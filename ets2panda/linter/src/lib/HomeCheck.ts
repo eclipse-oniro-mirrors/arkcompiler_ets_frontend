@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import type { CommandLineOptions } from './CommandLineOptions';
 import type { ProblemInfo } from './ProblemInfo';
 import { FaultID } from './Problems';
 import { shouldProcessFile } from './LinterRunner';
+import { cookBookTag } from './CookBookMsg';
 
 interface RuleConfigInfo {
   ruleSet: string[];
@@ -77,6 +78,7 @@ export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<s
   fileIssuesArray.forEach((fileIssues) => {
     fileIssues.issues.forEach((issueReport) => {
       const defect = issueReport.defect;
+      const ruleTag = findRuleTagByDesc(defect.description);
       const problemInfo: ProblemInfo = {
         line: defect.reportLine,
         column: defect.reportColumn,
@@ -90,7 +92,7 @@ export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<s
         problem: defect.problem,
         suggest: '',
         rule: defect.description,
-        ruleTag: -1,
+        ruleTag: ruleTag,
         autofixable: defect.fixable
       };
       if (problemInfo.autofixable) {
@@ -108,4 +110,38 @@ export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<s
     });
   });
   return result;
+}
+
+export function removeOutOfRangeFiles(
+  homeCheckResult: Map<string, ProblemInfo[]>,
+  cmdOptions: CommandLineOptions
+): Map<string, ProblemInfo[]> {
+  const filteredResult = new Map<string, ProblemInfo[]>();
+
+  for (const [filePath, problems] of homeCheckResult) {
+    if (cmdOptions.inputFiles.includes(filePath)) {
+      filteredResult.set(filePath, problems);
+    }
+  }
+
+  return filteredResult;
+}
+
+/*
+ * ruleId is not reliable for matching, as one ruleId (e.g., "arkts-numeric-semantic") can cover multiple rules.
+ * Using the rule name in description is more accurate.
+ */
+function findRuleTagByDesc(desc: string): number {
+  const ruleNameMatch = desc.match(/\(([^)]+)\)/);
+
+  if (ruleNameMatch) {
+    const ruleName = ruleNameMatch[1];
+    for (let i = 1; i < cookBookTag.length; i++) {
+      if (cookBookTag[i]?.includes(ruleName)) {
+        return i;
+      }
+    }
+  }
+
+  return -1;
 }

@@ -43,6 +43,26 @@
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 15,
+            "endLine": 63,
+            "endColumn": 21,
+            "problem": "ParameterProperties",
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 33,
+            "endLine": 63,
+            "endColumn": 40,
+            "problem": "ParameterProperties",
+            "suggest": "",
+            "rule": "Declaring fields in \"constructor\" is not supported (arkts-no-ctor-prop-decls)",
+            "severity": "ERROR"
         }
     ]
 }

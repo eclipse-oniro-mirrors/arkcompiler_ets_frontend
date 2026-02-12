@@ -773,9 +773,13 @@ export class NumericSemanticCheck implements BaseChecker {
                 return false;
             }
             const fieldSig = castOpRight.getFieldSignature();
-            if (fieldSig.getFieldName() === 'value') {
-                const declaringSig = fieldSig.getDeclaringSignature();
-                if (declaringSig instanceof ClassSignature && declaringSig.getClassName() === 'IteratorYieldResult') {
+            if (fieldSig.getFieldName() !== 'value') {
+                return false;
+            }
+            const declaringSig = fieldSig.getDeclaringSignature();
+            if (declaringSig instanceof ClassSignature) {
+                const className = declaringSig.getClassName();
+                if (className === 'IteratorResult' || className === 'IteratorYieldResult' || className === 'IteratorReturnResult') {
                     return true;
                 }
             }
@@ -1364,6 +1368,12 @@ export class NumericSemanticCheck implements BaseChecker {
                 checkStmts.push(s);
             });
 
+        const anonymousClassCheckRes = this.checkLocalUsedInAnonymousClassFieldInitializers(local, declaringMethod);
+        if (anonymousClassCheckRes !== IssueReason.OnlyUsedAsIntLong) {
+            hasChecked.set(local, { issueReason: anonymousClassCheckRes, numberCategory: NumberCategory.number });
+            return anonymousClassCheckRes;
+        }
+
         for (const s of checkStmts) {
             const res = this.checkRelatedStmtForLocal(s, local, hasChecked, numberCategory);
             if (res.issueReason !== IssueReason.OnlyUsedAsIntLong) {
@@ -1515,6 +1525,42 @@ export class NumericSemanticCheck implements BaseChecker {
 
         const clazz = method.getDeclaringArkClass();
         return this.findLocalFromOuterClass(local, clazz);
+    }
+
+    private checkLocalUsedInAnonymousClassFieldInitializers(local: Local, containingMethod: ArkMethod): IssueReason {
+        const declaringFile = containingMethod.getDeclaringArkFile();
+        const localName = local.getName();
+        const isValueUsingLocal = (value: Value, name: string): boolean => value instanceof Local && value.getName() === name;
+
+        for (const clazz of declaringFile.getClasses()) {
+            if (!clazz.isAnonymousClass()) {
+                continue;
+            }
+
+            const initMethod = clazz.getInstanceInitMethod() ?? clazz.getStaticInitMethod();
+            if (!initMethod) {
+                continue;
+            }
+
+            const stmts = initMethod.getBody()?.getCfg()?.getStmts() ?? [];
+            for (const stmt of stmts) {
+                if (!(stmt instanceof ArkAssignStmt)) {
+                    continue;
+                }
+
+                const rightOp = stmt.getRightOp();
+                if (!(rightOp instanceof ArkNormalBinopExpr && rightOp.getOperator() === NormalBinaryOperator.Division)) {
+                    continue;
+                }
+
+                if (isValueUsingLocal(rightOp.getOp1(), localName) ||
+                    isValueUsingLocal(rightOp.getOp2(), localName)) {
+                    return IssueReason.UsedWithOtherType;
+                }
+            }
+        }
+
+        return IssueReason.OnlyUsedAsIntLong;
     }
 
     private findLocalFromOuterClass(local: Local, objectClass: ArkClass): Local | null {
@@ -2930,7 +2976,7 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         visited.add(arkClass);
 
-        if (arkClass.getSignature().getDeclaringFileSignature().getProjectName() === 'built-in') {
+        if (arkClass.getSignature().getDeclaringFileSignature().getProjectName() === 'internalSdk') {
             return true;
         }
 

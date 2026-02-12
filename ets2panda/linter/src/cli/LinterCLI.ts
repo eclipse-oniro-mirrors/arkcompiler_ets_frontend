@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import * as path from 'node:path';
 import * as readlineSync from 'readline-sync';
 import * as readline from 'node:readline';
 import type { CommandLineOptions } from '../lib/CommandLineOptions';
-import { getHomeCheckConfigInfo, transferIssues2ProblemInfo } from '../lib/HomeCheck';
+import { getHomeCheckConfigInfo, transferIssues2ProblemInfo, removeOutOfRangeFiles } from '../lib/HomeCheck';
 import { lint } from '../lib/LinterRunner';
 import { Logger } from '../lib/Logger';
 import type { ProblemInfo } from '../lib/ProblemInfo';
@@ -34,6 +34,7 @@ import { processSyncErr, processSyncOut } from '../lib/utils/functions/ProcessWr
 import { parseCommandLine } from './CommandLineParser';
 import { getAllLinterRules } from '../lib/utils/functions/ConfiguredRulesProcess';
 import { tryCallGC } from '../lib/utils/functions/GarbageCollectorUtils';
+import { mergeArrayMaps } from '../lib/utils/functions/MergeArrayMaps';
 
 export function run(): void {
   const commandLineArgs = process.argv.slice(2);
@@ -132,25 +133,10 @@ async function executeHomeCheckTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): P
   const result = await migrationTool.start();
   migrationTool = null;
   scanTaskRelatedInfo.homeCheckResult = transferIssues2ProblemInfo(result);
-  for (const [filePath, problems] of scanTaskRelatedInfo.homeCheckResult) {
-    if (
-      !scanTaskRelatedInfo.cmdOptions.scanWholeProjectInHomecheck &&
-      !scanTaskRelatedInfo.cmdOptions.inputFiles.includes(filePath)
-    ) {
-      continue;
-    }
-    if (!scanTaskRelatedInfo.mergedProblems.has(filePath)) {
-      scanTaskRelatedInfo.mergedProblems.set(filePath, []);
-    }
-    statistic.accumulateRuleNumbers(
-      problems,
-      scanTaskRelatedInfo.statisticsReportInPutInfo.ruleToNumbersMap,
-      scanTaskRelatedInfo.statisticsReportInPutInfo.ruleToAutoFixedNumbersMap
-    );
-    scanTaskRelatedInfo.statisticsReportInPutInfo.arkOnePointOneProblemNumbers +=
-      statistic.getArktsOnePointOneProlemNumbers(problems);
-    scanTaskRelatedInfo.mergedProblems.get(filePath)!.push(...problems);
-  }
+  scanTaskRelatedInfo.homeCheckResult = removeOutOfRangeFiles(
+    scanTaskRelatedInfo.homeCheckResult,
+    scanTaskRelatedInfo.cmdOptions
+  );
 }
 
 function executeLintTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
@@ -161,7 +147,16 @@ function executeLintTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
     scanTaskRelatedInfo.timeRecorder.startScan();
   }
   const result = lint(compileOptions, scanTaskRelatedInfo.timeRecorder, homeCheckResult);
-  for (const [filePath, problems] of result.problemsInfos) {
+  // if migratorMode, lint result is merged result
+  scanTaskRelatedInfo.mergedProblems = cmdOptions.linterOptions.migratorMode ?
+    result.problemsInfos :
+    mergeArrayMaps(homeCheckResult, result.problemsInfos);
+  filterLintProblems(scanTaskRelatedInfo.mergedProblems, cmdOptions);
+  accumulateRuleNumbersOfMergeProblems(scanTaskRelatedInfo);
+}
+
+function accumulateRuleNumbersOfMergeProblems(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
+  for (const [, problems] of scanTaskRelatedInfo.mergedProblems) {
     statistic.accumulateRuleNumbers(
       problems,
       scanTaskRelatedInfo.statisticsReportInPutInfo.ruleToNumbersMap,
@@ -169,21 +164,12 @@ function executeLintTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
     );
     scanTaskRelatedInfo.statisticsReportInPutInfo.arkOnePointOneProblemNumbers +=
       statistic.getArktsOnePointOneProlemNumbers(problems);
-    mergeLintProblems(filePath, problems, scanTaskRelatedInfo.mergedProblems, cmdOptions);
   }
 }
 
-function mergeLintProblems(
-  filePath: string,
-  problems: ProblemInfo[],
-  mergedProblems: Map<string, ProblemInfo[]>,
-  cmdOptions: CommandLineOptions
-): void {
-  if (!mergedProblems.has(filePath)) {
-    mergedProblems.set(filePath, []);
-  }
-  let filteredProblems = problems;
-  mergedProblems.get(filePath)!.push(...filteredProblems);
+function filterLintProblems(mergedProblems: Map<string, ProblemInfo[]>, cmdOptions: CommandLineOptions): void {
+  let filteredProblems: ProblemInfo[] = [];
+
   for (const file of mergedProblems.keys()) {
     const totalProblems = mergedProblems.get(file);
 

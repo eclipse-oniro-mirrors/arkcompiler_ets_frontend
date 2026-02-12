@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,7 +61,7 @@ const c = 'c';
 const d = 10;
 interface ComputedPropertyT {
     a: string; // String-like name
-    __5: string; // Number-like name
+    5: string; // Number-like name
     [c]: string; // String-like name
     [d]: string; // Number-like name
 }
@@ -123,10 +123,7 @@ class H extends G<GeneratedTypeLiteralInterface_1> {}
 interface GeneratedTypeLiteralInterface_2 {
     y: string;
 }
-interface GeneratedTypeLiteralInterface_3 {
-    y: 'constant';
-}
-const g: G<GeneratedTypeLiteralInterface_2> = new G<GeneratedTypeLiteralInterface_3>();
+const g: G<GeneratedTypeLiteralInterface_2> = new G<{ y: 'constant' }>();
 function generic<T>(t: T): number {
   return 10;
 }

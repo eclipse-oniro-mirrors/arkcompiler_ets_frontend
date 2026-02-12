@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 37,
+            "line": 40,
             "column": 12,
-            "endLine": 37,
+            "endLine": 40,
             "endColumn": 23,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -55,9 +55,39 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 54,
             "column": 12,
-            "endLine": 57,
+            "endLine": 54,
+            "endColumn": 26,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 12,
+            "endLine": 61,
+            "endColumn": 26,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 12,
+            "endLine": 71,
+            "endColumn": 24,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 12,
+            "endLine": 81,
             "endColumn": 25,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -65,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 69,
+            "line": 93,
             "column": 12,
-            "endLine": 69,
+            "endLine": 93,
             "endColumn": 25,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -75,89 +105,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 82,
-            "column": 10,
-            "endLine": 82,
-            "endColumn": 14,
-            "problem": "NoTsLikeSmartType",
+            "line": 102,
+            "column": 1,
+            "endLine": 106,
+            "endColumn": 2,
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
-            "line": 94,
-            "column": 16,
-            "endLine": 94,
-            "endColumn": 47,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 100,
-            "column": 66,
-            "endLine": 100,
-            "endColumn": 75,
-            "problem": "SdkCommonApiWhiteList",
-            "suggest": "",
-            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 100,
-            "column": 66,
-            "endLine": 100,
-            "endColumn": 75,
-            "problem": "BuiltinNarrowTypes",
-            "suggest": "",
-            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 108,
-            "column": 54,
-            "endLine": 108,
-            "endColumn": 58,
-            "problem": "BuiltinDisableApi",
-            "suggest": "",
-            "rule": "API has been disabled (arkts-builtin-disable-api)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
-            "column": 8,
-            "endLine": 112,
-            "endColumn": 38,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 116,
-            "column": 50,
-            "endLine": 116,
-            "endColumn": 54,
-            "problem": "BuiltinDisableApi",
-            "suggest": "",
-            "rule": "API has been disabled (arkts-builtin-disable-api)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 121,
-            "column": 9,
-            "endLine": 121,
-            "endColumn": 47,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 140,
-            "column": 11,
-            "endLine": 140,
+            "line": 104,
+            "column": 14,
+            "endLine": 104,
             "endColumn": 18,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -165,9 +125,89 @@
             "severity": "ERROR"
         },
         {
-            "line": 144,
+            "line": 111,
+            "column": 16,
+            "endLine": 111,
+            "endColumn": 47,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 66,
+            "endLine": 117,
+            "endColumn": 75,
+            "problem": "SdkCommonApiWhiteList",
+            "suggest": "",
+            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 66,
+            "endLine": 117,
+            "endColumn": 75,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 125,
+            "column": 54,
+            "endLine": 125,
+            "endColumn": 58,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 129,
+            "column": 8,
+            "endLine": 129,
+            "endColumn": 38,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 133,
+            "column": 50,
+            "endLine": 133,
+            "endColumn": 54,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 138,
+            "column": 9,
+            "endLine": 138,
+            "endColumn": 47,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 159,
+            "column": 11,
+            "endLine": 159,
+            "endColumn": 18,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 163,
             "column": 5,
-            "endLine": 144,
+            "endLine": 163,
             "endColumn": 12,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -175,9 +215,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 158,
+            "line": 167,
             "column": 13,
-            "endLine": 158,
+            "endLine": 167,
             "endColumn": 20,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -185,29 +225,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 176,
-            "column": 6,
-            "endLine": 176,
-            "endColumn": 47,
-            "problem": "IncompationbleFunctionType",
+            "line": 182,
+            "column": 13,
+            "endLine": 182,
+            "endColumn": 34,
+            "problem": "NoTsLikeSmartType",
             "suggest": "",
-            "rule": "Stricter assignments into variables of function type (arkts-incompatible-function-types)",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
-            "line": 175,
-            "column": 10,
-            "endLine": 177,
-            "endColumn": 4,
-            "problem": "GenericCallNoTypeArgs",
-            "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 200,
+            "line": 195,
             "column": 20,
-            "endLine": 200,
+            "endLine": 195,
             "endColumn": 26,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -215,89 +245,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 344,
-            "column": 27,
-            "endLine": 344,
-            "endColumn": 36,
-            "problem": "SdkCommonApiWhiteList",
-            "suggest": "",
-            "rule": "The \"stringify\" in SDK is no longer supported.(sdk-method-not-supported)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 344,
-            "column": 27,
-            "endLine": 344,
-            "endColumn": 36,
-            "problem": "BuiltinNarrowTypes",
-            "suggest": "",
-            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 364,
-            "column": 25,
-            "endLine": 364,
-            "endColumn": 36,
-            "problem": "NoTuplesArrays",
-            "suggest": "",
-            "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 376,
-            "column": 21,
-            "endLine": 376,
-            "endColumn": 29,
-            "problem": "ParameterType",
-            "suggest": "",
-            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 376,
-            "column": 21,
-            "endLine": 376,
-            "endColumn": 29,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 396,
-            "column": 9,
-            "endLine": 396,
-            "endColumn": 63,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 424,
-            "column": 25,
-            "endLine": 424,
-            "endColumn": 32,
-            "problem": "UnknownType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 451,
-            "column": 39,
-            "endLine": 451,
-            "endColumn": 42,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 462,
+            "line": 226,
             "column": 1,
-            "endLine": 462,
+            "endLine": 226,
             "endColumn": 4,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -305,9 +255,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 465,
+            "line": 229,
             "column": 12,
-            "endLine": 465,
+            "endLine": 229,
             "endColumn": 15,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -315,9 +265,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 466,
+            "line": 230,
             "column": 12,
-            "endLine": 466,
+            "endLine": 230,
             "endColumn": 15,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -325,9 +275,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 489,
+            "line": 238,
             "column": 5,
-            "endLine": 489,
+            "endLine": 238,
             "endColumn": 11,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -335,9 +285,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 521,
+            "line": 264,
             "column": 9,
-            "endLine": 521,
+            "endLine": 264,
             "endColumn": 17,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -345,9 +295,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 523,
+            "line": 271,
             "column": 9,
-            "endLine": 523,
+            "endLine": 271,
             "endColumn": 17,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -355,9 +305,39 @@
             "severity": "ERROR"
         },
         {
-            "line": 525,
+            "line": 275,
+            "column": 1,
+            "endLine": 298,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 277,
+            "column": 9,
+            "endLine": 277,
+            "endColumn": 17,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 278,
+            "column": 9,
+            "endLine": 278,
+            "endColumn": 17,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 280,
             "column": 26,
-            "endLine": 525,
+            "endLine": 280,
             "endColumn": 28,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -365,9 +345,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 526,
+            "line": 281,
             "column": 15,
-            "endLine": 526,
+            "endLine": 281,
             "endColumn": 24,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -375,9 +355,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 530,
+            "line": 283,
             "column": 22,
-            "endLine": 530,
+            "endLine": 283,
             "endColumn": 24,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -385,9 +365,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 531,
+            "line": 284,
             "column": 14,
-            "endLine": 531,
+            "endLine": 284,
             "endColumn": 16,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -395,9 +375,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 535,
+            "line": 285,
             "column": 23,
-            "endLine": 535,
+            "endLine": 285,
             "endColumn": 29,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -405,9 +385,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 538,
+            "line": 287,
             "column": 20,
-            "endLine": 538,
+            "endLine": 287,
             "endColumn": 26,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -415,9 +395,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 540,
+            "line": 288,
             "column": 23,
-            "endLine": 540,
+            "endLine": 288,
             "endColumn": 29,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -425,9 +405,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 548,
+            "line": 295,
             "column": 31,
-            "endLine": 548,
+            "endLine": 295,
             "endColumn": 37,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -435,9 +415,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 597,
+            "line": 331,
             "column": 20,
-            "endLine": 597,
+            "endLine": 331,
             "endColumn": 28,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -445,9 +425,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 605,
+            "line": 339,
             "column": 16,
-            "endLine": 605,
+            "endLine": 339,
             "endColumn": 29,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -455,29 +435,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 633,
-            "column": 9,
-            "endLine": 633,
-            "endColumn": 17,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 653,
-            "column": 9,
-            "endLine": 653,
-            "endColumn": 17,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 669,
+            "line": 361,
             "column": 18,
-            "endLine": 669,
+            "endLine": 361,
             "endColumn": 32,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -485,9 +445,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 687,
+            "line": 379,
             "column": 31,
-            "endLine": 687,
+            "endLine": 379,
             "endColumn": 53,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
@@ -495,9 +455,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 688,
+            "line": 380,
             "column": 16,
-            "endLine": 688,
+            "endLine": 380,
             "endColumn": 35,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -505,29 +465,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 388,
-            "column": 38,
-            "endLine": 388,
-            "endColumn": 42,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Want\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 391,
-            "column": 15,
-            "endLine": 391,
-            "endColumn": 19,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Want\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 144,
+            "line": 163,
             "column": 5,
-            "endLine": 144,
+            "endLine": 163,
             "endColumn": 8,
             "problem": "StrictDiagnostic",
             "suggest": "'b.a' is possibly 'undefined'.",
@@ -535,9 +475,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 151,
+            "line": 167,
+            "column": 13,
+            "endLine": 167,
+            "endColumn": 16,
+            "problem": "StrictDiagnostic",
+            "suggest": "'b.a' is possibly 'undefined'.",
+            "rule": "'b.a' is possibly 'undefined'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 170,
             "column": 7,
-            "endLine": 151,
+            "endLine": 170,
             "endColumn": 10,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -545,19 +495,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 158,
-            "column": 13,
-            "endLine": 158,
-            "endColumn": 16,
-            "problem": "StrictDiagnostic",
-            "suggest": "'b.a' is possibly 'undefined'.",
-            "rule": "'b.a' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 198,
+            "line": 193,
             "column": 18,
-            "endLine": 198,
+            "endLine": 193,
             "endColumn": 25,
             "problem": "StrictDiagnostic",
             "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
@@ -565,19 +505,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 285,
-            "column": 1,
-            "endLine": 285,
-            "endColumn": 4,
-            "problem": "StrictDiagnostic",
-            "suggest": "'obj' is possibly 'undefined'.",
-            "rule": "'obj' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 299,
+            "line": 208,
             "column": 5,
-            "endLine": 299,
+            "endLine": 208,
             "endColumn": 8,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -585,29 +515,29 @@
             "severity": "ERROR"
         },
         {
-            "line": 314,
-            "column": 13,
-            "endLine": 314,
-            "endColumn": 16,
+            "line": 215,
+            "column": 9,
+            "endLine": 215,
+            "endColumn": 12,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
             "rule": "'obj' is possibly 'undefined'.",
             "severity": "ERROR"
         },
         {
-            "line": 388,
-            "column": 9,
-            "endLine": 388,
-            "endColumn": 21,
+            "line": 221,
+            "column": 17,
+            "endLine": 221,
+            "endColumn": 20,
             "problem": "StrictDiagnostic",
-            "suggest": "Not all code paths return a value.",
-            "rule": "Not all code paths return a value.",
+            "suggest": "'obj' is possibly 'undefined'.",
+            "rule": "'obj' is possibly 'undefined'.",
             "severity": "ERROR"
         },
         {
-            "line": 553,
+            "line": 300,
             "column": 10,
-            "endLine": 553,
+            "endLine": 300,
             "endColumn": 14,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",

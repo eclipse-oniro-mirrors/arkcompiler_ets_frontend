@@ -7,7 +7,7 @@
 ArkTS-Sta中，对象的属性名称必须是有效标识符，不支持使用单引号和连字符。
 
 **变更原因：**
- 
+
 在ArkTS-Sta中，对象的属性名不能使用数字或字符串，以增强对边界场景的约束。
 
 **适配建议：**
@@ -16,7 +16,7 @@ ArkTS-Sta中，对象的属性名称必须是有效标识符，不支持使用�
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 ```typescript
 // ArkTS-Dyn API定义
 interface RequestHeaders {
@@ -32,7 +32,7 @@ const headers: RequestHeaders = {
 };
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // ArkTS-Sta API定义
 interface RequestHeaders {

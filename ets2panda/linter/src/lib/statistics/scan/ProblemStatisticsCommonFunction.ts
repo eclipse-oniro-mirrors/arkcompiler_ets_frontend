@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { runWithIOLimit, mapWithLimit, PROJECTS_PER_DIR_CONCURRENCY } from './IoLimiter';
-import type { LintRunResult } from '../../LintRunResult';
 import { Logger } from '../../Logger';
 import type { ProblemInfo } from '../../ProblemInfo';
 import * as mk from '../../utils/consts/MapKeyConst';
@@ -92,7 +91,7 @@ export function accumulateRuleNumbers(
     if (problem.rule !== undefined) {
       const match = problem.rule.match(regex);
       if (match?.[1]?.trim()) {
-        if (problem.autofix) {
+        if (problem.autofix && problem.autofixable) {
           const currentNumber = ruleToAutoFixedNumbersMap.get(match[1]) || 0;
           ruleToAutoFixedNumbersMap.set(match[1], currentNumber + 1);
         }
@@ -190,7 +189,7 @@ function getProcessedRuleToNumbersMap(
 }
 
 export function generateMigrationStatisicsReport(
-  lintResult: LintRunResult,
+  lintResults: Map<string, ProblemInfo[]> | undefined,
   timeRecorder: TimeRecorder,
   outputFilePath?: string
 ): void {
@@ -198,7 +197,10 @@ export function generateMigrationStatisicsReport(
   const ruleToAutoFixedNumbersMap: Map<string, number> = new Map();
   let arkOnePointOneProblemNumbers: number = 0;
 
-  const problemsInfoAfterAutofixed = lintResult.problemsInfos;
+  if (lintResults === undefined) {
+    return;
+  }
+  const problemsInfoAfterAutofixed = lintResults;
   for (const problems of problemsInfoAfterAutofixed.values()) {
     accumulateRuleNumbers(problems, ruleToNumbersMap, ruleToAutoFixedNumbersMap);
     arkOnePointOneProblemNumbers = arkOnePointOneProblemNumbers + getArktsOnePointOneProlemNumbers(problems);

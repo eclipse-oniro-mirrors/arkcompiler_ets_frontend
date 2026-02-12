@@ -20,7 +20,7 @@ ArkTS-Sta对void类型的语义进行了收紧，限制其使用场景以增强�
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 
 ```
 import { UIAbility } from '@kit.AbilityKit';
@@ -39,7 +39,7 @@ export default class MyUIAbility extends UIAbility {
 }
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 
 ```
 import { UIAbility } from '@kit.AbilityKit';

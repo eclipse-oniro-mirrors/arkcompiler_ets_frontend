@@ -15,9 +15,139 @@
     ],
     "result": [
         {
-            "line": 171,
+            "line": 31,
+            "column": 56,
+            "endLine": 31,
+            "endColumn": 57,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 8,
+            "endLine": 40,
+            "endColumn": 9,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 53,
+            "endLine": 67,
+            "endColumn": 54,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 76,
+            "column": 8,
+            "endLine": 76,
+            "endColumn": 9,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 46,
+            "endLine": 82,
+            "endColumn": 47,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 6,
+            "endLine": 85,
+            "endColumn": 7,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 50,
+            "endLine": 99,
+            "endColumn": 51,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 10,
+            "endLine": 100,
+            "endColumn": 11,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 110,
+            "column": 8,
+            "endLine": 110,
+            "endColumn": 9,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 110,
+            "column": 33,
+            "endLine": 110,
+            "endColumn": 34,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 111,
+            "column": 12,
+            "endLine": 111,
+            "endColumn": 13,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 124,
+            "column": 57,
+            "endLine": 124,
+            "endColumn": 58,
+            "problem": "ObjectTypeLiteral",
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 142,
             "column": 5,
-            "endLine": 171,
+            "endLine": 142,
+            "endColumn": 6,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 148,
+            "column": 5,
+            "endLine": 148,
             "endColumn": 25,
             "problem": "CallSignature",
             "suggest": "",
@@ -25,9 +155,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 172,
+            "line": 149,
             "column": 5,
-            "endLine": 172,
+            "endLine": 149,
             "endColumn": 24,
             "problem": "ConstructorIface",
             "suggest": "",
@@ -35,9 +165,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 173,
+            "line": 150,
             "column": 5,
-            "endLine": 173,
+            "endLine": 150,
             "endColumn": 28,
             "problem": "IndexMember",
             "suggest": "",
@@ -45,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 173,
+            "line": 150,
             "column": 20,
-            "endLine": 173,
+            "endLine": 150,
             "endColumn": 27,
             "problem": "UnknownType",
             "suggest": "",
@@ -55,9 +185,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 185,
+            "line": 156,
             "column": 5,
-            "endLine": 185,
+            "endLine": 156,
+            "endColumn": 6,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 162,
+            "column": 5,
+            "endLine": 162,
             "endColumn": 25,
             "problem": "CallSignature",
             "suggest": "",
@@ -65,9 +205,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 186,
+            "line": 163,
             "column": 5,
-            "endLine": 186,
+            "endLine": 163,
             "endColumn": 24,
             "problem": "ConstructorIface",
             "suggest": "",
@@ -75,9 +215,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 187,
+            "line": 164,
             "column": 5,
-            "endLine": 187,
+            "endLine": 164,
             "endColumn": 28,
             "problem": "IndexMember",
             "suggest": "",
@@ -85,9 +225,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 187,
+            "line": 164,
             "column": 20,
-            "endLine": 187,
+            "endLine": 164,
             "endColumn": 27,
             "problem": "UnknownType",
             "suggest": "",
@@ -95,9 +235,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 192,
+            "line": 169,
             "column": 49,
-            "endLine": 192,
+            "endLine": 169,
             "endColumn": 50,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -105,9 +245,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 193,
+            "line": 170,
             "column": 11,
-            "endLine": 193,
+            "endLine": 170,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -115,9 +255,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 199,
+            "line": 176,
             "column": 11,
-            "endLine": 199,
+            "endLine": 176,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -125,9 +265,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 199,
+            "line": 176,
             "column": 30,
-            "endLine": 199,
+            "endLine": 176,
             "endColumn": 31,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -135,9 +275,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 201,
+            "line": 178,
             "column": 25,
-            "endLine": 201,
+            "endLine": 178,
             "endColumn": 26,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -145,9 +285,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 204,
+            "line": 181,
             "column": 11,
-            "endLine": 204,
+            "endLine": 181,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -155,9 +295,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 204,
+            "line": 181,
             "column": 12,
-            "endLine": 204,
+            "endLine": 181,
             "endColumn": 17,
             "problem": "ComputedPropertyName",
             "suggest": "",
@@ -165,9 +305,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 207,
+            "line": 184,
             "column": 11,
-            "endLine": 207,
+            "endLine": 184,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -175,9 +315,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 207,
+            "line": 184,
             "column": 31,
-            "endLine": 207,
+            "endLine": 184,
             "endColumn": 32,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -185,9 +325,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 209,
+            "line": 186,
             "column": 11,
-            "endLine": 209,
+            "endLine": 186,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -195,9 +335,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 209,
+            "line": 186,
             "column": 17,
-            "endLine": 209,
+            "endLine": 186,
             "endColumn": 23,
             "problem": "TypeQuery",
             "suggest": "",
@@ -205,9 +345,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 211,
+            "line": 188,
             "column": 11,
-            "endLine": 211,
+            "endLine": 188,
             "endColumn": 12,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -215,9 +355,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 211,
+            "line": 188,
             "column": 17,
-            "endLine": 211,
+            "endLine": 188,
             "endColumn": 23,
             "problem": "TypeQuery",
             "suggest": "",
@@ -225,9 +365,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 213,
+            "line": 190,
             "column": 10,
-            "endLine": 213,
+            "endLine": 190,
             "endColumn": 11,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",

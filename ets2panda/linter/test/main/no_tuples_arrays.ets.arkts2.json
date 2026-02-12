@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -88,7 +88,7 @@
             "line": 70,
             "column": 5,
             "endLine": 70,
-            "endColumn": 53,
+            "endColumn": 48,
             "problem": "NoTuplesArrays",
             "suggest": "",
             "rule": "Array and tuple are different type(arkts-no-tuples-arrays)",
@@ -165,16 +165,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 80,
-            "column": 35,
-            "endLine": 80,
-            "endColumn": 62,
-            "problem": "ArrayTypeImmutable",
-            "suggest": "",
-            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
             "line": 81,
             "column": 47,
             "endLine": 81,
@@ -195,16 +185,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 82,
-            "column": 42,
-            "endLine": 82,
-            "endColumn": 83,
-            "problem": "ArrayTypeImmutable",
-            "suggest": "",
-            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
             "line": 83,
             "column": 42,
             "endLine": 83,
@@ -219,6 +199,16 @@
             "column": 42,
             "endLine": 83,
             "endColumn": 76,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 42,
+            "endLine": 84,
+            "endColumn": 88,
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",

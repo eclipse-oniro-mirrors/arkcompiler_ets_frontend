@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -181,7 +181,11 @@ function executeLinter(linterInputInfo: LinterInputInfo): LintRunResult {
       new TypeScriptLinter(tsProgram.getTypeChecker(), options, srcFile, tscStrictDiagnostics) :
       new InteropTypescriptLinter(tsProgram.getTypeChecker(), tsProgram.getCompilerOptions(), options, srcFile);
 
-    linter.lint();
+    if (migrationInfo?.migrateforUI && linter instanceof TypeScriptLinter) {
+      linter.lintForUI();
+    } else {
+      linter.lint();
+    }
     const problems = linter.problemsInfos;
     problemsInfos.set(path.normalize(srcFile.fileName), [...problems]);
     projectStats.fileStats.push(linter.fileStats);
@@ -213,7 +217,7 @@ export function processIdeProgressBar(
   const phasePrefix = isMigrationStep ? 'Migration Phase' : 'Scan Phase';
 
   const migrationPhase = isMigrationStep ?
-    ` ${progressBarInfo.migrationInfo!.currentPass + 1} / ${progressBarInfo.migrationInfo!.maxPasses}` :
+    ` ${(progressBarInfo.migrationInfo!.currentPass ?? 0) + 1} / ${progressBarInfo.migrationInfo!.maxPasses ?? 1}` :
     '';
 
   const progressRatio = srcFiles.length > 0 ? fileCount / srcFiles.length : 0;
@@ -241,52 +245,53 @@ export function processIdeProgressBar(
 
 function migrate(
   linterConfig: LinterConfig,
-  initialLintResult: LintRunResult,
+  lintResult: LintRunResult,
   timeRecorder: TimeRecorder,
   hcResults?: Map<string, ProblemInfo[]>
 ): LintRunResult {
   timeRecorder.startMigration();
   const { cmdOptions } = linterConfig;
   const updatedSourceTexts: Map<string, string> = new Map();
-  let lintResult: LintRunResult = initialLintResult;
-  const problemsInfosBeforeMigrate = lintResult.problemsInfos;
   tryForceCallGC();
 
-  const migrationMaxPass = cmdOptions.linterOptions.migrationMaxPass ?? qEd.DEFAULT_MAX_AUTOFIX_PASSES;
-  for (let pass = 0; pass < migrationMaxPass; pass++) {
-    const changedFiles = fix(linterConfig, lintResult, updatedSourceTexts, hcResults);
-    hcResults = undefined;
+  let mergedProblems: Map<string, ProblemInfo[]> = hcResults ?? new Map();
+  mergedProblems = mergeArrayMaps(
+    mergedProblems,
+    filterLinterProblemsWithAutofixConfig(linterConfig.cmdOptions, lintResult.problemsInfos)
+  );
+  const changedFiles = fix(linterConfig, updatedSourceTexts, mergedProblems);
 
-    if (changedFiles.length === 0) {
-      // No fixes were applied, migration is finished.
-      break;
-    }
-
-    /*
-     * Re-compile and re-scan project after applying the fixes. Only re-check
-     * files that were fixed before.
-     * Additionally, invoke the garbage collector manually after creating
-     * compilation for the next pass to ensure that previous compilation is
-     * released from memory.
-     */
+  if (changedFiles.length !== 0) {
     cmdOptions.inputFiles = changedFiles;
-    const newLinterConfig = compileLintOptions(cmdOptions, getMigrationCreateProgramCallback(updatedSourceTexts));
-    linterConfig.tscCompiledProgram = newLinterConfig.tscCompiledProgram;
-    tryCallGC();
-    lintResult = lintImpl(linterConfig, { currentPass: pass, maxPasses: migrationMaxPass });
+    updateLinterConfig(cmdOptions, linterConfig, updatedSourceTexts);
+
+    const lintUIResults = lintImpl(linterConfig, { migrateforUI: true });
+    fix(linterConfig, updatedSourceTexts, mergedProblems, lintUIResults.problemsInfos);
   }
 
   // Write new text for updated source files.
   updateSourceFiles(updatedSourceTexts, cmdOptions);
 
   timeRecorder.endMigration();
-  generateMigrationStatisicsReport(lintResult, timeRecorder, cmdOptions.outputFilePath);
+  generateMigrationStatisicsReport(mergedProblems, timeRecorder, cmdOptions.outputFilePath);
 
-  if (cmdOptions.linterOptions.ideInteractive) {
-    lintResult.problemsInfos = problemsInfosBeforeMigrate;
+  if (!cmdOptions.linterOptions.ideInteractive) {
+    updateLinterConfig(cmdOptions, linterConfig, updatedSourceTexts);
+    return lintImpl(linterConfig);
   }
 
+  lintResult.problemsInfos = mergedProblems;
   return lintResult;
+}
+
+function updateLinterConfig(
+  cmdOptions: CommandLineOptions,
+  linterConfig: LinterConfig,
+  updatedSourceTexts: Map<string, string>
+): void {
+  const newLinterConfig = compileLintOptions(cmdOptions, getMigrationCreateProgramCallback(updatedSourceTexts));
+  linterConfig.tscCompiledProgram = newLinterConfig.tscCompiledProgram;
+  tryCallGC();
 }
 
 function filterLinterProblemsWithAutofixConfig(
@@ -335,18 +340,15 @@ function hasUseStaticDirective(srcFile: ts.SourceFile): boolean {
 
 function fix(
   linterConfig: LinterConfig,
-  lintResult: LintRunResult,
   updatedSourceTexts: Map<string, string>,
-  hcResults?: Map<string, ProblemInfo[]>
+  mergedProblems: Map<string, ProblemInfo[]>,
+  lintUIProblems?: Map<string, ProblemInfo[]>
 ): string[] {
   const program = linterConfig.tscCompiledProgram.getProgram();
   const changedFiles: string[] = [];
-  // Apply homecheck fixes first to avoid them being skipped due to conflict with linter autofixes
-  let mergedProblems: Map<string, ProblemInfo[]> = hcResults ?? new Map();
-  mergedProblems = mergeArrayMaps(
-    mergedProblems,
-    filterLinterProblemsWithAutofixConfig(linterConfig.cmdOptions, lintResult.problemsInfos)
-  );
+  if (lintUIProblems) {
+    mergedProblems = lintUIProblems;
+  }
   mergedProblems.forEach((problemInfos, fileName) => {
     const srcFile = program.getSourceFile(fileName);
     if (!srcFile) {
@@ -363,7 +365,7 @@ function fix(
       linterConfig.cmdOptions.inputFiles.includes(fileName) &&
       !hasUseStaticDirective(srcFile) &&
       linterConfig.cmdOptions.linterOptions.ideInteractive &&
-      !hasAnyAutofixes;
+      (!hasAnyAutofixes || !!lintUIProblems);
 
     // If nothing to fix or don't need to add 'use static', then skip file
     if (!hasAnyAutofixes && !needToAddUseStatic) {
@@ -380,7 +382,6 @@ function fix(
       changedFiles.push(fileName);
     }
   });
-
   return changedFiles;
 }
 

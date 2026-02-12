@@ -158,7 +158,7 @@ function getTypescript(detectedOS) {
     shell.exec(`npm install ${arkanalyzer}/${npm_arkanalyzer_package}`)
     shell.exec(`npm install --no-save ${typescript_dir}/${npm_typescript_package}`)
     const homecheck_source_file = homecheck + '/node_modules/ohos-typescript/lib/lib.es5.d.ts'
-    const homecheck_target_dir = homecheck + '/resources/internalSdk/@interanl'
+    const homecheck_target_dir = homecheck + '/resources/internalSdk/@internal'
     shell.mkdir('-p', homecheck_target_dir)
     shell.cp('-f', homecheck_source_file, homecheck_target_dir)
     shell.exec('npm run compile')

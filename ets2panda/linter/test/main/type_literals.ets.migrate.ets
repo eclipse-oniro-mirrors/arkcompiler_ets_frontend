@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,25 +28,20 @@ interface GeneratedTypeLiteralInterface_2 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_3 {
-    c: number;
-    d: string;
-}
-type Type4 = Type1 | GeneratedTypeLiteralInterface_2 | GeneratedTypeLiteralInterface_3;
+type Type4 = Type1 | GeneratedTypeLiteralInterface_2 | {c: number, d: string};
 interface Type5<T, K> {
     a: T;
     b: K;
     c: number;
 }
-interface GeneratedTypeLiteralInterface_4 {
-    x: number;
-    y: string;
-    z: Type1;
-}
 interface Type6 {
     a: number;
     b: string;
-    c: GeneratedTypeLiteralInterface_4;
+    c: {
+        x: number;
+        y: string;
+        z: Type1;
+    };
 }
 export interface Type7 {
     a: number;
@@ -69,25 +64,20 @@ interface GeneratedTypeLiteralInterface_8 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_9 {
-    c: number;
-    d: string;
-}
-let var4: Type1 | GeneratedTypeLiteralInterface_8 | GeneratedTypeLiteralInterface_9;
+let var4: Type1 | GeneratedTypeLiteralInterface_8 | {c: number, d: string};
 interface GeneratedTypeLiteralInterface_10 {
     a: number;
     b: string;
 }
 let var5 = var1 as GeneratedTypeLiteralInterface_10;
-interface GeneratedTypeLiteralInterface_12 {
-    x: number;
-    y: string;
-    z: Type2;
-}
 interface GeneratedTypeLiteralInterface_11 {
     a: number;
     b: string;
-    c: GeneratedTypeLiteralInterface_12;
+    c: {
+        x: number;
+        y: string;
+        z: Type2;
+    };
 }
 let var6: GeneratedTypeLiteralInterface_11 = {
   a: 1,
@@ -106,10 +96,7 @@ interface GeneratedTypeLiteralInterface_13 {
     x: number;
     y: string;
 }
-interface GeneratedTypeLiteralInterface_14 {
-    z: boolean;
-}
-function f(p: GeneratedTypeLiteralInterface_13): GeneratedTypeLiteralInterface_14 {
+function f(p: GeneratedTypeLiteralInterface_13): {z: boolean} {
   return {z: true};
 }
 
@@ -117,17 +104,10 @@ interface GeneratedTypeLiteralInterface_15 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_16 {
-    c: number;
-    d: string;
-}
-interface GeneratedTypeLiteralInterface_17 {
-    e: boolean;
-}
 class C {
   f: GeneratedTypeLiteralInterface_15 = {a: 1, b:'2'};
 
-  m(p: GeneratedTypeLiteralInterface_16): GeneratedTypeLiteralInterface_17 {
+  m(p: {c: number, d: string}): {e: boolean} {
     return {e: true};
   }
 }
@@ -141,10 +121,7 @@ class GC2 extends GC<GeneratedTypeLiteralInterface_18> {}
 interface GeneratedTypeLiteralInterface_19 {
     y: string;
 }
-interface GeneratedTypeLiteralInterface_20 {
-    y: '20';
-}
-const gc: GC<GeneratedTypeLiteralInterface_19> = new GC<GeneratedTypeLiteralInterface_20>();
+const gc: GC<GeneratedTypeLiteralInterface_19> = new GC<{ y: '20' }>();
 
 interface GeneratedTypeLiteralInterface_21 {
     z: number;
@@ -162,7 +139,7 @@ g<GeneratedTypeLiteralInterface_22>({ z: true });
 interface TypeMembers {
     a: number;
     'b': string;
-    __3: boolean;
+    3: boolean;
     ['x']: number;
     m: (p: string) => number;
     n(p: number): void;
@@ -176,7 +153,7 @@ interface TypeMembers {
 interface GeneratedTypeLiteralInterface_23 {
     a: number;
     'b': string;
-    __3: boolean;
+    3: boolean;
     ['x']: number;
     m: (p: string) => number;
     n(p: number): void;

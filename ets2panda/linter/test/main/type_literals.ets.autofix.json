@@ -22,9 +22,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 605,
-                    "end": 621,
-                    "replacementText": "interface Type1 {\n}"
+                    "start": 610,
+                    "end": 626,
+                    "replacementText": "interface Type1 {\n}",
+                    "line": 16,
+                    "column": 14,
+                    "endLine": 16,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -39,9 +43,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 622,
-                    "end": 659,
-                    "replacementText": "interface Type2 {\n    a: number;\n    b: string;\n}"
+                    "start": 627,
+                    "end": 664,
+                    "replacementText": "interface Type2 {\n    a: number;\n    b: string;\n}",
+                    "line": 17,
+                    "column": 14,
+                    "endLine": 17,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -56,14 +64,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 660,
-                    "end": 660,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n"
+                    "start": 665,
+                    "end": 665,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 18,
+                    "column": 14,
+                    "endLine": 18,
+                    "endColumn": 15
                 },
                 {
-                    "start": 673,
-                    "end": 696,
-                    "replacementText": "GeneratedTypeLiteralInterface_1"
+                    "start": 678,
+                    "end": 701,
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 18,
+                    "column": 14,
+                    "endLine": 18,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -78,14 +94,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 700,
-                    "end": 700,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    a: number;\n    b: string;\n}\n"
+                    "start": 705,
+                    "end": 705,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 19,
+                    "column": 22,
+                    "endLine": 19,
+                    "endColumn": 23
                 },
                 {
-                    "start": 721,
-                    "end": 743,
-                    "replacementText": "GeneratedTypeLiteralInterface_2"
+                    "start": 726,
+                    "end": 748,
+                    "replacementText": "GeneratedTypeLiteralInterface_2",
+                    "line": 19,
+                    "column": 22,
+                    "endLine": 19,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -100,14 +124,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 700,
-                    "end": 700,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    c: number;\n    d: string;\n}\n"
+                    "start": 705,
+                    "end": 705,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    c: number;\n    d: string;\n}\n",
+                    "line": 19,
+                    "column": 47,
+                    "endLine": 19,
+                    "endColumn": 48
                 },
                 {
-                    "start": 746,
-                    "end": 768,
-                    "replacementText": "GeneratedTypeLiteralInterface_3"
+                    "start": 751,
+                    "end": 773,
+                    "replacementText": "GeneratedTypeLiteralInterface_3",
+                    "line": 19,
+                    "column": 47,
+                    "endLine": 19,
+                    "endColumn": 48
                 }
             ],
             "suggest": "",
@@ -122,9 +154,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 770,
-                    "end": 813,
-                    "replacementText": "interface Type5<T, K> {\n    a: T;\n    b: K;\n    c: number;\n}"
+                    "start": 775,
+                    "end": 818,
+                    "replacementText": "interface Type5<T, K> {\n    a: T;\n    b: K;\n    c: number;\n}",
+                    "line": 20,
+                    "column": 20,
+                    "endLine": 20,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -139,9 +175,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 814,
-                    "end": 907,
-                    "replacementText": "interface Type6 {\n    a: number;\n    b: string;\n    c: {\n        x: number;\n        y: string;\n        z: Type1;\n    };\n}"
+                    "start": 819,
+                    "end": 912,
+                    "replacementText": "interface Type6 {\n    a: number;\n    b: string;\n    c: {\n        x: number;\n        y: string;\n        z: Type1;\n    };\n}",
+                    "line": 21,
+                    "column": 14,
+                    "endLine": 21,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -156,14 +196,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 814,
-                    "end": 814,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    x: number;\n    y: string;\n    z: Type1;\n}\n"
+                    "start": 819,
+                    "end": 819,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    x: number;\n    y: string;\n    z: Type1;\n}\n",
+                    "line": 24,
+                    "column": 6,
+                    "endLine": 24,
+                    "endColumn": 7
                 },
                 {
-                    "start": 858,
-                    "end": 904,
-                    "replacementText": "GeneratedTypeLiteralInterface_4"
+                    "start": 863,
+                    "end": 909,
+                    "replacementText": "GeneratedTypeLiteralInterface_4",
+                    "line": 24,
+                    "column": 6,
+                    "endLine": 24,
+                    "endColumn": 7
                 }
             ],
             "suggest": "",
@@ -178,9 +226,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 908,
-                    "end": 940,
-                    "replacementText": "export interface Type7 {\n    a: number;\n}"
+                    "start": 913,
+                    "end": 945,
+                    "replacementText": "export interface Type7 {\n    a: number;\n}",
+                    "line": 30,
+                    "column": 21,
+                    "endLine": 30,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -195,14 +247,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 942,
-                    "end": 942,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_5 {\n}\n"
+                    "start": 947,
+                    "end": 947,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_5 {\n}\n",
+                    "line": 32,
+                    "column": 11,
+                    "endLine": 32,
+                    "endColumn": 12
                 },
                 {
-                    "start": 952,
-                    "end": 954,
-                    "replacementText": "GeneratedTypeLiteralInterface_5"
+                    "start": 957,
+                    "end": 959,
+                    "replacementText": "GeneratedTypeLiteralInterface_5",
+                    "line": 32,
+                    "column": 11,
+                    "endLine": 32,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -227,14 +287,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 961,
-                    "end": 961,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_6 {\n    a: number;\n    b: string;\n}\n"
+                    "start": 966,
+                    "end": 966,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_6 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 33,
+                    "column": 11,
+                    "endLine": 33,
+                    "endColumn": 12
                 },
                 {
-                    "start": 971,
-                    "end": 993,
-                    "replacementText": "GeneratedTypeLiteralInterface_6"
+                    "start": 976,
+                    "end": 998,
+                    "replacementText": "GeneratedTypeLiteralInterface_6",
+                    "line": 33,
+                    "column": 11,
+                    "endLine": 33,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -259,14 +327,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1010,
-                    "end": 1010,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_7 {\n    a: number;\n    b: number;\n}\n"
+                    "start": 1015,
+                    "end": 1015,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_7 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 34,
+                    "column": 11,
+                    "endLine": 34,
+                    "endColumn": 12
                 },
                 {
-                    "start": 1020,
-                    "end": 1043,
-                    "replacementText": "GeneratedTypeLiteralInterface_7"
+                    "start": 1025,
+                    "end": 1048,
+                    "replacementText": "GeneratedTypeLiteralInterface_7",
+                    "line": 34,
+                    "column": 11,
+                    "endLine": 34,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -281,14 +357,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1047,
-                    "end": 1047,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_8 {\n    a: number;\n    b: string;\n}\n"
+                    "start": 1052,
+                    "end": 1052,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_8 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 35,
+                    "column": 19,
+                    "endLine": 35,
+                    "endColumn": 20
                 },
                 {
-                    "start": 1065,
-                    "end": 1087,
-                    "replacementText": "GeneratedTypeLiteralInterface_8"
+                    "start": 1070,
+                    "end": 1092,
+                    "replacementText": "GeneratedTypeLiteralInterface_8",
+                    "line": 35,
+                    "column": 19,
+                    "endLine": 35,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -303,14 +387,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1047,
-                    "end": 1047,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_9 {\n    c: number;\n    d: string;\n}\n"
+                    "start": 1052,
+                    "end": 1052,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_9 {\n    c: number;\n    d: string;\n}\n",
+                    "line": 35,
+                    "column": 44,
+                    "endLine": 35,
+                    "endColumn": 45
                 },
                 {
-                    "start": 1090,
-                    "end": 1112,
-                    "replacementText": "GeneratedTypeLiteralInterface_9"
+                    "start": 1095,
+                    "end": 1117,
+                    "replacementText": "GeneratedTypeLiteralInterface_9",
+                    "line": 35,
+                    "column": 44,
+                    "endLine": 35,
+                    "endColumn": 45
                 }
             ],
             "suggest": "",
@@ -325,14 +417,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1114,
-                    "end": 1114,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_10 {\n    a: number;\n    b: string;\n}\n"
+                    "start": 1119,
+                    "end": 1119,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_10 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 36,
+                    "column": 20,
+                    "endLine": 36,
+                    "endColumn": 21
                 },
                 {
-                    "start": 1133,
-                    "end": 1155,
-                    "replacementText": "GeneratedTypeLiteralInterface_10"
+                    "start": 1138,
+                    "end": 1160,
+                    "replacementText": "GeneratedTypeLiteralInterface_10",
+                    "line": 36,
+                    "column": 20,
+                    "endLine": 36,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -347,14 +447,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1157,
-                    "end": 1157,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_11 {\n    a: number;\n    b: string;\n    c: {\n        x: number;\n        y: string;\n        z: Type2;\n    };\n}\n"
+                    "start": 1162,
+                    "end": 1162,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_11 {\n    a: number;\n    b: string;\n    c: {\n        x: number;\n        y: string;\n        z: Type2;\n    };\n}\n",
+                    "line": 37,
+                    "column": 11,
+                    "endLine": 37,
+                    "endColumn": 12
                 },
                 {
-                    "start": 1167,
-                    "end": 1246,
-                    "replacementText": "GeneratedTypeLiteralInterface_11"
+                    "start": 1172,
+                    "end": 1251,
+                    "replacementText": "GeneratedTypeLiteralInterface_11",
+                    "line": 37,
+                    "column": 11,
+                    "endLine": 37,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -369,14 +477,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1157,
-                    "end": 1157,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_12 {\n    x: number;\n    y: string;\n    z: Type2;\n}\n"
+                    "start": 1162,
+                    "end": 1162,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_12 {\n    x: number;\n    y: string;\n    z: Type2;\n}\n",
+                    "line": 40,
+                    "column": 6,
+                    "endLine": 40,
+                    "endColumn": 7
                 },
                 {
-                    "start": 1198,
-                    "end": 1244,
-                    "replacementText": "GeneratedTypeLiteralInterface_12"
+                    "start": 1203,
+                    "end": 1249,
+                    "replacementText": "GeneratedTypeLiteralInterface_12",
+                    "line": 40,
+                    "column": 6,
+                    "endLine": 40,
+                    "endColumn": 7
                 }
             ],
             "suggest": "",
@@ -421,14 +537,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1344,
-                    "end": 1344,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_13 {\n    x: number;\n    y: string;\n}\n"
+                    "start": 1349,
+                    "end": 1349,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_13 {\n    x: number;\n    y: string;\n}\n",
+                    "line": 58,
+                    "column": 15,
+                    "endLine": 58,
+                    "endColumn": 16
                 },
                 {
-                    "start": 1358,
-                    "end": 1380,
-                    "replacementText": "GeneratedTypeLiteralInterface_13"
+                    "start": 1363,
+                    "end": 1385,
+                    "replacementText": "GeneratedTypeLiteralInterface_13",
+                    "line": 58,
+                    "column": 15,
+                    "endLine": 58,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -443,14 +567,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1344,
-                    "end": 1344,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_14 {\n    z: boolean;\n}\n"
+                    "start": 1349,
+                    "end": 1349,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_14 {\n    z: boolean;\n}\n",
+                    "line": 58,
+                    "column": 40,
+                    "endLine": 58,
+                    "endColumn": 41
                 },
                 {
-                    "start": 1383,
-                    "end": 1395,
-                    "replacementText": "GeneratedTypeLiteralInterface_14"
+                    "start": 1388,
+                    "end": 1400,
+                    "replacementText": "GeneratedTypeLiteralInterface_14",
+                    "line": 58,
+                    "column": 40,
+                    "endLine": 58,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
@@ -475,14 +607,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1421,
-                    "end": 1421,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_15 {\n    a: number;\n    b: string;\n}\n"
+                    "start": 1426,
+                    "end": 1426,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_15 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 63,
+                    "column": 6,
+                    "endLine": 63,
+                    "endColumn": 7
                 },
                 {
-                    "start": 1436,
-                    "end": 1458,
-                    "replacementText": "GeneratedTypeLiteralInterface_15"
+                    "start": 1441,
+                    "end": 1463,
+                    "replacementText": "GeneratedTypeLiteralInterface_15",
+                    "line": 63,
+                    "column": 6,
+                    "endLine": 63,
+                    "endColumn": 7
                 }
             ],
             "suggest": "",
@@ -507,14 +647,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1421,
-                    "end": 1421,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_16 {\n    c: number;\n    d: string;\n}\n"
+                    "start": 1426,
+                    "end": 1426,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_16 {\n    c: number;\n    d: string;\n}\n",
+                    "line": 65,
+                    "column": 8,
+                    "endLine": 65,
+                    "endColumn": 9
                 },
                 {
-                    "start": 1484,
-                    "end": 1506,
-                    "replacementText": "GeneratedTypeLiteralInterface_16"
+                    "start": 1489,
+                    "end": 1511,
+                    "replacementText": "GeneratedTypeLiteralInterface_16",
+                    "line": 65,
+                    "column": 8,
+                    "endLine": 65,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -529,14 +677,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1421,
-                    "end": 1421,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_17 {\n    e: boolean;\n}\n"
+                    "start": 1426,
+                    "end": 1426,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_17 {\n    e: boolean;\n}\n",
+                    "line": 65,
+                    "column": 33,
+                    "endLine": 65,
+                    "endColumn": 34
                 },
                 {
-                    "start": 1509,
-                    "end": 1521,
-                    "replacementText": "GeneratedTypeLiteralInterface_17"
+                    "start": 1514,
+                    "end": 1526,
+                    "replacementText": "GeneratedTypeLiteralInterface_17",
+                    "line": 65,
+                    "column": 33,
+                    "endLine": 65,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -561,14 +717,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1585,
-                    "end": 1585,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_18 {\n    x: 10;\n}\n"
+                    "start": 1590,
+                    "end": 1590,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_18 {\n    x: 10;\n}\n",
+                    "line": 72,
+                    "column": 22,
+                    "endLine": 72,
+                    "endColumn": 23
                 },
                 {
-                    "start": 1606,
-                    "end": 1615,
-                    "replacementText": "GeneratedTypeLiteralInterface_18"
+                    "start": 1611,
+                    "end": 1620,
+                    "replacementText": "GeneratedTypeLiteralInterface_18",
+                    "line": 72,
+                    "column": 22,
+                    "endLine": 72,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -583,14 +747,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1620,
-                    "end": 1620,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_19 {\n    y: string;\n}\n"
+                    "start": 1625,
+                    "end": 1625,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_19 {\n    y: string;\n}\n",
+                    "line": 73,
+                    "column": 14,
+                    "endLine": 73,
+                    "endColumn": 15
                 },
                 {
-                    "start": 1633,
-                    "end": 1646,
-                    "replacementText": "GeneratedTypeLiteralInterface_19"
+                    "start": 1638,
+                    "end": 1651,
+                    "replacementText": "GeneratedTypeLiteralInterface_19",
+                    "line": 73,
+                    "column": 14,
+                    "endLine": 73,
+                    "endColumn": 15
                 }
             ],
             "suggest": "",
@@ -605,14 +777,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1620,
-                    "end": 1620,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_20 {\n    y: '20';\n}\n"
+                    "start": 1625,
+                    "end": 1625,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_20 {\n    y: '20';\n}\n",
+                    "line": 73,
+                    "column": 38,
+                    "endLine": 73,
+                    "endColumn": 39
                 },
                 {
-                    "start": 1657,
-                    "end": 1668,
-                    "replacementText": "GeneratedTypeLiteralInterface_20"
+                    "start": 1662,
+                    "end": 1673,
+                    "replacementText": "GeneratedTypeLiteralInterface_20",
+                    "line": 73,
+                    "column": 38,
+                    "endLine": 73,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -627,14 +807,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1674,
-                    "end": 1674,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_21 {\n    z: number;\n}\n"
+                    "start": 1679,
+                    "end": 1679,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_21 {\n    z: number;\n}\n",
+                    "line": 75,
+                    "column": 16,
+                    "endLine": 75,
+                    "endColumn": 17
                 },
                 {
-                    "start": 1689,
-                    "end": 1700,
-                    "replacementText": "GeneratedTypeLiteralInterface_21"
+                    "start": 1694,
+                    "end": 1705,
+                    "replacementText": "GeneratedTypeLiteralInterface_21",
+                    "line": 75,
+                    "column": 16,
+                    "endLine": 75,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -649,14 +837,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1757,
-                    "end": 1757,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_22 {\n    z: boolean;\n}\n"
+                    "start": 1762,
+                    "end": 1762,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_22 {\n    z: boolean;\n}\n",
+                    "line": 80,
+                    "column": 3,
+                    "endLine": 80,
+                    "endColumn": 4
                 },
                 {
-                    "start": 1759,
-                    "end": 1773,
-                    "replacementText": "GeneratedTypeLiteralInterface_22"
+                    "start": 1764,
+                    "end": 1778,
+                    "replacementText": "GeneratedTypeLiteralInterface_22",
+                    "line": 80,
+                    "column": 3,
+                    "endLine": 80,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -681,9 +877,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1790,
-                    "end": 2037,
-                    "replacementText": "interface TypeMembers {\n    a: number;\n    'b': string;\n    3: boolean;\n    ['x']: number;\n    m: (p: string) => number;\n    n(p: number): void;\n    get val(): number;\n    set val(p: number);\n    (p: number): string;\n    new (p: string): C;\n    [key: string]: unknown;\n}"
+                    "start": 1795,
+                    "end": 2042,
+                    "replacementText": "interface TypeMembers {\n    a: number;\n    'b': string;\n    3: boolean;\n    ['x']: number;\n    m: (p: string) => number;\n    n(p: number): void;\n    get val(): number;\n    set val(p: number);\n    (p: number): string;\n    new (p: string): C;\n    [key: string]: unknown;\n}",
+                    "line": 82,
+                    "column": 20,
+                    "endLine": 82,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -748,14 +948,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 2039,
-                    "end": 2039,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_23 {\n    a: number;\n    'b': string;\n    3: boolean;\n    ['x']: number;\n    m: (p: string) => number;\n    n(p: number): void;\n    get val(): number;\n    set val(p: number);\n    (p: number): string;\n    new (p: string): C;\n    [key: string]: unknown;\n}\n"
+                    "start": 2044,
+                    "end": 2044,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_23 {\n    a: number;\n    'b': string;\n    3: boolean;\n    ['x']: number;\n    m: (p: string) => number;\n    n(p: number): void;\n    get val(): number;\n    set val(p: number);\n    (p: number): string;\n    new (p: string): C;\n    [key: string]: unknown;\n}\n",
+                    "line": 98,
+                    "column": 18,
+                    "endLine": 98,
+                    "endColumn": 19
                 },
                 {
-                    "start": 2056,
-                    "end": 2284,
-                    "replacementText": "GeneratedTypeLiteralInterface_23"
+                    "start": 2061,
+                    "end": 2289,
+                    "replacementText": "GeneratedTypeLiteralInterface_23",
+                    "line": 98,
+                    "column": 18,
+                    "endLine": 98,
+                    "endColumn": 19
                 }
             ],
             "suggest": "",
@@ -840,9 +1048,13 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 2558,
-                    "end": 2598,
-                    "replacementText": "interface LocalType {\n    a: number;\n    b: string;\n}"
+                    "start": 2563,
+                    "end": 2603,
+                    "replacementText": "interface LocalType {\n    a: number;\n    b: string;\n}",
+                    "line": 118,
+                    "column": 20,
+                    "endLine": 118,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",

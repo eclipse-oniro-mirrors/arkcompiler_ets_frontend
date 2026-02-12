@@ -113,6 +113,16 @@
             "suggest": "",
             "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 33,
+            "endLine": 59,
+            "endColumn": 40,
+            "problem": "NoAwaitJsPromise",
+            "suggest": "",
+            "rule": "\"Await\" operator can't be used with interop objects (arkts-interop-js2s-await-js-promise)",
+            "severity": "ERROR"
         }
     ]
 }

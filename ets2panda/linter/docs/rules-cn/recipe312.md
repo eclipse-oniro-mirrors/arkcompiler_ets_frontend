@@ -16,7 +16,7 @@ ArkTS-Sta中，`attributeValue`方法不再需要传入泛型参数。
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 ```typescript
 // a.ts ArkTS-Dyn API定义 
 export declare interface ElementAttributeValues {
@@ -30,7 +30,7 @@ import { ElementAttributeValues, attributeValue } from './a';
 attributeValue<'checkable'>(true);
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // a.ets ArkTS-Sta API定义
 export declare interface ElementAttributeValues {

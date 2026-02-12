@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,54 +62,28 @@ const o4: GeneratedObjectLiteralInterface_5 = {
 // Properties with various types. Nested object literals
 interface GeneratedObjectLiteralInterface_6 {
 }
-interface GeneratedObjectLiteralInterface_10 {
-    a: number;
-    b: string;
-}
-interface GeneratedObjectLiteralInterface_13 {
-    q: number;
-    w: number;
-}
-interface GeneratedObjectLiteralInterface_25 {
-    a: number;
-    b: string;
-    c: boolean;
-    d: C<number>;
-    e: GeneratedObjectLiteralInterface_6;
-    f: GeneratedObjectLiteralInterface_10;
-    g: GeneratedObjectLiteralInterface_13;
-}
-const o5: GeneratedObjectLiteralInterface_25 = {
+const o5 = {
     a: 1,
     b: '2',
     c: true,
     d: new C<number>(),
     e: ({} as GeneratedObjectLiteralInterface_6),
-    f: ({ a: 1, b: '2' } as GeneratedObjectLiteralInterface_10),
-    g: ({ q: 10,
-    w: 20 } as GeneratedObjectLiteralInterface_13),
+    f: { a: 1, b: '2' },
+    g: {
+        q: 10,
+        w: 20
+    },
 };
 interface GeneratedObjectLiteralInterface_14 {
     q: number;
     w: number;
 }
-interface GeneratedObjectLiteralInterface_16 {
-    q: number;
-    w: number;
-}
-interface GeneratedObjectLiteralInterface_21 {
-    a: number;
-    b: string;
-    c: GeneratedObjectLiteralInterface_14;
-    d: boolean;
-    e: GeneratedObjectLiteralInterface_16;
-}
-const o6: GeneratedObjectLiteralInterface_21 = {
+const o6 = {
     a: 1,
     b: '2',
     c: ({ q: 10, w: 20 } as GeneratedObjectLiteralInterface_14),
     d: true,
-    e: ({ q: 30, w: 40 } as GeneratedObjectLiteralInterface_16)
+    e: { q: 30, w: 40 }
 };
 
 // Object literals inside another expression
@@ -117,34 +91,16 @@ interface GeneratedObjectLiteralInterface_17 {
     a: number;
     b: number;
 }
-interface GeneratedObjectLiteralInterface_18 {
-    a: number;
-    b: number;
-}
-const o7 = ({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_17).a + ({ a: 3, b: 4 } as GeneratedObjectLiteralInterface_18).b;
+const o7 = ({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_17).a + { a:3, b:4 }.b;
 interface GeneratedObjectLiteralInterface_19 {
     x: number;
     y: number;
 }
-interface GeneratedObjectLiteralInterface_20 {
-    a: number;
-    b: number;
-    c: GeneratedObjectLiteralInterface_19;
-    d: number;
-}
-interface GeneratedObjectLiteralInterface_23 {
-    q: number;
-    w: number;
-}
-interface GeneratedObjectLiteralInterface_27 {
-    q: number;
-    w: number;
-}
-const o8: GeneratedObjectLiteralInterface_20 = {
+const o8 = {
     a: 1, 
     b: 2,
     c: ({ x: 1, y: 2 } as GeneratedObjectLiteralInterface_19),
-    d: foo(({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_23).q + ({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_27).w)
+    d: foo({q:1, w:2}.q + {q:3, w:4}.w)
 };
 
 // Object literals inside class declaration
@@ -152,44 +108,16 @@ interface GeneratedObjectLiteralInterface_22 {
     a: number;
     b: number;
 }
-interface GeneratedObjectLiteralInterface_24 {
-    a: number;
-    b: number;
-}
-interface GeneratedObjectLiteralInterface_26 {
-    a: number;
-    b: number;
-}
-interface GeneratedObjectLiteralInterface_28 {
-    c: number;
-    d: number;
-}
-interface GeneratedObjectLiteralInterface_29 {
-    e: number;
-}
-interface GeneratedObjectLiteralInterface_32 {
-    f: number;
-    g: number;
-}
-interface GeneratedObjectLiteralInterface_34 {
-    a: number;
-    b: number;
-}
-interface GeneratedObjectLiteralInterface_36 {
-    c: number;
-    d: number;
-    e: number;
-}
 class D {
     f1: GeneratedObjectLiteralInterface_22 = {a: 1, b: 2};
-    f2?: GeneratedObjectLiteralInterface_24 = {a: 1, b: 2};
-    f3!: GeneratedObjectLiteralInterface_26 = {a: 1, b: 2};
-    f4 = ({ c: 3, d: 4 } as GeneratedObjectLiteralInterface_28);
-    f5 = ({ e: 5 } as GeneratedObjectLiteralInterface_29).e + ({ f: 6, g: 7 } as GeneratedObjectLiteralInterface_32).f;
+    f2? = {a: 1, b: 2};
+    f3! = {a: 1, b: 2};
+    f4 = ({c: 3, d: 4});
+    f5 = {e: 5}.e + {f: 6, g: 7}.f;
 
     m() {
-        let x: GeneratedObjectLiteralInterface_34 = {a:1, b:2};
-        let y: GeneratedObjectLiteralInterface_36 = {c:1, d:2, e:3};
+        let x = {a:1, b:2};
+        let y = {c:1, d:2, e:3};
     }
 }
 
@@ -206,35 +134,15 @@ interface GeneratedObjectLiteralInterface_31 {
     a: number;
     b: number;
 }
-interface GeneratedObjectLiteralInterface_33 {
-    c: number;
-    d: number;
-}
-interface GeneratedObjectLiteralInterface_35 {
-    e: number;
-    f: number;
-}
-interface GeneratedObjectLiteralInterface_37 {
-    g: number;
-    d: number;
-}
-interface GeneratedObjectLiteralInterface_38 {
-    q: number;
-    w: number;
-}
-interface GeneratedObjectLiteralInterface_39 {
-    q: number;
-    w: number;
-}
 function bar(): void {
     let a: GeneratedObjectLiteralInterface_31 = {a: 1, b: 2};
-    let b: GeneratedObjectLiteralInterface_33 = {c: 3, d: 4};
+    let b = {c: 3, d: 4};
 
     if (a.b > b.c) {
-        let c: GeneratedObjectLiteralInterface_35 = {e: 5, f: 6};
+        let c = {e: 5, f: 6};
     }
 
-    let d: GeneratedObjectLiteralInterface_37 = {g: 7, d: foo(({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_38).q + ({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_39).w)};
+    let d = {g: 7, d: foo({q:1,w:2}.q + {q:3,w:4}.w)};
 }
 
 const o9 = { 1: '1', '2': 2 }; // Not fixable, property name is string/numeric literal

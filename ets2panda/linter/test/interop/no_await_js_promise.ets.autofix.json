@@ -32,8 +32,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 742,
-                    "end": 743,
+                    "start": 747,
+                    "end": 748,
                     "replacementText": "p.toPromise()",
                     "line": 19,
                     "column": 10,
@@ -53,8 +53,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 800,
-                    "end": 805,
+                    "start": 805,
+                    "end": 810,
                     "replacementText": "foo.invoke().toPromise()",
                     "line": 23,
                     "column": 10,
@@ -74,8 +74,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 860,
-                    "end": 869,
+                    "start": 865,
+                    "end": 874,
                     "replacementText": "pFuncCall.toPromise()",
                     "line": 27,
                     "column": 10,
@@ -95,8 +95,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 990,
-                    "end": 1000,
+                    "start": 995,
+                    "end": 1005,
                     "replacementText": "pArrowCall.toPromise()",
                     "line": 35,
                     "column": 10,
@@ -116,8 +116,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 1067,
-                    "end": 1068,
+                    "start": 1072,
+                    "end": 1073,
                     "replacementText": "p.toPromise()",
                     "line": 40,
                     "column": 12,
@@ -137,8 +137,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 1118,
-                    "end": 1127,
+                    "start": 1123,
+                    "end": 1132,
                     "replacementText": "pFuncCall.toPromise()",
                     "line": 44,
                     "column": 12,
@@ -168,8 +168,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 1197,
-                    "end": 1207,
+                    "start": 1202,
+                    "end": 1212,
                     "replacementText": "pArrowCall.toPromise()",
                     "line": 50,
                     "column": 12,
@@ -189,8 +189,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 1262,
-                    "end": 1267,
+                    "start": 1267,
+                    "end": 1272,
                     "replacementText": "foo.invoke().toPromise()",
                     "line": 54,
                     "column": 12,
@@ -210,8 +210,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1278,
-                    "end": 1338,
+                    "start": 1283,
+                    "end": 1343,
                     "replacementText": "async () => {\n    console.log(\"IIFE result:\", await p);\n}",
                     "line": 58,
                     "column": 2,
@@ -231,8 +231,8 @@
             "problem": "NoAwaitJsPromise",
             "autofix": [
                 {
-                    "start": 1333,
-                    "end": 1334,
+                    "start": 1338,
+                    "end": 1339,
                     "replacementText": "p.toPromise()",
                     "line": 59,
                     "column": 31,

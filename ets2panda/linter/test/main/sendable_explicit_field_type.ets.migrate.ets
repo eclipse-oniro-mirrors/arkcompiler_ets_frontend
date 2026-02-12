@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,31 +30,6 @@ class NoSendableClass {
 
 interface GeneratedObjectLiteralInterface_1 {
     key: string;
-}
-interface GeneratedObjectLiteralInterface_2 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_3 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_4 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_5 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_6 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_7 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_8 {
-    name: string;
-    age: number;
 }
 @Sendable
 class A {
@@ -125,7 +100,7 @@ class A {
     voidProp4: undefined = undefined;
     nullProp4: null = null;
     undefinedProp4: undefined = undefined;
-    objectProp4: GeneratedObjectLiteralInterface_2 = { name: "John", age: 30 };
+    objectProp4 = { name: "John", age: 30 };
     sendableClass4: SendableClass = new SendableClass();
     noSendableClass4: NoSendableClass = new NoSendableClass();
 
@@ -136,11 +111,11 @@ class A {
     arrayProp5?: number[] | undefined = [1, 2, 3];
     tupleProp5?: (string | number)[] | undefined = ["typescript", 4];
     enumProp5?: Color | undefined = Color.Green;
-    anyProp5?: GeneratedObjectLiteralInterface_3 = { key: "value" };
+    anyProp5? = { key: "value" };
     voidProp5?: undefined = undefined;
     nullProp5?: null | undefined = null;
     undefinedProp5?: undefined = undefined;
-    objectProp5?: GeneratedObjectLiteralInterface_4 = { name: "John", age: 30 };
+    objectProp5? = { name: "John", age: 30 };
     sendableClass5?: SendableClass | undefined = new SendableClass();
     noSendableClass5?: NoSendableClass | undefined = new NoSendableClass();
 
@@ -151,11 +126,11 @@ class A {
     public optArrayProp6: number[] = [1, 2, 3];
     public optTupleProp6: (string | number)[] = ["typescript", 4];
     public optEnumProp6: Color = Color.Green;
-    public optAnyProp6: GeneratedObjectLiteralInterface_5 = { key: "value" };
+    public optAnyProp6 = { key: "value" };
     public optVoidProp6: undefined = undefined;
     public optNullProp6: null = null;
     public optUndefinedProp6: undefined = undefined;
-    public optObjectProp6: GeneratedObjectLiteralInterface_6 = { name: "John", age: 30 };
+    public optObjectProp6 = { name: "John", age: 30 };
     public optSendableClass6: SendableClass = new SendableClass();
     public optNoSendableClass6: NoSendableClass = new NoSendableClass();
 
@@ -166,42 +141,17 @@ class A {
     readonly optArrayProp7: number[] = [1, 2, 3];
     readonly optTupleProp7: (string | number)[] = ["typescript", 4];
     readonly optEnumProp7: Color.Green = Color.Green;
-    readonly optAnyProp7: GeneratedObjectLiteralInterface_7 = { key: "value" };
+    readonly optAnyProp7 = { key: "value" };
     readonly optVoidProp7: undefined = undefined;
     readonly optNullProp7: null = null;
     readonly optUndefinedProp7: undefined = undefined;
-    readonly optObjectProp7: GeneratedObjectLiteralInterface_8 = { name: "John", age: 30 };
+    readonly optObjectProp7 = { name: "John", age: 30 };
     readonly optSendableClass7: SendableClass = new SendableClass();
     readonly optNoSendableClass7: NoSendableClass = new NoSendableClass();
 }
 
 interface GeneratedObjectLiteralInterface_9 {
     key: string;
-}
-interface GeneratedObjectLiteralInterface_10 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_11 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_12 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_13 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_14 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_15 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_16 {
-    name: string;
-    age: number;
 }
 @Sendable
 class A1 extends A {
@@ -275,7 +225,7 @@ class A1 extends A {
     voidProp4: undefined = undefined;
     nullProp4: null = null;
     undefinedProp4: undefined = undefined;
-    objectProp4: GeneratedObjectLiteralInterface_10 = { name: "John", age: 30 };
+    objectProp4 = { name: "John", age: 30 };
     sendableClass4: SendableClass = new SendableClass();
     noSendableClass4: NoSendableClass = new NoSendableClass();
 
@@ -286,11 +236,11 @@ class A1 extends A {
     arrayProp5?: number[] | undefined = [1, 2, 3];
     tupleProp5?: (string | number)[] | undefined = ["typescript", 4];
     enumProp5?: Color | undefined = Color.Green;
-    anyProp5?: GeneratedObjectLiteralInterface_11 = { key: "value" };
+    anyProp5? = { key: "value" };
     voidProp5?: undefined = undefined;
     nullProp5?: null | undefined = null;
     undefinedProp5?: undefined = undefined;
-    objectProp5?: GeneratedObjectLiteralInterface_12 = { name: "John", age: 30 };
+    objectProp5? = { name: "John", age: 30 };
     sendableClass5?: SendableClass | undefined = new SendableClass();
     noSendableClass5?: NoSendableClass | undefined = new NoSendableClass();
 
@@ -301,11 +251,11 @@ class A1 extends A {
     public optArrayProp6: number[] = [1, 2, 3];
     public optTupleProp6: (string | number)[] = ["typescript", 4];
     public optEnumProp6: Color = Color.Green;
-    public optAnyProp6: GeneratedObjectLiteralInterface_13 = { key: "value" };
+    public optAnyProp6 = { key: "value" };
     public optVoidProp6: undefined = undefined;
     public optNullProp6: null = null;
     public optUndefinedProp6: undefined = undefined;
-    public optObjectProp6: GeneratedObjectLiteralInterface_14 = { name: "John", age: 30 };
+    public optObjectProp6 = { name: "John", age: 30 };
     public optSendableClass6: SendableClass = new SendableClass();
     public optNoSendableClass6: NoSendableClass = new NoSendableClass();
 
@@ -316,42 +266,17 @@ class A1 extends A {
     readonly optArrayProp7: number[] = [1, 2, 3];
     readonly optTupleProp7: (string | number)[] = ["typescript", 4];
     readonly optEnumProp7: Color.Green = Color.Green;
-    readonly optAnyProp7: GeneratedObjectLiteralInterface_15 = { key: "value" };
+    readonly optAnyProp7 = { key: "value" };
     readonly optVoidProp7: undefined = undefined;
     readonly optNullProp7: null = null;
     readonly optUndefinedProp7: undefined = undefined;
-    readonly optObjectProp7: GeneratedObjectLiteralInterface_16 = { name: "John", age: 30 };
+    readonly optObjectProp7 = { name: "John", age: 30 };
     readonly optSendableClass7: SendableClass = new SendableClass();
     readonly optNoSendableClass7: NoSendableClass = new NoSendableClass();
 }
 
 interface GeneratedObjectLiteralInterface_17 {
     key: string;
-}
-interface GeneratedObjectLiteralInterface_18 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_19 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_20 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_21 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_22 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_23 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_24 {
-    name: string;
-    age: number;
 }
 @Sendable
 class A2 implements lang.ISendable {
@@ -422,7 +347,7 @@ class A2 implements lang.ISendable {
     voidProp4: undefined = undefined;
     nullProp4: null = null;
     undefinedProp4: undefined = undefined;
-    objectProp4: GeneratedObjectLiteralInterface_18 = { name: "John", age: 30 };
+    objectProp4 = { name: "John", age: 30 };
     sendableClass4: SendableClass = new SendableClass();
     noSendableClass4: NoSendableClass = new NoSendableClass();
 
@@ -433,11 +358,11 @@ class A2 implements lang.ISendable {
     arrayProp5?: number[] | undefined = [1, 2, 3];
     tupleProp5?: (string | number)[] | undefined = ["typescript", 4];
     enumProp5?: Color | undefined = Color.Green;
-    anyProp5?: GeneratedObjectLiteralInterface_19 = { key: "value" };
+    anyProp5? = { key: "value" };
     voidProp5?: undefined = undefined;
     nullProp5?: null | undefined = null;
     undefinedProp5?: undefined = undefined;
-    objectProp5?: GeneratedObjectLiteralInterface_20 = { name: "John", age: 30 };
+    objectProp5? = { name: "John", age: 30 };
     sendableClass5?: SendableClass | undefined = new SendableClass();
     noSendableClass5?: NoSendableClass | undefined = new NoSendableClass();
 
@@ -448,11 +373,11 @@ class A2 implements lang.ISendable {
     public optArrayProp6: number[] = [1, 2, 3];
     public optTupleProp6: (string | number)[] = ["typescript", 4];
     public optEnumProp6: Color = Color.Green;
-    public optAnyProp6: GeneratedObjectLiteralInterface_21 = { key: "value" };
+    public optAnyProp6 = { key: "value" };
     public optVoidProp6: undefined = undefined;
     public optNullProp6: null = null;
     public optUndefinedProp6: undefined = undefined;
-    public optObjectProp6: GeneratedObjectLiteralInterface_22 = { name: "John", age: 30 };
+    public optObjectProp6 = { name: "John", age: 30 };
     public optSendableClass6: SendableClass = new SendableClass();
     public optNoSendableClass6: NoSendableClass = new NoSendableClass();
 
@@ -463,42 +388,17 @@ class A2 implements lang.ISendable {
     readonly optArrayProp7: number[] = [1, 2, 3];
     readonly optTupleProp7: (string | number)[] = ["typescript", 4];
     readonly optEnumProp7: Color.Green = Color.Green;
-    readonly optAnyProp7: GeneratedObjectLiteralInterface_23 = { key: "value" };
+    readonly optAnyProp7 = { key: "value" };
     readonly optVoidProp7: undefined = undefined;
     readonly optNullProp7: null = null;
     readonly optUndefinedProp7: undefined = undefined;
-    readonly optObjectProp7: GeneratedObjectLiteralInterface_24 = { name: "John", age: 30 };
+    readonly optObjectProp7 = { name: "John", age: 30 };
     readonly optSendableClass7: SendableClass = new SendableClass();
     readonly optNoSendableClass7: NoSendableClass = new NoSendableClass();
 }
 
 interface GeneratedObjectLiteralInterface_25 {
     key: string;
-}
-interface GeneratedObjectLiteralInterface_26 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_27 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_28 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_29 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_30 {
-    name: string;
-    age: number;
-}
-interface GeneratedObjectLiteralInterface_31 {
-    key: string;
-}
-interface GeneratedObjectLiteralInterface_32 {
-    name: string;
-    age: number;
 }
 class A3 {
     booleanProp: boolean = true;
@@ -567,7 +467,7 @@ class A3 {
     voidProp4 = undefined;
     nullProp4 = null;
     undefinedProp4 = undefined;
-    objectProp4: GeneratedObjectLiteralInterface_26 = { name: "John", age: 30 };
+    objectProp4 = { name: "John", age: 30 };
     sendableClass4 = new SendableClass();
     noSendableClass4 = new NoSendableClass();
 
@@ -577,11 +477,11 @@ class A3 {
     arrayProp5? = [1, 2, 3];
     tupleProp5? = ["typescript", 4];
     enumProp5? = Color.Green;
-    anyProp5?: GeneratedObjectLiteralInterface_27 = { key: "value" };
+    anyProp5? = { key: "value" };
     voidProp5? = undefined;
     nullProp5? = null;
     undefinedProp5? = undefined;
-    objectProp5?: GeneratedObjectLiteralInterface_28 = { name: "John", age: 30 };
+    objectProp5? = { name: "John", age: 30 };
     sendableClass5? = new SendableClass();
     noSendableClass5? = new NoSendableClass();
 
@@ -591,11 +491,11 @@ class A3 {
     public optArrayProp6 = [1, 2, 3];
     public optTupleProp6 = ["typescript", 4];
     public optEnumProp6 = Color.Green;
-    public optAnyProp6: GeneratedObjectLiteralInterface_29 = { key: "value" };
+    public optAnyProp6 = { key: "value" };
     public optVoidProp6 = undefined;
     public optNullProp6 = null;
     public optUndefinedProp6 = undefined;
-    public optObjectProp6: GeneratedObjectLiteralInterface_30 = { name: "John", age: 30 };
+    public optObjectProp6 = { name: "John", age: 30 };
     public optSendableClass6 = new SendableClass();
     public optNoSendableClass6 = new NoSendableClass();
 
@@ -605,11 +505,11 @@ class A3 {
     readonly optArrayProp7 = [1, 2, 3];
     readonly optTupleProp7 = ["typescript", 4];
     readonly optEnumProp7 = Color.Green;
-    readonly optAnyProp7: GeneratedObjectLiteralInterface_31 = { key: "value" };
+    readonly optAnyProp7 = { key: "value" };
     readonly optVoidProp7 = undefined;
     readonly optNullProp7 = null;
     readonly optUndefinedProp7 = undefined;
-    readonly optObjectProp7: GeneratedObjectLiteralInterface_32 = { name: "John", age: 30 };
+    readonly optObjectProp7 = { name: "John", age: 30 };
     readonly optSendableClass7 = new SendableClass();
     readonly optNoSendableClass7 = new NoSendableClass();
 }

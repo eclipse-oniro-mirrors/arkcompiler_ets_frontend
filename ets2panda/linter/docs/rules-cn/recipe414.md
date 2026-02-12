@@ -16,7 +16,7 @@ ArkTS-Sta重载实现方式发生变化，ArkTS-Dyn部分API的名称和使用�
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 
 ```
 // ArkTS-Dyn API定义
@@ -32,7 +32,7 @@ let listener = () => {
 systemPasteboard.on('update', listener);
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 
 ```
 // ArkTS-Sta API定义
