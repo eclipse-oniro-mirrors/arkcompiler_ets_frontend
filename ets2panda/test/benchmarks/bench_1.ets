@@ -207,15 +207,12 @@ class F3 extends D3<string> {}
 class G3<U3 extends Numeric|string> extends C3<U3, string, Int> {}
 
 class E3<U3 extends Integral> extends C3<U3, string> {
+  f13(v: Int): Int {
+    return new Int(7);
+  }
 
-  f13(v: U3): Integral {
-    if (v instanceof Int) {
-      return new Int(7);
-    } else if (v instanceof Long) {
-      return new Long(8);
-    } else {
-      return new Int(-1);
-    }
+  f13(v: Long): Long {
+    return new Long(8);
   }
 
   f23(v: E3<U3>): E3<U3> {
