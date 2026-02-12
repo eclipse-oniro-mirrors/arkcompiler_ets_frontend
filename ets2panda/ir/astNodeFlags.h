@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,8 @@ enum class AstNodeFlags : uint16_t {
     GENERATE_VALUE_OF = 1U << 4U,
     RECHECK = 1U << 5U,
     NOCLEANUP = 1U << 6U,
+    // should be removed after we allow this/super is not the first statement in the constructor
+    DEFAULT_PARAM = 1U << 7U,
     // Moved out of the ir::Expression
     IS_GROUPED = 1U << 8U,
     /* do not introduce new flags. all the existing to be removed */

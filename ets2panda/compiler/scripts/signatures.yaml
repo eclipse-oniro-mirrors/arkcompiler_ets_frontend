@@ -996,7 +996,7 @@ signatures:
 
   - callee: BUILTIN_NULLPOINTER_ERROR
     method_name: $CTOR
-    params: []
+    params: [BUILTIN_STRING, BUILTIN_ERROR_OPTIONS]
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_NULLPOINTER_ERROR_CTOR
 

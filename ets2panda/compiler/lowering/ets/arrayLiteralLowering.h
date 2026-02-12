@@ -33,9 +33,11 @@ public:
     bool PerformForProgram(parser::Program *program) override;
 
 private:
-    ArenaVector<ir::Statement *> GenerateDefaultCallToConstructor(ir::Identifier *arraySymbol, checker::Type *eleType);
+    ArenaVector<ir::Statement *> GenerateDefaultCallToConstructor(ir::Identifier *arraySymbol, checker::Type *eleType,
+                                                                  checker::Signature *sig);
     ir::Statement *CreateNestedArrayCreationStatement(ArenaVector<ir::Identifier *> &identDims, size_t currentDim,
-                                                      checker::Type *type, ir::Expression *expr);
+                                                      checker::Type *type, ir::Expression *expr,
+                                                      checker::Signature *sig);
     ir::AstNode *TryTransformLiteralArrayToRefArray(ir::ArrayExpression *literalArray);
     ir::AstNode *TryTransformNewArrayExprToRefArray(ir::ETSNewArrayInstanceExpression *newExpr);
     ArenaVector<ir::Identifier *> TransformDimVectorToIdentVector(ArenaVector<ir::Expression *> &dimVector,

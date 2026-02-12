@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,11 +18,10 @@ class A {
 
 
 
-/* @@? 17:3 Error Semantic error ESE0204: No matching call signature for constructor */
 /* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 17:64 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 17:64 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:65 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:66 Error Syntax error ESY0295: number is a predefined type, cannot be used as an identifier */
 /* @@? 17:72 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 28:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 27:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

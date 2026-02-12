@@ -69,6 +69,7 @@ static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunct
     for (std::size_t dfltIdx = 0U; dfltIdx < params.size(); ++dfltIdx) {
         auto *const param = params[dfltIdx];
         auto stmt = TransformInitializer(allocator, parser, param);
+        stmt->SetAstNodeFlags(ir::AstNodeFlags::DEFAULT_PARAM);
         bodyStmt[dfltIdx] = stmt;
         // From a developer's perspective, this locational information is more intuitive.
         stmt->SetParent(param);

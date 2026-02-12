@@ -30,7 +30,6 @@
 #include "compiler/lowering/ets/declareOverloadLowering.h"
 #include "compiler/lowering/ets/cfgBuilderPhase.h"
 #include "compiler/lowering/ets/declGenPhase.h"
-#include "compiler/lowering/ets/defaultParametersInConstructorLowering.h"
 #include "compiler/lowering/ets/defaultParametersLowering.h"
 #include "compiler/lowering/ets/destructuringPhase.h"
 #include "compiler/lowering/ets/enumLowering.h"
@@ -111,7 +110,6 @@ std::vector<Phase *> GetETSPhaseList()
         new ResizableArrayConvert,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ExpressionLambdaConstructionPhase,
         new InsertOptionalParametersAnnotation,
-        new DefaultParametersInConstructorLowering,
         new DefaultParametersLowering,
         new AmbientLowering,
         new RestTupleConstructionPhase,
@@ -162,9 +160,9 @@ std::vector<Phase *> GetETSPhaseList()
         new PartialExportClassGen,
         new StringConstructorLowering,
         new StringComparisonLowering,
-        new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
+        new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new GenericBridgesPhase,
         new TypeFromLowering,
         new ClassFromExpressionLowering,
