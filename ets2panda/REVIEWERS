@@ -55,7 +55,6 @@
 /ets2panda/util/ @shimenkovmikhail @dkofanov ^igelhaus ^Prof
 /ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
 /ets2panda/util/diagnostic* @shimenkovmikhail ^igelhaus ^Prof
-/ets2panda/util/diagnostic*yaml @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* @chernykhsergey @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin @shimenkovmikhail @trubachevilya ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
 /ets2panda/util/plugin.* @zhelyapovaleksey @mbolshov ^igelhaus ^Prof
@@ -93,6 +92,7 @@
 /ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
+/ets2panda/util/diagnostic/*yaml @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/checker/types/ets/Nullish.* ^vpukhov ^victor_petukhov @gogabr ^igelhaus ^Prof
 /ets2panda/checker/types/ets/etsA* @xuxjeeee ^victor_petukhov ^gogabr ^igelhaus ^Prof
 /ets2panda/checker/types/ets/etsE* @ziziziiziziz ^victor_petukhov ^zelentsovdmitry ^igelhaus ^Prof
