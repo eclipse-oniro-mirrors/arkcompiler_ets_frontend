@@ -256,6 +256,10 @@ semantic:
   id: 290
   message: "Type '{}' is not constructible."
 
+- name: CANNOT_ANNOTATE
+  id: 489430
+  message: "Cannot annotate this overridden field {} in {}"
+
 - name: CANNOT_INFER_OBJ_LIT
   id: 174
   message: "Cannot infer type for {} because class composite needs an explicit target type"
