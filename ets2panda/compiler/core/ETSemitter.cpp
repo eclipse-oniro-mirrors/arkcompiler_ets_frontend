@@ -14,13 +14,12 @@
  */
 
 #include "ETSemitter.h"
-
+#include <algorithm>
 #include <memory>
 #include <set>
 #include <string>
 #include <unordered_set>
 #include <utility>
-
 #include "annotation.h"
 #include "compiler/base/catchTable.h"
 #include "compiler/core/ETSGen.h"
@@ -47,7 +46,6 @@
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
 #include "util/nameMangler.h"
-
 #include "assembly-program.h"
 
 namespace ark::es2panda::compiler {
@@ -58,6 +56,25 @@ static constexpr auto EXTENSION = panda_file::SourceLang::ETS;
 // NOTE: temporary dummy gn buildfix until ETS plugin has gn build support
 static constexpr auto EXTENSION = panda_file::SourceLang::PANDA_ASSEMBLY;
 #endif
+
+// Normalize path separators: convert backslashes to forward slashes
+std::string ETSEmitter::NormalizePathSeparators(const std::string &path)
+{
+    std::string normalized = path;
+    std::replace(normalized.begin(), normalized.end(), '\\', '/');
+    return normalized;
+}
+
+std::string ETSEmitter::GetNormalizedSourceFilePath(const public_lib::Context *context)
+{
+    std::string relativePath = std::string {context->parserProgram->VarBinder()->Program()->RelativeFilePath(context)};
+    return NormalizePathSeparators(relativePath);
+}
+
+std::string ETSEmitter::GetNormalizedSourceFilePath(const CodeGen *cg)
+{
+    return GetNormalizedSourceFilePath(cg->Context());
+}
 
 static uint32_t TranslateModifierFlags(ir::ModifierFlags modifierFlags)
 {
@@ -338,7 +355,7 @@ void ETSFunctionEmitter::GenVariableSignature(pandasm::debuginfo::LocalVariable 
 
 void ETSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
 {
-    func->sourceFile = std::string {Cg()->VarBinder()->Program()->RelativeFilePath(Cg()->Context())};
+    func->sourceFile = ETSEmitter::GetNormalizedSourceFilePath(Cg());
 
     if (!Cg()->IsDebug()) {
         return;
@@ -686,8 +703,7 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
     auto interfaceRecord = pandasm::Record(ToAssemblerType(interfaceDecl), Program()->lang);
 
     interfaceRecord.metadata->SetAccessFlags(ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE);
-    interfaceRecord.sourceFile =
-        std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
+    interfaceRecord.sourceFile = GetNormalizedSourceFilePath(Context());
 
     for (const auto *prop : interfaceDecl->Body()->Body()) {
         if (prop->IsMethodDefinition()) {
@@ -755,8 +771,7 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     auto classRecord = pandasm::Record(ToAssemblerType(classDef), Program()->lang);
     uint32_t accessFlags = GetAccessFlags(classDef);
     classRecord.metadata->SetAccessFlags(accessFlags);
-    classRecord.sourceFile =
-        std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
+    classRecord.sourceFile = GetNormalizedSourceFilePath(Context());
     for (const auto *prop : classDef->Body()) {
         if (prop->IsClassProperty()) {
             GenClassField(prop->AsClassProperty(), classRecord, external);
@@ -987,7 +1002,7 @@ void ETSEmitter::GenCustomAnnotationRecord(const ir::AnnotationDeclaration *anno
 
     uint32_t accessFlags = ACC_PUBLIC | ACC_ABSTRACT | ACC_ANNOTATION;
     annoRecord.metadata->SetAccessFlags(accessFlags);
-    annoRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
+    annoRecord.sourceFile = GetNormalizedSourceFilePath(Context());
     for (auto *it : annoDecl->Properties()) {
         GenCustomAnnotationProp(it->AsClassProperty(), baseName, annoRecord, external);
     }
