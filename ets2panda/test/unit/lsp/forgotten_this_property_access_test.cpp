@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -93,10 +93,8 @@ console.log(name);
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto result = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(ctx, start, length, errorCodes, options);
-    if (result.empty()) {
-        initializer.DestroyContext(ctx);
-        return;
-    }
+
+    ASSERT_FALSE(result.empty()) << "CodeFix result should not be empty when diagnostic error is found";
 
     if (!result.empty() && !result[0].changes_.empty()) {
         if (!result[0].changes_[0].textChanges.empty()) {
