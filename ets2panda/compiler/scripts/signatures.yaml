@@ -432,10 +432,10 @@ builtins:
     package: PKG_STD_CORE
     ref: BUILTIN_MAP
   - name: Error
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_ERROR
   - name: ErrorOptions
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_ERROR_OPTIONS
   - name: BigInt
     package: PKG_STD_CORE
