@@ -1,5 +1,4 @@
 # Tests that fails after recheck: Issue #24651
-ast/compiler/ets/optionalClassProperty1.ets
 ast/parser/ets/InvalidExpressions.ets
 parser/ets/re_export/diamond/D.ets
 parser/ets/re_export/diamond/D2.ets
@@ -20,65 +19,9 @@ runtime/ets/trailing_lambda_and_optional_parameterets5.ets
 runtime/ets/trailing_lambda_and_optional_parameterets6.ets
 runtime/ets/trailing_lambda_and_optional_parameterets8.ets
 runtime/ets/trailing_lambda_and_optional_parameterets9.ets
-ast/compiler/ets/interface_ambient_iterable_1.ets
-ast/parser/ets/implement_interface1.ets
-ast/parser/ets/unexpected_token_34.ets
-ast/parser/ets/unexpected_token_54.ets
-compiler/ets/lowering-interaction.ets
-parser/ets/import_folder.ets
-parser/ets/import_tests/check_exported_2.ets
-parser/ets/import_tests/import_alias/import_alias_1.ets
-parser/ets/import_tests/import_alias_and_without_alias_1.ets
-parser/ets/import_tests/import_all.ets
-parser/ets/import_tests/import_all_3.ets
-parser/ets/import_tests/import_all_alias_1.ets
 parser/ets/import_tests/import_relative_path.ets
-parser/ets/lambda_import_alias_1-2.ets
-parser/ets/re_export/import.ets
-parser/ets/re_export/import_13.ets
-parser/ets/re_export/import_15.ets
-parser/ets/re_export/import_6.ets
-parser/ets/re_export/import_7.ets
-parser/ets/re_export/import_8.ets
-parser/ets/re_export/import_index.ets
-parser/ets/selective_export/import_1.ets
-parser/ets/selective_export/import_2.ets
-parser/ets/selective_export/import_3.ets
-parser/ets/selective_export/import_4.ets
-runtime/ets/Function.ets
-runtime/ets/IterableTypesWithProtectedIterator.ets
-runtime/ets/ObjectIterable_1.ets
-runtime/ets/ObjectIterable_2.ets
-runtime/ets/extension_accessor/extensionAccessorAlone.ets
-runtime/ets/extension_accessor/extensionAccessorAsClassPropertyValue.ets
-runtime/ets/extension_accessor/extensionAccessorAsExprOfStatementExpr.ets
-runtime/ets/extension_accessor/extensionAccessorAsMemberExprObject.ets
-runtime/ets/extension_accessor/extensionAccessorAsMemberExprProperty.ets
-runtime/ets/extension_accessor/extensionAccessorInCallArgs.ets
-runtime/ets/extension_accessor/extensionAccessorInCallArgs2.ets
-runtime/ets/extension_accessor/extensionAccessorInFunction.ets
-runtime/ets/extension_accessor/extensionAccessorInOpAssignment.ets
-runtime/ets/extension_accessor/extensionAccessorInOpAssignment2.ets
-runtime/ets/extension_accessor/extensionAccessorInherited1.ets
-runtime/ets/extension_accessor/extensionAccessorInherited2.ets
-runtime/ets/extension_accessor/extensionAccessorWithNewExpr1.ets
-runtime/ets/extension_accessor/extensionAccessorWithNewExpr2.ets
-runtime/ets/extension_accessor/extensionGetterAndOriginalSetter.ets
-runtime/ets/extension_accessor/extensionSetterAndOriginalGetter.ets
-runtime/ets/forOfCustomIterator1.ets
-runtime/ets/forOfCustomIterator2.ets
-runtime/ets/generic_union.ets
 runtime/ets/lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
-runtime/ets/objectLiteral-2.ets
-runtime/ets/objectLiteral.ets
-runtime/ets/objectLiteralInterfaceType.ets
-runtime/ets/objectLiteral_abstract_class_object.ets
-runtime/ets/optinal_lambda_argument.ets
-runtime/ets/rest_object_literal.ets
-runtime/ets/any_lambda.ets
-ast/parser/ets/while_with_empty_body.ets
 ast/parser/ets/de_while_with_empty_body.ets
-ast/parser/ets/InvalidExpressions.ets
 runtime/ets/multisource_inheritance-2.ets
 runtime/ets/trailing_lambda_and_optional_parameterets10.ets
 runtime/ets/trailing_lambda_and_optional_parameterets2.ets
@@ -89,26 +32,12 @@ runtime/ets/trailing_lambda_and_optional_parameterets8.ets
 runtime/ets/trailing_lambda_and_optional_parameterets9.ets
 ast/parser/ets/unexpected_token_34.ets
 ast/parser/ets/unexpected_token_54.ets
-runtime/ets/generic_union.ets
-runtime/ets/optinal_lambda_argument.ets
-runtime/ets/class_implements_interface_import.ets
 runtime/ets/class_implements_interface_export.ets
-ast/parser/ets/partialGenericInterface.ets
-ast/parser/ets/partialGenericInterface_n.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_catch_outside_field.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_trailing_in_class_method.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_trailing_in_class_method2.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_trailing_in_function.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_trailing_in_function_with_receiver.ets
-runtime/ets/lambda_with_receiver/lambda_with_receiver_trailing_name_duplicated.ets
 runtime/ets/generic_lambda_6.ets
 runtime/ets/implement_interface.ets
 runtime/ets/typealias_function_name_conflict.ets
 #Test that failed before CheckerPhase (on ConstantExpressionLowering)
-ast/parser/ets/InvalidLexer.ets
 #Test that failed with abort before plugins-after-check phase
-compiler/ets/dynamic-equality.ets
-runtime/ets/non_null_number_as_index.ets
 
 #Issue #30577
 runtime/ets/re_export_default/import_reexport3.ets
@@ -117,8 +46,3 @@ ast/compiler/ets/annotation_new.ets
 
 # Tests that fails after recheck: Issue # 838
 runtime/ets/nested_array_2.ets
-
-# NOTE: tests failed after refactoring of Import Path Manager due to some bugs in its internal logic
-# should be fixed
-ast/compiler/ets/default_test/export_default1.ets
-ast/compiler/ets/package_invalid_initializer/main_test.ets
