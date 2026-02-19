@@ -1361,9 +1361,7 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
         return false;
     }
 
-    if (type->IsETSPrimitiveType()) {
-        return true;
-    }
+    ES2PANDA_ASSERT(!type->IsETSPrimitiveType());
 
     bool boxedPrimitive = (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive());
     bool nullOrUndefined = type->IsETSUndefinedType() || type->IsETSNullType();

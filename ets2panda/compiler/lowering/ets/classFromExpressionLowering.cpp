@@ -28,8 +28,8 @@ static ir::AstNode *LowerToSyntheticFromNode([[maybe_unused]] public_lib::Contex
 
     auto type = call->TypeParams()->Params()[0]->TsType();
 
-    auto typeNode = allocator->New<ir::OpaqueTypeNode>(
-        (type->IsETSVoidType() ? checker->GlobalETSAnyType() : checker->MaybeBoxType(type)), allocator);
+    auto typeNode =
+        allocator->New<ir::OpaqueTypeNode>(type->IsETSVoidType() ? checker->GlobalETSAnyType() : type, allocator);
     typeNode->SetRange(call->TypeParams()->Params()[0]->Range());
 
     ES2PANDA_ASSERT(call->TypeParams()->Params().size() == 1U);

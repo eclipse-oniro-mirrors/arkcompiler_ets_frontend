@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,16 +82,13 @@ static ETSObjectType *FunctionTypeToFunctionalInterfaceType(ETSChecker *checker,
         auto substitution = Substitution {};
         ES2PANDA_ASSERT(functionN != nullptr && nPosParams <= functionN->TypeArguments().size());
         for (size_t i = 0; i < nPosParams; i++) {
-            substitution.emplace(functionN->TypeArguments()[i]->AsETSTypeParameter(),
-                                 checker->MaybeBoxType(signature->Params()[i]->TsType()));
+            substitution.emplace(functionN->TypeArguments()[i]->AsETSTypeParameter(), signature->Params()[i]->TsType());
         }
         auto *elementType = !signature->RestVar()->TsType()->IsETSTupleType()
                                 ? checker->GetElementTypeOfArray(signature->RestVar()->TsType())
                                 : checker->GlobalETSAnyType();
-        substitution.emplace(functionN->TypeArguments()[nPosParams]->AsETSTypeParameter(),
-                             checker->MaybeBoxType(elementType));
-        substitution.emplace(functionN->TypeArguments()[nPosParams + 1]->AsETSTypeParameter(),
-                             checker->MaybeBoxType(signature->ReturnType()));
+        substitution.emplace(functionN->TypeArguments()[nPosParams]->AsETSTypeParameter(), elementType);
+        substitution.emplace(functionN->TypeArguments()[nPosParams + 1]->AsETSTypeParameter(), signature->ReturnType());
         auto result = functionN->Substitute(checker->Relation(), &substitution, true, isExtensionHack);
         result->AddObjectFlag(checker::ETSObjectFlags::FUNCTIONAL);
         return result;
@@ -106,11 +103,9 @@ static ETSObjectType *FunctionTypeToFunctionalInterfaceType(ETSChecker *checker,
 
     auto substitution = Substitution {};
     for (size_t i = 0; i < arity; i++) {
-        substitution.emplace(funcIface->TypeArguments()[i]->AsETSTypeParameter(),
-                             checker->MaybeBoxType(signature->Params()[i]->TsType()));
+        substitution.emplace(funcIface->TypeArguments()[i]->AsETSTypeParameter(), signature->Params()[i]->TsType());
     }
-    substitution.emplace(funcIface->TypeArguments()[arity]->AsETSTypeParameter(),
-                         checker->MaybeBoxType(signature->ReturnType()));
+    substitution.emplace(funcIface->TypeArguments()[arity]->AsETSTypeParameter(), signature->ReturnType());
     auto result = funcIface->Substitute(checker->Relation(), &substitution, true, isExtensionHack);
 
     if (signature->HasSignatureFlag(SignatureFlags::THIS_RETURN_TYPE)) {

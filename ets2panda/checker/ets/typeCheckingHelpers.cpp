@@ -56,22 +56,14 @@ namespace ark::es2panda::checker {
 void ETSChecker::CheckTruthinessOfType(ir::Expression *expr)
 {
     auto const testType = expr->Check(this);
-    auto *const conditionType = MaybeUnboxConditionalInRelation(testType);
-
-    expr->SetTsType(conditionType);
-
-    if (conditionType == nullptr) {
-        return;
-    }
-    expr->SetTsType(MaybeBoxType(conditionType));
-
-    if (conditionType->IsETSVoidType()) {
+    ES2PANDA_ASSERT(testType != nullptr);
+    if (testType->IsETSVoidType()) {
         LogError(diagnostic::VOID_IN_LOGIC, {}, expr->Start());
         return;
     }
 
     // For T_S compatibility
-    if (conditionType->IsETSEnumType()) {
+    if (testType->IsETSEnumType()) {
         expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }
@@ -387,11 +379,6 @@ bool Type::IsETSPrimitiveType() const
     return HasTypeFlag(ETS_PRIMITIVE);
 }
 
-bool Type::IsETSPrimitiveOrEnumType() const
-{
-    return IsETSPrimitiveType() || IsETSEnumType();
-}
-
 bool Type::IsETSReferenceType() const
 {
     // Do not modify
@@ -406,13 +393,6 @@ bool Type::IsETSUnboxableObject() const
 Type *ETSChecker::GetNonConstantType(Type *type)
 {
     ES2PANDA_ASSERT(type != nullptr);
-    if (type->IsETSStringType()) {
-        return GlobalBuiltinETSStringType();
-    }
-
-    if (type->IsETSBigIntType()) {
-        return GlobalETSBigIntType();
-    }
 
     if (type->IsETSUnionType()) {
         std::vector<Type *> nonConstTypes;
@@ -422,45 +402,26 @@ Type *ETSChecker::GetNonConstantType(Type *type)
         return CreateETSUnionType(std::move(nonConstTypes));
     }
 
-    if (!type->IsETSPrimitiveType()) {
-        if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
-            return MaybeBoxType(MaybeUnboxType(type));
-        }
+    if (!type->HasTypeFlag(TypeFlag::CONSTANT)) {
         return type;
     }
 
-    if (type->HasTypeFlag(TypeFlag::LONG)) {
-        return GlobalLongType();
+    if (type->IsETSStringType()) {
+        return GlobalBuiltinETSStringType();
     }
 
-    if (type->HasTypeFlag(TypeFlag::BYTE)) {
-        return GlobalByteType();
+    if (type->IsETSBigIntType()) {
+        return GlobalETSBigIntType();
     }
 
-    if (type->HasTypeFlag(TypeFlag::SHORT)) {
-        return GlobalShortType();
+    // Avoid circular dependencies for base object types
+    if (type->IsETSObjectType() && !type->HasTypeFlag(TypeFlag::GENERIC)) {
+        return type->AsETSObjectType()->GetBaseType();
     }
 
-    if (type->HasTypeFlag(TypeFlag::CHAR)) {
-        return GlobalCharType();
-    }
-
-    if (type->HasTypeFlag(TypeFlag::INT)) {
-        return GlobalIntType();
-    }
-
-    if (type->HasTypeFlag(TypeFlag::FLOAT)) {
-        return GlobalFloatType();
-    }
-
-    if (type->HasTypeFlag(TypeFlag::DOUBLE)) {
-        return GlobalDoubleType();
-    }
-
-    if (type->IsETSBooleanType()) {
-        return GlobalETSBooleanType();
-    }
-    return type;
+    auto *clone = type->Clone(this);
+    clone->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
+    return clone;
 }
 
 Type *ETSChecker::GetTypeOfSetterGetter(varbinder::Variable *const var)
@@ -721,7 +682,7 @@ Type *ETSChecker::GuaranteedTypeForUncheckedCallReturn(Signature *sig)
         return nullptr;
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return GuaranteedTypeForUncheckedCast(MaybeBoxType(baseSig->ReturnType()), MaybeBoxType(sig->ReturnType()));
+    return GuaranteedTypeForUncheckedCast(baseSig->ReturnType(), sig->ReturnType());
 }
 
 Type *ETSChecker::GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *memberExpression, ETSUnionType *etsUnionType)

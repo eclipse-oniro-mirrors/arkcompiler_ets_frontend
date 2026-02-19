@@ -693,9 +693,7 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
     ES2PANDA_ASSERT(checker != nullptr);
     ES2PANDA_ASSERT(newArrayInstanceExpr != nullptr);
     ES2PANDA_ASSERT(elementType != nullptr);
-    if (elementType->IsETSPrimitiveType()) {
-        return true;
-    }
+    ES2PANDA_ASSERT(!elementType->IsETSPrimitiveType());
 
     if (elementType->IsETSObjectType()) {
         auto *calleeObj = elementType->AsETSObjectType();
@@ -1069,8 +1067,7 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
         }
 
         const CastingContext castCtx(checker->Relation(), diagnostic::CAST_FAIL_UNREACHABLE, {},
-                                     CastingContext::ConstructorData {currentElement, compareType,
-                                                                      checker->MaybeBoxType(compareType),
+                                     CastingContext::ConstructorData {currentElement, compareType, compareType,
                                                                       currentElement->Start(), TypeRelationFlag::NONE});
 
         targetType = compareType;
@@ -1103,15 +1100,6 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
         }
 
         arrayExpressionElementTypes.emplace_back(elementType);
-    }
-
-    // NOTE (smartin): fix union type normalization. Currently for primitive types like a 'char | char' type, it will be
-    // normalized to 'Char'. However it shouldn't be boxed, and be kept as 'char'. For a quick fix, if all types are
-    // primitive, then after making the union type, explicitly unbox it.
-    if (std::all_of(arrayExpressionElementTypes.begin(), arrayExpressionElementTypes.end(),
-                    [](Type *const typeOfElement) { return typeOfElement->IsETSPrimitiveType(); })) {
-        return checker->CreateETSResizableArrayType(checker->GetNonConstantType(
-            checker->MaybeUnboxType(checker->CreateETSUnionType(std::move(arrayExpressionElementTypes)))));
     }
 
     // NOTE (smartin): optimize element access on constant array expressions (note is here, because the constant value
@@ -2158,8 +2146,8 @@ checker::Type *ETSAnalyzer::Check(ir::BinaryExpression *expr) const
 
     auto [newTsType, operationType] =
         checker->CheckBinaryOperator(expr->Left(), expr->Right(), expr, expr->OperatorType(), expr->Start());
-    expr->SetTsType(checker->MaybeBoxType(newTsType));
-    expr->SetOperationType(checker->MaybeBoxType(operationType));
+    expr->SetTsType(newTsType);
+    expr->SetOperationType(operationType);
 
     checker->Context().CheckBinarySmartCastCondition(expr);
 
@@ -2466,8 +2454,8 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
         return returnType;
     }
     if (calleeType->IsETSArrowType() || calleeType->IsETSRelaxedAnyType()) {
-        expr->SetUncheckedType(checker->GuaranteedTypeForUncheckedCast(
-            checker->GlobalETSAnyType(), checker->MaybeBoxType(expr->Signature()->ReturnType())));
+        expr->SetUncheckedType(
+            checker->GuaranteedTypeForUncheckedCast(checker->GlobalETSAnyType(), expr->Signature()->ReturnType()));
     } else {
         expr->SetUncheckedType(checker->GuaranteedTypeForUncheckedCallReturn(expr->Signature()));
     }
@@ -2601,13 +2589,9 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
         expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentType, alternateType));
     } else {
         Type *consequentTypeUnderly =
-            consequentType->IsETSNumericEnumType()
-                ? checker->MaybeBoxType(consequentType->AsETSEnumType()->GetBaseEnumElementType(checker))
-                : consequentType;
+            consequentType->IsETSNumericEnumType() ? consequentType->AsETSEnumType()->Underlying() : consequentType;
         Type *alternateTypeUnderly =
-            alternateType->IsETSNumericEnumType()
-                ? checker->MaybeBoxType(alternateType->AsETSEnumType()->GetBaseEnumElementType(checker))
-                : alternateType;
+            alternateType->IsETSNumericEnumType() ? alternateType->AsETSEnumType()->Underlying() : alternateType;
         if (IsNumericType(GetETSChecker(), consequentTypeUnderly) &&
             IsNumericType(GetETSChecker(), alternateTypeUnderly)) {
             if (consequentType->IsETSNumericEnumType()) {
@@ -2871,21 +2855,6 @@ checker::Type *ETSAnalyzer::ResolveMemberExpressionByBaseType(ETSChecker *checke
 
     if (baseType->IsETSUnionType()) {
         return expr->AdjustType(checker, expr->CheckUnionMember(checker, baseType));
-    }
-
-    // NOTE(mshimenkov): temporary workaround to deliver 'primitives refactoring' patch
-    // To be removed after complete refactoring
-    if (baseType->IsETSPrimitiveType()) {
-        static std::array<std::string_view, 7U> castMethods {
-            "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
-        };
-        auto res = std::find(castMethods.begin(), castMethods.end(), expr->Property()->AsIdentifier()->Name().Utf8());
-        if (res != castMethods.end()) {
-            auto type = checker->MaybeBoxType(baseType);
-            checker->ETSObjectTypeDeclNode(checker, type->AsETSObjectType());
-            return expr->SetTsType(TransformTypeForMethodReference(
-                checker, expr, expr->SetAndAdjustType(checker, type->AsETSObjectType())));
-        }
     }
 
     TypeErrorOnMissingProperty(expr, baseType, checker);
@@ -3847,7 +3816,7 @@ static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *ch
         return checker->CreateETSStringLiteralType("function");
     }
     if (argType->IsETSNumericEnumType()) {
-        auto unboxedType = argType->AsETSEnumType()->GetBaseEnumElementType(checker);
+        auto unboxedType = checker->MaybeUnboxType(argType->AsETSEnumType()->Underlying());
         return checkUnboxedTypeKind(checker->TypeKind(unboxedType), checker);
     }
     if (argType->IsETSStringEnumType()) {
@@ -4067,7 +4036,7 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
             GetAppropriatePreferredType(expr->PreferredType(), [&](Type *tp) { return checker->CheckIfNumeric(tp); });
         preferredType != nullptr && !expr->IsFolded() &&
         CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
-        type = checker->MaybeBoxType(preferredType);
+        type = preferredType;
     } else if (expr->Number().IsDouble()) {
         type = checker->GlobalDoubleBuiltinType();
     } else if (expr->Number().IsFloat()) {
@@ -4791,15 +4760,13 @@ checker::Type *ETSAnalyzer::Check(ir::SwitchStatement *st) const
     checker::ScopeContext scopeCtx(checker, st->Scope());
 
     auto *comparedExprType = checker->CheckSwitchDiscriminant(st->Discriminant());
-    // may have no meaning to unbox comparedExprType
-    auto unboxedDiscType = checker->MaybeUnboxType(comparedExprType);
 
     SmartCastArray smartCasts = checker->Context().CloneSmartCasts();
     bool hasDefaultCase = false;
 
     for (auto &it : st->Cases()) {
         checker->Context().EnterPath();
-        it->CheckAndTestCase(checker, comparedExprType, unboxedDiscType, st->Discriminant(), hasDefaultCase);
+        it->CheckAndTestCase(checker, comparedExprType, st->Discriminant(), hasDefaultCase);
         bool const caseTerminated = checker->Context().ExitPath();
 
         if (it != st->Cases().back()) {

@@ -778,7 +778,7 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
     if (param->DefaultType() != nullptr) {
         SetUpDefaultTypeDependenciesIfNeeded(param, param->DefaultType(), paramScope, localTypeParams);
         // NOTE: #14993 ensure default matches constraint
-        paramType->SetDefaultType(MaybeBoxType(param->DefaultType()->GetType(this)));
+        paramType->SetDefaultType(param->DefaultType()->GetType(this));
     }
 }
 

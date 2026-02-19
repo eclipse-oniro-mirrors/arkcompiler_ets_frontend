@@ -112,7 +112,6 @@ public:
     bool IsETSReferenceType() const;
     bool IsETSAsyncFuncReturnType() const;
     bool IsETSUnboxableObject() const;
-    bool IsETSPrimitiveOrEnumType() const;
 
     bool PossiblyETSNull() const;
     bool PossiblyETSUndefined() const;

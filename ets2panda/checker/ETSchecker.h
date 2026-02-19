@@ -315,8 +315,6 @@ public:
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     Type *GetConstantBuiltinType(Type *type);
 
-    void VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType);
-
     bool TypeHasDefaultValue(Type *tp) const;
 
     // Type creation
@@ -911,7 +909,6 @@ private:
     bool FindPropertyInAssignment(const ir::AstNode *it, const std::string &targetName);
     void ValidateReadonlyProperty(const ir::MemberExpression *memberExpr, const ETSFunctionType *propType,
                                   lexer::SourcePosition sourcePos);
-    std::tuple<bool, bool> IsResolvedAndValue(const ir::Expression *expr, Type *type) const;
     PropertySearchFlags GetSearchFlags(const ir::MemberExpression *memberExpr, const varbinder::Variable *targetRef);
     PropertySearchFlags GetInitialSearchFlags(const ir::Expression *memberExpr);
     Type *GetTypeOfSetterGetter([[maybe_unused]] varbinder::Variable *var);

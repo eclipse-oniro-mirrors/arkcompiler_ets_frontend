@@ -97,11 +97,12 @@ ETSResizableArrayType *ETSChecker::CreateETSMultiDimResizableArrayType(Type *ele
     ES2PANDA_ASSERT(arrayType->TypeArguments().size() == 1U);
 
     Type *baseArrayType = element;
+    ES2PANDA_ASSERT(!element->IsETSPrimitiveType());
 
     for (size_t dim = 0; dim < dimSize; ++dim) {
         auto tmpSubstitution = Substitution {};
         EmplaceSubstituted(&tmpSubstitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
-                           MaybeBoxType(baseArrayType));
+                           baseArrayType);
         baseArrayType = arrayType->Substitute(Relation(), &tmpSubstitution);
     }
     return baseArrayType->AsETSResizableArrayType();
@@ -115,8 +116,8 @@ ETSResizableArrayType *ETSChecker::CreateETSResizableArrayType(Type *element)
     ES2PANDA_ASSERT(arrayType->TypeArguments().size() == 1U);
 
     auto substitution = Substitution {};
-    EmplaceSubstituted(&substitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(),
-                       MaybeBoxType(element));
+    ES2PANDA_ASSERT(!element->IsETSPrimitiveType());
+    EmplaceSubstituted(&substitution, arrayType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(), element);
     return arrayType->Substitute(Relation(), &substitution);
 }
 
@@ -627,7 +628,8 @@ ETSAsyncFuncReturnType *ETSChecker::CreateETSAsyncFuncReturnTypeFromPromiseType(
 
 ETSAsyncFuncReturnType *ETSChecker::CreateETSAsyncFuncReturnTypeFromBaseType(Type *baseType)
 {
-    auto const promiseType = CreatePromiseOf(MaybeBoxType(baseType));
+    ES2PANDA_ASSERT(!baseType->IsETSPrimitiveType());
+    auto const promiseType = CreatePromiseOf(baseType);
     return ProgramAllocator()->New<ETSAsyncFuncReturnType>(ProgramAllocator(), Relation(), promiseType);
 }
 

@@ -45,22 +45,6 @@ public:
     static constexpr std::string_view DOLLAR_GET_METHOD_NAME {"$_get"};
     static constexpr std::string_view ITEMS_ARRAY_NAME {"#ItemsArray"};
 
-    Type *Underlying()
-    {
-        if (membersValues_.empty() || membersValues_[0]->TsType() == nullptr) {
-            return nullptr;
-        }
-        return membersValues_[0]->TsType();
-    }
-
-    Type const *Underlying() const
-    {
-        if (membersValues_.empty() || membersValues_[0]->TsType() == nullptr) {
-            return nullptr;
-        }
-        return membersValues_[0]->TsType();
-    }
-
     auto GetOrdinalFromMemberName(std::string_view name) const
     {
         return memberNameToOrdinal_.at(name);
@@ -103,7 +87,7 @@ public:
 
     virtual bool CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept = 0;
 
-    Type *GetBaseEnumElementType(ETSChecker *checker);
+    Type *Underlying() const;
 
 protected:
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
@@ -169,11 +153,7 @@ public:
     void CastTarget(TypeRelation *relation, Type *source) override;
     [[nodiscard]] bool CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept override;
 
-    [[nodiscard]] bool NonAnnotedHasDouble() const
-    {
-        ES2PANDA_ASSERT(EnumAnnotedType() == nullptr);
-        return Underlying()->IsDoubleType() || Underlying()->IsFloatType();
-    }
+    [[nodiscard]] bool NonAnnotedHasDouble(ETSChecker *checker) const;
 };
 
 class ETSStringEnumType : public ETSEnumType {

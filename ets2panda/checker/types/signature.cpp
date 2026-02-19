@@ -217,13 +217,7 @@ static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIden
         return false;
     }
 
-    auto *checker = relation->GetChecker()->IsETSChecker() ? relation->GetChecker()->AsETSChecker() : nullptr;
-
-    auto const areCompatible = [relation, checker, checkIdentical](Type const *superT, Type const *subT) -> bool {
-        if (checker != nullptr) {
-            superT = checker->MaybeBoxType(superT);
-            subT = checker->MaybeBoxType(subT);
-        }
+    auto const areCompatible = [relation, checkIdentical](Type const *superT, Type const *subT) -> bool {
         return checkIdentical ? relation->IsIdenticalTo(superT, subT) : relation->IsSupertypeOf(superT, subT);
     };
     if (!relation->NoReturnTypeCheck() && !areCompatible(super->ReturnType(), sub->ReturnType())) {
@@ -299,10 +293,7 @@ Signature *Signature::ToArrowSignature(ETSChecker *checker)
     auto *allocator = checker->ProgramAllocator();
     auto *sigInfo = allocator->New<SignatureInfo>(signatureInfo_, allocator);
     ES2PANDA_ASSERT(sigInfo != nullptr);
-    for (auto param : sigInfo->params) {
-        param->SetTsType(checker->MaybeBoxType(param->TsType()));
-    }
-    auto *retType = checker->MaybeBoxType(returnType_);
+    Type *retType = returnType_;
 
     auto *resultSig = allocator->New<Signature>(sigInfo, retType);
     ES2PANDA_ASSERT(resultSig != nullptr);

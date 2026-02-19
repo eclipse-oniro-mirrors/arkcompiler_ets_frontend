@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,4 +33,4 @@ function main(): void {
 
 
 /* @@@ label1 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int' */
-/* @@? 25:33 Error Semantic error ESE0262: Switch case type 'double' is not comparable to discriminant type 'int' */
+/* @@? 25:33 Error Semantic error ESE0262: Switch case type 'Double' is not comparable to discriminant type 'Int' */

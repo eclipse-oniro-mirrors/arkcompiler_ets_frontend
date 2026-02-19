@@ -247,6 +247,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/genericBridgesLowering.cpp",
   "compiler/lowering/ets/initModuleLowering.cpp",
   "compiler/lowering/ets/insertOptionalParametersAnnotation.cpp",
+  "compiler/lowering/ets/instantiateMethodsPhase.cpp",
   "compiler/lowering/ets/interfaceObjectLiteralLowering.cpp",
   "compiler/lowering/ets/interfacePropertyDeclarations.cpp",
   "compiler/lowering/ets/internalAPICheck.cpp",

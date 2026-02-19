@@ -940,7 +940,7 @@ static bool IsValueBasedTruthinessType(const Type *const conditionType)
 {
     ES2PANDA_ASSERT(conditionType != nullptr);
 
-    if (conditionType->IsETSPrimitiveOrEnumType()) {
+    if (conditionType->IsETSEnumType()) {
         return true;
     }
 
@@ -957,8 +957,6 @@ static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const check
     if (testType == nullptr) {
         return std::nullopt;
     }
-    auto *const conditionType = checker->MaybeUnboxConditionalInRelation(testType);
-    ES2PANDA_ASSERT(conditionType != nullptr);
 
     if (checker->IsNullLikeOrVoidExpression(test)) {
         return false;
@@ -973,11 +971,7 @@ static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const check
         return std::nullopt;
     }
 
-    if (conditionType->IsETSBooleanType() || conditionType->IsBooleanLiteralType()) {
-        return std::nullopt;
-    }
-
-    if (testType->DefinitelyNotETSNullish() && !IsValueBasedTruthinessType(conditionType)) {
+    if (testType->DefinitelyNotETSNullish() && !IsValueBasedTruthinessType(testType)) {
         return true;
     }
 

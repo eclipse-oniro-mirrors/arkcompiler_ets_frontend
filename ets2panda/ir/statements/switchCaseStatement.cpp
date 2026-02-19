@@ -103,14 +103,16 @@ checker::VerifiedType SwitchCaseStatement::Check(checker::ETSChecker *checker)
 
 // Auxilary function extracted from the 'Check' method for 'SwitchStatement' to reduce function's size.
 void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker::Type *comparedExprType,
-                                           checker::Type *unboxedDiscType, ir::Expression *node, bool &isDefaultCase)
+                                           ir::Expression *node, bool &isDefaultCase)
 {
+    auto *relation = checker->Relation();
     if (test_ != nullptr) {
-        auto *caseType = checker->MaybeUnboxType(test_->Check(checker));
+        checker::Type *caseType = test_->Check(checker);
         bool validCaseType = true;
 
-        if (caseType->HasTypeFlag(checker::TypeFlag::CHAR)) {
-            validCaseType = comparedExprType->HasTypeFlag(checker::TypeFlag::ETS_INTEGRAL);
+        if (relation->IsSupertypeOf(checker->GlobalCharBuiltinType(), caseType)) {
+            // No easier way to check for integral types
+            validCaseType = checker->MaybeUnboxType(comparedExprType)->HasTypeFlag(checker::TypeFlag::ETS_INTEGRAL);
         } else if (caseType->IsETSEnumType() || comparedExprType->IsETSEnumType()) {
             validCaseType = checker->Relation()->IsIdenticalTo(caseType, comparedExprType);
         } else {
@@ -118,7 +120,7 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
                 checker->Relation(),
                 node,
                 caseType,
-                unboxedDiscType,
+                comparedExprType,
                 test_->Start(),
                 util::DiagnosticWithParams {diagnostic::SWITCH_CASE_TYPE_INCOMPARABLE, {caseType, comparedExprType}}};
             if (!ctx.IsAssignable()) {
