@@ -106,7 +106,7 @@ public:
 
     const std::string &File() const
     {
-        ES2PANDA_ASSERT(HasLocation());
+        ES2PANDA_ASSERT(HasLocation() || HasPosition());
         return file_;
     }
 
@@ -264,6 +264,10 @@ public:
     ~Diagnostic() override = default;
 
     DiagnosticType Type() const override;
+    void SetType(DiagnosticType type)
+    {
+        type_ = type;
+    }
     uint32_t GetId() const override;
     std::string Message() const override;
 
@@ -277,8 +281,14 @@ public:
         return *suggestions_;
     }
 
+    const diagnostic::DiagnosticKind *Kind() const
+    {
+        return diagnosticKind_;
+    }
+
 private:
     const diagnostic::DiagnosticKind *diagnosticKind_;
+    DiagnosticType type_;
     std::vector<std::string> diagnosticParams_ {};
     std::unique_ptr<std::vector<class Suggestion *>> suggestions_ {};
 };

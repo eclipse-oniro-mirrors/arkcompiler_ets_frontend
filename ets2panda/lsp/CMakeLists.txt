@@ -44,6 +44,7 @@ set(DIAGNOSTIC_DIR
 
 panda_code_fix_gen(
     DATA
+        ${DIAGNOSTIC_DIR}/exclusionlist.yaml
         ${DIAGNOSTIC_DIR}/syntax.yaml
         ${DIAGNOSTIC_DIR}/semantic.yaml
         ${DIAGNOSTIC_DIR}/warning.yaml

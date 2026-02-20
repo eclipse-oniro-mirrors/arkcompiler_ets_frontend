@@ -20,6 +20,7 @@ module Diagnostic
   module_function
 
   @diagnostics = []
+  @blacklists_map = {}
 
   def diagnostics
     @diagnostics
@@ -30,7 +31,39 @@ module Diagnostic
     Kernel.exit 1
   end
 
+  def configuration_error(msg)
+    warn "Configuration Error: #{msg}"
+    Kernel.exit 1
+  end
+
+  def create_diagnostic_blacklist(diagnostic_type, diagnostic)
+    if diagnostic_type.to_s != 'warning'
+      configuration_error("Blacklists are only allowed for 'warning'. Found in '#{diagnostic_type}' for '#{diagnostic.name}'")
+    end
+
+    paths =[]
+    diagnostic.exclusionlist.each do |bl_name|
+      if @blacklists_map.key?(bl_name)
+        paths.concat(@blacklists_map[bl_name])
+      else
+        configuration_error("Blacklist '#{bl_name}' referenced by diagnostic '#{diagnostic.name}' is not defined")
+      end
+    end
+    paths.uniq!
+    paths
+  end
+
   def wrap_data(data)
+    if data.respond_to?(:exclusionlist)
+      blacklists_data = data.delete_field(:exclusionlist)
+      if blacklists_data
+        blacklists_data.each do |bl|
+          @blacklists_map[bl.name] = bl.paths || []
+        end
+      end
+      return
+    end
+
     graveyard = data.delete_field(:graveyard)
     data.freeze
     graveyard.each_cons(2) do |lhs, rhs|
@@ -61,6 +94,13 @@ module Diagnostic
       diagnostics.each do |diagnostic|
         diagnostic.type = diagnostic_type
         diagnostic.strict ||= false
+
+        if diagnostic.respond_to?(:exclusionlist) && diagnostic.exclusionlist
+          diagnostic.exclusionlist = create_diagnostic_blacklist(diagnostic_type, diagnostic)
+        else
+          diagnostic.exclusionlist = []
+        end
+
         @diagnostics.append(diagnostic)
       end
     end
@@ -70,4 +110,3 @@ end
 def Gen.on_require(data)
   Diagnostic.wrap_data(data)
 end
-

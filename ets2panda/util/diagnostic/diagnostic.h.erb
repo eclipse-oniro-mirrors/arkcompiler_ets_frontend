@@ -20,17 +20,20 @@
 
 #include "util/diagnostic.h"
 #include <tuple>
+#include <string_view>
+#include <regex>
 
 namespace ark::es2panda::diagnostic {
 
 class DiagnosticKind {
 public:
-    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict) :
+    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict, const std::string_view *exclusionlist = nullptr, size_t exclusionlistSize = 0) :
 #ifdef ES2PANDA_STRICT
-        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict) {}
+        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist), exclusionlistSize_(exclusionlistSize) {}
 #else
-        type_(type), id_(id), message_(message), strict_(strict) {}
+        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist), exclusionlistSize_(exclusionlistSize) {}
 #endif
+
     bool operator==(const DiagnosticKind &other) const
     {
         return std::tie(type_, id_) == std::tie(other.type_, other.id_);
@@ -61,16 +64,39 @@ public:
         return strict_;
     }
 
+    bool IsInExclusionList(std::string_view path) const
+    {
+        if (exclusionlistSize_ == 0) {
+            return false;
+        }
+
+        std::string sPath {path};
+        for (size_t i = 0; i < exclusionlistSize_; ++i) {
+            std::regex re {std::string {exclusionlist_[i]}};
+            if (std::regex_match(sPath, re)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 private:
     const util::DiagnosticType type_;
     const uint32_t id_;
     const std::string_view message_;
     const bool strict_;
+    const std::string_view *exclusionlist_;
+    const size_t exclusionlistSize_;
 };
 
 % Diagnostic::diagnostics.each do |desc|
-    constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>};
+%   if !desc.exclusionlist.empty?
+constexpr static std::string_view <%= desc.name %>_exclusionlist[] = { <%= desc.exclusionlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
+%   end
+constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>,
+    <% if !desc.exclusionlist.empty? %><%= desc.name %>_exclusionlist, sizeof(<%= desc.name %>_exclusionlist) / sizeof(std::string_view)<% else %>nullptr, 0<% end %>};
 % end
+
 } // namespace ark::es2panda::diagnostic
 
 #endif // ES2PANDA_UTIL_DIAGNOSTIC_KIND_H
