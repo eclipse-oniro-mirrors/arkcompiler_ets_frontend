@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,11 +14,14 @@
  */
 
 #include "astNode.h"
-#include "compiler/lowering/phase.h"
 #include "ir/astDump.h"
-#include "ir/astNodeHistory.h"
 #include "ir/srcDump.h"
 #include "ir/typed.h"
+// Conditional compilation as the part of the issue #32917
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
+#include "compiler/lowering/phase.h"
+#include "ir/astNodeHistory.h"
+#endif
 
 namespace ark::es2panda::ir {
 
@@ -357,14 +360,16 @@ void AstNode::CleanCheckInformation()
         return;
     }
     RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-    if (AsTyped()->PreferredType() != nullptr) {
+    if (AsTyped()->TsType() != nullptr && IsTypeError(AsTyped()->TsType())) {
+        SetVariable(nullptr);
         AsTyped()->SetTsType(nullptr);
         AsTyped()->SetPreferredType(nullptr);
         Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
-    }
-    if (AsTyped()->TsType() != nullptr && AsTyped()->TsType()->IsTypeError()) {
-        SetVariable(nullptr);
+    } else if (AsTyped()->PreferredType() != nullptr) {
         AsTyped()->SetTsType(nullptr);
+        AsTyped()->SetPreferredType(nullptr);
+        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    } else if (AsTyped()->TsType() == nullptr) {
         AsTyped()->SetPreferredType(nullptr);
         Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
     }
