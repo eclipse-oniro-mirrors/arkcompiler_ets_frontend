@@ -4514,12 +4514,18 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
         if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
             return false;
         }
+        // Note: First,handle this situation specially,and the ETSAsyncFuncReturnType needs to be restructured later.
+        // Related issue: #issue33499
+        checker::Type *preferredType = funcReturnType;
+        if (funcReturnType->IsETSAsyncFuncReturnType()) {
+            preferredType = funcReturnType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
+        }
 
         if (st->argument_->IsMemberExpression()) {
             checker->SetArrayPreferredTypeForNestedMemberExpressions(st->argument_->AsMemberExpression(),
-                                                                     funcReturnType);
+                                                                     preferredType);
         } else {
-            st->argument_->SetPreferredType(funcReturnType);
+            st->argument_->SetPreferredType(preferredType);
         }
 
         checker::Type *argumentType = st->argument_->Check(checker);
