@@ -1,0 +1,71 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/demo_mix_compile2/library/components/Calc.ets",
+        "${absolute_path_to_build_system}/test/demo_mix_compile2/library/Index.ets",
+        "${absolute_path_to_build_system}/test/demo_mix_compile2/entry/entrybackupability/EntryBackupAbility.ets"
+
+    ],
+    "buildMode": "Release",
+    "projectRootPath": "${absolute_path_to_build_system}/test/demo_mix_compile2",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/demo_mix_compile2/entry",
+    "cachePath": "./dist/cache",
+    "bundleName": "com.example.myapplication",
+    "useNormalizedOHMUrl": true,
+    "buildType": "build",
+    "packageName": "entry",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "sourceRoots": [
+        "./"
+    ],
+    "moduleType": "feature",
+    "moduleName": "entry",
+    "dependentModuleList": [
+        {
+            "language": "1.1",
+            "packageName": "entry",
+            "moduleType": "feature",
+            "moduleName": "entry",
+            "modulePath": "${absolute_path_to_build_system}/test/demo_mix_compile2/entry",
+            "entryFile": "${absolute_path_to_build_system}/test/demo_mix_compile2/entry",
+            "declFilesPath": "${absolute_path_to_build_system}/test/demo_mix_compile2/library/decl-fileInfo.json",
+            "declgenV1OutPath": "./dist/declgen/declgenV1",
+            "declgenV2OutPath": "./dist/declgen/declgenV2",
+            "declgenBridgeCodePath": "./dist/declgen/declgenBridgeCode",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [
+                "library"
+            ]
+        },
+        {
+            "language": "1.2",
+            "packageName": "library",
+            "moduleType": "har",
+            "moduleName": "library",
+            "modulePath": "${absolute_path_to_build_system}/test/demo_mix_compile2/library",
+            "entryFile": "${absolute_path_to_build_system}/test/demo_mix_compile2/library/Index.ets",
+            "declFilesPath": "${absolute_path_to_build_system}/test/demo_mix_compile2/entry/decl-fileInfo.json",
+            "declgenV1OutPath": "./dist/declgen/library/declgenV1",
+            "declgenV2OutPath": "./dist/declgen/library/declgenV2",
+            "declgenBridgeCodePath": "./dist/declgen/library/declgenBridgeCode",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": []
+        }
+    ],
+    "hasMainModule": false,
+    "allowEmptyBundleName": false,
+    "declgenV2OutPath": "./dist/declgen/entry/declgenV2",
+    "externalApiPaths": [
+        "${absolute_path_to_build_system}/test/mock_sdk/api",
+        "${absolute_path_to_build_system}/test/mock_sdk/kits",
+        "${absolute_path_to_build_system}/test/mock_sdk/arkts"
+    ],
+    "enableDeclgenEts2Ts": true,
+    "declgenBridgeCodePath": "./dist/declgen/entry/declgenBridgeCode",
+    "declgenV1OutPath": "./dist/declgen/entry/declgenV1",
+    "isBuildConfigModified": false,
+    "pandaSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/build-tools/ets2panda"
+}

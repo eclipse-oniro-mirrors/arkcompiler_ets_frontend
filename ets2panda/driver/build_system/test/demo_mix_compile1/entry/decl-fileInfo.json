@@ -1,0 +1,13 @@
+{
+    "packageName": "entry",
+    "files": {
+        "entryability/EntryAbility": {
+            "declPath": "${absolute_path_to_build_system}/test/demo_mix_compile1/entry/entryability/EntryAbility.d.ets",
+            "ohmUrl": "@normalized:N&entry&com.example.myapplication&entry/entryability/EntryAbility&1.0.0"
+        },
+        "pages/Index": {
+            "declPath": "${absolute_path_to_build_system}/test/demo_mix_compile1/entry/pages/Index.d.ets",
+            "ohmUrl": "@normalized:N&entry&com.example.myapplication&entry/pages/Index&1.0.0"
+        }
+    }
+}

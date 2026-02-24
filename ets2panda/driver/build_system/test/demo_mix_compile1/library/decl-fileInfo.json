@@ -1,0 +1,13 @@
+{
+    "packageName": "library",
+    "files": {
+        "components/Calc": {
+            "declPath": "${absolute_path_to_build_system}/test/demo_mix_compile1/library/components/Calc.d.ets",
+            "ohmUrl": "@normalized:N&entry&com.example.myapplication&library/components/Calc&1.0.0"
+        },
+        "Index": {
+            "declPath": "${absolute_path_to_build_system}/test/demo_mix_compile1/library/Index.d.ets",
+            "ohmUrl": "@normalized:N&entry&com.example.myapplication&entry/library/Index&1.0.0"
+        }
+    }
+}
