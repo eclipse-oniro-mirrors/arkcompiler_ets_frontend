@@ -43,6 +43,7 @@ bool ScopedAllocatorsManager::IsInitialized()
 }
 
 EHeap::EHeapSpace *EHeap::gEHeapSpace_ {};
+size_t EHeap::gHeapId_ = 0;
 
 void EHeap::InitializeEHeapSpace()
 {
@@ -54,6 +55,7 @@ void EHeap::InitializeEHeapSpace()
     static_assert(EHEAP_SIZE <= (4_GB * EHeap::EHeapSpace::ALLOC_ALIGNMENT));
 
     gEHeapSpace_ = new EHeapSpace(EHEAP_SIZE);
+    gHeapId_++;
 
     // consume the "nullptr" so the pointer compression may re-use it
     [[maybe_unused]] void *unused = Alloc(1);

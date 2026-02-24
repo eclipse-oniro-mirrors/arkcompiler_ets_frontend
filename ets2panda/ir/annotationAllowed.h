@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -226,13 +226,17 @@ private:
     friend class SizeOfNodeTest;
     EPtr<ArenaVector<AnnotationUsage *>> annotations_ = nullptr;
 
+    // #33459 improper memory management
     static inline ArenaAllocator *allocator_ = nullptr;
     static inline ArenaVector<AnnotationUsage *> *emptyAnnotations_ = nullptr;
+    static inline size_t lastEHeapId_ = static_cast<size_t>(-1);
 
     static void InitClass(ArenaAllocator *alloc)
     {
         ES2PANDA_ASSERT(alloc != nullptr);
-        if (allocator_ != alloc) {
+        auto const heapId = EHeap::DeprecatedId();
+        if (lastEHeapId_ != heapId) {
+            lastEHeapId_ = heapId;
             allocator_ = alloc;
             emptyAnnotations_ = allocator_->New<ArenaVector<AnnotationUsage *>>(allocator_->Adapter());
         }

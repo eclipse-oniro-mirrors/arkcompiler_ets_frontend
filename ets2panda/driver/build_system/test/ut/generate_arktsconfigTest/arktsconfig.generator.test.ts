@@ -312,6 +312,7 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
             expect(result.dependencies['std/core']).toBeDefined();
             expect(result.dependencies['escompat']).toBeDefined();
+            expect(result.dependencies['arkruntime']).toBeDefined();
         });
 
         test('should call ensurePathExists', () => {
@@ -397,7 +398,7 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
 
             // Should only have stdlib, not dynamic deps
             const depKeys = Object.keys(result.dependencies);
-            expect(depKeys.every(k => k.startsWith('std/') || k === 'escompat')).toBe(true);
+            expect(depKeys.every(k => k.startsWith('std/') || k === 'escompat' || k === 'arkruntime')).toBe(true);
             expect(result.dependencies['depModule//dep/file']).toBeUndefined();
         });
 
@@ -474,7 +475,8 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
                 'std/concurrency',
                 'std/annotations',
                 'std/interop',
-                'escompat'
+                'escompat',
+                'arkruntime'
             ];
 
             expectedLibs.forEach(lib => {
@@ -491,6 +493,7 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
             expect(result.dependencies['std/core'].path).toBe('/mock/panda/sdk/lib/etsstdlib.abc');
             expect(result.dependencies['std/math'].path).toBe('/mock/panda/sdk/lib/etsstdlib.abc');
             expect(result.dependencies['escompat'].path).toBe('/mock/panda/sdk/lib/etsstdlib.abc');
+            expect(result.dependencies['arkruntime'].path).toBe('/mock/panda/sdk/lib/etsstdlib.abc');
         });
 
         test('should include stdlib regardless of other dependencies', () => {
@@ -521,7 +524,7 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
 
             Object.keys(result.dependencies)
-                .filter(k => k.startsWith('std/') || k === 'escompat')
+                .filter(k => k.startsWith('std/') || k === 'escompat' || k === 'arkruntime')
                 .forEach(lib => {
                     expect(result.dependencies[lib].language).toBe('ets');
                 });
@@ -1311,7 +1314,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
             expect(result.dependencies['std/core']).toBeDefined();
             const depKeys = Object.keys(result.dependencies);
-            expect(depKeys.every(k => k.startsWith('std/') || k === 'escompat')).toBe(true);
+            expect(depKeys.every(k => k.startsWith('std/') || k === 'escompat' || k === 'arkruntime')).toBe(true);
         });
 
         test('should support generating configs for multiple modules', () => {

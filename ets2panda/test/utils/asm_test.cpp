@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -251,14 +251,14 @@ void AsmTest::CheckModuleAnnotation(ark::pandasm::Program *program, const std::s
 
     auto annotations = found->second.metadata->GetAnnotations();
     auto it = std::find_if(annotations.begin(), annotations.end(), [](const ark::pandasm::AnnotationData &annotation) {
-        return annotation.GetName() == std::string {ark::es2panda::compiler::Signatures::ETS_ANNOTATION_MODULE};
+        return annotation.GetName() == std::string {ark::es2panda::compiler::Signatures::ARKRUNTIME_ANNOTATION_MODULE};
     });
     if (isModule) {
         ASSERT_NE(it, annotations.end()) << recordName << " missing expected annotation: "
-                                         << ark::es2panda::compiler::Signatures::ETS_ANNOTATION_MODULE;
+                                         << ark::es2panda::compiler::Signatures::ARKRUNTIME_ANNOTATION_MODULE;
     } else {
         ASSERT_EQ(it, annotations.end()) << recordName << " has annotation: "
-                                         << ark::es2panda::compiler::Signatures::ETS_ANNOTATION_MODULE
+                                         << ark::es2panda::compiler::Signatures::ARKRUNTIME_ANNOTATION_MODULE
                                          << ", but shouldn't";
         return;
     }

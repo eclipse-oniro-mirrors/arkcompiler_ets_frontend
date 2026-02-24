@@ -29,6 +29,10 @@ void ImportExportDecls::IntroduceStdlibImportProgram()
             // 'abs()' function, it is not skipped for now.
             continue;
         }
+        if (path == "arkruntime") {
+            // NOTE(vpukhov): stdlib is not imported entirely, there are exceptions
+            continue;
+        }
         importStdlibFile += "import * from \"" + path + "\";";
     }
     auto stdlibImportProgram = parser_->IntroduceStdlibImportProgram(std::move(importStdlibFile));

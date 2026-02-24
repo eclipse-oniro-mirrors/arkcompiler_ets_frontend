@@ -408,6 +408,7 @@ std::optional<std::unique_ptr<ArkTsConfig>> Options::ParseArktsConfig()
     if (WasSetStdlib()) {
         config->FixupWithStdlibOption(GetStdlib());
     }
+    config->FixupWithoutStdlibOption();
     config->ResolveAllDependenciesInArkTsConfig();
     config->GenerateSourcePathMap();
     return config;

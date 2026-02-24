@@ -103,31 +103,22 @@ defines:
   - name: runtime_type
     ref: RUNTIME_TYPE_ANNOTATION
     comment: Annotation retention type
-  - name: ets/annotation/InnerClass
-    ref: ETS_ANNOTATION_INNER_CLASS
-    comment: Ets record
-  - name: ets/annotation/EnclosingClass
-    ref: ETS_ANNOTATION_ENCLOSING_CLASS
-    comment: Ets record
-  - name: ets/annotation/EnclosingMethod
-    ref: ETS_ANNOTATION_ENCLOSING_METHOD
-    comment: Ets record
-  - name: ets/annotation/Signature
-    ref: ETS_ANNOTATION_SIGNATURE
-    comment: Ets record
-  - name: ets/annotation/Module
-    ref: ETS_ANNOTATION_MODULE
-    comment: Ets record
-  - name: ets/annotation/FunctionalReference
-    ref: ETS_ANNOTATION_FUNCTIONAL_REFERENCE
-    comment: Ets record
-  - name: ets/annotation/FunctionOverload
-    ref: ETS_ANNOTATION_FUNCTION_OVERLOAD
-    comment: Ets record
-  - name: ets/coroutine/Async
-    ref: ETS_COROUTINE_ASYNC
-  - name: ets/annotation/DynamicCall
-    ref: ETS_ANNOTATION_DYNAMIC_CALL
+  - name: arkruntime.annotation.InternalAPI
+    ref: ARKRUNTIME_ANNOTATION_INTERNAL_API
+  - name: arkruntime.annotation.Module
+    ref: ARKRUNTIME_ANNOTATION_MODULE
+  - name: arkruntime.annotation.FunctionReference
+    ref: ARKRUNTIME_ANNOTATION_FUNCTIONAL_REFERENCE
+  - name: arkruntime.annotation.Async
+    ref: ARKRUNTIME_ANNOTATION_ASYNC
+  - name: std.annotations.InterfaceObjectLiteral
+    ref: ARKRUNTIME_ANNOTATION_INTERFACE_OBJECT_LITERAL
+  - name: std.annotations.functions.OptionalParametersAnnotation
+    ref: ARKRUNTIME_ANNOTATION_OPTIONAL_PARAMETERS
+  - name: std.core.NamedFunctionObject
+    ref: ARKRUNTIME_ANNOTATION_NAMED_FUNCTION_OBJECT
+  - name: std.core.AsyncFunctionObject
+    ref: ARKRUNTIME_ANNOTATION_ASYNC_FUNCTION_OBJECT
   - name: 'L'
     ref: CLASS_REF_BEGIN
   - name: '<'
@@ -268,7 +259,6 @@ defines:
     ref: ASYNC_FUNCTION_OBJECT
   - name: 'InterfaceObjectLiteral'
     ref: INTERFACE_OBJ_LITERAL
-    comment: ETS annotation type
   - name: 'use static'
     ref: STATIC_PROGRAM_FLAG
   - name: 'ETSGLOBAL.<cctor>:void;'
@@ -301,6 +291,8 @@ packages:
     ref: PKG_STD_INTEROP_JS
   - name: 'escompat'
     ref: PKG_ESCOMPAT
+  - name: 'arkruntime'
+    ref: PKG_ARKRUNTIME
 
 primitives:
   - name: u1

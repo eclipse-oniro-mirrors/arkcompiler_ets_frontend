@@ -111,6 +111,7 @@ if(PANDA_WITH_ETS)
                 "      \"std/annotations\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/interop\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"escompat\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"arkruntime\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"dynamic_import_tests\": {\"language\": \"js\", \"ohmUrl\": \"dynamic_import_tests\"},\n"
                 "      \"dynamic_import_tests/modules/instanceof\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\"},\n"
                 "      \"dynamic_import_tests/modules/module\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\"}\n"
@@ -386,6 +387,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/primitiveConversionPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp
   compiler/metadata/metadataEmitter.cpp
+  compiler/lowering/ets/internalAPICheck.cpp
   ir/astDump.cpp
   ir/srcDump.cpp
   ir/astNode.cpp
@@ -712,6 +714,7 @@ set(ES2PANDA_LIB_SRC
   util/es2pandaMacros.cpp
   util/helpers.cpp
   util/importPathManager.cpp
+  util/internalAPIWhitelist.cpp
   util/nameMangler.cpp
   util/path.cpp
   util/plugin.cpp

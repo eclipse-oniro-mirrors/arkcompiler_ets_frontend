@@ -404,7 +404,7 @@ public:
     {
         // NOTE (hurton): temporary solution, needs rework when std sources are renamed
         return (ModuleName().rfind("std.", 0) == 0) || (ModuleName().rfind("escompat", 0) == 0) ||
-               (FileName().Is("etsstdlib"));
+               (ModuleName().rfind("arkruntime", 0) == 0) || (FileName().Is("etsstdlib"));
     }
 
     bool IsGenAbcForExternal() const;

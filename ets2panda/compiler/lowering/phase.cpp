@@ -73,6 +73,7 @@
 #include "compiler/lowering/ets/unionLowering.h"
 #include "compiler/lowering/ets/typeFromLowering.h"
 #include "compiler/lowering/ets/classFromExpressionLowering.h"
+#include "compiler/lowering/ets/internalAPICheck.h"
 #include "compiler/lowering/plugin_phase.h"
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
@@ -132,6 +133,7 @@ std::vector<Phase *> GetETSPhaseList()
         // Metadata emitting and declarations dumping are right after the checker
         new MetadataEmittingPhase,
         new DeclGenPhase,
+        new InternalAPICheck,
         // pluginsAfterCheck has to go right after checkerPhase
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
         new FixedArrayLowering,

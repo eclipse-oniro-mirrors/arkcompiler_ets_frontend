@@ -699,26 +699,9 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
 std::vector<pandasm::AnnotationData> ETSEmitter::GenAnnotations(const ir::ClassDefinition *classDef)
 {
     std::vector<pandasm::AnnotationData> annotations;
-    const ir::AstNode *parent = classDef->Parent();
-    while (parent != nullptr) {
-        if ((classDef->Modifiers() & ir::ClassDefinitionModifiers::FUNCTIONAL_REFERENCE) != 0U) {
-            annotations.emplace_back(GenAnnotationFunctionalReference(classDef));
-            break;
-        }
-        if (parent->IsMethodDefinition()) {
-            annotations.emplace_back(GenAnnotationEnclosingMethod(parent->AsMethodDefinition()));
-            annotations.emplace_back(GenAnnotationInnerClass(classDef, parent));
-            break;
-        }
-        if (parent->IsClassDefinition()) {
-            annotations.emplace_back(GenAnnotationEnclosingClass(
-                parent->AsClassDefinition()->TsType()->AsETSObjectType()->AssemblerName().Utf8()));
-            annotations.emplace_back(GenAnnotationInnerClass(classDef, parent));
-            break;
-        }
-        parent = parent->Parent();
+    if ((classDef->Modifiers() & ir::ClassDefinitionModifiers::FUNCTIONAL_REFERENCE) != 0U) {
+        annotations.emplace_back(GenAnnotationFunctionalReference(classDef));
     }
-
     return annotations;
 }
 
@@ -1134,8 +1117,8 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationModule(const ir::ClassDefinitio
             pandasm::Type::FromName(AddDependence(ToAssemblerType(cls->Definition())), true)));
     }
 
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_MODULE);
-    pandasm::AnnotationData moduleAnno(Signatures::ETS_ANNOTATION_MODULE);
+    AddDependence(std::string(Signatures::ARKRUNTIME_ANNOTATION_MODULE));
+    pandasm::AnnotationData moduleAnno(Signatures::ARKRUNTIME_ANNOTATION_MODULE);
     pandasm::AnnotationElement value(
         Signatures::ANNOTATION_KEY_EXPORTED,
         std::make_unique<pandasm::ArrayValue>(pandasm::Value::Type::RECORD, std::move(exportedClasses)));
@@ -1143,23 +1126,10 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationModule(const ir::ClassDefinitio
     return moduleAnno;
 }
 
-pandasm::AnnotationData ETSEmitter::GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef)
-{
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_ENCLOSING_METHOD);
-    pandasm::AnnotationData enclosingMethod(Signatures::ETS_ANNOTATION_ENCLOSING_METHOD);
-    ES2PANDA_ASSERT(methodDef->Function() != nullptr);
-    pandasm::AnnotationElement value(
-        Signatures::ANNOTATION_KEY_VALUE,
-        std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(
-            methodDef->Function()->Scope()->InternalName().Mutf8())));
-    enclosingMethod.AddElement(std::move(value));
-    return enclosingMethod;
-}
-
 pandasm::AnnotationData ETSEmitter::GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef)
 {
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_FUNCTIONAL_REFERENCE);
-    pandasm::AnnotationData functionalReference(Signatures::ETS_ANNOTATION_FUNCTIONAL_REFERENCE);
+    AddDependence(std::string(Signatures::ARKRUNTIME_ANNOTATION_FUNCTIONAL_REFERENCE));
+    pandasm::AnnotationData functionalReference(Signatures::ARKRUNTIME_ANNOTATION_FUNCTIONAL_REFERENCE);
     bool isStatic = classDef->FunctionalReferenceReferencedMethod()->IsStatic();
     ES2PANDA_ASSERT(const_cast<ir::ClassDefinition *>(classDef) != nullptr);
     pandasm::AnnotationElement value(
@@ -1174,40 +1144,6 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationFunctionalReference(const ir::C
                                                                        isStatic)));
     functionalReference.AddElement(std::move(value));
     return functionalReference;
-}
-
-pandasm::AnnotationData ETSEmitter::GenAnnotationEnclosingClass(std::string_view className)
-{
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_ENCLOSING_CLASS);
-    pandasm::AnnotationData enclosingClass(Signatures::ETS_ANNOTATION_ENCLOSING_CLASS);
-    pandasm::AnnotationElement value(
-        Signatures::ANNOTATION_KEY_VALUE,
-        std::make_unique<pandasm::ScalarValue>(
-            pandasm::ScalarValue::Create<pandasm::Value::Type::RECORD>(pandasm::Type::FromName(className, true))));
-    enclosingClass.AddElement(std::move(value));
-    return enclosingClass;
-}
-
-pandasm::AnnotationData ETSEmitter::GenAnnotationInnerClass(const ir::ClassDefinition *classDef,
-                                                            const ir::AstNode *parent)
-{
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_INNER_CLASS);
-    pandasm::AnnotationData innerClass(Signatures::ETS_ANNOTATION_INNER_CLASS);
-    const bool isAnonymous = (classDef->Modifiers() & ir::ClassDefinitionModifiers::ANONYMOUS) != 0;
-    pandasm::AnnotationElement name(Signatures::ANNOTATION_KEY_NAME,
-                                    std::make_unique<pandasm::ScalarValue>(
-                                        isAnonymous
-                                            ? pandasm::ScalarValue::Create<pandasm::Value::Type::STRING_NULLPTR>(0)
-                                            : pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(
-                                                  classDef->TsType()->AsETSObjectType()->AssemblerName().Mutf8())));
-    innerClass.AddElement(std::move(name));
-
-    pandasm::AnnotationElement accessFlags(
-        Signatures::ANNOTATION_KEY_ACCESS_FLAGS,
-        std::make_unique<pandasm::ScalarValue>(
-            pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(TranslateModifierFlags(parent->Modifiers()))));
-    innerClass.AddElement(std::move(accessFlags));
-    return innerClass;
 }
 
 ir::MethodDefinition *ETSEmitter::FindAsyncImpl(ir::ScriptFunction *asyncFunc)
@@ -1250,36 +1186,16 @@ ir::MethodDefinition *ETSEmitter::FindAsyncImpl(ir::ScriptFunction *asyncFunc)
 
 pandasm::AnnotationData ETSEmitter::GenAnnotationAsync(ir::ScriptFunction *scriptFunc)
 {
-    GenAnnotationRecord(Signatures::ETS_COROUTINE_ASYNC);
+    AddDependence(std::string(Signatures::ARKRUNTIME_ANNOTATION_ASYNC));
     const ir::MethodDefinition *impl = FindAsyncImpl(scriptFunc);
     ES2PANDA_ASSERT(impl != nullptr);
     ES2PANDA_ASSERT(impl->Function() != nullptr);
-    pandasm::AnnotationData ann(Signatures::ETS_COROUTINE_ASYNC);
+    pandasm::AnnotationData ann(Signatures::ARKRUNTIME_ANNOTATION_ASYNC);
     pandasm::AnnotationElement value(
         Signatures::ANNOTATION_KEY_VALUE,
         std::make_unique<pandasm::ScalarValue>(
             pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(ToAssemblerSignature(impl->Function()))));
     ann.AddElement(std::move(value));
     return ann;
-}
-
-void ETSEmitter::GenAnnotationRecord(std::string_view recordNameView, bool isRuntime, bool isType)
-{
-    const std::string recordName(recordNameView);
-    const auto recordIt = Program()->recordTable.find(recordName);
-    if (recordIt == Program()->recordTable.end()) {
-        pandasm::Record record(recordName, EXTENSION);
-        record.metadata->SetAttribute(Signatures::EXTERNAL);
-        record.metadata->SetAttribute(Signatures::ANNOTATION_ATTRIBUTE);
-        if (isRuntime && isType) {
-            record.metadata->SetAttributeValue(Signatures::ANNOTATION_ATTRIBUTE_TYPE,
-                                               Signatures::RUNTIME_TYPE_ANNOTATION);
-        } else if (isRuntime && !isType) {
-            record.metadata->SetAttributeValue(Signatures::ANNOTATION_ATTRIBUTE_TYPE, Signatures::RUNTIME_ANNOTATION);
-        } else if (!isRuntime && isType) {
-            record.metadata->SetAttributeValue(Signatures::ANNOTATION_ATTRIBUTE_TYPE, Signatures::TYPE_ANNOTATION);
-        }
-        Program()->AddToRecordTable(std::move(record));
-    }
 }
 }  // namespace ark::es2panda::compiler

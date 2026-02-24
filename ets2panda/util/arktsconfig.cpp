@@ -406,11 +406,21 @@ static std::string ValueOrEmptyString(const JsonObject::JsonObjPointer *json, co
 
 void ArkTsConfig::FixupWithStdlibOption(const std::string &stdlib)
 {
-    for (std::string prefix : {"std", "escompat"}) {
+    for (std::string prefix : {"std", "escompat", "arkruntime"}) {
         std::string path = stdlib + util::PATH_DELIMITER + prefix;
         auto stdlibRealpath = ark::os::GetAbsolutePath(path);
         ES2PANDA_ASSERT(!stdlibRealpath.empty());
         paths_[prefix] = {stdlibRealpath};
+    }
+}
+
+void ArkTsConfig::FixupWithoutStdlibOption()
+{
+    auto it = paths_.find({"std"});
+    if (it != paths_.end() && it->second.size() == 1) {
+        auto path = it->second.at(0);
+        path = path.substr(0, path.rfind(util::PATH_DELIMITER) + 1) + "arkruntime";
+        paths_.insert({{"arkruntime"}, {path}});
     }
 }
 

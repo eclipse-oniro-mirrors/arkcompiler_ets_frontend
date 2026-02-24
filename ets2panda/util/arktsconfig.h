@@ -152,6 +152,7 @@ public:
     std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false) const;
 
     void FixupWithStdlibOption(const std::string &stdlib);
+    void FixupWithoutStdlibOption();
 
     void ResolveAllDependenciesInArkTsConfig();
 

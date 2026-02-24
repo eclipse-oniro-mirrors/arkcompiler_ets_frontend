@@ -667,6 +667,7 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
     if (builtinsInitialized) {  // NOTE(vpukhov): #31391
         CheckInterfaceFunctions(interfaceType);
     }
+    CheckInterfaceAnnotations(interfaceDecl);
 
     return interfaceType;
 }
@@ -758,6 +759,7 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         GetInterfaces(classType);
     }
     ctScope.TryCheckConstraints();
+    CheckClassAnnotations(classDef);
     return classType;
 }
 
@@ -1608,7 +1610,6 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
         return;
     }
 
-    CheckClassAnnotations(classDef);
     CheckGetterSetterProperties(classType);
 
     if (classDef->IsGlobal()) {

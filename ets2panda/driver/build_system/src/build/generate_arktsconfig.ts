@@ -384,7 +384,8 @@ export class ArkTSConfigGenerator {
             'std/concurrency',
             'std/annotations',
             'std/interop',
-            'escompat'
+            'escompat',
+            'arkruntime'
         ]
 
         etsstdlibPackageNames.forEach((currentName: string) => {
