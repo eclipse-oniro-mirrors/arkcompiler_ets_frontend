@@ -1281,7 +1281,7 @@ std::vector<SymbolDisplayPart> CreateDisplayForETSImportDeclaration(ir::AstNode 
     displayParts.emplace_back(CreateKeyword("module"));
     displayParts.emplace_back(CreateSpace());
     displayParts.emplace_back(
-        CreateClassName(std::string(node->AsETSImportDeclaration()->ImportMetadata().ResolvedSource())));
+        CreateClassName(std::string(node->AsETSImportDeclaration()->ImportInfo().ResolvedSource())));
 
     return displayParts;
 }

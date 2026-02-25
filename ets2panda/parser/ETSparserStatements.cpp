@@ -264,8 +264,8 @@ ir::Statement *ETSParser::ParseInitModuleStatement()
         return AllocBrokenStatement(startLoc);
     }
     // In order to build relationship between the current program and initModule program.
-    GetImportPathManager()->GatherImportMetadata(const_cast<parser::Program *>(GetContext().GetProgram()),
-                                                 expr->Arguments().front()->AsStringLiteral());
+    GetImportPathManager()->GatherImportInfo(const_cast<parser::Program *>(GetContext().GetProgram()),
+                                             expr->Arguments().front()->AsStringLiteral());
     auto initModuleStatement = AllocNode<ir::ExpressionStatement>(expr);
     ConsumeSemicolon(initModuleStatement);
     return initModuleStatement;

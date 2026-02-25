@@ -5291,7 +5291,7 @@ static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util
         auto &sMap = checker->VarBinder()
                          ->AsETSBinder()
                          ->GetSelectiveExportAliasMultimap()
-                         .find(importDecl->ImportMetadata().ResolvedSource())
+                         .find(importDecl->ImportInfo().ResolvedSource())
                          ->second;
         if (auto it = sMap.find(searchName); it != sMap.end()) {
             return result->second;

@@ -31,7 +31,7 @@ table Root {
 union RefType {
     class:ClassDecl,
     interface:InterfaceDecl,
-    enum:EnumDecl,
+    enum_:EnumDecl,
     annotation:AnnotationDecl,
     type:TypeDecl,
     typeParam:TypeParamDecl
@@ -124,16 +124,16 @@ table TypeParamDecl {
 // Types
 
 enum BuiltinTypeKind : byte {
-    byte = 0,
-    short = 1,
-    int = 2,
-    long = 3,
-    float = 4,
-    double = 5,
+    byte_ = 0,
+    short_ = 1,
+    int_ = 2,
+    long_ = 3,
+    float_ = 4,
+    double_ = 5,
     number = 6,
     boolean = 7,
     char = 8,
-    string = 9,
+    string_ = 9,
     bigint = 10,
     any = 11,
     object = 12,

@@ -26,7 +26,11 @@
 #include "util/path.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
-#include "parser/program/DeclarationCache.h"
+#include "parser/program/ImportCache.h"
+
+namespace ark::panda_file {
+class File;
+}  // namespace ark::panda_file
 
 namespace ark::es2panda {
 class ArkTsConfig;
@@ -46,17 +50,13 @@ class StringLiteral;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::util {
-enum class ModuleKind : uint8_t {
-    UNKNOWN,
 
-    PACKAGE,
-    MODULE,
-    SOURCE_DECL,
-    ETSCACHE_DECL,
-    DECLLESS_DYNAMIC,
+template <ModuleKind KIND>
+constexpr parser::CacheType SelectCacheType()
+{
+    return KIND == ModuleKind::METADATA_DECL ? parser::CacheType::METADATA : parser::CacheType::SOURCES;
+}
 
-    SIMULT_MAIN,
-};
 }  // namespace ark::es2panda::util
 
 namespace ark::es2panda::parser {
@@ -70,6 +70,8 @@ class NonPackageProgram;
 // Source-level modules:
 using SourceProgram = ProgramAdapter<util::ModuleKind::MODULE>;
 using SourceDeclarationProgram = ProgramAdapter<util::ModuleKind::SOURCE_DECL>;
+// Based on the loaded metadata from abc file
+using MetadataBasedProgram = ProgramAdapter<util::ModuleKind::METADATA_DECL>;
 // Internal, generated modules (for caching purpose):
 using LowDeclarationProgram = ProgramAdapter<util::ModuleKind::ETSCACHE_DECL>;
 
@@ -100,19 +102,19 @@ struct ModuleInfo {
 
 class ImportPathManager;
 
-class ImportMetadata : public parser::DeclarationCache::CacheReference {
+class ImportInfo : public parser::CacheReference<> {
 private:
     static constexpr std::string_view ABC_SUFFIX = ".abc";
 
 public:
     // NOTE(dkofanov): 'lang' and 'isExternalModule' are to be reduced.
-    ImportMetadata(const ImportPathManager &ipm, std::string_view resolvedSource, Language::Id lang = Language::Id::ETS,
-                   bool isExternalModule = false);
-    ImportMetadata() = default;
-    ImportMetadata(const ImportMetadata &other);
-    const ImportMetadata &operator=(const ImportMetadata &other);  // NOLINT(misc-unconventional-assign-operator)
-    NO_MOVE_SEMANTIC(ImportMetadata);
-    ~ImportMetadata() = default;
+    ImportInfo(const ImportPathManager &ipm, std::string_view resolvedSource, Language::Id lang = Language::Id::ETS,
+               bool isExternalModule = false);
+    ImportInfo() = default;
+    ImportInfo(const ImportInfo &other);
+    const ImportInfo &operator=(const ImportInfo &other);  // NOLINT(misc-unconventional-assign-operator)
+    NO_MOVE_SEMANTIC(ImportInfo);
+    ~ImportInfo() = default;
 
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
 
@@ -145,7 +147,7 @@ public:
         return extModuleData_->Path();
     }
 
-    const parser::DeclarationCache::CacheReference &Text() const
+    const parser::CacheReference<parser::AnyCacheType> &Data() const
     {
         return *this;
     }
@@ -154,8 +156,10 @@ public:
 
 private:
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
-    void SetFile(const std::string &file, util::DiagnosticEngine *de)
+    void SetTextFile(const std::string &file, util::DiagnosticEngine *de)
     {
+        static_assert(KIND != ModuleKind::METADATA_DECL);  // metadata is not stored as a text
+
         std::ifstream inputStream {file};
         if (!inputStream) {
             de->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {file});
@@ -168,23 +172,35 @@ private:
         if (text.empty()) {
             de->LogDiagnostic(diagnostic::EMPTY_SOURCE_FILE, util::DiagnosticMessageParams {file});
         }
-        SetText<KIND, SHOULD_CACHE>(file, std::move(text));
+        SetData<KIND, SHOULD_CACHE>(file, std::move(text));
+    }
+
+    template <bool SHOULD_CACHE = true>
+    void SetBinFile(const panda_file::File &pf)
+    {
+        auto metadataSpan = GetMetadata(pf);
+        std::vector<uint8_t> metadata;
+        metadata.insert(metadata.begin(), metadataSpan.begin(), metadataSpan.end());
+        SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(AbcPath(), std::move(metadata));
     }
 
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
-    void SetText(std::string textSource, std::string &&contents)
+    void SetData(std::string textSource, parser::SelectCacheDataType<SelectCacheType<KIND>(), true> contents)
     {
-        ES2PANDA_ASSERT(Text().Kind() == ModuleKind::UNKNOWN);
-        Set<KIND, SHOULD_CACHE>(textSource, std::move(contents));
+        ES2PANDA_ASSERT(Data().Kind() == ModuleKind::UNKNOWN);
+        Set(parser::ImportCache<SelectCacheType<KIND>()>::template StoreContents<KIND, SHOULD_CACHE>(
+            *this, textSource, std::move(contents)));
     }
 
-    void LinkFractionMetadataToPackage(const parser::PackageProgram &package);
+    void LinkFractionInfoToPackage(const parser::PackageProgram &package);
 
     bool ResolvedPathIsVirtual() const
     {
         ES2PANDA_ASSERT(!resolvedSource_.empty());
         return !IsAbsolute(std::string(resolvedSource_));
     }
+
+    inline static Span<const uint8_t> GetMetadata(const panda_file::File &pf);
 
 private:
     ArenaString resolvedSource_ {ERROR_LITERAL};
@@ -211,7 +227,7 @@ class ImportPathManager {
 public:
     static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
         "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
-    static constexpr std::string_view ABC_SUFFIX = ImportMetadata::ABC_SUFFIX;
+    static constexpr std::string_view ABC_SUFFIX = ImportInfo::ABC_SUFFIX;
     static constexpr std::string_view ETS_SUFFIX = ".ets";
     static constexpr std::string_view D_ETS_SUFFIX = ".d.ets";
     static constexpr std::string_view CACHE_SUFFIX = ".etscache";
@@ -260,7 +276,7 @@ public:
         parseQueue_.clear();
     }
 
-    parser::Program *GatherImportMetadata(parser::Program *importer, ir::StringLiteral *importPath);
+    parser::Program *GatherImportInfo(parser::Program *importer, ir::StringLiteral *importPath);
     parser::Program *EnsurePackageIsRegisteredByPackageFraction(parser::Program *fraction,
                                                                 ir::ETSPackageDeclaration *packageDecl);
     // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dependencies'.
@@ -277,10 +293,12 @@ public:
 
     parser::Program *SetupProgramForDebugInfoPlugin(std::string_view sourceFilePath, std::string_view moduleName);
 
-    parser::Program *SearchResolved(const ImportMetadata &importMetadata) const;
+    parser::Program *SearchResolved(const ImportInfo &importInfo) const;
 
     static std::string FormEtscacheFilePath(std::string moduleName, const std::string &cacheDir);
-    std::string FormAbcFilePath(const ImportMetadata &imd) const;
+    static void ExtractEtscacheToFile(const panda_file::File &pf, const std::string &abcPath,
+                                      const std::string &cacheDir);
+    std::string FormAbcFilePath(const ImportInfo &imd) const;
 
     auto *Context() const
     {
@@ -291,8 +309,6 @@ public:
     {
         return srcPos_;
     }
-
-    static int UnpackAbc(const std::string &abcPath, const std::string &cacheDir);
 
     const auto &GetFileDependencies() const
     {
@@ -327,7 +343,7 @@ private:
         bool resolvedIsExternalModule {false};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
-    ImportMetadata ResolvePath(parser::Program *importer, std::string_view importPath) const;
+    ImportInfo ResolvePath(parser::Program *importer, std::string_view importPath) const;
     ResolvedPathRes ResolveAbsolutePath(std::string_view importPathNode) const;
     std::string DirOrDirWithIndexFile(std::string resolvedPathPrototype) const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(std::string resolvedPathPrototype) const;
@@ -335,30 +351,30 @@ private:
     ResolvedPathRes TryResolvePath(std::string resolvedPathPrototype) const;
     void TryMatchStaticResolvedPath(ResolvedPathRes *result) const;
     void TryMatchDynamicResolvedPath(ResolvedPathRes *result) const;
+    bool DeclarationIsInCache(ImportInfo &importInfo);
 
     template <ModuleKind KIND, typename VarBinderT = void>
-    parser::ProgramAdapter<KIND> *IntroduceProgram(const ImportMetadata &importMetadata);
-    parser::Program *IntroduceProgram(const ImportMetadata &importMetadata);
+    parser::ProgramAdapter<KIND> *IntroduceProgram(const ImportInfo &importInfo);
+    parser::Program *IntroduceProgram(const ImportInfo &importInfo);
 
-    parser::Program *LookupCachesAndIntroduceProgram(ImportMetadata *importMetadata);
-    parser::Program *LookupProgramCaches(const ImportMetadata &importData);
-    void LookupMemCache(ImportMetadata *importMetadata);
-    void LookupDiskCache(ImportMetadata *importMetadata);
-    void MaybeUnpackAbcAndEmplaceInCacheDir(const ImportMetadata &importMetadata);
-    void LookupEtscacheFile(ImportMetadata *importData);
+    parser::Program *LookupImportDataAndIntroduceProgram(ImportInfo *importInfo);
+    parser::Program *LookupProgramCaches(const ImportInfo &importInfo);
+    void LookupMemCache(ImportInfo *importInfo);
+    void LookupDiskData(ImportInfo *importInfo);
+    void LookupEtscacheFile(ImportInfo *importInfo);
 
-    void LookupSourceFile(ImportMetadata *importMetadata);
-    void RegisterSourceFile(const ImportMetadata &importMetadata);
+    void LookupSourceFile(ImportInfo *importInfo);
+    void RegisterSourceFile(const ImportInfo &importInfo);
 
-    void RegisterPackageFraction(parser::PackageProgram *package, ImportMetadata *importMetadata);
+    void RegisterPackageFraction(parser::PackageProgram *package, ImportInfo *importInfo);
 
-    parser::PackageProgram *RegisterSourcesForPackageFromGlobbedDirectory(const ImportMetadata &importMetadata);
+    parser::PackageProgram *RegisterSourcesForPackageFromGlobbedDirectory(const ImportInfo &importInfo);
 #ifdef USE_UNIX_SYSCALL
     void UnixRegisterSourcesForPackageFromGlobbedDirectory(parser::ProgramAdapter<ModuleKind::PACKAGE> *pkg,
-                                                           const ImportMetadata &importMetadata);
+                                                           const ImportInfo &importInfo);
 #endif
 
-    parser::PackageProgram *NewEmptyPackage(const ImportMetadata &importMetadata);
+    parser::PackageProgram *NewEmptyPackage(const ImportInfo &importInfo);
 
     void RegisterProgram(parser::Program *program);
 

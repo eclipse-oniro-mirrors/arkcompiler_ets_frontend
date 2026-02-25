@@ -34,7 +34,7 @@
 #include "compiler/lowering/phase.h"
 #include "compiler/lowering/checkerPhase.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
-#include "parser/program/DeclarationCache.h"
+#include "parser/program/ImportCache.h"
 #include "parser/parserImpl.h"
 #include "parser/JSparser.h"
 #include "parser/ASparser.h"
@@ -139,8 +139,8 @@ void HandleGenerateDecl(public_lib::Context *context, const parser::Program *pro
 
     std::string_view textToWrite;
     if (context->config->options->IsStoreDeclarationCacheDirectlyInMemory()) {
-        using DC = parser::DeclarationCache;
-        textToWrite = DC::PromoteExistingEntryToLowdeclaration(program->GetImportMetadata(), std::move(res));
+        using IC = parser::ImportCache<parser::CacheType::SOURCES>;
+        textToWrite = IC::PromoteExistingEntryToLowdeclaration(program->GetImportInfo(), std::move(res));
     } else {
         textToWrite = res;
     }
@@ -306,7 +306,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> EmitPr
 
     context->emitter->EmitRecords();
     std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
-    auto &imd = context->parserProgram->GetImportMetadata();
+    auto &imd = context->parserProgram->GetImportInfo();
     res.emplace(context->parser->GetImportPathManager()->FormAbcFilePath(imd),
                 std::unique_ptr<pandasm::Program>(context->emitter->DumpDebugInfo()));
     return res;
@@ -387,7 +387,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
                                                                                   public_lib::Context *context)
 {
     ir::DisableContextHistory();
-    parser::DeclarationCache::ActivateCache();
+    parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
 
     auto config = public_lib::ConfigImpl {};
     context->config = &config;

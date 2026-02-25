@@ -59,7 +59,7 @@ void ImportExportDecls::IntroduceStdlibImportProgram()
 
     if (UNLIKELY(ctx_->config->options->IsGenStdlib())) {
         for (const auto *import : imports) {
-            auto prog = importManager->SearchResolved(import->ImportMetadata());
+            auto prog = importManager->SearchResolved(import->ImportInfo());
             if (prog->GetModuleKind() == util::ModuleKind::ETSCACHE_DECL) {
                 auto resolved = import->ResolvedSource();
                 ctx_->diagnosticEngine->LogDiagnostic(diagnostic::GEN_STDLIB_DECLS,

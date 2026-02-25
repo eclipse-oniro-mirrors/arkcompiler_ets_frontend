@@ -82,7 +82,7 @@
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/ets/fixedarrayLowering.h"
-#include "compiler/metadata/metadataEmitter.h"
+#include "compiler/metadata/emitter.h"
 #include "generated/diagnostic.h"
 #include "lexer/token/sourceLocation.h"
 #include "public/es2panda_lib.h"

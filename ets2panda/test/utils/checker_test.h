@@ -75,6 +75,16 @@ public:
         return allocator_.get();
     }
 
+    void SetWorkingDir(const std::string &dir)
+    {
+        es2pandaPath_ = dir;
+    }
+
+    const ark::es2panda::util::DiagnosticBase &GetAnyError() const
+    {
+        return diagnosticEngine_.GetAnyError();
+    }
+
     parser_alias::Program *Program()
     {
         return publicContext_->parserProgram;
@@ -163,7 +173,7 @@ public:
         auto emitter = Emitter(publicContext_.get());
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        parser_alias::DeclarationCache::ActivateCache();
+        parser_alias::ImportCache<parser_alias::CacheType::SOURCES>::ActivateCache();
         auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
         publicContext_->phaseManager = phaseManager;
 
@@ -213,13 +223,13 @@ public:
         publicContext_->PushChecker(checker);
         auto analyzer = Analyzer(checker);
         checker->SetAnalyzer(&analyzer);
+        auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
+        publicContext_->phaseManager = phaseManager;
         publicContext_->PushAnalyzer(publicContext_->GetChecker()->GetAnalyzer());
 
         auto emitter = Emitter(publicContext_.get());
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
-        publicContext_->phaseManager = phaseManager;
 
         parser.ParseGlobal();
         while (auto phase = publicContext_->phaseManager->NextPhase()) {

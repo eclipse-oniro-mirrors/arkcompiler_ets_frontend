@@ -79,7 +79,7 @@ void GlobalClassHandler::CollectReExportedClasses(parser::Program *program, ir::
                                                   const ir::ETSReExportDeclaration *reExport)
 {
     auto importDecl = reExport->GetETSImportDeclarations();
-    const auto importPath = reExport->GetETSImportDeclarations()->ImportMetadata().ResolvedSource();
+    const auto importPath = reExport->GetETSImportDeclarations()->ImportInfo().ResolvedSource();
     parser::Program *extProg = nullptr;
     // Search Correct external program by comparing importPath and absolutePath
     // NOTE(dkofanov): This works "as intended" only for main-program.

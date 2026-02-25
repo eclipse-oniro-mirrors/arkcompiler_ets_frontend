@@ -27,42 +27,42 @@ class StringLiteral;
 
 class ETSImportDeclaration : public ImportDeclaration {
 public:
-    ETSImportDeclaration(ir::StringLiteral *importPath, const util::ImportMetadata &importMetadata,
+    ETSImportDeclaration(ir::StringLiteral *importPath, const util::ImportInfo &importInfo,
                          ArenaVector<AstNode *> &&specifiers, const ImportKinds importKinds = ImportKinds::ALL)
-        : ImportDeclaration(importPath, std::move(specifiers), importKinds), importMetadata_(importMetadata)
+        : ImportDeclaration(importPath, std::move(specifiers), importKinds), importInfo_(importInfo)
     {
         SetType(AstNodeType::ETS_IMPORT_DECLARATION);
     }
 
     ETSImportDeclaration(ir::StringLiteral *importPath, ArenaVector<AstNode *> &&specifiers,
                          const ImportKinds importKinds = ImportKinds::ALL)
-        : ETSImportDeclaration(importPath, util::ImportMetadata {}, std::move(specifiers), importKinds)
+        : ETSImportDeclaration(importPath, util::ImportInfo {}, std::move(specifiers), importKinds)
     {
     }
 
-    void CopyImportMetadataFrom(ETSImportDeclaration *other)
+    void CopyImportInfoFrom(ETSImportDeclaration *other)
     {
-        importMetadata_ = other->importMetadata_;
+        importInfo_ = other->importInfo_;
     }
 
     es2panda::Language Language() const
     {
-        return es2panda::Language {ImportMetadata().Lang()};
+        return es2panda::Language {ImportInfo().Lang()};
     }
 
     std::string_view DeclPath() const
     {
-        return ImportMetadata().DeclPath();
+        return ImportInfo().DeclPath();
     }
 
     std::string_view OhmUrl() const
     {
-        return ImportMetadata().OhmUrl();
+        return ImportInfo().OhmUrl();
     }
 
     bool IsValid() const
     {
-        return (Source()->Str() != ERROR_LITERAL) && ImportMetadata().IsValid();
+        return (Source()->Str() != ERROR_LITERAL) && ImportInfo().IsValid();
     }
 
     bool IsPureDynamic() const
@@ -84,12 +84,12 @@ public:
 
     std::string_view ResolvedSource() const
     {
-        return ImportMetadata().ResolvedSource();
+        return ImportInfo().ResolvedSource();
     }
 
-    const util::ImportMetadata &ImportMetadata() const
+    const util::ImportInfo &ImportInfo() const
     {
-        return GetHistoryNode()->AsETSImportDeclaration()->importMetadata_;
+        return GetHistoryNode()->AsETSImportDeclaration()->importInfo_;
     }
 
     void Accept(ASTVisitorT *v) override
@@ -107,14 +107,14 @@ public:
     {
         auto otherImpl = other->AsETSImportDeclaration();
 
-        otherImpl->importMetadata_ = importMetadata_;
+        otherImpl->importInfo_ = importInfo_;
         otherImpl->assemblerName_ = assemblerName_;
 
         ImportDeclaration::CopyTo(other);
     };
 
 private:
-    util::ImportMetadata importMetadata_;
+    util::ImportInfo importInfo_;
     util::StringView assemblerName_ {};
 };
 }  // namespace ark::es2panda::ir

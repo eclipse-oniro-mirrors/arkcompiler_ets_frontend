@@ -114,7 +114,7 @@ public:
         auto emitter = Emitter(publicContext_.get());
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
-        parser::DeclarationCache::ActivateCache();
+        parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
         auto phaseManager = new compiler::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
         publicContext_->phaseManager = phaseManager;
 

@@ -32,7 +32,7 @@ static bool CheckSourceConsistency(parser::Program *program)
     std::stringstream ss;
     ss << "Package \"" << program->ModuleName() << "\" has incosistent fractions:";
     std::for_each(packageFractions.begin(), packageFractions.end(), [&ss](parser::Program *p) {
-        ss << std::endl << "  at " << p->GetImportMetadata().ResolvedSource();
+        ss << std::endl << "  at " << p->GetImportInfo().ResolvedSource();
         if (p->GetModuleKind() == util::ModuleKind::PACKAGE) {
             ss << " (ok)";
         } else {

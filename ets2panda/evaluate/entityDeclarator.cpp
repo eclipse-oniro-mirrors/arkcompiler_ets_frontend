@@ -79,15 +79,15 @@ ir::ETSImportDeclaration *EntityDeclarator::CreateIrImport(util::StringView path
     auto moduleName = debugInfoPlugin_.GetDebugInfoStorage()->GetModuleName(pathToDeclSourceFile.Utf8());
     auto *source = checker->AllocNode<ir::StringLiteral>(moduleName);
     auto importLanguage = ToLanguage(debugInfoPlugin_.GetETSBinder()->Extension());
-    util::ImportMetadata importMetadata {*debugInfoPlugin_.E2PContext()->parser->GetImportPathManager(),
-                                         pathToDeclSourceFile.Mutf8(), importLanguage.GetId()};
+    util::ImportInfo importInfo {*debugInfoPlugin_.E2PContext()->parser->GetImportPathManager(),
+                                 pathToDeclSourceFile.Mutf8(), importLanguage.GetId()};
 
     auto *local = checker->AllocNode<ir::Identifier>(classDeclName, allocator);
     auto *imported = checker->AllocNode<ir::Identifier>(classImportedName, allocator);
     auto *spec = checker->AllocNode<ir::ImportSpecifier>(imported, local);
     ArenaVector<ir::AstNode *> specifiers(1, spec, allocator->Adapter());
     // NOLINTNEXTLINE (performance-move-const-arg)
-    return checker->AllocNode<ir::ETSImportDeclaration>(source, importMetadata, std::move(specifiers));
+    return checker->AllocNode<ir::ETSImportDeclaration>(source, importInfo, std::move(specifiers));
 }
 
 void EntityDeclarator::InsertImportStatement(ir::Statement *importStatement, parser::Program *importerProgram)

@@ -229,8 +229,8 @@ static checker::Type *CreateModuleObjectType(public_lib::Context *ctx, ir::ETSIm
     auto checker = ctx->GetChecker()->AsETSChecker();
     auto allocator = checker->ProgramAllocator();
 
-    const auto importPath = importDecl->DeclPath() == util::ImportMetadata::DUMMY_PATH ? importDecl->ResolvedSource()
-                                                                                       : importDecl->DeclPath();
+    const auto importPath =
+        importDecl->DeclPath() == util::ImportInfo::DUMMY_PATH ? importDecl->ResolvedSource() : importDecl->DeclPath();
     auto program = checker->VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
     if (program == nullptr) {
         return checker->GlobalTypeError();

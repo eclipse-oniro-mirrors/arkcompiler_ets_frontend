@@ -3292,7 +3292,7 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
 
     ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);
     auto importPath =
-        importDecl->ImportMetadata().HasSpecifiedDeclPath() ? importDecl->DeclPath() : importDecl->ResolvedSource();
+        importDecl->ImportInfo().HasSpecifiedDeclPath() ? importDecl->DeclPath() : importDecl->ResolvedSource();
     SetPropertiesForModuleObject(moduleObjectType, importPath, importDecl);
     SetrModuleObjectTsType(ident, moduleObjectType);
 

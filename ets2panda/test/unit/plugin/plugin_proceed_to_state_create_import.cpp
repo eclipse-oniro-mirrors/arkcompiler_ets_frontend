@@ -161,7 +161,7 @@ bool Find(es2panda_AstNode *ast)
         auto importDeclaration =
             g_impl->UpdateETSImportDeclaration(g_ctx, ast, source, specifiers, len, IMPORT_KINDS_ALL);
 
-        g_impl->ETSImportDeclarationCopyImportMetadataFrom(g_ctx, importDeclaration, ast);
+        g_impl->ETSImportDeclarationCopyImportInfoFrom(g_ctx, importDeclaration, ast);
 
         for (size_t i = 0; i < len; i++) {
             g_impl->AstNodeSetParent(g_ctx, specifiers[i], importDeclaration);
