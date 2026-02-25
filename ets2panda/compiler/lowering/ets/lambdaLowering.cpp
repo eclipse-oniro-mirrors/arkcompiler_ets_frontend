@@ -82,12 +82,29 @@ static std::pair<ir::AstNode *, ir::ScriptFunction *> FindEnclosingClassAndFunct
     ES2PANDA_UNREACHABLE();
 }
 
+static bool IsInsideObjectLiteralMethod(const ir::AstNode *ast)
+{
+    bool foundMethod = false;
+    for (const ir::AstNode *curr = ast->Parent(); curr != nullptr; curr = curr->Parent()) {
+        if (curr->IsProperty() && curr->AsProperty()->IsMethod()) {
+            foundMethod = true;
+        }
+        if (foundMethod && curr->IsObjectExpression()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static ir::AstNode const *FindIfNeedThis(const ir::ArrowFunctionExpression *lambda, const checker::ETSChecker *checker)
 {
     const auto *lambdaClass = ContainingClass(lambda);
     return lambda->FindChild([&checker, &lambdaClass](const ir::AstNode *ast) {
-        return (ast->IsThisExpression() || ast->IsSuperExpression()) &&
-               checker->Relation()->IsIdenticalTo(lambdaClass, ContainingClass(ast));
+        if ((ast->IsThisExpression() || ast->IsSuperExpression()) &&
+            checker->Relation()->IsIdenticalTo(lambdaClass, ContainingClass(ast))) {
+            return !IsInsideObjectLiteralMethod(ast);
+        }
+        return false;
     });
 }
 
