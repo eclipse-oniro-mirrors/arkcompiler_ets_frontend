@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,4 @@ x = true ? x:():long=>32
 let y:()=>int = ()=>16 as int
 y = true ? y:():int=>32
 y = true ? ():int=>32:y
-x = /* @@ forbid_aggresive_constf */true ? x:"apple"
-
-/* @@@ forbid_aggresive_constf Error Semantic error ESE0318: Type '((() => Long))|"apple"' cannot be assigned to type '(() => Long)' */
+x = true ? x:"apple"

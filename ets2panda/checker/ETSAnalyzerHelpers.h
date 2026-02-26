@@ -24,6 +24,7 @@
 #include "util/helpers.h"
 
 #include <memory>
+#include <optional>
 
 namespace ark::es2panda::checker {
 void CheckExtensionIsShadowedInCurrentClassOrInterface(checker::ETSChecker *checker, checker::ETSObjectType *objType,
@@ -65,6 +66,7 @@ bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
 
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
+std::optional<bool> TryResolveConditionalTestValue(ETSChecker *checker, const ir::Expression *test);
 void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature);
 }  // namespace ark::es2panda::checker
 

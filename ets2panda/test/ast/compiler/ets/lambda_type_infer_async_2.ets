@@ -23,5 +23,4 @@ async function foo() {
 }
 
 /* @@? 19:20 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
-/* @@? 19:26 Error Semantic error ESE0127: No matching call signature for then(((p1: null) => void)) */
-/* @@? 20:23 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */
+/* @@? 19:26 Error Semantic error ESE0127: No matching call signature for then(((p1: null) => String|PromiseLike<String>)) */

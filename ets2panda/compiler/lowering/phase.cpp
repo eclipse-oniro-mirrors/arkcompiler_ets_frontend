@@ -27,6 +27,7 @@
 #include "compiler/lowering/ets/boxingForLocals.h"
 #include "compiler/lowering/ets/capturedVariables.h"
 #include "compiler/lowering/ets/constantExpressionLowering.h"
+#include "compiler/lowering/ets/conditionalSimplifyLowering.h"
 #include "compiler/lowering/ets/declareOverloadLowering.h"
 #include "compiler/lowering/ets/cfgBuilderPhase.h"
 #include "compiler/lowering/ets/declGenPhase.h"
@@ -156,6 +157,7 @@ std::vector<Phase *> GetETSPhaseList()
         new BoxingForLocals,
         new RecordLowering,
         new ObjectIteratorLowering,
+        new ConditionalSimplifyLowering,
         new OverloadMappingLowering,
         new LambdaConversionPhase,
         new UnionLowering,
