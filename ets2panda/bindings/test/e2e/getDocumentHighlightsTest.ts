@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -398,6 +398,27 @@ describe('getDocumentHighlightsTest', () => {
       }
     ]
   };
+  const EXPECT_009 = {
+    documentHighlights: [
+      {
+        fileName: getRealPath(moduleName, 'getDocumentHighlights10.ets'),
+        highlightSpans: [
+          {
+            fileName: getRealPath(moduleName, 'getDocumentHighlights10.ets'),
+            textSpan: {
+              start: 965,
+              length: 4
+            },
+            contextSpan: {
+              start: 0,
+              length: 0
+            },
+            kind: 2
+          }
+        ]
+      }
+    ]
+  };
   const lsp = getLsp(moduleName);
   test('getDocumentHighlights_000', () => {
     const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights1.ets'), 614);
@@ -443,5 +464,10 @@ describe('getDocumentHighlightsTest', () => {
     const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights9.ets'), 620);
     expect(res?.documentHighlights.length).toBe(1);
     expect(res).toMatchObject(EXPECT_008);
+  });
+  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_009', () => {
+    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights10.ets'), 967);
+    expect(res?.documentHighlights.length).toBe(1);
+    expect(res).toMatchObject(EXPECT_009);
   });
 });
