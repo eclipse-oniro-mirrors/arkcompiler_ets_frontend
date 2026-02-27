@@ -100,9 +100,10 @@ std::vector<CompletionEntry> GetKeywordCompletions(const std::string &input)
 {
     std::vector<CompletionEntry> allKeywords = AllKeywordsCompletions();
     std::vector<CompletionEntry> completions;
+    std::string lowerInput = ToLowerCase(input);
 
     for (const auto &entry : allKeywords) {
-        if (ToLowerCase(entry.GetName()).find(ToLowerCase(input)) == 0) {
+        if (ToLowerCase(entry.GetName()).find(lowerInput) != std::string::npos) {
             completions.push_back(entry);
         }
     }
@@ -1411,6 +1412,20 @@ auto GetDeclByScopePath(ArenaVector<varbinder::Scope *> &scopePath, size_t posit
     return decls;
 }
 
+std::vector<CompletionEntry> SortCompletionEntries(std::vector<CompletionEntry> &completions, std::string prefix)
+{
+    auto sort = [&prefix](const CompletionEntry &a, const CompletionEntry &b) -> bool {
+        bool aPrefix = ToLowerCase(a.GetName()).find(ToLowerCase(prefix)) == 0;
+        bool bPrefix = ToLowerCase(b.GetName()).find(ToLowerCase(prefix)) == 0;
+        if (aPrefix != bPrefix) {
+            return aPrefix;  // prefix match first
+        }
+        return false;  // keep original order
+    };
+    std::sort(completions.begin(), completions.end(), sort);
+    return completions;
+}
+
 // Support: global variables, local variables, functions, keywords
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
@@ -1430,7 +1445,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
 
     for (auto decl : decls) {
         auto entry = InitEntry(decl);
-        if (entry.GetName().find(prefix) != 0) {
+        if (entry.GetName().find(prefix) == std::string::npos) {
             continue;
         }
         entry = ProcessAutoImportForEntry(entry);
@@ -1441,8 +1456,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     completions.insert(completions.end(), keywordCompletions.begin(), keywordCompletions.end());
     auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
     completions.insert(completions.end(), systemInterfaceCompletions.begin(), systemInterfaceCompletions.end());
-
-    return completions;
+    return SortCompletionEntries(completions, prefix);
 }
 
 ArenaVector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope, ArenaAllocator *allocator)

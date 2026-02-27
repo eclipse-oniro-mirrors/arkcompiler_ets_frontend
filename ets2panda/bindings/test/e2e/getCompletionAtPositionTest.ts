@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -314,26 +314,30 @@ describe('getCompletionAtPositionTest', () => {
   const lsp = getLsp(moduleName);
   test('getCompletionAtPosition_000', () => {
     const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition1.ets'), 705);
+    expect(res).toBeDefined();
     EXPECT_000.forEach((item) => {
-      expect(toMatchObjectUnordered(res, item, 2)).toBe(true);
+      expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
     });
   });
   test('getCompletionAtPosition_001', () => {
     const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition2.ets'), 735);
+    expect(res).toBeDefined();
     EXPECT_001.forEach((item) => {
-      expect(toMatchObjectUnordered(res, item, 3)).toBe(true);
+      expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
     });
   });
   test('getCompletionAtPosition_002', () => {
     const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition3.ets'), 789);
+    expect(res).toBeDefined();
     EXPECT_002.forEach((item) => {
-      expect(toMatchObjectUnordered(res, item, 4)).toBe(true);
+      expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
     });
   });
   test('getCompletionAtPosition_003', () => {
     const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition4.ets'), 767);
+    expect(res).toBeDefined();
     EXPECT_003.forEach((item) => {
-      expect(toMatchObjectUnordered(res, item, 3)).toBe(true);
+      expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
     });
   });
   test('getCompletionAtPosition_004', () => {

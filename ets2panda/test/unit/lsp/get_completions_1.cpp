@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,68 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
     }
 }
 
+static void AssertCompletionsOrder(const std::vector<CompletionEntry> &entries,
+                                   const std::vector<CompletionEntry> &expectedEntries)
+{
+    if (expectedEntries.empty()) {
+        return;
+    }
+
+    size_t prevPos = std::string::npos;
+    for (const auto &expectedEntry : expectedEntries) {
+        size_t currentPos = std::string::npos;
+        for (size_t i = 0; i < entries.size(); ++i) {
+            if (entries[i].GetName() == expectedEntry.GetName() &&
+                entries[i].GetCompletionKind() == expectedEntry.GetCompletionKind() &&
+                entries[i].GetInsertText() == expectedEntry.GetInsertText()) {
+                currentPos = i;
+                break;
+            }
+        }
+        ASSERT_TRUE(currentPos != std::string::npos)
+            << "Expected completion '" << expectedEntry.GetName() << "' not found";
+
+        if (prevPos != std::string::npos) {
+            ASSERT_TRUE(currentPos > prevPos)
+                << "Expected completion '" << expectedEntry.GetName()
+                << "' should come after previous expected completion, but found at position " << currentPos
+                << " (previous at position " << prevPos << ")";
+        }
+        prevPos = currentPos;
+    }
+}
+
 namespace {
+TEST_F(LSPCompletionsTests, KeyWordCompletionsToInclude1)
+{
+    // test interface
+    std::vector<std::string> files = {"KeyWordCompletionsToInclude1.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class cal {}
+l
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 15;
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string res1 = "let";
+    std::string res2 = "cal";
+    std::string res3 = "null";
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry(res1, CompletionEntryKind::KEYWORD,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), res1),
+        CompletionEntry(res2, CompletionEntryKind::MODULE,
+                        std::string(ark::es2panda::lsp::sort_text::CLASS_MEMBER_SNIPPETS), res2),
+        CompletionEntry(res3, CompletionEntryKind::KEYWORD,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), res3)};
+    initializer.DestroyContext(ctx);
+    AssertCompletionsOrder(entries, expectedEntries);
+}
 TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest8848)
 {
     // test interface
