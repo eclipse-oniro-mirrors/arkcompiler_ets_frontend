@@ -19302,7 +19302,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (allCommon && objLiteralProps.length > 0) {
         const firstTypeName = this.tsTypeChecker.typeToStringForLinter(firstType);
         const autofix = this.autofixer?.fixSdkUnionTypeAmbiguity(firstArg, firstTypeName);
-        this.incrementCounters(firstArg, FaultID.SdkUnionTypeAmbiguity, autofix);
+        this.incrementCounters(firstArg, FaultID.TsOverload, autofix);
         return;
       }
     }

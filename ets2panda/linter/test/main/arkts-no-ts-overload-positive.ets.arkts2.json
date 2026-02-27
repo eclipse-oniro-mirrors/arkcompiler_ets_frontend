@@ -19,9 +19,9 @@
             "column": 8,
             "endLine": 19,
             "endColumn": 21,
-            "problem": "SdkUnionTypeAmbiguity",
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -29,9 +29,9 @@
             "column": 5,
             "endLine": 23,
             "endColumn": 18,
-            "problem": "SdkUnionTypeAmbiguity",
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -39,9 +39,9 @@
             "column": 8,
             "endLine": 27,
             "endColumn": 23,
-            "problem": "SdkUnionTypeAmbiguity",
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -49,9 +49,9 @@
             "column": 5,
             "endLine": 31,
             "endColumn": 18,
-            "problem": "SdkUnionTypeAmbiguity",
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -59,9 +59,59 @@
             "column": 14,
             "endLine": 41,
             "endColumn": 24,
-            "problem": "SdkUnionTypeAmbiguity",
+            "problem": "TsOverload",
             "suggest": "",
-            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 8,
+            "endLine": 72,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 76,
+            "column": 8,
+            "endLine": 76,
+            "endColumn": 25,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 77,
+            "column": 5,
+            "endLine": 77,
+            "endColumn": 18,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 78,
+            "column": 8,
+            "endLine": 78,
+            "endColumn": 21,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 8,
+            "endLine": 83,
+            "endColumn": 22,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         },
         {
@@ -142,6 +192,26 @@
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"HorizontalAlign\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 12,
+            "endLine": 82,
+            "endColumn": 20,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Resource\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 23,
+            "endLine": 82,
+            "endColumn": 25,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"$r\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]
