@@ -649,4 +649,17 @@ bool ClassDefinitionIsEnumTransformed(const ir::AstNode *node)
 {
     return node != nullptr && node->IsClassDefinition() && node->AsClassDefinition()->IsEnumTransformed();
 }
+
+ir::Expression *CreateUninitializedFixedArray(public_lib::Context *ctx, ir::Expression *arraySize,
+                                              checker::Type *arrayType)
+{
+    auto *allocator = ctx->allocator;
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    ArenaVector<ir::Expression *> params(allocator->Adapter());
+    params.emplace_back(arraySize);
+    params.emplace_back(checker->AllocNode<ir::OpaqueTypeNode>(arrayType, allocator));
+    auto resultExpr =
+        util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(allocator, "createrawfixedarray", std::move(params));
+    return resultExpr;
+}
 }  // namespace ark::es2panda::compiler

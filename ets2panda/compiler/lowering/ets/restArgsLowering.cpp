@@ -38,7 +38,7 @@ constexpr size_t TUPLE_SPREAD_ARG_COUNT = 5;
 
 struct RestArgsBlockExpressionData {
     std::string spreadArgsArray;
-    std::string arrayLength;
+    ir::Identifier *arrayLength;
     ir::Identifier *arraySymbol;
     ir::Identifier *arrayIndex;
     ir::Identifier *argumentIndex;
@@ -49,7 +49,7 @@ RestArgsBlockExpressionData CreateRestArgsBlockExpressionData(public_lib::Contex
     auto *allocator = context->allocator;
 
     const auto spreadArgsArray = GenName();
-    const auto arrayLength = GenName();
+    const auto arrayLength = Gensym(allocator);
     const auto arraySymbol = Gensym(allocator);
     ES2PANDA_ASSERT(arraySymbol != nullptr);
     const auto arrayIndex = Gensym(allocator);
@@ -190,52 +190,51 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     ArenaVector<ir::Expression *> spreadElements(allocator->Adapter());
 
     auto nonSpreadArgCount = GetNonSpreadArgCount(arguments, spreadElements);
-
+    auto addStmt = [&parser, &blockStatements](std::string_view const fmt, auto... args) {
+        blockStatements.push_back(parser->CreateFormattedStatement(fmt, args...));
+    };
     // tmp array to store spread arguments for avoiding repeated evaluation
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: FixedArray<Any> = new FixedArray<Any>(" +
-                                                                   std::to_string(spreadElements.size()) + ");",
-                                                               data.spreadArgsArray));
+    addStmt("let @@I1 = @@E2;", data.spreadArgsArray,
+            CreateUninitializedFixedArray(context,
+                                          parser->CreateFormattedExpression(std::to_string(spreadElements.size())),
+                                          checker->CreateETSArrayType(checker->GlobalETSAnyType())));
 
     // calculate the length of array to be created
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: int = 0;", data.arrayLength));
+    addStmt("let @@I1: int = 0;", data.arrayLength->Clone(allocator, nullptr));
     for (size_t i = 0; i < spreadElements.size(); ++i) {
         auto arg = spreadElements[i];
         auto argType = arg->TsType();
         auto argTypeNode = allocator->New<ir::OpaqueTypeNode>(argType, allocator);
-        blockStatements.push_back(parser->CreateFormattedStatement("@@I1[" + std::to_string(i) + "] = @@E2 as @@T3;",
-                                                                   data.spreadArgsArray, arg, argTypeNode));
+        addStmt("@@I1[" + std::to_string(i) + "] = @@E2 as @@T3;", data.spreadArgsArray, arg, argTypeNode);
         if (argType->IsETSTupleType() && argType->AsETSTupleType()->GetTupleSize() > 0) {
-            blockStatements.push_back(parser->CreateFormattedStatement(
-                "@@I1 = @@I2 + " + std::to_string(argType->AsETSTupleType()->GetTupleSize()) + " ;", data.arrayLength,
-                data.arrayLength));
+            addStmt("@@I1 = @@I2 + " + std::to_string(argType->AsETSTupleType()->GetTupleSize()) + " ;",
+                    data.arrayLength->Clone(allocator, nullptr), data.arrayLength->Clone(allocator, nullptr));
         } else {
-            blockStatements.push_back(parser->CreateFormattedStatement(
-                "@@I1 = @@I2 + (@@I3[" + std::to_string(i) + "] as @@T4).length;", data.arrayLength, data.arrayLength,
-                data.spreadArgsArray, argTypeNode->Clone(allocator, nullptr)));
+            addStmt("@@I1 = @@I2 + (@@I3[" + std::to_string(i) + "] as @@T4).length;",
+                    data.arrayLength->Clone(allocator, nullptr), data.arrayLength->Clone(allocator, nullptr),
+                    data.spreadArgsArray, argTypeNode->Clone(allocator, nullptr));
         }
     }
     if (nonSpreadArgCount > 0) {
-        blockStatements.push_back(parser->CreateFormattedStatement(
-            "@@I1 = @@I2 + " + std::to_string(nonSpreadArgCount) + ";", data.arrayLength, data.arrayLength));
+        addStmt("@@I1 = @@I2 + " + std::to_string(nonSpreadArgCount) + ";", data.arrayLength->Clone(allocator, nullptr),
+                data.arrayLength->Clone(allocator, nullptr));
     }
 
     auto constraintTypeNode = GetConstraintTypeNode(checker, constraintType, useConstraintType, arrayType);
     // For rest paramter in arrow function(whether it is FixedArray or Array), we need to create a FixedArray, for
     // normal function it depends on the type of the rest parameter.
     if (useConstraintType || arrayType->IsETSArrayType()) {
-        blockStatements.push_back(parser->CreateFormattedStatement(
-            "let @@I1: FixedArray<@@T2> = new FixedArray<@@T3>(@@I4);", data.arraySymbol, constraintTypeNode,
-            constraintTypeNode->Clone(allocator, nullptr), data.arrayLength));
+        addStmt(
+            "let @@I1 = @@E2;", data.arraySymbol,
+            CreateUninitializedFixedArray(context, data.arrayLength->Clone(allocator, nullptr),
+                                          useConstraintType ? checker->CreateETSArrayType(constraintType) : arrayType));
     } else {
-        blockStatements.push_back(parser->CreateFormattedStatement(
-            "let @@I1 = new Array<@@T2>(@@I3);", data.arraySymbol, constraintTypeNode, data.arrayLength));
+        addStmt("let @@I1 = new Array<@@T2>(@@I3);", data.arraySymbol, constraintTypeNode, data.arrayLength);
     }
-
     // fill the array with the arguments in original callExpression.
     auto *arraySymbolWithoutTypeAnnotation = FillArrayWithArguments(context, blockStatements, arguments, data);
 
-    blockStatements.push_back(
-        parser->CreateFormattedStatement("@@I1", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr)));
+    addStmt("@@I1", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr));
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
     return blockExpr;
 }
@@ -552,7 +551,7 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
     newArgs.push_back(restArgsArray);
 
     auto *newCall = util::NodeAllocator::ForceSetParent<ir::ETSNewClassInstanceExpression>(
-        allocator, originalCall->GetTypeRef()->Clone(allocator, nullptr)->AsETSTypeReference(), std::move(newArgs));
+        allocator, originalCall->GetTypeRef(), std::move(newArgs));
     restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
     restArgsArray->SetParent(newCall);
     newCall->SetParent(originalCall->Parent());

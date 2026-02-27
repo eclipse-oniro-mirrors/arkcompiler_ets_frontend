@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 #include "etsIntrinsicNode.h"
+#include <memory>
 
 #include "checker/ETSchecker.h"
 #include "compiler/core/ETSGen.h"
@@ -576,6 +577,46 @@ public:
         etsg->EmitAnyIsinstance(intrin, typeReg);
     }
 };
+
+class ETSIntrinsicCreateRawFixedArray final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "createrawfixedarray";
+    }
+
+    checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, size_t idx) const override
+    {
+        if (idx == 0U) {
+            return checker->GlobalIntType();
+        }
+        return nullptr;
+    }
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+        if (intrin->Arguments().size() != 2U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+        return intrin->SetTsType(intrin->Arguments()[1U]->TsType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
+        auto const [size, expr] = Args<2U>(intrin);
+        auto *type = expr->TsType();
+        size->Compile(etsg);
+
+        auto const arr = etsg->AllocReg();
+        auto const dim = etsg->AllocReg();
+        etsg->ApplyConversionAndStoreAccumulator(intrin, dim, size->TsType());
+        etsg->NewArray(intrin, arr, dim, type);
+
+        etsg->SetVRegType(arr, type);
+        etsg->LoadAccumulator(intrin, arr);
+        ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), intrin->TsType()));
+    }
+};
 // NOLINTNEXTLINE (cert-err58-cpp)
 const EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::INFOS = EtsIntrinsicInfo::InitIntrinsicInfos();
 
@@ -599,6 +640,7 @@ EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
     registerIntrin(std::make_unique<ETSIntrinsicAnyCallNew>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyCallThis>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyIsinstance>());
+    registerIntrin(std::make_unique<ETSIntrinsicCreateRawFixedArray>());
     return infos;
 }
 
