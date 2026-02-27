@@ -115,6 +115,23 @@ function do_checkout() {
     popd >/dev/null 2>&1 || exit 1
 }
 
+function replace_panda_sdk_reference() {
+    local dest=$1
+    [ -n "${dest}" ] || return 0
+    if [ -n "${PANDA_SDK_HOST_TARBALL}" ]; then
+        echo "Replacing '@panda/sdk\": \"next' references with tarball path ${PANDA_SDK_HOST_TARBALL}"
+        # Escape slashes in the tarball path for sed
+        local escaped_tarball
+        escaped_tarball=$(echo "${PANDA_SDK_HOST_TARBALL}" | sed 's/[\/&]/\\&/g')
+        find "${dest}" -name "package.json" -type f | while read -r pkg; do
+            cp "${pkg}" "${pkg}.bak"
+            sed -i "s/\"@panda\/sdk\"[[:space:]]*:[[:space:]]*\"next\"/\"@panda\/sdk\": \"${escaped_tarball}\"/g" "${pkg}"
+            sed -i "s/'@panda\/sdk'[[:space:]]*:[[:space:]]*'next'/'@panda\/sdk': '${escaped_tarball}'/g" "${pkg}"
+            echo "Processed: ${pkg}"
+        done
+    fi
+}
+
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 source "${SCRIPT_DIR}"/arkui.properties
 
@@ -123,6 +140,8 @@ ARKUI_DEV_BRANCH="${ARKUI_DEV_BRANCH:-master}"
 ARKUI_DEST="${ARKUI_DEST:-koala-sig}"
 
 do_checkout "${ARKUI_DEV_REPO}" "${ARKUI_DEV_BRANCH}" "${ARKUI_DEST}"
+
+replace_panda_sdk_reference "${ARKUI_DEST}"
 
 cd "${ARKUI_DEST}" || exit 1
 
@@ -142,20 +161,18 @@ retry 5 npm install || {
     exit 1
 }
 
+pushd incremental/tools/panda/ || exit 1
 if [ -z "${PANDA_SDK_HOST_TARBALL}" ] ; then
-    npm run panda:sdk:install -C incremental/tools/panda || exit 1
+    npm run panda:sdk:install
 else
-    for dir in incremental/tools/panda fast-arkrtsc libarkrtsc smart-arkrtsc; do
-        npm install "${PANDA_SDK_HOST_TARBALL}" -C $dir || exit 1
-    done
+    npm install "${PANDA_SDK_HOST_TARBALL}"
     if [ -n "${PANDA_SDK_DEV_TARBALL}" ] ; then
-        for dir in incremental/tools/panda fast-arkrtsc libarkrtsc smart-arkrtsc; do
-            npm install "${PANDA_SDK_DEV_TARBALL}" -C $dir || exit 1
-        done
+        npm install "${PANDA_SDK_DEV_TARBALL}"
     else
         echo "PANDA_SDK_DEV_TARBALL is not set, skipping!"
     fi
 fi
+popd >/dev/null 2>&1 || exit 1
 
 function run_script() {
     npm run $1 | tee out.txt
@@ -181,7 +198,13 @@ retry 5 run_script "sdk:all" || {
     exit 1
 }
 
-run_script "compile"
+# Compile memo-plugin, ui-plugins
+run_script "build:all --prefix ui2abc" || exit 1
+run_script "build:deps --prefix ui2abc/ets-tests" || exit 1
+
+# Have to run all build steps in one command to avoid issues with incremental builds and caching,
+# which may cause some files to be missing if the build is split into multiple steps
+#run_script "compile"
 
 if [ -z "${DEMO}" ] ; then
     echo "Just compiled ArkUI, but no demo specified."
