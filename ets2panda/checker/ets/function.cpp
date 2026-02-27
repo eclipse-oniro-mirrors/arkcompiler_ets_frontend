@@ -1092,12 +1092,20 @@ static std::vector<bool> FindTypeInferenceArguments(const ArenaVector<ir::Expres
 {
     std::vector<bool> argTypeInferenceRequired(arguments.size());
     size_t index = 0;
-    for (ir::Expression *arg : arguments) {
+    auto isNeedInterLambda = [](ir::AstNode *arg) {
         if (arg->IsArrowFunctionExpression()) {
             ir::ScriptFunction *const lambda = arg->AsArrowFunctionExpression()->Function();
-            if (ETSChecker::NeedTypeInference(lambda)) {
+            return ETSChecker::NeedTypeInference(lambda);
+        }
+        return false;
+    };
+    for (ir::Expression *arg : arguments) {
+        if (arg->IsArrayExpression()) {
+            if (arg->IsAnyChild(isNeedInterLambda)) {
                 argTypeInferenceRequired[index] = true;
             }
+        } else {
+            argTypeInferenceRequired[index] = isNeedInterLambda(arg);
         }
         ++index;
     }
@@ -2594,6 +2602,49 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
                                                     ir::Expression *argument, std::size_t index,
                                                     TypeRelationFlag flags);
 
+static bool ContainsTypeErrorRecursively(Type *type)
+{
+    if (type == nullptr) {
+        return false;
+    }
+
+    bool hasTypeError = false;
+    type->IterateRecursively([&hasTypeError](Type const *currentType) {
+        if (currentType != nullptr && currentType->IsTypeError()) {
+            hasTypeError = true;
+        }
+    });
+
+    return hasTypeError;
+}
+
+static bool ValidateTypeInferenceRequiredArgument(ETSChecker *checker, Signature *substitutedSig,
+                                                  const ArenaVector<ir::Expression *> &arguments,
+                                                  const std::tuple<ir::Expression *, Type *, ir::AstNode *> &argInfo,
+                                                  TypeRelationFlag flags)
+{
+    auto [argument, paramType, targetParm] = argInfo;
+
+    if (argument->IsArrowFunctionExpression()) {
+        // Note: If the signatures are from lambdas, then they have no `Function`.
+        ir::ScriptFunction *const lambda = argument->AsArrowFunctionExpression()->Function();
+        ERROR_SANITY_CHECK(checker, targetParm->IsETSParameterExpression(), return false);
+        if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), paramType, lambda) &&
+            TypeInference(checker, substitutedSig, arguments, flags)) {
+            return true;
+        }
+        return false;
+    }
+
+    if (!argument->IsArrayExpression() || !ContainsTypeErrorRecursively(paramType)) {
+        return true;
+    }
+
+    checker->LogError(diagnostic::INFER_FAILURE_FUNC_PARAM, {targetParm->AsETSParameterExpression()->Ident()->Name()},
+                      argument->Start());
+    return false;
+}
+
 static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature *substitutedSig,
                                                  const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
                                                  const std::vector<bool> &argTypeInferenceRequired)
@@ -2613,16 +2664,10 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
             return false;
         }
 
-        if (argTypeInferenceRequired[index]) {
-            ES2PANDA_ASSERT(argument->IsArrowFunctionExpression());
-            // Note: If the signatures are from lambdas, then they have no `Function`.
-            ir::ScriptFunction *const lambda = argument->AsArrowFunctionExpression()->Function();
-            auto targetParm = substitutedSig->GetSignatureInfo()->params[index]->Declaration()->Node();
-            ERROR_SANITY_CHECK(checker, targetParm->IsETSParameterExpression(), return false);
-            if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), paramType, lambda) &&
-                TypeInference(checker, substitutedSig, arguments, flags)) {
-                continue;
-            }
+        auto *targetParm = substitutedSig->GetSignatureInfo()->params[index]->Declaration()->Node();
+        if (argTypeInferenceRequired[index] &&
+            !ValidateTypeInferenceRequiredArgument(checker, substitutedSig, arguments,
+                                                   std::make_tuple(argument, paramType, targetParm), flags)) {
             return false;
         }
 

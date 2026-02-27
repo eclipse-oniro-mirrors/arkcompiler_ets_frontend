@@ -130,3 +130,6 @@ finallyClauseThrow.ets
 
 #31690 to review after merge
 namespace_tests/namespace_import_type_test/namespace_import.ets
+
+#33394
+element_access_compound_assignment.ets
