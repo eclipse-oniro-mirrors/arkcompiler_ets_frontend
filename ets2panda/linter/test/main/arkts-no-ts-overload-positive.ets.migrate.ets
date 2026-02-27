@@ -22,25 +22,26 @@ import {
   FontWeight,
   VerticalAlign,
   HorizontalAlign,
+  Resource,
   ColumnOptions,
   RowOptions,
 } from '@kit.ArkUI';
 
 import { Column, Row } from './sdk/column_row';
 
-// Test case 1: Column with only common field (space) - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 1: Column with only common field (space) - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Column({ space: 20 } as ColumnOptions)
 
 
-// Test case 2: Row with only common field (space) - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 2: Row with only common field (space) - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Row({ space: 20 } as RowOptions)
 
 
-// Test case 3: Column with space as string - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 3: Column with space as string - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Column({ space: '10' } as ColumnOptions)
 
 
-// Test case 4: Row with space as number - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 4: Row with space as number - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Row({ space: 10 } as RowOptions)
 
 
@@ -51,7 +52,7 @@ struct Index {
 
   build() {
     RelativeContainer() {
-      Column({space: 5} as ColumnOptions)  // Test case 5: Column in component build() - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+      Column({space: 5} as ColumnOptions)  // Test case 5: Column in component build() - triggers arkts-no-ts-overload error in ArkTS-2 mode
       Text(this.message)
         .id('HelloWorld')
         .fontSize($r('app.float.page_text_font_size'))
@@ -69,3 +70,28 @@ struct Index {
   }
 
 }
+
+
+// Test case 6: Empty object literal - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({})
+
+
+// Test case 7: Row with empty object literal - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Row({})
+
+
+// Test case 8: Nested Column call - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({
+  space: 10
+} as ColumnOptions)
+
+
+// Test case 9: Multiple Column calls in sequence - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({ space: '20px' } as ColumnOptions)
+Row({ space: 30 } as RowOptions)
+Column({ space: 40 } as ColumnOptions)
+
+
+// Test case 10: Column with Resource type - triggers arkts-no-ts-overload error in ArkTS-2 mode
+const res: Resource = $r('app.string.space_value');
+Column({ space: res } as ColumnOptions)
