@@ -1997,19 +1997,6 @@ std::tuple<Type *, ir::Expression *> ETSAnalyzer::CheckAssignmentExprOperatorTyp
     return {sourceType, relationNode};
 }
 
-static bool CheckAwaitExpressionInAsyncFunc(ir::AwaitExpression *expr)
-{
-    ir::AstNode *node = expr;
-    while (node != nullptr) {
-        if (node->IsScriptFunction() &&
-            (node->AsScriptFunction()->IsAsyncFunc() || node->AsScriptFunction()->IsAsyncImplFunc())) {
-            return true;
-        }
-        node = node->Parent();
-    }
-    return false;
-}
-
 checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -2017,7 +2004,15 @@ checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
         return expr->TsType();
     }
 
-    if (!CheckAwaitExpressionInAsyncFunc(expr)) {
+    /**
+     * NOTE(knazarov): Spec 16.3.4.
+     * A compile-time error occurs if await is used outside of an asynchronous function, method or lambda body.
+     * Check only the nearest ScriptFunction.
+     */
+    const auto ancestor = util::Helpers::FindAncestorGivenByType(expr, ir::AstNodeType::SCRIPT_FUNCTION);
+    const auto isAncestorAsync = (ancestor != nullptr) && (ancestor->AsScriptFunction()->IsAsyncFunc() ||
+                                                           ancestor->AsScriptFunction()->IsAsyncImplFunc());
+    if (!isAncestorAsync) {
         checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Argument()->Start());
     }
 

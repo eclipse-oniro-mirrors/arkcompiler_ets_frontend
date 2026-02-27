@@ -18,8 +18,10 @@ class X {
 }
 
 function main() {
-    waitForCompletion(async () => {
-        let f = (): object | null | undefined => await new X().m()
-        arktest.assertTrue(f() instanceof X)
-    })
+    let f = (): object | null | undefined => {
+        return waitForCompletion(async () => {
+            return await new X().m()
+        })
+    }
+    arktest.assertTrue(f() instanceof X)
 }
