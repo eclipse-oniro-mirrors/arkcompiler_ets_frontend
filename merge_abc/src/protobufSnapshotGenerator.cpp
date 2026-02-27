@@ -111,10 +111,10 @@ panda::es2panda::util::AbcProgramsCache *ProtobufSnapshotGenerator::GetAbcInputC
         abcProgsInfo.emplace(protoName, programCache);
     }
 
-    auto *abcProgarmsCache = allocator->New<panda::es2panda::util::AbcProgramsCache>(newFileHash, abcProgsInfo);
-    CHECK_NOT_NULL(abcProgarmsCache);
+    auto *abcProgramsCache = allocator->New<panda::es2panda::util::AbcProgramsCache>(newFileHash, abcProgsInfo);
+    CHECK_NOT_NULL(abcProgramsCache);
 
-    return abcProgarmsCache;
+    return abcProgramsCache;
 }
 
 void ProtobufSnapshotGenerator::UpdateAbcCacheFile(const panda::es2panda::util::AbcProgramsCache *abcProgramsCache,
