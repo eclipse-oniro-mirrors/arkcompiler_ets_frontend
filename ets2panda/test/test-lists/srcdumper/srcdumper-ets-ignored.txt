@@ -75,6 +75,10 @@ runtime/ets/interfaceObjectLiteral_08.ets
 runtime/ets/interfaceObjectLiteral_09.ets
 runtime/ets/interfaceObjectLiteral_10.ets
 
+ast/parser/ets/objectLiteralMethodThisInLambda.ets
+runtime/ets/objectLiteralMethodThisInLambda.ets
+runtime/ets/objectLiteralMethodWithArrowField.ets
+
 #31069
 type_error_test.ets
 
