@@ -15,19 +15,19 @@
 
 import { Column, Row } from './sdk/column_row';
 
-// Test case 1: Column with only common field (space) - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 1: Column with only common field (space) - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Column({ space: 20 })
 
 
-// Test case 2: Row with only common field (space) - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 2: Row with only common field (space) - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Row({ space: 20 })
 
 
-// Test case 3: Column with space as string - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 3: Column with space as string - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Column({ space: '10' })
 
 
-// Test case 4: Row with space as number - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+// Test case 4: Row with space as number - triggers arkts-no-ts-overload error in ArkTS-2 mode
 Row({ space: 10 })
 
 
@@ -38,7 +38,7 @@ struct Index {
 
   build() {
     RelativeContainer() {
-      Column({space: 5})  // Test case 5: Column in component build() - triggers sdk-union-type-ambiguity error in ArkTS-2 mode
+      Column({space: 5})  // Test case 5: Column in component build() - triggers arkts-no-ts-overload error in ArkTS-2 mode
       Text(this.message)
         .id('HelloWorld')
         .fontSize($r('app.float.page_text_font_size'))
@@ -56,3 +56,28 @@ struct Index {
   }
 
 }
+
+
+// Test case 6: Empty object literal - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({})
+
+
+// Test case 7: Row with empty object literal - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Row({})
+
+
+// Test case 8: Nested Column call - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({
+  space: 10
+})
+
+
+// Test case 9: Multiple Column calls in sequence - triggers arkts-no-ts-overload error in ArkTS-2 mode
+Column({ space: '20px' })
+Row({ space: 30 })
+Column({ space: 40 })
+
+
+// Test case 10: Column with Resource type - triggers arkts-no-ts-overload error in ArkTS-2 mode
+const res: Resource = $r('app.string.space_value');
+Column({ space: res })
