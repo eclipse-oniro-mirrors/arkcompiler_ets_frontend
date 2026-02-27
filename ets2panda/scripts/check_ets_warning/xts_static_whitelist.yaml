@@ -765,3 +765,7 @@
         webMessageExt.ets: 13
       test/xts/acts/window/ActsDisplayTestStatic:
         DisplayTest.test.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api12_static:
+        Navigation_L0_4.test.ets: 4
+        MultiNavigation.ets: 2
+      
