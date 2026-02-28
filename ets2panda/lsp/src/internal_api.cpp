@@ -82,7 +82,13 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
         return nullptr;
     }
     auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    auto checkFunc = [&pos](ir::AstNode *node) { return pos >= node->Start().index && pos < node->End().index; };
+    auto checkFunc = [&pos, &ctx](ir::AstNode *node) {
+        auto program = node->Range().start.Program();
+        if (program == nullptr || program != ctx->parserProgram) {
+            return false;
+        }
+        return pos >= node->Start().index && pos < node->End().index;
+    };
     ir::AstNode *bestMatch = ast->FindChild(checkFunc);
 
     for (auto *stmt : ast->AsETSModule()->Statements()) {
@@ -114,7 +120,11 @@ ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange 
         return nullptr;
     }
     auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    auto checkFunc = [&span](ir::AstNode *node) {
+    auto checkFunc = [&span, &ctx](ir::AstNode *node) {
+        auto program = node->Range().start.Program();
+        if (program == nullptr || program != ctx->parserProgram) {
+            return false;
+        }
         return node->Start().index <= span.pos && node->End().index >= span.end;
     };
     auto found = ast->FindChild(checkFunc);
