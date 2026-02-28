@@ -752,6 +752,9 @@ void ETSChecker::InferAliasLambdaType(ir::TypeNode *localTypeAnnotation, ir::Arr
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             InferTypesForLambda(lambda, localTypeAnnotation->AsETSFunctionType());
         }
+    } else if (localTypeAnnotation->IsETSUnionType()) {
+        // Lambda Type infer under union context will be performed in the ArrowExpression check.
+        init->SetPreferredType(localTypeAnnotation->GetType(this));
     }
 }
 

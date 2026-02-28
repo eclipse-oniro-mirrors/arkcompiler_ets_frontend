@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-// union infer in variable assign.
+// union infer in top-level variable assign. 
 type U = ((x: int) => int) | ((x: string, y: int) => int) | ((x: int) => string)
 let f1: U = (x) => {return x + 1};
 let f2: U = (x) => {return x.length}
@@ -26,6 +26,22 @@ arktest.assertEQ((f2 as ((x: string, y: int) => int))("aaa", 0), 3);
 arktest.assertEQ((f3 as ((x: int) => string))(0), "aaa");
 arktest.assertEQ((f4 as ((x: int) => int))(0), 33) // type first match
 arktest.assertEQ((f5 as ((x: string, y: int) => int))("aaa", 3), 6)
+
+// union infer in variable assign. 
+function inner_test() {
+    let f1: U = (x) => {return x + 1};
+    let f2: U = (x) => {return x.length}
+    let f3: U = (x) => {return "aaa"}
+    let f4: U = (x) => {return 33}
+    let f5: U = (x, y) => {return x.length + y}
+
+    arktest.assertEQ((f1 as ((x: int) => int))(1), 2);
+    arktest.assertEQ((f2 as ((x: string, y: int) => int))("aaa", 0), 3);
+    arktest.assertEQ((f3 as ((x: int) => string))(0), "aaa");
+    arktest.assertEQ((f4 as ((x: int) => int))(0), 33) // type first match
+    arktest.assertEQ((f5 as ((x: string, y: int) => int))("aaa", 3), 6)
+}
+inner_test()
 
 // union infer in function call.
 class A {
