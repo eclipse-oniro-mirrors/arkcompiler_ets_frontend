@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -488,6 +488,89 @@ bool ETSParser::IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType)
             tokenType == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD || tokenType == lexer::TokenType::KEYW_THIS);
 }
 
+// This function was created to reduce the size of `EatArrowFunctionParams`.
+bool ETSParser::HandleBracketToken(lexer::TokenType tokenType, ArrowParamState &state)
+{
+    if (tokenType == lexer::TokenType::PUNCTUATOR_LEFT_BRACE ||
+        tokenType == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
+        if (state.expectIdentifier) {
+            if (!IsValidTokenTypeOfArrowFunctionStart(tokenType)) {
+                return false;
+            }
+            state.expectIdentifier = false;
+        }
+    }
+    switch (tokenType) {
+        case lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS:
+            --state.openParens;
+            break;
+        case lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS:
+            ++state.openParens;
+            break;
+        case lexer::TokenType::PUNCTUATOR_LEFT_BRACE:
+            ++state.openBraces;
+            break;
+        case lexer::TokenType::PUNCTUATOR_RIGHT_BRACE:
+            --state.openBraces;
+            break;
+        case lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET:
+            ++state.openBrackets;
+            break;
+        case lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET:
+            --state.openBrackets;
+            break;
+        default:
+            break;
+    }
+    return true;
+}
+
+// This function was created to reduce the size of `EatArrowFunctionParams`.
+bool ETSParser::ProcessArrowParamToken(lexer::TokenType &tokenType, ArrowParamState &state, lexer::NextTokenFlags &flag,
+                                       bool &skipNextToken, lexer::Lexer *lexer)
+{
+    skipNextToken = false;
+    switch (tokenType) {
+        case lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS:
+        case lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS:
+        case lexer::TokenType::PUNCTUATOR_LEFT_BRACE:
+        case lexer::TokenType::PUNCTUATOR_RIGHT_BRACE:
+        case lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET:
+        case lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET: {
+            if (!HandleBracketToken(tokenType, state)) {
+                return false;
+            }
+            return true;
+        }
+        case lexer::TokenType::PUNCTUATOR_COMMA:
+            if (state.openParens == 1 && state.openBraces == 0 && state.openBrackets == 0) {
+                state.expectIdentifier = true;
+            }
+            return true;
+        case lexer::TokenType::PUNCTUATOR_MINUS:
+            flag = lexer::NextTokenFlags::UNARY_MINUS;
+            return true;
+        case lexer::TokenType::PUNCTUATOR_SEMI_COLON:
+        case lexer::TokenType::PUNCTUATOR_BACK_TICK:
+            return false;
+        case lexer::TokenType::PUNCTUATOR_AT:
+            lexer->NextToken();
+            ParseAnnotations(false);
+            tokenType = lexer->GetToken().Type();
+            skipNextToken = true;
+            return true;
+        default:
+            if (!state.expectIdentifier) {
+                return true;
+            }
+            if (!IsValidTokenTypeOfArrowFunctionStart(tokenType)) {
+                return false;
+            }
+            state.expectIdentifier = false;
+            return true;
+    }
+}
+
 bool ETSParser::EatArrowFunctionParams(lexer::Lexer *lexer)
 {
     ES2PANDA_ASSERT(lexer->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
@@ -497,43 +580,22 @@ bool ETSParser::EatArrowFunctionParams(lexer::Lexer *lexer)
     }
 
     auto tokenType = lexer->GetToken().Type();
-    size_t openBrackets = 1;
-    bool expectIdentifier = true;
-    while (tokenType != lexer::TokenType::EOS && openBrackets > 0) {
+    ArrowParamState state = {1, 0, 0, true};
+    while (tokenType != lexer::TokenType::EOS && state.openParens > 0) {
         lexer::NextTokenFlags flag = lexer::NextTokenFlags::NONE;
-        switch (tokenType) {
-            case lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS:
-                --openBrackets;
-                break;
-            case lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS:
-                ++openBrackets;
-                break;
-            case lexer::TokenType::PUNCTUATOR_COMMA:
-                expectIdentifier = true;
-                break;
-            // (DZ) need for correct processing of possible number literals
-            case lexer::TokenType::PUNCTUATOR_MINUS:
-                flag = lexer::NextTokenFlags::UNARY_MINUS;
-                break;
-            case lexer::TokenType::PUNCTUATOR_SEMI_COLON:
-            case lexer::TokenType::PUNCTUATOR_BACK_TICK:
-                return false;
-            case lexer::TokenType::PUNCTUATOR_AT:
-                Lexer()->NextToken();
-                ParseAnnotations(false);
-                tokenType = lexer->GetToken().Type();
-                continue;
-            default:
-                if (!expectIdentifier) {
-                    break;
-                }
-                if (!IsValidTokenTypeOfArrowFunctionStart(tokenType)) {
-                    return false;
-                }
-                expectIdentifier = false;
+        bool skipNextToken = false;
+        if (!ProcessArrowParamToken(tokenType, state, flag, skipNextToken, lexer)) {
+            return false;
         }
-        lexer->NextToken(flag);
-        tokenType = lexer->GetToken().Type();
+
+        if (!skipNextToken) {
+            lexer->NextToken(flag);
+            tokenType = lexer->GetToken().Type();
+        }
+    }
+
+    if (state.openParens != 0) {
+        return false;
     }
     return true;
 }

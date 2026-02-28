@@ -39,6 +39,13 @@ struct SpecifiersInfo {
     lexer::SourcePosition rightBackPos {};
 };
 
+struct ArrowParamState {
+    size_t openParens;
+    size_t openBraces;
+    size_t openBrackets;
+    bool expectIdentifier;
+};
+
 class ETSParser final : public TypedParser {
 public:
     ETSParser(public_lib::Context *context, ParserStatus status);
@@ -258,6 +265,9 @@ private:
     ir::TSInterfaceDeclaration *ParseInterfaceBody(ir::Identifier *name, bool isStatic);
     bool IsArrowFunctionExpressionStart();
     bool IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType);
+    bool HandleBracketToken(lexer::TokenType tokenType, ArrowParamState &state);
+    bool ProcessArrowParamToken(lexer::TokenType &tokenType, ArrowParamState &state, lexer::NextTokenFlags &flag,
+                                bool &skipNextToken, lexer::Lexer *lexer);
     bool EatArrowFunctionParams(lexer::Lexer *lexer);
     bool IsPrimitiveType(const lexer::TokenType &tokenType);
     ir::ArrowFunctionExpression *ParseArrowFunctionExpression();
