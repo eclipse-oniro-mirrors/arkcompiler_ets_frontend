@@ -212,6 +212,14 @@ static bool IsSimpleIdentifierOrNamespaceAccess(ir::Expression *expr)
     }
     if (expr->IsMemberExpression()) {
         auto *memberExpr = expr->AsMemberExpression();
+        if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+            ir::Expression *objectExpr = memberExpr->Object();
+            ir::Expression *propertyExpr = memberExpr->Property();
+            bool isSimpleElementAccess =
+                IsSimpleIdentifierOrNamespaceAccess(objectExpr) &&
+                (propertyExpr->IsLiteral() || IsSimpleIdentifierOrNamespaceAccess(propertyExpr));
+            return isSimpleElementAccess;
+        }
         return IsSimpleIdentifierOrNamespaceAccess(memberExpr->Object());
     }
 
