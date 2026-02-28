@@ -79,7 +79,8 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
     // are updated
     if (cacheFileIter != options_->cacheFiles.end()) {
         // cache is invalid when any one of source file infos being changed
-        auto bufToHash = buffer + src_->fileName + src_->recordName + src_->sourcefile + src_->pkgName;
+        auto bufToHash = buffer + src_->fileName + src_->recordName + src_->sourcefile + src_->pkgName +
+            panda::panda_file::GetVersion(panda::panda_file::version);
         ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
         if (!isAbcFile) {
             src_->hash = GetHash32String(reinterpret_cast<const uint8_t *>(bufToHash.c_str()));

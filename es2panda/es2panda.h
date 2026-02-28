@@ -122,6 +122,7 @@ struct CompilerOptions {
     bool updatePkgVersionForAbcInput {false};
     bool removeRedundantFile {false};
     bool dumpString {false};
+    bool enableCallableName {false};
     std::string targetApiSubVersion;
     std::string moduleRecordFieldName;
     bool enableAnnotations;

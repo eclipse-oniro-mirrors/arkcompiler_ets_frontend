@@ -1,0 +1,1570 @@
+slotNum = 0x2
+.language ECMAScript
+.function any .#~A=#A(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x1
+	stobjbyname 0x0, b, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~A>#test(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldlexvar 0x0, 0x0
+	sta v0
+	throw.undefinedifholewithname A
+	mov v1, v0
+	newobjrange 0x0, 0x1, v1
+	return
+label_2: 
+}
+
+slotNum = 0x13f
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+	mov v0, a0
+	mov v1, a1
+	mov v2, a2
+	newlexenv 0x1
+LABEL_2: 
+	ldhole
+	sta v7
+	defineclasswithbuffer 0x72, .#~A=#A, _1, 0x0, v7
+	sta v6
+	sta v8
+	lda v8
+	stlexvar 0x0, 0x0
+	lda v6
+	ldobjbyname 0x73, prototype
+	sta v8
+	lda v6
+LABEL_3: 
+	jmp LABEL_5
+LABEL_4: 
+	poplexenv
+	throw
+LABEL_5: 
+	poplexenv
+	sttoglobalrecord 0x75, A
+	createobjectwithbuffer 0x76, _2
+	sta v6
+	lda v6
+	sttoglobalrecord 0x77, x
+LABEL_6: 
+	tryldglobalbyname 0x78, A
+	sta v7
+	newobjrange 0x79, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x7b, b
+	sta v7
+	lda v7
+	callthis0 0x0, v8
+LABEL_7: 
+	jmp LABEL_9
+LABEL_8: 
+	sta v6
+	tryldglobalbyname 0x7d, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x7e, message
+	sta v8
+	lda v7
+	callarg1 0x2, v8
+	tryldglobalbyname 0x80, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x81, stack
+	sta v8
+	lda v7
+	callarg1 0x4, v8
+LABEL_9: 
+LABEL_10: 
+	tryldglobalbyname 0x83, A
+	sta v7
+	newobjrange 0x84, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0x86, test
+	sta v9
+	lda v9
+	callthis0 0x6, v10
+	sta v8
+	lda v8
+	ldobjbyname 0x88, b
+	sta v7
+	lda v7
+	callthis0 0x8, v8
+LABEL_11: 
+	jmp LABEL_13
+LABEL_12: 
+	sta v6
+	tryldglobalbyname 0x8a, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x8b, message
+	sta v8
+	lda v7
+	callarg1 0xa, v8
+	tryldglobalbyname 0x8d, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x8e, stack
+	sta v8
+	lda v7
+	callarg1 0xc, v8
+LABEL_13: 
+LABEL_14: 
+	tryldglobalbyname 0x90, x
+	sta v7
+	lda v7
+	ldobjbyname 0x91, b
+	sta v6
+	lda v6
+	callthis0 0xe, v7
+LABEL_15: 
+	jmp LABEL_17
+LABEL_16: 
+	sta v6
+	tryldglobalbyname 0x93, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x94, message
+	sta v8
+	lda v7
+	callarg1 0x10, v8
+	tryldglobalbyname 0x96, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x97, stack
+	sta v8
+	lda v7
+	callarg1 0x12, v8
+LABEL_17: 
+LABEL_18: 
+	tryldglobalbyname 0x99, A
+	sta v7
+	newobjrange 0x9a, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x9c, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda v7
+	callthis1 0x14, v8, v9
+LABEL_19: 
+	jmp LABEL_21
+LABEL_20: 
+	sta v6
+	tryldglobalbyname 0x9e, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x9f, message
+	sta v8
+	lda v7
+	callarg1 0x16, v8
+	tryldglobalbyname 0xa1, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xa2, stack
+	sta v8
+	lda v7
+	callarg1 0x18, v8
+LABEL_21: 
+LABEL_22: 
+	tryldglobalbyname 0xa4, A
+	sta v7
+	newobjrange 0xa5, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0xa7, test
+	sta v9
+	lda v9
+	callthis0 0x1a, v10
+	sta v8
+	lda v8
+	ldobjbyname 0xa9, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda v7
+	callthis1 0x1c, v8, v9
+LABEL_23: 
+	jmp LABEL_25
+LABEL_24: 
+	sta v6
+	tryldglobalbyname 0xab, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xac, message
+	sta v8
+	lda v7
+	callarg1 0x1e, v8
+	tryldglobalbyname 0xae, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xaf, stack
+	sta v8
+	lda v7
+	callarg1 0x20, v8
+LABEL_25: 
+LABEL_26: 
+	tryldglobalbyname 0xb1, x
+	sta v7
+	lda v7
+	ldobjbyname 0xb2, b
+	sta v6
+	ldai 0x1
+	sta v8
+	lda v6
+	callthis1 0x22, v7, v8
+LABEL_27: 
+	jmp LABEL_29
+LABEL_28: 
+	sta v6
+	tryldglobalbyname 0xb4, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xb5, message
+	sta v8
+	lda v7
+	callarg1 0x24, v8
+	tryldglobalbyname 0xb7, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xb8, stack
+	sta v8
+	lda v7
+	callarg1 0x26, v8
+LABEL_29: 
+LABEL_30: 
+	tryldglobalbyname 0xba, A
+	sta v7
+	newobjrange 0xbb, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xbd, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	lda v7
+	callthis2 0x28, v8, v9, v10
+LABEL_31: 
+	jmp LABEL_33
+LABEL_32: 
+	sta v6
+	tryldglobalbyname 0xbf, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xc0, message
+	sta v8
+	lda v7
+	callarg1 0x2a, v8
+	tryldglobalbyname 0xc2, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xc3, stack
+	sta v8
+	lda v7
+	callarg1 0x2c, v8
+LABEL_33: 
+LABEL_34: 
+	tryldglobalbyname 0xc5, A
+	sta v7
+	newobjrange 0xc6, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0xc8, test
+	sta v9
+	lda v9
+	callthis0 0x2e, v10
+	sta v8
+	lda v8
+	ldobjbyname 0xca, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	lda v7
+	callthis2 0x30, v8, v9, v10
+LABEL_35: 
+	jmp LABEL_37
+LABEL_36: 
+	sta v6
+	tryldglobalbyname 0xcc, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xcd, message
+	sta v8
+	lda v7
+	callarg1 0x32, v8
+	tryldglobalbyname 0xcf, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xd0, stack
+	sta v8
+	lda v7
+	callarg1 0x34, v8
+LABEL_37: 
+LABEL_38: 
+	tryldglobalbyname 0xd2, x
+	sta v7
+	lda v7
+	ldobjbyname 0xd3, b
+	sta v6
+	ldai 0x1
+	sta v8
+	lda.str a
+	sta v9
+	lda v6
+	callthis2 0x36, v7, v8, v9
+LABEL_39: 
+	jmp LABEL_41
+LABEL_40: 
+	sta v6
+	tryldglobalbyname 0xd5, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xd6, message
+	sta v8
+	lda v7
+	callarg1 0x38, v8
+	tryldglobalbyname 0xd8, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xd9, stack
+	sta v8
+	lda v7
+	callarg1 0x3a, v8
+LABEL_41: 
+LABEL_42: 
+	tryldglobalbyname 0xdb, A
+	sta v7
+	newobjrange 0xdc, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xde, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	ldai 0x2
+	sta v11
+	lda v7
+	callthis3 0x3c, v8, v9, v10, v11
+LABEL_43: 
+	jmp LABEL_45
+LABEL_44: 
+	sta v6
+	tryldglobalbyname 0xe0, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xe1, message
+	sta v8
+	lda v7
+	callarg1 0x3e, v8
+	tryldglobalbyname 0xe3, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xe4, stack
+	sta v8
+	lda v7
+	callarg1 0x40, v8
+LABEL_45: 
+LABEL_46: 
+	tryldglobalbyname 0xe6, A
+	sta v7
+	newobjrange 0xe7, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0xe9, test
+	sta v9
+	lda v9
+	callthis0 0x42, v10
+	sta v8
+	lda v8
+	ldobjbyname 0xeb, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	ldai 0x2
+	sta v11
+	lda v7
+	callthis3 0x44, v8, v9, v10, v11
+LABEL_47: 
+	jmp LABEL_49
+LABEL_48: 
+	sta v6
+	tryldglobalbyname 0xed, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xee, message
+	sta v8
+	lda v7
+	callarg1 0x46, v8
+	tryldglobalbyname 0xf0, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xf1, stack
+	sta v8
+	lda v7
+	callarg1 0x48, v8
+LABEL_49: 
+LABEL_50: 
+	tryldglobalbyname 0xf3, x
+	sta v7
+	lda v7
+	ldobjbyname 0xf4, b
+	sta v6
+	ldai 0x1
+	sta v8
+	lda.str a
+	sta v9
+	ldai 0x2
+	sta v10
+	lda v6
+	callthis3 0x4a, v7, v8, v9, v10
+LABEL_51: 
+	jmp LABEL_53
+LABEL_52: 
+	sta v6
+	tryldglobalbyname 0xf6, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xf7, message
+	sta v8
+	lda v7
+	callarg1 0x4c, v8
+	tryldglobalbyname 0xf9, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0xfa, stack
+	sta v8
+	lda v7
+	callarg1 0x4e, v8
+LABEL_53: 
+LABEL_54: 
+	tryldglobalbyname 0xfc, A
+	sta v7
+	newobjrange 0xfd, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x100, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	ldai 0x2
+	sta v11
+	ldai 0x3
+	sta v12
+	lda v7
+	callthisrange 0x50, 0x4, v8
+LABEL_55: 
+	jmp LABEL_57
+LABEL_56: 
+	sta v6
+	tryldglobalbyname 0x102, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x103, message
+	sta v8
+	lda v7
+	callarg1 0x52, v8
+	tryldglobalbyname 0x105, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x106, stack
+	sta v8
+	lda v7
+	callarg1 0x54, v8
+LABEL_57: 
+LABEL_58: 
+	tryldglobalbyname 0x108, A
+	sta v7
+	newobjrange 0x109, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0x10b, test
+	sta v9
+	lda v9
+	callthis0 0x56, v10
+	sta v8
+	lda v8
+	ldobjbyname 0x10d, b
+	sta v7
+	ldai 0x1
+	sta v9
+	lda.str a
+	sta v10
+	ldai 0x2
+	sta v11
+	ldai 0x3
+	sta v12
+	lda v7
+	callthisrange 0x58, 0x4, v8
+LABEL_59: 
+	jmp LABEL_61
+LABEL_60: 
+	sta v6
+	tryldglobalbyname 0x10f, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x110, message
+	sta v8
+	lda v7
+	callarg1 0x5a, v8
+	tryldglobalbyname 0x112, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x113, stack
+	sta v8
+	lda v7
+	callarg1 0x5c, v8
+LABEL_61: 
+LABEL_62: 
+	tryldglobalbyname 0x115, x
+	sta v7
+	lda v7
+	ldobjbyname 0x116, b
+	sta v6
+	ldai 0x1
+	sta v8
+	lda.str a
+	sta v9
+	ldai 0x2
+	sta v10
+	ldai 0x3
+	sta v11
+	lda v6
+	callthisrange 0x5e, 0x4, v7
+LABEL_63: 
+	jmp LABEL_65
+LABEL_64: 
+	sta v6
+	tryldglobalbyname 0x118, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x119, message
+	sta v8
+	lda v7
+	callarg1 0x60, v8
+	tryldglobalbyname 0x11b, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x11c, stack
+	sta v8
+	lda v7
+	callarg1 0x62, v8
+LABEL_65: 
+LABEL_66: 
+	tryldglobalbyname 0x11e, A
+	sta v7
+	newobjrange 0x11f, 0x1, v7
+	sta v6
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x121, b
+	sta v7
+	ldai 0x1
+	sta v9
+	ldai 0x2
+	sta v10
+	ldai 0x3
+	sta v11
+	ldai 0x4
+	sta v12
+	ldai 0x5
+	sta v13
+	ldai 0x6
+	sta v14
+	ldai 0x7
+	sta v15
+	ldai 0x8
+	sta v16
+	ldai 0x9
+	sta v17
+	ldai 0xa
+	sta v18
+	ldai 0xb
+	sta v19
+	ldai 0xc
+	sta v20
+	ldai 0xd
+	sta v21
+	ldai 0xe
+	sta v22
+	ldai 0xf
+	sta v23
+	ldai 0x10
+	sta v24
+	ldai 0x11
+	sta v25
+	ldai 0x12
+	sta v26
+	ldai 0x13
+	sta v27
+	ldai 0x14
+	sta v28
+	ldai 0x15
+	sta v29
+	ldai 0x16
+	sta v30
+	ldai 0x17
+	sta v31
+	ldai 0x18
+	sta v32
+	ldai 0x19
+	sta v33
+	ldai 0x1a
+	sta v34
+	ldai 0x1b
+	sta v35
+	ldai 0x1c
+	sta v36
+	ldai 0x1d
+	sta v37
+	ldai 0x1e
+	sta v38
+	ldai 0x1f
+	sta v39
+	ldai 0x20
+	sta v40
+	ldai 0x21
+	sta v41
+	ldai 0x22
+	sta v42
+	ldai 0x23
+	sta v43
+	ldai 0x24
+	sta v44
+	ldai 0x25
+	sta v45
+	ldai 0x26
+	sta v46
+	ldai 0x27
+	sta v47
+	ldai 0x28
+	sta v48
+	ldai 0x29
+	sta v49
+	ldai 0x2a
+	sta v50
+	ldai 0x2b
+	sta v51
+	ldai 0x2c
+	sta v52
+	ldai 0x2d
+	sta v53
+	ldai 0x2e
+	sta v54
+	ldai 0x2f
+	sta v55
+	ldai 0x30
+	sta v56
+	ldai 0x31
+	sta v57
+	ldai 0x32
+	sta v58
+	ldai 0x33
+	sta v59
+	ldai 0x34
+	sta v60
+	ldai 0x35
+	sta v61
+	ldai 0x36
+	sta v62
+	ldai 0x37
+	sta v63
+	ldai 0x38
+	sta v64
+	ldai 0x39
+	sta v65
+	ldai 0x3a
+	sta v66
+	ldai 0x3b
+	sta v67
+	ldai 0x3c
+	sta v68
+	ldai 0x3d
+	sta v69
+	ldai 0x3e
+	sta v70
+	ldai 0x3f
+	sta v71
+	ldai 0x40
+	sta v72
+	ldai 0x41
+	sta v73
+	ldai 0x42
+	sta v74
+	ldai 0x43
+	sta v75
+	ldai 0x44
+	sta v76
+	ldai 0x45
+	sta v77
+	ldai 0x46
+	sta v78
+	ldai 0x47
+	sta v79
+	ldai 0x48
+	sta v80
+	ldai 0x49
+	sta v81
+	ldai 0x4a
+	sta v82
+	ldai 0x4b
+	sta v83
+	ldai 0x4c
+	sta v84
+	ldai 0x4d
+	sta v85
+	ldai 0x4e
+	sta v86
+	ldai 0x4f
+	sta v87
+	ldai 0x50
+	sta v88
+	ldai 0x51
+	sta v89
+	ldai 0x52
+	sta v90
+	ldai 0x53
+	sta v91
+	ldai 0x54
+	sta v92
+	ldai 0x55
+	sta v93
+	ldai 0x56
+	sta v94
+	ldai 0x57
+	sta v95
+	ldai 0x58
+	sta v96
+	ldai 0x59
+	sta v97
+	ldai 0x5a
+	sta v98
+	ldai 0x5b
+	sta v99
+	ldai 0x5c
+	sta v100
+	ldai 0x5d
+	sta v101
+	ldai 0x5e
+	sta v102
+	ldai 0x5f
+	sta v103
+	ldai 0x60
+	sta v104
+	ldai 0x61
+	sta v105
+	ldai 0x62
+	sta v106
+	ldai 0x63
+	sta v107
+	ldai 0x64
+	sta v108
+	ldai 0x65
+	sta v109
+	ldai 0x66
+	sta v110
+	ldai 0x67
+	sta v111
+	ldai 0x68
+	sta v112
+	ldai 0x69
+	sta v113
+	ldai 0x6a
+	sta v114
+	ldai 0x6b
+	sta v115
+	ldai 0x6c
+	sta v116
+	ldai 0x6d
+	sta v117
+	ldai 0x6e
+	sta v118
+	ldai 0x6f
+	sta v119
+	ldai 0x70
+	sta v120
+	ldai 0x71
+	sta v121
+	ldai 0x72
+	sta v122
+	ldai 0x73
+	sta v123
+	ldai 0x74
+	sta v124
+	ldai 0x75
+	sta v125
+	ldai 0x76
+	sta v126
+	ldai 0x77
+	sta v127
+	ldai 0x78
+	sta v128
+	ldai 0x79
+	sta v129
+	ldai 0x7a
+	sta v130
+	ldai 0x7b
+	sta v131
+	ldai 0x7c
+	sta v132
+	ldai 0x7d
+	sta v133
+	ldai 0x7e
+	sta v134
+	ldai 0x7f
+	sta v135
+	ldai 0x80
+	sta v136
+	lda v7
+	wide.callthisrange 0x80, v8
+LABEL_67: 
+	jmp LABEL_69
+LABEL_68: 
+	sta v6
+	tryldglobalbyname 0x123, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x124, message
+	sta v8
+	lda v7
+	callarg1 0x64, v8
+	tryldglobalbyname 0x126, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x127, stack
+	sta v8
+	lda v7
+	callarg1 0x66, v8
+LABEL_69: 
+LABEL_70: 
+	tryldglobalbyname 0x129, A
+	sta v7
+	newobjrange 0x12a, 0x1, v7
+	sta v6
+	lda v6
+	sta v10
+	lda v10
+	ldobjbyname 0x12c, test
+	sta v9
+	lda v9
+	callthis0 0x68, v10
+	sta v8
+	lda v8
+	ldobjbyname 0x12e, b
+	sta v7
+	ldai 0x1
+	sta v9
+	ldai 0x2
+	sta v10
+	ldai 0x3
+	sta v11
+	ldai 0x4
+	sta v12
+	ldai 0x5
+	sta v13
+	ldai 0x6
+	sta v14
+	ldai 0x7
+	sta v15
+	ldai 0x8
+	sta v16
+	ldai 0x9
+	sta v17
+	ldai 0xa
+	sta v18
+	ldai 0xb
+	sta v19
+	ldai 0xc
+	sta v20
+	ldai 0xd
+	sta v21
+	ldai 0xe
+	sta v22
+	ldai 0xf
+	sta v23
+	ldai 0x10
+	sta v24
+	ldai 0x11
+	sta v25
+	ldai 0x12
+	sta v26
+	ldai 0x13
+	sta v27
+	ldai 0x14
+	sta v28
+	ldai 0x15
+	sta v29
+	ldai 0x16
+	sta v30
+	ldai 0x17
+	sta v31
+	ldai 0x18
+	sta v32
+	ldai 0x19
+	sta v33
+	ldai 0x1a
+	sta v34
+	ldai 0x1b
+	sta v35
+	ldai 0x1c
+	sta v36
+	ldai 0x1d
+	sta v37
+	ldai 0x1e
+	sta v38
+	ldai 0x1f
+	sta v39
+	ldai 0x20
+	sta v40
+	ldai 0x21
+	sta v41
+	ldai 0x22
+	sta v42
+	ldai 0x23
+	sta v43
+	ldai 0x24
+	sta v44
+	ldai 0x25
+	sta v45
+	ldai 0x26
+	sta v46
+	ldai 0x27
+	sta v47
+	ldai 0x28
+	sta v48
+	ldai 0x29
+	sta v49
+	ldai 0x2a
+	sta v50
+	ldai 0x2b
+	sta v51
+	ldai 0x2c
+	sta v52
+	ldai 0x2d
+	sta v53
+	ldai 0x2e
+	sta v54
+	ldai 0x2f
+	sta v55
+	ldai 0x30
+	sta v56
+	ldai 0x31
+	sta v57
+	ldai 0x32
+	sta v58
+	ldai 0x33
+	sta v59
+	ldai 0x34
+	sta v60
+	ldai 0x35
+	sta v61
+	ldai 0x36
+	sta v62
+	ldai 0x37
+	sta v63
+	ldai 0x38
+	sta v64
+	ldai 0x39
+	sta v65
+	ldai 0x3a
+	sta v66
+	ldai 0x3b
+	sta v67
+	ldai 0x3c
+	sta v68
+	ldai 0x3d
+	sta v69
+	ldai 0x3e
+	sta v70
+	ldai 0x3f
+	sta v71
+	ldai 0x40
+	sta v72
+	ldai 0x41
+	sta v73
+	ldai 0x42
+	sta v74
+	ldai 0x43
+	sta v75
+	ldai 0x44
+	sta v76
+	ldai 0x45
+	sta v77
+	ldai 0x46
+	sta v78
+	ldai 0x47
+	sta v79
+	ldai 0x48
+	sta v80
+	ldai 0x49
+	sta v81
+	ldai 0x4a
+	sta v82
+	ldai 0x4b
+	sta v83
+	ldai 0x4c
+	sta v84
+	ldai 0x4d
+	sta v85
+	ldai 0x4e
+	sta v86
+	ldai 0x4f
+	sta v87
+	ldai 0x50
+	sta v88
+	ldai 0x51
+	sta v89
+	ldai 0x52
+	sta v90
+	ldai 0x53
+	sta v91
+	ldai 0x54
+	sta v92
+	ldai 0x55
+	sta v93
+	ldai 0x56
+	sta v94
+	ldai 0x57
+	sta v95
+	ldai 0x58
+	sta v96
+	ldai 0x59
+	sta v97
+	ldai 0x5a
+	sta v98
+	ldai 0x5b
+	sta v99
+	ldai 0x5c
+	sta v100
+	ldai 0x5d
+	sta v101
+	ldai 0x5e
+	sta v102
+	ldai 0x5f
+	sta v103
+	ldai 0x60
+	sta v104
+	ldai 0x61
+	sta v105
+	ldai 0x62
+	sta v106
+	ldai 0x63
+	sta v107
+	ldai 0x64
+	sta v108
+	ldai 0x65
+	sta v109
+	ldai 0x66
+	sta v110
+	ldai 0x67
+	sta v111
+	ldai 0x68
+	sta v112
+	ldai 0x69
+	sta v113
+	ldai 0x6a
+	sta v114
+	ldai 0x6b
+	sta v115
+	ldai 0x6c
+	sta v116
+	ldai 0x6d
+	sta v117
+	ldai 0x6e
+	sta v118
+	ldai 0x6f
+	sta v119
+	ldai 0x70
+	sta v120
+	ldai 0x71
+	sta v121
+	ldai 0x72
+	sta v122
+	ldai 0x73
+	sta v123
+	ldai 0x74
+	sta v124
+	ldai 0x75
+	sta v125
+	ldai 0x76
+	sta v126
+	ldai 0x77
+	sta v127
+	ldai 0x78
+	sta v128
+	ldai 0x79
+	sta v129
+	ldai 0x7a
+	sta v130
+	ldai 0x7b
+	sta v131
+	ldai 0x7c
+	sta v132
+	ldai 0x7d
+	sta v133
+	ldai 0x7e
+	sta v134
+	ldai 0x7f
+	sta v135
+	ldai 0x80
+	sta v136
+	lda v7
+	wide.callthisrange 0x80, v8
+LABEL_71: 
+	jmp LABEL_73
+LABEL_72: 
+	sta v6
+	tryldglobalbyname 0x130, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x131, message
+	sta v8
+	lda v7
+	callarg1 0x6a, v8
+	tryldglobalbyname 0x133, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x134, stack
+	sta v8
+	lda v7
+	callarg1 0x6c, v8
+LABEL_73: 
+LABEL_74: 
+	tryldglobalbyname 0x136, x
+	sta v7
+	lda v7
+	ldobjbyname 0x137, b
+	sta v6
+	ldai 0x1
+	sta v8
+	ldai 0x2
+	sta v9
+	ldai 0x3
+	sta v10
+	ldai 0x4
+	sta v11
+	ldai 0x5
+	sta v12
+	ldai 0x6
+	sta v13
+	ldai 0x7
+	sta v14
+	ldai 0x8
+	sta v15
+	ldai 0x9
+	sta v16
+	ldai 0xa
+	sta v17
+	ldai 0xb
+	sta v18
+	ldai 0xc
+	sta v19
+	ldai 0xd
+	sta v20
+	ldai 0xe
+	sta v21
+	ldai 0xf
+	sta v22
+	ldai 0x10
+	sta v23
+	ldai 0x11
+	sta v24
+	ldai 0x12
+	sta v25
+	ldai 0x13
+	sta v26
+	ldai 0x14
+	sta v27
+	ldai 0x15
+	sta v28
+	ldai 0x16
+	sta v29
+	ldai 0x17
+	sta v30
+	ldai 0x18
+	sta v31
+	ldai 0x19
+	sta v32
+	ldai 0x1a
+	sta v33
+	ldai 0x1b
+	sta v34
+	ldai 0x1c
+	sta v35
+	ldai 0x1d
+	sta v36
+	ldai 0x1e
+	sta v37
+	ldai 0x1f
+	sta v38
+	ldai 0x20
+	sta v39
+	ldai 0x21
+	sta v40
+	ldai 0x22
+	sta v41
+	ldai 0x23
+	sta v42
+	ldai 0x24
+	sta v43
+	ldai 0x25
+	sta v44
+	ldai 0x26
+	sta v45
+	ldai 0x27
+	sta v46
+	ldai 0x28
+	sta v47
+	ldai 0x29
+	sta v48
+	ldai 0x2a
+	sta v49
+	ldai 0x2b
+	sta v50
+	ldai 0x2c
+	sta v51
+	ldai 0x2d
+	sta v52
+	ldai 0x2e
+	sta v53
+	ldai 0x2f
+	sta v54
+	ldai 0x30
+	sta v55
+	ldai 0x31
+	sta v56
+	ldai 0x32
+	sta v57
+	ldai 0x33
+	sta v58
+	ldai 0x34
+	sta v59
+	ldai 0x35
+	sta v60
+	ldai 0x36
+	sta v61
+	ldai 0x37
+	sta v62
+	ldai 0x38
+	sta v63
+	ldai 0x39
+	sta v64
+	ldai 0x3a
+	sta v65
+	ldai 0x3b
+	sta v66
+	ldai 0x3c
+	sta v67
+	ldai 0x3d
+	sta v68
+	ldai 0x3e
+	sta v69
+	ldai 0x3f
+	sta v70
+	ldai 0x40
+	sta v71
+	ldai 0x41
+	sta v72
+	ldai 0x42
+	sta v73
+	ldai 0x43
+	sta v74
+	ldai 0x44
+	sta v75
+	ldai 0x45
+	sta v76
+	ldai 0x46
+	sta v77
+	ldai 0x47
+	sta v78
+	ldai 0x48
+	sta v79
+	ldai 0x49
+	sta v80
+	ldai 0x4a
+	sta v81
+	ldai 0x4b
+	sta v82
+	ldai 0x4c
+	sta v83
+	ldai 0x4d
+	sta v84
+	ldai 0x4e
+	sta v85
+	ldai 0x4f
+	sta v86
+	ldai 0x50
+	sta v87
+	ldai 0x51
+	sta v88
+	ldai 0x52
+	sta v89
+	ldai 0x53
+	sta v90
+	ldai 0x54
+	sta v91
+	ldai 0x55
+	sta v92
+	ldai 0x56
+	sta v93
+	ldai 0x57
+	sta v94
+	ldai 0x58
+	sta v95
+	ldai 0x59
+	sta v96
+	ldai 0x5a
+	sta v97
+	ldai 0x5b
+	sta v98
+	ldai 0x5c
+	sta v99
+	ldai 0x5d
+	sta v100
+	ldai 0x5e
+	sta v101
+	ldai 0x5f
+	sta v102
+	ldai 0x60
+	sta v103
+	ldai 0x61
+	sta v104
+	ldai 0x62
+	sta v105
+	ldai 0x63
+	sta v106
+	ldai 0x64
+	sta v107
+	ldai 0x65
+	sta v108
+	ldai 0x66
+	sta v109
+	ldai 0x67
+	sta v110
+	ldai 0x68
+	sta v111
+	ldai 0x69
+	sta v112
+	ldai 0x6a
+	sta v113
+	ldai 0x6b
+	sta v114
+	ldai 0x6c
+	sta v115
+	ldai 0x6d
+	sta v116
+	ldai 0x6e
+	sta v117
+	ldai 0x6f
+	sta v118
+	ldai 0x70
+	sta v119
+	ldai 0x71
+	sta v120
+	ldai 0x72
+	sta v121
+	ldai 0x73
+	sta v122
+	ldai 0x74
+	sta v123
+	ldai 0x75
+	sta v124
+	ldai 0x76
+	sta v125
+	ldai 0x77
+	sta v126
+	ldai 0x78
+	sta v127
+	ldai 0x79
+	sta v128
+	ldai 0x7a
+	sta v129
+	ldai 0x7b
+	sta v130
+	ldai 0x7c
+	sta v131
+	ldai 0x7d
+	sta v132
+	ldai 0x7e
+	sta v133
+	ldai 0x7f
+	sta v134
+	ldai 0x80
+	sta v135
+	lda v6
+	wide.callthisrange 0x80, v7
+LABEL_75: 
+	jmp LABEL_77
+LABEL_76: 
+	sta v6
+	tryldglobalbyname 0x139, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x13a, message
+	sta v8
+	lda v7
+	callarg1 0x6e, v8
+	tryldglobalbyname 0x13c, print
+	sta v7
+	lda v6
+	sta v8
+	lda v8
+	ldobjbyname 0x13d, stack
+	sta v8
+	lda v7
+	callarg1 0x70, v8
+LABEL_77: 
+	ldundefined
+	returnundefined
+}
+
+.catchall LABEL_38, LABEL_39, LABEL_40
+
+.catchall LABEL_74, LABEL_75, LABEL_76
+
+.catchall LABEL_70, LABEL_71, LABEL_72
+
+.catchall LABEL_66, LABEL_67, LABEL_68
+
+.catchall LABEL_62, LABEL_63, LABEL_64
+
+.catchall LABEL_58, LABEL_59, LABEL_60
+
+.catchall LABEL_54, LABEL_55, LABEL_56
+
+.catchall LABEL_50, LABEL_51, LABEL_52
+
+.catchall LABEL_46, LABEL_47, LABEL_48
+
+.catchall LABEL_42, LABEL_43, LABEL_44
+
+.catchall LABEL_2, LABEL_3, LABEL_4
+
+.catchall LABEL_34, LABEL_35, LABEL_36
+
+.catchall LABEL_30, LABEL_31, LABEL_32
+
+.catchall LABEL_26, LABEL_27, LABEL_28
+
+.catchall LABEL_22, LABEL_23, LABEL_24
+
+.catchall LABEL_18, LABEL_19, LABEL_20
+
+.catchall LABEL_14, LABEL_15, LABEL_16
+
+.catchall LABEL_10, LABEL_11, LABEL_12
+
+.catchall LABEL_6, LABEL_7, LABEL_8
+
+

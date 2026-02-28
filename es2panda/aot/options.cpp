@@ -27,6 +27,7 @@ constexpr char PROCESS_AS_LIST_MARK = '@';
 constexpr size_t ITEM_COUNT_MERGE = 7;
 // item list: [filePath; recordName; moduleKind; sourceFile; outputfile; isSharedModule; sourceLang]
 constexpr size_t ITEM_COUNT_NOT_MERGE = 7;
+constexpr size_t FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION = 24;
 const std::string LIST_ITEM_SEPERATOR = ";";
 const std::set<std::string> VALID_EXTENSIONS = { "js", "ts", "as", "abc" };
 
@@ -567,8 +568,8 @@ bool Options::Parse(int argc, const char **argv)
         "bc-min-version are enabled, only bc-version will take effects");
     panda::PandArg<bool> bcMinVersion("bc-min-version", false, "Print ark bytecode minimum supported version");
     // todo(huyunhui): change default api verion to 0 after refactoring
-    // Current api version is 20
-    panda::PandArg<int> targetApiVersion("target-api-version", 20,
+    // Current api version is 24
+    panda::PandArg<int> targetApiVersion("target-api-version", 24,
         "Specify the targeting api version for es2abc to generated the corresponding version of bytecode");
     panda::PandArg<bool> targetBcVersion("target-bc-version", false, "Print the corresponding ark bytecode version"\
         "for target api version. If both target-bc-version and bc-version are enabled, only target-bc-version"\
@@ -595,6 +596,8 @@ bool Options::Parse(int argc, const char **argv)
         " from abc file and remove redundant source file, which is effective when the compile-context-info switch"\
         "  is turned on and there is abc input");
     panda::PandArg<bool> opDumpString("dump-string", false, "Dump program strings");
+    panda::PandArg<bool> opEnableCallableName("enable-callable-name", false,
+        "Whether to include the function name in call instructions, only available for API24 and above");
     panda::PandArg<std::string> srcPkgName("src-package-name", "", "This is for modify pacakge name in input abc"\
         " file and should aways be used with dstPkgName. srcPkgName is for finding the targeting package name to be"\
         " modified.");
@@ -672,6 +675,7 @@ bool Options::Parse(int argc, const char **argv)
     argparser_->Add(&opDumpDepsInfo);
     argparser_->Add(&opRemoveRedundantFile);
     argparser_->Add(&opDumpString);
+    argparser_->Add(&opEnableCallableName);
 
     argparser_->Add(&transformLib);
 
@@ -885,6 +889,8 @@ bool Options::Parse(int argc, const char **argv)
         !compilerOptions_.compileContextInfo.updateVersionInfo.empty());
     compilerOptions_.removeRedundantFile = opRemoveRedundantFile.GetValue();
     compilerOptions_.dumpString = opDumpString.GetValue();
+    compilerOptions_.enableCallableName = targetApiVersion.GetValue() >= FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION &&
+                                          opEnableCallableName.GetValue();
     compilerOptions_.moduleRecordFieldName = moduleRecordFieldName.GetValue();
 
     compilerOptions_.patchFixOptions.dumpSymbolTable = opDumpSymbolTable.GetValue();

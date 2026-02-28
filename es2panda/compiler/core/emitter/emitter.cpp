@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -212,7 +212,13 @@ bool FunctionEmitter::NeedToAddColumnForPandaIns(panda::pandasm::Ins *pandaIns)
         pandaIns->opcode == pandasm::Opcode::WIDE_CALLTHISRANGE ||
         pandaIns->opcode == pandasm::Opcode::CALLARG0 || pandaIns->opcode == pandasm::Opcode::CALLARG1 ||
         pandaIns->opcode == pandasm::Opcode::CALLARGS2 || pandaIns->opcode == pandasm::Opcode::CALLARGS3 ||
-        pandaIns->opcode == pandasm::Opcode::CALLRANGE || pandaIns->opcode == pandasm::Opcode::WIDE_CALLRANGE);
+        pandaIns->opcode == pandasm::Opcode::CALLRANGE || pandaIns->opcode == pandasm::Opcode::WIDE_CALLRANGE ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS0WITHNAME ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS1WITHNAME ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS2WITHNAME ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS3WITHNAME ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHISRANGEWITHNAME ||
+        pandaIns->opcode == pandasm::Opcode::WIDE_CALLTHISRANGEWITHNAME);
 }
 
 void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, panda::pandasm::Ins *pandaIns)
