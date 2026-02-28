@@ -123,6 +123,8 @@ export class Lsp {
   private fileDependencies: string;
   private buildConfigs: Record<string, BuildConfig>; // Map<moduleName, build_config.json>
   private moduleInfos: Record<string, ModuleInfo>; // Map<fileName, ModuleInfo>
+  private reverseModuleDeps: Map<string, Set<string>>;
+  private reverseClosureCache: Map<string, Set<string>> = new Map();
   private pathConfig: PathConfig;
   private lspDriverHelper = new LspDriverHelper();
   private declFileMap: Record<string, string> = {}; // Map<declFilePath, sourceFilePath>
@@ -149,6 +151,7 @@ export class Lsp {
     this.getFileContent = getContentCallback || ((path: string): string => fs.readFileSync(path, 'utf8'));
     this.buildConfigs = generateBuildConfigs(pathConfig, modules ? modules : [], plugins);
     this.moduleInfos = generateArkTsConfigs(this.buildConfigs);
+    this.reverseModuleDeps = this.buildReverseModuleDeps();
     this.pathConfig = pathConfig;
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
@@ -165,8 +168,16 @@ export class Lsp {
 
   // Full update for `Sync Now`
   update(modules: ModuleDescriptor[]): void {
-    this.buildConfigs = generateBuildConfigs(this.pathConfig, modules);
-    this.moduleInfos = generateArkTsConfigs(this.buildConfigs);
+    const prevBuildConfigs = this.buildConfigs;
+    const prevReverseModuleDeps = this.reverseModuleDeps;
+    const nextBuildConfigs = generateBuildConfigs(this.pathConfig, modules);
+    const nextModuleInfos = generateArkTsConfigs(nextBuildConfigs);
+    const invalidationRoots = this.collectInvalidationRoots(prevBuildConfigs, nextBuildConfigs);
+
+    this.buildConfigs = nextBuildConfigs;
+    this.moduleInfos = nextModuleInfos;
+    this.reverseModuleDeps = this.buildReverseModuleDeps();
+    this.invalidateReverseClosureCache(invalidationRoots, prevReverseModuleDeps, this.reverseModuleDeps);
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
@@ -357,34 +368,187 @@ export class Lsp {
     return moduleInfo ? [...moduleInfo.compileFiles, ...moduleInfo.depModuleCompileFiles] : [];
   }
 
+  private buildReverseModuleDeps(): Map<string, Set<string>> {
+    const reverseDeps = new Map<string, Set<string>>();
+    const ownerModulesByCompileFile = this.buildOwnerModulesByCompileFile(this.buildConfigs);
+    for (const moduleName of Object.keys(this.buildConfigs)) {
+      reverseDeps.set(moduleName, new Set());
+    }
+    for (const [moduleName, buildConfig] of Object.entries(this.buildConfigs)) {
+      const depModuleNames = this.collectDependencyModuleNames(moduleName, buildConfig, ownerModulesByCompileFile);
+      for (const depModuleName of depModuleNames) {
+        reverseDeps.get(depModuleName)?.add(moduleName);
+      }
+    }
+    return reverseDeps;
+  }
+
+  private areStringSetsEqual(first: string[], second: string[]): boolean {
+    if (first.length !== second.length) {
+      return false;
+    }
+    const left = new Set(first.map((item) => path.resolve(item)));
+    if (left.size !== second.length) {
+      return false;
+    }
+    for (const item of second) {
+      if (!left.has(path.resolve(item))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private buildOwnerModulesByCompileFile(configs: Record<string, BuildConfig>): Map<string, Set<string>> {
+    const ownersByFile = new Map<string, Set<string>>();
+    for (const [moduleName, config] of Object.entries(configs)) {
+      const compileFiles = config.compileFiles ?? [];
+      for (const filePath of compileFiles) {
+        const normalizedPath = path.resolve(filePath);
+        let owners = ownersByFile.get(normalizedPath);
+        if (!owners) {
+          owners = new Set<string>();
+          ownersByFile.set(normalizedPath, owners);
+        }
+        owners.add(moduleName);
+      }
+    }
+    return ownersByFile;
+  }
+
+  private collectDependencyModuleNames(
+    moduleName: string,
+    config: BuildConfig | undefined,
+    ownersByFile: Map<string, Set<string>>
+  ): Set<string> {
+    const dependencyModules = new Set<string>();
+    if (!config) {
+      return dependencyModules;
+    }
+    const depFiles = config.depModuleCompileFiles ?? [];
+    for (const filePath of depFiles) {
+      const depOwners = ownersByFile.get(path.resolve(filePath));
+      if (!depOwners) {
+        continue;
+      }
+      for (const depModuleName of depOwners) {
+        if (depModuleName !== moduleName) {
+          dependencyModules.add(depModuleName);
+        }
+      }
+    }
+    return dependencyModules;
+  }
+
+  private collectInvalidationRoots(
+    prevConfigs: Record<string, BuildConfig>,
+    nextConfigs: Record<string, BuildConfig>
+  ): Set<string> {
+    const roots = new Set<string>();
+    const prevOwnersByFile = this.buildOwnerModulesByCompileFile(prevConfigs);
+    const nextOwnersByFile = this.buildOwnerModulesByCompileFile(nextConfigs);
+    const allModules = new Set<string>([...Object.keys(prevConfigs), ...Object.keys(nextConfigs)]);
+    for (const moduleName of allModules) {
+      const prev = prevConfigs[moduleName];
+      const next = nextConfigs[moduleName];
+      if (!prev || !next) {
+        roots.add(moduleName);
+        this.collectDependencyModuleNames(moduleName, prev, prevOwnersByFile).forEach((dep) => roots.add(dep));
+        this.collectDependencyModuleNames(moduleName, next, nextOwnersByFile).forEach((dep) => roots.add(dep));
+        continue;
+      }
+      const prevCompileFiles = prev.compileFiles ?? [];
+      const nextCompileFiles = next.compileFiles ?? [];
+      const prevDepModuleCompileFiles = prev.depModuleCompileFiles ?? [];
+      const nextDepModuleCompileFiles = next.depModuleCompileFiles ?? [];
+      const isCompileFilesChanged = !this.areStringSetsEqual(prevCompileFiles, nextCompileFiles);
+      const isDepModuleCompileFilesChanged = !this.areStringSetsEqual(prevDepModuleCompileFiles, nextDepModuleCompileFiles);
+      if (isCompileFilesChanged || isDepModuleCompileFilesChanged) {
+        roots.add(moduleName);
+        this.collectDependencyModuleNames(moduleName, prev, prevOwnersByFile).forEach((dep) => roots.add(dep));
+        this.collectDependencyModuleNames(moduleName, next, nextOwnersByFile).forEach((dep) => roots.add(dep));
+      }
+    }
+    return roots;
+  }
+
+  private collectReverseDependentsFromGraph(moduleName: string, graph: Map<string, Set<string>>): Set<string> {
+    const visited = new Set<string>();
+    const queue: string[] = [];
+    const directDependents = graph.get(moduleName);
+    if (directDependents) {
+      queue.push(...directDependents);
+    }
+    for (let i = 0; i < queue.length; i++) {
+      const current = queue[i];
+      if (visited.has(current)) {
+        continue;
+      }
+      visited.add(current);
+      const next = graph.get(current);
+      if (next) {
+        queue.push(...next);
+      }
+    }
+    return visited;
+  }
+
+  private invalidateReverseClosureCache(
+    changedModules: Set<string>,
+    prevReverseModuleDeps: Map<string, Set<string>>,
+    nextReverseModuleDeps: Map<string, Set<string>>
+  ): void {
+    if (changedModules.size === 0 || this.reverseClosureCache.size === 0) {
+      return;
+    }
+    const invalidateSet = new Set<string>();
+    const graphs = [prevReverseModuleDeps, nextReverseModuleDeps];
+    for (const moduleName of changedModules) {
+      invalidateSet.add(moduleName);
+      for (const graph of graphs) {
+        const dependents = this.collectReverseDependentsFromGraph(moduleName, graph);
+        dependents.forEach((name) => invalidateSet.add(name));
+      }
+    }
+    invalidateSet.forEach((name) => this.reverseClosureCache.delete(name));
+  }
+
+  private collectReverseDependents(moduleName: string): Set<string> {
+    const cached = this.reverseClosureCache.get(moduleName);
+    if (cached) {
+      return cached;
+    }
+    const visited = this.collectReverseDependentsFromGraph(moduleName, this.reverseModuleDeps);
+    this.reverseClosureCache.set(moduleName, visited);
+    return visited;
+  }
+
   private getMergedCompileFilesCrossModule(filename: String): string[] {
     const curModuleInfo = this.moduleInfos[path.resolve(filename.valueOf())];
     if (!curModuleInfo || !Array.isArray(curModuleInfo.compileFiles)) {
       return [];
     }
-    const curComplileSet = new Set(curModuleInfo.compileFiles);
-    const result: string[] = [];
-    result.push(...curModuleInfo.compileFiles);
-    result.push(...curModuleInfo.depModuleCompileFiles)
-
-    for (const [modulekey, moduleInfo] of Object.entries(this.moduleInfos)) {
-      if (!moduleInfo || !Array.isArray(moduleInfo.depModuleCompileFiles)) {
-        continue;
-      }
-
-      const hasReference = moduleInfo.depModuleCompileFiles.some((file) =>
-        curComplileSet.has(file)
-      );
-
-      if (hasReference) {
-        if (Array.isArray(moduleInfo.compileFiles)) {
-          result.push(...moduleInfo.compileFiles);
-        }
-        result.push(...moduleInfo.depModuleCompileFiles);
-      }
+    const resultSet = new Set<string>();
+    curModuleInfo.compileFiles.forEach((file) => resultSet.add(file));
+    if (Array.isArray(curModuleInfo.depModuleCompileFiles)) {
+      curModuleInfo.depModuleCompileFiles.forEach((file) => resultSet.add(file));
     }
 
-    return [...new Set(result)];
+    const dependents = this.collectReverseDependents(curModuleInfo.packageName);
+    dependents.forEach((dependentModuleName) => {
+      const buildConfig = this.buildConfigs[dependentModuleName];
+      if (!buildConfig) {
+        return;
+      }
+      if (Array.isArray(buildConfig.compileFiles)) {
+        buildConfig.compileFiles.forEach((file) => resultSet.add(file));
+      }
+      if (Array.isArray(buildConfig.depModuleCompileFiles)) {
+        buildConfig.depModuleCompileFiles.forEach((file) => resultSet.add(file));
+      }
+    });
+
+    return Array.from(resultSet);
   }
 
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
@@ -494,7 +658,7 @@ export class Lsp {
       }
     }
     let result: LspReferenceData[] = [];
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       let fileCache = this.filesMap.get(compileFiles[i].valueOf());
@@ -753,7 +917,7 @@ export class Lsp {
       return;
     }
     let result: LspTypeHierarchiesInfo[] = [];
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     for (let i = 0; i < compileFiles.length; i++) {
       let searchPtr: KPointer;
       let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
@@ -871,7 +1035,7 @@ export class Lsp {
       contextList.push({ ctx: ctx, cfg: cfg });
       nativeContextList = global.es2panda._pushBackToNativeContextVector(ctx, ctx, 1);
     }
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     for (let i = 0; i < compileFiles.length; i++) {
       let filePath = path.resolve(compileFiles[i]);
       if (path.resolve(filename.valueOf()) === filePath) {
@@ -986,7 +1150,7 @@ export class Lsp {
     }
 
     let result: LspSafeDeleteLocationInfo[] = [];
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
@@ -1430,7 +1594,7 @@ export class Lsp {
  	      perfScope?.end();
  	      return uniqueResult;
       } else {
-        let compileFiles = this.getMergedCompileFiles(filename);
+        let compileFiles = this.getMergedCompileFilesCrossModule(filename);
         const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
         if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
           this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
