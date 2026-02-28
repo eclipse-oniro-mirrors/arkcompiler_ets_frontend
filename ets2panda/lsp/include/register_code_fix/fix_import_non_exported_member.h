@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,8 +33,8 @@ public:
 private:
     void MakeChangeForImportNonExportedMember(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos);
     bool FindImportDeclaration(ir::AstNode *&importDeclNode);
-    bool FindFunctionName(ir::AstNode *importDeclNode, util::StringView &functionName);
-    void ProcessExportPosition(ir::AstNode *funcDecl, const util::StringView &functionName, size_t &exportPosition,
+    bool FindFunctionName(ir::AstNode *tokenNode, ir::AstNode *importDeclNode, util::StringView &functionName);
+    void ProcessExportPosition(es2panda_Context *context, ir::AstNode *funcDecl, const util::StringView &functionName,
                                ChangeTracker &changeTracker);
     std::vector<FileTextChanges> GetCodeActionsToImportNonExportedMember(const CodeFixContext &context);
 };
