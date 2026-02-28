@@ -402,6 +402,7 @@ private:
     ir::ETSModule *ParseNamespaceStatement(ir::ModifierFlags memberModifiers);
     ir::Statement *ParseNamespace(ir::ModifierFlags flags) override;
     ir::ETSModule *ParseNamespaceImp(ir::ModifierFlags flags);
+    ArenaVector<ir::Statement *> ParseNamespaceBlockStatements();
     using NamespaceBody = std::tuple<ir::MethodDefinition *, ArenaVector<ir::AstNode *>, lexer::SourceRange>;
     NamespaceBody ParseNamespaceBody(ir::ClassDefinitionModifiers modifiers, ir::ModifierFlags flags);
     // NOLINTNEXTLINE(google-default-arguments)

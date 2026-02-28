@@ -2901,11 +2901,36 @@ static std::unordered_set<util::StringView> CollectInstancePropsTransitive(ETSOb
     return transitivePropNames;
 }
 
+void ETSChecker::CheckSuperclassAccessibleDefaultCtor(ETSObjectType *classType, ETSObjectType *superType,
+                                                      ir::ClassDefinition *classDef)
+{
+    // A compile-time error occurs if a class has a default constructor, but its superclass has no accessible
+    // constructor without parameters (see Accessible).
+    bool hasParamlessCtor =
+        std::any_of(classType->ConstructSignatures().begin(), classType->ConstructSignatures().end(),
+                    [](Signature *sig) { return sig->MinArgCount() == 0; });
+
+    bool superHasParamlessCtor =
+        std::any_of(superType->ConstructSignatures().begin(), superType->ConstructSignatures().end(),
+                    [](Signature *sig) { return sig->MinArgCount() == 0; });
+    if (!hasParamlessCtor || !superHasParamlessCtor) {
+        return;
+    }
+    bool hasAccessibleParamlessCtor = std::any_of(
+        superType->ConstructSignatures().begin(), superType->ConstructSignatures().end(),
+        [](Signature *sig) { return sig->MinArgCount() == 0 && !sig->HasSignatureFlag(SignatureFlags::PRIVATE); });
+    if (!hasAccessibleParamlessCtor) {
+        LogError(diagnostic::EXTENDING_CLASS_WITH_PRIVATE_CTOR, {superType->Name()}, classDef->Super()->Start());
+    }
+}
+
 void ETSChecker::CheckValidInheritance(ETSObjectType *classType, ir::ClassDefinition *classDef)
 {
     if (classType->SuperType() == nullptr) {
         return;
     }
+    auto *superType = classType->SuperType();
+    CheckSuperclassAccessibleDefaultCtor(classType, superType, classDef);
 
     const auto &allProps = classType->GetAllProperties();
     auto const interfaceList = GetInterfaces(classType);
