@@ -380,6 +380,7 @@ action("build_bindings") {
   deps = [
     ":public",
     ":ts_bindings",
+    "../:libes2panda_public_lsp",
   ]
   sources = [
     "src/common/Es2pandaNativeModule.ts",

@@ -1208,60 +1208,71 @@ ohos_shared_library("libes2panda") {
   subsystem_name = "arkcompiler"
 }
 
-ohos_source_set("libes2panda_frontend_static") {
-  sources = libes2panda_sources
+template("es2panda_frontend_static") {
+  ohos_source_set(target_name) {
+    sources = libes2panda_sources
+    configs = libes2panda_configs
+    defines = invoker.defines
 
-  configs = libes2panda_configs
-
-  deps = [
-    ":es2panda_diagnostic_gen_diagnostic_h",
-    ":es2panda_options_gen_options_h",
-    ":gen_${LIB_NAME}_decl_inc",
-    ":gen_${LIB_NAME}_enums_inc",
-    ":gen_${LIB_NAME}_idl",
-    ":gen_${LIB_NAME}_impl_inc",
-    ":gen_${LIB_NAME}_include_inc",
-    ":gen_${LIB_NAME}_list_inc",
-    ":gen_es2panda_compiler_signatures_h",
-    ":gen_es2panda_lexer_keywords_h",
-    ":gen_es2panda_lexer_tokenType_h",
-    ":gen_es2panda_lexer_token_inl",
-    ":isa_gen_es2panda_formats_h",
-    ":isa_gen_es2panda_isa_h",
-  ]
-  external_deps = [
-    "runtime_core:libarktsassembler_package",
-    "runtime_core:libarktsbase_package",
-    "runtime_core:libarktscompiler_package",
-    "runtime_core:libarktsfile_package",
-    sdk_libc_secshared_dep,
-  ]
-  if (ark_standalone_build || ark_static_standalone_build) {
-    deps += [
-      "$ark_third_party_root/icu/icu4c:static_icui18n",
-      "$ark_third_party_root/icu/icu4c:static_icuuc",
-      "$ark_third_party_root/flatbuffers:libflatbuffers_static",
+    deps = [
+      ":es2panda_diagnostic_gen_diagnostic_h",
+      ":es2panda_options_gen_options_h",
+      ":gen_${LIB_NAME}_decl_inc",
+      ":gen_${LIB_NAME}_enums_inc",
+      ":gen_${LIB_NAME}_idl",
+      ":gen_${LIB_NAME}_impl_inc",
+      ":gen_${LIB_NAME}_include_inc",
+      ":gen_${LIB_NAME}_list_inc",
+      ":gen_es2panda_compiler_signatures_h",
+      ":gen_es2panda_lexer_keywords_h",
+      ":gen_es2panda_lexer_tokenType_h",
+      ":gen_es2panda_lexer_token_inl",
+      ":isa_gen_es2panda_formats_h",
+      ":isa_gen_es2panda_isa_h",
     ]
-  } else {
-    external_deps += [
-      "icu:static_icui18n",
-      "icu:static_icuuc",
-      "runtime_core:assembler_headers",
-      "runtime_core:libpandabase_headers",
-      "runtime_core:libpandafile_headers",
-      "runtime_core:runtime_gen_headers",
-      "flatbuffers:libflatbuffers_static",
+    external_deps = [
+      "runtime_core:libarktsassembler_package",
+      "runtime_core:libarktsbase_package",
+      "runtime_core:libarktscompiler_package",
+      "runtime_core:libarktsfile_package",
+      sdk_libc_secshared_dep,
     ]
+    if (ark_standalone_build || ark_static_standalone_build) {
+      deps += [
+        "$ark_third_party_root/icu/icu4c:static_icui18n",
+        "$ark_third_party_root/icu/icu4c:static_icuuc",
+        "$ark_third_party_root/flatbuffers:libflatbuffers_static",
+      ]
+    } else {
+      external_deps += [
+        "icu:static_icui18n",
+        "icu:static_icuuc",
+        "runtime_core:assembler_headers",
+        "runtime_core:libpandabase_headers",
+        "runtime_core:libpandafile_headers",
+        "runtime_core:runtime_gen_headers",
+        "flatbuffers:libflatbuffers_static",
+      ]
+    }
+    part_name = "ets_frontend"
+    subsystem_name = "arkcompiler"
   }
-  part_name = "ets_frontend"
-  subsystem_name = "arkcompiler"
+}
+
+es2panda_frontend_static("libes2panda_frontend_static") {
+  defines = []
+}
+
+es2panda_frontend_static("libes2panda_frontend_static_lsp") {
+  defines = [
+    "ES2PANDA_ENABLE_AST_HISTORY",
+  ]
 }
 
 ohos_shared_library("libes2panda_public") {
   configs = [ ":libes2panda_config" ]
   deps = [
-    ":libes2panda_public_frontend_static",
-    "./lsp:libes2panda_lsp_static",
+    ":libes2panda_public_frontend_static"
   ]
   if (is_mingw || is_win) {
     output_extension = "dll"
@@ -1274,6 +1285,24 @@ ohos_shared_library("libes2panda_public") {
   if (is_linux) {
     libs += [ "stdc++fs" ]
   }
+  part_name = "ets_frontend"
+  subsystem_name = "arkcompiler"
+}
+
+ohos_shared_library("libes2panda_public_lsp") {
+  configs = [ ":libes2panda_config" ]
+  deps = [
+    ":libes2panda_public_frontend_static_lsp",
+    "./lsp:libes2panda_lsp_static_ast_history",
+  ]
+  if (is_mingw || is_win) {
+    output_extension = "dll"
+  } else {
+    output_extension = "so"
+  }
+
+  libs = platform_libs
+  ldflags = platform_ldflags
   part_name = "ets_frontend"
   subsystem_name = "arkcompiler"
 }
@@ -1303,46 +1332,57 @@ action("generate_ets2panda_info") {
   ]
 }
 
-ohos_source_set("libes2panda_public_frontend_static") {
-  sources = libes2panda_public_sources
+template("es2panda_public_frontend_static") {
+  ohos_source_set(target_name) {
+    sources = libes2panda_public_sources
+    configs = libes2panda_public_configs
+    deps = [ invoker.frontend_dep ]
+    if (target_os != "win" && target_os != "mingw" && target_os != "winuwp") {
+      deps += [ ":generate_ets2panda_info" ]
+      defines = invoker.gn_defines
+    }
+    external_deps = [
+      "runtime_core:libarktsbytecodeopt_package",
+      sdk_libc_secshared_dep,
+    ]
 
-  configs = libes2panda_public_configs
+    if (ark_standalone_build || ark_static_standalone_build) {
+      deps += [
+        "$ark_root/assembler:libarktsassembler",
+        "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
+        "$ark_root/compiler:libarktscompiler",
+        "$ark_root/libarkbase:libarktsbase",
+        "$ark_root/libarkfile:libarktsfile",
+      ]
+    } else {
+      external_deps += [
+        "runtime_core:assembler_headers",
+        "runtime_core:bytecode_optimizer_headers",
+        "runtime_core:compiler_headers",
+        "runtime_core:libpandabase_headers",
+        "runtime_core:libpandafile_headers",
+        "runtime_core:runtime_gen_headers",
+        "runtime_core:runtime_headers",
+        "runtime_core:verification_headers",
+      ]
+    }
 
-  deps = [ ":libes2panda_frontend_static" ]
-
-  if (target_os != "win" && target_os != "mingw" && target_os != "winuwp") {
-    deps += [ ":generate_ets2panda_info" ]
-    defines = [ "ES2PANDA_COMPILE_BY_GN" ]
+    part_name = "ets_frontend"
+    subsystem_name = "arkcompiler"
   }
+}
 
-  external_deps = [
-    "runtime_core:libarktsbytecodeopt_package",
-    sdk_libc_secshared_dep,
+es2panda_public_frontend_static("libes2panda_public_frontend_static") {
+  frontend_dep = ":libes2panda_frontend_static"
+  gn_defines = [ "ES2PANDA_COMPILE_BY_GN" ]
+}
+
+es2panda_public_frontend_static("libes2panda_public_frontend_static_lsp") {
+  frontend_dep = ":libes2panda_frontend_static_lsp"
+  gn_defines = [
+    "ES2PANDA_COMPILE_BY_GN",
+    "ES2PANDA_ENABLE_AST_HISTORY",
   ]
-
-  if (ark_standalone_build || ark_static_standalone_build) {
-    deps += [
-      "$ark_root/assembler:libarktsassembler",
-      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
-      "$ark_root/compiler:libarktscompiler",
-      "$ark_root/libarkbase:libarktsbase",
-      "$ark_root/libarkfile:libarktsfile",
-    ]
-  } else {
-    external_deps += [
-      "runtime_core:assembler_headers",
-      "runtime_core:bytecode_optimizer_headers",
-      "runtime_core:compiler_headers",
-      "runtime_core:libpandabase_headers",
-      "runtime_core:libpandafile_headers",
-      "runtime_core:runtime_gen_headers",
-      "runtime_core:runtime_headers",
-      "runtime_core:verification_headers",
-    ]
-  }
-
-  part_name = "ets_frontend"
-  subsystem_name = "arkcompiler"
 }
 
 ark_isa_gen("isa_gen_es2panda") {

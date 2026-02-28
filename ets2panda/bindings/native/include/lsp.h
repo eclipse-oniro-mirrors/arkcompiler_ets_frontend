@@ -29,7 +29,7 @@ inline const LSPAPI *GetLspApiImpl()
     }
     auto library = FindLibrary();
     if (library == nullptr) {
-        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC << std::endl;
+        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC_LSP << std::endl;
     }
     auto symbol = FindSymbol(library, "GetImpl");
     if (symbol == nullptr) {

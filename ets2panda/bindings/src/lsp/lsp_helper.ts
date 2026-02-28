@@ -98,7 +98,7 @@ function initBuildEnv(): void {
   const currentPath: string | undefined = process.env.PATH;
   let pandaLibPath: string = process.env.PANDA_LIB_PATH
     ? process.env.PANDA_LIB_PATH
-    : path.resolve(__dirname, '../../../ets2panda/lib');
+    : path.resolve(__dirname, '../../../bindings');
   process.env.PATH = `${currentPath}${path.delimiter}${pandaLibPath}`;
 }
 
@@ -143,7 +143,7 @@ export class Lsp {
     this.fileDependencies = path.join(this.cacheDir, 'file_dependencies.json');
     this.pandaLibPath = process.env.PANDA_LIB_PATH
       ? process.env.PANDA_LIB_PATH
-      : path.resolve(__dirname, '../../../ets2panda/lib');
+      : path.resolve(__dirname, '../../../bindings');
     this.pandaBinPath = process.env.PANDA_BIN_PATH
       ? process.env.PANDA_BIN_PATH
       : path.resolve(__dirname, '../../../ets2panda/bin');
@@ -156,6 +156,7 @@ export class Lsp {
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
     PluginDriver.getInstance().initPlugins(this.defaultBuildConfig);
+    this.lspDriverHelper.memInitialize(this.pandaLibPath);
   }
 
   // Partially update for new file
