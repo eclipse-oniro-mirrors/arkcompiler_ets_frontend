@@ -1,3 +1,4 @@
+import st from "@ohos.lang.interop";
 import A from "./test_ets2ts_isolated_enum";
 import B from "./test_ets2ts_isolated_enum";
 import C from "./test_ets2ts_isolated_enum";

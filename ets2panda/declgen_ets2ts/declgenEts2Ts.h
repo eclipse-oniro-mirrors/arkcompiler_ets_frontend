@@ -122,6 +122,7 @@ private:
                                      const checker::Type *checkerType = nullptr);
     bool ProcessTypeAnnotationSpecificTypes(const checker::Type *checkerType);
     void ProcessTypeAnnotationType(const ir::TypeNode *typeAnnotation, const checker::Type *checkerType = nullptr);
+    void ProcessRestParameterTypeAnnotationType(const ir::TypeNode *typeAnnotation);
     void ProcessETSTypeReference(const ir::TypeNode *typeAnnotation, const checker::Type *checkerType);
     void ProcessETSTuple(const ir::ETSTuple *etsTuple);
     void ProcessETSUnionType(const ir::ETSUnionType *etsUnionType);
@@ -151,6 +152,7 @@ private:
     void GenSingleNamedImport(ir::AstNode *specifier, const ir::ETSImportDeclaration *importDeclaration,
                               bool isGlueCode = false);
     void GenSingleNamedExport(ir::AstNode *specifier, bool isGlueCode = false);
+    void GenInteropImport();
     void GenReExportDeclaration(const ir::ETSReExportDeclaration *reExportDeclaration);
     bool GenNamespaceReExportDeclaration(const ir::AstNode *specifier,
                                          const ir::ETSImportDeclaration *importDeclaration);
@@ -208,6 +210,7 @@ private:
     void ProcessParamDefaultToMap(const ir::Statement *stmt);
     void ProcessParameterName(varbinder::LocalVariable *param);
     void ProcessFuncParameter(varbinder::LocalVariable *param);
+    void ProcessFuncRestParameter(varbinder::LocalVariable *param);
     void ProcessFuncParameters(const checker::Signature *sig);
     void GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef);
     void ProcessClassPropertyType(const ir::ClassProperty *classProp);
@@ -278,6 +281,8 @@ private:
     bool IsDependency(const ir::AstNode *decl);
     bool IsDependency(const checker::Type *tsType);
     bool IsDependency(const std::string &assemblerName);
+
+    bool IsInteropImport(const ir::ETSImportDeclaration *importDeclaration);
 
     void OutDts() {}
 
@@ -351,6 +356,7 @@ private:
         "StdProcess", "taskpool", "functions",    "containers", "Intl",     "GC",
         "jsonx",      "proxy",    "unsafeMemory", "reflect",    "StdDebug", "arktest"};
     const std::set<std::string> extensions_ = {".sts", ".ets", ".ts", ".js"};
+    const std::string interopSdkName_ = "@ohos.lang.interop";
 
     std::stringstream outputDts_;
     std::stringstream outputTs_;

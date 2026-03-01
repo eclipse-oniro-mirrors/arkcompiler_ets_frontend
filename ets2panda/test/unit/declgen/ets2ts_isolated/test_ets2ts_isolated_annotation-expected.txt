@@ -1,1 +1,2 @@
+import st from "@ohos.lang.interop";
 export declare function foo(): void;

@@ -1,3 +1,4 @@
+import st from "@ohos.lang.interop";
 export declare namespace MathOperations {
     const PI: number;
     function add(a: number, b: number): number;

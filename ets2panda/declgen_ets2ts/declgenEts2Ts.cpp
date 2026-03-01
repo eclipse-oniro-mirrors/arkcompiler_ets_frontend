@@ -382,10 +382,28 @@ void TSDeclGen::GenInitModuleGlueCode()
     }
 }
 
+bool TSDeclGen::IsInteropImport(const ir::ETSImportDeclaration *importDeclaration)
+{
+    const auto source = importDeclaration->Source()->Str().Utf8();
+    return source == RemoveModuleExtensionName(interopSdkName_);
+}
+
+void TSDeclGen::GenInteropImport()
+{
+    OutTs("import st from \"", interopSdkName_, "\";");
+    OutEndlTs();
+    OutDts("import st from \"", interopSdkName_, "\";");
+    OutEndlDts();
+}
+
 void TSDeclGen::GenImportDeclarations()
 {
+    GenInteropImport();
     for (auto *globalStatement : program_->Ast()->Statements()) {
         if (globalStatement->IsETSImportDeclaration()) {
+            if (IsInteropImport(globalStatement->AsETSImportDeclaration())) {
+                continue;
+            }
             GenImportDeclaration(globalStatement->AsETSImportDeclaration());
         }
     }
@@ -664,6 +682,52 @@ void TSDeclGen::ProcessParameterName(varbinder::LocalVariable *param)
     }
 }
 
+void TSDeclGen::ProcessRestParameterTypeAnnotationType(const ir::TypeNode *typeAnnotation)
+{
+    if (!typeAnnotation->IsETSTypeReference()) {
+        ProcessTypeAnnotationType(typeAnnotation);
+        return;
+    }
+    const auto *typeReference = typeAnnotation->AsETSTypeReference();
+    const auto typePart = typeReference->Part();
+    auto partName = typePart->GetIdent()->Name().Mutf8();
+    AddImport(partName);
+    if (typePart->TypeParams() != nullptr && typePart->TypeParams()->IsTSTypeParameterInstantiation()) {
+        if (partName == "ReadonlyArray" || partName == "FixedArray" ||
+            (typeReference->Parent()->Parent()->IsETSParameterExpression() &&
+             typeReference->Parent()->Parent()->AsETSParameterExpression()->TypeAnnotation() != nullptr &&
+             typeReference->Parent()->Parent()->AsETSParameterExpression()->TypeAnnotation()->IsReadonlyType() &&
+             partName == "Array")) {
+            GenArrayType(typePart->TypeParams()->Params()[0]->GetType(checker_));
+        } else {
+            OutDts(partName);
+            OutDts("<");
+            GenSeparated(typePart->TypeParams()->Params(),
+                         [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
+            OutDts(">");
+        }
+    } else {
+        GenPartName(partName);
+        OutDts(partName);
+    }
+}
+
+void TSDeclGen::ProcessFuncRestParameter(varbinder::LocalVariable *param)
+{
+    const auto *paramDeclNode = param->Declaration()->Node();
+    const auto *expr = paramDeclNode->AsETSParameterExpression();
+    const auto *typeAnnotation = expr->TypeAnnotation();
+
+    ProcessParameterName(param);
+
+    OutDts(": ");
+    if (typeAnnotation != nullptr && typeAnnotation->IsETSTypeReference()) {
+        ProcessRestParameterTypeAnnotationType(typeAnnotation);
+        return;
+    }
+    OutDts("ESObject");
+}
+
 void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
 {
     if (std::string(param->Name()).find("%%property-") != std::string::npos) {
@@ -747,7 +811,7 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
             OutDts(", ");
         }
         OutDts("...");
-        ProcessFuncParameter(sigInfo->restVar);
+        ProcessFuncRestParameter(sigInfo->restVar);
     }
     OutDts(")");
     if (!isSetter && !isConstructor) {
@@ -1551,6 +1615,25 @@ std::string TSDeclGen::ReplaceETSGLOBAL(const std::string &typeName)
     return globalDesc_;
 }
 
+static std::string ConvertInteropTypeName(const std::string &typeName)
+{
+    if (typeName == "Array") {
+        return "st.Array";
+    } else if (typeName == "Map") {
+        return "st.Map";
+    } else if (typeName == "Set") {
+        return "st.Set";
+    } else if (typeName == "es.Array") {
+        return "Array";
+    } else if (typeName == "es.Map") {
+        return "Map";
+    } else if (typeName == "es.Set") {
+        return "Set";
+    } else {
+        return typeName;
+    }
+}
+
 bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference)
 {
     if (typeReference->Part()->Name()->IsTSQualifiedName() &&
@@ -1563,7 +1646,7 @@ bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference
             OutDts("ESObject");
             return true;
         }
-        OutDts(qualifiedName);
+        OutDts(ConvertInteropTypeName(qualifiedName));
         return true;
     }
     return false;
@@ -1586,7 +1669,7 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
              partName == "Array")) {
             GenArrayType(typePart->TypeParams()->Params()[0]->GetType(checker_));
         } else {
-            OutDts(partName);
+            OutDts(ConvertInteropTypeName(partName));
             OutDts("<");
             GenSeparated(typePart->TypeParams()->Params(),
                          [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
@@ -1598,7 +1681,7 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
         OutDts(partName);
     } else {
         GenPartName(partName);
-        OutDts(partName);
+        OutDts(ConvertInteropTypeName(partName));
     }
 }
 
@@ -1727,7 +1810,11 @@ void TSDeclGen::ProcessETSFunctionType(const ir::ETSFunctionType *etsFunction)
         const bool isRestParam = paramExpr->IsRestParameter();
         const bool isOptional = paramExpr->IsOptional();
         OutDts(isRestParam ? "..." : "", paramName.Is("=t") ? "this" : paramName, isOptional ? "?: " : ": ");
-        ProcessTypeAnnotationType(paramExpr->TypeAnnotation(), paramExpr->TypeAnnotation()->TsType());
+        if (isRestParam) {
+            ProcessRestParameterTypeAnnotationType(paramExpr->TypeAnnotation());
+        } else {
+            ProcessTypeAnnotationType(paramExpr->TypeAnnotation(), paramExpr->TypeAnnotation()->TsType());
+        }
     });
     OutDts(") => ");
     ProcessTypeAnnotationType(etsFunction->ReturnType(), etsFunction->ReturnType()->TsType());

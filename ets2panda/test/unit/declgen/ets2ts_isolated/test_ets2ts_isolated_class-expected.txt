@@ -1,3 +1,4 @@
+import st from "@ohos.lang.interop";
 export declare interface I0 {
     I0Method?(a: string): string;
 }
