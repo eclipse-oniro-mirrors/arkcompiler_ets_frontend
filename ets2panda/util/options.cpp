@@ -302,6 +302,9 @@ void Options::InitializeWarnings()
     if (WasSetEtsWarningsBasePath()) {
         diagnosticEngine_.SetBasePath(GetEtsWarningsBasePath());
     }
+    if (WasSetEtsWarningsDiagnosticFormat() && GetEtsWarningsDiagnosticFormat() == "build-system") {
+        diagnosticEngine_.SetPrinter(std::make_unique<CustomDiagnosticPrinter>());
+    }
     std::array<bool, ETSWarnings::COUNT> warningSet {};
     ES2PANDA_ASSERT(ETSWarnings::LAST < ETSWarnings::COUNT);
 

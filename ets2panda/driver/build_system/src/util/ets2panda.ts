@@ -173,7 +173,7 @@ export class Ets2panda {
         const source = fs.readFileSync(inputFilePath, 'utf-8');
         const isDecl = (job.type & CompileJobType.DECL) !== 0;
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, false, isDecl);
-        ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
+        ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         const { arkts, arktsGlobal } = this.koalaModule;
@@ -279,7 +279,7 @@ export class Ets2panda {
 
         const isDecl = (job.type & CompileJobType.DECL) !== 0;
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true, isDecl);
-        ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
+        ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');
         if (dumpPerf) {
             ets2pandaCmd.push('--dump-perf-metrics');
         }
@@ -360,8 +360,7 @@ export class Ets2panda {
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
                         'Compile abc files failed.',
-                        error.message,
-                        job.fileInfo.input
+                        error.message
                     )
                 );
             }

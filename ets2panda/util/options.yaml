@@ -155,6 +155,13 @@ options:
     type: std::string
     default: ""
     description: Base directory for relative paths of filenames in warnings;
+  - name: diagnostic-format
+    type: std::string
+    default: default
+    possible_values:
+    - default
+    - build-system
+    description: Diagnostic output format
 
 - name: debugger-eval
   description: Compile given file in evaluation mode

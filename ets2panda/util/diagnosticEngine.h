@@ -26,6 +26,10 @@
 
 namespace ark::es2panda::util {
 
+using DiagnosticStorage = std::vector<std::shared_ptr<DiagnosticBase>>;
+
+using DiagnosticCheckpoint = std::array<size_t, DiagnosticType::COUNT>;
+
 class DiagnosticPrinter {
 public:
     DiagnosticPrinter() = default;
@@ -48,9 +52,19 @@ public:
     void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const override;
 };
 
-using DiagnosticStorage = std::vector<std::shared_ptr<DiagnosticBase>>;
+class CustomDiagnosticPrinter : public DiagnosticPrinter {
+public:
+    CustomDiagnosticPrinter() : counter_(1) {}
+    NO_COPY_SEMANTIC(CustomDiagnosticPrinter);
+    NO_MOVE_SEMANTIC(CustomDiagnosticPrinter);
+    ~CustomDiagnosticPrinter() override = default;
 
-using DiagnosticCheckpoint = std::array<size_t, DiagnosticType::COUNT>;
+    void Print(const DiagnosticBase &diagnostic, std::string basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const override;
+
+private:
+    mutable int counter_;
+};
 
 class DiagnosticEngine {
 public:
@@ -157,6 +171,11 @@ public:
         basePath_ = basePath;  // NOLINT(performance-unnecessary-value-param)
     }
 
+    void SetPrinter(std::unique_ptr<DiagnosticPrinter> printer)
+    {
+        printer_ = std::move(printer);
+    }
+
     void CleanDuplicateLog(DiagnosticType type);
 
     const DiagnosticStorage &GetDiagnosticStorage(DiagnosticType type);
@@ -199,7 +218,7 @@ private:
 
 private:
     std::array<DiagnosticStorage, static_cast<size_t>(DiagnosticType::COUNT)> diagnostics_;
-    std::unique_ptr<const DiagnosticPrinter> printer_;
+    std::unique_ptr<DiagnosticPrinter> printer_;
     bool wError_ {false};
     // NOLINTNEXTLINE(readability-redundant-string-init)
     std::string basePath_ {""};

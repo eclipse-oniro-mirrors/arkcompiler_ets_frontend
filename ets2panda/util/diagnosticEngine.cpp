@@ -51,6 +51,26 @@ void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::string b
     Print(diagnostic, std::cout, basePath);
 }
 
+void CustomDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::string basePath) const
+{
+    Print(diagnostic, std::cout, basePath);
+}
+
+void CustomDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out,
+                                    [[maybe_unused]] std::string basePath) const
+{
+    std::ostringstream stream;
+    stream << counter_++ << " ERROR: " << DiagnosticTypeToString(diagnostic.Type()) << " "
+           << diagnostic.ToStringUniqueNumber() << std::endl;
+    stream << "Error Message: " << diagnostic.Message();
+    if (!diagnostic.File().empty()) {
+        stream << " At File: " << diagnostic.File() << ":" << diagnostic.Line() << ":" << diagnostic.Offset()
+               << std::endl;
+    }
+    stream << std::endl;
+    out << stream.str();
+}
+
 void DiagnosticEngine::CleanDuplicateLog(DiagnosticType type)
 {
     DiagnosticStorage &log = diagnostics_[type];
