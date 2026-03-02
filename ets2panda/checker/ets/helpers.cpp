@@ -465,6 +465,8 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
             return GlobalIntBuiltinType();
         case TypeFlag::LONG:
             return GlobalLongBuiltinType();
+        case TypeFlag::FLOAT:
+            return GlobalFloatBuiltinType();
         case TypeFlag::DOUBLE:
             return GlobalDoubleBuiltinType();
         default:
