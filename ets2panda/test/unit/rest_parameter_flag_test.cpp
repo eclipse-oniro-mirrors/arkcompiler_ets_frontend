@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -333,7 +333,9 @@ TEST_F(RestParameterTest, abstract_function_with_rest_parameter_1)
 // === External methods ===
 TEST_F(RestParameterTest, external_function_with_rest_parameter_0)
 {
-    SetCurrentProgram("");
+    SetCurrentProgram(R"(
+        let o: Object[] = [1]
+    )");
     using ::testing::Contains, ::testing::Key, ::testing::Eq;
     EXPECT_THAT(program_->functionInstanceTable,
                 Contains(Key(Eq("std.core.Object[].<ctor>:std.core.Object[];i32;void;"))));
