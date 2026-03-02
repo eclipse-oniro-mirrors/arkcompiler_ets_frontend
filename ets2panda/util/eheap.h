@@ -96,10 +96,8 @@ public:
         NO_MOVE_SEMANTIC(Scope);
     };
 
-#ifndef NDEBUG
-    template <typename T>
-    using EPtr = T *;
-#else
+// Enable ptr compression in release and fast-verify:
+#if defined(NDEBUG) || defined(PANDA_FAST_VERIFY)
     // NOLINTBEGIN
     template <typename T>
     class EPtr {
@@ -157,7 +155,11 @@ public:
         uint32_t raw_;
     };
     // NOLINTEND
-#endif  // NDEBUG
+
+#else
+    template <typename T>
+    using EPtr = T *;
+#endif  // defined(NDEBUG) || defined(PANDA_FAST_VERIFY)
 
     EHeap() = delete;
     ~EHeap() = delete;
@@ -197,11 +199,13 @@ private:
             return buffer_;
         }
 
-        ALWAYS_INLINE void AssertInRange(void const *ptr)
+        ALWAYS_INLINE void AssertInRange([[maybe_unused]] void const *ptr)
         {
+#ifndef NDEBUG
             if (!(ToUintPtr(ptr) >= ToUintPtr(buffer_) && ToUintPtr(ptr) < current_)) {
                 BrokenEHeapPointerAction(ptr);
             }
+#endif
         }
 
         size_t AllocatedSize() const
