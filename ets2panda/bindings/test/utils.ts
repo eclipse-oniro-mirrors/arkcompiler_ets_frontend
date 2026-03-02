@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,14 +22,14 @@ export const DEFAULT_PATH_CONFIG: PathConfig = {
   declgenOutDir: ''
 };
 
-const DEFAULT_PLUGIN_LIST: string[] = process.env.SKIP_UI_PLUGINS ? [] : ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+const DEFAULT_PLUGIN_LIST: string[] = process.env.SKIP_UI_PLUGINS ? [] : ['ui-plugins', 'memo-plugins'];
 
 export function getLsp(moduleName: string, plugins: string[] = DEFAULT_PLUGIN_LIST): Lsp {
   const bindingsPath =
     process.env.BINDINGS_PATH || path.join(DEFAULT_PATH_CONFIG.buildSdkPath, 'build-tools', 'bindings');
 
   const pandaLibPath =
-    process.env.PANDA_LIB_PATH || path.join(DEFAULT_PATH_CONFIG.buildSdkPath, 'build-tools', 'bindings');
+    process.env.PANDA_LIB_PATH || path.join(DEFAULT_PATH_CONFIG.buildSdkPath, 'build-tools', 'ets2panda', 'lib');
 
   const pandaBinPath =
     process.env.PANDA_BIN_PATH || path.join(DEFAULT_PATH_CONFIG.buildSdkPath, 'build-tools', 'ets2panda', 'bin');

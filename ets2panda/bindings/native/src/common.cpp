@@ -40,13 +40,16 @@ void *FindLibrary()
         }
     }
 
-    const char *primaryLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_OHOS_LSP : G_LIB_ES2_PANDA_PUBLIC_OHOS;
-    const char *fallbackLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
-    const std::string candidates[] = {basePath + primaryLib, basePath + fallbackLib};
-    for (const auto &name : candidates) {
-        if (auto *library = LoadLibrary(name); library != nullptr) {
-            return library;
-        }
+    std::string libraryName = basePath + G_LIB_ES2_PANDA_PUBLIC_OHOS;
+    void *library = LoadLibrary(libraryName);
+    if (library != nullptr) {
+        return library;
+    }
+
+    std::string altLibraryName = basePath + G_LIB_ES2_PANDA_PUBLIC;
+    library = LoadLibrary(altLibraryName);
+    if (library != nullptr) {
+        return library;
     }
 
     return nullptr;
@@ -59,8 +62,7 @@ const es2panda_Impl *GetPublicImpl()
     }
     auto library = FindLibrary();
     if (library == nullptr) {
-        const char *libName = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
-        std::cout << "Cannot find " << libName << endl;
+        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC << endl;
     }
     auto symbol = FindSymbol(library, "es2panda_GetImpl");
     if (symbol == nullptr) {
@@ -144,7 +146,6 @@ TS_INTEROP_V0(MemInitialize)
 void impl_MemInitializeWithPath(KStringPtr &pandaLibPath)
 {
     g_pandaLibPath = GetStringView(pandaLibPath);
-    g_isLspUsage = true;
     GetPublicImpl()->MemInitialize();
 }
 TS_INTEROP_V1(MemInitializeWithPath, KStringPtr)

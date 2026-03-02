@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+# Copyright (c) 2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -62,8 +62,6 @@ def copy_output(options):
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
                 os.path.join(options.output_path, 'public.node'), True)
-        copy_files(os.path.join(options.root_out_dir, 'arkcompiler/ets_frontend', 'libes2panda_public_lsp.dll'),
-                os.path.join(options.output_path, 'libes2panda_public_lsp.dll'), True)
         copy_files(os.path.join(options.root_out_dir, 'libts_bindings.dll'),
                    os.path.join(options.source_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
@@ -74,8 +72,6 @@ def copy_output(options):
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'public.node'),
                 os.path.join(options.output_path, 'public.node'), True)
-        copy_files(os.path.join(options.root_out_dir, 'arkcompiler/ets_frontend', 'libes2panda_public_lsp.so'),
-                os.path.join(options.output_path, 'libes2panda_public_lsp.so'), True)
         copy_files(os.path.join(options.root_out_dir, 'ts_bindings.node'),
                    os.path.join(options.source_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'public.node'),
