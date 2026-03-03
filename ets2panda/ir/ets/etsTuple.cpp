@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 #include "etsTuple.h"
 
-#include "checker/ETSchecker.h"
 #include "checker/types/ets/etsTupleType.h"
 
 namespace ark::es2panda::ir {
@@ -99,14 +98,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
     }
     checker->CheckAnnotations(this);
 
-    // NOTE (smartin): Remove, when TupleN is handled in codegen
-    constexpr uint8_t MAX_TUPLE_ARITY = 16;
-    if (GetTupleTypeAnnotationsList().size() > MAX_TUPLE_ARITY) {
-        checker->LogError(diagnostic::TUPLEN_NOT_IMPLEMENTED, {}, Start());
-        return checker->InvalidateType(this);
-    }
-
-    std::vector<checker::Type *> typeList;
+    std::vector<checker::Type *> typeList {};
 
     bool isTypeError = false;
     for (auto *const typeAnnotation : GetTupleTypeAnnotationsList()) {

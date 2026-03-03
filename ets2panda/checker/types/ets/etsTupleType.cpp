@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,30 @@
 
 #include "etsTupleType.h"
 
-#include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
 
 namespace ark::es2panda::checker {
+
+ETSTupleType::ETSTupleType(ETSChecker *checker, ArenaVector<Type *> &&typeList)
+    : Type(checker::TypeFlag::ETS_TUPLE), typeList_(std::move(typeList))
+{
+    typeFlags_ |= TypeFlag::ETS_TUPLE;
+
+    auto typeSize = typeList_.size();
+    auto *type = checker->GlobalBuiltinTupleType(typeSize);
+
+    auto const &typeArguments = type->TypeArguments();
+    typeSize = typeArguments.size();  // We can have more actual parameters than type arguments!
+
+    Substitution substitution {};
+    for (std::size_t i = 0U; i < typeSize; ++i) {
+        ES2PANDA_ASSERT(typeArguments[i]->IsETSTypeParameter());
+        substitution.emplace(typeArguments[i]->AsETSTypeParameter(), typeList_[i]);
+    }
+
+    wrapperType_ = type->Substitute(checker->Relation(), &substitution);
+}
+
 void ETSTupleType::ToString(std::stringstream &ss, bool precise) const
 {
     if (HasTypeFlag(TypeFlag::READONLY)) {
@@ -72,11 +92,8 @@ Type *ETSTupleType::GetTypeAtIndex(const TupleSizeType index) const
 
 bool ETSTupleType::CheckElementsIdentical(TypeRelation *relation, const ETSTupleType *other) const
 {
-    if (GetTupleSize() != other->GetTupleSize()) {
-        return false;
-    }
-
-    for (TupleSizeType idx = 0; idx < GetTupleSize(); ++idx) {
+    ES2PANDA_ASSERT(GetTupleSize() <= other->GetTupleSize());
+    for (TupleSizeType idx = 0U; idx < GetTupleSize(); ++idx) {
         if (!relation->IsIdenticalTo(GetTypeAtIndex(idx), other->GetTypeAtIndex(idx))) {
             return false;
         }
@@ -84,41 +101,27 @@ bool ETSTupleType::CheckElementsIdentical(TypeRelation *relation, const ETSTuple
     return true;
 }
 
-void ETSTupleType::Identical([[maybe_unused]] TypeRelation *const relation, Type *const other)
+void ETSTupleType::Identical(TypeRelation *const relation, Type *const other)
 {
-    if (!other->IsETSTupleType()) {
-        return;
+    relation->Result(false);
+
+    if (other->IsETSTupleType() && HasTypeFlag(TypeFlag::READONLY) == other->HasTypeFlag(TypeFlag::READONLY)) {
+        auto *tupleType = other->AsETSTupleType();
+        if (GetTupleSize() == tupleType->GetTupleSize() && CheckElementsIdentical(relation, tupleType)) {
+            relation->Result(true);
+        }
     }
-
-    const auto *const otherTuple = other->AsETSTupleType();
-
-    if (HasTypeFlag(TypeFlag::READONLY) != other->HasTypeFlag(TypeFlag::READONLY)) {
-        relation->Result(false);
-        return;
-    }
-
-    if (!CheckElementsIdentical(relation, otherTuple)) {
-        relation->Result(false);
-        return;
-    }
-
-    relation->Result(true);
 }
 
 bool ETSTupleType::AssignmentSource(TypeRelation *const relation, Type *const target)
 {
-    if (!target->IsETSTupleType()) {
-        return false;
-    }
-
+    IsSubtypeOf(relation, target);
     return relation->IsTrue();
 }
 
 void ETSTupleType::AssignmentTarget(TypeRelation *const relation, Type *const source)
 {
-    if (!source->HasTypeFlag(TypeFlag::READONLY) && source->IsETSTupleType()) {
-        source->AsETSTupleType()->IsSubtypeOf(relation, this);
-    }
+    IsSupertypeOf(relation, source);
 }
 
 Type *ETSTupleType::Substitute(TypeRelation *relation, const Substitution *substitution)
@@ -139,9 +142,33 @@ void ETSTupleType::IsSubtypeOf(TypeRelation *const relation, Type *target)
         relation->Result(true);
         return;
     }
-    if (target->IsETSTupleType()) {
-        if (!HasTypeFlag(TypeFlag::READONLY) && CheckElementsIdentical(relation, target->AsETSTupleType())) {
-            relation->Result(true);
+
+    relation->Result(false);
+
+    if (!HasTypeFlag(TypeFlag::READONLY) || target->HasTypeFlag(TypeFlag::READONLY)) {
+        if (target->IsETSObjectType()) {
+            relation->IsSupertypeOf(target, GetWrapperType());
+        } else if (target->IsETSTupleType()) {
+            auto *tupleType = target->AsETSTupleType();
+            if (GetTupleSize() >= tupleType->GetTupleSize() && tupleType->CheckElementsIdentical(relation, this)) {
+                relation->Result(true);
+            }
+        }
+    }
+}
+
+void ETSTupleType::IsSupertypeOf(TypeRelation *relation, Type *source)
+{
+    relation->Result(false);
+
+    if (!source->HasTypeFlag(TypeFlag::READONLY) || HasTypeFlag(TypeFlag::READONLY)) {
+        if (source->IsETSTupleType()) {
+            auto *tupleType = source->AsETSTupleType();
+            if (GetTupleSize() <= tupleType->GetTupleSize() && CheckElementsIdentical(relation, tupleType)) {
+                relation->Result(true);
+            }
+        } else if (source->IsETSObjectType()) {
+            relation->IsSupertypeOf(GetWrapperType(), source);
         }
     }
 }

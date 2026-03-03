@@ -465,6 +465,14 @@ ETSObjectType *ETSChecker::AsETSObjectType(Type *(GlobalTypesHolder::*typeFuncto
     return ret != nullptr ? ret->AsETSObjectType() : nullptr;
 }
 
+template <typename... Args>
+ETSObjectType *ETSChecker::AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...) const,
+                                           Args... args) const noexcept
+{
+    auto *ret = (GetGlobalTypesHolder()->*typeFunctor)(args...);
+    return ret != nullptr ? ret->AsETSObjectType() : nullptr;
+}
+
 Type *ETSChecker::GlobalByteType() const
 {
     return GetGlobalTypesHolder()->GlobalByteType();
@@ -666,7 +674,7 @@ ETSObjectType *ETSChecker::GlobalBuiltinLambdaType(size_t nargs, bool hasRest) c
     return AsETSObjectType(&GlobalTypesHolder::GlobalLambdaBuiltinType, nargs, hasRest);
 }
 
-ETSObjectType *ETSChecker::GlobalBuiltinTupleType(size_t nargs) const
+ETSObjectType *ETSChecker::GlobalBuiltinTupleType(size_t const nargs) const noexcept
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalTupleBuiltinType, nargs);
 }

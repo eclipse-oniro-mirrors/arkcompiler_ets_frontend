@@ -711,14 +711,15 @@ Type *GlobalTypesHolder::GlobalLambdaBuiltinType(size_t nargs, bool hasRest)
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_LAMBDAN_CLASS));
 }
 
-size_t GlobalTypesHolder::VariadicTupleTypeThreshold()
+size_t GlobalTypesHolder::VariadicTupleTypeThreshold() const noexcept
 {
-    return static_cast<size_t>(GlobalTypeId::ETS_TUPLEN_CLASS) - static_cast<size_t>(GlobalTypeId::ETS_TUPLE0_CLASS);
+    return static_cast<size_t>(GlobalTypeId::ETS_TUPLEN_CLASS) - static_cast<size_t>(GlobalTypeId::ETS_TUPLE0_CLASS) -
+           1U;
 }
 
-Type *GlobalTypesHolder::GlobalTupleBuiltinType(size_t nargs)
+Type *GlobalTypesHolder::GlobalTupleBuiltinType(size_t const nargs) const noexcept
 {
-    const auto tupleClassIdPos = nargs < VariadicTupleTypeThreshold()
+    const auto tupleClassIdPos = nargs <= VariadicTupleTypeThreshold()
                                      ? static_cast<size_t>(GlobalTypeId::ETS_TUPLE0_CLASS) + nargs
                                      : static_cast<size_t>(GlobalTypeId::ETS_TUPLEN_CLASS);
     return globalTypes_.at(tupleClassIdPos);

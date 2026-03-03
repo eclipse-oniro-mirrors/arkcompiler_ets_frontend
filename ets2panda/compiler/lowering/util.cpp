@@ -628,8 +628,10 @@ void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *chec
         newStatus |= checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK;
     }
 
-    auto checkerCtx = checker::SavedCheckerContext(
-        checker, newStatus, containingClass == nullptr ? nullptr : containingClass->TsType()->AsETSObjectType());
+    auto checkerCtx =
+        checker::SavedCheckerContext(checker, newStatus,
+                                     containingClass == nullptr ? checker->Context().ContainingClass()
+                                                                : containingClass->TsType()->AsETSObjectType());
     auto scopeCtx = checker::ScopeContext(checker, scope);
 
     node->Check(checker);

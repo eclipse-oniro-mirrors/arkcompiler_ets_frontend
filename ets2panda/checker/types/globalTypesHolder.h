@@ -323,8 +323,8 @@ public:
     Type *GlobalLambdaBuiltinType(size_t nargs, bool hasRest);
 
     // Tuple types
-    Type *GlobalTupleBuiltinType(size_t nargs);
-    size_t VariadicTupleTypeThreshold();
+    [[nodiscard]] Type *GlobalTupleBuiltinType(size_t nargs) const noexcept;
+    [[nodiscard]] size_t VariadicTupleTypeThreshold() const noexcept;
 
     // ETS escompat layer
     Type *GlobalArrayBuiltinType();

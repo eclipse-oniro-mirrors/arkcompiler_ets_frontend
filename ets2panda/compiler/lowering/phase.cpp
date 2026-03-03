@@ -153,7 +153,6 @@ std::vector<Phase *> GetETSPhaseList()
         new ExtensionAccessorPhase,
         new BoxingForLocals,
         new RecordLowering,
-        new ObjectIndexLowering,
         new ObjectIteratorLowering,
         new OverloadMappingLowering,
         new LambdaConversionPhase,
@@ -165,6 +164,7 @@ std::vector<Phase *> GetETSPhaseList()
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
+        new ObjectIndexLowering,
         new GenericBridgesPhase,
         new TypeFromLowering,
         new ClassFromExpressionLowering,

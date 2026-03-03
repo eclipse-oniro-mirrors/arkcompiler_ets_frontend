@@ -2731,6 +2731,7 @@ checker::Type *ETSAnalyzer::Check(ir::MemberExpression *expr) const
             expr->property_->AsIdentifier()->SetName(reExportType.second);
         }
     }
+
     if (!checker->CheckNonNullish(expr->Object())) {
         auto *invalidType = checker->HasStatus(checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK)
                                 ? checker->GlobalETSUnionUndefinedNull()
@@ -2740,6 +2741,10 @@ checker::Type *ETSAnalyzer::Check(ir::MemberExpression *expr) const
 
     if (expr->IsComputed()) {
         return expr->AdjustType(checker, expr->CheckComputed(checker, baseType));
+    }
+
+    if (baseType->IsETSTupleType()) {
+        baseType = baseType->AsETSTupleType()->GetWrapperType();
     }
 
     return ResolveMemberExpressionByBaseType(checker, baseType, expr);
@@ -4275,6 +4280,9 @@ checker::Type *ETSAnalyzer::Check(ir::ForOfStatement *const st) const
         elemType = checker->GetElementTypeOfArray(exprType);
     } else if (exprType->IsETSObjectType() || exprType->IsETSUnionType() || exprType->IsETSTypeParameter()) {
         elemType = st->CheckIteratorMethod(checker);
+    } else if (exprType->IsETSTupleType()) {
+        elemType = checker->GlobalETSAnyType();
+        st->Right()->SetTsType(exprType->AsETSTupleType()->GetWrapperType());
     }
 
     if (elemType == checker->GlobalTypeError()) {
