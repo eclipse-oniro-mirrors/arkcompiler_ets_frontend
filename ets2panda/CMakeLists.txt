@@ -374,6 +374,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/optionalArgumentsLowering.cpp
   compiler/lowering/ets/optionalLowering.cpp
   compiler/lowering/ets/overloadMappingLowering.cpp
+  compiler/lowering/ets/overrideBridgesLowering.cpp
   compiler/lowering/ets/expandBrackets.cpp
   compiler/lowering/ets/packageImplicitImport.cpp
   compiler/lowering/ets/arrayConversionLowering.cpp

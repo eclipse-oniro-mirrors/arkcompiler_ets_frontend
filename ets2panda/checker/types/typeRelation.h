@@ -250,7 +250,7 @@ public:
         return IsIdenticalTo(const_cast<Type *>(source), const_cast<Type *>(target));
     }
     bool IsIdenticalTo(Type *source, Type *target);
-    bool SignatureIsIdenticalTo(Signature *source, Signature *target);
+    bool SignatureIsIdenticalTo(Signature const *source, Signature const *target);
     bool IsAssignableTo(Type *source, Type *target);
     bool IsComparableTo(Type *source, Type *target);
     bool IsCastableTo(Type *const source, Type *const target);
@@ -261,7 +261,7 @@ public:
     bool IsLegalBoxedPrimitiveConversion(Type *target, Type *source);
     bool IsSupertypeOf(Type *super, Type *sub);
     bool IsIdenticalTo(IndexInfo *source, IndexInfo *target);
-    bool SignatureIsSupertypeOf(Signature *super, Signature *sub);
+    bool SignatureIsSupertypeOf(Signature const *super, Signature const *sub);
     bool CheckVarianceRecursively(Type *type, VarianceFlag varianceFlag);
     bool IsReadonlyTypeOf(Type *source, Type *target);
     VarianceFlag TransferVariant(VarianceFlag variance, VarianceFlag posVariance);
@@ -320,11 +320,28 @@ public:
     }
 
     NO_COPY_SEMANTIC(SavedTypeRelationFlagsContext);
-    DEFAULT_MOVE_SEMANTIC(SavedTypeRelationFlagsContext);
+
+    explicit SavedTypeRelationFlagsContext(SavedTypeRelationFlagsContext &&other) noexcept
+        : relation_(other.relation_), prev_(std::move(other.prev_))
+    {
+        other.relation_ = nullptr;
+    }
+
+    SavedTypeRelationFlagsContext &operator=(SavedTypeRelationFlagsContext &&other) noexcept
+    {
+        if (this != &other) {
+            relation_ = other.relation_;
+            other.relation_ = nullptr;
+            prev_ = std::move(other.prev_);
+        }
+        return *this;
+    }
 
     ~SavedTypeRelationFlagsContext()
     {
-        relation_->flags_ = prev_;
+        if (relation_ != nullptr) {
+            relation_->flags_ = prev_;
+        }
     }
 
 private:

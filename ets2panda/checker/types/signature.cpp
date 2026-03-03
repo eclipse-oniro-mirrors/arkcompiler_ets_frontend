@@ -206,8 +206,8 @@ std::string Signature::ToString() const
 }
 
 // this function intentionally ignores relation->Result
-static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIdentical, Signature *const super,
-                                          Signature *const sub)
+static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIdentical, Signature const *super,
+                                          Signature const *sub)
 {
     if (sub->ArgCount() != super->ArgCount()) {
         return false;
@@ -219,7 +219,7 @@ static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIden
 
     auto *checker = relation->GetChecker()->IsETSChecker() ? relation->GetChecker()->AsETSChecker() : nullptr;
 
-    auto const areCompatible = [relation, checker, checkIdentical](Type *superT, Type *subT) -> bool {
+    auto const areCompatible = [relation, checker, checkIdentical](Type const *superT, Type const *subT) -> bool {
         if (checker != nullptr) {
             superT = checker->MaybeBoxType(superT);
             subT = checker->MaybeBoxType(subT);
@@ -239,7 +239,7 @@ static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIden
     return !sub->HasRestParameter() || relation->IsIdenticalTo(sub->RestVar()->TsType(), super->RestVar()->TsType());
 }
 
-void Signature::IsSubtypeOf(TypeRelation *relation, Signature *super)
+void Signature::IsSubtypeOf(TypeRelation *relation, Signature const *super) const
 {
     auto sub = this;
     if (sub->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER) !=

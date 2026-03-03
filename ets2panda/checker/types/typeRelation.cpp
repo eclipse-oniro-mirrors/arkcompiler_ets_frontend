@@ -92,7 +92,7 @@ bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
     return IsTrue();
 }
 
-bool TypeRelation::SignatureIsIdenticalTo(Signature *source, Signature *target)
+bool TypeRelation::SignatureIsIdenticalTo(Signature const *source, Signature const *target)
 {
     if (source == target) {
         return Result(true);
@@ -107,7 +107,7 @@ bool TypeRelation::SignatureIsIdenticalTo(Signature *source, Signature *target)
     return Result(false);
 }
 
-bool TypeRelation::SignatureIsSupertypeOf(Signature *super, Signature *sub)
+bool TypeRelation::SignatureIsSupertypeOf(Signature const *super, Signature const *sub)
 {
     if (super == sub) {
         return Result(true);

@@ -415,11 +415,28 @@ public:
     }
 
     NO_COPY_SEMANTIC(SavedCheckerContext);
-    DEFAULT_MOVE_SEMANTIC(SavedCheckerContext);
+
+    explicit SavedCheckerContext(SavedCheckerContext &&other) noexcept
+        : checker_(other.checker_), prev_(std::move(other.prev_))
+    {
+        other.checker_ = nullptr;
+    }
+
+    SavedCheckerContext &operator=(SavedCheckerContext &&other) noexcept
+    {
+        if (this != &other) {
+            checker_ = other.checker_;
+            other.checker_ = nullptr;
+            prev_ = std::move(other.prev_);
+        }
+        return *this;
+    }
 
     ~SavedCheckerContext()
     {
-        checker_->context_ = prev_;
+        if (checker_ != nullptr) {
+            checker_->context_ = prev_;
+        }
     }
 
 private:

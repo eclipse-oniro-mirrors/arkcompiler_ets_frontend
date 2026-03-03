@@ -56,6 +56,7 @@
 #include "compiler/lowering/ets/optionalArgumentsLowering.h"
 #include "compiler/lowering/ets/optionalLowering.h"
 #include "compiler/lowering/ets/overloadMappingLowering.h"
+#include "compiler/lowering/ets/overrideBridgesLowering.h"
 #include "compiler/lowering/ets/packageImplicitImport.h"
 #include "compiler/lowering/ets/arrayConversionLowering.h"
 #include "compiler/lowering/ets/partialExportClassGen.h"
@@ -175,6 +176,7 @@ std::vector<Phase *> GetETSPhaseList()
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new ObjectIndexLowering,
         new GenericBridgesPhase,
+        new OverrideBridgesPhase,
         new TypeFromLowering,
         new ClassFromExpressionLowering,
         new PrimitiveConversionPhase,
