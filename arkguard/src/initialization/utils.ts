@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,15 @@
  * limitations under the License.
  */
 
-import fs from 'fs';
-
 import { DEBUG } from './CommonObject';
+import { FileUtils } from '../utils/FileUtils';
 
 export function isDebug(projectConfig: any): boolean {
   return projectConfig.buildMode.toLowerCase() === DEBUG;
 }
 
 export function isFileExist(filePath: string): boolean {
-  let exist = true;
-  try {
-    fs.accessSync(filePath, fs.constants.F_OK);
-  } catch (err) {
-    exist = !err;
-  }
-  return exist;
+  return FileUtils.fileExists(filePath);
 }
 
 export function sortAndDeduplicateStringArr(arr: string[]) : string[] {

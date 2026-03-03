@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@ import { collectResevedFileNameInIDEConfig, MergedConfig, ObConfigResolver, read
 import { type IOptions } from '../configs/IOptions';
 import type { HvigorErrorInfo } from '../common/type';
 import { blockTimeAndMemPrinter, getObfuscationCacheDir } from '../utils/PrinterTimeAndMemUtils';
+import { FileUtils } from '../utils/FileUtils';
 
 // Record all unobfuscated properties and reasons.
 export const historyUnobfuscatedPropMap: Map<string, string[]> = new Map<string, string[]>();
@@ -53,6 +54,7 @@ export const printerTimeAndMemDataConfig = {
 
 
 export function initObfuscationConfig(projectConfig: any, arkProjectConfig: any, printObfLogger: Function): void {
+  FileUtils.setCachedFileInfo(arkProjectConfig.getCachedFileInfo ?? undefined);
   const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, printObfLogger, true);
   let mergedObConfig: MergedConfig = obConfig.resolveObfuscationConfigs();
   if (arkProjectConfig.allowEtsAnnotations) {
@@ -156,14 +158,14 @@ function initArkGuardConfig(
   } else {
     if (obfuscationCacheDir) {
       const defaultNameCachePath: string = path.join(obfuscationCacheDir, 'nameCache.json');
-      if (fs.existsSync(defaultNameCachePath)) {
+      if (FileUtils.fileExists(defaultNameCachePath)) {
         readNameCache(defaultNameCachePath, printObfLogger);
       }
     }
   }
   if (mergedObConfig.options.printKeptNames && obfuscationCacheDir) {
     const defaultUnobfuscationPath: string = path.join(obfuscationCacheDir, 'keptNames.json');
-    if (fs.existsSync(defaultUnobfuscationPath)) {
+    if (FileUtils.fileExists(defaultUnobfuscationPath)) {
       readUnobfuscationContentCache(defaultUnobfuscationPath, printObfLogger);
     }
   }

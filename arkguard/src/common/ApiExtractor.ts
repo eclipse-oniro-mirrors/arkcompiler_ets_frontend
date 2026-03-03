@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -942,7 +942,7 @@ export namespace ApiExtractor {
   function tryGetPackageID(filePath: string): string {
     const ohPackageJsonPath = path.join(filePath, 'oh-package.json5');
     let packgeNameAndVersion = '';
-    if (fs.existsSync(ohPackageJsonPath)) {
+    if (FileUtils.fileExists(ohPackageJsonPath)) {
       const ohPackageContent = json5.parse(fs.readFileSync(ohPackageJsonPath, 'utf-8'));
       packgeNameAndVersion = ohPackageContent.name + ohPackageContent.version;
     }
@@ -953,12 +953,11 @@ export namespace ApiExtractor {
     let fileNames: string[] = fs.readdirSync(apiPath);
     for (let fileName of fileNames) {
       let filePath: string = path.join(apiPath, fileName);
-      try {
-        fs.accessSync(filePath, fs.constants.R_OK);
-      } catch (err) {
+      const fileInfo = FileUtils.getFileInfo(filePath);
+      if (!fileInfo.exists) {
         continue;
       }
-      if (fs.statSync(filePath).isDirectory()) {
+      if (fileInfo.isDirectory) {
         const packgeNameAndVersion = tryGetPackageID(filePath);
         if (resolvedModules.has(packgeNameAndVersion)) {
           continue;

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -853,7 +853,7 @@ export class ObConfigResolver {
         continue;
       }
 
-      if (!fs.existsSync(tempAbsPath)) {
+      if (!FileUtils.fileExists(tempAbsPath)) {
         const warnInfo: string = `ArkTS: The path of obfuscation \'-keep\' configuration does not exist: ${keepPath}`;
         this.printObfLogger(warnInfo, warnInfo, 'warn');
         continue;
@@ -897,11 +897,11 @@ export class ObConfigResolver {
     for (let apiPath of sdkApis) {
       this.collectSdkApiWhitelist(apiPath, scannedRootFolder);
       const preDefineFilePath: string = path.join(apiPath, '../build-tools/ets-loader/lib/pre_define.js');
-      if (fs.existsSync(preDefineFilePath)) {
+      if (FileUtils.fileExists(preDefineFilePath)) {
         existPreDefineFilePath = preDefineFilePath;
       }
       const arkUIWhitelistPath: string = path.join(apiPath, '../build-tools/ets-loader/obfuscateWhiteList.json5');
-      if (fs.existsSync(arkUIWhitelistPath)) {
+      if (FileUtils.fileExists(arkUIWhitelistPath)) {
         existArkUIWhitelistPath = arkUIWhitelistPath;
       }
     }
@@ -923,7 +923,7 @@ export class ObConfigResolver {
       systemApiContent.ReservedGlobalNames = Array.from(savedExportNamesSet);
     }
 
-    if (!fs.existsSync(path.dirname(systemApiCachePath))) {
+    if (!FileUtils.fileExists(path.dirname(systemApiCachePath))) {
       fs.mkdirSync(path.dirname(systemApiCachePath), { recursive: true });
     }
     fs.writeFileSync(systemApiCachePath, JSON.stringify(systemApiContent, null, 2));
@@ -939,7 +939,7 @@ export class ObConfigResolver {
   private collectSdkApiWhitelist(sdkApiPath: string, scannedRootFolder: Set<string>): void {
     ApiExtractor.traverseApiFiles(sdkApiPath, ApiExtractor.ApiType.API);
     const componentPath: string = path.join(sdkApiPath, '../component');
-    if (!scannedRootFolder.has(componentPath) && fs.existsSync(componentPath)) {
+    if (!scannedRootFolder.has(componentPath) && FileUtils.fileExists(componentPath)) {
       scannedRootFolder.add(componentPath);
       ApiExtractor.traverseApiFiles(componentPath, ApiExtractor.ApiType.COMPONENT);
     }
@@ -956,13 +956,13 @@ export class ObConfigResolver {
     }
     // OptimizedReservedPropertyNames saves accurate list of UI API that need to be kept
     let arkUIWhitelist: ArkUIWhitelist = { ReservedPropertyNames: [], OptimizedReservedPropertyNames: [] };
-    if (fs.existsSync(arkUIWhitelistPath)) {
+    if (FileUtils.fileExists(arkUIWhitelistPath)) {
       arkUIWhitelist = JSON5.parse(fs.readFileSync(arkUIWhitelistPath, 'utf-8'));
     }
     // if enable -extra-options strip-system-api-args, use OptimizedReservedPropertyNames in arkUIWhitelist, and not scan pre_define.js
     let arkUIReservedPropertyNames: string[] = [...arkUIWhitelist.ReservedPropertyNames, ...arkUIWhitelist.OptimizedReservedPropertyNames];
     if (!config.options.stripSystemApiArgs) {
-      if (fs.existsSync(preDefineFilePath)) {
+      if (FileUtils.fileExists(preDefineFilePath)) {
         this.collectPreDefineFile(preDefineFilePath);
       }
       arkUIReservedPropertyNames = [...arkUIWhitelist.ReservedPropertyNames];
@@ -1105,7 +1105,7 @@ export class ObConfigResolver {
   }
 
   private determineNameCachePath(nameCachePath: string, configPath: string): void {
-    if (!fs.existsSync(nameCachePath)) {
+    if (!FileUtils.fileExists(nameCachePath)) {
       const errorInfo: string = `The applied namecache file '${nameCachePath}' configured by '${configPath}' does not exist.`;
       const errorCodeInfo: HvigorErrorInfo = {
         code: '10804004',
@@ -1160,13 +1160,13 @@ export function collectResevedFileNameInIDEConfig(
       FileUtils.collectPathReservedString(val, reservedFileNames);
     });
   }
-  if (fs.existsSync(ohPackagePath)) {
+  if (FileUtils.fileExists(ohPackagePath)) {
     const ohPackageContent = JSON5.parse(fs.readFileSync(ohPackagePath, 'utf-8'));
     ohPackageContent.main && FileUtils.collectPathReservedString(ohPackageContent.main, reservedFileNames);
     ohPackageContent.types && FileUtils.collectPathReservedString(ohPackageContent.types, reservedFileNames);
   }
 
-  if (fs.existsSync(moduleJsonPath)) {
+  if (FileUtils.fileExists(moduleJsonPath)) {
     const moduleJsonContent = JSON5.parse(fs.readFileSync(moduleJsonPath, 'utf-8'));
     moduleJsonContent.module?.srcEntry &&
       FileUtils.collectPathReservedString(moduleJsonContent.module?.srcEntry, reservedFileNames);
@@ -1317,7 +1317,7 @@ export function writeObfuscationNameCache(
   );
   if (obfuscationCacheDir && obfuscationCacheDir.length > 0) {
     const defaultNameCachePath: string = path.join(obfuscationCacheDir, 'nameCache.json');
-    if (!fs.existsSync(path.dirname(defaultNameCachePath))) {
+    if (!FileUtils.fileExists(path.dirname(defaultNameCachePath))) {
       fs.mkdirSync(path.dirname(defaultNameCachePath), { recursive: true });
     }
     fs.writeFileSync(defaultNameCachePath, writeContent);
@@ -1430,7 +1430,7 @@ export function printWhitelist(obfuscationOptions: ObOptions, nameOptions: IName
   whitelistObj.enum = convertSetToArray(enumSet);
 
   let whitelistContent = JSON.stringify(whitelistObj, null, 2); // 2: indentation
-  if (!fs.existsSync(path.dirname(defaultPath))) {
+  if (!FileUtils.fileExists(path.dirname(defaultPath))) {
     fs.mkdirSync(path.dirname(defaultPath), { recursive: true });
   }
   fs.writeFileSync(defaultPath, whitelistContent);
@@ -1496,12 +1496,12 @@ export function printUnobfuscationReasons(configPath: string, defaultPath: strin
   }
 
   let unobfuscationContent = JSON.stringify(unobfuscationObj, null, 2);
-  if (!fs.existsSync(path.dirname(defaultPath))) {
+  if (!FileUtils.fileExists(path.dirname(defaultPath))) {
     fs.mkdirSync(path.dirname(defaultPath), { recursive: true });
   }
   fs.writeFileSync(defaultPath, unobfuscationContent);
 
-  if (!fs.existsSync(path.dirname(configPath))) {
+  if (!FileUtils.fileExists(path.dirname(configPath))) {
     fs.mkdirSync(path.dirname(configPath), { recursive: true });
   }
   if (configPath) {
