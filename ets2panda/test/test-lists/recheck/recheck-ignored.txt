@@ -1,5 +1,4 @@
 # Tests that fails after recheck: Issue #24651
-ast/parser/ets/InvalidExpressions.ets
 parser/ets/re_export/diamond/D.ets
 parser/ets/re_export/diamond/D2.ets
 parser/ets/re_export/import_14.ets
@@ -30,8 +29,6 @@ runtime/ets/trailing_lambda_and_optional_parameterets5.ets
 runtime/ets/trailing_lambda_and_optional_parameterets6.ets
 runtime/ets/trailing_lambda_and_optional_parameterets8.ets
 runtime/ets/trailing_lambda_and_optional_parameterets9.ets
-ast/parser/ets/unexpected_token_34.ets
-ast/parser/ets/unexpected_token_54.ets
 runtime/ets/class_implements_interface_export.ets
 runtime/ets/generic_lambda_6.ets
 runtime/ets/implement_interface.ets

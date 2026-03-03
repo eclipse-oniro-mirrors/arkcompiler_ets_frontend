@@ -1,6 +1,4 @@
 #FailKind.SEGFAULT_FAIL - 3 tests:
-AnnotationConstExpression.ets
-annotation_tests/annotationUsageSingleFileds04.ets
 lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 #FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
 StringFasta.ets
@@ -10,19 +8,10 @@ struct-identifier.ets
 struct-init2.ets
 type_param_in_union.ets
 #FailKind.ABORT_FAIL - 1 tests:
-first_match/ctor_need_fix_bytecode.ets
-overload_declaration/constructor_overload_sig_with_ref_type.ets
 #FailKind.ABORT_FAIL - 2 tests:
 type_param_in_union.ets
 mypackage/implicit_package_import_2.ets
 #FailKind.TSC_FAIL - 21 tests:
-InterfacePrivateMethod.ets
-InterfaceWithDefaultFunction1.ets
-overload_declaration/InterfacePrivateMethod2.ets
-this_override.ets
-trailing_lambda_and_optional_parameterets7.ets
-trailing_lambda_and_optional_parameterets8.ets
-trailing_lambda_and_optional_parameterets9.ets
 ClassNewInstance.ets
 classFromCall.ets
 Enum7.ets
@@ -38,10 +27,8 @@ lambda_with_receiver/lambda_with_receiver_return_this3.ets
 lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ets
 static-invoke.ets
 top_level_03.ets
-multisource_inheritance.ets
 as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
-forOfCustomIterator3.ets
 fuzz/too_many_async.ets
 typeAlias_2.ets
 Multiline_string.ets
@@ -55,7 +42,6 @@ fuzz/class_body_interface.ets
 return_type_utility_1.ets
 return_type_utility_2.ets
 abstract_method_override.ets
-import_namespaces.ets
 
 #31593 TSC Fail
 generic_bridges_1.ets
@@ -89,11 +75,9 @@ first_match2/static_same_name.ets
 first_match2/static_same_name3.ets
 
 #31992 TSC Fail
-overload_interface/overload_interface_1.ets
 overload_interface/overload_interface_2.ets
 overload_interface/overload_interface_3.ets
 overload_interface/overload_interface_4.ets
-overload_interface/overload_interface_5.ets
 
 #todo, create an gitlab issue.
 context-sensitive-expr/RecordRecursiveTest-Lambda.ets
@@ -101,13 +85,11 @@ context-sensitive-expr/RecordRecursiveTest-Lambda02.ets
 context-sensitive-expr/RecordRecursiveTest-Lambda03.ets
 context-sensitive-expr/RecordRecursiveTest-Lambda04.ets
 context-sensitive-expr/RecordRecursiveTest-OriginalTdd.ets
-context-sensitive-expr/context-sensitive-expr-arrayliteral02.ets
 TypeAliasRecusive.ets
 
 #32594 TSC Fail
 nested_array_1.ets
 nested_array_2.ets
-nested_array_3.ets
 
 # TSC Fail
 fields_with_late_initialization/class_late_initlization_with_export.ets
