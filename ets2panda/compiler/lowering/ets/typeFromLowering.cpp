@@ -92,6 +92,34 @@ std::string HandleTypeParameter(ir::Expression *param, checker::ETSChecker *chec
 {
     auto *source = param->TsType();
     if (source->IsETSObjectType()) {
+        auto *objType = source->AsETSObjectType();
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN)) {
+            return std::string(compiler::Signatures::BOOLEANTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BYTE)) {
+            return std::string(compiler::Signatures::BYTETYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_CHAR)) {
+            return std::string(compiler::Signatures::CHARTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_SHORT)) {
+            return std::string(compiler::Signatures::SHORTTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_INT)) {
+            return std::string(compiler::Signatures::INTTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_LONG)) {
+            return std::string(compiler::Signatures::LONGTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_FLOAT)) {
+            return std::string(compiler::Signatures::FLOATTYPE_VAL);
+        }
+        if (objType->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_DOUBLE)) {
+            return std::string(compiler::Signatures::DOUBLETYPE_VAL);
+        }
+        if (objType->Name() == "Void") {
+            return std::string(compiler::Signatures::VOIDTYPE_VAL);
+        }
         return TypeToString(std::string(source->AsETSObjectType()->AssemblerName()));
     }
 
