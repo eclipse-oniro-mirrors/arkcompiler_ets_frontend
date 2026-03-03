@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,6 @@ function foo(entry: I) {
     });
 }
 
-
-/* @@@ label1 Error Semantic error ESE0395: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
-/* @@@ label2 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:15 Error Semantic error ESE0127: No matching construct signature for invalid_lambda_parameter.A(...) */
+/* @@? 22:36 Error Semantic error ESE0395: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
+/* @@? 22:61 Error Syntax error ESY0227: Unexpected token '=>'. */
