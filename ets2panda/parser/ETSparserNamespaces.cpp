@@ -78,20 +78,7 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
         parent->AddStatement(child);
         parent = child;
     }
-    ExpectToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
-    ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
-    while (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
-        util::ErrorRecursionGuard infiniteLoopBlocker(Lexer());
-        if (Lexer()->GetToken().Type() == lexer::TokenType::EOS) {
-            LogError(diagnostic::UNEXPECTED_TOKEN);
-            break;
-        }
-        if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_SEMI_COLON)) {
-            continue;
-        }
-        auto st = ParseTopLevelStatement();
-        statements.emplace_back(st);
-    }
+    auto statements = this->ParseNamespaceBlockStatements();
     auto nsEnd = Lexer()->GetToken().End();
     Lexer()->NextToken();
     if (child != nullptr) {
@@ -104,6 +91,27 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
     result->AddModifier(flags);
     result->SetRange({nsStart, nsEnd});
     return result;
+}
+
+ArenaVector<ir::Statement *> ETSParser::ParseNamespaceBlockStatements()
+{
+    ExpectToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+    ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
+    while (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
+        util::ErrorRecursionGuard infiniteLoopBlocker(Lexer());
+        if (Lexer()->GetToken().Type() == lexer::TokenType::EOS) {
+            LogError(diagnostic::UNEXPECTED_TOKEN);
+            break;
+        }
+        if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_SEMI_COLON)) {
+            continue;
+        }
+        auto status = GetContext().Status();
+        auto st = ParseTopLevelStatement();
+        GetContext().Status() = status;
+        statements.emplace_back(st);
+    }
+    return statements;
 }
 
 }  // namespace ark::es2panda::parser

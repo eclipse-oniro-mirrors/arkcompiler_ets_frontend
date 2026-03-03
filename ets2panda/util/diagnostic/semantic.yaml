@@ -494,6 +494,10 @@ semantic:
   id: 289
   message: "This expression is not callable."
 
+- name: EXTENDING_CLASS_WITH_PRIVATE_CTOR
+  id: 201875
+  message: "Cannot extend the superclass '{}' as it has no accessible constructor which can be called without arguments."
+
 - name: EXTENDING_FINAL
   id: 178
   message: "Cannot inherit with 'final' modifier."
