@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,9 +70,11 @@
  *   UpdateETSNewArrayInstanceExpression
  */
 
+static std::string strInit {""};
+
 static std::string g_source = R"(
 function main() {
-    new number[5];
+    new number[5](0);
 }
 )";
 
@@ -160,9 +162,9 @@ static bool SetAndGetETSArrayExpressionValue(es2panda_Context *context)
 }
 
 /*
- *  new number[5]
+ *  new number[5](0)
  *  is changed to
- *  new string[10]
+ *  new string[10]("")
  */
 static bool ETSArrayExpressionHandle(es2panda_Context *context, es2panda_AstNode *ast)
 {
@@ -170,8 +172,9 @@ static bool ETSArrayExpressionHandle(es2panda_Context *context, es2panda_AstNode
     es2panda_AstNode *part1 = g_impl->CreateETSTypeReferencePart1(context, arg1);
     es2panda_AstNode *typeReference = g_impl->CreateETSTypeReference(context, part1);
     es2panda_AstNode *dimensionInit = g_impl->CreateNumberLiteral(context, 1);
+    es2panda_AstNode *initializer = g_impl->CreateStringLiteral1(context, strInit.data());
     es2panda_AstNode *newArrayExpression =
-        g_impl->CreateETSNewArrayInstanceExpression(context, typeReference, dimensionInit);
+        g_impl->CreateETSNewArrayInstanceExpression(context, typeReference, dimensionInit, initializer);
     if (!g_impl->IsETSNewArrayInstanceExpression(newArrayExpression)) {
         return false;
     }
@@ -195,15 +198,16 @@ static bool ETSArrayExpressionHandle(es2panda_Context *context, es2panda_AstNode
     es2panda_AstNode *partUpdate = g_impl->CreateETSTypeReferencePart1(context, argUpdate);
     es2panda_AstNode *typeReferenceUpdate = g_impl->CreateETSTypeReference(context, partUpdate);
     es2panda_AstNode *dimensionUpdate = g_impl->CreateNumberLiteral(context, 10);
-    es2panda_AstNode *newArrayExpressionUpdate =
-        g_impl->UpdateETSNewArrayInstanceExpression(context, arrayExpr, typeReferenceUpdate, dimensionUpdate);
+    es2panda_AstNode *initializerUpdate = g_impl->CreateStringLiteral1(context, strInit.data());
+    es2panda_AstNode *newArrayExpressionUpdate = g_impl->UpdateETSNewArrayInstanceExpression(
+        context, arrayExpr, typeReferenceUpdate, dimensionUpdate, initializerUpdate);
 
     exprStatement = g_impl->CreateExpressionStatement(context, newArrayExpressionUpdate);
     newMainStatements[0] = {exprStatement};
     g_impl->BlockStatementSetStatements(context, mainFuncBody, newMainStatements, 1U);
     g_impl->AstNodeForEach(ast, SetRightParent, context);
     std::string str(g_impl->AstNodeDumpEtsSrcConst(context, ast));
-    if (str.find("new string[10];") == std::string::npos) {
+    if (str.find("new string[10](\"\");") == std::string::npos) {
         std::cout << "Fail to find update array value." << std::endl;
         return false;
     }

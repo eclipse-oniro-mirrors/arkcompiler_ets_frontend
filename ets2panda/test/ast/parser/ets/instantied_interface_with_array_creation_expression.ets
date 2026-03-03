@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,9 @@
 interface iface {}
 
 function main(): void {
-  /* @@ label */new iface[5];
+  /* @@ label */new iface[5](new iface);
 }
 
 
-/* @@@ label Error Semantic error ESE0050: Cannot use array creation expression with abstract classes and interfaces. */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
+/* @@@ label Error Semantic error ESE0275: iface is an interface therefore cannot be instantiated. */

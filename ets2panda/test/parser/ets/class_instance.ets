@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,6 @@
 let a = 5;
 let b = 10;
 
-let x = new int[10];
+let x = new int[10](0);
 let y = new int[a][b];
 let z = new int[a][b][a + b];

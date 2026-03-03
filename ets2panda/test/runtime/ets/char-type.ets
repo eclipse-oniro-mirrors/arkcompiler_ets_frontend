@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,7 @@ function main(): void {
   arktest.assertEQ(c'\u0005' << c'\u0002', 20)
   arktest.assertEQ(c5 << c2, 20)
 
-  let arr : char[] = new char[1];
+  let arr : char[] = new char[1] ((0).toChar());
   arr[0] = c2;
   arktest.assertTrue(c2 == arr[0] && arr[0] == c2)
 

@@ -108,56 +108,6 @@ void ETSCompiler::Compile(const ir::ETSFunctionType *node) const
     etsg->LoadAccumulatorPoison(node, node->TsType());
 }
 
-void ETSCompiler::Compile(const ir::ETSNewArrayInstanceExpression *expr) const
-{
-    ETSGen *etsg = GetETSGen();
-    auto const checker = const_cast<checker::ETSChecker *>(etsg->Checker());
-    compiler::RegScope rs(etsg);
-    compiler::TargetTypeContext ttctx(etsg, checker->GlobalIntType());
-
-    expr->Dimension()->Compile(etsg);
-
-    compiler::VReg arr = etsg->AllocReg();
-    compiler::VReg dim = etsg->AllocReg();
-    etsg->ApplyConversionAndStoreAccumulator(expr, dim, expr->Dimension()->TsType());
-    etsg->NewArray(expr, arr, dim, expr->TsType());
-
-    const auto *elementType = expr->TypeReference()->TsType();
-    const bool undefAssignable = checker->Relation()->IsSupertypeOf(elementType, checker->GlobalETSUndefinedType());
-    if (!elementType->IsETSPrimitiveType() && !undefAssignable) {
-        compiler::VReg countReg = etsg->AllocReg();
-        auto *startLabel = etsg->AllocLabel();
-        auto *endLabel = etsg->AllocLabel();
-        etsg->MoveImmediateToRegister(expr, countReg, checker::TypeFlag::INT, static_cast<std::int32_t>(0));
-        const auto indexReg = etsg->AllocReg();
-
-        etsg->SetLabel(expr, startLabel);
-        etsg->LoadAccumulator(expr, dim);
-        etsg->JumpCompareRegister<compiler::Jle>(expr, countReg, endLabel);
-
-        etsg->LoadAccumulator(expr, countReg);
-        etsg->StoreAccumulator(expr, indexReg);
-
-        if (expr->Signature() != nullptr) {
-            const compiler::TargetTypeContext ttctx2(etsg, elementType);
-            ArenaVector<ir::Expression *> arguments(checker->Allocator()->Adapter());
-            etsg->InitObject(expr, expr->Signature(), arguments);
-        } else {
-            etsg->LoadAccumulatorPoison(expr, elementType);
-        }
-        etsg->StoreArrayElement(expr, arr, indexReg, elementType);
-
-        etsg->IncrementImmediateRegister(expr, countReg, checker::TypeFlag::INT, static_cast<std::int32_t>(1));
-        etsg->JumpTo(expr, startLabel);
-        etsg->SetLabel(expr, endLabel);
-    }
-
-    etsg->SetVRegType(arr, expr->TsType());
-    etsg->LoadAccumulator(expr, arr);
-
-    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
-}
-
 static void ConvertRestArguments(checker::ETSChecker *const checker, ir::Expression *expr,
                                  checker::Signature const *signature, ArenaVector<ir::Expression *> &arguments)
 {

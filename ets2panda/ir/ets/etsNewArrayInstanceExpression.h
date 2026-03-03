@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,10 +38,12 @@ public:
     NO_COPY_SEMANTIC(ETSNewArrayInstanceExpression);
     NO_MOVE_SEMANTIC(ETSNewArrayInstanceExpression);
 
-    explicit ETSNewArrayInstanceExpression(ir::TypeNode *const typeReference, ir::Expression *const dimension)
+    explicit ETSNewArrayInstanceExpression(ir::TypeNode *const typeReference, ir::Expression *const dimension,
+                                           ir::Expression *const initializer)
         : Expression(AstNodeType::ETS_NEW_ARRAY_INSTANCE_EXPRESSION),
           typeReference_(typeReference),
-          dimension_(dimension)
+          dimension_(dimension),
+          initializer_(initializer)
     {
     }
 
@@ -63,6 +65,16 @@ public:
     [[nodiscard]] ir::Expression const *Dimension() const noexcept
     {
         return dimension_;
+    }
+
+    [[nodiscard]] ir::Expression *Initializer() noexcept
+    {
+        return initializer_;
+    }
+
+    [[nodiscard]] ir::Expression const *Initializer() const noexcept
+    {
+        return initializer_;
     }
 
     [[nodiscard]] checker::Signature *Signature() const noexcept
@@ -118,6 +130,7 @@ public:
 private:
     ir::TypeNode *typeReference_;
     ir::Expression *dimension_;
+    ir::Expression *initializer_;
     checker::Signature *defaultConstructorSignature_ {};
 };
 }  // namespace ark::es2panda::ir

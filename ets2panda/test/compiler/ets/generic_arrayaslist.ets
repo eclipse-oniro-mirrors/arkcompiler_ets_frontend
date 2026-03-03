@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,7 @@ interface Listt <T>  {
 class ArrayAsListt<T> implements Listt<T> {
 
     private init(capacity: int, val: T | null): void {
-        this.data = new (T | undefined)[capacity];
+        this.data = new (T | undefined)[capacity](undefined);
         for (let i = 0; i < this.data.length; ++i) {
         }
         this.curSize = capacity;
@@ -57,7 +57,7 @@ class ArrayAsListt<T> implements Listt<T> {
 
     public reserve(capacity: int): void {
         if (this.data.length < capacity) {
-            let newData = new (T | undefined)[capacity];
+            let newData = new (T | undefined)[capacity](undefined);
             for (let i = 0; i < this.curSize; ++i) {
                newData[i] = this.data[i];
             }
@@ -79,7 +79,7 @@ class ArrayAsListt<T> implements Listt<T> {
     public override pushFront(e: T): void {
         let dst = this.data;
         if (this.curSize == this.data.length) {
-            dst = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())];
+            dst = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())](undefined);
         }
         for (let i = this.curSize; i != 0; --i) {
             dst[i] = this.data[i-1];
@@ -101,7 +101,7 @@ class ArrayAsListt<T> implements Listt<T> {
 
     public override pushBack(e: T): void {
         if (this.curSize == this.data.length) {
-            let newData = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())];
+            let newData = new (T | undefined)[this.getNewCapacity(this.data.length.toInt())](undefined);
             for (let i = 0; i < this.curSize; ++i) {
                 newData[i] = this.data[i];
             }
@@ -176,7 +176,7 @@ class ArrayAsListt<T> implements Listt<T> {
     }
 
     public override filter(filterCond: (e: T) => boolean): ArrayAsListt<T> | null {
-        let indicators = new boolean[this.data.length];
+        let indicators = new boolean[this.data.length](false);
         let resAmount = 0;
         for (let i = 0; i < this.curSize; ++i) {
             indicators[i] = filterCond(this.data[i] as T);
@@ -184,7 +184,7 @@ class ArrayAsListt<T> implements Listt<T> {
                 ++resAmount;
             }
         }
-        let res = new (T | undefined)[resAmount];
+        let res = new (T | undefined)[resAmount](undefined);
         for (let i = 0, j = 0; i < this.curSize; ++i) {
             if (indicators[i]) {
                 res[j] = this.data[i];

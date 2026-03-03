@@ -493,34 +493,119 @@
                           }
                         },
                         "right": {
-                          "type": "ETSNewArrayInstanceExpression",
-                          "typeReference": {
-                            "type": "ETSPrimitiveType",
+                          "type": "CallExpression",
+                          "callee": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Array",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 17,
+                                  "program": "Morph3d.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 66,
+                                  "program": "Morph3d.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "create",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 17,
+                                  "program": "Morph3d.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 66,
+                                  "program": "Morph3d.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 21,
+                                "column": 17,
                                 "program": "Morph3d.ets"
                               },
                               "end": {
                                 "line": 26,
-                                "column": 27,
+                                "column": 66,
                                 "program": "Morph3d.ets"
                               }
                             }
                           },
-                          "dimension": {
-                            "type": "NumberLiteral",
-                            "value": 43200,
+                          "arguments": [
+                            {
+                              "type": "NumberLiteral",
+                              "value": 43200,
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 17,
+                                  "program": "Morph3d.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 66,
+                                  "program": "Morph3d.ets"
+                                }
+                              }
+                            },
+                            {
+                              "type": "NumberLiteral",
+                              "value": 0,
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 17,
+                                  "program": "Morph3d.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 66,
+                                  "program": "Morph3d.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "optional": false,
+                          "typeParameters": {
+                            "type": "TSTypeParameterInstantiation",
+                            "params": [
+                              {
+                                "type": "ETSPrimitiveType",
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 17,
+                                    "program": "Morph3d.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 66,
+                                    "program": "Morph3d.ets"
+                                  }
+                                }
+                              }
+                            ],
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 44,
+                                "column": 17,
                                 "program": "Morph3d.ets"
                               },
                               "end": {
                                 "line": 26,
-                                "column": 61,
+                                "column": 66,
                                 "program": "Morph3d.ets"
                               }
                             }
@@ -533,7 +618,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 62,
+                              "column": 66,
                               "program": "Morph3d.ets"
                             }
                           }
@@ -546,7 +631,7 @@
                           },
                           "end": {
                             "line": 26,
-                            "column": 62,
+                            "column": 66,
                             "program": "Morph3d.ets"
                           }
                         }
@@ -559,7 +644,7 @@
                         },
                         "end": {
                           "line": 26,
-                          "column": 63,
+                          "column": 67,
                           "program": "Morph3d.ets"
                         }
                       }

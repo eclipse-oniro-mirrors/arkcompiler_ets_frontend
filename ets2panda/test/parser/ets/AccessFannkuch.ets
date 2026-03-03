@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,13 +23,13 @@ export class AccessFannkuch {
 
     public fannkuch(n: int): int {
         // Not parsed new int[n]
-        let perm: int[] = new int[this.n];
+        let perm: int[] = new int[this.n] (0);
         // Not parsed new int[n]
-        let perm1: int[] = new int[this.n];
+        let perm1: int[] = new int[this.n] (0);
         // Not parsed new int[n]
-        let count: int[] = new int[this.n];
+        let count: int[] = new int[this.n] (0);
         // Not parsed new int[n]
-        let maxPerm: int[] = new int[this.n];
+        let maxPerm: int[] = new int[this.n] (0);
         let maxFlipsCount: int = 0;
         let m: int = this.n - 1;
 

@@ -589,114 +589,37 @@
                           }
                         },
                         "right": {
-                          "type": "ETSNewArrayInstanceExpression",
-                          "typeReference": {
-                            "type": "ETSUnionType",
-                            "types": [
-                              {
-                                "type": "ETSTypeReference",
-                                "part": {
-                                  "type": "ETSTypeReferencePart",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "T",
-                                    "loc": {
-                                      "start": {
-                                        "line": 25,
-                                        "column": 26,
-                                        "program": "array_creation_expression.ets"
-                                      },
-                                      "end": {
-                                        "line": 25,
-                                        "column": 27,
-                                        "program": "array_creation_expression.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 25,
-                                      "column": 26,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 25,
-                                      "column": 27,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 25,
-                                    "column": 26,
-                                    "program": "array_creation_expression.ets"
-                                  },
-                                  "end": {
-                                    "line": 25,
-                                    "column": 27,
-                                    "program": "array_creation_expression.ets"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "ETSUndefinedType",
-                                "loc": {
-                                  "start": {
-                                    "line": 25,
-                                    "column": 30,
-                                    "program": "array_creation_expression.ets"
-                                  },
-                                  "end": {
-                                    "line": 25,
-                                    "column": 39,
-                                    "program": "array_creation_expression.ets"
-                                  }
-                                }
-                              }
-                            ],
-                            "loc": {
-                              "start": {
-                                "line": 25,
-                                "column": 25,
-                                "program": "array_creation_expression.ets"
-                              },
-                              "end": {
-                                "line": 25,
-                                "column": 39,
-                                "program": "array_creation_expression.ets"
-                              }
-                            }
-                          },
-                          "dimension": {
+                          "type": "CallExpression",
+                          "callee": {
                             "type": "MemberExpression",
                             "object": {
-                              "type": "ThisExpression",
+                              "type": "Identifier",
+                              "name": "Array",
                               "loc": {
                                 "start": {
                                   "line": 25,
-                                  "column": 41,
+                                  "column": 21,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 45,
+                                  "column": 61,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
                             "property": {
                               "type": "Identifier",
-                              "name": "num",
+                              "name": "create",
                               "loc": {
                                 "start": {
                                   "line": 25,
-                                  "column": 46,
+                                  "column": 21,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 49,
+                                  "column": 61,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -706,12 +629,174 @@
                             "loc": {
                               "start": {
                                 "line": 25,
-                                "column": 41,
+                                "column": 21,
                                 "program": "array_creation_expression.ets"
                               },
                               "end": {
                                 "line": 25,
-                                "column": 49,
+                                "column": 61,
+                                "program": "array_creation_expression.ets"
+                              }
+                            }
+                          },
+                          "arguments": [
+                            {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "ThisExpression",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 21,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 61,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "num",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 21,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 61,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 25,
+                                  "column": 21,
+                                  "program": "array_creation_expression.ets"
+                                },
+                                "end": {
+                                  "line": 25,
+                                  "column": 61,
+                                  "program": "array_creation_expression.ets"
+                                }
+                              }
+                            },
+                            {
+                              "type": "UndefinedLiteral",
+                              "value": "undefined",
+                              "loc": {
+                                "start": {
+                                  "line": 25,
+                                  "column": 21,
+                                  "program": "array_creation_expression.ets"
+                                },
+                                "end": {
+                                  "line": 25,
+                                  "column": 61,
+                                  "program": "array_creation_expression.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "optional": false,
+                          "typeParameters": {
+                            "type": "TSTypeParameterInstantiation",
+                            "params": [
+                              {
+                                "type": "ETSUnionType",
+                                "types": [
+                                  {
+                                    "type": "ETSTypeReference",
+                                    "part": {
+                                      "type": "ETSTypeReferencePart",
+                                      "name": {
+                                        "type": "Identifier",
+                                        "name": "T",
+                                        "loc": {
+                                          "start": {
+                                            "line": 25,
+                                            "column": 21,
+                                            "program": "array_creation_expression.ets"
+                                          },
+                                          "end": {
+                                            "line": 25,
+                                            "column": 61,
+                                            "program": "array_creation_expression.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 25,
+                                          "column": 21,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 25,
+                                          "column": 61,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 25,
+                                        "column": 21,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 25,
+                                        "column": 61,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "type": "ETSUndefinedType",
+                                    "loc": {
+                                      "start": {
+                                        "line": 25,
+                                        "column": 21,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 25,
+                                        "column": 61,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 21,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 61,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 25,
+                                "column": 21,
+                                "program": "array_creation_expression.ets"
+                              },
+                              "end": {
+                                "line": 25,
+                                "column": 61,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -724,7 +809,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 50,
+                              "column": 61,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -737,7 +822,7 @@
                           },
                           "end": {
                             "line": 25,
-                            "column": 50,
+                            "column": 61,
                             "program": "array_creation_expression.ets"
                           }
                         }
@@ -750,7 +835,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 51,
+                          "column": 62,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1177,65 +1262,150 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "string",
-                                  "loc": {
-                                    "start": {
-                                      "line": 32,
-                                      "column": 17,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 32,
-                                      "column": 23,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 32,
-                                    "column": 17,
+                                    "column": 13,
                                     "program": "array_creation_expression.ets"
                                   },
                                   "end": {
                                     "line": 32,
-                                    "column": 23,
+                                    "column": 30,
                                     "program": "array_creation_expression.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 32,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 32,
+                                    "column": 30,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 32,
-                                  "column": 17,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 23,
+                                  "column": 30,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 32,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 32,
+                                    "column": 30,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "StringLiteral",
+                                "value": "",
+                                "loc": {
+                                  "start": {
+                                    "line": 32,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 32,
+                                    "column": 30,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "string",
+                                      "loc": {
+                                        "start": {
+                                          "line": 32,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 32,
+                                          "column": 30,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 32,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 32,
+                                        "column": 30,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 32,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 32,
+                                      "column": 30,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 32,
-                                  "column": 24,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 25,
+                                  "column": 30,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -1248,7 +1418,7 @@
                               },
                               "end": {
                                 "line": 32,
-                                "column": 26,
+                                "column": 30,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -1261,7 +1431,7 @@
                             },
                             "end": {
                               "line": 32,
-                              "column": 26,
+                              "column": 30,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1276,7 +1446,7 @@
                         },
                         "end": {
                           "line": 32,
-                          "column": 27,
+                          "column": 31,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1303,65 +1473,150 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "number",
-                                  "loc": {
-                                    "start": {
-                                      "line": 33,
-                                      "column": 17,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 33,
-                                      "column": 23,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 33,
-                                    "column": 17,
+                                    "column": 13,
                                     "program": "array_creation_expression.ets"
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 23,
+                                    "column": 29,
                                     "program": "array_creation_expression.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 33,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 33,
+                                    "column": 29,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 33,
-                                  "column": 17,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 33,
-                                  "column": 23,
+                                  "column": 29,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 33,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 33,
+                                    "column": 29,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 33,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 33,
+                                    "column": 29,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "number",
+                                      "loc": {
+                                        "start": {
+                                          "line": 33,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 33,
+                                          "column": 29,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 33,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 33,
+                                        "column": 29,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 33,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 33,
+                                      "column": 29,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 33,
-                                  "column": 24,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 33,
-                                  "column": 25,
+                                  "column": 29,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -1374,7 +1629,7 @@
                               },
                               "end": {
                                 "line": 33,
-                                "column": 26,
+                                "column": 29,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -1387,7 +1642,7 @@
                             },
                             "end": {
                               "line": 33,
-                              "column": 26,
+                              "column": 29,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1402,7 +1657,7 @@
                         },
                         "end": {
                           "line": 33,
-                          "column": 27,
+                          "column": 30,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1429,65 +1684,150 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Int",
-                                  "loc": {
-                                    "start": {
-                                      "line": 34,
-                                      "column": 17,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 34,
-                                      "column": 20,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 34,
-                                    "column": 17,
+                                    "column": 13,
                                     "program": "array_creation_expression.ets"
                                   },
                                   "end": {
                                     "line": 34,
-                                    "column": 20,
+                                    "column": 26,
                                     "program": "array_creation_expression.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 34,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 34,
+                                    "column": 26,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 34,
-                                  "column": 17,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 34,
-                                  "column": 20,
+                                  "column": 26,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 34,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 34,
+                                    "column": 26,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 34,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 34,
+                                    "column": 26,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "Int",
+                                      "loc": {
+                                        "start": {
+                                          "line": 34,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 34,
+                                          "column": 26,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 34,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 34,
+                                        "column": 26,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 34,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 34,
+                                      "column": 26,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 34,
-                                  "column": 21,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 34,
-                                  "column": 22,
+                                  "column": 26,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -1500,7 +1840,7 @@
                               },
                               "end": {
                                 "line": 34,
-                                "column": 23,
+                                "column": 26,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -1513,7 +1853,7 @@
                             },
                             "end": {
                               "line": 34,
-                              "column": 23,
+                              "column": 26,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1528,7 +1868,7 @@
                         },
                         "end": {
                           "line": 34,
-                          "column": 24,
+                          "column": 27,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1555,65 +1895,196 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Point",
-                                  "loc": {
-                                    "start": {
-                                      "line": 35,
-                                      "column": 17,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 35,
-                                      "column": 22,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 35,
-                                    "column": 17,
+                                    "column": 13,
                                     "program": "array_creation_expression.ets"
                                   },
                                   "end": {
                                     "line": 35,
-                                    "column": 22,
+                                    "column": 38,
                                     "program": "array_creation_expression.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 35,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 35,
+                                    "column": 38,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 35,
-                                  "column": 17,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 35,
-                                  "column": 22,
+                                  "column": 38,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 35,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 35,
+                                    "column": 38,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "ETSNewClassInstanceExpression",
+                                "typeReference": {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "Point",
+                                      "loc": {
+                                        "start": {
+                                          "line": 35,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 35,
+                                          "column": 38,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 35,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 35,
+                                        "column": 38,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 35,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 35,
+                                      "column": 38,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                },
+                                "arguments": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 35,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 35,
+                                    "column": 38,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "Point",
+                                      "loc": {
+                                        "start": {
+                                          "line": 35,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 35,
+                                          "column": 38,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 35,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 35,
+                                        "column": 38,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 35,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 35,
+                                      "column": 38,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 35,
-                                  "column": 23,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 35,
-                                  "column": 24,
+                                  "column": 38,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -1626,7 +2097,7 @@
                               },
                               "end": {
                                 "line": 35,
-                                "column": 25,
+                                "column": 38,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -1639,7 +2110,7 @@
                             },
                             "end": {
                               "line": 35,
-                              "column": 25,
+                              "column": 38,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1654,7 +2125,7 @@
                         },
                         "end": {
                           "line": 35,
-                          "column": 26,
+                          "column": 39,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1681,128 +2152,322 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "ListTest",
-                                  "loc": {
-                                    "start": {
-                                      "line": 36,
-                                      "column": 17,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 36,
-                                      "column": 25,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
-                                "typeParams": {
-                                  "type": "TSTypeParameterInstantiation",
-                                  "params": [
-                                    {
-                                      "type": "ETSTypeReference",
-                                      "part": {
-                                        "type": "ETSTypeReferencePart",
-                                        "name": {
-                                          "type": "Identifier",
-                                          "name": "Point",
-                                          "loc": {
-                                            "start": {
-                                              "line": 36,
-                                              "column": 26,
-                                              "program": "array_creation_expression.ets"
-                                            },
-                                            "end": {
-                                              "line": 36,
-                                              "column": 31,
-                                              "program": "array_creation_expression.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 36,
-                                            "column": 26,
-                                            "program": "array_creation_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 36,
-                                            "column": 31,
-                                            "program": "array_creation_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 36,
-                                          "column": 26,
-                                          "program": "array_creation_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 36,
-                                          "column": 31,
-                                          "program": "array_creation_expression.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "loc": {
-                                    "start": {
-                                      "line": 36,
-                                      "column": 25,
-                                      "program": "array_creation_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 36,
-                                      "column": 32,
-                                      "program": "array_creation_expression.ets"
-                                    }
-                                  }
-                                },
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 36,
-                                    "column": 17,
+                                    "column": 13,
                                     "program": "array_creation_expression.ets"
                                   },
                                   "end": {
                                     "line": 36,
-                                    "column": 32,
+                                    "column": 58,
                                     "program": "array_creation_expression.ets"
                                   }
                                 }
                               },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 36,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 36,
+                                    "column": 58,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 36,
-                                  "column": 17,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 36,
-                                  "column": 32,
+                                  "column": 58,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "NumberLiteral",
-                              "value": 3,
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 3,
+                                "loc": {
+                                  "start": {
+                                    "line": 36,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 36,
+                                    "column": 58,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "ETSNewClassInstanceExpression",
+                                "typeReference": {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "ListTest",
+                                      "loc": {
+                                        "start": {
+                                          "line": 36,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 36,
+                                          "column": 58,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "typeParams": {
+                                      "type": "TSTypeParameterInstantiation",
+                                      "params": [
+                                        {
+                                          "type": "ETSTypeReference",
+                                          "part": {
+                                            "type": "ETSTypeReferencePart",
+                                            "name": {
+                                              "type": "Identifier",
+                                              "name": "Point",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 36,
+                                                  "column": 13,
+                                                  "program": "array_creation_expression.ets"
+                                                },
+                                                "end": {
+                                                  "line": 36,
+                                                  "column": 58,
+                                                  "program": "array_creation_expression.ets"
+                                                }
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": {
+                                                "line": 36,
+                                                "column": 13,
+                                                "program": "array_creation_expression.ets"
+                                              },
+                                              "end": {
+                                                "line": 36,
+                                                "column": 58,
+                                                "program": "array_creation_expression.ets"
+                                              }
+                                            }
+                                          },
+                                          "loc": {
+                                            "start": {
+                                              "line": 36,
+                                              "column": 13,
+                                              "program": "array_creation_expression.ets"
+                                            },
+                                            "end": {
+                                              "line": 36,
+                                              "column": 58,
+                                              "program": "array_creation_expression.ets"
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 36,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 36,
+                                          "column": 58,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 36,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 36,
+                                        "column": 58,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 36,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 36,
+                                      "column": 58,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                },
+                                "arguments": [],
+                                "loc": {
+                                  "start": {
+                                    "line": 36,
+                                    "column": 13,
+                                    "program": "array_creation_expression.ets"
+                                  },
+                                  "end": {
+                                    "line": 36,
+                                    "column": 58,
+                                    "program": "array_creation_expression.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "ListTest",
+                                      "loc": {
+                                        "start": {
+                                          "line": 36,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 36,
+                                          "column": 58,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "typeParams": {
+                                      "type": "TSTypeParameterInstantiation",
+                                      "params": [
+                                        {
+                                          "type": "ETSTypeReference",
+                                          "part": {
+                                            "type": "ETSTypeReferencePart",
+                                            "name": {
+                                              "type": "Identifier",
+                                              "name": "Point",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 36,
+                                                  "column": 13,
+                                                  "program": "array_creation_expression.ets"
+                                                },
+                                                "end": {
+                                                  "line": 36,
+                                                  "column": 58,
+                                                  "program": "array_creation_expression.ets"
+                                                }
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": {
+                                                "line": 36,
+                                                "column": 13,
+                                                "program": "array_creation_expression.ets"
+                                              },
+                                              "end": {
+                                                "line": 36,
+                                                "column": 58,
+                                                "program": "array_creation_expression.ets"
+                                              }
+                                            }
+                                          },
+                                          "loc": {
+                                            "start": {
+                                              "line": 36,
+                                              "column": 13,
+                                              "program": "array_creation_expression.ets"
+                                            },
+                                            "end": {
+                                              "line": 36,
+                                              "column": 58,
+                                              "program": "array_creation_expression.ets"
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "loc": {
+                                        "start": {
+                                          "line": 36,
+                                          "column": 13,
+                                          "program": "array_creation_expression.ets"
+                                        },
+                                        "end": {
+                                          "line": 36,
+                                          "column": 58,
+                                          "program": "array_creation_expression.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 36,
+                                        "column": 13,
+                                        "program": "array_creation_expression.ets"
+                                      },
+                                      "end": {
+                                        "line": 36,
+                                        "column": 58,
+                                        "program": "array_creation_expression.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 36,
+                                      "column": 13,
+                                      "program": "array_creation_expression.ets"
+                                    },
+                                    "end": {
+                                      "line": 36,
+                                      "column": 58,
+                                      "program": "array_creation_expression.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 36,
-                                  "column": 33,
+                                  "column": 13,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
                                   "line": 36,
-                                  "column": 34,
+                                  "column": 58,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
@@ -1815,7 +2480,7 @@
                               },
                               "end": {
                                 "line": 36,
-                                "column": 35,
+                                "column": 58,
                                 "program": "array_creation_expression.ets"
                               }
                             }
@@ -1828,7 +2493,7 @@
                             },
                             "end": {
                               "line": 36,
-                              "column": 35,
+                              "column": 58,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1843,7 +2508,7 @@
                         },
                         "end": {
                           "line": 36,
-                          "column": 36,
+                          "column": 59,
                           "program": "array_creation_expression.ets"
                         }
                       }

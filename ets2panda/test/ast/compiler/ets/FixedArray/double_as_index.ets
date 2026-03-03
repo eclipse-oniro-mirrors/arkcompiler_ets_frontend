@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-let a: FixedArray<int> = new int[10.1]
-let b: FixedArray<int> = new FixedArray<int>(10.1)
+let a: FixedArray<int> = new int[10.1](0)
+let b: FixedArray<int> = new FixedArray<int>(10.1, 0)
 
 function bar(): number {
     return 4.3
 }
 
-let c: FixedArray<int> = new FixedArray<int>(bar())
+let c: FixedArray<int> = new FixedArray<int>(bar(), 0)
 
-/* @@? 16:26 Error Semantic error ESE0318: Type 'Array<Int>' cannot be assigned to type 'FixedArray<Int>' */
-/* @@? 16:34 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
+/* @@? 16:26 Error Semantic error ESE0127: No matching call signature for create(Double, Int) */
+/* @@? 16:26 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Int' at index 1 */
 /* @@? 17:46 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
 /* @@? 23:46 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */

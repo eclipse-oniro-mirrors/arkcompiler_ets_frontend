@@ -740,21 +740,6 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
     return true;
 }
 
-checker::Type *ETSAnalyzer::Check(ir::ETSNewArrayInstanceExpression *expr) const
-{
-    if (expr->TsType() != nullptr) {
-        return expr->TsType();
-    }
-
-    ETSChecker *checker = GetETSChecker();
-
-    auto *elementType = expr->TypeReference()->GetType(checker);
-    checker->ValidateArrayIndex(expr->Dimension(), true);
-    CheckArrayElementType(checker, expr->AsETSNewArrayInstanceExpression(), elementType);
-    expr->SetTsType(checker->CreateETSResizableArrayType(elementType));
-    return expr->TsType();
-}
-
 static checker::Type *CheckInstantiatedNewType(ETSChecker *checker, ir::ETSNewClassInstanceExpression *expr)
 {
     auto calleeType = expr->GetTypeRef()->Check(checker);

@@ -256,6 +256,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/optionalLowering.cpp",
   "compiler/lowering/ets/overloadMappingLowering.cpp",
   "compiler/lowering/ets/packageImplicitImport.cpp",
+  "compiler/lowering/ets/arrayConversionLowering.cpp",
   "compiler/lowering/ets/partialExportClassGen.cpp",
   "compiler/lowering/ets/primitiveConversionPhase.cpp",
   "compiler/lowering/ets/promiseVoid.cpp",

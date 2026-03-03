@@ -39,7 +39,7 @@ function main() {
     ]
 
     // array of promises
-    let ps: Object[] = new Object[10]
+    let ps: Object[] = new Object[10](new Object())
     for (let i = 0; i < 10; i++) {
         ps[i] = launch<Cb>() {
             return foo(i)

@@ -55,6 +55,7 @@
 #include "compiler/lowering/ets/optionalLowering.h"
 #include "compiler/lowering/ets/overloadMappingLowering.h"
 #include "compiler/lowering/ets/packageImplicitImport.h"
+#include "compiler/lowering/ets/arrayConversionLowering.h"
 #include "compiler/lowering/ets/partialExportClassGen.h"
 #include "compiler/lowering/ets/primitiveConversionPhase.h"
 #include "compiler/lowering/ets/promiseVoid.h"
@@ -110,6 +111,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ExportAnonymousConstPhase,
         new InitModuleLowering,
         new TopLevelStatements,
+        new ArrayConversionLowering,
         new ResizableArrayConvert,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ExpressionLambdaConstructionPhase,
         new InsertOptionalParametersAnnotation,
