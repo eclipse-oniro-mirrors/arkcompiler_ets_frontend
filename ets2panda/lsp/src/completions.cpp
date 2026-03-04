@@ -246,6 +246,7 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
 {
     std::vector<CompletionEntry> allExternalSourceExports;
     std::vector<CompletionEntry> completions;
+    std::string lowerInput = ToLowerCase(input);
 
     program->GetExternalSources()->Visit([&allExternalSourceExports](auto *extProg) {
         auto exports = GetExportsFromProgram(extProg);
@@ -255,7 +256,7 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
     });
 
     for (const auto &entry : allExternalSourceExports) {
-        if (ToLowerCase(entry.GetName()).find(ToLowerCase(input)) == 0) {
+        if (ToLowerCase(entry.GetName()).find(lowerInput) != std::string::npos) {
             completions.emplace_back(entry);
         }
     }
@@ -1414,15 +1415,16 @@ auto GetDeclByScopePath(ArenaVector<varbinder::Scope *> &scopePath, size_t posit
 
 std::vector<CompletionEntry> SortCompletionEntries(std::vector<CompletionEntry> &completions, std::string prefix)
 {
-    auto sort = [&prefix](const CompletionEntry &a, const CompletionEntry &b) -> bool {
-        bool aPrefix = ToLowerCase(a.GetName()).find(ToLowerCase(prefix)) == 0;
-        bool bPrefix = ToLowerCase(b.GetName()).find(ToLowerCase(prefix)) == 0;
+    auto lowerPrefix = ToLowerCase(prefix);
+    auto sort = [&lowerPrefix](const CompletionEntry &a, const CompletionEntry &b) -> bool {
+        bool aPrefix = ToLowerCase(a.GetName()).find(lowerPrefix) == 0;
+        bool bPrefix = ToLowerCase(b.GetName()).find(lowerPrefix) == 0;
         if (aPrefix != bPrefix) {
             return aPrefix;  // prefix match first
         }
         return false;  // keep original order
     };
-    std::sort(completions.begin(), completions.end(), sort);
+    std::stable_sort(completions.begin(), completions.end(), sort);
     return completions;
 }
 
