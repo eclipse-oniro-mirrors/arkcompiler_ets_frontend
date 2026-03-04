@@ -130,12 +130,49 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
     return node->TsType();
 }
 
+static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, ir::ClassDefinition *classDef,
+                                    varbinder::LocalVariable *propVar, util::StringView superTypeName)
+{
+    auto *propNode = propVar->Declaration()->Node();
+    propNode->Check(checker);
+    if (propNode->IsPrivate()) {
+        if (st->IsOverride()) {
+            checker->LogError(diagnostic::OVERRIDE_NOT_PRIVATE, {propVar->Declaration()->Name(), superTypeName},
+                              st->Start());
+        }
+        return;
+    }
+
+    if (st->HasAnnotations()) {
+        checker->LogError(diagnostic::CANNOT_ANNOTATE, {propVar->Declaration()->Name(), superTypeName}, st->Start());
+    }
+
+    size_t baseAccessLevel = propNode->IsPrivate() ? 0 : propNode->IsProtected() ? 1 : 2;
+    size_t derivedAccessLevel = st->IsPrivate() ? 0 : st->IsProtected() ? 1 : 2;
+    if (baseAccessLevel != derivedAccessLevel) {
+        checker->LogError(diagnostic::ACCESS_MODIFIER_MISMATCH,
+                          {st->Id()->Name(), classDef->Ident()->Name(), superTypeName}, st->Start());
+    }
+
+    if (!checker->Relation()->IsIdenticalTo(propVar->TsType(), st->TsType())) {
+        checker->LogError(diagnostic::INCOMPATIBLE_TYPE_FOR_OVERRIDE,
+                          {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "", superTypeName},
+                          st->Start());
+    }
+
+    st->SetOverride();
+    st->SetBasePropertyVar(propVar);
+    if (propNode->IsDefinite()) {
+        st->AddModifier(ir::ModifierFlags::DEFINITE);
+    } else {
+        st->ClearModifier(ir::ModifierFlags::DEFINITE);
+    }
+}
+
 static void CheckOverridenField(ir::ClassProperty *st, ETSChecker *checker, ir::ClassDefinition *classDef)
 {
     auto *superType = classDef->Super()->TsType()->AsETSObjectType();
-
     ES2PANDA_ASSERT(classDef->Super() != nullptr && superType != nullptr && !superType->IsGradual());
-
     varbinder::LocalVariable *propVar = nullptr;
     while (superType != nullptr) {
         propVar = superType->GetProperty(st->Id()->Name(), PropertySearchFlags::SEARCH_INSTANCE_FIELD);
@@ -153,37 +190,9 @@ static void CheckOverridenField(ir::ClassProperty *st, ETSChecker *checker, ir::
         ES2PANDA_ASSERT(st->BasePropertyVar() == nullptr);
         return;
     }
-    ES2PANDA_ASSERT(propVar != nullptr);
-    auto *propNode = propVar->Declaration()->Node();
-    propNode->Check(checker);
 
-    if (propNode->IsPrivate()) {
-        if (st->IsOverride()) {
-            checker->LogError(diagnostic::OVERRIDE_NOT_PRIVATE, {propVar->Declaration()->Name(), superType->Name()},
-                              st->Start());
-        }
-        return;
-    }
-    if (st->HasAnnotations()) {
-        checker->LogError(diagnostic::CANNOT_ANNOTATE, {propVar->Declaration()->Name(), superType->Name()},
-                          st->Start());
-    }
-    if ((st->IsProtected() && propNode->IsPublic()) || st->IsPrivate()) {
-        checker->LogError(diagnostic::ACCESS_MODIFIER_NARROWING, {st->Id()->Name()}, st->Start());
-    }
-    if (!checker->Relation()->IsIdenticalTo(propVar->TsType(), st->TsType())) {
-        checker->LogError(diagnostic::INCOMPATIBLE_TYPE_FOR_OVERRIDE,
-                          {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "",
-                           superType->AsETSObjectType()->Name()},
-                          st->Start());
-    }
-    st->SetOverride();
-    st->SetBasePropertyVar(propVar);
-    if (propNode->IsDefinite()) {
-        st->AddModifier(ir::ModifierFlags::DEFINITE);
-    } else {
-        st->ClearModifier(ir::ModifierFlags::DEFINITE);
-    }
+    ES2PANDA_ASSERT(propVar != nullptr);
+    CheckOverridenFieldImpl(st, checker, classDef, propVar, superType->AsETSObjectType()->Name());
 }
 
 static void CheckFieldOverride(ir::ClassProperty *st, ETSChecker *checker)
