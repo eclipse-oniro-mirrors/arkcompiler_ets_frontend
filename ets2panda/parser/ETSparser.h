@@ -464,6 +464,8 @@ private:
     std::optional<ir::Expression *> GetPostPrimaryExpression(ir::Expression *returnExpression,
                                                              lexer::SourcePosition startLoc, bool ignoreCallExpression,
                                                              [[maybe_unused]] bool *isChainExpression);
+    std::optional<ir::Expression *> ParsePunctuatorLessThan(ir::Expression *returnExpression,
+                                                            lexer::SourcePosition startLoc, bool ignoreCallExpression);
     std::vector<ir::AstNode *> insertingNodes_ {};
 };
 

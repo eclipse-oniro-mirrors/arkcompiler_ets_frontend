@@ -132,6 +132,11 @@ public:
 
     // NOLINTNEXTLINE(google-default-arguments)
     virtual void NextToken(NextTokenFlags flags = NextTokenFlags::NONE);
+    // Check if the current '<' has a matching '>'
+    // Return true if there is a matching '>' (possibly a type parameter),
+    //        false if there is no match (possibly a less than sign).
+    bool HasMatchingGreaterThan();
+
     virtual void ScanAsteriskPunctuator();
 
     Token &GetToken();
@@ -391,6 +396,19 @@ protected:
 
     LexerPosition &Pos();
     const LexerPosition &Pos() const;
+    // Helper functions for HasMatchingGreaterThan
+    void HasMatchingGreaterThanCheckBracket(int32_t &depth, int32_t &parenSize, int32_t &braceSize,
+                                            int32_t &squareSize);
+    bool HasMatchingGreaterThanInner(std::string_view::const_iterator &savedIter, int32_t &depth, int32_t &parenSize,
+                                     int32_t &braceSize, int32_t &squareSize);
+    bool HandleEqualsInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                 int32_t squareSize);
+    bool HandleAmpersandOrCircumflexInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize,
+                                                int32_t braceSize, int32_t squareSize);
+    bool HandleVLineInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                int32_t squareSize);
+    bool HandleQuestionInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                   int32_t squareSize);
 
 private:
     TemplateLiteralParserContext *tlCtx_ {};
