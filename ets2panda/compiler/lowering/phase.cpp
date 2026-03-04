@@ -22,6 +22,7 @@
 #include "compiler/lowering/ets/annotationCopyPostLowering.h"
 #include "compiler/lowering/ets/ambientLowering.h"
 #include "compiler/lowering/ets/arrayLiteralLowering.h"
+#include "compiler/lowering/ets/awaitLowering.h"
 #include "compiler/lowering/ets/bigintLowering.h"
 #include "compiler/lowering/ets/binaryExpressionLowering.h"
 #include "compiler/lowering/ets/boxingForLocals.h"
@@ -137,6 +138,7 @@ std::vector<Phase *> GetETSPhaseList()
         new InternalAPICheck,
         // pluginsAfterCheck has to go right after checkerPhase
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
+        new AwaitLoweringPhase,
         new FixedArrayLowering,
         new DynamicImport,
         new RelaxedAnyLoweringPhase,

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,5 +27,4 @@ async function foo() {
     arktest.assertTrue(!"nothing was thrown")
 }
 
-/* @@? 18:9 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
 /* @@? 18:15 Error Syntax error ESY0227: Unexpected token 'import'. */

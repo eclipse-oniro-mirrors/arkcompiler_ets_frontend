@@ -219,10 +219,6 @@ semantic:
   message: "Return type of async function must be 'Promise'."
   code_fix_ids: [FixReturnTypeInAsyncFunction]
 
-- name: AWAITED_TYPE_NOT_PROMISE
-  id: 303
-  message: "Type '{}' can not be awaited, it is not a Promise."
-
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
   message: "Await in non-aysnc function is deprecated, please move it to async function."

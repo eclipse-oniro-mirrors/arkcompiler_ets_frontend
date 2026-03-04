@@ -733,7 +733,6 @@ public:
     void MakePropertiesReadonly(ETSObjectType *classType);
     // Awaited<T>
     Type *HandleAwaitedUtilityType(Type *typeToBeAwaited);
-    Type *HandleAwaitExpression(Type *typeToBeAwaited, ir::AwaitExpression *expr);
     Type *UnwrapPromiseType(checker::Type *type);
     bool IsPromiseType(Type *type);
     // Required

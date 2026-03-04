@@ -1590,6 +1590,7 @@ void ETSCompiler::CompileCast(const ir::TSAsExpression *expr, checker::Type cons
         case checker::TypeFlag::ETS_UNION:
         case checker::TypeFlag::ETS_ANY:
         case checker::TypeFlag::ETS_NULL:
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_UNDEFINED:
         case checker::TypeFlag::ETS_VOID: {
             etsg->CastToReftype(expr, targetType, expr->isUncheckedCast_);
