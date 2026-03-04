@@ -253,6 +253,21 @@
                 "async": false,
                 "expression": false,
                 "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType",
+                  "loc": {
+                    "start": {
+                      "line": 18,
+                      "column": 28,
+                      "program": "extdef.ets"
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 32,
+                      "program": "extdef.ets"
+                    }
+                  }
+                },
                 "body": {
                   "type": "BlockStatement",
                   "statements": [
@@ -515,7 +530,7 @@
                   "loc": {
                     "start": {
                       "line": 18,
-                      "column": 26,
+                      "column": 32,
                       "program": "extdef.ets"
                     },
                     "end": {

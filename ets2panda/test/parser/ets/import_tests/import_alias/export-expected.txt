@@ -324,18 +324,33 @@
                 "async": false,
                 "expression": false,
                 "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType",
+                  "loc": {
+                    "start": {
+                      "line": 21,
+                      "column": 13,
+                      "program": "export.ets"
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 17,
+                      "program": "export.ets"
+                    }
+                  }
+                },
                 "body": {
                   "type": "BlockStatement",
                   "statements": [],
                   "loc": {
                     "start": {
                       "line": 21,
-                      "column": 11,
+                      "column": 18,
                       "program": "export.ets"
                     },
                     "end": {
                       "line": 21,
-                      "column": 14,
+                      "column": 21,
                       "program": "export.ets"
                     }
                   }
@@ -348,7 +363,7 @@
                   },
                   "end": {
                     "line": 21,
-                    "column": 14,
+                    "column": 21,
                     "program": "export.ets"
                   }
                 }
@@ -361,7 +376,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 14,
+                  "column": 21,
                   "program": "export.ets"
                 }
               }
@@ -375,7 +390,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 14,
+                "column": 21,
                 "program": "export.ets"
               }
             }
@@ -942,13 +957,18 @@
                 }
               }
             },
-            "value": {
-              "type": "NumberLiteral",
-              "value": 10,
+            "accessibility": "public",
+            "static": true,
+            "readonly": false,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
               "loc": {
                 "start": {
                   "line": 30,
-                  "column": 19,
+                  "column": 18,
                   "program": "export.ets"
                 },
                 "end": {
@@ -958,12 +978,6 @@
                 }
               }
             },
-            "accessibility": "public",
-            "static": true,
-            "readonly": false,
-            "declare": false,
-            "optional": false,
-            "computed": false,
             "definite": false,
             "loc": {
               "start": {
@@ -973,7 +987,7 @@
               },
               "end": {
                 "line": 30,
-                "column": 21,
+                "column": 24,
                 "program": "export.ets"
               }
             }

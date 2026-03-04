@@ -13,5 +13,5 @@
  * limitations under the License.
  */
 
-export let foo = 2;
+export let foo: int = 2;
 export function baz(): int { return 1; }

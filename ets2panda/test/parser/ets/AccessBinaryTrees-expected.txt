@@ -1633,12 +1633,12 @@
               "loc": {
                 "start": {
                   "line": 36,
-                  "column": 32,
+                  "column": 37,
                   "program": "AccessBinaryTrees.ets"
                 },
                 "end": {
                   "line": 36,
-                  "column": 33,
+                  "column": 38,
                   "program": "AccessBinaryTrees.ets"
                 }
               }
@@ -1649,6 +1649,21 @@
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 36,
+                  "column": 31,
+                  "program": "AccessBinaryTrees.ets"
+                },
+                "end": {
+                  "line": 36,
+                  "column": 34,
+                  "program": "AccessBinaryTrees.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -1658,7 +1673,7 @@
               },
               "end": {
                 "line": 36,
-                "column": 33,
+                "column": 38,
                 "program": "AccessBinaryTrees.ets"
               }
             }
@@ -1687,12 +1702,12 @@
               "loc": {
                 "start": {
                   "line": 37,
-                  "column": 30,
+                  "column": 35,
                   "program": "AccessBinaryTrees.ets"
                 },
                 "end": {
                   "line": 37,
-                  "column": 31,
+                  "column": 36,
                   "program": "AccessBinaryTrees.ets"
                 }
               }
@@ -1703,6 +1718,21 @@
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 37,
+                  "column": 29,
+                  "program": "AccessBinaryTrees.ets"
+                },
+                "end": {
+                  "line": 37,
+                  "column": 32,
+                  "program": "AccessBinaryTrees.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -1712,7 +1742,7 @@
               },
               "end": {
                 "line": 37,
-                "column": 31,
+                "column": 36,
                 "program": "AccessBinaryTrees.ets"
               }
             }
@@ -1741,12 +1771,12 @@
               "loc": {
                 "start": {
                   "line": 38,
-                  "column": 30,
+                  "column": 35,
                   "program": "AccessBinaryTrees.ets"
                 },
                 "end": {
                   "line": 38,
-                  "column": 32,
+                  "column": 37,
                   "program": "AccessBinaryTrees.ets"
                 }
               }
@@ -1757,6 +1787,21 @@
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 38,
+                  "column": 29,
+                  "program": "AccessBinaryTrees.ets"
+                },
+                "end": {
+                  "line": 38,
+                  "column": 32,
+                  "program": "AccessBinaryTrees.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -1766,7 +1811,7 @@
               },
               "end": {
                 "line": 38,
-                "column": 32,
+                "column": 37,
                 "program": "AccessBinaryTrees.ets"
               }
             }

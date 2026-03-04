@@ -26,11 +26,15 @@
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "ir/base/classProperty.h"
+#include "ir/base/methodDefinition.h"
 #include "ir/ets/etsDestructuring.h"
 #include "generated/diagnostic.h"
 #include "ir/ets/etsPrimitiveType.h"
 #include "ir/ts/tsAsExpression.h"
 #include "libarkbase/utils/logger.h"
+#include "util/es2pandaMacros.h"
+#include "util/helpers.h"
 
 namespace ark::es2panda::checker {
 
@@ -214,6 +218,26 @@ static void CheckFieldOverride(ir::ClassProperty *st, ETSChecker *checker)
     }
 }
 
+static void TypeAnnoCheckForExportedMethod(checker::ETSChecker *checker, ir::MethodDefinition *methodDef)
+{
+    if (!methodDef->IsConstructor() && !methodDef->IsSetter() &&
+        methodDef->Function()->ReturnTypeAnnotation() == nullptr) {
+        checker->LogError(diagnostic::EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO, {"function", methodDef->Id()->Name()},
+                          methodDef->Start());
+    }
+}
+
+static void TypeAnnoCheckForExportedClassProp(checker::ETSChecker *checker, ir::ClassProperty *classProp)
+{
+    if (classProp->TypeAnnotation() == nullptr && !classProp->Parent()->IsAnnotationUsage()) {
+        const std::string entityType = util::Helpers::IsGlobalClass(checker->Context().ContainingClass()->GetDeclNode())
+                                           ? "variable"
+                                           : "class property";
+        checker->LogError(diagnostic::EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO, {entityType, classProp->Id()->Name()},
+                          classProp->Start());
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 {
     if (st->TsType() != nullptr) {
@@ -267,6 +291,7 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
 
     if (!st->IsPrivate() && util::Helpers::IsExported(st)) {
         CheckExport(checker, propertyType);
+        TypeAnnoCheckForExportedClassProp(checker, st);
     }
 
     return propertyType;
@@ -348,6 +373,7 @@ static checker::Type *CheckMethodDefinitionHelper(ETSChecker *checker, ir::Metho
     if (!method->IsPrivate() && method->Function() != nullptr && util::Helpers::IsExported(method) &&
         method->Id()->Name().Utf8().find("lambda_invoke-") == std::string_view::npos) {
         CheckExport(checker, methodType);
+        TypeAnnoCheckForExportedMethod(checker, method);
     }
 
     return methodType;

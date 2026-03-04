@@ -15,4 +15,4 @@
 
 package import_tests.packages.subpackage_2;
 
-export let foo = 2;
+export let foo: int = 2;
