@@ -49,6 +49,10 @@ semantic:
   id: 45073
   message: "'{}' is defined as a property in class '{}', but is overridden here in '{}' as an accessor."
 
+- name: ACCESS_MODIFIER_MISMATCH
+  id: 1600001
+  message: "Access modifier of field '{}' in class '{}' and in the base class '{}' must be the same."
+
 - name: ACCESS_MODIFIER_NARROWING
   id: 771273
   message: "`{}` narrows the access modifier of the implemented field."
