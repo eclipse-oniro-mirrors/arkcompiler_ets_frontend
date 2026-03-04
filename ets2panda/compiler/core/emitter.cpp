@@ -243,6 +243,31 @@ static void GenLocalVariableInfo(pandasm::debuginfo::LocalVariable &variableDebu
     variableDebug.length = static_cast<uint32_t>(varsLength);
 }
 
+static bool IsVariableFirstDefByInsn(const IRNode *ins, const varbinder::Variable *var, uint32_t spillOffset)
+{
+    ES2PANDA_ASSERT(ins != nullptr);
+    if (var == nullptr || !var->IsLocalVariable()) {
+        return false;
+    }
+
+    const uint32_t varReg = var->AsLocalVariable()->Vreg().GetIndex() - spillOffset;
+    std::array<const VReg *, IRNode::MAX_REG_OPERAND> regs {};
+    const size_t regCnt = ins->Registers(&regs);
+
+    for (size_t idx = 0; idx < regCnt; ++idx) {
+        const auto kind = ins->GetOperandRegKind(idx);
+        if (kind != OperandKind::DST_VREG && kind != OperandKind::SRC_DST_VREG) {
+            continue;
+        }
+
+        if (regs[idx] != nullptr && regs[idx]->GetIndex() == varReg) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void FunctionEmitter::GenScopeVariableInfoEnd(pandasm::Function *func, const varbinder::Scope *scope, uint32_t count,
                                               uint32_t scopeStart, const VariablesStartsMap &starts) const
 {
@@ -322,9 +347,16 @@ void FunctionEmitter::GenScopeVariableInfo(pandasm::Function *func, const varbin
         const varbinder::Variable *var = nullptr;
         if (parent->IsVariableDeclarator()) {
             var = parent->AsVariableDeclarator()->Id()->Variable();
+            // Start local variable range from the first instruction that writes to the variable's vreg.
+            // This avoids marking temporary argument-preparation instructions as variable-visible.
+            int spillOffset = cg_->GetSpillDebugOffset();
+            if (!IsVariableFirstDefByInsn(*iter, var, spillOffset)) {
+                continue;
+            }
         } else if (parent->IsCatchClause()) {
             var = node->Variable();
         }
+
         if (var != nullptr && varsStarts.count(var) == 0) {
             varsStarts.emplace(var, count);
         }
