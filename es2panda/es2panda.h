@@ -138,6 +138,7 @@ struct CompilerOptions {
      * adds no column numbers when off.
      */
     bool enableColumn {false};
+    bool dumpPerfMetrics {false};
 };
 
 enum class ErrorType {

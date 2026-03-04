@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -132,8 +132,8 @@ void DebugInfoDumper::WriteVariableInfo(const pandasm::debuginfo::LocalVariable 
 {
     ss_ << "{";
     WriteProperty("name", localVariableDebug.name);
-    WriteProperty("signature", localVariableDebug.signature);
-    WriteProperty("signatureType", localVariableDebug.signature_type);
+    WriteProperty("signature", "any");
+    WriteProperty("signatureType", "any");
     WriteProperty("reg", localVariableDebug.reg);
     WriteProperty("start", static_cast<size_t>(localVariableDebug.start));
     WriteProperty("length", static_cast<size_t>(localVariableDebug.length), false);
@@ -160,7 +160,7 @@ void DebugInfoDumper::Dump()
         indent_++;
         Indent();
         ss_ << "\"signature\": {";
-        WriteProperty("retType", iter->second.return_type.GetName());
+        WriteProperty("retType", iter->second.ReturnType().GetName());
         indent_++;
         WrapArray("params", iter->second.params, false);
         indent_ -= 2U;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,11 +108,11 @@ void VisitDyanmicImports(ConstReferenceIf<isConst, pandasm::Function> function, 
         // The dynamicimport bytecode should not have label, otherwise the dyanmicimport might be a jump
         // target and its parameter is a variable instead of a constant string expression (Check
         // AbcCodeProcessor::AddJumpLabels for more details).
-        if ((*iter)->opcode != pandasm::Opcode::DYNAMICIMPORT || (*iter)->IsLabel()) {
+        if ((*iter)->GetOpcode() != pandasm::Opcode::DYNAMICIMPORT || (*iter)->IsLabel()) {
             continue;
         }
         auto prevIns = iter - 1;
-        if ((*prevIns)->opcode != pandasm::Opcode::LDA_STR) {
+        if ((*prevIns)->GetOpcode() != pandasm::Opcode::LDA_STR) {
             continue;
         }
         ASSERT((*prevIns)->Ids().size() == 1);

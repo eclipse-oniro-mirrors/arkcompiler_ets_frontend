@@ -237,7 +237,7 @@ public:
 
     void SetFunctionKind();
     void SetInSendable();
-    size_t GetExpectedPropertyCount() const;
+    uint32_t GetExpectedPropertyCount() const;
 
     bool IsDebug() const;
     bool isDebuggerEvaluateExpressionMode() const;

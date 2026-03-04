@@ -13,7 +13,7 @@ slotNum = 0x3
 .function any default.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, default.#~ES=#ES, default_1297, 0x0, v0
+	defineclasswithbuffer 0x0, default.#~ES=#ES, default_1262, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }
@@ -31,7 +31,7 @@ slotNum = 0x3
 .function any ets.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, ets.#~AT=#AT, ets_1338, 0x0, v0
+	defineclasswithbuffer 0x0, ets.#~AT=#AT, ets_1303, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }
@@ -49,7 +49,7 @@ slotNum = 0x3
 .function any js.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, js.#~JS=#JS, js_1379, 0x0, v0
+	defineclasswithbuffer 0x0, js.#~JS=#JS, js_1344, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }

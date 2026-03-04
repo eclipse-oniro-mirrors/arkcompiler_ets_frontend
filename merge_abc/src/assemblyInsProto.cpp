@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@
 namespace panda::proto {
 void Ins::Serialize(const panda::pandasm::InsPtr &insn, protoPanda::Ins &protoInsn)
 {
-    protoInsn.set_opcode(static_cast<uint32_t>(insn->opcode));
+    protoInsn.set_opcode(static_cast<uint32_t>(insn->GetOpcode()));
     for (const auto &reg : insn->Regs()) {
         protoInsn.add_regs(static_cast<uint32_t>(reg));
     }

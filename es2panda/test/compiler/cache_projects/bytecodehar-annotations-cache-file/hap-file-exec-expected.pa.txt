@@ -38,7 +38,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file1&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file1&2.0.0_1826, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file1&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file1&2.0.0_1646, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -46,9 +46,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1764
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1584
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1768
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1588
 {
   index: 0
     tag: 2
@@ -120,7 +120,7 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1768
     val: 0
 },
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1826
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1646
 {
   index: 0
     tag: 0
@@ -165,7 +165,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file2&2.0.0_1897, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file2&2.0.0_1717, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -173,9 +173,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1835
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1655
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1839
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1659
 {
   index: 0
     tag: 2
@@ -247,7 +247,7 @@ slot &bytecodehar1/bytecodehar1-file2&2.0.0_1839
     val: 0
 },
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1897
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1717
 {
   index: 0
     tag: 0
@@ -302,7 +302,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1637, 0x0, v0
+	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1433, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -310,9 +310,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1589
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1385
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1593
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1389
 {
   index: 0
     tag: 2
@@ -364,7 +364,7 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1593
     val: 0
 },
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1637
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1433
 {
   index: 0
     tag: 0
@@ -407,7 +407,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1694, 0x0, v0
+	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1490, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -415,9 +415,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1646
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1442
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1650
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1446
 {
   index: 0
     tag: 2
@@ -469,7 +469,7 @@ slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1650
     val: 0
 },
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1694
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1490
 {
   index: 0
     tag: 0
@@ -837,7 +837,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file1&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file1&2.0.0_1826, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file1&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file1&2.0.0_1646, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -845,9 +845,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1764
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1584
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1768
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1588
 {
   index: 0
     tag: 2
@@ -919,7 +919,7 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1768
     val: 0
 },
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1826
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1646
 {
   index: 0
     tag: 0
@@ -962,7 +962,7 @@ slotNum = 0x4
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1637, 0x0, v0
+	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1433, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -970,9 +970,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1589
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1385
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1593
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1389
 {
   index: 0
     tag: 2
@@ -1024,7 +1024,7 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1593
     val: 0
 },
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1637
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1433
 {
   index: 0
     tag: 0

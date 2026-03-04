@@ -89,9 +89,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2116
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1828
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2120
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1832
 {
   index: 0
     tag: 2
@@ -227,9 +227,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2156
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1868
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2160
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1872
 {
   index: 0
     tag: 2
@@ -810,9 +810,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2116
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1828
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2120
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1832
 {
   index: 0
     tag: 2
@@ -948,9 +948,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2156
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1868
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2160
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1872
 {
   index: 0
     tag: 2

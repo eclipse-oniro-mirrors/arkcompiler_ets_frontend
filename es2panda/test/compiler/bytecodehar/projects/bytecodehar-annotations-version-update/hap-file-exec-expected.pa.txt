@@ -84,7 +84,7 @@ slotNum = 0x7
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x4, &bytecodehar/bytecodehar-dynamic-import&.#~A=#A, &bytecodehar/bytecodehar-dynamic-import&_2498, 0x0, v0
+	defineclasswithbuffer 0x4, &bytecodehar/bytecodehar-dynamic-import&.#~A=#A, &bytecodehar/bytecodehar-dynamic-import&_2113, 0x0, v0
 	ldobjbyname 0x5, prototype
 	returnundefined
 }
@@ -92,9 +92,9 @@ slotNum = 0x7
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2450
+slot &bytecodehar/bytecodehar-dynamic-import&_2065
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2454
+slot &bytecodehar/bytecodehar-dynamic-import&_2069
 {
   index: 0
     tag: 2
@@ -146,7 +146,7 @@ slot &bytecodehar/bytecodehar-dynamic-import&_2454
     val: 0
 },
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2498
+slot &bytecodehar/bytecodehar-dynamic-import&_2113
 {
   index: 0
     tag: 0
@@ -259,7 +259,7 @@ slotNum = 0x4
 	stlexvar 0x0, 0x9
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar/bytecodehar-static-import&.#~A=#A, &bytecodehar/bytecodehar-static-import&_2647, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar/bytecodehar-static-import&.#~A=#A, &bytecodehar/bytecodehar-static-import&_2262, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -267,9 +267,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2507
+slot &bytecodehar/bytecodehar-static-import&_2122
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2511
+slot &bytecodehar/bytecodehar-static-import&_2126
 {
   index: 0
     tag: 2
@@ -461,7 +461,7 @@ slot &bytecodehar/bytecodehar-static-import&_2511
     val: 0
 },
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2647
+slot &bytecodehar/bytecodehar-static-import&_2262
 {
   index: 0
     tag: 0
@@ -917,7 +917,7 @@ slotNum = 0x7
 	stmodulevar 0x1
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x4, &bytecodehar/bytecodehar-dynamic-import&.#~A=#A, &bytecodehar/bytecodehar-dynamic-import&_2498, 0x0, v0
+	defineclasswithbuffer 0x4, &bytecodehar/bytecodehar-dynamic-import&.#~A=#A, &bytecodehar/bytecodehar-dynamic-import&_2113, 0x0, v0
 	ldobjbyname 0x5, prototype
 	returnundefined
 }
@@ -925,9 +925,9 @@ slotNum = 0x7
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2450
+slot &bytecodehar/bytecodehar-dynamic-import&_2065
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2454
+slot &bytecodehar/bytecodehar-dynamic-import&_2069
 {
   index: 0
     tag: 2
@@ -979,7 +979,7 @@ slot &bytecodehar/bytecodehar-dynamic-import&_2454
     val: 0
 },
 ------------------------------------
-slot &bytecodehar/bytecodehar-dynamic-import&_2498
+slot &bytecodehar/bytecodehar-dynamic-import&_2113
 {
   index: 0
     tag: 0
@@ -1092,7 +1092,7 @@ slotNum = 0x4
 	stlexvar 0x0, 0x9
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, &bytecodehar/bytecodehar-static-import&.#~A=#A, &bytecodehar/bytecodehar-static-import&_2647, 0x0, v0
+	defineclasswithbuffer 0x1, &bytecodehar/bytecodehar-static-import&.#~A=#A, &bytecodehar/bytecodehar-static-import&_2262, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -1100,9 +1100,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2507
+slot &bytecodehar/bytecodehar-static-import&_2122
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2511
+slot &bytecodehar/bytecodehar-static-import&_2126
 {
   index: 0
     tag: 2
@@ -1294,7 +1294,7 @@ slot &bytecodehar/bytecodehar-static-import&_2511
     val: 0
 },
 ------------------------------------
-slot &bytecodehar/bytecodehar-static-import&_2647
+slot &bytecodehar/bytecodehar-static-import&_2262
 {
   index: 0
     tag: 0
