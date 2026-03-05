@@ -20,6 +20,8 @@
 
 namespace ark::es2panda::compiler {
 
+void ResetCalleeCountOutside();
+
 class LambdaConversionPhase : public PhaseForProgramsToBeEmitted {
 public:
     std::string_view Name() const override

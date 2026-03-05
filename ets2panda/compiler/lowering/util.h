@@ -32,6 +32,7 @@ checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast);
 ir::Identifier *Gensym(ArenaAllocator *allocator);
 util::UString GenName(ArenaAllocator *allocator);
 [[nodiscard]] std::string GenName();
+void ResetGenSymCounter();
 void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept;
 ArenaSet<varbinder::Variable *> FindCaptured(ArenaAllocator *allocator, ir::AstNode *scopeBearer) noexcept;
 void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &range);

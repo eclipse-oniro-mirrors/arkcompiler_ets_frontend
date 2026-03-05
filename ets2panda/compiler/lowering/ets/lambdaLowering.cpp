@@ -118,6 +118,12 @@ static void ResetCalleeCount()
     g_calleeCount = 0;
 }
 
+void ResetCalleeCountOutside()
+{
+    std::lock_guard lock(g_calleeCountMutex);
+    g_calleeCount = 0;
+}
+
 static util::StringView CreateCalleeName(ArenaAllocator *allocator)
 {
     std::lock_guard lock(g_calleeCountMutex);

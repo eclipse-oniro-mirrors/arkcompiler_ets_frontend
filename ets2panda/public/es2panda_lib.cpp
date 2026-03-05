@@ -36,6 +36,7 @@
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/regSpiller.h"
 #include "compiler/lowering/phase.h"
+#include "compiler/lowering/ets/lambdaLowering.h"
 #include "ir/astNode.h"
 #include "ir/expressions/arrowFunctionExpression.h"
 #include "ir/ts/tsAsExpression.h"
@@ -250,6 +251,12 @@ extern "C" es2panda_Config *CreateConfig(int args, char const *const *argv)
     return reinterpret_cast<es2panda_Config *>(res);
 }
 
+extern "C" __attribute__((unused)) void ResetCounters()
+{
+    compiler::ResetCalleeCountOutside();
+    compiler::ResetGenSymCounter();
+}
+
 extern "C" void DestroyConfigControl(es2panda_Config *config, bool logFlag)
 {
     auto *cfg = reinterpret_cast<ConfigImpl *>(config);
@@ -269,6 +276,7 @@ extern "C" void DestroyConfigControl(es2panda_Config *config, bool logFlag)
     delete cfg->diagnosticEngine;
     delete cfg;
     ark::Logger::Destroy();
+    ResetCounters();
 }
 
 extern "C" void DestroyConfig(es2panda_Config *config)
@@ -1621,6 +1629,7 @@ es2panda_Impl g_impl = {
     RemoveFileCache,
     AddFileCache,
     FreeCompilerPartMemory,
+    ResetCounters,
 
 #include "generated/es2panda_lib/es2panda_lib_list.inc"
 

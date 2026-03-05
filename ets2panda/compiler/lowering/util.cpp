@@ -81,14 +81,21 @@ ir::Identifier *Gensym(ArenaAllocator *const allocator)
     return allocator->New<ir::Identifier>(s.View(), allocator);
 }
 
+static std::size_t g_gensymCounter = 0U;
+static std::mutex g_gensymCounterMutex {};
+
+void ResetGenSymCounter()
+{
+    std::lock_guard lock(g_gensymCounterMutex);
+    g_gensymCounter = 0U;
+}
+
 std::string GenName()
 {
-    static std::size_t gensymCounter = 0U;
-    static std::mutex gensymCounterMutex {};
     std::size_t individualGensym = 0;
     {
-        std::lock_guard lock(gensymCounterMutex);
-        individualGensym = ++gensymCounter;
+        std::lock_guard lock(g_gensymCounterMutex);
+        individualGensym = ++g_gensymCounter;
     }
     return std::string(GENSYM_CORE) + std::to_string(individualGensym);
 }
