@@ -18,6 +18,13 @@
 
 using ark::es2panda::lsp::Initializer;
 
+struct TypeCase {
+    size_t pos;
+    int firstHighlightStart;
+    int secondHighlightStart;
+    int expectedLength;
+};
+
 class LspDocumentHighlights : public LSPAPITests {};
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights1)
@@ -463,107 +470,77 @@ bbb = aaa.a;
     ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
 
-TEST_F(LspDocumentHighlights, getDocumentHighlights11)
+TEST_F(LspDocumentHighlights, getDocumentHighlightsBuiltInTypes)
 {
-    std::vector<std::string> files = {"getDocumentHighlights11.ets"};
+    std::vector<std::string> files = {"getDocumentHighlightsBuiltInTypes.ets"};
     std::vector<std::string> texts = {R"delimiter(
-let a: int = 10;
-let b: double = 3.14;
-let c: boolean = true;
-let d: int = 10;
-let e: double = 3.14;
-let f: boolean = true;
+let a: int = 10; let b: float = 2.2f;
+let c: double = 3.14; let d: short = 20;
+let e: long = 200000000000; let f: byte = 2;
+let g: char = c'a'; let h: boolean = true;
+let i: Any = 10; let j: Object = 1;
+let k: int = 20; let l: float = 3.3f;
+let m: double = 6.28; let n: short = 30;
+let o: long = 300000000000; let p: byte = 3;
+let q: char = c'b'; let r: boolean = false;
+let s: Any = true; let t: Object = 2;
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
-    int const expectedFileCount = 1;
-    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    ASSERT_EQ(filePaths.size(), 1);
+    std::vector<TypeCase> cases = {{9, 8, 211, 3},     {26, 25, 228, 5},   {47, 46, 249, 6},   {69, 68, 271, 5},
+                                   {88, 87, 290, 4},   {116, 115, 318, 4}, {133, 132, 335, 4}, {153, 152, 355, 7},
+                                   {176, 175, 379, 3}, {193, 192, 398, 6}};
 
     LSPAPI const *lspApi = GetImpl();
-    auto const pos = 9;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    auto result = lspApi->getDocumentHighlights(ctx, pos);
+    auto const firstExpectedHighlightCount = 2;
+    for (auto const &testCase : cases) {
+        auto result = lspApi->getDocumentHighlights(ctx, testCase.pos);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
+        ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, testCase.firstHighlightStart);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, testCase.secondHighlightStart);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, testCase.expectedLength);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, testCase.expectedLength);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+    }
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 8;
-    auto const secondHighlightStart = 70;
-    auto const expectedLength = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
 
-TEST_F(LspDocumentHighlights, getDocumentHighlights12)
+TEST_F(LspDocumentHighlights, getDocumentHighlightsBoxedTypes)
 {
-    std::vector<std::string> files = {"getDocumentHighlights12.ets"};
+    std::vector<std::string> files = {"getDocumentHighlightsBoxedTypes.ets"};
     std::vector<std::string> texts = {R"delimiter(
-let a: int = 10;
-let b: double = 3.14;
-let c: boolean = true;
-let d: int = 10;
-let e: double = 3.14;
-let f: boolean = true;
+let a: Int = 10; let b: Float = 2.2f;
+let c: Double = 3.14; let d: Short = 20;
+let e: Long = 200000000000; let f: Byte = 2;
+let g: Char = c'a'; let h: Boolean = true;
+let i: Int = 20; let j: Float = 3.3f;
+let k: Double = 6.28; let l: Short = 30;
+let m: Long = 300000000000; let n: Byte = 3;
+let o: Char = c'b'; let p: Boolean = false;
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
-    int const expectedFileCount = 1;
-    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    ASSERT_EQ(filePaths.size(), 1);
+    std::vector<TypeCase> cases = {{9, 8, 175, 3},   {26, 25, 192, 5},   {47, 46, 213, 6},   {69, 68, 235, 5},
+                                   {88, 87, 254, 4}, {116, 115, 282, 4}, {133, 132, 299, 4}, {153, 152, 319, 7}};
 
     LSPAPI const *lspApi = GetImpl();
-    auto const pos = 27;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    auto result = lspApi->getDocumentHighlights(ctx, pos);
+    auto const firstExpectedHighlightCount = 2;
+    for (auto const &testCase : cases) {
+        auto result = lspApi->getDocumentHighlights(ctx, testCase.pos);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
+        ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, testCase.firstHighlightStart);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, testCase.secondHighlightStart);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, testCase.expectedLength);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, testCase.expectedLength);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
+        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+    }
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 25;
-    auto const secondHighlightStart = 87;
-    auto const expectedLength = 6;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-}
-
-TEST_F(LspDocumentHighlights, getDocumentHighlights13)
-{
-    std::vector<std::string> files = {"getDocumentHighlights13.ets"};
-    std::vector<std::string> texts = {R"delimiter(
-let a: int = 10;
-let b: double = 3.14;
-let c: boolean = true;
-let d: int = 10;
-let e: double = 3.14;
-let f: boolean = true;
-)delimiter"};
-    auto filePaths = CreateTempFile(files, texts);
-    int const expectedFileCount = 1;
-    ASSERT_EQ(filePaths.size(), expectedFileCount);
-
-    LSPAPI const *lspApi = GetImpl();
-    auto const pos = 49;
-    Initializer initializer = Initializer();
-    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    auto result = lspApi->getDocumentHighlights(ctx, pos);
-    initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 47;
-    auto const secondHighlightStart = 109;
-    auto const expectedLength = 7;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
