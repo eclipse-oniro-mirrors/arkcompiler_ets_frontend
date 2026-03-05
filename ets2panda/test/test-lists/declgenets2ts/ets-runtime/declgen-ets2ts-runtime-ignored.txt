@@ -108,3 +108,13 @@ TypeAliasRecusive.ets
 nested_array_1.ets
 nested_array_2.ets
 nested_array_3.ets
+
+# TSC Fail
+fields_with_late_initialization/class_late_initlization_with_export.ets
+re_export/export/reexport_elements1.ets
+re_export/export/reexport_elements2.ets
+re_export/import.ets
+re_export/import_star.ets
+re_export_class/import_class_1.ets
+re_export_class/import_class_2.ets
+interface_with_optional_property_cycle_import/class_file.ets
