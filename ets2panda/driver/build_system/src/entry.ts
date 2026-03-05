@@ -79,6 +79,9 @@ function validateSingleFieldPaths(projectConfig: BuildConfig): void {
     if (projectConfig.pandaStdlibPath) {
         projectConfig.pandaStdlibPath = getVar(projectConfig.pandaStdlibPath)
     }
+    if (projectConfig.pandaSdkPath) {
+        projectConfig.pandaSdkPath = getVar(projectConfig.pandaSdkPath)
+    }
     
     projectConfig.sdkAliasMap = projectConfig.sdkAliasMap instanceof Map
         ? projectConfig.sdkAliasMap
