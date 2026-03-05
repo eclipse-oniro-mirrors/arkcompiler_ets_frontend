@@ -103,6 +103,7 @@ panda::es2panda::util::AbcProgramsCache *ProtobufSnapshotGenerator::GetAbcInputC
     std::map<std::string, panda::es2panda::util::ProgramCache *> abcProgsInfo {};
     for (const auto &item : abcProtoCache.abcprotoprogramsmap()) {
         auto *program = allocator->New<panda::pandasm::Program>();
+        CHECK_NOT_NULL(program);
         auto &protoName = item.name();
         auto &protoProgram = item.program();
         Program::Deserialize(protoProgram, *program, allocator);
