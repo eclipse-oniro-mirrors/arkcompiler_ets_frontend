@@ -141,7 +141,7 @@ bool DiagnosticBase::operator==(const DiagnosticBase &rhs) const
 
 DiagnosticType Diagnostic::Type() const
 {
-    return diagnosticKind_->Type();
+    return type_;
 }
 
 uint32_t Diagnostic::GetId() const
@@ -225,6 +225,9 @@ std::string DiagnosticBase::ToStringUniqueNumber() const
 DiagnosticBase::DiagnosticBase(const lexer::SourcePosition &pos)
 {
     posData_ = pos;
+    if (pos.Program() != nullptr) {
+        file_ = pos.Program()->SourceFilePath().Utf8();
+    }
 }
 
 DiagnosticBase::DiagnosticBase(const lexer::SourceLocation &loc)
@@ -298,6 +301,7 @@ Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,
                        std::vector<class Suggestion *> &&suggestions)
     : DiagnosticBase(pos),
       diagnosticKind_(&diagnosticKind),
+      type_(diagnosticKind.Type()),
       diagnosticParams_(FormatParams(diagnosticParams)),
       suggestions_(std::make_unique<std::vector<class Suggestion *>>(std::move(suggestions)))
 {
@@ -306,7 +310,10 @@ Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,
 Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,
                        const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos,
                        std::initializer_list<class Suggestion *> suggestions)
-    : DiagnosticBase(pos), diagnosticKind_(&diagnosticKind), diagnosticParams_(FormatParams(diagnosticParams))
+    : DiagnosticBase(pos),
+      diagnosticKind_(&diagnosticKind),
+      type_(diagnosticKind.Type()),
+      diagnosticParams_(FormatParams(diagnosticParams))
 {
     if (suggestions.size() != 0) {
         suggestions_ = std::make_unique<std::vector<class Suggestion *>>();

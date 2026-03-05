@@ -16,7 +16,9 @@
 #ifndef ES2PANDA_UTIL_DIAGNOSTIC_ENGINE_H
 #define ES2PANDA_UTIL_DIAGNOSTIC_ENGINE_H
 
+#include <cstddef>
 #include <memory>
+#include <type_traits>
 #include <utility>
 #include "es2panda.h"
 #include "util/es2pandaMacros.h"
@@ -188,6 +190,14 @@ private:
     {
         auto diag = std::make_unique<DIAGNOSTIC>(std::forward<T>(args)...);
         auto type = diag->Type();
+        if constexpr (std::is_same_v<Diagnostic, DIAGNOSTIC>) {
+            if (type == DiagnosticType::WARNING) {
+                if (diag->Kind() != nullptr && diag->Kind()->IsInExclusionList(diag->File())) {
+                    diag->SetType(DiagnosticType::SEMANTIC);
+                    type = DiagnosticType::SEMANTIC;
+                }
+            }
+        }
         diagnostics_[type].push_back(std::move(diag));
         return reinterpret_cast<DIAGNOSTIC *>(diagnostics_[type].back().get());
     }
