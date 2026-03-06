@@ -58,7 +58,6 @@ optional_field.ets
 Object-type-in-binary-logical-expression.ets
 trailing-lambda.ets
 BitwiseOperationsOnFloat.ets
-RecursiveTypeAlias11.ets
 conversionFloatIntLong.ets
 inallyCatchExecutedNormally.ets
 
@@ -110,17 +109,8 @@ first_match/namespace3.ets
 # Issue #28914
 non_null_number_as_index.ets
 
-#31069
-type_error_test.ets
-
 #31475
 as_string.ets
-
-#31895
-objliteral_method_returntype_infer.ets
-#31894
-set_keys_next.ets
-array_enum_access.ets
 
 #31475
 readonly_array/readonly_array_arg.ets

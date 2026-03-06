@@ -7,7 +7,6 @@ parser/ets/string_template_3.ets
 parser/ets/string_template_4.ets
 
 # FailKind.SRC_DUMPER_FAIL (Issue #20458)
-ast/parser/ets/re_export/re_export_16.ets
 compiler/ets/abstractNewClassInstanceExpression.ets
 runtime/ets/implicit_package_import_1.ets
 runtime/ets/implicit_package_import_2.ets
@@ -72,8 +71,6 @@ runtime/ets/interfaceObjectLiteral_03.ets
 runtime/ets/interfaceObjectLiteral_04.ets
 runtime/ets/interfaceObjectLiteral_07.ets
 runtime/ets/interfaceObjectLiteral_08.ets
-runtime/ets/interfaceObjectLiteral_09.ets
-runtime/ets/interfaceObjectLiteral_10.ets
 
 ast/parser/ets/objectLiteralMethodThisInLambda.ets
 runtime/ets/objectLiteralMethodThisInLambda.ets
