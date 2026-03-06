@@ -534,21 +534,9 @@ static checker::Type *SelectTypeToConvert(
     return toConvert;
 }
 
-/* NOTE(gogabr): conversions should be inserted at the checker stage. This function is temporary. */
-// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, huge_cyclomatic_complexity) solid logic
-static ir::Expression *InsertPrimitiveConversionIfNeeded(UnboxContext *uctx, ir::Expression *expr,
-                                                         checker::Type *expectedType)
+static checker::Type *DetermineTypeToConvert(UnboxContext *uctx, checker::Type *actualType, checker::Type *expectedType)
 {
     auto *checker = uctx->checker;
-    auto *relation = checker->Relation();
-    auto *actualType = expr->TsType();
-
-    ES2PANDA_ASSERT(IsRecursivelyUnboxed(actualType));
-
-    if (relation->IsSupertypeOf(expectedType, uctx->checker->MaybeBoxType(actualType))) {
-        return expr;
-    }
-
     checker::Type *toConvert = nullptr;
     auto checkSubtyping = [expectedType, checker, &toConvert](checker::Type *tp) {
         if (toConvert != nullptr) {
@@ -583,8 +571,32 @@ static ir::Expression *InsertPrimitiveConversionIfNeeded(UnboxContext *uctx, ir:
             break;
     }
 
-    toConvert = SelectTypeToConvert(std::make_tuple(uctx, relation, checker), toConvert, expectedType, actualType);
-    ES2PANDA_ASSERT(toConvert != nullptr);
+    toConvert =
+        SelectTypeToConvert(std::make_tuple(uctx, checker->Relation(), checker), toConvert, expectedType, actualType);
+    return toConvert;
+}
+
+/* NOTE(gogabr): conversions should be inserted at the checker stage. This function is temporary. */
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, huge_cyclomatic_complexity) solid logic
+static ir::Expression *InsertPrimitiveConversionIfNeeded(UnboxContext *uctx, ir::Expression *expr,
+                                                         checker::Type *expectedType)
+{
+    auto *checker = uctx->checker;
+    auto *relation = checker->Relation();
+    auto *actualType = expr->TsType();
+
+    ES2PANDA_ASSERT(IsRecursivelyUnboxed(actualType));
+
+    if (relation->IsSupertypeOf(expectedType, uctx->checker->MaybeBoxType(actualType))) {
+        return expr;
+    }
+
+    auto *toConvert = DetermineTypeToConvert(uctx, actualType, expectedType);
+    if (toConvert == nullptr) {
+        // No valid primitive conversion path for this reference expectation.
+        // Keep the primitive value as-is and let caller perform plain boxing.
+        return expr;
+    }
     auto *toConvertUnboxed = checker->MaybeUnboxType(toConvert);
 
     auto *res = CreateToIntrinsicCallExpression(uctx, toConvertUnboxed, actualType, expr);
@@ -676,6 +688,26 @@ static ir::Expression *InsertConversionBetweenPrimitivesIfNeeded(UnboxContext *u
     return res;
 }
 
+static ir::Expression *InsertReferenceCastIfNeeded(UnboxContext *uctx, ir::Expression *expr,
+                                                   checker::Type *expectedType)
+{
+    if (uctx->checker->Relation()->IsSupertypeOf(expectedType, expr->TsType())) {
+        return expr;
+    }
+
+    auto *allocator = uctx->allocator;
+    auto *parent = expr->Parent();
+    auto range = expr->Range();
+    auto *asExpr = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
+        allocator, expr, allocator->New<ir::OpaqueTypeNode>(expectedType, allocator), false);
+    asExpr->SetParent(parent);
+    asExpr->SetTsType(expectedType);
+    asExpr->TypeAnnotation()->SetTsType(expectedType);
+    asExpr->TypeAnnotation()->SetRange(range);
+    asExpr->SetRange(range);
+    return asExpr;
+}
+
 static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, checker::Type *expectedType)
 {
     if (expr == nullptr) {
@@ -691,10 +723,7 @@ static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, chec
     }
     if (actualType->IsETSPrimitiveType() && checker::ETSChecker::IsReferenceType(expectedType)) {
         expr = InsertPrimitiveConversionIfNeeded(uctx, expr, expectedType);
-        ES2PANDA_ASSERT(
-            uctx->checker->Relation()->IsSupertypeOf(expectedType, uctx->checker->MaybeBoxType(expr->TsType())) ||
-            (expr->TsType()->IsCharType() && expectedType->IsETSStringType()));
-        return InsertBoxing(uctx, expr);
+        return InsertReferenceCastIfNeeded(uctx, InsertBoxing(uctx, expr), expectedType);
     }
     if ((TypeIsBoxedPrimitive(actualType) ||
          (actualType->IsETSTypeParameter() &&
