@@ -102,8 +102,8 @@ public:
     }
 
 private:
-    size_t baseIndentSize_ = 4;
-    size_t indentSize_ = 4;
+    size_t baseIndentSize_ = 2;
+    size_t indentSize_ = 2;
     size_t tabSize_ = 4;
     std::string newLineCharacter_ = DEFAULT_NEWLINE_CHARACTER;
     bool convertTabsToSpaces_ = true;

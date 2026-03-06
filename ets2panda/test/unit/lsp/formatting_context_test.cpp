@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -111,7 +111,7 @@ TEST_F(LSPFormattingContextTests, FormatCodeSettingsDefaultValuesTest)
 {
     ark::es2panda::lsp::FormatCodeSettings settings;
 
-    EXPECT_EQ(settings.GetIndentSize(), 4U);
+    EXPECT_EQ(settings.GetIndentSize(), 2U);
     EXPECT_EQ(settings.GetTabSize(), 4U);
     EXPECT_EQ(settings.GetNewLineCharacter(), "\n");
     EXPECT_TRUE(settings.GetConvertTabsToSpaces());
