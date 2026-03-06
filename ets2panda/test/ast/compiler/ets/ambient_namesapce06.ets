@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,5 +26,5 @@ declare namespace MySpace{
 /* @@? 16:19 Error Semantic error ESE0351: Variable 'MySpace' has already been declared. */
 /* @@? 16:19 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
 /* @@? 22:19 Error Syntax error ESY0230: Expected '{', got '.'. */
-/* @@? 22:32 Error Syntax error ESY0001: Missing type annotation for property 'ClassAuthor'. */
+/* @@? 22:32 Error Semantic error ESE1111: Missing type annotation for the 'ClassAuthor'. */
 /* @@? 22:32 Error Syntax error ESY0224: Identifier expected, got '{'. */

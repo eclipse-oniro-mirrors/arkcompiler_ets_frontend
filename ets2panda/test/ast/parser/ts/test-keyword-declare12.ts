@@ -18,4 +18,4 @@ declare class Foo {
     private static a = /* @@ label */3;
 }
 
-/* @@@ label Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
+/* @@@ label Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: a */

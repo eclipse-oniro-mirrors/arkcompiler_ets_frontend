@@ -114,7 +114,7 @@ module module2
 /* @@? 20:1 Error Syntax error ESY0169: Missing catch or finally clause. */
 /* @@? 21:9 Error Syntax error ESY0230: Expected '{', got '('. */
 /* @@? 24:8 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 27:13 Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
+/* @@? 27:13 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: i */
 /* @@? 31:14 Error Syntax error ESY0184: Abstract methods can only appear within an abstract class. */
 /* @@? 35:12 Error Syntax error ESY0181: Only ambient modules can use quoted names. */
 /* @@? 35:22 Error Syntax error ESY0228: Unexpected token, expected ';'. */

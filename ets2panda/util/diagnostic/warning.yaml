@@ -119,16 +119,9 @@ warning:
   softlist: ["override_field_allowed"]
 
 - name: INITIALIZERS_IN_AMBIENT_CONTEXTS
-  id: 125
-  message: "Initializers are not allowed in ambient contexts."
-  strict: true
-  softlist: ["ambient_context"]
-
-- name: INIT_IN_AMBIENT
-  id: 153
+  id: 125125
   message: "Initializers are not allowed in ambient contexts: {}"
-  strict: true
-  softlist: ["ambient_context"]
+  softlist: ["ambient_context_and_missing_type_annotation"]
 
 - name: INSTANCEOF_ALWAYS_KNOWN
   id: 1001506
@@ -145,6 +138,12 @@ warning:
 - name: MAYBE_REASSIGNED
   id: 17
   message: "{} '{}' might already have been assigned."
+
+- name: MISSING_TYPE_ANNOTATION
+  id: 1111
+  message: "Missing type annotation for the '{}'."
+  strict: true
+  softlist: ["ambient_context_and_missing_type_annotation"]
 
 - name: NON_NULLISH_OPERAND
   id: 15
@@ -236,6 +235,8 @@ graveyard:
 - 27
 - 28
 - 30
+- 125
+- 153
 - 11567
 - 49710
 - 59220

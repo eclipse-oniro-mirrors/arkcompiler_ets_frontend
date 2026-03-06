@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ class A{
     foo3()
 
 
-/* @@? 17:7 Error Syntax error ESY0001: Missing type annotation for property 'au'. */
+/* @@? 17:7 Error Semantic error ESE1111: Missing type annotation for the 'au'. */
 /* @@? 17:7 Error Syntax error ESY0224: Identifier expected, got '`'. */
 /* @@? 21:6 Error Semantic error ESE0044: The required field 'au' must be specified. Fields without default values cannot be omitted. */
 /* @@? 24:6 Error Semantic error ESE0043: Annotation 'ClassAuthor' requires multiple fields to be specified. */

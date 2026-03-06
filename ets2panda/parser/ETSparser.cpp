@@ -1805,6 +1805,8 @@ ir::Expression *ETSParser::ParseVariableDeclaratorKey(VariableParsingFlags flags
         Lexer()->NextToken();  // eat ':'
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
         typeAnnotation = ParseTypeAnnotation(&options);
+    } else if (InAmbientContext()) {
+        LogError(diagnostic::MISSING_TYPE_ANNOTATION, {init->AsIdentifier()->Name()}, init->Start());
     }
 
     if (init->IsAnnotatedExpression() && typeAnnotation != nullptr) {
@@ -1825,6 +1827,10 @@ ir::VariableDeclarator *ETSParser::ParseVariableDeclaratorInitializer(ir::Expres
     ir::Expression *initializer = ParseExpression();
     lexer::SourcePosition endLoc = initializer->End();
 
+    if (InAmbientContext()) {
+        LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS, {init->AsIdentifier()->Name()}, initializer->Start());
+    }
+
     auto *declarator = AllocNode<ir::VariableDeclarator>(GetFlag(flags), init, initializer);
     declarator->SetRange({startLoc, endLoc});
 
@@ -1840,7 +1846,8 @@ ir::VariableDeclarator *ETSParser::ParseVariableDeclarator(ir::Expression *init,
 
     if (init->IsETSDestructuring()) {
         LogError(diagnostic::MISSING_INIT_IN_DEST_DEC);
-    } else if (init->AsIdentifier()->TypeAnnotation() == nullptr && (flags & VariableParsingFlags::FOR_OF) == 0U) {
+    } else if (!InAmbientContext() && init->AsIdentifier()->TypeAnnotation() == nullptr &&
+               (flags & VariableParsingFlags::FOR_OF) == 0U) {
         LogError(diagnostic::MISSING_INIT_OR_TYPE);
     } else if (!IsExternal() && (flags & VariableParsingFlags::CONST) && !InAmbientContext() &&
                (flags & (VariableParsingFlags::FOR_OF | VariableParsingFlags::IN_FOR)) == 0U) {

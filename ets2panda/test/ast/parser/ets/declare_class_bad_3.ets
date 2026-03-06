@@ -15,10 +15,9 @@
 
 declare class A {
     static f1: string = 20
-    /* @@ label */static foo(p: string): double;
+    static foo(p: string): double;
 }
 
 
-/* @@? 17:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: f1 */
+/* @@? 17:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: f1 */
 /* @@? 17:25 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
-/* @@@ label Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */

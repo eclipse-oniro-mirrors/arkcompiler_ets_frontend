@@ -31,4 +31,4 @@ declare class A {
 
 
 /* @@@ label Error Syntax error ESY0205: A get accessor must be at least as accessible as the setter. */
-/* @@@ label1 Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
+/* @@@ label1 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x */

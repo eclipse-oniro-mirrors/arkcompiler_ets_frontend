@@ -34,7 +34,6 @@ declare const x5: string = "abc"
 declare const x6: "abc" = "abc"
 declare const x7 = null
 declare const x8 = undefined
-// fllowing pass without CTE
 declare const x11 = 5
 declare const x21 = -5
 declare const y11 = 5.55
@@ -42,30 +41,52 @@ declare const y21 = -5.55
 declare const x31 = 0x5
 declare const x41 = 0b101
 declare const x51 = "abc"
+declare const notype
 
-
-/* @@? 16:37 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_1 */
-/* @@? 16:66 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_2 */
-/* @@? 17:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_12 */
+/* @@? 16:37 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_1 */
+/* @@? 16:66 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_2 */
+/* @@? 17:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_12 */
 /* @@? 17:38 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 17:64 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_22 */
+/* @@? 17:64 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_22 */
 /* @@? 17:64 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 18:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_13 */
-/* @@? 18:70 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_23 */
-/* @@? 19:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_14 */
+/* @@? 18:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_13 */
+/* @@? 18:70 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_23 */
+/* @@? 19:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_14 */
+/* @@? 20:22 Error Semantic error ESE1111: Missing type annotation for the 'int_1'. */
 /* @@? 20:22 Warning Warning W71336: Exported variable 'int_1' requires type annotation. */
+/* @@? 20:30 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_1 */
+/* @@? 22:22 Error Semantic error ESE1111: Missing type annotation for the 'int_12'. */
 /* @@? 22:22 Warning Warning W71336: Exported variable 'int_12' requires type annotation. */
-/* @@? 22:31 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: int_12 */
-/* @@? 24:36 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_16 */
+/* @@? 22:31 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_12 */
+/* @@? 24:36 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_16 */
+/* @@? 25:22 Error Semantic error ESE1111: Missing type annotation for the 'int_17'. */
 /* @@? 25:22 Warning Warning W71336: Exported variable 'int_17' requires type annotation. */
-/* @@? 26:39 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_18 */
-/* @@? 27:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x1 */
-/* @@? 28:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x2 */
-/* @@? 29:27 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: y1 */
-/* @@? 30:28 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: y2 */
-/* @@? 31:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x3 */
-/* @@? 32:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x4 */
-/* @@? 33:28 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x5 */
-/* @@? 34:27 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x6 */
-/* @@? 35:20 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: x7 */
-/* @@? 36:20 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: x8 */
+/* @@? 25:31 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_17 */
+/* @@? 26:39 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_18 */
+/* @@? 27:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x1 */
+/* @@? 28:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x2 */
+/* @@? 29:27 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: y1 */
+/* @@? 30:28 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: y2 */
+/* @@? 31:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x3 */
+/* @@? 32:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x4 */
+/* @@? 33:28 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x5 */
+/* @@? 34:27 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x6 */
+/* @@? 35:15 Error Semantic error ESE1111: Missing type annotation for the 'x7'. */
+/* @@? 35:20 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x7 */
+/* @@? 36:15 Error Semantic error ESE1111: Missing type annotation for the 'x8'. */
+/* @@? 36:20 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x8 */
+/* @@? 37:15 Error Semantic error ESE1111: Missing type annotation for the 'x11'. */
+/* @@? 37:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x11 */
+/* @@? 38:15 Error Semantic error ESE1111: Missing type annotation for the 'x21'. */
+/* @@? 38:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x21 */
+/* @@? 39:15 Error Semantic error ESE1111: Missing type annotation for the 'y11'. */
+/* @@? 39:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: y11 */
+/* @@? 40:15 Error Semantic error ESE1111: Missing type annotation for the 'y21'. */
+/* @@? 40:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: y21 */
+/* @@? 41:15 Error Semantic error ESE1111: Missing type annotation for the 'x31'. */
+/* @@? 41:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x31 */
+/* @@? 42:15 Error Semantic error ESE1111: Missing type annotation for the 'x41'. */
+/* @@? 42:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x41 */
+/* @@? 43:15 Error Semantic error ESE1111: Missing type annotation for the 'x51'. */
+/* @@? 43:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x51 */
+/* @@? 44:15 Error Semantic error ESE1111: Missing type annotation for the 'notype'. */

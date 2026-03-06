@@ -23,10 +23,11 @@ softlist:
   - ".*/arkui/ace_engine/generative_ui/.*"
   - ".*/arkui/ace_engine/interfaces/.*"
 
-- name: "ambient_context"
+- name: "ambient_context_and_missing_type_annotation"
   paths:
   - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ets"
   - ".*/api/@ohos\\.arkui\\.inspector\\.static\\.d\\.ets"
+  - ".*/api/@ohos\\.arkui\\.inspector\\.d\\.ets"
   - ".*/api/@ohos\\.data\\.cloudData\\.d\\.ets"
   - ".*/api/@ohos\\.file\\.fs\\.d\\.ets"
   - ".*/api/@ohos\\.hichecker\\.d\\.ets"
@@ -38,6 +39,7 @@ softlist:
   - ".*/api/@ohos\\.userIAM\\.userAuth\\.d\\.ets"
   - ".*/kits/@kit\\.ArkUI\\.static\\.d\\.ets"
   - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ts"
+  - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ets"
   - ".*/api/@ohos\\.data\\.cloudData\\.d\\.ts"
   - ".*/api/@ohos\\.file\\.fs\\.d\\.ts"
   - ".*/api/@ohos\\.hichecker\\.d\\.ts"
@@ -47,6 +49,8 @@ softlist:
   - ".*/api/@ohos\\.pasteboard\\.d\\.ts"
   - ".*/api/@ohos\\.request\\.d\\.ts"
   - ".*/api/@ohos\\.userIAM\\.userAuth\\.d\\.ts"
+  - ".*/inner/arkui/PeerNode\\.d\\.ets"
+  - ".*/foundation/multimedia/av_session/.*"
 
 - name: "allow_implicit_export"
   paths:

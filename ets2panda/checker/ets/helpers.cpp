@@ -912,26 +912,17 @@ static bool NeedWidening(ir::Expression *e)
     return e->IsConditionalExpression() || e->IsLiteral() || isConstInit || e->IsTemplateLiteral();
 }
 
-static void CheckAssignForDeclare(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
-                                  ir::ModifierFlags const flags, ETSChecker *check)
+static void CheckAssignForDeclare(ir::Identifier *ident, ir::Expression *init, ir::ModifierFlags const flags,
+                                  ETSChecker *check)
 {
     const bool isDeclare = (flags & ir::ModifierFlags::DECLARE) != 0;
     const bool isAbstract = (flags & ir::ModifierFlags::ABSTRACT) != 0;
     if (!isDeclare || isAbstract) {
         return;
     }
-    if (typeAnnotation != nullptr && init != nullptr && !init->IsUndefinedLiteral()) {
-        check->LogError(diagnostic::INIT_IN_AMBIENT, {ident->Name()}, init->Start());
+    if (init != nullptr && !init->IsUndefinedLiteral()) {
+        check->LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS, {ident->Name()}, init->Start());
         return;
-    }
-    const bool isConst = (flags & ir::ModifierFlags::CONST) != 0;
-    ES2PANDA_ASSERT(init != nullptr);
-    // NOTE(dkofanov): the bigint-contraint is loosen.
-    bool numberLiteralOrBigInt = init->IsNumberLiteral() || init->IsBigIntLiteral();
-    bool multilineLiteralWithNoEmbedding =
-        init->IsTemplateLiteral() && init->AsTemplateLiteral()->Expressions().empty();
-    if (isConst && !numberLiteralOrBigInt && !init->IsStringLiteral() && !multilineLiteralWithNoEmbedding) {
-        check->LogError(diagnostic::AMBIENT_CONST_INVALID_LIT, {ident->Name()}, init->Start());
     }
 }
 
@@ -1037,7 +1028,7 @@ checker::Type *ETSChecker::CheckVariableDeclaration(ir::Identifier *ident, ir::T
         if (init == nullptr) {
             return FixOptionalVariableType(bindingVar, flags);
         }
-        CheckAssignForDeclare(ident, typeAnnotation, init, flags, this);
+        CheckAssignForDeclare(ident, init, flags, this);
     } else {
         ES2PANDA_ASSERT(IsAnyError());
     }
