@@ -95,8 +95,8 @@ void ETSGen::CompileAndCheck(const ir::Expression *expr)
     auto const *const accType = GetAccumulatorType();
     auto const *const exprType = expr->TsType();
 
-    if (Checker()->Relation()->IsIdenticalTo(accType, exprType) || exprType->IsETSTypeParameter() ||
-        exprType->IsETSPartialTypeParameter() || exprType->IsETSNonNullishType()) {
+    if (Checker()->Relation()->IsIdenticalTo(accType, exprType) ||
+        Checker()->Relation()->IsIdenticalTo(accType, Checker()->GetApparentType(exprType))) {
         return;
     }
 

@@ -24,7 +24,6 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "ETSGen-inl.h"
-#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -797,12 +796,9 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
 {
     ETSGen *etsg = GetETSGen();
 
-    auto const *smartType = expr->TsType();
+    auto const *const smartType = etsg->Checker()->GetApparentType(expr->TsType());
     ES2PANDA_ASSERT(smartType != nullptr);
-    if (smartType->IsETSTypeParameter() || smartType->IsETSPartialTypeParameter() || smartType->IsETSNonNullishType() ||
-        smartType->IsETSTypeAliasType()) {
-        smartType = etsg->Checker()->GetApparentType(smartType);
-    }
+
     auto ttctx = compiler::TargetTypeContext(etsg, smartType);
 
     ES2PANDA_ASSERT(expr->Variable() != nullptr);
@@ -1649,10 +1645,12 @@ void ETSCompiler::Compile(const ir::TSNonNullExpression *expr) const
 
     expr->Expr()->Compile(etsg);
 
+    auto const *const originalType = etsg->Checker()->GetApparentType(expr->OriginalType());
+
     if (etsg->GetAccumulatorType()->PossiblyETSNullish()) {
         if (!etsg->GetAccumulatorType()->PossiblyETSNull()) {
             etsg->EmitNullcheck(expr);
-            etsg->SetAccumulatorType(expr->OriginalType());
+            etsg->SetAccumulatorType(originalType);
         } else {
             auto arg = etsg->AllocReg();
             etsg->StoreAccumulator(expr, arg);
@@ -1664,11 +1662,11 @@ void ETSCompiler::Compile(const ir::TSNonNullExpression *expr) const
 
             etsg->SetLabel(expr, endLabel);
             etsg->LoadAccumulator(expr, arg);
-            etsg->AssumeNonNullish(expr, expr->OriginalType());
+            etsg->AssumeNonNullish(expr, originalType);
         }
     }
 
-    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->OriginalType()));
+    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), originalType));
 }
 
 void ETSCompiler::Compile([[maybe_unused]] const ir::TSTypeAliasDeclaration *st) const {}
