@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +43,7 @@ export class ArkTSConfigGenerator {
   private static instance: ArkTSConfigGenerator | undefined;
   private stdlibStdPath: string;
   private stdlibEscompatPath: string;
+  private stdlibArkruntimePath: string;
   private systemSdkPath: string;
   private externalApiPath: string;
   private interopApiPath: string;
@@ -55,6 +56,7 @@ export class ArkTSConfigGenerator {
     let pandaStdlibPath: string = path.resolve(pandaSdkPath, 'lib', 'stdlib');
     this.stdlibStdPath = path.resolve(pandaStdlibPath, 'std');
     this.stdlibEscompatPath = path.resolve(pandaStdlibPath, 'escompat');
+    this.stdlibArkruntimePath = path.resolve(pandaStdlibPath, 'arkruntime');
     this.systemSdkPath = path.resolve(buildConfig.buildSdkPath, SYSTEM_SDK_PATH_FROM_SDK);
     this.externalApiPath = buildConfig.externalApiPath !== undefined ? buildConfig.externalApiPath : '';
     this.interopApiPath = buildConfig.interopApiPath !== undefined ? buildConfig.interopApiPath : '';
@@ -167,6 +169,7 @@ export class ArkTSConfigGenerator {
 
     this.pathSection.std = [this.stdlibStdPath];
     this.pathSection.escompat = [this.stdlibEscompatPath];
+    this.pathSection.arkruntime = [this.stdlibArkruntimePath];
 
     this.generateSystemSdkPathSection(this.pathSection);
 

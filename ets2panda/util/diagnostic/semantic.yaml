@@ -190,6 +190,10 @@ semantic:
   id: 122
   message: "Class name can't be the argument of function or method."
 
+- name: ARKRUNTIME_INTERNAL_API_ACCESS
+  id: 154780
+  message: "'{}' cannot be used here as it is an arkruntime internal API"
+
 - name: ARRAY_ELEMENT_INIT_TYPE_INCOMPAT
   id: 227
   message: "Array element at index {} with type '{}' is not compatible with the target array element type '{}'"

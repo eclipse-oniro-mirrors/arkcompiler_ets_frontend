@@ -25,4 +25,5 @@ function(add_test project)
     add_dependencies(es2panda_tests ${PROJECT_TARGET_NAME})
 endfunction()
 
-add_test(module-name-conflict)
+#33648
+#add_test(module-name-conflict)

@@ -111,7 +111,6 @@ private:
                                  bool external);
     void GenCustomAnnotationRecord(const ir::AnnotationDeclaration *annoDecl, std::string &baseName, bool external);
     void GenEnumRecord(const ir::TSEnumDeclaration *enumDecl, bool external);
-    void GenAnnotationRecord(std::string_view recordNameView, bool isRuntime = false, bool isType = false);
     void GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceDecl, bool external);
     void EmitDefaultFieldValue(pandasm::Field &classField, const ir::Expression *init);
     void GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external);
@@ -120,10 +119,7 @@ private:
     void GenFunction(ir::ScriptFunction const *scriptFunc, bool external);
     void GenClassInheritedFields(const checker::ETSObjectType *baseType, pandasm::Record &classRecord);
     pandasm::AnnotationData GenAnnotationModule(const ir::ClassDefinition *classDef);
-    pandasm::AnnotationData GenAnnotationEnclosingClass(std::string_view className);
-    pandasm::AnnotationData GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef);
     pandasm::AnnotationData GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef);
-    pandasm::AnnotationData GenAnnotationInnerClass(const ir::ClassDefinition *classDef, const ir::AstNode *parent);
     ir::MethodDefinition *FindAsyncImpl(ir::ScriptFunction *asyncFunc);
     void ProcessArrayExpression(std::string &baseName, LiteralArrayVector &result,
                                 std::vector<pandasm::LiteralArray::Literal> &literals, const ir::Expression *elem);

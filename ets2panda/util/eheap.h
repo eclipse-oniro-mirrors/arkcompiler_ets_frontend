@@ -161,6 +161,12 @@ public:
     using EPtr = T *;
 #endif  // defined(NDEBUG) || defined(PANDA_FAST_VERIFY)
 
+    // #33459 temporary API for improper memory management cases
+    static size_t DeprecatedId()
+    {
+        return gHeapId_;
+    }
+
     EHeap() = delete;
     ~EHeap() = delete;
 
@@ -235,6 +241,7 @@ private:
     friend class EAllocator;
 
     static EHeapSpace *gEHeapSpace_;
+    static size_t gHeapId_;  // #33459 temporary API for improper memory management cases
 };
 
 template <typename T>

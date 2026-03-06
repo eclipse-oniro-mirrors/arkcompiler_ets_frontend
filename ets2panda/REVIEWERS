@@ -56,7 +56,9 @@
 /ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
 /ets2panda/util/diagnostic* @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* @chernykhsergey @shimenkovmikhail ^igelhaus ^Prof
+/ets2panda/util/eheap.* @vpukhov @dkofanov @Prof @igelhaus
 /ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin ^shimenkovmikhail @trubachevilya ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11 @dkofanov
+/ets2panda/util/internalAPIWhitelist.* @vpukhov @Prof @igelhaus @Nojpg
 /ets2panda/util/plugin.* @zhelyapovaleksey @mbolshov ^igelhaus ^Prof
 /ets2panda/varbinder/ @lirismankarina @akmaevaleksey  ^zelentsovdmitry ^igelhaus ^Prof @xuxjeeee
 /ets2panda/varbinder/ETSBinder.* @ozerovnikita ^zelentsovdmitry ^igelhaus ^Prof @xuxjeeee
