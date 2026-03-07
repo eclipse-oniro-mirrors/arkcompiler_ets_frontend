@@ -67,15 +67,15 @@ describe('getSyntacticDiagnosticsTest', () => {
   ];
   const DIAGNOSTICS_003 = [
     {
-      message: `A function can only be decorated by the 'Builder'.`,
-      range: { start: { line: 22, character: 2 }, end: { line: 22, character: 7 } }
-    },
-    {
       message: `The '@Track' annotation can decorate only member variables of a class.`,
       range: { start: { line: 19, character: 2 }, end: { line: 19, character: 7 } }
     },
     {
       message: `The '@Track' annotation can decorate only member variables of a class.`,
+      range: { start: { line: 22, character: 2 }, end: { line: 22, character: 7 } }
+    },
+    {
+      message: `A function can only be decorated by the 'Builder'.`,
       range: { start: { line: 22, character: 2 }, end: { line: 22, character: 7 } }
     },
     {
