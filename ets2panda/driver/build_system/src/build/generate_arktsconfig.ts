@@ -409,10 +409,19 @@ export class ArkTSConfigGenerator {
                     // hack, should be fixed, probably bug in hvigor
                     mainFile: 'Index'
                 };
+                
                 arktsconfig.addDependency({
                     name: depModuleInfo.packageName,
                     item: depItem
                 });
+                
+                const alias = this.getAliasForPackage(depModuleInfo.packageName, moduleInfo.originalPackageNameMap);
+                if (alias) {
+                    arktsconfig.addDependency({
+                        name: alias,
+                        item: depItem
+                    });
+                }
             }
         });
     }
@@ -451,6 +460,8 @@ export class ArkTSConfigGenerator {
 
             const declFilesObject = JSON.parse(fs.readFileSync(depModuleInfo.declFilesPath, 'utf-8'));
             const files = declFilesObject.files;
+            
+            const alias = this.getAliasForPackage(depModuleInfo.packageName, moduleInfo.originalPackageNameMap);
 
             Object.keys(files).forEach((file: string) => {
                 const transformedKey: string = this.getTransformedDependencyKey(file, depModuleInfo);
@@ -485,6 +496,32 @@ export class ArkTSConfigGenerator {
                         name: depModuleInfo.packageName,
                         item: depItem
                     });
+                }
+
+                if (alias) {
+                    const aliasLegacyKey = alias + legacyKey.substring(depModuleInfo.packageName.length);
+                    const aliasTransformedKey = transformedKey.startsWith(depModuleInfo.packageName + '/')
+                        ? alias + transformedKey.substring(depModuleInfo.packageName.length)
+                        : '';
+
+                    arktsconfig.addDependency({
+                        name: aliasLegacyKey,
+                        item: depItem
+                    });
+
+                    if (aliasTransformedKey !== '' && aliasTransformedKey !== aliasLegacyKey) {
+                        arktsconfig.addDependency({
+                            name: aliasTransformedKey,
+                            item: depItem
+                        });
+                    }
+
+                    if (absFilePath === entryFileWithoutExtension) {
+                        arktsconfig.addDependency({
+                            name: alias,
+                            item: depItem
+                        });
+                    }
                 }
             });
         });
@@ -735,5 +772,17 @@ export class ArkTSConfigGenerator {
 
     public getArktsConfigByPackageName(packageName: string): ArkTSConfig | undefined {
         return this.arktsconfigs.get(packageName);
+    }
+
+    private getAliasForPackage(packageName: string, originalPackageNameMap?: Map<string, string>): string | undefined {
+        if (!originalPackageNameMap) {
+            return undefined;
+        }
+        for (const [alias, originalName] of originalPackageNameMap) {
+            if (originalName === packageName) {
+                return alias === originalName ? undefined : alias;
+            }
+        }
+        return undefined;
     }
 }

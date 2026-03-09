@@ -583,6 +583,10 @@ export abstract class BaseMode {
         }
     }
 
+    private resolvePackageName(packageName: string, originalPackageNameMap?: Map<string, string>): string {
+        return originalPackageNameMap?.get(packageName) ?? packageName;
+    }
+
     private getDependencyModules(moduleInfo: ModuleInfo): Map<string, ModuleInfo>[] {
         const dynamicDependencyModules: Map<string, ModuleInfo> = new Map<string, ModuleInfo>();
         const staticDependencyModules: Map<string, ModuleInfo> = new Map<string, ModuleInfo>();
@@ -733,12 +737,14 @@ export abstract class BaseMode {
                 declgenBridgeCodePath: dependency.declgenBridgeCodePath,
                 language: dependency.language,
                 declFilesPath: dependency.declFilesPath,
-                dependencies: dependency.dependencies ?? [],
+                dependencies: [],
                 byteCodeHar: dependency.byteCodeHar,
                 abcPath: dependency.abcPath,
                 staticFiles: [],
-                packageVersion: dependency.packageVersion
+                packageVersion: dependency.packageVersion,
+                originalPackageNameMap: dependency.originalPackageNameMap
             };
+            moduleInfo.dependencies = dependency.dependencies?.map(dep => this.resolvePackageName(dep, moduleInfo.originalPackageNameMap)) ?? [];
             this.moduleInfos.set(dependency.packageName, moduleInfo);
             this.moduleInfos.get(this.mainPackageName)!.dependencies.push(dependency.packageName)
         });
@@ -750,7 +756,7 @@ export abstract class BaseMode {
         const mainModuleInfo = this.dependencyModuleList.find((module) =>
             module.packageName === this.mainPackageName
         );
-        return {
+        let moduleInfo: ModuleInfo = {
             isMainModule: true,
             moduleName: mainModuleInfo?.moduleName,
             packageName: this.mainPackageName,
@@ -769,10 +775,13 @@ export abstract class BaseMode {
             byteCodeHar: this.byteCodeHar,
             language: mainModuleInfo?.language ?? LANGUAGE_VERSION.ARKTS_1_2,
             declFilesPath: mainModuleInfo?.declFilesPath,
-            dependencies: mainModuleInfo?.dependencies ?? [],
+            dependencies: [],
             staticFiles: [],
-            packageVersion: mainModuleInfo?.packageVersion
+            packageVersion: mainModuleInfo?.packageVersion,
+            originalPackageNameMap: mainModuleInfo?.originalPackageNameMap
         };
+        moduleInfo.dependencies = mainModuleInfo?.dependencies?.map(dep => this.resolvePackageName(dep, moduleInfo.originalPackageNameMap)) ?? [];
+        return moduleInfo;
     }
 
     protected processEntryFiles(): void {

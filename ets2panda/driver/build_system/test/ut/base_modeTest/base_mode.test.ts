@@ -1620,7 +1620,7 @@ describe('BaseMode', () => {
         const { LANGUAGE_VERSION } = require('../../../src/pre_define');
 
         const modA = createMockModuleInfo({ packageName: 'A', language: LANGUAGE_VERSION.ARKTS_HYBRID, dependencies: ['B'] });
-        // make B hybrid so it appears in both static and dynamic maps for the test
+        // make B hybrid so it appears in both static and dynamic maps for test
         const modB = createMockModuleInfo({ packageName: 'B', language: LANGUAGE_VERSION.ARKTS_HYBRID, dependencies: [] });
 
         (testMode as any).moduleInfos = new Map<string, any>([['A', modA], ['B', modB]]);
@@ -1630,5 +1630,436 @@ describe('BaseMode', () => {
         const a = (testMode as any).moduleInfos.get('A');
         expect(a.dynamicDependencyModules.has('B')).toBe(true);
         expect(a.staticDependencyModules.has('B')).toBe(true);
+    });
+
+    describe('resolvePackageName', () => {
+        test('returns original packageName when originalPackageNameMap is undefined', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const packageName = 'com.example.test';
+            const result = (mode as any).resolvePackageName(packageName, undefined);
+            expect(result).toBe('com.example.test');
+        });
+
+        test('returns mapped value when packageName exists in map', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const packageName = 'alias1';
+            const originalPackageNameMap = new Map<string, string>([
+                ['alias1', 'com.example.real1'],
+                ['alias2', 'com.example.real2']
+            ]);
+            const result = (mode as any).resolvePackageName(packageName, originalPackageNameMap);
+            expect(result).toBe('com.example.real1');
+        });
+
+        test('returns original packageName when not found in map', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const packageName = 'unknown';
+            const originalPackageNameMap = new Map<string, string>([
+                ['alias1', 'com.example.real1']
+            ]);
+            const result = (mode as any).resolvePackageName(packageName, originalPackageNameMap);
+            expect(result).toBe('unknown');
+        });
+    });
+
+    describe('collectModuleInfos with alias package names', () => {
+        test('resolves dependency package names using originalPackageNameMap', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const dep1 = {
+                packageName: 'com.real.dep1',
+                moduleName: 'depModule1',
+                modulePath: '/mock/com.real.dep1',
+                moduleType: 'hap',
+                sourceRoots: ['srcsrc'],
+                entryFile: '/mock/com.real.dep1/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep2 = {
+                packageName: 'com.real.dep2',
+                moduleName: 'depModule2',
+                modulePath: '/mock/com.real.dep2',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/com.real.dep2/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep = {
+                packageName: 'depPkg',
+                moduleName: 'depModule',
+                modulePath: '/mock/depPkg',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['depAlias1', 'depAlias2'],
+                originalPackageNameMap: new Map<string, string>([
+                    ['depAlias1', 'com.real.dep1'],
+                    ['depAlias2', 'com.real.dep2']
+                ])
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep, dep1, dep2]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const depModule = (mode as any).moduleInfos.get('depPkg');
+            expect(depModule.dependencies).toEqual(['com.real.dep1', 'com.real.dep2']);
+        });
+
+        test('adds resolved dependency package names to main module dependencies', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const dep = {
+                packageName: 'depPkg',
+                moduleName: 'depModule',
+                modulePath: '/mock/depPkg',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const mainModule = (mode as any).moduleInfos.get('mainPkg');
+            expect(mainModule.dependencies).toContain('depPkg');
+        });
+
+        test('maintains backward compatibility when originalPackageNameMap is undefined', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const dep1 = {
+                packageName: 'dep1',
+                moduleName: 'depModule1',
+                modulePath: '/mock/dep1',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/dep1/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep2 = {
+                packageName: 'dep2',
+                moduleName: 'depModule2',
+                modulePath: '/mock/dep2',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/dep2/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep = {
+                packageName: 'depPkg',
+                moduleName: 'depModule',
+                modulePath: '/mock/depPkg',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['dep1', 'dep2']
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep, dep1, dep2]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const depModule = (mode as any).moduleInfos.get('depPkg');
+            expect(depModule.dependencies).toEqual(['dep1', 'dep2']);
+        });
+
+        test('preserves originalPackageNameMap in ModuleInfo', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const originalMap = new Map<string, string>([
+                ['alias1', 'com.real1']
+            ]);
+
+            const dep = {
+                packageName: 'depPkg',
+                moduleName: 'depModule',
+                modulePath: '/mock/depPkg',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: [],
+                originalPackageNameMap: originalMap
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const depModule = (mode as any).moduleInfos.get('depPkg');
+            expect(depModule.originalPackageNameMap).toBe(originalMap);
+        });
+    });
+
+    describe('getMainModuleInfo with alias package names', () => {
+        test('resolves main module dependencies using originalPackageNameMap', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const originalMap = new Map<string, string>([
+                ['alias1', 'com.real.dep1'],
+                ['alias2', 'com.real.dep2']
+            ]);
+
+            const mainModuleInfo = {
+                packageName: 'mainPkg',
+                moduleName: 'mainModule',
+                modulePath: '/mock/main',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: 'index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['alias1', 'alias2'],
+                originalPackageNameMap: originalMap
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [mainModuleInfo]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            const result = (mode as any).getMainModuleInfo();
+
+            expect(result.dependencies).toEqual(['com.real.dep1', 'com.real.dep2']);
+        });
+
+        test('maintains backward compatibility when originalPackageNameMap is undefined', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const mainModuleInfo = {
+                packageName: 'mainPkg',
+                moduleName: 'mainModule',
+                modulePath: '/mock/main',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: 'index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['dep1', 'dep2']
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [mainModuleInfo]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            const result = (mode as any).getMainModuleInfo();
+
+            expect(result.dependencies).toEqual(['dep1', 'dep2']);
+        });
+
+        test('preserves originalPackageNameMap in main ModuleInfo', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const originalMap = new Map<string, string>([
+                ['alias1', 'com.real1']
+            ]);
+
+            const mainModuleInfo = {
+                packageName: 'mainPkg',
+                moduleName: 'mainModule',
+                modulePath: '/mock/main',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: 'index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: [],
+                originalPackageNameMap: originalMap
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [mainModuleInfo]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            const result = (mode as any).getMainModuleInfo();
+
+            expect(result.originalPackageNameMap).toBe(originalMap);
+        });
+    });
+
+    describe('Integration: alias package names in module collection', () => {
+        test('resolves package names across multiple dependency levels', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const dep2 = {
+                packageName: 'depPkg2',
+                moduleName: 'depModule2',
+                modulePath: '/mock/depPkg2',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg2/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep1 = {
+                packageName: 'depPkg1',
+                moduleName: 'depModule1',
+                modulePath: '/mock/depPkg1',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg1/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['depAlias2'],
+                originalPackageNameMap: new Map<string, string>([
+                    ['depAlias2', 'depPkg2']
+                ])
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep1, dep2]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const dep1Module = (mode as any).moduleInfos.get('depPkg1');
+            expect(dep1Module.dependencies).toEqual(['depPkg2']);
+            expect(dep1Module.originalPackageNameMap).toBeDefined();
+
+            const dep2Module = (mode as any).moduleInfos.get('depPkg2');
+            expect(dep2Module.dependencies).toEqual([]);
+        });
+
+        test('handles mixed alias and real package names', () => {
+            const config = createMockBuildConfig();
+            const mode = new TestBaseMode(config);
+            const { LANGUAGE_VERSION } = require('../../../src/pre_define');
+
+            const dep2 = {
+                packageName: 'depPkg2',
+                moduleName: 'depModule2',
+                modulePath: '/mock/depPkg2',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg2/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const comRealDep1 = {
+                packageName: 'com.real.dep1',
+                moduleName: 'comRealDep1Module',
+                modulePath: '/mock/com.real.dep1',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/com.real.dep1/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: []
+            };
+
+            const dep1 = {
+                packageName: 'depPkg1',
+                moduleName: 'depModule1',
+                modulePath: '/mock/depPkg1',
+                moduleType: 'hap',
+                sourceRoots: ['src'],
+                entryFile: '/mock/depPkg1/index.ets',
+                language: LANGUAGE_VERSION.ARKTS_1_2,
+                dependencies: ['alias1', 'depPkg2'],
+                originalPackageNameMap: new Map<string, string>([
+                    ['alias1', 'com.real.dep1']
+                ])
+            };
+
+            const newConfig = createMockBuildConfig({
+                packageName: 'mainPkg',
+                moduleRootPath: '/mock/main',
+                sourceRoots: ['src'],
+                dependencyModuleList: [dep1, dep2, comRealDep1]
+            });
+
+            (mode as any).buildConfig = newConfig;
+            (mode as any).moduleInfos = new Map<string, any>();
+
+            (mode as any).collectModuleInfos();
+
+            const dep1Module = (mode as any).moduleInfos.get('depPkg1');
+            expect(dep1Module.dependencies).toEqual(['com.real.dep1', 'depPkg2']);
+        });
     });
 });

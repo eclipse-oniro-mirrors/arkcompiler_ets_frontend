@@ -47,6 +47,17 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     };
     let buildSdkPath: string = buildConfig.buildSdkPath as string;
     buildConfig.pandaSdkPath = buildConfig.pandaSdkPath ?? path.resolve(buildSdkPath, PANDA_SDK_PATH_FROM_SDK);
+    
+    if (buildConfig.dependencyModuleList) {
+        buildConfig.dependencyModuleList = buildConfig.dependencyModuleList.map(dep => {
+            const newDep = { ...dep };
+            if (dep.originalPackageNameMap && !(dep.originalPackageNameMap instanceof Map)) {
+                newDep.originalPackageNameMap = new Map(Object.entries(dep.originalPackageNameMap));
+            }
+            return newDep;
+        });
+    }
+    
     checkCacheProjectConfig(buildConfig);
     initPlatformSpecificConfig(buildConfig);
     initBuildEnv(buildConfig);
