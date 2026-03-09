@@ -143,6 +143,8 @@ export interface ModuleConfig {
     sourceRoots: string[];
     byteCodeHar: boolean;
     entryFile: string;
+    bundleType: string;
+    bundleName: string;
 }
 
 export interface PathConfig {
@@ -211,6 +213,9 @@ export interface DependencyModuleConfig {
     declgenV2OutPath?: string;
     declgenBridgeCodePath?: string;
     byteCodeHar?: boolean;
+    bundleType?: string;
+    bundleName?: string;
+    packageVersion?: string;
 }
 
 export interface ModuleFile {
@@ -252,6 +257,10 @@ export interface ModuleInfo {
     useEmptyPackage?: boolean;
     byteCodeHar?: boolean;
     staticFiles: string[];
+    moduleName?: string;
+    bundleType?: string;
+    bundleName?: string;
+    packageVersion?: string;
 }
 
 export type SetupClusterOptions = {
