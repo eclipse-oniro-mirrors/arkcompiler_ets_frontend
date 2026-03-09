@@ -1057,6 +1057,35 @@ static ArenaVector<ir::AstNode *> FindPrimitiveTypeReferences(ir::AstNode *ast, 
     return uniqueReferences;
 }
 
+static bool IsAnyTypeIdentifier(const ir::Identifier *identifier)
+{
+    if (identifier == nullptr) {
+        return false;
+    }
+    auto const name = identifier->Name();
+    return name.Is("Any");
+}
+
+static ArenaVector<ir::AstNode *> FindAnyTypeReferences(ir::AstNode *ast, const ir::Identifier *identifier,
+                                                        ArenaAllocator *allocator)
+{
+    auto const name = identifier->Name();
+    auto checkFunc = [&name](ir::AstNode *child) {
+        return child->IsIdentifier() && child->AsIdentifier()->Name() == name &&
+               compiler::DeclarationFromIdentifier(child->AsIdentifier()) == nullptr;
+    };
+    auto references = ArenaVector<ir::AstNode *>(allocator->Adapter());
+    FindAllChild(ast, checkFunc, references);
+
+    auto uniqueReferences = RemoveRefDuplicates(references, allocator);
+
+    std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {
+        return (a->Start().index != b->Start().index) ? a->Start().index < b->Start().index
+                                                      : a->End().index < b->End().index;
+    });
+    return uniqueReferences;
+}
+
 DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
@@ -1079,24 +1108,30 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
     } else if (touchingToken->IsIdentifier()) {
         auto decl = compiler::DeclarationFromIdentifier(touchingToken->AsIdentifier());
         if (decl == nullptr) {
-            return DocumentHighlights(fileName, {});
+            if (!IsAnyTypeIdentifier(touchingToken->AsIdentifier())) {
+                return DocumentHighlights(fileName, {});
+            }
+            auto anyTypeReferences = FindAnyTypeReferences(ast, touchingToken->AsIdentifier(), ctx->allocator);
+            references.assign(anyTypeReferences.begin(), anyTypeReferences.end());
+            isPrimitive = true;
+        } else {
+            auto checkFunc = [&touchingToken](ir::AstNode *child) {
+                return child->IsIdentifier() && child->AsIdentifier()->Name() == touchingToken->AsIdentifier()->Name();
+            };
+            // Find the identifier's declaration. We consider the first found to be the identifier's declaration.
+            identifierDeclaration = decl->FindChild(checkFunc);
+            if (identifierDeclaration == nullptr) {
+                // If the identifier is not found in the declaration, we try to find it in the AST.
+                // This is needed for cases like `import {Foo as foo} from './a';` where
+                // `foo` is a alias for the imported `Foo` identifier.
+                identifierDeclaration = ast->FindChild(checkFunc);
+            }
+            if (identifierDeclaration == nullptr) {
+                return DocumentHighlights(fileName, {});
+            }
+            auto idReferences = FindReferencesByName(ast, decl, touchingToken, ctx->allocator);
+            references.assign(idReferences.begin(), idReferences.end());
         }
-        auto checkFunc = [&touchingToken](ir::AstNode *child) {
-            return child->IsIdentifier() && child->AsIdentifier()->Name() == touchingToken->AsIdentifier()->Name();
-        };
-        // Find the identifier's declaration. We consider the first found to be the identifier's declaration.
-        identifierDeclaration = decl->FindChild(checkFunc);
-        if (identifierDeclaration == nullptr) {
-            // If the identifier is not found in the declaration, we try to find it in the AST.
-            // This is needed for cases like `import {Foo as foo} from './a';` where
-            // `foo` is a alias for the imported `Foo` identifier.
-            identifierDeclaration = ast->FindChild(checkFunc);
-        }
-        if (identifierDeclaration == nullptr) {
-            return DocumentHighlights(fileName, {});
-        }
-        auto idReferences = FindReferencesByName(ast, decl, touchingToken, ctx->allocator);
-        references.assign(idReferences.begin(), idReferences.end());
     } else {
         return DocumentHighlights(fileName, {});
     }
