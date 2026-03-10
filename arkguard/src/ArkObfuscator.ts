@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -103,7 +103,7 @@ export {
 } from './utils/PrinterTimeAndMemUtils';
 import { Extension, type ProjectInfo, type FilePathObj } from './common/type';
 export { type HvigorErrorInfo } from './common/type';
-export { FileUtils } from './utils/FileUtils';
+export { FileUtils, type FileInfo, type GetCachedFileInfo } from './utils/FileUtils';
 export { MemoryUtils } from './utils/MemoryUtils';
 import { TypeUtils } from './utils/TypeUtils';
 import { handleReservedConfig } from './utils/TransformUtil';

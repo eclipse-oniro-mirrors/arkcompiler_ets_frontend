@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { readJsonSync } from 'fs-extra';
 import type { IOptions } from '../configs/IOptions';
 import { fileExtensions } from '../common/type';
@@ -24,14 +24,68 @@ import path from 'path';
 export const BUNDLE = '@bundle:';
 export const NORMALIZE = '@normalized:';
 
+export interface FileInfo {
+  exists: boolean;
+  isFile?: boolean;
+  isDirectory?: boolean;
+}
+
+export type GetCachedFileInfo = (filePath: string) => FileInfo | undefined;
+
 export class FileUtils {
+  private static getCachedFileInfo: GetCachedFileInfo | undefined;
+
+  public static setCachedFileInfo(fn: GetCachedFileInfo | undefined): void {
+    FileUtils.getCachedFileInfo = fn;
+  }
+
+  /**
+   * Query file meta via hvigor cache first, falling back to fs.statSync on cache miss.
+   */
+  public static getFileInfo(filePath: string): FileInfo {
+    if (FileUtils.getCachedFileInfo) {
+      try {
+        const info = FileUtils.getCachedFileInfo(filePath);
+        if (info && typeof info.exists === 'boolean') {
+          return info;
+        }
+      } catch {
+        // cache miss – fall through to fs
+      }
+    }
+    try {
+      const stats = fs.statSync(filePath);
+      return {
+        exists: true,
+        isFile: stats.isFile(),
+        isDirectory: stats.isDirectory(),
+      };
+    } catch {
+      return { exists: false };
+    }
+  }
+
+  public static fileExists(filePath: string): boolean {
+    return FileUtils.getFileInfo(filePath).exists;
+  }
+
+  public static isFile(filePath: string): boolean {
+    const info = FileUtils.getFileInfo(filePath);
+    return info.exists && !!info.isFile;
+  }
+
+  public static isDirectory(filePath: string): boolean {
+    const info = FileUtils.getFileInfo(filePath);
+    return info.exists && !!info.isDirectory;
+  }
+
   /**
    * Read file and return content
    *
    * @param filePath file path
    */
   public static readFile(filePath: string): string | undefined {
-    if (!existsSync(filePath)) {
+    if (!FileUtils.fileExists(filePath)) {
       console.error(`File <${this.getFileName(filePath)}> is not found.`);
       return undefined;
     }
@@ -44,7 +98,7 @@ export class FileUtils {
    * @param filePath file path
    */
   public static readFileAsJson(filePath: string): IOptions | undefined {
-    if (!existsSync(filePath)) {
+    if (!FileUtils.fileExists(filePath)) {
       console.error(`File <${this.getFileName(filePath)}> is not found.`);
       return undefined;
     }
@@ -162,6 +216,13 @@ export class FileUtils {
   }
 
   public static isReadableFile(filePath: string): boolean {
+    const info = FileUtils.getFileInfo(filePath);
+    if (info.exists && info.isFile) {
+      return true;
+    }
+    if (!info.exists) {
+      return false;
+    }
     try {
       fs.accessSync(filePath, fs.constants.R_OK);
     } catch (err) {
@@ -185,19 +246,19 @@ export class FileUtils {
   }
 
   public static deleteFile(filePath: string): void {
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+    if (FileUtils.fileExists(filePath)) {
+      fs.unlinkSync(filePath);
     }
   }
 
   public static createDirectory(dirPath: string): void {
-    if (!fs.existsSync(dirPath)) {
+    if (!FileUtils.fileExists(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
   }
 
   public static deleteFolderRecursive(folderPath: string): void {
-    if (fs.existsSync(folderPath)) {
+    if (FileUtils.fileExists(folderPath)) {
       const files = fs.readdirSync(folderPath);
       for (const file of files) {
         const curPath = path.join(folderPath, file);

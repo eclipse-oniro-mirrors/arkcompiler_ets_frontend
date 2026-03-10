@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import { IOptions } from '../../../src/configs/IOptions';
 const fsStub = {
   existsSync: sinon.stub(),
   accessSync: sinon.stub(),
+  statSync: sinon.stub(),
 };
 
 const fsExtraStub = {
@@ -46,14 +47,14 @@ describe('FileUtils.readFileAsJson', () => {
   });
 
   it('should return undefined if file does not exist', () => {
-    fsStub.existsSync.returns(false);
+    fsStub.statSync.throws(new Error('ENOENT'));
     const result = FileUtils.readFileAsJson('fakePath.json');
     expect(result).to.be.undefined;
     expect(consoleErrorStub.calledWith('File <fakePath.json> is not found.')).to.be.true;
   });
 
   it('should return undefined if readJsonSync throws an error', () => {
-    fsStub.existsSync.returns(true);
+    fsStub.statSync.returns({ isFile: () => true, isDirectory: () => false });
     fsExtraStub.readJsonSync.throws(new Error('read error'));
     const result = FileUtils.readFileAsJson('fakePath.json');
     expect(result).to.be.undefined;
@@ -62,7 +63,7 @@ describe('FileUtils.readFileAsJson', () => {
 
   it('should return JSON content if file exists and is valid', () => {
     const jsonContent: IOptions = { mCompact: true };
-    fsStub.existsSync.returns(true);
+    fsStub.statSync.returns({ isFile: () => true, isDirectory: () => false });
     fsExtraStub.readJsonSync.returns(jsonContent);
     const result = FileUtils.readFileAsJson('validPath.json');
     expect(result).to.deep.equal(jsonContent);
@@ -139,12 +140,19 @@ describe('FileUtils.isReadableFile', () => {
   });
 
   it('should return true if file is readable', () => {
-    fsStub.accessSync.withArgs('readableFile.txt', constants.R_OK).returns(undefined);
+    fsStub.statSync.returns({ isFile: () => true, isDirectory: () => false });
     const result = FileUtils.isReadableFile('readableFile.txt');
     expect(result).to.be.true;
   });
 
-  it('should return false if file is not readable', () => {
+  it('should return false if file does not exist', () => {
+    fsStub.statSync.throws(new Error('ENOENT'));
+    const result = FileUtils.isReadableFile('nonExistentFile.txt');
+    expect(result).to.be.false;
+  });
+
+  it('should return false if file is not readable (accessSync fallback)', () => {
+    fsStub.statSync.returns({ isFile: () => false, isDirectory: () => true });
     fsStub.accessSync.withArgs('unreadableFile.txt', constants.R_OK).throws(new Error('Not readable'));
     const result = FileUtils.isReadableFile('unreadableFile.txt');
     expect(result).to.be.false;
