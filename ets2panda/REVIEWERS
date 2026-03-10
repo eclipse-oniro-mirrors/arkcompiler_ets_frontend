@@ -50,7 +50,7 @@
 /ets2panda/test/benchmarks @pishin
 /ets2panda/test/depanalyzer @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/test/srcdump @xingshunxiang @mbolshov ^igelhaus ^Prof
-/ets2panda/test/test-lists @igelhaus ^Prof
+/ets2panda/test/test-lists @igelhaus ^Prof @kuchkovairina
 /ets2panda/test/utils @mbolshov ^igelhaus ^Prof
 /ets2panda/util/ @shimenkovmikhail @dkofanov ^igelhaus ^Prof
 /ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
