@@ -42,7 +42,6 @@
 #include "ir/ets/etsPrimitiveType.h"
 #include "ir/ets/etsPackageDeclaration.h"
 #include "ir/ets/etsReExportDeclaration.h"
-#include "ir/ets/etsWildcardType.h"
 #include "ir/ets/etsTuple.h"
 #include "ir/ets/etsFunctionType.h"
 #include "ir/ets/etsModule.h"
@@ -163,29 +162,6 @@ ir::TypeNode *ETSParser::GetTypeAnnotationOfPrimitiveType([[maybe_unused]] lexer
             break;
     }
     return typeAnnotation;
-}
-
-ir::TypeNode *ETSParser::ParseWildcardType(TypeAnnotationParsingOptions *options)
-{
-    const auto varianceStartLoc = Lexer()->GetToken().Start();
-    const auto varianceEndLoc = Lexer()->GetToken().End();
-    const auto varianceModifier = ParseTypeVarianceModifier(options);
-
-    bool isUnboundOut = varianceModifier == ir::ModifierFlags::OUT &&
-                        (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_GREATER_THAN ||
-                         Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA);
-    ir::ETSTypeReference *typeReference = nullptr;
-    if (!isUnboundOut) {
-        auto reference = ParseTypeReference(options);
-        ES2PANDA_ASSERT(reference != nullptr);
-        typeReference = reference->AsETSTypeReference();
-    }
-
-    auto *wildcardType = AllocNode<ir::ETSWildcardType>(typeReference, varianceModifier, Allocator());
-    ES2PANDA_ASSERT(wildcardType != nullptr);
-    wildcardType->SetRange({varianceStartLoc, typeReference == nullptr ? varianceEndLoc : typeReference->End()});
-
-    return wildcardType;
 }
 
 ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options)

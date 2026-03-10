@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,8 +47,6 @@ std::tuple<bool, CompletionEntryKind> GetTargetTokenKindIfETSType(ir::AstNodeTyp
         case ir::AstNodeType::ETS_TYPE_REFERENCE:
         case ir::AstNodeType::ETS_TYPE_REFERENCE_PART:
             return std::make_tuple(true, CompletionEntryKind::REFERENCE);
-        case ir::AstNodeType::ETS_WILDCARD_TYPE:
-            return std::make_tuple(true, CompletionEntryKind::TEXT);
         case ir::AstNodeType::ETS_UNION_TYPE:
             return std::make_tuple(true, CompletionEntryKind::TYPE_PARAMETER);
         default:

@@ -253,7 +253,6 @@ private:
     ir::TypeNode *ParsePrimitiveType(TypeAnnotationParsingOptions *options, ir::PrimitiveType type);
     ir::TypeNode *ParseUnionType(ir::TypeNode *firstType);
     ir::TypeNode *GetTypeAnnotationOfPrimitiveType(lexer::TokenType tokenType, TypeAnnotationParsingOptions *options);
-    ir::TypeNode *ParseWildcardType(TypeAnnotationParsingOptions *options);
     ir::TypeNode *ParseFunctionType(TypeAnnotationParsingOptions *options);
     ir::TypeNode *ParseETSTupleType(TypeAnnotationParsingOptions *options);
     ir::TypeNode *CreateErrorForWrongArrayType(lexer::SourcePosition &startPos);

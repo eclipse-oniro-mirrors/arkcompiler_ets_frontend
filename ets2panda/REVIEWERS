@@ -106,7 +106,7 @@
 /ets2panda/checker/types/ets/etsT* @xuxjeeee ^victor_petukhov ^gogabr ^igelhaus ^Prof
 /ets2panda/checker/types/ets/etsTypeParameter.* ^vpukhov @gogabr ^igelhaus ^Prof @ziziziiziziz
 /ets2panda/checker/types/ets/etsUnionType.* @akmaevaleksey ^vpukhov ^igelhaus ^Prof @ziziziiziziz
-/ets2panda/checker/types/ets/wildcardType.* ^vpukhov @gogabr ^igelhaus ^Prof @ziziziiziziz
+/ets2panda/checker/types/ets/etsWildcardType.* @zelentsovdmitry ^vpukhov ^gogabr ^igelhaus ^Prof
 /ets2panda/compiler/lowering/ets/ @gogabr ^igelhaus ^Prof ^zelentsovdmitry @ziziziiziziz
 /ets2panda/compiler/lowering/ets/arrayLiteralLowering* @ziziziiziziz @akmaevaleksey ^igelhaus ^Prof
 /ets2panda/compiler/lowering/ets/const* @ziziziiziziz @lirismankarina ^akmaevaleksey ^igelhaus ^Prof

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,18 +15,14 @@
 
 type Lazy<T> = T | () => T
 
-function useLazy(p: Lazy<string>): void {
-    if (p instanceof Function && p() == 'From param') {
-        console.log('param callable:', p())
+function useLazy(p: Lazy<string>): string {
+    if (p instanceof Function && p.unsafeCall() == 'From param') {
+        return 'param unsafe callable:' + p.unsafeCall();
     }
+    return "not callable";
 }
 
 function main() {
-    const v: Lazy<string> = () => 'From param'
-    useLazy(v)
+    const v: Lazy<string> = () => 'From param';
+    arktest.assertEQ(useLazy(v), 'param unsafe callable:From param');
 }
-
-/* @@? 19:34 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 19:34 Error Semantic error ESE0002: Type 'never' has no call signatures. */
-/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for log("param callable:", ...) */
-/* @@? 20:40 Error Semantic error ESE0002: Type 'never' has no call signatures. */

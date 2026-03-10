@@ -81,6 +81,10 @@ warning:
   id: 22
   message: "Function {} with this assembly signature already declared."
 
+- name: GENERIC_TYPE_CAST
+  id: 369037
+  message: "Cast expression `as {}` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime."
+
 - name: GEN_STDLIB_DECLS
   id: 2002
   message: "A 'stdlib' source '{}' is resolved to a '.d.ets' file in '--gen-stdlib' mode. Please use '--arktsconfig=<panda_src>/plugins/ets/stdlib/stdconfig.json'"
@@ -119,6 +123,10 @@ warning:
   id: 153
   message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
+
+- name: INVALID_CAST
+  id: 326
+  message: "Attempt to cast the type '{}' to '{}' can throw 'CastClassError' exception at runtime."
 
 - name: MAYBE_FALLTHROUGH
   id: 20

@@ -1310,7 +1310,7 @@ checker::Type *ETSChecker::ResolveSmartType(checker::Type *sourceType, checker::
     ES2PANDA_ASSERT(!targetType->IsETSPrimitiveType() && !sourceType->IsETSPrimitiveType());
 
     //  For left-hand invalid variable set smart type to right-hand type.
-    if (targetType->IsTypeError()) {
+    if (targetType->IsTypeError() || targetType->IsETSWildcardType()) {
         return sourceType;
     }
 
@@ -1399,17 +1399,19 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *te
     if (actualType->IsETSObjectType()) {
         auto *const objectType = actualType->AsETSObjectType();
 
-        if (Relation()->IsIdenticalTo(objectType, testedType) ||
-            objectType->AssemblerName() == testedType->AssemblerName()) {
+        auto *relation = Relation();
+        SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+
+        if (relation->IsIdenticalTo(objectType, testedType)) {
+            return {actualType, GetGlobalTypesHolder()->GlobalETSNeverType()};
+        }
+
+        if (relation->IsSupertypeOf(objectType, testedType)) {
             return {testedType, actualType};
         }
 
-        if (Relation()->IsSupertypeOf(objectType, testedType)) {
-            return {testedType, actualType};
-        }
-
-        if (Relation()->IsSupertypeOf(testedType, objectType)) {
-            return {testedType, actualType};
+        if (relation->IsSupertypeOf(testedType, objectType)) {
+            return {testedType, GetGlobalTypesHolder()->GlobalETSNeverType()};
         }
 
         return {GetGlobalTypesHolder()->GlobalETSNeverType(), actualType};
@@ -2205,7 +2207,6 @@ bool ETSChecker::IsFunctionContainsSignature(checker::ETSFunctionType *funcType,
 bool ETSChecker::CheckFunctionContainsClashingSignature(const checker::ETSFunctionType *funcType, Signature *signature)
 {
     for (auto *it : funcType->CallSignatures()) {
-        SavedTypeRelationFlagsContext strfCtx(Relation(), TypeRelationFlag::NONE);
         Relation()->SignatureIsSupertypeOf(it, signature);
         if (Relation()->IsTrue() && it->Function()->Id()->Name() == signature->Function()->Id()->Name()) {
             std::stringstream ss;

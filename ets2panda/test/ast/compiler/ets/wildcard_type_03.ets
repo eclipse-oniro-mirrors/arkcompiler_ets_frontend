@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,16 +13,20 @@
  * limitations under the License.
  */
 
-function foo() {
-    let input = true;
-    if (input instanceof Boolean) {
-        console.log("This is a test function");
-    } else {
-        let b = input as (string | number | null);
-        console.log("This is a test function with b: " + b);
+class C {}
+
+interface  X<out T extends C> {
+    read(): T;
+}
+
+function foo(obj: object) {
+    if (obj instanceof X) {
+        let o1: X<C> = obj;				// OK
+        let o2: X<never> = /* @@ label */obj;	// CTE
+
+        let p: C = obj.read();			// OK
     }
 }
-foo();
 
 
-/* @@? 21:17 Error Semantic error ESE0326: Cannot cast type 'Boolean' to 'String|Double|null' */
+/* @@@ label Error Semantic error ESE0318: Type 'X<C>' cannot be assigned to type 'X<never>' */

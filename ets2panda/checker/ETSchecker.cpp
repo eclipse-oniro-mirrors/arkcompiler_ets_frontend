@@ -591,11 +591,6 @@ Type *ETSChecker::GlobalETSBigIntType() const
     return GetGlobalTypesHolder()->GlobalETSBigIntBuiltinType();
 }
 
-Type *ETSChecker::GlobalWildcardType() const
-{
-    return GetGlobalTypesHolder()->GlobalWildcardType();
-}
-
 ETSObjectType *ETSChecker::GlobalETSObjectType() const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalETSObjectType);

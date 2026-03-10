@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,9 @@ function pi(): number {
 }
 
 function main() {
-    let v: UT = /* @@ label */pi
-    arktest.assertEQ((v as NumFunc)(), 3.14);
+    let v: UT = /* @@ label1 */pi
+    arktest.assertEQ((/* @@ label2 */v as NumFunc)(), 3.14);
 }
 
-/* @@@ label Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type 'String|Double' */
-/* @@? 25:23 Error Semantic error ESE0326: Cannot cast type 'String|Double' to '(() => Double)' */
+/* @@@ label1 Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type 'String|Double' */
+/* @@@ label2 Warning Warning W0326: Attempt to cast the type 'String|Double' to '(() => Double)' can throw 'CastClassError' exception at runtime. */

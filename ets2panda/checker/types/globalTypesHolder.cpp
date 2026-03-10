@@ -47,7 +47,6 @@
 #include "checker/types/ets/etsVoidType.h"
 #include "checker/types/ets/etsNullishTypes.h"
 #include "checker/types/ets/etsObjectType.h"
-#include "checker/types/ets/wildcardType.h"
 #include "checker/types/ets/etsAnyType.h"
 #include "checker/types/ets/etsNeverType.h"
 #include "util/helpers.h"
@@ -148,7 +147,6 @@ void GlobalTypesHolder::AddEtsSpecificTypes(ArenaAllocator *allocator)
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_VOID)] = allocator->New<ETSVoidType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_NULL)] = allocator->New<ETSNullType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_UNDEFINED)] = allocator->New<ETSUndefinedType>();
-    globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_WILDCARD)] = allocator->New<WildcardType>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::TYPE_ERROR)] = allocator->New<TypeError>();
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_ANY)] = allocator->New<ETSAnyType>(false);
     globalTypes_[static_cast<size_t>(GlobalTypeId::ETS_RELAXED_ANY)] = allocator->New<ETSAnyType>(true);
@@ -430,11 +428,6 @@ Type *GlobalTypesHolder::GlobalETSUnionUndefinedNullObject()
 Type *GlobalTypesHolder::GlobalETSUnionUndefinedNull()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_UNION_UNDEFINED_NULL));
-}
-
-Type *GlobalTypesHolder::GlobalWildcardType()
-{
-    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_WILDCARD));
 }
 
 Type *GlobalTypesHolder::GlobalETSBooleanBuiltinType()

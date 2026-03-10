@@ -15,7 +15,7 @@
 
 class Point {
     foo<X extends short>(): Promise<X> {
-       return Promise.resolve(1 as X);
+       return /* @@ label */Promise.resolve(1 as X);
     }
 }
 
@@ -27,5 +27,4 @@ function main(): void {
 }
 
 
-/* @@? 18:15 Error Semantic error ESE0127: No matching call signature for resolve(...) */
-/* @@? 18:31 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X' */
+/* @@@ label Error Semantic error ESE0091: Type 'Promise<*ERROR_TYPE*>' is not compatible with the enclosing method's return type 'Promise<X>' */

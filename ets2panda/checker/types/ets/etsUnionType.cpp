@@ -469,92 +469,78 @@ checker::Type *ETSUnionType::GetAssignableBuiltinType(
     return nullptr;
 }
 
-bool ETSUnionType::ExtractType(checker::ETSChecker *checker, checker::Type *source,
-                               std::vector<Type *> &unionTypes) noexcept
+void ETSUnionType::ExtractTypes(TypeRelation *relation, Type *testedType, std::vector<Type *> &consTypes,
+                                std::vector<Type *> &altTypes) noexcept
 {
-    source = checker->GetNonConstantType(source);
+    ES2PANDA_ASSERT(!testedType->IsETSPrimitiveType() && !testedType->IsETSUnionType());
 
-    bool rc = false;
-    auto it = unionTypes.cbegin();
-    while (it != unionTypes.cend()) {
+    SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+
+    auto it = altTypes.cbegin();
+    while (it != altTypes.cend()) {
         auto *constituentType = (*it);
-        //  Because 'instanceof' expression does not check for type parameters, then for generic types we should
-        //  consider that expressions like 'SomeType<U...>' and 'SomeType<T...>' are identical for smart casting.
-        //  We also have to pass through all the union to process cases like 'C<T>|A|B|C<U>|undefined`
         if (constituentType->IsETSTypeParameter()) {
             constituentType = constituentType->AsETSTypeParameter()->GetConstraintType();
-        } else if (constituentType->HasTypeFlag(checker::TypeFlag::GENERIC)) {
-            constituentType = constituentType->Clone(checker);
-            ES2PANDA_ASSERT(constituentType != nullptr);
-            constituentType->RemoveTypeFlag(checker::TypeFlag::GENERIC);
         }
 
-        if (checker->Relation()->IsIdenticalTo(constituentType, source)) {
-            rc = true;
+        if (relation->IsIdenticalTo(constituentType, testedType)) {
+            //  #33914 (DZ) Temporary hack so that ArkUI demo applications could pass CI
+            //  After merging this patch and implementation of corresponding changes in ArkUI
+            //  should be returned back to consTypes-.-emplace_back(- constituentType -)
+            consTypes.emplace_back(!testedType->IsETSResizableArrayType() ? constituentType : testedType);
             if (!(*it)->IsETSTypeParameter()) {
-                it = unionTypes.erase(it);
+                it = altTypes.erase(it);
+                continue;
+            }
+        } else if (relation->IsSupertypeOf(constituentType, testedType)) {
+            consTypes.emplace_back(testedType);
+        } else if (relation->IsSupertypeOf(testedType, constituentType)) {
+            consTypes.emplace_back(testedType);
+            if (!(*it)->IsETSTypeParameter()) {
+                it = altTypes.erase(it);
                 continue;
             }
         }
 
-        if (checker->Relation()->IsSupertypeOf(constituentType, source)) {
-            rc = true;
-        }
-
         ++it;
     }
-
-    return rc;
 }
 
-std::pair<checker::Type *, checker::Type *> ETSUnionType::GetComplimentaryType(ETSChecker *const checker,
-                                                                               checker::Type *sourceType)
+//  Returns pair <consequent_path_type, alternative_path_type>
+std::pair<Type *, Type *> ETSUnionType::GetComplimentaryType(ETSChecker *const checker, Type *sourceType)
 {
-    std::vector<Type *> unionTypes;
-    for (auto *ct : constituentTypes_) {
-        unionTypes.emplace_back(ct);
-    }
-
-    auto const extractType = [checker, &unionTypes](Type *&type) -> bool {
-        ES2PANDA_ASSERT(!type->IsETSPrimitiveType());
-        if (type->IsETSEnumType()) {
-            return true;
-        }
-        if (type->HasTypeFlag(checker::TypeFlag::GENERIC)) {
-            //  Because 'instanceof' expression does not check for type parameters, then for generic types we should
-            //  consider that expressions like 'SomeType<U>' and 'SomeType<T>' are identical for smart casting.
-            type = type->Clone(checker);
-            type->RemoveTypeFlag(checker::TypeFlag::GENERIC);
-        }
-        return ExtractType(checker, type, unionTypes);
-    };
-
-    bool ok = true;
+    std::vector<Type *> consTypes {};
+    std::vector<Type *> altTypes {constituentTypes_.begin(), constituentTypes_.end()};
 
     if (sourceType->IsETSUnionType()) {
         for (auto *constituentType : sourceType->AsETSUnionType()->ConstituentTypes()) {
-            if (ok = extractType(constituentType); !ok) {
-                break;
-            }
+            ExtractTypes(checker->Relation(), constituentType, consTypes, altTypes);
         }
     } else {
-        ok = extractType(sourceType);
+        ExtractTypes(checker->Relation(), sourceType, consTypes, altTypes);
     }
 
-    if (!ok) {
+    if (consTypes.empty()) {
         return std::make_pair(checker->GetGlobalTypesHolder()->GlobalETSNeverType(), this);
     }
 
-    checker::Type *complimentaryType;
-    if (auto const size = unionTypes.size(); size == 0U) {
-        complimentaryType = checker->GetGlobalTypesHolder()->GlobalETSNeverType();
+    // remove possibly identical types
+    std::sort(consTypes.begin(), consTypes.end());
+    auto last = std::unique(consTypes.begin(), consTypes.end());
+    consTypes.erase(last, consTypes.end());
+
+    auto *consequentType = (consTypes.size() == 1U) ? consTypes[0U] : checker->CreateETSUnionType(std::move(consTypes));
+
+    checker::Type *alternateType;
+    if (auto const size = altTypes.size(); size == 0U) {
+        alternateType = checker->GetGlobalTypesHolder()->GlobalETSNeverType();
     } else if (size == 1U) {
-        complimentaryType = unionTypes.front();
+        alternateType = altTypes[0U];
     } else {
-        complimentaryType = checker->CreateETSUnionType(std::move(unionTypes));
+        alternateType = checker->CreateETSUnionType(std::move(altTypes));
     }
 
-    return std::make_pair(sourceType, complimentaryType);
+    return std::make_pair(consequentType, alternateType);
 }
 
 Type *ETSUnionType::FindUnboxableType() const noexcept

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +60,7 @@
     _(TypeFlag::ETS_ARRAY, ETSArrayType)                               \
     _(TypeFlag::ETS_UNION, ETSUnionType)                               \
     _(TypeFlag::NON_PRIMITIVE, NonPrimitiveType)                       \
-    _(TypeFlag::WILDCARD, WildcardType)                                \
+    _(TypeFlag::ETS_WILDCARD, ETSWildcardType)                         \
     _(TypeFlag::ETS_TYPE_PARAMETER, ETSTypeParameter)                  \
     _(TypeFlag::ETS_NONNULLISH, ETSNonNullishType)                     \
     _(TypeFlag::ETS_READONLY, ETSReadonlyType)                         \

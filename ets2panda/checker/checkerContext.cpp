@@ -348,6 +348,70 @@ void CheckerContext::CheckUnarySmartCastCondition(ir::UnaryExpression const *con
     }
 }
 
+Type *CheckerContext::CreateWildcardSubstitutedType(Type *testedType) const
+{
+    auto const substituteWildcardType = [this](ETSObjectType *const objectType) {
+        auto *substitutedType = objectType->GetOriginalBaseType();
+
+        auto const &typeArguments = substitutedType->TypeArguments();
+        auto const typeArgumentsNumber = typeArguments.size();
+
+        auto const *const typeParamsDecl = substitutedType->GetTypeParams();
+        ES2PANDA_ASSERT(!typeArguments.empty() && typeParamsDecl != nullptr);
+
+        auto const &typeParameters = typeParamsDecl->Params();
+        ES2PANDA_ASSERT(typeParameters.size() == typeArgumentsNumber);
+
+        auto substitution = Substitution {};
+        for (std::size_t idx = 0U; idx < typeArgumentsNumber; ++idx) {
+            auto *typeArgument = typeArguments[idx]->AsETSTypeParameter();
+            auto *typeParameter = typeParameters[idx];
+
+            Type *type = nullptr;
+            if (typeParameter->IsOut()) {
+                type = typeArgument->GetConstraintType();
+            } else if (typeParameter->IsIn()) {
+                type = parent_->AsETSChecker()->GetGlobalTypesHolder()->GlobalETSNeverType();
+            } else {
+                //  We cannot cache wildcard types and should always create the unique instance because of
+                //  address comparison ('type1 == type2') in 'Relation->IsIdenticalTo(type1, type2)' method.
+                type = parent_->ProgramAllocator()->New<ETSWildcardType>(typeArgument);
+            }
+
+            substitution.emplace(typeArgument, type);
+        }
+
+        return substitutedType->Substitute(parent_->Relation(), &substitution);
+    };
+
+    auto const processUnionType = [substituteWildcardType, this](ETSUnionType *const unionType) {
+        bool wildcardSubstituted = false;
+        std::vector<Type *> unionTypes {};
+
+        for (auto *type : unionType->ConstituentTypes()) {
+            if (type->IsETSObjectType() && type->AsETSObjectType()->IsGeneric()) {
+                Type *newType = substituteWildcardType(type->AsETSObjectType());
+                wildcardSubstituted |= newType != type;
+                unionTypes.emplace_back(newType);
+            } else {
+                unionTypes.emplace_back(type);
+            }
+        }
+
+        return wildcardSubstituted ? parent_->AsETSChecker()->CreateETSUnionType(std::move(unionTypes)) : unionType;
+    };
+
+    if (testedType->IsETSObjectType() && testedType->AsETSObjectType()->IsGeneric()) {
+        testedType = substituteWildcardType(testedType->AsETSObjectType());
+    } else if (testedType->IsETSUnionType() && testedType->AsETSUnionType()->AnyOfConstituentTypes([](Type *type) {
+                   return type->IsETSObjectType() && type->AsETSObjectType()->IsGeneric();
+               })) {
+        testedType = processUnionType(testedType->AsETSUnionType());
+    }
+
+    return testedType;
+}
+
 void CheckerContext::CheckBinarySmartCastCondition(ir::BinaryExpression *const binaryExpression) noexcept
 {
     if (!IsInTestExpression() || !IsInValidChain(binaryExpression->Parent())) {
@@ -355,27 +419,22 @@ void CheckerContext::CheckBinarySmartCastCondition(ir::BinaryExpression *const b
     }
 
     if (auto const operatorType = binaryExpression->OperatorType(); operatorType == lexer::TokenType::KEYW_INSTANCEOF) {
-        if (binaryExpression->Left()->IsIdentifier()) {
-            if (binaryExpression->Right()->TsType() == nullptr) {
-                return;
-            }
-            // NOTE(pantos) Issue with generics
-            // eg
-            // class C <T> { ... }
-            // let x = new C<...>
-            // if (x instanceof C && x.fld instanceof ...
-            const auto variable = binaryExpression->Left()->AsIdentifier()->Variable();
-            auto type = binaryExpression->Right()->TsType();
-            auto smartIt = smartCasts_.find(variable);
-            // NOTE(pantos) Handle union types e.g. C<A>|C<B>|...
-            if (type->HasTypeFlag(TypeFlag::GENERIC) && smartIt != smartCasts_.end() && type->IsETSObjectType() &&
-                type->AsETSObjectType()->IsSameBasedGeneric(type->AsETSObjectType()->GetRelation(), smartIt->second)) {
-                // Replace generic type with instantiated one, e.g. C<T> with C<A>
-                type = smartIt->second;
-            }
-            ES2PANDA_ASSERT(testCondition_.variable == nullptr);
-            testCondition_ = {variable, type};
+        if (!binaryExpression->Left()->IsIdentifier()) {
+            return;
         }
+
+        Type *testedType = binaryExpression->Right()->Check(parent_->AsETSChecker());
+        ES2PANDA_ASSERT(testedType != nullptr);
+        if (testedType->IsTypeError()) {
+            return;
+        }
+
+        // Use special wildcard instantiation for generic types in case of 'instanceof' check
+        testedType = CreateWildcardSubstitutedType(testedType);
+
+        const auto variable = binaryExpression->Left()->AsIdentifier()->Variable();
+        ES2PANDA_ASSERT(testCondition_.variable == nullptr);
+        testCondition_ = {variable, testedType};
     } else if (operatorType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL ||
                operatorType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL ||
                operatorType == lexer::TokenType::PUNCTUATOR_EQUAL ||

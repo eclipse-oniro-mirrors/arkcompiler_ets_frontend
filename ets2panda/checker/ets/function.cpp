@@ -385,9 +385,6 @@ static varbinder::Scope *NodeScope(ir::AstNode *ast)
 static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *typeParam, Type *typeArgument,
                                      const Substitution *substitution)
 {
-    if (typeArgument->IsWildcardType()) {
-        return true;
-    }
     if (typeArgument->IsTypeError()) {
         return true;
     }
@@ -438,8 +435,7 @@ static bool EnhanceSubstitutionForUnion(ETSChecker *checker, const ArenaVector<T
             {
                 // Type parameters are inferred separately, here we check the equality of the base classes
                 SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(),
-                                                            checker->Relation()->GetTypeRelationFlags() |
-                                                                TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+                                                            TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
                 isIdenticalUpToTypeParams = checker->Relation()->IsIdenticalTo(pc, ac);
             }
 

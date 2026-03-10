@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,14 @@
  * limitations under the License.
  */
 
-function main(): void {
-  let int_a: int[][] = [[1],[2],[3]];
-  let int_a2: int[][] = /* @@ label1 */int_a as int[][];
-  let long_a: long[][] = /* @@ label2 */int_a as long[][];
+function foo(): string {
+    let input = true;
+    if (input instanceof Boolean) {
+        return "This is a test function";
+    } else {
+        let b = input as (string | number | null);
+        return "This is a test function with b: " + b;
+    }
 }
 
-/* @@@ label1 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label2 Warning Warning W0326: Attempt to cast the type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime. */
+arktest.assertEQ(foo(), "This is a test function");

@@ -71,11 +71,6 @@ uint32_t ETSArrayType::Rank() const
 void ETSArrayType::Identical(TypeRelation *relation, Type *other)
 {
     if (other->IsETSArrayType()) {
-        // will be removed, if wildcard type is assigned to array type, not element type
-        if (element_->IsWildcardType() || other->AsETSArrayType()->ElementType()->IsWildcardType()) {
-            relation->Result(true);
-            return;
-        }
         relation->IsIdenticalTo(element_, other->AsETSArrayType()->ElementType());
     }
 }

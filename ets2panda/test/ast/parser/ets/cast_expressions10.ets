@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,19 @@
 
 function main(): void {
   let Int_a: Int[][] = [[new Int(1)],[new Int(1)],[new Int(1)]];
-  let Int_a2: Int[][] = Int_a as Int[][];
-  let Object_a: Object[][] = Int_a as Object[][];
-  let Int_a3: Int[][] = Object_a as Int[][];
+  let Int_a2: Int[][] = /* @@ label1 */Int_a as Int[][];
+  let Object_a: Object[][] = /* @@ label2 */Int_a as Object[][];
+  let Int_a3: Int[][] = /* @@ label3 */Object_a as Int[][];
 
   let Object_: Object = Int_a as Object;
-  let Int_a4: Int[][] = Object_ as Int[][];
+  let Int_a4: Int[][] = /* @@ label4 */Object_ as Int[][];
 
-  let Long_a: Long[][] = Int_a as Long[][];
+  let Long_a: Long[][] = /* @@ label5 */Int_a as Long[][];
 }
 
-/* @@? 19:30 Error Semantic error ESE0326: Cannot cast type 'Array<Array<Int>>' to 'Array<Array<Object>>' */
-/* @@? 20:25 Error Semantic error ESE0326: Cannot cast type 'Array<Array<Object>>' to 'Array<Array<Int>>' */
-/* @@? 25:26 Error Semantic error ESE0326: Cannot cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' */
+
+/* @@@ label1 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label2 Warning Warning W369037: Cast expression `as Array<Array<Object>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label3 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label4 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label5 Warning Warning W0326: Attempt to cast the type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime. */

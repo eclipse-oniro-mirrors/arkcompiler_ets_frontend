@@ -20,21 +20,12 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
-#include "checker/types/typeFlag.h"
-#include "checker/checker.h"
 #include "checker/types/typeRelation.h"
+#include "compiler/lowering/checkerPhase.h"
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
-#include "ir/base/classProperty.h"
-#include "ir/base/methodDefinition.h"
 #include "ir/ets/etsDestructuring.h"
-#include "generated/diagnostic.h"
-#include "ir/ets/etsPrimitiveType.h"
-#include "ir/ts/tsAsExpression.h"
-#include "libarkbase/utils/logger.h"
-#include "util/es2pandaMacros.h"
-#include "util/helpers.h"
 
 namespace ark::es2panda::checker {
 
@@ -4798,8 +4789,6 @@ checker::Type *ETSAnalyzer::Check(ir::SwitchStatement *st) const
 {
     ETSChecker *checker = GetETSChecker();
     checker::ScopeContext scopeCtx(checker, st->Scope());
-    checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(checker->Relation(),
-                                                                    checker::TypeRelationFlag::NONE);
 
     auto *comparedExprType = checker->CheckSwitchDiscriminant(st->Discriminant());
     // may have no meaning to unbox comparedExprType
@@ -4954,9 +4943,15 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
     if (ident->Variable() == nullptr) {
         ident->Check(checker);
     }
-    auto *const variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), st->Init(), flags);
-    if (variableType != nullptr && variableType->IsTypeError()) {
-        return st->SetTsType(variableType);
+    auto *variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), st->Init(), flags);
+    if (variableType != nullptr) {
+        if (variableType->IsTypeError()) {
+            return st->SetTsType(variableType);
+        }
+        if (variableType->IsETSWildcardType()) {
+            variableType = variableType->AsETSWildcardType()->GetUnderlying()->GetConstraintType();
+            ident->Variable()->SetTsType(variableType);
+        }
     }
 
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
@@ -5127,6 +5122,10 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
 
     expr->Expr()->SetPreferredType(targetType);
 
+    if (targetType == checker->GetGlobalTypesHolder()->GlobalETSNeverType()) {
+        return expr->SetTsType(checker->TypeError(expr, diagnostic::CAST_TO_NEVER, expr->Start()));
+    }
+
     auto const sourceType = expr->Expr()->Check(checker);
     if (sourceType->IsTypeError() && checker->HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
         return expr->SetTsType(checker->GlobalTypeError());
@@ -5145,6 +5144,15 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
         {sourceType, targetType},
         checker::CastingContext::ConstructorData {expr->Expr(), sourceType, targetType, expr->Expr()->Start()});
 
+    if (checker->Relation()->IsTrue() && targetType->IsETSObjectType() && targetType->AsETSObjectType()->IsGeneric() &&
+        !expr->Expr()->IsArrayExpression() && !expr->Expr()->IsObjectExpression() &&
+        compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
+        std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
+                    targetType->AsETSObjectType()->TypeArguments().end(),
+                    [](Type *item) { return !item->IsETSTypeParameter() && !item->IsETSWildcardType(); })) {
+        checker->LogDiagnostic(diagnostic::GENERIC_TYPE_CAST, {targetType->ToString()}, expr->Expr()->Start());
+    }
+
     expr->isUncheckedCast_ = ctx.UncheckedCast();
 
     // Make sure the array type symbol gets created for the assembler to be able to emit checkcast.
@@ -5152,10 +5160,6 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
     if (!expr->isUncheckedCast_ && targetType->IsETSArrayType()) {
         const auto *const targetArrayType = targetType->AsETSArrayType();
         checker->CreateBuiltinArraySignature(targetArrayType, targetArrayType->Rank());
-    }
-
-    if (targetType == checker->GetGlobalTypesHolder()->GlobalETSNeverType()) {
-        return expr->SetTsType(checker->TypeError(expr, diagnostic::CAST_TO_NEVER, expr->Start()));
     }
 
     return expr->SetTsType(targetType);

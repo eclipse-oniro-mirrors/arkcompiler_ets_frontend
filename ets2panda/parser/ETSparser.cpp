@@ -46,6 +46,7 @@
 #include "ir/ets/etsPrimitiveType.h"
 #include "ir/ets/etsPackageDeclaration.h"
 #include "ir/ets/etsReExportDeclaration.h"
+#include "ir/ets/etsTuple.h"
 #include "ir/ets/etsFunctionType.h"
 #include "ir/ets/etsModule.h"
 #include "ir/ets/etsTypeReference.h"

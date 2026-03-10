@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-function foo<X extends short, Y extends short>(v: X = 1 as (X | Y)){}
+function foo<X extends short, Y extends short>(v: X = /* @@ label */1 as (X | Y)){}
 
 
-/* @@? 16:55 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X|Y' */
+/* @@@ label Warning Warning W0326: Attempt to cast the type 'Int' to 'X|Y' can throw 'CastClassError' exception at runtime. */

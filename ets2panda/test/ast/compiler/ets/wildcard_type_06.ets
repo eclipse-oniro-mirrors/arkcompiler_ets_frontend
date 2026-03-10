@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,28 @@
  * limitations under the License.
  */
 
-function main(): void {
-  let int_a: int[][] = [[1],[2],[3]];
-  let int_a2: int[][] = /* @@ label1 */int_a as int[][];
-  let long_a: long[][] = /* @@ label2 */int_a as long[][];
+class A { fooA() {} }
+class B { fooB() {} }
+
+class C<T> {
+    fld: T;
+
+    constructor(p: T) {
+        this.fld = p;
+    }
 }
 
-/* @@@ label1 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label2 Warning Warning W0326: Attempt to cast the type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime. */
+function foo(p: C<A>|C<B>|undefined) {
+    let v: C<A>|C<B>;
+    if (p instanceof C) {
+        v = p;				                    // OK
+        let y: C<A> = /* @@ label */p;	  // CTE
+        y.fld.fooA();
+    }
+}
+
+foo(new C<A>(new A ()))
+foo(new C<B>(new B()))
+
+
+/* @@@ label Error Semantic error ESE0318: Type 'C<A>|C<B>' cannot be assigned to type 'C<A>' */

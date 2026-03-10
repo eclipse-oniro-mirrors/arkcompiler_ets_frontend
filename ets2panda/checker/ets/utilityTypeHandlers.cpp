@@ -171,17 +171,18 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
 
 Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
 {
-    auto cached = [this, typeToBeAwaited](Type *res) {
-        awaitedTypeCache_.insert({typeToBeAwaited, res});
-        return res;
-    };
-
-    if (auto it = awaitedTypeCache_.find(typeToBeAwaited); it != awaitedTypeCache_.end()) {
-        return it->second;
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::AWAITED)>();
+    if (const auto found = typeCache.find(typeToBeAwaited); found != typeCache.end()) {
+        return found->second;
     }
 
+    auto const cacheType = [&typeCache, typeToBeAwaited](Type *awaitedType) {
+        typeCache.try_emplace(typeToBeAwaited, awaitedType);
+        return awaitedType;
+    };
+
     if (typeToBeAwaited->IsETSTypeParameter()) {
-        return cached(ProgramAllocator()->New<ETSAwaitedType>(typeToBeAwaited->AsETSTypeParameter()));
+        return cacheType(ProgramAllocator()->New<ETSAwaitedType>(typeToBeAwaited->AsETSTypeParameter()));
     }
 
     if (typeToBeAwaited->IsETSUnionType()) {
@@ -193,13 +194,13 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
             }
             awaitedTypes.push_back(UnwrapPromiseType(unwrapped));
         }
-        return cached(CreateETSUnionType(Span<Type *const>(awaitedTypes)));
+        return cacheType(CreateETSUnionType(Span<Type *const>(awaitedTypes)));
     }
 
     if (IsPromiseType(typeToBeAwaited)) {
         Type *typeArg = typeToBeAwaited->AsETSObjectType()->TypeArguments().at(0);
         auto unwrappedType = UnwrapPromiseType(typeArg);
-        return cached(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
+        return cacheType(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
     }
 
     // NOTE(mbolshov): #19701 update this when void = undefined
@@ -215,18 +216,32 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
 
 Type *ETSChecker::HandleReturnTypeUtilityType(Type *baseType)
 {
+    if (baseType->IsETSFunctionType()) {
+        auto *const funcTypeSig = baseType->AsETSFunctionType()->ArrowSignature();
+        return funcTypeSig->ReturnType();
+    }
+
+    if (baseType->IsETSNeverType()) {
+        return baseType;
+    }
+
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::RETURN_TYPE)>();
+    if (const auto found = typeCache.find(baseType); found != typeCache.end()) {
+        return found->second;
+    }
+
+    auto const cacheType = [&typeCache, baseType](Type *returnType) {
+        typeCache.emplace(baseType, returnType);
+        return returnType;
+    };
+
     if (baseType->IsETSTypeParameter()) {
         if (!Relation()->IsSupertypeOf(GlobalBuiltinFunctionType(),
                                        baseType->AsETSTypeParameter()->GetConstraintType())) {
             return GlobalTypeError();
         }
 
-        return ProgramAllocator()->New<ETSReturnTypeUtilityType>(baseType->AsETSTypeParameter());
-    }
-
-    if (baseType->IsETSFunctionType()) {
-        auto *const funcTypeSig = baseType->AsETSFunctionType()->ArrowSignature();
-        return funcTypeSig->ReturnType();
+        return cacheType(ProgramAllocator()->New<ETSReturnTypeUtilityType>(baseType->AsETSTypeParameter()));
     }
 
     if (baseType->IsETSUnionType()) {
@@ -238,15 +253,11 @@ Type *ETSChecker::HandleReturnTypeUtilityType(Type *baseType)
             }
             returnTypes.push_back(constituentRetType);
         }
-        return CreateETSUnionType(std::move(returnTypes));
+        return cacheType(CreateETSUnionType(std::move(returnTypes)));
     }
 
     if (Relation()->IsIdenticalTo(baseType, GlobalBuiltinFunctionType())) {
-        return GlobalETSAnyType();
-    }
-
-    if (baseType->IsETSNeverType()) {
-        return baseType;
+        return cacheType(GlobalETSAnyType());
     }
 
     return GlobalTypeError();
@@ -323,7 +334,14 @@ Type *ETSChecker::CreatePartialType(Type *const typeToBePartial)
 
 Type *ETSChecker::CreatePartialTypeParameter(ETSTypeParameter *typeToBePartial)
 {
-    return ProgramAllocator()->New<ETSPartialTypeParameter>(typeToBePartial, this);
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::PARTIAL)>();
+    if (const auto found = typeCache.find(typeToBePartial); found != typeCache.end()) {
+        return found->second;
+    }
+
+    auto *partialType = ProgramAllocator()->New<ETSPartialTypeParameter>(typeToBePartial, this);
+    typeCache.emplace(typeToBePartial, partialType);
+    return partialType;
 }
 
 Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::AstNode *typeDeclNode)
@@ -356,17 +374,7 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
 
     compiler::SetSourceRangesRecursively(partialClassDef, typeDeclNode->Range());
 
-    // If class prototype was created before, then we cached it's type. In that case return it.
-    // This handles cases where a Partial<T> presents in class T, because during generating %%partial-T we'd need the
-    // complete class %%partial-T which is not present at the time. Binding it's own type for it however will make it
-    // possible to resolve member references later, when the full %%partial-T class was created.
-    if (const auto found = NamedTypeStack().find(partialClassDef->TsType()); found != NamedTypeStack().end()) {
-        return *found;
-    }
-
     const varbinder::BoundContext boundCtx(recordTable, partialClassDef);
-
-    NamedTypeStackElement ntse(this, partialClassDef->TsType());
 
     // If class is external, put partial of it in global scope for the varbinder
     if (partialProgram != VarBinder()->Program()) {
@@ -389,10 +397,6 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
         CreateInterfaceProto(partialName, partialProgram, interfaceDecl);
     partialInterDecl->SetInternalName(partialQualifiedName);
 
-    if (const auto found = NamedTypeStack().find(partialInterDecl->TsType()); found != NamedTypeStack().end()) {
-        return *found;
-    }
-
     const varbinder::BoundContext boundCtx(recordTable, partialInterDecl);
     varbinder::RecordTableContext recordTableCtx {VarBinder()->AsETSBinder(), partialProgram};
     // If class is external, put partial of it in global scope for the varbinder
@@ -407,7 +411,6 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
     auto *partialType = CreatePartialTypeInterfaceDecl(interfaceDecl, typeToBePartial, partialInterDecl);
     VarBinder()->ResetTopScope(savedScope);
     ES2PANDA_ASSERT(partialType != nullptr);
-    NamedTypeStackElement ntse(this, partialType);
 
     return partialType;
 }
@@ -1235,13 +1238,21 @@ ir::MethodDefinition *ETSChecker::CreateNonStaticClassInitializer(varbinder::Cla
     return ctor;
 }
 
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// Readonly utility type
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 Type *ETSChecker::GetReadonlyType(Type *type)
 {
-    if (const auto found = NamedTypeStack().find(type); found != NamedTypeStack().end()) {
-        return *found;
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::READONLY)>();
+    if (const auto found = typeCache.find(type); found != typeCache.end()) {
+        return found->second;
     }
 
-    NamedTypeStackElement ntse(this, type);
+    auto const cacheType = [&typeCache, type](Type *readonlyType) {
+        typeCache.emplace(type, readonlyType);
+        return readonlyType;
+    };
+
     ES2PANDA_ASSERT(type != nullptr);
     if (type->IsETSArrayType()) {
         auto *arrType = type->AsETSArrayType();
@@ -1249,30 +1260,33 @@ Type *ETSChecker::GetReadonlyType(Type *type)
             ProgramAllocator()->New<ETSArrayType>(arrType->ElementType(), arrType->IsValueArray());
         ES2PANDA_ASSERT(clonedArrayType != nullptr);
         clonedArrayType->AddTypeFlag(TypeFlag::READONLY);
-        return clonedArrayType;
+        return cacheType(clonedArrayType);
     }
     if (type->IsETSTupleType()) {
         Type *const clonedType = type->Clone(this);
         clonedType->AddTypeFlag(TypeFlag::READONLY);
-        return clonedType;
+        return cacheType(clonedType);
     }
 
     if (type->IsETSObjectType()) {
         type->AsETSObjectType()->InstanceFields();
         auto *clonedType = type->Clone(this)->AsETSObjectType();
         MakePropertiesReadonly(clonedType);
-        return clonedType;
+        return cacheType(clonedType);
     }
+
     if (type->IsETSTypeParameter()) {
-        return ProgramAllocator()->New<ETSReadonlyType>(type->AsETSTypeParameter());
+        return cacheType(ProgramAllocator()->New<ETSReadonlyType>(type->AsETSTypeParameter()));
     }
+
     if (type->IsETSUnionType()) {
         std::vector<Type *> unionTypes;
         for (auto *t : type->AsETSUnionType()->ConstituentTypes()) {
             unionTypes.emplace_back(t->IsETSObjectType() ? GetReadonlyType(t) : t->Clone(this));
         }
-        return CreateETSUnionType(std::move(unionTypes));
+        return cacheType(CreateETSUnionType(std::move(unionTypes)));
     }
+
     return type;
 }
 
@@ -1318,16 +1332,20 @@ void ETSChecker::MakePropertiesReadonly(ETSObjectType *const classType)
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
 {
-    if (const auto found = NamedTypeStack().find(typeToBeRequired); found != NamedTypeStack().end()) {
-        return *found;
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::REQUIRED)>();
+    if (const auto found = typeCache.find(typeToBeRequired); found != typeCache.end()) {
+        return found->second;
     }
 
-    NamedTypeStackElement ntse(this, typeToBeRequired);
+    auto const cacheType = [&typeCache, typeToBeRequired](Type *requiredType) {
+        typeCache.emplace(typeToBeRequired, requiredType);
+        return requiredType;
+    };
 
     if (typeToBeRequired->IsETSTypeParameter()) {
         auto *const requiredClone = typeToBeRequired->Clone(this);
         requiredClone->AddTypeFlag(TypeFlag::ETS_REQUIRED_TYPE_PARAMETER);
-        return requiredClone;
+        return cacheType(requiredClone);
     }
 
     if (typeToBeRequired->IsETSUnionType()) {
@@ -1346,7 +1364,7 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
             unionTypes.emplace_back(type);
         }
 
-        return CreateETSUnionType(std::move(unionTypes));
+        return cacheType(CreateETSUnionType(std::move(unionTypes)));
     }
 
     if (typeToBeRequired->IsETSObjectType()) {
@@ -1357,7 +1375,7 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
 
     MakePropertiesNonNullish(typeToBeRequired->AsETSObjectType());
 
-    return typeToBeRequired;
+    return cacheType(typeToBeRequired);
 }
 
 void ETSChecker::MakePropertiesNonNullish(ETSObjectType *const classType)

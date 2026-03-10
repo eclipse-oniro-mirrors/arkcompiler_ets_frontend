@@ -304,6 +304,8 @@ public:
 
     ETSObjectType *GetTypeInstantiation(ETSChecker *checker, std::string const &hash);
 
+    ir::TSTypeParameterDeclaration *GetTypeParams() const;
+
     varbinder::Scope *GetTypeArgumentScope() const
     {
         auto *typeParams = GetTypeParams();
@@ -524,8 +526,6 @@ private:
     bool TryCastUnboxable(TypeRelation *const relation, Type *const target);
 
     void CacheSupertypeTransitive(ETSObjectType *type);
-
-    ir::TSTypeParameterDeclaration *GetTypeParams() const;
 
     ArenaAllocator *const allocator_;
     util::StringView const name_;

@@ -76,7 +76,6 @@
 #include "ir/ets/etsPrimitiveType.h"
 #include "ir/ets/etsPackageDeclaration.h"
 #include "ir/ets/etsReExportDeclaration.h"
-#include "ir/ets/etsWildcardType.h"
 #include "ir/ets/etsNewArrayInstanceExpression.h"
 #include "ir/ets/etsTuple.h"
 #include "ir/ets/etsFunctionType.h"

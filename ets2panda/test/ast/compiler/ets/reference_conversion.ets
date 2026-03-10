@@ -21,7 +21,7 @@ interface D {
 /* @@? 16:10 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
 /* @@? 16:11 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
 /* @@? 16:13 Error Syntax error ESY0151: Unexpected token, expected string literal. */
-/* @@? 16:13 Error Semantic error ESE0326: Cannot cast type '"*ERROR_LITERAL*"' to 'D' */
+/* @@? 16:13 Warning Warning W0326: Attempt to cast the type '"*ERROR_LITERAL*"' to 'D' can throw 'CastClassError' exception at runtime. */
 /* @@? 16:19 Error Syntax error ESY0227: Unexpected token '}'. */
 /* @@? 16:21 Error Syntax error ESY0227: Unexpected token 'from'. */
 /* @@? 16:21 Error Semantic error ESE0143: Unresolved reference from */

@@ -313,10 +313,10 @@ private:
 };
 class SavedTypeRelationFlagsContext {
 public:
-    explicit SavedTypeRelationFlagsContext(TypeRelation *relation, TypeRelationFlag newFlag)
+    explicit SavedTypeRelationFlagsContext(TypeRelation *relation, TypeRelationFlag const newFlag)
         : relation_(relation), prev_(relation->flags_)
     {
-        relation_->flags_ = newFlag;
+        relation_->flags_ |= newFlag;
     }
 
     NO_COPY_SEMANTIC(SavedTypeRelationFlagsContext);
