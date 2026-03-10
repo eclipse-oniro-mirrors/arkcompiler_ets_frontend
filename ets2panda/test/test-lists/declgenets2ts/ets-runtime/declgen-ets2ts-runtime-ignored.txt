@@ -100,3 +100,7 @@ re_export/import_star.ets
 re_export_class/import_class_1.ets
 re_export_class/import_class_2.ets
 interface_with_optional_property_cycle_import/class_file.ets
+
+#33327 TSC Fail
+override_tests/overload_override_2.ets
+override_tests/mixed_override.ets
