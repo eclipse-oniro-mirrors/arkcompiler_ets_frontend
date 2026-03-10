@@ -2565,6 +2565,10 @@ void TSDeclGen::AddDependency(const checker::Type *tsType)
     }
 
     if (tsType->IsETSObjectType()) {
+        if (tsType->IsETSResizableArrayType()) {
+            AddDependency(tsType->AsETSResizableArrayType()->ElementType());
+            return;
+        }
         const auto objectType = tsType->AsETSObjectType();
         const auto typeName = objectType->AssemblerName().Mutf8();
         if (typeName.empty() || typeName.find("std.core.") != std::string::npos) {
