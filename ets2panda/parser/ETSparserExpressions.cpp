@@ -537,10 +537,7 @@ bool ETSParser::ProcessArrowParamToken(lexer::TokenType &tokenType, ArrowParamSt
         case lexer::TokenType::PUNCTUATOR_RIGHT_BRACE:
         case lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET:
         case lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET: {
-            if (!HandleBracketToken(tokenType, state)) {
-                return false;
-            }
-            return true;
+            return HandleBracketToken(tokenType, state);
         }
         case lexer::TokenType::PUNCTUATOR_COMMA:
             if (state.openParens == 1 && state.openBraces == 0 && state.openBrackets == 0) {
@@ -594,10 +591,7 @@ bool ETSParser::EatArrowFunctionParams(lexer::Lexer *lexer)
         }
     }
 
-    if (state.openParens != 0) {
-        return false;
-    }
-    return true;
+    return state.openParens == 0;
 }
 
 bool ETSParser::IsArrowFunctionExpressionStart()

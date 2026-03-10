@@ -487,9 +487,11 @@ let s: Any = true; let t: Object = 2;
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     ASSERT_EQ(filePaths.size(), 1);
+    // NOLINTBEGIN(readability-magic-numbers)
     std::vector<TypeCase> cases = {{9, 8, 211, 3},     {26, 25, 228, 5},   {47, 46, 249, 6},   {69, 68, 271, 5},
                                    {88, 87, 290, 4},   {116, 115, 318, 4}, {133, 132, 335, 4}, {153, 152, 355, 7},
                                    {176, 175, 379, 3}, {193, 192, 398, 6}};
+    // NOLINTEND(readability-magic-numbers)
 
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();
@@ -524,8 +526,10 @@ let o: Char = c'b'; let p: Boolean = false;
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     ASSERT_EQ(filePaths.size(), 1);
+    // NOLINTBEGIN(readability-magic-numbers)
     std::vector<TypeCase> cases = {{9, 8, 175, 3},   {26, 25, 192, 5},   {47, 46, 213, 6},   {69, 68, 235, 5},
                                    {88, 87, 254, 4}, {116, 115, 282, 4}, {133, 132, 299, 4}, {153, 152, 319, 7}};
+    // NOLINTEND(readability-magic-numbers)
 
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();

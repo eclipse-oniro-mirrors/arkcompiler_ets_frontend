@@ -825,5 +825,5 @@ set(METADATA_SCHEMA "${METADATA_DIR}/metadata.fbs")
 set(METADATA_TARGET_NAME "es2panda_generate_metadata_schema")
 set(FLATBUFFERS_BUILD_TESTS OFF)
 
-panda_target_include_directories(es2panda-lib PRIVATE ${FLATBUFFERS_DIR}/include/)
+panda_target_include_directories(es2panda-lib SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/)
 add_subdirectory(${FLATBUFFERS_DIR} ${CMAKE_BINARY_DIR}/third_party/flatbuffers EXCLUDE_FROM_ALL)

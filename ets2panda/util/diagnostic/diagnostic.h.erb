@@ -19,19 +19,22 @@
 #define ES2PANDA_UTIL_DIAGNOSTIC_KIND_H
 
 #include "util/diagnostic.h"
+#include <array>
 #include <tuple>
 #include <string_view>
 #include <regex>
 
 namespace ark::es2panda::diagnostic {
 
+% MAX_SIZE = Diagnostic::diagnostics.map(&:exclusionlist).map(&:size).max
+
 class DiagnosticKind {
 public:
-    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict, const std::string_view *exclusionlist = nullptr, size_t exclusionlistSize = 0) :
+    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict, const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist = {}) :
 #ifdef ES2PANDA_STRICT
-        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist), exclusionlistSize_(exclusionlistSize) {}
+        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist) {}
 #else
-        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist), exclusionlistSize_(exclusionlistSize) {}
+        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist) {}
 #endif
 
     bool operator==(const DiagnosticKind &other) const
@@ -66,13 +69,12 @@ public:
 
     bool IsInExclusionList(std::string_view path) const
     {
-        if (exclusionlistSize_ == 0) {
+        std::string sPath {path};
+        if (path.empty()) {
             return false;
         }
-
-        std::string sPath {path};
-        for (size_t i = 0; i < exclusionlistSize_; ++i) {
-            std::regex re {std::string {exclusionlist_[i]}};
+        for (auto exclusion : exclusionlist_) {
+            std::regex re {std::string {exclusion}};
             if (std::regex_match(sPath, re)) {
                 return true;
             }
@@ -85,16 +87,16 @@ private:
     const uint32_t id_;
     const std::string_view message_;
     const bool strict_;
-    const std::string_view *exclusionlist_;
-    const size_t exclusionlistSize_;
+    const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist_;
 };
 
+constexpr static std::array<std::string_view, <%= MAX_SIZE %>> EMPTY_EXCLUSION_LIST = {};
 % Diagnostic::diagnostics.each do |desc|
 %   if !desc.exclusionlist.empty?
-constexpr static std::string_view <%= desc.name %>_exclusionlist[] = { <%= desc.exclusionlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
+constexpr static std::array<std::string_view, <%= MAX_SIZE %>> <%= desc.name %>_EXCLUSIONLIST = { <%= desc.exclusionlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
 %   end
 constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>,
-    <% if !desc.exclusionlist.empty? %><%= desc.name %>_exclusionlist, sizeof(<%= desc.name %>_exclusionlist) / sizeof(std::string_view)<% else %>nullptr, 0<% end %>};
+    <% if !desc.exclusionlist.empty? %><%= desc.name %>_EXCLUSIONLIST<% else %>EMPTY_EXCLUSION_LIST<% end %>};
 % end
 
 } // namespace ark::es2panda::diagnostic

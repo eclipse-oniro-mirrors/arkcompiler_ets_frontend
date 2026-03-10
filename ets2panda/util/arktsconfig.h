@@ -56,7 +56,7 @@ class DiagnosticEngine;
 namespace ark::es2panda {
 
 struct CompareByLength {
-    using is_transparent = void;
+    using is_transparent = void;  // NOLINT(readability-identifier-naming)
 
     template <typename T1, typename T2>
     bool operator()(const T1 &x, const T2 &y) const
@@ -207,11 +207,11 @@ public:
     }
 
     using DependenciesLookupResult = std::optional<std::pair<const std::string &, const ExternalModuleData &>>;
-    DependenciesLookupResult FindInDependencies(std::string_view resolvedSource) const;
+    DependenciesLookupResult FindInDependencies(std::string_view importString) const;
 
-    DependenciesLookupResult FindInDependencies(const std::string &resolvedSource) const
+    DependenciesLookupResult FindInDependencies(const std::string &importString) const
     {
-        return FindInDependencies(std::string_view {resolvedSource});
+        return FindInDependencies(std::string_view {importString});
     }
 
 #ifdef ARKTSCONFIG_USE_FILESYSTEM

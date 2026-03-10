@@ -183,7 +183,8 @@ public:
     ThrowableDiagnostic(DiagnosticType type, const diagnostic::DiagnosticKind &diagnosticKind,
                         const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos);
 
-    DEFAULT_COPY_SEMANTIC(ThrowableDiagnostic);
+    ThrowableDiagnostic(const ThrowableDiagnostic &) noexcept = default;
+    DEFAULT_COPY_OPERATOR(ThrowableDiagnostic);
     DEFAULT_MOVE_SEMANTIC(ThrowableDiagnostic);
     ~ThrowableDiagnostic() override = default;
 

@@ -30,7 +30,7 @@
 
 namespace ark::es2panda::compiler::test {
 
-using namespace Metadata;
+using Metadata::GetRoot, Metadata::BuiltinTypeKind, Metadata::TypeParamDecl;
 
 class MetadataTest : public ::test::utils::CheckerTest {
 public:
@@ -97,8 +97,8 @@ public:
                << " not found in the metadata of method " << methodName << " for class " << className;
     }
 
-    bool HasTypeParam(const ::flatbuffers::Vector<::flatbuffers::Offset<Metadata::TypeParamDecl>> &typeParams,
-                      std::string expectedTypeParamName)
+    bool HasTypeParam(const ::flatbuffers::Vector<::flatbuffers::Offset<TypeParamDecl>> &typeParams,
+                      const std::string &expectedTypeParamName)
     {
         for (auto typeParam : typeParams) {
             if (typeParam->name()->str() == expectedTypeParamName) {

@@ -237,9 +237,9 @@ public:
     }
 
     [[nodiscard]] std::pair<SmartCastArray, bool> EnterLoop(const ir::LoopStatement &loop,
-                                                            SmartCastTypes loopConditionSmartCasts) noexcept;
+                                                            const SmartCastTypes &loopConditionSmartCasts) noexcept;
     void InvalidateSmartCastsForLoopHeader(const ir::LoopStatement &loop,
-                                           SmartCastTypes loopConditionSmartCasts) noexcept;
+                                           const SmartCastTypes &loopConditionSmartCasts) noexcept;
 
     [[nodiscard]] bool IsInLoop() const noexcept
     {

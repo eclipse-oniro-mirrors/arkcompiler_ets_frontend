@@ -261,6 +261,7 @@ void ETSParser::ParseInSimultMode()
 void ETSParser::ParseSources()
 {
     auto &parseQueue = GetImportPathManager()->GetParseQueue();
+    // NOLINTNEXTLINE(modernize-loop-convert)
     for (size_t i = 0; i < parseQueue.size(); i++) {
         if (!parseQueue[i].isParsed) {
             ParseNotParsed(&parseQueue[i]);
@@ -318,7 +319,6 @@ void ETSParser::ParseSource(parser::Program *program)
         GetContext().Status() &= ~ParserStatus::IN_PACKAGE;
     }
     program->SetAst(script);
-    return;
 }
 
 ir::Statement *ETSParser::ParseIdentKeyword()
@@ -1080,7 +1080,7 @@ ir::ETSPackageDeclaration *ETSParser::ParsePackageDeclaration()
         RaisePackageDeprecatedMessage();
 
         ir::Expression *packageNameNode = ParseQualifiedName();
-        ir::ETSPackageDeclaration *packageDeclaration = AllocNode<ir::ETSPackageDeclaration>(packageNameNode);
+        auto *packageDeclaration = AllocNode<ir::ETSPackageDeclaration>(packageNameNode);
         ES2PANDA_ASSERT(packageDeclaration != nullptr);
         packageDeclaration->SetRange({startLoc, Lexer()->GetToken().End()});
         ConsumeSemicolon(packageDeclaration);

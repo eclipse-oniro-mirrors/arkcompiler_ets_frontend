@@ -1107,11 +1107,7 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
 
     auto ctx = AssignmentContext(checker->Relation(), currentElement, elementType, targetType, currentElement->Start(),
                                  {{diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT, {idx, elementType, targetType}}});
-    if (!ctx.IsAssignable()) {
-        return false;
-    }
-
-    return true;
+    return ctx.IsAssignable();
 }
 
 static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpression *arrayExpr)

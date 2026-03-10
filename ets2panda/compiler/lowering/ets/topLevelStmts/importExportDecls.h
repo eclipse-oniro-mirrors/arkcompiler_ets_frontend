@@ -28,7 +28,7 @@ class SavedImportExportDeclsContext;
 class ImportExportDecls : ir::visitor::EmptyAstVisitor {
 public:
     ImportExportDecls() = default;
-    ImportExportDecls(public_lib::Context *ctx)
+    explicit ImportExportDecls(public_lib::Context *ctx)
         : varbinder_(ctx->parserProgram->VarBinder()->AsETSBinder()), parser_(ctx->parser->AsETSParser()), ctx_(ctx)
     {
     }

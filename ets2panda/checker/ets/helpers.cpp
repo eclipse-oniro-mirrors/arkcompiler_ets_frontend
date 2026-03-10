@@ -1873,7 +1873,7 @@ static std::pair<bool, util::StringView> FindSpecifierForModuleObject(ir::ETSImp
                                                                       varbinder::Variable *binding)
 {
     ES2PANDA_ASSERT(importDecl != nullptr);
-    if (importDecl->Specifiers().size() != 0 && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier()) {
+    if ((!importDecl->Specifiers().empty()) && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier()) {
         return std::make_pair(true, util::StringView());
     }
 

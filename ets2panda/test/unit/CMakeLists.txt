@@ -94,4 +94,4 @@ ets2panda_add_gtest(es2panda_checker_tests
 
 set(FLATBUFFERS_CXX_FLAGS "-Wno-error")
 set(FLATBUFFERS_DIR "${PANDA_THIRD_PARTY_SOURCES_DIR}/flatbuffers")
-panda_target_include_directories(es2panda_metadata_test PRIVATE ${FLATBUFFERS_DIR}/include/)
+panda_target_include_directories(es2panda_metadata_test SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/)

@@ -21,7 +21,10 @@
 namespace ark::es2panda::parser {
 class JSParser : public ParserImpl {
 public:
-    JSParser(public_lib::Context *context, ParserStatus status = ParserStatus::NO_OPTS) : ParserImpl(context, status) {}
+    explicit JSParser(public_lib::Context *context, ParserStatus status = ParserStatus::NO_OPTS)
+        : ParserImpl(context, status)
+    {
+    }
 };
 }  // namespace ark::es2panda::parser
 

@@ -160,7 +160,7 @@ public:
         const ir::ETSImportDeclaration *const import, const util::StringView &imported);
     std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInExports(
         const ir::ETSImportDeclaration *const import, const util::StringView &imported);
-    void AddImportNamespaceSpecifiersToTopBindings(parser::Program *const importProgram,
+    void AddImportNamespaceSpecifiersToTopBindings(parser::Program *const importedProgram,
                                                    ir::ImportNamespaceSpecifier *namespaceSpecifier,
                                                    const ir::ETSImportDeclaration *import);
     util::StringView GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
@@ -288,7 +288,7 @@ private:
     void HandleStarImport(ir::TSQualifiedName *importName, util::StringView fullPath);
     void InsertForeignBinding(const util::StringView &name, Variable *var);
     void InsertOrAssignForeignBinding(const util::StringView &name, Variable *var);
-    void ImportAllForeignBindings(const parser::Program *importProgram);
+    void ImportAllForeignBindings(const parser::Program *importedProgram);
     void ThrowRedeclarationError(const lexer::SourcePosition &pos, const Variable *const var,
                                  const Variable *const variable, util::StringView localName);
 

@@ -70,15 +70,14 @@ std::string ApplyEdits(const std::string &original, const std::vector<::TextChan
 
 enum class StripScanState { CODE, SINGLE_QUOTE, DOUBLE_QUOTE, TEMPLATE, LINE_COMMENT, BLOCK_COMMENT };
 
-static void EnterStringState(StripScanState nextState, StripScanState &state, bool &escaped, std::string &normalized,
-                             char ch)
+void EnterStringState(StripScanState nextState, StripScanState &state, bool &escaped, std::string &normalized, char ch)
 {
     state = nextState;
     escaped = false;
     normalized.push_back(ch);
 }
 
-static void HandleCodeState(StripScanState &state, bool &escaped, std::string &normalized, char ch, char next)
+void HandleCodeState(StripScanState &state, bool &escaped, std::string &normalized, char ch, char next)
 {
     if (ch == '/' && next == '/') {
         state = StripScanState::LINE_COMMENT;
@@ -106,7 +105,7 @@ static void HandleCodeState(StripScanState &state, bool &escaped, std::string &n
     normalized.push_back(ch);
 }
 
-static void HandleStringState(StripScanState &state, bool &escaped, std::string &normalized, char ch, char endChar)
+void HandleStringState(StripScanState &state, bool &escaped, std::string &normalized, char ch, char endChar)
 {
     normalized.push_back(ch);
     if (!escaped && ch == endChar) {
@@ -115,14 +114,14 @@ static void HandleStringState(StripScanState &state, bool &escaped, std::string 
     escaped = (!escaped && ch == '\\');
 }
 
-static void HandleLineCommentState(StripScanState &state, char ch)
+void HandleLineCommentState(StripScanState &state, char ch)
 {
     if (ch == '\n') {
         state = StripScanState::CODE;
     }
 }
 
-static void HandleBlockCommentState(StripScanState &state, bool &skipNext, char ch, char next)
+void HandleBlockCommentState(StripScanState &state, bool &skipNext, char ch, char next)
 {
     if (ch == '*' && next == '/') {
         state = StripScanState::CODE;
@@ -266,7 +265,7 @@ std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsViaLspApi(
     return edits;
 }
 
-constexpr const char K_EXTRACT_METHOD_GLOBAL_FOR_RENAME_CODE[] = R"('use static'
+constexpr std::string_view K_EXTRACT_METHOD_GLOBAL_FOR_RENAME_CODE = R"('use static'
 
 function newFunction(a: number, b: number) {
     let c = a + b;
@@ -283,7 +282,7 @@ class MyClass {
 }
 )";
 
-constexpr const char K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE[] = R"(
+constexpr std::string_view K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE = R"(
 namespace A {
   let x = 1;
   function foo() {
@@ -300,7 +299,7 @@ namespace A {
 }
 )";
 
-constexpr const char K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE[] = R"(
+constexpr std::string_view K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE = R"(
 namespace A {
   let x = 1;
   function foo() {
@@ -318,7 +317,7 @@ namespace A {
 }
 )";
 
-constexpr const char K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_CODE[] = R"(
+constexpr std::string_view K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_CODE = R"(
 namespace A {
   namespace B {
     function a() {
@@ -329,7 +328,7 @@ namespace A {
 }
 )";
 
-constexpr const char K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_EXPECTED[] = R"(
+constexpr std::string_view K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_EXPECTED = R"(
 namespace A {
   function newFunction(y: Int) {
     return y + 1;
@@ -344,7 +343,7 @@ namespace A {
 }
 )";
 
-constexpr const char K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE[] = R"(
+constexpr std::string_view K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE = R"(
 namespace B {
   export namespace A {
     function a() {
@@ -703,14 +702,14 @@ const a = 1,
   b = /*start*/a + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -752,14 +751,14 @@ const a = 1,
   /*aboutB*/b = /*start*/a + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -784,14 +783,14 @@ B*/
 b = /*start*/a + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -819,14 +818,14 @@ B*/
 b = /*start*/a + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -853,14 +852,14 @@ const a = 1,
 b = /*start*/a + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -885,14 +884,14 @@ const x = 1;
 const y = /*start*/x + 1/*end*/;
 )";
 
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -1421,14 +1420,14 @@ interface I {a:1|2|3}
 
 let i:I = /*start*/{a:1}/*end*/;
 )";
-    constexpr std::string_view startMarker = "/*start*/";
-    constexpr std::string_view endMarker = "/*end*/";
-    const size_t spanStart = code.find(startMarker);
+    constexpr std::string_view START_MARKER = "/*start*/";
+    constexpr std::string_view END_MARKER = "/*end*/";
+    const size_t spanStart = code.find(START_MARKER);
     ASSERT_NE(spanStart, std::string::npos);
-    code.erase(spanStart, startMarker.length());
-    const size_t spanEnd = code.find(endMarker);
+    code.erase(spanStart, START_MARKER.length());
+    const size_t spanEnd = code.find(END_MARKER);
     ASSERT_NE(spanEnd, std::string::npos);
-    code.erase(spanEnd, endMarker.length());
+    code.erase(spanEnd, END_MARKER.length());
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
@@ -2441,7 +2440,8 @@ class MyClass {
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodGlobalForRename)
 {
-    const std::string code = K_EXTRACT_METHOD_GLOBAL_FOR_RENAME_CODE;
+    const std::string code = std::string(K_EXTRACT_METHOD_GLOBAL_FOR_RENAME_CODE);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr std::string_view target = "let c = a + b;";
     const size_t spanStart = code.find(target, code.find("MyMethod"));
     EXPECT_NE(spanStart, std::string::npos);
@@ -2576,7 +2576,7 @@ class MyClass {
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatements)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE);
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let y = 3;", "foo();");
 
     auto initializer = std::make_unique<Initializer>();
@@ -2632,7 +2632,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatements)
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsWithCommentsEnclose)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE);
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let y = 3;", "foo();");
 
     auto initializer = std::make_unique<Initializer>();
@@ -2668,7 +2668,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsWit
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceGlobalParams)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE);
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let y = 3;", "foo();");
 
     auto initializer = std::make_unique<Initializer>();
@@ -2706,7 +2706,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceGlobalParams)
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsWithCommentsGlobal)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_WITH_COMMENTS_CODE);
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let y = 3;", "foo();");
 
     auto initializer = std::make_unique<Initializer>();
@@ -2747,7 +2747,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsWit
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodExportedNestedNamespaceExpressionGlobalParams)
 {
-    const std::string code = K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE;
+    const std::string code = std::string(K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE);
     const size_t spanStart = code.find("y + 1");
     ASSERT_NE(spanStart, std::string::npos);
     const size_t spanEnd = spanStart + std::string("y + 1").size();
@@ -2774,7 +2774,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodExportedNestedNamespaceExpression
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceOuterScopeParams)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE);
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let y = 3;", "foo();");
 
     auto initializer = std::make_unique<Initializer>();
@@ -2825,7 +2825,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceOuterScopeParams)
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceExpressionToOuterNamespace)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_CODE);
     const size_t spanStart = code.find("y + 1");
     ASSERT_NE(spanStart, std::string::npos);
     const size_t spanEnd = spanStart + std::string("y + 1").size();
@@ -2842,8 +2842,9 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceExpressionToOuterN
     EXPECT_EQ(outerScopeAction->action.description, "Extract to function in namespace 'A'");
 
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
-    auto edits = ExpectExtractResultIgnoringWhitespace(
-        refactorContext, code, K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_EXPECTED, refactorName, actionName);
+    auto edits = ExpectExtractResultIgnoringWhitespace(refactorContext, code,
+                                                       std::string(K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_EXPECTED),
+                                                       refactorName, actionName);
     ASSERT_NE(edits, nullptr);
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
@@ -2862,7 +2863,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceExpressionToOuterN
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsLineSelection)
 {
-    const std::string code = K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE;
+    const std::string code = std::string(K_NESTED_NAMESPACE_EXTRACT_METHOD_CODE);
     const std::string startToken = "      let y = 3;";
     const std::string endToken = "      foo();\n";
     const size_t spanStart = code.find(startToken);

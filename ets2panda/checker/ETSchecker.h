@@ -166,7 +166,7 @@ public:
     ETSObjectType *GlobalBuiltinLambdaType(size_t nargs, bool hasRest) const;
     size_t GlobalBuiltinFunctionTypeVariadicThreshold() const;
 
-    [[nodiscard]] ETSObjectType *GlobalBuiltinTupleType(size_t nargs) const noexcept;
+    [[nodiscard]] ETSObjectType *GlobalBuiltinTupleType(size_t nargs) const;
 
     GlobalArraySignatureMap &GlobalArrayTypes();
     const GlobalArraySignatureMap &GlobalArrayTypes() const;
@@ -465,7 +465,7 @@ public:
     Signature *FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr);
     Signature *MatchOrderSignatures(ArenaVector<Signature *> &signatures,
                                     const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
-                                    TypeRelationFlag resolveFlags, std::string_view signatureKind = "call");
+                                    TypeRelationFlag validateFlags, std::string_view signatureKind = "call");
 
     Signature *ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr);
     Signature *ComposeSignature(ir::ScriptFunction *func, SignatureInfo *signatureInfo, Type *returnType,
@@ -938,7 +938,7 @@ private:
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
 
     template <typename... Args>
-    ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...) const, Args... args) const noexcept;
+    ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...) const, Args... args) const;
 
     // Static invoke
     bool SetStaticInvokeValues(ir::Identifier *const ident, ir::Identifier *classId, ir::Identifier *methodId,

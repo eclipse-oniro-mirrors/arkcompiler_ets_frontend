@@ -56,7 +56,7 @@ public:
 
 class CustomDiagnosticPrinter : public DiagnosticPrinter {
 public:
-    CustomDiagnosticPrinter() : counter_(1) {}
+    CustomDiagnosticPrinter() = default;
     NO_COPY_SEMANTIC(CustomDiagnosticPrinter);
     NO_MOVE_SEMANTIC(CustomDiagnosticPrinter);
     ~CustomDiagnosticPrinter() override = default;
@@ -65,7 +65,7 @@ public:
     void Print(const DiagnosticBase &diagnostic, std::ostream &out, const std::string &basePath) const override;
 
 private:
-    mutable int counter_;
+    mutable int counter_ {1};
 };
 
 class DiagnosticEngine {

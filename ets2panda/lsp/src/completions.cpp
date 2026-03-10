@@ -1485,6 +1485,9 @@ public:
         initializer_.DestroyContext(ctx_);
     }
 
+    NO_COPY_SEMANTIC(ScopedContext);
+    NO_MOVE_SEMANTIC(ScopedContext);
+
 private:
     Initializer initializer_ {};
     es2panda_Context *ctx_ {};
@@ -1663,9 +1666,9 @@ std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::Completion
     }
 
     const char slash = static_cast<char>(lexer::LEX_CHAR_SLASH);
-    auto pos = importDecl.find(slash);
+    const auto &pos = importDecl.find(slash);
     const std::string importSub = importDecl.substr(0, pos);
-    auto configPaths = config->Paths();
+    const auto &configPaths = config->Paths();
     if (configPaths.count(importSub) != 0) {
         return false;
     }

@@ -20,8 +20,6 @@
 #include "libarkbase/mem/arena_allocator.h"
 #include "lexer/token/sourceLocation.h"
 
-#include "libarkbase/mem/arena_allocator.h"
-
 namespace ark::es2panda::parser {
 class Program;
 }  // namespace ark::es2panda::parser

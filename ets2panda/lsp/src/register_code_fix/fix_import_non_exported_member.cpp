@@ -59,7 +59,7 @@ std::vector<std::string> CollectMissingImports(const ir::ETSImportDeclaration *i
     std::vector<std::string> result;
     result.reserve(names.size());
     for (auto &name : names) {
-        result.emplace_back(std::move(name));
+        result.emplace_back(name);
     }
     return result;
 }

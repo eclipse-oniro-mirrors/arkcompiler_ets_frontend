@@ -57,7 +57,7 @@ public:
 
     void EnableMetadataEmitting()
     {
-        metadataEnabled = true;
+        metadataEnabled_ = true;
     }
 
     static void SetUpTestCase()
@@ -187,7 +187,7 @@ public:
             return nullptr;
         }
 
-        if (metadataEnabled) {
+        if (metadataEnabled_) {
             options->SetEmitMetadata(true);
         }
 
@@ -250,7 +250,7 @@ private:
     std::string es2pandaPath_;
     util_alias::DiagnosticEngine diagnosticEngine_;
     checker_alias::ETSChecker checker_;
-    bool metadataEnabled = false;
+    bool metadataEnabled_ = false;
 };
 
 }  // namespace test::utils
