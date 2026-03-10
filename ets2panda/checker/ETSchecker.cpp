@@ -838,4 +838,20 @@ std::string ETSChecker::FunctionalInterfaceInvokeName(size_t arity, bool hasRest
     return "unsafeCall";
 }
 
+bool ETSChecker::IsInGeneratedSetterForReadonlyProperty()
+{
+    auto *sig = Context().ContainingSignature();
+    if (sig == nullptr || !sig->HasFunction()) {
+        return false;
+    }
+
+    if (!sig->HasSignatureFlag(SignatureFlags::SETTER)) {
+        return false;
+    }
+
+    const ir::ScriptFunction *func = sig->Function();
+    return (func->OriginalNode() != nullptr) && func->OriginalNode()->IsClassProperty() &&
+           func->OriginalNode()->AsClassProperty()->IsReadonly();
+}
+
 }  // namespace ark::es2panda::checker

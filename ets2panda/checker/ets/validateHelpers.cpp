@@ -264,7 +264,7 @@ void ETSChecker::ValidateResolvedIdentifier(ir::Identifier *const ident)
 
 void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir::Expression *expr)
 {
-    if (IsVariableGetterSetter(variable)) {
+    if (IsVariableGetterSetter(variable) || IsInGeneratedSetterForReadonlyProperty()) {
         return;
     }
 

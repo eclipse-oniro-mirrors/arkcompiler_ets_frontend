@@ -671,6 +671,7 @@ public:
     void GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *originalProp, ETSObjectType *classType);
     void SetupGetterSetterFlags(ir::ClassProperty *originalProp, ETSObjectType *classType, ir::MethodDefinition *getter,
                                 ir::MethodDefinition *setter, const bool inExternal);
+    [[nodiscard]] bool IsInGeneratedSetterForReadonlyProperty();
     Type *GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident,
                                        std::unordered_set<parser::Program *> *moduleStackCache = nullptr);
     void ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclaration *importDecl,
