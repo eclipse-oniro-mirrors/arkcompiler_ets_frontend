@@ -828,6 +828,189 @@ std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
 }
 // NOLINTEND(readability-else-after-return)
 
+static bool IsNullishComparisonOperand(const ir::Expression *const expr, bool &compareAgainstNull)
+{
+    if (expr->IsNullLiteral()) {
+        compareAgainstNull = true;
+        return true;
+    }
+    if (expr->IsUndefinedLiteral()) {
+        compareAgainstNull = false;
+        return true;
+    }
+
+    auto *const exprType = expr->TsType();
+    if (exprType == nullptr) {
+        return false;
+    }
+    if (exprType->IsETSNullType()) {
+        compareAgainstNull = true;
+        return true;
+    }
+    if (exprType->IsETSUndefinedType()) {
+        compareAgainstNull = false;
+        return true;
+    }
+
+    return false;
+}
+
+static bool ExtractNullishComparisonOperands(const ir::BinaryExpression *binary, const ir::Expression *&checkedExpr,
+                                             bool &compareAgainstNull)
+{
+    if (IsNullishComparisonOperand(binary->Left(), compareAgainstNull)) {
+        checkedExpr = binary->Right();
+        return true;
+    }
+
+    if (IsNullishComparisonOperand(binary->Right(), compareAgainstNull)) {
+        checkedExpr = binary->Left();
+        return true;
+    }
+
+    return false;
+}
+
+static std::optional<bool> EvaluateNullishEqualityTypeResult(const Type *checkedType, bool compareAgainstNull,
+                                                             bool strict)
+{
+    if (!strict) {
+        if (checkedType->DefinitelyNotETSNullish()) {
+            return false;
+        }
+        if (checkedType->DefinitelyETSNullish()) {
+            return true;
+        }
+        return std::nullopt;
+    }
+
+    if (compareAgainstNull) {
+        if (checkedType->IsETSNullType()) {
+            return true;
+        }
+        if (checkedType->DefinitelyNotETSNullish() || checkedType->IsETSUndefinedType()) {
+            return false;
+        }
+        return std::nullopt;
+    }
+
+    if (checkedType->IsETSUndefinedType()) {
+        return true;
+    }
+    if (checkedType->DefinitelyNotETSNullish() || checkedType->IsETSNullType()) {
+        return false;
+    }
+
+    return std::nullopt;
+}
+
+static std::optional<bool> TryResolveNullishEqualityTestValue(const ir::Expression *const test)
+{
+    ES2PANDA_ASSERT(test != nullptr);
+
+    if (!test->IsBinaryExpression()) {
+        return std::nullopt;
+    }
+
+    auto *const binary = test->AsBinaryExpression();
+    if (!binary->IsEquality()) {
+        return std::nullopt;
+    }
+
+    bool strict = false;
+    bool negate = false;
+    switch (binary->OperatorType()) {
+        case lexer::TokenType::PUNCTUATOR_EQUAL:
+            break;
+        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+            negate = true;
+            break;
+        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+            strict = true;
+            break;
+        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
+            strict = true;
+            negate = true;
+            break;
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+
+    const ir::Expression *checkedExpr = nullptr;
+    bool compareAgainstNull = false;
+    if (!ExtractNullishComparisonOperands(binary, checkedExpr, compareAgainstNull)) {
+        return std::nullopt;
+    }
+
+    auto *const checkedType = checkedExpr->TsType();
+    if (checkedType == nullptr) {
+        return std::nullopt;
+    }
+    auto const result = EvaluateNullishEqualityTypeResult(checkedType, compareAgainstNull, strict);
+    if (!result.has_value()) {
+        return std::nullopt;
+    }
+
+    return negate ? !result.value() : result.value();
+}
+
+static bool IsValueBasedTruthinessType(const Type *const conditionType)
+{
+    ES2PANDA_ASSERT(conditionType != nullptr);
+
+    if (conditionType->IsETSPrimitiveOrEnumType()) {
+        return true;
+    }
+
+    return conditionType->IsETSObjectType() &&
+           conditionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::VALUE_TYPED);
+}
+
+static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const checker, const ir::Expression *const test)
+{
+    ES2PANDA_ASSERT(checker != nullptr);
+    ES2PANDA_ASSERT(test != nullptr);
+
+    auto *const testType = const_cast<Type *>(test->TsType());
+    if (testType == nullptr) {
+        return std::nullopt;
+    }
+    auto *const conditionType = checker->MaybeUnboxConditionalInRelation(testType);
+    ES2PANDA_ASSERT(conditionType != nullptr);
+
+    if (checker->IsNullLikeOrVoidExpression(test)) {
+        return false;
+    }
+
+    auto [resolved, value] = IsConstantTestValue(test);
+    if (resolved) {
+        return value;
+    }
+
+    if (test->IsBinaryExpression()) {
+        return std::nullopt;
+    }
+
+    if (conditionType->IsETSBooleanType() || conditionType->IsBooleanLiteralType()) {
+        return std::nullopt;
+    }
+
+    if (testType->DefinitelyNotETSNullish() && !IsValueBasedTruthinessType(conditionType)) {
+        return true;
+    }
+
+    return std::nullopt;
+}
+
+std::optional<bool> TryResolveConditionalTestValue(ETSChecker *const checker, const ir::Expression *const test)
+{
+    if (auto const value = TryResolveTypeKnownTruthiness(checker, test); value.has_value()) {
+        return value;
+    }
+
+    return TryResolveNullishEqualityTestValue(test);
+}
+
 void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature)
 {
     if (signature == nullptr) {

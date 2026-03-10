@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,4 +22,3 @@ type X<T> = T extends number ? T : string
 /* @@? 17:23 Error Syntax error ESY0227: Unexpected token 'number'. */
 /* @@? 17:23 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 17:32 Error Semantic error ESE0143: Unresolved reference T */
-/* @@? 17:36 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

@@ -99,6 +99,13 @@ public:
                operator_ == lexer::TokenType::PUNCTUATOR_BITWISE_XOR_EQUAL;
     }
 
+    [[nodiscard]] bool IsEquality() const noexcept
+    {
+        return operator_ == lexer::TokenType::PUNCTUATOR_EQUAL || operator_ == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
+               operator_ == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL ||
+               operator_ == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
+    }
+
     [[nodiscard]] bool IsArithmetic() const noexcept
     {
         return operator_ == lexer::TokenType::PUNCTUATOR_PLUS || operator_ == lexer::TokenType::PUNCTUATOR_MINUS ||

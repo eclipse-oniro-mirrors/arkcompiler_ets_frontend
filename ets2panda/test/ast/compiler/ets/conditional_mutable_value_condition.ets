@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,20 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve(undefined);
+let g = 0
 
-p.then(obj => {
-    const result = typeof obj?.prop;
-});
+function bar() {
+    let arr = [1, 2]
+    return arr[g ? 1 : ""]
+}
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => void|PromiseLike<void>)) */
+function baz() {
+    g++
+}
+
+baz()
+bar()
+
+
+/* @@? 20:12 Error Semantic error ESE0127: No matching indexing signature for $_get(Int|"") */
+/* @@? 20:16 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

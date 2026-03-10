@@ -2416,6 +2416,18 @@ static Type *BiggerNumericType(ETSChecker *checker, Type *t1, Type *t2)
     ES2PANDA_UNREACHABLE();
 }
 
+static void ApplyTestedSmartCasts(ETSChecker *const checker, const SmartCastTypes &testedTypes,
+                                  bool const consequentBranch)
+{
+    if (!testedTypes.has_value()) {
+        return;
+    }
+
+    for (auto [variable, consequentType, alternateType] : *testedTypes) {
+        checker->ApplySmartCast(variable, consequentBranch ? consequentType : alternateType);
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -2427,11 +2439,36 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     SmartCastArray smartCasts = checker->Context().EnterTestExpression();
     checker->CheckTruthinessOfType(expr->Test());
     SmartCastTypes testedTypes = checker->Context().ExitTestExpression();
-    if (testedTypes.has_value()) {
-        for (auto [variable, consequentType, _] : *testedTypes) {
-            checker->ApplySmartCast(variable, consequentType);
-        }
+    auto const testValue = TryResolveConditionalTestValue(checker, expr->Test());
+    if (testValue.has_value()) {
+        auto const checkBranch = [checker, &testedTypes](ir::Expression *branch, bool takeConsequentSmartCast,
+                                                         bool suppressDiagnostics) {
+            ApplyTestedSmartCasts(checker, testedTypes, takeConsequentSmartCast);
+            if (suppressDiagnostics) {
+                checker::InferMatchContext silentBranchCheckCtx(checker, util::DiagnosticType::SEMANTIC,
+                                                                branch->Range(), false);
+                Type *const branchType = branch->Check(checker);
+                return branchType;
+            }
+            Type *const branchType = branch->Check(checker);
+            return branchType;
+        };
+
+        auto *const takenBranch = testValue.value() ? expr->Consequent() : expr->Alternate();
+        auto *const deadBranch = testValue.value() ? expr->Alternate() : expr->Consequent();
+        auto *const takenType = checkBranch(takenBranch, testValue.value(), false);
+
+        checker->Context().RestoreSmartCasts(smartCasts);
+        (void)checkBranch(deadBranch, !testValue.value(), true);
+
+        expr->SetTsType(takenType);
+
+        // Restore smart casts to initial state.
+        checker->Context().RestoreSmartCasts(smartCasts);
+        return expr->TsType();
     }
+
+    ApplyTestedSmartCasts(checker, testedTypes, true);
 
     auto *consequent = expr->Consequent();
     Type *consequentType = consequent->Check(checker);
@@ -2439,11 +2476,7 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     SmartCastArray consequentSmartCasts = checker->Context().CloneSmartCasts();
     checker->Context().RestoreSmartCasts(smartCasts);
 
-    if (testedTypes.has_value()) {
-        for (auto [variable, _, alternateType] : *testedTypes) {
-            checker->ApplySmartCast(variable, alternateType);
-        }
-    }
+    ApplyTestedSmartCasts(checker, testedTypes, false);
 
     auto *alternate = expr->Alternate();
     Type *alternateType = alternate->Check(checker);
@@ -4393,11 +4426,7 @@ checker::Type *ETSAnalyzer::Check(ir::IfStatement *st) const
     SmartCastArray smartCasts = checker->Context().EnterTestExpression();
     checker->CheckTruthinessOfType(st->Test());
     SmartCastTypes testedTypes = checker->Context().ExitTestExpression();
-    if (testedTypes.has_value()) {
-        for (auto [variable, consequentType, _] : *testedTypes) {
-            checker->ApplySmartCast(variable, consequentType);
-        }
-    }
+    ApplyTestedSmartCasts(checker, testedTypes, true);
 
     checker->Context().EnterPath();
     st->Consequent()->Check(checker);
@@ -4407,11 +4436,7 @@ checker::Type *ETSAnalyzer::Check(ir::IfStatement *st) const
     // Restore smart casts to initial state.
     checker->Context().RestoreSmartCasts(smartCasts);
     //  Apply the alternate smart casts
-    if (testedTypes.has_value()) {
-        for (auto [variable, _, alternateType] : *testedTypes) {
-            checker->ApplySmartCast(variable, alternateType);
-        }
-    }
+    ApplyTestedSmartCasts(checker, testedTypes, false);
 
     if (st->Alternate() != nullptr) {
         checker->Context().EnterPath();
@@ -4826,11 +4851,7 @@ checker::Type *ETSAnalyzer::Check(ir::WhileStatement *st) const
     SmartCastArray savedSmartCasts = checker->Context().EnterTestExpression();
     checker->CheckTruthinessOfType(st->Test());
     SmartCastTypes testedTypes = checker->Context().ExitTestExpression();
-    if (testedTypes.has_value()) {
-        for (auto [variable, consequentType, _] : *testedTypes) {
-            checker->ApplySmartCast(variable, consequentType);
-        }
-    }
+    ApplyTestedSmartCasts(checker, testedTypes, true);
 
     auto [smartCasts, clearFlag] = checker->Context().EnterLoop(*st, testedTypes);
     st->Body()->Check(checker);
