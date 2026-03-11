@@ -510,12 +510,12 @@
                               "loc": {
                                 "start": {
                                   "line": 24,
-                                  "column": 34,
+                                  "column": 16,
                                   "program": "launch_super.ets"
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 39,
+                                  "column": 21,
                                   "program": "launch_super.ets"
                                 }
                               }
@@ -526,12 +526,12 @@
                               "loc": {
                                 "start": {
                                   "line": 24,
-                                  "column": 40,
+                                  "column": 22,
                                   "program": "launch_super.ets"
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 43,
+                                  "column": 25,
                                   "program": "launch_super.ets"
                                 }
                               }
@@ -541,81 +541,18 @@
                             "loc": {
                               "start": {
                                 "line": 24,
-                                "column": 34,
+                                "column": 16,
                                 "program": "launch_super.ets"
                               },
                               "end": {
                                 "line": 24,
-                                "column": 43,
+                                "column": 25,
                                 "program": "launch_super.ets"
                               }
                             }
                           }
                         ],
                         "optional": false,
-                        "typeParameters": {
-                          "type": "TSTypeParameterInstantiation",
-                          "params": [
-                            {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 16,
-                                  "program": "launch_super.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 20,
-                                  "program": "launch_super.ets"
-                                }
-                              }
-                            },
-                            {
-                              "type": "ETSFunctionType",
-                              "params": [],
-                              "returnType": {
-                                "type": "ETSPrimitiveType",
-                                "loc": {
-                                  "start": {
-                                    "line": 24,
-                                    "column": 28,
-                                    "program": "launch_super.ets"
-                                  },
-                                  "end": {
-                                    "line": 24,
-                                    "column": 32,
-                                    "program": "launch_super.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 22,
-                                  "program": "launch_super.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 32,
-                                  "program": "launch_super.ets"
-                                }
-                              }
-                            }
-                          ],
-                          "loc": {
-                            "start": {
-                              "line": 24,
-                              "column": 15,
-                              "program": "launch_super.ets"
-                            },
-                            "end": {
-                              "line": 24,
-                              "column": 33,
-                              "program": "launch_super.ets"
-                            }
-                          }
-                        },
                         "loc": {
                           "start": {
                             "line": 24,
@@ -624,7 +561,7 @@
                           },
                           "end": {
                             "line": 24,
-                            "column": 44,
+                            "column": 26,
                             "program": "launch_super.ets"
                           }
                         }
@@ -637,7 +574,7 @@
                         },
                         "end": {
                           "line": 24,
-                          "column": 45,
+                          "column": 27,
                           "program": "launch_super.ets"
                         }
                       }

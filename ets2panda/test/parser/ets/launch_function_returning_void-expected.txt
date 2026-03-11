@@ -460,81 +460,18 @@
                                 "loc": {
                                   "start": {
                                     "line": 22,
-                                    "column": 49,
+                                    "column": 31,
                                     "program": "launch_function_returning_void.ets"
                                   },
                                   "end": {
                                     "line": 22,
-                                    "column": 52,
+                                    "column": 34,
                                     "program": "launch_function_returning_void.ets"
                                   }
                                 }
                               }
                             ],
                             "optional": false,
-                            "typeParameters": {
-                              "type": "TSTypeParameterInstantiation",
-                              "params": [
-                                {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 31,
-                                      "program": "launch_function_returning_void.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 35,
-                                      "program": "launch_function_returning_void.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "ETSFunctionType",
-                                  "params": [],
-                                  "returnType": {
-                                    "type": "ETSPrimitiveType",
-                                    "loc": {
-                                      "start": {
-                                        "line": 22,
-                                        "column": 43,
-                                        "program": "launch_function_returning_void.ets"
-                                      },
-                                      "end": {
-                                        "line": 22,
-                                        "column": 47,
-                                        "program": "launch_function_returning_void.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 22,
-                                      "column": 37,
-                                      "program": "launch_function_returning_void.ets"
-                                    },
-                                    "end": {
-                                      "line": 22,
-                                      "column": 47,
-                                      "program": "launch_function_returning_void.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 30,
-                                  "program": "launch_function_returning_void.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 48,
-                                  "program": "launch_function_returning_void.ets"
-                                }
-                              }
-                            },
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -543,7 +480,7 @@
                               },
                               "end": {
                                 "line": 22,
-                                "column": 53,
+                                "column": 35,
                                 "program": "launch_function_returning_void.ets"
                               }
                             }
@@ -556,7 +493,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 53,
+                              "column": 35,
                               "program": "launch_function_returning_void.ets"
                             }
                           }
@@ -571,7 +508,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 53,
+                          "column": 35,
                           "program": "launch_function_returning_void.ets"
                         }
                       }
