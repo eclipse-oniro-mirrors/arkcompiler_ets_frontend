@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,5 +71,3 @@ function retC() {
 /* @@? 37:37 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 38:35 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 39:33 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 45:34 Error Semantic error ESE0318: Type 'Array<Int>' cannot be assigned to type 'ConcatArray<Double>' */
-/* @@? 46:32 Error Semantic error ESE0318: Type 'Array<Int>' cannot be assigned to type 'ArrayLike<Double>' */
