@@ -486,6 +486,10 @@ syntax:
   id: 166
   message: "'import' and 'export' may only appear at the top level."
 
+- name: IMPORT_ITSELF
+  id: 175127
+  message: "Module '{}' must not import itself."
+
 - name: IMPORT_META_DIRECT_EVAL
   id: 48
   message: "'import.Meta' is not allowed in direct eval in module code."
