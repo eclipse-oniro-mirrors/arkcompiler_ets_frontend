@@ -1181,14 +1181,33 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         if (propType->IsETSMethodType()) {
             bool needSetter =
                 expr->Parent()->IsAssignmentExpression() && expr == expr->Parent()->AsAssignmentExpression()->Left();
-            if (needSetter) {  // CC-OFF(G.FUN.01-CPP, C_RULE_ID_FUNCTION_NESTING_LEVEL) solid logic
-                if (auto *setterSig = propType->AsETSFunctionType()->FindSetter(); setterSig != nullptr) {
-                    HandleDeclarationNode(uctx_, setterSig->Function());
-                    propType = setterSig->Params()[0]->TsType();
+            if (!needSetter) {
+                if (auto *getterSig = propType->AsETSFunctionType()->FindGetter(); getterSig != nullptr) {
+                    HandleDeclarationNode(uctx_, getterSig->Function());
+                    propType = getterSig->ReturnType();
                 }
-            } else if (auto *getterSig = propType->AsETSFunctionType()->FindGetter(); getterSig != nullptr) {
-                HandleDeclarationNode(uctx_, getterSig->Function());
-                propType = getterSig->ReturnType();
+                return propType;
+            }
+            checker::Signature *setterSig = propType->AsETSFunctionType()->FindSetter();
+            if (setterSig != nullptr) {
+                HandleDeclarationNode(uctx_, setterSig->Function());
+                propType = setterSig->Params()[0]->TsType();
+                return propType;
+            }
+
+            util::StringView methodName = propType->Variable()->Declaration()->Name();
+            auto *objType = expr->AsMemberExpression()->Object()->TsType()->AsETSObjectType();
+            auto *var = objType->GetProperty(methodName, checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
+                                                             checker::PropertySearchFlags::SEARCH_IN_BASE |
+                                                             checker::PropertySearchFlags::SEARCH_IN_INTERFACES);
+            if (var == nullptr) {
+                return propType;
+            }
+            setterSig = var->TsType()->AsETSFunctionType()->FindSetter();
+            if (setterSig != nullptr) {
+                HandleDeclarationNode(uctx_, setterSig->Function());
+                propType = setterSig->Params()[0]->TsType();
+                return propType;
             }
         } else if (expr->IsMemberExpression() && expr->AsMemberExpression()->Property()->Variable() != nullptr) {
             /* Adjustment needed for Readonly<T> types and possibly some other cases */
