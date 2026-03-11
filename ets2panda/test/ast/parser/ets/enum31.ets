@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,5 +25,5 @@ enum ColorC {
 }
 
 
-/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@@ label1 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@@ label1 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */

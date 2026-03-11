@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,17 +61,18 @@ enum MissingLeftBrace
 
 /* @@? 16:5 Error Syntax error ESY0126: Variable declaration expected. */
 /* @@? 22:22 Error Syntax error ESY0228: Unexpected token, expected '{'. */
-/* @@? 32:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
 /* @@? 32:1 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 37:10 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 32:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 37:10 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
 /* @@? 38:1 Error Syntax error ESY0227: Unexpected token '}'. */
 /* @@? 40:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
 /* @@? 43:10 Error Syntax error ESY0227: Unexpected token '?'. */
-/* @@? 43:10 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 43:10 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
 /* @@? 48:3 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
 /* @@? 48:3 Error Semantic error ESE0143: Unresolved reference Member2 */
 /* @@? 49:1 Error Syntax error ESY0227: Unexpected token '}'. */
 /* @@? 56:3 Error Syntax error ESY0228: Unexpected token, expected '{'. */
 /* @@? 56:10 Error Syntax error ESY0224: Identifier expected, got ','. */
 /* @@? 57:3 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 57:3 Error Semantic error ESE0143: Unresolved reference Member2 */
 /* @@? 58:1 Error Syntax error ESY0227: Unexpected token '}'. */

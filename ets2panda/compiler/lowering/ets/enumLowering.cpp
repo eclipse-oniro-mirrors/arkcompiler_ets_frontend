@@ -682,15 +682,6 @@ checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker:
     auto *const itemInit = enumDecl->Members().front()->AsTSEnumMember()->Init();
 
     if (itemInit->IsNumberLiteral()) {
-        if (itemInit->AsNumberLiteral()->Number().IsFloat() &&
-            CheckEnumMemberType<EnumType::FLOAT>(enumDecl->Members(), hasLoggedError, false)) {
-            return CreateEnumNumericClassFromEnumDeclaration<EnumType::FLOAT>(enumDecl, flags);
-        }
-
-        if (itemInit->AsNumberLiteral()->Number().IsDouble() &&
-            CheckEnumMemberType<EnumType::DOUBLE>(enumDecl->Members(), hasLoggedError, false)) {
-            return CreateEnumNumericClassFromEnumDeclaration<EnumType::DOUBLE>(enumDecl, flags);
-        }
         if (((itemInit->AsNumberLiteral()->Number().IsInteger() || itemInit->AsNumberLiteral()->Number().IsLong()) &&
              CheckEnumMemberType<EnumType::INT>(enumDecl->Members(), hasLoggedError, false, &hasLongLiteral))) {
             auto res = hasLongLiteral ? CreateEnumNumericClassFromEnumDeclaration<EnumType::LONG>(enumDecl, flags)
