@@ -126,6 +126,7 @@ private:
 };
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
+ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
 ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange &span, bool flagFindFirstMatch);
 ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &span);
 ir::AstNode *GetTouchingTokenForIdentifier(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);

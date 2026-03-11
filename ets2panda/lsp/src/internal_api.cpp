@@ -110,6 +110,45 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
     return bestMatch;
 }
 
+// temp solution: support right match
+ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, bool flagFindFirstMatch)
+{
+    if (context == nullptr) {
+        return nullptr;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return nullptr;
+    }
+    auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    auto checkFunc = [&pos, &ctx](ir::AstNode *node) {
+        auto program = node->Range().start.Program();
+        if (program == nullptr || program != ctx->parserProgram) {
+            return false;
+        }
+        return pos >= node->Start().index && pos <= node->End().index;
+    };
+    ir::AstNode *bestMatch = ast->FindChild(checkFunc);
+
+    for (auto *stmt : ast->AsETSModule()->Statements()) {
+        ir::AstNode *stmtMatch = stmt->FindChild(checkFunc);
+        if (stmtMatch != nullptr && stmtMatch->Start().index <= pos && stmtMatch->End().index >= pos &&
+            !flagFindFirstMatch) {
+            bestMatch = stmtMatch;
+        }
+    }
+
+    while (bestMatch != nullptr && !flagFindFirstMatch) {
+        ir::AstNode *nestedMatch = bestMatch->FindChild(checkFunc);
+        if (nestedMatch == nullptr) {
+            break;
+        }
+        bestMatch = nestedMatch;
+    }
+
+    return bestMatch;
+}
+
 ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange &span, bool flagFindFirstMatch)
 {
     if (context == nullptr) {
@@ -898,7 +937,7 @@ size_t GetTokenPosOfNode(const ir::AstNode *astNode)
 std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_Context *context, size_t pos)
 {
     std::pair<ir::AstNode *, util::StringView> res;
-    auto node = GetTouchingToken(context, pos, false);
+    auto node = GetTouchingTokenRightMatch(context, pos, false);
     if (node == nullptr) {
         return res;
     }
