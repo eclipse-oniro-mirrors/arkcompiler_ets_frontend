@@ -1,3 +1,4 @@
+import st from "@ohos.lang.interop";
 import * as np from "./test_ets2ts_isolated_enum";
 import { B, C0 as C } from "./test_ets2ts_isolated_enum";
 export declare let b: np.A;
