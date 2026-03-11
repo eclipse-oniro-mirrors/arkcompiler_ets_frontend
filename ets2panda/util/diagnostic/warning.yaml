@@ -131,11 +131,6 @@ warning:
   id: 14
   message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
 
-- name: PACKAGE_DEPRECATED
-  id: 59220
-  message: "The package keyword is deprecated."
-  strict: true
-
 - name: PACKAGE_DEPRECATED_WARNING
   id: 163154
   message: "Consider do not use the keyword 'package'. This keyword will be deprecated soon"
@@ -190,5 +185,6 @@ graveyard:
 - 28
 - 11567
 - 49710
+- 59220
 - 122948
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.
