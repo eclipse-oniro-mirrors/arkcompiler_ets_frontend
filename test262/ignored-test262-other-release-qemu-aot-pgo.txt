@@ -32,7 +32,7 @@ test262/data/other_tests/built-ins/Date/prototype/setUTCSeconds/arg-coercion-ord
 #23670
 test262/data/other_tests/harness/nativeFunctionMatcher.js
 
-#28424
+#31701
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js
 
 # Issue 11781

@@ -87,7 +87,7 @@ context-sensitive-expr/RecordRecursiveTest-Lambda04.ets
 context-sensitive-expr/RecordRecursiveTest-OriginalTdd.ets
 TypeAliasRecusive.ets
 
-#32594 TSC Fail
+# TSC Fail
 nested_array_1.ets
 nested_array_2.ets
 

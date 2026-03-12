@@ -1,7 +1,6 @@
 # Known failures list for weekly workload-fastverify-qemu-int
 
 #26315
-json-parse-inspector
 float-mm
 typescript-compiler
 wsl
@@ -9,20 +8,16 @@ wsl
 #18740
 splay
 
-#27146
-json-stringify-inspector
-
-#18863
-json-parse-inspector
-
 ##25919
 raytrace
 
 #19862
 typescript-compiler
 
-#30387
+#33565
 crypto
+json-stringify-inspector
+json-parse-inspector
 mandreel
 numericalComputation
 OfflineAssembler

@@ -16,9 +16,9 @@ ast/parser/ets/extension_function_tests/extension_function_class_typealias.ets
 # Issue #22140
 ast/parser/ets/InvalidLexer.ets
 
-# Issue #22206
- ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
- ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
+# Issue #33652
+ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
+ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
 
 # Issue: #23074
 # after the fix the test fails to detect another type error
