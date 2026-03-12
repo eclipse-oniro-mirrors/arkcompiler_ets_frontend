@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -115,16 +115,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
-            "column": 44,
-            "endLine": 30,
-            "endColumn": 48,
-            "problem": "ThisType",
-            "suggest": "",
-            "rule": "Type notation using \"this\" is not supported (arkts-no-typing-with-this)",
-            "severity": "ERROR"
-        },
-        {
             "line": 45,
             "column": 20,
             "endLine": 45,
@@ -132,16 +122,6 @@
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 45,
-            "column": 61,
-            "endLine": 45,
-            "endColumn": 65,
-            "problem": "ThisType",
-            "suggest": "",
-            "rule": "Type notation using \"this\" is not supported (arkts-no-typing-with-this)",
             "severity": "ERROR"
         }
     ]
