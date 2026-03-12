@@ -211,15 +211,17 @@ export class LspDeclInfo extends LspNode {
 }
 
 export class LspReferences extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, definitionData?: LspDefinitionData) {
     super(peer);
     this.referenceInfos = new NativePtrDecoder()
       .decode(global.es2panda._getReferenceInfos(this.peer))
       .map((elPeer: KNativePointer) => {
         return new LspReferenceData(elPeer);
       });
+    this.definitionData = definitionData;
   }
   readonly referenceInfos: LspReferenceData[];
+  readonly definitionData?: LspDefinitionData;
 }
 
 export class LspTextSpan extends LspNode {

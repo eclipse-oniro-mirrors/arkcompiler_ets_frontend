@@ -457,8 +457,25 @@ public:
         return varbinders_;
     }
 
+    void Clear();
+
 private:
     void VerifyDeclarationModule();
+
+    void ResetAst()
+    {
+        ast_ = nullptr;
+    }
+
+    void RemoveASTLowered()
+    {
+        isASTlowered_ = false;
+    }
+
+    void SetExternalSources(const ExternalSources *externalSources)
+    {
+        externalSources_ = *externalSources;
+    }
 
 private:
     util::ImportInfo importInfo_;

@@ -46,6 +46,7 @@
 #include "compiler/lowering/util.h"
 #include "formatting/formatting.h"
 #include "lsp_utils.h"
+#include "symbol_reference_index.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 
@@ -193,6 +194,95 @@ References GetReferencesAtPosition(es2panda_Context *context, DeclInfo *declInfo
         ref.start = startCharOffset;
         ref.length = lengthChar;
     }
+    auto compare = [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
+        if (lhs.fileName != rhs.fileName) {
+            return lhs.fileName < rhs.fileName;
+        }
+        if (lhs.start != rhs.start) {
+            return lhs.start < rhs.start;
+        }
+        return lhs.length < rhs.length;
+    };
+    RemoveDuplicates(result.referenceInfos, compare);
+    return result;
+}
+
+void InitSymbolReferenceIndexWrapper()
+{
+    InitSymbolReferenceIndex();
+}
+
+void ClearSymbolReferenceIndexWrapper()
+{
+    ClearSymbolReferenceIndex();
+}
+
+bool BuildSymbolReferenceIndexForContextWrapper(es2panda_Context *context)
+{
+    if (context == nullptr) {
+        return false;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+    return BuildSymbolReferenceIndexForContext(context);
+}
+
+bool BuildSymbolReferenceIndexForContextWithExternalWrapper(es2panda_Context *context)
+{
+    if (context == nullptr) {
+        return false;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+    return BuildSymbolReferenceIndexForContextWithExternal(context);
+}
+
+bool RemoveSymbolReferenceIndexForFileWrapper(const char *fileName)
+{
+    if (fileName == nullptr) {
+        return false;
+    }
+    return RemoveSymbolReferenceIndexForFile(std::string(fileName));
+}
+
+References GetReferencesAtPositionFromIndexWrapper(es2panda_Context *context, size_t position)
+{
+    References result {};
+    if (context == nullptr) {
+        return result;
+    }
+
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+
+    std::string source = std::string(ctx->parserProgram->SourceCode());
+    size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
+    result = GetReferencesAtPositionFromIndex(context, byteOffset);
+    if (!result.definitionInfo.fileName.empty()) {
+        auto defFileSource = GetIndexedFileSource(result.definitionInfo.fileName);
+        if (!defFileSource.empty()) {
+            size_t startCharOffset =
+                ark::es2panda::lsp::ByteOffsetToCodePointOffset(defFileSource, result.definitionInfo.start);
+            size_t lengthChar = ark::es2panda::lsp::ByteOffsetToCodePointOffset(
+                                    defFileSource, result.definitionInfo.start + result.definitionInfo.length) -
+                                startCharOffset;
+            result.definitionInfo.start = startCharOffset;
+            result.definitionInfo.length = lengthChar;
+        }
+    }
+
+    for (auto &ref : result.referenceInfos) {
+        auto fileSource = GetIndexedFileSource(ref.fileName);
+        if (fileSource.empty()) {
+            continue;
+        }
+        size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, ref.start);
+        size_t lengthChar =
+            ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, ref.start + ref.length) - startCharOffset;
+        ref.start = startCharOffset;
+        ref.length = lengthChar;
+    }
+
     auto compare = [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
         if (lhs.fileName != rhs.fileName) {
             return lhs.fileName < rhs.fileName;
@@ -1042,7 +1132,13 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetFormattingEditsForRange,
                     GetFormattingEditsAfterKeystroke,
                     GetFormatContext,
-                    GetDefaultFormatCodeSettings};
+                    GetDefaultFormatCodeSettings,
+                    InitSymbolReferenceIndexWrapper,
+                    ClearSymbolReferenceIndexWrapper,
+                    BuildSymbolReferenceIndexForContextWrapper,
+                    BuildSymbolReferenceIndexForContextWithExternalWrapper,
+                    RemoveSymbolReferenceIndexForFileWrapper,
+                    GetReferencesAtPositionFromIndexWrapper};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

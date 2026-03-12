@@ -154,6 +154,14 @@ public:
 
     bool IsValid() const;
 
+    void UpdateTextForLSPIncremental(std::string textSource, std::string &&contents)
+    {
+        parser::ImportCache<parser::CacheType::SOURCES>::UpdateOnFileModification(Key(), std::move(textSource),
+                                                                                  std::move(contents), Kind());
+        ClearKind();
+        parser::ImportCache<parser::CacheType::SOURCES>::GetFromCache(this);
+    }
+
 private:
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
     void SetTextFile(const std::string &file, util::DiagnosticEngine *de)
@@ -285,6 +293,7 @@ public:
     const ArkTsConfig &ArkTSConfig() const;
 
     void InitParseQueueForSimult();
+    void PrepareParseQueueForProgram(parser::Program *program);
     void IntroduceMainProgramForSimult();
 
     void SetupGlobalProgram();
@@ -294,6 +303,12 @@ public:
     parser::Program *SetupProgramForDebugInfoPlugin(std::string_view sourceFilePath, std::string_view moduleName);
 
     parser::Program *SearchResolved(const ImportInfo &importInfo) const;
+    void RemoveProgramFromResolvedSources(ArenaString filename);
+
+    parser::Program *FindOrIntroduceProgramForIncremental(std::string_view absolutePath);
+
+    template <bool ATTACH_TO_GLOBAL_EXTERNAL_SOURCES = true>
+    parser::Program *FindOrIntroduceProgram(std::string_view absolutePath);
 
     static std::string FormEtscacheFilePath(std::string moduleName, const std::string &cacheDir);
     static void ExtractEtscacheToFile(const panda_file::File &pf, const std::string &abcPath,
@@ -311,6 +326,11 @@ public:
     }
 
     const auto &GetFileDependencies() const
+    {
+        return fileDependencies_;
+    }
+
+    auto &GetFileDependencies()
     {
         return fileDependencies_;
     }
@@ -357,6 +377,7 @@ private:
     parser::ProgramAdapter<KIND> *IntroduceProgram(const ImportInfo &importInfo);
     parser::Program *IntroduceProgram(const ImportInfo &importInfo);
 
+    template <bool ATTACH_TO_GLOBAL_EXTERNAL_SOURCES = true>
     parser::Program *LookupImportDataAndIntroduceProgram(ImportInfo *importInfo);
     parser::Program *LookupProgramCaches(const ImportInfo &importInfo);
     void LookupMemCache(ImportInfo *importInfo);

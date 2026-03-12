@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-import { getLsp, getLspWithUi, getRealPath } from '../utils';
+import fs from 'fs';
+import { getLsp, getRealPath, getLspWithUi } from '../utils';
 import path from 'path';
 
 describe('getReferencesAtPositionTest', () => {
@@ -21,7 +22,7 @@ describe('getReferencesAtPositionTest', () => {
   const REFERENCES_001 = [
     { fileName: 'getReferencesAtPosition2.ets', start: 635, length: 1 },
     { fileName: 'getReferencesAtPosition2.ets', start: 665, length: 1 },
-    { fileName: 'getReferencesAtPosition3.ets', start: 617, length: 1 },
+    { fileName: 'getReferencesAtPosition3.ets', start: 617, length: 1 }, 
     { fileName: 'getReferencesAtPosition3.ets', start: 667, length: 1 }
   ];
   const REFERENCES_002 = [
@@ -38,6 +39,11 @@ describe('getReferencesAtPositionTest', () => {
   }
   describe('No UI Plugins', () => {
     const lsp = getLsp(moduleName);
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition2.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition2.ets'), 'utf8') });
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition3.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition3.ets'), 'utf8') });
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), 'utf8') });
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition5.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition5.ets'), 'utf8') });
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 'utf8') });
     test('getReferencesAtPosition_000', () => {
       const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition1.ets'), 613);
       expect(res?.length).toBe(0);

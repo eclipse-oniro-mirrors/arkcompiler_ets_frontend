@@ -207,9 +207,11 @@ ir::ETSModule *ETSParser::ParseImportsAndReExportOnly(lexer::SourcePosition star
 parser::Program *ETSParser::IntroduceStdlibImportProgram(std::string &&importSrc)
 {
     auto *stdlibImportProgram = GetImportPathManager()->IntroduceStdlibImportProgram(std::move(importSrc));
+    if (stdlibImportProgram->Ast() != nullptr) {
+        return stdlibImportProgram;
+    }
     ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().back().program == stdlibImportProgram);
     ES2PANDA_ASSERT(!GetImportPathManager()->GetParseQueue().back().isParsed);
-    ES2PANDA_ASSERT(stdlibImportProgram->Ast() == nullptr);
 
     GetContext().Status() |= ParserStatus::IN_DEFAULT_IMPORTS;
     ParseSources();
@@ -228,6 +230,23 @@ void ETSParser::AddDirectImportsToDirectExternalSources(
         auto key = prog->GetImportInfo().ResolvedSource();
         directExtSourcesHolder.insert({ArenaString {key}, prog});
     }
+}
+
+void ETSParser::IncrementalParse()
+{
+    ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+    SetProgram(Context()->parserProgram);
+    GetContext().SetProgram(Context()->parserProgram);
+    GetContext().SetLanguage(ToLanguage(Context()->parserProgram->Extension()));
+    ES2PANDA_ASSERT(Context()->parserProgram == GetProgram());
+
+    ES2PANDA_ASSERT(GetProgram() != nullptr);
+    ParseSource(GetProgram());
+    GetImportPathManager()->GetParseQueue().front().isParsed = true;
+    ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().front().program == GetProgram());
+
+    DoSomethingSpecificToMainProgram(this);
+    ParseSources();
 }
 
 void ETSParser::ParseInSimultMode()

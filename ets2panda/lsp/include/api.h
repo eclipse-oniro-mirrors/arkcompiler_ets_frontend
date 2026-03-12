@@ -72,6 +72,7 @@ typedef struct ReferenceInfo {
 
 typedef struct References {
     std::vector<ReferenceInfo> referenceInfos;
+    DefinitionInfo definitionInfo;
 } References;
 
 typedef struct Position {
@@ -423,6 +424,12 @@ typedef struct LSPAPI {
                                                                 char key, const TextSpan &span);
     ark::es2panda::lsp::FormatContext (*getFormatContext)(ark::es2panda::lsp::FormatCodeSettings &options);
     ark::es2panda::lsp::FormatCodeSettings (*getDefaultFormatCodeSettings)(const std::string &newLineCharacter);
+    void (*initSymbolReferenceIndex)();
+    void (*clearSymbolReferenceIndex)();
+    bool (*buildSymbolReferenceIndexForContext)(es2panda_Context *context);
+    bool (*buildSymbolReferenceIndexForContextWithExternal)(es2panda_Context *context);
+    bool (*removeSymbolReferenceIndexForFile)(const char *fileName);
+    References (*getReferencesAtPositionFromIndex)(es2panda_Context *context, size_t position);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

@@ -24,7 +24,7 @@ export const DEFAULT_PATH_CONFIG: PathConfig = {
   declgenOutDir: ''
 };
 
-export const UI_PLUGIN_LIST: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+export const UI_PLUGIN_LIST: string[] = ['ui-plugins', 'memo-plugins'];
 const DEFAULT_PLUGIN_LIST: string[] = [];
 const STDLIB_PATH_KEYS = ['std', 'escompat', 'arkruntime'];
 
@@ -133,7 +133,7 @@ function initLspEnv(pathConfig: PathConfig): void {
     process.env.BINDINGS_PATH || path.join(pathConfig.buildSdkPath, 'build-tools', 'bindings');
 
   const pandaLibPath =
-    process.env.PANDA_LIB_PATH || path.join(pathConfig.buildSdkPath, 'build-tools', 'bindings');
+    process.env.PANDA_LIB_PATH || path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'lib');
 
   const pandaBinPath =
     process.env.PANDA_BIN_PATH || path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'bin');

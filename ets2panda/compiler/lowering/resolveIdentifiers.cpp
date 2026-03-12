@@ -40,7 +40,7 @@ void ResolveIdentifiers::Setup()
     // NOTE(dkofanov): If present, the whole cache should be restored at once, at program-restoration. To be moved.
     auto *program = Context()->parserProgram;
     program->GetExternalSources()->Visit([program](auto *extProgram) {
-        if (extProgram->IsASTLowered() || !extProgram->IsProgramModified()) {
+        if (!extProgram->IsProgramModified()) {
             InsertReExported(program, program->VarBinder()->AsETSBinder(), extProgram);
         }
     });

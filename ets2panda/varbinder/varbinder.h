@@ -141,6 +141,14 @@ public:
         return varScope_;
     }
 
+    void CleanScopes()
+    {
+        topScope_ = nullptr;
+        scope_ = nullptr;
+        varScope_ = nullptr;
+        functionScopes_.clear();
+    }
+
     [[nodiscard]] bool IsETSBinder() const noexcept
     {
         return Extension() == ScriptExtension::ETS;

@@ -90,7 +90,7 @@ import * as crypto from 'crypto';
 import * as os from 'os';
 import { changeDeclgenFileExtension } from '../common/utils';
 import { logger } from './logger';
-import { TextPositionUtils } from './utils';
+import { TextPositionUtils, formEts2pandaCmd } from './utils';
 
 const ets2pandaCmdPrefix = ['-', '--extension', 'ets', '--arktsconfig'];
 
@@ -98,7 +98,7 @@ function initBuildEnv(): void {
   const currentPath: string | undefined = process.env.PATH;
   let pandaLibPath: string = process.env.PANDA_LIB_PATH
     ? process.env.PANDA_LIB_PATH
-    : path.resolve(__dirname, '../../../bindings');
+    : path.resolve(__dirname, '../../../ets2panda/lib');
   process.env.PATH = `${currentPath}${path.delimiter}${pandaLibPath}`;
 }
 
@@ -143,7 +143,7 @@ export class Lsp {
     this.fileDependencies = path.join(this.cacheDir, 'file_dependencies.json');
     this.pandaLibPath = process.env.PANDA_LIB_PATH
       ? process.env.PANDA_LIB_PATH
-      : path.resolve(__dirname, '../../../bindings');
+      : path.resolve(__dirname, '../../../ets2panda/lib');
     this.pandaBinPath = process.env.PANDA_BIN_PATH
       ? process.env.PANDA_BIN_PATH
       : path.resolve(__dirname, '../../../ets2panda/bin');
@@ -157,6 +157,11 @@ export class Lsp {
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
     PluginDriver.getInstance().initPlugins(this.defaultBuildConfig);
     this.lspDriverHelper.memInitialize(this.pandaLibPath);
+    try {
+      global.es2panda._initSymbolReferenceIndex();
+    } catch (error) {
+      logger.warn(`init symbol reference index failed: ${String(error)}`);
+    }
   }
 
   // Partially update for new file
@@ -181,10 +186,16 @@ export class Lsp {
     this.invalidateReverseClosureCache(invalidationRoots, prevReverseModuleDeps, this.reverseModuleDeps);
   }
 
+  deleteFile(fileName: string): void {
+    if (this.filesMap.size === 1) {
+      const activeEntry = Array.from(this.filesMap.entries())[0];
+      const activeFileCache = activeEntry[1];
+      const ret = global.es2pandaPublic._DeleteProgramForFile(activeFileCache.fileContext, fileName);
+      this.tryRemoveSymbolReferenceIndex(fileName);
+    }
+  }
+
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
-    this.filesMap.forEach((value, key) => {
-      this.deleteFromFilesMap(key);
-    });
     if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
       return;
     }
@@ -192,13 +203,34 @@ export class Lsp {
     if (this.filesMap.get(fileName)?.fileHash === hash) {
       return;
     }
-    if (this.filesMap.has(fileName)) {
-      this.deleteFromFilesMap(fileName);
+
+    if (this.filesMap.size === 1) {
+      const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
+      const ret = global.es2pandaPublic._IncrementalPrepareProgram(
+        activeFileCache.fileContext,
+        fileName,
+        fileContent.newDoc
+      );
+      if (ret !== 0) {
+        logger.error('incremental update failed for ', fileName);
+        return;
+      }
+      this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
+      this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
+      this.filesMap.clear();
+      this.filesMap.set(fileName, {
+        fileContent: fileContent.newDoc,
+        fileConfig: activeFileCache.fileConfig,
+        fileContext: activeFileCache.fileContext,
+        fileHash: hash
+      });
+      return;
     }
     const [cfg, ctx] = this.createContext(fileName, true, fileContent.newDoc) ?? [];
     if (!cfg || !ctx) {
       return;
     }
+    this.tryBuildSymbolReferenceIndex(fileName, ctx);
     this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx, fileHash: hash });
   }
 
@@ -210,6 +242,25 @@ export class Lsp {
     }
   }
 
+  private tryBuildSymbolReferenceIndex(filePath: string, context: KNativePointer): void {
+    try {
+      const ret = global.es2panda._buildSymbolReferenceIndexForContext(context);
+      if (!ret) {
+        logger.warn(`build symbol reference index failed for ${filePath}`);
+      }
+    } catch (error) {
+      logger.warn(`build symbol reference index exception for ${filePath}: ${String(error)}`);
+    }
+  }
+
+  private tryRemoveSymbolReferenceIndex(filePath: string): void {
+    try {
+      global.es2panda._removeSymbolReferenceIndexForFile(filePath);
+    } catch (error) {
+      logger.warn(`remove symbol reference index exception for ${filePath}: ${String(error)}`);
+    }
+  }
+
   private getFileSource(filePath: string): string {
     const getSource =
       this.filesMap.get(filePath)?.fileContent || this.getFileContent(filePath) || fs.readFileSync(filePath, 'utf8');
@@ -217,6 +268,27 @@ export class Lsp {
       logger.error('File content not found for path: ', filePath);
     }
     return getSource.replace(/\r\n/g, '\n');
+  }
+
+  private proceedPreparedContext(filePath: string, context: KNativePointer, processToCheck: boolean = true): void {
+      const packageName = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
+      ? this.moduleInfos[filePath].packageName
+      : undefined;
+    const buildConfig = packageName ? this.buildConfigs[packageName] : this.defaultBuildConfig;
+    const pluginDriver = PluginDriver.getInstance();
+    pluginDriver.initPlugins(buildConfig);
+    const pluginContext = pluginDriver.getPluginContext();
+    pluginContext.setCodingFilePath(filePath);
+    pluginContext.setProjectConfig(buildConfig);
+    pluginContext.setContextPtr(context);
+
+    this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
+    PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
+
+    if (processToCheck) {
+      this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, context);
+      PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+    }
   }
 
   private createContext(
@@ -261,26 +333,9 @@ export class Lsp {
     const localCfg = this.lspDriverHelper.createCfg(ets2pandaCmd, filePath, this.pandaLibPath);
     const source = fileSource ? fileSource : this.getFileSource(filePath);
 
-    const localCtx = this.lspDriverHelper.createCtx(source, filePath, localCfg, this.globalContextPtr);
+    const localCtx = this.lspDriverHelper.createCtx(source, filePath, localCfg, this.globalContextPtr, false, true);
     try {
-      const packageName = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
-        ? this.moduleInfos[filePath].packageName
-        : undefined;
-      const buildConfig = packageName ? this.buildConfigs[packageName] : this.defaultBuildConfig;
-      const pluginDriver = PluginDriver.getInstance();
-      pluginDriver.initPlugins(buildConfig);
-      const pluginContext = pluginDriver.getPluginContext();
-      pluginContext.setCodingFilePath(filePath);
-      pluginContext.setProjectConfig(buildConfig);
-      pluginContext.setContextPtr(localCtx);
-
-      this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, localCtx);
-      PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-
-      if (processToCheck) {
-        this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, localCtx);
-        PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-      }
+      this.proceedPreparedContext(filePath, localCtx, processToCheck);
       return [localCfg, localCtx];
     } catch (error) {
       this.lspDriverHelper.destroyContext(localCtx);
@@ -726,67 +781,35 @@ export class Lsp {
       perfScope?.end();
       return result;
     }
-    let declInfo: KPointer;
-    let searchFileCache = this.filesMap.get(filename.valueOf());
-    if (searchFileCache) {
-      try {
-        declInfo = global.es2panda._getDeclInfo(searchFileCache.fileContext, offset);
-      } catch (error) {
-        logger.error('failed to getReferencesAtPosition by fileCache', error);
+
+    let ptr: KPointer;
+    const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
+    filename = isWindows ? filename.replace(/\//g, '\\') : filename;
+    const fileCache = this.filesMap.get(filename.valueOf());
+    if (fileCache) {
+      ptr = global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, offset);
+    } else {
+      const [cfg, ctx] = this.createContext(filename) ?? [];
+      if (!cfg || !ctx) {
         return;
       }
-    } else {
-      const [cfg, searchCtx] = this.createContextForCrossModule(filename) ?? [];
-      if (!cfg || !searchCtx) { return; }
       try {
-        declInfo = global.es2panda._getDeclInfo(searchCtx, offset);
-      } catch (error) {
-        logger.error('failed to getReferencesAtPosition', error);
-        return;
+        global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+        ptr = global.es2panda._getReferencesAtPositionFromIndex(ctx, offset);
       } finally {
-        this.destroyContext(cfg, searchCtx);
+        this.destroyContext(cfg, ctx);
       }
     }
 
-    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
-    const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
-    if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
-      this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
-    }
-    for (let i = 0; i < compileFiles.length; i++) {
-      let ptr: KPointer;
-      let fileCache = this.filesMap.get(compileFiles[i].valueOf());
-      if (fileCache) {
-        try {
-          ptr = global.es2panda._getReferencesAtPosition(fileCache.fileContext, declInfo);
-        } catch (error) {
-          logger.error('failed to getReferencesAtPosition by fileCache', error);
-          return;
-        }
-      } else {
-        const [cfg, ctx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
-        if (!cfg || !ctx) { return; }
-        try {
-          ptr = global.es2panda._getReferencesAtPosition(ctx, declInfo);
-        } catch (error) {
-          logger.error('failed to getReferencesAtPosition', error);
-          return;
-        } finally {
-          this.destroyContext(cfg, ctx);
-        }
+    const refs = new LspReferences(ptr);
+    refs.referenceInfos.forEach((ref) => {
+      const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
+      if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
+        ref.nodeInfos = nodeInfoTemp;
       }
-      let refs = new LspReferences(ptr);
-      if (refs.referenceInfos.length === 0) {
-        continue;
-      }
-      refs.referenceInfos.forEach((ref) => {
-        const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
-        if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
-          ref.nodeInfos = nodeInfoTemp;
-        }
-        result.push(ref);
-      });
-    }
+      result.push(ref);
+    });
+
     result = Array.from(new Set(result));
     perfScope?.end();
     return result;
@@ -2176,16 +2199,27 @@ export class Lsp {
   // AST caching is not enabled by default.
   // Call `initAstCache` before invoking the language service interface to enable AST cache
   public initAstCache(): void {
-    const jobs: Record<string, Job> = {};
-    const queues: Job[] = [];
-    // #15318:Temp disable AstCache 
-    // this.collectCompileJobs(jobs);
-    this.initGlobalContext(jobs);
-    this.initCompileQueues(jobs, queues);
-    if (Object.keys(jobs).length === 0 && queues.length === 0) {
-      return;
-    }
-    this.dealWithJob(jobs, queues);
+    let files: string[] = Array.from(Object.keys(this.moduleInfos));
+    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, true, files[0]);
+    let lspDriverHelper = new LspDriverHelper();
+    let config = lspDriverHelper.createCfg(ets2pandaCmd, files[0]);
+    const ctx = lspDriverHelper.createContextSimultaneousModeForLsp(config.peer, files.length, files, true);
+    PluginDriver.getInstance().getPluginContext().setCodingFilePath(files[0]);
+    PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
+    PluginDriver.getInstance().getPluginContext().setContextPtr(ctx);
+
+    this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, ctx);
+    PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
+    this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
+    PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+
+    global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+    this.filesMap.set(files[0], {
+      fileContent: fs.readFileSync(files[0], 'utf8').replace(/\r\n/g, '\n'),
+      fileConfig: config,
+      fileContext: ctx,
+      fileHash: createHash(files[0])
+    });
   }
 
   private compileExternalProgram(jobInfo: JobInfo): void {

@@ -684,6 +684,55 @@ KNativePointer impl_getReferencesAtPosition(KNativePointer context, KNativePoint
 }
 TS_INTEROP_2(getReferencesAtPosition, KNativePointer, KNativePointer, KNativePointer)
 
+KInt impl_initSymbolReferenceIndex()
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    ctx->initSymbolReferenceIndex();
+    return 0;
+}
+TS_INTEROP_0(initSymbolReferenceIndex, KInt)
+
+KInt impl_clearSymbolReferenceIndex()
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    ctx->clearSymbolReferenceIndex();
+    return 0;
+}
+TS_INTEROP_0(clearSymbolReferenceIndex, KInt)
+
+KBoolean impl_buildSymbolReferenceIndexForContext(KNativePointer context)
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    auto ok = ctx->buildSymbolReferenceIndexForContext(reinterpret_cast<es2panda_Context *>(context));
+    return ok ? 1 : 0;
+}
+TS_INTEROP_1(buildSymbolReferenceIndexForContext, KBoolean, KNativePointer)
+
+KBoolean impl_buildSymbolReferenceIndexForContextWithExternal(KNativePointer context)
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    auto ok = ctx->buildSymbolReferenceIndexForContextWithExternal(reinterpret_cast<es2panda_Context *>(context));
+    return ok ? 1 : 0;
+}
+TS_INTEROP_1(buildSymbolReferenceIndexForContextWithExternal, KBoolean, KNativePointer)
+
+KBoolean impl_removeSymbolReferenceIndexForFile(KStringPtr &fileNamePtr)
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    auto ok = ctx->removeSymbolReferenceIndexForFile(GetStringCopy(fileNamePtr));
+    return ok ? 1 : 0;
+}
+TS_INTEROP_1(removeSymbolReferenceIndexForFile, KBoolean, KStringPtr)
+
+KNativePointer impl_getReferencesAtPositionFromIndex(KNativePointer context, KInt position)
+{
+    LSPAPI const *ctx = GetLspApiImpl();
+    auto ref = new References(ctx->getReferencesAtPositionFromIndex(reinterpret_cast<es2panda_Context *>(context),
+                                                                    static_cast<std::size_t>(position)));
+    return ref;
+}
+TS_INTEROP_2(getReferencesAtPositionFromIndex, KNativePointer, KNativePointer, KInt)
+
 KNativePointer impl_getReferenceInfos(KNativePointer refs)
 {
     auto *refsPtr = reinterpret_cast<References *>(refs);

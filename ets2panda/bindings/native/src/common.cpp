@@ -40,13 +40,10 @@ void *FindLibrary()
         }
     }
 
-    std::string primaryLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_OHOS_LSP : G_LIB_ES2_PANDA_PUBLIC_OHOS;
-    std::string fallbackLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
-
-    if (auto *primaryLibrary = LoadLibrary(basePath + primaryLib); primaryLibrary != nullptr) {
+    if (auto *primaryLibrary = LoadLibrary(basePath + G_LIB_ES2_PANDA_PUBLIC_OHOS); primaryLibrary != nullptr) {
         return primaryLibrary;
     }
-    if (auto *fallbackLibrary = LoadLibrary(basePath + fallbackLib); fallbackLibrary != nullptr) {
+    if (auto *fallbackLibrary = LoadLibrary(basePath + G_LIB_ES2_PANDA_PUBLIC); fallbackLibrary != nullptr) {
         return fallbackLibrary;
     }
     return nullptr;
@@ -59,8 +56,7 @@ const es2panda_Impl *GetPublicImpl()
     }
     auto library = FindLibrary();
     if (library == nullptr) {
-        const char *libName = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
-        std::cout << "Cannot find " << libName << endl;
+        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC << endl;
     }
     auto symbol = FindSymbol(library, "es2panda_GetImpl");
     if (symbol == nullptr) {
@@ -144,7 +140,6 @@ TS_INTEROP_V0(MemInitialize)
 void impl_MemInitializeWithPath(KStringPtr &pandaLibPath)
 {
     g_pandaLibPath = GetStringView(pandaLibPath);
-    g_isLspUsage = true;
     GetPublicImpl()->MemInitialize();
 }
 TS_INTEROP_V1(MemInitializeWithPath, KStringPtr)
@@ -218,3 +213,17 @@ void impl_InvalidateFileCache(KNativePointer globalContextPtr, KStringPtr &filen
     return GetPublicImpl()->InvalidateFileCache(context, filenamePtr.Data());
 }
 TS_INTEROP_V2(InvalidateFileCache, KNativePointer, KStringPtr)
+
+KInt impl_IncrementalPrepareProgram(KNativePointer contextPtr, KStringPtr &filenamePtr, KStringPtr &sourceTextPtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return GetPublicImpl()->IncrementalPrepareProgram(context, filenamePtr.Data(), sourceTextPtr.Data());
+}
+TS_INTEROP_3(IncrementalPrepareProgram, KInt, KNativePointer, KStringPtr, KStringPtr)
+
+KInt impl_DeleteProgramForFile(KNativePointer contextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return GetPublicImpl()->DeleteProgramForFile(context, filenamePtr.Data());
+}
+TS_INTEROP_2(DeleteProgramForFile, KInt, KNativePointer, KStringPtr)

@@ -18,7 +18,7 @@ import { global } from './global';
 import { throwError } from './utils';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';
 import { withStringResult } from './Platform';
-import { KBoolean, KInt, KNativePointer, KPointer } from './InteropTypes';
+import { KBoolean, KInt, KNativePointer, KPointer, nullptr} from './InteropTypes';
 import { passString, passStringArray, unpackString } from './private';
 import { Es2pandaNativeModule } from './Es2pandaNativeModule';
 
@@ -210,6 +210,13 @@ export class LspDriverHelper {
         return Config.create(cmd, filePath, pandaLibPath, true);
     }
 
+    public createContextSimultaneousModeForLsp(
+        configPtr: KNativePointer, fileNamesCount: KInt, filenames: string[], isLspUsage: boolean
+    ): KNativePointer {
+        let ctx = global.es2panda._CreateContextSimultaneousModeForLsp(configPtr, fileNamesCount, passStringArray(filenames), isLspUsage);
+        return ctx;
+    }
+
     public createCtx(
         source: string,
         filePath: string,
@@ -218,11 +225,7 @@ export class LspDriverHelper {
         isExternal: boolean = false,
         isLspUsage: boolean = false
     ): KNativePointer {
-        if (globalContextPtr) {
-            return Context.lspCreateCacheContextFromString(source, filePath, cfg, globalContextPtr, isExternal, isLspUsage);
-        } else {
-            return Context.lspCreateFromString(source, filePath, cfg);
-        }
+        return Context.lspCreateCacheContextFromString(source, filePath, cfg, nullptr, isExternal, isLspUsage);
     }
 
     public proceedToState(state: Es2pandaContextState, ctx: KNativePointer): void {

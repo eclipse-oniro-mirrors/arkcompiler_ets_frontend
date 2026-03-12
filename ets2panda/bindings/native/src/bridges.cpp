@@ -95,6 +95,29 @@ KNativePointer impl_FormOutputPathForFile(KNativePointer contextPtr, KStringPtr 
 }
 TS_INTEROP_2(FormOutputPathForFile, KNativePointer, KNativePointer, KStringPtr)
 
+KNativePointer impl_CreateContextSimultaneousModeForLsp(KNativePointer configPtr, KInt fileNamesCount,
+                                                        KStringArray filenames, KBoolean isLspUsage)
+{
+    auto config = reinterpret_cast<es2panda_Config *>(configPtr);
+    const std::size_t headerLen = 4;
+    if (fileNamesCount <= 0) {
+        return nullptr;
+    }
+    const char **externalFileList = new const char *[fileNamesCount];
+    std::size_t position = headerLen;
+    std::size_t strLen;
+    for (std::size_t i = 0; i < static_cast<std::size_t>(fileNamesCount); ++i) {
+        strLen = UnpackUInt(filenames + position);
+        position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        externalFileList[i] = strdup(std::string(reinterpret_cast<const char *>(filenames + position), strLen).c_str());
+        position += strLen;
+    }
+    return GetPublicImpl()->CreateContextSimultaneousModeForLsp(config, fileNamesCount, externalFileList,
+                                                                isLspUsage != 0);
+}
+TS_INTEROP_4(CreateContextSimultaneousModeForLsp, KNativePointer, KNativePointer, KInt, KStringArray, KBoolean)
+
 KNativePointer impl_CreateContextSimultaneousMode(KNativePointer configPtr, KInt fileNamesCount, KStringArray filenames)
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
