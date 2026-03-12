@@ -1,0 +1,3 @@
+{
+"stdout": "\\[.+\\.\\S+:\\d+:\\d+\\] Warning W163154: Consider do not use the keyword 'package'\\. This keyword will be deprecated soon\n"
+}

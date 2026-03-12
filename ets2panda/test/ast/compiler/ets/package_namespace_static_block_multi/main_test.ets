@@ -15,4 +15,4 @@
 
 import {NS} from "./P2"
 
-/* @@? P2_02.ets:21:5 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */
+/* @@? P2_01.ets:20:5 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,8 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package mypackage;
 
 function ClassTypeTest(a0: C1){
     arktest.assertEQ(C1.stmemb, "c1_stmemb")
@@ -30,10 +28,7 @@ function main(): void {
     arktest.assertEQ(globVar2, 7)
 }
 
-let globVar2: number;
-static {
-    globVar2 = globVar1;
-}
+let globVar2: number = globVar1;
 
 function func2(a0: number): void {
     arktest.assertEQ(a0, 6)

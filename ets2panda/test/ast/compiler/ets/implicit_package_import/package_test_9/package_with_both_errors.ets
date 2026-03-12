@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-package mypack;
-
 class Day {}
 
 function foo(): Day {

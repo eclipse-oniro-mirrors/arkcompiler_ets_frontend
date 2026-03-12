@@ -22,6 +22,7 @@ import subprocess
 import logging
 import sys
 import re
+from common_output import get_common_output, remove_common_part
 
 
 def ensure_exists(path):
@@ -55,14 +56,18 @@ def normalize_output_file_paths(text):
     return normalized
 
 
-def compare_test_output(lhs, rhs):
+def normalize_output(actual_output, common_outputs, part_name):
+    result = normalize_output_file_paths(actual_output)
+    result = remove_common_part(result, common_outputs, part_name)
+    return result
+
+
+def compare_test_output(lhs, rhs, ignore_parts):
     if lhs.returncode != rhs.get("returncode", 0):
         raise RuntimeError(f"Return code mismatch: expected {rhs.get('returncode', 0)}, got {lhs.returncode}")
-    
-    # Normalize stdout for comparison
-    normalized_stdout = normalize_output_file_paths(lhs.stdout)
-    
+
     if "stdout" in rhs:
+        normalized_stdout = normalize_output(lhs.stdout, ignore_parts, "stdout")
         expected_stdout = rhs["stdout"]
         if normalized_stdout != expected_stdout:
             message = [
@@ -76,7 +81,7 @@ def compare_test_output(lhs, rhs):
             raise RuntimeError("\n".join(message))
     
     if "stderr" in rhs:
-        normalized_stderr = normalize_output_file_paths(lhs.stderr)
+        normalized_stderr = normalize_output(lhs.stderr, ignore_parts, "stderr")
         if normalized_stderr != rhs["stderr"]:
             raise RuntimeError(f"Stderr mismatch\nExpected: {rhs['stderr']}\nGot: {normalized_stderr}")
 
@@ -105,4 +110,5 @@ actual = subprocess.run(cmd,
 
 with open(expected_path, "r", encoding="utf-8") as expected_file:
     expected = json.load(expected_file)
-    compare_test_output(actual, expected)
+    common_parts = get_common_output(expected_path)
+    compare_test_output(actual, expected, common_parts)

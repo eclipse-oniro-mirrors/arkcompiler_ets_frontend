@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-package mypack;
-
 let a: int = "I am a number, I promise...";
 
 

@@ -131,6 +131,15 @@ warning:
   id: 14
   message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
 
+- name: PACKAGE_DEPRECATED
+  id: 59220
+  message: "The package keyword is deprecated."
+  strict: true
+
+- name: PACKAGE_DEPRECATED_WARNING
+  id: 163154
+  message: "Consider do not use the keyword 'package'. This keyword will be deprecated soon"
+
 - name: PROHIBIT_TOP_LEVEL_STATEMENTS
   id: 3
   message: "Prohibit top-level statements."

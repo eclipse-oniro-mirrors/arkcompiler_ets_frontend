@@ -1,3 +1,33 @@
+# The package keyword is not used anylonger
+# Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
+compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
+compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_1.ets
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_2.ets
+ast/compiler/ets/implicit_package_import/package_test_9/package_module.ets
+ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ets
+ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ets
+parser/ets/import_tests/import_alias_and_without_alias_2.ets
+parser/ets/import_tests/import_alias_and_without_alias_3.ets
+parser/ets/import_tests/import_all.ets
+parser/ets/import_tests/packages/aliasWithoutAlias/import1/import1.ets
+parser/ets/import_tests/packages/aliasWithoutAlias/import2/import2.ets
+parser/ets/import_tests/packages/import_package_with_alias/package/package_module.ets
+parser/ets/import_tests/packages/import_package_with_alias/import_package_with_alias.ets
+parser/ets/import_tests/packages/subpackage/package_module_1.ets
+parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
+parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
+parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
+parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
+parser/ets/import_tests/packages/package_module_1.ets
+parser/ets/import_tests/packages/package_module_2.ets
+# ets2panda/test/tsconfig/test-build/ets/packages/world.ets --
+# ets2panda/test/tsconfig/test-build/ets/hello.ets
+# ets2panda/test/tsconfig/test-build/paths/lib/module2/lib.ets --
+# ets2panda/test/tsconfig/test-build/paths/lib/module22/lib.ets --
+# ets2panda/test/tsconfig/test-build/paths/main.ets
+# ets2panda/test/unit/declgen/ets/pckg/test.ets
+
 # FailKind.INVALID_JSON (Issue #20457)
 runtime/ets/StringTemplate1.ets
 runtime/ets/StringTemplate2.ets

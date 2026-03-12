@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 
-package import_tests.packages.subpackage_a;
-
 export let b: String = "SubpackageA";

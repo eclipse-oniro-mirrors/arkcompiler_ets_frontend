@@ -457,6 +457,9 @@ private:
     }
     void CheckDeclare();
 
+    void WarnPackageDeprecated();
+    void RaisePackageDeprecatedMessage();
+
     friend class ExternalSourceParser;
     friend class InnerSourceParser;
 
@@ -467,6 +470,8 @@ private:
     std::optional<ir::Expression *> ParsePunctuatorLessThan(ir::Expression *returnExpression,
                                                             lexer::SourcePosition startLoc, bool ignoreCallExpression);
     std::vector<ir::AstNode *> insertingNodes_ {};
+
+    bool packageDeprecationWarned_;
 };
 
 class ExternalSourceParser {
