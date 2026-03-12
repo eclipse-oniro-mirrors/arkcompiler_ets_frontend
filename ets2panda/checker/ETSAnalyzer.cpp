@@ -1310,6 +1310,19 @@ static Type *SelectPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayExpress
     return res;
 }
 
+static Type *GetPreferredTypeFromArraySupertypes(ETSChecker *checker, Type *originalType)
+{
+    if (originalType == nullptr || !originalType->IsETSObjectType() ||
+        originalType->AsETSObjectType()->TypeArguments().empty()) {
+        return nullptr;
+    }
+    auto *arrayType = checker->CreateETSResizableArrayType(originalType->AsETSObjectType()->TypeArguments().front());
+    if (checker->Relation()->IsSupertypeOf(originalType->AsETSObjectType(), arrayType)) {
+        return arrayType;
+    }
+    return nullptr;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -1317,7 +1330,11 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
         return expr->TsType();
     }
 
-    auto *preferredType = GetAppropriatePreferredType(expr->PreferredType(), &Type::IsAnyETSArrayOrTupleType);
+    Type *preferredType = GetPreferredTypeFromArraySupertypes(checker, expr->PreferredType());
+
+    if (preferredType == nullptr) {
+        preferredType = GetAppropriatePreferredType(expr->PreferredType(), &Type::IsAnyETSArrayOrTupleType);
+    }
 
     if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSUnionType()) {
         if (auto *picked = SelectPreferredTypeForLiteral(checker, expr, expr->PreferredType()->AsETSUnionType())) {
