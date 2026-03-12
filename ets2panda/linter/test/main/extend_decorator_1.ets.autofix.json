@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -24,7 +24,7 @@
                 {
                     "start": 743,
                     "end": 1018,
-                    "replacementText": "function cardStyle(this: ColumnAttribute): this {\n    this.backgroundColor(\"#ffff00\");\n    this.backgroundColor(\"#00ffff\");\n    this.backgroundColor(\"#ff00ff\");\n    this.backgroundColor(mycolor);\n    this.backgroundColor(Color.Red);\n    this.borderRadius(8);\n    this.padding(8);\n    this.backgroundImagePosition({\n        x: 0,\n        y: 0\n    });\n    return this;\n}",
+                    "replacementText": "function cardStyle(this: ColumnAttribute): ColumnAttribute {\n    this.backgroundColor(\"#ffff00\");\n    this.backgroundColor(\"#00ffff\");\n    this.backgroundColor(\"#ff00ff\");\n    this.backgroundColor(mycolor);\n    this.backgroundColor(Color.Red);\n    this.borderRadius(8);\n    this.padding(8);\n    this.backgroundImagePosition({\n        x: 0,\n        y: 0\n    });\n    return this;\n}",
                     "line": 28,
                     "column": 1,
                     "endLine": 42,
@@ -45,7 +45,7 @@
                 {
                     "start": 1020,
                     "end": 1105,
-                    "replacementText": "function superCard(this: ColumnAttribute, padding: number): this {\n    this.cardStyle();\n    this.padding(10);\n    return this;\n}",
+                    "replacementText": "function superCard(this: ColumnAttribute, padding: number): ColumnAttribute {\n    this.cardStyle();\n    this.padding(10);\n    return this;\n}",
                     "line": 44,
                     "column": 1,
                     "endLine": 49,

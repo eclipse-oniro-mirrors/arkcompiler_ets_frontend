@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,7 @@ struct MyCard {
 
 const mycolor: string = "#ffffff"
 
-function cardStyle(this: ColumnAttribute): this {
+function cardStyle(this: ColumnAttribute): ColumnAttribute {
     this.backgroundColor("#ffff00");
     this.backgroundColor("#00ffff");
     this.backgroundColor("#ff00ff");
@@ -48,7 +48,7 @@ function cardStyle(this: ColumnAttribute): this {
     return this;
 }
 
-function superCard(this: ColumnAttribute, padding: number): this {
+function superCard(this: ColumnAttribute, padding: number): ColumnAttribute {
     this.cardStyle();
     this.padding(10);
     return this;

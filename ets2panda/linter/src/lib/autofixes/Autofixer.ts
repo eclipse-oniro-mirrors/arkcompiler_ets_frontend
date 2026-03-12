@@ -2915,7 +2915,7 @@ export class Autofixer {
     }
     const typeName = componentName + ATTRIBUTE_SUFFIX;
     interfacesNeedToImport.add(typeName);
-    const parameDecl = ts.factory.createParameterDeclaration(
+    const paramDecl = ts.factory.createParameterDeclaration(
       undefined,
       undefined,
       ts.factory.createIdentifier(THIS_IDENTIFIER),
@@ -2923,8 +2923,8 @@ export class Autofixer {
       ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(typeName), undefined),
       undefined
     );
-    const returnType = ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(THIS_IDENTIFIER), undefined);
-    const newFuncDecl = Autofixer.createFunctionDeclaration(funcDecl, undefined, parameDecl, returnType, newBlock);
+    const returnType = ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(typeName), undefined);
+    const newFuncDecl = Autofixer.createFunctionDeclaration(funcDecl, undefined, paramDecl, returnType, newBlock);
     let text = this.printer.printNode(ts.EmitHint.Unspecified, newFuncDecl, funcDecl.getSourceFile());
     if (preserveDecorator) {
       text = '@' + CustomInterfaceName.AnimatableExtend + this.getNewLine() + text;
