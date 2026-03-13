@@ -1951,12 +1951,80 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
     return expr->SetTsType(GetSmartTypeForAssignment(expr, leftType, rightType, relationNode));
 }
 
+static bool IsLoweredGlobalImmediateInitAssignment(ir::AssignmentExpression const *expr)
+{
+    if (expr->Parent() == nullptr || !expr->Parent()->IsExpressionStatement() || !expr->Left()->IsIdentifier()) {
+        return false;
+    }
+
+    auto *lhsIdent = expr->Left()->AsIdentifier();
+    if (lhsIdent->Variable() == nullptr || lhsIdent->Variable()->Declaration() == nullptr ||
+        lhsIdent->Variable()->Declaration()->Node() == nullptr) {
+        return false;
+    }
+
+    auto *declNode = lhsIdent->Variable()->Declaration()->Node();
+    if (!declNode->IsClassProperty()) {
+        return false;
+    }
+
+    auto *classProp = declNode->AsClassProperty();
+    if (!classProp->IsImmediateInit() || classProp->TypeAnnotation() != nullptr || classProp->Value() == nullptr) {
+        return false;
+    }
+
+    auto const *ownerClass = util::Helpers::GetContainingClassDefinition(classProp);
+    auto const *exprClass = util::Helpers::GetContainingClassDefinition(expr);
+    if (ownerClass == nullptr || exprClass == nullptr || ownerClass != exprClass ||
+        !util::Helpers::IsGlobalClass(ownerClass)) {
+        return false;
+    }
+
+    // Lowering contract:
+    // GlobalDeclTransformer::CreateAssignmentStatement() sets generated statement range to classProperty range.
+    // For unannotated immediate init, RHS is a clone of classProperty value with the same source range.
+    bool sameStmtRange = !(expr->Parent()->Range() != classProp->Range());
+    bool sameRhsRange = !(expr->Right()->Range() != classProp->Value()->Range());
+    return sameStmtRange && sameRhsRange;
+}
+
+static bool ShouldSkipContextualTypingForArrayLiteral(ETSChecker *checker, Type *leftType)
+{
+    if (!util::Helpers::IsArrayType(leftType)) {
+        return false;
+    }
+
+    auto *elementType = checker->GetElementTypeOfArray(leftType);
+    if (elementType == nullptr || !elementType->IsETSUnionType()) {
+        return false;
+    }
+
+    size_t arrayLikeCandidates = 0;
+    for (auto *candidate : elementType->AsETSUnionType()->ConstituentTypes()) {
+        if (candidate->IsAnyETSArrayOrTupleType()) {
+            if (++arrayLikeCandidates > 1) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 static checker::Type *HandleSubstitution(ETSChecker *checker, ir::AssignmentExpression *expr, Type *const leftType)
 {
-    bool possibleInferredTypeOfArray = leftType->IsETSArrayType() || leftType->IsETSResizableArrayType() ||
-                                       leftType->IsETSTupleType() || leftType->IsETSUnionType();
+    bool possibleInferredTypeOfArray =
+        util::Helpers::IsArrayType(leftType) || leftType->IsETSTupleType() || leftType->IsETSUnionType();
     if (expr->Right()->IsArrayExpression() && possibleInferredTypeOfArray) {
-        checker->ModifyPreferredType(expr->Right()->AsArrayExpression(), leftType);
+        auto *arrayExpr = expr->Right()->AsArrayExpression();
+        // NOTE(likaizheng): Temporary narrow workaround for SPEC issue 838.
+        // Top-level unannotated immediate-init declarations are lowered into ETSGLOBAL::cctor assignments.
+        // Reapplying contextual typing on the lowered assignment may trigger ambiguity that does not appear for
+        // function-local unannotated declarations. Keep this guard narrow and remove it after top-level and
+        // function-body declaration checking paths are aligned.
+        bool const skipContextualTyping = IsLoweredGlobalImmediateInitAssignment(expr) &&
+                                          ShouldSkipContextualTypingForArrayLiteral(checker, leftType);
+        checker->ModifyPreferredType(arrayExpr, skipContextualTyping ? nullptr : leftType);
     } else if (expr->Right()->IsArrowFunctionExpression() &&
                (leftType->IsETSArrowType() || leftType->IsETSUnionType())) {
         if (auto *preferredType = GetAppropriatePreferredType(leftType, [](Type *tp) { return tp->IsETSArrowType(); });
