@@ -2391,6 +2391,7 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
 
 static bool IsNumericType(ETSChecker *checker, Type *type)
 {
+    ES2PANDA_ASSERT(!type->IsETSNeverType());
     return checker->Relation()->IsSupertypeOf(checker->GetGlobalTypesHolder()->GlobalNumericBuiltinType(), type);
 }
 
@@ -2496,7 +2497,11 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     // Here we need to combine types from consequent and alternate if blocks.
     checker->Context().CombineSmartCasts(consequentSmartCasts);
 
-    if (checker->IsTypeIdenticalTo(consequentType, alternateType)) {
+    if (consequentType->IsETSNeverType()) {
+        expr->SetTsType(alternateType);
+    } else if (alternateType->IsNeverType()) {
+        expr->SetTsType(consequentType);
+    } else if (checker->IsTypeIdenticalTo(consequentType, alternateType)) {
         expr->SetTsType(consequentType);
     } else if (IsNumericType(GetETSChecker(), consequentType) && IsNumericType(GetETSChecker(), alternateType)) {
         expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentType, alternateType));

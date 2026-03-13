@@ -82,7 +82,6 @@ import_self_head_tests/B/test.d.ets
 
 #24986
 RecordKeyTypeCheck.ets
-nullishTypeCodesamples.ets
 
 # Rebase no-primitives pathch onto master with merger Array refactoring
 union_generic_class.ets
