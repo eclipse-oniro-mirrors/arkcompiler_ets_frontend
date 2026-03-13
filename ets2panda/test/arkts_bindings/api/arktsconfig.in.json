@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "package": "${TEST_PACKAGE}",
+    "baseUrl": "${CURRENT_SOURCE_DIR}",
+    "paths": {
+      "@arkts-bindings": ["../../../arkts_bindings/src"]
+    }
+  },
+  "references": [
+    { "path": "../../../arkts_bindings/src" }
+  ]
+}
