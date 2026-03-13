@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,16 @@ function main(){
     const myCharClass = new X/* @@ label */<Char,String>();
 }
 
+class A {}
+
+class C {
+    f<T extends A>(a: T) { }
+}
+
+class D {}
+/* @@ label2 */(new C()).f(new D());
+
 /* @@@ label Error Semantic error ESE0228: Type argument 'Char' should be a subtype of 'Comparable<String>' constraint */
+
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for f(D) */
+/* @@@ label2 Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A' constraint */

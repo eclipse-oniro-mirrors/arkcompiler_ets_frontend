@@ -46,6 +46,6 @@ function main() {
 /* @@? 32:14 Error Semantic error ESE0127: No matching call signature for f0(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
 /* @@? 32:17 Error Semantic error ESE0132: The type of parameter 'p' cannot be inferred */
 /* @@? 33:14 Error Semantic error ESE0127: No matching call signature for f1(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
-/* @@? 33:17 Error Semantic error ESE0132: The type of parameter 'p' cannot be inferred */
+/* @@? 33:14 Error Semantic error ESE0228: Type argument 'Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>' should be a subtype of '((p1: Int) => Int)' constraint */
 /* @@? 34:14 Error Semantic error ESE0127: No matching call signature for f2(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
-/* @@? 34:17 Error Semantic error ESE0132: The type of parameter 'p' cannot be inferred */
+/* @@? 34:14 Error Semantic error ESE0228: Type argument 'Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>' should be a subtype of 'Array<((p1: Int) => Int)>' constraint */

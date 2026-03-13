@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,11 +24,12 @@ final class StaticClass<T> implements AInterface<T>{
 }
 
 function func (arg: B<String>) {
-    return /* @@ label */StaticClass.staticFunction(arg);
+    return /* @@ label1 */StaticClass.staticFunction(arg);
 }
 
 function main() {
     let a = func(new B<String>());
 }
 
-
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for staticFunction(B<String>) */
+/* @@@ label1 Error Semantic error ESE0228: Type argument 'String' should be a subtype of 'Double' constraint */

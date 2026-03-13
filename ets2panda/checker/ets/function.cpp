@@ -218,6 +218,29 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
     checker->RemoveStatus(checker::CheckerStatus::IN_TYPE_INFER);
 }
 
+static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *typeParam, Type *typeArgument,
+                                     const Substitution *substitution);
+
+static bool CheckTypeParamsConstraint(ETSChecker *checker, const Substitution *substitution,
+                                      const lexer::SourcePosition &pos)
+{
+    for (auto it = substitution->begin(); it != substitution->end(); ++it) {
+        auto *constraintType = it->second;
+        auto *typeParameter = it->first->AsETSTypeParameter();
+
+        while (typeParameter->GetConstraintType() && typeParameter->GetConstraintType()->IsETSTypeParameter()) {
+            typeParameter = typeParameter->GetConstraintType()->AsETSTypeParameter();
+        }
+
+        if (!IsCompatibleTypeArgument(checker, typeParameter, constraintType, substitution)) {
+            checker->LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING,
+                              {constraintType, typeParameter->GetConstraintType()}, pos);
+            return false;
+        }
+    }
+    return true;
+}
+
 static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChecker *checker, Signature *signature,
                                                                          const ArenaVector<ir::Expression *> &arguments,
                                                                          const lexer::SourcePosition &pos)
@@ -234,6 +257,9 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
     auto noNeverArg = std::all_of(sigArgs.begin(), sigArgs.end(),
                                   [](varbinder::LocalVariable *param) { return !param->TsType()->IsETSNeverType(); });
     if (substitution.size() == sigParams.size()) {
+        if (!CheckTypeParamsConstraint(checker, &substitution, pos)) {
+            return std::nullopt;
+        }
         return ComposeTemporarySubstitution(checker, &paramRenamer, &substitution);
     }
     for (const auto typeParam : sigParams) {
@@ -261,11 +287,11 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
         return std::nullopt;
     }
 
+    if (!CheckTypeParamsConstraint(checker, &substitution, pos)) {
+        return std::nullopt;
+    }
     return ComposeTemporarySubstitution(checker, &paramRenamer, &substitution);
 }
-
-static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *typeParam, Type *typeArgument,
-                                     const Substitution *substitution);
 
 static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChecker *checker, Signature *signature,
                                                                          const ArenaVector<ir::TypeNode *> &params,
@@ -376,7 +402,7 @@ static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *type
     }
     ES2PANDA_ASSERT(ETSChecker::IsReferenceType(typeArgument));
     auto constraint = typeParam->GetConstraintType()->Substitute(checker->Relation(), substitution);
-    return checker->Relation()->IsSupertypeOf(constraint, typeArgument);
+    return checker->Relation()->IsSupertypeOf(constraint, typeArgument->Substitute(checker->Relation(), substitution));
 }
 
 static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Type *> &typeParams, Type *paramType,
