@@ -36,3 +36,7 @@ es2panda_frontend_unittest("program_test") {
 es2panda_frontend_unittest("sourceTextModuleRecord_test") {
   sources = [ "parser/module/sourceTextModuleRecord_test.cpp" ]
 }
+
+es2panda_frontend_unittest("parserContext_test") {
+  sources = [ "parser/context/parserContext_test.cpp" ]
+}
