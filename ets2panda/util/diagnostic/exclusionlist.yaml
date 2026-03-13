@@ -15,3 +15,13 @@ exclusionlist:
 - name: "numeric_conversions"
   paths:
   - ".*/advanced_ui_component_static/arcslider/@ohos\\.arkui\\.advanced\\.ArcSlider\\.ets"
+
+- name: "explicit_export"
+  paths:
+  - "(^|[\\/])developtools([\\/]|$)"
+  - "(^|[\\/])base[\\/]inputmethod([\\/]|$)"
+  - "(^|[\\/])base[\\/]global([\\/]|$)"
+  - "(^|[\\/])base[\\/]hiviewdfx([\\/]|$)"
+  - "(^|[\\/])base[\\/]testfwk([\\/]|$)"
+  - "(^|[\\/])base[\\/]security[\\/]certificate_manager([\\/]|$)"
+  - "(^|[\\/])base[\\/]security[\\/]access_token([\\/]|$)"
