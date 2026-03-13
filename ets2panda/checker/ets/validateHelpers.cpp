@@ -23,6 +23,7 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
         return;
     }
+
     if (var->HasFlag(varbinder::VariableFlags::METHOD)) {
         return;
     }

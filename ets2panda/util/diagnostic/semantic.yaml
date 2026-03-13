@@ -1176,7 +1176,7 @@ semantic:
 
 - name: OVERLOAD_SAME_ACCESS_MODIFIERS
   id: 386
-  message: "Overload alias and overloaded method name must have exactly the same modifiers (public, private, protected)."
+  message: "Access modifier mismatch: a 'public' overload requires all methods to be 'public'; a 'protected' overload cannot have 'private' methods."
 
 - name: OVERLOAD_SAME_ACCESS_MODIFIERS_STATIC_ASYNC
   id: 387
