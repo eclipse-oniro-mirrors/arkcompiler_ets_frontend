@@ -57,8 +57,9 @@ static ir::ClassDefinition *GetUnionAccessClass(public_lib::Context *ctx, varbin
     ident->SetVariable(var);
 
     auto classCtx = varbinder::LexicalScope<varbinder::ClassScope>(varbinder);
-    auto *classDef = ctx->AllocNode<ir::ClassDefinition>(ctx->Allocator(), ident, ir::ClassDefinitionModifiers::GLOBAL,
-                                                         ir::ModifierFlags::ABSTRACT, Language(Language::Id::ETS));
+    auto *classDef =
+        ctx->AllocNode<ir::ClassDefinition>(ctx->Allocator(), ident, ir::ClassDefinitionModifiers::CLASS_DECL,
+                                            ir::ModifierFlags::ABSTRACT, Language(Language::Id::ETS));
     ES2PANDA_ASSERT(classDef != nullptr);
     classDef->SetScope(classCtx.GetScope());
     auto *classDecl = ctx->AllocNode<ir::ClassDeclaration>(classDef, allocator);
