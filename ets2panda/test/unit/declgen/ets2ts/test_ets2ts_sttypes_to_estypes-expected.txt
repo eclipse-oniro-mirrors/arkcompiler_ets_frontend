@@ -1,0 +1,231 @@
+import st from "@ohos.lang.interop";
+export declare const es2st_array: Array<number>;
+export declare const es2st_arrayOfArray: Array<Array<string>>;
+export declare const es2st_arrayOfBoolean: Array<boolean>;
+export declare const es2st_arrayOfObject: Array<Object>;
+export declare const es2st_map: Map<string, number>;
+export declare const es2st_mapOfMap: Map<string, Map<string, number>>;
+export declare const es2st_mapWithArrayValue: Map<string, Array<number>>;
+export declare const es2st_set: Set<number>;
+export declare const es2st_setOfString: Set<string>;
+export declare const es2st_setOfObject: Set<Object>;
+export declare const st_array: st.Array<number>;
+export declare const st_arrayOfArray: st.Array<st.Array<string>>;
+export declare const st_arrayOfBoolean: st.Array<boolean>;
+export declare const st_arrayOfObject: st.Array<Object>;
+export declare const st_map: st.Map<string, number>;
+export declare const st_mapOfMap: st.Map<string, st.Map<string, number>>;
+export declare const st_mapWithArrayValue: st.Map<string, st.Array<number>>;
+export declare const st_set: st.Set<number>;
+export declare const st_setOfString: st.Set<string>;
+export declare const st_setOfObject: st.Set<Object>;
+export declare function stProcessArray(arr: st.Array<number>): st.Array<string>;
+export declare function stProcessMap(map: st.Map<string, number>): st.Map<number, string>;
+export declare function stProcessSet(set: st.Set<string>): st.Set<number>;
+export declare const mixed_esArrayInStMap: st.Map<string, Array<number>>;
+export declare const mixed_stArrayInEsMap: Map<string, st.Array<number>>;
+export declare const mixed_esSetInStArray: st.Array<Set<string>>;
+export declare const mixed_stSetInEsArray: Array<st.Set<string>>;
+export declare function convertEsArrayToStArray(input: Array<number>): st.Array<number>;
+export declare function convertStMapToEsMap(input: st.Map<string, number>): Map<string, number>;
+export declare function processMixedTypes(esArr: Array<string>, stMap: st.Map<number, boolean>, esSet: Set<number>): st.Array<Map<string, st.Set<number>>>;
+export declare class ArrayPropertyClass {
+    public get numbers(): Array<number>;
+    public set numbers(value: Array<number>);
+    public get strings(): Array<string>;
+    public set strings(value: Array<string>);
+    protected get protectedArray(): Array<Object>;
+    protected set protectedArray(value: Array<Object>);
+    public get readonlyArray(): Array<number>;
+    public constructor(nums: Array<number>);
+}
+export declare class ArrayMethodClass {
+    public getNumbers(): Array<number>;
+    public setStrings(arr: Array<string>): void;
+    public transformArray(input: Array<number>): Array<string>;
+    public mergeArrays(arr1: Array<number>, arr2: Array<number>): Array<number>;
+    public static createArray(): Array<number>;
+    constructor();
+}
+export declare class MapPropertyClass {
+    public get stringToNumber(): Map<string, number>;
+    public set stringToNumber(value: Map<string, number>);
+    public get numberToString(): Map<number, string>;
+    public set numberToString(value: Map<number, string>);
+    protected get protectedMap(): Map<string, Object>;
+    protected set protectedMap(value: Map<string, Object>);
+    public get readonlyMap(): Map<string, number>;
+    public constructor(map: Map<string, number>);
+}
+export declare class MapMethodClass {
+    public getMap(): Map<string, number>;
+    public setMap(map: Map<string, string>): void;
+    public transformMap(input: Map<string, number>): Map<number, string>;
+    public mergeMaps(map1: Map<string, number>, map2: Map<string, number>): Map<string, number>;
+    public static createMap(): Map<string, number>;
+    constructor();
+}
+export declare class SetPropertyClass {
+    public get numberSet(): Set<number>;
+    public set numberSet(value: Set<number>);
+    public get stringSet(): Set<string>;
+    public set stringSet(value: Set<string>);
+    protected get protectedSet(): Set<Object>;
+    protected set protectedSet(value: Set<Object>);
+    public get readonlySet(): Set<number>;
+    public constructor(set: Set<number>);
+}
+export declare class SetMethodClass {
+    public getSet(): Set<number>;
+    public setSet(set: Set<string>): void;
+    public transformSet(input: Set<number>): Set<string>;
+    public unionSets(set1: Set<number>, set2: Set<number>): Set<number>;
+    public static createSet(): Set<number>;
+    constructor();
+}
+export declare class MixedEsTypesClass {
+    public get array(): Array<number>;
+    public set array(value: Array<number>);
+    public get map(): Map<string, number>;
+    public set map(value: Map<string, number>);
+    public get set(): Set<string>;
+    public set set(value: Set<string>);
+    public constructor();
+    public arrayToMap(arr: Array<string>): Map<number, string>;
+    public mapToSet(map: Map<string, number>): Set<number>;
+    public setToArray(set: Set<string>): Array<string>;
+    public getNestedStructure(): Map<string, Array<Set<number>>>;
+}
+export declare class StArrayPropertyClass {
+    public get numbers(): st.Array<number>;
+    public set numbers(value: st.Array<number>);
+    public get strings(): st.Array<string>;
+    public set strings(value: st.Array<string>);
+    protected get protectedArray(): st.Array<Object>;
+    protected set protectedArray(value: st.Array<Object>);
+    public get readonlyArray(): st.Array<number>;
+    public constructor(nums: st.Array<number>);
+}
+export declare class StArrayMethodClass {
+    public getNumbers(): st.Array<number>;
+    public setStrings(arr: st.Array<string>): void;
+    public transformArray(input: st.Array<number>): st.Array<string>;
+    public mergeArrays(arr1: st.Array<number>, arr2: st.Array<number>): st.Array<number>;
+    public static createArray(): st.Array<number>;
+    constructor();
+}
+export declare class StMapPropertyClass {
+    public get stringToNumber(): st.Map<string, number>;
+    public set stringToNumber(value: st.Map<string, number>);
+    public get numberToString(): st.Map<number, string>;
+    public set numberToString(value: st.Map<number, string>);
+    protected get protectedMap(): st.Map<string, Object>;
+    protected set protectedMap(value: st.Map<string, Object>);
+    public get readonlyMap(): st.Map<string, number>;
+    public constructor(map: st.Map<string, number>);
+}
+export declare class StMapMethodClass {
+    public getMap(): st.Map<string, number>;
+    public setMap(map: st.Map<string, string>): void;
+    public transformMap(input: st.Map<string, number>): st.Map<number, string>;
+    public mergeMaps(map1: st.Map<string, number>, map2: st.Map<string, number>): st.Map<string, number>;
+    public static createMap(): st.Map<string, number>;
+    constructor();
+}
+export declare class StSetPropertyClass {
+    public get numberSet(): st.Set<number>;
+    public set numberSet(value: st.Set<number>);
+    public get stringSet(): st.Set<string>;
+    public set stringSet(value: st.Set<string>);
+    protected get protectedSet(): st.Set<Object>;
+    protected set protectedSet(value: st.Set<Object>);
+    public get readonlySet(): st.Set<number>;
+    public constructor(set: st.Set<number>);
+}
+export declare class StSetMethodClass {
+    public getSet(): st.Set<number>;
+    public setSet(set: st.Set<string>): void;
+    public transformSet(input: st.Set<number>): st.Set<string>;
+    public unionSets(set1: st.Set<number>, set2: st.Set<number>): st.Set<number>;
+    public static createSet(): st.Set<number>;
+    constructor();
+}
+export declare class MixedStTypesClass {
+    public get array(): st.Array<number>;
+    public set array(value: st.Array<number>);
+    public get map(): st.Map<string, number>;
+    public set map(value: st.Map<string, number>);
+    public get set(): st.Set<string>;
+    public set set(value: st.Set<string>);
+    public constructor();
+    public arrayToMap(arr: st.Array<string>): st.Map<number, string>;
+    public mapToSet(map: st.Map<string, number>): st.Set<number>;
+    public setToArray(set: st.Set<string>): st.Array<string>;
+    public getNestedStructure(): st.Map<string, st.Array<st.Set<number>>>;
+}
+export declare interface StTypesInterface {
+    arrayProp: st.Array<number>;
+    mapProp: st.Map<string, string>;
+    setProp: st.Set<boolean>;
+    getArray(): st.Array<number>;
+    setMap(map: st.Map<string, number>): void;
+    processSet(set: st.Set<string>): st.Set<string>;
+}
+export declare class MixedEsStPropertyClass {
+    public get esArrayOfStMap(): Array<st.Map<string, number>>;
+    public set esArrayOfStMap(value: Array<st.Map<string, number>>);
+    public get esMapWithStSet(): Map<string, st.Set<number>>;
+    public set esMapWithStSet(value: Map<string, st.Set<number>>);
+    public get esSetOfStArray(): Set<st.Array<string>>;
+    public set esSetOfStArray(value: Set<st.Array<string>>);
+    public get stArrayOfEsMap(): st.Array<Map<string, number>>;
+    public set stArrayOfEsMap(value: st.Array<Map<string, number>>);
+    public get stMapWithEsSet(): st.Map<string, Set<number>>;
+    public set stMapWithEsSet(value: st.Map<string, Set<number>>);
+    public get stSetOfEsArray(): st.Set<Array<string>>;
+    public set stSetOfEsArray(value: st.Set<Array<string>>);
+    public get deeplyNested(): Map<string, st.Array<Set<st.Map<number, string>>>>;
+    public set deeplyNested(value: Map<string, st.Array<Set<st.Map<number, string>>>>);
+    public constructor();
+}
+export declare class MixedEsStMethodClass {
+    public esArrayToStArray(input: Array<number>): st.Array<number>;
+    public stArrayToEsArray(input: st.Array<number>): Array<number>;
+    public esMapToStMap(input: Map<string, number>): st.Map<string, number>;
+    public stMapToEsMap(input: st.Map<string, number>): Map<string, number>;
+    public esSetToStSet(input: Set<string>): st.Set<string>;
+    public stSetToEsSet(input: st.Set<string>): Set<string>;
+    public mixedParams(esArr: Array<number>, stArr: st.Array<string>, esMap: Map<string, number>, stSet: st.Set<boolean>): void;
+    public getEsArrayOfStMaps(): Array<st.Map<string, number>>;
+    public getStMapOfEsArrays(): st.Map<string, Array<number>>;
+    public static createMixedStructure(): Map<string, st.Array<Set<number>>>;
+    constructor();
+}
+export declare interface MixedEsStInterface {
+    esArray: Array<number>;
+    stArray: st.Array<number>;
+    esMapWithStValue: Map<string, st.Array<number>>;
+    stMapWithEsValue: st.Map<string, Array<number>>;
+    convertEsToSt(input: Array<string>): st.Array<string>;
+    convertStToEs(input: st.Map<string, number>): Map<string, number>;
+    processMixed(esSet: Set<number>, stSet: st.Set<string>): Array<st.Map<string, number>>;
+}
+export declare class TypeConverter {
+    public convertArrayEsToSt<T>(input: Array<T>): st.Array<T>;
+    public convertArrayStToEs<T>(input: st.Array<T>): Array<T>;
+    public convertMapEsToSt<K, V>(input: Map<K, V>): st.Map<K, V>;
+    public convertMapStToEs<K, V>(input: st.Map<K, V>): Map<K, V>;
+    public convertSetEsToSt<T>(input: Set<T>): st.Set<T>;
+    public convertSetStToEs<T>(input: st.Set<T>): Set<T>;
+    constructor();
+}
+export declare class ComplexNestedStructure {
+    public get esStEs(): Array<st.Map<string, Set<number>>>;
+    public set esStEs(value: Array<st.Map<string, Set<number>>>);
+    public get stEsSt(): st.Array<Map<string, st.Set<number>>>;
+    public set stEsSt(value: st.Array<Map<string, st.Set<number>>>);
+    public get deepAlternating(): Map<string, st.Array<Set<st.Map<number, Array<string>>>>>;
+    public set deepAlternating(value: Map<string, st.Array<Set<st.Map<number, Array<string>>>>>);
+    public constructor();
+    public processComplexStructure(input: Map<string, st.Array<Set<number>>>): st.Array<Map<number, st.Set<Array<string>>>>;
+}

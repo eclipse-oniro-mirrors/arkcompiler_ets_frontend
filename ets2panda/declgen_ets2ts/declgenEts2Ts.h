@@ -133,6 +133,7 @@ private:
     void GenUnionType(const checker::ETSUnionType *unionType);
     void GenTupleType(const checker::ETSTupleType *tupleType);
     void GenArrayType(const checker::Type *elementType);
+    void GenInteropArrayType(const checker::Type *elementType);
 
     template <class UnionType>
     std::vector<UnionType *> FilterUnionTypes(const ArenaVector<UnionType *> &originTypes);
@@ -220,6 +221,7 @@ private:
     std::string ReplaceETSGLOBAL(const std::string &typeName);
     std::string GetIndent() const;
     std::string RemoveModuleExtensionName(const std::string &filepath);
+    std::string ConvertInteropTypeName(const std::string &typeName);
     void GenPartName(std::string &partName);
     void ProcessIndent();
 

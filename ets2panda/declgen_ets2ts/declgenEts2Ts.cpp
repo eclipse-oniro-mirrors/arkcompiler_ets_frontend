@@ -1003,7 +1003,7 @@ void TSDeclGen::GenObjectType(const checker::ETSObjectType *objectType)
         } else if (size_t partialPos = typeStr.find("%%partial-"); partialPos != std::string::npos) {
             OutDts("Partial<", typeStr.substr(0, partialPos), ">");
         } else {
-            OutDts(typeStr);
+            OutDts(ConvertInteropTypeName(typeStr));
         }
         AddImport(typeStr);
     }
@@ -1615,7 +1615,7 @@ std::string TSDeclGen::ReplaceETSGLOBAL(const std::string &typeName)
     return globalDesc_;
 }
 
-static std::string ConvertInteropTypeName(const std::string &typeName)
+std::string TSDeclGen::ConvertInteropTypeName(const std::string &typeName)
 {
     if (typeName == "Array") {
         return "st.Array";
@@ -1647,6 +1647,13 @@ bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference
             return true;
         }
         OutDts(ConvertInteropTypeName(qualifiedName));
+        auto typeParams = typeReference->Part()->TypeParams();
+        if (typeParams != nullptr && typeParams->IsTSTypeParameterInstantiation()) {
+            OutDts("<");
+            GenSeparated(typeParams->Params(),
+                         [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
+            OutDts(">");
+        }
         return true;
     }
     return false;
