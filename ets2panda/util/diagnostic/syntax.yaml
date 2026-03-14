@@ -990,6 +990,10 @@ syntax:
   id: 69198
   message: "Not allowed to contain the modifier 'static' along with the modifier 'override'."
 
+- name: PACKAGE_DEPRECATED
+  id: 139148
+  message: "The package keyword is deprecated."
+
 - name: PACKAGE_MODULE_IMPORT_OWN_PACKAGE
   id: 3
   message: "Package module cannot import from a file in it's own package."
