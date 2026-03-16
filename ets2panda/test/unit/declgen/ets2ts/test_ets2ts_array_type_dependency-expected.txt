@@ -1,0 +1,13 @@
+import st from "@ohos.lang.interop";
+declare interface interfaceA {
+    c?: number | undefined;
+    d?: string | undefined;
+}
+declare interface interfaceB {
+    e?: number | undefined;
+    f?: st.Array<string> | undefined;
+}
+export declare interface interfaceC {
+    a?: st.Array<interfaceA> | undefined;
+    b?: interfaceB | undefined;
+}

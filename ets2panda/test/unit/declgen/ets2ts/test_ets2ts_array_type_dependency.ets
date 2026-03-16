@@ -1,3 +1,4 @@
+'use static'
 /**
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-declare interface interfaceA {
-    c?: number | undefined;
-    d?: string | undefined;
+
+interface interfaceA {
+    c?: number,
+    d?: string,
 }
-declare interface interfaceB {
-    e?: number | undefined;
-    f?: Array<string> | undefined;
+
+interface interfaceB {
+    e?: number,
+    f?: string[],
 }
-export declare interface interfaceC {
-    a?: Array<interfaceA> | undefined;
-    b?: interfaceB | undefined;
+
+export interface interfaceC {
+    a?: interfaceA[],
+    b?: interfaceB,
 }
