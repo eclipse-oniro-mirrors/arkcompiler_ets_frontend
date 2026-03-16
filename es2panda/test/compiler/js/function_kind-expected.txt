@@ -1,0 +1,48 @@
+--- Generator Declaration ---
+Is GeneratorFunction? true
+Is AsyncGeneratorFunction? false
+Is AsyncFunction? false
+Is NormalFunction? true
+Constructor Name: GeneratorFunction
+Prototype Chain Name: GeneratorFunction
+
+--- Async Generator Declaration ---
+Is GeneratorFunction? false
+Is AsyncGeneratorFunction? true
+Is AsyncFunction? false
+Is NormalFunction? true
+Constructor Name: AsyncGeneratorFunction
+Prototype Chain Name: AsyncGeneratorFunction
+
+--- Class Generator Method ---
+Is GeneratorFunction? true
+Is AsyncGeneratorFunction? false
+Is AsyncFunction? false
+Is NormalFunction? true
+Constructor Name: GeneratorFunction
+Prototype Chain Name: GeneratorFunction
+
+--- Class Async Generator Method ---
+Is GeneratorFunction? false
+Is AsyncGeneratorFunction? true
+Is AsyncFunction? false
+Is NormalFunction? true
+Constructor Name: AsyncGeneratorFunction
+Prototype Chain Name: AsyncGeneratorFunction
+
+--- Class Async Method ---
+Is GeneratorFunction? false
+Is AsyncGeneratorFunction? false
+Is AsyncFunction? true
+Is NormalFunction? true
+Constructor Name: AsyncFunction
+Prototype Chain Name: AsyncFunction
+
+--- Class Normal Method ---
+Is GeneratorFunction? false
+Is AsyncGeneratorFunction? false
+Is AsyncFunction? false
+Is NormalFunction? true
+Constructor Name: Function
+Prototype Chain Name: Function
+
