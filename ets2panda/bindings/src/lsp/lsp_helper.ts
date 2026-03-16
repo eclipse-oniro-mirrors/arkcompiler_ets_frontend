@@ -224,12 +224,35 @@ export class Lsp {
     processToCheck: boolean = true,
     fileSource?: string
   ): [Config, KNativePointer] | undefined {
+    return this.createContextByArkTsConfigPriority(filename, processToCheck, fileSource, false);
+  }
+
+  private createContextForCrossModule(
+    filename: String,
+    processToCheck: boolean = true,
+    fileSource?: string
+  ): [Config, KNativePointer] | undefined {
+    return this.createContextByArkTsConfigPriority(
+      filename,
+      processToCheck,
+      fileSource,
+      Object.keys(this.buildConfigs).length > 1
+    );
+  }
+
+  private createContextByArkTsConfigPriority(
+    filename: String,
+    processToCheck: boolean,
+    fileSource: string | undefined,
+    preferModuleArkTsConfig: boolean
+  ): [Config, KNativePointer] | undefined {
     const filePath = path.resolve(filename.valueOf());
-    const arktsconfig =
-      process.env.ARKTSCONFIG ||
-      (Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
-        ? this.moduleInfos[filePath].arktsConfigFile
-        : this.defaultArkTsConfig);
+    const moduleArktsconfig = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
+      ? this.moduleInfos[filePath].arktsConfigFile
+      : undefined;
+    const arktsconfig = preferModuleArkTsConfig
+      ? moduleArktsconfig || process.env.ARKTSCONFIG || this.defaultArkTsConfig
+      : process.env.ARKTSCONFIG || moduleArktsconfig || this.defaultArkTsConfig;
     if (!arktsconfig) {
       logger.error('Missing arktsconfig for ', filePath);
     }
@@ -326,11 +349,11 @@ export class Lsp {
 
   getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDefinitionAtPosition', this.perfMetricLogFilePath) : undefined;
- 	  let result: LspDefinitionData;
+    let result: LspDefinitionData;
     if (nodeInfos) {
       result = this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
       perfScope?.end();
- 	    return result;
+      return result;
     }
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -576,8 +599,8 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getCurrentTokenValue(filename: String, offset: number): string | undefined {
@@ -647,7 +670,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, searchCtx] = this.createContext(filename) ?? [];
+      const [cfg, searchCtx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !searchCtx) { return; }
       try {
         isPackageModule = global.es2panda._isPackageModule(searchCtx);
@@ -671,7 +694,7 @@ export class Lsp {
           return;
         }
       } else {
-        const [cfg, ctx] = this.createContext(compileFiles[i]) ?? [];
+        const [cfg, ctx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
         if (!cfg || !ctx) { return; }
         try {
           ptr = global.es2panda._getFileReferences(path.resolve(filename.valueOf()), ctx, isPackageModule);
@@ -695,11 +718,11 @@ export class Lsp {
 
   getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getReferencesAtPosition', this.perfMetricLogFilePath) : undefined;
- 	  let result: LspDefinitionData[] = [];
+    let result: LspDefinitionData[] = [];
     if (nodeInfos) {
       result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
- 	    perfScope?.end();
- 	    return result;
+      perfScope?.end();
+      return result;
     }
     let declInfo: KPointer;
     let searchFileCache = this.filesMap.get(filename.valueOf());
@@ -711,7 +734,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, searchCtx] = this.createContext(filename) ?? [];
+      const [cfg, searchCtx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !searchCtx) { return; }
       try {
         declInfo = global.es2panda._getDeclInfo(searchCtx, offset);
@@ -723,7 +746,7 @@ export class Lsp {
       }
     }
 
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
     if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
       this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
@@ -739,7 +762,7 @@ export class Lsp {
           return;
         }
       } else {
-        const [cfg, ctx] = this.createContext(compileFiles[i]) ?? [];
+        const [cfg, ctx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
         if (!cfg || !ctx) { return; }
         try {
           ptr = global.es2panda._getReferencesAtPosition(ctx, declInfo);
@@ -763,8 +786,8 @@ export class Lsp {
       });
     }
     result = Array.from(new Set(result));
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   private addDynamicDeclFilePaths(declFilesJson: string, compileFiles: string[]): void {
@@ -904,7 +927,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
         ctxFile = ctx;
@@ -930,7 +953,7 @@ export class Lsp {
           return;
         }
       } else {
-        const [cfg, searchCtx] = this.createContext(compileFiles[i]) ?? [];
+        const [cfg, searchCtx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
         if (!cfg || !searchCtx) { return; }
         try {
           searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctxFile, offset);
@@ -980,7 +1003,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
         ptr = global.es2panda._getClassHierarchyInfo(ctx, offset);
@@ -992,8 +1015,8 @@ export class Lsp {
       }
     }
     const result = new LspClassHierarchy(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getAliasScriptElementKind(filename: String, offset: number): LspCompletionEntryKind | undefined {
@@ -1031,7 +1054,7 @@ export class Lsp {
     if (fileCache) {
       nativeContextList = global.es2panda._pushBackToNativeContextVector(fileCache.fileContext, fileCache.fileContext, 1)
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       contextList.push({ ctx: ctx, cfg: cfg });
       nativeContextList = global.es2panda._pushBackToNativeContextVector(ctx, ctx, 1);
@@ -1047,7 +1070,7 @@ export class Lsp {
       if (searchFileCache) {
         global.es2panda._pushBackToNativeContextVector(searchFileCache.fileContext, nativeContextList, 0);
       } else {
-        const [searchCfg, searchCtx] = this.createContext(filePath) ?? [];
+        const [searchCfg, searchCtx] = this.createContextForCrossModule(filePath) ?? [];
         if (!searchCfg || !searchCtx) { return; }
         contextList.push({ ctx: searchCtx, cfg: searchCfg });
         global.es2panda._pushBackToNativeContextVector(searchCtx, nativeContextList, 0);
@@ -1059,8 +1082,8 @@ export class Lsp {
       this.destroyContext(cfg, ctx);
     }
     const result = new LspClassHierarchies(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getClassPropertyInfo(
@@ -1079,7 +1102,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
         ptr = global.es2panda._getClassPropertyInfo(ctx, offset, shouldCollectInherited);
@@ -1091,8 +1114,8 @@ export class Lsp {
       }
     }
     const result = new LspClassPropertyInfo(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getOrganizeImports(filename: String): LspFileTextChanges | undefined {
@@ -1121,7 +1144,7 @@ export class Lsp {
       }
     }
     const result = new LspFileTextChanges(ptr);
- 	  perfScope?.end();
+    perfScope?.end();
 
     return result;
   }
@@ -1178,8 +1201,8 @@ export class Lsp {
       result.push(...refs.safeDeleteLocationInfos);
     }
     const locInfo = Array.from(new Set(result));
- 	  perfScope?.end();
- 	  return locInfo;
+    perfScope?.end();
+    return locInfo;
   }
 
   getCompletionEntryDetails(filename: String, offset: number, entryName: String): CompletionEntryDetails | undefined {
@@ -1206,9 +1229,9 @@ export class Lsp {
       }
     }
     const result = new CompletionEntryDetails(ptr);
- 	  perfScope?.end();
- 	 
- 	  return result;
+    perfScope?.end();
+
+    return result;
   }
 
   getApplicableRefactors(
@@ -1243,8 +1266,8 @@ export class Lsp {
     let refs = new LspApplicableRefactorInfo(ptr);
     result.push(...refs.applicableRefactorInfo);
     const RefactorItemInfo = Array.from(new Set(result));
- 	  perfScope?.end();
- 	  return RefactorItemInfo;
+    perfScope?.end();
+    return RefactorItemInfo;
   }
 
   getEditsForRefactor(
@@ -1288,8 +1311,8 @@ export class Lsp {
       this.destroyContext(cfg, ctx);
     }
     const result = new LspRefactorEditInfo(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo | undefined {
@@ -1316,8 +1339,8 @@ export class Lsp {
       }
     }
     const result = new LspClassConstructorInfo(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getSyntacticDiagnostics(filename: String): LspDiagsNode | undefined {
@@ -1344,8 +1367,8 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getSuggestionDiagnostics(filename: String): LspDiagsNode | undefined {
@@ -1372,8 +1395,8 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   getQuickInfoAtPosition(filename: String, offset: number): LspQuickInfo | undefined {
@@ -1388,7 +1411,7 @@ export class Lsp {
         return;
       }
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
         ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, offset);
@@ -1458,8 +1481,8 @@ export class Lsp {
       }
     }
     const result = new LspCompletionInfo(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   toLineColumnOffset(filename: String, offset: number): LspLineAndCharacter | undefined {
@@ -1488,9 +1511,9 @@ export class Lsp {
       }
     }
     const result = new LspLineAndCharacter(ptr);
- 	  perfScope?.end();
- 	 
- 	  return result;
+    perfScope?.end();
+
+    return result;
   }
 
   getSafeDeleteInfo(filename: String, position: number): boolean | undefined {
@@ -1566,8 +1589,8 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('findRenameLocations', this.perfMetricLogFilePath) : undefined;
     if (nodeInfos) {
       const result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
- 	    perfScope?.end();
- 	    return result;
+      perfScope?.end();
+      return result;
     }
 
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -1592,8 +1615,8 @@ export class Lsp {
           return new LspRenameLocation(elPeer);
         });
         const uniqueResult = Array.from(new Set(result));
- 	      perfScope?.end();
- 	      return uniqueResult;
+        perfScope?.end();
+        return uniqueResult;
       } else {
         let compileFiles = this.getMergedCompileFilesCrossModule(filename);
         const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
@@ -1615,7 +1638,7 @@ export class Lsp {
           if (searchFileCache) {
             fileContexts.push(searchFileCache.fileContext);
           } else {
-            const [compileFileCfg, compileFileCtx] = this.createContext(compileFiles[i]) ?? [];
+            const [compileFileCfg, compileFileCtx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
             if (!compileFileCfg || !compileFileCtx) {
               tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
               return undefined;
@@ -1659,15 +1682,15 @@ export class Lsp {
         }
 
         const uniqueResult = Array.from(new Set(result));
- 	      perfScope?.end();
- 	      return uniqueResult;
+        perfScope?.end();
+        return uniqueResult;
       }
     };
 
     if (fileCache) {
       return processRenameLocations(fileCache.fileContext, true);
     } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
       if (!cfg || !ctx) { return; }
       return processRenameLocations(ctx, false, cfg);
     }
@@ -1826,8 +1849,8 @@ export class Lsp {
       }
     }
     const result = new LspSignatureHelpItems(ptr);
- 	  perfScope?.end();
- 	  return result;
+    perfScope?.end();
+    return result;
   }
 
   // Use AST cache start
