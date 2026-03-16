@@ -81,7 +81,7 @@ slotNum = 0x12
 .language ECMAScript
 .function any .#**f6*#f19(any a0, any a1, any a2) {
 	nop
-label_45: 
+label_44: 
 label_0: 
 	newlexenv 0x1
 label_32: 
@@ -118,7 +118,7 @@ label_3:
 	sta v10
 	mov v9, v10
 	jmp label_4
-label_48: 
+label_47: 
 	sta v9
 	mov v6, v7
 	mov v5, v8
@@ -160,6 +160,10 @@ label_18:
 	lda v3
 	less 0xb, v7
 	jeqz label_19
+	jmp label_10
+label_52: 
+	mov v7, v8
+	jmp label_18
 label_10: 
 	lda v2
 	stlexvar 0x0, 0x0
@@ -174,7 +178,7 @@ label_11:
 	sta v13
 	mov v12, v13
 	jmp label_12
-label_50: 
+label_49: 
 	sta v12
 	mov v6, v9
 	mov v8, v10
@@ -194,9 +198,6 @@ label_14:
 	sta v8
 	lda v7
 	callarg1 0xf, v8
-label_31: 
-end_label_31: 
-label_37: 
 	poplexenv
 	mov v5, v6
 	jmp label_15
@@ -216,11 +217,12 @@ label_16:
 	newlexenv 0x1
 	lda v7
 	stlexvar 0x0, 0x0
-	mov v7, v8
-	jmp label_18
-label_51: 
+label_31: 
+end_label_31: 
+	jmp label_52
+label_50: 
 	sta v5
-label_43: 
+label_42: 
 	poplexenv
 	lda v5
 	throw
@@ -237,25 +239,25 @@ label_15:
 label_33: 
 end_label_33: 
 	jmp label_20
-label_52: 
+label_51: 
 	sta v0
-label_44: 
+label_43: 
 	poplexenv
 	lda v0
 	throw
 label_21: 
 	poplexenv
 	returnundefined
-label_46: 
+label_45: 
 }
 
-.catchall label_26, end_label_27, label_50
+.catchall label_26, end_label_27, label_49
 
-.catchall label_28, end_label_29, label_48
+.catchall label_28, end_label_29, label_47
 
-.catchall label_30, end_label_31, label_51
+.catchall label_30, end_label_31, label_50
 
-.catchall label_32, end_label_33, label_52
+.catchall label_32, end_label_33, label_51
 
 slotNum = 0x0
 .language ECMAScript
