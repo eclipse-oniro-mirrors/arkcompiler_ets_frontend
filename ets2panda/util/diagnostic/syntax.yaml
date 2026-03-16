@@ -801,6 +801,10 @@ syntax:
   id: 304
   message: "Late-initialized field cannot have default value."
 
+- name: LATE_INITIALIZATION_FIELD_INVALID_MODIFIER
+  id: 139768
+  message: "Late-initialized field cannot be readonly."
+
 - name: LEXICAL_DEC_NOT_ALLOWED_IN_SINGLE_STATEMENT_CONTEXT
   id: 175
   message: "Lexical declaration is not allowed in single statement context."

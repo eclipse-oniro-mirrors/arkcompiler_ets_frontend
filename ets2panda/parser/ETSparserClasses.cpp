@@ -434,6 +434,7 @@ void ETSParser::ValidateFieldModifiers(ir::ModifierFlags modifiers, bool optiona
     const bool isDefinite = (modifiers & ir::ModifierFlags::DEFINITE) != 0;
     const bool isStatic = (modifiers & ir::ModifierFlags::STATIC) != 0;
     const bool isOverride = (modifiers & ir::ModifierFlags::OVERRIDE) != 0;
+    const bool isReadonly = (modifiers & ir::ModifierFlags::READONLY) != 0;
 
     if (isStatic && isOverride) {
         LogError(diagnostic::OVERRIDE_NOT_STATIC, {}, pos);
@@ -454,6 +455,9 @@ void ETSParser::ValidateFieldModifiers(ir::ModifierFlags modifiers, bool optiona
         }
         if (optionalField) {
             LogError(diagnostic::CONFLICTING_FIELD_MODIFIERS, {}, pos);
+        }
+        if (isReadonly) {
+            LogError(diagnostic::LATE_INITIALIZATION_FIELD_INVALID_MODIFIER, {}, pos);
         }
     }
 }
