@@ -86,4 +86,24 @@ let aaa = '中文测试';
     ASSERT_EQ(res.second, expectedCol);
 }
 
+TEST_F(LSPOffsetTests, getLineAndColByOffsetForCRLF)
+{
+    LSPAPI const *lspApi = GetImpl();
+    auto res = lspApi->getColAndLineByOffset("a\r\nb\r\nc", 3);
+    const size_t expectedLine = 2;
+    const size_t expectedCol = 1;
+    ASSERT_EQ(res.first, expectedLine);
+    ASSERT_EQ(res.second, expectedCol);
+}
+
+TEST_F(LSPOffsetTests, getOffsetByColAndLineForCRLF)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const size_t line = 2;
+    const size_t col = 1;
+    auto res = lspApi->getOffsetByColAndLine("a\r\nb\r\nc", line, col);
+    const size_t expectedOffset = 3;
+    ASSERT_EQ(res, expectedOffset);
+}
+
 }  // namespace

@@ -90,3 +90,7 @@ python3 <ets_frontend>/ets2panda/test/benchmarks/runner/update_static_values.py 
 ```
 
 The script will unpack the archives, find all `*-current-perf.txt` files, aggregate the metrics across all runs, and overwrite the corresponding `*-max.txt` files.
+
+# Warning diagnostics workloads
+- Additional warning-focused workloads live in `test/benchmarks/warning_diagnostics`.
+- These files are not picked by `runner.py` (it scans only `test/benchmarks/*.ets`) and are intended for manual performance experiments.
