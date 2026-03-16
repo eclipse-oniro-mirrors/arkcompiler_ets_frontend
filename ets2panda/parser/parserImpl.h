@@ -71,7 +71,8 @@ enum class TypeAnnotationParsingOptions : uint32_t {
     ANNOTATION_NOT_ALLOW = 1U << 17U,
     INSTANCEOF = 1U << 18U,
     TYPE_ALIAS_CONTEXT = 1U << 19U,
-    IGNORE_KEYW_KEYOF = 1U << 20U
+    IGNORE_KEYW_KEYOF = 1U << 20U,
+    PARENTHESIZED_TYPE = 1U << 21U
 };
 
 enum class ParseListOptions : uint32_t {
