@@ -614,24 +614,11 @@ static EnumLoweringPhase::DeclarationFlags GetDeclFlags(ir::TSEnumDeclaration *c
                 enumDecl->Parent()->AsClassDefinition()->IsNamespaceTransformed()};
 }
 
-checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast)
+ir::ClassDeclaration *EnumLoweringPhase::CreateEnumClassByPrimitiveType(ir::TSEnumDeclaration *const enumDecl,
+                                                                        const DeclarationFlags &flags,
+                                                                        bool &hasLoggedError,
+                                                                        ir::TypeNode *typeAnnotation)
 {
-    auto *enumDecl = ast->AsTSEnumDeclaration();
-    auto const flags = GetDeclFlags(enumDecl);
-    if (!flags.IsValid() || enumDecl->Members().empty()) {
-        return ast;
-    }
-
-    bool hasLoggedError = false;
-    auto *const itemInit = enumDecl->Members().front()->AsTSEnumMember()->Init();
-    ir::TypeNode *typeAnnotation = enumDecl->TypeAnnotation();
-
-    if (!typeAnnotation->IsETSPrimitiveType()) {
-        // # 5524 This will be removed when type aliases are supported.
-        LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, itemInit->Start());
-        return ast;
-    }
-
     ir::PrimitiveType primitiveType = typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType();
     if ((primitiveType == ir::PrimitiveType::BYTE) &&
         CheckEnumMemberType<EnumType::BYTE>(enumDecl->Members(), hasLoggedError, true)) {
@@ -656,6 +643,49 @@ checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(c
     if ((primitiveType == ir::PrimitiveType::DOUBLE) &&
         CheckEnumMemberType<EnumType::DOUBLE>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::DOUBLE>(enumDecl, flags);
+    }
+    return nullptr;
+}
+
+checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast)
+{
+    auto *enumDecl = ast->AsTSEnumDeclaration();
+    auto const flags = GetDeclFlags(enumDecl);
+    if (!flags.IsValid() || enumDecl->Members().empty()) {
+        return ast;
+    }
+
+    bool hasLoggedError = false;
+    auto *const itemInit = enumDecl->Members().front()->AsTSEnumMember()->Init();
+    ir::TypeNode *typeAnnotation = enumDecl->TypeAnnotation();
+
+    auto isStringEnum = typeAnnotation->IsETSTypeReference() &&
+                        (typeAnnotation->AsETSTypeReference()->BaseName()->Name() == STRING_REFERENCE_TYPE ||
+                         typeAnnotation->AsETSTypeReference()->BaseName()->Name() == STRING_TYPE);
+
+    auto isNumberEnum =
+        typeAnnotation->IsETSTypeReference() && typeAnnotation->AsETSTypeReference()->BaseName()->Name() == NUMBER_TYPE;
+    if (!typeAnnotation->IsETSPrimitiveType() && !isStringEnum && !isNumberEnum) {
+        // # 5524 This will be removed when type aliases are supported.
+        LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, itemInit->Start());
+        return ast;
+    }
+
+    if (isStringEnum) {
+        if (!CheckEnumMemberType<EnumLoweringPhase::EnumType::STRING>(enumDecl->Members(), hasLoggedError, true)) {
+            return ast;
+        }
+        return CreateEnumNumericClassFromEnumDeclaration<EnumType::STRING>(enumDecl, flags);
+    }
+
+    if (isNumberEnum &&
+        CheckEnumMemberType<EnumLoweringPhase::EnumType::DOUBLE>(enumDecl->Members(), hasLoggedError, true)) {
+        return CreateEnumNumericClassFromEnumDeclaration<EnumType::DOUBLE>(enumDecl, flags);
+    }
+
+    auto *const enumClassDecl = CreateEnumClassByPrimitiveType(enumDecl, flags, hasLoggedError, typeAnnotation);
+    if (enumClassDecl != nullptr) {
+        return enumClassDecl;
     }
 
     if (!hasLoggedError) {
