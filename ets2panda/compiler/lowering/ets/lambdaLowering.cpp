@@ -823,8 +823,8 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
     } else {
         ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType() ||
                         restParameterSubstituteType->IsETSReadonlyArrayType());
-        auto *typeNode = allocator->New<ir::OpaqueTypeNode>(
-            checker->GetElementTypeOfArray(lciInfo->lambdaSignature->RestVar()->TsType()), allocator);
+        auto *typeNode =
+            allocator->New<ir::OpaqueTypeNode>(checker->GetElementTypeOfArray(restParameterSubstituteType), allocator);
         auto restParameterLenView = GenName(allocator).View();
         args = parser->CreateFormattedStatement(
             GetArrayReallocationStringResizableArray(startIdx), restParameterLenView, lciInfo->restParameterIdentifier,
