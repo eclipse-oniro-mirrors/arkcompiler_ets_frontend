@@ -22,7 +22,7 @@ GenericsTest.ets
 #11327
 objectEquality.ets
 
-#19809 FailKind.ES2PANDA_FAIL
+#33654
 conditionalExpressionGenericLUB.ets
 
 # Failed due to lambda captures
@@ -42,7 +42,7 @@ funcRefWithRestArguments.ets
 # Wrong type inferred for lambda
 type_param_in_union.ets
 
-#15276
+#33655
 n_overrideWithNullable.ets
 nullableType.ets
 

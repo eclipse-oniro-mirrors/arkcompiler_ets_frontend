@@ -13,7 +13,7 @@ parser/ts/test_decorator3.ts
 #32155
 ast/compiler/ets/annotation_new.ets
 
-#32379
+#33653
 compiler/ets/invalidInheritance3.ets
 
 parser/ets/import_tests/import_relative_path.ets

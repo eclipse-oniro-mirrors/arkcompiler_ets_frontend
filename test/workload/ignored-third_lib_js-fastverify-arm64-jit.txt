@@ -13,8 +13,6 @@ validator_test
 #23990
 hamcrest_test
 
-#25198
+#33565
 jsDiff_test
-
-#30387
 pdfview_test

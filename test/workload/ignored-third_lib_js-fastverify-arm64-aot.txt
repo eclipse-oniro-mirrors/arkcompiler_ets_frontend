@@ -3,16 +3,14 @@
 pinyin4js_test
 Easyrelpace_test
 
-#30387
+#33565
 crypto-js_test
 jsDiff_test
-mathjs_test
-
-#18546
 jBox2d_test
+mathjs_test
 
 #27438
 dayjs_test
 
-#26457
+#33330
 memory-cache_test

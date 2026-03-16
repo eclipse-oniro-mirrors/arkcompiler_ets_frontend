@@ -1,8 +1,5 @@
 # panda#11502
 nullCoalesc.ets
 
-# panda#11330
-ArrayLiteral.ets
-
 # test only for x64
 unboxing2_x64.ets

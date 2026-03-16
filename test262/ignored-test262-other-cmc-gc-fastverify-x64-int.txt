@@ -1,6 +1,6 @@
 # Known failure list for test262 -other -cmc-gc-fastverify-x64-int
 
-#27389
+#31093
 test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Script_Extensions_-Pau_Cin_Hau.js
 
 #26458

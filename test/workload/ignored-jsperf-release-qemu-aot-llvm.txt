@@ -4,7 +4,7 @@ Proxy.handler_applyProxy
 #19077
 Function_applyFunction
 
-#30387
+#33565
 DisplayNames_constructor
 DisplayNames_of
 DisplayNames_resolvedOptions
