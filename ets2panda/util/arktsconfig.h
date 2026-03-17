@@ -261,6 +261,10 @@ private:
     void Inherit(const ArkTsConfig &base);
     bool ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
                          std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
+    std::optional<std::string> TryResolveWithDependencies(std::string_view path) const;
+    std::optional<std::string> TryResolveWithDependencyAliases(std::string_view path) const;
+    std::optional<std::string> TryResolveWithPaths(std::string_view path) const;
+    std::optional<std::string> ResolvePath(std::string_view path) const;
 
     bool isParsed_ = false;
     std::string configPath_;

@@ -45,7 +45,9 @@ import {
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
     TS_SUFFIX,
-    ENABLE_DECLARATION_BARRIER
+    ENABLE_DECLARATION_BARRIER,
+    ENABLE_DECL_CACHE,
+    ETSCACHE_SUFFIX
 } from '../pre_define';
 import {
     PluginDriver,
@@ -204,17 +206,18 @@ export class Ets2panda {
             this.logger.printInfo('[Ets2panda] Checked');
 
             statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
-            if (job.type & CompileJobType.DECL) {
+            // logic for setting CompileJobType.DECL should be rechecked
+            if (job.type & CompileJobType.DECL && ENABLE_DECL_CACHE) {
                 // emit declarations based on relative location of the file in a project,
                 // since es2panda doesn't know about ohos modules right now
                 const relativeDeclPath = changeFileExtension(
                     path.relative(job.fileInfo.moduleRoot, job.fileInfo.input),
-                    DECL_ETS_SUFFIX
+                    ETSCACHE_SUFFIX
                 )
-                const outputDeclFilePath = path.resolve(this.declgenV2OutDir, relativeDeclPath);
+                const outputDeclFilePath = path.resolve(this.cacheDir, relativeDeclPath);
                 ensurePathExists(outputDeclFilePath)
 
-                // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
+                // .etscache files are generated separately from .abc file right now
                 arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
                 this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
                 if (ENABLE_DECLARATION_BARRIER) {
@@ -312,19 +315,20 @@ export class Ets2panda {
             this.logger.printInfo('[Ets2panda] Checked');
 
             statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
-            if (job.type & CompileJobType.DECL) {
+            if (job.type & CompileJobType.DECL && ENABLE_DECL_CACHE) {
                 for (const file of job.fileList) {
                     // emit declarations based on relative location of the file in a project,
                     // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(
                         path.relative(job.fileInfo.moduleRoot, file),
-                        DECL_ETS_SUFFIX
+                        ETSCACHE_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
-                        this.declgenV2OutDir,
+                        this.cacheDir,
                         relative
                     )
                     ensurePathExists(declEtsOutputPath);
+                    // .etscache files are generated separately from .abc file right now
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${file}`)
                 }
@@ -379,6 +383,7 @@ export class Ets2panda {
         skipDeclCheck: boolean,
         genDeclAnnotations: boolean
     ): void {
+        // this logic does not suppport declgen in simultaneous mode
         const inputFilePath = jobInfo.fileInfo.input;
         const source = fs.readFileSync(inputFilePath, 'utf8');
         const filePathFromModuleRoot: string = path.relative(jobInfo.fileInfo.moduleRoot, inputFilePath);
@@ -449,5 +454,10 @@ export class Ets2panda {
             arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
             arkts.destroyConfig(arktsGlobal.config);
         }
+    }
+
+    public extractDeclarationsFromAbcFile(abcFile: string, cacheDir: string) {
+        let { arkts, arktsGlobal } = this.koalaModule;
+        arkts.ExtractDeclarationsFromAbcFile(abcFile, cacheDir);
     }
 }

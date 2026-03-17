@@ -118,6 +118,7 @@ export interface ArkTS {
     };
     Es2pandaImportKinds: typeof Es2pandaImportKinds;
     Es2pandaImportFlags: typeof Es2pandaImportFlags;
+    ExtractDeclarationsFromAbcFile: Function;
 }
 
 export interface KoalaModule {

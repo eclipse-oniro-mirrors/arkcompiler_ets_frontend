@@ -944,6 +944,7 @@ describe('BaseMode', () => {
             ]]),
             moduleInfos: new Map(),
             abcFiles: new Set(),
+            abcDeclarationMap: new Map(),
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: {record: jest.fn()},

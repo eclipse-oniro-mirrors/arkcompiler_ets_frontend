@@ -858,6 +858,12 @@ bool Helpers::IsStdLib(const parser::Program *program)
     return std::count(stdlib.begin(), stdlib.end(), fileFolder) != 0;
 }
 
+bool Helpers::IsStdLib(std::string_view path)
+{
+    auto const &stdlib = StdLib();
+    return std::find(stdlib.begin(), stdlib.end(), path) != stdlib.end();
+}
+
 checker::Type *Helpers::CheckReturnTypeOfCheck([[maybe_unused]] const ir::AstNode *const node,
                                                checker::Type *const type)
 {

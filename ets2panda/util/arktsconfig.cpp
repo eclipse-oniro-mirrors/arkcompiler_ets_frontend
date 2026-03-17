@@ -604,57 +604,82 @@ std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path,
     return std::nullopt;
 }
 
-std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic) const
+std::optional<std::string> ArkTsConfig::TryResolveWithPaths(std::string_view path) const
 {
-    auto tryResolveWithPaths = [this, &path]() -> std::optional<std::string> {
-        if (auto indexIt = paths_.find(std::string(path) + "/Index"); indexIt != paths_.end()) {
-            auto result = ResolveImportPath(path, TrimPath(indexIt->first), indexIt->second);
-            if (result.has_value()) {
-                return result;
-            }
-        }
-        for (const auto &[alias, paths] : paths_) {
-            auto trimmedAlias = TrimPath(alias);
-            if (path.rfind(trimmedAlias, 0) == 0) {
-                return ResolveImportPath(path, trimmedAlias, paths);
-            }
-        }
-        return std::nullopt;
-    };
-    auto tryResolveWithDependencies = [this, &path]() -> std::optional<std::string> {
-        for (const auto &[dynPath, dependence] : dependencies_) {
-            if (path == dynPath) {
-                return dynPath;
-            }
-            // Such imports are allowed in ohos: <package name>/<relative path>
-            if (path.rfind(dynPath, 0) == 0 &&
-                util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
-                return dynPath;
-            }
-        }
-        return std::nullopt;
-    };
-    auto tryResolveWithDependencyAliases = [this, &path]() -> std::optional<std::string> {
-        for (const auto &[dynPath, dependence] : dependencies_) {
-            const auto &aliases = dependence.Alias();
-            if (std::find(aliases.begin(), aliases.end(), path) != aliases.end()) {
-                return dynPath;
-            }
-        }
-        return std::nullopt;
-    };
-    std::vector<std::function<std::optional<std::string>()>> resolvers;
-    if (isDynamic) {
-        resolvers = {tryResolveWithDependencies, tryResolveWithDependencyAliases, tryResolveWithPaths};
-    } else {
-        resolvers = {tryResolveWithDependencies, tryResolveWithPaths, tryResolveWithDependencyAliases};
-    }
-    for (auto &resolver : resolvers) {
-        if (auto result = resolver()) {
+    // remove this?
+    if (auto indexIt = paths_.find(std::string(path) + "/Index"); indexIt != paths_.end()) {
+        auto result = ResolveImportPath(path, TrimPath(indexIt->first), indexIt->second);
+        if (result.has_value()) {
             return result;
         }
     }
+    for (const auto &[alias, paths] : paths_) {
+        auto trimmedAlias = TrimPath(alias);
+        if (path.rfind(trimmedAlias, 0) == 0) {
+            return ResolveImportPath(path, trimmedAlias, paths);
+        }
+    }
     return std::nullopt;
+}
+
+std::optional<std::string> ArkTsConfig::TryResolveWithDependencies(std::string_view path) const
+{
+    for (const auto &[dynPath, dependence] : dependencies_) {
+        // Interop import
+        if (path == dynPath && !util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
+            return dynPath;
+        }
+        // Handling binary import for etsstdlib
+        if (path == dynPath && util::Helpers::IsStdLib(path)) {
+            ES2PANDA_ASSERT(util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX));
+            return dynPath;
+        }
+        // Binary import { XXX } from "<package name>" -> <package name>/<mainfile>
+        if (path == dynPath && util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
+            return dynPath + "." + std::string {dependence.MainFile()};
+        }
+        // Binary import { XXX } from "<package name>/<relative path>" -> <package name>/<relative path>
+        if (path != dynPath && path.rfind(dynPath, 0) == 0 &&
+            util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
+            return std::string {path};
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> ArkTsConfig::TryResolveWithDependencyAliases(std::string_view path) const
+{
+    for (const auto &[dynPath, dependence] : dependencies_) {
+        const auto &aliases = dependence.Alias();
+        if (std::find(aliases.begin(), aliases.end(), path) != aliases.end()) {
+            return dynPath;
+        }
+    }
+    return std::nullopt;
+}
+
+std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic) const
+{
+    std::optional<std::string> result = TryResolveWithDependencies(path);
+    if (result) {
+        return result;
+    }
+
+    if (isDynamic) {
+        result = TryResolveWithDependencyAliases(path);
+        if (result) {
+            return result;
+        }
+        result = TryResolveWithPaths(path);
+    } else {
+        result = TryResolveWithPaths(path);
+        if (result) {
+            return result;
+        }
+        // not sure whether it is needed at all
+        result = TryResolveWithDependencyAliases(path);
+    }
+    return result;
 }
 
 std::vector<std::string> ArkTsConfig::ParseStringArray(const std::unique_ptr<ark::JsonObject> *alias,

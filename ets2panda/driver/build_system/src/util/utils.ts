@@ -288,3 +288,18 @@ export function shouldBeUpdated(source: string, target: string): boolean {
     }
     return true;
 }
+
+export function traverseDirAndFindFilesWithRegExp(dir: string, regexp: RegExp): string[] {
+    if (!fs.existsSync(dir)) return [];
+    let result: string[] = [];
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            result = result.concat(traverseDirAndFindFilesWithRegExp(fullPath, regexp));
+        } else if (regexp.test(entry.name)) {
+            result.push(fullPath);
+        }
+    }
+    return result;
+}

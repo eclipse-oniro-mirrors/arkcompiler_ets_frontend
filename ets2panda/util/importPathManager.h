@@ -273,7 +273,7 @@ public:
 
     parser::Program *SearchResolved(const ImportMetadata &importMetadata) const;
 
-    std::string FormEtscacheFilePath(const ImportMetadata &imd) const;
+    static std::string FormEtscacheFilePath(std::string moduleName, const std::string &cacheDir);
 
     auto *Context() const
     {
@@ -284,6 +284,8 @@ public:
     {
         return srcPos_;
     }
+
+    static int UnpackAbc(const std::string &abcPath, const std::string &cacheDir);
 
 private:
     template <typename VarBinderT, Language::Id LANG_ID>

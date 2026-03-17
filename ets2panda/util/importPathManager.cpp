@@ -565,18 +565,12 @@ parser::Program *ImportPathManager::LookupProgramCaches(const ImportMetadata &im
 }
 
 // NOTE(dkofanov): #32416 revise for packages caching, etc.
-std::string ImportPathManager::FormEtscacheFilePath(const ImportMetadata &imd) const
+std::string ImportPathManager::FormEtscacheFilePath(std::string moduleName, const std::string &cacheDir)
 {
-    const auto &cacheDir = ArkTSConfig().CacheDir();
     ES2PANDA_ASSERT(!cacheDir.empty());
-    ES2PANDA_ASSERT(!imd.ModuleName().empty());
-
-    std::string declarationCacheFile = cacheDir;
-    declarationCacheFile += util::PATH_DELIMITER;
-    declarationCacheFile += imd.ModuleName();
-    declarationCacheFile += CACHE_SUFFIX;
-
-    return declarationCacheFile;
+    ES2PANDA_ASSERT(!moduleName.empty());
+    std::replace(moduleName.begin(), moduleName.end(), '.', util::Path::GetPathDelimiter());
+    return cacheDir + util::PATH_DELIMITER + moduleName + std::string {CACHE_SUFFIX};
 }
 
 class EtscacheFileLock {
@@ -666,7 +660,13 @@ private:
 
         static Pointer Open(const std::string &filename)
         {
+#ifdef USE_UNIX_SYSCALL
+            return {};
+#else
+            const std::string absDecl = fs::absolute(filename).string();
+            fs::create_directories(fs::path(absDecl).parent_path());
             FlockTrace(filename, "Open for write");
+#endif
 #ifdef PANDA_TARGET_WINDOWS
             FD fd = ::CreateFileW(Utf8ToWString(filename).c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
                                   NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -805,18 +805,17 @@ private:
     ExlusiveFileWriter::Pointer writer_ = {};
 };
 
-template <typename EtscachePathByMNameGetter>
-static void UnpackAbc(DiagnosticEngine *de, const std::string &abcPath, const EtscachePathByMNameGetter &dstGetter)
+int ImportPathManager::UnpackAbc(const std::string &abcPath, const std::string &cacheDir)
 {
     auto abc = panda_file::OpenPandaFile(abcPath);
     if (abc == nullptr) {
-        de->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {abcPath});
-        return;
+        return 1;
     }
     for (auto id : abc->GetExported()) {
         panda_file::File::EntityId classId(id);
         auto mname = ExtractMnameFromPandafile(*abc, classId);
-        if (EtscacheFileLock lock {dstGetter(mname), abcPath}; lock.ShouldWriteDeclfile()) {
+        std::string dstPath {ImportPathManager::FormEtscacheFilePath(mname, cacheDir)};
+        if (EtscacheFileLock lock {dstPath, abcPath}; lock.ShouldWriteDeclfile()) {
             std::stringstream ss;
             panda_file::ClassDataAccessor {*abc, classId}.EnumerateAnnotation(
                 ImportPathManager::ANNOTATION_MODULE_DECLARATION.data(),
@@ -834,6 +833,7 @@ static void UnpackAbc(DiagnosticEngine *de, const std::string &abcPath, const Et
             }
         }
     }
+    return 0;
 }
 
 void ImportPathManager::MaybeUnpackAbcAndEmplaceInCacheDir(const ImportMetadata &importMetadata)
@@ -843,11 +843,10 @@ void ImportPathManager::MaybeUnpackAbcAndEmplaceInCacheDir(const ImportMetadata 
 
     if (processedAbcFiles_.count(importMetadata.AbcPath()) == 0) {
         processedAbcFiles_.insert(importMetadata.AbcPath());
-        UnpackAbc(DE(), importMetadata.AbcPath(), [this](std::string_view mname) {
-            ImportMetadata imdMock {};
-            imdMock.moduleName_ = std::string {mname};
-            return FormEtscacheFilePath(imdMock);
-        });
+        auto result = UnpackAbc(importMetadata.AbcPath(), ArkTSConfig().CacheDir());
+        if (result) {
+            DE()->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {importMetadata.AbcPath()});
+        }
     }
 
     // Just unpack, will be loaded by LookupEtscacheFile.
@@ -1112,7 +1111,7 @@ void ImportPathManager::LookupEtscacheFile(ImportMetadata *importData)
     if (ArkTSConfig().CacheDir().empty()) {
         return;
     }
-    auto cachefile = FormEtscacheFilePath(*importData);
+    auto cachefile = FormEtscacheFilePath(std::string {importData->ModuleName()}, ArkTSConfig().CacheDir());
     ES2PANDA_ASSERT(cachefile.find(ArkTSConfig().CacheDir()) == 0);
     if (!ark::os::file::File::IsRegularFile(cachefile)) {
         return;

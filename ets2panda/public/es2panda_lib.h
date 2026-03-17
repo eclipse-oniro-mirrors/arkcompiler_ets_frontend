@@ -293,6 +293,7 @@ struct CAPI_EXPORT es2panda_Impl {
     void (*AddFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*FreeCompilerPartMemory)(es2panda_Context *context);
     void (*ResetCounters)();
+    int (*ExtractDeclarationsFromAbcFile)(const char *abcFile, const char *cacheDir);
 // COMPARE_MANUAL_CAPI_AND_IDL_END
 // CC-OFFNXT(G.INC.08) project code style
 #include "generated/es2panda_lib/es2panda_lib_decl.inc"
