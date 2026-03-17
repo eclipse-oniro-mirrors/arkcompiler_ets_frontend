@@ -47,7 +47,6 @@ public:
         : context_(context),
           parser_(context->parser->AsETSParser()),
           allocator_(context->Allocator()),
-          globalProgram_(nullptr),
           packageInitializerBlockCount_(context->Allocator()->Adapter()) {};
 
     static void MergeNamespace(ArenaVector<ir::ETSModule *> &namespaces, public_lib::Context *ctx);
@@ -116,7 +115,7 @@ private:
     public_lib::Context *context_;
     parser::ETSParser *const parser_;
     ArenaAllocator *const allocator_;
-    parser::Program *globalProgram_;
+    parser::Program *globalProgram_ {nullptr};
     ArenaUnorderedSet<util::StringView> packageInitializerBlockCount_;
 };
 }  // namespace ark::es2panda::compiler

@@ -2629,11 +2629,8 @@ static bool ValidateTypeInferenceRequiredArgument(ETSChecker *checker, Signature
         // Note: If the signatures are from lambdas, then they have no `Function`.
         ir::ScriptFunction *const lambda = argument->AsArrowFunctionExpression()->Function();
         ERROR_SANITY_CHECK(checker, targetParm->IsETSParameterExpression(), return false);
-        if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), paramType, lambda) &&
-            TypeInference(checker, substitutedSig, arguments, flags)) {
-            return true;
-        }
-        return false;
+        return CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), paramType, lambda) &&
+               TypeInference(checker, substitutedSig, arguments, flags);
     }
 
     if (!argument->IsArrayExpression() || !ContainsTypeErrorRecursively(paramType)) {

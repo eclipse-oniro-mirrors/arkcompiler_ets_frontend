@@ -30,14 +30,12 @@ static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::Express
     if (argsSize == 1) {
         return parser->CreateFormattedExpression(
             "new @@T1()", checker->AllocNode<ir::OpaqueTypeNode>(arrayInstance->Signature()->Owner(), allocator));
-    } else {
-        auto *arg = arrayInstance->GetArguments()[1];
-        if (arg->IsArrowFunctionExpression()) {
-            return parser->CreateFormattedExpression("@@E1(@@I2)", arg, idx->Clone(allocator, nullptr));
-        } else {
-            return arg;
-        }
     }
+    auto *arg = arrayInstance->GetArguments()[1];
+    if (arg->IsArrowFunctionExpression()) {
+        return parser->CreateFormattedExpression("@@E1(@@I2)", arg, idx->Clone(allocator, nullptr));
+    }
+    return arg;
 }
 ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstNode *node)
 {
@@ -95,24 +93,21 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
     return loweringResult;
 }
 
-static bool isLoweringCandidate(ir::AstNode *node)
+static bool IsLoweringCandidate(ir::AstNode *node)
 {
     if (!node->IsETSNewClassInstanceExpression()) {
         return false;
     }
     auto *arrayInstanceType = node->AsETSNewClassInstanceExpression()->TsType();
     ES2PANDA_ASSERT(arrayInstanceType != nullptr);
-    if (!arrayInstanceType->IsETSArrayType()) {
-        return false;
-    }
-    return true;
+    return arrayInstanceType->IsETSArrayType();
 }
 bool FixedArrayLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [ctx = Context()](ir::AstNode *node) -> ir::AstNode * {
-            if (!isLoweringCandidate(node)) {
+            if (!IsLoweringCandidate(node)) {
                 return node;
             }
 

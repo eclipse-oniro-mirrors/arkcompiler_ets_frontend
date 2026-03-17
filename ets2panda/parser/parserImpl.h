@@ -611,7 +611,7 @@ protected:
 
 private:
     bool GetCanBeForInOf(ir::Expression *leftNode, ir::AstNode *initNode);
-    Program *program_;
+    Program *program_ {nullptr};
     ParserContext context_;
     ClassPrivateContext classPrivateContext_;
     uint32_t classId_ {};

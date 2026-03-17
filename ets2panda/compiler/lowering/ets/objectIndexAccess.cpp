@@ -112,8 +112,9 @@ static ir::AstNode *ProcessTupleGetAccess(public_lib::Context *ctx, ir::MemberEx
     auto *const checker = ctx->GetChecker()->AsETSChecker();
     static std::size_t const TUPLE_THRESHOLD = checker->GetGlobalTypesHolder()->VariadicTupleTypeThreshold();
 
+    static std::size_t const CODE_STRING_RESERVE = 64U;
     std::string code {};
-    code.reserve(64U);
+    code.reserve(CODE_STRING_RESERVE);
 
     std::vector<ir::AstNode *> nodes {};
     nodes.emplace_back(memberExpression->Object());

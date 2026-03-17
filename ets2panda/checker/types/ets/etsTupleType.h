@@ -26,7 +26,7 @@ class ETSTupleType final : public Type {
 
 public:
     ETSTupleType() = delete;
-    virtual ~ETSTupleType() = default;
+    ~ETSTupleType() override = default;
 
     NO_COPY_SEMANTIC(ETSTupleType);
     NO_MOVE_SEMANTIC(ETSTupleType);

@@ -24,6 +24,7 @@ class ScriptFunction;
 class FunctionExpression : public Expression {
 public:
     FunctionExpression() = delete;
+    ~FunctionExpression() override = default;
 
     NO_COPY_SEMANTIC(FunctionExpression);
     NO_MOVE_SEMANTIC(FunctionExpression);

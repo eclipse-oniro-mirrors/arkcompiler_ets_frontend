@@ -20,6 +20,7 @@
 
 namespace ark::es2panda::compiler {
 
+// NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
 struct UnboxContext {
     void Setup(public_lib::Context *ctx)
     {
@@ -37,6 +38,7 @@ struct UnboxContext {
     std::set<ir::AstNode *> handled;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
+// NOLINTEND(cppcoreguidelines-pro-type-member-init)
 
 class UnboxPhase : public PhaseForProgramsToBeEmitted {
 public:

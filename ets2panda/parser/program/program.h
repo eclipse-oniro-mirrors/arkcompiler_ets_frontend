@@ -84,7 +84,7 @@ class Program : public RecordTableHolder {
         using ProgramsSubmap = ArenaVector<ProgramAdapter<KIND> *>;
         using TransitiveExternals = std::tuple<ProgramsSubmap<KINDS>...>;
 
-        explicit ExternalSourcesImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...), direct_ {} {}
+        explicit ExternalSourcesImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...) {}
 
         template <typename SubmapT>
         static constexpr auto GetModuleKindFromSubmapType()
@@ -553,6 +553,7 @@ private:
 template <typename CB>
 void Program::MaybeIteratePackage(const CB &cb)
 {
+    // NOLINTNEXTLINE(misc-unused-parameters)
     auto invokeMaybePassFlag = [&cb](auto *program, bool isPackageFraction) {
         // CC-OFFNXT(G.NAM.03-CPP) project codestyle
         constexpr bool SHOULD_INFORM_OF_PACKAGE_FRACTION = std::is_invocable_v<CB, Program *, bool>;

@@ -31,6 +31,7 @@
 #include "libarkfile/file-inl.h"
 #include "libarkbase/utils/logger.h"
 
+#include "util/es2pandaMacros.h"
 #include "varbinder/ETSBinder.h"
 #include "varbinder/TSBinder.h"
 #include "varbinder/ASBinder.h"
@@ -287,10 +288,9 @@ parser::PackageProgram *ImportPathManager::NewEmptyPackage(const ImportMetadata 
     return package;
 }
 
-std::string GetRealPath(std::string path)
+std::string GetRealPath(const std::string &path)
 {
-    const std::string realPath = ark::os::GetAbsolutePath(path);
-    return realPath;
+    return ark::os::GetAbsolutePath(path);
 }
 
 template <typename VarBinderT, Language::Id LANG_ID>
@@ -577,8 +577,8 @@ class EtscacheFileLock {
 public:
     NO_MOVE_SEMANTIC(EtscacheFileLock);
     NO_COPY_SEMANTIC(EtscacheFileLock);
-    EtscacheFileLock(const std::string &dstDeclPath, const std::string &srcAbcPath)
-        : dstPath_(dstDeclPath), abcPath_(srcAbcPath)
+    EtscacheFileLock(std::string dstDeclPath, std::string srcAbcPath)
+        : dstPath_(std::move(dstDeclPath)), abcPath_(std::move(srcAbcPath))
     {
         if ((!os::IsFileExists(dstPath_) || ShouldRewrite(abcPath_, dstPath_))) {
             writer_ = ExlusiveFileWriter::Open(dstPath_);
@@ -586,11 +586,12 @@ public:
             ExlusiveFileWriter::WaitUnlockForRead(dstPath_);
         }
     }
+    ~EtscacheFileLock() = default;
 
     void WriteEtscacheFile(std::string_view text) const
     {
         ES2PANDA_ASSERT(bool(writer_));
-        writer_->Write(std::move(text));
+        writer_->Write(text);
     }
 
     bool ShouldWriteDeclfile() const
@@ -643,7 +644,8 @@ private:
             }
             ::CloseHandle(fd);
 #else
-            auto const fd = ::open(filename.c_str(), O_RDONLY);
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+            auto const fd = ::open(filename.c_str(), O_RDONLY | O_CLOEXEC);
             if (fd == -1) {
                 std::cerr << "File opening error '" << filename << "': " << ::strerror(errno) << std::endl;
                 return;
@@ -689,7 +691,8 @@ private:
             }
 #else
             auto constexpr CHMOD = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-            auto const fd = ::open(filename.c_str(), O_WRONLY | O_CREAT, CHMOD);
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
+            auto const fd = ::open(filename.c_str(), O_WRONLY | O_CREAT | O_CLOEXEC, CHMOD);
             if (fd == -1) {
                 std::cerr << "File opening error '" << filename << "': " << ::strerror(errno) << std::endl;
                 return {};
@@ -844,7 +847,7 @@ void ImportPathManager::MaybeUnpackAbcAndEmplaceInCacheDir(const ImportMetadata 
     if (processedAbcFiles_.count(importMetadata.AbcPath()) == 0) {
         processedAbcFiles_.insert(importMetadata.AbcPath());
         auto result = UnpackAbc(importMetadata.AbcPath(), ArkTSConfig().CacheDir());
-        if (result) {
+        if (result != 0) {
             DE()->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {importMetadata.AbcPath()});
         }
     }
@@ -965,7 +968,7 @@ public:
         }
     }
 
-    parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, ArenaString packageName)
+    parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, const ArenaString &packageName)
     {
         if (progsByResolvedPath_.count(packageName) != 0) {
             // Already fixed.
@@ -1400,11 +1403,13 @@ ImportMetadata::ImportMetadata(const ImportPathManager &ipm, std::string_view re
     CheckModuleName(ipm, *this);
 }
 
+// NOLINTNEXTLINE(bugprone-copy-constructor-init)
 ImportMetadata::ImportMetadata(const ImportMetadata &other)
 {
     *this = other;
 }
 
+// NOLINTNEXTLINE(misc-unconventional-assign-operator,bugprone-unhandled-self-assignment)
 const ImportMetadata &ImportMetadata::operator=(const ImportMetadata &other)
 {
     parser::DeclarationCache::CacheReference::operator=(other);

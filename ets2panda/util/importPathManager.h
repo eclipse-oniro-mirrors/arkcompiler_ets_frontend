@@ -28,6 +28,10 @@
 #include "util/diagnosticEngine.h"
 #include "parser/program/DeclarationCache.h"
 
+namespace ark::es2panda {
+class ArkTsConfig;
+}  // namespace ark::es2panda
+
 namespace ark::es2panda::util {
 namespace gen::extension {
 enum Enum : size_t;
@@ -71,8 +75,6 @@ using LowDeclarationProgram = ProgramAdapter<util::ModuleKind::ETSCACHE_DECL>;
 
 }  // namespace ark::es2panda::parser
 
-class ArkTsConfig;
-
 namespace ark::es2panda::util {
 
 inline bool IsAbsolute(const std::string &path)
@@ -108,8 +110,9 @@ public:
                    bool isExternalModule = false);
     ImportMetadata() = default;
     ImportMetadata(const ImportMetadata &other);
-    const ImportMetadata &operator=(const ImportMetadata &other);
+    const ImportMetadata &operator=(const ImportMetadata &other);  // NOLINT(misc-unconventional-assign-operator)
     NO_MOVE_SEMANTIC(ImportMetadata);
+    ~ImportMetadata() = default;
 
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
 
@@ -228,7 +231,7 @@ public:
     struct ParseInfo {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         bool isParsed {};
-        parser::Program *program;
+        parser::Program *program {nullptr};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
 

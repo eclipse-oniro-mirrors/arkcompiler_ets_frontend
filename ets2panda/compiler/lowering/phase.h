@@ -168,7 +168,7 @@ using PhaseForProgramsToBeEmitted = PhaseForSelectedPrograms<ProgramsToBeEmitted
 // While this behavior is incorrect and unexpected, 'PhaseForProgramsWithBodies_LEGACY' is introduced conservatively,
 // which should be repalced with 'PhaseForProgramsWithBodies' or 'PhaseForProgramsToBeEmitted'.
 // CC-OFFNXT(G.NAM.03-CPP) project codestyle
-using PhaseForProgramsWithBodies_LEGACY = PhaseForProgramsToBeEmitted;
+using PhaseForProgramsWithBodies_LEGACY = PhaseForProgramsToBeEmitted;  // NOLINT(readability-identifier-naming)
 using PhaseForProgramsWithBodies =
     PhaseForSelectedPrograms<ProgramsByKindSelector<util::ModuleKind::PACKAGE, util::ModuleKind::MODULE>>;
 

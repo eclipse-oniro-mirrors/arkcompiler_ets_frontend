@@ -183,9 +183,11 @@ static TextRange GetTrimmedSelectionSpan(const RefactorContext &context)
     const auto &source = ctx->sourceFile->source;
     size_t start = std::min(context.span.pos, source.size());
     size_t end = std::min(context.span.end, source.size());
+    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
     while (start < end && std::isspace(static_cast<unsigned char>(source[start]))) {
         ++start;
     }
+    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
     while (end > start && std::isspace(static_cast<unsigned char>(source[end - 1]))) {
         --end;
     }
@@ -385,7 +387,7 @@ std::vector<ir::ClassDefinition *> CollectEnclosingNamespaceScopes(ir::AstNode *
     return scopes;
 }
 
-static std::string IdentifierNameMutf8(const ir::Identifier *ident)
+std::string IdentifierNameMutf8(const ir::Identifier *ident)
 {
     return ident == nullptr ? "" : ident->Name().Mutf8();
 }
@@ -579,12 +581,12 @@ bool IsDeclaredInGlobalScope(const varbinder::Decl *decl)
     return true;
 }
 
-static bool IsContainedInRange(const ir::AstNode *node, TextRange span)
+bool IsContainedInRange(const ir::AstNode *node, TextRange span)
 {
     return node != nullptr && node->Start().index >= span.pos && node->End().index <= span.end;
 }
 
-static void RecordDeclaredIdentifier(const ir::AstNode *node, std::unordered_set<std::string> &declaredInside)
+void RecordDeclaredIdentifier(const ir::AstNode *node, std::unordered_set<std::string> &declaredInside)
 {
     if (node == nullptr || !node->IsVariableDeclarator()) {
         return;
@@ -595,8 +597,8 @@ static void RecordDeclaredIdentifier(const ir::AstNode *node, std::unordered_set
     }
 }
 
-static void RecordAssignedIdentifier(const ir::AstNode *node, ir::ScriptFunction *enclosing,
-                                     std::unordered_set<std::string> &assignedInside)
+void RecordAssignedIdentifier(const ir::AstNode *node, ir::ScriptFunction *enclosing,
+                              std::unordered_set<std::string> &assignedInside)
 {
     const ir::Expression *target = nullptr;
     if (node != nullptr && node->IsAssignmentExpression()) {
@@ -617,7 +619,7 @@ static void RecordAssignedIdentifier(const ir::AstNode *node, ir::ScriptFunction
     }
 }
 
-static std::optional<std::pair<std::string, ir::Identifier *>> ResolveUsedIdentifier(
+std::optional<std::pair<std::string, ir::Identifier *>> ResolveUsedIdentifier(
     ir::AstNode *node, bool includeNonGlobal, ir::ScriptFunction *enclosing,
     const std::unordered_set<std::string> &declaredInside)
 {
@@ -645,7 +647,7 @@ static std::optional<std::pair<std::string, ir::Identifier *>> ResolveUsedIdenti
 }
 
 template <class Handler>
-static void CollectFunctionIOUsage(ir::AstNode *ast, TextRange range, Handler &&handler)
+void CollectFunctionIOUsage(ir::AstNode *ast, TextRange range, Handler &&handler)
 {
     if (ast == nullptr) {
         return;
@@ -659,9 +661,9 @@ static void CollectFunctionIOUsage(ir::AstNode *ast, TextRange range, Handler &&
     });
 }
 
-static void FinalizeFunctionIO(FunctionIOInfo &info, const std::unordered_set<std::string> &declaredInside,
-                               const std::unordered_set<std::string> &assignedInside,
-                               const std::vector<std::string> &usedOrder)
+void FinalizeFunctionIO(FunctionIOInfo &info, const std::unordered_set<std::string> &declaredInside,
+                        const std::unordered_set<std::string> &assignedInside,
+                        const std::vector<std::string> &usedOrder)
 {
     std::vector<std::string> assignedOutside;
     assignedOutside.reserve(assignedInside.size());
@@ -685,8 +687,8 @@ static void FinalizeFunctionIO(FunctionIOInfo &info, const std::unordered_set<st
     }
 }
 
-static void BuildParamDecls(FunctionIOInfo &info, const std::unordered_map<std::string, ir::Identifier *> &firstUse,
-                            checker::ETSChecker *checker)
+void BuildParamDecls(FunctionIOInfo &info, const std::unordered_map<std::string, ir::Identifier *> &firstUse,
+                     checker::ETSChecker *checker)
 {
     auto normalizeTypeForExtractedParam = [](const std::string &typeText) -> std::string {
         if (typeText == "Number") {
@@ -718,7 +720,7 @@ static void BuildParamDecls(FunctionIOInfo &info, const std::unordered_map<std::
             info.paramDecls.push_back(name);
             continue;
         }
-        info.paramDecls.push_back(name + ": " + typeText);
+        info.paramDecls.push_back(std::string(name).append(": ").append(typeText));
     }
 }
 
@@ -822,17 +824,17 @@ bool ParseUnsignedIndex(std::string_view text, size_t &value)
         return false;
     }
     size_t parsed = 0;
-    constexpr size_t decBase = 10;
-    constexpr size_t maxValue = std::numeric_limits<size_t>::max();
+    constexpr size_t DEC_BASE = 10;                                   // CC-OFF(G.NAM.03-CPP) project code style
+    constexpr size_t MAX_VALUE = std::numeric_limits<size_t>::max();  // CC-OFF(G.NAM.03-CPP) project code style
     for (char ch : text) {
         if (ch < '0' || ch > '9') {
             return false;
         }
-        size_t digit = static_cast<size_t>(ch - '0');
-        if (parsed > (maxValue - digit) / decBase) {
+        auto digit = static_cast<size_t>(ch - '0');
+        if (parsed > (MAX_VALUE - digit) / DEC_BASE) {
             return false;
         }
-        parsed = (parsed * decBase) + digit;
+        parsed = (parsed * DEC_BASE) + digit;
     }
     value = parsed;
     return true;
@@ -891,14 +893,14 @@ std::string GetIndentAtPosition(public_lib::Context *ctx, size_t pos)
     return std::string(source.substr(lineStart, indentEnd - lineStart));
 }
 
-static bool IsLineBreak(char ch)
+bool IsLineBreak(char ch)
 {
     return ch == '\n' || ch == '\r';
 }
 
-static std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos);
+std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos);
 
-static size_t NormalizeInsertPos(std::string_view source, size_t pos)
+size_t NormalizeInsertPos(std::string_view source, size_t pos)
 {
     size_t adjusted = std::min(pos, source.size());
     while (adjusted < source.size() && IsLineBreak(source[adjusted])) {
@@ -907,7 +909,7 @@ static size_t NormalizeInsertPos(std::string_view source, size_t pos)
     return adjusted;
 }
 
-static void GetLineBounds(std::string_view source, size_t pos, size_t &lineStart, size_t &lineEnd)
+void GetLineBounds(std::string_view source, size_t pos, size_t &lineStart, size_t &lineEnd)
 {
     if (source.empty()) {
         lineStart = 0;
@@ -930,7 +932,7 @@ static void GetLineBounds(std::string_view source, size_t pos, size_t &lineStart
     }
 }
 
-static bool IsBlankLine(std::string_view source, size_t lineStart, size_t lineEnd)
+bool IsBlankLine(std::string_view source, size_t lineStart, size_t lineEnd)
 {
     if (source.empty() || lineStart >= source.size()) {
         return true;
@@ -948,7 +950,7 @@ static bool IsBlankLine(std::string_view source, size_t lineStart, size_t lineEn
     return true;
 }
 
-static std::string FormatDeclarationForInsert(public_lib::Context *ctx, size_t insertPos, std::string declaration)
+std::string FormatDeclarationForInsert(public_lib::Context *ctx, size_t insertPos, std::string declaration)
 {
     if (ctx == nullptr || ctx->sourceFile == nullptr || declaration.empty()) {
         return declaration;
@@ -965,7 +967,7 @@ static std::string FormatDeclarationForInsert(public_lib::Context *ctx, size_t i
     return declaration;
 }
 
-static bool IsLineStartAtPosition(std::string_view source, size_t pos)
+bool IsLineStartAtPosition(std::string_view source, size_t pos)
 {
     if (pos == 0) {
         return true;
@@ -974,10 +976,11 @@ static bool IsLineStartAtPosition(std::string_view source, size_t pos)
     return prev == '\n' || prev == '\r';
 }
 
-static ir::AstNode *ScanTouchingTokenForward(const RefactorContext &context, std::string_view source)
+ir::AstNode *ScanTouchingTokenForward(const RefactorContext &context, std::string_view source)
 {
     size_t upper = std::min(context.span.end, source.size());
     for (size_t i = context.span.pos; i < upper; ++i) {
+        // NOLINTNEXTLINE(readability-implicit-bool-conversion)
         if (std::isspace(static_cast<unsigned char>(source[i]))) {
             continue;
         }
@@ -988,11 +991,12 @@ static ir::AstNode *ScanTouchingTokenForward(const RefactorContext &context, std
     return nullptr;
 }
 
-static ir::AstNode *ScanTouchingTokenBackward(const RefactorContext &context, std::string_view source)
+ir::AstNode *ScanTouchingTokenBackward(const RefactorContext &context, std::string_view source)
 {
     size_t i = std::min(context.span.pos, source.size());
     while (i > 0) {
         --i;
+        // NOLINTNEXTLINE(readability-implicit-bool-conversion)
         if (std::isspace(static_cast<unsigned char>(source[i]))) {
             continue;
         }
@@ -1003,7 +1007,7 @@ static ir::AstNode *ScanTouchingTokenBackward(const RefactorContext &context, st
     return nullptr;
 }
 
-static ir::AstNode *FindTouchingTokenByScan(const RefactorContext &context, public_lib::Context *ctx)
+ir::AstNode *FindTouchingTokenByScan(const RefactorContext &context, public_lib::Context *ctx)
 {
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
         return nullptr;
@@ -1018,13 +1022,13 @@ static ir::AstNode *FindTouchingTokenByScan(const RefactorContext &context, publ
     return ScanTouchingTokenBackward(context, source);
 }
 
-static bool IsNamespaceModule(const ir::AstNode *node)
+bool IsNamespaceModule(const ir::AstNode *node)
 {
     auto *module = node != nullptr ? node->AsETSModule() : nullptr;
     return module != nullptr && module->IsNamespace();
 }
 
-static bool HasNamespaceModuleAncestor(const ir::AstNode *current)
+bool HasNamespaceModuleAncestor(const ir::AstNode *current)
 {
     for (auto *parent = current != nullptr ? current->Parent() : nullptr; parent != nullptr;
          parent = parent->Parent()) {
@@ -1035,7 +1039,7 @@ static bool HasNamespaceModuleAncestor(const ir::AstNode *current)
     return false;
 }
 
-static bool IsInGlobalClassStaticBlock(const ir::AstNode *current)
+bool IsInGlobalClassStaticBlock(const ir::AstNode *current)
 {
     for (auto *cursor = current; cursor != nullptr; cursor = cursor->Parent()) {
         if (!cursor->IsClassStaticBlock()) {
@@ -1052,7 +1056,7 @@ static bool IsInGlobalClassStaticBlock(const ir::AstNode *current)
     return false;
 }
 
-static bool IsSyntheticScriptFunctionUnderGlobalClass(const ir::AstNode *node)
+bool IsSyntheticScriptFunctionUnderGlobalClass(const ir::AstNode *node)
 {
     auto *parent = node != nullptr ? node->Parent() : nullptr;
     if (parent == nullptr || !parent->IsScriptFunction() || !compiler::HasGlobalClassParent(parent)) {
@@ -1062,19 +1066,19 @@ static bool IsSyntheticScriptFunctionUnderGlobalClass(const ir::AstNode *node)
     return script != nullptr && script->IsSynthetic();
 }
 
-static bool IsNamespaceModuleParent(const ir::AstNode *node)
+bool IsNamespaceModuleParent(const ir::AstNode *node)
 {
     auto *parent = node != nullptr ? node->Parent() : nullptr;
     return parent != nullptr && parent->IsETSModule() && IsNamespaceModule(parent);
 }
 
-static bool IsProgramParent(const ir::AstNode *node)
+bool IsProgramParent(const ir::AstNode *node)
 {
     auto *parent = node != nullptr ? node->Parent() : nullptr;
     return parent != nullptr && parent->IsProgram();
 }
 
-static bool ShouldIndentBlockStatement(const ir::AstNode *node)
+bool ShouldIndentBlockStatement(const ir::AstNode *node)
 {
     if (node == nullptr) {
         return false;
@@ -1094,7 +1098,7 @@ static bool ShouldIndentBlockStatement(const ir::AstNode *node)
     return true;
 }
 
-static bool ShouldIndentClassDefinition(const ir::AstNode *node)
+bool ShouldIndentClassDefinition(const ir::AstNode *node)
 {
     auto *classDef = node != nullptr ? node->AsClassDefinition() : nullptr;
     if (classDef == nullptr) {
@@ -1109,7 +1113,7 @@ static bool ShouldIndentClassDefinition(const ir::AstNode *node)
     return true;
 }
 
-static bool IsIndentScopeNode(const ir::AstNode *node)
+bool IsIndentScopeNode(const ir::AstNode *node)
 {
     if (node == nullptr) {
         return false;
@@ -1126,7 +1130,7 @@ static bool IsIndentScopeNode(const ir::AstNode *node)
     return node->IsSwitchStatement();
 }
 
-static bool HasSelectionNewline(const RefactorContext &context, std::string_view source)
+bool HasSelectionNewline(const RefactorContext &context, std::string_view source)
 {
     size_t upper = std::min(context.span.end, source.size());
     for (size_t i = context.span.pos; i < upper; ++i) {
@@ -1138,20 +1142,22 @@ static bool HasSelectionNewline(const RefactorContext &context, std::string_view
     return false;
 }
 
-static TextRange TrimSpanWhitespace(TextRange span, std::string_view source)
+TextRange TrimSpanWhitespace(TextRange span, std::string_view source)
 {
     size_t trimStart = std::min(span.pos, source.size());
     size_t trimEnd = std::min(span.end, source.size());
+    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
     while (trimStart < trimEnd && std::isspace(static_cast<unsigned char>(source[trimStart]))) {
         ++trimStart;
     }
+    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
     while (trimEnd > trimStart && std::isspace(static_cast<unsigned char>(source[trimEnd - 1]))) {
         --trimEnd;
     }
     return {trimStart, trimEnd};
 }
 
-static ir::AstNode *GetNodeForSpan(const RefactorContext &context)
+ir::AstNode *GetNodeForSpan(const RefactorContext &context)
 {
     const auto normalizedSpan = GetTrimmedSelectionSpan(context);
     if (normalizedSpan.pos == normalizedSpan.end) {
@@ -1166,8 +1172,7 @@ static ir::AstNode *GetNodeForSpan(const RefactorContext &context)
     return node;
 }
 
-static ir::AstNode *ResolveNodeForSelection(const RefactorContext &context, public_lib::Context *ctx,
-                                            bool selectionHasNewline)
+ir::AstNode *ResolveNodeForSelection(const RefactorContext &context, public_lib::Context *ctx, bool selectionHasNewline)
 {
     auto *node = GetNodeForSpan(context);
     if (node != nullptr || !selectionHasNewline) {
@@ -1182,19 +1187,20 @@ static ir::AstNode *ResolveNodeForSelection(const RefactorContext &context, publ
     return node;
 }
 
-static bool IsStatementSelectionCandidate(const ir::AstNode *node)
+bool IsStatementSelectionCandidate(const ir::AstNode *node)
 {
     return node != nullptr && (node->IsStatement() || node->IsExpressionStatement() || node->IsVariableDeclaration()) &&
            !node->IsBlockStatement();
 }
 
-static bool IsSelectionSuffixSkippable(std::string_view source, size_t start, size_t end)
+bool IsSelectionSuffixSkippable(std::string_view source, size_t start, size_t end)
 {
     if (start > end || end > source.size()) {
         return false;
     }
     for (size_t i = start; i < end; ++i) {
         char ch = source[i];
+        // NOLINTNEXTLINE(readability-implicit-bool-conversion)
         if (ch != ';' && !std::isspace(static_cast<unsigned char>(ch))) {
             return false;
         }
@@ -1207,7 +1213,7 @@ struct StatementSelectionScanResult {
     bool hasPartialOverlap {false};
 };
 
-static StatementSelectionScanResult ScanStatementSelectionCandidates(ir::AstNode *ast, TextRange span)
+StatementSelectionScanResult ScanStatementSelectionCandidates(ir::AstNode *ast, TextRange span)
 {
     StatementSelectionScanResult result;
     if (ast == nullptr) {
@@ -1237,7 +1243,7 @@ static StatementSelectionScanResult ScanStatementSelectionCandidates(ir::AstNode
     return result;
 }
 
-static bool HasContainedStatementAncestorInSpan(const ir::AstNode *statement, TextRange span)
+bool HasContainedStatementAncestorInSpan(const ir::AstNode *statement, TextRange span)
 {
     for (auto *ancestor = statement == nullptr ? nullptr : statement->Parent(); ancestor != nullptr;
          ancestor = ancestor->Parent()) {
@@ -1251,8 +1257,8 @@ static bool HasContainedStatementAncestorInSpan(const ir::AstNode *statement, Te
     return false;
 }
 
-static std::vector<ir::AstNode *> CollectTopLevelContainedStatements(
-    const std::vector<ir::AstNode *> &containedStatements, TextRange span)
+std::vector<ir::AstNode *> CollectTopLevelContainedStatements(const std::vector<ir::AstNode *> &containedStatements,
+                                                              TextRange span)
 {
     std::vector<ir::AstNode *> topLevelStatements;
     topLevelStatements.reserve(containedStatements.size());
@@ -1264,7 +1270,7 @@ static std::vector<ir::AstNode *> CollectTopLevelContainedStatements(
     return topLevelStatements;
 }
 
-static void SortStatementsBySourceOrder(std::vector<ir::AstNode *> &statements)
+void SortStatementsBySourceOrder(std::vector<ir::AstNode *> &statements)
 {
     std::stable_sort(statements.begin(), statements.end(), [](const ir::AstNode *lhs, const ir::AstNode *rhs) {
         if (lhs->Start().index != rhs->Start().index) {
@@ -1274,8 +1280,8 @@ static void SortStatementsBySourceOrder(std::vector<ir::AstNode *> &statements)
     });
 }
 
-static bool ValidateStatementSelectionBoundaries(public_lib::Context *ctx, TextRange span, const ir::AstNode *first,
-                                                 const ir::AstNode *last)
+bool ValidateStatementSelectionBoundaries(public_lib::Context *ctx, TextRange span, const ir::AstNode *first,
+                                          const ir::AstNode *last)
 {
     if (first == nullptr || last == nullptr || first->Start().index != span.pos) {
         return false;
@@ -1290,7 +1296,7 @@ static bool ValidateStatementSelectionBoundaries(public_lib::Context *ctx, TextR
     return sourceFile != nullptr && IsSelectionSuffixSkippable(sourceFile->source, last->End().index, span.end);
 }
 
-static bool AreTopLevelStatementsContinuousSiblings(const std::vector<ir::AstNode *> &topLevelStatements)
+bool AreTopLevelStatementsContinuousSiblings(const std::vector<ir::AstNode *> &topLevelStatements)
 {
     if (topLevelStatements.empty()) {
         return false;
@@ -1336,7 +1342,7 @@ static bool AreTopLevelStatementsContinuousSiblings(const std::vector<ir::AstNod
     return false;
 }
 
-static ir::AstNode *FindStatementOverlappingSelection(public_lib::Context *ctx, TextRange span)
+ir::AstNode *FindStatementOverlappingSelection(public_lib::Context *ctx, TextRange span)
 {
     auto *ast = ctx == nullptr ? nullptr : ctx->parserProgram->Ast();
     if (ast == nullptr || span.pos >= span.end) {
@@ -1365,7 +1371,7 @@ static ir::AstNode *FindStatementOverlappingSelection(public_lib::Context *ctx, 
     return first;
 }
 
-static ir::AstNode *FindBackwardNonWhitespaceToken(const RefactorContext &context, size_t pos)
+ir::AstNode *FindBackwardNonWhitespaceToken(const RefactorContext &context, size_t pos)
 {
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
@@ -1375,7 +1381,7 @@ static ir::AstNode *FindBackwardNonWhitespaceToken(const RefactorContext &contex
     size_t probe = std::min(pos, source.size());
     while (probe > 0) {
         --probe;
-        if (std::isspace(static_cast<unsigned char>(source[probe]))) {
+        if (std::isspace(static_cast<unsigned char>(source[probe])) != 0) {
             continue;
         }
         return GetTouchingToken(context.context, probe, false);
@@ -1383,7 +1389,7 @@ static ir::AstNode *FindBackwardNonWhitespaceToken(const RefactorContext &contex
     return nullptr;
 }
 
-static ir::AstNode *ResolveScopeDepthProbeNode(const RefactorContext &context, size_t pos)
+ir::AstNode *ResolveScopeDepthProbeNode(const RefactorContext &context, size_t pos)
 {
     if (auto *node = GetTouchingToken(context.context, pos, false); node != nullptr) {
         return node;
@@ -1396,7 +1402,7 @@ static ir::AstNode *ResolveScopeDepthProbeNode(const RefactorContext &context, s
     return FindBackwardNonWhitespaceToken(context, pos);
 }
 
-static size_t CountIndentScopeDepth(const ir::AstNode *node)
+size_t CountIndentScopeDepth(const ir::AstNode *node)
 {
     size_t depth = 0;
     for (auto *current = node; current != nullptr; current = current->Parent()) {
@@ -1407,7 +1413,7 @@ static size_t CountIndentScopeDepth(const ir::AstNode *node)
     return depth;
 }
 
-static std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos)
+std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos)
 {
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
         return "";
@@ -1515,7 +1521,7 @@ bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
     return found;
 }
 
-static bool ScopeHasName(ir::AstNode *scopeNode, const std::string &name)
+bool ScopeHasName(ir::AstNode *scopeNode, const std::string &name)
 {
     if (scopeNode == nullptr) {
         return false;
@@ -1822,7 +1828,7 @@ std::pair<std::string, std::string> BuildParamSignature(const RefactorContext &c
     return {JoinWithComma(paramDecls), JoinWithComma(freeVars)};
 }
 
-static size_t ResolveIndentSize(const RefactorContext &context)
+size_t ResolveIndentSize(const RefactorContext &context)
 {
     const size_t globalDefaultIndentSize = FormatCodeSettings().GetIndentSize();
     if (context.textChangesContext == nullptr) {
@@ -1911,7 +1917,7 @@ size_t FindClassHelperInsertPos(public_lib::Context *ctx, ir::ClassDefinition *c
     return lineStart;
 }
 
-static std::string ResolveClassIndent(std::string_view methodIndent, size_t indentSize)
+std::string ResolveClassIndent(std::string_view methodIndent, size_t indentSize)
 {
     if (methodIndent.size() < indentSize) {
         return "";
@@ -1919,8 +1925,8 @@ static std::string ResolveClassIndent(std::string_view methodIndent, size_t inde
     return std::string(methodIndent.substr(0, methodIndent.size() - indentSize));
 }
 
-static void AppendClassHelperSignature(std::string &helper, std::string_view classIndent, std::string_view helperName,
-                                       std::string_view paramsSig, std::string_view newLine)
+void AppendClassHelperSignature(std::string &helper, std::string_view classIndent, std::string_view helperName,
+                                std::string_view paramsSig, std::string_view newLine)
 {
     helper.append(newLine);
     helper.append(classIndent)
@@ -1932,14 +1938,14 @@ static void AppendClassHelperSignature(std::string &helper, std::string_view cla
         .append(newLine);
 }
 
-static void AppendClassHelperBodyLine(std::string &helper, std::string_view classIndent, std::string_view indentStep,
-                                      std::string_view body, std::string_view newLine)
+void AppendClassHelperBodyLine(std::string &helper, std::string_view classIndent, std::string_view indentStep,
+                               std::string_view body, std::string_view newLine)
 {
     helper.append(classIndent).append(indentStep).append(body).append(newLine);
 }
 
-static void AppendClassHelperReturnLine(std::string &helper, std::string_view classIndent, std::string_view indentStep,
-                                        std::string_view returnName, std::string_view newLine)
+void AppendClassHelperReturnLine(std::string &helper, std::string_view classIndent, std::string_view indentStep,
+                                 std::string_view returnName, std::string_view newLine)
 {
     helper.append(classIndent).append(indentStep).append("return ").append(returnName).append(";").append(newLine);
 }
@@ -2451,14 +2457,14 @@ size_t SkipSpacesForward(std::string_view source, size_t pos, size_t limit)
 
 std::optional<size_t> FindTightBlockCommentStart(std::string_view source, size_t scan)
 {
-    constexpr size_t blockCommentSuffixLen = 2;
-    constexpr size_t blockCommentStarOffset = 2;
-    constexpr size_t blockCommentSlashOffset = 1;
-    if (scan < blockCommentSuffixLen || source[scan - blockCommentStarOffset] != '*' ||
-        source[scan - blockCommentSlashOffset] != '/') {
+    constexpr size_t BLOCK_COMMENT_SUFFIX_LEN = 2;
+    constexpr size_t BLOCK_COMMENT_STAR_OFFSET = 2;
+    constexpr size_t BLOCK_COMMENT_SLASH_OFFSET = 1;
+    if (scan < BLOCK_COMMENT_SUFFIX_LEN || source[scan - BLOCK_COMMENT_STAR_OFFSET] != '*' ||
+        source[scan - BLOCK_COMMENT_SLASH_OFFSET] != '/') {
         return std::nullopt;
     }
-    const size_t commentStart = source.rfind("/*", scan - blockCommentSuffixLen);
+    const size_t commentStart = source.rfind("/*", scan - BLOCK_COMMENT_SUFFIX_LEN);
     if (commentStart == std::string::npos) {
         return std::nullopt;
     }
@@ -3258,9 +3264,9 @@ static std::optional<std::pair<ir::VariableDeclarator *, ir::VariableDeclaration
 static std::optional<size_t> FindDeclaratorIndex(const ir::VariableDeclaration *declaration,
                                                  const ir::VariableDeclarator *declarator)
 {
-    constexpr size_t kMinDeclarators = 2;
+    constexpr size_t K_MIN_DECLARATORS = 2;
     const auto &declarators = declaration->Declarators();
-    if (declarators.size() < kMinDeclarators) {
+    if (declarators.size() < K_MIN_DECLARATORS) {
         return std::nullopt;
     }
     for (size_t i = 0; i < declarators.size(); ++i) {
@@ -3536,10 +3542,7 @@ static bool ShouldPrependNamespaceNewline(public_lib::Context *ctx, size_t inser
         return false;
     }
     const auto &source = ctx->sourceFile->source;
-    if (insertPos >= source.size() || !IsLineBreakChar(source[insertPos])) {
-        return false;
-    }
-    return true;
+    return insertPos < source.size() && IsLineBreakChar(source[insertPos]);
 }
 
 static std::string_view TrimHorizontalWhitespace(std::string_view text)

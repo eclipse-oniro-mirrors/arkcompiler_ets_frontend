@@ -181,7 +181,7 @@ private:
     void Get(CacheReference *importData) const noexcept;
 
     template <util::ModuleKind KIND, bool SHOULD_CACHE>
-    CacheReference Add(const CacheReference &importData, std::string textSource, std::string &&text)
+    CacheReference Add(const CacheReference &importData, const std::string &textSource, std::string &&text)
     {
         std::scoped_lock lock(dataGuard_);
         const auto &newElem = textsStorage_.emplace_back(

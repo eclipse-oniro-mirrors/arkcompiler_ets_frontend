@@ -55,7 +55,7 @@ static void ValidateImportDeclarationsSourcePath(const public_lib::Context *cons
 
 static void ValidateNoImportComesFromSamePackage(const public_lib::Context *const ctx, parser::PackageProgram *package)
 {
-    ES2PANDA_ASSERT(package->GetUnmergedPackagePrograms().size() == 0);  // Was just merged.
+    ES2PANDA_ASSERT(package->GetUnmergedPackagePrograms().empty());  // Was just merged.
 
     {
         // Filter out only import declarations

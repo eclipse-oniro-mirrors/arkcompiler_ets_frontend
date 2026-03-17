@@ -74,6 +74,7 @@ int main(int argc, char **argv)
         return NULLPTR_IMPL_ERROR_CODE;
     }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     const char **args = const_cast<const char **>(&(argv[1]));
     auto *config = g_impl->CreateConfig(argc - 1, args);
 
@@ -81,11 +82,13 @@ int main(int argc, char **argv)
     std::string secondLowered;
     std::string loweredAfterReset;
 
+    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     if (!CreateLoweredDump(config, argv[argc - 1], &firstLowered) ||
         !CreateLoweredDump(config, argv[argc - 1], &secondLowered)) {
         g_impl->DestroyConfig(config);
         return TEST_ERROR_CODE;
     }
+    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     if (firstLowered == secondLowered) {
         std::cerr << "Lowered sources are unexpectedly equal before ResetCounters" << std::endl;
@@ -95,10 +98,12 @@ int main(int argc, char **argv)
 
     g_impl->ResetCounters();
 
+    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     if (!CreateLoweredDump(config, argv[argc - 1], &loweredAfterReset)) {
         g_impl->DestroyConfig(config);
         return TEST_ERROR_CODE;
     }
+    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     if (firstLowered != loweredAfterReset) {
         std::cerr << "Lowered source after ResetCounters does not match the initial lowered source" << std::endl;

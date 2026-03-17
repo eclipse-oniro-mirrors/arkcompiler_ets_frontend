@@ -145,7 +145,7 @@ void CheckerContext::CombineSmartCasts(SmartCastArray const &otherSmartCasts)
 
 // Second return value shows if the 'IN_LOOP' flag should be cleared on exit from the loop (case of nested loops).
 std::pair<SmartCastArray, bool> CheckerContext::EnterLoop(const ir::LoopStatement &loop,
-                                                          const SmartCastTypes loopConditionSmartCasts) noexcept
+                                                          const SmartCastTypes &loopConditionSmartCasts) noexcept
 {
     bool const clearFlag = !IsInLoop();
     if (clearFlag) {
@@ -159,7 +159,7 @@ std::pair<SmartCastArray, bool> CheckerContext::EnterLoop(const ir::LoopStatemen
 }
 
 void CheckerContext::InvalidateSmartCastsForLoopHeader(const ir::LoopStatement &loop,
-                                                       const SmartCastTypes loopConditionSmartCasts) noexcept
+                                                       const SmartCastTypes &loopConditionSmartCasts) noexcept
 {
     ReassignedVariableMap changedVariables {};
     if (loop.IsWhileStatement()) {

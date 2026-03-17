@@ -684,9 +684,9 @@ void AddOverloadFlag(ArenaAllocator *allocator, bool isStdLib, varbinder::Variab
     }
 }
 
-void ETSBinder::ImportAllForeignBindings(const parser::Program *const importProgram)
+void ETSBinder::ImportAllForeignBindings(const parser::Program *const importedProgram)
 {
-    const auto *const importGlobalScope = importProgram->GlobalScope();
+    const auto *const importGlobalScope = importedProgram->GlobalScope();
 
     bool const isStdLib = util::Helpers::IsStdLib(Program());
 
@@ -725,13 +725,13 @@ void ETSBinder::ImportAllForeignBindings(const parser::Program *const importProg
         }
     }
 
-    for (const auto [bindingName, var] : importProgram->GlobalClassScope()->StaticMethodScope()->Bindings()) {
+    for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticMethodScope()->Bindings()) {
         if (!var->Declaration()->Node()->IsDefaultExported()) {
             InsertForeignBinding(bindingName, var);
         }
     }
 
-    for (const auto [bindingName, var] : importProgram->GlobalClassScope()->StaticFieldScope()->Bindings()) {
+    for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticFieldScope()->Bindings()) {
         if (!var->Declaration()->Node()->IsDefaultExported()) {
             InsertForeignBinding(bindingName, var);
         }

@@ -40,15 +40,15 @@ void *FindLibrary()
         }
     }
 
-    const char *primaryLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_OHOS_LSP : G_LIB_ES2_PANDA_PUBLIC_OHOS;
-    const char *fallbackLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
-    const std::string candidates[] = {basePath + primaryLib, basePath + fallbackLib};
-    for (const auto &name : candidates) {
-        if (auto *library = LoadLibrary(name); library != nullptr) {
-            return library;
-        }
-    }
+    std::string primaryLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_OHOS_LSP : G_LIB_ES2_PANDA_PUBLIC_OHOS;
+    std::string fallbackLib = g_isLspUsage ? G_LIB_ES2_PANDA_PUBLIC_LSP : G_LIB_ES2_PANDA_PUBLIC;
 
+    if (auto *primaryLibrary = LoadLibrary(basePath + primaryLib); primaryLibrary != nullptr) {
+        return primaryLibrary;
+    }
+    if (auto *fallbackLibrary = LoadLibrary(basePath + fallbackLib); fallbackLibrary != nullptr) {
+        return fallbackLibrary;
+    }
     return nullptr;
 }
 

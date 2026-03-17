@@ -72,7 +72,7 @@ std::vector<varbinder::ClassScope *> DiffClassScopes(varbinder::Scope *base, var
 checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast)
 {
     ast = util::Helpers::FindAncestorGivenByType(ast, ir::AstNodeType::CLASS_DEFINITION);
-    return ast == nullptr || !ast->AsClassDefinition()->TsType()
+    return ast == nullptr || ast->AsClassDefinition()->TsType() == nullptr
                ? nullptr
                : ast->AsClassDefinition()->TsType()->AsETSObjectType();
 }

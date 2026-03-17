@@ -14,19 +14,20 @@
  */
 
 #include "metadataEmitter.h"
+#include "ir/base/classDefinition.h"
+#include "ir/base/methodDefinition.h"
 #include "metadata_generated.h"
 
 #include <string>
 
 namespace ark::es2panda::compiler {
 
-using namespace ark::es2panda::parser;
-using namespace ark::es2panda::ir;
-using namespace flatbuffers;
-using namespace checker;
+using checker::ETSObjectFlags, checker::Type;
+using ir::MethodDefinition, ir::ClassDefinition;
 
 const Metadata::BuiltinTypeKind NOT_BUILTIN_TYPE_KIND = static_cast<Metadata::BuiltinTypeKind>(-1);
 
+// NOLINTNEXTLINE(cert-err58-cpp,fuchsia-statically-constructed-objects)
 const std::map<checker::ETSObjectFlags, Metadata::BuiltinTypeKind> MetadataEmittingPhase::BUILTIN_PRIMITIVE_TYPES = {
     {ETSObjectFlags::BUILTIN_BOOLEAN, Metadata::BuiltinTypeKind::BUILTIN_TYPE_KIND_BOOLEAN},
     {ETSObjectFlags::BUILTIN_BYTE, Metadata::BuiltinTypeKind::BUILTIN_TYPE_KIND_BYTE},
@@ -74,13 +75,13 @@ Metadata::BuiltinTypeKind MetadataEmittingPhase::GetBuiltinTypeKind(Type *etsTyp
 
 // Recording type params for methods is only supported currently
 Offset<Vector<Offset<Metadata::TypeParamDecl>>> MetadataEmittingPhase::BuildTypeParams(
-    FlatBufferBuilder &builder, ArenaVector<checker::Type *> astTypeParams)
+    FlatBufferBuilder &builder, const ArenaVector<checker::Type *> &astTypeParams)
 {
     std::vector<Offset<Metadata::TypeParamDecl>> typeParamDecls;
     for (auto type : astTypeParams) {
         typeParamDecls.emplace_back(BuildTypeParamDecl(builder, type));
     }
-    return builder.CreateVector<Offset<Metadata::TypeParamDecl>>(std::move(typeParamDecls));
+    return builder.CreateVector<Offset<Metadata::TypeParamDecl>>(typeParamDecls);
 }
 
 Offset<Metadata::TypeParamDecl> MetadataEmittingPhase::BuildTypeParamDecl(FlatBufferBuilder &builder,
@@ -108,7 +109,7 @@ Offset<Vector<Offset<Metadata::FunctionDecl>>> MetadataEmittingPhase::BuildClass
         methods.emplace_back(BuildFunctionDecl(builder, elem->AsMethodDefinition()));
     }
 
-    return builder.CreateVector<Offset<Metadata::FunctionDecl>>(std::move(methods));
+    return builder.CreateVector<Offset<Metadata::FunctionDecl>>(methods);
 }
 
 Offset<Metadata::FunctionDecl> MetadataEmittingPhase::BuildFunctionDecl(FlatBufferBuilder &builder,
@@ -151,7 +152,7 @@ bool MetadataEmittingPhase::PerformForProgram(parser::Program *program)
 
         classes.emplace_back(BuildClassDecl(builder, exportedClass));
     }
-    auto root = Metadata::CreateRoot(builder, builder.CreateVector<Offset<Metadata::ClassDecl>>(std::move(classes)));
+    auto root = Metadata::CreateRoot(builder, builder.CreateVector<Offset<Metadata::ClassDecl>>(classes));
     builder.Finish(root);
     auto buf = builder.GetBufferSpan();
     std::vector<uint8_t> bytes;

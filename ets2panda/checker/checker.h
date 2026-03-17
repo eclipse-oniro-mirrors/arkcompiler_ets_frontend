@@ -521,6 +521,7 @@ public:
     void CheckErrorInRange();
     bool IsErrorInRange(const util::DiagnosticBase &errorLog) const;
 
+    // NOLINTNEXTLINE(bugprone-exception-escape)
     ~InferMatchContext()
     {
         if (isLogError_) {

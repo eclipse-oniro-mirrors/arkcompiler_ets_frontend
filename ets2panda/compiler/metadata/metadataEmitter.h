@@ -22,7 +22,7 @@
 
 namespace ark::es2panda::compiler {
 
-using namespace flatbuffers;
+using flatbuffers::Offset, flatbuffers::Vector, flatbuffers::FlatBufferBuilder;
 
 class MetadataEmittingPhase : public PhaseForProgramsWithBodies {
 public:
@@ -33,15 +33,16 @@ public:
 
     Metadata::BuiltinTypeKind GetBuiltinTypeKind(checker::Type *etsType);
     Offset<Vector<Offset<Metadata::TypeParamDecl>>> BuildTypeParams(FlatBufferBuilder &builder,
-                                                                    ArenaVector<checker::Type *> astTypeParams);
+                                                                    const ArenaVector<checker::Type *> &astTypeParams);
     Offset<Metadata::TypeParamDecl> BuildTypeParamDecl(FlatBufferBuilder &builder, checker::Type *typeParam);
     Offset<Vector<Offset<Metadata::FunctionDecl>>> BuildClassMethods(FlatBufferBuilder &builder,
                                                                      ir::ClassDefinition *astDecl);
-    Offset<Metadata::FunctionDecl> BuildFunctionDecl(FlatBufferBuilder &builder, ir::MethodDefinition *method);
+    Offset<Metadata::FunctionDecl> BuildFunctionDecl(FlatBufferBuilder &builder, ir::MethodDefinition *astDecl);
     Offset<Metadata::ClassDecl> BuildClassDecl(FlatBufferBuilder &builder, ir::ClassDefinition *astDecl);
     bool PerformForProgram(parser::Program *program) override;
 
 private:
+    // NOLINTNEXTLINE(fuchsia-statically-constructed-objects)
     static const std::map<checker::ETSObjectFlags, Metadata::BuiltinTypeKind> BUILTIN_PRIMITIVE_TYPES;
 };
 

@@ -1669,7 +1669,6 @@ void Lexer::HasMatchingGreaterThanCheckBracket(int32_t &depth, int32_t &parenSiz
         default:
             break;
     }
-    return;
 }
 
 bool Lexer::HasMatchingGreaterThanInner(std::string_view::const_iterator &savedIter, int32_t &depth, int32_t &parenSize,
@@ -1724,15 +1723,15 @@ bool Lexer::HasMatchingGreaterThan()
     int32_t braceSize = 0;
     int32_t squareSize = 0;
     int32_t sigleQuoteSize = 0;
-    int32_t DoubleQuoteSize = 0;
+    int32_t doubleQuoteSize = 0;
     while (depth > 0) {
         auto cp = Iterator().Peek();
         if (cp == LEX_CHAR_SINGLE_QUOTE) {
             sigleQuoteSize++;
         } else if (cp == LEX_CHAR_DOUBLE_QUOTE) {
-            DoubleQuoteSize++;
+            doubleQuoteSize++;
         }
-        if ((sigleQuoteSize % QUOTE_PAIR_MODULO != 0) || (DoubleQuoteSize % QUOTE_PAIR_MODULO != 0)) {
+        if ((sigleQuoteSize % QUOTE_PAIR_MODULO != 0) || (doubleQuoteSize % QUOTE_PAIR_MODULO != 0)) {
             Iterator().Forward(1);
             continue;
         }
