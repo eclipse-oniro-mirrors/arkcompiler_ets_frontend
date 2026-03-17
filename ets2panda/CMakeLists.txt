@@ -815,6 +815,10 @@ if(PANDA_TARGET_LINUX OR PANDA_TARGET_WINDOWS)
   add_subdirectory(${ES2PANDA_NAPI_LIB_DIR})
 endif()
 
+if(PANDA_TARGET_LINUX AND PANDA_WITH_ETS)
+  add_subdirectory(arkts_bindings)
+endif()
+
 if(PANDA_WITH_TESTS)
   add_subdirectory(test)
 endif()

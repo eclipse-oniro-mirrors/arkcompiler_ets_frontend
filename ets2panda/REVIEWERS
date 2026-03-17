@@ -21,6 +21,7 @@
 /es2panda/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
 /ets2panda/ @igelhaus @Prof ^vigavi
 /ets2panda/aot @dkofanov  ^igelhaus ^Prof
+/ets2panda/arkts_bindings @mbolshov @lirismankarina @okolnovevgeny ^igelhaus ^Prof
 /ets2panda/ast_verifier ^mbolshov @dkofanov ^igelhaus ^Prof
 /ets2panda/bindings ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu @oh-rgx1 ^H_awson
 /ets2panda/lexer @akmaevaleksey ^csabaosztrogonac @igelhaus ^zelentsovdmitry @Prof @gcw_HJ4zMsdn
@@ -46,6 +47,7 @@
 /ets2panda/parser/ @ziziziiziziz @shimenkovmikhail ^igelhaus ^Prof @zelentsovdmitry ^xuxjeeee
 /ets2panda/scripts/*-build.sh @titova_tatiana ^igelhaus ^Prof
 /ets2panda/scripts/arkui* @titova_tatiana ^igelhaus ^Prof
+/ets2panda/test/arkts_bindings @mbolshov @lirismankarina @okolnovevgeny ^igelhaus ^Prof
 /ets2panda/test/ast @ozerovnikita ^igelhaus ^Prof
 /ets2panda/test/benchmarks @pishin
 /ets2panda/test/depanalyzer @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
