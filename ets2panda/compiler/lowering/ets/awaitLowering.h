@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,23 @@
  * limitations under the License.
  */
 
-async function foo(): Promise<Object> {
-    let obj: Object = /* @@ label */await 5;
-    return /* @@ label1 */null;
-}
+#ifndef ES2PANDA_COMPILER_LOWERING_AWAIT_LOWERING_H
+#define ES2PANDA_COMPILER_LOWERING_AWAIT_LOWERING_H
 
-/* @@@ label1 Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object> | Object' */
+#include "compiler/lowering/phase.h"
+
+namespace ark::es2panda::compiler {
+
+class AwaitLoweringPhase : public PhaseForProgramsWithBodies_LEGACY {
+public:
+    std::string_view Name() const override
+    {
+        return "AwaitLowering";
+    }
+
+    bool PerformForProgram(parser::Program *program) override;
+};
+
+}  // namespace ark::es2panda::compiler
+
+#endif

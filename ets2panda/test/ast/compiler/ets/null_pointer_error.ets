@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,8 @@ export class AbstractDaoSession{
     }
 }
 
-
-/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'dataRdb'. */
-/* @@? 1:3 Error Semantic error ESE0070: 'ValueType' type does not exist. */
+/* @@? 1:4 Error Semantic error ESE0070: 'ValueType' type does not exist. */
+/* @@? 1:4 Error Semantic error ESE0371: Cannot find type 'dataRdb'. */
 /* @@? 17:62 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 19:17 Error Semantic error ESE0371: Cannot find type 'AbstractDao'. */
-/* @@? 20:16 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 19:17 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */

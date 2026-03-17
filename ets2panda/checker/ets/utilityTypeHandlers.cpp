@@ -205,19 +205,6 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
     return typeToBeAwaited;
 }
 
-Type *ETSChecker::HandleAwaitExpression(Type *typeToBeAwaited, ir::AwaitExpression *expr)
-{
-    Relation()->SetFlags(TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
-    if (!typeToBeAwaited->IsETSTypeParameter() &&
-        !Relation()->IsSupertypeOf(GlobalBuiltinPromiseType(), typeToBeAwaited)) {
-        LogError(diagnostic::AWAITED_TYPE_NOT_PROMISE, {typeToBeAwaited}, expr->Start());
-        return typeToBeAwaited;
-    }
-    Relation()->RemoveFlags(TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
-
-    return HandleAwaitedUtilityType(typeToBeAwaited);
-}
-
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // ReturnType utility type
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

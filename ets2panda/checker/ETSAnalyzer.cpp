@@ -2101,7 +2101,7 @@ checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
         checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Argument()->Start());
     }
 
-    expr->SetTsType(checker->HandleAwaitExpression(expr->argument_->Check(checker), expr));
+    expr->SetTsType(checker->HandleAwaitedUtilityType(expr->argument_->Check(checker)));
     return expr->TsType();
 }
 

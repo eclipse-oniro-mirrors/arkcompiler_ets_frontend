@@ -389,6 +389,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/annotationCopyPostLowering.cpp
   compiler/lowering/ets/primitiveConversionPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp
+  compiler/lowering/ets/awaitLowering.cpp
   compiler/metadata/metadataEmitter.cpp
   compiler/lowering/ets/internalAPICheck.cpp
   ir/astDump.cpp
