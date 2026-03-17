@@ -25,3 +25,8 @@ exclusionlist:
   - "(^|[\\/])base[\\/]testfwk([\\/]|$)"
   - "(^|[\\/])base[\\/]security[\\/]certificate_manager([\\/]|$)"
   - "(^|[\\/])base[\\/]security[\\/]access_token([\\/]|$)"
+  - "(^|[\\/])base[\\/]web[\\/]webview([\\/]|$)"
+  - "(^|[\\/])foundation[\\/]barrierfree([\\/]|$)"
+  - "(^|[\\/])foundation[\\/]ability[\\/]ability_runtime([\\/]|$)"
+  - "(^|[\\/])foundation[\\/]ability[\\/]dmsfwk([\\/]|$)"
+  - "(^|[\\/])foundation[\\/]ability[\\/]form_fwk([\\/]|$)"
