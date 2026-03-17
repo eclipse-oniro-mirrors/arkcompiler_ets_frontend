@@ -1002,7 +1002,7 @@ let a = 1;)delimiter"};
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LSPCompletionsTests, getCompletionsAtPosition7)
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition9)
 {
     std::vector<std::string> files = {"getCompletionsAtPosition10.ets"};
     std::vector<std::string> texts = {R"delimiter(
@@ -1033,7 +1033,7 @@ let a = 1;)delimiter"};
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition8)
 {
-    std::vector<std::string> files = {"getCompletionsAtPosition11.ets"};
+    std::vector<std::string> files = {"getCompletionsAtPosition9.ets"};
     std::vector<std::string> texts = {R"delimiter(
 enum Color {
   Red = "red",
@@ -1054,6 +1054,45 @@ let myColor: Color = Color.)delimiter"};
                                                       std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), "Red"),
                                       CompletionEntry("Blue", CompletionEntryKind::ENUM_MEMBER,
                                                       std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), "Blue")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition7)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition8.ets"};
+    const std::string text = R"delimiter(
+let bb = 11;
+class P {
+    age:int = 0;
+    func() {
+        this.
+        this.age = 10;
+    }
+}
+let cc = 11;
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "this.";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    // Expect class P members after `this.`
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("age", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                                                      std::string(SUGGESTED_CLASS_MEMBERS), "age"),
+                                      CompletionEntry("func", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "func()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }

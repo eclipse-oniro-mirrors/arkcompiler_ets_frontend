@@ -524,10 +524,42 @@ ir::AstNode *FindNodeBeforePosition(const std::vector<ir::AstNode *> &children, 
     return FindRightmostChildNodeWithTokens(children, mid);
 }
 
+static ir::AstNode *RefineFoundByModuleStatements(const ir::AstNode *startNode, size_t pos,
+                                                  const ir::NodePredicate &checkFunc, ir::AstNode *found)
+{
+    if (!startNode->IsETSModule()) {
+        return found;
+    }
+    for (auto *stmt : startNode->AsETSModule()->Statements()) {
+        auto *stmtMatch = stmt->FindChild(checkFunc);
+        if (stmtMatch == nullptr || stmtMatch->Start().index > pos || stmtMatch->End().index < pos) {
+            continue;
+        }
+        if (found == nullptr) {
+            found = stmtMatch;
+            continue;
+        }
+        auto foundWidth = found->End().index - found->Start().index;
+        auto stmtWidth = stmtMatch->End().index - stmtMatch->Start().index;
+        if (stmtWidth < foundWidth) {
+            found = stmtMatch;
+        }
+    }
+    return found;
+}
+
 ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, ArenaAllocator *allocator)
 {
-    auto checkFunc = [&pos](ir::AstNode *node) { return node->Start().index <= pos && pos <= node->End().index; };
+    auto *startProgram = startNode->Range().start.Program();
+    auto checkFunc = [&pos, &startProgram](ir::AstNode *node) {
+        auto *program = node->Range().start.Program();
+        if (startProgram != nullptr && (program == nullptr || program != startProgram)) {
+            return false;
+        }
+        return node->Start().index <= pos && pos <= node->End().index;
+    };
     auto found = startNode->FindChild(checkFunc);
+    found = RefineFoundByModuleStatements(startNode, pos, checkFunc, found);
     if (found != nullptr) {
         auto nestedFound = found->FindChild(checkFunc);
         while (nestedFound != nullptr) {

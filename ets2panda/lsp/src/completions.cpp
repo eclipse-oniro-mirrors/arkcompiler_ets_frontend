@@ -1602,6 +1602,14 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
     if (IsInETSImportStatement(pos, precedingToken)) {
         return GetImportStatementCompletions(context, precedingToken, pos);
     }
+    // Boundary fallback: when cursor is right after an import token (e.g. `import)`),
+    // the preceding token may be resolved outside the import statement.
+    if (pos > 0) {
+        auto *precedingAtLeft = FindPrecedingToken(pos - 1, ctx->parserProgram->Ast(), allocator);
+        if (precedingAtLeft != nullptr && IsInETSImportStatement(pos, precedingAtLeft)) {
+            return GetImportStatementCompletions(context, precedingAtLeft, pos);
+        }
+    }
     if (IsAnnotationBeginning(sourceCode, precedingToken->Start().index)) {
         return GetAnnotationCompletions(context, pos, precedingToken);  // need to filter annotation
     }
