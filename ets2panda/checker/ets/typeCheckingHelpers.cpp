@@ -781,6 +781,43 @@ Type *ETSChecker::GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *member
     return CreateETSUnionType(std::move(apparentTypes));
 }
 
+bool ETSChecker::CheckTypeParamsRecursion(ir::TSTypeParameterInstantiation *typeParams,
+                                          std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
+{
+    bool allowed = true;
+    for (auto *typeParam : typeParams->Params()) {
+        if (typeParam->IsETSTypeReference()) {
+            allowed &= CheckTypeReferencePartRecursion(typeParam->AsETSTypeReference()->Part(), typeAliases);
+        }
+    }
+    return allowed;
+}
+
+bool ETSChecker::CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
+                                                 std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
+{
+    if (!part->Name()->IsIdentifier() && !part->Name()->IsTSQualifiedName()) {
+        return false;
+    }
+    auto *var = part->Name()->IsIdentifier() ? part->Name()->Variable()
+                                             : part->Name()->AsTSQualifiedName()->Right()->Variable();
+    if (part->Name()->Variable() == nullptr) {
+        return true;
+    }
+
+    auto const *const decl = var->Declaration();
+    if (auto const *const node = decl->Node(); node != nullptr && node->IsTSTypeAliasDeclaration()) {
+        bool allowed = IsAllowedTypeAliasRecursion(node->AsTSTypeAliasDeclaration(), typeAliases);
+        if (allowed && part->TypeParams() != nullptr) {
+            allowed &= CheckTypeParamsRecursion(part->TypeParams(), typeAliases);
+        }
+
+        return allowed;
+    }
+
+    return true;
+}
+
 bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
                                              std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
 {
@@ -792,39 +829,23 @@ bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *t
         return false;
     }
 
-    auto typeAliasDeclarationCheck = [this, &typeAliases](ir::ETSTypeReferencePart *part) {
-        if (!part->Name()->IsIdentifier() && !part->Name()->IsTSQualifiedName()) {
-            return false;
-        }
-        auto *var = part->Name()->IsIdentifier() ? part->Name()->Variable()
-                                                 : part->Name()->AsTSQualifiedName()->Right()->Variable();
-        if (part->Name()->Variable() == nullptr) {
-            return true;
-        }
-
-        auto const *const decl = var->Declaration();
-        if (auto const *const node = decl->Node(); node != nullptr && node->IsTSTypeAliasDeclaration()) {
-            return IsAllowedTypeAliasRecursion(node->AsTSTypeAliasDeclaration(), typeAliases);
-        }
-
-        return true;
-    };
-
     if (typeAliasNode->TypeAnnotation()->IsETSFunctionType() &&
         typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->IsETSTypeReference()) {
-        isAllowedRerursiveType &= typeAliasDeclarationCheck(
-            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part());
+        isAllowedRerursiveType &= CheckTypeReferencePartRecursion(
+            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part(),
+            typeAliases);
     }
 
     if (typeAliasNode->TypeAnnotation()->IsETSTypeReference()) {
         isAllowedRerursiveType &=
-            typeAliasDeclarationCheck(typeAliasNode->TypeAnnotation()->AsETSTypeReference()->Part());
+            CheckTypeReferencePartRecursion(typeAliasNode->TypeAnnotation()->AsETSTypeReference()->Part(), typeAliases);
     }
 
     if (isAllowedRerursiveType && typeAliasNode->TypeAnnotation()->IsETSUnionType()) {
         for (auto &type : typeAliasNode->TypeAnnotation()->AsETSUnionType()->Types()) {
             if (type->IsETSTypeReference()) {
-                isAllowedRerursiveType &= typeAliasDeclarationCheck(type->AsETSTypeReference()->Part());
+                isAllowedRerursiveType &=
+                    CheckTypeReferencePartRecursion(type->AsETSTypeReference()->Part(), typeAliases);
             }
         }
     }
