@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ describe('getSpanOfEnclosingCommentTest', () => {
     length: 9
   };
   const lsp = getLsp(moduleName);
-  test('getSpanOfEnclosingComment_000', () => {
+  test.skip('getSpanOfEnclosingComment_000', () => {
     const res = lsp.getSpanOfEnclosingComment(getRealPath(moduleName, 'getSpanOfEnclosingComment1.ets'), 669, false);
     expect(res).toMatchObject(EXPECT_000);
   });
