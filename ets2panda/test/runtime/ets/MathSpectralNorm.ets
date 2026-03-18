@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,11 +46,11 @@ export class MathSpectralNorm {
   private static spectralnorm(n: int): double {
     let i: int;
     // Not parsed new double[n]
-    let u: double[] = new double[n];
+    let u: double[] = new double[n] (0);
     // Not parsed new double[n]
-    let w: double[] = new double[n];
+    let w: double[] = new double[n] (0);
     // Not parsed new double[n]
-    let v: double[] = new double[n];
+    let v: double[] = new double[n] (0);
     let vbv: double = 0;
     let vv: double = 0;
 

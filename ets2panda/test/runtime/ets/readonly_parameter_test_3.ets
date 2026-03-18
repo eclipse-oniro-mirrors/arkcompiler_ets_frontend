@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,7 @@ function foo2 (px: Readonly<int[]>, py: readonly [string, float]) {
 
 function foo3 (x: Readonly<int[]>, x2: int[]) {
     x = [1, 2]
-    x = new int[10]
+    x = new int[10] (0)
     let y: int[] = []
     x = y
     x = x2

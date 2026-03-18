@@ -556,51 +556,37 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 31,
-                                  "program": "AccessFannkuch.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 34,
-                                  "program": "AccessFannkuch.ets"
-                                }
-                              }
-                            },
-                            "dimension": {
+                            "type": "CallExpression",
+                            "callee": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "ThisExpression",
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 26,
-                                    "column": 35,
+                                    "column": 27,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 39,
+                                    "column": 46,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "n",
+                                "name": "create",
                                 "loc": {
                                   "start": {
                                     "line": 26,
-                                    "column": 40,
+                                    "column": 27,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 41,
+                                    "column": 46,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
@@ -610,12 +596,111 @@
                               "loc": {
                                 "start": {
                                   "line": 26,
-                                  "column": 35,
+                                  "column": 27,
                                   "program": "AccessFannkuch.ets"
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 41,
+                                  "column": 46,
+                                  "program": "AccessFannkuch.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 27,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 46,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "n",
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 27,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 46,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 27,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 46,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 27,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 46,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 27,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 46,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 27,
+                                  "program": "AccessFannkuch.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 46,
                                   "program": "AccessFannkuch.ets"
                                 }
                               }
@@ -628,7 +713,7 @@
                               },
                               "end": {
                                 "line": 26,
-                                "column": 42,
+                                "column": 46,
                                 "program": "AccessFannkuch.ets"
                               }
                             }
@@ -641,7 +726,7 @@
                             },
                             "end": {
                               "line": 26,
-                              "column": 42,
+                              "column": 46,
                               "program": "AccessFannkuch.ets"
                             }
                           }
@@ -656,7 +741,7 @@
                         },
                         "end": {
                           "line": 26,
-                          "column": 43,
+                          "column": 47,
                           "program": "AccessFannkuch.ets"
                         }
                       }
@@ -761,51 +846,37 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 28,
-                                  "column": 32,
-                                  "program": "AccessFannkuch.ets"
-                                },
-                                "end": {
-                                  "line": 28,
-                                  "column": 35,
-                                  "program": "AccessFannkuch.ets"
-                                }
-                              }
-                            },
-                            "dimension": {
+                            "type": "CallExpression",
+                            "callee": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "ThisExpression",
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 28,
-                                    "column": 36,
+                                    "column": 28,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 40,
+                                    "column": 47,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "n",
+                                "name": "create",
                                 "loc": {
                                   "start": {
                                     "line": 28,
-                                    "column": 41,
+                                    "column": 28,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 42,
+                                    "column": 47,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
@@ -815,12 +886,111 @@
                               "loc": {
                                 "start": {
                                   "line": 28,
-                                  "column": 36,
+                                  "column": 28,
                                   "program": "AccessFannkuch.ets"
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 42,
+                                  "column": 47,
+                                  "program": "AccessFannkuch.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "loc": {
+                                    "start": {
+                                      "line": 28,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 28,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "n",
+                                  "loc": {
+                                    "start": {
+                                      "line": 28,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 28,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 28,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 47,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 28,
+                                    "column": 28,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 28,
+                                    "column": 47,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 28,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 28,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 28,
+                                  "column": 28,
+                                  "program": "AccessFannkuch.ets"
+                                },
+                                "end": {
+                                  "line": 28,
+                                  "column": 47,
                                   "program": "AccessFannkuch.ets"
                                 }
                               }
@@ -833,7 +1003,7 @@
                               },
                               "end": {
                                 "line": 28,
-                                "column": 43,
+                                "column": 47,
                                 "program": "AccessFannkuch.ets"
                               }
                             }
@@ -846,7 +1016,7 @@
                             },
                             "end": {
                               "line": 28,
-                              "column": 43,
+                              "column": 47,
                               "program": "AccessFannkuch.ets"
                             }
                           }
@@ -861,7 +1031,7 @@
                         },
                         "end": {
                           "line": 28,
-                          "column": 44,
+                          "column": 48,
                           "program": "AccessFannkuch.ets"
                         }
                       }
@@ -966,51 +1136,37 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 30,
-                                  "column": 32,
-                                  "program": "AccessFannkuch.ets"
-                                },
-                                "end": {
-                                  "line": 30,
-                                  "column": 35,
-                                  "program": "AccessFannkuch.ets"
-                                }
-                              }
-                            },
-                            "dimension": {
+                            "type": "CallExpression",
+                            "callee": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "ThisExpression",
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 30,
-                                    "column": 36,
+                                    "column": 28,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 40,
+                                    "column": 47,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "n",
+                                "name": "create",
                                 "loc": {
                                   "start": {
                                     "line": 30,
-                                    "column": 41,
+                                    "column": 28,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 30,
-                                    "column": 42,
+                                    "column": 47,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
@@ -1020,12 +1176,111 @@
                               "loc": {
                                 "start": {
                                   "line": 30,
-                                  "column": 36,
+                                  "column": 28,
                                   "program": "AccessFannkuch.ets"
                                 },
                                 "end": {
                                   "line": 30,
-                                  "column": 42,
+                                  "column": 47,
+                                  "program": "AccessFannkuch.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "loc": {
+                                    "start": {
+                                      "line": 30,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 30,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "n",
+                                  "loc": {
+                                    "start": {
+                                      "line": 30,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 30,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 28,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 47,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 30,
+                                    "column": 28,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 30,
+                                    "column": 47,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 30,
+                                      "column": 28,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 30,
+                                      "column": 47,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 28,
+                                  "program": "AccessFannkuch.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 47,
                                   "program": "AccessFannkuch.ets"
                                 }
                               }
@@ -1038,7 +1293,7 @@
                               },
                               "end": {
                                 "line": 30,
-                                "column": 43,
+                                "column": 47,
                                 "program": "AccessFannkuch.ets"
                               }
                             }
@@ -1051,7 +1306,7 @@
                             },
                             "end": {
                               "line": 30,
-                              "column": 43,
+                              "column": 47,
                               "program": "AccessFannkuch.ets"
                             }
                           }
@@ -1066,7 +1321,7 @@
                         },
                         "end": {
                           "line": 30,
-                          "column": 44,
+                          "column": 48,
                           "program": "AccessFannkuch.ets"
                         }
                       }
@@ -1171,51 +1426,37 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 32,
-                                  "column": 34,
-                                  "program": "AccessFannkuch.ets"
-                                },
-                                "end": {
-                                  "line": 32,
-                                  "column": 37,
-                                  "program": "AccessFannkuch.ets"
-                                }
-                              }
-                            },
-                            "dimension": {
+                            "type": "CallExpression",
+                            "callee": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "ThisExpression",
+                                "type": "Identifier",
+                                "name": "Array",
                                 "loc": {
                                   "start": {
                                     "line": 32,
-                                    "column": 38,
+                                    "column": 30,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 32,
-                                    "column": 42,
+                                    "column": 49,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "n",
+                                "name": "create",
                                 "loc": {
                                   "start": {
                                     "line": 32,
-                                    "column": 43,
+                                    "column": 30,
                                     "program": "AccessFannkuch.ets"
                                   },
                                   "end": {
                                     "line": 32,
-                                    "column": 44,
+                                    "column": 49,
                                     "program": "AccessFannkuch.ets"
                                   }
                                 }
@@ -1225,12 +1466,111 @@
                               "loc": {
                                 "start": {
                                   "line": 32,
-                                  "column": 38,
+                                  "column": 30,
                                   "program": "AccessFannkuch.ets"
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 44,
+                                  "column": 49,
+                                  "program": "AccessFannkuch.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "ThisExpression",
+                                  "loc": {
+                                    "start": {
+                                      "line": 32,
+                                      "column": 30,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 32,
+                                      "column": 49,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "n",
+                                  "loc": {
+                                    "start": {
+                                      "line": 32,
+                                      "column": 30,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 32,
+                                      "column": 49,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 32,
+                                    "column": 30,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 32,
+                                    "column": 49,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 32,
+                                    "column": 30,
+                                    "program": "AccessFannkuch.ets"
+                                  },
+                                  "end": {
+                                    "line": 32,
+                                    "column": 49,
+                                    "program": "AccessFannkuch.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 32,
+                                      "column": 30,
+                                      "program": "AccessFannkuch.ets"
+                                    },
+                                    "end": {
+                                      "line": 32,
+                                      "column": 49,
+                                      "program": "AccessFannkuch.ets"
+                                    }
+                                  }
+                                }
+                              ],
+                              "loc": {
+                                "start": {
+                                  "line": 32,
+                                  "column": 30,
+                                  "program": "AccessFannkuch.ets"
+                                },
+                                "end": {
+                                  "line": 32,
+                                  "column": 49,
                                   "program": "AccessFannkuch.ets"
                                 }
                               }
@@ -1243,7 +1583,7 @@
                               },
                               "end": {
                                 "line": 32,
-                                "column": 45,
+                                "column": 49,
                                 "program": "AccessFannkuch.ets"
                               }
                             }
@@ -1256,7 +1596,7 @@
                             },
                             "end": {
                               "line": 32,
-                              "column": 45,
+                              "column": 49,
                               "program": "AccessFannkuch.ets"
                             }
                           }
@@ -1271,7 +1611,7 @@
                         },
                         "end": {
                           "line": 32,
-                          "column": 46,
+                          "column": 50,
                           "program": "AccessFannkuch.ets"
                         }
                       }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
  function main() {
-    let array = new (int|string|undefined)[10]
+    let array = new (int|string|undefined)[10] (undefined)
     array[0] = 1;
     array[2] = "test";
     arktest.assertEQ(array[0], 1)

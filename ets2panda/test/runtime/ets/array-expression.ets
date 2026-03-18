@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@ function add(arg : double[]): double {
 
 // TODO(user): unify copyBooleanArr and copyCharArr once generics are supported
 function copyBooleanArr(src: boolean[]): boolean[] {
-    let dst: boolean[] = new boolean[src.length];
+    let dst: boolean[] = new boolean[src.length] (false);
     for (let i = 0; i < src.length; i++) {
         dst[i] = src[i];
     }
@@ -28,7 +28,7 @@ function copyBooleanArr(src: boolean[]): boolean[] {
 
 // TODO(user): unify copyBooleanArr and copyCharArr once generics are supported
 function copyCharArr(src: char[]): char[] {
-    let dst: char[] = new char[src.length];
+    let dst: char[] = new char[src.length] ((0).toChar());
     for (let i = 0; i < src.length; i++) {
         dst[i] = src[i];
     }

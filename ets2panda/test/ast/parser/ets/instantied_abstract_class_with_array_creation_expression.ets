@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,9 @@
 abstract class cls {}
 
 function main(): void {
-  /* @@ label */new cls[10];
+  /* @@ label */new cls[10](new cls);
 }
 
 
-/* @@@ label Error Semantic error ESE0050: Cannot use array creation expression with abstract classes and interfaces. */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
+/* @@@ label Error Semantic error ESE0052: cls is abstract therefore cannot be instantiated. */

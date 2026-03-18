@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,7 @@ class Test {
 function main() {
     let a: Test = new Test();
     arktest.assertEQ(a.foo([123, 123, 123]), "invoke2");
-    arktest.assertEQ(a.foo(new number[5]), "invoke2");
+    arktest.assertEQ(a.foo(new number[5] (0)), "invoke2");
     arktest.assertEQ(a.foo(new Array<number>(2)), "invoke2");
     arktest.assertEQ(a.foo(new number[5][10]), "invoke6");
 }

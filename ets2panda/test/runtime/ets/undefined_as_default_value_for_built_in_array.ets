@@ -17,12 +17,12 @@ type UnionTypeUndefined = int | undefined
 type UnionTypeUndefinedAndNull = int | undefined | null | string
 
 function main(): int {
-    let v: UnionTypeUndefined[] = new UnionTypeUndefined[33]
+    let v: UnionTypeUndefined[] = new UnionTypeUndefined[33] (undefined)
     for (let i = 0; i < 33; i++) {
       arktest.assertTrue(v[i] instanceof undefined, "v[i] value has to be undefined.")
     }
 
-    let y: UnionTypeUndefinedAndNull[] = new UnionTypeUndefinedAndNull[33]
+    let y: UnionTypeUndefinedAndNull[] = new UnionTypeUndefinedAndNull[33] (undefined)
     for (let i = 0; i < 33; i++) {
       arktest.assertTrue(y[i] instanceof undefined, "y[i] value has to be undefined.")
     }

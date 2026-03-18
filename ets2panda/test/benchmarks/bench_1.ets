@@ -650,7 +650,7 @@ function test_substitution7() {
     assert_ccexc7(() => { erase7<A7 | B7>(new Object()); })
     assert_ccexc7(() => { erase7<A7 | B7>(new C7()); })
 
-    assert_ccexc7(() => { erase7<FixedArray<A7>>(new B7[0]); })
+    assert_ccexc7(() => { erase7<FixedArray<A7>>(new B7[0](new B7())); })
 }
 
 class Erased7<T7> {
@@ -677,7 +677,7 @@ function test_substitution_memberexpr7() {
     assert_ccexc7(() => { new Erased7<A7 | B7>(new Object()).t7; })
     assert_ccexc7(() => { new Erased7<A7 | B7>(new C7()).t7; })
 
-    assert_ccexc7(() => { new Erased7<FixedArray<A7>>(new B7[0]).t7; })
+    assert_ccexc7(() => { new Erased7<FixedArray<A7>>(new B7[0](new B7())).t7; })
 }
 
 function cast_to_tparam7<T7 extends A7 | B7 | null>(x: Object | null | undefined) { x as T7; }

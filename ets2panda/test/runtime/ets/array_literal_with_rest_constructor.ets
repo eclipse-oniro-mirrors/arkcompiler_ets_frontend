@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,8 +34,8 @@ class ClassWithNormalConstructor {
 function
 main()
 {
-    let restArray : ClassWithRestParams[] = /* @@ restArray */ new ClassWithRestParams[3];
-    let normalArray : ClassWithNormalConstructor[] = /* @@ normalArray */ new ClassWithNormalConstructor[2];
+    let restArray : ClassWithRestParams[] = /* @@ restArray */ new ClassWithRestParams[3] (new ClassWithRestParams());
+    let normalArray : ClassWithNormalConstructor[] = /* @@ normalArray */ new ClassWithNormalConstructor[2] (new ClassWithNormalConstructor());
 
     // Check lengths
     arktest.assertTrue(restArray.length == 3);

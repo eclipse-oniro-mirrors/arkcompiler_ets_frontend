@@ -3828,34 +3828,119 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
+                                "loc": {
+                                  "start": {
+                                    "line": 49,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 49,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 49,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 49,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 49,
-                                  "column": 27,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 49,
-                                  "column": 33,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "Identifier",
-                              "name": "n",
+                            "arguments": [
+                              {
+                                "type": "Identifier",
+                                "name": "n",
+                                "loc": {
+                                  "start": {
+                                    "line": 49,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 49,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 49,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 49,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 49,
+                                      "column": 23,
+                                      "program": "MathSpectralNorm.ets"
+                                    },
+                                    "end": {
+                                      "line": 49,
+                                      "column": 40,
+                                      "program": "MathSpectralNorm.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 49,
-                                  "column": 34,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 49,
-                                  "column": 35,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
@@ -3868,7 +3953,7 @@
                               },
                               "end": {
                                 "line": 49,
-                                "column": 36,
+                                "column": 40,
                                 "program": "MathSpectralNorm.ets"
                               }
                             }
@@ -3881,7 +3966,7 @@
                             },
                             "end": {
                               "line": 49,
-                              "column": 36,
+                              "column": 40,
                               "program": "MathSpectralNorm.ets"
                             }
                           }
@@ -3896,7 +3981,7 @@
                         },
                         "end": {
                           "line": 49,
-                          "column": 37,
+                          "column": 41,
                           "program": "MathSpectralNorm.ets"
                         }
                       }
@@ -4001,34 +4086,119 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
+                                "loc": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 51,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 51,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 51,
-                                  "column": 27,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 51,
-                                  "column": 33,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "Identifier",
-                              "name": "n",
+                            "arguments": [
+                              {
+                                "type": "Identifier",
+                                "name": "n",
+                                "loc": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 51,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 51,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 51,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 51,
+                                      "column": 23,
+                                      "program": "MathSpectralNorm.ets"
+                                    },
+                                    "end": {
+                                      "line": 51,
+                                      "column": 40,
+                                      "program": "MathSpectralNorm.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 51,
-                                  "column": 34,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 51,
-                                  "column": 35,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
@@ -4041,7 +4211,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 36,
+                                "column": 40,
                                 "program": "MathSpectralNorm.ets"
                               }
                             }
@@ -4054,7 +4224,7 @@
                             },
                             "end": {
                               "line": 51,
-                              "column": 36,
+                              "column": 40,
                               "program": "MathSpectralNorm.ets"
                             }
                           }
@@ -4069,7 +4239,7 @@
                         },
                         "end": {
                           "line": 51,
-                          "column": 37,
+                          "column": 41,
                           "program": "MathSpectralNorm.ets"
                         }
                       }
@@ -4174,34 +4344,119 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewArrayInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSPrimitiveType",
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Array",
+                                "loc": {
+                                  "start": {
+                                    "line": 53,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 53,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "create",
+                                "loc": {
+                                  "start": {
+                                    "line": 53,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 53,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 53,
-                                  "column": 27,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 53,
-                                  "column": 33,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
                             },
-                            "dimension": {
-                              "type": "Identifier",
-                              "name": "n",
+                            "arguments": [
+                              {
+                                "type": "Identifier",
+                                "name": "n",
+                                "loc": {
+                                  "start": {
+                                    "line": 53,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 53,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              },
+                              {
+                                "type": "NumberLiteral",
+                                "value": 0,
+                                "loc": {
+                                  "start": {
+                                    "line": 53,
+                                    "column": 23,
+                                    "program": "MathSpectralNorm.ets"
+                                  },
+                                  "end": {
+                                    "line": 53,
+                                    "column": 40,
+                                    "program": "MathSpectralNorm.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
+                            "typeParameters": {
+                              "type": "TSTypeParameterInstantiation",
+                              "params": [
+                                {
+                                  "type": "ETSPrimitiveType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 53,
+                                      "column": 23,
+                                      "program": "MathSpectralNorm.ets"
+                                    },
+                                    "end": {
+                                      "line": 53,
+                                      "column": 40,
+                                      "program": "MathSpectralNorm.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 53,
-                                  "column": 34,
+                                  "column": 23,
                                   "program": "MathSpectralNorm.ets"
                                 },
                                 "end": {
                                   "line": 53,
-                                  "column": 35,
+                                  "column": 40,
                                   "program": "MathSpectralNorm.ets"
                                 }
                               }
@@ -4214,7 +4469,7 @@
                               },
                               "end": {
                                 "line": 53,
-                                "column": 36,
+                                "column": 40,
                                 "program": "MathSpectralNorm.ets"
                               }
                             }
@@ -4227,7 +4482,7 @@
                             },
                             "end": {
                               "line": 53,
-                              "column": 36,
+                              "column": 40,
                               "program": "MathSpectralNorm.ets"
                             }
                           }
@@ -4242,7 +4497,7 @@
                         },
                         "end": {
                           "line": 53,
-                          "column": 37,
+                          "column": 41,
                           "program": "MathSpectralNorm.ets"
                         }
                       }

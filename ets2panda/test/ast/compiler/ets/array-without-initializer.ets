@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
- enum Color { Red = 0, Green, Blue }
+let a = new boolean[2]
 
-function main() {
-    let c: int[] = new int[Color.Green] (0);
-    c[Color.Red] = Color.Blue;
-}
+/* @@? 18:95 Error Syntax error ESY63526: Expression to initialize array element is missed. */

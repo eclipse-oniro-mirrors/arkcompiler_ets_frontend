@@ -253,34 +253,119 @@
               }
             },
             "value": {
-              "type": "ETSNewArrayInstanceExpression",
-              "typeReference": {
-                "type": "ETSPrimitiveType",
+              "type": "CallExpression",
+              "callee": {
+                "type": "MemberExpression",
+                "object": {
+                  "type": "Identifier",
+                  "name": "Array",
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 9,
+                      "program": "class_instance.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 23,
+                      "program": "class_instance.ets"
+                    }
+                  }
+                },
+                "property": {
+                  "type": "Identifier",
+                  "name": "create",
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 9,
+                      "program": "class_instance.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 23,
+                      "program": "class_instance.ets"
+                    }
+                  }
+                },
+                "computed": false,
+                "optional": false,
                 "loc": {
                   "start": {
                     "line": 19,
-                    "column": 13,
+                    "column": 9,
                     "program": "class_instance.ets"
                   },
                   "end": {
                     "line": 19,
-                    "column": 16,
+                    "column": 23,
                     "program": "class_instance.ets"
                   }
                 }
               },
-              "dimension": {
-                "type": "NumberLiteral",
-                "value": 10,
+              "arguments": [
+                {
+                  "type": "NumberLiteral",
+                  "value": 10,
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 9,
+                      "program": "class_instance.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 23,
+                      "program": "class_instance.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "NumberLiteral",
+                  "value": 0,
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 9,
+                      "program": "class_instance.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 23,
+                      "program": "class_instance.ets"
+                    }
+                  }
+                }
+              ],
+              "optional": false,
+              "typeParameters": {
+                "type": "TSTypeParameterInstantiation",
+                "params": [
+                  {
+                    "type": "ETSPrimitiveType",
+                    "loc": {
+                      "start": {
+                        "line": 19,
+                        "column": 9,
+                        "program": "class_instance.ets"
+                      },
+                      "end": {
+                        "line": 19,
+                        "column": 23,
+                        "program": "class_instance.ets"
+                      }
+                    }
+                  }
+                ],
                 "loc": {
                   "start": {
                     "line": 19,
-                    "column": 17,
+                    "column": 9,
                     "program": "class_instance.ets"
                   },
                   "end": {
                     "line": 19,
-                    "column": 19,
+                    "column": 23,
                     "program": "class_instance.ets"
                   }
                 }
@@ -293,7 +378,7 @@
                 },
                 "end": {
                   "line": 19,
-                  "column": 20,
+                  "column": 23,
                   "program": "class_instance.ets"
                 }
               }
@@ -313,7 +398,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 20,
+                "column": 23,
                 "program": "class_instance.ets"
               }
             }

@@ -373,6 +373,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/overloadMappingLowering.cpp
   compiler/lowering/ets/expandBrackets.cpp
   compiler/lowering/ets/packageImplicitImport.cpp
+  compiler/lowering/ets/arrayConversionLowering.cpp
   compiler/lowering/ets/partialExportClassGen.cpp
   compiler/lowering/ets/promiseVoid.cpp
   compiler/lowering/ets/objectLiteralLowering.cpp

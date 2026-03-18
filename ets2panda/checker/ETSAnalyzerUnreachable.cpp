@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -412,6 +412,11 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::TSVoidKeyword *node) cons
 }
 
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::DummyNode *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
+checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSNewArrayInstanceExpression *expr) const
 {
     ES2PANDA_UNREACHABLE();
 }

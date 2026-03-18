@@ -57,6 +57,9 @@ void ETSNewArrayInstanceExpression::Dump(ir::SrcDumper *dumper) const
     dumper->Add("[");
     dimension_->Dump(dumper);
     dumper->Add("]");
+    dumper->Add("(");
+    initializer_->Dump(dumper);
+    dumper->Add(")");
 }
 
 void ETSNewArrayInstanceExpression::Compile(compiler::PandaGen *pg) const
@@ -83,7 +86,9 @@ ETSNewArrayInstanceExpression *ETSNewArrayInstanceExpression::Clone(ArenaAllocat
 {
     auto *const typeRef = typeReference_ != nullptr ? typeReference_->Clone(allocator, nullptr) : nullptr;
     auto *const dimension = dimension_ != nullptr ? dimension_->Clone(allocator, nullptr)->AsExpression() : nullptr;
-    auto *const clone = allocator->New<ETSNewArrayInstanceExpression>(typeRef, dimension);
+    auto *const initializer =
+        initializer_ != nullptr ? initializer_->Clone(allocator, nullptr)->AsExpression() : nullptr;
+    auto *const clone = allocator->New<ETSNewArrayInstanceExpression>(typeRef, dimension, initializer);
     ES2PANDA_ASSERT(clone);
 
     if (typeRef != nullptr) {

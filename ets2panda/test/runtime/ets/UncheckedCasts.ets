@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,7 +54,7 @@ function test_substitution() {
     assert_ccexc(() => { erase<A | B>(new Object()); })
     assert_ccexc(() => { erase<A | B>(new C()); })
 
-    assert_ccexc(() => { erase<FixedArray<A>>(new B[0]); })
+    assert_ccexc(() => { erase<FixedArray<A>>(new B[0] (new B)); })
 }
 
 class Erased<T> {
@@ -81,7 +81,7 @@ function test_substitution_memberexpr() {
     assert_ccexc(() => { new Erased<A | B>(new Object()).t; })
     assert_ccexc(() => { new Erased<A | B>(new C()).t; })
 
-    assert_ccexc(() => { new Erased<FixedArray<A>>(new B[0]).t; })
+    assert_ccexc(() => { new Erased<FixedArray<A>>(new B[0] (new B)).t; })
 }
 
 function cast_to_tparam<T extends A | B | null>(x: Object | null | undefined) { x as T; }

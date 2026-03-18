@@ -715,67 +715,168 @@
                     {
                       "type": "ReturnStatement",
                       "argument": {
-                        "type": "ETSNewArrayInstanceExpression",
-                        "typeReference": {
-                          "type": "ETSUnionType",
-                          "types": [
+                        "type": "CallExpression",
+                        "callee": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Array",
+                            "loc": {
+                              "start": {
+                                "line": 22,
+                                "column": 16,
+                                "program": "returnTypeGenericArray.ets"
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 49,
+                                "program": "returnTypeGenericArray.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "create",
+                            "loc": {
+                              "start": {
+                                "line": 22,
+                                "column": 16,
+                                "program": "returnTypeGenericArray.ets"
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 49,
+                                "program": "returnTypeGenericArray.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 22,
+                              "column": 16,
+                              "program": "returnTypeGenericArray.ets"
+                            },
+                            "end": {
+                              "line": 22,
+                              "column": 49,
+                              "program": "returnTypeGenericArray.ets"
+                            }
+                          }
+                        },
+                        "arguments": [
+                          {
+                            "type": "NumberLiteral",
+                            "value": 5,
+                            "loc": {
+                              "start": {
+                                "line": 22,
+                                "column": 16,
+                                "program": "returnTypeGenericArray.ets"
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 49,
+                                "program": "returnTypeGenericArray.ets"
+                              }
+                            }
+                          },
+                          {
+                            "type": "UndefinedLiteral",
+                            "value": "undefined",
+                            "loc": {
+                              "start": {
+                                "line": 22,
+                                "column": 16,
+                                "program": "returnTypeGenericArray.ets"
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 49,
+                                "program": "returnTypeGenericArray.ets"
+                              }
+                            }
+                          }
+                        ],
+                        "optional": false,
+                        "typeParameters": {
+                          "type": "TSTypeParameterInstantiation",
+                          "params": [
                             {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "T",
+                              "type": "ETSUnionType",
+                              "types": [
+                                {
+                                  "type": "ETSTypeReference",
+                                  "part": {
+                                    "type": "ETSTypeReferencePart",
+                                    "name": {
+                                      "type": "Identifier",
+                                      "name": "T",
+                                      "loc": {
+                                        "start": {
+                                          "line": 22,
+                                          "column": 16,
+                                          "program": "returnTypeGenericArray.ets"
+                                        },
+                                        "end": {
+                                          "line": 22,
+                                          "column": 49,
+                                          "program": "returnTypeGenericArray.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 22,
+                                        "column": 16,
+                                        "program": "returnTypeGenericArray.ets"
+                                      },
+                                      "end": {
+                                        "line": 22,
+                                        "column": 49,
+                                        "program": "returnTypeGenericArray.ets"
+                                      }
+                                    }
+                                  },
                                   "loc": {
                                     "start": {
                                       "line": 22,
-                                      "column": 21,
+                                      "column": 16,
                                       "program": "returnTypeGenericArray.ets"
                                     },
                                     "end": {
                                       "line": 22,
-                                      "column": 22,
+                                      "column": 49,
                                       "program": "returnTypeGenericArray.ets"
                                     }
                                   }
                                 },
-                                "loc": {
-                                  "start": {
-                                    "line": 22,
-                                    "column": 21,
-                                    "program": "returnTypeGenericArray.ets"
-                                  },
-                                  "end": {
-                                    "line": 22,
-                                    "column": 22,
-                                    "program": "returnTypeGenericArray.ets"
+                                {
+                                  "type": "ETSUndefinedType",
+                                  "loc": {
+                                    "start": {
+                                      "line": 22,
+                                      "column": 16,
+                                      "program": "returnTypeGenericArray.ets"
+                                    },
+                                    "end": {
+                                      "line": 22,
+                                      "column": 49,
+                                      "program": "returnTypeGenericArray.ets"
+                                    }
                                   }
                                 }
-                              },
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 22,
-                                  "column": 21,
+                                  "column": 16,
                                   "program": "returnTypeGenericArray.ets"
                                 },
                                 "end": {
                                   "line": 22,
-                                  "column": 22,
-                                  "program": "returnTypeGenericArray.ets"
-                                }
-                              }
-                            },
-                            {
-                              "type": "ETSUndefinedType",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 25,
-                                  "program": "returnTypeGenericArray.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 34,
+                                  "column": 49,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -784,28 +885,12 @@
                           "loc": {
                             "start": {
                               "line": 22,
-                              "column": 20,
+                              "column": 16,
                               "program": "returnTypeGenericArray.ets"
                             },
                             "end": {
                               "line": 22,
-                              "column": 34,
-                              "program": "returnTypeGenericArray.ets"
-                            }
-                          }
-                        },
-                        "dimension": {
-                          "type": "NumberLiteral",
-                          "value": 5,
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 36,
-                              "program": "returnTypeGenericArray.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 37,
+                              "column": 49,
                               "program": "returnTypeGenericArray.ets"
                             }
                           }
@@ -818,7 +903,7 @@
                           },
                           "end": {
                             "line": 22,
-                            "column": 38,
+                            "column": 49,
                             "program": "returnTypeGenericArray.ets"
                           }
                         }
@@ -831,7 +916,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 39,
+                          "column": 50,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }

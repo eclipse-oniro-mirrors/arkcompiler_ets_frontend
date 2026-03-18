@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ export class BitopsNSieveBits {
 
   private static sieve(n1: int, n2: int): int[] {
     // Not parsed new int[...]
-    let isPrime: int[] = new int[(n2 << n1) + 31 >> 5];
+    let isPrime: int[] = new int[(n2 << n1) + 31 >> 5](0);
     BitopsNSieveBits.primes(isPrime, n1, n2);
     return isPrime;
   }

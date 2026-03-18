@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,7 @@ TEST_F(GlobalETSObjectTypeTest, TypeDeclNodeTest)
         << "    testBool: boolean = false;\n"
         << "    prop: int = 1;\n}\n"
         << "function main() {"
-        << "     let arr = new A[10]\n;"
+        << "     let arr = new A[10](new A)\n;"
         << "     for (let a of arr) {\n"
         << "         if (a.testBool) {\n"
         << "}\n}\n}" << std::endl;

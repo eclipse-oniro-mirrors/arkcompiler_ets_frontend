@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,18 +22,18 @@ class ListTest<T> {
     constructor()
     {
         this.num = 10;
-        this.data = new (T | undefined)[this.num];
+        this.data = new (T | undefined)[this.num](undefined);
     }
     private data: (T | undefined)[];
     private num: int;
 }
 
 function main(): void {
-    let s = new string[3];
-    let n = new number[3];
-    let i = new Int[3];
-    let x = new Point[3];
-    let y = new ListTest<Point>[3];
+    let s = new string[3]("");
+    let n = new number[3](0);
+    let i = new Int[3](0);
+    let x = new Point[3](new Point());
+    let y = new ListTest<Point>[3](new ListTest<Point>());
 }
 
 

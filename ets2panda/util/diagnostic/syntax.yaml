@@ -125,6 +125,10 @@ syntax:
   id: 344
   message: "Cannot export two different names with the same export alias name '{}'."
 
+- name: CANNOT_INITIALIZE_ARRAY
+  id: 63526
+  message: "Expression to initialize array element is missed."
+
 - name: CAN_NOT_FIND_NAME_TO_EXPORT
   id: 279
   message: "Cannot find name '{}' to export."

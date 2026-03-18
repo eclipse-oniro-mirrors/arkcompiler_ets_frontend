@@ -17,6 +17,7 @@
 
 #include "ir/ets/etsTuple.h"
 #include "ir/ets/etsDestructuring.h"
+#include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "lexer/lexer.h"
 
@@ -827,27 +828,34 @@ ir::Expression *ETSParser::ParseNewExpression()
         auto endLoc = Lexer()->GetToken().End();
         ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
 
-        if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
-            auto *arrInstance = AllocNode<ir::ETSNewArrayInstanceExpression>(typeReference, dimension);
+        if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+            Lexer()->NextToken();
+            ir::Expression *initializer = ParseExpression();
+            auto *arrInstance = AllocNode<ir::ETSNewArrayInstanceExpression>(typeReference, dimension, initializer);
+            endLoc = Lexer()->GetToken().End();
+            ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS);
             arrInstance->SetRange({start, endLoc});
             return arrInstance;
         }
+        if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
+            ArenaVector<ir::Expression *> dimensions(Allocator()->Adapter());
+            dimensions.push_back(dimension);
 
-        ArenaVector<ir::Expression *> dimensions(Allocator()->Adapter());
-        dimensions.push_back(dimension);
+            do {
+                Lexer()->NextToken();
+                dimensions.push_back(ParseExpression());
 
-        do {
-            Lexer()->NextToken();
-            dimensions.push_back(ParseExpression());
+                endLoc = Lexer()->GetToken().End();
+                ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
+            } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET);
 
-            endLoc = Lexer()->GetToken().End();
-            ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
-        } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET);
-
-        auto *multiArray = AllocNode<ir::ETSNewMultiDimArrayInstanceExpression>(typeReference, std::move(dimensions));
-        ES2PANDA_ASSERT(multiArray != nullptr);
-        multiArray->SetRange({start, endLoc});
-        return multiArray;
+            auto *multiArray =
+                AllocNode<ir::ETSNewMultiDimArrayInstanceExpression>(typeReference, std::move(dimensions));
+            ES2PANDA_ASSERT(multiArray != nullptr);
+            multiArray->SetRange({start, endLoc});
+            return multiArray;
+        }
+        LogError(diagnostic::CANNOT_INITIALIZE_ARRAY);
     }
 
     ArenaVector<ir::Expression *> arguments(Allocator()->Adapter());

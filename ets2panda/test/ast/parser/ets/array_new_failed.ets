@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,9 @@
  */
 
 function foo(): void {
-  let a = new int[/* @@ label */5.1]
+  let a = new int[/* @@ label */5.1](0)
 }
 
 
-/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
+/* @@? 17:11 Error Semantic error ESE0127: No matching call signature for create(Double, Int) */
+/* @@? 17:11 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Int' at index 1 */
