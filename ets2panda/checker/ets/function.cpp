@@ -1600,61 +1600,103 @@ static bool AppendSignatureInfoParam(ETSChecker *checker, SignatureInfo *sigInfo
     return true;
 }
 
+static void InitializeSignatureTypeParameters(ETSChecker *checker, SignatureInfo *signatureInfo,
+                                              ir::TSTypeParameterDeclaration *typeParams)
+{
+    if (typeParams == nullptr) {
+        return;
+    }
+
+    auto [typeParamTypes, ok] = checker->CreateUnconstrainedTypeParameters(typeParams);
+    ES2PANDA_ASSERT(signatureInfo != nullptr);
+    signatureInfo->typeParams = std::move(typeParamTypes);
+    if (ok) {
+        ok = checker->PrecheckTypeParameterConstraintCycles(typeParams);
+    }
+    if (ok) {
+        checker->AssignTypeParameterConstraints(typeParams);
+    }
+}
+
+static bool AppendSignatureInfoParams(ETSChecker *checker, SignatureInfo *signatureInfo,
+                                      ArenaVector<ir::Expression *> const &params)
+{
+    for (auto *const paramExpr : params) {
+        if (!paramExpr->IsETSParameterExpression()) {
+            ES2PANDA_ASSERT(checker->IsAnyError());
+            return false;
+        }
+
+        auto *const param = paramExpr->AsETSParameterExpression();
+        checker->CheckAnnotations(param);
+        if (!AppendSignatureInfoParam(checker, signatureInfo, param)) {  // #23134
+            ES2PANDA_ASSERT(checker->IsAnyError());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static Type *ResolveRestParameterType(ETSChecker *checker, ir::ETSParameterExpression *param)
+{
+    if (param->TypeAnnotation() != nullptr) {
+        return param->RestParameter()->TypeAnnotation()->GetType(checker);
+    }
+
+    if (param->Ident()->TsType() != nullptr) {
+        return param->Ident()->TsType();
+    }
+
+    ES2PANDA_ASSERT(checker->IsAnyError());  // #23134
+    return nullptr;
+}
+
+static bool FinalizeRestParameter(ETSChecker *checker, SignatureInfo *signatureInfo,
+                                  ArenaVector<ir::Expression *> const &params)
+{
+    auto *const lastParam = params.empty() ? nullptr : params.back()->AsETSParameterExpression();
+    if (lastParam == nullptr || !lastParam->IsRestParameter()) {
+        return true;
+    }
+
+    Type *restParamType = ResolveRestParameterType(checker, lastParam);
+    if (restParamType == nullptr) {
+        return false;
+    }
+
+    ES2PANDA_ASSERT(restParamType != nullptr);
+    if (!restParamType->IsAnyETSArrayOrTupleType()) {
+        checker->LogError(diagnostic::ONLY_ARRAY_OR_TUPLE_FOR_REST, {}, lastParam->Start());
+        restParamType = checker->GlobalTypeError();
+    }
+
+    signatureInfo->restVar = SetupSignatureParameter(lastParam, restParamType);
+    ES2PANDA_ASSERT(signatureInfo->restVar != nullptr);
+
+    size_t nOpt =
+        std::count_if(signatureInfo->params.begin(), signatureInfo->params.end(), [](varbinder::LocalVariable *var) {
+            return var->Declaration()->Node()->AsETSParameterExpression()->IsOptional();
+        });
+    if (signatureInfo->restVar->TsType()->IsETSTupleType()) {
+        signatureInfo->minArgCount += nOpt;
+    }
+
+    return true;
+}
+
 SignatureInfo *ETSChecker::ComposeSignatureInfo(ir::TSTypeParameterDeclaration *typeParams,
                                                 ArenaVector<ir::Expression *> const &params)
 {
     auto *const signatureInfo = CreateSignatureInfo();
+    InitializeSignatureTypeParameters(this, signatureInfo, typeParams);
 
-    if (typeParams != nullptr) {
-        auto [typeParamTypes, ok] = CreateUnconstrainedTypeParameters(typeParams);
-        ES2PANDA_ASSERT(signatureInfo != nullptr);
-        signatureInfo->typeParams = std::move(typeParamTypes);
-        if (ok) {
-            AssignTypeParameterConstraints(typeParams);
-        }
+    if (!AppendSignatureInfoParams(this, signatureInfo, params)) {
+        return nullptr;
     }
 
-    for (auto *const p : params) {
-        if (!p->IsETSParameterExpression()) {
-            ES2PANDA_ASSERT(IsAnyError());
-            return nullptr;
-        }
-        CheckAnnotations(p->AsETSParameterExpression());
-        if (!AppendSignatureInfoParam(this, signatureInfo, p->AsETSParameterExpression())) {  // #23134
-            ES2PANDA_ASSERT(IsAnyError());
-            return nullptr;
-        }
-    }
-
-    if (!params.empty()) {
-        if (auto param = params.back()->AsETSParameterExpression(); param->IsRestParameter()) {
-            checker::Type *restParamType = nullptr;
-            if (param->TypeAnnotation() != nullptr) {
-                restParamType = param->RestParameter()->TypeAnnotation()->GetType(this);
-            } else if (param->Ident()->TsType() != nullptr) {
-                restParamType = param->Ident()->TsType();
-            } else {
-                ES2PANDA_ASSERT(IsAnyError());  // #23134
-                return nullptr;
-            }
-            ES2PANDA_ASSERT(restParamType != nullptr);
-            if (!restParamType->IsAnyETSArrayOrTupleType()) {
-                LogError(diagnostic::ONLY_ARRAY_OR_TUPLE_FOR_REST, {}, param->Start());
-                restParamType = GlobalTypeError();
-            }
-            signatureInfo->restVar = SetupSignatureParameter(param, restParamType);
-            ES2PANDA_ASSERT(signatureInfo->restVar != nullptr);
-
-            // NOTE(muhammet): Have to add optional arguments again so it doesn't break the assertion for rest
-            // tuples
-            size_t nOpt = std::count_if(signatureInfo->params.begin(), signatureInfo->params.end(),
-                                        [](varbinder::LocalVariable *var) {
-                                            return var->Declaration()->Node()->AsETSParameterExpression()->IsOptional();
-                                        });
-            if (signatureInfo->restVar->TsType()->IsETSTupleType()) {
-                signatureInfo->minArgCount += nOpt;
-            }
-        }
+    if (!FinalizeRestParameter(this, signatureInfo, params)) {
+        return nullptr;
     }
 
     return signatureInfo;

@@ -46,9 +46,12 @@
 #include "ir/statements/variableDeclarator.h"
 #include "ir/ts/tsClassImplements.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
+#include "ir/ts/tsIntersectionType.h"
+#include "ir/ts/tsParenthesizedType.h"
 #include "ir/ts/tsInterfaceHeritage.h"
 #include "ir/ts/tsTypeParameter.h"
 #include "ir/ts/tsTypeParameterDeclaration.h"
+#include "ir/ts/tsUnionType.h"
 #include "util/diagnostic.h"
 #include "varbinder/declaration.h"
 #include "varbinder/variableFlags.h"
@@ -59,6 +62,183 @@
 namespace ark::es2panda::checker {
 
 static constexpr std::string_view SET_PROTOTYPE_OF = "setPrototypeOf";
+
+enum class TypeParameterVisitState : uint8_t { WHITE, GRAY, BLACK };
+using TypeParameterSet = std::unordered_set<varbinder::Variable *>;
+using TypeParameterNodeMap = std::unordered_map<varbinder::Variable *, ir::TSTypeParameter *>;
+using TypeParameterDependencyGraph = std::unordered_map<varbinder::Variable *, TypeParameterSet>;
+using TypeParameterVisitStateMap = std::unordered_map<varbinder::Variable *, TypeParameterVisitState>;
+
+static varbinder::Variable *GetDirectConstraintDependency(const ir::TypeNode *constraint,
+                                                          const TypeParameterSet &localTypeParams)
+{
+    if (constraint == nullptr || !constraint->IsETSTypeReference()) {
+        return nullptr;
+    }
+
+    auto *const referencePart = constraint->AsETSTypeReference()->Part();
+    if (referencePart->Previous() != nullptr || !referencePart->Name()->IsIdentifier()) {
+        return nullptr;
+    }
+
+    auto *const variable = referencePart->Name()->AsIdentifier()->Variable();
+    if (variable == nullptr || localTypeParams.count(variable) == 0U) {
+        return nullptr;
+    }
+
+    return variable;
+}
+
+static void CollectConstraintDependencies(const ir::TypeNode *constraint, const TypeParameterSet &localTypeParams,
+                                          TypeParameterSet &dependencies)
+{
+    if (constraint == nullptr) {
+        return;
+    }
+
+    if (auto *const dependencyVar = GetDirectConstraintDependency(constraint, localTypeParams);
+        dependencyVar != nullptr) {
+        dependencies.emplace(dependencyVar);
+        return;
+    }
+
+    if (constraint->IsETSUnionType()) {
+        for (auto *const type : constraint->AsETSUnionType()->Types()) {
+            CollectConstraintDependencies(type, localTypeParams, dependencies);
+        }
+    }
+}
+
+static void InitializeTypeParameterDependencyGraph(const ir::TSTypeParameterDeclaration *typeParams,
+                                                   TypeParameterNodeMap &paramByVar,
+                                                   TypeParameterDependencyGraph &dependencyGraph)
+{
+    for (auto *const typeParam : typeParams->Params()) {
+        auto *const typeParamVar = typeParam->Name()->Variable();
+        paramByVar.emplace(typeParamVar, typeParam);
+        dependencyGraph.try_emplace(typeParamVar);
+    }
+}
+
+static void CollectSyntacticConstraintDependencies(const ir::TSTypeParameterDeclaration *typeParams,
+                                                   const TypeParameterSet &localTypeParams,
+                                                   TypeParameterDependencyGraph &dependencyGraph)
+{
+    for (auto *const typeParam : typeParams->Params()) {
+        auto *const typeParamVariable = typeParam->Name()->Variable();
+        auto dependencyGraphIt = dependencyGraph.find(typeParamVariable);
+        if (dependencyGraphIt == dependencyGraph.end() || typeParam->Constraint() == nullptr) {
+            continue;
+        }
+
+        CollectConstraintDependencies(typeParam->Constraint(), localTypeParams, dependencyGraphIt->second);
+    }
+}
+
+static void CollectSemanticConstraintDependencies(const Type *constraintType, const TypeParameterSet &localTypeParams,
+                                                  TypeParameterSet &dependencies)
+{
+    if (constraintType == nullptr) {
+        return;
+    }
+
+    constraintType->IterateRecursivelyPreorder([&dependencies, &localTypeParams](const Type *type) {
+        if (type == nullptr || !type->IsETSTypeParameter()) {
+            return;
+        }
+
+        auto *const dependencyVar = const_cast<varbinder::Variable *>(type->Variable());
+        if (dependencyVar != nullptr && localTypeParams.count(dependencyVar) != 0U) {
+            dependencies.emplace(dependencyVar);
+        }
+    });
+}
+
+static TypeParameterSet CollectLocalTypeParameters(const ir::TSTypeParameterDeclaration *typeParams)
+{
+    TypeParameterSet localTypeParams {};
+    for (auto *const typeParam : typeParams->Params()) {
+        localTypeParams.emplace(typeParam->Name()->Variable());
+    }
+    return localTypeParams;
+}
+
+struct TypeParameterCycleDetectionContext {
+    ETSChecker *checker;
+    const TypeParameterDependencyGraph &dependencyGraph;
+    const TypeParameterNodeMap &paramByVar;
+    TypeParameterVisitStateMap visitStateByVariable {};
+    TypeParameterSet diagnosedCycleVariables {};
+    bool isValid {true};
+};
+
+static void ReportConstraintCycle(TypeParameterCycleDetectionContext &context, varbinder::Variable *typeParamVariable)
+{
+    if (!context.diagnosedCycleVariables.emplace(typeParamVariable).second) {
+        return;
+    }
+
+    auto *const typeParam = context.paramByVar.at(typeParamVariable);
+    context.checker->LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {typeParam->Name()->Name().Utf8()},
+                              typeParam->Constraint()->Start());
+    context.isValid = false;
+}
+
+static void DetectConstraintCycleForTypeParameter(TypeParameterCycleDetectionContext &context,
+                                                  varbinder::Variable *typeParamVariable);
+
+static void DetectConstraintCycleForDependency(TypeParameterCycleDetectionContext &context,
+                                               varbinder::Variable *typeParamVariable,
+                                               varbinder::Variable *dependencyVariable)
+{
+    auto dependencyVisitStateIt = context.visitStateByVariable.find(dependencyVariable);
+    if (dependencyVisitStateIt == context.visitStateByVariable.end()) {
+        return;
+    }
+
+    if (dependencyVisitStateIt->second == TypeParameterVisitState::GRAY) {
+        ReportConstraintCycle(context, typeParamVariable);
+        return;
+    }
+
+    if (dependencyVisitStateIt->second == TypeParameterVisitState::WHITE) {
+        DetectConstraintCycleForTypeParameter(context, dependencyVariable);
+    }
+}
+
+static void DetectConstraintCycleForTypeParameter(TypeParameterCycleDetectionContext &context,
+                                                  varbinder::Variable *typeParamVariable)
+{
+    context.visitStateByVariable[typeParamVariable] = TypeParameterVisitState::GRAY;
+
+    if (auto dependencyGraphIt = context.dependencyGraph.find(typeParamVariable);
+        dependencyGraphIt != context.dependencyGraph.end()) {
+        for (auto *const dependencyVariable : dependencyGraphIt->second) {
+            DetectConstraintCycleForDependency(context, typeParamVariable, dependencyVariable);
+        }
+    }
+
+    context.visitStateByVariable[typeParamVariable] = TypeParameterVisitState::BLACK;
+}
+
+static bool DetectConstraintCycles(ETSChecker *checker, const ir::TSTypeParameterDeclaration *typeParams,
+                                   const TypeParameterDependencyGraph &dependencyGraph,
+                                   const TypeParameterNodeMap &paramByVar)
+{
+    TypeParameterCycleDetectionContext context {checker, dependencyGraph, paramByVar};
+    for (const auto &[typeParamVariable, _] : dependencyGraph) {
+        context.visitStateByVariable.emplace(typeParamVariable, TypeParameterVisitState::WHITE);
+    }
+
+    for (auto *const typeParam : typeParams->Params()) {
+        auto *const typeParamVariable = typeParam->Name()->Variable();
+        if (context.visitStateByVariable[typeParamVariable] == TypeParameterVisitState::WHITE) {
+            DetectConstraintCycleForTypeParameter(context, typeParamVariable);
+        }
+    }
+
+    return context.isValid;
+}
 
 static void CheckGetterSetterOverride(varbinder::LocalVariable const *child, varbinder::LocalVariable const *parent,
                                       ETSChecker *checker)
@@ -408,27 +588,74 @@ ArenaVector<ETSObjectType *> const &ETSChecker::GetInterfaces(ETSObjectType *typ
 std::pair<ArenaVector<Type *>, bool> ETSChecker::CreateUnconstrainedTypeParameters(
     ir::TSTypeParameterDeclaration const *typeParams)
 {
-    bool ok = true;
+    bool isValid = true;
     ArenaVector<Type *> result {ProgramAllocator()->Adapter()};
     checker::ScopeContext scopeCtx(this, typeParams->Scope());
 
-    // Note: we have to run pure check loop first to avoid endless loop because of possible circular dependencies
-    Type2TypeMap extends {};
     TypeSet typeParameterDecls {};
-    for (auto *const typeParam : typeParams->Params()) {
-        ok &= CheckDefaultTypeParameter(typeParam, typeParameterDecls);
-        if (auto *const constraint = typeParam->Constraint();
-            constraint != nullptr && constraint->IsETSTypeReference() &&
-            constraint->AsETSTypeReference()->Part()->Name()->IsIdentifier()) {
-            ok &= CheckTypeParameterConstraint(typeParam, extends);
-        }
-    }
 
     for (auto *const typeParam : typeParams->Params()) {
+        isValid &= CheckDefaultTypeParameter(typeParam, typeParameterDecls);
         result.emplace_back(SetUpParameterType(typeParam));
     }
 
-    return {result, ok};
+    return {result, isValid};
+}
+
+bool ETSChecker::ValidateTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams)
+{
+    bool isValid = true;
+    checker::ScopeContext scopeCtx(this, typeParams->Scope());
+    if (!PrecheckTypeParameterConstraintCycles(typeParams)) {
+        return false;
+    }
+
+    auto const localTypeParams = CollectLocalTypeParameters(typeParams);
+    TypeParameterNodeMap paramByVar {};
+    TypeParameterDependencyGraph dependencyGraph {};
+    InitializeTypeParameterDependencyGraph(typeParams, paramByVar, dependencyGraph);
+
+    for (auto *const typeParam : typeParams->Params()) {
+        auto *const typeParamVariable = typeParam->Name()->Variable();
+        auto dependencyGraphIt = dependencyGraph.find(typeParamVariable);
+        if (dependencyGraphIt == dependencyGraph.end() || typeParam->Constraint() == nullptr) {
+            continue;
+        }
+
+        CheckerStatus status = CheckerStatus::IN_INSTANCEOF_CONTEXT;
+        status &= this->Context().Status();
+        this->Context().Status() &= ~CheckerStatus::IN_INSTANCEOF_CONTEXT;
+        auto *const constraintType = typeParam->Constraint()->GetType(this);
+        this->Context().Status() |= status;
+        // Validation should not leave partially resolved constraint types cached on the AST.
+        // The real constraint setup runs later and must recompute types after dependency ordering
+        // has been established.
+        typeParam->Constraint()->CleanCheckInformation();
+
+        if (constraintType != nullptr && constraintType->IsTypeError()) {
+            isValid = false;
+            continue;
+        }
+
+        CollectSemanticConstraintDependencies(constraintType, localTypeParams, dependencyGraphIt->second);
+    }
+
+    return DetectConstraintCycles(this, typeParams, dependencyGraph, paramByVar) && isValid;
+}
+
+bool ETSChecker::PrecheckTypeParameterConstraintCycles(ir::TSTypeParameterDeclaration const *typeParams)
+{
+    checker::ScopeContext scopeCtx(this, typeParams->Scope());
+    auto const localTypeParams = CollectLocalTypeParameters(typeParams);
+    TypeParameterNodeMap paramByVar {};
+    TypeParameterDependencyGraph dependencyGraph {};
+    InitializeTypeParameterDependencyGraph(typeParams, paramByVar, dependencyGraph);
+
+    // Guard semantic validation and constraint setup with a lightweight AST-level cycle precheck first.
+    // Self/indirect self dependencies must not be resolved via GetType(), otherwise
+    // we can recurse before the later semantic validation gets a chance to report them.
+    CollectSyntacticConstraintDependencies(typeParams, localTypeParams, dependencyGraph);
+    return DetectConstraintCycles(this, typeParams, dependencyGraph, paramByVar);
 }
 
 void ETSChecker::AssignTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams)
@@ -491,66 +718,48 @@ bool ETSChecker::CheckDefaultTypeParameter(const ir::TSTypeParameter *param, Typ
     return ok;
 }
 
-bool ETSChecker::CheckTypeParameterConstraint(ir::TSTypeParameter *param, Type2TypeMap &extends)
+void ETSChecker::SetUpReferencedTypeParameterConstraints(ir::TSTypeParameter *const param, ir::TypeNode *typeNode,
+                                                         varbinder::Scope *paramScope, const TypeSet &localTypeParams)
 {
-    const auto typeParamVar = param->Name()->Variable();
-    const auto constraintVar = param->Constraint()->AsETSTypeReference()->Part()->GetIdent()->Variable();
-    // Check if constraintVar is the same as typeParamVar (self-reference)
-    if (constraintVar == typeParamVar) {
-        LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
-                 param->Constraint()->Start());
-        return false;
+    TypeParameterSet dependencies {};
+    CollectConstraintDependencies(typeNode, localTypeParams, dependencies);
+    for (auto *const dependencyVariable : dependencies) {
+        if (dependencyVariable == param->Name()->Variable()) {
+            continue;
+        }
+
+        auto *const found =
+            paramScope->FindLocal(dependencyVariable->Name(), varbinder::ResolveBindingOptions::BINDINGS);
+        if (found != nullptr && found->Declaration() != nullptr && found->Declaration()->Node()->IsTSTypeParameter()) {
+            SetUpTypeParameterConstraint(found->Declaration()->Node()->AsTSTypeParameter());
+        }
+    }
+}
+
+void ETSChecker::SetUpDefaultTypeDependenciesIfNeeded(ir::TSTypeParameter *const param, ir::TypeNode *defaultType,
+                                                      varbinder::Scope *paramScope, const TypeSet &localTypeParams)
+{
+    if (defaultType->IsETSTypeReference()) {
+        const auto typeName = defaultType->AsETSTypeReference()->Part()->GetIdent()->Name();
+        auto *found = paramScope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
+        if (found == nullptr) {
+            SetUpReferencedTypeParameterConstraints(param, defaultType, paramScope, localTypeParams);
+        }
+        return;
     }
 
-    TypeSet visited {};
-    auto current = extends.find(constraintVar);
-    while (current != extends.cend()) {
-        if (current->second == typeParamVar) {
-            LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
-                     param->Constraint()->Start());
-            return false;
-        }
-        // Avoid infinite loop by tracking visited nodes
-        // If we've already visited this node, we're in a cycle (but not involving typeParamVar)
-        if (visited.find(current->first) != visited.cend()) {
-            break;
-        }
-        visited.emplace(current->first);
-        current = extends.find(current->second);
-    }
-
-    extends.emplace(typeParamVar, constraintVar);
-    return true;
+    SetUpReferencedTypeParameterConstraints(param, defaultType, paramScope, localTypeParams);
 }
 
 void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 {
     ETSTypeParameter *const paramType = param->Name()->Variable()->TsType()->AsETSTypeParameter();
-    auto *const paramScope = param->Parent()->AsTSTypeParameterDeclaration()->Scope();
-    auto const traverseReferenced = [this, paramScope](ir::TypeNode *typeNode) {
-        if (!typeNode->IsETSTypeReference()) {
-            return;
-        }
-        const auto typeName = typeNode->AsETSTypeReference()->Part()->GetIdent()->Name();
-        auto *const found = paramScope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
-        if (found != nullptr) {
-            SetUpTypeParameterConstraint(found->Declaration()->Node()->AsTSTypeParameter());
-        }
-    };
-    auto const traverseDefaultTypeIfNeeded = [paramScope, &traverseReferenced](ir::TypeNode *defaultType) {
-        if (defaultType->IsETSTypeReference()) {
-            const auto typeName = defaultType->AsETSTypeReference()->Part()->GetIdent()->Name();
-            auto *found = paramScope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
-            if (found == nullptr) {
-                traverseReferenced(defaultType);
-            }
-        } else {
-            traverseReferenced(defaultType);
-        }
-    };
+    auto *const typeParamDecl = param->Parent()->AsTSTypeParameterDeclaration();
+    auto *const paramScope = typeParamDecl->Scope();
+    auto const localTypeParams = CollectLocalTypeParameters(typeParamDecl);
 
     if (param->Constraint() != nullptr) {
-        traverseReferenced(param->Constraint());
+        SetUpReferencedTypeParameterConstraints(param, param->Constraint(), paramScope, localTypeParams);
         CheckerStatus status = CheckerStatus::IN_INSTANCEOF_CONTEXT;
         status &= this->Context().Status();
         this->Context().Status() &= ~CheckerStatus::IN_INSTANCEOF_CONTEXT;
@@ -567,7 +776,7 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
     }
 
     if (param->DefaultType() != nullptr) {
-        traverseDefaultTypeIfNeeded(param->DefaultType());
+        SetUpDefaultTypeDependenciesIfNeeded(param, param->DefaultType(), paramScope, localTypeParams);
         // NOTE: #14993 ensure default matches constraint
         paramType->SetDefaultType(MaybeBoxType(param->DefaultType()->GetType(this)));
     }
@@ -604,6 +813,9 @@ void ETSChecker::CreateTypeForClassOrInterfaceTypeParameters(ETSObjectType *type
                                                      : type->GetDeclNode()->AsTSInterfaceDeclaration()->TypeParams();
     auto [typeParamTypes, ok] = CreateUnconstrainedTypeParameters(typeParams);
     type->SetTypeArguments(std::move(typeParamTypes));
+    if (ok) {
+        ok = ValidateTypeParameterConstraints(typeParams);
+    }
     if (ok) {
         AssignTypeParameterConstraints(typeParams);
     }

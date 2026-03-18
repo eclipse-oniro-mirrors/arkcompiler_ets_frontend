@@ -5274,6 +5274,9 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
         auto [typeParamTypes, ok] = checker->CreateUnconstrainedTypeParameters(st->TypeParams());
         st->SetTypeParameterTypes(std::move(typeParamTypes));
         if (ok) {
+            ok = checker->ValidateTypeParameterConstraints(st->TypeParams());
+        }
+        if (ok) {
             checker->AssignTypeParameterConstraints(st->TypeParams());
         }
     }
