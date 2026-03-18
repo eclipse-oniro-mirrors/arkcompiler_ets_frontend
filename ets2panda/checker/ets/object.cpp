@@ -2861,6 +2861,15 @@ varbinder::LocalVariable *ETSChecker::ResolveOverloadReference(const ir::Identif
     if (var == nullptr) {
         return nullptr;
     }
+    if (var->HasFlag(varbinder::VariableFlags::PRIVATE)) {
+        ES2PANDA_ASSERT(var->Declaration() != nullptr);
+        ES2PANDA_ASSERT(var->Declaration()->Node()->Parent()->IsClassDefinition());
+
+        auto *declaringType = var->Declaration()->Node()->Parent()->AsClassDefinition()->TsType()->AsETSObjectType();
+        if (declaringType != objType) {
+            return nullptr;
+        }
+    }
     ValidatePropertyAccess(var, objType, ident);
     return var;
 }

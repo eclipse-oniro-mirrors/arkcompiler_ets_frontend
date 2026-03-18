@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@ class A {
     foo11(a: Long): Int {
         return 1;
     }
-    private foo12(a: Int): Int {
+    foo12(a: Int): Int {
         return 0;
     }
 
@@ -26,7 +26,7 @@ class A {
     foo21(a: Int): Int {
         return 1;
     }
-    private foo22(a: Long): Int {
+    foo22(a: Long): Int {
         return 0;
     }
 
@@ -35,7 +35,7 @@ class A {
     foo31(a: Long): Int {
         return 1;
     }
-    private foo32(a: Int): Int {
+    foo32(a: Int): Int {
         return 0;
     }
 
@@ -44,7 +44,7 @@ class A {
     foo41(a: Int): Int {
         return 1;
     }
-    protected foo42(a: Long): Int {
+    foo42(a: Long): Int {
         return 0;
     }
 

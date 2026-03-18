@@ -1738,6 +1738,17 @@ static bool CheckAccessModifierForOverloadDeclaration(ETSChecker *const checker,
                                                       const ir::ModifierFlags &overloadedMethodFlags,
                                                       const lexer::SourcePosition &pos)
 {
+    auto getAccessModifier = [](const ir::ModifierFlags &flags) {
+        if ((flags & ir::ModifierFlags::PRIVATE) != 0) {
+            return ir::ModifierFlags::PRIVATE;
+        }
+
+        if ((flags & ir::ModifierFlags::PROTECTED) != 0) {
+            return ir::ModifierFlags::PROTECTED;
+        }
+
+        return ir::ModifierFlags::PUBLIC;
+    };
     if (((overLoadAliasFlags ^ overloadedMethodFlags) & (ir::ModifierFlags::STATIC | ir::ModifierFlags::ASYNC)) != 0) {
         checker->LogError(diagnostic::OVERLOAD_SAME_ACCESS_MODIFIERS_STATIC_ASYNC, {}, pos);
         return false;
@@ -1751,6 +1762,19 @@ static bool CheckAccessModifierForOverloadDeclaration(ETSChecker *const checker,
     if ((overLoadAliasFlags & ir::ModifierFlags::EXPORT) != 0 &&
         (((overLoadAliasFlags ^ overloadedMethodFlags) & (ir::ModifierFlags::EXPORT)) != 0)) {
         checker->LogError(diagnostic::OVERLOAD_MUST_ALSO_BE_EXPORTED, {}, pos);
+        return false;
+    }
+    auto overloadAccess = getAccessModifier(overLoadAliasFlags);
+    auto methodAccess = getAccessModifier(overloadedMethodFlags);
+    // An explicit overload is public but at least one overloaded method is not public.
+    if (overloadAccess == ir::ModifierFlags::PUBLIC && methodAccess != ir::ModifierFlags::PUBLIC) {
+        checker->LogError(diagnostic::OVERLOAD_SAME_ACCESS_MODIFIERS, {}, pos);
+        return false;
+    }
+
+    // An explicit overload is protected but at least one overloaded method is private.
+    if (overloadAccess == ir::ModifierFlags::PROTECTED && methodAccess == ir::ModifierFlags::PRIVATE) {
+        checker->LogError(diagnostic::OVERLOAD_SAME_ACCESS_MODIFIERS, {}, pos);
         return false;
     }
 

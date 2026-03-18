@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  */
 
 class Base {
-    private fooPrivate(x: string): string {
+    fooPrivate(x: string): string {
         return "invoke1"
     }
-    protected fooProtected(x: number): string {
+    fooProtected(x: number): string {
         return "invoke2"
     }
-    public fooPublic(x: boolean): string {
+    fooPublic(x: boolean): string {
         return "invoke3"
     }
 
