@@ -570,8 +570,41 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "CharLiteral",
-                            "value": "{",
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Fgr",
+                              "loc": {
+                                "start": {
+                                  "line": 27,
+                                  "column": 14,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                },
+                                "end": {
+                                  "line": 27,
+                                  "column": 17,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "BR",
+                              "loc": {
+                                "start": {
+                                  "line": 27,
+                                  "column": 18,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                },
+                                "end": {
+                                  "line": 27,
+                                  "column": 20,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 27,
@@ -619,8 +652,41 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "CharLiteral",
-                            "value": "[",
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Sqr",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 14,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 17,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "BR",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 18,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 20,
+                                  "program": "switch_readonly_member_compare_char.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 29,

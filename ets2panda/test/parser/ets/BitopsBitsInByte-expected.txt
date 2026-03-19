@@ -1687,8 +1687,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 358400,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "BitopsBitsInByte",
+                              "loc": {
+                                "start": {
+                                  "line": 40,
+                                  "column": 27,
+                                  "program": "BitopsBitsInByte.ets"
+                                },
+                                "end": {
+                                  "line": 40,
+                                  "column": 43,
+                                  "program": "BitopsBitsInByte.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 40,
+                                  "column": 44,
+                                  "program": "BitopsBitsInByte.ets"
+                                },
+                                "end": {
+                                  "line": 40,
+                                  "column": 52,
+                                  "program": "BitopsBitsInByte.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 40,

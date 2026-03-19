@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,31 +40,31 @@ const y: string = -1.7976931348623157e308 + " min float" + 100;
 const z: string = 2.2250738585072014e-308 + " smallest positive float" + 0.0001;
 
 enum Color {
-    A = a,
-    B = b,
-    C = c,
-    D = d,
-    E = e,
-    F = f,
-    G = g,
-    H = h,
-    I = i,
-    J = j,
-    K = k,
-    L = l,
-    M = m,
-    N = n,
-    O = o,
-    P = p,
-    Q = q,
-    R = r,
-    S = s,
-    T = t,
-    U = u,
-    V = v,
-    X = x,
-    Y = y,
-    Z = z,
+    A = 1 + 123123123111311 + 3 + "a a" + 111 + 221 + 3113.0,
+    B = 1.23 + "hello" + 4,
+    C = 0.123e5 + "world" + 10,
+    D = 1e100 + "large float" + 100,
+    E = 3.14 + "pi" + 25,
+    F = 1.1 + 2.2 + "plus floats" + 10,
+    G = 1000 + " small float" + 1,
+    H = 3.0 + "equal float" + 5,
+    I = 0.000000123 + "tiny float" + 9,
+    J = 10.0 + 1.234 + " numbers together" + 2,
+    K = 1.0 + "just one" + 0.5,
+    L = 1e-100 + "tiny float in scientific" + 10000,
+    M = 1e+100 + " extremely large float" + 0,
+    N = (1.5 * 2.5) + " result of multiplication" + 3,
+    O = 0.123456789 + " precise decimal" + 12,
+    P = (0.1 + 0.2) + " rounding check" + 0.5,
+    Q = 1000000.12345 + " million" + 500,
+    R = 1000 + "large number" + 99.99,
+    S = 0.000001 + "minuscule number" + 0.00001,
+    T = 1.2 + "concatenation" + 5000,
+    U = 0 + "zero start" + 1.999,
+    V = 123456789 + " number is large" + 1.2345,
+    X = 1.7976931348623157e308 + " max float" + 100,
+    Y = -1.7976931348623157e308 + " min float" + 100,
+    Z = 2.2250738585072014e-308 + " smallest positive float" + 0.0001,
 }
 
 function main() {

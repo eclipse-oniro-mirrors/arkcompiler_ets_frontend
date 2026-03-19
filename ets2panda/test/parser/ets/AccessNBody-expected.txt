@@ -12434,8 +12434,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0.606326,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00166008,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 102,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 125,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 128,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 139,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 140,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 153,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 128,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 153,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 125,
@@ -12450,8 +12515,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 2.81199,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00769901,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 155,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 178,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 181,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 192,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 193,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 206,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 181,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 206,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 125,
@@ -12466,8 +12596,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -0.0252184,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": -6.9046e-05,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 208,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 232,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 235,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 246,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 125,
+                                    "column": 247,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 125,
+                                    "column": 260,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 125,
+                                  "column": 235,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 125,
+                                  "column": 260,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 125,
@@ -12839,8 +13034,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -1.01077,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": -0.00276743,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 101,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 125,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 128,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 139,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 140,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 153,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 128,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 153,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 128,
@@ -12855,8 +13115,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 1.82566,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00499853,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 155,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 178,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 181,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 192,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 193,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 206,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 181,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 206,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 128,
@@ -12871,8 +13196,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0.00841576,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 2.30417e-05,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 208,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 231,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 234,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 245,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 128,
+                                    "column": 246,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 128,
+                                    "column": 259,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 128,
+                                  "column": 234,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 128,
+                                  "column": 259,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 128,
@@ -13244,8 +13634,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 1.08279,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.0029646,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 102,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 125,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 128,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 139,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 140,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 153,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 128,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 153,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 131,
@@ -13260,8 +13715,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0.868713,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00237847,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 155,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 178,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 181,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 192,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 193,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 206,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 181,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 206,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 131,
@@ -13276,8 +13796,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -0.0108326,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": -2.9659e-05,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 208,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 232,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 235,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 246,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 131,
+                                    "column": 247,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 131,
+                                    "column": 260,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 131,
+                                  "column": 235,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 131,
+                                  "column": 260,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 131,
@@ -13649,8 +14234,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0.979091,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00268068,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 101,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 124,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 127,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 138,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 139,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 152,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 127,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 152,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 134,
@@ -13665,8 +14315,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0.594699,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": 0.00162824,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 154,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 177,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 180,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 191,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 192,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 205,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 180,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 205,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 134,
@@ -13681,8 +14396,73 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -0.034756,
+                            "type": "BinaryExpression",
+                            "operator": "*",
+                            "left": {
+                              "type": "NumberLiteral",
+                              "value": -9.51592e-05,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 207,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 231,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
+                            "right": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessNBody",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 234,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 245,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "DAYS_PER_YEAR",
+                                "loc": {
+                                  "start": {
+                                    "line": 134,
+                                    "column": 246,
+                                    "program": "AccessNBody.ets"
+                                  },
+                                  "end": {
+                                    "line": 134,
+                                    "column": 259,
+                                    "program": "AccessNBody.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 134,
+                                  "column": 234,
+                                  "program": "AccessNBody.ets"
+                                },
+                                "end": {
+                                  "line": 134,
+                                  "column": 259,
+                                  "program": "AccessNBody.ets"
+                                }
+                              }
+                            },
                             "loc": {
                               "start": {
                                 "line": 134,

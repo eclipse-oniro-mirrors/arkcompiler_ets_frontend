@@ -3599,8 +3599,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -1286749544853,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "BitopsNSieveBits",
+                              "loc": {
+                                "start": {
+                                  "line": 53,
+                                  "column": 27,
+                                  "program": "BitopsNSieveBits.ets"
+                                },
+                                "end": {
+                                  "line": 53,
+                                  "column": 43,
+                                  "program": "BitopsNSieveBits.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 53,
+                                  "column": 44,
+                                  "program": "BitopsNSieveBits.ets"
+                                },
+                                "end": {
+                                  "line": 53,
+                                  "column": 52,
+                                  "program": "BitopsNSieveBits.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 53,

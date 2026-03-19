@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,6 @@ const b = -(flag)
 const c = ~(flag)
 
 
-/* @@? 21:11 Error Semantic error ESE0347: Wrong operand type for unary expression */
 /* @@? 21:12 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
-/* @@? 22:11 Error Semantic error ESE0347: Wrong operand type for unary expression */
 /* @@? 22:12 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
-/* @@? 23:11 Error Semantic error ESE0347: Wrong operand type for unary expression */
 /* @@? 23:12 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */

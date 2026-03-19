@@ -24,156 +24,18 @@
         "implements": [],
         "body": [
           {
-            "type": "ClassProperty",
-            "key": {
-              "type": "Identifier",
-              "name": "index1",
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 7,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 13,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "value": {
-              "type": "NumberLiteral",
-              "value": 1,
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 21,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 22,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "accessibility": "public",
-            "static": true,
-            "readonly": false,
-            "declare": false,
-            "optional": false,
-            "computed": false,
-            "typeAnnotation": {
-              "type": "ETSPrimitiveType",
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 15,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 18,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "definite": false,
-            "loc": {
-              "start": {
-                "line": 16,
-                "column": 7,
-                "program": "tupleIndexWithNumbers.ets"
-              },
-              "end": {
-                "line": 16,
-                "column": 22,
-                "program": "tupleIndexWithNumbers.ets"
-              }
-            }
-          },
-          {
-            "type": "ClassProperty",
-            "key": {
-              "type": "Identifier",
-              "name": "index2",
-              "loc": {
-                "start": {
-                  "line": 17,
-                  "column": 7,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 17,
-                  "column": 13,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "value": {
-              "type": "NumberLiteral",
-              "value": 1,
-              "loc": {
-                "start": {
-                  "line": 17,
-                  "column": 22,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 17,
-                  "column": 23,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "accessibility": "public",
-            "static": true,
-            "readonly": false,
-            "declare": false,
-            "optional": false,
-            "computed": false,
-            "typeAnnotation": {
-              "type": "ETSPrimitiveType",
-              "loc": {
-                "start": {
-                  "line": 17,
-                  "column": 15,
-                  "program": "tupleIndexWithNumbers.ets"
-                },
-                "end": {
-                  "line": 17,
-                  "column": 19,
-                  "program": "tupleIndexWithNumbers.ets"
-                }
-              }
-            },
-            "definite": false,
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 7,
-                "program": "tupleIndexWithNumbers.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 23,
-                "program": "tupleIndexWithNumbers.ets"
-              }
-            }
-          },
-          {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 16,
                   "column": 10,
                   "program": "tupleIndexWithNumbers.ets"
                 },
                 "end": {
-                  "line": 19,
+                  "line": 16,
                   "column": 14,
                   "program": "tupleIndexWithNumbers.ets"
                 }
@@ -193,12 +55,12 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 16,
                       "column": 10,
                       "program": "tupleIndexWithNumbers.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 16,
                       "column": 14,
                       "program": "tupleIndexWithNumbers.ets"
                     }
@@ -212,12 +74,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 16,
                       "column": 18,
                       "program": "tupleIndexWithNumbers.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 16,
                       "column": 22,
                       "program": "tupleIndexWithNumbers.ets"
                     }
@@ -246,12 +108,12 @@
                                       "name": "number",
                                       "loc": {
                                         "start": {
-                                          "line": 20,
+                                          "line": 17,
                                           "column": 15,
                                           "program": "tupleIndexWithNumbers.ets"
                                         },
                                         "end": {
-                                          "line": 20,
+                                          "line": 17,
                                           "column": 21,
                                           "program": "tupleIndexWithNumbers.ets"
                                         }
@@ -259,12 +121,12 @@
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 20,
+                                        "line": 17,
                                         "column": 15,
                                         "program": "tupleIndexWithNumbers.ets"
                                       },
                                       "end": {
-                                        "line": 20,
+                                        "line": 17,
                                         "column": 21,
                                         "program": "tupleIndexWithNumbers.ets"
                                       }
@@ -272,12 +134,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 20,
+                                      "line": 17,
                                       "column": 15,
                                       "program": "tupleIndexWithNumbers.ets"
                                     },
                                     "end": {
-                                      "line": 20,
+                                      "line": 17,
                                       "column": 21,
                                       "program": "tupleIndexWithNumbers.ets"
                                     }
@@ -292,12 +154,12 @@
                                       "name": "number",
                                       "loc": {
                                         "start": {
-                                          "line": 20,
+                                          "line": 17,
                                           "column": 23,
                                           "program": "tupleIndexWithNumbers.ets"
                                         },
                                         "end": {
-                                          "line": 20,
+                                          "line": 17,
                                           "column": 29,
                                           "program": "tupleIndexWithNumbers.ets"
                                         }
@@ -305,12 +167,12 @@
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 20,
+                                        "line": 17,
                                         "column": 23,
                                         "program": "tupleIndexWithNumbers.ets"
                                       },
                                       "end": {
-                                        "line": 20,
+                                        "line": 17,
                                         "column": 29,
                                         "program": "tupleIndexWithNumbers.ets"
                                       }
@@ -318,12 +180,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 20,
+                                      "line": 17,
                                       "column": 23,
                                       "program": "tupleIndexWithNumbers.ets"
                                     },
                                     "end": {
-                                      "line": 20,
+                                      "line": 17,
                                       "column": 29,
                                       "program": "tupleIndexWithNumbers.ets"
                                     }
@@ -332,12 +194,12 @@
                               ],
                               "loc": {
                                 "start": {
-                                  "line": 20,
+                                  "line": 17,
                                   "column": 14,
                                   "program": "tupleIndexWithNumbers.ets"
                                 },
                                 "end": {
-                                  "line": 20,
+                                  "line": 17,
                                   "column": 30,
                                   "program": "tupleIndexWithNumbers.ets"
                                 }
@@ -345,12 +207,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 20,
+                                "line": 17,
                                 "column": 7,
                                 "program": "tupleIndexWithNumbers.ets"
                               },
                               "end": {
-                                "line": 20,
+                                "line": 17,
                                 "column": 12,
                                 "program": "tupleIndexWithNumbers.ets"
                               }
@@ -364,12 +226,12 @@
                                 "value": 0,
                                 "loc": {
                                   "start": {
-                                    "line": 20,
+                                    "line": 17,
                                     "column": 34,
                                     "program": "tupleIndexWithNumbers.ets"
                                   },
                                   "end": {
-                                    "line": 20,
+                                    "line": 17,
                                     "column": 35,
                                     "program": "tupleIndexWithNumbers.ets"
                                   }
@@ -380,12 +242,12 @@
                                 "value": 0,
                                 "loc": {
                                   "start": {
-                                    "line": 20,
+                                    "line": 17,
                                     "column": 37,
                                     "program": "tupleIndexWithNumbers.ets"
                                   },
                                   "end": {
-                                    "line": 20,
+                                    "line": 17,
                                     "column": 38,
                                     "program": "tupleIndexWithNumbers.ets"
                                   }
@@ -394,12 +256,12 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 20,
+                                "line": 17,
                                 "column": 33,
                                 "program": "tupleIndexWithNumbers.ets"
                               },
                               "end": {
-                                "line": 20,
+                                "line": 17,
                                 "column": 39,
                                 "program": "tupleIndexWithNumbers.ets"
                               }
@@ -407,12 +269,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 20,
+                              "line": 17,
                               "column": 7,
                               "program": "tupleIndexWithNumbers.ets"
                             },
                             "end": {
-                              "line": 20,
+                              "line": 17,
                               "column": 39,
                               "program": "tupleIndexWithNumbers.ets"
                             }
@@ -422,12 +284,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 20,
+                          "line": 17,
                           "column": 3,
                           "program": "tupleIndexWithNumbers.ets"
                         },
                         "end": {
-                          "line": 20,
+                          "line": 17,
                           "column": 39,
                           "program": "tupleIndexWithNumbers.ets"
                         }
@@ -445,12 +307,12 @@
                             "name": "tuple",
                             "loc": {
                               "start": {
-                                "line": 21,
+                                "line": 18,
                                 "column": 3,
                                 "program": "tupleIndexWithNumbers.ets"
                               },
                               "end": {
-                                "line": 21,
+                                "line": 18,
                                 "column": 8,
                                 "program": "tupleIndexWithNumbers.ets"
                               }
@@ -461,204 +323,12 @@
                             "value": 1,
                             "loc": {
                               "start": {
-                                "line": 21,
+                                "line": 18,
                                 "column": 9,
                                 "program": "tupleIndexWithNumbers.ets"
                               },
                               "end": {
-                                "line": 21,
-                                "column": 15,
-                                "program": "tupleIndexWithNumbers.ets"
-                              }
-                            }
-                          },
-                          "computed": true,
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 3,
-                              "program": "tupleIndexWithNumbers.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 16,
-                              "program": "tupleIndexWithNumbers.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 2,
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 19,
-                              "program": "tupleIndexWithNumbers.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 20,
-                              "program": "tupleIndexWithNumbers.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 21,
-                            "column": 3,
-                            "program": "tupleIndexWithNumbers.ets"
-                          },
-                          "end": {
-                            "line": 21,
-                            "column": 20,
-                            "program": "tupleIndexWithNumbers.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 21,
-                          "column": 3,
-                          "program": "tupleIndexWithNumbers.ets"
-                        },
-                        "end": {
-                          "line": 21,
-                          "column": 21,
-                          "program": "tupleIndexWithNumbers.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "Identifier",
-                            "name": "tuple",
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 3,
-                                "program": "tupleIndexWithNumbers.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "tupleIndexWithNumbers.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "NumberLiteral",
-                            "value": 1,
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 9,
-                                "program": "tupleIndexWithNumbers.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 15,
-                                "program": "tupleIndexWithNumbers.ets"
-                              }
-                            }
-                          },
-                          "computed": true,
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 3,
-                              "program": "tupleIndexWithNumbers.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 16,
-                              "program": "tupleIndexWithNumbers.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "NumberLiteral",
-                          "value": 2,
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 19,
-                              "program": "tupleIndexWithNumbers.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 20,
-                              "program": "tupleIndexWithNumbers.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 3,
-                            "program": "tupleIndexWithNumbers.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 20,
-                            "program": "tupleIndexWithNumbers.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 3,
-                          "program": "tupleIndexWithNumbers.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 21,
-                          "program": "tupleIndexWithNumbers.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "Identifier",
-                            "name": "tuple",
-                            "loc": {
-                              "start": {
-                                "line": 23,
-                                "column": 3,
-                                "program": "tupleIndexWithNumbers.ets"
-                              },
-                              "end": {
-                                "line": 23,
-                                "column": 8,
-                                "program": "tupleIndexWithNumbers.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "NumberLiteral",
-                            "value": 1,
-                            "loc": {
-                              "start": {
-                                "line": 23,
-                                "column": 9,
-                                "program": "tupleIndexWithNumbers.ets"
-                              },
-                              "end": {
-                                "line": 23,
+                                "line": 18,
                                 "column": 10,
                                 "program": "tupleIndexWithNumbers.ets"
                               }
@@ -668,12 +338,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 23,
+                              "line": 18,
                               "column": 3,
                               "program": "tupleIndexWithNumbers.ets"
                             },
                             "end": {
-                              "line": 23,
+                              "line": 18,
                               "column": 11,
                               "program": "tupleIndexWithNumbers.ets"
                             }
@@ -684,12 +354,12 @@
                           "value": 2,
                           "loc": {
                             "start": {
-                              "line": 23,
+                              "line": 18,
                               "column": 14,
                               "program": "tupleIndexWithNumbers.ets"
                             },
                             "end": {
-                              "line": 23,
+                              "line": 18,
                               "column": 15,
                               "program": "tupleIndexWithNumbers.ets"
                             }
@@ -697,12 +367,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 23,
+                            "line": 18,
                             "column": 3,
                             "program": "tupleIndexWithNumbers.ets"
                           },
                           "end": {
-                            "line": 23,
+                            "line": 18,
                             "column": 15,
                             "program": "tupleIndexWithNumbers.ets"
                           }
@@ -710,12 +380,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 23,
+                          "line": 18,
                           "column": 3,
                           "program": "tupleIndexWithNumbers.ets"
                         },
                         "end": {
-                          "line": 23,
+                          "line": 18,
                           "column": 16,
                           "program": "tupleIndexWithNumbers.ets"
                         }
@@ -724,12 +394,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 16,
                       "column": 23,
                       "program": "tupleIndexWithNumbers.ets"
                     },
                     "end": {
-                      "line": 24,
+                      "line": 19,
                       "column": 2,
                       "program": "tupleIndexWithNumbers.ets"
                     }
@@ -737,12 +407,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 16,
                     "column": 10,
                     "program": "tupleIndexWithNumbers.ets"
                   },
                   "end": {
-                    "line": 24,
+                    "line": 19,
                     "column": 2,
                     "program": "tupleIndexWithNumbers.ets"
                   }
@@ -750,12 +420,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 16,
                   "column": 10,
                   "program": "tupleIndexWithNumbers.ets"
                 },
                 "end": {
-                  "line": 24,
+                  "line": 19,
                   "column": 2,
                   "program": "tupleIndexWithNumbers.ets"
                 }
@@ -764,12 +434,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 19,
+                "line": 16,
                 "column": 1,
                 "program": "tupleIndexWithNumbers.ets"
               },
               "end": {
-                "line": 24,
+                "line": 19,
                 "column": 2,
                 "program": "tupleIndexWithNumbers.ets"
               }
@@ -810,7 +480,7 @@
       "program": "tupleIndexWithNumbers.ets"
     },
     "end": {
-      "line": 25,
+      "line": 20,
       "column": 1,
       "program": "tupleIndexWithNumbers.ets"
     }

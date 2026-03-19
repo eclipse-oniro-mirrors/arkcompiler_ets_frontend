@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,8 +73,8 @@ TEST_F(LoweringTest, TestStringConstansReorder1)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -95,8 +95,8 @@ TEST_F(LoweringTest, TestStringConstansReorder2)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -119,8 +119,8 @@ TEST_F(LoweringTest, TestStringConstansReorder3)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsBinaryExpression(); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -144,8 +144,8 @@ TEST_F(LoweringTest, TestStringConstansReorder4)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderLeft(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderLeft(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -189,8 +189,8 @@ TEST_F(LoweringTest, TestStringConstansReorder6)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderLeft(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderLeft(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -213,8 +213,8 @@ TEST_F(LoweringTest, TestStringConstansReorder7)
         const auto *const ast = GetAst();
 
         ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderLeft(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect);
         }));
     }
@@ -265,11 +265,11 @@ TEST_F(LoweringTest, TestStringConstansReorder9)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect1](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect1](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect1);
         }));
-        ASSERT_TRUE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect2);
         }));
     }
@@ -294,11 +294,11 @@ TEST_F(LoweringTest, TestStringConstansReorder10)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
-        ASSERT_TRUE(ast->IsAnyChild([expect1](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([expect1](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect1);
         }));
-        ASSERT_TRUE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect2);
         }));
     }
@@ -324,11 +324,11 @@ TEST_F(LoweringTest, TestStringConstansReorder11)
     {
         const auto *const ast = GetAst();
 
-        ASSERT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return CheckConstReorderRight(node); }));
         ASSERT_TRUE(ast->IsAnyChild([expect1](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect1);
         }));
-        ASSERT_TRUE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
+        ASSERT_FALSE(ast->IsAnyChild([expect2](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expect2);
         }));
     }

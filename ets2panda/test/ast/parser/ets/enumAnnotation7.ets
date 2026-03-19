@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,22 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-const a: int = 1;
+
 
 enum Test: int {
-	A = a,
-	b = 1 + a
+	A = 1,
+	B = 1 + A
 };
 
 enum Test2: byte {
-	A = a,
-	b = 0x01 + A
+	A = 1,
+	B = 0x01 + A
 }
 
-const b: string = "name"
-
 enum Test3{
-	A = b,
+	A = "name",
 	B = A + " test"
 }

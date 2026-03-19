@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,7 @@
  * limitations under the License.
  */
 
-const index1: int = 1
-const index2: long = 1
-
 function main(): void {
   let tuple: [number, number] = [0, 0]
-  tuple[index1] = 2;
-  tuple[index2] = 2;
   tuple[1] = 2;
 }

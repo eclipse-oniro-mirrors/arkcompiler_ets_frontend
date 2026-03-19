@@ -218,8 +218,8 @@
                           }
                         },
                         "right": {
-                          "type": "NumberLiteral",
-                          "value": 1,
+                          "type": "Identifier",
+                          "name": "b",
                           "loc": {
                             "start": {
                               "line": 20,

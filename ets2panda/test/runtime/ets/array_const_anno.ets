@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,11 +15,11 @@
 
 
 @interface Monitor {
-    a : string[] = [b]
+    a : string[] = ['a']
 }
-const b : string = 'a'
+
 // Just make sure there is no CTE here.
-@Monitor([b])
+@Monitor(['a'])
 function c(){}
 
 function main() {
