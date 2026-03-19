@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,10 @@
 function basicComparison() {
     arktest.assertTrue(1n < 2);
     arktest.assertTrue(2n > 1);
-    arktest.assertTrue(1n == 1);
+    arktest.assertTrue(1n == 1n);
+    arktest.assertTrue((1n as Any) == (1n as Any));
+    arktest.assertFalse(1n == 0n);
+    arktest.assertFalse(1n == 1);
     arktest.assertTrue(1n <= 1.5);
     arktest.assertTrue(1n >= 0.5);
 }
@@ -36,7 +39,9 @@ function numberMaxSafeIntComp() {
     arktest.assertTrue(BigInt(MAX_SAFE) <= MAX_SAFE);
     arktest.assertFalse(BigInt(MAX_SAFE) > MAX_SAFE);
     arktest.assertTrue(BigInt(MAX_SAFE) >= MAX_SAFE);
-    arktest.assertTrue(BigInt(MAX_SAFE) == MAX_SAFE);
+    arktest.assertTrue(BigInt(MAX_SAFE) != MAX_SAFE);
+    arktest.assertTrue(BigInt(MAX_SAFE) == BigInt(MAX_SAFE));
+    arktest.assertTrue(BigInt(MAX_SAFE).doubleValue() == MAX_SAFE);
     arktest.assertTrue(BigInt(MAX_SAFE - 1) < MAX_SAFE);
     arktest.assertTrue(BigInt(MAX_SAFE + 1) > MAX_SAFE);
 }
@@ -47,7 +52,9 @@ function numberMinSafeIntComp() {
     arktest.assertTrue(BigInt(MIN_SAFE) <= MIN_SAFE);
     arktest.assertFalse(BigInt(MIN_SAFE) > MIN_SAFE);
     arktest.assertTrue(BigInt(MIN_SAFE) >= MIN_SAFE);
-    arktest.assertTrue(BigInt(MIN_SAFE) == MIN_SAFE);
+    arktest.assertTrue(BigInt(MIN_SAFE) != MIN_SAFE);
+    arktest.assertTrue(BigInt(MIN_SAFE) == BigInt(MIN_SAFE));
+    arktest.assertTrue(BigInt(MIN_SAFE).doubleValue() == MIN_SAFE);
     arktest.assertTrue(BigInt(MIN_SAFE - 1) < MIN_SAFE);
     arktest.assertTrue(BigInt(MIN_SAFE + 1) > MIN_SAFE);
 }
@@ -102,7 +109,9 @@ function zeroValueComp() {
     arktest.assertFalse(0n > 0);
     arktest.assertTrue(0n <= 0);
     arktest.assertTrue(0n >= 0);
-    arktest.assertTrue(0n == 0);
+    arktest.assertTrue(0n != 0);
+    arktest.assertTrue(0n == 0n);
+    arktest.assertTrue((0n).doubleValue() == 0);
     arktest.assertFalse(0n < -0);
     arktest.assertFalse(0n > -0);
     arktest.assertTrue(0n <= -0);
@@ -114,7 +123,9 @@ function negativeComp() {
     arktest.assertTrue(-1n <= -1);
     arktest.assertFalse(-1n > -1);
     arktest.assertTrue(-1n >= -1);
-    arktest.assertTrue(-1n == -1);
+    arktest.assertTrue(-1n != -1);
+    arktest.assertTrue(-1n == -1n);
+    arktest.assertTrue((-1n).doubleValue() == -1);
     arktest.assertTrue(-1n < -0.5);
     arktest.assertTrue(-1n > -1.5);
 }
@@ -157,15 +168,21 @@ function moreBoundaryTests() {
 }
 
 function strictEqualityTests() {
-    arktest.assertTrue(1n === 1);
-    arktest.assertTrue(0n === 0);
-    arktest.assertTrue(-1n === -1);
+    arktest.assertTrue(1n !== 1);
+    arktest.assertTrue((1n).doubleValue() === 1);
+    arktest.assertTrue(0n !== 0);
+    arktest.assertTrue((0n).doubleValue() === 0);
+    arktest.assertTrue(-1n !== -1);
+    arktest.assertTrue((-1n).doubleValue() === -1);
 }
 
 function looseEqualityTests() {
-    arktest.assertTrue(1n == 1);
-    arktest.assertTrue(0n == 0);
-    arktest.assertTrue(-1n == -1);
+    arktest.assertTrue(1n != 1);
+    arktest.assertTrue((1n).doubleValue() == 1);
+    arktest.assertTrue(0n != 0);
+    arktest.assertTrue((0n).doubleValue() == 0);
+    arktest.assertTrue(-1n != -1);
+    arktest.assertTrue((-1n).doubleValue() == -1);
 }
 
 function main() {

@@ -131,3 +131,6 @@ runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
 runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_1.ets
 runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_2.ets
 runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_3.ets
+
+# 33821 Invalid MemberExpression dump for literals
+runtime/ets/bigint_comp_number.ets

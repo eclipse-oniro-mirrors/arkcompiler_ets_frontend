@@ -21,6 +21,10 @@ warning:
   id: 16
   message: "Cannot assign to '{}' because it is a read-only property."
 
+- name: BIGINT_BUGPRONE_LOOSEEQUAL
+  id: 18
+  message: "Values of BigInt type are never equal to numerics."
+
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."
@@ -179,7 +183,6 @@ warning:
   exclusionlist: ["explicit_export"]
 
 graveyard:
-- 18
 - 19
 - 27
 - 28
