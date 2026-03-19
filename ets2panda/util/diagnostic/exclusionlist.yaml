@@ -30,3 +30,8 @@ exclusionlist:
   - "(^|[\\/])foundation[\\/]ability[\\/]ability_runtime([\\/]|$)"
   - "(^|[\\/])foundation[\\/]ability[\\/]dmsfwk([\\/]|$)"
   - "(^|[\\/])foundation[\\/]ability[\\/]form_fwk([\\/]|$)"
+
+- name: "override_field"
+  paths:
+  - ".*[\\/]ability[\\/]ability_runtime[\\/]frameworks[\\/]ets[\\/]ets[\\/].+\\.ets$"
+  - ".*[\\/]ability[\\/]form_fwk[\\/]frameworks[\\/]ets[\\/].+\\.ets$"
