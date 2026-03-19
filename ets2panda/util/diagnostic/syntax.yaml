@@ -33,6 +33,10 @@ syntax:
   id: 4
   message: "Ambient class declarations must have a body."
 
+- name: AMBIGUOUS_FUNC_TYPE_INUNION
+  id: 113981
+  message: "Using '{}' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit."
+
 - name: ANNOTATION_DECLARATION_ACCESS_MODIFIER
   id: 210
   message: "Annotation declaration can not have access modifier."

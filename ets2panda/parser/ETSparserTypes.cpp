@@ -191,6 +191,8 @@ ir::TypeNode *ETSParser::ParseWildcardType(TypeAnnotationParsingOptions *options
 ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options)
 {
     auto startLoc = Lexer()->GetToken().Start();
+    const bool isUnionMember = ((*options) & TypeAnnotationParsingOptions::DISALLOW_UNION) != 0;
+    const bool isBareFunctionType = ((*options) & TypeAnnotationParsingOptions::PARENTHESIZED_TYPE) == 0;
     auto params = ParseFunctionParams();
     bool hasReceiver = !params.empty() && params[0]->IsETSParameterExpression() &&
                        params[0]->AsETSParameterExpression()->Ident()->IsReceiver();
@@ -214,6 +216,12 @@ ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options
     }
     if (returnTypeAnnotation == nullptr) {
         return nullptr;
+    }
+
+    if (isUnionMember && isBareFunctionType && returnTypeAnnotation->IsETSUnionType()) {
+        const auto endLoc = Lexer()->GetToken().Start();
+        const auto ambiguousType = GetProgram()->SourceCode().substr(startLoc.index, endLoc.index - startLoc.index);
+        LogError(diagnostic::AMBIGUOUS_FUNC_TYPE_INUNION, {ambiguousType}, startLoc);
     }
 
     auto *funcType = AllocNode<ir::ETSFunctionType>(
@@ -423,7 +431,8 @@ std::pair<ir::TypeNode *, bool> ETSParser::GetTypeAnnotationFromParentheses(Type
         return {nullptr, false};
     }
 
-    typeAnnotation = ParseTypeAnnotation(options);
+    auto innerOptions = *options | TypeAnnotationParsingOptions::PARENTHESIZED_TYPE;
+    typeAnnotation = ParseTypeAnnotation(&innerOptions);
     if (typeAnnotation == nullptr) {
         return std::make_pair(typeAnnotation, true);
     }
