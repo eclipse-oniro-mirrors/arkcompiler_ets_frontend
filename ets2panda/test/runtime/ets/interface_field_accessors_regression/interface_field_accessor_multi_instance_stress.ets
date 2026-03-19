@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,22 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface ICounter {
+    count: int
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+class CounterImpl implements ICounter {
+    count: int = 0
 }
 
+function main(): void {
+    let items: Array<ICounter> = [new CounterImpl(), new CounterImpl(), new CounterImpl()];
 
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+    for (let i = 0; i < items.length; i++) {
+        items[i].count = i * 10;
+    }
+
+    for (let i = 0; i < items.length; i++) {
+        arktest.assertEQ(items[i].count, i * 10);
+    }
+}

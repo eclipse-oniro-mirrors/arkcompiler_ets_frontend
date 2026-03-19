@@ -264,7 +264,8 @@ static void CheckGetterSetterOverride(varbinder::LocalVariable const *child, var
         return;
     }
 
-    if (checker->IsVariableGetterSetter(child) && childDeclNode->OriginalNode() == nullptr) {
+    if (checker->IsVariableGetterSetter(child) && !checker->IsVariableGetterSetterClassProperty(parent) &&
+        childDeclNode->OriginalNode() == nullptr) {
         checker->LogError(diagnostic::ACCESSOR_OVERRIDE_PROP,
                           {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
     }
@@ -273,19 +274,25 @@ static void CheckGetterSetterOverride(varbinder::LocalVariable const *child, var
 static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbinder::LocalVariable const *parent,
                                   ETSChecker *checker)
 {
-    auto readonlyCheck = [](varbinder::LocalVariable const *var, bool isParent, bool isReadonly) {
+    auto readonlyCheck = [](varbinder::LocalVariable const *var, bool isParent, bool isReadonly,
+                            varbinder::LocalVariable const *counterpart) {
         if (!var->TsType()->IsETSMethodType()) {
             return true;
         }
 
         auto *functionType = var->TsType()->AsETSFunctionType();
         auto getter = functionType->FindGetter();
-        if (getter == nullptr) {
+        auto setter = functionType->FindSetter();
+        if (getter == nullptr && setter == nullptr) {
             return false;
         }
 
-        auto setter = functionType->FindSetter();
         if (!isParent && setter == nullptr && !isReadonly) {
+            // Accessor-only rules apply when the counterpart is also an accessor (method type). A getter-only member
+            // may override a plain field (e.g. subclass getter over super field that implements an interface accessor).
+            if (counterpart->TsType() == nullptr || !counterpart->TsType()->IsETSMethodType()) {
+                return true;
+            }
             return false;
         }
 
@@ -297,8 +304,10 @@ static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbind
     };
 
     CheckGetterSetterOverride(child, parent, checker);
-    bool checkChild = readonlyCheck(child, false, parent->Declaration()->Type() == varbinder::DeclType::READONLY);
-    bool checkParent = readonlyCheck(parent, true, child->Declaration()->Type() == varbinder::DeclType::READONLY);
+    bool checkChild =
+        readonlyCheck(child, false, parent->Declaration()->Type() == varbinder::DeclType::READONLY, parent);
+    bool checkParent =
+        readonlyCheck(parent, true, child->Declaration()->Type() == varbinder::DeclType::READONLY, child);
     return checkChild && checkParent && (child->TsType()->IsETSFunctionType() || parent->TsType()->IsETSFunctionType());
 }
 
@@ -2663,7 +2672,8 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
                            : property;
             ES2PANDA_ASSERT(property != nullptr);
         } else if (ident->Parent()->IsMemberExpression() &&
-                   ident->Parent()->AsMemberExpression()->Object()->IsSuperExpression()) {
+                   ident->Parent()->AsMemberExpression()->Object()->IsSuperExpression() &&
+                   !IsVariableGetterSetterClassProperty(property)) {
             LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {ident->Name()}, ident->Start());
         }
     }
@@ -3018,9 +3028,7 @@ std::vector<ResolveResult *> ETSChecker::ValidateAccessor(ir::MemberExpression *
 
 ir::ClassProperty *ETSChecker::FindClassProperty(const ETSObjectType *const objectType, const ETSFunctionType *propType)
 {
-    auto propName =
-        util::UString(std::string(compiler::Signatures::PROPERTY) + propType->Name().Mutf8(), ProgramAllocator())
-            .View();
+    auto propName = propType->Name();
 
     ir::ClassProperty *classProp = nullptr;
     if (objectType->GetDeclNode()->IsClassDefinition()) {
@@ -3140,15 +3148,17 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
         WarnForEndlessLoopInGetterSetter(memberExpr);
     }
 
+    const bool preferClassPropertyAccessor = prop != nullptr && IsVariableGetterSetterClassProperty(prop);
     // Note: validate originalAccessor and extensionAccessor.
     if ((IsVariableGetterSetter(prop) || IsVariableExtensionAccessor(globalFunctionVar)) &&
-        ((searchFlag & PropertySearchFlags::IS_GETTER) != 0 || (searchFlag & PropertySearchFlags::IS_SETTER) != 0)) {
+        ((searchFlag & PropertySearchFlags::IS_GETTER) != 0 || (searchFlag & PropertySearchFlags::IS_SETTER) != 0) &&
+        !preferClassPropertyAccessor) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         return ValidateAccessor(const_cast<ir::MemberExpression *>(memberExpr), prop, globalFunctionVar, searchFlag);
     }
 
     std::vector<ResolveResult *> resolveRes {};
-    if (globalFunctionVar != nullptr) {
+    if (globalFunctionVar != nullptr && !preferClassPropertyAccessor) {
         ResolvedKind resolvedKind = DecideResolvedKind(globalFunctionVar->TsType());
         if (IsExtensionAccessorCallUse(this, memberExpr, resolvedKind)) {
             LogError(diagnostic::EXTENSION_ACCESSOR_INVALID_CALL, {}, memberExpr->Start());
@@ -3192,25 +3202,61 @@ varbinder::LocalVariable *ETSChecker::ResolveOverloadReference(const ir::Identif
     return var;
 }
 
+namespace {
+
+const ir::AstNode *FindEnclosingGetterOrSetterMethod(const ir::AstNode *node)
+{
+    while (node != nullptr && (!node->IsMethodDefinition() || node->AsMethodDefinition()->Function() == nullptr ||
+                               (!node->AsMethodDefinition()->Function()->IsGetter() &&
+                                !node->AsMethodDefinition()->Function()->IsSetter()))) {
+        node = node->Parent();
+    }
+    return node;
+}
+
+varbinder::Variable *ResolveMemberAccessPropertyVariable(const ir::Identifier *ident, const ir::AstNode *accessorParent)
+{
+    if (ident->Variable() != nullptr) {
+        return ident->Variable();
+    }
+    if (accessorParent == nullptr) {
+        return nullptr;
+    }
+    auto *classDef = accessorParent->Parent();
+    if (accessorParent->AsMethodDefinition()->Function() != nullptr &&
+        accessorParent->AsMethodDefinition()->Function()->IsSetter() && classDef != nullptr) {
+        classDef = classDef->Parent();
+    }
+    if (classDef == nullptr || !classDef->IsClassDefinition() || classDef->AsClassDefinition()->TsType() == nullptr) {
+        return nullptr;
+    }
+    auto *classType = classDef->AsClassDefinition()->TsType()->AsETSObjectType();
+    constexpr auto SEARCH_FLAGS = PropertySearchFlags::SEARCH_INSTANCE_FIELD | PropertySearchFlags::SEARCH_IN_BASE |
+                                  PropertySearchFlags::SEARCH_IN_INTERFACES;
+    return static_cast<varbinder::Variable *>(classType->GetProperty(ident->Name(), SEARCH_FLAGS));
+}
+
+}  // namespace
+
 void ETSChecker::WarnForEndlessLoopInGetterSetter(const ir::MemberExpression *const memberExpr)
 {
     if (!memberExpr->Object()->IsThisExpression() || memberExpr->Property() == nullptr ||
         !memberExpr->Property()->IsIdentifier()) {
         return;
     }
-    auto ident = memberExpr->Property()->AsIdentifier();
-    auto parent = memberExpr->Parent();
-    while (parent != nullptr && (!parent->IsMethodDefinition() || parent->AsMethodDefinition()->Function() == nullptr ||
-                                 (!parent->AsMethodDefinition()->Function()->IsGetter() &&
-                                  !parent->AsMethodDefinition()->Function()->IsSetter()))) {
-        parent = parent->Parent();
+    auto *ident = memberExpr->Property()->AsIdentifier();
+    auto *parent = FindEnclosingGetterOrSetterMethod(memberExpr->Parent());
+    auto *resolved = ResolveMemberAccessPropertyVariable(ident, parent);
+    // Skip loop warning for synthetic getter/setter class-property accesses generated from interface properties.
+    if (IsVariableGetterSetterClassProperty(resolved)) {
+        return;
     }
     if (parent != nullptr && parent->AsMethodDefinition()->Function() != nullptr &&
         ident->Name() == parent->AsMethodDefinition()->Function()->Id()->Name()) {
         if (parent->AsMethodDefinition()->Function()->IsGetter()) {
-            LogDiagnostic(diagnostic::GETTER_LOOP, memberExpr->Property()->AsIdentifier()->Start());
+            LogDiagnostic(diagnostic::GETTER_LOOP, ident->Start());
         } else {
-            LogDiagnostic(diagnostic::SETTER_LOOP, memberExpr->Property()->AsIdentifier()->Start());
+            LogDiagnostic(diagnostic::SETTER_LOOP, ident->Start());
         }
     }
 }
@@ -3372,6 +3418,63 @@ void ETSChecker::CheckReadonlyClassPropertyInImplementedInterface(ETSObjectType 
     }
 }
 
+// After Recheck/Rebind, OriginalNode() may not match field->Declaration()->Node() for the same logical property.
+// Match by accessor name + ClassProperty in OriginalNode (pointer or same name with GETTER_SETTER); scan overloads.
+static bool IsSyntheticAccessorForProperty(ir::MethodDefinition *method, util::StringView propName,
+                                           ir::ClassProperty *prop)
+{
+    auto *func = method->Function();
+    if (func == nullptr || (!func->IsGetter() && !func->IsSetter())) {
+        return false;
+    }
+    if (!method->Key()->IsIdentifier() || method->Key()->AsIdentifier()->Name() != propName) {
+        return false;
+    }
+    auto *on = method->OriginalNode();
+    if (on == nullptr || !on->IsClassProperty()) {
+        return false;
+    }
+    auto *onProp = on->AsClassProperty();
+    if (onProp == prop) {
+        return true;
+    }
+    if (!onProp->Key()->IsIdentifier() || onProp->Key()->AsIdentifier()->Name() != propName) {
+        return false;
+    }
+    return (onProp->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U;
+}
+
+static bool MethodTreeHasGeneratedAccessor(ir::MethodDefinition *root, util::StringView propName,
+                                           ir::ClassProperty *prop)
+{
+    if (root == nullptr) {
+        return false;
+    }
+    if (IsSyntheticAccessorForProperty(root, propName, prop)) {
+        return true;
+    }
+    for (auto *o : root->Overloads()) {
+        if (MethodTreeHasGeneratedAccessor(o, propName, prop)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool HasGeneratedInterfaceFieldAccessors(ir::ClassDefinition *classDef, ir::ClassProperty *prop)
+{
+    if (classDef == nullptr || prop == nullptr || !prop->Key()->IsIdentifier()) {
+        return false;
+    }
+    const util::StringView propName = prop->Key()->AsIdentifier()->Name();
+    for (auto *node : classDef->Body()) {
+        if (node->IsMethodDefinition() && MethodTreeHasGeneratedAccessor(node->AsMethodDefinition(), propName, prop)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void ETSChecker::TransformProperties(ETSObjectType *classType)
 {
     auto propertyList = classType->Fields();
@@ -3385,6 +3488,12 @@ void ETSChecker::TransformProperties(ETSObjectType *classType)
             continue;
         }
 
+        // Recheck may run checker again for the same class. If accessors for this property were already generated,
+        // skip transforming it again to keep class body/method scope stable.
+        if (HasGeneratedInterfaceFieldAccessors(classDef, originalProp)) {
+            continue;
+        }
+
         if (!field->HasFlag(varbinder::VariableFlags::PUBLIC)) {
             LogError(diagnostic::INTERFACE_PROP_NOT_PUBLIC, {}, field->Declaration()->Node()->Start());
         }
@@ -3392,21 +3501,6 @@ void ETSChecker::TransformProperties(ETSObjectType *classType)
         classType->RemoveProperty<checker::PropertyType::INSTANCE_FIELD>(field);
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         GenerateGetterSetterPropertyAndMethod(originalProp, classType);
-    }
-
-    auto &body = classDef->Body();
-    if (!std::any_of(body.cbegin(), body.cend(), [](const ir::AstNode *node) {
-            return node->IsClassProperty() && (node->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U;
-        })) {
-        return;
-    }
-    auto it = classDef->BodyForUpdate().begin();
-    while (it != classDef->BodyForUpdate().end()) {
-        if ((*it)->IsClassProperty() && ((*it)->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
-            it = classDef->BodyForUpdate().erase(it);
-        } else {
-            ++it;
-        }
     }
 }
 

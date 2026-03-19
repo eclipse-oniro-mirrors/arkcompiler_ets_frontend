@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,5 @@ function main() {
     arktest.assertEQ(a.a, false);
 }
 
-
+/* @@? 22:18 Error Semantic error ESE4002: Cannot assign to a readonly field a */
 /* @@? 22:18 Warning Warning W0010: The instance field initializer expression cannot use the this. */
-/* @@? 24:14 Error Semantic error ESE0210: Readonly field already initialized at declaration. */

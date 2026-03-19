@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,21 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface ICallback {
+    cb: (x: int) => int
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+class CallbackImpl implements ICallback {
+    cb: (x: int) => int = (x: int) => x + 1
 }
 
+function main(): void {
+    let i: ICallback = new CallbackImpl();
+    arktest.assertEQ(i.cb(1), 2);
 
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+    i.cb = (x: int) => x * 3;
+    arktest.assertEQ(i.cb(2), 6);
+
+    let impl = i as CallbackImpl;
+    arktest.assertEQ(impl.cb(3), 9);
+}

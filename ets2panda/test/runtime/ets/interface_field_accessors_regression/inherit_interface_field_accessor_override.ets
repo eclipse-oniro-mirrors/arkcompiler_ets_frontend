@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,24 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface IName {
+    name: string
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+class Animal implements IName {
+    name: string = "Animal"
 }
 
+class Dog extends Animal {
+    name: string = "Dog"
+}
 
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+function main(): void {
+    let d: Dog = new Dog();
+    let a: IName = d;
+    arktest.assertEQ(a.name, "Dog");
+
+    a.name = "Cat";
+    arktest.assertEQ(d.name, "Cat");
+    arktest.assertEQ(a.name, "Cat");
+}

@@ -61,8 +61,8 @@ void ScopesInitPhase::VisitScriptFunction(ir::ScriptFunction *scriptFunction)
         auto const *const curScope = VarBinder()->GetScope();
         auto const &functionName = id->Name();
         auto const res =
-            curScope->Find(functionName, scriptFunction->IsStatic() ? varbinder::ResolveBindingOptions::ALL_STATIC
-                                                                    : varbinder::ResolveBindingOptions::ALL_NON_STATIC);
+            curScope->Find(functionName, scriptFunction->IsStatic() ? varbinder::ResolveBindingOptions::STATIC_METHODS
+                                                                    : varbinder::ResolveBindingOptions::METHODS);
         if (res.variable != nullptr && res.variable->Declaration()->IsFunctionDecl()) {
             id->SetVariable(res.variable);
         }
@@ -1037,7 +1037,8 @@ void InitScopesPhaseETS::DeclareClassMethod(ir::MethodDefinition *method)
             ? varbinder::ResolveBindingOptions::STATIC_VARIABLES | varbinder::ResolveBindingOptions::STATIC_DECLARATION
             : varbinder::ResolveBindingOptions::VARIABLES | varbinder::ResolveBindingOptions::DECLARATION;
     auto variable = clsScope->FindLocal(methodName->Name(), options);
-    if (variable != nullptr) {
+    if (variable != nullptr &&
+        (variable->Declaration()->Node()->Modifiers() & ir::ModifierFlags::GETTER_SETTER) == 0U) {
         VarBinder()->ThrowRedeclaration(methodName->Start(), methodName->Name(), variable->Declaration()->Type());
     }
 
@@ -1251,7 +1252,8 @@ void InitScopesPhaseETS::VisitMethodDefinition(ir::MethodDefinition *method)
     auto res =
         curScope->Find(methodName->Name(), method->IsStatic() ? varbinder::ResolveBindingOptions::ALL_STATIC
                                                               : varbinder::ResolveBindingOptions::ALL_NON_STATIC);
-    if (res.variable != nullptr && !res.variable->Declaration()->IsFunctionDecl() && res.scope == curScope) {
+    if (res.variable != nullptr && !res.variable->Declaration()->IsFunctionDecl() && res.scope == curScope &&
+        (res.variable->Declaration()->Node()->Modifiers() & ir::ModifierFlags::GETTER_SETTER) == 0U) {
         VarBinder()->ThrowRedeclaration(methodName->Start(), res.name, varbinder::DeclType::METHOD);
     }
 

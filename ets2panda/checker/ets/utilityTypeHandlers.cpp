@@ -680,7 +680,7 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
         // Method calls on partial classes will make the class not type safe, so we don't copy any methods
         if (prop->IsClassProperty()) {
             if (prop->AsClassProperty()->Id() == nullptr ||
-                prop->AsClassProperty()->Id()->Name().Mutf8().find(compiler::Signatures::PROPERTY, 0) == 0) {
+                (prop->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
                 continue;
             }
 

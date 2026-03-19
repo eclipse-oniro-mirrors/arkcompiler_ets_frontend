@@ -1,0 +1,72 @@
+import st from "@ohos.lang.interop";
+export declare interface I {
+    name: string;
+}
+export declare class A implements I {
+    constructor();
+    public get name(): string;
+    public set name(value: string);
+}
+export declare class B {
+    public get name(): string;
+    public set name(value: string);
+    constructor();
+}
+export declare class C {
+    public get name(): string;
+    constructor();
+}
+export declare class D {
+    public set name(value: string);
+    constructor();
+}
+export declare class E {
+    public get name(): string;
+    public set name(value: string);
+    constructor();
+}
+export declare interface F {
+    get name(): string;
+    set name(value: string);
+}
+export declare interface G {
+    varA: string;
+    get varB(): string;
+    get varC(): number;
+    set varC(value: number);
+    foo(): void;
+    bar: () => void;
+}
+export declare class H implements G {
+    public get varB(): string;
+    public get varC(): number;
+    public set varC(value: number);
+    public foo(): void;
+    constructor();
+    public get varA(): string;
+    public set varA(value: string);
+    public get bar(): () => void;
+    public set bar(value: () => void);
+}
+export declare class J {
+    public get varA(): string;
+    public set varA(value: string);
+    public get varB(): string;
+    public get varC(): number;
+    public set varC(value: number);
+    public foo(): void;
+    public get bar(): () => void;
+    public set bar(value: () => void);
+    constructor();
+}
+export declare class K extends J {
+    public get varA(): string;
+    public set varA(value: string);
+    public get varB(): string;
+    public get varC(): number;
+    public set varC(value: number);
+    public foo(): void;
+    public get bar(): () => void;
+    public set bar(value: () => void);
+    constructor();
+}

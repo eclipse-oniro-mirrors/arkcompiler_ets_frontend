@@ -2217,8 +2217,7 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
                                     methodDef->IsStatic() ? processedStaticMethods : processedInstanceMethods);
         } else if (prop->IsClassProperty()) {
             const auto classProp = prop->AsClassProperty();
-            const auto propName = GetKeyIdent(classProp->Key())->Name().Mutf8();
-            if (propName.find("%%property-") != std::string::npos) {
+            if (classProp->Modifiers() & ir::ModifierFlags::GETTER_SETTER) {
                 continue;
             }
             GenPropDeclaration(classProp);

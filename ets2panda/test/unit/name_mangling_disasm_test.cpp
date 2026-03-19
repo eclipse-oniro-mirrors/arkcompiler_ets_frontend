@@ -237,7 +237,7 @@ TEST_F(NameManglingAsmTest, propertyNameGen)
 
     SetCurrentProgram(input);
     std::string_view expectedRecordName = "dummy.TestClass";
-    std::string_view expectedPropName = "dummy.TestClass.%%property-testMember";
+    std::string_view expectedPropName = "dummy.TestClass.testMember";
     CheckPropertyUsingRecordTable(input, expectedRecordName, expectedPropName);
 }
 

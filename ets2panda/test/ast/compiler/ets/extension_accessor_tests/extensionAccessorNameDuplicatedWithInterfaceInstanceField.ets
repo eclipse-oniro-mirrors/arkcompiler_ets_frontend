@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,16 +21,15 @@ class B implements A {
     name_ : string
 }
 
-get name(this: B): string /* @@ label1 */{
+get name(this: B): string{
     return this.name_; 
 }
 
-set name(this: B, n: string) /* @@ label2 */{
+set name(this: B, n: string) {
     this.name_ = n;
 }
 
-
-/* @@@ label1 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class B */
-/* @@@ label1 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */
-/* @@@ label2 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class B */
-/* @@@ label2 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */
+/* @@? 24:26 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */
+/* @@? 24:26 Error Semantic error ESE0079: The extension accessor or extension function 'name' has the same name with field of class B */
+/* @@? 28:30 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */
+/* @@? 28:30 Error Semantic error ESE0079: The extension accessor or extension function 'name' has the same name with field of class B */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface IWritable {
+    value: int
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+class ReadonlyImpl implements IWritable {
+    readonly value: int = 1
 }
 
-
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+/* @@? 16:1 Error Semantic error ESE0215: Class ReadonlyImpl cannot implement interface IWritable because the declaration type for field value is not compatible with the declaration type required by the interface. */
+/* @@? 21:14 Error Semantic error ESE0337: Cannot implement interface IWritable: property 'value' must have a setter, but the implementation is readonly */

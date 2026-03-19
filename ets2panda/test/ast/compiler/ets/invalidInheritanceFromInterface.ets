@@ -31,6 +31,7 @@ function main(): void {
     arktest.assertEQ(instance.getX(), true);
 }
 
+/* @@? 16:1 Error Semantic error ESE0215: Class B cannot implement interface A because the declaration type for field x is not compatible with the declaration type required by the interface. */
 /* @@? 16:1 Error Semantic error ESE0215: Class B cannot implement interface A because the declaration type for method x is not compatible with the declaration type required by the interface. */
-/* @@? 23:12 Error Semantic error ESE0136: Method x(%%property-x: Boolean): void in B not overriding any method */
+/* @@? 23:12 Error Semantic error ESE0136: Method x(x: Boolean): void in B not overriding any method */
 /* @@? 25:15 Error Semantic error ESE0002: Type 'Boolean' has no call signatures. */
