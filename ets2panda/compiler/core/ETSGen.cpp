@@ -741,35 +741,25 @@ void ETSGen::CheckedReferenceNarrowing(const ir::AstNode *node, const checker::T
         SetLabel(node, end);
         LoadAccumulator(node, srcReg);
         if (!target->IsETSUndefinedType()) {
-            EmitCheckCast(node, ToAssemblerType(target));
+            EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
         }
         SetAccumulatorType(target);
         return;
     }
 
-    auto isNullish = AllocLabel();
-    bool nullishCheck = false;
-
-    if (source->PossiblyETSUndefined() && !target->PossiblyETSUndefined()) {
-        nullishCheck = true;
-        BranchIfUndefined(node, isNullish);
-    }
     if (source->PossiblyETSNull() && !target->PossiblyETSNull() && IsNullUnsafeObjectType(target)) {
-        nullishCheck = true;
+        auto isNullish = AllocLabel();
         BranchIfNull(node, isNullish);
-    }
-
-    if (!nullishCheck) {
-        EmitCheckCast(node, ToAssemblerType(target));
-    } else {
         LoadAccumulator(node, srcReg);
-        EmitCheckCast(node, ToAssemblerType(target));
+        EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
         JumpTo(node, end);
 
         SetLabel(node, isNullish);
         EmitFailedTypeCastException(node, srcReg, target);
 
         SetLabel(node, end);
+    } else {
+        EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
     }
     SetAccumulatorType(target);
 }
@@ -1566,7 +1556,7 @@ void ETSGen::ResolveConditionalResultReference(const ir::AstNode *node)
     Branch(node, end);
     SetLabel(node, isString);
     LoadAccumulator(node, objReg);
-    EmitCheckCast(node, Signatures::BUILTIN_STRING);  // help verifier
+    EmitCheckCast(node, Signatures::BUILTIN_STRING, true);  // help verifier
     testString();
     SetLabel(node, end);
 }
@@ -1743,7 +1733,7 @@ void ETSGen::AssumeNonNullish(const ir::AstNode *node, checker::Type const *targ
     ES2PANDA_ASSERT(nullishType != nullptr);
     if (nullishType->PossiblyETSNull()) {
         // clear 'null' dataflow
-        EmitCheckCast(node, ToAssemblerType(targetType));
+        EmitCheckCast(node, ToAssemblerType(targetType), true);
     }
     SetAccumulatorType(targetType);
 }

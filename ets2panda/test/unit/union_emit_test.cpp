@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -252,7 +252,7 @@ TEST_F(UnionAsmTest, union_test_generic_checkcast)
     )");
 
     CheckInsInFunction("dummy.ETSGLOBAL.test1:dummy.X;{Ustd.core.Double,std.core.String};",
-                       "checkcast {Ustd.core.Double,std.core.String}", true);
+                       "checkcast.nonnull {Ustd.core.Double,std.core.String}", true);
     CheckInsInFunction("dummy.ETSGLOBAL.test2:dummy.X;{Ustd.core.Double,std.core.String};",
                        "checkcast {Ustd.core.Double,std.core.String}", true);
 }
@@ -263,8 +263,8 @@ TEST_F(UnionAsmTest, union_test_as)
         function test1(v: string): void { v as string | number }
     )");
 
-    CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "checkcast {Ustd.core.Double,std.core.String}",
-                       true);
+    CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;",
+                       "checkcast.nonnull {Ustd.core.Double,std.core.String}", true);
 }
 
 TEST_F(UnionAsmTest, union_null_object)
