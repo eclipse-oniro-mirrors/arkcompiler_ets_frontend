@@ -1742,8 +1742,12 @@ static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expressio
     if (!TryExtractNumber(initExpr, initNumber, str)) {
         return;
     }
-    lexer::Number number = initNumber.IsReal() ? lexer::Number {initNumber.GetValueAndCastTo<double>()}
-                                               : lexer::Number {initNumber.GetValueAndCastTo<int64_t>()};
+    // Per spec examples, real literals without explicit narrowing are inferred as 'double'
+    // in union contexts (e.g. float|double <- 3.14), so ambiguity check applies to integer literals only.
+    if (initNumber.IsReal()) {
+        return;
+    }
+    lexer::Number number {initNumber.GetValueAndCastTo<int64_t>()};
     int fits = std::count_if(unionType->ConstituentTypes().begin(), unionType->ConstituentTypes().end(),
                              [&](Type *t) { return FitsNumericType(t, number); });
     if (fits > 1) {
@@ -4564,7 +4568,6 @@ static bool CheckIsValidReturnTypeAnnotation(ir::ReturnStatement *st, ir::Script
     return true;
 }
 
-// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                                   checker::Type *&funcReturnType, ir::TypeNode *returnTypeAnnotation,
                                                   ETSChecker *checker) const
@@ -4609,28 +4612,36 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
         }
         funcReturnType = voidType;
     } else {
-        const auto name = containingFunc->Scope()->InternalName().Mutf8();
-        if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
-            return false;
-        }
-        // Note: First,handle this situation specially,and the ETSAsyncFuncReturnType needs to be restructured later.
-        // Related issue: #issue33499
-        checker::Type *preferredType = funcReturnType;
-        if (funcReturnType->IsETSAsyncFuncReturnType()) {
-            preferredType = funcReturnType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
-        }
-
-        if (st->argument_->IsMemberExpression()) {
-            checker->SetArrayPreferredTypeForNestedMemberExpressions(st->argument_->AsMemberExpression(),
-                                                                     preferredType);
-        } else {
-            st->argument_->SetPreferredType(preferredType);
-        }
-
-        checker::Type *argumentType = st->argument_->Check(checker);
-        return CheckReturnType(checker, funcReturnType, argumentType, st->argument_, containingFunc);
+        return CheckReturnStatementArgumentType(st, containingFunc, funcReturnType, checker);
     }
     return true;
+}
+
+bool ETSAnalyzer::CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
+                                                   checker::Type *funcReturnType, ETSChecker *checker) const
+{
+    const auto name = containingFunc->Scope()->InternalName().Mutf8();
+    if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
+        return false;
+    }
+    // Note: First,handle this situation specially,and the ETSAsyncFuncReturnType needs to be restructured later.
+    // Related issue: #issue33499
+    checker::Type *preferredType = funcReturnType;
+    if (funcReturnType->IsETSAsyncFuncReturnType()) {
+        preferredType = funcReturnType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
+    }
+
+    if (st->argument_->IsMemberExpression()) {
+        checker->SetArrayPreferredTypeForNestedMemberExpressions(st->argument_->AsMemberExpression(), preferredType);
+    } else {
+        st->argument_->SetPreferredType(preferredType);
+    }
+
+    checker::Type *argumentType = st->argument_->Check(checker);
+    if (funcReturnType->IsETSUnionType()) {
+        IsAmbiguousUnionInit(funcReturnType->AsETSUnionType(), st->argument_, checker);
+    }
+    return CheckReturnType(checker, funcReturnType, argumentType, st->argument_, containingFunc);
 }
 
 checker::Type *ETSAnalyzer::GetFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc) const
@@ -5224,9 +5235,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSQualifiedName *expr) const
     ETSChecker *checker = GetETSChecker();
     checker::Type *baseType = expr->Left()->Check(checker);
     if (baseType->IsETSObjectType()) {
-        // clang-format off
         auto searchName = expr->Right()->Name();
-        // clang-format on
         // NOTE (oeotvos) This should be done differently in the follow-up patch.
         if (searchName.Empty()) {
             searchName = expr->Right()->Name();

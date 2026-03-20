@@ -63,6 +63,8 @@ private:
     bool CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                          checker::Type *&funcReturnType, ir::TypeNode *returnTypeAnnotation,
                                          ETSChecker *checker) const;
+    bool CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
+                                          checker::Type *funcReturnType, ETSChecker *checker) const;
     void CheckClassProperty(ETSChecker *checker, ir::ScriptFunction *scriptFunc) const;
 
     checker::Type *ResolveMemberExpressionByBaseType(ETSChecker *checker, checker::Type *baseType,
