@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -443,9 +443,6 @@ void Binder::BuildScriptFunction(Scope *outerScope, const ir::ScriptFunction *sc
     if (bindingFlags_ & ResolveBindingFlags::TS_BEFORE_TRANSFORM) {
         return;
     }
-    
-    auto *funcScope = scriptFunc->Scope();
-    funcScope->ParamScope()->SetParent(outerScope);
 
     if (scriptFunc->IsArrow()) {
         const ir::ScriptFunction *ctor = util::Helpers::GetContainingConstructor(scriptFunc);
@@ -812,6 +809,8 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
             if (scriptFunc->Id() != nullptr) {
                 scriptFunc->Id()->SetParent(scriptFunc);
             }
+
+            funcScope->ParamScope()->SetParent(outerScope);
 
             {
                 auto paramScopeCtx = LexicalScope<FunctionParamScope>::Enter(this, funcScope->ParamScope());
