@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,10 @@ class D extends C {
     static fooString(a: string): string {
         return "static invoke2"
     }
-    static overload foo111{ foo111, fooString };
+    static foo111FromC(a: number): string {
+        return C.foo111(a)
+    }
+    static overload foo111 { foo111FromC, fooString };
 }
 
 function main() {

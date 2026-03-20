@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,9 @@ class A {
     
 class B extends A {
     constructor() {}
+    static $_instantiate<T extends B>(factory: () => T, content: () => void): T {
+        return A.$_instantiate(factory, content)
+    }
     override __initializeStruct(): A {
         return this
     }

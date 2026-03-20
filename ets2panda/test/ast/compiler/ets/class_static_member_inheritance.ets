@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-class C {
-    static foo111(a: number): string {
-        return "static invoke1";
-    }
+class A {
+    static x:int = 1
+    static foo():int { return 2 }
 }
 
-class D extends C {
-    static foo111(a: string): string {
-        return "static invoke2"
-    }
+class B extends A {
+
 }
 
 function main() {
-    arktest.assertEQ(D.foo111("abc"), "static invoke2")
-    arktest.assertEQ(C.foo111(1), "static invoke1")
+    let y:int = B.x
+    B.foo()
 }
+
+/* @@? 26:19 Error Semantic error ESE696291: Class static member x must be accessed with the class name A qualification only. Access using the derived class name will be deprecated soon. */
+/* @@? 27:7 Error Semantic error ESE696291: Class static member foo must be accessed with the class name A qualification only. Access using the derived class name will be deprecated soon. */
