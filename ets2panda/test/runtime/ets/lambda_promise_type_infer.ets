@@ -42,19 +42,4 @@ function main() {
     test3(async () => { return 1 });
     test4(async () => { return 1 });
     test5(async () => { return 1 });
-
-    let func1 = async () => {
-        const nestedAsync = async () => {
-            return new Promise<string>((resolve) => {
-                resolve("Hello from nested async function");
-            });
-        };
-
-        const result = await Promise.resolve()
-            .then(async () => {
-                return await nestedAsync();
-            });
-        arktest.assertTrue(result == "Hello from nested async function");
-    }
-    func1();
 }

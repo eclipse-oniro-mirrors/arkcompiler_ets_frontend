@@ -24,7 +24,7 @@ class AsyncMethodLoweringStackless : public PhaseForProgramsToBeEmitted {
 public:
     std::string_view Name() const override;
     bool PerformForProgram(parser::Program *program) override;
-    bool PostconditionForProgram(const parser::Program *program) override;
+    bool PreconditionForProgram(const parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler
