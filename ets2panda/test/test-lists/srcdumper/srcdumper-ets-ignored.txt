@@ -12,21 +12,11 @@ parser/ets/import_tests/import_alias_and_without_alias_3.ets
 parser/ets/import_tests/import_all.ets
 parser/ets/import_tests/packages/aliasWithoutAlias/import1/import1.ets
 parser/ets/import_tests/packages/aliasWithoutAlias/import2/import2.ets
-parser/ets/import_tests/packages/import_package_with_alias/package/package_module.ets
-parser/ets/import_tests/packages/import_package_with_alias/import_package_with_alias.ets
 parser/ets/import_tests/packages/subpackage/package_module_1.ets
 parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
 parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
 parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
 parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
-parser/ets/import_tests/packages/package_module_1.ets
-parser/ets/import_tests/packages/package_module_2.ets
-# ets2panda/test/tsconfig/test-build/ets/packages/world.ets --
-# ets2panda/test/tsconfig/test-build/ets/hello.ets
-# ets2panda/test/tsconfig/test-build/paths/lib/module2/lib.ets --
-# ets2panda/test/tsconfig/test-build/paths/lib/module22/lib.ets --
-# ets2panda/test/tsconfig/test-build/paths/main.ets
-# ets2panda/test/unit/declgen/ets/pckg/test.ets
 
 # FailKind.INVALID_JSON (Issue #20457)
 runtime/ets/StringTemplate1.ets
@@ -119,10 +109,8 @@ ast/compiler/ets/interfaceObjectLiteral_04.ets
 ast/compiler/ets/interfaceObjectLiteral_05.ets
 
 runtime/ets/declareExport.ets
-ast/parser/ets/import_tests/enum/import.ets
 parser/ets/import_tests/enum/import.ets
 parser/ets/import_tests/enum/xml/export.ets
-parser/ets/import_tests/import_relative_path.ets
 
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets

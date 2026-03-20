@@ -4,13 +4,8 @@ parser/ets/re_export/diamond/D2.ets
 parser/ets/re_export/import_14.ets
 parser/ets/re_export/import_2.ets
 runtime/ets/extension_function_tests/extensionFunctionReturnThis2.ets
-runtime/ets/getteSetterImplementation.ets
-runtime/ets/getterSetterImplementationWithConstructor.ets
-runtime/ets/implementsClassPropertyFunctionType.ets
-runtime/ets/implementsClassPropertyFunctionType2.ets
 runtime/ets/lambda_with_receiver/lambda_with_receiver_return_this2.ets
 runtime/ets/multisource_inheritance-2.ets
-runtime/ets/readonly_simple_form_pos.ets
 runtime/ets/trailing_lambda_and_optional_parameterets10.ets
 runtime/ets/trailing_lambda_and_optional_parameterets2.ets
 runtime/ets/trailing_lambda_and_optional_parameterets3.ets
@@ -18,7 +13,6 @@ runtime/ets/trailing_lambda_and_optional_parameterets5.ets
 runtime/ets/trailing_lambda_and_optional_parameterets6.ets
 runtime/ets/trailing_lambda_and_optional_parameterets8.ets
 runtime/ets/trailing_lambda_and_optional_parameterets9.ets
-parser/ets/import_tests/import_relative_path.ets
 runtime/ets/lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 ast/parser/ets/de_while_with_empty_body.ets
 runtime/ets/multisource_inheritance-2.ets
@@ -29,7 +23,6 @@ runtime/ets/trailing_lambda_and_optional_parameterets5.ets
 runtime/ets/trailing_lambda_and_optional_parameterets6.ets
 runtime/ets/trailing_lambda_and_optional_parameterets8.ets
 runtime/ets/trailing_lambda_and_optional_parameterets9.ets
-runtime/ets/class_implements_interface_export.ets
 runtime/ets/generic_lambda_6.ets
 runtime/ets/implement_interface.ets
 runtime/ets/typealias_function_name_conflict.ets

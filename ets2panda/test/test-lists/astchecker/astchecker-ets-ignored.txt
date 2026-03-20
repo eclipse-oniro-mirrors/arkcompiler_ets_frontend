@@ -2,45 +2,25 @@
 # Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
 ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ets
 ast/compiler/ets/implicit_package_import/package_test_3/package_module_2_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_4/package_module_1.ets
 ast/compiler/ets/implicit_package_import/package_test_4/package_module_2.ets
-ast/compiler/ets/implicit_package_import/package_test_5/package_module_1.ets
-ast/compiler/ets/implicit_package_import/package_test_5/package_module_2_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_6/package_module_1.ets
-ast/compiler/ets/implicit_package_import/package_test_6/package_module_2.ets
 ast/compiler/ets/implicit_package_import/package_test_7/package_module_1_neg.ets
 ast/compiler/ets/implicit_package_import/package_test_7/package_module_2_neg.ets
-ast/compiler/ets/implicit_package_import/package_test_8/import_multi_error.ets
 ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_semantic_error.ets
 ast/compiler/ets/implicit_package_import/package_test_9/package_module_with_syntax_error.ets
 ast/compiler/ets/implicit_package_import/package_test_9/package_module.ets
 ast/compiler/ets/implicit_package_import/package_test_9/package_with_both_errors.ets
-ast/compiler/ets/import_tests/import_distant_package/package_with_errors/inner_package_with_errors/distant_package.ets
-ast/compiler/ets/import_tests/import_distant_package/package_with_errors/import_in_package_with_error.ets
-ast/compiler/ets/import_tests/import_distant_package/package_with_errors/package_with_errors_1.ets
-ast/compiler/ets/import_tests/import_distant_package/package_with_errors/package_with_errors_2.ets
-ast/compiler/ets/import_tests/import_distant_package/package_with_errors/package_with_errors_2.ets
 ast/compiler/ets/import_tests/import_distant_package/master_file.ets
-ast/compiler/ets/namespace_tests/namespace_access_violation_merge_conflicts.ets
 ast/compiler/ets/namespace_tests/src01.ets
-ast/compiler/ets/package_invalid_initializer/P3/P3.ets
-ast/compiler/ets/package_invalid_initializer/main_test.ets
 ast/compiler/ets/package_namespace_static_block_multi/package/P2_01.ets
 ast/compiler/ets/package_namespace_static_block_multi/package/P2_02.ets
 ast/compiler/ets/package_namespace_static_block_multi/main_test.ets
 ast/compiler/ets/package_static_block_multi_files/P1/P1_0.ets
 ast/compiler/ets/package_static_block_multi_files/P1/P1_1.ets
 ast/compiler/ets/package_static_block_multi_files/main_test.ets
-ast/compiler/ets/redefine_class/redefine_array.ets
 ast/compiler/ets/use_static_flag/package/flag_before_package.ets
 ast/compiler/ets/use_static_flag/package/flag_before_package2.ets
-ast/compiler/ets/use_static_flag/package_2_neg/flag_before_package.ets
-ast/compiler/ets/use_static_flag/package_3_neg/flag_before_package.ets
 ast/compiler/ets/use_static_flag/package_neg/flag_package.ets
 ast/compiler/ets/use_static_flag/package_neg/flag_package2.ets
-ast/compiler/ets/xgc_ea/xgc_ea.ets
-# ast/parser/ets/import_tests/enum/export/export.ets
-ast/parser/ets/import_tests/enum/import.ets
 
 # Fails with Assertion. Description in Issue #19645
 ast/parser/ets/extension_function_tests/extension_function_not_for_class_type.ets
@@ -63,6 +43,9 @@ ast/parser/ets/InvalidLexer.ets
 # Issue #33652
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
+
+#33503
+ast/compiler/ets/export_non_type_anno.ets
 
 # Issue: #23074
 # after the fix the test fails to detect another type error
@@ -120,4 +103,3 @@ ast/compiler/ets/package_namespace_static_block_multi/main_test.ets
 ast/compiler/ets/package_static_block_multi_files/main_test.ets
 ast/parser/ets/typenode_clone_comprehensive.ets
 ast/parser/ets/import_tests/import_name_conflict_2.ets
-
