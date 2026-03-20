@@ -1399,6 +1399,7 @@ void AssignAnalyzer::LetInit(const ir::AstNode *node)
 
     auto ownerDef = OwnerDef(declNode);
     if (ownerDef != classDef_) {
+        CheckInheritedReadonlyAssignment(node, declNode);
         return;
     }
 
@@ -1477,6 +1478,31 @@ bool AssignAnalyzer::CheckClassProperty(const ir::AstNode *node, const ir::AstNo
         }
     }
     return true;
+}
+
+void AssignAnalyzer::CheckInheritedReadonlyAssignment(const ir::AstNode *node, const ir::AstNode *declNode)
+{
+    if (node == declNode) {
+        return;
+    }
+
+    if (!declNode->IsReadonly()) {
+        return;
+    }
+
+    if (!declNode->IsClassProperty()) {
+        return;
+    }
+
+    if (classDef_ == declNode->Parent()) {
+        return;
+    }
+
+    util::StringView name = GetVariableName(declNode);
+    const lexer::SourcePosition pos = GetVariablePosition(node);
+
+    ++numErrors_;
+    checker_->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {name}, pos);
 }
 
 void AssignAnalyzer::CheckInit(const ir::AstNode *node)
