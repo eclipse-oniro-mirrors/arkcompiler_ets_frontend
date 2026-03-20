@@ -48,7 +48,7 @@ static bool IsFloatingPoint(ir::Expression *expr, public_lib::Context *ctx)
     return false;
 }
 
-ir::Expression *CreateBigInt(public_lib::Context *ctx, ir::BigIntLiteral *literal)
+static ir::Expression *CreateBigInt(public_lib::Context *ctx, ir::BigIntLiteral *literal)
 {
     auto parser = ctx->parser->AsETSParser();
     auto checker = ctx->GetChecker()->AsETSChecker();
@@ -68,7 +68,7 @@ ir::Expression *CreateBigInt(public_lib::Context *ctx, ir::BigIntLiteral *litera
     return loweringResult;
 }
 
-ir::Expression *CovertBigIntToNumber(public_lib::Context *ctx, ir::Expression *expr)
+static ir::Expression *CovertBigIntToNumber(public_lib::Context *ctx, ir::Expression *expr)
 {
     ES2PANDA_ASSERT(expr->TsType()->IsETSBigIntType());
     auto checker = ctx->GetChecker()->AsETSChecker();
@@ -83,7 +83,7 @@ ir::Expression *CovertBigIntToNumber(public_lib::Context *ctx, ir::Expression *e
     return loweringResult;
 }
 
-ir::Expression *CreateBigIntFromNumericExpression(public_lib::Context *ctx, ir::Expression *expr)
+static ir::Expression *CreateBigIntFromNumericExpression(public_lib::Context *ctx, ir::Expression *expr)
 {
     auto parser = ctx->parser->AsETSParser();
     auto checker = ctx->GetChecker()->AsETSChecker();
@@ -99,7 +99,7 @@ ir::Expression *CreateBigIntFromNumericExpression(public_lib::Context *ctx, ir::
     return loweringResult;
 }
 
-bool IsRelationOp(lexer::TokenType opType)
+static bool IsRelationOp(lexer::TokenType opType)
 {
     return opType == lexer::TokenType::PUNCTUATOR_EQUAL || opType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
            opType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL ||
@@ -109,7 +109,29 @@ bool IsRelationOp(lexer::TokenType opType)
            opType == lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL;
 }
 
-bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpression *expr)
+static bool IsEqualityOp(lexer::TokenType opType)
+{
+    return (opType == lexer::TokenType::PUNCTUATOR_EQUAL) || (opType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL) ||
+           (opType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL) ||
+           (opType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL);
+}
+
+static bool ShouldPreventFromBigintImplicitCast(public_lib::Context *ctx, ir::BinaryExpression *expr)
+{
+    auto op = expr->OperatorType();
+    if (IsEqualityOp(op)) {
+        if ((op != lexer::TokenType::PUNCTUATOR_STRICT_EQUAL) &&
+            (op != lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL)) {
+            ctx->diagnosticEngine->LogDiagnostic(diagnostic::BIGINT_BUGPRONE_LOOSEEQUAL,
+                                                 util::DiagnosticMessageParams {}, expr->Start());
+        }
+        return true;
+    }
+
+    return false;
+}
+
+static bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpression *expr)
 {
     // Don't apply BigInt conversion to logical operators - they should preserve original types
     auto op = expr->OperatorType();
@@ -126,6 +148,9 @@ bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpr
     if (leftIsBigInt && !rightIsBigInt && IsNumericType(ctx, right->TsType())) {
         // If the right operand is a floating point, convert the left operand to a floating point to avoid loss of
         // precision
+        if (ShouldPreventFromBigintImplicitCast(ctx, expr)) {
+            return false;
+        }
         if (IsFloatingPoint(right, ctx) && IsRelationOp(op)) {
             ir::Expression *newLeft = CovertBigIntToNumber(ctx, left);
             expr->SetLeft(newLeft);
@@ -139,6 +164,9 @@ bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpr
     if (rightIsBigInt && !leftIsBigInt && IsNumericType(ctx, left->TsType())) {
         // If the left operand is a floating point, convert the right operand to a floating point to avoid loss of
         // precision
+        if (ShouldPreventFromBigintImplicitCast(ctx, expr)) {
+            return false;
+        }
         if (IsFloatingPoint(left, ctx) && IsRelationOp(op)) {
             ir::Expression *newRight = CovertBigIntToNumber(ctx, right);
             expr->SetRight(newRight);
@@ -152,46 +180,6 @@ bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpr
     return false;
 }
 
-bool ReplaceStrictEqualByNormalEqual(ir::BinaryExpression *expr)
-{
-    auto left = expr->Left()->TsType();
-    auto isBigintLeft = (left != nullptr && left->IsETSBigIntType()) || expr->Left()->IsBigIntLiteral();
-    auto right = expr->Right()->TsType();
-    auto isBigintRight = (right != nullptr && right->IsETSBigIntType()) || expr->Right()->IsBigIntLiteral();
-    if (!isBigintLeft && !isBigintRight) {
-        return false;
-    }
-
-    if (expr->OperatorType() == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL) {
-        expr->SetOperator(lexer::TokenType::PUNCTUATOR_EQUAL);
-        return true;
-    }
-    if (expr->OperatorType() == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL) {
-        expr->SetOperator(lexer::TokenType::PUNCTUATOR_NOT_EQUAL);
-        return true;
-    }
-
-    return false;
-}
-
-bool RemoveConst(ir::BinaryExpression *expr)
-{
-    bool isRemoved = false;
-    auto left = expr->Left()->TsType();
-    if (left != nullptr && left->IsETSBigIntType()) {
-        left->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
-        isRemoved = true;
-    }
-
-    auto right = expr->Right()->TsType();
-    if (right != nullptr && right->IsETSBigIntType()) {
-        right->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
-        isRemoved = true;
-    }
-
-    return isRemoved;
-}
-
 bool BigIntLowering::PerformForProgram(parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursivelyPostorder(
@@ -203,9 +191,7 @@ bool BigIntLowering::PerformForProgram(parser::Program *const program)
 
             if (ast->IsBinaryExpression()) {
                 auto expr = ast->AsBinaryExpression();
-                bool doCheck = ReplaceStrictEqualByNormalEqual(expr);
-                doCheck |= RemoveConst(expr);
-                doCheck |= ConvertToSuitableCompareExpression(ctx, expr);
+                bool doCheck = ConvertToSuitableCompareExpression(ctx, expr);
                 if (doCheck) {
                     // Clear the type to force recalculation of the correct result type
                     expr->SetTsType(nullptr);
