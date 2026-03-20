@@ -28,7 +28,7 @@ static ani_env *g_env {nullptr};
 
 ani_env *GetAniEnv()
 {
-    if (!g_env) {
+    if (g_env == nullptr) {
         throw std::runtime_error("FATAL: ANI environment is not available");
     }
     return g_env;
@@ -65,29 +65,29 @@ const std::vector<std::pair<std::string, void *>> &Exports::GetMethods(const std
 {
     auto it = implementations_.find(module);
     if (it == implementations_.end()) {
-        LOG_ERROR("Module", module.c_str(), "is not registered");
+        LogError("Module", module.c_str(), "is not registered");
         throw std::runtime_error("Fatal error");
     }
     return it->second;
 }
 
-static std::map<std::string, std::string> g_ModuleClasses = {
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+static std::map<std::string, std::string> g_moduleClasses = {
     {"Es2pandaNativeModule", "@arkts-bindings.Es2pandaNativeModule.Es2pandaNativeModule"},
     {"GeneratedEs2pandaNativeModule", "@arkts-bindings.generated.Es2pandaNativeModule.Es2pandaNativeModule"},
     {"InteropNativeModule", "@arkts-bindings.InteropNativeModule.InteropNativeModule"},
 };
 
-static const std::string GetModuleClass(const std::string &module)
+static std::string GetModuleClass(const std::string &module)
 {
-    auto moduleClass = g_ModuleClasses.find(module);
-    if (moduleClass != g_ModuleClasses.end()) {
+    auto moduleClass = g_moduleClasses.find(module);
+    if (moduleClass != g_moduleClasses.end()) {
         return moduleClass->second;
     }
     return "";
 }
 
-static bool registerNativeMethods(ani_env *env, const ani_class cls,
-                                  const std::vector<std::pair<std::string, void *>> impls)
+static bool RegisterNativeMethods(ani_env *env, ani_class cls, const std::vector<std::pair<std::string, void *>> &impls)
 {
     std::vector<ani_native_function> methods;
     methods.reserve(impls.size());
@@ -101,23 +101,23 @@ static bool registerNativeMethods(ani_env *env, const ani_class cls,
     return env->Class_BindNativeMethods(cls, methods.data(), methods.size()) == ANI_OK;
 }
 
-static bool registerModules(ani_env *env)
+static bool RegisterModules(ani_env *env)
 {
     Exports *inst = Exports::GetInstance();
     for (const auto &module : inst->GetModules()) {
         std::string moduleClass = GetModuleClass(module);
         if (moduleClass.empty()) {
-            LOG_ERROR("Class for module ", module.c_str(), " is not registered");
+            LogError("Class for module ", module.c_str(), " is not registered");
             return false;
         }
         ani_class cls = nullptr;
         env->FindClass(moduleClass.c_str(), &cls);
         if (cls == nullptr) {
-            LOG_ERROR("Cannot find managed class ", moduleClass.c_str());
+            LogError("Cannot find managed class ", moduleClass.c_str());
             return false;
         }
-        if (!registerNativeMethods(env, cls, inst->GetMethods(module))) {
-            LOG_ERROR("Failed to register methods for class ", moduleClass.c_str());
+        if (!RegisterNativeMethods(env, cls, inst->GetMethods(module))) {
+            LogError("Failed to register methods for class ", moduleClass.c_str());
             return false;
         }
     }
@@ -137,7 +137,7 @@ ANI_EXPORT ani_status ANI_Constructor(ani_vm *vm, uint32_t *result)
         return ANI_ERROR;
     }
 
-    if (!registerModules(env)) {
+    if (!RegisterModules(env)) {
         return ANI_ERROR;
     }
 

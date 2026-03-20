@@ -20,6 +20,7 @@
 
 #include <array>
 
+// NOLINTBEGIN(misc-non-private-member-variables-in-classes)
 struct TestPair {
 public:
     int a {0};
@@ -27,12 +28,13 @@ public:
 
     TestPair(int aa, int bb) : a(aa), b(bb) {}
 };
+// NOLINTEND(misc-non-private-member-variables-in-classes)
 
-static constexpr EtsInt PAIR_TEST_DATA[][2] {{10, 20}, {30, 40}};
+static constexpr std::array<std::array<EtsInt, 2>, 2> PAIR_TEST_DATA {{{10, 20}, {30, 40}}};
 
 EtsNativePointer impl_CreatePair(EtsInt a, EtsInt b)
 {
-    TestPair *pair = new TestPair(a, b);
+    auto pair = new TestPair(a, b);
     return pair;
 }
 ETS_INTEROP_2(CreatePair, EtsNativePointer, EtsInt, EtsInt)
@@ -52,8 +54,10 @@ void impl_ValidatePair(EtsNativePointer ptr, EtsInt testIdx)
 
     auto pair = reinterpret_cast<TestPair *>(ptr);
     auto expectedValues = PAIR_TEST_DATA[testIdx];
+    // NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     ASSERT_EQ(pair->a, expectedValues[0]);
     ASSERT_EQ(pair->b, expectedValues[1]);
+    // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 }
 ETS_INTEROP_V2(ValidatePair, EtsNativePointer, EtsInt)
 

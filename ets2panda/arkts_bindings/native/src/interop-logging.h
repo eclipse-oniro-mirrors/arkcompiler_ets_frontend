@@ -18,14 +18,14 @@
 #include <iostream>
 
 template <typename... Args>
-void LOG_INFO(Args &&...args)
+void LogInfo(Args &&...args)
 {
     (std::cout << ... << args);
     std::cout << "\n";
 }
 
 template <typename... Args>
-void LOG_ERROR(Args &&...args)
+void LogError(Args &&...args)
 {
     (std::cerr << ... << args);
     std::cerr << "\n";

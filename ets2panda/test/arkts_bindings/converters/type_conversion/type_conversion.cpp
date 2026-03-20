@@ -18,34 +18,35 @@
 
 #include "ani.h"
 
-static constexpr EtsBoolean BOOLEAN_TEST_DATA[] {true, false, true, false, false, true, false, false};
-static constexpr EtsByte BYTE_TEST_DATA[] {-128, -127, -35, 0, 1, 27, 100, 127};
-static constexpr EtsShort SHORT_TEST_DATA[] {-32768, -15325, -30, 0, 1, 12345, 32767};
-static constexpr EtsInt INT_TEST_DATA[] {1,         0,          -1,         82,          -125,      123456,
-                                         205452356, -300000000, 1234567890, -2147483648, 2147483647};
-static constexpr EtsLong LONG_TEST_DATA[] {0,
-                                           -100,
-                                           200,
-                                           123456789012345,
-                                           1'000'000'000'000'000'000,
-                                           9'223'372'036'854'775'807,
-                                           -9'223'372'036'854'775'807 - 1};
-static constexpr EtsFloat FLOAT_TEST_DATA[] {0, 0.0f, 1.0f, -20.1f, 1.56f, 10 / 3.0f, 12345e-3f};
-static constexpr EtsDouble DOUBLE_TEST_DATA[] {-10.0, 0.0, 1.2, -300.6125, 2 / 3.0, 100 / 3.0};
-static constexpr const char *STRING_TEST_DATA[] {"",
-                                                 "  ",
-                                                 "1",
-                                                 "200",
-                                                 "a",
-                                                 "b",
-                                                 "z",
-                                                 "qwerty123",
-                                                 "500600123456foobar",
-                                                 "   whitespaces at the beginning",
-                                                 "whitespaces at the end   ",
-                                                 "   whitespaces     everywhere   ",
-                                                 "/home/project/src/dir1/dir2/dir3/file.ets"};
-static const std::vector<const char *> STRING_ARRAY_TEST_DATA[] = {
+static constexpr std::array<EtsBoolean, 8> BOOLEAN_TEST_DATA {true, false, true, false, false, true, false, false};
+static constexpr std::array<EtsByte, 8> BYTE_TEST_DATA {-128, -127, -35, 0, 1, 27, 100, 127};
+static constexpr std::array<EtsShort, 7> SHORT_TEST_DATA {-32768, -15325, -30, 0, 1, 12345, 32767};
+static constexpr std::array<EtsInt, 11> INT_TEST_DATA {
+    1, 0, -1, 82, -125, 123456, 205452356, -300000000, 1234567890, -2147483648, 2147483647};
+static constexpr std::array<EtsLong, 7> LONG_TEST_DATA {0,
+                                                        -100,
+                                                        200,
+                                                        123456789012345,
+                                                        1'000'000'000'000'000'000,
+                                                        9'223'372'036'854'775'807,
+                                                        -9'223'372'036'854'775'807 - 1};
+static constexpr std::array<EtsFloat, 7> FLOAT_TEST_DATA {0, 0.0F, 1.0F, -20.1F, 1.56F, 10 / 3.0F, 12345e-3F};
+static constexpr std::array<EtsDouble, 6> DOUBLE_TEST_DATA {-10.0, 0.0, 1.2, -300.6125, 2 / 3.0, 100 / 3.0};
+static constexpr std::array<const char *, 13> STRING_TEST_DATA {"",
+                                                                "  ",
+                                                                "1",
+                                                                "200",
+                                                                "a",
+                                                                "b",
+                                                                "z",
+                                                                "qwerty123",
+                                                                "500600123456foobar",
+                                                                "   whitespaces at the beginning",
+                                                                "whitespaces at the end   ",
+                                                                "   whitespaces     everywhere   ",
+                                                                "/home/project/src/dir1/dir2/dir3/file.ets"};
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+static const std::array<std::vector<const char *>, 5> STRING_ARRAY_TEST_DATA {
     std::vector<const char *> {}, std::vector<const char *> {""}, std::vector<const char *> {"hello world"},
     std::vector<const char *> {"qwe", "rty", "hello"}, std::vector<const char *> {"1", "20", "300", "4000", "50000"}};
 
