@@ -711,7 +711,10 @@ export abstract class BaseMode {
 
             let moduleInfo: ModuleInfo = {
                 isMainModule: false,
+                moduleName: dependency.moduleName,
                 packageName: dependency.packageName,
+                bundleName: dependency.bundleName,
+                bundleType: dependency.bundleType,
                 moduleRootPath: dependency.modulePath,
                 moduleType: dependency.moduleType,
                 sourceRoots: dependency.sourceRoots,
@@ -727,7 +730,8 @@ export abstract class BaseMode {
                 dependencies: dependency.dependencies ?? [],
                 byteCodeHar: dependency.byteCodeHar,
                 abcPath: dependency.abcPath,
-                staticFiles: []
+                staticFiles: [],
+                packageVersion: dependency.packageVersion
             };
             this.moduleInfos.set(dependency.packageName, moduleInfo);
             this.moduleInfos.get(this.mainPackageName)!.dependencies.push(dependency.packageName)
@@ -742,7 +746,10 @@ export abstract class BaseMode {
         );
         return {
             isMainModule: true,
+            moduleName: mainModuleInfo?.moduleName,
             packageName: this.mainPackageName,
+            bundleName: mainModuleInfo?.bundleName,
+            bundleType: mainModuleInfo?.bundleType,
             moduleRootPath: mainModuleInfo?.modulePath ?? this.mainModuleRootPath,
             moduleType: mainModuleInfo?.moduleType ?? this.moduleType,
             sourceRoots: this.mainSourceRoots,
@@ -757,7 +764,8 @@ export abstract class BaseMode {
             language: mainModuleInfo?.language ?? LANGUAGE_VERSION.ARKTS_1_2,
             declFilesPath: mainModuleInfo?.declFilesPath,
             dependencies: mainModuleInfo?.dependencies ?? [],
-            staticFiles: []
+            staticFiles: [],
+            packageVersion: mainModuleInfo?.packageVersion
         };
     }
 

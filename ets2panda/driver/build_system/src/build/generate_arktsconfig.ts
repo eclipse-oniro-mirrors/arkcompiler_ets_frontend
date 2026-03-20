@@ -417,6 +417,30 @@ export class ArkTSConfigGenerator {
         });
     }
 
+    private generateOhmUrl(ohmUrl: string, curModuleInfo: ModuleInfo): string {
+        const urlParts: string[] = ohmUrl.split('&');
+
+        const MODULE_INDEX = 1;
+        const BUNDLE_INDEX = 2;
+        const VERSION_INDEX = urlParts.length - 1;
+
+        if (curModuleInfo.bundleType === 'shared' || curModuleInfo.bundleType === 'appPlugin') {
+            urlParts[BUNDLE_INDEX] = curModuleInfo.bundleName ?? urlParts[BUNDLE_INDEX];
+        } else if (this.buildConfig.moduleType === 'shared' && (this.buildConfig.bundleType === 'shared' || this.buildConfig.bundleType === 'appPlugin')) {
+            urlParts[BUNDLE_INDEX] = this.buildConfig.bundleName ?? urlParts[BUNDLE_INDEX];
+        }
+
+        if (curModuleInfo.moduleType === 'shared' && !curModuleInfo.isMainModule) {
+            urlParts[MODULE_INDEX] = curModuleInfo.moduleName ?? urlParts[MODULE_INDEX];
+        }
+
+        if (curModuleInfo.moduleType === 'har') {
+            urlParts[VERSION_INDEX] = curModuleInfo.packageVersion ?? urlParts[VERSION_INDEX];
+        }
+
+        return urlParts.join('&');
+    }
+
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
             if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
@@ -436,7 +460,7 @@ export class ArkTSConfigGenerator {
                     language: 'js',
                     path: files[file].declPath,
                     sourceFilePath: files[file].filePath,
-                    ohmUrl: files[file].ohmUrl
+                    ohmUrl: this.generateOhmUrl(files[file].ohmUrl, depModuleInfo)
                 };
 
                 arktsconfig.addDependency({
