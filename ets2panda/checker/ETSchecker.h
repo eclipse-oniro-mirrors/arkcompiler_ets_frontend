@@ -332,7 +332,7 @@ public:
     ETSStringType *CreateETSStringLiteralType(util::StringView value);
     ETSResizableArrayType *CreateETSMultiDimResizableArrayType(Type *element, size_t dimSize);
     ETSResizableArrayType *CreateETSResizableArrayType(Type *element);
-    ETSArrayType *CreateETSArrayType(Type *elementType, bool isCachePolluting = false);
+    ETSArrayType *CreateETSArrayType(Type *elementType, bool isValueArray = false);
 
     Type *CreateETSUnionType(Span<Type *const> constituentTypes, bool needSubtypeReduction = false);
     template <size_t N>
@@ -540,6 +540,7 @@ public:
                                            ir::TypeNode *returnTypeAnnotation);
     bool CheckAndLogInvalidThisUsage(const ir::TypeNode *type, const diagnostic::DiagnosticKind &diagnostic);
     bool IsFixedArray(ir::ETSTypeReferencePart *part);
+    bool IsValueArray(ir::ETSTypeReferencePart *part);
     void ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation);
 
     template <typename T>

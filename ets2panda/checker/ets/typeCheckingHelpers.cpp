@@ -1091,6 +1091,12 @@ bool ETSChecker::IsFixedArray(ir::ETSTypeReferencePart *part)
            part->Name()->AsIdentifier()->Name().Mutf8() == compiler::Signatures::FIXED_ARRAY_TYPE_NAME;
 }
 
+bool ETSChecker::IsValueArray(ir::ETSTypeReferencePart *part)
+{
+    return part->Name()->IsIdentifier() &&
+           part->Name()->AsIdentifier()->Name().Mutf8() == compiler::Signatures::VALUE_ARRAY_TYPE_NAME;
+}
+
 void ETSChecker::ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation)
 {
     if (returnTypeAnnotation->IsETSUnionType()) {
@@ -1114,7 +1120,8 @@ void ETSChecker::ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation)
         return;
     }
     if (returnTypeAnnotation->IsETSTypeReference() &&
-        IsFixedArray(returnTypeAnnotation->AsETSTypeReference()->Part())) {
+        (IsFixedArray(returnTypeAnnotation->AsETSTypeReference()->Part()) ||
+         IsValueArray(returnTypeAnnotation->AsETSTypeReference()->Part()))) {
         if (returnTypeAnnotation->AsETSTypeReference()->Part()->TypeParams() != nullptr) {
             auto elementType = returnTypeAnnotation->AsETSTypeReference()->Part()->TypeParams()->Params()[0];
             if (CheckAndLogInvalidThisUsage(elementType, diagnostic::NOT_ALLOWED_THIS_IN_ARRAY_TYPE)) {

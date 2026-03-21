@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,7 @@ void ETSArrayType::ToString(std::stringstream &ss, bool precise) const
     if (HasTypeFlag(TypeFlag::READONLY)) {
         ss << "readonly ";
     }
-    ss << "FixedArray<";
+    ss << (IsValueArray() ? "ValueArray<" : "FixedArray<");
     bool needParens = (element_->IsETSUnionType() || element_->IsETSFunctionType());
     if (needParens) {
         ss << "(";
@@ -87,11 +87,19 @@ void ETSArrayType::AssignmentTarget(TypeRelation *relation, Type *source)
         return;
     }
     if (source->IsETSArrayType()) {
-        if (ElementType()->IsETSPrimitiveOrEnumType() ||
-            source->AsETSArrayType()->ElementType()->IsETSPrimitiveOrEnumType()) {
+        auto *sourceArray = source->AsETSArrayType();
+        if (IsValueArray() != sourceArray->IsValueArray()) {
+            relation->Result(false);
             return;
         }
-        relation->IsSupertypeOf(element_, source->AsETSArrayType()->ElementType());
+        if (ElementType()->IsETSPrimitiveOrEnumType() || sourceArray->ElementType()->IsETSPrimitiveOrEnumType()) {
+            return;
+        }
+        if (IsValueArray()) {
+            relation->IsIdenticalTo(element_, sourceArray->ElementType());
+        } else {
+            relation->IsSupertypeOf(element_, sourceArray->ElementType());
+        }
     }
 }
 
@@ -123,7 +131,16 @@ void ETSArrayType::Cast(TypeRelation *const relation, Type *const target)
 void ETSArrayType::IsSupertypeOf(TypeRelation *const relation, Type *source)
 {
     if (source->IsETSArrayType()) {
-        relation->IsSupertypeOf(this->AsETSArrayType()->ElementType(), source->AsETSArrayType()->ElementType());
+        auto *sourceArray = source->AsETSArrayType();
+        if (IsValueArray() != sourceArray->IsValueArray()) {
+            relation->Result(false);
+            return;
+        }
+        if (IsValueArray()) {
+            relation->IsIdenticalTo(this->AsETSArrayType()->ElementType(), sourceArray->ElementType());
+        } else {
+            relation->IsSupertypeOf(this->AsETSArrayType()->ElementType(), sourceArray->ElementType());
+        }
     }
 }
 
@@ -139,9 +156,7 @@ Type *ETSArrayType::Instantiate(ArenaAllocator *allocator, TypeRelation *relatio
 {
     auto *elementType = element_->Instantiate(allocator, relation, globalTypes);
 
-    // Some TypeFlag such as READONLY may pollute the ETSArrayType in the cache
-    ETSArrayType *arrayType =
-        relation->GetChecker()->AsETSChecker()->CreateETSArrayType(elementType, HasTypeFlag(TypeFlag::READONLY));
+    ETSArrayType *arrayType = relation->GetChecker()->AsETSChecker()->CreateETSArrayType(elementType, IsValueArray());
     arrayType->typeFlags_ = typeFlags_;
     return arrayType;
 }
@@ -158,9 +173,8 @@ Type *ETSArrayType::Substitute(TypeRelation *relation, const Substitution *subst
         return this;
     }
 
-    // Some TypeFlag such as READONLY may pollute the ETSArrayType in the cache
-    ETSArrayType *result =
-        relation->GetChecker()->AsETSChecker()->CreateETSArrayType(resultElt, HasTypeFlag(TypeFlag::READONLY));
+    // NOTE(vpukhov): ValueArrays should not be generic
+    ETSArrayType *result = relation->GetChecker()->AsETSChecker()->CreateETSArrayType(resultElt, IsValueArray());
     result->typeFlags_ = typeFlags_;
     return result;
 }

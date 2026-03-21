@@ -35,7 +35,8 @@ syntax:
 
 - name: AMBIGUOUS_FUNC_TYPE_INUNION
   id: 113981
-  message: "Using '{}' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit."
+  message: "Using '{}' function type notation in a union causes ambiguity. Parenthesize the function type or its return type
+    to make the meaning explicit."
 
 - name: ANNOTATION_DECLARATION_ACCESS_MODIFIER
   id: 210

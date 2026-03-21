@@ -98,8 +98,5 @@ TEST_F(GlobalETSObjectTypeTest, ETSArrayContainGlobalETSObject)
     ASSERT(checker);
     auto *globalETSObjectType = checker->GlobalETSObjectType();
     [[maybe_unused]] auto arrayType = checker->CreateETSArrayType(globalETSObjectType, false);
-    [[maybe_unused]] auto readonlyArrayType = checker->CreateETSArrayType(globalETSObjectType, true);
-    ASSERT(!arrayType->HasTypeFlag(checker::TypeFlag::READONLY));
-    ASSERT(readonlyArrayType->HasTypeFlag(checker::TypeFlag::READONLY));
 }
 }  // namespace ark::es2panda

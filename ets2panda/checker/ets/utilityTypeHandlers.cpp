@@ -281,7 +281,7 @@ static std::pair<util::StringView, util::StringView> GetPartialClassName(ETSChec
 }
 
 static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassProgram(
-    // CC-OFF(G.FMT.06-CPP) project code style
+    // CC-OFFNXT(G.FMT.06-CPP) project code style
     [[maybe_unused]] ETSChecker *checker, ir::AstNode *typeNode)
 {
     auto classDefProgram = typeNode->GetTopStatement()->AsETSModule()->Program();
@@ -1241,8 +1241,9 @@ Type *ETSChecker::GetReadonlyType(Type *type)
     NamedTypeStackElement ntse(this, type);
     ES2PANDA_ASSERT(type != nullptr);
     if (type->IsETSArrayType()) {
+        auto *arrType = type->AsETSArrayType();
         ETSArrayType *const clonedArrayType =
-            ProgramAllocator()->New<ETSArrayType>(type->AsETSArrayType()->ElementType());
+            ProgramAllocator()->New<ETSArrayType>(arrType->ElementType(), arrType->IsValueArray());
         ES2PANDA_ASSERT(clonedArrayType != nullptr);
         clonedArrayType->AddTypeFlag(TypeFlag::READONLY);
         return clonedArrayType;

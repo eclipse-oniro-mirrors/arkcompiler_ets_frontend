@@ -163,6 +163,8 @@ defines:
     ref: RETURN_TYPE_TYPE_NAME
   - name: 'FixedArray'
     ref: FIXED_ARRAY_TYPE_NAME
+  - name: 'ValueArray'
+    ref: VALUE_ARRAY_TYPE_NAME
   - name: 'Required'
     ref: REQUIRED_TYPE_NAME
   - name: 'Array'

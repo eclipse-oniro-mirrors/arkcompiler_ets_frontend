@@ -1343,7 +1343,7 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
     }
 
     if (type->IsETSPrimitiveType()) {
-        ES2PANDA_UNREACHABLE();
+        return true;
     }
 
     bool boxedPrimitive = (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive());
