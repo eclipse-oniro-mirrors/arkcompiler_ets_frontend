@@ -452,7 +452,7 @@ semantic:
 
 - name: ERROR_ARKTS_NO_ENUM_MIXED_TYPES
   id: 342
-  message: "Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type."
+  message: "Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type."
 
 - name: ERROR_ARKTS_NO_PROPERTIES_BY_INDEX
   id: 343

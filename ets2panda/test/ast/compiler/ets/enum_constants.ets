@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,17 @@
  * limitations under the License.
  */
 
-enum Color {
-    Red = 4 / 3.0
+enum E {
+    A = 1,
+    B = 1.2
 }
 
-/* @@ label */enum Date {
-    Day = /* @@ label1 */Date.now()
+enum E1 {
+    A = 1.0,
+    B = 2
 }
 
+enum E2: double { A = 0.0, B = 1, C = 3.14159 }
 
-
-/* @@@ label Error Semantic error ESE0350: Class 'Date' is already defined with different type. */
-/* @@@ label1 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@? 18:9 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@? 22:9 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */

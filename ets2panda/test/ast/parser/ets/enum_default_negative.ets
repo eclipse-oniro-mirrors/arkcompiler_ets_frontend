@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,13 +25,13 @@ enum D {
     a = 9?(1)
 }
 
-/* @@? 17:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 17:9 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
 /* @@? 17:10 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 18:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
 /* @@? 20:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
 /* @@? 21:9 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 21:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 25:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 21:9 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@? 25:9 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
 /* @@? 26:1 Error Syntax error ESY0228: Unexpected token, expected ':'. */
 /* @@? 38:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
 /* @@? 38:1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
