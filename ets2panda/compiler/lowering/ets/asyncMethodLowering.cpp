@@ -124,6 +124,17 @@ static ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker,
     return implMethod;
 }
 
+static void BuildProxyMethod(varbinder::ETSBinder *binder, const ir::ScriptFunction *func,
+                             const util::StringView &containingClassName, bool isExternal)
+{
+    ES2PANDA_ASSERT(!containingClassName.Empty() && func != nullptr);
+    func->Scope()->BindName(containingClassName);
+
+    if (!func->IsAsyncFunc() && !isExternal) {
+        binder->Functions().push_back(func->Scope());
+    }
+}
+
 static ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
                                               ir::ClassDefinition *classDef)
 {
@@ -152,8 +163,8 @@ static ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::
     }
     implMethod->Id()->SetVariable(implMethod->Function()->Id()->Variable());
 
-    checker->VarBinder()->AsETSBinder()->BuildProxyMethod(implMethod->Function(), classDef->InternalName(),
-                                                          asyncFunc->IsExternal());
+    BuildProxyMethod(checker->VarBinder()->AsETSBinder(), implMethod->Function(), classDef->InternalName(),
+                     asyncFunc->IsExternal());
     implMethod->SetParent(asyncMethod->Parent());
 
     return implMethod;
@@ -189,7 +200,9 @@ static void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefin
 static void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
 {
     ES2PANDA_ASSERT(!node->TsType()->IsTypeError());
-    if (util::Helpers::IsAsyncMethod(node) && node->Function() != nullptr && !node->Function()->IsExternal()) {
+
+    if (node->Function() != nullptr && (node->Function()->IsAsyncFunc() && !node->Function()->IsProxy()) &&
+        !node->Function()->IsExternal()) {
         ComposeAsyncImplMethod(checker, node);
     }
 
@@ -211,6 +224,10 @@ static void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefiniti
 
 bool AsyncMethodLowering::PerformForProgram(parser::Program *program)
 {
+    if (Context()->config->options->IsStacklessCoros()) {
+        return true;
+    }
+
     checker::ETSChecker *const checker = Context()->GetChecker()->AsETSChecker();
 
     ir::NodeTransformer handleClassAsyncMethod = [checker](ir::AstNode *const ast) {

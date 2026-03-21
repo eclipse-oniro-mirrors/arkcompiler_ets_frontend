@@ -418,3 +418,8 @@ options:
   type: bool
   default: false
   description: "(experimental) Emit metadata into abc file, to use it while importing the current module from other modules instead of using sources directly"
+
+- name: stackless-coros
+  type: bool
+  default: false
+  description: "(experimental) Emit bytecode that supports stackless coroutines"

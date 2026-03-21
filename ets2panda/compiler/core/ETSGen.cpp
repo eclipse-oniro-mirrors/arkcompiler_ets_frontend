@@ -130,6 +130,15 @@ const checker::Type *ETSGen::ReturnType() const noexcept
     return RootNode()->AsScriptFunction()->Signature()->ReturnType();
 }
 
+bool ETSGen::IsAsync() const noexcept
+{
+    /*
+     * NOTE(knazarov): here, IsDeclaredAsync is needed
+     * for compatibility with existing logic
+     */
+    return RootNode()->AsScriptFunction()->IsDeclaredAsync();
+}
+
 const checker::ETSObjectType *ETSGen::ContainingObjectType() const noexcept
 {
     return containingObjectType_;
@@ -565,6 +574,26 @@ void ETSGen::LoadThis(const ir::AstNode *node)
 void ETSGen::CreateBigIntObject(const ir::AstNode *node, VReg arg0, std::string_view signature)
 {
     Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(signature), arg0, dummyReg_);
+}
+
+void ETSGen::EmitEtsAsyncSuspend([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg asyncContext)
+{
+#ifdef PANDA_WITH_ETS
+    ES2PANDA_ASSERT(IsAsync());
+    Ra().Emit<EtsAsyncSuspend, 1>(node, asyncContext);
+#else
+    ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
+}
+
+void ETSGen::EmitEtsAsyncDispatch([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg asyncContext)
+{
+#ifdef PANDA_WITH_ETS
+    ES2PANDA_ASSERT(IsAsync());
+    Ra().Emit<EtsAsyncDispatch, 1>(node, asyncContext);
+#else
+    ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
 }
 
 VReg ETSGen::GetThisReg() const

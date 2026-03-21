@@ -285,7 +285,6 @@ void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnT
             ClearPendingExits();
             return;
         }
-
         checker_->LogError(diagnostic::NONRETURNING_PATHS, {}, errorPos);
     }
 

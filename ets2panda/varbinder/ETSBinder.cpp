@@ -609,16 +609,6 @@ void ETSBinder::AddDynamicImport(ir::ETSImportDeclaration *import)
     dynamicImports_.push_back(import);
 }
 
-void ETSBinder::BuildProxyMethod(ir::ScriptFunction *func, const util::StringView &containingClassName, bool isExternal)
-{
-    ES2PANDA_ASSERT(!containingClassName.Empty() && func != nullptr);
-    func->Scope()->BindName(containingClassName);
-
-    if (!func->IsAsyncFunc() && !isExternal) {
-        Functions().push_back(func->Scope());
-    }
-}
-
 void ETSBinder::InsertForeignBinding(const util::StringView &name, Variable *var)
 {
     TopScope()->InsertForeignBinding(name, var);
@@ -1324,7 +1314,15 @@ bool ETSBinder::BuildInternalNameWithCustomRecordTable(ir::ScriptFunction *const
 
 void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
 {
-    if (func->IsArrow() || func->IsAsyncFunc()) {
+    /*
+     * NOTE(knazarov) Here it is important to leave IsAsyncFunc, since
+     * for stackless we need to omit compilation of these 'native' funcs
+     */
+    if (!GetContext()->config->options->IsStacklessCoros() && func->IsAsyncFunc()) {
+        return;
+    }
+
+    if (func->IsArrow()) {
         return;
     }
 

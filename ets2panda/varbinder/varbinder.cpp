@@ -253,6 +253,7 @@ util::StringView VarBinder::BuildFunctionName(util::StringView name, uint32_t id
 bool VarBinder::BuildInternalName(ir::ScriptFunction *scriptFunc)
 {
     auto *funcScope = scriptFunc->Scope();
+
     auto name = util::Helpers::FunctionName(Allocator(), scriptFunc);
 
     uint32_t idx = functionScopes_.size();

@@ -15,6 +15,7 @@
 
 #include "compiler/lowering/ets/topLevelStmts/importExportDecls.h"
 #include "generated/diagnostic.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -30,7 +31,19 @@ void ImportExportDecls::IntroduceStdlibImportProgram()
             continue;
         }
         if (path == "arkruntime") {
-            // NOTE(vpukhov): stdlib is not imported entirely, there are exceptions
+            /*
+             * NOTE(knazarov): workaround to be able to work with arkruntime entities
+             * in lowerings. Needs to be reworked, since it may lead to user name collisions
+             * or exploitations by users. Currently, we are unable to:
+             * 1. import * as Ident from 'arkruntime', since `AddImportNamespaceSpecifiersToTopBindings`
+             *    does not account correctly for this case
+             * 2. import * as %%gensym%%, since parser will reject such symbols
+             * When both these blockers are resolved, this line should be reworked to the
+             * importStdlibFile += "import * as %%arkruntime%% from \'arkruntime\';";
+             */
+            importStdlibFile += "import {" + std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS) + " as " +
+                                std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) +
+                                std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS) + "} from \'arkruntime\';";
             continue;
         }
         importStdlibFile += "import * from \"" + path + "\";";

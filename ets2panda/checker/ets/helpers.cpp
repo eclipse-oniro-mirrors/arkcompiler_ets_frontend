@@ -536,6 +536,7 @@ void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, chec
                                         ir::ReturnStatement *st)
 {
     auto *const signature = containingFunc->Signature();
+    ES2PANDA_ASSERT(signature);
     signature->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
 
     auto *funcReturnType = signature->ReturnType();

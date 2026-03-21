@@ -1528,7 +1528,7 @@ Signature *ETSChecker::ComposeSignature(ir::ScriptFunction *func, SignatureInfo 
     signature->SetOwnerVar(nameVar);
 
     const auto *returnTypeAnnotation = func->ReturnTypeAnnotation();
-    if (returnTypeAnnotation == nullptr && ((func->Flags() & ir::ScriptFunctionFlags::HAS_RETURN) != 0)) {
+    if (returnTypeAnnotation == nullptr && func->HasReturnStatement()) {
         signature->AddSignatureFlag(SignatureFlags::NEED_RETURN_TYPE);
     }
 
@@ -1706,6 +1706,7 @@ void ETSChecker::BuildFunctionSignature(ir::ScriptFunction *func, bool isConstru
     auto *returnType = func->GetPreferredReturnType() != nullptr
                            ? func->GetPreferredReturnType()
                            : ComposeReturnType(func->ReturnTypeAnnotation(), func->IsAsyncFunc());
+
     auto *signature = ComposeSignature(func, signatureInfo, returnType, nameVar);
     if (signature == nullptr) {  // #23134
         ES2PANDA_ASSERT(IsAnyError());

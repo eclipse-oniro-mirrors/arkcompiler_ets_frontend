@@ -164,7 +164,6 @@ public:
     static void CheckDefaultImport(const ArenaVector<ir::ETSImportDeclaration *> &statements);
     static std::tuple<util::StringView, bool> ParamName(ArenaAllocator *allocator, const ir::Expression *param,
                                                         std::uint32_t index);
-    static bool IsAsyncMethod(ir::AstNode const *node);
     static bool IsExported(ir::AstNode const *node) noexcept;
     static bool IsArrayType(checker::Type *type);
     static checker::Type *CreateUnionOfTupleConstituentTypes(checker::ETSChecker *checker,

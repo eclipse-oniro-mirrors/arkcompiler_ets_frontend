@@ -623,22 +623,31 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
     return SetUpCalleeMethod(ctx, info, cmInfo, func, scopeForMethod);
 }
 
-static ir::MethodDefinition *CreateCallee(public_lib::Context *ctx, ir::ArrowFunctionExpression *lambda,
-                                          LambdaInfo const *info)
+static ir::MethodDefinition *CreateCalleeStackfull(public_lib::Context *ctx, ir::ArrowFunctionExpression *lambda,
+                                                   LambdaInfo const *info)
 {
+    ES2PANDA_ASSERT(!ctx->config->options->IsStacklessCoros());
+
     auto *allocator = ctx->allocator;
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *body = lambda->Function()->Body()->AsBlockStatement();
-    auto calleeName = lambda->Function()->IsAsyncFunc()
-                          ? (util::UString {checker::ETSChecker::GetAsyncImplName(info->name), allocator}).View()
-                          : info->name;
-    auto *forcedReturnType = lambda->Function()->IsAsyncFunc() ? checker->GlobalETSAnyType() : nullptr;
+    const bool isAsync = lambda->Function()->IsAsyncFunc();
+
+    auto calleeName = info->name;
+    if (isAsync) {
+        calleeName = (util::UString {checker::ETSChecker::GetAsyncImplName(info->name), allocator}).View();
+    }
+
+    checker::Type *forcedReturnType = nullptr;
+    if (isAsync) {
+        forcedReturnType = checker->GlobalETSAnyType();
+    }
 
     CalleeMethodInfo cmInfo;
     cmInfo.calleeName = calleeName;
     cmInfo.body = body;
     cmInfo.forcedReturnType = forcedReturnType;
-    if (lambda->Function()->IsAsyncFunc()) {
+    if (isAsync) {
         cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::ASYNC_IMPL;
         auto retTypeAnnotation = lambda->Function()->ReturnTypeAnnotation();
         if (retTypeAnnotation != nullptr && retTypeAnnotation->TsType()->IsETSObjectType()) {
@@ -646,13 +655,14 @@ static ir::MethodDefinition *CreateCallee(public_lib::Context *ctx, ir::ArrowFun
             if ((retType->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType() ||
                  retType->GetOriginalBaseType() == checker->GlobalBuiltinPromiseLikeType()) &&
                 retType->TypeArguments().front() == checker->GlobalVoidType()) {
-                cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::RETURN_PROMISEVOID | cmInfo.auxFunctionFlags;
+                cmInfo.auxFunctionFlags =
+                    ir::ScriptFunctionFlags::ASYNC_IMPL_RETURN_PROMISEVOID | cmInfo.auxFunctionFlags;
             }
         }
     }
     auto *method = CreateCalleeMethod(ctx, lambda, info, &cmInfo);
 
-    if (lambda->Function()->IsAsyncFunc()) {
+    if (isAsync) {
         CalleeMethodInfo cmInfoAsync;
         cmInfoAsync.calleeName = info->name;
         cmInfoAsync.body = nullptr;
@@ -665,6 +675,37 @@ static ir::MethodDefinition *CreateCallee(public_lib::Context *ctx, ir::ArrowFun
     }
 
     return method;
+}
+
+static ir::MethodDefinition *CreateCalleeStackless(public_lib::Context *ctx, ir::ArrowFunctionExpression *lambda,
+                                                   LambdaInfo const *info)
+{
+    ES2PANDA_ASSERT(ctx->config->options->IsStacklessCoros());
+
+    auto calleeName = info->name;
+    CalleeMethodInfo cmInfo;
+    cmInfo.calleeName = calleeName;
+    cmInfo.body = lambda->Function()->Body()->AsBlockStatement();
+    cmInfo.forcedReturnType = nullptr;
+    if (lambda->Function()->IsAsyncFunc()) {
+        cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::ASYNC;
+    }
+
+    auto *method = CreateCalleeMethod(ctx, lambda, info, &cmInfo);
+
+    ES2PANDA_ASSERT(method);
+
+    return method;
+}
+
+static ir::MethodDefinition *CreateCallee(public_lib::Context *ctx, ir::ArrowFunctionExpression *lambda,
+                                          LambdaInfo const *info)
+{
+    if (ctx->config->options->IsStacklessCoros()) {
+        return CreateCalleeStackless(ctx, lambda, info);
+    }
+
+    return CreateCalleeStackfull(ctx, lambda, info);
 }
 
 // The name "=t" used in extension methods has special meaning for the code generator;
@@ -1525,6 +1566,7 @@ static ir::ETSNewClassInstanceExpression *CreateConstructorCall(public_lib::Cont
                                                    objectType->AsETSObjectType());
     auto scopeCtx = checker::ScopeContext(ctx->GetChecker(), nearestScope);
     newExpr->Check(checker);
+
     // NOTE: We need to set back the TsType, which is ETSFunctionType, to ensure to insert correct invoke calls.
     ES2PANDA_ASSERT(lambdaOrFuncRef->TsType()->IsETSFunctionType());
     newExpr->SetTsType(lambdaOrFuncRef->TsType());

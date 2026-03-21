@@ -41,6 +41,11 @@ public:
         return argument_;
     }
 
+    [[nodiscard]] Expression *Argument() noexcept
+    {
+        return argument_;
+    }
+
     [[nodiscard]] AwaitExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
