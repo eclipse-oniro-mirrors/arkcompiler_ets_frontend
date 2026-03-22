@@ -89,6 +89,7 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     ir::Identifier *newArrayId = Gensym(allocator);
     ES2PANDA_ASSERT(newArrayId != nullptr);
     checker::Type *arrayElementType = checker->GetElementTypeOfArray(array->TsType());
+    bool isValueArray = array->TsType()->IsETSArrayType() && array->TsType()->AsETSArrayType()->IsValueArray();
 
     // NOTE: If arrayElementType is ETSUnionType(String|Int) or ETSObjectType(private constructor) or ..., we cannot
     //       use "new Type[]" to declare an array, so we generate a new UnionType "arrayElementType|null" to solve
@@ -114,8 +115,8 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     } else {
         newArrayDeclareStr << "let @@I1 = @@E2;" << std::endl;
         newStmts.emplace_back(newArrayId->Clone(allocator, nullptr));
-        newStmts.emplace_back(
-            CreateUninitializedFixedArray(ctx, newArrayLengthId, checker->CreateETSArrayType(arrayElementType)));
+        newStmts.emplace_back(CreateUninitializedFixedArray(
+            ctx, newArrayLengthId, checker->CreateETSArrayType(arrayElementType, isValueArray)));
     }
 
     ES2PANDA_ASSERT(newArrayLengthId != nullptr);

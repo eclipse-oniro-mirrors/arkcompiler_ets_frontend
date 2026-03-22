@@ -849,6 +849,9 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
     auto *restParameterType = lciInfo->lambdaSignature->RestVar()->TsType();
     auto *restParameterSubstituteType = restParameterType->Substitute(checker->Relation(), lciInfo->substitution);
     auto *elementType = checker->GetElementTypeOfArray(restParameterSubstituteType);
+    bool const isValueArray =
+        restParameterSubstituteType->IsETSArrayType() && restParameterSubstituteType->AsETSArrayType()->IsValueArray();
+
     ir::Statement *args = nullptr;
     if (restParameterSubstituteType->IsETSArrayType()) {
         auto restParameterLen = Gensym(allocator);
@@ -857,7 +860,7 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
             GetArrayReallocationStringFixedArray(startIdx), restParameterLen, lciInfo->restParameterIdentifier,
             lciInfo->restParameterIdentifier, tmpArray,
             CreateUninitializedFixedArray(ctx, restParameterLen->Clone(allocator, nullptr),
-                                          checker->CreateETSArrayType(elementType)),
+                                          checker->CreateETSArrayType(elementType, isValueArray)),
             lciInfo->restArgumentIdentifier, tmpArray, restParameterLen->Clone(allocator, nullptr),
             lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, elementType);
         std::cout << args->DumpEtsSrc() << std::endl;
@@ -887,7 +890,7 @@ static void CreateInvokeMethodRestParameter(public_lib::Context *ctx, LambdaClas
     lciInfo->restParameterIdentifier = restIdent->Name();
     auto *spread = allocator->New<ir::SpreadElement>(ir::AstNodeType::REST_ELEMENT, allocator, restIdent);
     ES2PANDA_ASSERT(spread != nullptr);
-    auto *arr = checker->CreateETSArrayType(checker->GlobalETSAnyType());
+    auto *arr = checker->CreateETSArrayType(checker->GlobalETSAnyType(), false);
 
     auto *typeAnnotation = allocator->New<ir::OpaqueTypeNode>(arr, allocator);
 

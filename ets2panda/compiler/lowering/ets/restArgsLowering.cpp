@@ -197,7 +197,7 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     addStmt("let @@I1 = @@E2;", data.spreadArgsArray,
             CreateUninitializedFixedArray(context,
                                           parser->CreateFormattedExpression(std::to_string(spreadElements.size())),
-                                          checker->CreateETSArrayType(checker->GlobalETSAnyType())));
+                                          checker->CreateETSArrayType(checker->GlobalETSAnyType(), false)));
 
     // calculate the length of array to be created
     addStmt("let @@I1: int = 0;", data.arrayLength->Clone(allocator, nullptr));
@@ -223,11 +223,12 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     auto constraintTypeNode = GetConstraintTypeNode(checker, constraintType, useConstraintType, arrayType);
     // For rest paramter in arrow function(whether it is FixedArray or Array), we need to create a FixedArray, for
     // normal function it depends on the type of the rest parameter.
+    bool isValueArray = arrayType->IsETSArrayType() && arrayType->AsETSArrayType()->IsValueArray();
     if (useConstraintType || arrayType->IsETSArrayType()) {
-        addStmt(
-            "let @@I1 = @@E2;", data.arraySymbol,
-            CreateUninitializedFixedArray(context, data.arrayLength->Clone(allocator, nullptr),
-                                          useConstraintType ? checker->CreateETSArrayType(constraintType) : arrayType));
+        addStmt("let @@I1 = @@E2;", data.arraySymbol,
+                CreateUninitializedFixedArray(
+                    context, data.arrayLength->Clone(allocator, nullptr),
+                    useConstraintType ? checker->CreateETSArrayType(constraintType, isValueArray) : arrayType));
     } else {
         addStmt("let @@I1 = new Array<@@T2>(@@I3);", data.arraySymbol, constraintTypeNode, data.arrayLength);
     }
@@ -413,7 +414,7 @@ static bool CanSkipRestArgsLowering(checker::ETSChecker *checker, const checker:
         std::any_of(copiedArguments.begin(), copiedArguments.end(), [&](ir::Expression *arg) {
             if (arg->IsSpreadElement()) {
                 return !IsSameArrayType(arg->AsSpreadElement()->Argument()->TsType(),
-                                        isArrowType ? checker->CreateETSArrayType(checker->GlobalETSAnyType())
+                                        isArrowType ? checker->CreateETSArrayType(checker->GlobalETSAnyType(), false)
                                                     : restParamType);
             }
             return false;

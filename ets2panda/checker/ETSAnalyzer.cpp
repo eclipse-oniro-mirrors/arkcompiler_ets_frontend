@@ -864,7 +864,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewMultiDimArrayInstanceExpression *exp
     auto *fixedArrayType = elementType;
     for (auto *dim : expr->Dimensions()) {
         checker->ValidateArrayIndex(dim, true);
-        fixedArrayType = checker->CreateETSArrayType(fixedArrayType);
+        fixedArrayType = checker->CreateETSArrayType(fixedArrayType, false);
     }
     expr->SetTsType(checker->CreateETSMultiDimResizableArrayType(elementType, expr->Dimensions().size()));
     if (expr->TsType()->IsETSArrayType()) {
@@ -2159,7 +2159,7 @@ static Signature *CreateRelaxedAnySyntheticCallSignature(ETSChecker *checker)
 
     auto *paramVar =
         varbinder::Scope::CreateVar(checker->ProgramAllocator(), "args", varbinder::VariableFlags::NONE, nullptr);
-    paramVar->SetTsType(checker->CreateETSArrayType(checker->GlobalETSRelaxedAnyType()));
+    paramVar->SetTsType(checker->CreateETSArrayType(checker->GlobalETSRelaxedAnyType(), false));
     info->restVar = paramVar;
     // owner is not set
 
@@ -2326,8 +2326,10 @@ static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallE
 
     auto *const signature = expr->Signature();
     if (signature->RestVar() != nullptr && signature->RestVar()->TsType()->IsETSArrayType()) {
-        auto *elementType = signature->RestVar()->TsType()->AsETSArrayType()->ElementType();
-        auto *const arrayType = checker->CreateETSArrayType(elementType)->AsETSArrayType();
+        auto originalArray =
+            signature->RestVar()->TsType()->AsETSArrayType();  // NOTE(vpukhov): no idea why it is copied currently
+        auto *const arrayType =
+            checker->CreateETSArrayType(originalArray->ElementType(), originalArray->IsValueArray())->AsETSArrayType();
         checker->CreateBuiltinArraySignature(arrayType, arrayType->Rank());
     }
 

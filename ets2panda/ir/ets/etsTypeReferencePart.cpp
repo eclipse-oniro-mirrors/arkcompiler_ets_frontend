@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -132,14 +132,22 @@ checker::VerifiedType ETSTypeReferencePart::Check(checker::ETSChecker *checker)
     return {this, checker->GetAnalyzer()->Check(this)};
 }
 
-static checker::Type *HandleFixedArrayType(checker::ETSChecker *const checker, ETSTypeReferencePart *ref)
+static checker::Type *HandleArrayType(checker::ETSChecker *checker, ETSTypeReferencePart *ref, bool isValueArray)
 {
     auto typeParams = ref->TypeParams();
     if (typeParams == nullptr || typeParams->Params().size() != 1) {
         checker->LogError(diagnostic::FIXED_ARRAY_PARAM_ERROR, {}, ref->Start());
         return checker->GlobalTypeError();
     }
-    return checker->CreateETSArrayType(typeParams->Params()[0]->GetType(checker), ref->IsReadonlyType());
+
+    checker::Type *elementType = typeParams->Params()[0]->GetType(checker);
+
+    if (isValueArray && !checker->MaybeUnboxType(elementType)->IsETSPrimitiveType()) {
+        checker->LogError(diagnostic::VALUE_ARRAY_PRIMITIVE_REQUIRED, {}, ref->Start());
+        return checker->GlobalTypeError();
+    }
+
+    return checker->CreateETSArrayType(elementType, isValueArray);
 }
 
 static checker::Type *HandlePartialType(checker::ETSChecker *const checker, ETSTypeReferencePart *ref)
@@ -188,7 +196,10 @@ static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const che
         return HandlePartialType(checker, ref);
     }
     if (ident->Name() == compiler::Signatures::FIXED_ARRAY_TYPE_NAME) {
-        return HandleFixedArrayType(checker, ref);
+        return HandleArrayType(checker, ref, false);
+    }
+    if (ident->Name() == compiler::Signatures::VALUE_ARRAY_TYPE_NAME) {
+        return HandleArrayType(checker, ref, true);
     }
     return nullptr;
 }

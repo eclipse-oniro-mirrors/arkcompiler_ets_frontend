@@ -151,7 +151,7 @@ static checker::Type *MaybeRecursivelyUnboxReferenceType(UnboxContext *uctx, che
     if (t->IsETSArrayType()) {
         auto *srcArr = t->AsETSArrayType();
         auto *newE = MaybeRecursivelyUnboxType(uctx, srcArr->ElementType(), alreadySeen);
-        return (newE == srcArr->ElementType()) ? t : uctx->checker->CreateETSArrayType(newE);
+        return (newE == srcArr->ElementType()) ? t : uctx->checker->CreateETSArrayType(newE, srcArr->IsValueArray());
     }
 
     if (t->IsETSResizableArrayType()) {

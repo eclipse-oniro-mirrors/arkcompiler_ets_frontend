@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -83,8 +83,9 @@ private:
         // NOTE(mmartin): find a better solution to handle utility type resolution
         return name.Is(Signatures::PARTIAL_TYPE_NAME) || name.Is(Signatures::REQUIRED_TYPE_NAME) ||
                name.Is(Signatures::READONLY_TYPE_NAME) || name.Is(Signatures::FIXED_ARRAY_TYPE_NAME) ||
-               name.Is(compiler::Signatures::ANY_TYPE_NAME) || name.Is(Signatures::ANY) ||
-               name.Is(compiler::Signatures::AWAITED_TYPE_NAME) || name.Is(compiler::Signatures::RETURN_TYPE_TYPE_NAME);
+               name.Is(Signatures::VALUE_ARRAY_TYPE_NAME) || name.Is(compiler::Signatures::ANY_TYPE_NAME) ||
+               name.Is(Signatures::ANY) || name.Is(compiler::Signatures::AWAITED_TYPE_NAME) ||
+               name.Is(compiler::Signatures::RETURN_TYPE_TYPE_NAME);
     }
 
     bool IsUnionMemberAccess()

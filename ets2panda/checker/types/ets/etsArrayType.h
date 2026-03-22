@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,10 @@
 namespace ark::es2panda::checker {
 class ETSArrayType : public Type {
 public:
-    explicit ETSArrayType(Type *elementType) : Type(TypeFlag::ETS_ARRAY), element_(elementType) {}
+    explicit ETSArrayType(Type *elementType, bool isValueArray = false)
+        : Type(TypeFlag::ETS_ARRAY), element_(elementType), isValueArray_(isValueArray)
+    {
+    }
 
     Type *ElementType()
     {
@@ -31,6 +34,11 @@ public:
     const Type *ElementType() const
     {
         return element_;
+    }
+
+    bool IsValueArray() const
+    {
+        return isValueArray_;
     }
 
     void SetElementType(Type *element)
@@ -57,6 +65,8 @@ public:
 
 private:
     Type *element_;
+    // NOTE(vpukhov): temporary state to distinguish broken FixedArrays and normal ValueArrays
+    bool isValueArray_;
 };
 }  // namespace ark::es2panda::checker
 

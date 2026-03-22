@@ -179,7 +179,8 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
     auto cName = classDef->Ident()->Name();
     if (cName == compiler::Signatures::PARTIAL_TYPE_NAME || cName == compiler::Signatures::READONLY_TYPE_NAME ||
         cName == compiler::Signatures::REQUIRED_TYPE_NAME || cName == compiler::Signatures::FIXED_ARRAY_TYPE_NAME ||
-        cName == compiler::Signatures::AWAITED_TYPE_NAME || cName == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
+        cName == compiler::Signatures::VALUE_ARRAY_TYPE_NAME || cName == compiler::Signatures::AWAITED_TYPE_NAME ||
+        cName == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
         checker->LogError(diagnostic::USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME, {cName},
                           type->GetDeclNode()->Start());
         type->SetSuperType(checker->GlobalETSObjectType());
@@ -457,7 +458,7 @@ bool ETSChecker::CheckDefaultTypeParameter(const ir::TSTypeParameter *param, Typ
             if (defaultTypePart->Name()->IsTSQualifiedName()) {
                 defaultTypePart->Name()->Check(this);
             }
-            if (IsFixedArray(defaultTypePart)) {
+            if (IsFixedArray(defaultTypePart) || IsValueArray(defaultTypePart)) {
                 defaultTypePart->Check(this);
             }
             auto *const variable = defaultTypePart->GetIdent()->Variable();

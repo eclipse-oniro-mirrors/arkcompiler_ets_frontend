@@ -120,21 +120,20 @@ ETSResizableArrayType *ETSChecker::CreateETSResizableArrayType(Type *element)
     return arrayType->Substitute(Relation(), &substitution);
 }
 
-ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isCachePolluting)
+ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isValueArray)
 {
-    auto res = arrayTypes_.find({elementType, isCachePolluting});
+    auto res = arrayTypes_.find({elementType, isValueArray});
     if (res != arrayTypes_.end()) {
         return res->second;
     }
 
-    auto *arrayType = ProgramAllocator()->New<ETSArrayType>(elementType);
+    auto *arrayType = ProgramAllocator()->New<ETSArrayType>(elementType, isValueArray);
 
     ES2PANDA_ASSERT(arrayType != nullptr);
     std::stringstream ss;
     arrayType->ToAssemblerTypeWithRank(ss);
-    // arrayType->SetAssemblerName(util::UString(ss.str(), ProgramAllocator()).View());
 
-    auto it = arrayTypes_.insert({{elementType, isCachePolluting}, arrayType});
+    auto it = arrayTypes_.insert({{elementType, isValueArray}, arrayType});
     if (it.second && (!elementType->IsTypeParameter() || !elementType->IsETSTypeParameter())) {
         CreateBuiltinArraySignature(arrayType, arrayType->Rank());
     }
