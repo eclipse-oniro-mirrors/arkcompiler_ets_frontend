@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,6 @@
 
 
 /* @@? 16:12 Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */
-/* @@? 16:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'. */
+/* @@? 16:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'BYTECODE', or 'RUNTIME'. */
 /* @@? 16:12 Error Semantic error ESE0143: Unresolved reference policy */
 /* @@? 16:12 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

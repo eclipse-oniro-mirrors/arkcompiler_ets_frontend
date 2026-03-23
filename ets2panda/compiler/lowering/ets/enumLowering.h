@@ -23,6 +23,8 @@ namespace ark::es2panda::compiler {
 class EnumLoweringPhase : public PhaseForAllPrograms {
 public:
     static constexpr std::string_view STRING_REFERENCE_TYPE {"String"};
+    static constexpr std::string_view STRING_TYPE {"string"};
+    static constexpr std::string_view NUMBER_TYPE {"number"};
     static constexpr std::string_view IDENTIFIER_I {"i"};
     static constexpr std::string_view PARAM_NAME {"name"};
     static constexpr std::string_view PARAM_VALUE {"value"};
@@ -144,6 +146,9 @@ private:
                                                 ir::TSEnumDeclaration const *const enumDecl);
     ir::Expression *CheckEnumTypeForItemFields(EnumType enumType, ir::TSEnumMember *const member);
     checker::AstNodePtr TransformEnumChildrenRecursively(checker::AstNodePtr &ast);
+    ir::ClassDeclaration *CreateEnumClassByPrimitiveType(ir::TSEnumDeclaration *const enumDecl,
+                                                         const DeclarationFlags &flags, bool &hasLoggedError,
+                                                         ir::TypeNode *typeAnnotation);
     checker::AstNodePtr TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast);
     ArenaAllocator *Allocator();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,4 +33,4 @@ function foo(){}
 /* @@? 18:2 Error Semantic error ESE0006: Only standard annotations are allowed to be applied on annotations. */
 /* @@? 21:2 Error Semantic error ESE1122645: Annotation '@Retention' can only be applied to annotation declarations. */
 /* @@? 24:2 Error Semantic error ESE1122645: Annotation '@Retention' can only be applied to annotation declarations. */
-/* @@? 27:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'. */
+/* @@? 27:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'BYTECODE', or 'RUNTIME'. */

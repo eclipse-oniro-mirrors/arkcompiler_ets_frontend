@@ -139,7 +139,7 @@ semantic:
 
 - name: ANNOTATION_POLICY_INVALID
   id: 4
-  message: "Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'."
+  message: "Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'BYTECODE', or 'RUNTIME'."
 
 - name: ANNOTATION_TARGET_DUPLICATE
   id: 263981
