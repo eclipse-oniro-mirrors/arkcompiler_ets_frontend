@@ -179,8 +179,12 @@ parser::Program *ImportPathManager::GatherImportInfo(parser::Program *importer, 
     AddOutputMatching(importInfo.ResolvedSource(), FormAbcFilePath(importInfo));
     LOG(DEBUG, ES2PANDA) << "[" << importer->ModuleInfo().moduleName << "] "
                          << "Import " << importPath->ToString() << " resolved to " << importInfo.ResolvedSource();
-
-    return LookupImportDataAndIntroduceProgram(&importInfo);
+    auto *importedProgram = LookupImportDataAndIntroduceProgram(&importInfo);
+    if ((importedProgram == importer) && !importer->IsStdLib()) {
+        DE()->LogDiagnostic(diagnostic::IMPORT_ITSELF, util::DiagnosticMessageParams {importInfo.ResolvedSource()},
+                            srcPos_);
+    }
+    return importedProgram;
 }
 
 static bool IsRelativePath(std::string_view path)
@@ -241,9 +245,6 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
             TryMatchStaticResolvedPath(&result);
         } else {
             TryMatchDynamicResolvedPath(&result);
-        }
-        if (result.resolvedPath == curModulePath) {
-            DE()->LogDiagnostic(diagnostic::IMPORT_ITSELF, util::DiagnosticMessageParams {curModulePath});
         }
     } else {
         result = ResolveAbsolutePath(importPath);
