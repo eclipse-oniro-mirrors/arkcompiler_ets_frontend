@@ -30,6 +30,7 @@ exclusionlist:
   - "(^|[\\/])foundation[\\/]ability[\\/]ability_runtime([\\/]|$)"
   - "(^|[\\/])foundation[\\/]ability[\\/]dmsfwk([\\/]|$)"
   - "(^|[\\/])foundation[\\/]ability[\\/]form_fwk([\\/]|$)"
+  - "(^|[\\/])foundation[\\/]arkui[\\/]ace_engine([\\/]|$)"
 
 - name: "override_field"
   paths:
