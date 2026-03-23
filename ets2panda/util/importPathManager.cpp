@@ -1274,7 +1274,20 @@ static std::optional<ArenaString> DeduceModuleNameByMatchingWithArktsconfig(cons
     using MatcherT = std::optional<ArenaString> (*)(const ArkTsConfig &, std::string_view, const ImportPathManager &);
     std::vector<MatcherT> matchers {};
 
-    // 1. Try 'dynamicPaths' (aka 'dependencies') field:
+    // 1. Try 'cacheDir` field:
+    auto cacheDirMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
+                              [[maybe_unused]] const ImportPathManager &ipm) -> std::optional<ArenaString> {
+        if (cfg.CacheDir().empty() || !Helpers::StartsWith(resolvedSource, cfg.CacheDir())) {
+            return std::nullopt;
+        }
+        // don't append package name, since cacheDir already have it
+        std::optional<ArenaString> mName = OhmurlToMname(CheckAndRebaseOhmurl(ipm, resolvedSource, cfg.CacheDir(), ""));
+        ES2PANDA_ASSERT(mName->at(0) != '.');
+        return mName;
+    };
+    matchers.emplace_back(cacheDirMatcher);
+
+    // 2. Try 'dynamicPaths' (aka 'dependencies') field:
     auto dynamicPathMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
                                  [[maybe_unused]] const ImportPathManager &ipm) {
         std::optional<ArenaString> res {};
@@ -1285,12 +1298,13 @@ static std::optional<ArenaString> DeduceModuleNameByMatchingWithArktsconfig(cons
     };
     matchers.emplace_back(dynamicPathMatcher);
 
-    // 2. Try 'paths' field:
+    // 3. Try 'paths' field:
     auto pathsMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
                            const ImportPathManager &ipm) -> std::optional<ArenaString> {
         for (auto const &[unitName, unitPaths] : cfg.Paths()) {
             auto it = std::find_if(unitPaths.begin(), unitPaths.end(), [resolvedSource](const auto &unitPath) {
                 ES2PANDA_ASSERT(!unitPath.empty());
+                // NOTE(33661) should be Helpers::StartsWith(resolvedSource, unitName)
                 return Helpers::StartsWith(resolvedSource, unitPath);
             });
             if (it != unitPaths.end()) {
