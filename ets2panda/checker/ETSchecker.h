@@ -959,6 +959,10 @@ private:
     // Check type alias for recursive cases
     bool IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
                                      std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
+    bool CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
+                                         std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
+    bool CheckTypeParamsRecursion(ir::TSTypeParameterInstantiation *typeParams,
+                                  std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
 
     bool IsExceptionOrErrorType(checker::Type *type);
 
