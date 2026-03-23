@@ -1349,7 +1349,7 @@
                             }
                           },
                           "init": {
-                            "type": "ETSNewMultiDimArrayInstanceExpression",
+                            "type": "ETSNewClassInstanceExpression",
                             "typeReference": {
                               "type": "ETSPrimitiveType",
                               "loc": {
@@ -1365,40 +1365,7 @@
                                 }
                               }
                             },
-                            "dimensions": [
-                              {
-                                "type": "NumberLiteral",
-                                "value": 4,
-                                "loc": {
-                                  "start": {
-                                    "line": 27,
-                                    "column": 32,
-                                    "program": "array.ets"
-                                  },
-                                  "end": {
-                                    "line": 27,
-                                    "column": 33,
-                                    "program": "array.ets"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "NumberLiteral",
-                                "value": 4,
-                                "loc": {
-                                  "start": {
-                                    "line": 27,
-                                    "column": 35,
-                                    "program": "array.ets"
-                                  },
-                                  "end": {
-                                    "line": 27,
-                                    "column": 36,
-                                    "program": "array.ets"
-                                  }
-                                }
-                              }
-                            ],
+                            "arguments": [],
                             "loc": {
                               "start": {
                                 "line": 27,
@@ -1407,7 +1374,7 @@
                               },
                               "end": {
                                 "line": 27,
-                                "column": 37,
+                                "column": 38,
                                 "program": "array.ets"
                               }
                             }
@@ -1420,7 +1387,7 @@
                             },
                             "end": {
                               "line": 27,
-                              "column": 37,
+                              "column": 38,
                               "program": "array.ets"
                             }
                           }
@@ -1529,9 +1496,11 @@
       "program": "array.ets"
     },
     "end": {
-      "line": 29,
+      "line": 32,
       "column": 1,
       "program": "array.ets"
     }
   }
 }
+[array.ets:27:23] Semantic error ESE0318: Type 'Byte' cannot be assigned to type 'Array<Array<Byte>>'
+[array.ets:27:37] Syntax error ESY63526: Expression to initialize array element is missed.

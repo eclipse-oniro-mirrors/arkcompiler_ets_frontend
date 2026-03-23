@@ -422,7 +422,7 @@
               }
             },
             "value": {
-              "type": "ETSNewMultiDimArrayInstanceExpression",
+              "type": "ETSNewClassInstanceExpression",
               "typeReference": {
                 "type": "ETSPrimitiveType",
                 "loc": {
@@ -438,40 +438,7 @@
                   }
                 }
               },
-              "dimensions": [
-                {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 17,
-                      "program": "class_instance.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 18,
-                      "program": "class_instance.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "Identifier",
-                  "name": "b",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 20,
-                      "program": "class_instance.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 21,
-                      "program": "class_instance.ets"
-                    }
-                  }
-                }
-              ],
+              "arguments": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -480,7 +447,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 22,
+                  "column": 23,
                   "program": "class_instance.ets"
                 }
               }
@@ -500,7 +467,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 22,
+                "column": 23,
                 "program": "class_instance.ets"
               }
             }
@@ -524,7 +491,7 @@
               }
             },
             "value": {
-              "type": "ETSNewMultiDimArrayInstanceExpression",
+              "type": "ETSNewClassInstanceExpression",
               "typeReference": {
                 "type": "ETSPrimitiveType",
                 "loc": {
@@ -540,88 +507,7 @@
                   }
                 }
               },
-              "dimensions": [
-                {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 21,
-                      "column": 17,
-                      "program": "class_instance.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 18,
-                      "program": "class_instance.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "Identifier",
-                  "name": "b",
-                  "loc": {
-                    "start": {
-                      "line": 21,
-                      "column": 20,
-                      "program": "class_instance.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 21,
-                      "program": "class_instance.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "BinaryExpression",
-                  "operator": "+",
-                  "left": {
-                    "type": "Identifier",
-                    "name": "a",
-                    "loc": {
-                      "start": {
-                        "line": 21,
-                        "column": 23,
-                        "program": "class_instance.ets"
-                      },
-                      "end": {
-                        "line": 21,
-                        "column": 24,
-                        "program": "class_instance.ets"
-                      }
-                    }
-                  },
-                  "right": {
-                    "type": "Identifier",
-                    "name": "b",
-                    "loc": {
-                      "start": {
-                        "line": 21,
-                        "column": 27,
-                        "program": "class_instance.ets"
-                      },
-                      "end": {
-                        "line": 21,
-                        "column": 28,
-                        "program": "class_instance.ets"
-                      }
-                    }
-                  },
-                  "loc": {
-                    "start": {
-                      "line": 21,
-                      "column": 23,
-                      "program": "class_instance.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 28,
-                      "program": "class_instance.ets"
-                    }
-                  }
-                }
-              ],
+              "arguments": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -630,7 +516,7 @@
                 },
                 "end": {
                   "line": 21,
-                  "column": 29,
+                  "column": 30,
                   "program": "class_instance.ets"
                 }
               }
@@ -650,7 +536,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 29,
+                "column": 30,
                 "program": "class_instance.ets"
               }
             }
@@ -690,9 +576,11 @@
       "program": "class_instance.ets"
     },
     "end": {
-      "line": 21,
-      "column": 30,
+      "line": 24,
+      "column": 95,
       "program": "class_instance.ets"
     }
   }
 }
+[class_instance.ets:20:22] Syntax error ESY63526: Expression to initialize array element is missed.
+[class_instance.ets:21:29] Syntax error ESY63526: Expression to initialize array element is missed.

@@ -16,7 +16,6 @@
 let isPrime: FixedArray<int> = new int[[]][[]
 
 
-/* @@? 16:32 Error Semantic error ESE0318: Type 'Array<Array<Int>>' cannot be assigned to type 'FixedArray<Int>' */
-/* @@? 16:40 Error Semantic error ESE0301: Can't resolve array type */
-/* @@? 16:44 Error Semantic error ESE0301: Can't resolve array type */
-/* @@? 22:79 Error Syntax error ESY0230: Expected ']', got 'end of stream'. */
+/* @@? 16:32 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'FixedArray<Int>' */
+/* @@? 21:95 Error Syntax error ESY0230: Expected ']', got 'end of stream'. */
+/* @@? 21:95 Error Syntax error ESY63526: Expression to initialize array element is missed. */
