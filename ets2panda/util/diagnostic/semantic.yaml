@@ -445,6 +445,14 @@ semantic:
   id: 154289
   message: "Enum '{}' cannot be used as object"
 
+- name: ENUM_CONVERSION_ERROR_FROM
+  id: 593373
+  message: "Conversion from '{}' to '{}' is not supported. Please use 'EnumType.fromValue(value)'"
+
+- name: ENUM_CONVERSION_ERROR_TO
+  id: 593372
+  message: "Conversion from '{}' to '{}' is not supported. Please use implicit conversion of enum value to '{}' value or call 'enumValue.valueOf()'"
+
 - name: ERROR_ARKTS_NO_CONDITIONAL_TYPES
   id: 136365
   message: "Conditional type aliases are not supported. Introduce a new type with constraints explicitly, or rewrite logic

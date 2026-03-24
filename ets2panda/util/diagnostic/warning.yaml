@@ -61,11 +61,6 @@ warning:
   id: 20000
   message: "The source file '{}' is empty."
 
-- name: ENUM_DEPRECATED_CAST
-  id: 30
-  message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed. Please use 'valueOf' or 'fromValue'."
-  strict: true
-
 - name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
   id: 71336
   message: "Exported {} '{}' requires type annotation."
@@ -194,6 +189,7 @@ warning:
 graveyard:
 - 27
 - 28
+- 30
 - 11567
 - 49710
 - 59220
