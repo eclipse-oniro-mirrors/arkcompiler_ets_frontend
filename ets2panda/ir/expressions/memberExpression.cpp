@@ -373,7 +373,8 @@ static checker::Type *AdjustRecordReturnType(checker::Type *type, checker::Type 
             return recordValueType;
         }
 
-        if (type->IsETSFunctionType() && type->AsETSFunctionType()->Name().Is(compiler::Signatures::GET_INDEX_METHOD)) {
+        if (type->IsETSFunctionType() && !type->IsETSArrowType() &&
+            type->AsETSFunctionType()->Name().Is(compiler::Signatures::GET_INDEX_METHOD)) {
             type->AsETSFunctionType()->CallSignatures()[0]->SetReturnType(recordValueType);
         }
     }

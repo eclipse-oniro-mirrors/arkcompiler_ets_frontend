@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,10 +34,9 @@ function main() {
     let n = new Partial<Partial>()
 }
 
-
-/* @@? 16:16 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
-/* @@? 20:16 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
-/* @@? 24:15 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
+/* @@? 16:7 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 20:7 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 24:7 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
 /* @@? 29:13 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
 /* @@? 30:13 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
 /* @@? 31:13 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */

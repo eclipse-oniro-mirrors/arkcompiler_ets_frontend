@@ -2932,6 +2932,8 @@ static void SetTypeforRecordProperties(const ir::ObjectExpression *expr, checker
     for (auto *const recordProperty : recordProperties) {
         ir::Expression *recordPropertyExpr = nullptr;
         if (recordProperty->IsProperty()) {
+            recordProperty->AsProperty()->Key()->SetPreferredType(typeArguments[0]);
+            recordProperty->AsProperty()->Key()->Check(checker);
             recordPropertyExpr = recordProperty->AsProperty()->Value();
         } else if (recordProperty->IsSpreadElement()) {
             recordPropertyExpr = recordProperty->AsSpreadElement()->Argument();

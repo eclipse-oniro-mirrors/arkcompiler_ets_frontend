@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2025 Huawei Device Co., Ltd.
+  * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -31,11 +31,16 @@ function foo<T>(){
   let recordarrT  = Type.from<Record<Array<T>,Array<T>>>();
 }
 
+/* @@? 17:19 Error Semantic error ESE0127: No matching call signature for from() */
 /* @@? 17:36 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 21:20 Error Semantic error ESE0127: No matching call signature for from() */
 /* @@? 21:38 Error Semantic error ESE124644: T in Required<T> must be a class or an interface type. */
+/* @@? 25:20 Error Semantic error ESE0127: No matching call signature for from() */
 /* @@? 25:38 Error Semantic error ESE124644: T in Readonly<T> must be a class or an interface type. */
 /* @@? 29:18 Error Semantic error ESE655063: Generic function from requires explicit type arguments when used as a value. */
 /* @@? 29:28 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in Record. Record() is not allowed. */
 /* @@? 29:28 Error Semantic error ESE0002: Type 'Record<K,V>' has no call signatures. */
-/* @@? 30:37 Error Semantic error ESE0228: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
-/* @@? 31:37 Error Semantic error ESE0228: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+/* @@? 30:21 Error Semantic error ESE0127: No matching call signature for from() */
+/* @@? 30:37 Error Semantic error ESE0228: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>|BaseEnum<Float>|BaseEnum<Double>|BaseEnum<Byte>|BaseEnum<Short>' constraint */
+/* @@? 31:21 Error Semantic error ESE0127: No matching call signature for from() */
+/* @@? 31:37 Error Semantic error ESE0228: Type argument 'Array<T>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>|BaseEnum<Float>|BaseEnum<Double>|BaseEnum<Byte>|BaseEnum<Short>' constraint */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,4 +21,5 @@ function main(){
         2: 2
     }
 }
-/* @@@ label Error Semantic error ESE0228: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+
+/* @@? 19:32 Error Semantic error ESE0228: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>|BaseEnum<Float>|BaseEnum<Double>|BaseEnum<Byte>|BaseEnum<Short>' constraint */

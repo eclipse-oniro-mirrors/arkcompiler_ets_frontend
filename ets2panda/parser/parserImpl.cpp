@@ -1339,6 +1339,53 @@ void ParserImpl::ParseIndexSignature()
     EatTypeAnnotation();
 }
 
+static bool IsUtilityType(const lexer::Token &token)
+{
+    return token.Ident().Is(compiler::Signatures::PARTIAL_TYPE_NAME) ||
+           token.Ident().Is(compiler::Signatures::READONLY_TYPE_NAME) ||
+           token.Ident().Is(compiler::Signatures::REQUIRED_TYPE_NAME) ||
+           token.Ident().Is(compiler::Signatures::AWAITED_TYPE_NAME) ||
+           token.Ident().Is(compiler::Signatures::RETURN_TYPE_TYPE_NAME);
+}
+
+ir::Identifier *ParserImpl::ValidateIdentifierAndReportErrors(const lexer::Token &token, bool isUserDefinedType,
+                                                              TypeAnnotationParsingOptions options,
+                                                              const lexer::SourcePosition &tokenStart)
+{
+    bool allowTypeParam = (options & TypeAnnotationParsingOptions::ADD_TYPE_PARAMETER_BINDING) != 0;
+    if (!allowTypeParam && !IsValidIdentifierName(token)) {
+        LogError(diagnostic::PREDEFINED_TYPE_AS_IDENTIFIER, {token.Ident()}, tokenStart);
+        lexer_->NextToken();
+        return AllocBrokenExpression(tokenStart);
+    }
+    if (!allowTypeParam && IsUtilityType(token)) {
+        LogError(diagnostic::USING_RESERVED_NAME_AS_VARIABLE_OR_TYPE_NAME, {token.Ident()}, tokenStart);
+        lexer_->NextToken();
+        return AllocBrokenExpression(tokenStart);
+    }
+    if (token.IsDefinableTypeName() && isUserDefinedType) {
+        LogError(diagnostic::NOT_ALLOWED_USER_DEFINED_TYPE);
+    }
+    return nullptr;
+}
+
+ir::Identifier *ParserImpl::HandleEmptyTokenNameError(const lexer::Token &token, lexer::TokenType tokenType,
+                                                      const lexer::SourcePosition &tokenStart,
+                                                      TypeAnnotationParsingOptions options)
+{
+    if ((options & TypeAnnotationParsingOptions::REPORT_ERROR) == 0) {
+        return nullptr;
+    }
+    if (token.IsLiteral()) {
+        LogError(diagnostic::LITERAL_VALUE_IDENT, {token.ToString()}, tokenStart);
+    } else if (token.IsKeyword()) {
+        LogError(diagnostic::HARD_KEYWORD_IDENT, {token.ToString()}, tokenStart);
+    }
+    LogError(diagnostic::IDENTIFIER_EXPECTED_HERE, {TokenToString(tokenType)}, tokenStart);
+    lexer_->NextToken();
+    return AllocBrokenExpression(tokenStart);
+}
+
 ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, bool isUserDefinedType,
                                              TypeAnnotationParsingOptions options)
 {
@@ -1351,14 +1398,9 @@ ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, 
     }
 
     auto const &tokenStart = token.Start();
-    if (!IsValidIdentifierName(token) && ((options & TypeAnnotationParsingOptions::ADD_TYPE_PARAMETER_BINDING) == 0)) {
-        LogError(diagnostic::PREDEFINED_TYPE_AS_IDENTIFIER, {token.Ident()}, tokenStart);
-        lexer_->NextToken();
-        return AllocBrokenExpression(tokenStart);
-    }
-
-    if (token.IsDefinableTypeName() && isUserDefinedType) {
-        LogError(diagnostic::NOT_ALLOWED_USER_DEFINED_TYPE);
+    if (auto *errorIdent = ValidateIdentifierAndReportErrors(token, isUserDefinedType, options, tokenStart);
+        errorIdent != nullptr) {
+        return errorIdent;
     }
 
     util::StringView tokenName {};
@@ -1376,17 +1418,7 @@ ir::Identifier *ParserImpl::ExpectIdentifier([[maybe_unused]] bool isReference, 
     }
 
     if (tokenName.Empty()) {
-        if ((options & TypeAnnotationParsingOptions::REPORT_ERROR) == 0) {
-            return nullptr;
-        }
-        if (token.IsLiteral()) {
-            LogError(diagnostic::LITERAL_VALUE_IDENT, {token.ToString()}, tokenStart);
-        } else if (token.IsKeyword()) {
-            LogError(diagnostic::HARD_KEYWORD_IDENT, {token.ToString()}, tokenStart);
-        }
-        LogError(diagnostic::IDENTIFIER_EXPECTED_HERE, {TokenToString(tokenType)}, tokenStart);
-        lexer_->NextToken();
-        return AllocBrokenExpression(tokenStart);
+        return HandleEmptyTokenNameError(token, tokenType, tokenStart, options);
     }
 
     auto *ident = AllocNode<ir::Identifier>(tokenName, Allocator());

@@ -23,25 +23,25 @@
 
 namespace ark::es2panda::compiler {
 
-using KeyType = std::variant<int32_t, int64_t, float, double, util::StringView>;
+using KeyType = std::variant<double, util::StringView>;
 using KeySetType = std::unordered_set<KeyType>;
 
 static KeyType TypeToKey(checker::Type *type)
 {
     if (type->IsByteType()) {
-        return type->AsByteType()->GetValue();
+        return static_cast<double>(type->AsByteType()->GetValue());
     }
     if (type->IsShortType()) {
-        return type->AsShortType()->GetValue();
+        return static_cast<double>(type->AsShortType()->GetValue());
     }
     if (type->IsIntType()) {
-        return type->AsIntType()->GetValue();
+        return static_cast<double>(type->AsIntType()->GetValue());
     }
     if (type->IsLongType()) {
-        return type->AsLongType()->GetValue();
+        return static_cast<double>(type->AsLongType()->GetValue());
     }
     if (type->IsFloatType()) {
-        return type->AsFloatType()->GetValue();
+        return static_cast<double>(type->AsFloatType()->GetValue());
     }
     if (type->IsDoubleType()) {
         return type->AsDoubleType()->GetValue();
@@ -51,6 +51,15 @@ static KeyType TypeToKey(checker::Type *type)
     }
     ES2PANDA_UNREACHABLE();
     return {};
+}
+
+static std::optional<util::StringView> ComputeMemberExpressionKey(ir::Expression *key, public_lib::Context *ctx)
+{
+    auto *memberExpr = key->AsMemberExpression();
+    util::UString stableKey(key->TsType()->AsETSObjectType()->Name(), ctx->Allocator());
+    stableKey.Append('.');
+    stableKey.Append(memberExpr->Property()->AsIdentifier()->Name());
+    return stableKey.View();
 }
 
 static ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx);
@@ -83,11 +92,7 @@ static void CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, pu
         auto *prop = it->AsProperty();
         switch (prop->Key()->Type()) {
             case ir::AstNodeType::NUMBER_LITERAL: {
-                auto number = prop->Key()->AsNumberLiteral()->Number();
-                if ((number.IsInt() && keySet.insert(number.GetInt()).second) ||
-                    (number.IsLong() && keySet.insert(number.GetLong()).second) ||
-                    (number.IsFloat() && keySet.insert(number.GetFloat()).second) ||
-                    (number.IsDouble() && keySet.insert(number.GetDouble()).second)) {
+                if (keySet.insert(prop->Key()->AsNumberLiteral()->Number().GetDouble()).second) {
                     continue;
                 }
                 ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_PROP_NAME_COLLISION, {}, expr->Start());
@@ -98,6 +103,14 @@ static void CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, pu
                     continue;
                 }
                 ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_PROP_NAME_COLLISION, {}, expr->Start());
+                break;
+            }
+            case ir::AstNodeType::MEMBER_EXPRESSION: {
+                auto enumKey = ComputeMemberExpressionKey(prop->Key(), ctx);
+                if (enumKey.has_value() && keySet.insert(enumKey.value()).second) {
+                    continue;
+                }
+                ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_UNKNOWN_PROP, {}, expr->Start());
                 break;
             }
             default: {

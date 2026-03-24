@@ -289,6 +289,9 @@ ir::Expression *ETSParser::ParsePropertyKey([[maybe_unused]] ExpressionParseFlag
 
     switch (Lexer()->GetToken().Type()) {
         case lexer::TokenType::LITERAL_IDENT: {
+            if (Lexer()->Lookahead() == lexer::LEX_CHAR_DOT) {
+                return ParseMemberExpression();
+            }
             const util::StringView &ident = Lexer()->GetToken().Ident();
             key = AllocNode<ir::Identifier>(ident, Allocator());
             ES2PANDA_ASSERT(key != nullptr);
