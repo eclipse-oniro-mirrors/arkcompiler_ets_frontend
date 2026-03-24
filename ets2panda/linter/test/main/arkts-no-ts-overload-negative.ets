@@ -38,5 +38,39 @@ Column(columnOpts)
 
 // Negative case 6: Using variable with explicit type for Row - no ambiguity error
 const rowOpts: RowOptions = { space: 20 };
-Row(rowOpts) 
+Row(rowOpts)
+
+
+// Negative case 7: Column with explicit as ColumnOptions - no ambiguity error
+Column({ space: 30 } as ColumnOptions)
+
+
+// Negative case 8: Row with explicit as RowOptions - no ambiguity error
+Row({ space: '40px' } as RowOptions)
+
+
+// Negative case 9: Column with explicit as ColumnOptionsV2 - no ambiguity error
+Column({ space: $r('app.string.space') } as ColumnOptionsV2)
+
+
+// Negative case 10: Row with explicit as RowOptionsV2 - no ambiguity error
+Row({ space: $r('app.string.space') } as RowOptionsV2)
+
+
+// Negative case 11: Column with undefined parameter - no ambiguity error
+Column(undefined)
+
+
+// Negative case 12: Row with undefined parameter - no ambiguity error
+Row(undefined)
+
+
+// Negative case 13: Using typed variable with ColumnOptionsV2 - no ambiguity error
+const columnOptsV2: ColumnOptionsV2 = { space: 50 };
+Column(columnOptsV2)
+
+
+// Negative case 14: Using typed variable with RowOptionsV2 - no ambiguity error
+const rowOptsV2: RowOptionsV2 = { space: 60 };
+Row(rowOptsV2) 
 

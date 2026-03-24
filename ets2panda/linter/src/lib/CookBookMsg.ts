@@ -448,8 +448,7 @@ cookBookTag[413] =
 cookBookTag[414] = 'APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)';
 cookBookTag[415] =
   '"enableV2Compatibility" function and "makeV1Observed" function is not supported (arkui-no-enableV2Compatibility-and-makeV1Observed-function)';
-cookBookTag[416] =
-  'Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)';
+cookBookTag[416] = '';
 cookBookTag[417] = 'Convert the number type to a specific int/long/double type (sdk-api-num2int)';
 cookBookTag[418] = 'Instance method shall bind the \'this\' instance by default (arkts-instance-method-bind-this)';
 cookBookTag[419] =

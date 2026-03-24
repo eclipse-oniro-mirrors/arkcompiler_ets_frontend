@@ -303,7 +303,6 @@ export enum FaultID {
   EntryHasInvalidLocalStorageWithV2,
   SdkApiStaticOverload,
   EnableV2CompatibilityFunctionNotSupported,
-  SdkUnionTypeAmbiguity,
   // this should always be last enum
   LAST_ID
 }
