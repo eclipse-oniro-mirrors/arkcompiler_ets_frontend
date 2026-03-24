@@ -110,9 +110,10 @@ static int EmitBytecodeToBinaryFile(ark::pandasm::Program *prog, const std::stri
     return 0;
 }
 
-int GenerateBinaryFiles(std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> &progs,
-                        const util::Options &options, const ReporterFun &reporter)
+int GenerateBinaryFiles([[maybe_unused]] std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> &progs,
+                        [[maybe_unused]] const util::Options &options, [[maybe_unused]] const ReporterFun &reporter)
 {
+#if not defined PANDA_TARGET_MOBILE
     for (auto &[abcFile, prog] : progs) {
         auto progParentDir = ark::os::GetParentDir(abcFile);
         fs::create_directories(progParentDir);
@@ -121,6 +122,7 @@ int GenerateBinaryFiles(std::unordered_map<std::string, std::unique_ptr<ark::pan
             return 1;
         }
     }
+#endif
 
     return 0;
 }

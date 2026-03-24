@@ -561,8 +561,9 @@ std::string ImportPathManager::FormEtscacheFilePath(std::string moduleName, cons
     return cacheDir + util::PATH_DELIMITER + moduleName + std::string {CACHE_SUFFIX};
 }
 
-std::string ImportPathManager::FormAbcFilePath(const ImportMetadata &imd) const
+std::string ImportPathManager::FormAbcFilePath([[maybe_unused]] const ImportMetadata &imd) const
 {
+#if not defined PANDA_TARGET_MOBILE
     std::string outputDir;
     ES2PANDA_ASSERT(Context() != nullptr && Context()->config != nullptr);
     auto *opts = Context()->config->options;
@@ -594,6 +595,8 @@ std::string ImportPathManager::FormAbcFilePath(const ImportMetadata &imd) const
     abcFile += ABC_SUFFIX;
 
     return abcFile;
+#endif
+    return "";
 }
 
 class EtscacheFileLock {
