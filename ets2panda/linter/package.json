@@ -93,5 +93,8 @@
     "log4js",
     "commander",
     "homecheck"
-  ]
+  ],
+  "overrides": {
+    "minipass": "7.1.2"
+  }
 }
