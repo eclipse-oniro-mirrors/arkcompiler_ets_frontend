@@ -59,6 +59,7 @@ inline void ThrowEtsError(const std::string &message, const std::string &errorTy
     ANI_FATAL_ERROR(status, "Failed to create Undefined object");
 
     ani_object err {};
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
     status = env->Object_New(cls, ctor, &err, errMsg, undef);
     ANI_FATAL_ERROR(status, "Failed to create Error object");
     status = env->ThrowError(static_cast<ani_error>(err));
@@ -90,11 +91,11 @@ struct InteropTypeConverter<EtsBoolean> {
     using InteropType = ani_boolean;
     static EtsBoolean ConvertFrom([[maybe_unused]] ani_env *env, InteropType value)
     {
-        return value;
+        return value != 0U;
     }
     static InteropType ConvertTo([[maybe_unused]] ani_env *env, EtsBoolean value)
     {
-        return value;
+        return static_cast<InteropType>(value);
     }
     static void Release([[maybe_unused]] ani_env *env, [[maybe_unused]] InteropType value,
                         [[maybe_unused]] const EtsBoolean &converted)
@@ -328,13 +329,14 @@ struct InteropTypeConverter<EtsStringArray> {
             status = env->String_GetUTF8(itemStr, buf, bufSize, &strSize);
             ANI_THROW_IF_FAILED(status, "Failed to get value of UTF-8 string");
 
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             result[i] = buf;
         }
 
         return result;
     }
-    static InteropType ConvertTo(ani_env *env, const EtsStringArray value) = delete;
-    static void Release([[maybe_unused]] ani_env *env, InteropType value, const EtsStringArray converted)
+    static InteropType ConvertTo(ani_env *env, EtsStringArray value) = delete;
+    static void Release([[maybe_unused]] ani_env *env, InteropType value, EtsStringArray converted)
     {
         if (value == nullptr) {
             return;
@@ -346,15 +348,13 @@ struct InteropTypeConverter<EtsStringArray> {
 
         if (length > 0) {
             for (size_t i = 0; i < length; ++i) {
-                if (converted[i]) {
+                if (converted[i] != nullptr) {
                     delete[] converted[i];
                 }
             }
         }
 
-        if (converted != nullptr) {
-            delete[] converted;
-        }
+        delete[] converted;
     }
 };
 
@@ -421,7 +421,7 @@ public:
     InteropTypeConverter<Ret>::InteropType Ani_##name(ani_env *env, [[maybe_unused]] ani_object self, \
                                                       InteropTypeConverter<P0>::InteropType _p0)      \
     {                                                                                                 \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                            \
+        auto p0 = GetArgument<P0>(env, _p0);                                                          \
         auto res = MakeResult<Ret>(env, impl_##name(p0));                                             \
         ReleaseArgument(env, _p0, p0);                                                                \
         /* CC-OFFNXT(G.PRE.05) code generation */                                                     \
@@ -435,8 +435,8 @@ public:
                                                       InteropTypeConverter<P0>::InteropType _p0,      \
                                                       InteropTypeConverter<P1>::InteropType _p1)      \
     {                                                                                                 \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                            \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                            \
+        auto p0 = GetArgument<P0>(env, _p0);                                                          \
+        auto p1 = GetArgument<P1>(env, _p1);                                                          \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1));                                         \
         ReleaseArgument(env, _p0, p0);                                                                \
         ReleaseArgument(env, _p1, p1);                                                                \
@@ -451,9 +451,9 @@ public:
         ani_env *env, [[maybe_unused]] ani_object self, InteropTypeConverter<P0>::InteropType _p0, \
         InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2)      \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2));                                  \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -470,10 +470,10 @@ public:
         InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2,      \
         InteropTypeConverter<P3>::InteropType _p3)                                                 \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3));                              \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -491,11 +491,11 @@ public:
         InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2,      \
         InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4)      \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4));                          \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -515,12 +515,12 @@ public:
         InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4,      \
         InteropTypeConverter<P5>::InteropType _p5)                                                 \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5));                      \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -541,13 +541,13 @@ public:
         InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4,      \
         InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6)      \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
+        auto p6 = GetArgument<P6>(env, _p6);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6));                  \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -570,14 +570,14 @@ public:
         InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6,      \
         InteropTypeConverter<P7>::InteropType _p7)                                                 \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                         \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
+        auto p6 = GetArgument<P6>(env, _p6);                                                       \
+        auto p7 = GetArgument<P7>(env, _p7);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7));              \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -601,15 +601,15 @@ public:
         InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6,      \
         InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8)      \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                         \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                         \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
+        auto p6 = GetArgument<P6>(env, _p6);                                                       \
+        auto p7 = GetArgument<P7>(env, _p7);                                                       \
+        auto p8 = GetArgument<P8>(env, _p8);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8));          \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -635,16 +635,16 @@ public:
         InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8,      \
         InteropTypeConverter<P9>::InteropType _p9)                                                 \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                         \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                         \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                         \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
+        auto p6 = GetArgument<P6>(env, _p6);                                                       \
+        auto p7 = GetArgument<P7>(env, _p7);                                                       \
+        auto p8 = GetArgument<P8>(env, _p8);                                                       \
+        auto p9 = GetArgument<P9>(env, _p9);                                                       \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9));      \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -671,17 +671,17 @@ public:
         InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8,      \
         InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10)    \
     {                                                                                              \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                         \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                         \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                         \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                         \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                         \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                         \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                         \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                         \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                         \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                         \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                       \
+        auto p1 = GetArgument<P1>(env, _p1);                                                       \
+        auto p2 = GetArgument<P2>(env, _p2);                                                       \
+        auto p3 = GetArgument<P3>(env, _p3);                                                       \
+        auto p4 = GetArgument<P4>(env, _p4);                                                       \
+        auto p5 = GetArgument<P5>(env, _p5);                                                       \
+        auto p6 = GetArgument<P6>(env, _p6);                                                       \
+        auto p7 = GetArgument<P7>(env, _p7);                                                       \
+        auto p8 = GetArgument<P8>(env, _p8);                                                       \
+        auto p9 = GetArgument<P9>(env, _p9);                                                       \
+        auto p10 = GetArgument<P10>(env, _p10);                                                    \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)); \
         ReleaseArgument(env, _p0, p0);                                                             \
         ReleaseArgument(env, _p1, p1);                                                             \
@@ -710,18 +710,18 @@ public:
         InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10,         \
         InteropTypeConverter<P11>::InteropType _p11)                                                    \
     {                                                                                                   \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                              \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                              \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                              \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                              \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                              \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                              \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                              \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                              \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                              \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                              \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                          \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                          \
+        auto p0 = GetArgument<P0>(env, _p0);                                                            \
+        auto p1 = GetArgument<P1>(env, _p1);                                                            \
+        auto p2 = GetArgument<P2>(env, _p2);                                                            \
+        auto p3 = GetArgument<P3>(env, _p3);                                                            \
+        auto p4 = GetArgument<P4>(env, _p4);                                                            \
+        auto p5 = GetArgument<P5>(env, _p5);                                                            \
+        auto p6 = GetArgument<P6>(env, _p6);                                                            \
+        auto p7 = GetArgument<P7>(env, _p7);                                                            \
+        auto p8 = GetArgument<P8>(env, _p8);                                                            \
+        auto p9 = GetArgument<P9>(env, _p9);                                                            \
+        auto p10 = GetArgument<P10>(env, _p10);                                                         \
+        auto p11 = GetArgument<P11>(env, _p11);                                                         \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)); \
         ReleaseArgument(env, _p0, p0);                                                                  \
         ReleaseArgument(env, _p1, p1);                                                                  \
@@ -751,19 +751,19 @@ public:
         InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10,              \
         InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12)            \
     {                                                                                                        \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                   \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                   \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                   \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                   \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                   \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                   \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                   \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                   \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                   \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                   \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                               \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                               \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                               \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                 \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                 \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                 \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                 \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                 \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                 \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                 \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                 \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                 \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                 \
+        auto p10 = GetArgument<P10>(env, _p10);                                                              \
+        auto p11 = GetArgument<P11>(env, _p11);                                                              \
+        auto p12 = GetArgument<P12>(env, _p12);                                                              \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)); \
         ReleaseArgument(env, _p0, p0);                                                                       \
         ReleaseArgument(env, _p1, p1);                                                                       \
@@ -795,20 +795,20 @@ public:
         InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12,                 \
         InteropTypeConverter<P13>::InteropType _p13)                                                              \
     {                                                                                                             \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                        \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                        \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                        \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                        \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                        \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                        \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                        \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                        \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                        \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                        \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                    \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                    \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                                    \
-        P13 p13 = GetArgument<P13>(env, _p13);                                                                    \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                      \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                      \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                      \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                      \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                      \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                      \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                      \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                      \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                      \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                      \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                   \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                   \
+        auto p12 = GetArgument<P12>(env, _p12);                                                                   \
+        auto p13 = GetArgument<P13>(env, _p13);                                                                   \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13)); \
         ReleaseArgument(env, _p0, p0);                                                                            \
         ReleaseArgument(env, _p1, p1);                                                                            \
@@ -841,21 +841,21 @@ public:
         InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12,                      \
         InteropTypeConverter<P13>::InteropType _p13, InteropTypeConverter<P14>::InteropType _p14)                      \
     {                                                                                                                  \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                             \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                             \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                             \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                             \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                             \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                             \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                             \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                             \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                             \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                             \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                         \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                         \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                                         \
-        P13 p13 = GetArgument<P13>(env, _p13);                                                                         \
-        P14 p14 = GetArgument<P14>(env, _p14);                                                                         \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                           \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                           \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                           \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                           \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                           \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                           \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                           \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                           \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                           \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                           \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                        \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                        \
+        auto p12 = GetArgument<P12>(env, _p12);                                                                        \
+        auto p13 = GetArgument<P13>(env, _p13);                                                                        \
+        auto p14 = GetArgument<P14>(env, _p14);                                                                        \
         auto res = MakeResult<Ret>(env, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14)); \
         ReleaseArgument(env, _p0, p0);                                                                                 \
         ReleaseArgument(env, _p1, p1);                                                                                 \
@@ -888,7 +888,7 @@ public:
 #define ETS_INTEROP_V1(name, P0)                                                                               \
     void Ani_##name(ani_env *env, [[maybe_unused]] ani_object self, InteropTypeConverter<P0>::InteropType _p0) \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
         impl_##name(p0);                                                                                       \
         ReleaseArgument(env, _p0, p0);                                                                         \
     }                                                                                                          \
@@ -899,8 +899,8 @@ public:
     void Ani_##name(ani_env *env, [[maybe_unused]] ani_object self, InteropTypeConverter<P0>::InteropType _p0, \
                     InteropTypeConverter<P1>::InteropType _p1)                                                 \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
         impl_##name(p0, p1);                                                                                   \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -912,9 +912,9 @@ public:
     void Ani_##name(ani_env *env, [[maybe_unused]] ani_object self, InteropTypeConverter<P0>::InteropType _p0, \
                     InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2)      \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
         impl_##name(p0, p1, p2);                                                                               \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -928,10 +928,10 @@ public:
                     InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2,      \
                     InteropTypeConverter<P3>::InteropType _p3)                                                 \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
         impl_##name(p0, p1, p2, p3);                                                                           \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -946,11 +946,11 @@ public:
                     InteropTypeConverter<P1>::InteropType _p1, InteropTypeConverter<P2>::InteropType _p2,      \
                     InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4)      \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
         impl_##name(p0, p1, p2, p3, p4);                                                                       \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -967,12 +967,12 @@ public:
                     InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4,      \
                     InteropTypeConverter<P5>::InteropType _p5)                                                 \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
         impl_##name(p0, p1, p2, p3, p4, p5);                                                                   \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -990,13 +990,13 @@ public:
                     InteropTypeConverter<P3>::InteropType _p3, InteropTypeConverter<P4>::InteropType _p4,      \
                     InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6)      \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
         impl_##name(p0, p1, p2, p3, p4, p5, p6);                                                               \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1017,14 +1017,14 @@ public:
                     InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6,      \
                     InteropTypeConverter<P7>::InteropType _p7)                                                 \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7);                                                           \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1045,15 +1045,15 @@ public:
                     InteropTypeConverter<P5>::InteropType _p5, InteropTypeConverter<P6>::InteropType _p6,      \
                     InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8)      \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8);                                                       \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1076,16 +1076,16 @@ public:
                     InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8,      \
                     InteropTypeConverter<P9>::InteropType _p9)                                                 \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);                                                   \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1109,17 +1109,17 @@ public:
                     InteropTypeConverter<P7>::InteropType _p7, InteropTypeConverter<P8>::InteropType _p8,      \
                     InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10)    \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                 \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);                                              \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1145,18 +1145,18 @@ public:
                     InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10,    \
                     InteropTypeConverter<P11>::InteropType _p11)                                               \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                 \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                 \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);                                         \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1183,19 +1183,19 @@ public:
                     InteropTypeConverter<P9>::InteropType _p9, InteropTypeConverter<P10>::InteropType _p10,    \
                     InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12)  \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                 \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                 \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                                 \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                \
+        auto p12 = GetArgument<P12>(env, _p12);                                                                \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);                                    \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1224,20 +1224,20 @@ public:
                     InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12,  \
                     InteropTypeConverter<P13>::InteropType _p13)                                               \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                 \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                 \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                                 \
-        P13 p13 = GetArgument<P13>(env, _p13);                                                                 \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                \
+        auto p12 = GetArgument<P12>(env, _p12);                                                                \
+        auto p13 = GetArgument<P13>(env, _p13);                                                                \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);                               \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \
@@ -1267,21 +1267,21 @@ public:
                     InteropTypeConverter<P11>::InteropType _p11, InteropTypeConverter<P12>::InteropType _p12,  \
                     InteropTypeConverter<P13>::InteropType _p13, InteropTypeConverter<P14>::InteropType _p14)  \
     {                                                                                                          \
-        P0 p0 = GetArgument<P0>(env, _p0);                                                                     \
-        P1 p1 = GetArgument<P1>(env, _p1);                                                                     \
-        P2 p2 = GetArgument<P2>(env, _p2);                                                                     \
-        P3 p3 = GetArgument<P3>(env, _p3);                                                                     \
-        P4 p4 = GetArgument<P4>(env, _p4);                                                                     \
-        P5 p5 = GetArgument<P5>(env, _p5);                                                                     \
-        P6 p6 = GetArgument<P6>(env, _p6);                                                                     \
-        P7 p7 = GetArgument<P7>(env, _p7);                                                                     \
-        P8 p8 = GetArgument<P8>(env, _p8);                                                                     \
-        P9 p9 = GetArgument<P9>(env, _p9);                                                                     \
-        P10 p10 = GetArgument<P10>(env, _p10);                                                                 \
-        P11 p11 = GetArgument<P11>(env, _p11);                                                                 \
-        P12 p12 = GetArgument<P12>(env, _p12);                                                                 \
-        P13 p13 = GetArgument<P13>(env, _p13);                                                                 \
-        P14 p14 = GetArgument<P14>(env, _p14);                                                                 \
+        auto p0 = GetArgument<P0>(env, _p0);                                                                   \
+        auto p1 = GetArgument<P1>(env, _p1);                                                                   \
+        auto p2 = GetArgument<P2>(env, _p2);                                                                   \
+        auto p3 = GetArgument<P3>(env, _p3);                                                                   \
+        auto p4 = GetArgument<P4>(env, _p4);                                                                   \
+        auto p5 = GetArgument<P5>(env, _p5);                                                                   \
+        auto p6 = GetArgument<P6>(env, _p6);                                                                   \
+        auto p7 = GetArgument<P7>(env, _p7);                                                                   \
+        auto p8 = GetArgument<P8>(env, _p8);                                                                   \
+        auto p9 = GetArgument<P9>(env, _p9);                                                                   \
+        auto p10 = GetArgument<P10>(env, _p10);                                                                \
+        auto p11 = GetArgument<P11>(env, _p11);                                                                \
+        auto p12 = GetArgument<P12>(env, _p12);                                                                \
+        auto p13 = GetArgument<P13>(env, _p13);                                                                \
+        auto p14 = GetArgument<P14>(env, _p14);                                                                \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);                          \
         ReleaseArgument(env, _p0, p0);                                                                         \
         ReleaseArgument(env, _p1, p1);                                                                         \

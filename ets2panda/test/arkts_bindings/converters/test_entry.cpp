@@ -23,7 +23,7 @@ static ani_env *g_env {nullptr};
 
 ani_env *GetAniEnv()
 {
-    if (!g_env) {
+    if (g_env == nullptr) {
         throw std::runtime_error("FATAL: ANI environment is not available");
     }
     return g_env;
@@ -51,14 +51,13 @@ const std::vector<std::pair<std::string, void *>> &Exports::GetMethods(const std
 {
     auto it = implementations_.find(module);
     if (it == implementations_.end()) {
-        LOG_ERROR("Cannot find module with implementations: ", module);
+        LogError("Cannot find module with implementations: ", module);
         throw std::runtime_error("Failure");
     }
     return it->second;
 }
 
-static bool registerNativeMethods(ani_env *env, const ani_class cls,
-                                  const std::vector<std::pair<std::string, void *>> impls)
+static bool RegisterNativeMethods(ani_env *env, ani_class cls, const std::vector<std::pair<std::string, void *>> &impls)
 {
     std::vector<ani_native_function> methods;
     methods.reserve(impls.size());
@@ -89,13 +88,13 @@ ANI_EXPORT ani_status ANI_Constructor(ani_vm *vm, uint32_t *result)
     ani_class cls = nullptr;
     env->FindClass(testClass, &cls);
     if (cls == nullptr) {
-        LOG_ERROR("Cannot find managed class: ", testClass);
+        LogError("Cannot find managed class: ", testClass);
         return ANI_ERROR;
     }
 
     Exports *inst = Exports::GetInstance();
-    if (!registerNativeMethods(env, cls, inst->GetMethods("TestNativeModule"))) {
-        LOG_ERROR("Failed to register native methods");
+    if (!RegisterNativeMethods(env, cls, inst->GetMethods("TestNativeModule"))) {
+        LogError("Failed to register native methods");
         return ANI_ERROR;
     }
 

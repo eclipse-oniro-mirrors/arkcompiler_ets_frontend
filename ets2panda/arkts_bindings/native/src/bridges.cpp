@@ -120,7 +120,7 @@ EtsNativePointer impl_CreateCacheContextFromFile(EtsNativePointer configPtr, Ets
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
-    return GetPublicImpl()->CreateCacheContextFromFile(config, sourceFileName.Data(), context, isExternal != 0);
+    return GetPublicImpl()->CreateCacheContextFromFile(config, sourceFileName.Data(), context, isExternal);
 }
 ETS_INTEROP_4(CreateCacheContextFromFile, EtsNativePointer, EtsNativePointer, EtsStringPtr, EtsNativePointer,
               EtsBoolean)

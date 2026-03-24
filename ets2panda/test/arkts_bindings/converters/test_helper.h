@@ -24,7 +24,7 @@
 #include <stdexcept>
 
 template <typename... Args>
-inline void LOG_ERROR(Args &&...args)
+inline void LogError(Args &&...args)
 {
     (std::cerr << ... << args);
     std::cerr << "\n";
@@ -33,21 +33,21 @@ inline void LOG_ERROR(Args &&...args)
 template <typename Type1, typename Type2>
 inline void PrintAssertMessage(const char *message, Type1 val1, Type2 val2, const char *op)
 {
-    LOG_ERROR(message, '\'', val1, '\'', op, '\'', val2, '\'');
+    LogError(message, '\'', val1, '\'', op, '\'', val2, '\'');
 }
 
 template <>
 inline void PrintAssertMessage<int8_t, int8_t>(const char *message, int8_t val1, int8_t val2, const char *op)
 {
-    LOG_ERROR(message, '\'', static_cast<int>(val1), '\'', op, '\'', static_cast<int>(val2), '\'');
+    LogError(message, '\'', static_cast<int>(val1), '\'', op, '\'', static_cast<int>(val2), '\'');
 }
 
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 // CC-OFFNXT(G.PRE.02-CPP) error handling
-#define ASSERT_PRINT(message, val1, val2, op)                     \
-    LOG_ERROR("\nAssertion failed at ", __FILE__, ':', __LINE__); \
-    PrintAssertMessage(message, val1, val2, op);                  \
+#define ASSERT_PRINT(message, val1, val2, op)                    \
+    LogError("\nAssertion failed at ", __FILE__, ':', __LINE__); \
+    PrintAssertMessage(message, val1, val2, op);                 \
     ThrowEtsError("", "std.core.AssertionError")
 
 // CC-OFFNXT(G.PRE.02-CPP) error handling

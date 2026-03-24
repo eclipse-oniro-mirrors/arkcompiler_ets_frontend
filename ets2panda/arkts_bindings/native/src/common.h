@@ -24,8 +24,10 @@
 #include <cstring>
 #include "securec.h"
 
+// NOLINTBEGIN
 #define LIB_PREFIX "lib"
 #define LIB_SUFFIX ".so"
+// NOLINTEND
 
 const es2panda_Impl *GetPublicImpl();
 void *FindLibrary();
