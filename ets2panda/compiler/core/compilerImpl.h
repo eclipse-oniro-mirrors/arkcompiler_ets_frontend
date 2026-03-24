@@ -53,7 +53,8 @@ public:
     NO_MOVE_SEMANTIC(CompilerImpl);
     ~CompilerImpl() = default;
 
-    pandasm::Program *Compile(const CompilationUnit &unit, public_lib::Context *context);
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compile(const CompilationUnit &unit,
+                                                                               public_lib::Context *context);
 
     std::vector<util::Plugin> const &Plugins()
     {
@@ -63,7 +64,7 @@ public:
     static void DumpAsm(const ark::pandasm::Program *prog);
     static std::string GetPhasesList(ScriptExtension ext);
 
-    void Emit(public_lib::Context *context);
+    void CompileFunctions(public_lib::Context *context);
 
     CompileQueue *Queue()
     {

@@ -20,6 +20,7 @@ import { initBuildConfig } from './init/process_build_config';
 import { BuildMode } from './build/build_mode';
 import { Logger, LoggerGetter, getConsoleLogger } from './logger';
 import { DriverError } from './util/error';
+import { substituteEnvVarsInJSON } from './util/utils';
 import { ArkTSConfigGenerator } from './build/generate_arktsconfig';
 import { PluginDriver } from './plugins/plugins_driver';
 import { BuildConfig, BUILD_TYPE } from './types';
@@ -33,161 +34,10 @@ function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGet
     }
 
     const hvigorLogger = projectConfig.getHvigorConsoleLogger as LoggerGetter
-    Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger));
-}
-
-function replaceOnEnv(str: string, indexA: number, indexB: number): string {
-    let envName: string = str.substring(indexA + 2, indexB)
-    const envValue = process.env[envName] || ''
-
-    if (envValue === '') {
-        throw new Error(envName + ' environment variable is not set');
-    }
-
-    return str.replace(str.substring(indexA, indexB + 1), envValue)
-}
-
-function getVar(str: string | null | undefined): string {
-    if (str === null || str === undefined || str === '') {
-        return ''
-    }
-    let indexA = str.indexOf('$')
-    let indexB = str.indexOf('}')
-
-    if (indexA === -1 || indexB === -1) {
-        return str
-    }
-
-    return replaceOnEnv(str, indexA, indexB)
-}
-
-function validatePlugins(projectConfig: BuildConfig): void {
-    for (const key in projectConfig.plugins) {
-        projectConfig.plugins[key] = getVar(projectConfig.plugins[key])
-    }
-}
-
-function validatePaths(projectConfig: BuildConfig): void {
-    for (const key in projectConfig.paths) {
-        for (let i = 0; i < projectConfig.paths[key].length; i++) {
-            projectConfig.paths[key][i] = getVar(projectConfig.paths[key][i])
-        }
-    }
-}
-
-function validateSingleFieldPaths(projectConfig: BuildConfig): void {
-    if (projectConfig.pandaStdlibPath) {
-        projectConfig.pandaStdlibPath = getVar(projectConfig.pandaStdlibPath)
-    }
-    if (projectConfig.pandaSdkPath) {
-        projectConfig.pandaSdkPath = getVar(projectConfig.pandaSdkPath)
-    }
-    
-    projectConfig.sdkAliasMap = projectConfig.sdkAliasMap instanceof Map
-        ? projectConfig.sdkAliasMap
-        : new Map(Object.entries(projectConfig.sdkAliasMap || {}));
-
-    projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
-    projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
-    projectConfig.loaderOutPath = getVar(projectConfig.loaderOutPath)
-    projectConfig.cachePath = getVar(projectConfig.cachePath)
-    projectConfig.entryFile = getVar(projectConfig.entryFile);
-}
-
-function validateInteropApiPaths(interopApiPaths: string[]): void {
-    for (let i = 0; i < interopApiPaths?.length || 0; i++) {
-        interopApiPaths[i] = getVar(interopApiPaths[i])
-    }
-}
-
-function validateSdkAliasMap(projectConfig: BuildConfig): void {
-    if (projectConfig.sdkAliasMap.size !== 0) {
-        for (const [name, path] of projectConfig.sdkAliasMap) {
-            const newPath = getVar(path);
-            projectConfig.sdkAliasMap.set(name, newPath);
-        }
-    }
-}
-
-function validateCompileFiles(compileFiles: string[]): void {
-    compileFiles.forEach((file, i) => {
-        compileFiles[i] = getVar(file);
-    });
-}
-
-function validateDependencyModuleList(projectConfig: BuildConfig): void {
-    for (let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
-        projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
-
-        const currentEntryFile = projectConfig.dependencyModuleList[i].entryFile;
-        if (currentEntryFile) {
-            projectConfig.dependencyModuleList[i].entryFile = getVar(currentEntryFile)
-        }
-
-        const currentDeclFilesPath = projectConfig.dependencyModuleList[i].declFilesPath;
-        if (currentDeclFilesPath) {
-            projectConfig.dependencyModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
-        }
-
-        const currentAbcPath = projectConfig.dependencyModuleList[i].abcPath;
-        if (currentAbcPath) {
-            projectConfig.dependencyModuleList[i].abcPath = getVar(currentAbcPath)
-        }
-
-        for (let j = 0; j < projectConfig.dependencyModuleList[i].sourceRoots.length; j++) {
-            projectConfig.dependencyModuleList[i].sourceRoots[j] = getVar(projectConfig.dependencyModuleList[i].sourceRoots[j])
-        }
-    }
-}
-
-function validateDependentModuleList(projectConfig: BuildConfig): void {
-    for (let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
-        projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
-
-        const currentEntryFile = projectConfig.dependentModuleList[i].entryFile;
-        if (currentEntryFile) {
-            projectConfig.dependentModuleList[i].entryFile = getVar(currentEntryFile)
-        }
-
-        const currentDeclFilesPath = projectConfig.dependentModuleList[i].declFilesPath;
-        if (currentDeclFilesPath) {
-            projectConfig.dependentModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
-        }
-
-        const currentAbcPath = projectConfig.dependentModuleList[i].abcPath;
-        if (currentAbcPath) {
-            projectConfig.dependentModuleList[i].abcPath = getVar(currentAbcPath)
-        }
-
-        for (let j = 0; j < projectConfig.dependentModuleList[i].sourceRoots.length; j++) {
-            projectConfig.dependentModuleList[i].sourceRoots[j] = getVar(projectConfig.dependentModuleList[i].sourceRoots[j])
-        }
-    }
-}
-
-function validateModuleFiles(projectConfig: BuildConfig): void {
-    for (let i = 0; i < projectConfig.moduleFiles?.length || 0; i++) {
-        projectConfig.moduleFiles[i].packageName = getVar(projectConfig.moduleFiles[i].packageName);
-        for (let j = 0; j < projectConfig.moduleFiles[i].staticFiles?.length || 0; j++) {
-            projectConfig.moduleFiles[i].staticFiles[j] = getVar(projectConfig.moduleFiles[i].staticFiles[j]);
-        }
-    }
-}
-
-function validate(projectConfig: BuildConfig): void {
-    validatePlugins(projectConfig)
-    validatePaths(projectConfig)
-    validateSingleFieldPaths(projectConfig)
-    validateInteropApiPaths(projectConfig.interopApiPaths)
-    validateSdkAliasMap(projectConfig)
-    validateCompileFiles(projectConfig.compileFiles)
-    validateDependencyModuleList(projectConfig)
-    validateDependentModuleList(projectConfig)
-    validateModuleFiles(projectConfig)
+    Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger), projectConfig.enableDebugOutput);
 }
 
 export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
-    validate(projectConfig)
     backwardCompatibleBuildConfigStub(projectConfig, loggerGetter)
 
     let logger: Logger = Logger.getInstance();
@@ -231,7 +81,7 @@ function clean(): void {
 
 function main(): void {
     const buildConfigPath: string = path.resolve(process.argv[2]);
-    const projectConfig: BuildConfig = JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8'));
+    const projectConfig: BuildConfig = substituteEnvVarsInJSON(JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8')));
 
     build(projectConfig)
 }

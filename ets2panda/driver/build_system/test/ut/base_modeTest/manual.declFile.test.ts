@@ -17,12 +17,14 @@ import {
     BuildConfig,
     ModuleInfo,
     DeclgenV1JobInfo,
-    DeclgenV1JobConfig,
-    DeclFileInfo,
     OHOS_MODULE_TYPE,
     BUILD_MODE,
-    DeclgenV2JobConfig
+    JobContentType,
+    CompileJobInfo,
+    FileInfo
 } from '../../../src/types';
+
+import type { Graph, GraphNode } from '../../../src/util/graph';
 
 jest.mock('fs', () => {
     const actualFs = jest.requireActual('fs');
@@ -43,6 +45,9 @@ jest.mock('fs', () => {
 });
 
 import * as fs from 'fs';
+
+type mockGraphNodeType = GraphNode<Partial<CompileJobInfo>>
+type mockGraphType = Graph<Partial<CompileJobInfo>>
 
 jest.mock('../../../src/util/utils', () => {
     const actualUtils = jest.requireActual('../../../src/util/utils');
@@ -188,8 +193,12 @@ class TestableBaseMode extends BaseMode {
         // tmp solution
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
         let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             fileInfo: {input: file, output: "", arktsConfig: "", moduleName: moduleInfo.packageName, moduleRoot: moduleInfo.moduleRootPath },
-                                             fileList: [file]};
+                                             contentType: JobContentType.FILE,
+                                             content: { input: file, output: "" },
+                                             arktsConfig: "",
+                                             moduleName: moduleInfo.packageName,
+                                             moduleRoot: moduleInfo.moduleRootPath
+                                           };
         return (this as any).getOutputFilePaths(declgenJob);
     }
 
@@ -197,8 +206,12 @@ class TestableBaseMode extends BaseMode {
         // tmp solution
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
         let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             fileInfo: {input: file, output: "", arktsConfig: "", moduleName: moduleInfo.packageName, moduleRoot: moduleInfo.moduleRootPath },
-                                             fileList: [file]};
+                                             contentType: JobContentType.FILE,
+                                             content: { input: file, output: "" },
+                                             arktsConfig: "",
+                                             moduleName: moduleInfo.packageName,
+                                             moduleRoot: moduleInfo.moduleRootPath
+                                           };
         return (this as any).needsBackup(declgenJob);
     }
 
@@ -206,8 +219,12 @@ class TestableBaseMode extends BaseMode {
         // tmp solution
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
         let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             fileInfo: {input: file, output: "", arktsConfig: "", moduleName: moduleInfo.packageName, moduleRoot: moduleInfo.moduleRootPath },
-                                             fileList: [file]};
+                                             contentType: JobContentType.FILE,
+                                             content: { input: file, output: "" },
+                                             arktsConfig: "",
+                                             moduleName: moduleInfo.packageName,
+                                             moduleRoot: moduleInfo.moduleRootPath
+                                           };
         return (this as any).backupFiles(declgenJob, needsDecl, needsGlue);
     }
 
@@ -215,8 +232,12 @@ class TestableBaseMode extends BaseMode {
         // tmp solution
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
         let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             fileInfo: {input: file, output: "", arktsConfig: "", moduleName: moduleInfo.packageName, moduleRoot: moduleInfo.moduleRootPath },
-                                             fileList: [file]};
+                                             contentType: JobContentType.FILE,
+                                             content: { input: file, output: "" },
+                                             arktsConfig: "",
+                                             moduleName: moduleInfo.packageName,
+                                             moduleRoot: moduleInfo.moduleRootPath
+                                           };
         return (this as any).updateDeclFileMapAsync(declgenJob);
     }
 
@@ -275,14 +296,14 @@ function createMockBuildConfig(overrides: Partial<BuildConfig> = {}): BuildConfi
 
 function createMockDeclgenV1JobInfo(overrides: Partial<DeclgenV1JobInfo> = {}): DeclgenV1JobInfo {
     return {
-        fileList: ['/test/module/root/src/file1.ets'],
-        fileInfo: {
+        contentType: JobContentType.FILE,
+        content: {
             input: '/test/module/root/src/file1.ets',
-            output: '',
-            arktsConfig: '',
-            moduleName: 'test-package',
-            moduleRoot: '/test/module/root'
+            output: ''
         },
+        arktsConfig: '',
+        moduleName: 'test-package',
+        moduleRoot: '/test/module/root',
         declgenConfig: {output: '/test/declgen/v1', bridgeCode: '/test/bridge/code'},
         ...overrides
     } as DeclgenV1JobInfo;
@@ -722,7 +743,7 @@ describe('BaseMode declaration file map management tests', () => {
         const fileC = `${basePath}/C.ets`;
 
         const mockFileToModule = new Map();
-        const mockModuleInfo = createMockModuleInfo({
+        const mockModuleInfo: ModuleInfo = createMockModuleInfo({
             packageName: moduleName,
             moduleRootPath: moduleRoot,
             declgenV1OutPath: '/output',
@@ -735,7 +756,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         (testMode as any).fileToModule = mockFileToModule;
         (testMode as any).entryFiles = [fileA, fileB, fileC];
-        (testMode as any).moduleInfos = new Map();
+        (testMode as any).moduleInfos = new Map([[moduleName, mockModuleInfo]]);
 
         const {TaskManager} = require('../../../src/util/TaskManager');
         const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
@@ -771,18 +792,15 @@ describe('BaseMode declaration file map management tests', () => {
 
         const mockDepAnalyzerInstance = {
             getGraph: jest.fn().mockReturnValue({
-                nodes: [
+                nodes: new Set<mockGraphNodeType>([
                     {
                         id: 'nodeA',
                         data: {
-                            fileList: [fileA],
-                            fileInfo: {
-                                input: fileA,
-                                output: '',
-                                arktsConfig: '',
-                                moduleName: moduleName,
-                                moduleRoot: moduleRoot
-                            }
+                            contentType: JobContentType.FILE,
+                            content: { input: fileA, output: '' },
+                            arktsConfig: '',
+                            moduleName: moduleName,
+                            moduleRoot: moduleRoot
                         },
                         predecessors: new Set<string>(),
                         descendants: new Set<string>(['nodeB'])
@@ -790,14 +808,11 @@ describe('BaseMode declaration file map management tests', () => {
                     {
                         id: 'nodeB',
                         data: {
-                            fileList: [fileB],
-                            fileInfo: {
-                                input: fileB,
-                                output: '',
-                                arktsConfig: '',
-                                moduleName: moduleName,
-                                moduleRoot: moduleRoot
-                            }
+                            contentType: JobContentType.FILE,
+                            content: { input: fileB, output: '' },
+                            arktsConfig: '',
+                            moduleName: moduleName,
+                            moduleRoot: moduleRoot
                         },
                         predecessors: new Set<string>(['nodeA']),
                         descendants: new Set<string>(['nodeC'])
@@ -805,35 +820,40 @@ describe('BaseMode declaration file map management tests', () => {
                     {
                         id: 'nodeC',
                         data: {
-                            fileList: [fileC],
-                            fileInfo: {
-                                input: fileC,
-                                output: '',
-                                arktsConfig: '',
-                                moduleName: moduleName,
-                                moduleRoot: moduleRoot
-                            }
+                            contentType: JobContentType.FILE,
+                            content: { input: fileC, output: '' },
+                            arktsConfig: '',
+                            moduleName: moduleName,
+                            moduleRoot: moduleRoot
                         },
                         predecessors: new Set<string>(['nodeB']),
                         descendants: new Set<string>()
                     }
-                ],
+                ]),
                 hasNodes: () => true
-            })
+            } as Partial<mockGraphType>)
         };
 
         (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
 
         const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
-        (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: any) => {
-            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: node.data.fileList});
-            return node.data.fileList.includes(fileB);
+        const extractFilesFromNodeData = (data: CompileJobInfo): string[] => {
+            if (data.contentType === JobContentType.FILE) {
+                return [(data.content as FileInfo).input];
+            } else {
+                return (data.content as FileInfo[]).map((fi: FileInfo) => fi.input);
+            }
+        };
+        (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: GraphNode<CompileJobInfo>) => {
+            const fileList: string[] = extractFilesFromNodeData(node.data);
+            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: fileList});
+            return fileList.includes(fileB);
         });
 
         const backupFilesCalls: DeclgenV1JobInfo[] = [];
         (testMode as any).needsBackup = jest.fn().mockImplementation((jobInfo: DeclgenV1JobInfo) => {
             backupFilesCalls.push(jobInfo);
-            const needsDeclBackup = jobInfo.fileInfo.input === fileB;
+            const needsDeclBackup = (jobInfo.content as FileInfo).input === fileB;
             return Promise.resolve({needsDeclBackup, needsGlueCodeBackup: false});
         });
 
@@ -894,13 +914,18 @@ describe('BaseMode declaration file map management tests', () => {
 
         expect(nodeNeedsRegenerationCalls.length).toBe(3);
 
-        expect(backupFilesCalls[0].fileList).toEqual([fileB]);
-        expect(backupFilesCalls[0].fileList.length).toBe(1);
+        expect(backupFilesCalls[0].contentType).toEqual(JobContentType.FILE);
+        expect(backupFilesCalls[0].content).toEqual({ input: fileB, output: "" });
 
         expect((testMode as any).backupFiles).toHaveBeenCalledTimes(1);
-        let declgenJobCalledWith: DeclgenV1JobInfo = { declgenConfig: { output: "/output", bridgeCode: "/bridge" },
-                                             fileInfo: {input: fileB, output: "", arktsConfig: "", moduleName: moduleName, moduleRoot: moduleRoot },
-                                             fileList: [fileB]};
+        let declgenJobCalledWith: DeclgenV1JobInfo = {
+            declgenConfig: { output: "/output", bridgeCode: "/bridge" },
+            contentType: JobContentType.FILE,
+            content: { input: fileB, output: "" },
+            arktsConfig: "",
+            moduleName: moduleName,
+            moduleRoot: moduleRoot
+        };
         expect((testMode as any).backupFiles).toHaveBeenCalledWith(declgenJobCalledWith, true, false);
 
         expect(updateCalls).toEqual([declgenJobCalledWith]);
@@ -934,7 +959,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         (testMode as any).fileToModule = mockFileToModule;
         (testMode as any).entryFiles = [fileA, fileB, fileC];
-        (testMode as any).moduleInfos = new Map();
+        (testMode as any).moduleInfos = new Map([[moduleName, mockModuleInfo]]);
 
         const {TaskManager} = require('../../../src/util/TaskManager');
         const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
@@ -959,9 +984,16 @@ describe('BaseMode declaration file map management tests', () => {
                 nodes: [{
                     id: 'cluster_ABC',
                     data: {
-                        fileList: [fileC, fileB, fileA],
-                        fileInfo:
-                            {input: fileC, output: '', arktsConfig: '', moduleName: moduleName, moduleRoot: moduleRoot}
+                        contentType: JobContentType.CLUSTER,
+                        content:
+                        [
+                            { input: fileC, output: ''},
+                            { input: fileB, output: ''},
+                            { input: fileA, output: ''}
+                        ],
+                        arktsConfig: '',
+                        moduleName: moduleName,
+                        moduleRoot: moduleRoot
                     },
                     predecessors: new Set<string>(),
                     descendants: new Set<string>()
@@ -973,9 +1005,17 @@ describe('BaseMode declaration file map management tests', () => {
         (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
 
         const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
+        const extractFilesFromNode = (data: any) => {
+            if (data.contentType === JobContentType.FILE) {
+                return [data.content.input as string];
+            } else {
+                return data.content.map((fi: any) => fi.input) as any as string[];
+            }
+        };
         (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: any) => {
-            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: node.data.fileList});
-            return node.data.fileList.includes(fileB);
+            const fileList = extractFilesFromNode(node.data);
+            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: fileList});
+            return fileList.includes(fileB);
         });
 
         const needsBackupCalls: string[] = [];
@@ -997,7 +1037,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         const backupFilesCalls: string[] = [];
         (testMode as any).backupFiles =
-            jest.fn().mockImplementation((file: string, needsDecl: boolean, needsGlue: boolean) => {
+            jest.fn().mockImplementation((file: string, _1: boolean, _2: boolean) => {
                 backupFilesCalls.push(file);
                 return Promise.resolve();
             });

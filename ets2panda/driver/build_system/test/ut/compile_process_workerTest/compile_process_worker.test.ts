@@ -18,6 +18,9 @@ import {
     WorkerMessageType,
     ProcessCompileTask,
     BUILD_MODE,
+    JobContentType,
+    CompileJobType,
+    BuildConfig,
 } from '../../../src/types';
 import { LogData } from '../../../src/logger';
 
@@ -45,20 +48,18 @@ type MockEts2panda = {
 
 describe('compile_process_worker', () => {
     const mockTaskId = 'test-task-123';
-    const mockBuildConfig = {
+    const mockBuildConfig: Partial<BuildConfig> = {
         buildMode: BUILD_MODE.DEBUG,
         dumpPerf: false,
-    } as any;
-    const mockFileInfo = { input: 'test.ets', output: 'test.abc' } as any;
-    const mockDeclgenConfig = { output: 'test.d.ts' } as any;
+    };
 
-    const baseTask: ProcessCompileTask = {
-        fileInfo: mockFileInfo,
-        fileList: ['test.ets'],
-        declgenConfig: mockDeclgenConfig,
-        type: 'DECL_ABC' as any,
-        buildConfig: mockBuildConfig,
-    } as any;
+    const baseTask: Partial<ProcessCompileTask> = {
+        contentType: JobContentType.FILE,
+        content: { input: 'test.ets', output: 'test.abc' },
+        declgenConfig: { output: 'test.d.ts' },
+        jobType: CompileJobType.DECL_ABC,
+        buildConfig: mockBuildConfig as BuildConfig,
+    };
 
     const getMockEts2panda = (): MockEts2panda => {
         const { Ets2panda } = require('../../../src/util/ets2panda');
@@ -83,8 +84,11 @@ describe('compile_process_worker', () => {
     };
 
     test('compile_process_worker compile test', () => {
-        const task = { ...baseTask, fileList: ['single.ets'] };
-        const message = {
+        const task: Partial<ProcessCompileTask> = {
+            ...baseTask,
+            content: { input: 'single.ets', output: 'single.abc' }
+        };
+        const message: any = {
             type: WorkerMessageType.ASSIGN_TASK,
             data: { taskId: mockTaskId, payload: task },
         };
@@ -97,7 +101,6 @@ describe('compile_process_worker', () => {
         expect(ets2panda.compile).toHaveBeenCalledWith(
             mockTaskId,
             task,
-            true,
             expect.any(Function),
             expect.any(Function)
         );
@@ -109,7 +112,12 @@ describe('compile_process_worker', () => {
     });
 
     test('compile_process_worker compileSimultaneous test', () => {
-        const task = { ...baseTask, fileList: ['file1.ets', 'file2.ets'] };
+        const task: Partial<ProcessCompileTask> = {
+            ...baseTask,
+            contentType: JobContentType.CLUSTER,
+            content: [{ input: 'file1.ets', output: 'file1.abc' },
+                      { input: 'file2.ets', output: 'file2.abc' }]
+        };
         const message = {
             type: WorkerMessageType.ASSIGN_TASK,
             data: { taskId: mockTaskId, payload: task },
@@ -122,7 +130,6 @@ describe('compile_process_worker', () => {
         expect(ets2panda.compileSimultaneous).toHaveBeenCalledWith(
             mockTaskId,
             task,
-            false,
             true,
             expect.any(Function),
             expect.any(Function)
@@ -142,7 +149,7 @@ describe('compile_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        const declCallback = ets2panda.compile.mock.calls[0][3];
+        const declCallback = ets2panda.compile.mock.calls[0][2];
         declCallback();
         expect((process as any).send).toHaveBeenCalledWith({
             type: WorkerMessageType.DECL_GENERATED,
@@ -161,7 +168,7 @@ describe('compile_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        const abcCallback = ets2panda.compile.mock.calls[0][4];
+        const abcCallback = ets2panda.compile.mock.calls[0][3];
         abcCallback();
         expect((process as any).send).toHaveBeenCalledWith({
             type: WorkerMessageType.ABC_COMPILED,

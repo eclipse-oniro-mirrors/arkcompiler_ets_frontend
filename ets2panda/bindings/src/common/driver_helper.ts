@@ -19,7 +19,7 @@ import { throwError } from './utils';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';
 import { withStringResult } from './Platform';
 import { KBoolean, KInt, KNativePointer, KPointer } from './InteropTypes';
-import { passString, passStringArray } from './private';
+import { passString, passStringArray, unpackString } from './private';
 import { Es2pandaNativeModule } from './Es2pandaNativeModule';
 
 export class DriverHelper {
@@ -142,10 +142,14 @@ export class DriverHelper {
         );
     }
 
-    public createContextGenerateAbcForExternalSourceFiles(
+    public formOutputPathForFile(inputPath: string): String {
+        return unpackString(global.es2panda._FormOutputPathForFile(global.context, inputPath));
+    }
+
+    public createContextSimultaneousMode(
         filenames: string[]
     ): KPointer {
-        let ctx = global.es2panda._CreateContextGenerateAbcForExternalSourceFiles(this._cfg!.peer, filenames.length, passStringArray(filenames));
+        let ctx = global.es2panda._CreateContextSimultaneousMode(this._cfg!.peer, filenames.length, passStringArray(filenames));
         this._ctx = new Context(ctx);
         return ctx;
     }

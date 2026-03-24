@@ -383,7 +383,6 @@ static void InitializeContext(Context *res)
 
     res->codeGenCb = CompileJob;
     res->emitter = new compiler::ETSEmitter(res);
-    res->program = nullptr;
     res->state = ES2PANDA_STATE_NEW;
 }
 
@@ -391,7 +390,6 @@ static Context *InitContext(es2panda_Config *config)
 {
     auto *cfg = reinterpret_cast<ConfigImpl *>(config);
     auto *res = new Context;
-    res->compiledByCapi = true;
     if (cfg == nullptr) {
         res->errorMessage = "Config is nullptr.";
         res->state = ES2PANDA_STATE_ERROR;
@@ -515,8 +513,9 @@ extern "C" __attribute__((unused)) es2panda_Context *CreateContextFromString(es2
     return CreateContext(config, std::string(source), fileName, nullptr, false, false);
 }
 
-extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExternalSourceFiles(
-    es2panda_Config *config, int fileNamesCount, char const *const *fileNames)
+extern __attribute__((unused)) es2panda_Context *CreateContextSimultaneousMode(es2panda_Config *config,
+                                                                               int fileNamesCount,
+                                                                               char const *const *fileNames)
 {
     auto res = InitContext(config);
     if (res->state == ES2PANDA_STATE_ERROR) {
@@ -525,10 +524,10 @@ extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExte
     auto *cfg = reinterpret_cast<ConfigImpl *>(config);
 
     ES2PANDA_ASSERT(cfg->options->IsSimultaneous());
-    for (size_t i = 0; i < static_cast<size_t>(fileNamesCount); ++i) {
-        const char *cName = *(fileNames + i);
-        std::string fileName(cName);
-        res->sourceFileNames.emplace_back(std::move(fileName));
+
+    Span<const char *const> files(fileNames, fileNamesCount);
+    for (const char *file : files) {
+        res->sourceFileNames.emplace_back(std::string {file});
     }
 
     res->input = "";
@@ -540,6 +539,14 @@ extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExte
 
     InitializeContext(res);
     return reinterpret_cast<es2panda_Context *>(res);
+}
+
+extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExternalSourceFiles(
+    es2panda_Config *config, int fileNamesCount, char const *const *fileNames)
+{
+    reinterpret_cast<ConfigImpl *>(config)->diagnosticEngine->LogDiagnostic(
+        diagnostic::DEPRECATED_PUBLIC_API, util::DiagnosticMessageParams {__FUNCTION__});
+    return CreateContextSimultaneousMode(config, fileNamesCount, fileNames);
 }
 
 extern "C" __attribute__((unused)) es2panda_Context *CreateContextFromStringWithHistory(es2panda_Config *config,
@@ -738,11 +745,20 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 
     /* Main thread can also be used instead of idling */
     ctx->queue->Schedule(ctx);
+    emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
     ctx->queue->Consume();
     ctx->queue->Wait([emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
-    ES2PANDA_ASSERT(ctx->program == nullptr);
-    emitter->GenAnnotation();
-    ctx->program = emitter->Finalize(ctx->config->options->IsDumpDebugInfo(), compiler::Signatures::ETS_GLOBAL);
+
+    if (ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+        ctx->output = emitter->AsETSEmitter()->EmitRecordsSimultIncMode();
+    } else {
+        emitter->EmitRecords();
+        std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
+        auto &imd = ctx->parserProgram->GetImportMetadata();
+        res.emplace(ctx->parser->GetImportPathManager()->FormAbcFilePath(imd),
+                    std::unique_ptr<pandasm::Program>(emitter->DumpDebugInfo()));
+        ctx->output = std::move(res);
+    }
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_ASM_GENERATED : ES2PANDA_STATE_ERROR;
     return ctx;
 }
@@ -759,11 +775,10 @@ __attribute__((unused)) Context *GenerateBin(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_ASM_GENERATED);
 
-    ES2PANDA_ASSERT(ctx->program != nullptr);
-    util::GenerateProgram(ctx->program, *ctx->config->options,
-                          [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
-                              ctx->diagnosticEngine->LogDiagnostic(kind, params);
-                          });
+    auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
+        ctx->diagnosticEngine->LogDiagnostic(kind, params);
+    };
+    util::GenerateBinaryFiles(ctx->output, *ctx->config->options, reporter);
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_BIN_GENERATED : ES2PANDA_STATE_ERROR;
     return ctx;
 }
@@ -812,7 +827,6 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
     if (ctx->config != nullptr) {
         ctx->config->diagnosticEngine->EnsureLocations();
     }
-    delete ctx->program;
     if (ctx->emitter != nullptr) {
         FreeCompilerPartMemory(context);
     }
@@ -1372,7 +1386,7 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     ArenaSet<ir::AstNode *> res = AllDeclarationsByNameFromNodeHelper(allocator, programE2p->Ast(), nameE2p);
     result.insert(res.begin(), res.end());
 
-    for (auto [_, ext_program] : programE2p->GetExternalSources()->Direct()) {
+    for (auto &[_, ext_program] : programE2p->GetExternalSources()->Direct()) {
         if (ext_program != nullptr) {
             res = AllDeclarationsByNameFromNodeHelper(allocator, ext_program->Ast(), nameE2p);
             result.insert(res.begin(), res.end());
@@ -1382,7 +1396,7 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     *declsLen = result.size();
     auto apiRes = allocator->New<es2panda_AstNode *[]>(*declsLen);
     size_t i = 0;
-    for (auto elem : result) {
+    for (auto &elem : result) {
         auto toPush = reinterpret_cast<es2panda_AstNode *>(elem);
         apiRes[i++] = toPush;
     };
@@ -1411,6 +1425,37 @@ extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2pand
                                                                                                                   : 1;
 }
 
+inline static parser::Program *FindProgramInContextByPath(Context *ctxImpl, const std::string &inputPathStr)
+{
+    if (!ctxImpl->config->options->IsSimultaneous()) {
+        return ctxImpl->parserProgram;
+    }
+
+    for (const auto &[_, prog] : ctxImpl->parserProgram->GetExternalSources()->Direct()) {
+        if (prog && prog->IsBuiltSimultaneously() && prog->AbsoluteName().Mutf8() == inputPathStr) {
+            return prog;
+        }
+    }
+
+    return nullptr;
+}
+
+extern "C" __attribute__((unused)) char *FormOutputPathForFile(es2panda_Context *ctx, const char *inputPath)
+{
+    auto *ctxImpl = reinterpret_cast<Context *>(ctx);
+    if (ctxImpl->state != ES2PANDA_STATE_PARSED) {
+        return StdStringToCString(ctxImpl->Allocator(), "");
+    }
+
+    auto *prog = FindProgramInContextByPath(ctxImpl, inputPath);
+    if (prog == nullptr) {
+        return StdStringToCString(ctxImpl->Allocator(), "");
+    }
+
+    return StdStringToCString(ctxImpl->Allocator(),
+                              ctxImpl->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportMetadata()));
+}
+
 static bool HandleMultiFileModeTemplate(
     Context *ctxImpl, const std::string &outputPath,
     const std::function<std::pair<bool, const std::string>(const std::string &)> &findPath,
@@ -1422,7 +1467,7 @@ static bool HandleMultiFileModeTemplate(
     }
 
     for (auto [_, prog] : ctxImpl->parserProgram->GetExternalSources()->Direct()) {
-        if (prog == nullptr || !prog->IsGenAbcForExternal()) {
+        if (prog == nullptr || !prog->IsBuiltSimultaneously()) {
             continue;
         }
 
@@ -1570,6 +1615,7 @@ es2panda_Impl g_impl = {
     CreateContextFromStringWithHistory,
     CreateCacheContextFromString,
     CreateContextGenerateAbcForExternalSourceFiles,
+    CreateContextSimultaneousMode,
     ProceedToState,
     DestroyContext,
     CreateGlobalContext,
@@ -1628,6 +1674,7 @@ es2panda_Impl g_impl = {
     AllDeclarationsByNameFromNode,
     AllDeclarationsByNameFromProgram,
     GenerateTsDeclarationsFromContext,
+    FormOutputPathForFile,
     InsertETSImportDeclarationAndParse,
     GenerateStaticDeclarationsFromContext,
     InvalidateFileCache,

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2023 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,16 +35,26 @@ std::vector<LiteralBuffer> &ProgramElement::BuffStorage()
 
 pandasm::Function *ProgramElement::Function()
 {
-    return func_;
+    return asmFunc_;
+}
+
+ir::ScriptFunction *ProgramElement::SrcFunction()
+{
+    return srcFunc_;
 }
 
 void ProgramElement::SetFunction(pandasm::Function *func)
 {
-    func_ = func;
+    asmFunc_ = func;
+}
+
+void ProgramElement::SetSrcFunction(ir::ScriptFunction *func)
+{
+    srcFunc_ = func;
 }
 
 ProgramElement::~ProgramElement()
 {
-    delete func_;
+    delete asmFunc_;
 }
 }  // namespace ark::es2panda::compiler

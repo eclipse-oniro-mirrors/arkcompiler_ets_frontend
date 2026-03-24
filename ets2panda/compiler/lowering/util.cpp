@@ -267,17 +267,31 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
     return scope;
 }
 
-static void CollectDirectExtSources(parser::Program *globalProg, parser::Program *program,
-                                    std::map<ArenaString, parser::Program *> &progsFromPath)
+static std::vector<parser::Program *> CollectDirectExtSources(public_lib::Context *ctx, parser::Program *prog)
 {
-    auto &directSources = program->GetExternalSources()->Direct();
-    for (const auto &fileDepends : globalProg->GetFileDependencies()[ArenaString {program->SourceFilePath().Utf8()}]) {
-        if (progsFromPath.find(fileDepends) == progsFromPath.end()) {
+    const auto &fileDeps = ctx->parser->GetImportPathManager()->GetFileDependencies();
+    auto prgPath = ArenaString {prog->AbsoluteName().Utf8()};
+    if (fileDeps.find(prgPath) == fileDeps.end()) {
+        return {};
+    }
+
+    std::map<std::string_view, parser::Program *> path2prog;
+    path2prog.emplace(prog->AbsoluteName().Utf8(), prog);
+    ctx->parserProgram->GetExternalSources()->Visit(
+        [&path2prog](auto *prg) { path2prog.emplace(prg->AbsoluteName().Utf8(), prg); });
+
+    std::vector<parser::Program *> res;
+    const auto &directDepsSet = fileDeps.at(prgPath);
+    res.reserve(directDepsSet.size());
+
+    for (const auto &extSrcPath : directDepsSet) {
+        if (path2prog.find(extSrcPath) == path2prog.end()) {
             continue;
         }
-        ES2PANDA_ASSERT(directSources.find(fileDepends) == directSources.end());
-        directSources[fileDepends] = progsFromPath[fileDepends];
+        res.emplace_back(path2prog.at(extSrcPath));
     }
+
+    return res;
 }
 
 class RecheckGraph {
@@ -319,35 +333,51 @@ private:
     std::set<Node *> foundModifiedProgs_ {};
 };
 
-static RecheckGraph::Node *RecheckGraphCreatorHelper(parser::Program *globalProg, parser::Program *program,
-                                                     std::map<ArenaString, parser::Program *> &progsFromPath,
+static RecheckGraph::Node *RecheckGraphCreatorHelper(public_lib::Context *ctx, parser::Program *program,
+                                                     RecheckGraph *graph);
+
+static void RecheckDependencies(public_lib::Context *ctx, parser::Program *prg, RecheckGraph *graph)
+{
+    auto *node = &graph->Programs().at(prg);
+
+    auto recheckImpl = [&ctx, &node, &graph](auto *prog) {
+        RecheckGraph::Node *importedNode = nullptr;
+        importedNode = RecheckGraphCreatorHelper(ctx, prog, graph);
+        node->ImportedNodes().emplace(importedNode);
+        importedNode->NodesImportedBy().emplace(node);
+    };
+
+    std::vector<parser::Program *> directExtSources;
+    if (prg->Is<util::ModuleKind::SIMULT_MAIN>()) {
+        // In simultaneous build mode all programs to be built are added as direct external sources to the synthetic
+        // main module. And there is no info aboud that in importPathManager::fileDependencies since those programs are
+        // not explicitly imported from the main module
+        directExtSources.reserve(prg->GetExternalSources()->Direct().size());
+        for (auto &[_, directExtSrc] : prg->GetExternalSources()->Direct()) {
+            directExtSources.emplace_back(directExtSrc);
+        }
+    } else {
+        directExtSources = CollectDirectExtSources(ctx, prg);
+    }
+
+    for (auto directExtPrg : directExtSources) {
+        recheckImpl(directExtPrg);
+    }
+}
+
+static RecheckGraph::Node *RecheckGraphCreatorHelper(public_lib::Context *ctx, parser::Program *program,
                                                      RecheckGraph *graph)
 {
     if (graph->Programs().find(program) != graph->Programs().end()) {
         return &graph->Programs().at(program);
     }
     graph->Programs().emplace(program, RecheckGraph::Node(program));
+    RecheckDependencies(ctx, program, graph);
+
     auto *node = &graph->Programs().at(program);
-    if (program->GetExternalSources()->Empty()) {
-        CollectDirectExtSources(globalProg, program, progsFromPath);
-    }
-
-    auto runOnSource = [&progsFromPath, globalProg, graph, node](auto *prog) {
-        RecheckGraph::Node *importedNode = nullptr;
-        importedNode = RecheckGraphCreatorHelper(globalProg, prog, progsFromPath, graph);
-        node->ImportedNodes().emplace(importedNode);
-        importedNode->NodesImportedBy().emplace(node);
-    };
-    for (auto [_, source] : program->GetExternalSources()->Direct()) {
-        (void)_;
-        runOnSource(source);
-    }
-    program->GetExternalSources()->Visit(runOnSource);
-
     if (program->IsProgramModified()) {
         graph->FoundModifiedProgs().emplace(node);
     }
-    program->GetExternalSources()->Direct().clear();
     return node;
 }
 
@@ -388,18 +418,14 @@ static void ExtendModifiedFlagOnPackagePrograms(parser::Program *globalProg)
     }
 }
 
-static bool ExtendModifiedFlagOnDependentPrograms(parser::Program *globalProg, parser::Program *program)
+static bool ExtendModifiedFlagOnDependentPrograms(public_lib::Context *ctx, parser::Program *program)
 {
+    auto *globalProg = ctx->parserProgram;
+
     ExtendModifiedFlagOnPackagePrograms(globalProg);
 
-    std::map<ArenaString, parser::Program *> progsFromPath;
-    progsFromPath[ArenaString {program->SourceFilePath().Utf8()}] = program;
-
-    program->GetExternalSources()->Visit(
-        [&progsFromPath](auto *prog) { progsFromPath.emplace(ArenaString {prog->SourceFilePath().Utf8()}, prog); });
-
     RecheckGraph graph;
-    RecheckGraphCreatorHelper(globalProg, program, progsFromPath, &graph);
+    RecheckGraphCreatorHelper(ctx, program, &graph);
 
     for (auto node : graph.FoundModifiedProgs()) {
         if (node->Prog()->IsProgramModified()) {
@@ -463,7 +489,7 @@ static varbinder::ETSBinder *SetupNewVarBinderHierarchy(public_lib::Context *ctx
 static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, parser::Program *program)
 {
     auto ctx = phaseManager->Context();
-    if (!ExtendModifiedFlagOnDependentPrograms(ctx->parserProgram, program)) {
+    if (!ExtendModifiedFlagOnDependentPrograms(ctx, program)) {
         return;
     }
 
@@ -496,9 +522,9 @@ static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *var
     ctx->PushChecker(newChecker);
 
     for (auto *savedVarBinder : savedVarBinders) {
-        for (auto func : savedVarBinder->Functions()) {
+        for (auto func : savedVarBinder->FunctionScopes()) {
             if (func->Node()->Program() != nullptr && !func->Node()->Program()->IsProgramModified()) {
-                newVarbinder->Functions().push_back(func);
+                newVarbinder->FunctionScopes().push_back(func);
             }
         }
     }

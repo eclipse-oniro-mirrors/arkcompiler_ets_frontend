@@ -28,19 +28,26 @@ void DepAnalyzer::DumpJson(std::string &outFilePath)
     outFile << ss.rdbuf();
 }
 
-std::string ConvertBackslash(std::string_view path)
+std::string EscapeBackslash(std::string_view path)
 {
 #if defined(_WIN32)
-    std::string res {path};
-    std::replace_if(
-        res.begin(), res.end(), [](const auto &c) { return c == '\\'; }, '/');
-    return res;
+    std::ostringstream ss {};
+    for (const auto &c : path) {
+        if (c == '\\') {
+            // Print backslash twice
+            ss << c;
+        }
+        ss << c;
+    }
+    return ss.str();
 #else
     return std::string {path};
 #endif
 }
 
-static void DumpJsonHelper(std::ostream &ostr, std::string_view name, const DepAnalyzer::FileDependenciesMap &map)
+// DepAnalyzer::FileDependenciesMap
+template <typename ValueT>
+static void DumpJsonHelper(std::ostream &ostr, std::string_view name, const ValueT &map)
 {
     std::string_view jsonTab = "  ";
     std::string_view jsonTab2 = "    ";
@@ -48,23 +55,31 @@ static void DumpJsonHelper(std::ostream &ostr, std::string_view name, const DepA
 
     ostr << jsonTab << "\"" << name << "\": {";
 
+    auto dumpArray = [&ostr, &jsonTab3](const auto &valueArray) {
+        for (auto setIt = valueArray.begin(); setIt != valueArray.end(); ++setIt) {
+            if (LIKELY(setIt != valueArray.begin())) {
+                ostr << ",";
+            }
+            ostr << std::endl << jsonTab3 << "\"" << EscapeBackslash(*setIt) << "\"";
+        }
+    };
+
     for (auto mapIt = map.begin(); mapIt != map.end(); ++mapIt) {
         const auto &file = mapIt->first;
-        const auto &deps = mapIt->second;
+        const auto &value = mapIt->second;
 
         if (LIKELY(mapIt != map.begin())) {
             ostr << ",";
         }
-        ostr << std::endl << jsonTab2 << "\"" << ConvertBackslash(file) << "\": [";
 
-        for (auto setIt = deps.begin(); setIt != deps.end(); ++setIt) {
-            if (LIKELY(setIt != deps.begin())) {
-                ostr << ",";
-            }
-            ostr << std::endl << jsonTab3 << "\"" << ConvertBackslash(*setIt) << "\"";
+        if constexpr (std::is_same_v<ValueT, DepAnalyzer::FileOutputMatching>) {
+            ostr << std::endl
+                 << jsonTab2 << "\"" << EscapeBackslash(file) << "\": \"" << EscapeBackslash(value) << "\"";
+        } else {
+            ostr << std::endl << jsonTab2 << "\"" << EscapeBackslash(file) << "\": [";
+            dumpArray(value);
+            ostr << std::endl << jsonTab2 << "]";
         }
-
-        ostr << std::endl << jsonTab2 << "]";
     }
     ostr << std::endl << jsonTab << "}";
 }
@@ -93,14 +108,17 @@ static int CollectFilesToProcess(const std::string &fileListPath, std::vector<st
 void DepAnalyzer::DumpJson(std::ostream &ostr)
 {
     ostr << "{" << std::endl;
-    DumpJsonHelper(ostr, "dependencies", directDependencies_);
+    DumpJsonHelper<DepAnalyzer::FileDependenciesMap>(ostr, "dependencies", directDependencies_);
     ostr << "," << std::endl;
-    DumpJsonHelper(ostr, "dependants", directDependants_);
+    DumpJsonHelper<DepAnalyzer::FileDependenciesMap>(ostr, "dependants", directDependants_);
+    ostr << "," << std::endl;
+    DumpJsonHelper<DepAnalyzer::FileOutputMatching>(ostr, "outputMatching", outputMatching_);
     ostr << std::endl << "}";
 }
 
-void DepAnalyzer::CollectDependencies(const ark::es2panda::parser::Program::FileDependenciesMap &dependencies)
+void DepAnalyzer::CollectData(const ark::es2panda::util::ImportPathManager *ipm)
 {
+    const auto &dependencies = ipm->GetFileDependencies();
     for (const auto &[prgPath, depPaths] : dependencies) {
         GetAlreadyProcessedFiles().insert(std::string {prgPath});
         for (const auto &depPath : depPaths) {
@@ -108,6 +126,11 @@ void DepAnalyzer::CollectDependencies(const ark::es2panda::parser::Program::File
             directDependencies_[std::string {prgPath}].insert(std::string {depPath});
             directDependants_[std::string {depPath}].insert(std::string {prgPath});
         }
+    }
+
+    const auto &outputMatching = ipm->GetOutputMatching();
+    for (const auto &[prgPath, abcPath] : outputMatching) {
+        outputMatching_.try_emplace(std::string {prgPath}, std::string {abcPath});
     }
 }
 
@@ -165,7 +188,7 @@ int DepAnalyzer::AnalyzeDeps(const std::string &exec, const std::string &arktsco
 
         ark::es2panda::parser::Program *prg = ctxImpl->parserProgram;
         GetAlreadyProcessedFiles().insert(prg->AbsoluteName().Mutf8());
-        CollectDependencies(prg->GetFileDependencies());
+        CollectData(ctxImpl->parser->GetImportPathManager());
 
         impl->DestroyContext(ctx);
     }

@@ -59,8 +59,8 @@ describe('ArkTSConfig - Constructor and Initialization', () => {
         expect(arktsConfig.compilerOptions.cacheDir).toBe('/cache');
     });
 
-    test('should set projectRootPath correctly', () => {
-        expect(arktsConfig.compilerOptions.projectRootPath).toBe('/project');
+    test('should set rootDir correctly', () => {
+        expect(arktsConfig.compilerOptions.rootDir).toBe('/project');
     });
 
     test('should initialize empty paths object', () => {
@@ -565,7 +565,7 @@ describe('ArkTSConfig - Getters and Setters', () => {
             expect(opts.paths).toBeDefined();
             expect(opts.dependencies).toBeDefined();
             expect(opts.cacheDir).toBeDefined();
-            expect(opts.projectRootPath).toBeDefined();
+            expect(opts.rootDir).toBeDefined();
         });
     });
 

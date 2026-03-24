@@ -263,12 +263,6 @@ defines:
     ref: INTERFACE_OBJ_LITERAL
   - name: 'use static'
     ref: STATIC_PROGRAM_FLAG
-  - name: 'ETSGLOBAL.<cctor>:void;'
-    ref: UNUSED_ETSGLOBAL_CTOR
-  - name: 'ETSGLOBAL._$init$_:void;'
-    ref: UNUSED_ETSGLOBAL_INIT
-  - name: 'ETSGLOBAL.main:void;'
-    ref: UNUSED_ETSGLOBAL_MAIN
   - name: "initialize"
     ref: CLASS_INITIALIZE_METHOD
   - name: 'constructor'

@@ -113,12 +113,12 @@ const checker::Checker *Program::Checker() const
     return checkers_.at(compiler::GetPhaseManager()->GetCurrentMajor());
 }
 
-bool Program::IsGenAbcForExternal() const
+bool Program::IsBuiltSimultaneously() const
 {
-    if (genAbcForExternalSource_) {
+    if (isBuiltSimultaneously_) {
         [[maybe_unused]] auto ctx = compiler::GetPhaseManager()->Context();
         ES2PANDA_ASSERT(ctx->config->options->IsSimultaneous());
-        ES2PANDA_ASSERT(ctx->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE);
+        ES2PANDA_ASSERT(ctx->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS);
         return true;
     }
     return false;

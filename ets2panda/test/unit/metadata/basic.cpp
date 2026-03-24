@@ -181,8 +181,8 @@ TEST_F(MetadataTest, metadata_abc_writing_reading_test)
     std::array<const char *const, argumentsNumber> args = {{"dummy.ets", "--output=dummy.abc"}};
     options->Parse(Span(args.begin(), argumentsNumber));
 
-    util::GenerateProgram(
-        program.get(), *options,
+    util::GenerateBinaryFile(
+        program.get(), options->GetOutput(), *options,
         [&diagnosticEngine](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
             diagnosticEngine.LogDiagnostic(kind, params);
         });
@@ -377,8 +377,8 @@ TEST_F(MetadataTest, metadata_disabled)
     std::array<const char *const, 2> args = {{"dummy.ets", "--output=dummy.abc"}};
     options->Parse(Span(args.begin(), argsNumber));
 
-    util::GenerateProgram(
-        program.get(), *options,
+    util::GenerateBinaryFile(
+        program.get(), options->GetOutput(), *options,
         [&diagnosticEngine](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
             diagnosticEngine.LogDiagnostic(kind, params);
         });

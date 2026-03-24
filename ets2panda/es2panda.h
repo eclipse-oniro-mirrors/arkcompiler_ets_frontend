@@ -60,7 +60,9 @@ enum class CompilationMode {
     GEN_STD_LIB,
     PROJECT,
     SINGLE_FILE,
-    GEN_ABC_FOR_EXTERNAL_SOURCE,
+    SIMULTANEOUS,
+    // Like simultaneous mode, but produces several abc files, one for each input file
+    SIMULTANEOUS_INCREMENTAL,
 };
 // CC-OFFNXT(G.FUD.06) switch-case, ODR
 inline Language ToLanguage(ScriptExtension ext)
@@ -112,8 +114,10 @@ public:
     NO_COPY_SEMANTIC(Compiler);
     NO_MOVE_SEMANTIC(Compiler);
 
-    pandasm::Program *Compile(const SourceFile &input, const util::Options &options,
-                              util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus = 0);
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compile(const SourceFile &input,
+                                                                               const util::Options &options,
+                                                                               util::DiagnosticEngine &diagnosticEngine,
+                                                                               uint32_t parseStatus = 0);
 
     static void DumpAsm(const pandasm::Program *prog);
 

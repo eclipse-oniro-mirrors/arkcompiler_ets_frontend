@@ -183,19 +183,18 @@ public:
         return allocator_;
     }
 
-    [[nodiscard]] const ArenaVector<FunctionScope *> &Functions() const noexcept
-    {
-        return functionScopes_;
-    }
-
-    [[nodiscard]] ArenaVector<FunctionScope *> &Functions() noexcept
+    // NOTE(mshimenkov): Used during code gen phase and stores function scopes that serves as the primary scope context
+    // to be compiled during code gen. The scope determines whether the current compilation target is:
+    // 1. A regular function → compiled with function semantics (parameters, return handling)
+    // 2. A global block → compiled as module-level code (static properties, top-level statements)
+    [[nodiscard]] ArenaVector<FunctionScope *> &FunctionScopes() noexcept
     {
         return functionScopes_;
     }
 
     [[nodiscard]] virtual ScriptExtension Extension() const noexcept
     {
-        return ScriptExtension::JS;
+        return ScriptExtension::INVALID;
     }
 
     [[nodiscard]] virtual ResolveBindingOptions BindingOptions() const noexcept
@@ -292,7 +291,6 @@ protected:
         target->program_ = program_;
         target->allocator_ = allocator_;
         target->context_ = context_;
-        target->bindingOptions_ = bindingOptions_;
         target->genStdLib_ = genStdLib_;
     }
 
@@ -304,7 +302,6 @@ private:
     Scope *scope_ {};
     VariableScope *varScope_ {};
     ArenaVector<FunctionScope *> functionScopes_;
-    ResolveBindingOptions bindingOptions_ {};
     bool genStdLib_ {false};
 };
 

@@ -196,6 +196,8 @@ struct CAPI_EXPORT es2panda_Impl {
                                                       bool isExternal, bool isLspUsage);
     es2panda_Context *(*CreateContextGenerateAbcForExternalSourceFiles)(es2panda_Config *config, int fileNamesCount,
                                                                         char const *const *fileNames);
+    es2panda_Context *(*CreateContextSimultaneousMode)(es2panda_Config *config, int fileNamesCount,
+                                                       char const *const *fileNames);
     es2panda_Context *(*ProceedToState)(es2panda_Context *context, es2panda_ContextState state);  // context is consumed
     void (*DestroyContext)(es2panda_Context *context);
 
@@ -284,6 +286,7 @@ struct CAPI_EXPORT es2panda_Impl {
     int (*GenerateTsDeclarationsFromContext)(es2panda_Context *context, const char *outputDeclEts,
                                              const char *outputEts, bool exportAll, bool isolated,
                                              const char *recordFile, bool genAnnotations);
+    char *(*FormOutputPathForFile)(es2panda_Context *context, const char *inputPath);
     void (*InsertETSImportDeclarationAndParse)(es2panda_Context *context, es2panda_Program *program,
                                                es2panda_AstNode *importDeclaration);
     int (*GenerateStaticDeclarationsFromContext)(es2panda_Context *context, const char *outputPath);

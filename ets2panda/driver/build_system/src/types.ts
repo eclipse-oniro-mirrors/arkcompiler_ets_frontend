@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ export enum WorkerMessageType {
     DECL_GENERATED = 'DECL_GENERATED',
     ABC_COMPILED = 'ABC_COMPILED',
     ERROR_OCCURED = 'ERROR_OCCURED',
-    ASSIGN_TASK = 'ASSIGN_TASK'
+    ASSIGN_TASK = 'ASSIGN_TASK',
+    TASK_FINISHED = 'TASK_FINISHED'
 }
 
 // ProjectConfig begins
@@ -83,19 +84,20 @@ export interface ArkTSGlobal {
 export interface ArkTS {
     Config: {
         create: Function;
-        createContextGenerateAbcForExternalSourceFiles: Function;
+        createContextSimultaneousMode: Function;
     };
     Context: {
         createFromString: Function;
         createFromStringWithHistory: Function;
         createCacheContextFromFile: Function;
-        createContextGenerateAbcForExternalSourceFiles: Function;
+        createContextSimultaneousMode: Function;
     };
     EtsScript: {
         fromContext: Function;
     };
     proceedToState: Function;
     generateTsDeclarationsFromContext: Function;
+    formOutputPathForFile: Function;
     generateStaticDeclarationsFromContext: Function;
     destroyConfig: Function;
     Es2pandaContextState: typeof Es2pandaContextState;
@@ -197,6 +199,7 @@ export interface DeclgenConfig {
 
 export interface LoggerConfig {
     getHvigorConsoleLogger?: Function;
+    enableDebugOutput?: boolean;
 }
 
 export interface DependencyModuleConfig {
@@ -338,10 +341,10 @@ export interface DependencyItem {
 export interface CompilerOptions {
     package: string;
     baseUrl: string;
+    rootDir: string;
     paths: Record<string, string[]>;
     dependencies: Record<string, DependencyItem>;
     useEmptyPackage?: boolean;
-    projectRootPath?: string;
     cacheDir?: string;
     declgenV2OutPath?: string;
 }
@@ -350,30 +353,34 @@ export interface ArkTSConfigObject {
     compilerOptions: CompilerOptions;
 };
 
-export interface JobInfo {
-    fileInfo: FileInfo,
-    // In case of simultaneous mode
-    fileList: string[];
+export enum JobContentType {
+    FILE = 0b0,
+    CLUSTER = 0b1,
 }
 
 export interface FileInfo {
-    input: string;
-    output: string;
-    arktsConfig: string;
-    moduleName: string;
-    moduleRoot: string;
-};
+    input: string,
+    output: string,
+}
+
+export interface JobInfo {
+    contentType: JobContentType,
+    content: FileInfo | FileInfo[],
+    arktsConfig: string,
+    moduleName: string,
+    moduleRoot: string,
+}
 
 export enum CompileJobType {
-    NONE        = 0b00,
-    DECL        = 0b01,
-    ABC         = 0b10,
-    DECL_ABC    = 0b11
+    NONE = 0b00,
+    DECL = 0b01,
+    ABC = 0b10,
+    DECL_ABC = 0b11
 }
 
 export interface CompileJobInfo extends JobInfo {
     declgenConfig: DeclgenV2JobConfig;
-    type: CompileJobType
+    jobType: CompileJobType
 }
 
 export interface ProcessCompileTask extends CompileJobInfo {
@@ -398,9 +405,9 @@ export interface ProcessDeclgenV1Task extends DeclgenV1JobInfo {
 }
 export interface DeclFileInfo {
     delFilePath: string;
-    declLastModified: number|null;
+    declLastModified: number | null;
     glueCodeFilePath: string;
-    glueCodeLastModified: number|null;
+    glueCodeLastModified: number | null;
     sourceFilePath: string;
-    sourceFileLastModified: number|null;
+    sourceFileLastModified: number | null;
 }

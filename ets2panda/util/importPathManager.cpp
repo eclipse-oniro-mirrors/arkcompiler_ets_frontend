@@ -175,7 +175,8 @@ parser::Program *ImportPathManager::GatherImportMetadata(parser::Program *import
         return nullptr;
     }
 
-    GetGlobalProgram()->AddFileDependencies(importer->AbsoluteName().Utf8(), importData.ResolvedSource());
+    AddFileDependencies(importer->AbsoluteName().Utf8(), importData.ResolvedSource());
+    AddOutputMatching(importData.ResolvedSource(), FormAbcFilePath(importData));
     LOG(DEBUG, ES2PANDA) << "[" << importer->ModuleInfo().moduleName << "] "
                          << "Import " << importPath->ToString() << " resolved to " << importData.ResolvedSource();
 
@@ -309,6 +310,7 @@ void ImportPathManager::SetupGlobalProgram(public_lib::Context *ctx)
         util::ImportMetadata importData {*this, normalizedPathForGlobalProg};
         importData.SetText<ModuleKind::MODULE>(normalizedPathForGlobalProg, std::string(ctx->input));
         ctx->parserProgram = IntroduceProgram<ModuleKind::MODULE, VarBinderT>(importData);
+        AddOutputMatching(normalizedPathForGlobalProg, FormAbcFilePath(ctx->parserProgram->GetImportMetadata()));
     } else {
         util::ImportMetadata importData {};
         importData.moduleName_ = normalizedPathForGlobalProg;
@@ -423,28 +425,14 @@ void ImportPathManager::InitParseQueueForSimult()
     IntroduceMainProgramForSimult();
     srcPos_.SetProgram(Context()->parserProgram);
 
-    // NOTE(dkofanov): Looks like this function is called not only for the simult, but for LSP or whatever.
-    bool isSimult = Context()->config->options->IsSimultaneous();
-    if (isSimult) {
-        ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() ==
-                        CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE);
-        ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
-    }
-
-    std::vector<util::StringView> directImportsFromMainSource {};
+    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS);
+    ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
     for (auto &sourceName : Context()->sourceFileNames) {
-        directImportsFromMainSource.emplace_back(sourceName);
-
         // Build of `importMetadata` should be refined.
         util::ImportMetadata importData {*this, sourceName};
         auto program = LookupCachesAndIntroduceProgram(&importData);
-        if (isSimult) {
-            program->SetGenAbcForExternalSources();
-        }
+        program->SetIsBuiltSimultaneously();
     }
-
-    ES2PANDA_ASSERT(directImportsFromMainSource_.empty());
-    directImportsFromMainSource_ = directImportsFromMainSource;
 }
 
 static bool IsExtensionForPackageFraction(const std::string &extension)
@@ -571,6 +559,41 @@ std::string ImportPathManager::FormEtscacheFilePath(std::string moduleName, cons
     ES2PANDA_ASSERT(!moduleName.empty());
     std::replace(moduleName.begin(), moduleName.end(), '.', util::Path::GetPathDelimiter());
     return cacheDir + util::PATH_DELIMITER + moduleName + std::string {CACHE_SUFFIX};
+}
+
+std::string ImportPathManager::FormAbcFilePath(const ImportMetadata &imd) const
+{
+    std::string outputDir;
+    ES2PANDA_ASSERT(Context() != nullptr && Context()->config != nullptr);
+    auto *opts = Context()->config->options;
+
+    if (opts != nullptr && opts->WasSetOutput()) {
+        if (!opts->IsIncremental()) {
+            ES2PANDA_ASSERT(!ark::os::file::File::IsDirectory(opts->GetOutput()));
+            return fs::absolute(opts->GetOutput()).string();
+        }
+
+        if (!ark::os::file::File::IsDirectory(opts->GetOutput())) {
+            DE()->LogDiagnostic(diagnostic::SIMULTANEOUS_INCREMENTAL_OUTPUT, util::DiagnosticMessageParams {});
+            return "";
+        }
+
+        outputDir = fs::absolute(opts->GetOutput()).string();
+    } else if (Context()->emitter != nullptr && !Context()->emitter->IsETSEmitter()) {
+        return fs::absolute(std::string {ImportMetadata::DUMMY_PATH} + std::string {ImportPathManager::ABC_SUFFIX})
+            .string();
+    } else if (!opts->ArkTSConfig().CacheDir().empty()) {
+        outputDir = fs::absolute(opts->ArkTSConfig().CacheDir()).string();
+    } else {
+        outputDir = fs::absolute("build").string();
+    }
+
+    std::string abcFile = outputDir;
+    abcFile += util::PATH_DELIMITER;
+    abcFile += imd.ModuleName();
+    abcFile += ABC_SUFFIX;
+
+    return abcFile;
 }
 
 class EtscacheFileLock {
@@ -1381,7 +1404,7 @@ static void CheckModuleName(const ImportPathManager &ipm, const ImportMetadata &
     CheckNoColonInName(imd.ModuleName(), ipm.Context()->diagnosticEngine);
     if (imd.ModuleName().empty()) {
         ipm.Context()->diagnosticEngine->LogDiagnostic(diagnostic::UNRESOLVED_MODULE,
-                                                       DiagnosticMessageParams {imd.ResolvedSource()});
+                                                       DiagnosticMessageParams {imd.TextSource()});
     }
 }
 

@@ -15,9 +15,7 @@
 
 #include "ETSemitter.h"
 
-#include <iostream>
 #include <memory>
-#include <ostream>
 #include <set>
 #include <string>
 #include <unordered_set>
@@ -46,7 +44,6 @@
 #include "checker/types/signature.h"
 #include "checker/ETSchecker.h"
 #include "checker/types/type.h"
-#include "checker/types/ets/types.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
 #include "util/nameMangler.h"
@@ -276,13 +273,16 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
     return func;
 }
 
-ETSEmitter::ETSEmitter(const public_lib::Context *context)
-    : Emitter(context),
-      dependencies_(std::make_unique<detail::EmitterDependencies>(context->config->options->GetOptLevel()))
-{
-}
+ETSEmitter::ETSEmitter(const public_lib::Context *context) : Emitter(context) {}
 
-ETSEmitter::~ETSEmitter() = default;
+thread_local detail::EmitterDependencies *ETSEmitter::dependencies_ = nullptr;
+
+ETSEmitter::~ETSEmitter()
+{
+    for (auto [_, dep] : depMaps_) {
+        delete dep;
+    }
+}
 
 std::string const &ETSEmitter::AddDependence(std::string const &str)
 {
@@ -304,23 +304,25 @@ bool ETSFunctionEmitter::IsEmissionRequired(ir::ScriptFunction *func, parser::Pr
         return false;
     }
 
-    auto varbinder = static_cast<varbinder::ETSBinder *>(globalProgram->VarBinder());
+    auto varbinder = globalProgram->VarBinder()->AsETSBinder();
 
     // NOTE(vpukhov): #28197: remove emitter-related things from the Varbinder and Program
     // CompileQueue::Schedule enqueues external functions for compilation, so we have to filter them out
     auto program = GetProgram(scriptFunc->Signature()->Owner()->GetDeclNode());
-    bool programIsExternal = !(varbinder->IsGenStdLib() || program->IsGenAbcForExternal() || program == globalProgram ||
-                               varbinder->GetExternalRecordTable().at(program) == varbinder->GetGlobalRecordTable());
+    bool programIsExternal =
+        !(varbinder->IsGenStdLib() || program->IsBuiltSimultaneously() || program == globalProgram ||
+          varbinder->GetExternalRecordTable().at(program) == varbinder->GetGlobalRecordTable());
     return !programIsExternal;
 }
 
 pandasm::Function *ETSFunctionEmitter::GenFunctionSignature()
 {
-    auto *emitter = static_cast<ETSEmitter *>(Cg()->Context()->emitter);
+    auto *emitter = Cg()->Context()->emitter->AsETSEmitter();
     auto func = GenScriptFunction(Cg()->RootNode()->AsScriptFunction(), emitter, false);
 
     auto *funcElement = new pandasm::Function(func.name, func.language);
     *funcElement = std::move(func);
+    GetProgramElement()->SetSrcFunction(const_cast<ir::ScriptFunction *>(Cg()->RootNode()->AsScriptFunction()));
     GetProgramElement()->SetFunction(funcElement);
     funcElement->regsNum = VReg::REG_START - Cg()->TotalRegsNum();
 
@@ -359,29 +361,6 @@ void ETSFunctionEmitter::GenFunctionAnnotations([[maybe_unused]] pandasm::Functi
     }
 }
 
-static void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
-{
-    ArenaSet<ir::ClassDefinition *> &classDefinitions = varbinder->GetGlobalRecordTable()->ClassDefinitions();
-    for (auto it = classDefinitions.begin(); it != classDefinitions.end(); ++it) {
-        if ((*it)->InternalName().Is(Signatures::ETS_GLOBAL)) {
-            classDefinitions.erase(it);
-            break;
-        }
-    }
-    // obsolete if record itself will not be emitted
-    std::vector<std::string_view> filterFunctions = {
-        Signatures::UNUSED_ETSGLOBAL_CTOR, Signatures::UNUSED_ETSGLOBAL_INIT, Signatures::UNUSED_ETSGLOBAL_MAIN};
-
-    auto &functions = varbinder->Functions();
-    functions.erase(std::remove_if(functions.begin(), functions.end(),
-                                   [&filterFunctions](varbinder::FunctionScope *scope) -> bool {
-                                       return std::any_of(
-                                           filterFunctions.begin(), filterFunctions.end(),
-                                           [&scope](std::string_view &s) { return scope->InternalName().Is(s); });
-                                   }),  // CC-OFF(G.FMT.02)
-                    functions.end());
-}
-
 void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external)
 {
     if (!external && scriptFunc->Body() != nullptr) {
@@ -405,30 +384,63 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     Program()->AddToFunctionTable(std::move(func));
 }
 
-void ETSEmitter::GenAnnotation()
+std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitter::EmitRecordsSimultIncMode()
 {
-    Program()->lang = EXTENSION;
-    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
+    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL);
 
-    if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-        FilterForSimultaneous(varbinder);
+    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
+    ES2PANDA_ASSERT(varbinder->Program() == Context()->parserProgram);
+    ES2PANDA_ASSERT(varbinder->Program()->Is<util::ModuleKind::SIMULT_MAIN>());
+
+    // NOTE(mshimenkov): Treat every 'direct' external source as the main module and emit records for it.
+    // In simultaneous mode every 'direct' external source is a separate program
+    const auto &programsHolder = Context()->parserProgram->GetExternalSources()->Direct();
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> outProgsHolder = {};
+    outProgsHolder.reserve(programsHolder.size());
+
+    for (const auto &[path, prog] : programsHolder) {
+        ES2PANDA_ASSERT(prog->IsBuiltSimultaneously());
+
+        auto pandasmProg = std::unique_ptr<pandasm::Program>(GetOrCreatePandasmProgram(prog));
+
+        SetProgram(pandasmProg.get());
+        varbinder->SetProgram(prog);
+        varbinder->SetGlobalRecordTable(prog->GetRecordTable());
+        SetupDependenciesForTheProgram(prog);
+
+        EmitRecordsImpl(true);
+        DumpDebugInfo();
+
+        auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportMetadata());
+        outProgsHolder.emplace(abcPath, std::move(pandasmProg));
     }
 
-    ES2PANDA_ASSERT(varbinder->CheckRecordTablesConsistency());
-    auto const traverseRecords = [this, varbinder](bool traverseExternals) {
+    return outProgsHolder;
+}
+
+void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
+{
+    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
+
+    Program()->lang = EXTENSION;
+    auto const traverseRecords = [this, varbinder, isIncrementalBuild](bool traverseExternals) {
         EmitRecordTable(varbinder->GetGlobalRecordTable(), false, traverseExternals);
         auto *saveProgram = varbinder->Program();
         for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
             if (recordTable == varbinder->GetGlobalRecordTable()) {
                 continue;
             }
-            bool programIsExternal = !(varbinder->IsGenStdLib() || recordTable->Program()->IsGenAbcForExternal());
+            bool programIsExternal = !(varbinder->IsGenStdLib());
+            if (!isIncrementalBuild) {
+                // Emit records from other programs built simultaneously as well
+                programIsExternal &= !extProg->IsBuiltSimultaneously();
+            }
             varbinder->SetProgram(extProg);
             EmitRecordTable(recordTable, programIsExternal, traverseExternals);
         }
         varbinder->SetProgram(saveProgram);
         if (traverseExternals) {
-            const auto *checker = static_cast<checker::ETSChecker *>(Context()->GetChecker());
+            const auto *checker = Context()->GetChecker()->AsETSChecker();
             for (auto [arrType, _] : checker->GlobalArrayTypes()) {
                 GenGlobalArrayRecord(arrType);
             }
@@ -445,7 +457,12 @@ void ETSEmitter::GenAnnotation()
     traverseRecords(true);                        // initial pass, which contributes to the difference
     dependencies_->ProceedToEmitExternalDelta();  // compute the difference
     traverseRecords(true);                        // re-run the pass
-    dependencies_.reset();
+}
+
+void ETSEmitter::EmitRecords()
+{
+    ES2PANDA_ASSERT(Context()->parserProgram->VarBinder()->AsETSBinder()->CheckRecordTablesConsistency());
+    return EmitRecordsImpl();
 }
 
 void ETSEmitter::EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals)
@@ -458,7 +475,7 @@ void ETSEmitter::EmitRecordTable(varbinder::RecordTable *table, bool programIsEx
         return;
     }
 
-    const auto *varbinder = static_cast<const varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
+    const auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
 
     auto baseName = varbinder->GetRecordTable()->RecordName().Mutf8();
     for (auto *annoDecl : table->AnnotationDeclarations()) {
@@ -1210,4 +1227,56 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationAsync(ir::ScriptFunction *scrip
     ann.AddElement(std::move(value));
     return ann;
 }
+
+void ETSEmitter::AddProgramElement(ProgramElement *programElement)
+{
+    // Function was filtered out (external functions are not emitted)
+    if (programElement->Function() == nullptr) {
+        return;
+    }
+
+    if (Context()->config->options->GetCompilationMode() != CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+        return Emitter::AddProgramElement(programElement);
+    }
+
+    auto *m = util::Helpers::FindAncestorGivenByType(programElement->SrcFunction(), ir::AstNodeType::ETS_MODULE);
+    ES2PANDA_ASSERT(m != nullptr);
+    auto *parserProg = m->AsETSModule()->Program();
+    auto *savedProg = Program();
+    auto *newProg = GetOrCreatePandasmProgram(parserProg);
+    SetProgram(newProg);
+    Emitter::AddProgramElement(programElement);
+    SetProgram(savedProg);
+}
+
+void ETSEmitter::SetupDependenciesForTheProgram(const parser::Program *prg)
+{
+    dependencies_ = GetOrCreateDependenciesForTheProgram(prg);
+}
+
+detail::EmitterDependencies *ETSEmitter::GetOrCreateDependenciesForTheProgram(const parser::Program *prg)
+{
+    ES2PANDA_ASSERT(prg != nullptr);
+    auto k = prg->GetImportMetadata().Key();
+    if (auto it = depMaps_.find(k); it != depMaps_.end()) {
+        return it->second;
+    }
+
+    // NOTE(mshimenkov): Newly created detail::EmitterDependencies are freed in the desctructor
+    return depMaps_.emplace(k, new detail::EmitterDependencies {Context()->config->options->GetOptLevel()})
+        .first->second;
+}
+
+pandasm::Program *ETSEmitter::GetOrCreatePandasmProgram(const parser::Program *prg)
+{
+    ES2PANDA_ASSERT(prg != nullptr);
+    auto k = prg->GetImportMetadata().Key();
+    if (auto it = prgMaps_.find(k); it != prgMaps_.end()) {
+        return it->second;
+    }
+
+    // NOTE(mshimenkov): Newly created pandasm::Program are freed by the caller
+    return prgMaps_.emplace(k, new pandasm::Program {}).first->second;
+}
+
 }  // namespace ark::es2panda::compiler

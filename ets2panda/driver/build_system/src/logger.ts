@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025 -  2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,21 +32,23 @@ export type LoggerGetter = (code: SubsystemCode) => ILogger;
 
 export class Logger implements ILogger {
     private static instance?: Logger;
+    private enableDebugOutput: boolean = false;
     private loggerMap: { [key in SubsystemCode]?: ILogger };
     private hasErrorOccurred: boolean = false;
 
-    private constructor(loggerGetter: LoggerGetter) {
+    private constructor(loggerGetter: LoggerGetter, enableDebugOutput?: boolean) {
+        this.enableDebugOutput = enableDebugOutput ?? false;
         this.loggerMap = {};
         this.loggerMap[SubsystemCode.BUILDSYSTEM] = loggerGetter(SubsystemCode.BUILDSYSTEM);
         this.loggerMap[SubsystemCode.ES2PANDA] = loggerGetter(SubsystemCode.ES2PANDA);
     }
 
-    public static getInstance(loggerGetter?: LoggerGetter): Logger {
+    public static getInstance(loggerGetter?: LoggerGetter, enableDebugOutput?: boolean): Logger {
         if (!Logger.instance) {
             if (!loggerGetter) {
                 throw new Error('loggerGetter is required for the first Logger instantiation.');
             }
-            Logger.instance = new Logger(loggerGetter);
+            Logger.instance = new Logger(loggerGetter, enableDebugOutput);
         }
         return Logger.instance;
     }
@@ -66,6 +68,9 @@ export class Logger implements ILogger {
     }
 
     public printDebug(message: string, subsystemCode: SubsystemCode = SubsystemCode.BUILDSYSTEM): void {
+        if (!this.enableDebugOutput) {
+            return;
+        }
         const logger: ILogger = this.getLoggerFromSubsystemCode(subsystemCode);
         logger.printDebug(`[ID:${process.pid}] [time:${Date.now()}] ${message}`);
     }

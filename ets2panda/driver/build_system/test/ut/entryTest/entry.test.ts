@@ -20,8 +20,7 @@ import {
     OHOS_MODULE_TYPE,
     BUILD_MODE
 } from '../../../src/types';
-import { Logger, LogData } from '../../../src/logger';
-import { DriverError } from '../../../src/util/error';
+import { Logger } from '../../../src/logger';
 import {
     getKoalaModule,
     cleanKoalaModule
@@ -56,7 +55,7 @@ describe('entry.ts build function with clean', () => {
     test('BUILD_TYPE.BUILD branch cleans and calls BuildMode', async () => {
         const BuildMode = require('../../../src/build/build_mode').BuildMode;
         const mockRun = jest.fn().mockResolvedValue(undefined);
-        BuildMode.mockImplementation((config: BuildConfig) => ({
+        BuildMode.mockImplementation((_: BuildConfig) => ({
             run: mockRun,
             generateDeclaration: jest.fn()
         }));
@@ -174,7 +173,7 @@ describe('entry.ts build function with clean', () => {
     test('backwardCompatibleBuildConfigStub uses and preserves getHvigorConsoleLogger', async () => {
         setupLogger();
         const hvigorLoggerMock = jest.fn() as any;
-        const mockConfig = {
+        const mockConfig: Partial<BuildConfig> = {
             buildType: BUILD_TYPE.BUILD,
             packageName: 'test',
             compileFiles: [],
@@ -187,7 +186,7 @@ describe('entry.ts build function with clean', () => {
             moduleRootPath: '/test/path',
             buildMode: BUILD_MODE.DEBUG,
             getHvigorConsoleLogger: hvigorLoggerMock
-        } as unknown as BuildConfig;
+        };
 
         const { BuildMode } = require('../../../src/build/build_mode');
         BuildMode.mockImplementation(() => ({
@@ -196,11 +195,11 @@ describe('entry.ts build function with clean', () => {
             runSimultaneous: jest.fn()
         }));
 
-        await entryModule.build(mockConfig);
+        await entryModule.build(mockConfig as any);
 
         // Verify Logger.getInstance was called with the hvigor logger
-        expect(Logger.getInstance).toHaveBeenCalledWith(hvigorLoggerMock);
-        
+        expect(Logger.getInstance).toHaveBeenCalledWith(hvigorLoggerMock, undefined);
+
         // Verify getHvigorConsoleLogger was NOT deleted
         expect(mockConfig.getHvigorConsoleLogger).toBeDefined();
         expect(mockConfig.getHvigorConsoleLogger).toBe(hvigorLoggerMock);

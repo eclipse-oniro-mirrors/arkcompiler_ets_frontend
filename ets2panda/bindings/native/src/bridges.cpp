@@ -88,8 +88,14 @@ KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KStringPt
 TS_INTEROP_7(GenerateTsDeclarationsFromContext, KInt, KNativePointer, KStringPtr, KStringPtr, KBoolean, KBoolean,
              KStringPtr, KBoolean)
 
-KNativePointer impl_CreateContextGenerateAbcForExternalSourceFiles(KNativePointer configPtr, KInt fileNamesCount,
-                                                                   KStringArray filenames)
+KNativePointer impl_FormOutputPathForFile(KNativePointer contextPtr, KStringPtr &inputPath)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return new std::string(GetPublicImpl()->FormOutputPathForFile(context, GetStringCopy(inputPath)));
+}
+TS_INTEROP_2(FormOutputPathForFile, KNativePointer, KNativePointer, KStringPtr)
+
+KNativePointer impl_CreateContextSimultaneousMode(KNativePointer configPtr, KInt fileNamesCount, KStringArray filenames)
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     const std::size_t headerLen = 4;
@@ -106,9 +112,9 @@ KNativePointer impl_CreateContextGenerateAbcForExternalSourceFiles(KNativePointe
         externalFileList[i] = strdup(std::string(reinterpret_cast<const char *>(filenames + position), strLen).c_str());
         position += strLen;
     }
-    return GetPublicImpl()->CreateContextGenerateAbcForExternalSourceFiles(config, fileNamesCount, externalFileList);
+    return GetPublicImpl()->CreateContextSimultaneousMode(config, fileNamesCount, externalFileList);
 }
-TS_INTEROP_3(CreateContextGenerateAbcForExternalSourceFiles, KNativePointer, KNativePointer, KInt, KStringArray)
+TS_INTEROP_3(CreateContextSimultaneousMode, KNativePointer, KNativePointer, KInt, KStringArray)
 
 KInt impl_GenerateStaticDeclarationsFromContext(KNativePointer contextPtr, KStringPtr &outputPath)
 {

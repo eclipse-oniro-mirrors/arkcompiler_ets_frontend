@@ -928,36 +928,16 @@ static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *class
     return true;
 }
 
-static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *program,
-                                   const std::unordered_set<ir::AstNode *> &requiredTypes)
+static void GenerateAnonClassForDeclNode(public_lib::Context *ctx, parser::Program *program, ir::AstNode *ast)
 {
-    auto const cmode = ctx->config->options->GetCompilationMode();
-    bool isLocal = program == ctx->parserProgram || cmode == CompilationMode::GEN_STD_LIB ||
-                   (cmode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE && program->IsGenAbcForExternal());
-
-    auto const isRequired = [&requiredTypes, isLocal](checker::ETSObjectType *type) {
-        if (isLocal && (type->GetDeclNode()->IsExported() || type->GetDeclNode()->IsDefaultExported())) {
-            return true;
-        }
-        return requiredTypes.find(type->GetDeclNode()) != requiredTypes.end();
-    };
-
-    program->Ast()->IterateRecursivelyPostorder([ctx, program, isRequired](ir::AstNode *ast) -> void {
-        if (!ast->IsTyped() || ast->AsTyped()->TsType() == nullptr) {
-            return;
-        }
-        if (ast->IsTSInterfaceDeclaration() &&
-            isRequired(ast->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType()) &&
-            CheckInterfaceShouldGenerateAnonClass(ctx->GetChecker()->AsETSChecker(), ast->AsTSInterfaceDeclaration())) {
-            GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration());
-        } else if (ast->IsClassDefinition() && ast != program->GlobalClass() &&
-                   ast->AsClassDefinition()->IsAbstract() &&
-                   !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
-                   isRequired(ast->AsClassDefinition()->TsType()->AsETSObjectType()) &&
-                   CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
-            GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition());
-        }
-    });
+    if (ast->IsTSInterfaceDeclaration() &&
+        CheckInterfaceShouldGenerateAnonClass(ctx->GetChecker()->AsETSChecker(), ast->AsTSInterfaceDeclaration())) {
+        GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration());
+    } else if (ast->IsClassDefinition() && ast != program->GlobalClass() && ast->AsClassDefinition()->IsAbstract() &&
+               !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
+               CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
+        GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition());
+    }
 }
 
 template <typename F>
@@ -975,44 +955,13 @@ static void TraverseObjectLiteralExpressions(parser::Program *program, F const &
     });
 }
 
-bool InterfaceObjectLiteralLowering::Perform()
+bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
 {
-    std::unordered_set<ir::AstNode *> requiredTypes {};
     auto ctx = Context();
 
-    ProgramsToBeEmittedSelector::Apply(ctx, [&requiredTypes](parser::Program *prog) {
-        TraverseObjectLiteralExpressions(prog, [&requiredTypes](ir::ObjectExpression *expr) {
-            requiredTypes.insert(expr->TsType()->AsETSObjectType()->GetDeclNode());
-        });
-    });
-
-    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
-    auto *savedProgram = varbinder->Program();
-    ES2PANDA_ASSERT(savedProgram == ctx->parserProgram);
-    auto *savedRecordTable = varbinder->GetRecordTable();
-    auto *savedTopScope = varbinder->TopScope();
-    ctx->parserProgram->GetExternalSources()->Visit([ctx, varbinder, &requiredTypes](auto *extProg) {
-        if (extProg->IsASTLowered()) {
-            return;
-        }
-        varbinder->ResetTopScope(extProg->GlobalScope());
-        ES2PANDA_ASSERT(varbinder->CheckRecordTablesConsistency(extProg));
-        varbinder->SetRecordTable(extProg->GetRecordTable());
-        varbinder->SetProgram(extProg);
-        TransfromInterfaceDecl(ctx, extProg, requiredTypes);
-    });
-    varbinder->SetProgram(savedProgram);
-    varbinder->SetRecordTable(savedRecordTable);
-    varbinder->ResetTopScope(savedTopScope);
-    TransfromInterfaceDecl(ctx, savedProgram, requiredTypes);
-
-    ProgramsToBeEmittedSelector::Apply(ctx, [ctx, &requiredTypes](parser::Program *prog) {
-        TraverseObjectLiteralExpressions(prog, [ctx, &requiredTypes](ir::ObjectExpression *expr) {
-            (void)requiredTypes;
-            ES2PANDA_ASSERT(requiredTypes.find(expr->TsType()->AsETSObjectType()->GetDeclNode()) !=
-                            requiredTypes.end());
-            HandleInterfaceLowering(ctx, expr);
-        });
+    TraverseObjectLiteralExpressions(prog, [ctx, prog](ir::ObjectExpression *expr) {
+        GenerateAnonClassForDeclNode(ctx, prog, expr->TsType()->AsETSObjectType()->GetDeclNode());
+        HandleInterfaceLowering(ctx, expr);
     });
 
     return true;

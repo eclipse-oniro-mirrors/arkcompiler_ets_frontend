@@ -91,7 +91,10 @@ export class Es2pandaNativeModule {
   ): KInt {
     throw new Error('Not implemented');
   }
-  _CreateContextGenerateAbcForExternalSourceFiles(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array): KPtr {
+  _FormOutputPathForFile(context: KPtr, inputPath: String): KPtr {
+    throw new Error('Not implemented');
+  }
+  _CreateContextSimultaneousMode(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array): KPtr {
     throw new Error('Not implemented');
   }
   _GenerateStaticDeclarationsFromContext(context: KPtr, filename: String): KPtr {

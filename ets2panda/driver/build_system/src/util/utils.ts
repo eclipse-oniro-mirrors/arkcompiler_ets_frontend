@@ -35,7 +35,6 @@ import {
     OHOS_MODULE_TYPE,
     BuildConfig,
     DependencyModuleConfig,
-    FileInfo
 } from '../types';
 
 const WINDOWS: string = 'Windows_NT';
@@ -231,39 +230,6 @@ export function getFileHash(filePath: string): string {
     return computeHash(fs.readFileSync(filePath, 'utf-8'));
 }
 
-export function formEts2pandaCmd(
-    fileInfo: FileInfo,
-    isDebug: boolean = false,
-    simultaneous: boolean = false,
-    decl: boolean = false
-): string[] {
-
-    const ets2pandaCmd: string[] = [
-        '_',
-        '--extension',
-        'ets',
-        '--arktsconfig',
-        fileInfo.arktsConfig
-    ]
-
-    if (simultaneous) {
-        ets2pandaCmd.push('--simultaneous')
-    }
-    if (decl) {
-        ets2pandaCmd.push('--emit-declaration');
-    }
-    ets2pandaCmd.push('--output')
-    ets2pandaCmd.push(fileInfo.output)
-
-    if (isDebug) {
-        ets2pandaCmd.push('--debug-info');
-        ets2pandaCmd.push('--opt-level=0');
-    }
-
-    ets2pandaCmd.push(fileInfo.input)
-    return ets2pandaCmd
-}
-
 export function updateFileHash(file: string, hashCache: Record<string, string>): boolean {
     const fileHash: string = getFileHash(file);
     const currHash: string = hashCache[file];
@@ -303,3 +269,38 @@ export function traverseDirAndFindFilesWithRegExp(dir: string, regexp: RegExp): 
     }
     return result;
 }
+
+function substituteEnvVarInString(str: string): string {
+    if (str === '') {
+        return str
+    }
+
+    const indexA = str.indexOf('${')
+    const indexB = str.indexOf('}')
+
+    if (indexA === -1 || indexB === -1) {
+        return str
+    }
+    const envName: string = str.substring(indexA + 2, indexB)
+    const envValue: string = process.env[envName] || ''
+
+    if (envValue === '') {
+        throw new Error(envName + ' environment variable is not set');
+    }
+
+    return str.replace(str.substring(indexA, indexB + 1), envValue)
+}
+
+export function substituteEnvVarsInJSON(json: any): any {
+    Object.entries(json).forEach(([key, value]) => {
+        if (typeof value === 'object') {
+            json[key] = substituteEnvVarsInJSON(value);
+        }
+        if (typeof value === 'string') {
+            json[key] = substituteEnvVarInString(value);
+        }
+    });
+
+    return json;
+}
+

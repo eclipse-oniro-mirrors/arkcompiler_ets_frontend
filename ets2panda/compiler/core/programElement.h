@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,13 +36,16 @@ public:
     std::vector<pandasm::Ins *> &LiteralBufferIns();
     std::vector<LiteralBuffer> &BuffStorage();
     pandasm::Function *Function();
+    ir::ScriptFunction *SrcFunction();
     void SetFunction(pandasm::Function *func);
+    void SetSrcFunction(ir::ScriptFunction *func);
 
 private:
     std::set<std::string> strings_;
     std::vector<pandasm::Ins *> literalBufferIns_;
     std::vector<LiteralBuffer> buffStorage_;
-    pandasm::Function *func_ {};
+    pandasm::Function *asmFunc_ {};
+    ir::ScriptFunction *srcFunc_ {};
 };
 }  // namespace ark::es2panda::compiler
 #endif

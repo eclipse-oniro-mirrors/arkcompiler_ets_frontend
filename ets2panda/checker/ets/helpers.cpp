@@ -3090,7 +3090,7 @@ void ETSChecker::SetupGetterSetterFlags(ir::ClassProperty *originalProp, ETSObje
             func->AddModifier(ir::ModifierFlags::OVERRIDE);
         }
 
-        if (inExternal && !getProgram(originalProp)->IsGenAbcForExternal()) {
+        if (inExternal && !getProgram(originalProp)->IsBuiltSimultaneously()) {
             func->AddFlag(ir::ScriptFunctionFlags::EXTERNAL);
         }
 

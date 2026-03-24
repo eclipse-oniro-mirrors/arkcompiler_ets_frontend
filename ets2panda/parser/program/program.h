@@ -416,11 +416,11 @@ public:
                (ModuleName().rfind("arkruntime", 0) == 0) || (FileName().Is("etsstdlib"));
     }
 
-    bool IsGenAbcForExternal() const;
+    bool IsBuiltSimultaneously() const;
 
-    void SetGenAbcForExternalSources(bool genAbc = true)
+    void SetIsBuiltSimultaneously(bool flag = true)
     {
-        genAbcForExternalSource_ = genAbc;
+        isBuiltSimultaneously_ = flag;
     }
 
     varbinder::ClassScope *GlobalClassScope();
@@ -452,16 +452,6 @@ public:
     compiler::CFG *GetCFG();
     const compiler::CFG *GetCFG() const;
 
-    auto &GetFileDependencies()
-    {
-        return fileDependencies_;
-    }
-
-    void AddFileDependencies(std::string_view file, std::string_view depFile)
-    {
-        fileDependencies_[ArenaString {file}].emplace(depFile);
-    }
-
     ArenaMap<int32_t, varbinder::VarBinder *> &VarBinders()
     {
         return varbinders_;
@@ -469,9 +459,6 @@ public:
 
 private:
     void VerifyDeclarationModule();
-
-public:
-    using FileDependenciesMap = ArenaUnorderedMap<ArenaString, ArenaUnorderedSet<ArenaString>>;
 
 private:
     util::ImportMetadata importMetadata_;
@@ -483,14 +470,12 @@ private:
 
     bool isASTlowered_ {};
     bool isModified_ {true};
-    bool genAbcForExternalSource_ {false};
+    bool isBuiltSimultaneously_ {false};
     ScriptExtension extension_ {};
     ETSNolintsCollectionMap etsnolintCollection_;
     util::ModuleInfo moduleInfo_;
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
-
-    FileDependenciesMap fileDependencies_;
 
     // NOTE(dkofanov): externalSources_ are stored only in main program. This field should be moved to
     // 'public_lib::Context'.

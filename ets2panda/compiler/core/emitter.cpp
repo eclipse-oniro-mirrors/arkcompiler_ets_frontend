@@ -425,9 +425,6 @@ static void UpdateLiteralBufferId([[maybe_unused]] ark::pandasm::Ins *ins, [[may
 
 void Emitter::AddProgramElement(ProgramElement *programElement)
 {
-    if (programElement->Function() == nullptr) {
-        return;
-    }
     prog_->strings.insert(programElement->Strings().begin(), programElement->Strings().end());
 
     uint32_t newLiteralBufferIndex = literalBufferIndex_;
@@ -518,21 +515,21 @@ void Emitter::AddLiteralBuffer(const LiteralBuffer &literals, uint32_t index)
     prog_->literalarrayTable.emplace(std::to_string(index), std::move(literalArrayInstance));
 }
 
-pandasm::Program *Emitter::Finalize(bool dumpDebugInfo, std::string_view globalClass)
+pandasm::Program *Emitter::DumpDebugInfo()
 {
-    if (dumpDebugInfo) {
+    if (Context()->config->options->IsDumpDebugInfo()) {
         debuginfo::DebugInfoDumper dumper(prog_);
         dumper.Dump();
     }
 
-    if (context_->parserProgram->VarBinder()->IsGenStdLib() ||
-        context_->parserProgram->VarBinder()->Program()->IsGenAbcForExternal()) {
-        auto it = prog_->recordTable.find(std::string(globalClass));
+    if (context_->parserProgram->VarBinder()->IsGenStdLib()) {
+        auto it = prog_->recordTable.find(std::string(Signatures::ETS_GLOBAL));
         if (it != prog_->recordTable.end()) {
             prog_->recordTable.erase(it);
         }
     }
-    prog_->metadata = context_->metadata;
+    prog_->metadata = std::move(context_->metadata);
+
     auto *prog = prog_;
     prog_ = nullptr;
     return prog;

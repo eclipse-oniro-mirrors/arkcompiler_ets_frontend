@@ -23,10 +23,8 @@ import {
     DEP_ANALYZER_DIR,
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
-    MERGED_CLUSTER_FILE,
     FILE_HASH_CACHE,
     ETSCACHE_SUFFIX,
-    ABC_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
     ENABLE_DECL_CACHE,
     ENABLE_CLUSTERS
@@ -45,7 +43,11 @@ import {
     BuildConfig,
     ModuleInfo,
     CompileJobInfo,
-    CompileJobType
+    CompileJobType,
+    JobContentType,
+    JobInfo,
+    FileInfo,
+    OHOS_MODULE_TYPE
 } from './types'
 
 import {
@@ -78,6 +80,9 @@ export interface DependencyFileMap {
     };
     dependencies: {
         [filePath: string]: string[];
+    };
+    outputMatching: {
+        [filePath: string]: string;
     }
 }
 
@@ -117,7 +122,7 @@ export class DependencyAnalyzer {
         ensureDirExists(this.outputDir);
         this.binPath = buildConfig.dependencyAnalyzerPath!;
 
-        this.hashCacheFile = path.resolve(buildConfig.cachePath, FILE_HASH_CACHE);
+        this.hashCacheFile = path.resolve(buildConfig.cachePath, DEP_ANALYZER_DIR, FILE_HASH_CACHE);
         this.filesHashCache = this.loadHashCache();
 
         this.statsRecorder = new StatisticsRecorder(
@@ -167,7 +172,7 @@ export class DependencyAnalyzer {
 
         let mainModule = modules.find((module) => module.isMainModule)!
         // NOTE: create new temporary arktsconfig for dependency analyzer
-        let resArkTSConfig: ArkTSConfig = cloneDeep(ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(mainModule.packageName)!)
+        let resArkTSConfig: ArkTSConfig = cloneDeep(this.getArktsConfigByPackageName(mainModule.packageName)!)
         modules.forEach((module) => {
             if (module.isMainModule) {
                 return;
@@ -178,6 +183,10 @@ export class DependencyAnalyzer {
         });
 
         fs.writeFileSync(outputPath, JSON.stringify(resArkTSConfig.object, null, 2));
+    }
+
+    private getArktsConfigByPackageName(name: string): ArkTSConfig | undefined {
+        return ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(name)
     }
 
     private formExecCmd(input: string, output: string, config: string): string {
@@ -200,7 +209,8 @@ export class DependencyAnalyzer {
     ): DependencyFileMap {
         let resDependencyMap: DependencyFileMap = {
             dependants: {},
-            dependencies: {}
+            dependencies: {},
+            outputMatching: {}
         }
 
         // Filter files by entryFiles
@@ -220,6 +230,8 @@ export class DependencyAnalyzer {
                 return entryFiles.has(dependant)
             })
         })
+
+        resDependencyMap.outputMatching = dependencyMap.outputMatching;
 
         this.logger.printDebug(`filtered dependency map: ${JSON.stringify(resDependencyMap, null, 1)}`)
         return resDependencyMap;
@@ -243,6 +255,7 @@ export class DependencyAnalyzer {
         this.generateMergedArktsConfig(modules, arktsConfigPath)
 
         let execCmd = this.formExecCmd(inputFile, outputFile, arktsConfigPath)
+        this.logger.printDebug(`Dependency analyzer cmd ${execCmd}`);
 
         try {
             child_process.execSync(execCmd, {
@@ -275,58 +288,38 @@ export class DependencyAnalyzer {
             }
         });
 
-        // Remove dependencies on itself
-        const removeItemIfNecessary = (item: [filePath: string, filePathes: string[]]): void => {
-            const filePath: string = item[0]
-            const filePathes: string[] = item[1]
-            const index = filePathes.indexOf(filePath)
-            if (index > -1) {
-                filePathes.splice(index, 1)
-            }
-        }
-        Object.entries(fullDependencyMap.dependants).forEach(removeItemIfNecessary)
-        Object.entries(fullDependencyMap.dependencies).forEach(removeItemIfNecessary)
-
         this.logger.printDebug(`full dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
         return this.filterDependencyMap(fullDependencyMap, entryFiles);
     }
 
-    public getGraph(
-        entryFiles: Set<string>,
-        fileToModule: Map<string, ModuleInfo>,
-        moduleInfos: Map<string, ModuleInfo>,
-        outputs: string[]
-    ): Graph<CompileJobInfo> {
+    private verifyAndDumpGraph(graph: Graph<CompileJobInfo>, output: string): void {
+        graph.verify();
+        if (this.dumpGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, output), dotGraphDump(graph), 'utf-8');
+        }
+    }
 
-        this.statsRecorder.record(formEvent(DepAnalyzerEvent.GEN_DEPENDENCY_MAP));
-        const dependencyMap: DependencyFileMap =
-            this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
-
-        this.statsRecorder.record(formEvent(DepAnalyzerEvent.CREATE_GRAPH));
-
+    private createDependencyGraph(entryFiles: Set<string>, fileToModule: Map<string, ModuleInfo>, dependencyMap: DependencyFileMap) {
         const dependencyGraphNodes: GraphNode<CompileJobInfo>[] = [];
         for (const file of entryFiles) {
             const module: ModuleInfo = fileToModule.get(file)!
-            const output: string = path.resolve(
-                this.cacheDir, module.packageName,
-                changeFileExtension(
-                    path.relative(module.moduleRootPath, file),
-                    ABC_SUFFIX
-                )
-            );
             const node = new GraphNode<CompileJobInfo>(computeHash(file), {
-                fileInfo: {
+                contentType: JobContentType.FILE,
+                content: {
                     input: file,
-                    output: output,
-                    arktsConfig: module.arktsConfigFile,
-                    moduleName: module.packageName,
-                    moduleRoot: module.moduleRootPath,
+                    output: dependencyMap.outputMatching[file],
                 },
-                fileList: [file],
+                arktsConfig: module.arktsConfigFile,
+                moduleName: module.packageName,
+                moduleRoot: module.moduleRootPath,
                 declgenConfig: {
                     output: module.declgenV2OutPath!
                 },
-                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
+                // Force declaration files generation for HAR and SHARED ohos modules
+                jobType:
+                    (module.moduleType === OHOS_MODULE_TYPE.HAR || module.moduleType === OHOS_MODULE_TYPE.SHARED) ||
+                        ENABLE_DECL_CACHE ?
+                        CompileJobType.DECL_ABC : CompileJobType.ABC
             });
             if (dependencyMap.dependencies[file]) {
                 for (const dependency of dependencyMap.dependencies[file]) {
@@ -341,51 +334,72 @@ export class DependencyAnalyzer {
             dependencyGraphNodes.push(node);
         }
 
-        const dependencyGraph: Graph<CompileJobInfo> = Graph.createGraphFromNodes(dependencyGraphNodes);
-        dependencyGraph.verify();
-        if (this.dumpGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(dependencyGraph), 'utf-8');
-        }
+        return Graph.createGraphFromNodes(dependencyGraphNodes);
+    }
 
-        this.statsRecorder.record(formEvent(DepAnalyzerEvent.COLLAPSE_CYCLES));
-        const dataMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
-            const outputAbc = path.resolve(
-                this.cacheDir, 'clusters', computeHash([lhs.id, rhs.id].join('|')), MERGED_CLUSTER_FILE,
-            );
+    public getGraph(
+        entryFiles: Set<string>,
+        fileToModule: Map<string, ModuleInfo>,
+        moduleInfos: Map<string, ModuleInfo>,
+        outputs: string[]
+    ): Graph<CompileJobInfo> {
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.GEN_DEPENDENCY_MAP));
+        const dependencyMap: DependencyFileMap =
+            this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
+
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.CREATE_GRAPH));
+        const dependencyGraph: Graph<CompileJobInfo> =
+            this.createDependencyGraph(entryFiles, fileToModule, dependencyMap);
+        this.verifyAndDumpGraph(dependencyGraph, 'graph.dot');
+
+        // NOTE(mshimenkov): Collect output files to pass them to the linker later
+        dependencyGraph.nodes.forEach((node: GraphNode<CompileJobInfo>) => {
+            outputs.push(dependencyMap.outputMatching[(node.data.content as FileInfo).input]);
+        });
+
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
+        this.filterGraph(dependencyGraph, moduleInfos);
+        this.verifyAndDumpGraph(dependencyGraph, 'graph.filtered.dot');
+
+        const nodeMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
+            let files: FileInfo[] = []
+            const appendFiles = (job: JobInfo) => {
+                if (job.contentType === JobContentType.FILE) {
+                    files.push(job.content as FileInfo);
+                } else {
+                    files = files.concat(job.content as FileInfo[]);
+                }
+            }
+            appendFiles(lhs.data);
+            appendFiles(rhs.data);
+
             return {
-                fileInfo: {
-                    // In clusters this field is meaningless
-                    input: lhs.data.fileInfo.input,
-                    output: outputAbc,
-                    arktsConfig: lhs.data.fileInfo.arktsConfig,
-                    moduleName: lhs.data.fileInfo.moduleName,
-                    moduleRoot: lhs.data.fileInfo.moduleRoot,
-                },
-                fileList: [...lhs.data.fileList, ...rhs.data.fileList],
+                contentType: JobContentType.CLUSTER,
+                content: files,
+                arktsConfig: lhs.data.arktsConfig,
+                moduleName: lhs.data.moduleName,
+                moduleRoot: lhs.data.moduleRoot,
                 declgenConfig: {
                     output: lhs.data.declgenConfig.output
                 },
-                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
+                jobType: lhs.data.jobType | rhs.data.jobType
             }
         };
         const cycleMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
-            if ((lhs.data.fileInfo.moduleName !== rhs.data.fileInfo.moduleName) ||
-                (lhs.data.fileInfo.moduleRoot !== rhs.data.fileInfo.moduleRoot)) {
+            const lModuleName: string = lhs.data.moduleName;
+            const rModuleName: string = rhs.data.moduleName;
+            if (lModuleName !== rModuleName)
                 throw new DriverError(
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
                         'Cyclic dependency between modules found.',
-                        `Module cycle: ${lhs.data.fileInfo.moduleName} <---> ${rhs.data.fileInfo.moduleName}`)
+                        `Module cycle: ${lModuleName} <---> ${rModuleName}`)
                 )
-            }
-            return dataMerger(lhs, rhs);
+            return nodeMerger(lhs, rhs);
         }
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.COLLAPSE_CYCLES));
         Graph.collapseCycles(dependencyGraph, cycleMerger);
-
-        dependencyGraph.verify();
-        if (this.dumpGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.collapsed.dot'), dotGraphDump(dependencyGraph), 'utf-8');
-        }
+        this.verifyAndDumpGraph(dependencyGraph, 'graph.collapsed.dot');
 
         if (this.clusteredBuild) {
             let mainModule = Array.from(moduleInfos.values()).find((module) => module.isMainModule)!
@@ -393,35 +407,16 @@ export class DependencyAnalyzer {
             const nodeIds: string[] = Graph.topologicalSort(dependencyGraph);
             while (nodeIds.length > 0) {
                 let cluster = dependencyGraph.getNodeById(nodeIds.shift()!);
-                cluster.data.fileInfo.arktsConfig = mainModule.arktsConfigFile;
-                cluster.data.fileInfo.moduleName = mainModule.packageName;
-                cluster.data.fileInfo.moduleRoot = mainModule.moduleRootPath;
+                cluster.data.arktsConfig = mainModule.arktsConfigFile;
+                cluster.data.moduleName = mainModule.packageName;
                 for (let counter = 0; counter < CLUSTER_FILES_TRESHOLD - 1 && nodeIds.length > 0; counter++) {
                     let nodeToMerge = dependencyGraph.getNodeById(nodeIds.shift()!);
-                    cluster = dependencyGraph.mergeNodes(cluster, nodeToMerge, dataMerger);
+                    cluster = dependencyGraph.mergeNodes(cluster, nodeToMerge, nodeMerger);
                 }
             }
 
-            dependencyGraph.verify();
-            if (this.dumpGraph) {
-                fs.writeFileSync(path.resolve(this.cacheDir, 'graph.clustered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
-            }
+            this.verifyAndDumpGraph(dependencyGraph, 'graph.clustered.dot');
         }
-
-        // NOTE: some workaround to gather all outputs
-        // NOTE: likely to be refactored
-        dependencyGraph.nodes.forEach((node: GraphNode<CompileJobInfo>) => {
-            outputs.push(node.data.fileInfo.output);
-        });
-
-        this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
-        this.filterGraph(dependencyGraph);
-
-        dependencyGraph.verify();
-        if (this.dumpGraph) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.filtered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
-        }
-
 
         this.statsRecorder.record(formEvent(DepAnalyzerEvent.SAVE_HASH));
         this.saveHashCache();
@@ -431,55 +426,53 @@ export class DependencyAnalyzer {
         return dependencyGraph;
     }
 
-    private filterGraph(graph: Graph<CompileJobInfo>): void {
+    private filterGraph(graph: Graph<CompileJobInfo>, moduleInfos: Map<string, ModuleInfo>): void {
         for (const nodeId of Graph.topologicalSort(graph)) {
             const node = graph.getNodeById(nodeId);
+            if (node.data.contentType !== JobContentType.FILE) {
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
+                        'Corrupted graph: graph should contain only \'File\' nodes before filtering.'
+                    )
+                )
+            }
             if (node.predecessors.size !== 0) {
                 // Still has dependencies, so do not remove the node
-                // Update file hashes
-                node.data.fileList.map((file: string) => updateFileHash(file, this.filesHashCache));
-                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
+                // Just update file hashes
+                updateFileHash((node.data.content as FileInfo).input, this.filesHashCache);
                 continue;
             }
 
-            if (node.data.fileList.length > 1) {
-                let shouldBeCompiled: boolean = false;
-                for (const file of node.data.fileList) {
-                    shouldBeCompiled = updateFileHash(file, this.filesHashCache) ||
-                        shouldBeUpdated(file, node.data.fileInfo.output) ||
-                        shouldBeCompiled
-                }
-
-                if (!shouldBeCompiled) {
-                    this.logger.printDebug(`Skipping cluster ${node.id} compilation`);
-                    graph.removeNode(node);
-                }
-
-                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
-                continue;
-            }
-
-            const input = node.data.fileInfo.input;
-            const outputAbc = node.data.fileInfo.output;
+            const fi = node.data.content as FileInfo;
+            const input = fi.input;
+            const outputAbc = fi.output;
             const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
 
             const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
-            const genDecl: boolean = hashChanged || shouldBeUpdated(input, outputDecl);
+            let genDecl: boolean = ENABLE_DECL_CACHE && (hashChanged || shouldBeUpdated(input, outputDecl));
             const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
+
+            // Force decl generation for Har/Hsp module until binary import is fully implemented
+            const module = moduleInfos.get(node.data.moduleName)!;
+            if (module.moduleType === OHOS_MODULE_TYPE.HAR || module.moduleType === OHOS_MODULE_TYPE.SHARED) {
+                genDecl = true;
+            }
 
             if (!compileAbc && !genDecl) {
                 this.logger.printDebug(`Skipping file ${input} compilation`)
                 graph.removeNode(node);
             }
 
-            node.data.type &= CompileJobType.NONE;
-            if (genDecl && ENABLE_DECL_CACHE) {
-                node.data.type |= CompileJobType.DECL;
+            node.data.jobType &= CompileJobType.NONE;
+            if (genDecl) {
+                node.data.jobType |= CompileJobType.DECL;
             }
 
             if (compileAbc) {
-                node.data.type |= CompileJobType.ABC;
+                node.data.jobType |= CompileJobType.ABC;
             }
         }
     }
 }
+

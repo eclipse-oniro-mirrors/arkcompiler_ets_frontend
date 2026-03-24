@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,12 @@
  */
 
 
-import { WorkerMessageType, ProcessDeclgenV1Task } from '../types';
+import {
+    WorkerMessageType,
+    ProcessDeclgenV1Task,
+    JobContentType,
+    FileInfo,
+} from '../types';
 import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
@@ -29,26 +34,19 @@ function declgen(id: string, task: ProcessDeclgenV1Task): void {
 
     try {
         ets2panda.initalize();
-        if (task.fileList.length > 1) {
-            for (const file of task.fileList) {
+        if (task.contentType === JobContentType.CLUSTER) {
+            for (const fi of (task.content as FileInfo[])) {
                 const outPut: string = path.resolve(
-                    task.buildConfig.cachePath, task.fileInfo.moduleName,
+                    task.buildConfig.cachePath, task.moduleName,
                     changeFileExtension(
-                        path.relative(task.fileInfo.moduleRoot, file),
+                        path.relative(task.moduleRoot, fi.input),
                         ABC_SUFFIX
                     )
                 );
-                const subTask = {
+                const subTask: ProcessDeclgenV1Task = {
                     ...task,
-                    fileInfo: {
-                        input: file,
-                        output: outPut,
-                        arktsConfig: task.fileInfo.arktsConfig,
-                        moduleName: task.fileInfo.moduleName,
-                        moduleRoot: task.fileInfo.moduleRoot,
-                    },
-                    fileList: [file]
-                }
+                    content: {input: fi.input, output: outPut}
+                };
                 ets2panda.declgenV1(subTask, subTask.buildConfig.skipDeclCheck ?? true, subTask.buildConfig.genDeclAnnotations ?? true);
             }
         } else {
@@ -73,6 +71,9 @@ function declgen(id: string, task: ProcessDeclgenV1Task): void {
         }
     } finally {
         ets2panda.finalize();
+        process.send!({
+            type: WorkerMessageType.TASK_FINISHED,
+        });
     }
 }
 

@@ -32,7 +32,6 @@
 #include "compiler/core/JSemitter.h"
 #include "compiler/core/ETSemitter.h"
 #include "compiler/lowering/phase.h"
-#include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/checkerPhase.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "parser/program/DeclarationCache.h"
@@ -44,11 +43,7 @@
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "util/eheap.h"
-#include "util/ustring.h"
 #include "util/perfMetrics.h"
-#include "varbinder/JSBinder.h"
-#include "varbinder/ASBinder.h"
-#include "varbinder/TSBinder.h"
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {
@@ -65,15 +60,18 @@ void CompilerImpl::HandleContextLiterals(public_lib::Context *context)
     emitter->LiteralBufferIndex() += context->contextLiterals.size();
 }
 
-void CompilerImpl::Emit(public_lib::Context *context)
+void CompilerImpl::CompileFunctions(public_lib::Context *context)
 {
     HandleContextLiterals(context);
 
     queue_.Schedule(context);
 
+    auto *emitter = context->emitter;
+    if (emitter->IsETSEmitter()) {
+        emitter->AsETSEmitter()->SetupDependenciesForTheProgram(context->parserProgram);
+    }
     /* Main thread can also be used instead of idling */
     queue_.Consume();
-    auto *emitter = context->emitter;
     queue_.Wait([emitter](CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
 }
 
@@ -295,20 +293,31 @@ static void MarkAsLowered(public_lib::Context *ctx)
     });
 }
 
-static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Context *context)
+static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> EmitProgram(CompilerImpl *compilerImpl,
+                                                                                      public_lib::Context *context)
 {
     ES2PANDA_PERF_SCOPE("@EmitProgram");
-    compilerImpl->Emit(context);
-    context->emitter->GenAnnotation();
-    return context->emitter->Finalize(context->config->options->IsDumpDebugInfo(), Signatures::ETS_GLOBAL);
+    compilerImpl->CompileFunctions(context);
+
+    if (context->emitter->IsETSEmitter() &&
+        (context->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL)) {
+        return context->emitter->AsETSEmitter()->EmitRecordsSimultIncMode();
+    }
+
+    context->emitter->EmitRecords();
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
+    auto &imd = context->parserProgram->GetImportMetadata();
+    res.emplace(context->parser->GetImportPathManager()->FormAbcFilePath(imd),
+                std::unique_ptr<pandasm::Program>(context->emitter->DumpDebugInfo()));
+    return res;
 }
 
-static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *context)
+static bool ParseAndRunPhases(public_lib::Context *context)
 {
     ES2PANDA_ASSERT(context->parserProgram == nullptr);
     ES2PANDA_PERF_SCOPE("@phases");
 
-    if (context->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
+    if (context->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS &&
         context->config->options->GetExtension() == ScriptExtension::ETS) {
         if (!context->sourceFile->filePath.empty()) {
             context->sourceFileNames.emplace_back(os::GetAbsolutePath(context->sourceFile->filePath));
@@ -332,7 +341,7 @@ static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *
     //  We have to check the return status of 'RunVerifierAndPhase` and 'RunPhases` separately because there can be
     //  some internal errors (say, in Post-Conditional check) or terminate options (say in 'CheckOptionsAfterPhase')
     //  that were not reported to the log.
-    if (unit.ext == ScriptExtension::ETS) {
+    if (context->parserProgram->VarBinder()->Extension() == ScriptExtension::ETS) {
         if (!RunVerifierAndPhases(context)) {
             return false;
         }
@@ -357,7 +366,7 @@ static void ResetLineIndexCaches(public_lib::Context *context)
     context->parserProgram->GetExternalSources()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
 }
 
-static pandasm::Program *ClearContextAndReturnProgam(public_lib::Context *context, pandasm::Program *program)
+static void ClearContext(public_lib::Context *context)
 {
     ResetLineIndexCaches(context);
 
@@ -368,21 +377,25 @@ static pandasm::Program *ClearContextAndReturnProgam(public_lib::Context *contex
     context->phaseManager = nullptr;
     context->parserProgram = nullptr;
     context->emitter = nullptr;
-    return program;
 }
 
 // NOTE(dkofanov): should be alligned with the public-lib context initialization and processing.
 template <typename Parser, typename Checker, typename Analyzer, typename AstCompiler, typename CodeGen,
           typename RegSpiller, typename FunctionEmitter, typename Emitter>
-static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *compilerImpl, public_lib::Context *context)
+static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compile(const CompilationUnit &unit,
+                                                                                  CompilerImpl *compilerImpl,
+                                                                                  public_lib::Context *context)
 {
     ir::DisableContextHistory();
     parser::DeclarationCache::ActivateCache();
 
     auto config = public_lib::ConfigImpl {};
-    auto phaseManager = compiler::PhaseManager(context, unit.ext, context->allocator);
     context->config = &config;
     context->config->options = &unit.options;
+
+    auto phaseManager = compiler::PhaseManager(context, unit.ext, context->allocator);
+    context->phaseManager = &phaseManager;
+
     context->queue = compilerImpl->Queue();
     context->plugins = &compilerImpl->Plugins();
 
@@ -400,29 +413,30 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     context->PushAnalyzer(checker.GetAnalyzer());
     context->codeGenCb = MakeCompileJob<CodeGen, RegSpiller, FunctionEmitter, Emitter, AstCompiler>();
     context->diagnosticEngine = &unit.diagnosticEngine;
-    context->phaseManager = &phaseManager;
 
     auto emitter = Emitter(context);
     context->emitter = &emitter;
 
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res = {};
     try {
-        if (!ParseAndRunPhases(unit, context)) {
-            context->diagnosticEngine->EnsureLocations();
-            return ClearContextAndReturnProgam(context, nullptr);
+        if (ParseAndRunPhases(context)) {
+            MarkAsLowered(context);
+            res = EmitProgram(compilerImpl, context);
         }
-
-        MarkAsLowered(context);
-        context->diagnosticEngine->EnsureLocations();
-        return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context));
     } catch (util::ThrowableDiagnostic &e) {
         context->diagnosticEngine->EnsureLocations();
         e.EnsureLocation();
-        ResetLineIndexCaches(context);
+        ClearContext(context);
         throw e;
     }
+
+    context->diagnosticEngine->EnsureLocations();
+    ClearContext(context);
+    return res;
 }
 
-pandasm::Program *CompilerImpl::Compile(const CompilationUnit &unit, public_lib::Context *context)
+std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> CompilerImpl::Compile(const CompilationUnit &unit,
+                                                                                         public_lib::Context *context)
 {
     switch (unit.ext) {
         case ScriptExtension::TS: {
@@ -447,7 +461,6 @@ pandasm::Program *CompilerImpl::Compile(const CompilationUnit &unit, public_lib:
         }
         default: {
             ES2PANDA_UNREACHABLE();
-            return nullptr;
         }
     }
 }

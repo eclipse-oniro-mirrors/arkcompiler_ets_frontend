@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -85,8 +85,9 @@ Compiler::~Compiler()
     delete compiler_;
 }
 
-pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options &options,
-                                    util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus)
+std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compiler::Compile(
+    const SourceFile &input, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
+    uint32_t parseStatus)
 {
     public_lib::Context context;
 
@@ -97,9 +98,11 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
     try {
         return compiler_->Compile(compiler::CompilationUnit {input, options, parseStatus, ext_, diagnosticEngine},
                                   &context);
-    } catch (const util::ThrowableDiagnostic &e) {
+    } catch (util::ThrowableDiagnostic &e) {
+        diagnosticEngine.EnsureLocations();
+        e.EnsureLocation();
         error_ = e;
-        return nullptr;
+        return {};
     }
 }
 

@@ -1984,7 +1984,7 @@ change_types:
       max_ptr_depth: 0
     new_args:
     cast:
-      expression: auto |es2panda_arg.type.ptr_depth||arg_name|E2p = *(reinterpret_cast<Context *>(context));
+      expression: auto &|es2panda_arg.type.ptr_depth||arg_name|E2p = *(reinterpret_cast<Context *>(context));
       var_name: '|arg_name|E2p'
 
   - es2panda_arg:

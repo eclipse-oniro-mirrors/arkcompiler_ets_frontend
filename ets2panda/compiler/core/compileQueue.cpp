@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,7 +52,7 @@ void CompileQueue::Schedule(public_lib::Context *context)
     ES2PANDA_ASSERT(jobsCount_ == 0);
     std::unique_lock<std::mutex> lock(m_);
     // NOTE(vpukhov): #28197: do not use the functions list and traverse the program as the ETSEmitter does
-    auto &functions = context->parserProgram->VarBinder()->Functions();
+    auto &functions = context->parserProgram->VarBinder()->FunctionScopes();
     jobs_ = new CompileJob[functions.size()]();
 
     for (auto *function : functions) {

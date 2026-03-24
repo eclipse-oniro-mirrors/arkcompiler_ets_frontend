@@ -211,7 +211,7 @@ export class TaskManager<PayloadT extends JobInfo> {
                 this.isDeclgen ?
                     ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER :
                     ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
-                `Task ${task.id} is not completed. Dropping it. Processed file is ${task.payload.fileInfo.input}`,
+                `Task ${task.id} is not completed. Dropping it.`,
                 `Worker ${workerInfo.id} exceeded timeout of ${this.taskTimeoutMs} ms`,
             )
             this.logger.printError(logData)
@@ -238,45 +238,40 @@ export class TaskManager<PayloadT extends JobInfo> {
         switch (message.type) {
             case WorkerMessageType.ERROR_OCCURED:
                 this.logErrorMessage(message);
-                this.onTaskFailed(message.data.taskId, workerInfo);
+                this.onTaskFailed(message.data.taskId);
                 break;
             case WorkerMessageType.DECL_GENERATED:
-                this.onDeclGenerated(message.data.taskId, workerInfo);
+                this.onDeclGenerated(message.data.taskId);
                 break;
             case WorkerMessageType.ABC_COMPILED:
-                this.onFileCompiled(message.data.taskId, workerInfo);
+                this.onFileCompiled(message.data.taskId);
+                break;
+            case WorkerMessageType.TASK_FINISHED:
+                this.onTaskFinished(workerInfo);
                 break;
             default:
                 break;
         }
     }
 
-    private onTaskFailed(taskId: string, workerInfo: WorkerInfo): void {
+    private onTaskFinished(workerInfo: WorkerInfo) {
+        workerInfo.currentTaskId = undefined;
+        this.idleWorkers.push(workerInfo);
+        this.tryDispatch();
+    }
+
+    private onTaskFailed(taskId: string): void {
         this.settleTask(taskId, true);
-        workerInfo.currentTaskId = undefined;
-        this.idleWorkers.push(workerInfo);
         this.tryDispatch();
     }
 
-    private onFileCompiled(taskId: string, workerInfo: WorkerInfo): void {
+    private onFileCompiled(taskId: string): void {
         this.settleTask(taskId, false);
-        workerInfo.currentTaskId = undefined;
-        this.idleWorkers.push(workerInfo);
         this.tryDispatch();
     }
 
-    private onDeclGenerated(taskId: string, workerInfo: WorkerInfo): void {
-        // (1) Declgen-only mode: worker is now free for next task
-        // (2) Compile mode: we can only release the worker until ABC compilation is done
-        // in this case, declgen is only a signal to queue the next compilation task
-
+    private onDeclGenerated(taskId: string): void {
         this.settleTask(taskId, false);
-        if (this.isDeclgen) {
-            // Declgen-only mode here
-            workerInfo.currentTaskId = undefined;
-            this.idleWorkers.push(workerInfo);
-        }
-
         this.tryDispatch();
     }
 

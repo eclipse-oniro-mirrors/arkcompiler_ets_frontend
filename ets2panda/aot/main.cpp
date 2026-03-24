@@ -52,8 +52,8 @@ public:
 static int CompileFromSource(es2panda::Compiler &compiler, es2panda::SourceFile &input, const util::Options &options,
                              util::DiagnosticEngine &diagnosticEngine)
 {
-    auto program = std::unique_ptr<pandasm::Program> {compiler.Compile(input, options, diagnosticEngine)};
-    if (program == nullptr) {
+    auto programs = compiler.Compile(input, options, diagnosticEngine);
+    if (programs.size() == 0) {
         const auto &err = compiler.GetError();
 
         if (err.Type() == util::DiagnosticType::INVALID) {
@@ -67,11 +67,13 @@ static int CompileFromSource(es2panda::Compiler &compiler, es2panda::SourceFile 
         return 1;
     }
 
-    return util::GenerateProgram(
-        program.get(), options,
+    auto res = util::GenerateBinaryFiles(
+        programs, options,
         [&diagnosticEngine](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
             diagnosticEngine.LogDiagnostic(kind, params);
         });
+
+    return res;
 }
 
 using StringPairVector = std::vector<std::pair<std::string, std::string>>;

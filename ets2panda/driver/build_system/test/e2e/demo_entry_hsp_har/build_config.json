@@ -13,7 +13,7 @@
     ],
     "loaderOutPath": "./build",
     "cachePath": "./build/cache",
-    "buildSdkPath": ".",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "pandaStdlibPath": "${absolute_path_to_stdlib}",
     "dependentModuleList": [
         {

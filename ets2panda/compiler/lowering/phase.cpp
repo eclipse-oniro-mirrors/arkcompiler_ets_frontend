@@ -92,7 +92,6 @@ namespace ark::es2panda::compiler {
 
 // NOLINTBEGIN(fuchsia-statically-constructed-objects)
 static CheckerPhase g_checkerPhase;
-static InitScopesPhaseETS g_initScopesPhaseEts;
 static InitScopesPhaseAS g_initScopesPhaseAs;
 static InitScopesPhaseTs g_initScopesPhaseTs;
 static InitScopesPhaseJs g_initScopesPhaseJs;

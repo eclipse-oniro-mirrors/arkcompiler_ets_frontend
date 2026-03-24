@@ -18,7 +18,7 @@
 
   "loaderOutPath": "./build/entry",
   "cachePath": "./build/cache/entry",
-  "buildSdkPath": ".",
+  "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
   "pandaStdlibPath": "${absolute_path_to_stdlib}",
 
   "enableDeclgenEts2Ts": false,

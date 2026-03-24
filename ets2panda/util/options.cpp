@@ -190,7 +190,7 @@ bool Options::ParseInputOutput()
             diagnosticEngine_.LogDiagnostic(diagnostic::PROJ_COMP_WITH_OUTPUT, DiagnosticMessageParams {});
             return false;
         }
-    } else {
+    } else if (!SourceFileName().empty()) {
         SetOutput(ark::os::RemoveExtension(BaseName(SourceFileName())).append(".abc"));
     }
 
