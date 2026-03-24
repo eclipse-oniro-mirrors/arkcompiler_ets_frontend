@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLspWithUi, getRealPath } from '../utils';
 
 // ui-syntax rule is moved to after-check and can be enabled after adaptation
 xdescribe('getCodeFixesAtPositionTest', () => {
@@ -53,10 +53,18 @@ xdescribe('getCodeFixesAtPositionTest', () => {
     }
   ];
 
-  const PLUGIN_LIST: string[] = process.env.SKIP_UI_PLUGINS ? [] : ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
-  const lsp = getLsp(moduleName, PLUGIN_LIST);
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCodeFixesAtPosition_000', () => {
-    const res = lsp.getCodeFixesAtPosition(getRealPath(moduleName, 'getCodeFixesAtPosition1.ets'), 994, 995, [4000]);
-    expect(res).toMatchObject(EXPECT_000);
+  describe('No UI Plugins', () => {});
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCodeFixesAtPosition_000', () => {
+      const res = getUiLsp().getCodeFixesAtPosition(
+        getRealPath(moduleName, 'getCodeFixesAtPosition1.ets'),
+        994,
+        995,
+        [4000]
+      );
+      expect(res).toMatchObject(EXPECT_000);
+    });
   });
 });

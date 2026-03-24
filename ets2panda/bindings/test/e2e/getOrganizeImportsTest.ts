@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getOrganizeImportsTest', () => {
   const moduleName: string = 'getOrganizeImports';
@@ -44,20 +44,26 @@ describe('getOrganizeImportsTest', () => {
       }
     ]
   };
-  const lsp = getLsp(moduleName);
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getOrganizeImports_000', () => {
-    const res = lsp.getOrganizeImports(getRealPath(moduleName, 'getOrganizeImports1.ets'));
-    expect(res?.fileTextChanges.length).toBe(1);
-    expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_000);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getOrganizeImports_001', () => {
+      const res = lsp.getOrganizeImports(getRealPath(moduleName, 'ExtractDefaultImport1_import.ets'));
+      expect(res?.fileTextChanges.length).toBe(1);
+      expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_001);
+    });
+    test('getOrganizeImports_002', () => {
+      const res = lsp.getOrganizeImports(getRealPath(moduleName, 'ExtractDefaultImport2_import.ets'));
+      expect(res?.fileTextChanges.length).toBe(1);
+      expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_002);
+    });
   });
-  test('getOrganizeImports_001', () => {
-    const res = lsp.getOrganizeImports(getRealPath(moduleName, 'ExtractDefaultImport1_import.ets'));
-    expect(res?.fileTextChanges.length).toBe(1);
-    expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_001);
-  });
-  test('getOrganizeImports_002', () => {
-    const res = lsp.getOrganizeImports(getRealPath(moduleName, 'ExtractDefaultImport2_import.ets'));
-    expect(res?.fileTextChanges.length).toBe(1);
-    expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_002);
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getOrganizeImports_000', () => {
+      const res = getUiLsp().getOrganizeImports(getRealPath(moduleName, 'getOrganizeImports1.ets'));
+      expect(res?.fileTextChanges.length).toBe(1);
+      expect(res?.fileTextChanges[0]).toMatchObject(EXPECT_000);
+    });
   });
 });

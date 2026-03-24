@@ -24,7 +24,8 @@ export const DEFAULT_PATH_CONFIG: PathConfig = {
   declgenOutDir: ''
 };
 
-const DEFAULT_PLUGIN_LIST: string[] = process.env.SKIP_UI_PLUGINS ? [] : ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+export const UI_PLUGIN_LIST: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+const DEFAULT_PLUGIN_LIST: string[] = [];
 const STDLIB_PATH_KEYS = ['std', 'escompat', 'arkruntime'];
 
 interface ParsedArkTSConfigObject {
@@ -150,6 +151,10 @@ export function getLsp(moduleName: string, plugins: string[] = DEFAULT_PLUGIN_LI
     [{ name: moduleName, moduleType: 'har', srcPath: path.resolve('test/testcases/', moduleName) }],
     plugins
   );
+}
+
+export function getLspWithUi(moduleName: string): Lsp {
+  return getLsp(moduleName, UI_PLUGIN_LIST);
 }
 
 export function getMultiModuleLsp(

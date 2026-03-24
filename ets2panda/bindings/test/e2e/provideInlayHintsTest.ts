@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('provideInlayHintsTest', () => {
   const moduleName: string = 'provideInlayHints';
@@ -42,19 +42,25 @@ describe('provideInlayHintsTest', () => {
       whitespaceAfter: true
     }
   ];
-  const lsp = getLsp(moduleName);
-  test('provideInlayHints_000', () => {
-    const res = lsp.provideInlayHints(getRealPath(moduleName, 'provideInlayHints1.ets'), {
-      start: 712,
-      length: 11
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('provideInlayHints_000', () => {
+      const res = lsp.provideInlayHints(getRealPath(moduleName, 'provideInlayHints1.ets'), {
+        start: 712,
+        length: 11
+      });
+      expect(res).toMatchObject(EXPECT_000);
     });
-    expect(res).toMatchObject(EXPECT_000);
   });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('provideInlayHints_001', () => {
-    const res = lsp.provideInlayHints(getRealPath(moduleName, 'provideInlayHints2.ets'), {
-      start: 683,
-      length: 5
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('provideInlayHints_001', () => {
+      const res = getUiLsp().provideInlayHints(getRealPath(moduleName, 'provideInlayHints2.ets'), {
+        start: 683,
+        length: 5
+      });
+      expect(res).toMatchObject(EXPECT_001);
     });
-    expect(res).toMatchObject(EXPECT_001);
   });
 });

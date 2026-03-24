@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getDocumentHighlightsTest', () => {
   const moduleName: string = 'getDocumentHighlights';
@@ -419,55 +419,61 @@ describe('getDocumentHighlightsTest', () => {
       }
     ]
   };
-  const lsp = getLsp(moduleName);
-  test('getDocumentHighlights_000', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights1.ets'), 614);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_000);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getDocumentHighlights_000', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights1.ets'), 614);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_000);
+    });
+    test('getDocumentHighlights_001', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights2.ets'), 717);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_001);
+    });
+    test('getDocumentHighlights_002', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights3.ets'), 616);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_002);
+    });
+    test('getDocumentHighlights_003', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights4.ets'), 626);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_003);
+    });
+    test('getDocumentHighlights_004', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights5.ets'), 619);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_004);
+    });
+    test('getDocumentHighlights_005', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights6.ets'), 657);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_005);
+    });
+    test('getDocumentHighlights_006', () => {
+      const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights7.ets'), 733);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_006);
+    });
   });
-  test('getDocumentHighlights_001', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights2.ets'), 717);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_001);
-  });
-  test('getDocumentHighlights_002', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights3.ets'), 616);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_002);
-  });
-  test('getDocumentHighlights_003', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights4.ets'), 626);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_003);
-  });
-  test('getDocumentHighlights_004', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights5.ets'), 619);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_004);
-  });
-  test('getDocumentHighlights_005', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights6.ets'), 657);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_005);
-  });
-  test('getDocumentHighlights_006', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights7.ets'), 733);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_006);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_007', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights8.ets'), 677);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_007);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_008', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights9.ets'), 620);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_008);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_009', () => {
-    const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights10.ets'), 967);
-    expect(res?.documentHighlights.length).toBe(1);
-    expect(res).toMatchObject(EXPECT_009);
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_007', () => {
+      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights8.ets'), 677);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_007);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_008', () => {
+      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights9.ets'), 620);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_008);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getDocumentHighlights_009', () => {
+      const res = getUiLsp().getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights10.ets'), 967);
+      expect(res?.documentHighlights.length).toBe(1);
+      expect(res).toMatchObject(EXPECT_009);
+    });
   });
 });

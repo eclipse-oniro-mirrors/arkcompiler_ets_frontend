@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getSyntacticDiagnosticsTest', () => {
   const moduleName: string = 'getSyntacticDiagnostics';
@@ -87,27 +87,31 @@ describe('getSyntacticDiagnosticsTest', () => {
       range: { start: { line: 36, character: 6 }, end: { line: 36, character: 11 } }
     }
   ];
-  const PLUGIN_LIST: string[] = process.env.SKIP_UI_PLUGINS ? [] : ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
-  const lsp = getLsp(moduleName, PLUGIN_LIST);
-  test('getSyntacticDiagnostics_000', () => {
-    const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics1.ets'));
-    expect(res?.diagnostics).toStrictEqual([]);
-  });
-  test('getSyntacticDiagnostics_001', () => {
-    const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics2.ets'));
-    expect(res?.diagnostics.length).toBe(10);
-    expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_001);
-  });
-  test('getSyntacticDiagnostics_002', () => {
-    const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics3.ets'));
-    expect(res?.diagnostics.length).toBe(1);
-    expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_002);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getSyntacticDiagnostics_000', () => {
+      const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics1.ets'));
+      expect(res?.diagnostics).toStrictEqual([]);
+    });
+    test('getSyntacticDiagnostics_001', () => {
+      const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics2.ets'));
+      expect(res?.diagnostics.length).toBe(10);
+      expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_001);
+    });
+    test('getSyntacticDiagnostics_002', () => {
+      const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics3.ets'));
+      expect(res?.diagnostics.length).toBe(1);
+      expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_002);
+    });
   });
 
-  // ui-syntax rule is moved to after-check and can be enabled after adaptation
-  (process.env.SKIP_UI_PLUGINS ? test.skip : xtest)('getSyntacticDiagnostics_003', () => {
-    const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics4.ets'));
-    expect(res?.diagnostics.length).toBe(5);
-    expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_003);
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    // ui-syntax rule is moved to after-check and can be enabled after adaptation
+    (process.env.SKIP_UI_PLUGINS ? test.skip : xtest)('getSyntacticDiagnostics_003', () => {
+      const res = getUiLsp().getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics4.ets'));
+      expect(res?.diagnostics.length).toBe(5);
+      expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_003);
+    });
   });
 });

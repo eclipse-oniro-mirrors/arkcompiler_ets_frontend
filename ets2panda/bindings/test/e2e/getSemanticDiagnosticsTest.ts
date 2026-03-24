@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getSemanticDiagnosticsTest', () => {
   const moduleName: string = 'getSemanticDiagnostics';
@@ -41,19 +41,25 @@ describe('getSemanticDiagnosticsTest', () => {
       range: { start: { line: 19, character: 10 }, end: { line: 19, character: 15 } }
     }
   ];
-  const lsp = getLsp(moduleName);
-  test('getSemanticDiagnostics_000', () => {
-    const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics1.ets'));
-    expect(res?.diagnostics).toStrictEqual([]);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getSemanticDiagnostics_000', () => {
+      const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics1.ets'));
+      expect(res?.diagnostics).toStrictEqual([]);
+    });
+    test('getSemanticDiagnostics_001', () => {
+      const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics2.ets'));
+      expect(res?.diagnostics.length).toBe(3);
+      expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_001);
+    });
   });
-  test('getSemanticDiagnostics_001', () => {
-    const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics2.ets'));
-    expect(res?.diagnostics.length).toBe(3);
-    expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_001);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getSemanticDiagnostics_002', () => {
-    const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics3.ets'));
-    expect(res?.diagnostics.length).toBe(2);
-    expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_002);
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getSemanticDiagnostics_002', () => {
+      const res = getUiLsp().getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics3.ets'));
+      expect(res?.diagnostics.length).toBe(2);
+      expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_002);
+    });
   });
 });
