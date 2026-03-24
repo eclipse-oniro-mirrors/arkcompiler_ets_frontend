@@ -94,7 +94,8 @@ private:
 
     ir::ClassDeclaration *CreateGlobalClass();
     ir::ClassStaticBlock *CreateStaticBlock(ir::ClassDefinition *classDef);
-    ir::MethodDefinition *CreateGlobalMethod(std::string_view name, ArenaVector<ir::Statement *> &&statements);
+    ir::MethodDefinition *CreateGlobalMethod(std::string_view name, ArenaVector<ir::Statement *> &&statements,
+                                             bool needTypeAnno = false);
     void AddInitStatementsToStaticBlock(ir::ClassDefinition *globalClass,
                                         ArenaVector<ir::Statement *> &&initStatements);
     void AddInitCallToStaticBlock(ir::ClassDefinition *globalClass, ir::MethodDefinition *initMethod);

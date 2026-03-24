@@ -15,10 +15,4 @@
 
 import {fooImport} from "./import_type_error_top_level"
 
-export let inExport = fooImport()
-
-// ignored because used only in import
-/* @@? export_and_import_top_level.ets:18:12 Warning Warning W71336: Exported variable 'inExport' requires type annotation. */
-
-/* @@? import_type_error_top_level.ets:20:1 Warning Warning W71336: Exported function 'fooImport' requires type annotation. */
-/* @@? import_type_error_top_level.ets:21:35 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+export let inExport: string = fooImport()

@@ -14,6 +14,6 @@
  */
  
 namespace ns {
-    let x = 1;
+    let x: int = 1;
 }
-export ns;/* @@? 17:9 Warning Warning W71336: Exported class property 'x' requires type annotation. */
+export ns;

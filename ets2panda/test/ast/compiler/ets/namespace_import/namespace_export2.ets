@@ -13,4 +13,4 @@
  * limitations under the License.
  */
 
-export default null;/* @@? 1:3 Warning Warning W71336: Exported variable 'gensym%%_default_anonymous' requires type annotation. */
+export default null;

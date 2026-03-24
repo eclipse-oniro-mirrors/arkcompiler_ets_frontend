@@ -85,7 +85,7 @@ TEST_F(LSPAICTests, GetAutoImportCompletionEntryResolved)
          }
          )",
         R"(
-         export function helper() {
+         export function helper(): int {
              return 2 * 2;
          }
          )"};

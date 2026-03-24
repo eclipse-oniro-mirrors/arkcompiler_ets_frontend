@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-let a = 5;
+let a: int = 5;
 
 export type {a}
-/* @@? 16:5 Warning Warning W71336: Exported variable 'a' requires type annotation. */

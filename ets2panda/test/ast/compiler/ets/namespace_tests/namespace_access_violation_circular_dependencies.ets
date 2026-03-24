@@ -23,5 +23,5 @@ namespace NS2 {
 }
 
 /* @@? 18:16 Error Semantic error ESE0308: Circular dependency detected for identifier: value */
-/* @@? 18:16 Warning Warning W71336: Exported class property 'value' requires type annotation. */
-/* @@? 22:16 Warning Warning W71336: Exported class property 'constant' requires type annotation. */
+/* @@? 18:16 Error Semantic error ESE71336: Exported class property 'value' requires type annotation. */
+/* @@? 22:16 Error Semantic error ESE71336: Exported class property 'constant' requires type annotation. */

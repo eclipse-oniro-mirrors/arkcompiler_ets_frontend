@@ -155,8 +155,8 @@ TEST_F(LSPMoveToNewFileTests, ExportCase2)
 {
     std::string strNewFilePath = TEMP_DIR + "MoveToNewFile_PI.ets";
     std::vector<std::string> files = {"MoveToNewFileTests_export_case2.ets"};
-    std::vector<std::string> texts = {R"(const MoveToNewFile_PI = 3.14;
-let version = "1.0";
+    std::vector<std::string> texts = {R"(const MoveToNewFile_PI: number = 3.14;
+let version: number = "1.0";
 console.log(MoveToNewFile_PI, version, debug);
 )"};
     DeleteFile(strNewFilePath);
@@ -185,8 +185,8 @@ console.log(MoveToNewFile_PI, version, debug);
     EXPECT_EQ(changes.size(), 1);
 
     std::string newFileContent = ReadFile(strNewFilePath);
-    const auto content = R"(export const MoveToNewFile_PI = 3.14;
-export let version = "1.0";
+    const auto content = R"(export const MoveToNewFile_PI: number = 3.14;
+export let version: number = "1.0";
 )";
     ASSERT_EQ(newFileContent, content);
     init.DestroyContext(ctx);
@@ -197,7 +197,7 @@ TEST_F(LSPMoveToNewFileTests, ImportCase5)
     std::vector<std::string> files = {"MoveToNewFileTests_import_case5.ets"};
     std::vector<std::string> texts = {
         R"(
-            export function foo() {}
+            export function foo(): void {}
             foo();
         )"};
     auto filePaths = CreateTempFile(files, texts);
@@ -331,7 +331,7 @@ ret(): Base
 interface MoveToNewFile_Derived extends Base {
 }
 )",
-        R"(export const A = 1; export const B = 2; export const C = 3;)", R"(export const X = 1;)"};
+        R"(export const A: int = 1; export const B: int = 2; export const C: int = 3;)", R"(export const X: int = 1;)"};
     auto filePaths = CreateTempFile(files, texts);
 
     Initializer init;
@@ -372,13 +372,13 @@ interface MoveToNewFileDerived extends Base {
 interface Test2 extends Test1 {
 }
 )",
-                                      R"(export const A = 1; export const B = 2; export const C = 3;
+                                      R"(export const A: int = 1; export const B: int = 2; export const C: int = 3;
 export interface Test1 { }
 )",
                                       R"(export interface Base {
 param(): void
 ret(): Base }
-export const X = 1;
+export const X: int = 1;
 )"};
     std::vector<std::string> files = {"MoveToNewFileTests_import_case2.ets", "MoveToNewFileTests_import_21.ets",
                                       "MoveToNewFileTests_import_22.ets"};

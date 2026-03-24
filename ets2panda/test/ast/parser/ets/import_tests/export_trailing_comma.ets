@@ -20,5 +20,4 @@ export {foo2,}
 export {/* @@ label */, foo3}
 
 
-/* @@? 1:3 Warning Warning W71336: Exported variable 'gensym%%_default_anonymous' requires type annotation. */
-/* @@@ label Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 20:23 Error Syntax error ESY0227: Unexpected token ','. */

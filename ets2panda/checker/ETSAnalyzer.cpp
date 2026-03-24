@@ -346,7 +346,8 @@ static void TypeAnnoCheckForExportedMethod(checker::ETSChecker *checker, ir::Met
 
 static void TypeAnnoCheckForExportedClassProp(checker::ETSChecker *checker, ir::ClassProperty *classProp)
 {
-    if (classProp->TypeAnnotation() == nullptr && !classProp->Parent()->IsAnnotationUsage()) {
+    if (classProp->TypeAnnotation() == nullptr && !classProp->Parent()->IsAnnotationUsage() &&
+        classProp->Id()->Name() != compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) {
         const std::string entityType = util::Helpers::IsGlobalClass(checker->Context().ContainingClass()->GetDeclNode())
                                            ? "variable"
                                            : "class property";

@@ -13,4 +13,4 @@
  * limitations under the License.
  */
 
-export const constVar = 10/* @@? 16:14 Warning Warning W71336: Exported variable 'constVar' requires type annotation. */
+export const constVar: int = 10

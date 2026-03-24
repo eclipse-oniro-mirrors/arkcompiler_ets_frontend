@@ -61,15 +61,15 @@ function retC() {
 }
 
 
-/* @@? 19:9 Warning Warning W71336: Exported function '$_set' requires type annotation. */
-/* @@? 23:9 Warning Warning W71336: Exported function '$_set' requires type annotation. */
+/* @@? 19:9 Error Semantic error ESE71336: Exported function '$_set' requires type annotation. */
+/* @@? 23:9 Error Semantic error ESE71336: Exported function '$_set' requires type annotation. */
 /* @@? 26:13 Error Syntax error ESY0227: Unexpected token 'this'. */
 /* @@? 26:17 Error Syntax error ESY0227: Unexpected token '.'. */
 /* @@? 26:25 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 26:25 Error Syntax error ESY0227: Unexpected token '.'. */
 /* @@? 26:37 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 26:37 Error Syntax error ESY0227: Unexpected token '--'. */
-/* @@? 31:9 Warning Warning W71336: Exported function '$_set' requires type annotation. */
+/* @@? 31:9 Error Semantic error ESE71336: Exported function '$_set' requires type annotation. */
 /* @@? 36:29 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 37:37 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 38:35 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */

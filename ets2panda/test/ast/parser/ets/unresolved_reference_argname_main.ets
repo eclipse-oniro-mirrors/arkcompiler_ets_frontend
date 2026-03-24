@@ -16,4 +16,3 @@
 
 import { foo } from "./unresolved_reference_argname_proxy.ets";
 foo(undefined)
-/* @@? unresolved_reference_argname_proxy.ets:17:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */

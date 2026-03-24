@@ -23,6 +23,7 @@
 #include "ir/base/scriptFunction.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/ets/etsIntrinsicNode.h"
+#include "ir/ets/etsPrimitiveType.h"
 #include "ir/expressions/memberExpression.h"
 #include "ir/expressions/identifier.h"
 #include "ir/expressions/classExpression.h"
@@ -217,7 +218,7 @@ void GlobalClassHandler::SetupInitializerBlock(ArenaVector<ArenaVector<ir::State
     util::UString initializerBlockName =
         util::UString {std::string(compiler::Signatures::INITIALIZER_BLOCK_INIT) + moduleName, allocator_};
     ir::MethodDefinition *initializerBlockInit =
-        CreateGlobalMethod(initializerBlockName.View().Utf8(), std::move(blockStmts));
+        CreateGlobalMethod(initializerBlockName.View().Utf8(), std::move(blockStmts), true);
     InsertInGlobal(globalClass, initializerBlockInit);
     AddInitCallToStaticBlock(globalClass, initializerBlockInit);
 }
@@ -433,7 +434,8 @@ static std::pair<lexer::SourcePosition, lexer::SourcePosition> GetBoundInBody(pa
 }
 
 ir::MethodDefinition *GlobalClassHandler::CreateGlobalMethod(const std::string_view name,
-                                                             ArenaVector<ir::Statement *> &&statements)
+                                                             ArenaVector<ir::Statement *> &&statements,
+                                                             bool needTypeAnno)
 {
     const auto functionFlags = ir::ScriptFunctionFlags::NONE;
     auto functionModifiers = ir::ModifierFlags::STATIC | ir::ModifierFlags::PUBLIC;
@@ -449,6 +451,12 @@ ir::MethodDefinition *GlobalClassHandler::CreateGlobalMethod(const std::string_v
     ES2PANDA_ASSERT(func != nullptr);
     func->SetIdent(ident);
     func->AddModifier(functionModifiers);
+
+    // Note(zihan): Only initializer block need type anno, because namespace can be exported.
+    if (needTypeAnno) {
+        auto *voidAnno = NodeAllocator::Alloc<ir::ETSPrimitiveType>(allocator_, ir::PrimitiveType::VOID, allocator_);
+        func->SetReturnTypeAnnotation(voidAnno);
+    }
 
     auto *funcExpr = NodeAllocator::Alloc<ir::FunctionExpression>(allocator_, func);
     auto *identClone = ident->Clone(allocator_, nullptr);

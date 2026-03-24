@@ -17,7 +17,7 @@ import {inExport} from "./export_and_import_top_level"
 
 let x = inExport
 
-export function fooImport() {
+export function fooImport(): String {
     let x: String = /* @@ label */1
     return x
 }
@@ -25,8 +25,4 @@ export function fooImport() {
 // used to give wrong output:
 // TypeError: Type 'int' cannot be assigned to type 'String' [export_and_import_top_level.ets:21:1]
 
-
-/* @@? export_and_import_top_level.ets:18:12 Warning Warning W71336: Exported variable 'inExport' requires type annotation. */
-
-/* @@? import_type_error_top_level.ets:20:1 Warning Warning W71336: Exported function 'fooImport' requires type annotation. */
 /* @@@ label Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

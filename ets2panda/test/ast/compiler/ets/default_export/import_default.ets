@@ -18,6 +18,3 @@ import FOOB from './export_default2'
 
 FOOA.fooA();
 FOOB.fooB();
-/* @@? export_default1.ets:17:12 Warning Warning W71336: Exported function 'fooA' requires type annotation. */
-
-/* @@? export_default2.ets:18:12 Warning Warning W71336: Exported function 'fooB' requires type annotation. */

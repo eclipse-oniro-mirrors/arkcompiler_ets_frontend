@@ -405,11 +405,11 @@ TEST_F(FixImportNonExportedMemberTest, TestImportNonExportedMemberFixNotApplicab
     std::vector<std::string> fileContents = {
         R"(
         // MainModuleNotOn.ets
-        export function foo() {
+        export function foo(): void {
             console.log("Hello Foo!");
         }
 
-        export function bar() {
+        export function bar(): void {
             console.log("Hello Bar!");
         }
         )",
@@ -540,7 +540,7 @@ TEST_F(FixImportNonExportedMemberTest, TestImportNonExportedMemberFixNotApplicab
     std::vector<std::string> fileContents = {
         R"(
         // MainModuleReExport.ets
-        function reExported() {
+        function reExported(): void {
             console.log("Hello ReExport!");
         }
         )",

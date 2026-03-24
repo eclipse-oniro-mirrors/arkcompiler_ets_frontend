@@ -13,4 +13,4 @@
  * limitations under the License.
  */
 
-export default function boo() { console.log("mod4") }   /* @@? 16:1 Warning Warning W71336: Exported function 'boo' requires type annotation. */
+export default function boo(): void { console.log("mod4") }

@@ -54,6 +54,9 @@
                 "async": false,
                 "expression": false,
                 "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType"
+                },
                 "body": {
                   "type": "BlockStatement",
                   "statements": [
@@ -145,3 +148,4 @@
     }
   ]
 }
+[package_module_2.ets:16:9] Syntax error ESY139148: The package keyword is deprecated.

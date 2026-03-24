@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,21 +16,21 @@
 namespace QualifiedNamespace {
     export namespace LevelOne {
         export namespace LevelTwo {
-            export function qualifiedFunction() {
+            export function qualifiedFunction(): string{
                 return "Qualified Function";
             }
 
-            export let qualifiedValue = 100;
+            export let qualifiedValue: int = 100;
 
             // Utility function to reset the state of LevelTwo
-            export function resetState() {
+            export function resetState(): void {
                 qualifiedValue = 100;  // Reset qualifiedValue to its initial state
             }
         }
     }
 
     // Utility function to reset the state of LevelOne and LevelTwo
-    export function resetQualifiedState() {
+    export function resetQualifiedState(): void {
         LevelOne.LevelTwo.resetState();
     }
 }

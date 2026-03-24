@@ -22,6 +22,6 @@ namespace ConflictedSpace {
 }
 
 
-/* @@? 17:16 Warning Warning W71336: Exported class property 'InnerSpace' requires type annotation. */
+/* @@? 17:16 Error Semantic error ESE71336: Exported class property 'InnerSpace' requires type annotation. */
 /* @@? 19:22 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
 /* @@? 19:22 Error Semantic error ESE0351: Variable 'InnerSpace' has already been declared. */

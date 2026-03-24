@@ -15,9 +15,8 @@
 
 
 class B {
-    static fooB(){
+    static fooB(): void {
     }
 }
 
 export default {B}
-/* @@? 18:12 Warning Warning W71336: Exported function 'fooB' requires type annotation. */

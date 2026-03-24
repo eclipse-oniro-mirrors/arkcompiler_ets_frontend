@@ -21,6 +21,6 @@ function main() {
     age = "1"
 }
 
-/* @@? 17:8 Warning Warning W71336: Exported function 'age' requires type annotation. */
+/* @@? 17:8 Error Semantic error ESE71336: Exported function 'age' requires type annotation. */
 /* @@? 20:5 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
 /* @@? 21:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

@@ -15,12 +15,12 @@
 
 import { NullableNumber  } from "dynamic_import_tests/modules/module";
 
-export function test_union() {
+export function test_union(): void {
     () => {
         let res = true
         let union_not_null : NullableNumber = 0x55aa
         union_not_null instanceof NullableNumber
     }
 }
-/* @@? 18:1 Warning Warning W71336: Exported function 'test_union' requires type annotation. */
+
 /* @@? 22:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

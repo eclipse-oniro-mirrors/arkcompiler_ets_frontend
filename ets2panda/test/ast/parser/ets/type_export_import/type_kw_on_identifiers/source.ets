@@ -34,4 +34,4 @@ export class R {}
 
 export default d;
 
-let d = 0;/* @@? 37:5 Warning Warning W71336: Exported variable 'd' requires type annotation. */
+let d: int = 0;

@@ -20,5 +20,4 @@ export default {
     },
 };
 
-/* @@? 1:3 Warning Warning W71336: Exported variable 'gensym%%_default_anonymous' requires type annotation. */
 /* @@? 16:16 Error Semantic error ESE0174: Cannot infer type for gensym%%_default_anonymous because class composite needs an explicit target type */

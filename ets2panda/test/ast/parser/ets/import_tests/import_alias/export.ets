@@ -18,7 +18,7 @@ class bar1{
 }
 
 export class bar2{
-    bar2(){ }
+    bar2(): void { }
 }
 
 function foo1():void{ }
@@ -27,6 +27,4 @@ export function foo2():void{ }
 
 let goo1 = 10;
 
-export let goo2 = 10;
-/* @@? 21:5 Warning Warning W71336: Exported function 'bar2' requires type annotation. */
-/* @@? 30:12 Warning Warning W71336: Exported variable 'goo2' requires type annotation. */
+export let goo2: int = 10;

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-export function main() {
+export function main(): void {
     let a: string = "hello world"
     console.log(a);
 }

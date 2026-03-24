@@ -15,7 +15,7 @@
 
 function test_func(): void {}
 
-let msg = "hello";
+let msg: string = "hello";
 
 class TestClass {
     test_member = "test_member";
@@ -36,4 +36,3 @@ export {
     TestClass as tc,
     aliased
 }
-/* @@? 18:5 Warning Warning W71336: Exported variable 'msg' requires type annotation. */

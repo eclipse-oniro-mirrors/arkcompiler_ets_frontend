@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 
-export const MyValue = "MyValue"
-
-/* @@? 16:14 Warning Warning W71336: Exported variable 'MyValue' requires type annotation. */
+export const MyValue: string = "MyValue"

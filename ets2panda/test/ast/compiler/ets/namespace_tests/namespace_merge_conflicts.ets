@@ -33,6 +33,6 @@ namespace A.C {
     function moo() { too(); }
 }
 
-/* @@? 21:9 Warning Warning W71336: Exported function 'too' requires type annotation. */
+/* @@? 21:9 Error Semantic error ESE71336: Exported function 'too' requires type annotation. */
 /* @@? 29:5 Error Semantic error ESE0130: Function foo is already declared. */
-/* @@? 33:5 Warning Warning W71336: Exported function 'moo' requires type annotation. */
+/* @@? 33:5 Error Semantic error ESE71336: Exported function 'moo' requires type annotation. */

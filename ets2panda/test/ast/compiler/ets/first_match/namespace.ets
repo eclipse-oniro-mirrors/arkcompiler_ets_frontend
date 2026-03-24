@@ -61,11 +61,12 @@ function main(){
     NS.overloadfoo3("abc");
 }
 
+/* @@? 27:5 Error Semantic error ESE71336: Exported function 'foo3' requires type annotation. */
+/* @@? 37:5 Error Semantic error ESE71336: Exported function 'foo5' requires type annotation. */
+
 /* @@? 25:34 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
 /* @@? 25:40 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
-/* @@? 27:5 Warning Warning W71336: Exported function 'foo3' requires type annotation. */
 /* @@? 35:41 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
-/* @@? 37:5 Warning Warning W71336: Exported function 'foo5' requires type annotation. */
 /* @@? 49:8 Error Semantic error ESE0206: 'foo1' is not exported in 'NS' */
 /* @@? 50:8 Error Semantic error ESE0206: 'foo2' is not exported in 'NS' */
 /* @@? 52:8 Error Semantic error ESE0206: 'foo4' is not exported in 'NS' */

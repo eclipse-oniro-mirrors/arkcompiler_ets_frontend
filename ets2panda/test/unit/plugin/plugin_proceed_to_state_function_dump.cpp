@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@
 #include "util.h"
 
 static es2panda_Impl *g_impl = nullptr;
-static const char *const G_SOURCE = "export function foo(x?: int) {}";
+static const char *const G_SOURCE = "export function foo(x?: int): void {}";
 static std::string *g_dumpedSource = nullptr;
 
 int main(int argc, char **argv)

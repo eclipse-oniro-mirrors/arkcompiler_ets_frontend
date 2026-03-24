@@ -221,22 +221,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 33,
-                      "program": "instanceof.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 33,
-                      "program": "instanceof.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 20,
@@ -294,7 +279,7 @@
       "loc": {
         "start": {
           "line": 20,
-          "column": 16,
+          "column": 1,
           "program": "instanceof.ets"
         },
         "end": {
@@ -372,22 +357,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 23,
-                      "column": 33,
-                      "program": "instanceof.ets"
-                    },
-                    "end": {
-                      "line": 23,
-                      "column": 33,
-                      "program": "instanceof.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 23,
@@ -445,7 +415,7 @@
       "loc": {
         "start": {
           "line": 23,
-          "column": 16,
+          "column": 1,
           "program": "instanceof.ets"
         },
         "end": {

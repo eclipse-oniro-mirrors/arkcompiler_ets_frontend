@@ -37,7 +37,7 @@ function main() {
     nameTop = 1;
 }
 
-/* @@? 17:12 Warning Warning W71336: Exported function 'name' requires type annotation. */
+/* @@? 17:12 Error Semantic error ESE71336: Exported function 'name' requires type annotation. */
 /* @@? 29:24 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
 /* @@? 31:15 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
 /* @@? 32:16 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

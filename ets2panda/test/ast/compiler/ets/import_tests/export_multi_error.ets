@@ -46,7 +46,7 @@ export type MyI = I
 export type {MyI}
 /******************/
 
-function f(){
+function f(): int {
     return 1;
 }
 
@@ -61,6 +61,5 @@ export default function TestFuncToo(): void {}
 /* @@? 46:14 Warning Warning W0000: Duplicated export aliases for 'MyI'. */
 /* @@? 16:10 Error Syntax error ESY0279: Cannot find name 'foo' to export. */
 /* @@? 27:14 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo2'. */
-/* @@? 49:1 Warning Warning W71336: Exported function 'f' requires type annotation. */
 /* @@? 56:1 Error Semantic error ESE0374: Only one default export is allowed in a module */
 /* @@? 57:1 Error Semantic error ESE0374: Only one default export is allowed in a module */

@@ -32,7 +32,7 @@ export class TreeNode {
   }
 }
 
-export class AccessBinaryTrees {
+class AccessBinaryTrees {
   static readonly startDepth = 4;
   static readonly endDepth = 7;
   static readonly expected = -4;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,7 @@ namespace Test1 {
     }
     const c = new C();
     const expected: int[] = [1, 2, 3]
-    export function r() {
+    export function r(): void {
         expect(expected, c.f(a1), c.f(a2), c.f(a3))
     }
 }
@@ -63,7 +63,7 @@ namespace Test2 {
     }
     const c = new C();
     const expected: int[] = [1, 2, 2]
-    export function r() {
+    export function r(): void {
         expect(expected, c.f(a1), c.f(a2), c.f(a3))
     }
 }
@@ -80,7 +80,7 @@ namespace Test3 {
     }
     const c = new C2();
     const expected: int[] = [1, 2, 2]
-    export function r() {
+    export function r(): void {
         expect(expected, c.f(a1), c.f(a2), c.f(a3))
     }
 }

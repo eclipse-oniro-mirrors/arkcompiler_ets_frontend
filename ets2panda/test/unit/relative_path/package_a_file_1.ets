@@ -13,4 +13,4 @@
  * limitations under the License.
  */
 
-export const num = 1;
+export const num: int = 1;

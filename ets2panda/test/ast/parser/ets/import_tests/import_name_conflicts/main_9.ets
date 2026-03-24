@@ -20,5 +20,4 @@ function main() {
   A()
 }
 
-/* @@? imported_module_3.ets:16:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */
 /* @@? 17:22 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */

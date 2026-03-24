@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 namespace A{
-    export let a = 1
+    export let a: number = 1
     export function foo1():string {return "foo1"}
 }
 
 namespace A{
-    export let b = 2
+    export let b: number = 2
     export function foo2():string {return "foo2"}
 }
 
 namespace A{
-    export let c = 3
+    export let c: number = 3
     export function foo3():string {return "foo3"}
 }
 

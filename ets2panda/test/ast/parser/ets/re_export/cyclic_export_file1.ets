@@ -14,4 +14,4 @@
  */
 
 export * from './cyclic_export_file2.ets';
-export let fromA = 111;/* @@? 17:12 Warning Warning W71336: Exported variable 'fromA' requires type annotation. */
+export let fromA: int = 111;

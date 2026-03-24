@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,16 @@
 
 namespace A {
     export class C1{
-        static arr1 = [1, 2, 3]
-        arr2 = [1, 2, 3]
+        static arr1: number[] = [1, 2, 3]
+        arr2: number[] = [1, 2, 3]
     }
 }
 
 namespace B {
     export namespace X {
-        export let c1 = new A.C1()
+        export let c1: A.C1 = new A.C1()
         export class C2 {
-            static a = 5
+            static a: number = 5
         }
     }
 }

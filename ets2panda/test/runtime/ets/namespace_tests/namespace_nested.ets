@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,25 +14,25 @@
  */
 
 namespace OuterNamespace {
-    export function outerFunction() {
+    export function outerFunction(): string {
         return "Outer function";
     }
 
     export namespace InnerNamespace {
-        export function innerFunction() {
+        export function innerFunction(): string {
             return "Inner function";
         }
 
-        export let sharedValue = 50;
+        export let sharedValue: int = 50;
 
         // Utility function to reset the state of InnerNamespace
-        export function resetState() {
+        export function resetState(): void {
             sharedValue = 50;  // Reset sharedValue to its initial state
         }
     }
 
     // Utility function to reset the state of OuterNamespace
-    export function resetOuterState() {
+    export function resetOuterState(): void {
         InnerNamespace.resetState();
     }
 }

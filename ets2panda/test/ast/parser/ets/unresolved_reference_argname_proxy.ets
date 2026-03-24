@@ -17,7 +17,6 @@
 export function foo(
     style?: number,
     context?: number
-) {
+): void {
     return
 }
-/* @@? 17:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */

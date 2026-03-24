@@ -13,6 +13,6 @@
  * limitations under the License.
 ---*/
 'use static'
-export function foo() {
+export function foo(): string {
     return 'foo'
 }

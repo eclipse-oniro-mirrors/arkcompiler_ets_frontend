@@ -207,4 +207,5 @@
     }
   ]
 }
+[package_module_2.ets:16:9] Syntax error ESY139148: The package keyword is deprecated.
 [package_module_2.ets:20:10] Semantic error ESE0143: Unresolved reference myvar2

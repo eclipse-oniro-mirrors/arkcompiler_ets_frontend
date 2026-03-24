@@ -19,7 +19,7 @@ export enum Car {
 }
 
 export class Animal {
-    public age = 0
+    public age: int = 0
 }
 
 export interface Plug {}
@@ -36,7 +36,6 @@ export let plug: Plug
 console.log(car, animal, mutant, jsvalue, plug)
 
 
-/* @@? 22:12 Warning Warning W71336: Exported class property 'age' requires type annotation. */
 /* @@? 36:13 Error Semantic error ESE0375: Variable 'car' is used before being assigned. */
 /* @@? 36:18 Error Semantic error ESE0375: Variable 'animal' is used before being assigned. */
 /* @@? 36:26 Error Semantic error ESE0375: Variable 'mutant' is used before being assigned. */

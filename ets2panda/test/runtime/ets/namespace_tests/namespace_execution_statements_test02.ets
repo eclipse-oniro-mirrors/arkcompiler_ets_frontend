@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,11 +15,11 @@
 
 namespace MySpace {
     // 1. Variable definition and assignment
-    export let count = 123;
-    export let message = "Initial message";
+    export let count: number = 123;
+    export let message: string = "Initial message";
 
     // 2. Function definition
-    export function resetMessage() {
+    export function resetMessage(): void {
         message = "Message has been reset";
     }
 
@@ -56,7 +56,7 @@ namespace MySpace {
     }
 
     // Reset function to initialize the variables to their default values
-    export function resetState() {
+    export function resetState(): void {
         count = 123;
         message = "Initial message";
     }

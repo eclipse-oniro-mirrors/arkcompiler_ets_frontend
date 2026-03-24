@@ -23,5 +23,5 @@ A.foo(); // Error: 'A' does not contain a member named 'foo'
 
 
 
-/* @@? 19:5 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+/* @@? 19:5 Error Semantic error ESE71336: Exported function 'foo' requires type annotation. */
 /* @@? 22:3 Error Semantic error ESE0087: Property 'foo' does not exist on type 'A' */

@@ -37,9 +37,9 @@ export class TreeNode {
 }
 
 export class AccessBinaryTrees {
-  static readonly startDepth = 4;
-  static readonly endDepth = 7;
-  static readonly expected = -4;
+  static readonly startDepth: int = 4;
+  static readonly endDepth: int = 7;
+  static readonly expected: int = -4;
 
   static bottomUpTree(item: int, depth: int): TreeNode {
    if (depth > 0) {

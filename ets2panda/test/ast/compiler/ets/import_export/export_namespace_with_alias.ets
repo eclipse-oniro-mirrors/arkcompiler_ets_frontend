@@ -14,7 +14,7 @@
  */
 
 namespace ns2{
-    export let num = 1
+    export let num: int = 1
 }
 
-export {ns2 as ns}/* @@? 17:16 Warning Warning W71336: Exported class property 'num' requires type annotation. */
+export {ns2 as ns}

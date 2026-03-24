@@ -19,9 +19,4 @@ function main():void{
     let a = new all./* @@ label */bar1();
 }
 
-
-
-/* @@? export.ets:21:5 Warning Warning W71336: Exported function 'bar2' requires type annotation. */
-/* @@? export.ets:30:12 Warning Warning W71336: Exported variable 'goo2' requires type annotation. */
-
 /* @@@ label Error Semantic error ESE0070: 'bar1' type does not exist. */

@@ -26,6 +26,6 @@ namespace A.B {
 
 A.B.bar(); // Error: 'bar()' cannot be accessed
 
-/* @@? 19:9 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-/* @@? 24:5 Warning Warning W71336: Exported function 'bar' requires type annotation. */
+/* @@? 19:9 Error Semantic error ESE71336: Exported function 'foo' requires type annotation. */
+/* @@? 24:5 Error Semantic error ESE71336: Exported function 'bar' requires type annotation. */
 /* @@? 27:5 Error Semantic error ESE0206: 'bar' is not exported in 'B' */

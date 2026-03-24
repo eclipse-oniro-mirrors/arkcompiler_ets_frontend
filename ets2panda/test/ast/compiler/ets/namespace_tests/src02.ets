@@ -14,17 +14,12 @@
  */
 
 namespace Space1 {
-   export function foo() {  }
-   export let variable = 1234;
-   export const constant = 1234;
+   export function foo(): void {  }
+   export let variable: int = 1234;
+   export const constant: int = 1234;
 }
 
 export namespace Space2 {
-   export function foo(p: number) {  }
-   export let variable = "1234";
+   export function foo(p: number): void {  }
+   export let variable: string = "1234";
 }
-/* @@? 17:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-/* @@? 18:15 Warning Warning W71336: Exported class property 'variable' requires type annotation. */
-/* @@? 19:17 Warning Warning W71336: Exported class property 'constant' requires type annotation. */
-/* @@? 23:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-/* @@? 24:15 Warning Warning W71336: Exported class property 'variable' requires type annotation. */
