@@ -449,6 +449,7 @@ private:
     bool VariableHasDefaultValue(const ir::AstNode *node);
     bool CheckStaticFieldInit(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr);
     bool CheckClassProperty(const ir::AstNode *node, const ir::AstNode *declNode);
+    void CheckInheritedReadonlyAssignment(const ir::AstNode *node, const ir::AstNode *declNode);
 
     ETSChecker *checker_;
     Set inits_ {};
