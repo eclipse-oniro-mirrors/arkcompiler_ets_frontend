@@ -195,6 +195,7 @@ public:
     }
 
     void EmitNullishException(const ir::AstNode *node);
+    void EmitClassCastException(const ir::AstNode *node, ark::es2panda::util::StringView err);
     void ThrowException(const ir::Expression *expr);
     bool ExtendWithFinalizer(ir::AstNode const *node, const ir::AstNode *originalNode, Label *prevFinnaly = nullptr);
 
@@ -400,16 +401,8 @@ public:
         Ra().Emit<Call, 3U>(node, AssemblerSignatureReference(name), arg0, arg1, arg2, dummyReg_);
     }
 
-    void CallByName([[maybe_unused]] const ir::AstNode *const node,
-                    [[maybe_unused]] const checker::Signature *signature, [[maybe_unused]] const VReg arg0,
-                    [[maybe_unused]] const ArenaVector<ir::Expression *> &arguments)
-    {
-#ifdef PANDA_WITH_ETS
-        CallArgStart<EtsCallNameShort, EtsCallName, EtsCallNameRange>(node, signature, arg0, arguments);
-#else
-        ES2PANDA_UNREACHABLE();
-#endif
-    }
+    void CallByName(const ir::AstNode *const node, const ir::MemberExpression::ComponentTypeMemberAccessors &signatures,
+                    const VReg arg0, const ArenaVector<ir::Expression *> &arguments);
 
     void CallVirtual(const ir::AstNode *const node, const checker::Signature *signature, const VReg athis,
                      const ArenaVector<ir::Expression *> &arguments)

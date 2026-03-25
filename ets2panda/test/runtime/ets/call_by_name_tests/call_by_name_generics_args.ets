@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,25 +11,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
-class A {
-    foo2(a: int) { }
-    foo1() {
-        return 1
-    }
-    overload foo{ foo1, foo2 }
+class G<K,V> {
+    foo(a: K) { return a }
 }
 
-class B {
-    foo() { }
+function foo(a: G<string, string> | G<string, int>, k: string) {
+    return a.foo(k)
 }
 
-type AAA = A | B
-
-function foo<T extends AAA>(a: T) {
-    return /* @@ label1 */a.foo()
+function main(): void {
+    const key1 = "key1"
+    arktest.assertEQ(foo(new G<string, string>, key1), key1)
+    arktest.assertEQ(foo(new G<string, int>, key1), key1)
 }
-
-/* @@? 31:27 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@? 31:27 Error Semantic error ESE0391: Overload declaration cannot be called by union. */

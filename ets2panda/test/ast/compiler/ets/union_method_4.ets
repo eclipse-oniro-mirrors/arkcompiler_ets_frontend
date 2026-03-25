@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,5 +33,7 @@ function bar(x: A|B) {
 
 /* @@? 27:19 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 27:19 Error Semantic error ESE0127: No matching call signature for foo("123") */
-/* @@? 31:20 Error Semantic error ESE0139: Signature bar(v: String): void is not visible here. */
+/* @@? 27:19 Error Semantic error ESE0139: Signature foo(v: String): void is not visible here. */
+/* @@? 31:20 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 31:20 Error Semantic error ESE0127: No matching call signature for bar("123") */
+/* @@? 31:20 Error Semantic error ESE0139: Signature bar(v: String): void is not visible here. */

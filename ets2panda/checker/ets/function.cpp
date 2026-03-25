@@ -2461,6 +2461,15 @@ static Signature *ValidateOrderSignature(
 
 static util::StringView GetInvocationTargetName(const ir::Expression *expr)
 {
+    if (expr->IsCallExpression() && expr->AsCallExpression()->Callee()->TsType() == nullptr) {
+        auto callee = expr->AsCallExpression()->Callee();
+        if (callee->IsMemberExpression()) {
+            auto prop = callee->AsMemberExpression()->Property();
+            ES2PANDA_ASSERT(prop->IsIdentifier());
+            return prop->AsIdentifier()->Name();
+        }
+        return util::StringView("");
+    }
     if (expr->IsCallExpression() && expr->AsCallExpression()->Callee()->TsType()->IsETSFunctionType() &&
         !expr->AsCallExpression()->Callee()->TsType()->IsETSArrowType()) {
         return expr->AsCallExpression()->Callee()->TsType()->AsETSFunctionType()->Name();

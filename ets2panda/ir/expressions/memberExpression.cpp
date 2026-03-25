@@ -218,17 +218,43 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
     }
 }
 
-checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checker, checker::ETSUnionType *unionType)
+void MemberExpression::AddUnionSignature(checker::ETSChecker *checker, checker::Type *memberType,
+                                         checker::Type *const type, checker::Type **commonPropType)
+{
+    const auto parentCallExpression = Parent()->AsCallExpression();
+    const auto memberFunctionType = memberType->AsETSFunctionType();
+    const auto memberTypeSignature =
+        checker->FirstMatchSignatures(memberFunctionType->CallSignatures(), parentCallExpression);
+    if (memberTypeSignature != nullptr) {
+        this->AddComponentTypeMemberAccessor(type, memberTypeSignature);
+    } else {
+        checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+        *commonPropType = checker->GlobalTypeError();
+    }
+}
 
+static bool haveDifferentSignatures(checker::ETSChecker *checker,
+                                    const MemberExpression::ComponentTypeMemberAccessors &typeSignatures)
+{
+    if (typeSignatures.size() < 2U || !std::holds_alternative<checker::Signature *>(typeSignatures[0].second)) {
+        return false;
+    }
+
+    const auto first = std::get<checker::Signature *>(typeSignatures[0].second);
+    for (size_t i = 1; i < typeSignatures.size(); ++i) {
+        const auto current = std::get<checker::Signature *>(typeSignatures[i].second);
+        if (!checker->Relation()->SignatureIsIdenticalTo(first, current)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checker, checker::ETSUnionType *unionType)
 {
     checker::Type *commonPropType = nullptr;
 
     auto const addPropType = [this, checker, &commonPropType](checker::Type *memberType) {
-        if (commonPropType == nullptr) {
-            commonPropType = memberType;
-            return;
-        }
-
         if (memberType == nullptr) {
             checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
             commonPropType = checker->GlobalTypeError();
@@ -237,13 +263,14 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
 
         if (memberType->IsETSMethodType() && memberType->Variable()->HasFlag(varbinder::VariableFlags::OVERLOAD)) {
             checker->LogError(diagnostic::OVERLOADED_UNION_CALL, {}, Start());
+            commonPropType = checker->GlobalTypeError();
             return;
         }
 
         if (memberType->IsETSMethodType() && memberType->AsETSFunctionType()->CallSignatures().size() > 1U) {
             if (!Parent()->IsCallExpression() || Parent()->AsCallExpression()->Callee() != this) {
-                commonPropType = checker->GlobalTypeError();
                 checker->LogError(diagnostic::OVERLOADED_METHOD_AS_VALUE, Start());
+                commonPropType = checker->GlobalTypeError();
                 return;
             }
         }
@@ -251,8 +278,14 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         if (memberType->IsETSMethodType()) {
             if (!Parent()->IsCallExpression()) {
                 checker->LogError(diagnostic::UNION_MEMBER_METHOD_REFERENCE, {}, Start());
+                commonPropType = checker->GlobalTypeError();
                 return;
             }
+        }
+
+        if (commonPropType == nullptr) {
+            commonPropType = memberType;
+            return;
         }
 
         if (!commonPropType->IsETSMethodType() && !memberType->IsETSMethodType()) {
@@ -274,11 +307,13 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         if (newType->AsETSFunctionType()->CallSignatures().empty()) {
             checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
             commonPropType = checker->GlobalTypeError();
+            return;
         }
 
         commonPropType = newType;
     };
 
+    this->componentTypeMemberAccessors_.clear();
     for (auto *const type : unionType->ConstituentTypes()) {
         auto *const apparent = checker->GetApparentType(type);
         ES2PANDA_ASSERT(apparent != nullptr);
@@ -289,9 +324,17 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
                 return checker->GlobalTypeError();
             }
             addPropType(memberType);
+            if (Parent()->IsCallExpression() && memberType != nullptr && memberType->IsETSMethodType()) {
+                AddUnionSignature(checker, memberType, type, &commonPropType);
+            }
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
+            commonPropType = checker->GlobalTypeError();
         }
+    }
+    if (haveDifferentSignatures(checker, this->GetComponentTypeMemberAccessors())) {
+        checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+        commonPropType = checker->GlobalTypeError();
     }
     return commonPropType;
 }
@@ -610,5 +653,15 @@ std::string MemberExpression::ToString() const
     }
 
     return str1 + '.' + str2;
+}
+
+void MemberExpression::AddComponentTypeMemberAccessor(checker::Type *t, MemberAccessor m)
+{
+    componentTypeMemberAccessors_.emplace_back(t, m);
+}
+
+const MemberExpression::ComponentTypeMemberAccessors &MemberExpression::GetComponentTypeMemberAccessors() const
+{
+    return componentTypeMemberAccessors_;
 }
 }  // namespace ark::es2panda::ir

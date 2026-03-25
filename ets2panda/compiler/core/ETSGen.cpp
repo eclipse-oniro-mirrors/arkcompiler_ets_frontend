@@ -1795,6 +1795,29 @@ void ETSGen::EmitNullishException(const ir::AstNode *node)
     SetAccumulatorType(nullptr);
 }
 
+void ETSGen::EmitClassCastException(const ir::AstNode *node, ark::es2panda::util::StringView err)
+{
+    RegScope rs(this);
+
+    VReg errString = AllocReg();
+    LoadAccumulatorString(node, err);
+    StoreAccumulator(node, errString);
+
+    VReg optionsReg = AllocReg();
+    LoadAccumulatorUndefined(node);
+    StoreAccumulator(node, optionsReg);
+
+    Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_CLASS_CAST_ERROR_CTOR), errString,
+                            optionsReg);
+    SetAccumulatorType(Checker()->GlobalETSObjectType());
+
+    VReg exception = AllocReg();
+    StoreAccumulator(node, exception);
+
+    EmitThrow(node, exception);
+    SetAccumulatorType(nullptr);
+}
+
 template <typename IntCompare, typename CondCompare, typename DynCompare, bool IS_STRICT>
 void ETSGen::BinaryEquality(const ir::AstNode *node, VReg lhs, Label *ifFalse)
 {
@@ -2957,5 +2980,67 @@ void ETSGen::LoadAccumulatorNumber(const ir::AstNode *node, T number, checker::T
     if (targetType_ && (targetType_->IsETSObjectType() || targetType_->IsETSUnionType())) {
         ApplyConversion(node, targetType_);
     }
+}
+
+static bool AreSignaturesEqual(const ir::MemberExpression::ComponentTypeMemberAccessors &signatures)
+{
+    const auto first = std::get<checker::Signature *>(signatures[0].second);
+    for (size_t i = 1; i < signatures.size(); ++i) {
+        const auto current = std::get<checker::Signature *>(signatures[i].second);
+        if (first->Owner()->AssemblerName() != current->Owner()->AssemblerName() ||
+            first->InternalName() != current->InternalName()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void ETSGen::CallByName(const ir::AstNode *const node,
+                        const ir::MemberExpression::ComponentTypeMemberAccessors &signatures, const VReg arg0,
+                        const ArenaVector<ir::Expression *> &arguments)
+{
+    /**
+     * NOTE(knazarov):
+     * As temporary measure, CallByName is compiled to an equivalent bytecode sequence.
+     * Ideally, this should have been implemented as lowering, but we do it codegen
+     * since similar instruction will be implemented later. In order to not mess up
+     * smartcasts and other frontend machinery, changes are isolated to the codegen of
+     * this instruction.
+     */
+
+    ES2PANDA_ASSERT(node);
+    ES2PANDA_ASSERT(node->IsCallExpression());
+
+    if (AreSignaturesEqual(signatures)) {
+        CallVirtual(node, std::get<checker::Signature *>(signatures[0].second), arg0, arguments);
+        return;
+    }
+
+    const auto callExpr = node->AsCallExpression();
+
+    const auto endLabel = AllocLabel();
+    Label *nextIsInstanceLabel = nullptr;
+    for (size_t i = 0; i < signatures.size(); ++i) {
+        const auto constituentType = signatures[i].first;
+        ES2PANDA_ASSERT(constituentType != nullptr);
+        const auto constituentTypeSignature = std::get<checker::Signature *>(signatures[i].second);
+        ES2PANDA_ASSERT(constituentTypeSignature != nullptr);
+
+        nextIsInstanceLabel = AllocLabel();
+        ES2PANDA_ASSERT(nextIsInstanceLabel != nullptr);
+
+        LoadAccumulator(callExpr, arg0);
+        EmitIsInstance(callExpr, ToAssemblerType(constituentType));
+        BranchIfFalse(callExpr, nextIsInstanceLabel);
+        LoadAccumulator(callExpr, arg0);
+        EmitCheckCast(callExpr, ToAssemblerType(constituentType), true);
+        CallVirtual(callExpr, constituentTypeSignature, arg0, arguments);
+        Branch(callExpr, endLabel);
+        SetLabel(callExpr, nextIsInstanceLabel);
+    }
+
+    EmitClassCastException(callExpr, "None of the constituent types of the union type matched the received object.");
+
+    SetLabel(callExpr, endLabel);
 }
 }  // namespace ark::es2panda::compiler

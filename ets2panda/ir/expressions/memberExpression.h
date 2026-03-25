@@ -69,13 +69,24 @@ public:
     MemberExpression &operator=(const MemberExpression &) = delete;
     NO_MOVE_SEMANTIC(MemberExpression);
 
+    using MemberAccessor = std::variant<checker::Signature *, varbinder::LocalVariable *>;
+    using ComponentTypeMemberAccessors = ArenaVector<std::pair<checker::Type *, MemberAccessor>>;
+
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit MemberExpression(Expression *object, Expression *property, MemberExpressionKind kind, bool computed,
-                              bool optional)
+                              bool optional, ComponentTypeMemberAccessors componentTypeMemberAccessors)
         : MaybeOptionalExpression(AstNodeType::MEMBER_EXPRESSION, optional),
           object_(object),
           property_(property),
           kind_(kind),
-          computed_(computed)
+          computed_(computed),
+          componentTypeMemberAccessors_(componentTypeMemberAccessors)
+    {
+    }
+
+    explicit MemberExpression(Expression *object, Expression *property, MemberExpressionKind kind, bool computed,
+                              bool optional)
+        : MemberExpression(object, property, kind, computed, optional, {})
     {
     }
 
@@ -216,6 +227,8 @@ public:
     void CompileToRegs(compiler::PandaGen *pg, compiler::VReg object, compiler::VReg property) const;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
+    void AddComponentTypeMemberAccessor(checker::Type *t, MemberAccessor m);
+    const ComponentTypeMemberAccessors &GetComponentTypeMemberAccessors() const;
 
     std::string ToString() const override;
 
@@ -261,6 +274,8 @@ private:
                                                   std::string_view const methodName);
 
     void LoadRhs(compiler::PandaGen *pg) const;
+    void AddUnionSignature(checker::ETSChecker *checker, checker::Type *memberType, checker::Type *const type,
+                           checker::Type **commonPropType);
 
     EPtr<Expression> object_ = nullptr;
     EPtr<Expression> property_ = nullptr;
@@ -270,6 +285,7 @@ private:
     EPtr<checker::Type> uncheckedType_ {};
     EPtr<checker::ETSObjectType> objType_ {};
     EPtr<checker::ETSFunctionType> extensionAccessorType_ {};
+    ComponentTypeMemberAccessors componentTypeMemberAccessors_ {};
 };
 }  // namespace ark::es2panda::ir
 

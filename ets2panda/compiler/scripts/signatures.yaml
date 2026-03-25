@@ -995,7 +995,7 @@ signatures:
 
   - callee: BUILTIN_CLASS_CAST_ERROR
     method_name: $CTOR
-    params: [BUILTIN_STRING]
+    params: [BUILTIN_STRING, BUILTIN_ERROR_OPTIONS]
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_CLASS_CAST_ERROR_CTOR
 
