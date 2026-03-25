@@ -451,7 +451,8 @@ semantic:
 
 - name: ENUM_CONVERSION_ERROR_TO
   id: 593372
-  message: "Conversion from '{}' to '{}' is not supported. Please use implicit conversion of enum value to '{}' value or call 'enumValue.valueOf()'"
+  message: "Conversion from '{}' to '{}' is not supported. Please use implicit conversion of enum value to '{}' value or call
+    'enumValue.valueOf()'"
 
 - name: ERROR_ARKTS_NO_CONDITIONAL_TYPES
   id: 136365
@@ -460,7 +461,8 @@ semantic:
 
 - name: ERROR_ARKTS_NO_ENUM_MIXED_TYPES
   id: 342
-  message: "Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type."
+  message: "Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the
+    same type."
 
 - name: ERROR_ARKTS_NO_PROPERTIES_BY_INDEX
   id: 343
@@ -860,6 +862,10 @@ semantic:
   id: 57199
   message: "Lambda with a non-void return type must return a value."
   code_fix_ids: [FixAddFunctionReturnStatement]
+
+- name: LAMBDA_NOT_SUPPORTED
+  id: 17070
+  message: "Lambda expression is not supported as fixed size array argument."
 
 - name: LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE
   id: 376
