@@ -30,10 +30,8 @@ class CIt implements Iterator<string> {
 		this.base = c
 	}
 	next(): IteratorResult<string> {
-		return {
-			done: this.index >= this.base.data.length,
-			value: this.index >= this.base.data.length ? undefined : this.base.data[this.index++]
-		}
+		return new IteratorResult<string>(this.index >= this.base.data.length,
+			this.index >= this.base.data.length ? undefined : this.base.data[this.index++]);
 	}
 }
 
@@ -53,10 +51,8 @@ class DIt implements Iterator<number> {
 		this.base = d
 	}
 	next(): IteratorResult<number> {
-		return {
-			done: this.index >= this.base.data.length,
-			value: this.index >= this.base.data.length ? undefined : this.base.data[this.index++]
-		}
+		return new IteratorResult<number>(this.index >= this.base.data.length,
+			this.index >= this.base.data.length ? undefined : this.base.data[this.index++]);
 	}
 }
 

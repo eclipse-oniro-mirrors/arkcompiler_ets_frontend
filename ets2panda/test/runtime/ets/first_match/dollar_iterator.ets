@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,15 +30,9 @@ class CIterator implements Iterator<string> {
     }
     next(): IteratorResult<string> {
         if (this.index >= this.base.data.length) {
-            return {
-                done: true,
-                value: undefined
-            }
+            return new IteratorResult<string>(true, undefined);
         }
-        return {
-          done: this.index >= this.base.data.length,
-          value: this.base.data[this.index++]
-        }
+        return new IteratorResult<string>(this.index >= this.base.data.length, this.base.data[this.index++]);
     }
 }
 

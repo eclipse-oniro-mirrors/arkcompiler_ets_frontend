@@ -3523,6 +3523,18 @@ static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *cons
                                  varbinder::LocalVariable *const lv, const util::StringView &pname,
                                  ETSObjectType const *const objectType)
 {
+    if (!objectType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        auto *const decl = lv->Declaration();
+        if (decl != nullptr && decl->Node() != nullptr && decl->Node()->IsClassProperty()) {
+            auto *const classProp = decl->Node()->AsClassProperty();
+            if (classProp->IsReadonly()) {
+                checker->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {lv->Name()}, propExpr->Start());
+                propExpr->SetTsType(checker->GlobalTypeError());
+                return false;
+            }
+        }
+    }
+
     auto *propType = checker->GetTypeOfVariable(lv);
 
     if (auto *setterType = GetSetterType(lv, checker); setterType != nullptr) {

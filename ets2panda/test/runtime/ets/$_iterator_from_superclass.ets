@@ -25,10 +25,8 @@ class XIterator<T> implements Iterator<T>{
         this.data = p
     }
     override next(): IteratorResult<T>{
-        return {
-            done: this.index >= this.data.len(),
-            value: this.index >= this.data.len()?undefined : this.data.val(this.index++)
-        }
+        return new IteratorResult<T>(this.index >= this.data.len(),
+            this.index >= this.data.len()?undefined : this.data.val(this.index++));
     }
 }
 

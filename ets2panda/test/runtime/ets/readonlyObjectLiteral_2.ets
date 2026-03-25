@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 class A {
-    readonly fld: number = 2;
+    readonly fld: number = 3;
     fld2: number = 3;
 }
 function main(): void {
-    let a: A = {fld: 3, fld2: 4};
+    let a: A = {fld2: 4};
+    arktest.assertEQ(a.fld2, 4)
     a.fld2 = 5;
     arktest.assertEQ(a.fld, 3)
     arktest.assertEQ(a.fld2, 5)
