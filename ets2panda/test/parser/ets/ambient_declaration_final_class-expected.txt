@@ -69,22 +69,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 16,
-                      "column": 24,
-                      "program": "ambient_declaration_final_class.ets"
-                    },
-                    "end": {
-                      "line": 16,
-                      "column": 24,
-                      "program": "ambient_declaration_final_class.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 16,

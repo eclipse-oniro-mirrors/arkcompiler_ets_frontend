@@ -74,7 +74,7 @@ export declare class A {
   public set testSet(n: number)
   
   ambient_indexer
-  public constructor() {}
+  public constructor()
   
 }
 
@@ -90,7 +90,7 @@ export declare struct myStruct {
   * @param2 preStr { p }
   */
   public Prop?: (number | undefined);
-  public constructor() {}
+  public constructor()
   
 }
 
@@ -195,7 +195,7 @@ declare namespace JsdocNS {
     */
     public set testSet(n: number)
     
-    public constructor() {}
+    public constructor()
     
   }
   
@@ -211,7 +211,7 @@ declare namespace JsdocNS {
     * @param2 preStr { p }
     */
     private Prop: number;
-    public constructor() {}
+    public constructor()
     
   }
   

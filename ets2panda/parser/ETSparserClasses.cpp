@@ -1416,7 +1416,9 @@ void ETSParser::CreateImplicitConstructor([[maybe_unused]] ir::MethodDefinition 
         return;
     }
 
-    auto *methodDef = BuildImplicitConstructor(ir::ClassDefinitionModifiers::SET_CTOR_ID, startLoc);
+    ir::ModifierFlags ctorFlags {flags & ir::ModifierFlags::DECLARE};
+    ctorFlags |= ir::ModifierFlags::CONSTRUCTOR;
+    auto *methodDef = BuildImplicitConstructor(ir::ClassDefinitionModifiers::SET_CTOR_ID, startLoc, ctorFlags);
     ES2PANDA_ASSERT(methodDef != nullptr);
     if ((flags & ir::ModifierFlags::DECLARE) != 0) {
         auto func = methodDef->Function();

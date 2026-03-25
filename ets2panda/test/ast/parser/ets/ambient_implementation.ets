@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,13 @@
  * limitations under the License.
  */
 
-declare /* @@ label1 */module /* @@ label2 */"someModule" /* @@ label3 */{}
+declare namespace MySpace {
+    function foo(): void {}
+}
 
+declare class MyClass {
+    public foo(): void {}
+}
 
-/* @@@ label1 Error Syntax error ESY0331: Ambient functions, constructors, and methods cannot have bodies. Ambient modules and namespaces can contain only ambient declarations. */
-/* @@@ label1 Error Semantic error ESE0143: Unresolved reference module */
-/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'someModule'. */
-/* @@@ label3 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 17:26 Error Syntax error ESY0331: Ambient functions, constructors, and methods cannot have bodies. Ambient modules and namespaces can contain only ambient declarations. */
+/* @@? 21:24 Error Syntax error ESY0331: Ambient functions, constructors, and methods cannot have bodies. Ambient modules and namespaces can contain only ambient declarations. */

@@ -664,32 +664,38 @@ ir::AstNode *ParserImpl::ParseClassElement(const ArenaVector<ir::AstNode *> &pro
 }
 
 ir::MethodDefinition *ParserImpl::BuildImplicitConstructor(ir::ClassDefinitionModifiers modifiers,
-                                                           const lexer::SourcePosition &startLoc)
+                                                           const lexer::SourcePosition &startLoc,
+                                                           ir::ModifierFlags flags)
 {
     ArenaVector<ir::Expression *> params(Allocator()->Adapter());
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
 
-    if ((modifiers & ir::ClassDefinitionModifiers::HAS_SUPER) != 0U) {
+    const bool hasSuper = (modifiers & ir::ClassDefinitionModifiers::HAS_SUPER) != 0U;
+    const bool isDeclare = (flags & ir::ModifierFlags::DECLARE) != 0U;
+
+    if (hasSuper) {
         util::StringView argsStr = "args";
         params.push_back(AllocNode<ir::SpreadElement>(ir::AstNodeType::REST_ELEMENT, Allocator(),
                                                       AllocNode<ir::Identifier>(argsStr, Allocator())));
-        ArenaVector<ir::Expression *> callArgs(Allocator()->Adapter());
-        auto *superExpr = AllocNode<ir::SuperExpression>();
-        callArgs.push_back(AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, Allocator(),
-                                                        AllocNode<ir::Identifier>(argsStr, Allocator())));
 
-        auto *callExpr = AllocNode<ir::CallExpression>(superExpr, std::move(callArgs), nullptr, false);
-        statements.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
+        if (!isDeclare) {
+            ArenaVector<ir::Expression *> callArgs(Allocator()->Adapter());
+            auto *superExpr = AllocNode<ir::SuperExpression>();
+            callArgs.push_back(AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, Allocator(),
+                                                            AllocNode<ir::Identifier>(argsStr, Allocator())));
+
+            auto *callExpr = AllocNode<ir::CallExpression>(superExpr, std::move(callArgs), nullptr, false);
+            statements.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
+        }
     }
 
-    auto *body = AllocNode<ir::BlockStatement>(Allocator(), std::move(statements));
+    ir::BlockStatement *body = isDeclare ? nullptr : AllocNode<ir::BlockStatement>(Allocator(), std::move(statements));
+    auto sfFlags = ir::ScriptFunctionFlags::CONSTRUCTOR | ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED |
+                   ir::ScriptFunctionFlags::SYNTHETIC;
     auto *func = AllocNode<ir::ScriptFunction>(
-        Allocator(), ir::ScriptFunction::ScriptFunctionData {body,
-                                                             ir::FunctionSignature(nullptr, std::move(params), nullptr),
-                                                             ir::ScriptFunctionFlags::CONSTRUCTOR |
-                                                                 ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED,
-                                                             {},
-                                                             context_.GetLanguage()});
+        Allocator(),
+        ir::ScriptFunction::ScriptFunctionData {body, ir::FunctionSignature(nullptr, std::move(params), nullptr),
+                                                sfFlags, flags, context_.GetLanguage()});
 
     auto *funcExpr = AllocNode<ir::FunctionExpression>(func);
     auto *key = AllocNode<ir::Identifier>("constructor", Allocator());
@@ -699,8 +705,8 @@ ir::MethodDefinition *ParserImpl::BuildImplicitConstructor(ir::ClassDefinitionMo
         func->SetIdent(key->Clone(Allocator(), nullptr));
     }
 
-    auto *ctor = AllocNode<ir::MethodDefinition>(ir::MethodDefinitionKind::CONSTRUCTOR, key, funcExpr,
-                                                 ir::ModifierFlags::CONSTRUCTOR, Allocator(), false);
+    auto *ctor = AllocNode<ir::MethodDefinition>(ir::MethodDefinitionKind::CONSTRUCTOR, key, funcExpr, flags,
+                                                 Allocator(), false);
     ES2PANDA_ASSERT(ctor != nullptr);
 
     const auto rangeImplicitContstuctor = lexer::SourceRange(startLoc, startLoc);
@@ -719,7 +725,9 @@ void ParserImpl::CreateImplicitConstructor(ir::MethodDefinition *&ctor,
         return;
     }
 
-    ctor = BuildImplicitConstructor(modifiers, startLoc);
+    ir::ModifierFlags ctorFlags {flags & ir::ModifierFlags::DECLARE};
+    ctorFlags |= ir::ModifierFlags::CONSTRUCTOR;
+    ctor = BuildImplicitConstructor(modifiers, startLoc, ctorFlags);
     if ((flags & ir::ModifierFlags::DECLARE) != 0) {
         ES2PANDA_ASSERT(ctor != nullptr);
         auto *ctorFunc = ctor->Function();
