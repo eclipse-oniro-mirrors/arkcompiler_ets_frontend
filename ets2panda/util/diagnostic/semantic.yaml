@@ -1434,7 +1434,7 @@ semantic:
 
 - name: THIS_BEFORE_THIS_OR_SUPER
   id: 679
-  message: "'this' cannot be referenced before super() call or this() call."
+  message: "'{}' cannot be referenced before super() call or this() call."
 
 - name: THIS_INCORRECTLY_USED_AS_TYPE_ANNOTAITON
   id: 392
