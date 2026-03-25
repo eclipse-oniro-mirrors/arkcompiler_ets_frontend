@@ -100,6 +100,7 @@ public:
     pandasm::AnnotationData GenAnnotationAsync(ir::ScriptFunction *scriptFunc);
     std::string const &AddDependence(std::string const &str);
     void SetupDependenciesForTheProgram(const parser::Program *prg);
+    void GenSyntheticRuntimeTypeRecord(util::StringView assemblerType);
 
 private:
     pandasm::Program *GetOrCreatePandasmProgram(const parser::Program *prg);
@@ -107,7 +108,6 @@ private:
     void EmitRecordsImpl(bool isIncrementalBuild = false);
     void EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
-    void GenGlobalUnionRecord(util::StringView assemblerType);
     std::vector<pandasm::AnnotationData> GenAnnotations(const ir::ClassDefinition *classDef);
     void GenClassRecord(const ir::ClassDefinition *classDef, bool external);
     pandasm::AnnotationElement ProcessArrayType(const ir::ClassProperty *prop, std::string &baseName,

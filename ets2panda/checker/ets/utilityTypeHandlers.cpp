@@ -1276,16 +1276,41 @@ Type *ETSChecker::GetReadonlyType(Type *type)
     return type;
 }
 
+template <PropertyType PROP_TYPE>
+void ETSChecker::MakePropertyReadonly(ETSObjectType *const classType, varbinder::LocalVariable *const prop)
+{
+    auto const propType = prop->Declaration()->Node()->Check(this);
+
+    auto *newDecl = ProgramAllocator()->New<varbinder::ReadonlyDecl>(prop->Name(), prop->Declaration()->Node());
+    auto *const propCopy = prop->Copy(ProgramAllocator(), newDecl);
+    propCopy->AddFlag(varbinder::VariableFlags::READONLY);
+    propCopy->SetTsType(propType);
+
+    classType->RemoveProperty<PROP_TYPE>(prop);
+    classType->AddProperty<PROP_TYPE>(propCopy);
+}
+
 void ETSChecker::MakePropertiesReadonly(ETSObjectType *const classType)
 {
-    classType->UpdateTypeProperties([this](auto *property, auto *propType) {
-        auto *newDecl =
-            ProgramAllocator()->New<varbinder::ReadonlyDecl>(property->Name(), property->Declaration()->Node());
-        auto *const propCopy = property->Copy(ProgramAllocator(), newDecl);
-        propCopy->AddFlag(varbinder::VariableFlags::READONLY);
-        propCopy->SetTsType(propType);
-        return propCopy;
-    });
+    classType->AddTypeFlag(TypeFlag::READONLY);
+
+    for (auto const &prop : classType->InstanceFields()) {
+        MakePropertyReadonly<PropertyType::INSTANCE_FIELD>(classType, prop.second);
+    }
+
+    for (auto const &prop : classType->StaticFields()) {
+        MakePropertyReadonly<PropertyType::STATIC_FIELD>(classType, prop.second);
+    }
+
+    if (classType->SuperType() != nullptr) {
+        auto *const superProp = classType->SuperType()->Clone(this)->AsETSObjectType();
+        MakePropertiesReadonly(superProp);
+        if (classType->SuperType() == GlobalETSObjectType()) {
+            superProp->SetSuperType(GlobalETSObjectType());
+        }
+
+        classType->SetSuperType(superProp);
+    }
 }
 
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1351,6 +1376,10 @@ void ETSChecker::MakePropertiesNonNullish(ETSObjectType *const classType)
     if (classType->SuperType() != nullptr) {
         auto *const superRequired = classType->SuperType()->Clone(this)->AsETSObjectType();
         MakePropertiesNonNullish(superRequired);
+        if (classType->SuperType() == GlobalETSObjectType()) {
+            superRequired->SetSuperType(GlobalETSObjectType());
+        }
+
         classType->SetSuperType(superRequired);
     }
 }

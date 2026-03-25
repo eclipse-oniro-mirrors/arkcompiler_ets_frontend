@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,7 +87,7 @@ void ETSAnyType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise) 
 
 void ETSAnyType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::BUILTIN_OBJECT;
+    ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
 }
 
 TypeFacts ETSAnyType::GetTypeFacts() const
@@ -97,7 +97,7 @@ TypeFacts ETSAnyType::GetTypeFacts() const
 
 void ETSAnyType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::BUILTIN_OBJECT);
+    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::TYPE_DESCRIPTOR_ANY);
 }
 
 Type *ETSAnyType::Instantiate(ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,

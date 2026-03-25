@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -110,7 +110,7 @@ void ETSUndefinedType::ToString(std::stringstream &ss, [[maybe_unused]] bool pre
 
 void ETSUndefinedType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::BUILTIN_OBJECT;
+    ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
 }
 
 void ETSUndefinedType::ToDebugInfoType(std::stringstream &ss) const

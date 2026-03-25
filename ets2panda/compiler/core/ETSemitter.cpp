@@ -104,6 +104,12 @@ static const std::unordered_set<std::string> ALWAYS_EMIT_RECORDS_LIST {
     "std.core.StringBuilder.%%get-stringLength:i32;",
 };
 
+// NOTE(aantipina): Issue #32028
+// Null and JSValue classes should not have any methods and constructors.
+// NOLINTNEXTLINE (fuchsia-statically-constructed-objects, cert-err58-cpp)
+static const std::set<std::string> RUNTIME_EMIT_IGNORELIST = {"std.core.Null.<ctor>:void;",
+                                                              "std.interop.js.JSValue.<ctor>:void;"};
+
 class EmitterDependencies final {
 public:
     explicit EmitterDependencies(int optLevel)
@@ -125,6 +131,9 @@ public:
     {
         if (isExternal) {
             return toEmit_.find(str) == toEmit_.end();
+        }
+        if (RUNTIME_EMIT_IGNORELIST.find(str) != RUNTIME_EMIT_IGNORELIST.end()) {
+            return true;
         }
         AddDependence(str);
         return false;
@@ -445,8 +454,10 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
                 GenGlobalArrayRecord(arrType);
             }
             for (auto unionType : checker->UnionAssemblerTypes()) {
-                GenGlobalUnionRecord(unionType);
+                GenSyntheticRuntimeTypeRecord(unionType);
             }
+            GenSyntheticRuntimeTypeRecord(Signatures::ANY_ASSEMBLY_TYPE);
+            GenSyntheticRuntimeTypeRecord(Signatures::NEVER_ASSEMBLY_TYPE);
         }
     };
 
@@ -656,7 +667,7 @@ void ETSEmitter::GenGlobalArrayRecord(const checker::ETSArrayType *arrayType)
     Program()->AddToFunctionTable(std::move(ctor));
 }
 
-void ETSEmitter::GenGlobalUnionRecord(util::StringView assemblerType)
+void ETSEmitter::GenSyntheticRuntimeTypeRecord(util::StringView assemblerType)
 {
     std::string name = assemblerType.Mutf8();
     if (dependencies_->IsNotRequired(name)) {

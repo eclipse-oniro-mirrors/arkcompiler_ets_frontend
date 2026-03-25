@@ -667,13 +667,6 @@ void ETSGen::ReturnAcc(const ir::AstNode *node)
     }
 }
 
-bool ETSGen::IsNullUnsafeObjectType(checker::Type const *type) const
-{
-    ES2PANDA_ASSERT(type != nullptr);
-    auto const checker = const_cast<checker::ETSChecker *>(Checker());
-    return checker->Relation()->IsSupertypeOf(checker->GetApparentType(type), checker->GlobalETSObjectType());
-}
-
 // Implemented on top of the runtime type system, do not relax checks, do not introduce new types
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
 void ETSGen::IsInstance(const ir::AstNode *const node, const VReg srcReg, const checker::Type *target)
@@ -691,9 +684,8 @@ void ETSGen::IsInstance(const ir::AstNode *const node, const VReg srcReg, const 
     }
 
     LoadAccumulator(node, srcReg);
-    if (target->IsETSArrayType() || (target->IsETSObjectType() &&
-                                     !(IsNullUnsafeObjectType(target) && GetAccumulatorType()->PossiblyETSNullish()))) {
-        if (ToAssemblerType(target) != Signatures::BUILTIN_OBJECT) {
+    if (target->IsETSArrayType() || target->IsETSObjectType()) {
+        if (ToAssemblerType(target) != Signatures::ANY_ASSEMBLY_TYPE) {
             EmitIsInstance(node, ToAssemblerType(target));
         } else {
             LoadAccumulatorBoolean(node, true);
@@ -719,11 +711,7 @@ void ETSGen::IsInstance(const ir::AstNode *const node, const VReg srcReg, const 
             BranchIfUndefined(node, ifTrue);
         }
         ES2PANDA_ASSERT(!target->IsETSTypeAliasType());
-        if (!target->PossiblyETSNull() && IsNullUnsafeObjectType(target)) {
-            BranchIfNull(node, ifFalse);
-            LoadAccumulator(node, srcReg);
-        }
-        if (ToAssemblerType(target) == Signatures::BUILTIN_OBJECT) {
+        if (ToAssemblerType(target) == Signatures::ANY_ASSEMBLY_TYPE) {
             if (!target->PossiblyETSUndefined()) {
                 BranchIfUndefined(node, ifFalse);
             }
@@ -754,48 +742,19 @@ void ETSGen::CheckedReferenceNarrowing(const ir::AstNode *node, const checker::T
 
     const RegScope rs(this);
     const auto srcReg = AllocReg();
-    auto end = AllocLabel();
 
     StoreAccumulator(node, srcReg);
     if (target->IsETSVoidType() || target->IsETSAnyType()) {  // NOTE(vpukhov): #19701 void refactoring
         SetAccumulatorType(target);
         return;
     }
-    if (target->IsETSNeverType()) {
-        EmitFailedTypeCastException(node, srcReg, target);
-        SetAccumulatorType(target);
-        return;
-    }
-    if (target->DefinitelyETSNullish()) {
-        if (target->PossiblyETSUndefined()) {
-            BranchIfUndefined(node, end);
-        }
-        if (target->PossiblyETSNull()) {
-            BranchIfNull(node, end);
-        }
-        EmitFailedTypeCastException(node, srcReg, target);
-        SetLabel(node, end);
-        LoadAccumulator(node, srcReg);
-        if (!target->IsETSUndefinedType()) {
-            EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
-        }
-        SetAccumulatorType(target);
-        return;
-    }
 
-    if (source->PossiblyETSNull() && !target->PossiblyETSNull() && IsNullUnsafeObjectType(target)) {
-        auto isNullish = AllocLabel();
-        BranchIfNull(node, isNullish);
-        LoadAccumulator(node, srcReg);
-        EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
-        JumpTo(node, end);
-
-        SetLabel(node, isNullish);
-        EmitFailedTypeCastException(node, srcReg, target);
-
-        SetLabel(node, end);
+    if (target->IsETSUndefinedType()) {
+        EmitCheckCast(node, ToAssemblerType(Checker()->GlobalETSNeverType()), false);
+    } else if (target->IsETSNeverType()) {
+        EmitCheckCast(node, ToAssemblerType(Checker()->GlobalETSNeverType()), true);
     } else {
-        EmitCheckCast(node, ToAssemblerType(target), !target->PossiblyETSUndefined());
+        EmitCheckCast(node, ToAssemblerType(target), source->PossiblyETSUndefined() && !target->PossiblyETSUndefined());
     }
     SetAccumulatorType(target);
 }
@@ -814,34 +773,6 @@ void ETSGen::GuardUncheckedType(const ir::AstNode *node, const checker::Type *un
         }
     }
     SetAccumulatorType(target);
-}
-
-void ETSGen::EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target)
-{
-    const RegScope rs(this);
-    const auto typeReg = AllocReg();
-
-    bool useExclUndefinedStub;
-
-    if (target->IsETSUndefinedType() || target->IsETSNeverType()) {
-        useExclUndefinedStub = false;
-        LoadAccumulatorUndefined(node);
-    } else {
-        useExclUndefinedStub = !const_cast<checker::ETSChecker *>(Checker())->Relation()->IsSupertypeOf(
-            target, Checker()->GlobalETSUndefinedType());
-        EmitLdaType(node, ToAssemblerType(target));
-    }
-    StoreAccumulator(node, typeReg);
-
-    const auto stubSignature = useExclUndefinedStub
-                                   ? compiler::Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCL_UNDEFINED_STUB
-                                   : compiler::Signatures::BUILTIN_RUNTIME_FAILED_TYPE_CAST_INCL_UNDEFINED_STUB;
-    Ra().Emit<CallShort>(node, AssemblerSignatureReference(stubSignature), src, typeReg);
-
-    const auto errorReg = AllocReg();
-    StoreAccumulator(node, errorReg);
-    EmitThrow(node, errorReg);
-    SetAccumulatorType(nullptr);
 }
 
 void ETSGen::LoadConstantObject(const ir::Expression *node, const checker::Type *type)
@@ -2032,8 +1963,7 @@ static std::optional<std::tuple<checker::Type const *, util::StringView, bool>> 
     }
     // NOTE(vpukhov): emit faster code
     bool isFinal = obj->GetDeclNode()->IsFinal();
-    auto methodSig =
-        MakeView(etsg, etsg->Emitter()->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:std.core.Object;u1;");
+    auto methodSig = MakeView(etsg, etsg->Emitter()->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:Y;u1;");
     return std::make_tuple(checker->GetNonConstantType(obj), methodSig, isFinal);
 }
 
@@ -2383,27 +2313,18 @@ void ETSGen::ToString(const ir::Expression *node, VReg arg)
 {
     const auto regType = GetVRegType(arg);
     if (regType->IsETSReferenceType()) {
-        if (regType->PossiblyETSUndefined()) {
-            const auto ifUndefined = AllocLabel();
-            const auto end = AllocLabel();
-            LoadAccumulator(node, arg);
-            BranchIfUndefined(node, ifUndefined);
-            CallVirtual(node, Signatures::BUILTIN_OBJECT_TO_STRING, arg);
-            SetAccumulatorType(Checker()->GlobalBuiltinETSStringType());
-            JumpTo(node, end);
-
-            SetLabel(node, ifUndefined);
-            LoadAccumulatorString(node, "undefined");
-
-            SetLabel(node, end);
-            return;
-        }
         if (regType->IsETSStringType()) {
             LoadAccumulator(node, arg);
-        } else {
-            CallVirtual(node, Signatures::BUILTIN_OBJECT_TO_STRING, arg);
-            SetAccumulatorType(Checker()->GlobalBuiltinETSStringType());
+            return;
         }
+
+        if (Checker()->Relation()->IsSupertypeOf(Checker()->GlobalETSObjectType(), regType)) {
+            CallVirtual(node, Signatures::BUILTIN_OBJECT_TO_STRING, arg);
+        } else {
+            Emitter()->AddDependence(Signatures::BUILTIN_RUNTIME_TO_STRING_STUB.data());
+            CallExact(node, Signatures::BUILTIN_RUNTIME_TO_STRING_STUB, arg);
+        }
+        SetAccumulatorType(Checker()->GlobalBuiltinETSStringType());
         return;
     }
 
@@ -2457,6 +2378,7 @@ void ETSGen::StringBuilderAppend(const ir::AstNode *node, VReg builder)
 
     ES2PANDA_ASSERT(GetAccumulatorType() != nullptr);
     if (GetAccumulatorType()->IsETSReferenceType() && !GetAccumulatorType()->IsETSStringType()) {
+        ES2PANDA_ASSERT(GetAccumulatorType()->ToAssemblerTypeWithRank() != Signatures::ANY_ASSEMBLY_TYPE);
         if (GetAccumulatorType()->PossiblyETSUndefined()) {
             Label *ifUndefined = AllocLabel();
             Label *end = AllocLabel();

@@ -35,7 +35,9 @@ static bool IsLoweringCandidate(checker::ETSChecker *checker, checker::Type *typ
         return true;  // enum-BaseEnum case
     }
 
-    return type->IsETSAnyType() ||
+    // NOTE(dslynko, #32028): JSValue should not be ETSObjectType
+    return !(type->IsETSObjectType() && type->AsETSObjectType()->IsNotBaseObject()) &&
+           (type != checker->GlobalETSAnyType()) &&
            !checker->Relation()->IsSupertypeOf(checker->GlobalETSUnionUndefinedNullObject(), type);
 }
 

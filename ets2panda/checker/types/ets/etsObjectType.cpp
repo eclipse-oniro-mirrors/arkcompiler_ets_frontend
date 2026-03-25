@@ -970,7 +970,8 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
         return;
     }
     // #23072 - superType_ of the current object is not intialized in recursive generics
-    if (GetConstOriginalBaseType() == checker->GlobalETSObjectType()) {  // Fastpath, all objects are subtypes of Object
+    // NOTE(dslynko, #32028): JSValue should not be ETSObjectType
+    if (GetConstOriginalBaseType() == checker->GlobalETSAnyType()) {  // Fastpath, all objects are subtypes of Any
         relation->Result(true);
         return;
     }
@@ -994,9 +995,10 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
 
 void ETSObjectType::IsSubtypeOf(TypeRelation *relation, Type *target)
 {
-    if (target->IsETSObjectType()) {
+    if (target->IsETSObjectType() && !target->IsETSAsyncFuncReturnType()) {
         EnsureTransitiveSupertypesInitialized();
         auto &transitives = *transitiveSupertypes_;
+
         if (transitives.find(target->AsETSObjectType()->GetOriginalBaseType()) == transitives.end()) {
             relation->Result(false);
             return;
@@ -1065,7 +1067,6 @@ void ETSObjectType::IsGenericSupertypeOf(TypeRelation *relation, ETSObjectType *
 
 Type *ETSObjectType::AsSuper(Checker *checker, varbinder::Variable *sourceVar)
 {
-    checker = GetETSChecker();
     if (sourceVar == nullptr) {
         return nullptr;
     }
@@ -1289,42 +1290,6 @@ void ETSObjectType::SetCopiedTypeProperties(TypeRelation *const relation, ETSObj
     copiedType->relation_ = relation;
 }
 
-void ETSObjectType::UpdateTypeProperty(varbinder::LocalVariable *const prop, PropertyType fieldType,
-                                       PropertyProcesser const &func)
-{
-    auto const propType = prop->Declaration()->Node()->Check(GetETSChecker());
-
-    auto *const propCopy = func(prop, propType);
-    if (fieldType == PropertyType::INSTANCE_FIELD) {
-        RemoveProperty<PropertyType::INSTANCE_FIELD>(prop);
-        AddProperty<PropertyType::INSTANCE_FIELD>(propCopy);
-    } else {
-        RemoveProperty<PropertyType::STATIC_FIELD>(prop);
-        AddProperty<PropertyType::STATIC_FIELD>(propCopy);
-    }
-}
-
-void ETSObjectType::UpdateTypeProperties(PropertyProcesser const &func)
-{
-    AddTypeFlag(TypeFlag::READONLY);
-    for (auto const &prop : InstanceFields()) {
-        UpdateTypeProperty(prop.second, PropertyType::INSTANCE_FIELD, func);
-    }
-
-    for (auto const &prop : StaticFields()) {
-        UpdateTypeProperty(prop.second, PropertyType::STATIC_FIELD, func);
-    }
-
-    if (SuperType() != nullptr) {
-        auto *const superProp =
-            SuperType()
-                ->Instantiate(allocator_, relation_, relation_->GetChecker()->GetGlobalTypesHolder())
-                ->AsETSObjectType();
-        superProp->UpdateTypeProperties(func);
-        SetSuperType(superProp);
-    }
-}
-
 static std::string GetHashFromTArgs(std::vector<Type *> &targs, const bool isReadonly, const bool extensionFuncFlag)
 {
     std::stringstream ss;
@@ -1422,11 +1387,6 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
     }
 
     return Substitute(relation, &substitution);
-}
-
-ETSChecker *ETSObjectType::GetETSChecker()
-{
-    return relation_->GetChecker()->AsETSChecker();
 }
 
 void ETSObjectType::CheckAndInstantiateProperties() const
@@ -1577,7 +1537,9 @@ const ArenaVector<ETSObjectType *> &ETSObjectType::ReExports() const
 util::StringView ETSObjectType::AssemblerName() const
 {
     if (IsGradual()) {
-        return "std.core.Object";  // "{Ustd.core.Object,std.core.JSValue}"
+        // We need to emit "Any" as the closest common ancestor between "Object" and "JSValue"
+        //  in order to avoid generation of "JSValue" in bytecode in signatures or instructions.
+        return compiler::Signatures::ANY_ASSEMBLY_TYPE;
     }
     return internalName_;
 }

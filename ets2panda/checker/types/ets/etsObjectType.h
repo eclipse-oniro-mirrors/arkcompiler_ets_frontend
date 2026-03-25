@@ -66,8 +66,6 @@ public:
     void AddInterface(ETSObjectType *interfaceType);
     void SetSuperType(ETSObjectType *super);
 
-    ETSChecker *GetETSChecker();
-
     void SetTypeArguments(ArenaVector<Type *> &&typeArgs)
     {
 #ifndef NDEBUG
@@ -230,7 +228,15 @@ public:
 
     bool IsGlobalETSObjectType() const noexcept
     {
-        return superType_ == nullptr && !IsGradual();
+        return superType_ == nullptr && !IsGradual() && !IsNotBaseObject();
+    }
+
+    bool IsNotBaseObject() const noexcept
+    {
+        // NOTE(dslynko, #32028): JSValue should not be ETSObjectType
+        auto asmType = AssemblerName();
+        return asmType == compiler::Signatures::NULL_ASSEMBLY_TYPE ||
+               asmType == compiler::Signatures::JSVALUE_ASSEMBLY_TYPE;
     }
 
     bool IsPropertyInherited(const varbinder::Variable *var);
@@ -390,7 +396,6 @@ public:
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
     bool IsBoxedPrimitive() const;
     Type *Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) override;
-    void UpdateTypeProperties(PropertyProcesser const &func);
     ETSObjectType *Substitute(TypeRelation *relation, const Substitution *substitution) override;
     ETSObjectType *Substitute(TypeRelation *relation, const Substitution *substitution, bool cache,
                               bool isExtensionFunctionType = false);
@@ -506,8 +511,6 @@ private:
     void IdenticalUptoTypeArguments(TypeRelation *relation, Type *other);
     void SubstitutePartialTypes(TypeRelation *relation, Type *other);
     void IsGenericSupertypeOf(TypeRelation *relation, ETSObjectType *source);
-    void UpdateTypeProperty(varbinder::LocalVariable *const prop, PropertyType fieldType,
-                            PropertyProcesser const &func);
 
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
 
