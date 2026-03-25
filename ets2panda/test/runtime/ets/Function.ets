@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,11 +37,22 @@ function main() {
         (f) => f.unsafeCall("a", "b", "c"),
         "ab"
     )
-    // NOTE(vpukhov): optional arity is not preserved
-    // test((a: string, b?: string) => a + b,
-    //     (f) => f.unsafeCall("a"),
-    //     "aundefined"
-    // )
+    test((a?: int) => a == undefined ? -1 : a,
+        (f) => f.unsafeCall(),
+        -1
+    )
+    test((a?: int, b?: int) => (a == undefined ? 10 : a) + (b == undefined ? 20 : b),
+        (f) => f.unsafeCall(),
+        30
+    )
+    test((a: string, b?: string) => a + b,
+        (f) => f.unsafeCall("a"),
+        "aundefined"
+    )
+    test((a: string, b?: string) => b == undefined ? a + "!" : a + b,
+        (f) => f.unsafeCall("a"),
+        "a!"
+    )
     test((...a: string[]) => a[0] + a[1],
         (f) => f.unsafeCall("a", "b"),
         "ab"
