@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,10 @@
  */
 
 declare function testRest<T>(a: (t: T, t1: T, ...ts: T[]) => void): T
-    
+
 testRest((t1:number, t2:boolean, t3) => {})
 
-/* @@? 18:10 Error Semantic error ESE0046: Type '((p1: Double, p2: Boolean, p3: never) => void)' is not compatible with type '((p1: never, p2: never, ...p3: Array<never>) => void)' at index 1 */
+/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for testRest(((p1: Double, p2: Boolean, p3: *ERROR_TYPE*) => void)) */
+/* @@? 18:1 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'testRest'. Specify the type argument explicitly. */
+/* @@? 18:10 Error Semantic error ESE0046: Type '((p1: Double, p2: Boolean, p3: T) => void)' is not compatible with type '((p1: T, p2: T, ...p3: Array<T>) => void)' at index 1 */
+/* @@? 18:34 Error Semantic error ESE0132: The type of parameter 't3' cannot be inferred */

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,28 +11,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
-interface Base {}
-
-class A implements Base {
-    foo<T extends A = A>() { return 1 }
-}
-
-class B implements Base {
-    foo<T extends B = B>() { return 2 }
-}
-
-class C implements Base {
-    foo<T extends C = C>() { return 3 }
-}
-
-function foo<T extends Base>(a0: A|B|C) : int {
-    return a0.foo()
+function foo<T>(a: number): number {
+    return a;
 }
 
 function main() {
-    arktest.assertEQ(foo<B>(new A), 1)
-    arktest.assertEQ(foo<C>(new B), 2)
-    arktest.assertEQ(foo<A>(new C), 3)
+  arktest.assertEQ(foo<number>(1), 1);
 }

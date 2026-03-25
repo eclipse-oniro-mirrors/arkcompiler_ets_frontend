@@ -603,6 +603,10 @@ semantic:
   id: 171
   message: "Type '{}' has {} number of type parameters, but {} type arguments were provided."
 
+- name: GENERIC_TYPE_PARAM_INFERENCE_FAILED
+  id: 8745
+  message: "Type parameter '{}' can not be inferred for the call to '{}'. Specify the type argument explicitly."
+
 - name: GENERIC_WITHOUT_TYPE_PARAMS
   id: 170
   message: "Type '{}' is generic but type argument were not provided."

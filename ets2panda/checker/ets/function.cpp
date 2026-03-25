@@ -233,7 +233,8 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
 }
 
 static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChecker *checker, Signature *signature,
-                                                                         const ArenaVector<ir::Expression *> &arguments)
+                                                                         const ArenaVector<ir::Expression *> &arguments,
+                                                                         const lexer::SourcePosition &pos)
 {
     auto substitution = Substitution {};
     auto paramRenamer = RenameParameters(checker, signature);
@@ -243,20 +244,27 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
 
     InferUntilFail(sigRenamed, arguments, checker, &substitution);
 
-    if (substitution.size() != sigParams.size()) {
-        for (const auto typeParam : sigParams) {
-            auto newTypeParam = typeParam->AsETSTypeParameter();
-            if (auto it = substitution.find(newTypeParam); it != substitution.cend()) {
-                continue;
+    auto sigArgs = signature->Params();
+    auto noNeverArg = std::all_of(sigArgs.begin(), sigArgs.end(),
+                                  [](varbinder::LocalVariable *param) { return !param->TsType()->IsETSNeverType(); });
+    if (substitution.size() == sigParams.size()) {
+        return ComposeTemporarySubstitution(checker, &paramRenamer, &substitution);
+    }
+    for (const auto typeParam : sigParams) {
+        auto newTypeParam = typeParam->AsETSTypeParameter();
+        if (auto it = substitution.find(newTypeParam); it != substitution.cend()) {
+            continue;
+        }
+        if (newTypeParam->GetDefaultType() == nullptr) {
+            if (sigArgs.empty() || noNeverArg) {
+                checker->LogError(diagnostic::GENERIC_TYPE_PARAM_INFERENCE_FAILED,
+                                  {typeParam, signature->Function()->Id()->Name()}, pos);
             }
-            if (newTypeParam->GetDefaultType() == nullptr) {
-                checker->EmplaceSubstituted(&substitution, newTypeParam, checker->GlobalETSNeverType());
-                continue;
-            }
-            auto dflt = newTypeParam->GetDefaultType()->Substitute(checker->Relation(), &substitution);
-            if (!checker->EnhanceSubstitutionForType(sigInfo->typeParams, newTypeParam, dflt, &substitution)) {
-                return std::nullopt;
-            }
+            continue;
+        }
+        auto dflt = newTypeParam->GetDefaultType()->Substitute(checker->Relation(), &substitution);
+        if (!checker->EnhanceSubstitutionForType(sigInfo->typeParams, newTypeParam, dflt, &substitution)) {
+            return std::nullopt;
         }
     }
     if (substitution.size() != sigParams.size() &&
@@ -330,7 +338,7 @@ static Signature *MaybeSubstituteTypeParameters(
     const std::optional<Substitution> substitution =
         (typeArguments != nullptr)
             ? BuildExplicitSubstitutionForArguments(checker, signature, typeArguments->Params(), pos)
-            : BuildImplicitSubstitutionForArguments(checker, signature, arguments);
+            : BuildImplicitSubstitutionForArguments(checker, signature, arguments, pos);
 
     return (!substitution.has_value()) ? nullptr : signature->Substitute(checker->Relation(), &substitution.value());
 }

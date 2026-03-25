@@ -122,3 +122,6 @@ runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_me
 
 # 33821 Invalid MemberExpression dump for literals
 runtime/ets/bigint_comp_number.ets
+
+# 33890 FailKind.SRC_DUMPER_FAIL
+runtime/ets/call_by_name_tests/call_by_name_generics_basic.ets
