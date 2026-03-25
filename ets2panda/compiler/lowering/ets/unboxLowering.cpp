@@ -58,6 +58,17 @@ bool IsUnboxingApplicable(checker::Type *t)
     return TypeIsBoxedPrimitive(t) || AnyOfElementTypes(t, IsUnboxingApplicable);
 }
 
+static bool IsInAnnotationContext(ir::AstNode *node)
+{
+    while (node != nullptr && !(node->IsClassDefinition() && node->AsClassDefinition()->IsGlobal())) {
+        if (node->IsAnnotationDeclaration() || node->IsAnnotationUsage()) {
+            return true;
+        }
+        node = node->Parent();
+    }
+    return false;
+}
+
 }  // namespace
 
 using TypeIdStorage = std::vector<std::uint64_t>;  // Long recursion chains are unlikely, use vector
@@ -150,7 +161,15 @@ static checker::Type *MaybeRecursivelyUnboxReferenceType(UnboxContext *uctx, che
 
     if (t->IsETSArrayType()) {
         auto *srcArr = t->AsETSArrayType();
-        auto *newE = MaybeRecursivelyUnboxType(uctx, srcArr->ElementType(), alreadySeen);
+        checker::Type *newE = nullptr;
+        if (srcArr->IsValueArray()) {
+            newE = MaybeRecursivelyUnboxType(uctx, srcArr->ElementType(), alreadySeen);
+        } else {
+            newE = MaybeRecursivelyUnboxReferenceType(uctx, srcArr->ElementType(), alreadySeen);
+            if (newE->IsETSPrimitiveType()) {
+                newE = uctx->checker->MaybeBoxType(newE);
+            }
+        }
         return (newE == srcArr->ElementType()) ? t : uctx->checker->CreateETSArrayType(newE, srcArr->IsValueArray());
     }
 
@@ -720,6 +739,10 @@ static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, chec
 
     if (expectedType->HasTypeFlag(checker::TypeFlag::ETS_NEVER)) {
         return expr;
+    }
+    if (IsInAnnotationContext(expr) && actualType->IsETSPrimitiveType() && TypeIsBoxedPrimitive(expectedType)) {
+        checker::Type *primitiveType = uctx->checker->MaybeUnboxType(expectedType);
+        return InsertConversionBetweenPrimitivesIfNeeded(uctx, expr, primitiveType);
     }
     if (actualType->IsETSPrimitiveType() && checker::ETSChecker::IsReferenceType(expectedType)) {
         expr = InsertPrimitiveConversionIfNeeded(uctx, expr, expectedType);

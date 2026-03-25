@@ -49,7 +49,7 @@ function InstanceTesting<T>(){
   arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int | undefined>>())
   arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int>>())
   arktest.assertEQ(Class.from<int>(), Class.from<FixedArray<int | undefined>>().getFixedArrayComponentType())
-  arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
+  arktest.assertEQ(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
   arktest.assertEQ(Class.from<G<number>>(), Class.from<G<string>>())
   arktest.assertEQ(Class.from<Array<G<string>>>(), Class.from<Array<int>>())
   
@@ -60,15 +60,15 @@ function InstanceTesting<T>(){
 }
 
 function ArrayInstanceTesting(){
-  arktest.assertNE(Class.from<FixedArray<boolean>>(), Class.from<FixedArray<boolean|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<byte>>(), Class.from<FixedArray<byte|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<char>>(), Class.from<FixedArray<char|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<short>>(), Class.from<FixedArray<short|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<int>>(), Class.from<FixedArray<int|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<boolean>>(), Class.from<FixedArray<boolean|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<byte>>(), Class.from<FixedArray<byte|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<char>>(), Class.from<FixedArray<char|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<short>>(), Class.from<FixedArray<short|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<int>>(), Class.from<FixedArray<int|undefined>>())
   arktest.assertNE(Class.from<FixedArray<long>>(), Class.from<FixedArray<int|undefined>>())
   arktest.assertNE(Class.from<FixedArray<float>>(), Class.from<FixedArray<int|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<double>>(), Class.from<FixedArray<double|undefined>>())
-  arktest.assertNE(Class.from<FixedArray<number>>(), Class.from<FixedArray<number|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<double>>(), Class.from<FixedArray<double|undefined>>())
+  arktest.assertEQ(Class.from<FixedArray<number>>(), Class.from<FixedArray<number|undefined>>())
 }
 
 function anyMethod(): Any {

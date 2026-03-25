@@ -21,6 +21,7 @@
 #include "parser/ETSparser.h"
 #include "varbinder/ETSBinder.h"
 #include "varbinder/scope.h"
+#include "ir/opaqueTypeNode.h"
 
 namespace ark::es2panda::compiler {
 
@@ -42,75 +43,103 @@ static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).t
 static constexpr char const FORMAT_TO_STRING_PRIMITIVE_EXPRESSION[] = "@@E1.toString(@@E2)";
 // NOLINTEND(modernize-avoid-c-arrays)
 
-static ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
-                                                ir::ETSNewClassInstanceExpression *newClassInstExpr)
+static ir::Expression *ReplaceConstructorNullish(public_lib::Context *const ctx,
+                                                 ir::ETSNewClassInstanceExpression *newClassInstExpr)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *parser = ctx->parser->AsETSParser();
 
+    auto *arg = newClassInstExpr->GetArguments()[0];
+    auto *argType = arg->TsType();
+
+    // For the case when the constructor parameter is "null" or "undefined"
+    if (argType->IsETSNullType() || argType->IsETSUndefinedType()) {
+        auto *literal = argType->IsETSNullType() ? ctx->AllocNode<ir::StringLiteral>("null")
+                                                 : ctx->AllocNode<ir::StringLiteral>("undefined");
+        ES2PANDA_ASSERT(literal != nullptr);
+        literal->SetParent(newClassInstExpr->Parent());
+
+        // Run checker
+        literal->Check(checker);
+        return literal;
+    }
+
+    // Enter to the old scope
+    auto *scope = NearestScope(newClassInstExpr);
+    auto exprCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
+
+    // Generate temporary variable
+    auto const tmpIdentName = GenName(ctx->Allocator());
+
+    // Create BlockExpression
+    ir::Expression *blockExpr = nullptr;
+    if (argType->IsETSObjectType() && argType->AsETSObjectType()->IsBoxedPrimitive()) {
+        blockExpr = parser->CreateFormattedExpression(FORMAT_TO_STRING_PRIMITIVE_EXPRESSION, argType->ToString(), arg);
+    } else if (argType->PossiblyETSNull() && !argType->PossiblyETSUndefined()) {
+        blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_NULL_EXPRESSION, tmpIdentName, arg, tmpIdentName,
+                                                      tmpIdentName);
+    } else if (argType->PossiblyETSUndefined() && !argType->PossiblyETSNull()) {
+        blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_UNDEFINED_EXPRESSION, tmpIdentName, arg,
+                                                      tmpIdentName, tmpIdentName);
+    } else if (argType->PossiblyETSNullish()) {
+        blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_NULLISH_EXPRESSION, tmpIdentName, arg, tmpIdentName,
+                                                      tmpIdentName, tmpIdentName);
+    } else {
+        blockExpr = parser->CreateFormattedExpression(FORMAT_TO_STRING_EXPRESSION, arg);
+    }
+
+    blockExpr->SetParent(newClassInstExpr->Parent());
+
+    // Run VarBinder for new BlockExpression
+    InitScopesPhaseETS::RunExternalNode(blockExpr, checker->VarBinder());
+    checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(blockExpr, NearestScope(blockExpr));
+
+    // Run checker
+    blockExpr->Check(checker);
+    return blockExpr;
+}
+
+static ir::Expression *ReplaceConstructorFixedArray(public_lib::Context *const ctx,
+                                                    ir::ETSNewClassInstanceExpression *newClassInstExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *parser = ctx->parser->AsETSParser();
+
+    auto *arg = newClassInstExpr->GetArguments()[0];
+    auto *allocator = checker->Allocator();
+    auto *argTypeNode = checker->AllocNode<ir::OpaqueTypeNode>(arg->TsType(), allocator);
+    auto *convertedArg = parser->CreateFormattedExpression(
+        std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + "stub.toValueArray(@@E1 as @@T2)", arg, argTypeNode);
+    auto *newExpr = parser->CreateFormattedExpression("new String(@@E1)", convertedArg);
+    newExpr->SetParent(newClassInstExpr->Parent());
+    auto *scope = NearestScope(newClassInstExpr);
+    auto exprCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
+    InitScopesPhaseETS::RunExternalNode(newExpr, checker->VarBinder());
+    checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(newExpr, NearestScope(newExpr));
+    newExpr->Check(checker);
+    return newExpr;
+}
+
+static ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
+                                                ir::ETSNewClassInstanceExpression *newClassInstExpr)
+{
     // Skip missing signatures
     if (newClassInstExpr->Signature() == nullptr || newClassInstExpr->Signature()->InternalName() == nullptr) {
         return newClassInstExpr;
     }
 
-    // Case for the constructor: new String(str: string)
     if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_STRING_CTOR) {
         auto *arg = newClassInstExpr->GetArguments()[0];
         arg->SetParent(newClassInstExpr->Parent());
         return arg;
     }
 
-    // Case for the constructor: new String(str: Object)
     if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_NULLISH_CTOR) {
-        auto *arg = newClassInstExpr->GetArguments()[0];
-        auto *argType = arg->TsType();
+        return ReplaceConstructorNullish(ctx, newClassInstExpr);
+    }
 
-        // For the case when the constructor parameter is "null" or "undefined"
-        if (argType->IsETSNullType() || argType->IsETSUndefinedType()) {
-            auto *literal = argType->IsETSNullType() ? ctx->AllocNode<ir::StringLiteral>("null")
-                                                     : ctx->AllocNode<ir::StringLiteral>("undefined");
-            ES2PANDA_ASSERT(literal != nullptr);
-            literal->SetParent(newClassInstExpr->Parent());
-
-            // Run checker
-            literal->Check(checker);
-            return literal;
-        }
-
-        // Enter to the old scope
-        auto *scope = NearestScope(newClassInstExpr);
-        auto exprCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
-
-        // Generate temporary variable
-        auto const tmpIdentName = GenName(ctx->Allocator());
-
-        // Create BlockExpression
-        ir::Expression *blockExpr = nullptr;
-        if (argType->IsETSObjectType() && argType->AsETSObjectType()->IsBoxedPrimitive()) {
-            blockExpr =
-                parser->CreateFormattedExpression(FORMAT_TO_STRING_PRIMITIVE_EXPRESSION, argType->ToString(), arg);
-        } else if (argType->PossiblyETSNull() && !argType->PossiblyETSUndefined()) {
-            blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_NULL_EXPRESSION, tmpIdentName, arg, tmpIdentName,
-                                                          tmpIdentName);
-        } else if (argType->PossiblyETSUndefined() && !argType->PossiblyETSNull()) {
-            blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_UNDEFINED_EXPRESSION, tmpIdentName, arg,
-                                                          tmpIdentName, tmpIdentName);
-        } else if (argType->PossiblyETSNullish()) {
-            blockExpr = parser->CreateFormattedExpression(FORMAT_CHECK_NULLISH_EXPRESSION, tmpIdentName, arg,
-                                                          tmpIdentName, tmpIdentName, tmpIdentName);
-        } else {
-            blockExpr = parser->CreateFormattedExpression(FORMAT_TO_STRING_EXPRESSION, arg);
-        }
-
-        blockExpr->SetParent(newClassInstExpr->Parent());
-
-        // Run VarBinder for new BlockExpression
-        InitScopesPhaseETS::RunExternalNode(blockExpr, checker->VarBinder());
-        checker->VarBinder()->AsETSBinder()->ResolveReferencesForScope(blockExpr, NearestScope(blockExpr));
-
-        // Run checker
-        blockExpr->Check(checker);
-        return blockExpr;
+    if (newClassInstExpr->Signature()->InternalName() == "std.core.String.<ctor>:std.core.Char[];void;") {
+        return ReplaceConstructorFixedArray(ctx, newClassInstExpr);
     }
 
     return newClassInstExpr;

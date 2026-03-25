@@ -169,7 +169,8 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
         newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
     } else {
         ir::Identifier *genSymIdent2 = Gensym(Allocator());
-        ss << "let @@I1: FixedArray<@@T2> = @@E3;";
+        bool elementIsUnboxable = arrayType->IsETSObjectType() && arrayType->AsETSObjectType()->IsBoxedPrimitive();
+        ss << "let @@I1: " << (elementIsUnboxable ? "ValueArray" : "FixedArray") << "<@@T2> = @@E3;";
         ss << "let @@I4: Array<@@T5> = new Array<@@T6>(@@I7.length);";
         ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]} @@I11";
         newStmts.emplace_back(genSymIdent);
@@ -192,8 +193,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     loweringResult->SetRange(literalArray->Range());
     loweringResult->SetParent(parent);
 
-    auto *scope = NearestScope(parent);
-    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder_, scope);
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder_, NearestScope(parent));
     CheckLoweredNode(varbinder_, checker_, loweringResult);
     return loweringResult;
 }

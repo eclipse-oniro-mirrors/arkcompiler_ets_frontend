@@ -21,6 +21,19 @@
     "ets2panda/linter/src/lib/statistics/scan/ProblemStatisticsCommonFunction.ts": "*",
     "ets2panda/linter/src/lib/utils/functions/ConfiguredRulesProcess.ts": "*",
     "ets2panda/test/unit/declgen/ets/expected": "*",
+    "ets2panda/util/arktsconfig.h": "*",
+    "ets2panda/util/diagnostic.h": "*",
+    "ets2panda/test/unit/lsp/get_completions.cpp": "*",
+    "ets2panda/test/unit/lsp/formatting_test_3.cpp": "*",
+    "ets2panda/test/unit/lsp/formatting_test_2.cpp": "*",
+    "ets2panda/test/unit/lsp/formatting_test_1.cpp": "*",
+    "ets2panda/test/unit/lsp/formatting_test.cpp": "*",
+    "ets2panda/lsp/src/refactors/extract_symbol.cpp": "*",
+    "ets2panda/lsp/src/formatting/rules.cpp": "*",
+    "ets2panda/compiler/lowering/ets/exportAnonymousConst.cpp": "*",
+    "ets2panda/bindings/native/include/dynamic-loader.h": "*",
+    "ets2panda/arkts_bindings/src/global.ets": "*",
+    "ets2panda/arkts_bindings/native/src/ets-types.h": "*",
     "*": ["G.CMT.03", "G.FMT.11", "G.NAM.03", "huge_headerfile", "huge_non_headerfile", "bc-30001"]
 }
 

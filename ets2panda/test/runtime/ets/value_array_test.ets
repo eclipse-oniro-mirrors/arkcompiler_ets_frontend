@@ -179,9 +179,9 @@ function testMultiDimensional() {
 
 function testTypeAssertions() {
     let arr: ValueArray<int> = [1, 2, 3];
-    let fixedAttempt = arr as Object as FixedArray<int>;
-    arktest.assertTrue(fixedAttempt instanceof FixedArray<int>);
-    arktest.assertTrue(fixedAttempt instanceof ValueArray<int>);
+    let valueAttempt = arr as Object as ValueArray<int>;
+    arktest.assertFalse(valueAttempt instanceof FixedArray<int>);
+    arktest.assertTrue(valueAttempt instanceof ValueArray<int>);
     
     let obj: Object = arr as Object;
     arktest.assertTrue(obj instanceof Object);
