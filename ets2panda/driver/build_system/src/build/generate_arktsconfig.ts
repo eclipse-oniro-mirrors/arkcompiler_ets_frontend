@@ -628,7 +628,7 @@ export class ArkTSConfigGenerator {
             language: 'js',
             path: filePath,
             ohmUrl: getOhmurlByApi(baseName),
-            alias: [key]
+            alias: [key,'dynamic'+key]
         };
     }
 
