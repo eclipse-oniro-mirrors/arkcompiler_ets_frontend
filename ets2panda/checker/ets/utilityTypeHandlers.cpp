@@ -202,6 +202,10 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
         return cached(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
     }
 
+    // NOTE(mbolshov): #19701 update this when void = undefined
+    if (typeToBeAwaited->IsETSVoidType()) {
+        return GlobalETSUndefinedType();
+    }
     return typeToBeAwaited;
 }
 
