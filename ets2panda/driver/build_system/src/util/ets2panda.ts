@@ -48,7 +48,8 @@ import {
     TS_SUFFIX,
     ENABLE_DECLARATION_BARRIER,
     ETSCACHE_SUFFIX,
-    MERGED_INTERMEDIATE_FILE
+    MERGED_INTERMEDIATE_FILE,
+    ENABLE_DECL_FILE_CACHE
 } from '../pre_define';
 import {
     PluginDriver,
@@ -284,7 +285,7 @@ export class Ets2panda {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Checked');
 
-            if (job.jobType & CompileJobType.DECL) {
+            if (ENABLE_DECL_FILE_CACHE && job.jobType & CompileJobType.DECL) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
                 // emit declarations based on relative location of the file in a project,
                 // since es2panda doesn't know about ohos modules right now
@@ -392,7 +393,7 @@ export class Ets2panda {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Checked');
 
-            if (job.jobType & CompileJobType.DECL) {
+            if (ENABLE_DECL_FILE_CACHE && job.jobType & CompileJobType.DECL) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
                 for (const fi of (job.content as FileInfo[])) {
                     // emit declarations based on relative location of the file in a project,

@@ -26,7 +26,6 @@ import {
     FILE_HASH_CACHE,
     ETSCACHE_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
-    ENABLE_DECL_CACHE,
     ENABLE_CLUSTERS
 } from './pre_define';
 
@@ -315,11 +314,7 @@ export class DependencyAnalyzer {
                 declgenConfig: {
                     output: module.declgenV2OutPath!
                 },
-                // Force declaration files generation for HAR and SHARED ohos modules
-                jobType:
-                    (module.moduleType === OHOS_MODULE_TYPE.HAR || module.moduleType === OHOS_MODULE_TYPE.SHARED) ||
-                        ENABLE_DECL_CACHE ?
-                        CompileJobType.DECL_ABC : CompileJobType.ABC
+                jobType: CompileJobType.NONE
             });
             if (dependencyMap.dependencies[file]) {
                 for (const dependency of dependencyMap.dependencies[file]) {
@@ -358,7 +353,7 @@ export class DependencyAnalyzer {
         });
 
         this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
-        this.filterGraph(dependencyGraph, moduleInfos);
+        this.filterGraph(dependencyGraph, fileToModule);
         this.verifyAndDumpGraph(dependencyGraph, 'graph.filtered.dot');
 
         const nodeMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
@@ -426,7 +421,7 @@ export class DependencyAnalyzer {
         return dependencyGraph;
     }
 
-    private filterGraph(graph: Graph<CompileJobInfo>, moduleInfos: Map<string, ModuleInfo>): void {
+    private filterGraph(graph: Graph<CompileJobInfo>, fileToModule: Map<string, ModuleInfo>): void {
         for (const nodeId of Graph.topologicalSort(graph)) {
             const node = graph.getNodeById(nodeId);
             if (node.data.contentType !== JobContentType.FILE) {
@@ -449,15 +444,12 @@ export class DependencyAnalyzer {
             const outputAbc = fi.output;
             const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
 
+            const module: ModuleInfo = fileToModule.get(input)!;
+            const isHarOrHsp: boolean = module.moduleType === OHOS_MODULE_TYPE.HAR ||
+                module.moduleType === OHOS_MODULE_TYPE.SHARED;
             const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
-            let genDecl: boolean = ENABLE_DECL_CACHE && (hashChanged || shouldBeUpdated(input, outputDecl));
+            const genDecl: boolean = isHarOrHsp && (hashChanged || shouldBeUpdated(input, outputDecl));
             const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
-
-            // Force decl generation for Har/Hsp module until binary import is fully implemented
-            const module = moduleInfos.get(node.data.moduleName)!;
-            if (module.moduleType === OHOS_MODULE_TYPE.HAR || module.moduleType === OHOS_MODULE_TYPE.SHARED) {
-                genDecl = true;
-            }
 
             if (!compileAbc && !genDecl) {
                 this.logger.printDebug(`Skipping file ${input} compilation`)
