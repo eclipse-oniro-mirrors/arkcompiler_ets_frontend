@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 import path from 'path';
 
 describe('getReferencesAtPositionTest', () => {
@@ -36,33 +36,39 @@ describe('getReferencesAtPositionTest', () => {
     references.fileName = path.basename(references.fileName);
     expect(references).toMatchObject(expected);
   }
-  const lsp = getLsp(moduleName);
-  test('getReferencesAtPosition_000', () => {
-    const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition1.ets'), 613);
-    expect(res?.length).toBe(0);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getReferencesAtPosition_000', () => {
+      const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition1.ets'), 613);
+      expect(res?.length).toBe(0);
+    });
+    test('getReferencesAtPosition_001', () => {
+      const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition2.ets'), 635);
+      expect(res?.length).toBe(4);
+      const length = res ? res.length : 0;
+      for (let i = 0; i < length; i++) {
+        expectReferences(res ? res[i] : undefined, REFERENCES_001[i]);
+      }
+    });
+    test('getReferencesAtPosition_002', () => {
+      const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), 625);
+      expect(res?.length).toBe(2);
+      const length = res ? res.length : 0;
+      for (let i = 0; i < length; i++) {
+        expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);
+      }
+    });
   });
-  test('getReferencesAtPosition_001', () => {
-    const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition2.ets'), 635);
-    expect(res?.length).toBe(4);
-    const length = res ? res.length : 0;
-    for (let i = 0; i < length; i++) {
-      expectReferences(res ? res[i] : undefined, REFERENCES_001[i]);
-    }
-  });
-  test('getReferencesAtPosition_002', () => {
-    const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), 625);
-    expect(res?.length).toBe(2);
-    const length = res ? res.length : 0;
-    for (let i = 0; i < length; i++) {
-      expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);
-    }
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getReferencesAtPosition_003', () => {
-    const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 697);
-    expect(res?.length).toBe(2);
-    const length = res ? res.length : 0;
-    for (let i = 0; i < length; i++) {
-      expectReferences(res ? res[i] : undefined, REFERENCES_003[i]);
-    }
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getReferencesAtPosition_003', () => {
+      const res = getUiLsp().getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 697);
+      expect(res?.length).toBe(2);
+      const length = res ? res.length : 0;
+      for (let i = 0; i < length; i++) {
+        expectReferences(res ? res[i] : undefined, REFERENCES_003[i]);
+      }
+    });
   });
 });

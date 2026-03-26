@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getRenameInfoTest', () => {
   const moduleName: string = 'getRenameInfo';
@@ -37,17 +37,23 @@ describe('getRenameInfoTest', () => {
     canRenameFailure: false,
     localizedErrorMessage: 'You cannot rename this element'
   };
-  const lsp = getLsp(moduleName);
-  test('getRenameInfo_000', () => {
-    const res = lsp.getRenameInfo(getRealPath(moduleName, 'getRenameInfo1.ets'), 615);
-    expect(res).toMatchObject(EXPECT_000);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getRenameInfo_000', () => {
+      const res = lsp.getRenameInfo(getRealPath(moduleName, 'getRenameInfo1.ets'), 615);
+      expect(res).toMatchObject(EXPECT_000);
+    });
+    test('getRenameInfo_002', () => {
+      const res = lsp.getRenameInfo(getRealPath(moduleName, 'getRenameInfo3.ets'), 697);
+      expect(res).toMatchObject(EXPECT_002);
+    });
   });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getRenameInfo_001', () => {
-    const res = lsp.getRenameInfo(getRealPath(moduleName, 'getRenameInfo2.ets'), 626);
-    expect(res).toMatchObject(EXPECT_001);
-  });
-  test('getRenameInfo_002', () => {
-    const res = lsp.getRenameInfo(getRealPath(moduleName, 'getRenameInfo3.ets'), 697);
-    expect(res).toMatchObject(EXPECT_002);
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getRenameInfo_001', () => {
+      const res = getUiLsp().getRenameInfo(getRealPath(moduleName, 'getRenameInfo2.ets'), 626);
+      expect(res).toMatchObject(EXPECT_001);
+    });
   });
 });

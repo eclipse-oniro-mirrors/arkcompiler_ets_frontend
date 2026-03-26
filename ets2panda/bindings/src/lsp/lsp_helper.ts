@@ -267,7 +267,9 @@ export class Lsp {
         ? this.moduleInfos[filePath].packageName
         : undefined;
       const buildConfig = packageName ? this.buildConfigs[packageName] : this.defaultBuildConfig;
-      const pluginContext = PluginDriver.getInstance().getPluginContext();
+      const pluginDriver = PluginDriver.getInstance();
+      pluginDriver.initPlugins(buildConfig);
+      const pluginContext = pluginDriver.getPluginContext();
       pluginContext.setCodingFilePath(filePath);
       pluginContext.setProjectConfig(buildConfig);
       pluginContext.setContextPtr(localCtx);

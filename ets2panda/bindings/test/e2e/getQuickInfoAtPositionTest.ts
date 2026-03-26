@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getQuickInfoAtPositionTest', () => {
   const moduleName: string = 'getQuickInfoAtPosition';
@@ -179,7 +179,7 @@ describe('getQuickInfoAtPositionTest', () => {
   };
   const EXPECT_004 = {
     kind: 'struct',
-    kindModifier: 'final',
+    kindModifier: '',
     textSpan: {
       start: 699,
       length: 5
@@ -200,25 +200,31 @@ describe('getQuickInfoAtPositionTest', () => {
       }
     ]
   };
-  const lsp = getLsp(moduleName);
-  test('getQuickInfoAtPosition_000', () => {
-    const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition1.ets'), 639);
-    expect(res).toMatchObject(EXPECT_000);
+  describe('No UI Plugins', () => {
+    const lsp = getLsp(moduleName);
+    test('getQuickInfoAtPosition_000', () => {
+      const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition1.ets'), 639);
+      expect(res).toMatchObject(EXPECT_000);
+    });
+    test('getQuickInfoAtPosition_001', () => {
+      const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition2.ets'), 631);
+      expect(res).toMatchObject(EXPECT_001);
+    });
+    test('getQuickInfoAtPosition_002', () => {
+      const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition3.ets'), 676);
+      expect(res).toMatchObject(EXPECT_002);
+    });
   });
-  test('getQuickInfoAtPosition_001', () => {
-    const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition2.ets'), 631);
-    expect(res).toMatchObject(EXPECT_001);
-  });
-  test('getQuickInfoAtPosition_002', () => {
-    const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition3.ets'), 676);
-    expect(res).toMatchObject(EXPECT_002);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
-    const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
-    expect(res).toMatchObject(EXPECT_003);
-  });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
-    const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
-    expect(res).toMatchObject(EXPECT_004);
+
+  describe('With UI Plugins', () => {
+    const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
+      const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
+      expect(res).toMatchObject(EXPECT_003);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
+      const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
+      expect(res).toMatchObject(EXPECT_004);
+    });
   });
 });
