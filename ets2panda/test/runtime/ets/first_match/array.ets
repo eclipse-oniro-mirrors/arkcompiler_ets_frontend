@@ -43,3 +43,5 @@ function main() {
     arktest.assertEQ(a.foo(new Array<number>(2)), "invoke2");
     arktest.assertEQ(a.foo(new number[5][10]), "invoke6");
 }
+
+/* @@? 44:45 Error Syntax error ESY63526: Expression to initialize array element is missed. */

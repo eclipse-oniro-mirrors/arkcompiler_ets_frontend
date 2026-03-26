@@ -822,39 +822,35 @@ ir::Expression *ETSParser::ParseNewExpression()
     ES2PANDA_ASSERT(typeReference != nullptr);
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
-        Lexer()->NextToken();
-        ir::Expression *dimension = ParseExpression();
+        ArenaVector<ir::Expression *> dimensions(Allocator()->Adapter());
 
-        auto endLoc = Lexer()->GetToken().End();
-        ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
+        do {
+            Lexer()->NextToken();
+            dimensions.push_back(ParseExpression());
+            ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
+        } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET);
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
             Lexer()->NextToken();
             ir::Expression *initializer = ParseExpression();
-            auto *arrInstance = AllocNode<ir::ETSNewArrayInstanceExpression>(typeReference, dimension, initializer);
-            endLoc = Lexer()->GetToken().End();
+
+            auto endLoc = Lexer()->GetToken().End();
             ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS);
-            arrInstance->SetRange({start, endLoc});
-            return arrInstance;
-        }
-        if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
-            ArenaVector<ir::Expression *> dimensions(Allocator()->Adapter());
-            dimensions.push_back(dimension);
 
-            do {
-                Lexer()->NextToken();
-                dimensions.push_back(ParseExpression());
-
-                endLoc = Lexer()->GetToken().End();
-                ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET);
-            } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET);
-
+            if (dimensions.size() == 1) {
+                auto *arrInstance =
+                    AllocNode<ir::ETSNewArrayInstanceExpression>(typeReference, dimensions[0], initializer);
+                arrInstance->SetRange({start, endLoc});
+                return arrInstance;
+            }
+            LogError(diagnostic::MULTIDIM_ARRAY_NOT_SUPPORTED);
             auto *multiArray =
                 AllocNode<ir::ETSNewMultiDimArrayInstanceExpression>(typeReference, std::move(dimensions));
             ES2PANDA_ASSERT(multiArray != nullptr);
             multiArray->SetRange({start, endLoc});
             return multiArray;
         }
+
         LogError(diagnostic::CANNOT_INITIALIZE_ARRAY);
     }
 

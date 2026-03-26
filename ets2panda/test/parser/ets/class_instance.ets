@@ -19,3 +19,6 @@ let b = 10;
 let x = new int[10](0);
 let y = new int[a][b];
 let z = new int[a][b][a + b];
+
+/* @@? 20:22 Error Syntax error ESY63526: Expression to initialize array element is missed. */
+/* @@? 18:15 Error Syntax error ESY63526: Expression to initialize array element is missed. */

@@ -27,3 +27,5 @@ function main() {
     arktest.assertEQ(c[1][1][1], 10)
     arktest.assertEQ(c[0][0][0], 5)
 }
+
+/* @@? 25:5 Error Syntax error ESY63526: Expression to initialize array element is missed. */

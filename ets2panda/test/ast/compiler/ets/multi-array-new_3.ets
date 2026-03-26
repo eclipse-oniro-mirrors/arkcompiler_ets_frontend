@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,13 +17,12 @@ function main(): void {
    let A: Array<number> = new Array<number>();
    let a: Number[][][];
    
-   a = new Number[/* @@ label */A.length + 2.][/* @@ label1 */4.00][/* @@ label2 */A.length + 3.0000];
+   a = new Number[A.length + 2.][4.00][A.length + 3.0000];
    
    arktest.assertEQ(a.length, 2)
    arktest.assertEQ(a[1].length, 4)
    arktest.assertEQ(a[0][3].length, 3)
 }
 
-/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
-/* @@@ label1 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
-/* @@@ label2 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
+/* @@? 20:8 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Array<Array<Array<Double>>>' */
+/* @@? 20:58 Error Syntax error ESY63526: Expression to initialize array element is missed. */

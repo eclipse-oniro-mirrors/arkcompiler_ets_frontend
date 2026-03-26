@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,8 @@
 function main(): void {
   let A: Array<number> = new Array<number>();
   let a: FixedArray<FixedArray<FixedArray<Number>>>;
-  a = new Number[/* @@ label */A.length + 2.][4][/* @@ label1 */A.length + 3.00001];
+  a = new Number[A.length + 2.][4][A.length + 3.00001];
 }
 
-/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
-/* @@@ label1 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
+/* @@? 19:7 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'FixedArray<FixedArray<FixedArray<Double>>>' */
+/* @@? 19:55 Error Syntax error ESY63526: Expression to initialize array element is missed. */

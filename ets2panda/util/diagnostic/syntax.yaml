@@ -879,6 +879,10 @@ syntax:
   id: 326
   message: "Only one index signature can exist in a class"
 
+- name: MULTIDIM_ARRAY_NOT_SUPPORTED
+  id: 97506
+  message: "Multidimensional array creation with or without initializers is not supported now."
+
 - name: MULTIPLE_CONSTRUCTOR_IMPLEMENTATIONS
   id: 206
   message: "Multiple constructor implementations are not allowed."

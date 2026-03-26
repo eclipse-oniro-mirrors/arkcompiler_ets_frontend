@@ -21,3 +21,12 @@ string-builder.ets
 # TODO(dkofanov): deprecated package import
 mypackage/implicit_package_import_1.ets
 mypackage/implicit_package_import_2.ets
+
+#33867
+array_test2.ets
+first_match/array.ets
+first_match/generics.ets
+multi-array.ets
+newArrayCreationArrayType.ets
+notNullMultidimensionalArray.ets
+nullishTypeCodesamples.ets
