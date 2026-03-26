@@ -653,8 +653,8 @@
             "program": "lambda_infer_type_has_return.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "lambda_infer_type_has_return.ets"
           }
         }
@@ -666,8 +666,8 @@
           "program": "lambda_infer_type_has_return.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "lambda_infer_type_has_return.ets"
         }
       }

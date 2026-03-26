@@ -205,8 +205,8 @@
             "program": "test-class-async-method.js"
           },
           "end": {
-            "line": 20,
-            "column": 1,
+            "line": 19,
+            "column": 2,
             "program": "test-class-async-method.js"
           }
         }
@@ -218,8 +218,8 @@
           "program": "test-class-async-method.js"
         },
         "end": {
-          "line": 20,
-          "column": 1,
+          "line": 19,
+          "column": 2,
           "program": "test-class-async-method.js"
         }
       }

@@ -164,7 +164,7 @@ class Foo {
     auto res = lspApi->getClassConstructorInfo(ctx, offset, properties);
 
     std::string expectedText = "constructor() {\n}";
-    size_t const expectedPosition = 13;
+    size_t const expectedPosition = 12;
     std::vector<FileTextChanges> expectedFileTextChanges =
         CreateExpectedFileTextChanges(filePaths.at(0), expectedPosition, expectedText);
     AssertClassConstructorInfo(res.GetFileTextChanges(), expectedFileTextChanges);

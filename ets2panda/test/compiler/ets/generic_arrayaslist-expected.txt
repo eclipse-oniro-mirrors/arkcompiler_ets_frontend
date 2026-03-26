@@ -25198,8 +25198,8 @@
             "program": "generic_arrayaslist.ets"
           },
           "end": {
-            "line": 241,
-            "column": 1,
+            "line": 240,
+            "column": 2,
             "program": "generic_arrayaslist.ets"
           }
         }
@@ -25211,8 +25211,8 @@
           "program": "generic_arrayaslist.ets"
         },
         "end": {
-          "line": 241,
-          "column": 1,
+          "line": 240,
+          "column": 2,
           "program": "generic_arrayaslist.ets"
         }
       }

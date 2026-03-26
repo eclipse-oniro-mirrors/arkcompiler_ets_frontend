@@ -715,8 +715,8 @@
             "program": "generics_instantiation_3.ets"
           },
           "end": {
-            "line": 23,
-            "column": 1,
+            "line": 22,
+            "column": 2,
             "program": "generics_instantiation_3.ets"
           }
         }
@@ -728,8 +728,8 @@
           "program": "generics_instantiation_3.ets"
         },
         "end": {
-          "line": 23,
-          "column": 1,
+          "line": 22,
+          "column": 2,
           "program": "generics_instantiation_3.ets"
         }
       }

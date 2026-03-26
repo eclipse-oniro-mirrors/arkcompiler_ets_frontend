@@ -229,8 +229,8 @@
             "program": "inheritance.ets"
           },
           "end": {
-            "line": 25,
-            "column": 6,
+            "line": 23,
+            "column": 2,
             "program": "inheritance.ets"
           }
         }
@@ -242,8 +242,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 25,
-          "column": 6,
+          "line": 23,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -548,8 +548,8 @@
             "program": "inheritance.ets"
           },
           "end": {
-            "line": 28,
-            "column": 6,
+            "line": 26,
+            "column": 2,
             "program": "inheritance.ets"
           }
         }
@@ -561,8 +561,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 28,
-          "column": 6,
+          "line": 26,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -744,8 +744,8 @@
             "program": "inheritance.ets"
           },
           "end": {
-            "line": 31,
-            "column": 9,
+            "line": 29,
+            "column": 2,
             "program": "inheritance.ets"
           }
         }
@@ -757,8 +757,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 31,
-          "column": 9,
+          "line": 29,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -1002,8 +1002,8 @@
             "program": "inheritance.ets"
           },
           "end": {
-            "line": 34,
-            "column": 7,
+            "line": 32,
+            "column": 2,
             "program": "inheritance.ets"
           }
         }
@@ -1015,8 +1015,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 34,
-          "column": 7,
+          "line": 32,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }
@@ -1198,8 +1198,8 @@
             "program": "inheritance.ets"
           },
           "end": {
-            "line": 36,
-            "column": 1,
+            "line": 35,
+            "column": 2,
             "program": "inheritance.ets"
           }
         }
@@ -1211,8 +1211,8 @@
           "program": "inheritance.ets"
         },
         "end": {
-          "line": 36,
-          "column": 1,
+          "line": 35,
+          "column": 2,
           "program": "inheritance.ets"
         }
       }

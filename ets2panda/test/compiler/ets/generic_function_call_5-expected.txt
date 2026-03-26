@@ -532,8 +532,8 @@
             "program": "generic_function_call_5.ets"
           },
           "end": {
-            "line": 23,
-            "column": 9,
+            "line": 21,
+            "column": 2,
             "program": "generic_function_call_5.ets"
           }
         }
@@ -545,8 +545,8 @@
           "program": "generic_function_call_5.ets"
         },
         "end": {
-          "line": 23,
-          "column": 9,
+          "line": 21,
+          "column": 2,
           "program": "generic_function_call_5.ets"
         }
       }

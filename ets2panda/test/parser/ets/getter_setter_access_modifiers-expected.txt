@@ -713,8 +713,8 @@
             "program": "getter_setter_access_modifiers.ets"
           },
           "end": {
-            "line": 26,
-            "column": 6,
+            "line": 24,
+            "column": 2,
             "program": "getter_setter_access_modifiers.ets"
           }
         }
@@ -726,8 +726,8 @@
           "program": "getter_setter_access_modifiers.ets"
         },
         "end": {
-          "line": 26,
-          "column": 6,
+          "line": 24,
+          "column": 2,
           "program": "getter_setter_access_modifiers.ets"
         }
       }
@@ -1873,8 +1873,8 @@
             "program": "getter_setter_access_modifiers.ets"
           },
           "end": {
-            "line": 47,
-            "column": 1,
+            "line": 46,
+            "column": 2,
             "program": "getter_setter_access_modifiers.ets"
           }
         }
@@ -1886,8 +1886,8 @@
           "program": "getter_setter_access_modifiers.ets"
         },
         "end": {
-          "line": 47,
-          "column": 1,
+          "line": 46,
+          "column": 2,
           "program": "getter_setter_access_modifiers.ets"
         }
       }

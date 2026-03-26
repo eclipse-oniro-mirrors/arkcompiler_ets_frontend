@@ -329,8 +329,8 @@
             "program": "this_type_class_method_return_valid.ets"
           },
           "end": {
-            "line": 19,
-            "column": 1,
+            "line": 18,
+            "column": 2,
             "program": "this_type_class_method_return_valid.ets"
           }
         }
@@ -342,8 +342,8 @@
           "program": "this_type_class_method_return_valid.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "this_type_class_method_return_valid.ets"
         }
       }

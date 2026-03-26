@@ -1746,8 +1746,8 @@
             "program": "optional_field_interfaceUnion.ets"
           },
           "end": {
-            "line": 33,
-            "column": 1,
+            "line": 32,
+            "column": 2,
             "program": "optional_field_interfaceUnion.ets"
           }
         }
@@ -1759,8 +1759,8 @@
           "program": "optional_field_interfaceUnion.ets"
         },
         "end": {
-          "line": 33,
-          "column": 1,
+          "line": 32,
+          "column": 2,
           "program": "optional_field_interfaceUnion.ets"
         }
       }

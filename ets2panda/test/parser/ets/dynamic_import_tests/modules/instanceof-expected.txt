@@ -22,7 +22,111 @@
         },
         "superClass": null,
         "implements": [],
-        "body": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "main",
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": true,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "main",
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "instanceof.ets"
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "instanceof.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "instanceof.ets"
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "instanceof.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "instanceof.ets"
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "instanceof.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": "instanceof.ets"
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": "instanceof.ets"
+              }
+            }
+          }
+        ],
         "loc": {
           "start": {
             "line": 1,
@@ -181,8 +285,8 @@
             "program": "instanceof.ets"
           },
           "end": {
-            "line": 23,
-            "column": 7,
+            "line": 21,
+            "column": 2,
             "program": "instanceof.ets"
           }
         }
@@ -194,8 +298,8 @@
           "program": "instanceof.ets"
         },
         "end": {
-          "line": 23,
-          "column": 7,
+          "line": 21,
+          "column": 2,
           "program": "instanceof.ets"
         }
       }
@@ -332,8 +436,8 @@
             "program": "instanceof.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "instanceof.ets"
           }
         }
@@ -345,56 +449,8 @@
           "program": "instanceof.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
-          "program": "instanceof.ets"
-        }
-      }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "instanceof.ets"
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "instanceof.ets"
         }
       }

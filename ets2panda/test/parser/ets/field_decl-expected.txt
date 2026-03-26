@@ -690,8 +690,8 @@
             "program": "field_decl.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "field_decl.ets"
           }
         }
@@ -703,8 +703,8 @@
           "program": "field_decl.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "field_decl.ets"
         }
       }

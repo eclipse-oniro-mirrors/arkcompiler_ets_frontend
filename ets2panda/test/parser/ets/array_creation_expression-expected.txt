@@ -301,8 +301,8 @@
             "program": "array_creation_expression.ets"
           },
           "end": {
-            "line": 21,
-            "column": 6,
+            "line": 19,
+            "column": 2,
             "program": "array_creation_expression.ets"
           }
         }
@@ -314,8 +314,8 @@
           "program": "array_creation_expression.ets"
         },
         "end": {
-          "line": 21,
-          "column": 6,
+          "line": 19,
+          "column": 2,
           "program": "array_creation_expression.ets"
         }
       }
@@ -1134,8 +1134,8 @@
             "program": "array_creation_expression.ets"
           },
           "end": {
-            "line": 31,
-            "column": 9,
+            "line": 29,
+            "column": 2,
             "program": "array_creation_expression.ets"
           }
         }
@@ -1147,8 +1147,8 @@
           "program": "array_creation_expression.ets"
         },
         "end": {
-          "line": 31,
-          "column": 9,
+          "line": 29,
+          "column": 2,
           "program": "array_creation_expression.ets"
         }
       }

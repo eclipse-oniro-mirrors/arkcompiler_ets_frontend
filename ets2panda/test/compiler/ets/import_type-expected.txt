@@ -370,7 +370,7 @@
           },
           "end": {
             "line": 19,
-            "column": 25,
+            "column": 24,
             "program": "import_type.ets"
           }
         }
@@ -383,7 +383,7 @@
         },
         "end": {
           "line": 19,
-          "column": 25,
+          "column": 24,
           "program": "import_type.ets"
         }
       }

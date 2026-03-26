@@ -392,8 +392,8 @@
             "program": "assignNullableFromMethodToNullableParam.ets"
           },
           "end": {
-            "line": 22,
-            "column": 9,
+            "line": 20,
+            "column": 2,
             "program": "assignNullableFromMethodToNullableParam.ets"
           }
         }
@@ -405,8 +405,8 @@
           "program": "assignNullableFromMethodToNullableParam.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 2,
           "program": "assignNullableFromMethodToNullableParam.ets"
         }
       }

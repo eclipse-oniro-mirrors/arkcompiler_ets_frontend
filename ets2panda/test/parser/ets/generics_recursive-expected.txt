@@ -289,8 +289,8 @@
             "program": "generics_recursive.ets"
           },
           "end": {
-            "line": 18,
-            "column": 6,
+            "line": 16,
+            "column": 29,
             "program": "generics_recursive.ets"
           }
         }
@@ -302,8 +302,8 @@
           "program": "generics_recursive.ets"
         },
         "end": {
-          "line": 18,
-          "column": 6,
+          "line": 16,
+          "column": 29,
           "program": "generics_recursive.ets"
         }
       }
@@ -917,8 +917,8 @@
             "program": "generics_recursive.ets"
           },
           "end": {
-            "line": 25,
-            "column": 6,
+            "line": 23,
+            "column": 2,
             "program": "generics_recursive.ets"
           }
         }
@@ -930,8 +930,8 @@
           "program": "generics_recursive.ets"
         },
         "end": {
-          "line": 25,
-          "column": 6,
+          "line": 23,
+          "column": 2,
           "program": "generics_recursive.ets"
         }
       }
@@ -1766,8 +1766,8 @@
             "program": "generics_recursive.ets"
           },
           "end": {
-            "line": 31,
-            "column": 6,
+            "line": 29,
+            "column": 2,
             "program": "generics_recursive.ets"
           }
         }
@@ -1779,8 +1779,8 @@
           "program": "generics_recursive.ets"
         },
         "end": {
-          "line": 31,
-          "column": 6,
+          "line": 29,
+          "column": 2,
           "program": "generics_recursive.ets"
         }
       }
@@ -1965,8 +1965,8 @@
             "program": "generics_recursive.ets"
           },
           "end": {
-            "line": 33,
-            "column": 9,
+            "line": 31,
+            "column": 14,
             "program": "generics_recursive.ets"
           }
         }
@@ -1978,8 +1978,8 @@
           "program": "generics_recursive.ets"
         },
         "end": {
-          "line": 33,
-          "column": 9,
+          "line": 31,
+          "column": 14,
           "program": "generics_recursive.ets"
         }
       }
@@ -3001,8 +3001,8 @@
             "program": "generics_recursive.ets"
           },
           "end": {
-            "line": 45,
-            "column": 1,
+            "line": 44,
+            "column": 2,
             "program": "generics_recursive.ets"
           }
         }
@@ -3014,8 +3014,8 @@
           "program": "generics_recursive.ets"
         },
         "end": {
-          "line": 45,
-          "column": 1,
+          "line": 44,
+          "column": 2,
           "program": "generics_recursive.ets"
         }
       }

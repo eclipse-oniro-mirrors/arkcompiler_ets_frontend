@@ -620,8 +620,8 @@
             "program": "callInterfaceMethodWithNullableParam.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 2,
             "program": "callInterfaceMethodWithNullableParam.ets"
           }
         }
@@ -633,8 +633,8 @@
           "program": "callInterfaceMethodWithNullableParam.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 2,
           "program": "callInterfaceMethodWithNullableParam.ets"
         }
       }

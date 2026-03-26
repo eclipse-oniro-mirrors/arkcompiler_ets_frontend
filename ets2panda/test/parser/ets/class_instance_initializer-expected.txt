@@ -1604,8 +1604,8 @@
             "program": "class_instance_initializer.ets"
           },
           "end": {
-            "line": 41,
-            "column": 6,
+            "line": 39,
+            "column": 2,
             "program": "class_instance_initializer.ets"
           }
         }
@@ -1617,8 +1617,8 @@
           "program": "class_instance_initializer.ets"
         },
         "end": {
-          "line": 41,
-          "column": 6,
+          "line": 39,
+          "column": 2,
           "program": "class_instance_initializer.ets"
         }
       }
@@ -3335,8 +3335,8 @@
             "program": "class_instance_initializer.ets"
           },
           "end": {
-            "line": 66,
-            "column": 1,
+            "line": 65,
+            "column": 2,
             "program": "class_instance_initializer.ets"
           }
         }
@@ -3348,8 +3348,8 @@
           "program": "class_instance_initializer.ets"
         },
         "end": {
-          "line": 66,
-          "column": 1,
+          "line": 65,
+          "column": 2,
           "program": "class_instance_initializer.ets"
         }
       }

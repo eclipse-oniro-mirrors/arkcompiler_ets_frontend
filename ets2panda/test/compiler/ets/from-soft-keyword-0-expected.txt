@@ -250,8 +250,8 @@
             "program": "from-soft-keyword-0.ets"
           },
           "end": {
-            "line": 22,
-            "column": 6,
+            "line": 20,
+            "column": 2,
             "program": "from-soft-keyword-0.ets"
           }
         }
@@ -263,8 +263,8 @@
           "program": "from-soft-keyword-0.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 2,
           "program": "from-soft-keyword-0.ets"
         }
       }
@@ -519,8 +519,8 @@
             "program": "from-soft-keyword-0.ets"
           },
           "end": {
-            "line": 26,
-            "column": 9,
+            "line": 24,
+            "column": 2,
             "program": "from-soft-keyword-0.ets"
           }
         }
@@ -532,8 +532,8 @@
           "program": "from-soft-keyword-0.ets"
         },
         "end": {
-          "line": 26,
-          "column": 9,
+          "line": 24,
+          "column": 2,
           "program": "from-soft-keyword-0.ets"
         }
       }

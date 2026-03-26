@@ -951,8 +951,8 @@
             "program": "test-type-alias-call6.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "test-type-alias-call6.ets"
           }
         }
@@ -964,8 +964,8 @@
           "program": "test-type-alias-call6.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "test-type-alias-call6.ets"
         }
       }

@@ -794,8 +794,8 @@
             "program": "nullableGenericSignature.ets"
           },
           "end": {
-            "line": 26,
-            "column": 9,
+            "line": 24,
+            "column": 2,
             "program": "nullableGenericSignature.ets"
           }
         }
@@ -807,8 +807,8 @@
           "program": "nullableGenericSignature.ets"
         },
         "end": {
-          "line": 26,
-          "column": 9,
+          "line": 24,
+          "column": 2,
           "program": "nullableGenericSignature.ets"
         }
       }

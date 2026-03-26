@@ -258,8 +258,8 @@
             "program": "generic_typealias_8.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 16,
+            "column": 11,
             "program": "generic_typealias_8.ets"
           }
         }
@@ -271,8 +271,8 @@
           "program": "generic_typealias_8.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 11,
           "program": "generic_typealias_8.ets"
         }
       }

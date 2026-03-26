@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -165,8 +165,8 @@ constexpr size_t RE_EXPORT_DECL_END_LINE = 62;
 constexpr size_t IMPORT_DECL_END_LINE = 1;
 constexpr size_t INNER_INTERFACE_END_LINE = 21;
 constexpr size_t INTERFACE_OUTSIDE_END_LINE = 40;
-constexpr size_t CLASS_OUTSIDE_END_LINE = 54;
-constexpr size_t INNER_CLASS_END_LINE = 29;
+constexpr size_t CLASS_OUTSIDE_END_LINE = 52;
+constexpr size_t INNER_CLASS_END_LINE = 27;
 constexpr size_t CLASS_PROP1_END_LINE = 26;
 constexpr size_t CLASS_PROP2_END_LINE = 49;
 constexpr size_t CLASS_PROP3_END_LINE = 51;
@@ -189,7 +189,7 @@ constexpr size_t FUNCTION_PARAM3_END_LINE = 43;
 constexpr size_t FUNCTION_DECL_END_LINE = 69;
 constexpr size_t TPALIAS_END_LINE = 89;
 constexpr size_t TPALIAS2_END_LINE = 91;
-constexpr size_t CLASS_TEST_END_LINE = 100;
+constexpr size_t CLASS_TEST_END_LINE = 98;
 constexpr size_t CLASS_TEST_CONSTRUCTOR_END_LINE = 97;
 
 constexpr size_t NS_START_COL = 1;
@@ -235,8 +235,8 @@ constexpr size_t RE_EXPORT_DECL_END_COL = 40;
 constexpr size_t IMPORT_DECL_END_COL = 40;
 constexpr size_t INNER_INTERFACE_END_COL = 4;
 constexpr size_t INTERFACE_OUTSIDE_END_COL = 2;
-constexpr size_t CLASS_OUTSIDE_END_COL = 9;
-constexpr size_t INNER_CLASS_END_COL = 12;
+constexpr size_t CLASS_OUTSIDE_END_COL = 2;
+constexpr size_t INNER_CLASS_END_COL = 4;
 constexpr size_t CLASS_PROP1_END_COL = 34;
 constexpr size_t CLASS_PROP2_END_COL = 33;
 constexpr size_t CLASS_PROP3_END_COL = 26;
@@ -259,7 +259,7 @@ constexpr size_t FUNCTION_PARAM3_END_COL = 21;
 constexpr size_t FUNCTION_DECL_END_COL = 8;
 constexpr size_t TPALIAS_END_COL = 34;
 constexpr size_t TPALIAS2_END_COL = 38;
-constexpr size_t CLASS_TEST_END_COL = 1;
+constexpr size_t CLASS_TEST_END_COL = 2;
 constexpr size_t CLASS_TEST_CONSTRUCTOR_END_COL = 9;
 
 const std::string CLASS_TEST_NAME = "ClassTest";

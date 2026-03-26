@@ -870,9 +870,12 @@ ParserImpl::ClassBody ParserImpl::ParseClassBody(ir::ClassDefinitionModifiers mo
     }
 
     CreateImplicitConstructor(ctor, properties, modifiers, flags, startOfInnerBody);
-    ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_BRACE);
-
+    const bool hasRightBrace = lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE;
     lexer::SourcePosition endLoc = lexer_->GetToken().End();
+    ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_BRACE);
+    if (!hasRightBrace) {
+        endLoc = lexer_->GetToken().End();
+    }
     return {ctor, std::move(properties), lexer::SourceRange {startLoc, endLoc}};
 }
 

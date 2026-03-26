@@ -5324,8 +5324,8 @@
             "program": "MathPartialSums.ets"
           },
           "end": {
-            "line": 83,
-            "column": 9,
+            "line": 81,
+            "column": 2,
             "program": "MathPartialSums.ets"
           }
         }
@@ -5337,8 +5337,8 @@
           "program": "MathPartialSums.ets"
         },
         "end": {
-          "line": 83,
-          "column": 9,
+          "line": 81,
+          "column": 2,
           "program": "MathPartialSums.ets"
         }
       }

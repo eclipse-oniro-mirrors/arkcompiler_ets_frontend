@@ -266,8 +266,8 @@
             "program": "methodOverrideCovariantReturnType.ets"
           },
           "end": {
-            "line": 20,
-            "column": 10,
+            "line": 18,
+            "column": 2,
             "program": "methodOverrideCovariantReturnType.ets"
           }
         }
@@ -279,8 +279,8 @@
           "program": "methodOverrideCovariantReturnType.ets"
         },
         "end": {
-          "line": 20,
-          "column": 10,
+          "line": 18,
+          "column": 2,
           "program": "methodOverrideCovariantReturnType.ets"
         }
       }
@@ -990,8 +990,8 @@
             "program": "methodOverrideCovariantReturnType.ets"
           },
           "end": {
-            "line": 33,
-            "column": 6,
+            "line": 31,
+            "column": 2,
             "program": "methodOverrideCovariantReturnType.ets"
           }
         }
@@ -1003,8 +1003,8 @@
           "program": "methodOverrideCovariantReturnType.ets"
         },
         "end": {
-          "line": 33,
-          "column": 6,
+          "line": 31,
+          "column": 2,
           "program": "methodOverrideCovariantReturnType.ets"
         }
       }
@@ -1141,8 +1141,8 @@
             "program": "methodOverrideCovariantReturnType.ets"
           },
           "end": {
-            "line": 37,
-            "column": 6,
+            "line": 35,
+            "column": 2,
             "program": "methodOverrideCovariantReturnType.ets"
           }
         }
@@ -1154,8 +1154,8 @@
           "program": "methodOverrideCovariantReturnType.ets"
         },
         "end": {
-          "line": 37,
-          "column": 6,
+          "line": 35,
+          "column": 2,
           "program": "methodOverrideCovariantReturnType.ets"
         }
       }
@@ -2061,8 +2061,8 @@
             "program": "methodOverrideCovariantReturnType.ets"
           },
           "end": {
-            "line": 47,
-            "column": 1,
+            "line": 46,
+            "column": 2,
             "program": "methodOverrideCovariantReturnType.ets"
           }
         }
@@ -2074,8 +2074,8 @@
           "program": "methodOverrideCovariantReturnType.ets"
         },
         "end": {
-          "line": 47,
-          "column": 1,
+          "line": 46,
+          "column": 2,
           "program": "methodOverrideCovariantReturnType.ets"
         }
       }

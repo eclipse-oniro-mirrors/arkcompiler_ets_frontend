@@ -3855,8 +3855,8 @@
             "program": "BitopsNSieveBits.ets"
           },
           "end": {
-            "line": 57,
-            "column": 9,
+            "line": 55,
+            "column": 2,
             "program": "BitopsNSieveBits.ets"
           }
         }
@@ -3868,8 +3868,8 @@
           "program": "BitopsNSieveBits.ets"
         },
         "end": {
-          "line": 57,
-          "column": 9,
+          "line": 55,
+          "column": 2,
           "program": "BitopsNSieveBits.ets"
         }
       }

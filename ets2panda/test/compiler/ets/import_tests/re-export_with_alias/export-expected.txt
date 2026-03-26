@@ -350,8 +350,8 @@
             "program": "export.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "export.ets"
           }
         }
@@ -363,8 +363,8 @@
           "program": "export.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "export.ets"
         }
       }

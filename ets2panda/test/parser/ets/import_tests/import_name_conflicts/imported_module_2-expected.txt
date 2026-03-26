@@ -186,8 +186,8 @@
             "program": "imported_module_2.ets"
           },
           "end": {
-            "line": 24,
-            "column": 6,
+            "line": 22,
+            "column": 2,
             "program": "imported_module_2.ets"
           }
         }
@@ -199,8 +199,8 @@
           "program": "imported_module_2.ets"
         },
         "end": {
-          "line": 24,
-          "column": 6,
+          "line": 22,
+          "column": 2,
           "program": "imported_module_2.ets"
         }
       }
@@ -337,8 +337,8 @@
             "program": "imported_module_2.ets"
           },
           "end": {
-            "line": 25,
-            "column": 7,
+            "line": 24,
+            "column": 15,
             "program": "imported_module_2.ets"
           }
         }
@@ -350,8 +350,8 @@
           "program": "imported_module_2.ets"
         },
         "end": {
-          "line": 25,
-          "column": 7,
+          "line": 24,
+          "column": 15,
           "program": "imported_module_2.ets"
         }
       }

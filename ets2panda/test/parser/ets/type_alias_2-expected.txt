@@ -423,8 +423,8 @@
             "program": "type_alias_2.ets"
           },
           "end": {
-            "line": 22,
-            "column": 1,
+            "line": 21,
+            "column": 2,
             "program": "type_alias_2.ets"
           }
         }
@@ -436,8 +436,8 @@
           "program": "type_alias_2.ets"
         },
         "end": {
-          "line": 22,
-          "column": 1,
+          "line": 21,
+          "column": 2,
           "program": "type_alias_2.ets"
         }
       }

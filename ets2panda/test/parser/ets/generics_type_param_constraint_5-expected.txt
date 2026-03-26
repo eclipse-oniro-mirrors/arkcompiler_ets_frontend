@@ -855,8 +855,8 @@
             "program": "generics_type_param_constraint_5.ets"
           },
           "end": {
-            "line": 22,
-            "column": 1,
+            "line": 21,
+            "column": 35,
             "program": "generics_type_param_constraint_5.ets"
           }
         }
@@ -868,8 +868,8 @@
           "program": "generics_type_param_constraint_5.ets"
         },
         "end": {
-          "line": 22,
-          "column": 1,
+          "line": 21,
+          "column": 35,
           "program": "generics_type_param_constraint_5.ets"
         }
       }

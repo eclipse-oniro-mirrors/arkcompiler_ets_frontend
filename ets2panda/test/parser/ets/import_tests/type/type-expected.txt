@@ -133,8 +133,8 @@
             "program": "type.ets"
           },
           "end": {
-            "line": 18,
-            "column": 7,
+            "line": 16,
+            "column": 11,
             "program": "type.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "type.ets"
         },
         "end": {
-          "line": 18,
-          "column": 7,
+          "line": 16,
+          "column": 11,
           "program": "type.ets"
         }
       }

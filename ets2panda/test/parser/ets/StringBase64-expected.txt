@@ -11751,8 +11751,8 @@
             "program": "StringBase64.ets"
           },
           "end": {
-            "line": 88,
-            "column": 9,
+            "line": 86,
+            "column": 2,
             "program": "StringBase64.ets"
           }
         }
@@ -11764,8 +11764,8 @@
           "program": "StringBase64.ets"
         },
         "end": {
-          "line": 88,
-          "column": 9,
+          "line": 86,
+          "column": 2,
           "program": "StringBase64.ets"
         }
       }

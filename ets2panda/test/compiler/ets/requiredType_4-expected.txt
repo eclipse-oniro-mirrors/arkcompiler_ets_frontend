@@ -265,8 +265,8 @@
             "program": "requiredType_4.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 18,
+            "column": 2,
             "program": "requiredType_4.ets"
           }
         }
@@ -278,8 +278,8 @@
           "program": "requiredType_4.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "requiredType_4.ets"
         }
       }

@@ -1405,8 +1405,8 @@
             "program": "generics_2.ets"
           },
           "end": {
-            "line": 29,
-            "column": 1,
+            "line": 28,
+            "column": 2,
             "program": "generics_2.ets"
           }
         }
@@ -1418,8 +1418,8 @@
           "program": "generics_2.ets"
         },
         "end": {
-          "line": 29,
-          "column": 1,
+          "line": 28,
+          "column": 2,
           "program": "generics_2.ets"
         }
       }

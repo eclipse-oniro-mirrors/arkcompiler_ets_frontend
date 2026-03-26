@@ -282,8 +282,8 @@
             "program": "this_type_valid_return_type.ets"
           },
           "end": {
-            "line": 21,
-            "column": 1,
+            "line": 20,
+            "column": 2,
             "program": "this_type_valid_return_type.ets"
           }
         }
@@ -295,8 +295,8 @@
           "program": "this_type_valid_return_type.ets"
         },
         "end": {
-          "line": 21,
-          "column": 1,
+          "line": 20,
+          "column": 2,
           "program": "this_type_valid_return_type.ets"
         }
       }

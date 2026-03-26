@@ -566,8 +566,8 @@
             "program": "tupleAsTypeParam2.ets"
           },
           "end": {
-            "line": 23,
-            "column": 9,
+            "line": 21,
+            "column": 2,
             "program": "tupleAsTypeParam2.ets"
           }
         }
@@ -579,8 +579,8 @@
           "program": "tupleAsTypeParam2.ets"
         },
         "end": {
-          "line": 23,
-          "column": 9,
+          "line": 21,
+          "column": 2,
           "program": "tupleAsTypeParam2.ets"
         }
       }

@@ -133,8 +133,8 @@
             "program": "generic_function_call_4.ets"
           },
           "end": {
-            "line": 17,
-            "column": 6,
+            "line": 16,
+            "column": 11,
             "program": "generic_function_call_4.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "generic_function_call_4.ets"
         },
         "end": {
-          "line": 17,
-          "column": 6,
+          "line": 16,
+          "column": 11,
           "program": "generic_function_call_4.ets"
         }
       }
@@ -332,8 +332,8 @@
             "program": "generic_function_call_4.ets"
           },
           "end": {
-            "line": 19,
-            "column": 9,
+            "line": 17,
+            "column": 14,
             "program": "generic_function_call_4.ets"
           }
         }
@@ -345,8 +345,8 @@
           "program": "generic_function_call_4.ets"
         },
         "end": {
-          "line": 19,
-          "column": 9,
+          "line": 17,
+          "column": 14,
           "program": "generic_function_call_4.ets"
         }
       }

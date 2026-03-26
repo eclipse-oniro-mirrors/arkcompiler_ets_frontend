@@ -728,8 +728,8 @@
             "program": "Line.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "Line.ets"
           }
         }
@@ -741,8 +741,8 @@
           "program": "Line.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "Line.ets"
         }
       }

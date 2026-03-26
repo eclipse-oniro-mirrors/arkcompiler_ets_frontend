@@ -134,8 +134,8 @@
             "program": "new_expressions.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 2,
             "program": "new_expressions.ets"
           }
         }
@@ -147,8 +147,8 @@
           "program": "new_expressions.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 2,
           "program": "new_expressions.ets"
         }
       }

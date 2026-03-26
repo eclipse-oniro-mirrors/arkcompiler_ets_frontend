@@ -409,8 +409,8 @@
             "program": "asyncfun_lambda_lib.ets"
           },
           "end": {
-            "line": 17,
-            "column": 7,
+            "line": 16,
+            "column": 71,
             "program": "asyncfun_lambda_lib.ets"
           }
         }
@@ -422,8 +422,8 @@
           "program": "asyncfun_lambda_lib.ets"
         },
         "end": {
-          "line": 17,
-          "column": 7,
+          "line": 16,
+          "column": 71,
           "program": "asyncfun_lambda_lib.ets"
         }
       }
@@ -773,8 +773,8 @@
             "program": "asyncfun_lambda_lib.ets"
           },
           "end": {
-            "line": 18,
-            "column": 7,
+            "line": 17,
+            "column": 57,
             "program": "asyncfun_lambda_lib.ets"
           }
         }
@@ -786,8 +786,8 @@
           "program": "asyncfun_lambda_lib.ets"
         },
         "end": {
-          "line": 18,
-          "column": 7,
+          "line": 17,
+          "column": 57,
           "program": "asyncfun_lambda_lib.ets"
         }
       }
@@ -1105,8 +1105,8 @@
             "program": "asyncfun_lambda_lib.ets"
           },
           "end": {
-            "line": 19,
-            "column": 7,
+            "line": 18,
+            "column": 49,
             "program": "asyncfun_lambda_lib.ets"
           }
         }
@@ -1118,8 +1118,8 @@
           "program": "asyncfun_lambda_lib.ets"
         },
         "end": {
-          "line": 19,
-          "column": 7,
+          "line": 18,
+          "column": 49,
           "program": "asyncfun_lambda_lib.ets"
         }
       }
@@ -1377,7 +1377,7 @@
           },
           "end": {
             "line": 19,
-            "column": 48,
+            "column": 47,
             "program": "asyncfun_lambda_lib.ets"
           }
         }
@@ -1390,7 +1390,7 @@
         },
         "end": {
           "line": 19,
-          "column": 48,
+          "column": 47,
           "program": "asyncfun_lambda_lib.ets"
         }
       }

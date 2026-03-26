@@ -236,8 +236,8 @@
             "program": "tuple_types_1.ets"
           },
           "end": {
-            "line": 17,
-            "column": 6,
+            "line": 16,
+            "column": 20,
             "program": "tuple_types_1.ets"
           }
         }
@@ -249,8 +249,8 @@
           "program": "tuple_types_1.ets"
         },
         "end": {
-          "line": 17,
-          "column": 6,
+          "line": 16,
+          "column": 20,
           "program": "tuple_types_1.ets"
         }
       }
@@ -535,8 +535,8 @@
             "program": "tuple_types_1.ets"
           },
           "end": {
-            "line": 19,
-            "column": 5,
+            "line": 17,
+            "column": 30,
             "program": "tuple_types_1.ets"
           }
         }
@@ -548,8 +548,8 @@
           "program": "tuple_types_1.ets"
         },
         "end": {
-          "line": 19,
-          "column": 5,
+          "line": 17,
+          "column": 30,
           "program": "tuple_types_1.ets"
         }
       }

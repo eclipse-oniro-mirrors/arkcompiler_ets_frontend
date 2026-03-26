@@ -133,8 +133,8 @@
             "program": "generic_function_call_1.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 16,
+            "column": 11,
             "program": "generic_function_call_1.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "generic_function_call_1.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 11,
           "program": "generic_function_call_1.ets"
         }
       }

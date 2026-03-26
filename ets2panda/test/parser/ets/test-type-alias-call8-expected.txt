@@ -628,8 +628,8 @@
             "program": "test-type-alias-call8.ets"
           },
           "end": {
-            "line": 24,
-            "column": 1,
+            "line": 23,
+            "column": 2,
             "program": "test-type-alias-call8.ets"
           }
         }
@@ -641,8 +641,8 @@
           "program": "test-type-alias-call8.ets"
         },
         "end": {
-          "line": 24,
-          "column": 1,
+          "line": 23,
+          "column": 2,
           "program": "test-type-alias-call8.ets"
         }
       }

@@ -186,8 +186,8 @@
             "program": "access_modifier_3.ets"
           },
           "end": {
-            "line": 19,
-            "column": 1,
+            "line": 18,
+            "column": 2,
             "program": "access_modifier_3.ets"
           }
         }
@@ -199,8 +199,8 @@
           "program": "access_modifier_3.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "access_modifier_3.ets"
         }
       }

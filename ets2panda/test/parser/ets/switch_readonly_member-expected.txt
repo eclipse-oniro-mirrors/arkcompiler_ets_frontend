@@ -187,8 +187,8 @@
             "program": "switch_readonly_member.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "switch_readonly_member.ets"
           }
         }
@@ -200,8 +200,8 @@
           "program": "switch_readonly_member.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "switch_readonly_member.ets"
         }
       }
@@ -392,8 +392,8 @@
             "program": "switch_readonly_member.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 2,
             "program": "switch_readonly_member.ets"
           }
         }
@@ -405,8 +405,8 @@
           "program": "switch_readonly_member.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 2,
           "program": "switch_readonly_member.ets"
         }
       }

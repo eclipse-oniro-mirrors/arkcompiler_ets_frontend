@@ -290,8 +290,8 @@
             "program": "class_def_varargs_2.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 18,
+            "column": 2,
             "program": "class_def_varargs_2.ets"
           }
         }
@@ -303,8 +303,8 @@
           "program": "class_def_varargs_2.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "class_def_varargs_2.ets"
         }
       }

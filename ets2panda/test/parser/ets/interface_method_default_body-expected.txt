@@ -795,8 +795,8 @@
             "program": "interface_method_default_body.ets"
           },
           "end": {
-            "line": 29,
-            "column": 9,
+            "line": 27,
+            "column": 2,
             "program": "interface_method_default_body.ets"
           }
         }
@@ -808,8 +808,8 @@
           "program": "interface_method_default_body.ets"
         },
         "end": {
-          "line": 29,
-          "column": 9,
+          "line": 27,
+          "column": 2,
           "program": "interface_method_default_body.ets"
         }
       }

@@ -603,8 +603,8 @@
             "program": "ambient_indexer_6.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 18,
+            "column": 2,
             "program": "ambient_indexer_6.ets"
           }
         }
@@ -616,8 +616,8 @@
           "program": "ambient_indexer_6.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "ambient_indexer_6.ets"
         }
       }

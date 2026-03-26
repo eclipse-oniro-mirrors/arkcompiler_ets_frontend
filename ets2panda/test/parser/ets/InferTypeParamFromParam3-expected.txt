@@ -808,8 +808,8 @@
             "program": "InferTypeParamFromParam3.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 50,
             "program": "InferTypeParamFromParam3.ets"
           }
         }
@@ -821,8 +821,8 @@
           "program": "InferTypeParamFromParam3.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 50,
           "program": "InferTypeParamFromParam3.ets"
         }
       }
@@ -1966,8 +1966,8 @@
             "program": "InferTypeParamFromParam3.ets"
           },
           "end": {
-            "line": 26,
-            "column": 9,
+            "line": 24,
+            "column": 2,
             "program": "InferTypeParamFromParam3.ets"
           }
         }
@@ -1979,8 +1979,8 @@
           "program": "InferTypeParamFromParam3.ets"
         },
         "end": {
-          "line": 26,
-          "column": 9,
+          "line": 24,
+          "column": 2,
           "program": "InferTypeParamFromParam3.ets"
         }
       }

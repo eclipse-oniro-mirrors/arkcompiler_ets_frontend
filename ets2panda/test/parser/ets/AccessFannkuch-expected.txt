@@ -6315,8 +6315,8 @@
             "program": "AccessFannkuch.ets"
           },
           "end": {
-            "line": 90,
-            "column": 9,
+            "line": 88,
+            "column": 2,
             "program": "AccessFannkuch.ets"
           }
         }
@@ -6328,8 +6328,8 @@
           "program": "AccessFannkuch.ets"
         },
         "end": {
-          "line": 90,
-          "column": 9,
+          "line": 88,
+          "column": 2,
           "program": "AccessFannkuch.ets"
         }
       }

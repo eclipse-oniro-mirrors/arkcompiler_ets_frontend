@@ -737,8 +737,8 @@
             "program": "class_static_initializer.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "class_static_initializer.ets"
           }
         }
@@ -750,8 +750,8 @@
           "program": "class_static_initializer.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "class_static_initializer.ets"
         }
       }

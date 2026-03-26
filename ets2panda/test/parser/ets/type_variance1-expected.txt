@@ -378,8 +378,8 @@
             "program": "type_variance1.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "type_variance1.ets"
           }
         }
@@ -391,8 +391,8 @@
           "program": "type_variance1.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "type_variance1.ets"
         }
       }
@@ -972,8 +972,8 @@
             "program": "type_variance1.ets"
           },
           "end": {
-            "line": 29,
-            "column": 6,
+            "line": 27,
+            "column": 11,
             "program": "type_variance1.ets"
           }
         }
@@ -985,8 +985,8 @@
           "program": "type_variance1.ets"
         },
         "end": {
-          "line": 29,
-          "column": 6,
+          "line": 27,
+          "column": 11,
           "program": "type_variance1.ets"
         }
       }
@@ -1717,8 +1717,8 @@
             "program": "type_variance1.ets"
           },
           "end": {
-            "line": 36,
-            "column": 6,
+            "line": 34,
+            "column": 2,
             "program": "type_variance1.ets"
           }
         }
@@ -1730,8 +1730,8 @@
           "program": "type_variance1.ets"
         },
         "end": {
-          "line": 36,
-          "column": 6,
+          "line": 34,
+          "column": 2,
           "program": "type_variance1.ets"
         }
       }
@@ -1916,8 +1916,8 @@
             "program": "type_variance1.ets"
           },
           "end": {
-            "line": 38,
-            "column": 9,
+            "line": 36,
+            "column": 15,
             "program": "type_variance1.ets"
           }
         }
@@ -1929,8 +1929,8 @@
           "program": "type_variance1.ets"
         },
         "end": {
-          "line": 38,
-          "column": 9,
+          "line": 36,
+          "column": 15,
           "program": "type_variance1.ets"
         }
       }

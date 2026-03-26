@@ -456,8 +456,8 @@
             "program": "invalidInheritance3.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "invalidInheritance3.ets"
           }
         }
@@ -469,8 +469,8 @@
           "program": "invalidInheritance3.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "invalidInheritance3.ets"
         }
       }
@@ -721,8 +721,8 @@
             "program": "invalidInheritance3.ets"
           },
           "end": {
-            "line": 23,
-            "column": 1,
+            "line": 22,
+            "column": 2,
             "program": "invalidInheritance3.ets"
           }
         }
@@ -734,8 +734,8 @@
           "program": "invalidInheritance3.ets"
         },
         "end": {
-          "line": 23,
-          "column": 1,
+          "line": 22,
+          "column": 2,
           "program": "invalidInheritance3.ets"
         }
       }
@@ -906,4 +906,4 @@
     }
   }
 }
-[invalidInheritance3.ets:21:5] Semantic error ESE0141: a in B cannot override a in A because overriding type is not compatible with the base type.
+[invalidInheritance3.ets:21:5] Warning W52491: a in B cannot override a in A because overriding type is not compatible with the base type.

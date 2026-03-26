@@ -874,8 +874,8 @@
             "program": "test-type-alias-call5.ets"
           },
           "end": {
-            "line": 26,
-            "column": 1,
+            "line": 25,
+            "column": 2,
             "program": "test-type-alias-call5.ets"
           }
         }
@@ -887,8 +887,8 @@
           "program": "test-type-alias-call5.ets"
         },
         "end": {
-          "line": 26,
-          "column": 1,
+          "line": 25,
+          "column": 2,
           "program": "test-type-alias-call5.ets"
         }
       }

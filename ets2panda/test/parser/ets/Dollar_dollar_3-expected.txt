@@ -133,8 +133,8 @@
             "program": "Dollar_dollar_3.ets"
           },
           "end": {
-            "line": 17,
-            "column": 4,
+            "line": 16,
+            "column": 11,
             "program": "Dollar_dollar_3.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "Dollar_dollar_3.ets"
         },
         "end": {
-          "line": 17,
-          "column": 4,
+          "line": 16,
+          "column": 11,
           "program": "Dollar_dollar_3.ets"
         }
       }

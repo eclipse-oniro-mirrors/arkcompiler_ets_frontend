@@ -133,8 +133,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 30,
-            "column": 6,
+            "line": 29,
+            "column": 12,
             "program": "union_types_merging.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 30,
-          "column": 6,
+          "line": 29,
+          "column": 12,
           "program": "union_types_merging.ets"
         }
       }
@@ -329,8 +329,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 31,
-            "column": 6,
+            "line": 30,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -342,8 +342,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 31,
-          "column": 6,
+          "line": 30,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -525,8 +525,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 32,
-            "column": 6,
+            "line": 31,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -538,8 +538,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 32,
-          "column": 6,
+          "line": 31,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -721,8 +721,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 33,
-            "column": 6,
+            "line": 32,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -734,8 +734,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 33,
-          "column": 6,
+          "line": 32,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -917,8 +917,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 35,
-            "column": 6,
+            "line": 33,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -930,8 +930,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 35,
-          "column": 6,
+          "line": 33,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -1068,8 +1068,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 36,
-            "column": 6,
+            "line": 35,
+            "column": 12,
             "program": "union_types_merging.ets"
           }
         }
@@ -1081,8 +1081,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 36,
-          "column": 6,
+          "line": 35,
+          "column": 12,
           "program": "union_types_merging.ets"
         }
       }
@@ -1264,8 +1264,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 37,
-            "column": 6,
+            "line": 36,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -1277,8 +1277,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 37,
-          "column": 6,
+          "line": 36,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -1460,8 +1460,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 38,
-            "column": 6,
+            "line": 37,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -1473,8 +1473,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 38,
-          "column": 6,
+          "line": 37,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }
@@ -1656,8 +1656,8 @@
             "program": "union_types_merging.ets"
           },
           "end": {
-            "line": 39,
-            "column": 6,
+            "line": 38,
+            "column": 23,
             "program": "union_types_merging.ets"
           }
         }
@@ -1669,8 +1669,8 @@
           "program": "union_types_merging.ets"
         },
         "end": {
-          "line": 39,
-          "column": 6,
+          "line": 38,
+          "column": 23,
           "program": "union_types_merging.ets"
         }
       }

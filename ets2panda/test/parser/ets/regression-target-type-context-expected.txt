@@ -1441,8 +1441,8 @@
             "program": "regression-target-type-context.ets"
           },
           "end": {
-            "line": 33,
-            "column": 9,
+            "line": 31,
+            "column": 2,
             "program": "regression-target-type-context.ets"
           }
         }
@@ -1454,8 +1454,8 @@
           "program": "regression-target-type-context.ets"
         },
         "end": {
-          "line": 33,
-          "column": 9,
+          "line": 31,
+          "column": 2,
           "program": "regression-target-type-context.ets"
         }
       }

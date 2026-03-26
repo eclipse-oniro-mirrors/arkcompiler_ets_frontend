@@ -953,8 +953,8 @@
             "program": "BitopsBitwiseAnd.ets"
           },
           "end": {
-            "line": 30,
-            "column": 9,
+            "line": 28,
+            "column": 2,
             "program": "BitopsBitwiseAnd.ets"
           }
         }
@@ -966,8 +966,8 @@
           "program": "BitopsBitwiseAnd.ets"
         },
         "end": {
-          "line": 30,
-          "column": 9,
+          "line": 28,
+          "column": 2,
           "program": "BitopsBitwiseAnd.ets"
         }
       }

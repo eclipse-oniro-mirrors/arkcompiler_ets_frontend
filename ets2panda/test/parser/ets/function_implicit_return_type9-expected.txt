@@ -314,8 +314,8 @@
             "program": "function_implicit_return_type9.ets"
           },
           "end": {
-            "line": 23,
-            "column": 9,
+            "line": 21,
+            "column": 2,
             "program": "function_implicit_return_type9.ets"
           }
         }
@@ -327,8 +327,8 @@
           "program": "function_implicit_return_type9.ets"
         },
         "end": {
-          "line": 23,
-          "column": 9,
+          "line": 21,
+          "column": 2,
           "program": "function_implicit_return_type9.ets"
         }
       }

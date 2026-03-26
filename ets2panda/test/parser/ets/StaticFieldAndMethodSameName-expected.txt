@@ -351,8 +351,8 @@
             "program": "StaticFieldAndMethodSameName.ets"
           },
           "end": {
-            "line": 21,
-            "column": 9,
+            "line": 19,
+            "column": 2,
             "program": "StaticFieldAndMethodSameName.ets"
           }
         }
@@ -364,8 +364,8 @@
           "program": "StaticFieldAndMethodSameName.ets"
         },
         "end": {
-          "line": 21,
-          "column": 9,
+          "line": 19,
+          "column": 2,
           "program": "StaticFieldAndMethodSameName.ets"
         }
       }

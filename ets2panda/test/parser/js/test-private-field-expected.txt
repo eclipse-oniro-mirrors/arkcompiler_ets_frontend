@@ -1062,8 +1062,8 @@
                     "program": "test-private-field.js"
                   },
                   "end": {
-                    "line": 31,
-                    "column": 2,
+                    "line": 30,
+                    "column": 6,
                     "program": "test-private-field.js"
                   }
                 }
@@ -1075,8 +1075,8 @@
                   "program": "test-private-field.js"
                 },
                 "end": {
-                  "line": 31,
-                  "column": 2,
+                  "line": 30,
+                  "column": 6,
                   "program": "test-private-field.js"
                 }
               }
@@ -1094,8 +1094,8 @@
                 "program": "test-private-field.js"
               },
               "end": {
-                "line": 31,
-                "column": 2,
+                "line": 30,
+                "column": 6,
                 "program": "test-private-field.js"
               }
             }
@@ -1108,8 +1108,8 @@
             "program": "test-private-field.js"
           },
           "end": {
-            "line": 32,
-            "column": 1,
+            "line": 31,
+            "column": 2,
             "program": "test-private-field.js"
           }
         }
@@ -1121,8 +1121,8 @@
           "program": "test-private-field.js"
         },
         "end": {
-          "line": 32,
-          "column": 1,
+          "line": 31,
+          "column": 2,
           "program": "test-private-field.js"
         }
       }

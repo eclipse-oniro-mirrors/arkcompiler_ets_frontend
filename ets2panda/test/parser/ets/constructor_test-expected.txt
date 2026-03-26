@@ -592,8 +592,8 @@
             "program": "constructor_test.ets"
           },
           "end": {
-            "line": 29,
-            "column": 6,
+            "line": 27,
+            "column": 2,
             "program": "constructor_test.ets"
           }
         }
@@ -605,8 +605,8 @@
           "program": "constructor_test.ets"
         },
         "end": {
-          "line": 29,
-          "column": 6,
+          "line": 27,
+          "column": 2,
           "program": "constructor_test.ets"
         }
       }
@@ -1102,8 +1102,8 @@
             "program": "constructor_test.ets"
           },
           "end": {
-            "line": 39,
-            "column": 1,
+            "line": 38,
+            "column": 2,
             "program": "constructor_test.ets"
           }
         }
@@ -1115,8 +1115,8 @@
           "program": "constructor_test.ets"
         },
         "end": {
-          "line": 39,
-          "column": 1,
+          "line": 38,
+          "column": 2,
           "program": "constructor_test.ets"
         }
       }

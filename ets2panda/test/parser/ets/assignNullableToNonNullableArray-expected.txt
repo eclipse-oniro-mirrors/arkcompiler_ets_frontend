@@ -133,8 +133,8 @@
             "program": "assignNullableToNonNullableArray.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 16,
+            "column": 11,
             "program": "assignNullableToNonNullableArray.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "assignNullableToNonNullableArray.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 11,
           "program": "assignNullableToNonNullableArray.ets"
         }
       }

@@ -229,8 +229,8 @@
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 19,
+            "column": 11,
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           }
         }
@@ -242,8 +242,8 @@
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 19,
+          "column": 11,
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         }
       }
@@ -548,8 +548,8 @@
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           },
           "end": {
-            "line": 21,
-            "column": 6,
+            "line": 20,
+            "column": 37,
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           }
         }
@@ -561,8 +561,8 @@
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         },
         "end": {
-          "line": 21,
-          "column": 6,
+          "line": 20,
+          "column": 37,
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         }
       }
@@ -744,8 +744,8 @@
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           },
           "end": {
-            "line": 23,
-            "column": 9,
+            "line": 21,
+            "column": 21,
             "program": "method-resolution-class-and-interface-in-signatures_5.ets"
           }
         }
@@ -757,8 +757,8 @@
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         },
         "end": {
-          "line": 23,
-          "column": 9,
+          "line": 21,
+          "column": 21,
           "program": "method-resolution-class-and-interface-in-signatures_5.ets"
         }
       }

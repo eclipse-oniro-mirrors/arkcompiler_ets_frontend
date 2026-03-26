@@ -582,8 +582,8 @@
             "program": "typeVarReferenceFromStaticContext2.ets"
           },
           "end": {
-            "line": 21,
-            "column": 1,
+            "line": 20,
+            "column": 2,
             "program": "typeVarReferenceFromStaticContext2.ets"
           }
         }
@@ -595,8 +595,8 @@
           "program": "typeVarReferenceFromStaticContext2.ets"
         },
         "end": {
-          "line": 21,
-          "column": 1,
+          "line": 20,
+          "column": 2,
           "program": "typeVarReferenceFromStaticContext2.ets"
         }
       }

@@ -918,8 +918,8 @@
             "program": "test-ts-parameter-property.ts"
           },
           "end": {
-            "line": 36,
-            "column": 6,
+            "line": 34,
+            "column": 2,
             "program": "test-ts-parameter-property.ts"
           }
         }
@@ -931,8 +931,8 @@
           "program": "test-ts-parameter-property.ts"
         },
         "end": {
-          "line": 36,
-          "column": 6,
+          "line": 34,
+          "column": 2,
           "program": "test-ts-parameter-property.ts"
         }
       }
@@ -1071,8 +1071,8 @@
             "program": "test-ts-parameter-property.ts"
           },
           "end": {
-            "line": 40,
-            "column": 6,
+            "line": 38,
+            "column": 2,
             "program": "test-ts-parameter-property.ts"
           }
         }
@@ -1084,8 +1084,8 @@
           "program": "test-ts-parameter-property.ts"
         },
         "end": {
-          "line": 40,
-          "column": 6,
+          "line": 38,
+          "column": 2,
           "program": "test-ts-parameter-property.ts"
         }
       }
@@ -1243,8 +1243,8 @@
             "program": "test-ts-parameter-property.ts"
           },
           "end": {
-            "line": 44,
-            "column": 6,
+            "line": 42,
+            "column": 2,
             "program": "test-ts-parameter-property.ts"
           }
         }
@@ -1256,8 +1256,8 @@
           "program": "test-ts-parameter-property.ts"
         },
         "end": {
-          "line": 44,
-          "column": 6,
+          "line": 42,
+          "column": 2,
           "program": "test-ts-parameter-property.ts"
         }
       }

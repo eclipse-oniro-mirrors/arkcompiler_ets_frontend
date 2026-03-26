@@ -1568,8 +1568,8 @@
             "program": "AccessBinaryTrees.ets"
           },
           "end": {
-            "line": 35,
-            "column": 7,
+            "line": 33,
+            "column": 2,
             "program": "AccessBinaryTrees.ets"
           }
         }
@@ -1581,8 +1581,8 @@
           "program": "AccessBinaryTrees.ets"
         },
         "end": {
-          "line": 35,
-          "column": 7,
+          "line": 33,
+          "column": 2,
           "program": "AccessBinaryTrees.ets"
         }
       }
@@ -5344,8 +5344,8 @@
             "program": "AccessBinaryTrees.ets"
           },
           "end": {
-            "line": 79,
-            "column": 9,
+            "line": 77,
+            "column": 2,
             "program": "AccessBinaryTrees.ets"
           }
         }
@@ -5357,8 +5357,8 @@
           "program": "AccessBinaryTrees.ets"
         },
         "end": {
-          "line": 79,
-          "column": 9,
+          "line": 77,
+          "column": 2,
           "program": "AccessBinaryTrees.ets"
         }
       }

@@ -133,8 +133,8 @@
             "program": "cast_expressions3.ets"
           },
           "end": {
-            "line": 17,
-            "column": 10,
+            "line": 16,
+            "column": 11,
             "program": "cast_expressions3.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "cast_expressions3.ets"
         },
         "end": {
-          "line": 17,
-          "column": 10,
+          "line": 16,
+          "column": 11,
           "program": "cast_expressions3.ets"
         }
       }
@@ -439,8 +439,8 @@
             "program": "cast_expressions3.ets"
           },
           "end": {
-            "line": 19,
-            "column": 6,
+            "line": 18,
+            "column": 34,
             "program": "cast_expressions3.ets"
           }
         }
@@ -452,8 +452,8 @@
           "program": "cast_expressions3.ets"
         },
         "end": {
-          "line": 19,
-          "column": 6,
+          "line": 18,
+          "column": 34,
           "program": "cast_expressions3.ets"
         }
       }
@@ -635,8 +635,8 @@
             "program": "cast_expressions3.ets"
           },
           "end": {
-            "line": 21,
-            "column": 9,
+            "line": 19,
+            "column": 21,
             "program": "cast_expressions3.ets"
           }
         }
@@ -648,8 +648,8 @@
           "program": "cast_expressions3.ets"
         },
         "end": {
-          "line": 21,
-          "column": 9,
+          "line": 19,
+          "column": 21,
           "program": "cast_expressions3.ets"
         }
       }

@@ -393,8 +393,8 @@
             "program": "this_equality.ets"
           },
           "end": {
-            "line": 24,
-            "column": 1,
+            "line": 23,
+            "column": 2,
             "program": "this_equality.ets"
           }
         }
@@ -406,8 +406,8 @@
           "program": "this_equality.ets"
         },
         "end": {
-          "line": 24,
-          "column": 1,
+          "line": 23,
+          "column": 2,
           "program": "this_equality.ets"
         }
       }

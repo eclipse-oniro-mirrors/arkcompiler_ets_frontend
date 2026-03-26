@@ -1789,8 +1789,8 @@
             "program": "binary_operations.ets"
           },
           "end": {
-            "line": 42,
-            "column": 1,
+            "line": 41,
+            "column": 2,
             "program": "binary_operations.ets"
           }
         }
@@ -1802,8 +1802,8 @@
           "program": "binary_operations.ets"
         },
         "end": {
-          "line": 42,
-          "column": 1,
+          "line": 41,
+          "column": 2,
           "program": "binary_operations.ets"
         }
       }

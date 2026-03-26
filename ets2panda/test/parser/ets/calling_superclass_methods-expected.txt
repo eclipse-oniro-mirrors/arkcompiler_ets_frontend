@@ -251,8 +251,8 @@
             "program": "calling_superclass_methods.ets"
           },
           "end": {
-            "line": 22,
-            "column": 6,
+            "line": 20,
+            "column": 2,
             "program": "calling_superclass_methods.ets"
           }
         }
@@ -264,8 +264,8 @@
           "program": "calling_superclass_methods.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 2,
           "program": "calling_superclass_methods.ets"
         }
       }
@@ -631,8 +631,8 @@
             "program": "calling_superclass_methods.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "calling_superclass_methods.ets"
           }
         }
@@ -644,8 +644,8 @@
           "program": "calling_superclass_methods.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "calling_superclass_methods.ets"
         }
       }

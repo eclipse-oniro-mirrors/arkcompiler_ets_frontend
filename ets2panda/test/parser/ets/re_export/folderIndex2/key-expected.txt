@@ -233,8 +233,8 @@
             "program": "key.ets"
           },
           "end": {
-            "line": 19,
-            "column": 7,
+            "line": 18,
+            "column": 2,
             "program": "key.ets"
           }
         }
@@ -246,8 +246,8 @@
           "program": "key.ets"
         },
         "end": {
-          "line": 19,
-          "column": 7,
+          "line": 18,
+          "column": 2,
           "program": "key.ets"
         }
       }
@@ -484,8 +484,8 @@
             "program": "key.ets"
           },
           "end": {
-            "line": 22,
-            "column": 1,
+            "line": 21,
+            "column": 2,
             "program": "key.ets"
           }
         }
@@ -497,8 +497,8 @@
           "program": "key.ets"
         },
         "end": {
-          "line": 22,
-          "column": 1,
+          "line": 21,
+          "column": 2,
           "program": "key.ets"
         }
       }

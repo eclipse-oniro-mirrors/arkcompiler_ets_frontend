@@ -670,8 +670,8 @@
             "program": "proxy_method.ets"
           },
           "end": {
-            "line": 22,
-            "column": 9,
+            "line": 20,
+            "column": 2,
             "program": "proxy_method.ets"
           }
         }
@@ -683,8 +683,8 @@
           "program": "proxy_method.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 2,
           "program": "proxy_method.ets"
         }
       }

@@ -345,8 +345,8 @@
             "program": "ambient_call_signature.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 18,
+            "column": 2,
             "program": "ambient_call_signature.ets"
           }
         }
@@ -358,8 +358,8 @@
           "program": "ambient_call_signature.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "ambient_call_signature.ets"
         }
       }

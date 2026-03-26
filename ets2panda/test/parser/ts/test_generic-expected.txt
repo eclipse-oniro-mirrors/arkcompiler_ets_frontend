@@ -4371,8 +4371,8 @@
             "program": "test_generic.ts"
           },
           "end": {
-            "line": 53,
-            "column": 6,
+            "line": 51,
+            "column": 2,
             "program": "test_generic.ts"
           }
         }
@@ -4384,8 +4384,8 @@
           "program": "test_generic.ts"
         },
         "end": {
-          "line": 53,
-          "column": 6,
+          "line": 51,
+          "column": 2,
           "program": "test_generic.ts"
         }
       }
@@ -4809,8 +4809,8 @@
             "program": "test_generic.ts"
           },
           "end": {
-            "line": 57,
-            "column": 6,
+            "line": 55,
+            "column": 2,
             "program": "test_generic.ts"
           }
         }
@@ -4822,8 +4822,8 @@
           "program": "test_generic.ts"
         },
         "end": {
-          "line": 57,
-          "column": 6,
+          "line": 55,
+          "column": 2,
           "program": "test_generic.ts"
         }
       }
@@ -5342,8 +5342,8 @@
             "program": "test_generic.ts"
           },
           "end": {
-            "line": 61,
-            "column": 4,
+            "line": 59,
+            "column": 2,
             "program": "test_generic.ts"
           }
         }
@@ -5355,8 +5355,8 @@
           "program": "test_generic.ts"
         },
         "end": {
-          "line": 61,
-          "column": 4,
+          "line": 59,
+          "column": 2,
           "program": "test_generic.ts"
         }
       }

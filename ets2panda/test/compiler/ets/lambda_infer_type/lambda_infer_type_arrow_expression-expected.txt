@@ -542,8 +542,8 @@
             "program": "lambda_infer_type_arrow_expression.ets"
           },
           "end": {
-            "line": 22,
-            "column": 1,
+            "line": 21,
+            "column": 2,
             "program": "lambda_infer_type_arrow_expression.ets"
           }
         }
@@ -555,8 +555,8 @@
           "program": "lambda_infer_type_arrow_expression.ets"
         },
         "end": {
-          "line": 22,
-          "column": 1,
+          "line": 21,
+          "column": 2,
           "program": "lambda_infer_type_arrow_expression.ets"
         }
       }

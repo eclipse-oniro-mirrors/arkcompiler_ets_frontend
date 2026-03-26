@@ -181,8 +181,8 @@
             "program": "generics_5.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 17,
+            "column": 16,
             "program": "generics_5.ets"
           }
         }
@@ -194,8 +194,8 @@
           "program": "generics_5.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 17,
+          "column": 16,
           "program": "generics_5.ets"
         }
       }

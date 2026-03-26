@@ -115,7 +115,7 @@ QuickInfo ExpectResultKeywordsClass()
     const std::string expectedFileName = "GetFileContentsOfKeywordsClass.ets";
     const std::string kind = "class";
     size_t const start = 21;
-    size_t const length = 19;
+    size_t const length = 10;
     TextSpan span(start, length);
     const std::string kindModifiers = "static public";
     std::vector<SymbolDisplayPart> expected;

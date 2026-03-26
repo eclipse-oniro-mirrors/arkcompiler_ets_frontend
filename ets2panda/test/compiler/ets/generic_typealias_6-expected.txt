@@ -290,8 +290,8 @@
             "program": "generic_typealias_6.ets"
           },
           "end": {
-            "line": 18,
-            "column": 5,
+            "line": 16,
+            "column": 36,
             "program": "generic_typealias_6.ets"
           }
         }
@@ -303,8 +303,8 @@
           "program": "generic_typealias_6.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 16,
+          "column": 36,
           "program": "generic_typealias_6.ets"
         }
       }

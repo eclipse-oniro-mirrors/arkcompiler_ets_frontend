@@ -133,8 +133,8 @@
             "program": "callFunctionWithNullableParam.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 16,
+            "column": 11,
             "program": "callFunctionWithNullableParam.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "callFunctionWithNullableParam.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 16,
+          "column": 11,
           "program": "callFunctionWithNullableParam.ets"
         }
       }

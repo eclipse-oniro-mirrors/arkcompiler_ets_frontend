@@ -134,8 +134,8 @@
             "program": "constructor_super_call3.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "constructor_super_call3.ets"
           }
         }
@@ -147,8 +147,8 @@
           "program": "constructor_super_call3.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "constructor_super_call3.ets"
         }
       }
@@ -378,8 +378,8 @@
             "program": "constructor_super_call3.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "constructor_super_call3.ets"
           }
         }
@@ -391,8 +391,8 @@
           "program": "constructor_super_call3.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "constructor_super_call3.ets"
         }
       }

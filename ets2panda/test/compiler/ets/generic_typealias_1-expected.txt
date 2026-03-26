@@ -571,8 +571,8 @@
             "program": "generic_typealias_1.ets"
           },
           "end": {
-            "line": 22,
-            "column": 9,
+            "line": 20,
+            "column": 13,
             "program": "generic_typealias_1.ets"
           }
         }
@@ -584,8 +584,8 @@
           "program": "generic_typealias_1.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 13,
           "program": "generic_typealias_1.ets"
         }
       }

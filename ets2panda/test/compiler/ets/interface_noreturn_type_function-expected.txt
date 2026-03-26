@@ -379,8 +379,8 @@
             "program": "interface_noreturn_type_function.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 24,
             "program": "interface_noreturn_type_function.ets"
           }
         }
@@ -392,8 +392,8 @@
           "program": "interface_noreturn_type_function.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 24,
           "program": "interface_noreturn_type_function.ets"
         }
       }
