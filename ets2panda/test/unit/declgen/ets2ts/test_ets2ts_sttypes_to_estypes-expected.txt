@@ -229,3 +229,21 @@ export declare class ComplexNestedStructure {
     public constructor();
     public processComplexStructure(input: Map<string, st.Array<Set<number>>>): st.Array<Map<number, st.Set<Array<string>>>>;
 }
+export declare class Ui {
+    @State
+    public uiEsArray: Array<string>;
+    @State
+    public uiStArray: st.Array<string>;
+    constructor();
+}
+export declare namespace ns {
+    const namespacedEsArray: Array<number>;
+    const namespacedStArray: st.Array<number>;
+    class Ui {
+        @State
+        public uiEsArray: Array<string>;
+        @State
+        public uiStArray: st.Array<string>;
+        constructor();
+    }
+}
