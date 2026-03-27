@@ -84,6 +84,7 @@ export class Ets2panda {
     private readonly plugins: PluginsConfig;
     private readonly buildSdkPath: string;
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
+    private readonly declgenV2OutDir: string;
     private readonly cacheDir: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
     private readonly recordType?: 'ON' | 'OFF';
@@ -102,6 +103,7 @@ export class Ets2panda {
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
         this.recordType = buildConfig.recordType;
+        this.declgenV2OutDir = buildConfig.declgenV2OutPath;
         this.pluginDriver.initPlugins(buildConfig);
         this.projectRootPath = buildConfig.projectRootPath;
         this.debugBuild = (buildConfig.buildMode === BUILD_MODE.DEBUG);
@@ -290,9 +292,9 @@ export class Ets2panda {
                 // since es2panda doesn't know about ohos modules right now
                 const relativeDeclPath = changeFileExtension(
                     path.relative(job.moduleRoot, input),
-                    ETSCACHE_SUFFIX
+                    DECL_ETS_SUFFIX
                 )
-                const outputDeclFilePath = path.resolve(this.cacheDir, relativeDeclPath);
+                const outputDeclFilePath = path.resolve(this.declgenV2OutDir, relativeDeclPath);
                 ensurePathExists(outputDeclFilePath)
 
                 // .etscache files are generated separately from .abc file right now
@@ -399,10 +401,10 @@ export class Ets2panda {
                     // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(
                         path.relative(job.moduleRoot, fi.input),
-                        ETSCACHE_SUFFIX
+                        DECL_ETS_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
-                        this.cacheDir,
+                        this.declgenV2OutDir,
                         relative
                     )
                     ensurePathExists(declEtsOutputPath);
