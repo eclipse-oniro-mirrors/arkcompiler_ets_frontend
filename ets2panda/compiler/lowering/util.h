@@ -63,6 +63,9 @@ bool IsAnonymousClassType(const checker::Type *type);
 bool ClassDefinitionIsEnumTransformed(const ir::AstNode *node);
 ir::Expression *CreateUninitializedFixedArray(public_lib::Context *ctx, ir::Expression *arraySize,
                                               checker::Type *arrayType);
+
+ir::Expression *CreateUninitializedResizableArray(public_lib::Context *ctx, ir::Expression *arraySize,
+                                                  checker::Type *arrayType);
 }  // namespace ark::es2panda::compiler
 
 #endif  // ES2PANDA_COMPILER_LOWERING_UTIL_H

@@ -107,11 +107,11 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     std::stringstream newArrayDeclareStr;
     std::vector<ir::AstNode *> newStmts;
     if (array->TsType()->IsETSResizableArrayType()) {
-        newArrayDeclareStr << "let @@I1: Array<@@T2> = new Array<@@T3>(@@I4);" << std::endl;
+        newArrayDeclareStr << "let @@I1: @@T2 = @@E3;" << std::endl;
+        auto *typeNode = checker->AllocNode<ir::OpaqueTypeNode>(array->TsType(), allocator);
         newStmts.emplace_back(newArrayId->Clone(allocator, nullptr));
-        newStmts.emplace_back(checker->AllocNode<ir::OpaqueTypeNode>(arrayElementType, allocator));
-        newStmts.emplace_back(checker->AllocNode<ir::OpaqueTypeNode>(arrayElementType, allocator));
-        newStmts.emplace_back(newArrayLengthId);
+        newStmts.emplace_back(typeNode);
+        newStmts.emplace_back(CreateUninitializedResizableArray(ctx, newArrayLengthId, array->TsType()));
     } else {
         newArrayDeclareStr << "let @@I1 = @@E2;" << std::endl;
         newStmts.emplace_back(newArrayId->Clone(allocator, nullptr));

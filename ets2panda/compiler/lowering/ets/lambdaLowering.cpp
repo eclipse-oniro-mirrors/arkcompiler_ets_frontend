@@ -825,7 +825,7 @@ static std::string GetArrayReallocationStringResizableArray(std::size_t startIdx
 {
     std::stringstream statements;
     statements << "let @@I1: int = @@I2.length > " << startIdx << " ? (@@I3.length - " << startIdx << ") : 0;";
-    statements << "let @@I4 = new Array<@@T5>(@@I6);";
+    statements << "let @@I4: Array<@@T5> = @@E6;";
     statements << "for (let i: int = 0; i < @@I7; i = i + 1) {";
     statements << "    @@I8.$_set(i, @@I9[i + " << startIdx << "] as @@T10);";
     statements << "}";
@@ -863,17 +863,18 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
                                           checker->CreateETSArrayType(elementType, isValueArray)),
             lciInfo->restArgumentIdentifier, tmpArray, restParameterLen->Clone(allocator, nullptr),
             lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, elementType);
-        std::cout << args->DumpEtsSrc() << std::endl;
     } else {
         ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType() ||
                         restParameterSubstituteType->IsETSReadonlyArrayType());
-        auto *typeNode =
-            allocator->New<ir::OpaqueTypeNode>(checker->GetElementTypeOfArray(restParameterSubstituteType), allocator);
-        auto restParameterLenView = GenName(allocator).View();
+        auto *arrayelementType = checker->GetElementTypeOfArray(restParameterSubstituteType);
+        auto restParameterLen = Gensym(allocator);
         args = parser->CreateFormattedStatement(
-            GetArrayReallocationStringResizableArray(startIdx), restParameterLenView, lciInfo->restParameterIdentifier,
-            lciInfo->restParameterIdentifier, lciInfo->restArgumentIdentifier, typeNode, restParameterLenView,
-            restParameterLenView, lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, typeNode);
+            GetArrayReallocationStringResizableArray(startIdx), restParameterLen, lciInfo->restParameterIdentifier,
+            lciInfo->restParameterIdentifier, lciInfo->restArgumentIdentifier, arrayelementType,
+            CreateUninitializedResizableArray(ctx, restParameterLen->Clone(allocator, nullptr),
+                                              checker->CreateETSResizableArrayType(arrayelementType)),
+            restParameterLen->Clone(allocator, nullptr), lciInfo->restArgumentIdentifier,
+            lciInfo->restParameterIdentifier, arrayelementType);
     }
     ES2PANDA_ASSERT(args != nullptr);
     return ArenaVector<ir::Statement *>(args->AsBlockStatement()->Statements());

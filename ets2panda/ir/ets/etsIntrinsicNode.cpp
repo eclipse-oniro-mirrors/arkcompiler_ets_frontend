@@ -18,6 +18,7 @@
 
 #include "checker/ETSchecker.h"
 #include "compiler/core/ETSGen.h"
+#include "public/public.h"
 
 namespace ark::es2panda::ir {
 
@@ -617,6 +618,46 @@ public:
         ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), intrin->TsType()));
     }
 };
+
+class ETSIntrinsicCreateRawResizableArray final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "createrawresizablearray";
+    }
+
+    checker::Type *ExpectedTypeAt(checker::ETSChecker *checker, size_t idx) const override
+    {
+        if (idx == 0U) {
+            return checker->GlobalIntType();
+        }
+        return nullptr;
+    }
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+        if (intrin->Arguments().size() != 3U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+
+        return intrin->SetTsType(intrin->Arguments()[2U]->TsType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
+        auto size = intrin->Arguments()[0U];
+        auto initializer = intrin->Arguments()[1U];
+        size->Compile(etsg);
+        initializer->Compile(etsg);
+
+        auto createVar = intrin->TsType()->AsETSObjectType()->StaticMethods()["create"];
+        ArenaVector<ir::Expression *> args(etsg->Context()->Allocator()->Adapter());
+        args.emplace_back(size);
+        args.emplace_back(initializer);
+        auto signature = createVar->Declaration()->Node()->AsMethodDefinition()->Function()->Signature();
+        etsg->CallExact(intrin, signature, args);
+    }
+};
 // NOLINTNEXTLINE (cert-err58-cpp)
 const EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::INFOS = EtsIntrinsicInfo::InitIntrinsicInfos();
 
@@ -672,6 +713,7 @@ EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
     registerIntrin(std::make_unique<ETSIntrinsicAnyCallThis>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyIsinstance>());
     registerIntrin(std::make_unique<ETSIntrinsicCreateRawFixedArray>());
+    registerIntrin(std::make_unique<ETSIntrinsicCreateRawResizableArray>());
     registerIntrin(std::make_unique<ETSIntrinsicAsyncDispatch>());
     return infos;
 }
