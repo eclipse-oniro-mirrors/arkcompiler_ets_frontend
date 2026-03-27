@@ -88,6 +88,16 @@ exclusionlist:
   - "(^|[\\/])foundation[\\/]ability[\\/]dmsfwk([\\/]|$)"
   - "(^|[\\/])foundation[\\/]ability[\\/]form_fwk([\\/]|$)"
   - "(^|[\\/])foundation[\\/]arkui[\\/]ace_engine([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkcompiler[\\/]arkts_module_test([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_c_arkui_test_api15_static([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_component_apilack_static([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_component_common_attrss([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_component_seven([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_noui([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_XNode([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_animation([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_commonAttrsDialog([\\/]|$)"
+  - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_commonAttrsLayout([\\/]|$)"
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_commonAttrsOther([\\/]|$)"
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_commonAttrsVisual([\\/]|$)"
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_commonEvents([\\/]|$)"
@@ -108,7 +118,7 @@ exclusionlist:
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_picker([\\/]|$)"
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_platform([\\/]|$)"
   - "(^|[\\/])test[\\/]xts[\\/]acts[\\/]arkui[\\/]ace_ets_module_ui[\\/]ace_ets_module_richeditor_undefined_static([\\/]|$)"
-  
+
 - name: "override_field"
   paths:
   - ".*[\\/]ability[\\/]ability_runtime[\\/]frameworks[\\/]ets[\\/]ets[\\/].+\\.ets$"
