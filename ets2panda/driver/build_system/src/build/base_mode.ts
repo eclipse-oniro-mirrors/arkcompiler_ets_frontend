@@ -425,17 +425,22 @@ export abstract class BaseMode {
         return this.buildConfig.enableDebugOutput;
     }
 
-    private compile(id: string, job: CompileJobInfo): boolean {
+    private compile(id: string, job: CompileJobInfo, incremental: boolean = true): boolean {
         const ets2panda = Ets2panda.getInstance();
         let errOccurred = false;
         ets2panda.initalize();
         try {
-            ets2panda.compile(id, job)
+            ets2panda.compile(id, job, incremental)
         } catch (error) {
             if (error instanceof DriverError) {
+                // Report the error
                 this.logger.printError(error.logData);
                 errOccurred = true;
+            } else {
+                // Propagate the error further
+                throw error;
             }
+
         } finally {
             ets2panda.finalize()
         }
@@ -451,6 +456,12 @@ export abstract class BaseMode {
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
             return;
+        }
+
+        if (this.enableDebugOutput) {
+            for (const node of buildGraph.nodes) {
+                this.logger.printDebug(`DepGraph node: ${node.id}: ${JSON.stringify(node.data, null, 1)}`);
+            }
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SEQUENTIAL));
@@ -475,45 +486,27 @@ export abstract class BaseMode {
                 // Compile cluster simultaneously
                 this.logger.printDebug('Compiling cluster....')
                 this.logger.printDebug(`${(job.content as FileInfo[]).map((fi: FileInfo) => fi.input)}`)
-                const res = this.compileSimultaneous(id, job)
-                success = res && success;
             } else {
-                const res = this.compile(id, job)
-                success = res && success;
+                this.logger.printDebug('Compiling file....')
+                this.logger.printDebug(`${(job.content as FileInfo).input}`)
             }
+            const res: boolean = this.compile(id, job)
+            success = res && success;
         }
 
         Ets2panda.destroyInstance();
 
         if (!success) {
-            const logData = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
-                'One or more errors occured.'
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    'One or more errors occured.'
+                )
             );
-            this.logger.printError(logData);
-            throw new Error('Run failed.');
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
         this.mergeAbcFiles(allOutputs);
-    }
-
-    private compileSimultaneous(id: string, job: CompileJobInfo, incremental: boolean = true): boolean {
-        const ets2panda = Ets2panda.getInstance();
-        ets2panda.initalize();
-        let errOccurred = false;
-        try {
-            ets2panda.compileSimultaneous(id, job, incremental)
-        } catch (error) {
-            if (error instanceof DriverError) {
-                this.logger.printError(error.logData);
-                errOccurred = true;
-            }
-        } finally {
-            ets2panda.finalize()
-        }
-
-        return !errOccurred;
     }
 
     private collectAbcFileFromByteCodeHar(): void {
@@ -851,7 +844,7 @@ export abstract class BaseMode {
 
         // Just to init
         Ets2panda.getInstance(this.buildConfig)
-        const res = this.compileSimultaneous('SimultaneousBuildId', {
+        const res = this.compile('SimultaneousBuildId', {
             contentType: JobContentType.CLUSTER,
             content: content,
             arktsConfig: arktsConfigFile,

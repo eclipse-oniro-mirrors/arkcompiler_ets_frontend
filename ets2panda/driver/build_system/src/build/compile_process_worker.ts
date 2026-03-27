@@ -16,7 +16,6 @@
 import {
     WorkerMessageType,
     ProcessCompileTask,
-    JobContentType,
 } from '../types';
 import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
@@ -49,22 +48,13 @@ function compile(id: string, task: ProcessCompileTask): void {
 
     try {
         ets2panda.initalize();
-        if (task.contentType === JobContentType.CLUSTER) {
-            ets2panda.compileSimultaneous(
-                id,
-                task,
-                true,
-                declGeneratedCb,
-                abcCompiledCb
-            )
-        } else {
-            ets2panda.compile(
-                id,
-                task,
-                declGeneratedCb,
-                abcCompiledCb
-            )
-        }
+        ets2panda.compile(
+            id,
+            task,
+            true,
+            declGeneratedCb,
+            abcCompiledCb
+        )
     } catch (error) {
         if (error instanceof DriverError) {
             process.send!({

@@ -62,7 +62,6 @@ jest.mock('../../../src/util/utils', () => ({
 const mockEts = {
     initalize: jest.fn(),
     compile: jest.fn(),
-    compileSimultaneous: jest.fn(),
     declgenV1: jest.fn(),
     finalize: jest.fn()
 };
@@ -79,8 +78,7 @@ class TestBaseMode extends BaseMode {
     constructor(buildConfig: BuildConfig) {
         super(buildConfig);
     }
-    public runCompile(id: string, job: any) { return (this as any).compile(id, job); }
-    public runCompileSimultaneous(id: string, job: any) { return (this as any).compileSimultaneous(id, job); }
+    public runCompile(id: string, job: any, incremental: boolean) { return (this as any).compile(id, job, incremental); }
     public runDeclgenV1(job: any) { return (this as any).declgenV1(job); }
 }
 
@@ -147,12 +145,12 @@ describe('BaseMode', () => {
             jobType: CompileJobType.ABC
         };
 
-        mockEts.compile.mockImplementation(() => {});
+        mockEts.compile.mockImplementation(() => { });
 
-        const res = testMode.runCompile('job1', job);
+        const res = testMode.runCompile('job1', job, false);
         expect(res).toBe(true);
         expect(mockEts.initalize).toHaveBeenCalled();
-        expect(mockEts.compile).toHaveBeenCalledWith('job1', job);
+        expect(mockEts.compile).toHaveBeenCalledWith('job1', job, false);
         expect(mockEts.finalize).toHaveBeenCalled();
     });
 
@@ -174,15 +172,15 @@ describe('BaseMode', () => {
         mockEts.compile.mockImplementation(() => { throw driverErr; });
 
         const logger = require('../../../src/logger').Logger.getInstance();
-        const spy = jest.spyOn(logger, 'printError').mockImplementation(() => {});
+        const spy = jest.spyOn(logger, 'printError').mockImplementation(() => { });
 
-        const res = modeHar.runCompile('job2', job);
+        const res = modeHar.runCompile('job2', job, false);
         expect(res).toBe(false);
         expect(spy).toHaveBeenCalled();
         expect(mockEts.finalize).toHaveBeenCalled();
     });
 
-    test('compileSimultaneous succeeds and calls ets2panda methods', () => {
+    test('compile succeeds and calls ets2panda methods [cluster]', () => {
         const job: Partial<CompileJobInfo> = {
             contentType: JobContentType.CLUSTER,
             content: [
@@ -195,12 +193,12 @@ describe('BaseMode', () => {
             jobType: CompileJobType.ABC
         };
 
-        mockEts.compileSimultaneous.mockImplementation(() => {});
+        mockEts.compile.mockImplementation(() => { });
 
-        const res = testMode.runCompileSimultaneous('cycle1', job);
+        const res = testMode.runCompile('cycle1', job, true);
         expect(res).toBe(true);
         expect(mockEts.initalize).toHaveBeenCalled();
-        expect(mockEts.compileSimultaneous).toHaveBeenCalled();
+        expect(mockEts.compile).toHaveBeenCalledWith('cycle1', job, true);
         expect(mockEts.finalize).toHaveBeenCalled();
     });
 
@@ -217,7 +215,7 @@ describe('BaseMode', () => {
             jobType: CompileJobType.DECL
         };
 
-        mockEts.declgenV1.mockImplementation(() => {});
+        mockEts.declgenV1.mockImplementation(() => { });
         const res = testMode.runDeclgenV1(job);
         expect(res).toBe(true);
         expect(mockEts.initalize).toHaveBeenCalled();
@@ -242,7 +240,7 @@ describe('BaseMode', () => {
         mockEts.declgenV1.mockImplementation(() => { throw driverErr; });
 
         const logger = require('../../../src/logger').Logger.getInstance();
-        const spy = jest.spyOn(logger, 'printError').mockImplementation(() => {});
+        const spy = jest.spyOn(logger, 'printError').mockImplementation(() => { });
 
         const res = testMode.runDeclgenV1(job);
         expect(res).toBe(false);
@@ -277,7 +275,7 @@ describe('BaseMode', () => {
         (testMode as any).moduleInfos = new Map<string, any>([['depHar2', moduleInfo]]);
 
         const logger = require('../../../src/logger').Logger.getInstance();
-        const spyErr = jest.spyOn(logger, 'printError').mockImplementation(() => {});
+        const spyErr = jest.spyOn(logger, 'printError').mockImplementation(() => { });
 
         (testMode as any).collectAbcFileFromByteCodeHar();
         expect(spyErr).toHaveBeenCalled();
@@ -347,7 +345,7 @@ describe('BaseMode', () => {
         const execSpy = jest.spyOn(child_process, 'execSync').mockImplementation(() => { throw new Error('fail'); });
 
         const logger = require('../../../src/logger').Logger.getInstance();
-        const spyErr = jest.spyOn(logger, 'printError').mockImplementation(() => {});
+        const spyErr = jest.spyOn(logger, 'printError').mockImplementation(() => { });
 
         (testMode as any).mergeAbcFiles(outputs);
 
@@ -414,8 +412,10 @@ describe('BaseMode', () => {
         const hybridMod = createMockModuleInfo({ packageName: 'hybridMod', language: LANGUAGE_VERSION.ARKTS_HYBRID });
 
         // main module depends on all three
-        const mainModule = createMockModuleInfo({ packageName: 'mainPkg',
-            dependencies: ['staticMod', 'dynamicMod', 'hybridMod'] });
+        const mainModule = createMockModuleInfo({
+            packageName: 'mainPkg',
+            dependencies: ['staticMod', 'dynamicMod', 'hybridMod']
+        });
 
         // set moduleInfos map
         (testMode as any).moduleInfos = new Map<string, any>([
@@ -535,7 +535,7 @@ describe('BaseMode', () => {
                     initTaskQueue: jest.fn(),
                     finish: mockFinish
                 })),
-                DriverProcessFactory: jest.fn().mockImplementation(() => ({ }))
+                DriverProcessFactory: jest.fn().mockImplementation(() => ({}))
             };
         });
 
@@ -598,7 +598,7 @@ describe('BaseMode', () => {
                     initTaskQueue: jest.fn(),
                     finish: mockFinish
                 })),
-                DriverProcessFactory: jest.fn().mockImplementation(() => ({ }))
+                DriverProcessFactory: jest.fn().mockImplementation(() => ({}))
             };
         });
 
@@ -783,7 +783,7 @@ describe('BaseMode', () => {
                 initTaskQueue: jest.fn(),
                 finish: jest.fn()
             })),
-            DriverProcessFactory: jest.fn().mockImplementation(() => ({ }))
+            DriverProcessFactory: jest.fn().mockImplementation(() => ({}))
         }));
 
         const BaseModeModule = require('../../../src/build/base_mode');
@@ -880,7 +880,7 @@ describe('BaseMode', () => {
                     initTaskQueue: jest.fn(),
                     finish: mockFinish
                 })),
-                DriverProcessFactory: jest.fn().mockImplementation(() => ({ }))
+                DriverProcessFactory: jest.fn().mockImplementation(() => ({}))
             };
         });
 
@@ -901,7 +901,7 @@ describe('BaseMode', () => {
             abcDeclarationMap: new Map(),
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
-            statsRecorder: {record: jest.fn()},
+            statsRecorder: { record: jest.fn() },
             moduleType: 'hap',
             loadDeclFileMap: jest.fn(),
             saveDeclFileMap: jest.fn(),
@@ -914,12 +914,12 @@ describe('BaseMode', () => {
             nodeNeedsRegeneration: jest.fn()
         };
         ctx.needsRegeneration.mockReturnValue(true);
-        ctx.needsBackup.mockResolvedValue({needsDeclBackup: false, needsGlueCodeBackup: false});
+        ctx.needsBackup.mockResolvedValue({ needsDeclBackup: false, needsGlueCodeBackup: false });
         ctx.backupFiles.mockResolvedValue(undefined);
         ctx.updateDeclFileMapAsync.mockResolvedValue(undefined);
         ctx.saveDeclFileMap.mockResolvedValue(undefined);
         ctx.getOutputFilePaths.mockReturnValue(
-            {declEtsOutputPath: '/tmp/test.d.ts', glueCodeOutputPath: '/tmp/test.ts'});
+            { declEtsOutputPath: '/tmp/test.d.ts', glueCodeOutputPath: '/tmp/test.ts' });
         ctx.nodeNeedsRegeneration.mockReturnValue(true);
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
@@ -1013,15 +1013,15 @@ describe('BaseMode', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
                     getGraph: jest.fn(() => ({
-                            hasNodes: () => true,
-                            getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
-                                id,
-                                data: {
-                                    contentType: JobContentType.FILE,
-                                    content: [],
-                                    jobType: CompileJobType.NONE,
-                                }
-                            })
+                        hasNodes: () => true,
+                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                            id,
+                            data: {
+                                contentType: JobContentType.FILE,
+                                content: [],
+                                jobType: CompileJobType.NONE,
+                            }
+                        })
                     }))
                 }))
             };
@@ -1088,15 +1088,15 @@ describe('BaseMode', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
                     getGraph: jest.fn(() => ({
-                            hasNodes: () => true,
-                            getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
-                                id,
-                                data: {
-                                    contentType: JobContentType.FILE,
-                                    content: [],
-                                    jobType: CompileJobType.NONE,
-                                }
-                            })
+                        hasNodes: () => true,
+                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                            id,
+                            data: {
+                                contentType: JobContentType.FILE,
+                                content: [],
+                                jobType: CompileJobType.NONE,
+                            }
+                        })
                     }))
                 }))
             };
@@ -1218,13 +1218,14 @@ describe('BaseMode', () => {
                                 predecessors: new Set<string>,
                                 descendants: new Set<string>
                             }),
-                            nodes: new Set<mockGraphNodeType> };
+                            nodes: new Set<mockGraphNodeType>
+                        };
                     })
                 }))
             };
         });
 
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), compileSimultaneous: jest.fn(), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1306,7 +1307,7 @@ describe('BaseMode', () => {
             };
         });
 
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), compileSimultaneous: jest.fn(), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1334,7 +1335,10 @@ describe('BaseMode', () => {
             compile: jest.fn(() => false)
         };
 
-        await expect(fn.call(ctx)).rejects.toThrow('Run failed.');
+
+        const err: DriverError = new DriverError(LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                                                                            'One or more errors occured.'))
+        await expect(fn.call(ctx)).rejects.toThrow(err);
         expect(destroySpy).toHaveBeenCalled();
     });
 
@@ -1363,7 +1367,7 @@ describe('BaseMode', () => {
             }))
         }));
 
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), compileSimultaneous: jest.fn(), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1393,7 +1397,7 @@ describe('BaseMode', () => {
         expect(loggerInstance.printWarn).toHaveBeenCalledWith('Nothing to compile. Exiting...');
     });
 
-    test('run calls compileSimultaneous when cycle job present', async () => {
+    test('run calls compile when cycle job present', async () => {
         jest.resetModules();
 
         const loggerInstance = {
@@ -1425,8 +1429,8 @@ describe('BaseMode', () => {
                                 data: {
                                     contentType: JobContentType.CLUSTER,
                                     content: [
-                                        { input: '/mock/module/a.ets', output: '/mock/output/a.abc'},
-                                        { input: '/mock/module/b.ets', output: '/mock/output/b.abc'}
+                                        { input: '/mock/module/a.ets', output: '/mock/output/a.abc' },
+                                        { input: '/mock/module/b.ets', output: '/mock/output/b.abc' }
                                     ],
                                     arktsConfig: '',
                                     moduleName: 'test',
@@ -1445,7 +1449,7 @@ describe('BaseMode', () => {
         // Graph.topologicalSort should return the node id
         jest.doMock('../../../src/util/graph', () => ({ Graph: { topologicalSort: jest.fn(() => ['n1']) } }));
 
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), compileSimultaneous: jest.fn(), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1471,8 +1475,8 @@ describe('BaseMode', () => {
             moduleType: 'hap'
         };
 
-        // delegate compileSimultaneous to prototype implementation which uses mocked Ets2panda
-        ctx.compileSimultaneous = (id: string, job: any) => BaseModeClass.prototype.compileSimultaneous.call(ctx, id, job);
+        // delegate compile to prototype implementation which uses mocked Ets2panda
+        ctx.compile = (id: string, job: any) => BaseModeClass.prototype.compile.call(ctx, id, job);
         ctx.mergeAbcFiles = jest.fn();
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
@@ -1509,7 +1513,7 @@ describe('BaseMode', () => {
             }))
         }));
 
-        const mockEtsLocal = { initalize: jest.fn(), compileSimultaneous: jest.fn(() => true), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(() => true), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1540,7 +1544,7 @@ describe('BaseMode', () => {
         ctx.mainPackageName = 'testPackage';
         ctx.mergeAbcFiles = jest.fn();
         // delegate to the class's private implementation (uses mocked Ets2panda)
-        ctx.compileSimultaneous = (id: string, job: any) => BaseModeClass.prototype.compileSimultaneous.call(ctx, id, job);
+        ctx.compile = (id: string, job: any) => BaseModeClass.prototype.compile.call(ctx, id, job);
         ctx.mergeAbcFiles = jest.fn();
 
         const expectedIntermediate = path.resolve(cfg.cachePath, pre.MERGED_INTERMEDIATE_FILE);
@@ -1551,7 +1555,7 @@ describe('BaseMode', () => {
         expect(ctx.mergeAbcFiles).toHaveBeenCalledWith([expectedIntermediate]);
     });
 
-    test('runSimultaneous throws when compileSimultaneous fails', async () => {
+    test('runSimultaneous throws when compile fails', async () => {
         jest.resetModules();
 
         const loggerInstance = {
@@ -1578,7 +1582,7 @@ describe('BaseMode', () => {
 
         const { ErrorCode, DriverError } = require('../../../src/util/error');
         const { LogDataFactory } = require('../../../src/logger');
-        const mockEtsLocal = { initalize: jest.fn(), compileSimultaneous: jest.fn(() => { throw new DriverError(LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL, 'fail')) }), finalize: jest.fn() };
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(() => { throw new DriverError(LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL, 'fail')) }), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
             Ets2panda: {
@@ -1608,7 +1612,7 @@ describe('BaseMode', () => {
         // ensure mainPackageName is available on the context
         ctx.mainPackageName = 'testPackage';
         // delegate to the class's private implementation (uses mocked Ets2panda)
-        ctx.compileSimultaneous = (id: string, job: any) => BaseModeClass.prototype.compileSimultaneous.call(ctx, id, job);
+        ctx.compile = (id: string, job: any) => BaseModeClass.prototype.compile.call(ctx, id, job);
         // ensure mergeAbcFiles exists to avoid undefined when the method unwinds
         ctx.mergeAbcFiles = jest.fn();
 
