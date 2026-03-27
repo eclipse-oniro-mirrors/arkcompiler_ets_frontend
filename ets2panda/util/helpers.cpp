@@ -871,6 +871,12 @@ checker::Type *Helpers::CheckReturnTypeOfCheck([[maybe_unused]] const ir::AstNod
     return type;
 }
 
+bool Helpers::TypeContainsParameterUnderInference(checker::Type const *type)
+{
+    return type->TypeExpressionContains(
+        [](checker::Type const *tp) { return tp->IsETSTypeParameter() && tp->AsETSTypeParameter()->UnderInference(); });
+}
+
 util::UString Helpers::EscapeHTMLString(ArenaAllocator *allocator, std::string_view const str)
 {
     util::UString replaced(allocator);

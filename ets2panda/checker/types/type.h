@@ -45,6 +45,7 @@ class ETSResizableArrayType;
 using Substitution = std::map<ETSTypeParameter *, Type *>;
 using ArenaSubstitution = ArenaMap<ETSTypeParameter *, Type *>;
 using TypeTraverser = std::function<void(Type const *)>;
+using TypePredicate = std::function<bool(Type const *)>;
 
 extern void TypeStatsHook(Type *t);
 
@@ -299,6 +300,8 @@ public:
             func(this);
         }
     }
+
+    [[nodiscard]] bool TypeExpressionContains(TypePredicate const &pred) const;
 
     virtual void Identical(TypeRelation *relation, Type *other);
     virtual void AssignmentTarget(TypeRelation *relation, Type *source) = 0;

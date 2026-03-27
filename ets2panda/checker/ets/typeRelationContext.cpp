@@ -142,9 +142,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ArenaVector<Type
 
     ConstraintCheckScope ctScope(checker_);
     result_ = type->Substitute(checker_->Relation(), &substitution)->AsETSObjectType();
-    if (!checker_->Relation()->NoThrowGenericTypeAlias()) {
-        checker_->PendingConstraintCheckRecords().emplace_back(&typeParams, std::move(substitution), pos);
-    }
+    checker_->PendingConstraintCheckRecords().emplace_back(&typeParams, std::move(substitution), pos);
 
     result_->AddTypeFlag(TypeFlag::GENERIC);
     ctScope.TryCheckConstraints();

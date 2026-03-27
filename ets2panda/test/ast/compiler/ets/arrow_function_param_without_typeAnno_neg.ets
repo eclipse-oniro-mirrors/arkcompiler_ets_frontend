@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,5 +19,5 @@ function foo<T extends (p: number) => number>(a: T): T{
 
 let r = foo(x => x)
 
-/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for foo(((p1: *ERROR_TYPE*) => void)) */
+/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for foo(((p1: *ERROR_TYPE*) => *ERROR_TYPE*)) */
 /* @@? 20:13 Error Semantic error ESE0132: The type of parameter 'x' cannot be inferred */

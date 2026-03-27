@@ -214,6 +214,7 @@ public:
     [[nodiscard]] static checker::Type *CheckReturnTypeOfCheck([[maybe_unused]] const ir::AstNode *const node,
                                                                checker::Type *const type);
 
+    [[nodiscard]] static bool TypeContainsParameterUnderInference(checker::Type const *type);
     [[nodiscard]] static util::UString EscapeHTMLString(ArenaAllocator *allocator, std::string_view const str);
     [[nodiscard]] static ir::AstNode *DerefETSTypeReference(ir::AstNode *node);
 

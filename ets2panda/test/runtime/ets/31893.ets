@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,16 @@
  * limitations under the License.
  */
 
-function foo(a: Promise<Any>): Promise<number>{
-    return new Promise<number>((resolve) => {
-        a.then((result) => {
-            resolve(result)
-        })
-    })
+class C<T> {
+    f(x: T, y: T, z: T): T[] {
+        return [x, y, z].map((x) => x)
+    }
 }
 
 function main() {
-    let a = Promise.resolve(undefined);
-    arktest.assertTrue(foo(a) instanceof Promise)
+    let c = new C<int>
+    let xyz = c.f(1, 2, 3)
+    arktest.assertEQ(xyz[0], 1)
+    arktest.assertEQ(xyz[1], 2)
+    arktest.assertEQ(xyz[2], 3)
 }

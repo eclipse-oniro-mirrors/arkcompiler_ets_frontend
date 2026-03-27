@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,11 @@ void ETSTypeParameter::ToString(std::stringstream &ss, bool precise) const
 
 void ETSTypeParameter::Identical(TypeRelation *relation, Type *other)
 {
+    if (UnderInference() && !(other->IsETSTypeParameter() && other->AsETSTypeParameter()->UnderInference())) {
+        // We are optimistically assuming the needed relation
+        relation->Result(true);
+        return;
+    }
     relation->Result(false);
     if (other->IsETSTypeParameter() && other->AsETSTypeParameter()->GetOriginal() == GetOriginal()) {
         relation->Result(true);
@@ -37,7 +42,7 @@ void ETSTypeParameter::Identical(TypeRelation *relation, Type *other)
 
 bool ETSTypeParameter::AssignmentSource(TypeRelation *relation, [[maybe_unused]] Type *target)
 {
-    return relation->IsAssignableTo(this->GetConstraintType(), target);
+    return relation->IsSupertypeOf(target, this->GetConstraintType());
 }
 
 void ETSTypeParameter::AssignmentTarget(TypeRelation *relation, Type *source)
@@ -75,11 +80,23 @@ void ETSTypeParameter::CastTarget(TypeRelation *relation, Type *source)
 
 void ETSTypeParameter::IsSupertypeOf(TypeRelation *relation, [[maybe_unused]] Type *source)
 {
+    if (UnderInference() && !(source->IsETSTypeParameter() && source->AsETSTypeParameter()->UnderInference())) {
+        // We are optimistically assuming the needed relation
+        relation->Result(true);
+        return;
+    }
+
     relation->Result(false);
 }
 
 void ETSTypeParameter::IsSubtypeOf(TypeRelation *relation, Type *target)
 {
+    if (UnderInference() && !(target->IsETSTypeParameter() && target->AsETSTypeParameter()->UnderInference())) {
+        // We are optimistically assuming the needed relation
+        relation->Result(true);
+        return;
+    }
+
     if (relation->IsSupertypeOf(target, GetConstraintType())) {
         return;
     }
@@ -152,7 +169,7 @@ Type *ETSTypeParameter::Substitute([[maybe_unused]] TypeRelation *relation, cons
         return this;
     }
 
-    if (auto repl = substitution->find(type->AsETSTypeParameter()); repl != substitution->end()) {
+    if (auto repl = substitution->find(GetOriginal()); repl != substitution->end()) {
         ES2PANDA_ASSERT(repl->second->IsETSReferenceType());
         return repl->second;
     }
@@ -164,14 +181,19 @@ void ETSTypeParameter::ToAssemblerType(std::stringstream &ss) const
     GetConstraintType()->ToAssemblerTypeWithRank(ss);
 }
 
+[[nodiscard]] ETSTypeParameter *ETSTypeParameter::GetOriginal() const
+{
+    if (underInference_) {
+        return const_cast<ETSTypeParameter *>(this);
+    }
+
+    // This is needed in order to identify re-created trype parameters with original ones during rechack.
+    return GetDeclNode()->Name()->Variable()->TsType()->AsETSTypeParameter();
+}
+
 void ETSTypeParameter::ToDebugInfoType(std::stringstream &ss) const
 {
     GetConstraintType()->ToDebugInfoType(ss);
-}
-
-ETSTypeParameter *ETSTypeParameter::GetOriginal() const
-{
-    return GetDeclNode()->Name()->Variable()->TsType()->AsETSTypeParameter();
 }
 
 util::StringView const &ETSTypeParameter::Name() const noexcept

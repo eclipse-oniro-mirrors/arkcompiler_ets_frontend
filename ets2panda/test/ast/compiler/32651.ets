@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve('hello');
+class C<T extends string>{}
 
-p.then(obj => {
-    const result = typeof obj.prop;
-});
+type A = C<int>
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: "hello") => T|PromiseLike<T>)) */
-/* @@? 19:31 Error Semantic error ESE0087: Property 'prop' does not exist on type 'String' */
+let a = new A
+
+/* @@? 18:11 Error Semantic error ESE0228: Type argument 'Int' should be a subtype of 'String' constraint */

@@ -307,6 +307,8 @@ Signature *Signature::ToArrowSignature(ETSChecker *checker)
     auto *resultSig = allocator->New<Signature>(sigInfo, retType);
     ES2PANDA_ASSERT(resultSig != nullptr);
     resultSig->flags_ = flags_;
+    // Whatever the original function. now we already know the return type.
+    resultSig->flags_ &= ~SignatureFlags::NEED_RETURN_TYPE;
     resultSig->SetOwner(Owner());
     resultSig->SetOwnerVar(OwnerVar());
     ES2PANDA_ASSERT(!resultSig->HasFunction());

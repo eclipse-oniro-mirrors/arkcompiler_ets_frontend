@@ -48,12 +48,11 @@ enum class TypeRelationFlag : uint32_t {
     IGNORE_TYPE_PARAMETERS = 1U << 11U,
     CHECK_PROXY = 1U << 12U,
     NO_CHECK_TRAILING_LAMBDA = 1U << 13U,
-    NO_THROW_GENERIC_TYPEALIAS = 1U << 14U,
-    OVERRIDING_CONTEXT = 1U << 15U,
-    IGNORE_REST_PARAM = 1U << 16U,
-    STRING_TO_CHAR = 1U << 17U,
-    OVERLOADING_CONTEXT = 1U << 18U,
-    NO_SUBSTITUTION_NEEDED = 1U << 19U,
+    OVERRIDING_CONTEXT = 1U << 14U,
+    IGNORE_REST_PARAM = 1U << 15U,
+    STRING_TO_CHAR = 1U << 16U,
+    OVERLOADING_CONTEXT = 1U << 17U,
+    NO_SUBSTITUTION_NEEDED = 1U << 18U,
 
     ASSIGNMENT_CONTEXT = NONE,
     BRIDGE_CHECK = OVERRIDING_CONTEXT | IGNORE_TYPE_PARAMETERS,
@@ -163,11 +162,6 @@ public:
     [[nodiscard]] bool UncheckedCast() const noexcept
     {
         return (flags_ & TypeRelationFlag::UNCHECKED_CAST) != 0;
-    }
-
-    [[nodiscard]] bool NoThrowGenericTypeAlias() const noexcept
-    {
-        return (flags_ & TypeRelationFlag::NO_THROW_GENERIC_TYPEALIAS) != 0;
     }
 
     [[nodiscard]] bool IsOverridingCheck() const noexcept
