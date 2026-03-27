@@ -45,6 +45,7 @@ ohos_copy("ets2panda_build_system") {
 
 ohos_copy("ohos_ets_build_system") {
   deps = [ ":build_build_system" ]
+  external_deps = [ "runtime_core:ohos_ets_etsstdlib_abc" ]
   sources = [ rebase_path("$target_gen_dir") ]
   outputs = [ ohos_ets_build_system_path ]
   part_name = "ets_frontend"
