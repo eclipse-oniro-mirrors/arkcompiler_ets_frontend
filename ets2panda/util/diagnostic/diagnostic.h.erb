@@ -27,14 +27,19 @@
 namespace ark::es2panda::diagnostic {
 
 % MAX_SIZE = Diagnostic::diagnostics.map(&:exclusionlist).map(&:size).max
+% WHITE_LIST_MAX_SIZE = Diagnostic::diagnostics.map(&:whitelist).map(&:size).max
 
 class DiagnosticKind {
 public:
-    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict, const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist = {}) :
+    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict,
+    const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist = {},
+    const std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>>& whitelist = {}, bool hasWhiteList = false) :
 #ifdef ES2PANDA_STRICT
-        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist) {}
+        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message),
+        strict_(strict), exclusionlist_(exclusionlist), whitelist_(whitelist), hasWhiteList_(hasWhiteList) {}
 #else
-        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist) {}
+        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist),
+        whitelist_(whitelist), hasWhiteList_(hasWhiteList) {}
 #endif
 
     bool operator==(const DiagnosticKind &other) const
@@ -67,19 +72,35 @@ public:
         return strict_;
     }
 
-    bool IsInExclusionList(std::string_view path) const
+    template <size_t listSize>
+    bool IsInList(std::string_view path, const std::array<std::string_view, listSize>& listToCheck) const
     {
         std::string sPath {path};
         if (path.empty()) {
             return false;
         }
-        for (auto exclusion : exclusionlist_) {
-            std::regex re {std::string {exclusion}};
+        for (auto checkPath : listToCheck) {
+            std::regex re {std::string {checkPath}};
             if (std::regex_match(sPath, re)) {
                 return true;
             }
         }
         return false;
+    }
+
+    bool IsInExclusionList(std::string_view path) const
+    {
+        return IsInList<<%= MAX_SIZE %>>(path, exclusionlist_);
+    }
+
+    bool IsInWhiteList(std::string_view path) const
+    {
+        return !hasWhiteList_ || IsInList<<%= WHITE_LIST_MAX_SIZE %>>(path, whitelist_);
+    }
+
+    bool HasWhiteList() const
+    {
+        return hasWhiteList_;
     }
 
 private:
@@ -88,15 +109,22 @@ private:
     const std::string_view message_;
     const bool strict_;
     const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist_;
+    const std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>>& whitelist_;
+    const bool hasWhiteList_;
 };
 
 constexpr static std::array<std::string_view, <%= MAX_SIZE %>> EMPTY_EXCLUSION_LIST = {};
+constexpr static std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>> EMPTY_WHITE_LIST = {};
 % Diagnostic::diagnostics.each do |desc|
 %   if !desc.exclusionlist.empty?
 constexpr static std::array<std::string_view, <%= MAX_SIZE %>> <%= desc.name %>_EXCLUSIONLIST = { <%= desc.exclusionlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
 %   end
+%   if !desc.whitelist.empty?
+constexpr static std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>> <%= desc.name %>_WHITELIST = { <%= desc.whitelist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
+%   end
 constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>,
-    <% if !desc.exclusionlist.empty? %><%= desc.name %>_EXCLUSIONLIST<% else %>EMPTY_EXCLUSION_LIST<% end %>};
+    <% if !desc.exclusionlist.empty? %><%= desc.name %>_EXCLUSIONLIST<% else %>EMPTY_EXCLUSION_LIST<% end %>,
+    <% if !desc.whitelist.empty? %><%= desc.name %>_WHITELIST, true<% else %>EMPTY_WHITE_LIST, false<% end %>};
 % end
 
 } // namespace ark::es2panda::diagnostic

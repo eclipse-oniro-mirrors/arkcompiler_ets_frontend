@@ -192,7 +192,8 @@ private:
         auto type = diag->Type();
         if constexpr (std::is_same_v<Diagnostic, DIAGNOSTIC>) {
             if (type == DiagnosticType::WARNING) {
-                if (diag->Kind() != nullptr && diag->Kind()->IsInExclusionList(diag->File())) {
+                if (diag->Kind() != nullptr &&
+                    (diag->Kind()->IsInExclusionList(diag->File()) || !diag->Kind()->IsInWhiteList(diag->File()))) {
                     diag->SetType(DiagnosticType::SEMANTIC);
                     type = DiagnosticType::SEMANTIC;
                 }

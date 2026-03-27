@@ -196,6 +196,7 @@ set(DIAGNOSTIC_DIR
 panda_gen(
     DATA
         ${DIAGNOSTIC_DIR}/exclusionlist.yaml
+        ${DIAGNOSTIC_DIR}/whitelist.yaml
         ${DIAGNOSTIC_DIR}/syntax.yaml
         ${DIAGNOSTIC_DIR}/semantic.yaml
         ${DIAGNOSTIC_DIR}/warning.yaml
@@ -209,6 +210,7 @@ panda_gen(
     SOURCE ${DIAGNOSTIC_DIR}
     DESTINATION ${GENERATED_DIR}
     API
+        ${DIAGNOSTIC_DIR}/diagnostic.rb
         ${DIAGNOSTIC_DIR}/diagnostic.rb
         ${DIAGNOSTIC_DIR}/diagnostic.rb
         ${DIAGNOSTIC_DIR}/diagnostic.rb

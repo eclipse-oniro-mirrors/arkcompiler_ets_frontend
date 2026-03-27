@@ -21,6 +21,7 @@ module Diagnostic
 
   @diagnostics = []
   @blacklists_map = {}
+  @whitelists_map = {}
 
   def diagnostics
     @diagnostics
@@ -36,24 +37,24 @@ module Diagnostic
     Kernel.exit 1
   end
 
-  def create_diagnostic_blacklist(diagnostic_type, diagnostic)
+  def create_diagnostic_pathlist(diagnostic_type, diagnostic, list, result_map)
     if diagnostic_type.to_s != 'warning'
-      configuration_error("Blacklists are only allowed for 'warning'. Found in '#{diagnostic_type}' for '#{diagnostic.name}'")
+      configuration_error("Lists are only allowed for 'warning'. Found in '#{diagnostic_type}' for '#{diagnostic.name}'")
     end
 
     paths =[]
-    diagnostic.exclusionlist.each do |bl_name|
-      if @blacklists_map.key?(bl_name)
-        paths.concat(@blacklists_map[bl_name])
+    list.each do |bl_name|
+      if result_map.key?(bl_name)
+        paths.concat(result_map[bl_name])
       else
-        configuration_error("Blacklist '#{bl_name}' referenced by diagnostic '#{diagnostic.name}' is not defined")
+        configuration_error("List '#{bl_name}' referenced by diagnostic '#{diagnostic.name}' is not defined")
       end
     end
     paths.uniq!
     paths
   end
 
-  def wrap_data(data)
+  def try_parse_lists(data)
     if data.respond_to?(:exclusionlist)
       blacklists_data = data.delete_field(:exclusionlist)
       if blacklists_data
@@ -61,8 +62,37 @@ module Diagnostic
           @blacklists_map[bl.name] = bl.paths || []
         end
       end
-      return
+      return true
     end
+
+    if data.respond_to?(:whitelist)
+      whitelists_data = data.delete_field(:whitelist)
+      if whitelists_data
+        whitelists_data.each do |wl|
+          @whitelists_map[wl.name] = wl.paths || []
+        end
+      end
+      return true
+    end
+    return false
+  end
+
+  def set_lists(diagnostic, diagnostic_type)
+    if diagnostic.respond_to?(:exclusionlist) && diagnostic.exclusionlist
+      diagnostic.exclusionlist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.exclusionlist, @blacklists_map)
+    else
+      diagnostic.exclusionlist = []
+    end
+
+    if diagnostic.respond_to?(:whitelist) && diagnostic.whitelist
+      diagnostic.whitelist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.whitelist, @whitelists_map)
+    else
+      diagnostic.whitelist = []
+    end
+  end
+
+  def wrap_data(data)
+    return if try_parse_lists(data)
 
     graveyard = data.delete_field(:graveyard)
     data.freeze
@@ -95,11 +125,7 @@ module Diagnostic
         diagnostic.type = diagnostic_type
         diagnostic.strict ||= false
 
-        if diagnostic.respond_to?(:exclusionlist) && diagnostic.exclusionlist
-          diagnostic.exclusionlist = create_diagnostic_blacklist(diagnostic_type, diagnostic)
-        else
-          diagnostic.exclusionlist = []
-        end
+        set_lists(diagnostic, diagnostic_type)
 
         @diagnostics.append(diagnostic)
       end
