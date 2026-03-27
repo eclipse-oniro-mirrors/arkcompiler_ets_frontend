@@ -16,6 +16,7 @@
 #include "initModuleLowering.h"
 
 #include "compiler/lowering/util.h"
+#include "generated/diagnostic.h"
 #include "generated/signatures.h"
 #include "ir/astNode.h"
 #include "ir/expression.h"
@@ -86,9 +87,17 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
         return callExpr;
     }
     auto *parser = ctx->parser->AsETSParser();
-    auto metaData = parser->GetImportPathManager()
-                        ->GatherImportMetadata(program, importPath->AsStringLiteral())
-                        ->GetImportMetadata();
+    auto *importPathStr = importPath->AsStringLiteral();
+    auto *gatheredImportMetaData = parser->GetImportPathManager()->GatherImportMetadata(program, importPathStr);
+    if (gatheredImportMetaData == nullptr) {
+        ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
+        auto *allocator = ctx->allocator;
+        auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
+        node->SetRange(callExpr->Range());
+        node->SetParent(callExpr->Parent());
+        return node;
+    }
+    auto metaData = gatheredImportMetaData->GetImportMetadata();
     if (!metaData.OhmUrl().empty()) {
         return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData);
     }
