@@ -1590,3 +1590,4 @@
     }
   }
 }
+[generics_2.ets:26:16] Warning W670214: This cast can be excessive because it always succeeds

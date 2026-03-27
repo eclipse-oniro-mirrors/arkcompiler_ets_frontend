@@ -22,8 +22,3 @@ parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
 #33678
 parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
 parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
-
-#33835
-compiler/ets/dynamicLambdaJSValueCast.ets
-compiler/ets/generics_instantiation_1.ets
-parser/ets/promiseCasting.ets

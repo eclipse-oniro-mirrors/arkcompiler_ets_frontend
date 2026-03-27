@@ -15,12 +15,11 @@
 
 let arr: number[] = [1, 2, 3];
 let arr2: int[] = [2, 4];
-const combinedArr = arr.concat(arr2 as Array<number>);
+const combinedArr = arr.concat(/* @@ label */arr2 as Array<number>);
 
 console.log(combinedArr)
 console.log(combinedArr.length);
 combinedArr[3]
 
-/* @@? 18:21 Error Semantic error ESE0127: No matching call signature for concat(Array<Double>) */
-/* @@? 18:32 Error Semantic error ESE0326: Cannot cast type 'Array<Int>' to 'Array<Double>' */
-/* @@? 22:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+
+/* @@@ label Warning Warning W0326: Attempting to cast type 'Array<Int>' to 'Array<Double>' can throw 'CastClassError' exception at runtime */

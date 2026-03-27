@@ -982,3 +982,4 @@
     }
   }
 }
+[dynamic_optional_decl.ets:21:18] Warning W670214: This cast can be excessive because it always succeeds

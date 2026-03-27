@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-function foo<X extends short, Y extends short>(v: X = /* @@ label */1 as (X | Y)){}
+function foo<X extends short, Y extends short>(/* @@ label1 */v: X = /* @@ label2 */1 as (X | Y)){}
 
 
-/* @@@ label Warning Warning W0326: Attempt to cast the type 'Int' to 'X|Y' can throw 'CastClassError' exception at runtime. */
+/* @@@ label1 Error Semantic error ESE0318: Type 'X|Y' cannot be assigned to type 'X' */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Int' to 'X|Y' can throw 'CastClassError' exception at runtime */

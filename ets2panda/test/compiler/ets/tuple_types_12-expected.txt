@@ -2421,3 +2421,9 @@
     }
   }
 }
+[tuple_types_12.ets:22:106] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_12.ets:22:115] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_12.ets:23:26] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_12.ets:24:28] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_12.ets:25:5] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_12.ets:26:5] Warning W670214: This cast can be excessive because it always succeeds

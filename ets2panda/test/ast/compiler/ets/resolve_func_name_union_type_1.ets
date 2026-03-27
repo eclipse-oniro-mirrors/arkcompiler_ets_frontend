@@ -26,4 +26,4 @@ function main() {
 }
 
 /* @@@ label1 Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type 'String|Double' */
-/* @@@ label2 Warning Warning W0326: Attempt to cast the type 'String|Double' to '(() => Double)' can throw 'CastClassError' exception at runtime. */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type 'String|Double' to '(() => Double)' can throw 'CastClassError' exception at runtime */

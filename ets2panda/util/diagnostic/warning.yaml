@@ -83,7 +83,7 @@ warning:
 
 - name: GENERIC_TYPE_CAST
   id: 369037
-  message: "Cast expression `as {}` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime."
+  message: "Cast expression `as {}` is type unsafe. 'CastClassError' exception can be thrown at runtime"
 
 - name: GEN_STDLIB_DECLS
   id: 2002
@@ -126,7 +126,7 @@ warning:
 
 - name: INVALID_CAST
   id: 326
-  message: "Attempt to cast the type '{}' to '{}' can throw 'CastClassError' exception at runtime."
+  message: "Attempting to cast type '{}' to '{}' can throw 'CastClassError' exception at runtime"
 
 - name: MAYBE_FALLTHROUGH
   id: 20
@@ -139,6 +139,10 @@ warning:
 - name: NO_OHMURL
   id: 11
   message: "'ohmUrl' for module '{}' wasn't specified"
+
+- name: NULLISH_CAST_TO_NONNULLISH
+  id: 304
+  message: "Possible cast of 'null' or 'undefined' to non-nullish type can throw 'CastClassError' exception at runtime"
 
 - name: NULLISH_OPERAND
   id: 14
@@ -183,6 +187,10 @@ warning:
 - name: THIS_OR_SUPER_IN_FIELD_INITIALIZER
   id: 10
   message: "The instance field initializer expression cannot use the {}."
+
+- name: TRIVIAL_CAST
+  id: 670214
+  message: "This cast can be excessive because it always succeeds"
 
 - name: UNREACHABLE_STMT
   id: 26

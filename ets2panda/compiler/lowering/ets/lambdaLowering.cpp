@@ -863,7 +863,6 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
                                           checker->CreateETSArrayType(elementType, isValueArray)),
             lciInfo->restArgumentIdentifier, tmpArray, restParameterLen->Clone(allocator, nullptr),
             lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, elementType);
-        std::cout << args->DumpEtsSrc() << std::endl;
     } else {
         ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType() ||
                         restParameterSubstituteType->IsETSReadonlyArrayType());

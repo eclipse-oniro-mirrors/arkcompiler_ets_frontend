@@ -4268,3 +4268,12 @@
     }
   }
 }
+[tuple_types_1.ets:30:10] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:31:10] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:32:10] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:35:19] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:35:40] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:35:61] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:36:19] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:36:40] Warning W670214: This cast can be excessive because it always succeeds
+[tuple_types_1.ets:37:19] Warning W670214: This cast can be excessive because it always succeeds

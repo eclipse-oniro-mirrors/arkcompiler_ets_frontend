@@ -1932,3 +1932,10 @@
     }
   }
 }
+[cast_expressions3.ets:24:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:25:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:26:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:27:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:29:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:30:13] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions3.ets:31:13] Warning W670214: This cast can be excessive because it always succeeds

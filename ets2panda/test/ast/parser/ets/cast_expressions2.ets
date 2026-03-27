@@ -21,4 +21,4 @@ function narrowing_reference_test(): void {
   let B_ = /* @@ label */A_ as B;
 }
 
-/* @@@ label Warning Warning W0326: Attempt to cast the type 'A' to 'B' can throw 'CastClassError' exception at runtime. */
+/* @@@ label Warning Warning W0326: Attempting to cast type 'A' to 'B' can throw 'CastClassError' exception at runtime */

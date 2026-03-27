@@ -4529,3 +4529,5 @@
     }
   }
 }
+[union_types_1.ets:36:18] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_1.ets:55:18] Warning W670214: This cast can be excessive because it always succeeds

@@ -14,8 +14,7 @@
  */
 
 #include "castingContext.h"
-#include "checker/types/type.h"
-#include "checker/ETSchecker.h"
+#include "compiler/lowering/checkerPhase.h"
 
 namespace ark::es2panda::checker {
 CastingContext::CastingContext(TypeRelation *relation, const diagnostic::DiagnosticKind &diagKind,
@@ -31,6 +30,12 @@ CastingContext::CastingContext(TypeRelation *relation, const diagnostic::Diagnos
         if (!relation->IsCastableTo(data.source, data.target)) {
             relation->RaiseError(diagKind, list, data.pos);
         }
+    } else {
+        trivialCast_ = true;
+        if (!data.node->IsArrayExpression() && !data.node->IsObjectExpression() && !data.node->IsLiteral() &&
+            compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME) {
+            relation->RaiseError(diagnostic::TRIVIAL_CAST, {}, data.pos);
+        }
     }
 
     uncheckedCast_ = relation->UncheckedCast();
@@ -40,5 +45,10 @@ CastingContext::CastingContext(TypeRelation *relation, const diagnostic::Diagnos
 bool CastingContext::UncheckedCast() const noexcept
 {
     return uncheckedCast_;
+}
+
+bool CastingContext::TrivialCast() const noexcept
+{
+    return trivialCast_;
 }
 }  // namespace ark::es2panda::checker
