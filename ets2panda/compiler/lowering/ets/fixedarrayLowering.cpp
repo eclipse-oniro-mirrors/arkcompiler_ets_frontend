@@ -20,8 +20,8 @@
 
 namespace ark::es2panda::compiler {
 
-static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::Expression *idx,
-                                           ir::ETSNewClassInstanceExpression *arrayInstance, int argsSize)
+static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::ETSNewClassInstanceExpression *arrayInstance,
+                                           int argsSize)
 {
     auto *allocator = ctx->GetChecker()->Allocator();
     auto checker = ctx->GetChecker()->AsETSChecker();
@@ -33,7 +33,7 @@ static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::Express
     }
     auto *arg = arrayInstance->GetArguments()[1];
     if (arg->IsArrowFunctionExpression()) {
-        return parser->CreateFormattedExpression("@@E1(@@I2)", arg, idx->Clone(allocator, nullptr));
+        ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::LAMBDA_NOT_SUPPORTED, {}, arg->Start());
     }
     return arg;
 }
@@ -69,7 +69,7 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
         sourceCode << "@@I5;";
         newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
     } else {
-        initializer = EvaluateInitializer(ctx, idx, arrayInstance, argSize);
+        initializer = EvaluateInitializer(ctx, arrayInstance, argSize);
         sourceCode << "for (let @@I5: int = 0; @@I6 < @@E7; ++@@I8) { @@I9[@@I10] = @@E11}";
         sourceCode << "@@I12;";
 
