@@ -46,7 +46,7 @@ static ir::Expression *ConvertCallIfNeeded(public_lib::Context *ctx, ir::CallExp
     auto *calleeObj = callee->AsMemberExpression()->Object();
     auto *calleePropId = callee->AsMemberExpression()->Property()->AsIdentifier();
 
-    if (calleePropId->Variable()->HasFlag(varbinder::VariableFlags::STATIC)) {
+    if (calleePropId->Variable() != nullptr && calleePropId->Variable()->HasFlag(varbinder::VariableFlags::STATIC)) {
         return call;
     }
 

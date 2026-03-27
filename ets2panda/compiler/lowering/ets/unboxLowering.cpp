@@ -26,6 +26,7 @@
 #include "util/es2pandaMacros.h"
 #include "generated/signatures.h"
 #include "util/helpers.h"
+#include "varbinder/variable.h"
 
 namespace ark::es2panda::compiler {
 
@@ -1239,6 +1240,66 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         return propType;
     }
 
+    bool HandleDeclarationIfNeeded(ir::MemberExpression *mexpr, varbinder::Variable *var)
+    {
+        if (var->Declaration() != nullptr && var->Declaration()->Node() != nullptr &&
+            var->Declaration()->Node()->IsTyped() && mexpr->Object()->TsType() != nullptr &&
+            !mexpr->Object()->TsType()->IsETSAnyType()) {
+            HandleDeclarationNode(uctx_, var->Declaration()->Node());
+            return true;
+        }
+        return false;
+    }
+
+    void SetUnboxedPropType(ir::MemberExpression *mexpr, checker::Type *propType)
+    {
+        /* Special handling for getters/setters. */
+        if (propType->IsETSMethodType()) {
+            propType = GetHandledGetterSetterType(mexpr, propType);
+        } else if (mexpr->Property()->Variable() != nullptr) {
+            /* Adjustment needed for Readonly<T> types and possibly some other cases */
+            mexpr->Property()->Variable()->SetTsType(propType);
+        }
+        if (IsRecursivelyUnboxed(propType)) {
+            mexpr->Property()->SetTsType(propType);
+            mexpr->SetTsType(propType);
+        }
+    }
+
+    checker::Type *AdjustUnionMemberType(ir::MemberExpression *mexpr)
+    {
+        auto accessors = mexpr->GetComponentTypeMemberAccessors();
+        if (accessors.empty()) {
+            return nullptr;
+        }
+
+        // NOTE(ermolaevavarvara): Check if first (and hence all the others) accessor is LocalVariable; if not,
+        // nothing to validate
+        if (!std::holds_alternative<varbinder::LocalVariable *>(accessors[0].second)) {
+            return nullptr;
+        }
+
+        auto getVarType = [this](const auto memberAccessor) {
+            return uctx_->checker->GetTypeOfVariable(std::get<varbinder::LocalVariable *>(memberAccessor));
+        };
+        for (size_t i = 0; i < accessors.size(); ++i) {
+            auto var = std::get<varbinder::LocalVariable *>(accessors[i].second);
+            HandleDeclarationIfNeeded(mexpr, var);
+            // NOTE(ermolaevavarvara): TsType for DeclarationNode was setted, but not for all the variables
+            if (accessors[i].first->HasTypeFlag(checker::TypeFlag::READONLY)) {
+                var->SetTsType(var->Declaration()->Node()->AsTyped()->TsType());
+            }
+        }
+
+        checker::Type *firstVarType = getVarType(accessors[0].second);
+
+        // NOTE(ermolaevavarvara): Validate that all LocalVariable types are identical
+        for (size_t i = 1; i < accessors.size(); ++i) {
+            ES2PANDA_ASSERT(uctx_->checker->Relation()->IsIdenticalTo(getVarType(accessors[i].second), firstVarType));
+        }
+        return firstVarType;
+    }
+
     // CC-OFFNXT(C_RULE_ID_FUNCTION_NESTING_LEVEL, huge_method[C++], huge_cca_cyclomatic_complexity[C++]) solid logic
     // CC-OFFNXT(huge_cyclomatic_complexity, huge_depth[C++], huge_depth, huge_method, G.FUN.01-CPP, G.FUN.05) solid
     void VisitMemberExpression(ir::MemberExpression *mexpr) override
@@ -1247,34 +1308,23 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
             /* Workaround for memo plugin */
             mexpr->Kind() == ir::MemberExpressionKind::NONE || mexpr->Kind() == ir::MemberExpressionKind::GETTER ||
             mexpr->Kind() == ir::MemberExpressionKind::SETTER) {
-            if (mexpr->Property()->Variable() != nullptr) {
+            if (auto propVar = mexpr->Property()->Variable(); propVar != nullptr) {
                 checker::Type *propType = nullptr;
-                if (mexpr->Property()->Variable()->Declaration() != nullptr &&
-                    mexpr->Property()->Variable()->Declaration()->Node() != nullptr &&
-                    mexpr->Property()->Variable()->Declaration()->Node()->IsTyped() &&
-                    mexpr->Object()->TsType() != nullptr && !mexpr->Object()->TsType()->IsETSAnyType()) {
-                    HandleDeclarationNode(uctx_, mexpr->Property()->Variable()->Declaration()->Node());
-                    propType = mexpr->Property()->Variable()->Declaration()->Node()->AsTyped()->TsType();
-                } else if (mexpr->Property()->Variable()->TsType() != nullptr) {
-                    propType = mexpr->Property()->Variable()->TsType();
+                if (HandleDeclarationIfNeeded(mexpr, propVar)) {
+                    propType = propVar->Declaration()->Node()->AsTyped()->TsType();
+                } else if (propVar->TsType() != nullptr) {
+                    propType = propVar->TsType();
                 } else {
                     propType = mexpr->Property()->TsType();
                 }
                 ES2PANDA_ASSERT(propType != nullptr);
-
-                /* Special handling for getters/setters. */
-                if (propType->IsETSMethodType()) {
-                    propType = GetHandledGetterSetterType(mexpr, propType);
-                } else if (mexpr->Property()->Variable() != nullptr) {
-                    /* Adjustment needed for Readonly<T> types and possibly some other cases */
-                    mexpr->Property()->Variable()->SetTsType(propType);
+                SetUnboxedPropType(mexpr, propType);
+            } else if (mexpr->Object()->TsType()->IsETSUnionType()) {
+                auto memberType = AdjustUnionMemberType(mexpr);
+                if (memberType != nullptr) {
+                    SetUnboxedPropType(mexpr, memberType);
                 }
-
-                if (IsRecursivelyUnboxed(propType)) {
-                    mexpr->Property()->SetTsType(propType);
-                    mexpr->SetTsType(propType);
-                }
-            } else if (mexpr->Property()->Variable() == nullptr && mexpr->Object()->TsType()->IsETSArrayType() &&
+            } else if (propVar == nullptr && mexpr->Object()->TsType()->IsETSArrayType() &&
                        mexpr->Property()->AsIdentifier()->Name() == "length") {
                 mexpr->SetTsType(uctx_->checker->GlobalIntType());
             }

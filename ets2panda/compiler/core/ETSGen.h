@@ -32,6 +32,8 @@
 
 namespace ark::es2panda::compiler {
 
+using MemberAccessor = std::variant<checker::Signature *, varbinder::LocalVariable *>;
+using ComponentTypeMemberAccessors = ArenaVector<std::pair<checker::Type *, MemberAccessor>>;
 class ETSGen final : public CodeGen {
 public:
     explicit ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
@@ -87,10 +89,9 @@ public:
     void StorePropertyByNameAny(const ir::AstNode *const node, const VReg objReg, const util::StringView &fullName);
     void LoadPropertyByNameAny(const ir::AstNode *const node, const VReg objReg, const util::StringView &fullName);
 
-    void StorePropertyByName(const ir::AstNode *node, VReg objReg,
-                             checker::ETSChecker::NamedAccessMeta const &fieldMeta);
-    void LoadPropertyByName(const ir::AstNode *node, VReg objReg,
-                            checker::ETSChecker::NamedAccessMeta const &fieldMeta);
+    void StorePropertyByName(const ir::AstNode *node, VReg objReg, const ComponentTypeMemberAccessors &signatures);
+
+    void LoadPropertyByName(const ir::AstNode *node, const ComponentTypeMemberAccessors &signatures, VReg objReg);
 
     void LoadThis(const ir::AstNode *node);
     [[nodiscard]] VReg GetThisReg() const;
