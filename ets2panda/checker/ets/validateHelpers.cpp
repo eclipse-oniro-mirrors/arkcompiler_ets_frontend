@@ -269,8 +269,11 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir:
         return;
     }
 
-    if (variable->Declaration()->IsConstDecl() || variable->Declaration()->IsReadonlyDecl()) {
-        std::string_view fieldType = variable->Declaration()->IsConstDecl() ? "constant" : "readonly";
+    const bool isConstVariable = variable->Declaration()->IsConstDecl();
+    const bool isReadonlyVariable =
+        variable->Declaration()->IsReadonlyDecl() || variable->HasFlag(varbinder::VariableFlags::READONLY);
+    if (isConstVariable || isReadonlyVariable) {
+        std::string_view fieldType = isConstVariable ? "constant" : "readonly";
         if ((HasStatus(CheckerStatus::IN_CONSTRUCTOR | CheckerStatus::IN_STATIC_BLOCK) &&
              !variable->HasFlag(varbinder::VariableFlags::EXPLICIT_INIT_REQUIRED)) ||
             (variable->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK) &&
@@ -281,14 +284,13 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir:
         }
 
         if (HasStatus(CheckerStatus::IN_CONSTRUCTOR)) {
-            if (variable->HasFlag(varbinder::VariableFlags::STATIC) &&
-                variable->HasFlag(varbinder::VariableFlags::READONLY)) {
+            if (variable->HasFlag(varbinder::VariableFlags::STATIC) && isReadonlyVariable) {
                 std::ignore =
                     TypeError(variable, diagnostic::FIELD_ASSIGN_TO_READONLY, {variable->Name()}, expr->Start());
             }
         } else if (!HasStatus(CheckerStatus::IN_STATIC_BLOCK)) {
-            const auto &diagKind = variable->Declaration()->IsConstDecl() ? diagnostic::FIELD_ASSIGN_TO_CONST
-                                                                          : diagnostic::FIELD_ASSIGN_TO_READONLY;
+            const auto &diagKind =
+                isConstVariable ? diagnostic::FIELD_ASSIGN_TO_CONST : diagnostic::FIELD_ASSIGN_TO_READONLY;
             std::ignore = TypeError(variable, diagKind, {variable->Name()}, expr->Start());
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,8 @@ class AIterator implements Iterator<string> {
         this.base = base;
     }
     next(): IteratorResult<string> {
-        return {
-            done: this.index >= this.base.data.length,
-            value: this.index >= this.base.data.length ? undefined : this.base.data[this.index++]
-        }
+        return new IteratorResult<string>(this.index >= this.base.data.length,
+            this.index >= this.base.data.length ? undefined : this.base.data[this.index++]);
     }
 }
 
