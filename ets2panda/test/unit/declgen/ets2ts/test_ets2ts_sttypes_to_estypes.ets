@@ -492,3 +492,17 @@ export class ComplexNestedStructure {
         return new Array<es.Map<number, Set<es.Array<string>>>>();
     }
 }
+
+export declare namespace ns {
+    export const namespacedEsArray: es.Array<number>;
+    export const namespacedStArray: Array<number>;
+    export class Ui {
+        @State uiEsArray: es.Array<string>;
+        @State uiStArray: Array<string>;
+    }
+}
+
+export class Ui {
+    @State uiEsArray: es.Array<string>;
+    @State uiStArray: Array<string>;
+}

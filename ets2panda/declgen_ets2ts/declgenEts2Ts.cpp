@@ -2545,7 +2545,8 @@ void TSDeclGen::ProcessClassPropDeclaration(const ir::ClassProperty *classProp)
         OutDts(propName);
         OutDts(": ");
         if (!state_.inNamespace) {
-            classProp->IsStatic() ? OutDts("ESObject") : GenType(classProp->TsType());
+            auto typeAnnotation = classProp->TypeAnnotation();
+            classProp->IsStatic() ? OutDts("ESObject") : ProcessTypeAnnotationType(typeAnnotation, classProp->TsType());
         } else {
             ProcessClassPropertyType(classProp);
         }
