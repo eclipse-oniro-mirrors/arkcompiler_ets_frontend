@@ -2870,8 +2870,12 @@ checker::Type *ETSAnalyzer::ResolveMemberExpressionByBaseType(ETSChecker *checke
 
     if (baseType->IsETSObjectType()) {
         checker->ETSObjectTypeDeclNode(checker, baseType->AsETSObjectType());
-        return expr->SetTsType(TransformTypeForMethodReference(
-            checker, expr, expr->SetAndAdjustType(checker, baseType->AsETSObjectType())));
+        auto *memberType = expr->SetAndAdjustType(checker, baseType->AsETSObjectType());
+        if (!checker->CheckSuperMemberBeforeCtorCall(expr)) {
+            return checker->InvalidateType(expr);
+        }
+
+        return expr->SetTsType(TransformTypeForMethodReference(checker, expr, memberType));
     }
 
     if (baseType->IsETSUnionType()) {

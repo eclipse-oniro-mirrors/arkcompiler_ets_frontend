@@ -302,6 +302,7 @@ public:
     void CheckThisOrSuperCallInConstructor(ETSObjectType *classType, Signature *ctorSig);
     void CheckExpressionsInConstructor(const ArenaVector<const ir::Expression *> &arguments);
     ArenaVector<const ir::Expression *> CheckMemberOrCallOrObjectExpressionInConstructor(const ir::Expression *arg);
+    bool CheckSuperMemberBeforeCtorCall(const ir::MemberExpression *expr);
     void CheckSuperclassAccessibleDefaultCtor(ETSObjectType *classType, ETSObjectType *superType,
                                               ir::ClassDefinition *classDef);
     void CheckValidInheritance(ETSObjectType *classType, ir::ClassDefinition *classDef);

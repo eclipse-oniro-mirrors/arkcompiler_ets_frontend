@@ -2143,13 +2143,13 @@ static bool IsRootLevelConstructorCall(const ir::CallExpression *callExpr, const
     return exprStmt->Parent()->AsBlockStatement() == blockStmt;
 }
 
-static ir::Statement *FindContainingStatement(ir::Expression *node, const ir::BlockStatement *blockStmt)
+static ir::Statement *FindContainingStatement(const ir::Expression *node, const ir::BlockStatement *blockStmt)
 {
-    ir::AstNode *current = node;
+    const ir::AstNode *current = node;
     while (current != nullptr && current->Parent() != blockStmt) {
         current = current->Parent();
     }
-    return current != nullptr ? current->AsStatement() : nullptr;
+    return current != nullptr ? const_cast<ir::AstNode *>(current)->AsStatement() : nullptr;
 }
 
 static bool CheckConstructorCallPosition(ir::Expression *node, std::string_view msg, ETSChecker *checker)
@@ -2178,12 +2178,8 @@ static bool CheckConstructorCallPosition(ir::Expression *node, std::string_view 
     return true;
 }
 
-static bool CheckThisBeforeCtorCall(ir::Expression *node, ETSChecker *checker)
+static bool CheckReferenceBeforeCtorCall(const ir::Expression *node, std::string_view msg, ETSChecker *checker)
 {
-    if (!node->IsThisExpression()) {
-        return true;
-    }
-
     auto *sig = checker->Context().ContainingSignature();
     if (sig == nullptr || !sig->HasSignatureFlag(SignatureFlags::CONSTRUCT) || sig->Function()->Body() == nullptr ||
         !sig->Function()->Body()->IsBlockStatement()) {
@@ -2204,7 +2200,20 @@ static bool CheckThisBeforeCtorCall(ir::Expression *node, ETSChecker *checker)
     if (currentStmtIt >= firstCtorCallIt) {
         return true;
     }
-    checker->LogError(diagnostic::THIS_BEFORE_THIS_OR_SUPER, {}, node->Start());
+    checker->LogError(diagnostic::THIS_BEFORE_THIS_OR_SUPER, {msg}, node->Start());
+    return false;
+}
+
+static bool CheckThisBeforeCtorCall(ir::Expression *node, ETSChecker *checker)
+{
+    if (!node->IsThisExpression()) {
+        return true;
+    }
+
+    if (CheckReferenceBeforeCtorCall(node, "this", checker)) {
+        return true;
+    }
+
     return false;
 }
 
@@ -2247,6 +2256,22 @@ Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *cl
     }
 
     return classType;
+}
+
+bool ETSChecker::CheckSuperMemberBeforeCtorCall(const ir::MemberExpression *expr)
+{
+    if (!expr->Object()->IsSuperExpression()) {
+        return true;
+    }
+
+    auto *propType = expr->PropVar() != nullptr
+                         ? GetTypeOfVariable(const_cast<varbinder::LocalVariable *>(expr->PropVar()))
+                         : expr->TsType();
+    if (propType == nullptr || !propType->IsETSMethodType()) {
+        return true;
+    }
+
+    return CheckReferenceBeforeCtorCall(expr, "super", this);
 }
 
 void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
