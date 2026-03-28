@@ -2061,10 +2061,24 @@ void ETSChecker::ValidateSignatureAccessibility(ETSObjectType *callee, Signature
     bool isSignatureInherited = callee->IsSignatureInherited(signature);
     const auto *currentOutermost = containingClass->OutermostClass();
     if (!signature->HasSignatureFlag(SignatureFlags::PRIVATE) &&
-        ((signature->HasSignatureFlag(SignatureFlags::PROTECTED) && containingClass->IsDescendantOf(callee)) ||
+        ((signature->HasSignatureFlag(SignatureFlags::PROTECTED) &&
+          // CC-OFFNXT(G.FMT.02-CPP) project code style
+          (containingClass->IsDescendantOf(callee) || callee->IsDescendantOf(containingClass))) ||
+         // CC-OFFNXT(G.FMT.02-CPP) project code style
          (currentOutermost != nullptr && currentOutermost == callee->OutermostClass())) &&
         isSignatureInherited) {
         return;
+    }
+
+    // Allow static methods to access private members through derived class instances
+    if (signature->HasSignatureFlag(SignatureFlags::PRIVATE)) {
+        auto *signatureOwner = signature->Owner();
+        if (signatureOwner == containingClass && callee->IsDescendantOf(containingClass)) {
+            auto *containingSignature = Context().ContainingSignature();
+            if (containingSignature != nullptr && containingSignature->Function()->IsStatic()) {
+                return;
+            }
+        }
     }
 
     if (!maybeErrorInfo.has_value()) {
