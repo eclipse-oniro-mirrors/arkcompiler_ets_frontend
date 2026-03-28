@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,6 @@ enum Direction {
 /* @@ label1 */}
 
 
+/* @@@ label Error Syntax error ESY0318: Class cannot be used as object. */
 /* @@@ label Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
-/* @@@ label Error Semantic error ESE0143: Unresolved reference Right */
 /* @@@ label1 Error Syntax error ESY0227: Unexpected token '}'. */
