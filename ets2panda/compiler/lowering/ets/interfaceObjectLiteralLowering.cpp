@@ -449,10 +449,11 @@ static void MethodsHaveBody(checker::TypeRelation *relation, ir::TSInterfaceDecl
     ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
 
     //  Collect all the methods declared in interface and check if it has default implementation somewhere
-    auto const addMethod = [&methods, relation](ir::ScriptFunction const *const function) -> void {
+    auto const addMethod = [&methods, relation](ir::MethodDefinition const *const methodDef) -> void {
+        auto const *const function = methodDef->Function();
         auto const &name = function->Id()->Name();
         auto *const signature = const_cast<checker::Signature *>(function->Signature());
-        auto const hasBody = function->HasBody();
+        auto const hasBody = function->HasBody() || (methodDef->Modifiers() & ir::ModifierFlags::DEFAULT) != 0;
 
         auto const it = std::find_if(
             methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
@@ -474,13 +475,13 @@ static void MethodsHaveBody(checker::TypeRelation *relation, ir::TSInterfaceDecl
         auto methodDef = node->AsMethodDefinition();
         ES2PANDA_ASSERT(methodDef->Function());
         if (!methodDef->Function()->IsGetterOrSetter()) {
-            addMethod(methodDef->Function());
+            addMethod(methodDef);
         }
 
         for (auto const *const overload : methodDef->Overloads()) {
             ES2PANDA_ASSERT(overload->Function());
             if (!overload->Function()->IsGetterOrSetter()) {
-                addMethod(overload->Function());
+                addMethod(overload);
             }
         }
     }
