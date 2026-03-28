@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -93,7 +93,7 @@ function main(): void {
     arktest.assertEQ(tup_13[0], 10)
     arktest.assertEQ(tup_13[1], 11)
     tup_13[0] = 12;
-    tup_13[1] = Double.valueOf(13.0);
+    tup_13[1] = new Double(13.0);
     arktest.assertEQ(tup_13[0], 12)
     arktest.assertEQ(tup_13[1], 13)
 
