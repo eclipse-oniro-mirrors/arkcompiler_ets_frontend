@@ -3588,20 +3588,76 @@ static bool IsMethodPropertyAssignable(ETSChecker *const checker, std::string_vi
     return false;
 }
 
+static bool ReportInterfaceAccessorMismatchIfNeeded(ETSChecker *const checker, ir::Expression *const propExpr,
+                                                    varbinder::LocalVariable *const lv,
+                                                    const util::StringView &propertyName,
+                                                    ETSObjectType const *const objectType)
+{
+    if (!objectType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return false;
+    }
+
+    if (lv->TsType() == nullptr) {
+        checker->GetTypeOfVariable(lv);
+    }
+
+    auto *const lvType = lv->TsType();
+    if (lvType != nullptr && lvType->IsETSFunctionType() &&
+        checker->ReportInterfaceAccessorTypeMismatchIfNeeded(lvType->AsETSFunctionType(), propertyName,
+                                                             propExpr->Start())) {
+        propExpr->SetTsType(checker->GlobalTypeError());
+        return true;
+    }
+
+    return false;
+}
+
+static bool ReportReadonlyClassPropertyAssignmentIfNeeded(ETSChecker *const checker, ir::Expression *const propExpr,
+                                                          varbinder::LocalVariable *const lv,
+                                                          ETSObjectType const *const objectType)
+{
+    if (objectType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return false;
+    }
+
+    auto *const decl = lv->Declaration();
+    if (decl == nullptr || decl->Node() == nullptr || !decl->Node()->IsClassProperty()) {
+        return false;
+    }
+
+    auto *const classProp = decl->Node()->AsClassProperty();
+    if (!classProp->IsReadonly()) {
+        return false;
+    }
+
+    checker->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {lv->Name()}, propExpr->Start());
+    propExpr->SetTsType(checker->GlobalTypeError());
+    return true;
+}
+
+static bool ReportObjectLiteralMethodRedefinitionIfNeeded(ETSChecker *const checker, ir::Expression *const propExpr,
+                                                          Type *const propType, ETSObjectType const *const objectType)
+{
+    if (!propType->IsETSMethodType() ||
+        objectType->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::ABSTRACT)) {
+        return false;
+    }
+
+    checker->LogError(diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
+    propExpr->SetTsType(checker->GlobalTypeError());
+    return true;
+}
+
 static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *const propExpr,
                                  varbinder::LocalVariable *const lv, const util::StringView &pname,
                                  ETSObjectType const *const objectType)
 {
-    if (!objectType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
-        auto *const decl = lv->Declaration();
-        if (decl != nullptr && decl->Node() != nullptr && decl->Node()->IsClassProperty()) {
-            auto *const classProp = decl->Node()->AsClassProperty();
-            if (classProp->IsReadonly()) {
-                checker->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {lv->Name()}, propExpr->Start());
-                propExpr->SetTsType(checker->GlobalTypeError());
-                return false;
-            }
-        }
+    if (ReportInterfaceAccessorMismatchIfNeeded(checker, propExpr, lv, pname, objectType)) {
+        return false;
+    }
+
+    if (ReportReadonlyClassPropertyAssignmentIfNeeded(checker, propExpr, lv, objectType)) {
+        return false;
     }
 
     auto *propType = checker->GetTypeOfVariable(lv);
@@ -3618,11 +3674,7 @@ static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *cons
     ir::Expression *value = propExpr->AsProperty()->Value();
     value->SetPreferredType(propType);
 
-    // NOTE (DZ): now method re-definition is allowed only in object literals of interface and abstract class!
-    if (propType->IsETSMethodType() &&
-        !objectType->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::ABSTRACT)) {
-        checker->LogError(diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
-        propExpr->SetTsType(checker->GlobalTypeError());
+    if (ReportObjectLiteralMethodRedefinitionIfNeeded(checker, propExpr, propType, objectType)) {
         return false;
     }
 
@@ -3667,6 +3719,8 @@ static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::Obje
             propExpr->SetTsType(checker->GlobalTypeError());
             continue;
         }
+        // The property is present in the literal, so it must not be reported as "missing required" later.
+        properties.erase(*propertyName);
 
         if (ir::Expression *key = propExpr->AsProperty()->Key(); key->IsIdentifier()) {
             key->AsIdentifier()->SetVariable(lv);
@@ -3681,8 +3735,6 @@ static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::Obje
         if (!IsPropertyAssignable(checker, propExpr, lv, *propertyName, objType)) {
             continue;
         }
-
-        properties.erase(*propertyName);
     }
 }
 
