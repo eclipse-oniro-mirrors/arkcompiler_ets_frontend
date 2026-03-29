@@ -1603,7 +1603,7 @@ ir::AnnotatedExpression *ETSParser::GetAnnotatedExpressionFromParam()
 
 ir::Expression *ETSParser::ParseFunctionParameterAnnotations()
 {
-    Lexer()->NextToken();  // eat '@'
+    EatLeadingAtForAnnotation();
 
     auto annotations = ParseAnnotations(false);
     auto savePos = Lexer()->GetToken().Start();
@@ -2095,7 +2095,8 @@ ir::TSTypeParameter *ETSParser::ParseTypeParameter([[maybe_unused]] TypeAnnotati
 {
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
     ArenaVector<ir::AnnotationUsage *> annotations {Allocator()->Adapter()};
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         annotations = ParseAnnotations(false);
     }
 
@@ -2109,7 +2110,8 @@ ir::TSTypeParameter *ETSParser::ParseTypeParameter([[maybe_unused]] TypeAnnotati
         }
     }();
 
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         auto moreAnnos = ParseAnnotations(false);
         for (auto *anno : moreAnnos) {
             annotations.push_back(anno);

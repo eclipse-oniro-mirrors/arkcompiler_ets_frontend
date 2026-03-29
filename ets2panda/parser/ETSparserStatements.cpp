@@ -273,7 +273,7 @@ ir::Statement *ETSParser::ParseInitModuleStatement()
 
 ir::Statement *ETSParser::ParseAnnotationsInStatement(StatementParsingFlags flags)
 {
-    Lexer()->NextToken();  // eat '@'
+    EatLeadingAtForAnnotation();
 
     auto annotations = ParseAnnotations(false);
     auto savePos = Lexer()->GetToken().Start();

@@ -685,7 +685,8 @@ ir::AstNode *ETSParser::ParseClassElement(const ArenaVector<ir::AstNode *> &prop
     auto startLoc = Lexer()->GetToken().Start();
 
     ArenaVector<ir::AnnotationUsage *> annotations(Allocator()->Adapter());
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         annotations = ParseAnnotations(false);
     }
 
@@ -1230,7 +1231,7 @@ ir::MethodDefinition *ETSParser::ParseInterfaceMethod(ir::ModifierFlags flags, i
 
 ir::AstNode *ETSParser::ParseAnnotationsInInterfaceBody()
 {
-    Lexer()->NextToken();  // eat '@'
+    EatLeadingAtForAnnotation();
 
     auto annotations = ParseAnnotations(false);
     auto savePos = Lexer()->GetToken().Start();
