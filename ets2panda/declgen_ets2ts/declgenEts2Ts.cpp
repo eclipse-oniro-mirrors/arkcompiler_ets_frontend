@@ -390,8 +390,6 @@ bool TSDeclGen::IsInteropImport(const ir::ETSImportDeclaration *importDeclaratio
 
 void TSDeclGen::GenInteropImport()
 {
-    OutTs("import st from \"", interopSdkName_, "\";");
-    OutEndlTs();
     OutDts("import st from \"", interopSdkName_, "\";");
     OutEndlDts();
 }
