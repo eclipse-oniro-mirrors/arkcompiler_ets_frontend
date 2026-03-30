@@ -456,6 +456,8 @@ public:
                                                   Type *argumentType, Substitution *substitution);
     std::pair<ArenaVector<Type *>, bool> CreateUnconstrainedTypeParameters(
         ir::TSTypeParameterDeclaration const *typeParams);
+    bool PrecheckTypeParameterConstraintCycles(ir::TSTypeParameterDeclaration const *typeParams);
+    bool ValidateTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams);
     [[nodiscard]] std::optional<Substitution> CheckTypeParamsAndBuildSubstitutionIfValid(
         Signature *signature, const ArenaVector<ir::TypeNode *> &params, const lexer::SourcePosition &pos);
     void AssignTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams);
@@ -925,11 +927,13 @@ private:
     template <typename EnumType>
     EnumType *CreateEnumTypeFromEnumDeclaration(ir::TSEnumDeclaration const *const enumDecl);
 
-    using Type2TypeMap = std::unordered_map<varbinder::Variable *, varbinder::Variable *>;
     using TypeSet = std::unordered_set<varbinder::Variable *>;
-    bool CheckTypeParameterConstraint(ir::TSTypeParameter *param, Type2TypeMap &extends);
     bool CheckDefaultTypeParameter(const ir::TSTypeParameter *param, TypeSet &typeParameterDecls);
 
+    void SetUpReferencedTypeParameterConstraints(ir::TSTypeParameter *param, ir::TypeNode *typeNode,
+                                                 varbinder::Scope *paramScope, const TypeSet &localTypeParams);
+    void SetUpDefaultTypeDependenciesIfNeeded(ir::TSTypeParameter *param, ir::TypeNode *defaultType,
+                                              varbinder::Scope *paramScope, const TypeSet &localTypeParams);
     void SetUpTypeParameterConstraint(ir::TSTypeParameter *param);
     void CheckProgram(parser::Program *program, bool runAnalysis = false);
     void CheckWarnings(parser::Program *program, const util::Options &options);

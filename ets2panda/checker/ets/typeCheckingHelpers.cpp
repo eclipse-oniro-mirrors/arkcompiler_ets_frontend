@@ -858,6 +858,9 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
         ES2PANDA_ASSERT(typeAliasType != nullptr);
         typeAliasType->AsETSTypeAliasType()->SetTypeArguments(std::move(typeParamTypes));
         if (ok) {
+            ok = ValidateTypeParameterConstraints(aliasTypeNode->TypeParams());
+        }
+        if (ok) {
             AssignTypeParameterConstraints(aliasTypeNode->TypeParams());
         }
     }
