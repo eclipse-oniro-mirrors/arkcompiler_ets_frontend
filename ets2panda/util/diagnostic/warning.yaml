@@ -185,7 +185,7 @@ warning:
   id: 1236581
   message: "Type '{}' used in export declaration(s) is not exported."
   strict: true
-  exclusionlist: ["explicit_export"]
+  whitelist: ["allow_implicit_export"]
 
 graveyard:
 - 27
