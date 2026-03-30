@@ -90,9 +90,34 @@ static void AssertCompletionsOrder(const std::vector<CompletionEntry> &entries,
 }
 
 namespace {
+TEST_F(LSPCompletionsTests, KeyWordCompletionsToInclude2)
+{
+    std::vector<std::string> files = {"KeyWordCompletionsToInclude2.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+so    // expect 'console' and 'sort'
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 3;
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string res1 = "sort";
+    std::string res2 = "console";
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry(res1, CompletionEntryKind::METHOD,
+                        std::string(ark::es2panda::lsp::sort_text::CLASS_MEMBER_SNIPPETS), res1 + "()"),
+        CompletionEntry(res2, CompletionEntryKind::PROPERTY,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), res2)};
+    initializer.DestroyContext(ctx);
+    AssertCompletionsOrder(entries, expectedEntries);
+}
+
 TEST_F(LSPCompletionsTests, KeyWordCompletionsToInclude1)
 {
-    // test interface
     std::vector<std::string> files = {"KeyWordCompletionsToInclude1.ets"};
     std::vector<std::string> texts = {R"delimiter(
 class cal {}
@@ -120,6 +145,7 @@ l
     initializer.DestroyContext(ctx);
     AssertCompletionsOrder(entries, expectedEntries);
 }
+
 TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest8848)
 {
     // test interface
