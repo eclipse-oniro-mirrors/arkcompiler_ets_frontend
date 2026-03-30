@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,17 +20,17 @@ let obj: Record<string, number> = {
 
 /* @@? 18:5 Error Syntax error ESY0016: Unexpected token. */
 /* @@? 18:6 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 18:10 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 18:10 Error Syntax error ESY0230: Expected '{', got '.'. */
 /* @@? 18:10 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 18:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 18:10 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 18:10 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 18:10 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 18:20 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 18:24 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 18:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 18:24 Error Syntax error ESY0230: Expected '{', got ']'. */
-/* @@? 18:24 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference viewModel */
+/* @@? 18:24 Error Syntax error ESY0228: Unexpected token, expected ':'. */
 /* @@? 18:25 Error Syntax error ESY0227: Unexpected token ':'. */
-/* @@? 18:27 Error Syntax error ESY0227: Unexpected token '123'. */
-/* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */
-
+/* @@? 18:27 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 19:1 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 37:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 37:1 Error Syntax error ESY0230: Expected '{', got 'end of stream'. */
+/* @@? 37:1 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 37:1 Error Syntax error ESY0016: Unexpected token. */

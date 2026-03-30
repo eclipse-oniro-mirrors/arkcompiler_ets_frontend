@@ -270,6 +270,12 @@ protected:
     void EatTypeAnnotation();
     bool ParsePunctuatorGreaterThan(bool throwError = true);
     util::StringView ParseSymbolIteratorIdentifier() const noexcept;
+    ir::Identifier *ValidateIdentifierAndReportErrors(const lexer::Token &token, bool isUserDefinedType,
+                                                      TypeAnnotationParsingOptions options,
+                                                      const lexer::SourcePosition &tokenStart);
+    ir::Identifier *HandleEmptyTokenNameError(const lexer::Token &token, lexer::TokenType tokenType,
+                                              const lexer::SourcePosition &tokenStart,
+                                              TypeAnnotationParsingOptions options);
     ir::Identifier *ExpectIdentifier(bool isReference = false, bool isUserDefinedType = false,
                                      TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR);
     void ExpectToken(lexer::TokenType tokenType, bool consumeToken = true);

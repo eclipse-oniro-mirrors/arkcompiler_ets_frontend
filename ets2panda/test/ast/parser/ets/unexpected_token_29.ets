@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,16 +19,13 @@ function main(): void {
     }
 /* @@ label7 */}
 
-
-/* @@@ label1 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
+/* @@? 17:40 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
 /* @@? 17:44 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
-/* @@@ label2 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 17:67 Error Syntax error ESY0228: Unexpected token, expected ';'. */
 /* @@? 17:69 Error Semantic error ESE0062: need to specify target type for class composite */
-/* @@@ label3 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@@ label4 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@@ label4 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@@ label4 Error Syntax error ESY0230: Expected '{', got '('. */
-/* @@@ label4 Error Syntax error ESY0016: Unexpected token. */
-/* @@@ label5 Error Syntax error ESY0230: Expected ')', got 'string literal'. */
-/* @@@ label6 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@@ label7 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 19:5 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@? 20:16 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 32:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0016: Unexpected token. */
