@@ -29,12 +29,9 @@ std::string_view AsyncMethodLoweringStackless::Name() const
     return "AsyncMethodLoweringStackless";
 }
 
-static ArenaVector<ir::Statement *> CreatePrologue(public_lib::Context *ctx, ir::Identifier *currentAsyncCtxIdent)
+static ir::CallExpression *CreateAsyncContextCurrentCall(ArenaAllocator *alloc)
 {
-    ES2PANDA_ASSERT(ctx);
-    ES2PANDA_ASSERT(currentAsyncCtxIdent);
-
-    const auto alloc = ctx->Allocator();
+    ES2PANDA_ASSERT(alloc);
 
     const auto asyncCtxImportAlias = util::UString {
         std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS), alloc};
@@ -52,32 +49,34 @@ static ArenaVector<ir::Statement *> CreatePrologue(public_lib::Context *ctx, ir:
         alloc, asyncCtxCurrentMemberExpression, ArenaVector<ir::Expression *>({}), nullptr, false, false);
     ES2PANDA_ASSERT(asyncCtxCurrentCall);
 
-    const auto asyncCtxVariableDeclarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
-        alloc, ir::VariableDeclaratorFlag::CONST, currentAsyncCtxIdent->Clone(alloc, nullptr), asyncCtxCurrentCall);
-    ES2PANDA_ASSERT(asyncCtxVariableDeclarator);
+    return asyncCtxCurrentCall;
+}
 
-    const auto asyncCtxVariableDeclaration = util::NodeAllocator::ForceSetParent<ir::VariableDeclaration>(
-        alloc, ir::VariableDeclaration::VariableDeclarationKind::CONST, alloc,
-        ArenaVector<ir::VariableDeclarator *>({asyncCtxVariableDeclarator}));
-    ES2PANDA_ASSERT(asyncCtxVariableDeclaration);
+static ArenaVector<ir::Statement *> CreatePrologue(public_lib::Context *ctx)
+{
+    ES2PANDA_ASSERT(ctx);
+
+    const auto alloc = ctx->Allocator();
+
+    const auto asyncCtxCurrentCall = CreateAsyncContextCurrentCall(alloc);
 
     const auto dispatchCall = util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(
-        alloc, "asyncdispatch", ArenaVector<ir::Expression *>({currentAsyncCtxIdent->Clone(alloc, nullptr)}));
+        alloc, "asyncdispatch", ArenaVector<ir::Expression *>({asyncCtxCurrentCall}));
     ES2PANDA_ASSERT(dispatchCall);
 
     const auto dispatchStmt = util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(alloc, dispatchCall);
     ES2PANDA_ASSERT(dispatchStmt);
 
-    return {asyncCtxVariableDeclaration, dispatchStmt};
+    return {dispatchStmt};
 }
 
-static void AddPrologueToMethodBody(public_lib::Context *ctx, ir::BlockStatement *block, ir::Identifier *asyncCtxIdent)
+static void AddPrologueToMethodBody(public_lib::Context *ctx, ir::BlockStatement *block)
 {
     ES2PANDA_ASSERT(ctx);
     ES2PANDA_ASSERT(block);
 
     const auto statements = block->Statements();
-    const auto prologue = CreatePrologue(ctx, asyncCtxIdent);
+    const auto prologue = CreatePrologue(ctx);
     const auto prologueSize = prologue.size();
 
     ArenaVector<ir::Statement *> newStatements = {};
@@ -88,42 +87,6 @@ static void AddPrologueToMethodBody(public_lib::Context *ctx, ir::BlockStatement
     block->SetStatements(std::move(newStatements));
 
     for (size_t i = 0; i < prologueSize; ++i) {
-        auto checker = ctx->GetChecker()->AsETSChecker();
-        auto binder = checker->VarBinder()->AsETSBinder();
-        auto scope = NearestScope(block);
-        auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(binder, scope);
-        auto stmts = block->Statements();
-        CheckLoweredNode(binder, checker, stmts[i]);
-    }
-}
-
-static ArenaVector<ir::Statement *> CreateEpilogue(public_lib::Context *ctx)
-{
-    ES2PANDA_ASSERT(ctx);
-
-    const auto alloc = ctx->Allocator();
-    const auto undefinedLit = alloc->New<ir::UndefinedLiteral>();
-    ES2PANDA_ASSERT(undefinedLit);
-
-    auto returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(alloc, undefinedLit);
-    ES2PANDA_ASSERT(returnStmt);
-
-    return {returnStmt};
-}
-
-static void AddEpilogueToMethodBody(public_lib::Context *ctx, ir::BlockStatement *block)
-{
-    ES2PANDA_ASSERT(ctx);
-    ES2PANDA_ASSERT(block);
-
-    const auto statements = block->Statements();
-    const auto statementsSize = statements.size();
-    const auto epilogue = CreateEpilogue(ctx);
-    const auto epilogueSize = epilogue.size();
-
-    block->AddStatements(std::move(epilogue));
-
-    for (size_t i = statementsSize; i < statementsSize + epilogueSize; ++i) {
         auto checker = ctx->GetChecker()->AsETSChecker();
         auto binder = checker->VarBinder()->AsETSBinder();
         auto scope = NearestScope(block);
@@ -216,12 +179,10 @@ static ir::Expression *PrepareAsyncContextResolveValue(public_lib::Context *ctx,
     return parser->CreateFormattedExpression("@@E1 as @@T2", argClone, promiseTypeArg);
 }
 
-static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, ir::ReturnStatement *stmt,
-                                                  ir::Identifier *asyncCtxIdent)
+static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, ir::ReturnStatement *stmt)
 {
     ES2PANDA_ASSERT(ctx);
     ES2PANDA_ASSERT(stmt);
-    ES2PANDA_ASSERT(asyncCtxIdent);
 
     auto checker = ctx->GetChecker()->AsETSChecker();
     const auto parser = ctx->parser->AsETSParser();
@@ -236,14 +197,22 @@ static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, ir::
         "let @@I1 = @@E2", resolveValSym->Clone(alloc, nullptr), asyncContextResolveValue);
     ES2PANDA_ASSERT(resolveValDecl);
 
-    const auto returnArgDecl =
-        parser->CreateFormattedStatement("@@I1 ? @@I2.resolve(@@I3) : Promise.resolve(@@I4)",
-                                         asyncCtxIdent->Clone(alloc, nullptr), asyncCtxIdent->Clone(alloc, nullptr),
-                                         resolveValSym->Clone(alloc, nullptr), resolveValSym->Clone(alloc, nullptr));
+    const auto asyncCtxCurrent = CreateAsyncContextCurrentCall(alloc);
+    ES2PANDA_ASSERT(asyncCtxCurrent);
+
+    const auto asyncCtxSym = Gensym(alloc);
+    ES2PANDA_ASSERT(asyncCtxSym);
+    const auto asyncCtxDecl =
+        parser->CreateFormattedStatement("let @@I1 = @@E2", asyncCtxSym->Clone(alloc, nullptr), asyncCtxCurrent);
+    ES2PANDA_ASSERT(asyncCtxDecl);
+
+    const auto returnArgDecl = parser->CreateFormattedStatement(
+        "@@I1 ? @@I2.resolve(@@I3) : Promise.resolve(@@I4)", asyncCtxSym->Clone(alloc, nullptr),
+        asyncCtxSym->Clone(alloc, nullptr), resolveValSym->Clone(alloc, nullptr), resolveValSym->Clone(alloc, nullptr));
     ES2PANDA_ASSERT(returnArgDecl);
 
     auto returnArg = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(
-        alloc, ArenaVector<ir::Statement *>({resolveValDecl, returnArgDecl}));
+        alloc, ArenaVector<ir::Statement *>({resolveValDecl, asyncCtxDecl, returnArgDecl}));
     ES2PANDA_ASSERT(returnArg);
 
     auto loweringResult = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(alloc, returnArg);
@@ -251,6 +220,44 @@ static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, ir::
     HandleLoweringResult(loweringResult, stmt, checker);
 
     return loweringResult->AsReturnStatement();
+}
+
+static void AddMissingReturnStatement(public_lib::Context *ctx, ir::ScriptFunction *func)
+{
+    ES2PANDA_ASSERT(func);
+    ES2PANDA_ASSERT(func->HasBody());
+    ES2PANDA_ASSERT(func->Body()->IsBlockStatement());
+
+    if (func->HasReturnStatement()) {
+        return;
+    }
+
+    auto checker = ctx->GetChecker()->AsETSChecker();
+    const auto alloc = ctx->Allocator();
+
+    const auto funcReturnType = func->Signature()->ReturnType();
+    const auto promiseVoidType = checker->CreatePromiseOf(checker->GlobalVoidType());
+    const auto promiseUndefinedType = checker->CreatePromiseOf(checker->GlobalETSUndefinedType());
+    const auto relation = checker->Relation();
+    if (!relation->IsSupertypeOf(funcReturnType, promiseVoidType) &&
+        !relation->IsSupertypeOf(funcReturnType, promiseUndefinedType)) {
+        return;
+    }
+
+    const auto undefinedLit = alloc->New<ir::UndefinedLiteral>();
+    ES2PANDA_ASSERT(undefinedLit);
+    auto returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(alloc, undefinedLit);
+    ES2PANDA_ASSERT(returnStmt);
+    auto body = func->Body()->AsBlockStatement();
+    ES2PANDA_ASSERT(body);
+    body->AddStatement(returnStmt);
+    func->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
+
+    auto binder = checker->VarBinder()->AsETSBinder();
+    auto scope = NearestScope(body);
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(binder, scope);
+
+    CheckLoweredNode(binder, checker, returnStmt);
 }
 
 static void HandleAsyncFunctionBody(public_lib::Context *ctx, ir::BlockStatement *body)
@@ -261,23 +268,9 @@ static void HandleAsyncFunctionBody(public_lib::Context *ctx, ir::BlockStatement
     ES2PANDA_ASSERT(body->Parent()->IsScriptFunction());
     ES2PANDA_ASSERT(body->Parent()->AsScriptFunction()->IsAsyncFunc());
 
-    const auto asyncCtxIdent = Gensym(ctx->Allocator());
-    ES2PANDA_ASSERT(asyncCtxIdent);
+    AddPrologueToMethodBody(ctx, body);
 
-    /*
-     * NOTE(knazarov): prologue does not need to be transformed, since it  does not contain
-     * neither `await`, nor `return`.
-     */
-    AddPrologueToMethodBody(ctx, body, asyncCtxIdent);
-
-    /*
-     * NOTE(knazarov): assume that in case that no return statement is present, the only possible
-     * return statement is `return undefined`, since otherwise checker would have already reported an error
-     */
-    const auto containingFunc = body->Parent()->AsScriptFunction();
-    if (!containingFunc->HasReturnStatement()) {
-        AddEpilogueToMethodBody(ctx, body);
-    }
+    AddMissingReturnStatement(ctx, body->Parent()->AsScriptFunction());
 
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     const std::function<ir::AstNode *(ir::AstNode *)> transformer = [&](ir::AstNode *node) -> ir::AstNode * {
@@ -296,7 +289,7 @@ static void HandleAsyncFunctionBody(public_lib::Context *ctx, ir::BlockStatement
         node->TransformChildren(transformer, LOWERING_NAME);
 
         if (node->IsReturnStatement()) {
-            return HandleReturnStatement(ctx, node->AsReturnStatement(), asyncCtxIdent);
+            return HandleReturnStatement(ctx, node->AsReturnStatement());
         }
 
         return node;
