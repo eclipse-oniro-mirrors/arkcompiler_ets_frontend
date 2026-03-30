@@ -173,7 +173,7 @@ ir::AstNode *ChangeTracker::NextCommaToken(es2panda_Context *context, const ir::
 {
     auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
     auto *astNodes = astContext->parserProgram->Ast();
-    const auto children = GetChildren(astNodes, astContext->allocator);
+    const auto children = GetChildren(astNodes);
     const auto next = FindRightToken(node->Start().index, children);
     return next;
 }

@@ -329,7 +329,7 @@ CompletionEntryKind GetAliasScriptElementKindImpl(es2panda_Context *context, siz
         return CompletionEntryKind::ALIAS_TYPE;
     }
     if (typeAnnotation->IsETSTypeReference()) {
-        auto part = typeAnnotation->AsETSTypeReference()->Part()->AsETSTypeReferencePart();
+        auto part = typeAnnotation->AsETSTypeReference()->Part();
         if (part == nullptr) {
             return CompletionEntryKind::ALIAS_TYPE;
         }

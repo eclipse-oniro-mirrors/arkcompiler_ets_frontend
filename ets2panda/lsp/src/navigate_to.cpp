@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -120,7 +120,7 @@ std::vector<NavigateToItem> GetItemsFromNamedDeclaration(es2panda_Context *conte
 
     auto *ctx = reinterpret_cast<public_lib::Context *>(context);
     auto *ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    auto children = GetChildren(ast, ctx->allocator);
+    auto children = GetChildren(ast);
     items.reserve(children.size());
     for (auto *child : children) {
         if (auto item = TryMakeItemFromNode(child, matcher, filePath)) {

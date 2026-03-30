@@ -203,10 +203,16 @@ TextRange GetCallPositionOfExtraction(const RefactorContext &context)
     auto start = normalizedSpan.pos;
     auto end = normalizedSpan.end;
     const auto startedNode = GetTouchingToken(context.context, start, false);
+    if (startedNode == nullptr) {
+        return {start, end};
+    }
     if (startedNode->Start().index < start) {
         start = startedNode->Start().index;
     }
     const auto endedNode = GetTouchingToken(context.context, end - 1, false);
+    if (endedNode == nullptr) {
+        return {start, end};
+    }
     if (endedNode->End().index > end) {
         end = endedNode->End().index;
     }
@@ -2570,7 +2576,7 @@ static ir::AstNode *ResolveInsertPosNode(ir::AstNode *target, const std::string 
         insertPosNode = FindEncloseBreakPosition(target, startPos);
     } else if (const auto namespaceDepth = GetNamespaceActionDepth(actionName, EXTRACT_CONSTANT_ACTION_ENCLOSE.name,
                                                                    EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX);
-               namespaceDepth.has_value()) {
+               namespaceDepth.has_value()) {  // CC-OFF(G.FMT.02-CPP) project code style
         insertPosNode = FindNamespaceBreakPosition(target, namespaceDepth.value(), startPos);
     }
     if (functionNamespaceDepth.has_value()) {

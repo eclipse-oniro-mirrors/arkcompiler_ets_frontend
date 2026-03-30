@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -175,11 +175,10 @@ bool HasPropertyAccessExpressionWithName(ir::AstNode *node, const std::string &f
 
 bool IsPromiseHandler(ir::AstNode *node)
 {
-    ir::AstNode *currentIdentNode = nullptr;
-    if (HasSpecificIdentifier(node) == nullptr) {
+    auto *currentIdentNode = HasSpecificIdentifier(node);
+    if (currentIdentNode == nullptr || !currentIdentNode->IsIdentifier()) {
         return false;
     }
-    currentIdentNode = HasSpecificIdentifier(node);
     return ir::AstNodeType::CALL_EXPRESSION == node->Type() &&
            (HasPropertyAccessExpressionWithName(currentIdentNode, "then") ||
             HasPropertyAccessExpressionWithName(currentIdentNode, "catch") ||
@@ -196,11 +195,10 @@ bool IsExist(ArenaVector<ir::Expression *> args)
 
 bool HasSupportedNumberOfArguments(ir::AstNode *node)
 {
-    ir::AstNode *currentIdentNode = nullptr;
-    if (HasSpecificIdentifier(node) == nullptr) {
+    auto *currentIdentNode = HasSpecificIdentifier(node);
+    if (currentIdentNode == nullptr || !currentIdentNode->IsIdentifier()) {
         return false;
     }
-    currentIdentNode = HasSpecificIdentifier(node);
     auto const &name = currentIdentNode->AsIdentifier()->Name();
     auto const maxArguments = name == "then" ? 2 : name == "catch" ? 1 : name == "finally" ? 1 : 0;
     if ((int)(node->AsCallExpression()->Arguments().size()) > maxArguments) {

@@ -162,7 +162,6 @@ struct FormatInputs {
     FormatContext &formatCtx;
     const std::string &sourceText;
     ir::AstNode *ast;
-    ArenaAllocator *allocator;
 };
 
 enum class KeystrokeType {
@@ -304,19 +303,19 @@ static bool IsCommentPosition(es2panda_Context *context, size_t position)
     return commentRange.end_ != 0 || commentRange.pos_ != 0;
 }
 
-static bool IsListElement(ir::AstNode *parent, ir::AstNode *node, ArenaAllocator *allocator)
+static bool IsListElement(ir::AstNode *parent, ir::AstNode *node)
 {
     if (parent == nullptr || node == nullptr) {
         return false;
     }
-    auto children = GetChildren(parent, allocator);
+    auto children = GetChildren(parent);
     if (children.size() <= 1) {
         return false;
     }
     return std::find(children.begin(), children.end(), node) != children.end();
 }
 
-static ir::AstNode *FindOutermostNodeWithinListLevel(ir::AstNode *node, ArenaAllocator *allocator)
+static ir::AstNode *FindOutermostNodeWithinListLevel(ir::AstNode *node)
 {
     auto *current = node;
     while (current != nullptr) {
@@ -327,7 +326,7 @@ static ir::AstNode *FindOutermostNodeWithinListLevel(ir::AstNode *node, ArenaAll
         if (parent->End().index != current->End().index) {
             break;
         }
-        if (IsListElement(parent, current, allocator)) {
+        if (IsListElement(parent, current)) {
             break;
         }
         current = parent;
@@ -353,25 +352,25 @@ static std::vector<TextChange> FormatNodeLines(const FormatInputs &inputs, ir::A
 
 static std::vector<TextChange> FormatAfterOpenBrace(const FormatInputs &inputs, size_t position)
 {
-    auto *precedingToken = FindPrecedingToken(position, inputs.ast, inputs.allocator);
+    auto *precedingToken = FindPrecedingToken(position, inputs.ast);
     if (precedingToken == nullptr && position > 0) {
-        precedingToken = FindPrecedingToken(position - 1, inputs.ast, inputs.allocator);
+        precedingToken = FindPrecedingToken(position - 1, inputs.ast);
     }
-    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken, inputs.allocator);
+    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken);
     return FormatNodeLines(inputs, outermostNode, position);
 }
 
 static std::vector<TextChange> FormatAfterCloseBraceOrSemicolon(const FormatInputs &inputs, size_t position)
 {
     size_t searchPos = position > 0 ? position - 1 : position;
-    auto *precedingToken = FindPrecedingToken(searchPos, inputs.ast, inputs.allocator);
+    auto *precedingToken = FindPrecedingToken(searchPos, inputs.ast);
     if (precedingToken == nullptr) {
         precedingToken = GetTouchingToken(inputs.ctx, searchPos, false);
     }
     if (precedingToken == nullptr) {
         return {};
     }
-    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken, inputs.allocator);
+    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken);
     if (outermostNode == nullptr) {
         return {};
     }
@@ -420,8 +419,7 @@ std::vector<TextChange> FormatAfterKeystroke(es2panda_Context *context, FormatCo
     util::StringView sourceCode = publicContext->parserProgram->SourceCode();
     std::string sourceText(sourceCode.Utf8());
     auto *ast = publicContext->parserProgram->Ast();
-    auto *allocator = publicContext->allocator;
-    FormatInputs inputs {context, publicContext, formatContext, sourceText, ast, allocator};
+    FormatInputs inputs {context, publicContext, formatContext, sourceText, ast};
 
     if (span.start > sourceText.length()) {
         return {};

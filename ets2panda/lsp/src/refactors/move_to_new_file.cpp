@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -183,10 +183,12 @@ void MoveToNewFileRefactor::DoChange(es2panda_Context *context, ChangeTracker &t
     es2panda_Context *tempFileContext = initializer.CreateContext(tempNewFile.c_str(), ES2PANDA_STATE_CHECKED);
     std::vector<FileTextChanges> changes = OrganizeImports::Organize(tempFileContext, tempNewFile);
     if (changes.empty()) {
+        initializer.DestroyContext(tempFileContext);
         return;
     }
     std::ofstream ofsNewFile(newFile);
     if (!ofsNewFile) {
+        initializer.DestroyContext(tempFileContext);
         return;
     }
     const auto &change = changes[0];
@@ -214,6 +216,7 @@ void MoveToNewFileRefactor::DoChange(es2panda_Context *context, ChangeTracker &t
         return false;
     });
     OrganizeImports::Organize(context, newFile);
+    initializer.DestroyContext(tempFileContext);
 }
 
 std::vector<ApplicableRefactorInfo> MoveToNewFileRefactor::GetAvailableActions(const RefactorContext &refContext) const

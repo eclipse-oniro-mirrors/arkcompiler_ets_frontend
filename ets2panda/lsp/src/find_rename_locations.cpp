@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -54,7 +54,8 @@ bool NeedsCrossFileRename(es2panda_Context *context, size_t position)
         auto parent = touchingToken->Parent();
         if (parent != nullptr && parent->IsMemberExpression()) {
             auto property = parent->AsMemberExpression()->Property();
-            if (property != nullptr && compiler::DeclarationFromIdentifier(property->AsIdentifier()) == decl) {
+            if (property != nullptr && property->IsIdentifier() &&
+                compiler::DeclarationFromIdentifier(property->AsIdentifier()) == decl) {
                 return true;
             }
         }

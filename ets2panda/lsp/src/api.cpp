@@ -211,7 +211,7 @@ es2panda_AstNode *GetPrecedingToken(es2panda_Context *context, const size_t pos)
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     SetPhaseManager(ctx->phaseManager);
     auto ast = ctx->parserProgram->Ast();
-    return reinterpret_cast<es2panda_AstNode *>(FindPrecedingToken(pos, ast, ctx->allocator));
+    return reinterpret_cast<es2panda_AstNode *>(FindPrecedingToken(pos, ast));
 }
 
 std::string GetCurrentTokenValue(es2panda_Context *context, size_t position)

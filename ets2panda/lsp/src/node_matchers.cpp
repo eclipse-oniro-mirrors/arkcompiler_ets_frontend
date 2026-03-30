@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -485,7 +485,8 @@ bool MatchSwitchStatement(ir::AstNode *childNode, const NodeInfo *info)
         return std::string(discriminant->AsIdentifier()->Name()) == info->name;
     }
     if (discriminant->IsMemberExpression()) {
-        return std::string(discriminant->AsMemberExpression()->Object()->AsIdentifier()->Name()) == info->name;
+        auto *obj = discriminant->AsMemberExpression()->Object();
+        return obj->IsIdentifier() && std::string(obj->AsIdentifier()->Name()) == info->name;
     }
     return false;
 }
@@ -503,6 +504,10 @@ bool MatchTsNonNullExpression(ir::AstNode *childNode, const NodeInfo *info)
         return std::string(expression->AsIdentifier()->Name()) == info->name;
     }
     if (expression->IsMemberExpression()) {
+        if (!expression->AsMemberExpression()->Object()->IsIdentifier() ||
+            !expression->AsMemberExpression()->Property()->IsIdentifier()) {
+            return false;
+        }
         return std::string(expression->AsMemberExpression()->Object()->AsIdentifier()->Name()) == info->name ||
                std::string(expression->AsMemberExpression()->Property()->AsIdentifier()->Name()) == info->name;
     }
@@ -550,8 +555,11 @@ void HandleSpeadeElement(ir::AstNode *node, std::vector<NodeInfo> &result)
             result.emplace_back(std::string(ident->AsIdentifier()->Name()), ir::AstNodeType::SPREAD_ELEMENT);
         }
         if (ident->IsMemberExpression()) {
-            auto propertyName = std::string(ident->AsMemberExpression()->Property()->AsIdentifier()->Name());
-            result.emplace_back(propertyName, ir::AstNodeType::SPREAD_ELEMENT);
+            auto *property = ident->AsMemberExpression()->Property();
+            if (property->IsIdentifier()) {
+                auto propertyName = std::string(property->AsIdentifier()->Name());
+                result.emplace_back(propertyName, ir::AstNodeType::SPREAD_ELEMENT);
+            }
         }
     }
 }
@@ -563,13 +571,15 @@ void HandleTSEnumMember(ir::AstNode *node, std::vector<NodeInfo> &result)
 
 void HandleCallExpression(ir::AstNode *node, std::vector<NodeInfo> &result)
 {
-    if (node->AsCallExpression()->Callee()->IsMemberExpression()) {
-        result.emplace_back(node->AsCallExpression()->Callee()->AsMemberExpression()->Property()->ToString(),
-                            ir::AstNodeType::CALL_EXPRESSION);
+    auto *callee = node->AsCallExpression()->Callee();
+    if (callee->IsMemberExpression()) {
+        auto *property = callee->AsMemberExpression()->Property();
+        if (property != nullptr) {
+            result.emplace_back(property->ToString(), ir::AstNodeType::CALL_EXPRESSION);
+        }
     }
-    if (node->AsCallExpression()->Callee()->IsIdentifier()) {
-        result.emplace_back(std::string(node->AsCallExpression()->Callee()->AsIdentifier()->Name()),
-                            ir::AstNodeType::CALL_EXPRESSION);
+    if (callee->IsIdentifier()) {
+        result.emplace_back(std::string(callee->AsIdentifier()->Name()), ir::AstNodeType::CALL_EXPRESSION);
     }
 }
 
@@ -588,7 +598,11 @@ static std::unordered_map<ir::AstNodeType, NodeExtractor> GetClassAndIdentifierE
                     }},
             {ir::AstNodeType::PROPERTY,
                     [](ir::AstNode *node, const NodeInfo *) {
-                        return node->IsProperty() ? node->AsProperty()->Key()->AsIdentifier() : node;
+                        if (!node->IsProperty()) {
+                            return node;
+                        }
+                        auto *key = node->AsProperty()->Key();
+                        return key->IsIdentifier() ? key->AsIdentifier() : node;
                     }},
             {ir::AstNodeType::METHOD_DEFINITION,
                     [](ir::AstNode *node, const NodeInfo *) {
@@ -637,7 +651,11 @@ static std::unordered_map<ir::AstNodeType, NodeExtractor> GetExpressionExtractor
 {
     return {{ir::AstNodeType::MEMBER_EXPRESSION,
              [](ir::AstNode *node, const NodeInfo *) {
-                 return node->IsMemberExpression() ? node->AsMemberExpression()->Property()->AsIdentifier() : node;
+                 if (!node->IsMemberExpression()) {
+                     return node;
+                 }
+                 auto *property = node->AsMemberExpression()->Property();  // CC-OFF(G.FMT.02-CPP) project code style
+                 return property->IsIdentifier() ? property->AsIdentifier() : node;
              }},
             {ir::AstNodeType::CALL_EXPRESSION,
              [](ir::AstNode *node, const NodeInfo *info) { return ExtractCallExpressionIdentifier(node, info); }},
@@ -664,8 +682,11 @@ static std::unordered_map<ir::AstNodeType, NodeExtractor> GetTypeReferenceExtrac
                     }},
             {ir::AstNodeType::TS_TYPE_REFERENCE,
                     [](ir::AstNode *node, const NodeInfo *) {
-                        return node->IsETSTypeReference()
-                            ? node->AsETSTypeReference()->Part()->Name()->AsIdentifier() : node;
+                        auto *part = node->AsETSTypeReference()->Part();
+                        if (!part->Name()->IsIdentifier()) {
+                            return node;
+                        }
+                        return static_cast<ir::AstNode *>(part->Name()->AsIdentifier());
                     }}
             };
     // clang-format on

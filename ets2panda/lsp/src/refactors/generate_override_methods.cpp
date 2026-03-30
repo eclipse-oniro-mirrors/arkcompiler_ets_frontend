@@ -116,7 +116,14 @@ static std::vector<const ir::AstNode *> GetSuperClassOfInterface(ir::AstNode *no
         return out;
     }
     for (auto e : node->AsTSInterfaceDeclaration()->Extends()) {
-        out.push_back(e->Expr()->AsETSTypeReference()->Part()->Name()->AsIdentifier());
+        if (!e->Expr()->IsETSTypeReference()) {
+            continue;
+        }
+        auto *part = e->Expr()->AsETSTypeReference()->Part();
+        if (!part->Name()->IsIdentifier()) {
+            continue;
+        }
+        out.push_back(part->Name()->AsIdentifier());
     }
     return out;
 }

@@ -79,28 +79,27 @@ InferFunctionRefactor::InferFunctionRefactor()
 ir::AstNode *GetTypeNode(ir::AstNode *declaration)
 {
     ir::AstNode *type = nullptr;
-    if (declaration->Parent()->IsFunctionDeclaration()) {
-        declaration->Parent()->AsFunctionDeclaration()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
+    auto *parent = declaration->Parent();
+    if (parent->IsFunctionDeclaration()) {
+        parent->AsFunctionDeclaration()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
             if (child->IsReturnStatement()) {
                 type = child->AsReturnStatement()->Argument();
             }
         });
-    } else if (declaration->Parent()->IsFunctionExpression()) {
-        declaration->Parent()->AsFunctionExpression()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
+    } else if (parent->IsFunctionExpression()) {
+        parent->AsFunctionExpression()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
             if (child->IsReturnStatement()) {
                 type = child->AsReturnStatement()->Argument();
             }
         });
-    } else if (declaration->Parent()->IsArrowFunctionExpression()) {
+    } else if (parent->IsArrowFunctionExpression()) {
         type = declaration->FindChild([](ir::AstNode *child) { return child->IsReturnStatement(); });
-        type = type == nullptr
-                   ? declaration->Parent()->AsArrowFunctionExpression()->Function()->ReturnStatements().at(0)
-                   : type;
+        type = type == nullptr ? parent->AsArrowFunctionExpression()->Function()->ReturnStatements().at(0) : type;
         if (type != nullptr) {
             type = type->AsReturnStatement()->Argument();
         }
-    } else if (declaration->Parent()->IsMethodDefinition()) {
-        declaration->Parent()->AsMethodDefinition()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
+    } else if (parent->IsMethodDefinition()) {
+        parent->AsMethodDefinition()->Function()->Body()->Iterate([&type](ir::AstNode *child) {
             if (child->IsReturnStatement()) {
                 type = child->AsReturnStatement()->Argument();
             }
@@ -114,7 +113,10 @@ std::string GetDeclaratorName(ir::AstNode *namedNode)
     std::string name;
     namedNode->FindChild([&name](ir::AstNode *typeChild) {
         if (typeChild->IsETSTypeReference()) {
-            name = " : " + std::string(typeChild->AsETSTypeReference()->Part()->Name()->AsIdentifier()->Name()) + "[]";
+            auto *part = typeChild->AsETSTypeReference()->Part();
+            if (part->Name() != nullptr && part->Name()->IsIdentifier()) {
+                name = " : " + std::string(part->Name()->AsIdentifier()->Name()) + "[]";
+            }
             return true;
         }
         return false;

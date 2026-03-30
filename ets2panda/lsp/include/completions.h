@@ -202,7 +202,7 @@ std::vector<CompletionEntry> GetMemberCompletions(es2panda_Context *context, siz
 Request KeywordCompletionData(const std::string &input);
 std::string ToLowerCase(const std::string &str);
 std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *context, size_t position);
-ArenaVector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope, ArenaAllocator *allocator);
+std::vector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope);
 CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry);
 
 std::optional<CompletionEntryData> GetAutoImportCompletionEntry(ark::es2panda::lsp::CompletionEntryData *data,

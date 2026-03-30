@@ -183,7 +183,11 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
         return CompletionEntry(name, CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsMethodDefinition()) {
-        name = std::string(node->AsMethodDefinition()->Key()->AsIdentifier()->Name());
+        auto *key = node->AsMethodDefinition()->Key();
+        if (!key->IsIdentifier()) {
+            return CompletionEntry();
+        }
+        name = std::string(key->AsIdentifier()->Name());
         return CompletionEntry(name, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
                                name + "()", std::nullopt, GetTypeSig(node));
     }
@@ -1159,13 +1163,20 @@ Request KeywordCompletionData(const std::string &input)
 
 std::string GetDeclName(const ir::AstNode *decl)
 {
+    if (decl == nullptr) {
+        return "";
+    }
     switch (decl->Type()) {
         case ir::AstNodeType::IDENTIFIER:
             return decl->AsIdentifier()->ToString();
-        case ir::AstNodeType::METHOD_DEFINITION:
-            return decl->AsMethodDefinition()->Key()->AsIdentifier()->ToString();
-        case ir::AstNodeType::CLASS_PROPERTY:
-            return decl->AsClassProperty()->Key()->AsIdentifier()->ToString();
+        case ir::AstNodeType::METHOD_DEFINITION: {
+            auto *key = decl->AsMethodDefinition()->Key();
+            return key->IsIdentifier() ? key->AsIdentifier()->ToString() : "";
+        }
+        case ir::AstNodeType::CLASS_PROPERTY: {
+            auto *key = decl->AsClassProperty()->Key();
+            return key->IsIdentifier() ? key->AsIdentifier()->ToString() : "";
+        }
         case ir::AstNodeType::CLASS_DEFINITION:
             return std::string(decl->AsClassDefinition()->Ident()->Name());
         case ir::AstNodeType::TS_INTERFACE_DECLARATION:
@@ -1301,13 +1312,13 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
     std::unordered_set<std::string> hasImported;
     for (auto &specifier : specifiers) {
         if (specifier->IsImportSpecifier()) {
-            auto name = specifier->AsImportSpecifier()->Imported()->AsIdentifier()->Name();
+            auto name = specifier->AsImportSpecifier()->Imported()->Name();
             hasImported.emplace(name.Utf8());
         }
     }
 
     std::string specStr;
-    if (node != nullptr && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
+    if (node != nullptr && node->IsIdentifier() && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
         specStr = node->AsIdentifier()->Name().Utf8();
     }
     auto ans = GetExportsFromProgram(program, specStr);
@@ -1477,7 +1488,7 @@ varbinder::Scope *NearestScope(const ir::AstNode *ast)
     return ast == nullptr ? nullptr : ast->Scope();
 }
 
-void GetIdentifiersInScope(const varbinder::Scope *scope, ArenaVector<ir::AstNode *> &results)
+void GetIdentifiersInScope(const varbinder::Scope *scope, std::vector<ir::AstNode *> &results)
 {
     if (scope->Node() == nullptr) {
         return;
@@ -1488,7 +1499,7 @@ void GetIdentifiersInScope(const varbinder::Scope *scope, ArenaVector<ir::AstNod
     FindAllChild(scope->Node(), checkFunc, results);
 }
 
-auto GetDeclByScopePath(ArenaVector<varbinder::Scope *> &scopePath, ArenaAllocator *allocator)
+auto GetDeclByScopePath(std::vector<varbinder::Scope *> &scopePath)
 {
     auto hashFunc = [](const ir::AstNode *node) {
         static std::hash<std::string> strHasher;
@@ -1497,10 +1508,9 @@ auto GetDeclByScopePath(ArenaVector<varbinder::Scope *> &scopePath, ArenaAllocat
     auto equalFunc = [](const ir::AstNode *lhs, const ir::AstNode *rhs) {
         return GetDeclName(lhs) == GetDeclName(rhs);
     };
-    auto decls = ArenaUnorderedSet<ir::AstNode *, decltype(hashFunc), decltype(equalFunc)>(0, hashFunc, equalFunc,
-                                                                                           allocator->Adapter());
+    auto decls = std::unordered_set<ir::AstNode *, decltype(hashFunc), decltype(equalFunc)>(0, hashFunc, equalFunc);
     for (auto scope : scopePath) {
-        auto nodes = ArenaVector<ir::AstNode *>(allocator->Adapter());
+        auto nodes = std::vector<ir::AstNode *>();
         GetIdentifiersInScope(scope, nodes);
         for (auto node : nodes) {
             auto decl = compiler::DeclarationFromIdentifier(node->AsIdentifier());
@@ -1531,17 +1541,13 @@ std::vector<CompletionEntry> SortCompletionEntries(std::vector<CompletionEntry> 
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto allocator = ctx->allocator;
-    if (allocator == nullptr) {
-        return {};
-    }
-    auto precedingToken = FindPrecedingToken(position, ctx->parserProgram->Ast(), allocator);
+    auto precedingToken = FindPrecedingToken(position, ctx->parserProgram->Ast());
     if (precedingToken == nullptr) {
         return {};
     }
-    auto scopePath = BuildScopePath(compiler::NearestScope(precedingToken), allocator);
+    auto scopePath = BuildScopePath(compiler::NearestScope(precedingToken));
     auto prefix = GetCurrentTokenValueImpl(context, position, precedingToken);
-    auto decls = GetDeclByScopePath(scopePath, allocator);
+    auto decls = GetDeclByScopePath(scopePath);
     std::vector<CompletionEntry> completions;
 
     for (auto decl : decls) {
@@ -1560,9 +1566,9 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     return SortCompletionEntries(completions, prefix);
 }
 
-ArenaVector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope, ArenaAllocator *allocator)
+std::vector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope)
 {
-    ArenaVector<varbinder::Scope *> scopePath(allocator->Adapter());
+    std::vector<varbinder::Scope *> scopePath;
     for (auto scope = startScope; scope != nullptr; scope = scope->Parent()) {
         scopePath.push_back(scope);
     }
@@ -1762,13 +1768,12 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
     if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
         return {};
     }
-    auto allocator = ctx->allocator;
     std::string sourceCode(ctx->parserProgram->SourceCode());
     if (IsAnnotationBeginning(sourceCode, pos)) {
         return GetAnnotationCompletions(context, pos);  // need to filter annotation
     }
     // Current GetPrecedingPosition cannot get token of "obj." with position.
-    auto precedingToken = FindPrecedingToken(pos, ctx->parserProgram->Ast(), allocator);
+    auto precedingToken = FindPrecedingToken(pos, ctx->parserProgram->Ast());
     if (precedingToken == nullptr) {
         return {};
     }
@@ -1778,7 +1783,7 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
     // Boundary fallback: when cursor is right after an import token (e.g. `import)`),
     // the preceding token may be resolved outside the import statement.
     if (pos > 0) {
-        auto *precedingAtLeft = FindPrecedingToken(pos - 1, ctx->parserProgram->Ast(), allocator);
+        auto *precedingAtLeft = FindPrecedingToken(pos - 1, ctx->parserProgram->Ast());
         if (precedingAtLeft != nullptr && IsInETSImportStatement(pos, precedingAtLeft)) {
             return GetImportStatementCompletions(context, precedingAtLeft, pos);
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,7 @@ static inline bool IsMirroredSimpleKind(AstNodeType t)
     }
 }
 
-std::vector<AstNode *> GetChildren(AstNode *node, [[maybe_unused]] ArenaAllocator *allocator)
+std::vector<AstNode *> GetChildren(AstNode *node)
 {
     std::vector<AstNode *> children {};
 
@@ -230,9 +230,9 @@ bool IsDeclarationOrModifier(AstNode *node, AstNode *parent)
         (node->IsTSImportEqualsDeclaration() && parent->IsTSImportEqualsDeclaration()));
 }
 
-std::optional<AstNode *> GetAdjustedLocationForClass(AstNode *node, ArenaAllocator *allocator)
+std::optional<AstNode *> GetAdjustedLocationForClass(AstNode *node)
 {
-    if (node == nullptr || allocator == nullptr) {
+    if (node == nullptr) {
         return std::nullopt;
     }
     if (!node->IsClassDeclaration() && !node->IsClassExpression()) {
@@ -261,9 +261,9 @@ static AstNode *FunctionDeclSelfOrParent(AstNode *n)
     return nullptr;
 }
 
-std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllocator *allocator)
+std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node)
 {
-    if (node == nullptr || allocator == nullptr) {
+    if (node == nullptr) {
         return std::nullopt;
     }
 
@@ -282,17 +282,16 @@ std::optional<AstNode *> GetAdjustedLocationForFunction(AstNode *node, ArenaAllo
     return (id != nullptr) ? std::optional<AstNode *> {id} : std::nullopt;
 }
 
-std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const std::vector<AstNode *> &children,
-                                                           ArenaAllocator *allocator)
+std::optional<AstNode *> GetAdjustedLocationForDeclaration(AstNode *node, const std::vector<AstNode *> &children)
 {
     switch (node->Type()) {
         case AstNodeType::CLASS_DECLARATION:
         case AstNodeType::CLASS_EXPRESSION:
         case AstNodeType::STRUCT_DECLARATION:
-            return GetAdjustedLocationForClass(node, allocator);
+            return GetAdjustedLocationForClass(node);
         case AstNodeType::FUNCTION_DECLARATION:
         case AstNodeType::FUNCTION_EXPRESSION:
-            return GetAdjustedLocationForFunction(node, allocator);
+            return GetAdjustedLocationForFunction(node);
         case AstNodeType::TS_CONSTRUCTOR_TYPE:
             return node;
         default:
@@ -379,7 +378,7 @@ static std::optional<AstNode *> TryTSAsExpression(AstNode *node, AstNode *parent
 }
 
 static std::optional<AstNode *> TryTSImportType(AstNode *node, AstNode *parent,
-                                                const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                                const std::vector<AstNode *> &parentChildren)
 {
     if (node == nullptr || parent == nullptr) {
         return std::nullopt;
@@ -388,7 +387,7 @@ static std::optional<AstNode *> TryTSImportType(AstNode *node, AstNode *parent,
         return std::nullopt;
     }
     if (AstNode *pp = parent->Parent()) {
-        if (auto loc = GetAdjustedLocationForDeclaration(pp, parentChildren, allocator)) {
+        if (auto loc = GetAdjustedLocationForDeclaration(pp, parentChildren)) {
             return loc;
         }
     }
@@ -450,21 +449,21 @@ static std::optional<AstNode *> TryTypeOperatorFamily(AstNode *parent, const std
 }
 
 static std::optional<AstNode *> TryDeclaration(AstNode *node, AstNode *parent,
-                                               const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                               const std::vector<AstNode *> &parentChildren)
 {
     if (!IsDeclarationOrModifier(node, parent)) {
         return std::nullopt;
     }
-    return GetAdjustedLocationForDeclaration(parent, parentChildren, allocator);
+    return GetAdjustedLocationForDeclaration(parent, parentChildren);
 }
 
 static std::optional<AstNode *> TryExpressions(AstNode *node, AstNode *parent,
-                                               const std::vector<AstNode *> &parentChildren, ArenaAllocator *allocator)
+                                               const std::vector<AstNode *> &parentChildren)
 {
     if (auto asExpr = TryTSAsExpression(node, parent, parentChildren)) {
         return asExpr;
     }
-    if (auto importType = TryTSImportType(node, parent, parentChildren, allocator)) {
+    if (auto importType = TryTSImportType(node, parent, parentChildren)) {
         return importType;
     }
     if (auto heritageOrInfer = TryTSHeritageAndInfer(node, parent, parentChildren)) {
@@ -549,7 +548,7 @@ static std::optional<AstNode *> TryConvenienceExpressions(AstNode *node, AstNode
     return std::nullopt;
 }
 
-std::optional<AstNode *> GetAdjustedLocation(AstNode *node, ArenaAllocator *allocator)
+std::optional<AstNode *> GetAdjustedLocation(AstNode *node)
 {
     if (node == nullptr) {
         return std::nullopt;
@@ -564,11 +563,11 @@ std::optional<AstNode *> GetAdjustedLocation(AstNode *node, ArenaAllocator *allo
         return node;
     }
 
-    std::vector<AstNode *> parentChildren = GetChildren(parent, allocator);
-    if (auto r = TryDeclaration(node, parent, parentChildren, allocator)) {
+    std::vector<AstNode *> parentChildren = GetChildren(parent);
+    if (auto r = TryDeclaration(node, parent, parentChildren)) {
         return r;
     }
-    if (auto r = TryExpressions(node, parent, parentChildren, allocator)) {
+    if (auto r = TryExpressions(node, parent, parentChildren)) {
         return r;
     }
     if (auto r = TryImportsAndExports(parent, parentChildren)) {

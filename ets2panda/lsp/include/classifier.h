@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,8 +50,8 @@ std::unique_ptr<lexer::Lexer> InitLexer(es2panda_Context *context);
 ClassificationType GetClassificationType(const lexer::Token &token);
 ClassificationType AstNodeTypeToClassificationType(ir::AstNodeType type);
 char const *ClassificationTypeToString(ClassificationType type);
-ArenaVector<ClassifiedSpan *> GetSyntacticClassifications(es2panda_Context *context, size_t startPos, size_t length);
-ArenaVector<ClassifiedSpan *> GetSemanticClassifications(es2panda_Context *context, size_t startPos, size_t length);
+std::vector<ClassifiedSpan *> GetSyntacticClassifications(es2panda_Context *context, size_t startPos, size_t length);
+std::vector<ClassifiedSpan *> GetSemanticClassifications(es2panda_Context *context, size_t startPos, size_t length);
 
 }  // namespace ark::es2panda::lsp
 
