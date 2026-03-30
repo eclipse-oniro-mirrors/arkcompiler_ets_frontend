@@ -492,6 +492,10 @@ semantic:
   id: 22843
   message: "Exponent must be an integer if base is less than 0."
 
+- name: EXPONENTIATION_BIGINT_NEGATIVE_EXPONENT
+  id: 655064
+  message: "Exponentiation expressions cannot have a negative bigint exponent."
+
 - name: EXPONENTIATION_TYPE_LIMITATION
   id: 295768
   message: "The operands of exponentiation must both be numeric type or bigint type."
