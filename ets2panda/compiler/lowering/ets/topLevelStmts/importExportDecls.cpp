@@ -21,7 +21,8 @@ namespace ark::es2panda::compiler {
 
 static std::string GetArkruntimeImports()
 {
-    static std::array IMPORTED_NAMES = {Signatures::BUILTIN_ASYNCCONTEXT_CLASS, std::string_view("stub")};
+    static std::array IMPORTED_NAMES = {Signatures::BUILTIN_ASYNCCONTEXT_CLASS, std::string_view("stub"),
+                                        std::string_view("annotation")};
 
     std::string importString = "import {";
     for (const auto &name : IMPORTED_NAMES) {
