@@ -877,6 +877,7 @@ export abstract class BaseMode {
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
+            this.mergeAbcFiles(allOutputs);
             return;
         }
 
