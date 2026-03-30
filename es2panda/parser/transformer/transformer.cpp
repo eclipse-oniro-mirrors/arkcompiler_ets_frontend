@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1102,10 +1102,12 @@ ir::UpdateNodes Transformer::VisitClassDeclaration(ir::ClassDeclaration *node)
     bool hasClassDecorators = node->HasDecorators();
     if (hasClassDecorators) {
         auto aliasName = GetClassAliasName();
-        res.push_back(CreateVariableDeclarationWithIdentify(aliasName, VariableParsingFlags::VAR, nullptr, false));
+        res.push_back(CreateVariableDeclarationWithIdentify(aliasName, VariableParsingFlags::VAR,
+            node->Definition()->Ident(), false));
         auto *clsExpression = AllocNode<ir::ClassExpression>(node->Definition());
-        auto *assignExpr = AllocNode<ir::AssignmentExpression>(CreateReferenceIdentifier(aliasName), clsExpression,
-                                                               lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
+        auto *assignExpr = AllocNode<ir::AssignmentExpression>(
+            CreateReferenceIdentifier(aliasName, node->Definition()->Ident()), clsExpression,
+            lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
         res.push_back(CreateVariableDeclarationWithIdentify(name, VariableParsingFlags::LET, node, false,
             assignExpr, false));
     } else {
@@ -1351,8 +1353,10 @@ std::vector<ir::AstNode *> Transformer::CreateVariableDeclarationForDecorators(i
             auto methodDecorators = node->AsMethodDefinition()->Decorators();
             for (size_t i = 0; i < methodDecorators.size(); i++) {
                 util::StringView varName = CreateNewVariable(false);
-                res.push_back(CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
-                                                                    false, methodDecorators[i]->Expr(), true));
+                auto *varDecl = CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
+                    false, methodDecorators[i]->Expr(), true);
+                SetRangeRecursively(varDecl, methodDecorators[i]);
+                res.push_back(varDecl);
             }
 
             auto paramsDecorators = node->AsMethodDefinition()->GetParamDecorators();
@@ -1360,8 +1364,10 @@ std::vector<ir::AstNode *> Transformer::CreateVariableDeclarationForDecorators(i
                 auto paramDecorators = paramsDecorators[i].decorators;
                 for (size_t j = 0; j < paramDecorators.size(); j++) {
                     util::StringView varName = CreateNewVariable(false);
-                    res.push_back(CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
-                                                                        false, paramDecorators[j]->Expr(), true));
+                    auto *varDecl = CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
+                        false, paramDecorators[j]->Expr(), true);
+                    SetRangeRecursively(varDecl, paramDecorators[j]);
+                    res.push_back(varDecl);
                 }
             }
             return res;
@@ -1429,7 +1435,7 @@ std::vector<ir::AstNode *> Transformer::CreateParamDecorators(util::StringView c
         auto decorators = paramsDecorators[i].decorators;
         for (int j = static_cast<int>(decorators.size()) - 1; j >= 0; j--) {
             ArenaVector<ir::Expression *> arguments(Allocator()->Adapter());
-            arguments.push_back(CreateDecoratorTarget(className, isConstructor || isStatic));
+            arguments.push_back(CreateDecoratorTarget(className, isConstructor || isStatic, decorators[j]));
             arguments.push_back(isConstructor ?
                 CreateReferenceIdentifier(CONSTRUCTOR_NAME) :
                 GetClassMemberName(node->Key(), node->Computed(), node));
@@ -1437,7 +1443,9 @@ std::vector<ir::AstNode *> Transformer::CreateParamDecorators(util::StringView c
             auto *callExpr = AllocNode<ir::CallExpression>(
                 variableDeclarations[--pos]->AsVariableDeclaration()->Declarators().front()->Id(),
                 std::move(arguments), nullptr, false);
-            res.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
+            auto *exprStmt = AllocNode<ir::ExpressionStatement>(callExpr);
+            SetRangeRecursively(exprStmt, decorators[j]);
+            res.push_back(exprStmt);
         }
     }
     return res;
@@ -1467,13 +1475,14 @@ std::vector<ir::AstNode *> Transformer::CreatePropertyDecorators(util::StringVie
     auto decorators = node->Decorators();
     for (int i = static_cast<int>(decorators.size() - 1); i >= 0; i--) {
         ArenaVector<ir::Expression *> arguments(Allocator()->Adapter());
-        arguments.push_back(CreateDecoratorTarget(className, isStatic));
+        arguments.push_back(CreateDecoratorTarget(className, isStatic, decorators[i]));
         arguments.push_back(GetClassMemberName(node->Key(), node->IsComputed(), node));
         auto *callExpr = AllocNode<ir::CallExpression>(
             variableDeclarations[i]->AsVariableDeclaration()->Declarators().front()->Id(),
             std::move(arguments), nullptr, false);
-
-        res.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
+        auto *exprStmt = AllocNode<ir::ExpressionStatement>(callExpr);
+        SetRangeRecursively(exprStmt, decorators[i]);
+        res.push_back(exprStmt);
     }
     return res;
 }
@@ -1507,47 +1516,59 @@ std::vector<ir::AstNode *> Transformer::CreateMethodDecorators(util::StringView 
     auto decorators = node->Decorators();
     for (int i = static_cast<int>(decorators.size() - 1); i >= 0; i--) {
         ArenaVector<ir::Expression *> arguments(Allocator()->Adapter());
-        arguments.push_back(CreateDecoratorTarget(className, isStatic));
+        arguments.push_back(CreateDecoratorTarget(className, isStatic, decorators[i]));
         arguments.push_back(GetClassMemberName(node->Key(), node->Computed(), node));
         util::StringView varName = CreateNewVariable(false);
         auto getOwnPropertyDescriptorCall = CreateGetOwnPropertyDescriptorCall(
-            CreateDecoratorTarget(className, isStatic), GetClassMemberName(node->Key(), node->Computed(), node));
-        res.push_back(CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
-                                                            false, getOwnPropertyDescriptorCall, true));
+            CreateDecoratorTarget(className, isStatic, decorators[i]),
+            GetClassMemberName(node->Key(), node->Computed(), node), decorators[i]);
+        auto *varDecl = CreateVariableDeclarationWithIdentify(varName, VariableParsingFlags::LET, nullptr,
+                                                              false, getOwnPropertyDescriptorCall, true);
+        SetRangeRecursively(varDecl, decorators[i]);
+        res.push_back(varDecl);
+        
         arguments.push_back(AllocNode<ir::Identifier>(varName));
         auto *callExpr = AllocNode<ir::CallExpression>(
             variableDeclarations[--pos]->AsVariableDeclaration()->Declarators().front()->Id(),
             std::move(arguments), nullptr, false);
-
         auto newValue = AllocNode<ir::BinaryExpression>(callExpr, AllocNode<ir::Identifier>(varName),
             lexer::TokenType::PUNCTUATOR_LOGICAL_OR);
-
-        auto *defineProperty = CreateDefinePropertyCall(CreateDecoratorTarget(className, isStatic),
-            GetClassMemberName(node->Key(), node->Computed(), node), newValue);
-
-        res.push_back(AllocNode<ir::ExpressionStatement>(defineProperty));
+        auto *defineProperty = CreateDefinePropertyCall(CreateDecoratorTarget(className, isStatic, decorators[i]),
+            GetClassMemberName(node->Key(), node->Computed(), node), newValue, decorators[i]);
+        auto *exprStmt = AllocNode<ir::ExpressionStatement>(defineProperty);
+        SetRangeRecursively(exprStmt, decorators[i]);
+        res.push_back(exprStmt);
     }
     return res;
 }
 
-ir::Expression *Transformer::CreateDecoratorTarget(util::StringView className, bool isStatic)
+ir::Expression *Transformer::CreateDecoratorTarget(util::StringView className, bool isStatic,
+                                                   const ir::AstNode *originalNode)
 {
     if (isStatic) {
         return CreateReferenceIdentifier(className);
     }
-    return CreateClassPrototype(className);
+    return CreateClassPrototype(className, originalNode);
 }
 
-ir::MemberExpression *Transformer::CreateClassPrototype(util::StringView className)
+ir::MemberExpression *Transformer::CreateClassPrototype(util::StringView className, const ir::AstNode *originalNode)
 {
     auto *cls = CreateReferenceIdentifier(className);
-    return AllocNode<ir::MemberExpression>(cls, AllocNode<ir::Identifier>(CLASS_PROTOTYPE),
+    auto *protoIdent = AllocNode<ir::Identifier>(CLASS_PROTOTYPE);
+    auto *memberExpr = AllocNode<ir::MemberExpression>(cls, protoIdent,
         ir::MemberExpression::MemberExpressionKind::PROPERTY_ACCESS, false, false);
+    
+    if (originalNode != nullptr) {
+        SetRangeRecursively(memberExpr, originalNode);
+    }
+    
+    return memberExpr;
 }
 
 ir::CallExpression *Transformer::CreateDefinePropertyCall(ir::Expression *target,
                                                           ir::Expression *key,
-                                                          ir::Expression *value)
+                                                          ir::Expression *value,
+                                                          const ir::AstNode *originalNode)
 {
     auto *id = CreateReferenceIdentifier(OBJECT_VAR_NAME);
     auto *caller = AllocNode<ir::MemberExpression>(id, AllocNode<ir::Identifier>(FUNC_NAME_OF_DEFINE_PROPERTY),
@@ -1556,10 +1577,17 @@ ir::CallExpression *Transformer::CreateDefinePropertyCall(ir::Expression *target
     arguments.push_back(target);
     arguments.push_back(key);
     arguments.push_back(value);
-    return AllocNode<ir::CallExpression>(caller, std::move(arguments), nullptr, false);
+    auto *callExpr = AllocNode<ir::CallExpression>(caller, std::move(arguments), nullptr, false);
+    
+    if (originalNode != nullptr) {
+        SetRangeRecursively(callExpr, originalNode);
+    }
+    
+    return callExpr;
 }
 
-ir::CallExpression *Transformer::CreateGetOwnPropertyDescriptorCall(ir::Expression *target, ir::Expression *key)
+ir::CallExpression *Transformer::CreateGetOwnPropertyDescriptorCall(ir::Expression *target, ir::Expression *key,
+                                                                    const ir::AstNode *originalNode)
 {
     auto *id = CreateReferenceIdentifier(OBJECT_VAR_NAME);
     auto *caller = AllocNode<ir::MemberExpression>(id,
@@ -1568,7 +1596,13 @@ ir::CallExpression *Transformer::CreateGetOwnPropertyDescriptorCall(ir::Expressi
     ArenaVector<ir::Expression *> arguments(Allocator()->Adapter());
     arguments.push_back(target);
     arguments.push_back(key);
-    return AllocNode<ir::CallExpression>(caller, std::move(arguments), nullptr, false);
+    auto *callExpr = AllocNode<ir::CallExpression>(caller, std::move(arguments), nullptr, false);
+    
+    if (originalNode != nullptr) {
+        SetRangeRecursively(callExpr, originalNode);
+    }
+    
+    return callExpr;
 }
 
 ir::Expression *Transformer::GetClassMemberName(ir::Expression *key, bool isComputed,
@@ -1646,7 +1680,9 @@ std::vector<ir::AstNode *> Transformer::CreateClassDecorators(ir::ClassDeclarati
         auto *assignExpr = AllocNode<ir::AssignmentExpression>(left, innerAssignExpr,
             lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
-        res.push_back(AllocNode<ir::ExpressionStatement>(assignExpr));
+        auto *exprStmt = AllocNode<ir::ExpressionStatement>(assignExpr);
+        SetRangeRecursively(exprStmt, decorators[i]);
+        res.push_back(exprStmt);
     }
     return res;
 }
@@ -1883,7 +1919,7 @@ ir::VariableDeclaration *Transformer::CreateVariableDeclarationWithIdentify(util
                                                                             ir::Expression *init,
                                                                             bool needBinding)
 {
-    auto *ident = CreateReferenceIdentifier(name);
+    auto *ident = CreateReferenceIdentifier(name, node);
     auto *declarator = AllocNode<ir::VariableDeclarator>(ident, init);
     ArenaVector<ir::VariableDeclarator *> declarators(Allocator()->Adapter());
     declarators.push_back(declarator);
@@ -2031,10 +2067,13 @@ ir::UpdateNodes Transformer::VisitTsModuleDeclaration(ir::TSModuleDeclaration *n
     return res;
 }
 
-ir::Identifier *Transformer::CreateReferenceIdentifier(util::StringView name)
+ir::Identifier *Transformer::CreateReferenceIdentifier(util::StringView name, ir::AstNode *originalNode)
 {
     auto *node = AllocNode<ir::Identifier>(name);
     node->AsIdentifier()->SetReference();
+    if (originalNode != nullptr) {
+        SetOriginalNode(node, originalNode);
+    }
     return node;
 }
 

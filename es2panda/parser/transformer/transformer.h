@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -169,8 +169,10 @@ private:
                                                         ir::ClassProperty *node,
                                                         const std::vector<ir::AstNode *> &variableDeclarations,
                                                         bool isStatic);
-    ir::CallExpression *CreateGetOwnPropertyDescriptorCall(ir::Expression *target, ir::Expression *key);
-    ir::CallExpression *CreateDefinePropertyCall(ir::Expression *target, ir::Expression *key, ir::Expression *value);
+    ir::CallExpression *CreateGetOwnPropertyDescriptorCall(ir::Expression *target, ir::Expression *key,
+                                                           const ir::AstNode *originalNode);
+    ir::CallExpression *CreateDefinePropertyCall(ir::Expression *target, ir::Expression *key, ir::Expression *value,
+                                                 const ir::AstNode *originalNode);
     ir::ClassStaticBlock *CreateClassStaticBlock(ir::ClassDeclaration *node, bool hasPrivateIdentifer);
     bool HasPrivateIdentifierInDecorators(const ir::ClassDefinition *classDefinition);
     void FindPrivateIdentifierInDecorator(const ir::AstNode *parent, bool *hasprivateIdentifier);
@@ -181,9 +183,10 @@ private:
                                                      const std::vector<ir::AstNode *> &variableDeclarations,
                                                      bool isConstructor,
                                                      bool isStatic);
-    ir::MemberExpression *CreateClassPrototype(util::StringView className);
-    ir::Expression *CreateDecoratorTarget(util::StringView className, bool isStatic);
-    ir::Identifier *CreateReferenceIdentifier(util::StringView name);
+    ir::MemberExpression *CreateClassPrototype(util::StringView className, const ir::AstNode *originalNode);
+    ir::Expression *CreateDecoratorTarget(util::StringView className, bool isStatic,
+                                          const ir::AstNode *originalNode = nullptr);
+    ir::Identifier *CreateReferenceIdentifier(util::StringView name, ir::AstNode *originalNode = nullptr);
     util::StringView CreatePrivateElementBindName(util::StringView name);
     util::StringView CreateNewVariable(bool needAddToStatements = true);
     util::StringView CreateNewVariableName() const;
