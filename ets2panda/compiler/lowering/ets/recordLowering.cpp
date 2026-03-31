@@ -15,6 +15,9 @@
 
 #include "recordLowering.h"
 
+#include <cmath>
+#include <limits>
+
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 
@@ -23,8 +26,91 @@
 
 namespace ark::es2panda::compiler {
 
-using KeyType = std::variant<double, util::StringView>;
+using KeyType = std::variant<int32_t, int64_t, float, double, util::StringView>;
 using KeySetType = std::unordered_set<KeyType>;
+
+static bool IsIntegralKey(KeyType const &key)
+{
+    return std::holds_alternative<int32_t>(key) || std::holds_alternative<int64_t>(key);
+}
+
+static bool IsFloatingKey(KeyType const &key)
+{
+    return std::holds_alternative<float>(key) || std::holds_alternative<double>(key);
+}
+
+static int64_t ToInt64(KeyType const &key)
+{
+    if (std::holds_alternative<int32_t>(key)) {
+        return std::get<int32_t>(key);
+    }
+    return std::get<int64_t>(key);
+}
+
+static double ToDouble(KeyType const &key)
+{
+    if (std::holds_alternative<float>(key)) {
+        return std::get<float>(key);
+    }
+    if (std::holds_alternative<double>(key)) {
+        return std::get<double>(key);
+    }
+    if (std::holds_alternative<int32_t>(key)) {
+        return static_cast<double>(std::get<int32_t>(key));
+    }
+    return static_cast<double>(std::get<int64_t>(key));
+}
+
+static bool NumericKeysEqual(KeyType const &lhs, KeyType const &rhs)
+{
+    if (IsIntegralKey(lhs) && IsIntegralKey(rhs)) {
+        return ToInt64(lhs) == ToInt64(rhs);
+    }
+
+    if (IsFloatingKey(lhs) && IsFloatingKey(rhs)) {
+        return ToDouble(lhs) == ToDouble(rhs);
+    }
+
+    auto const intVal = IsIntegralKey(lhs) ? ToInt64(lhs) : ToInt64(rhs);
+    auto const floatVal = IsFloatingKey(lhs) ? ToDouble(lhs) : ToDouble(rhs);
+    if (!std::isfinite(floatVal) || std::trunc(floatVal) != floatVal) {
+        return false;
+    }
+
+    constexpr auto minInt64 = static_cast<double>(std::numeric_limits<int64_t>::min());
+    constexpr auto maxInt64 = static_cast<double>(std::numeric_limits<int64_t>::max());
+    if (floatVal < minInt64 || floatVal > maxInt64) {
+        return false;
+    }
+
+    return static_cast<int64_t>(floatVal) == intVal;
+}
+
+static bool AreEquivalentKeys(KeyType const &lhs, KeyType const &rhs)
+{
+    if (std::holds_alternative<util::StringView>(lhs) || std::holds_alternative<util::StringView>(rhs)) {
+        return lhs == rhs;
+    }
+
+    return NumericKeysEqual(lhs, rhs);
+}
+
+static bool ContainsEquivalentKey(KeySetType const &keySet, KeyType const &key)
+{
+    return std::any_of(keySet.cbegin(), keySet.cend(),
+                       [&key](auto const &existing) { return AreEquivalentKeys(existing, key); });
+}
+
+static void AddKeyOrReportCollision(KeySetType &keySet, KeyType const &key, ir::ObjectExpression *expr,
+                                    public_lib::Context *ctx)
+{
+    if (ContainsEquivalentKey(keySet, key)) {
+        ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_PROP_NAME_COLLISION, {}, expr->Start());
+        return;
+    }
+
+    keySet.insert(key);
+}
 
 static KeyType TypeToKey(checker::Type *type)
 {
@@ -92,17 +178,20 @@ static void CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, pu
         auto *prop = it->AsProperty();
         switch (prop->Key()->Type()) {
             case ir::AstNodeType::NUMBER_LITERAL: {
-                if (keySet.insert(prop->Key()->AsNumberLiteral()->Number().GetDouble()).second) {
-                    continue;
+                auto number = prop->Key()->AsNumberLiteral()->Number();
+                if (number.IsInt()) {
+                    AddKeyOrReportCollision(keySet, number.GetInt(), expr, ctx);
+                } else if (number.IsLong()) {
+                    AddKeyOrReportCollision(keySet, number.GetLong(), expr, ctx);
+                } else if (number.IsFloat()) {
+                    AddKeyOrReportCollision(keySet, number.GetFloat(), expr, ctx);
+                } else if (number.IsDouble()) {
+                    AddKeyOrReportCollision(keySet, number.GetDouble(), expr, ctx);
                 }
-                ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_PROP_NAME_COLLISION, {}, expr->Start());
                 break;
             }
             case ir::AstNodeType::STRING_LITERAL: {
-                if (keySet.insert(prop->Key()->AsStringLiteral()->Str()).second) {
-                    continue;
-                }
-                ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_PROP_NAME_COLLISION, {}, expr->Start());
+                AddKeyOrReportCollision(keySet, prop->Key()->AsStringLiteral()->Str(), expr, ctx);
                 break;
             }
             case ir::AstNodeType::MEMBER_EXPRESSION: {
@@ -128,7 +217,7 @@ static void CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *
         return;
     }
     for (auto &ct : keyType->AsETSUnionType()->ConstituentTypes()) {
-        if (ct->IsConstantType() && keySet.find(TypeToKey(ct)) == keySet.end()) {
+        if (ct->IsConstantType() && !ContainsEquivalentKey(keySet, TypeToKey(ct))) {
             ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::OBJ_LIT_NOT_COVERING_UNION, {}, expr->Start());
         }
     }
@@ -175,9 +264,9 @@ static ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public
     }
 
     // Access type arguments
-    [[maybe_unused]] size_t constexpr NUM_ARGUMENTS = 2;
+    [[maybe_unused]] size_t constexpr numArguments = 2;
     auto const &typeArguments = expr->TsType()->AsETSObjectType()->TypeArguments();
-    ES2PANDA_ASSERT(typeArguments.size() == NUM_ARGUMENTS);
+    ES2PANDA_ASSERT(typeArguments.size() == numArguments);
 
     auto const *keyType = typeArguments[0];
     if (keyType->IsETSTypeParameter()) {
