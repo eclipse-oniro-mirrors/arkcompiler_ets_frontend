@@ -765,6 +765,82 @@ static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, chec
     return expr;
 }
 
+static void BoxDynamicOrJsArgs(UnboxContext *uctx, ArenaVector<ir::Expression *> &arguments)
+{
+    // NOLINTNEXTLINE(modernize-loop-convert)
+    for (size_t i = 0; i < arguments.size(); i++) {
+        auto *arg = arguments[i];
+        arguments[i] = AdjustType(uctx, arg, uctx->checker->MaybeBoxType(arg->TsType()));
+    }
+}
+
+static void AdjustCallArgsForCallee(UnboxContext *uctx, ir::ScriptFunction *func, checker::Signature *callSig,
+                                    ArenaVector<ir::Expression *> &arguments)
+{
+    // NOLINTNEXTLINE(modernize-loop-convert)
+    for (size_t i = 0; i < arguments.size(); i++) {
+        auto *arg = arguments[i];
+
+        if (i >= func->Signature()->Params().size()) {
+            auto *restVar = callSig->RestVar();
+            if (restVar != nullptr &&
+                !arg->IsSpreadElement()) {  // NOTE(gogabr) should we try to unbox spread elements?
+                auto *restElemType = uctx->checker->GetElementTypeOfArray(restVar->TsType());
+                arguments[i] = AdjustType(uctx, arg, restElemType);
+            }
+        } else {
+            auto *origSigType = func->Signature()->Params()[i]->TsType();
+            if (origSigType->IsETSPrimitiveType()) {
+                callSig->Params()[i]->SetTsType(origSigType);
+                arguments[i] = AdjustType(uctx, arg, origSigType);
+            } else {
+                arguments[i] = AdjustType(uctx, arg, callSig->Params()[i]->TsType());
+            }
+        }
+    }
+}
+
+static void NormalizeCallSigReturn(UnboxContext *uctx, checker::Signature *callSig, ir::ScriptFunction *func)
+{
+    if (func->Signature()->ReturnType()->IsETSPrimitiveType()) {
+        callSig->SetReturnType(func->Signature()->ReturnType());
+    } else {
+        callSig->SetReturnType(NormalizeType(uctx, callSig->ReturnType()));
+    }
+}
+
+static void SetThisReturnCallType(UnboxContext *uctx, ir::CallExpression *call)
+{
+    auto *callee = call->Callee();
+    auto isFuncRefCall = [&callee]() {
+        if (!callee->IsMemberExpression()) {
+            return false;
+        };
+        auto *calleeObject = callee->AsMemberExpression()->Object();
+        return (calleeObject)
+                   ->TsType()
+                   ->IsETSFunctionType() ||  // NOTE(gogabr): How can this happen after lambdaLowering?
+               (calleeObject->TsType()->IsETSObjectType() &&
+                calleeObject->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::FUNCTIONAL));
+    }();
+    if (callee->IsMemberExpression() && !isFuncRefCall) {
+        auto *obj = callee->AsMemberExpression()->Object();
+        if (obj->IsSuperExpression()) {
+            auto *derived = uctx->checker->Context().ContainingClass();
+            call->SetTsType(derived != nullptr ? static_cast<checker::Type *>(derived) : obj->TsType());
+        } else {
+            call->SetTsType(obj->TsType());
+        }
+    } else {
+        // Either a functional reference call, or
+        // function with receiver called in a "normal", "function-like" way:
+        // function f(x: this) : this { return this }
+        // f(new A)
+        ES2PANDA_ASSERT(!call->Arguments().empty());
+        call->SetTsType(call->Arguments()[0]->TsType());
+    }
+}
+
 static void HandleForOfStatement(UnboxContext *uctx, ir::ForOfStatement *forOf)
 {
     auto *left = forOf->Left();
@@ -893,73 +969,22 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         }
     }
 
-    // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
     void VisitCallExpression(ir::CallExpression *call) override
     {
         if (!call->Signature()->HasFunction() || call->Signature()->Function()->Language() == Language::Id::JS) {
             // some lambda call and dynamic call to js, all arguments and return type need to be boxed
-            // NOLINTNEXTLINE(modernize-loop-convert)
-            for (size_t i = 0; i < call->Arguments().size(); i++) {
-                auto *arg = call->Arguments()[i];
-                call->Arguments()[i] = AdjustType(uctx_, arg, uctx_->checker->MaybeBoxType(arg->TsType()));
-            }
+            BoxDynamicOrJsArgs(uctx_, call->Arguments());
             return;
         }
 
         auto *func = call->Signature()->Function();
 
         HandleDeclarationNode(uctx_, func);
-        // NOLINTNEXTLINE(modernize-loop-convert)
-        for (size_t i = 0; i < call->Arguments().size(); i++) {
-            auto *arg = call->Arguments()[i];
-
-            if (i >= func->Signature()->Params().size()) {
-                auto *restVar = call->Signature()->RestVar();
-                if (restVar != nullptr &&
-                    !arg->IsSpreadElement()) {  // NOTE(gogabr) should we try to unbox spread elements?
-                    auto *restElemType = GetArrayElementType(restVar->TsType());
-                    call->Arguments()[i] = AdjustType(uctx_, arg, restElemType);
-                }
-            } else {
-                auto *origSigType = func->Signature()->Params()[i]->TsType();
-                if (origSigType->IsETSPrimitiveType()) {
-                    call->Signature()->Params()[i]->SetTsType(origSigType);
-                    call->Arguments()[i] = AdjustType(uctx_, arg, origSigType);
-                } else {
-                    call->Arguments()[i] = AdjustType(uctx_, arg, call->Signature()->Params()[i]->TsType());
-                }
-            }
-        }
-
-        if (func->Signature()->ReturnType()->IsETSPrimitiveType()) {
-            call->Signature()->SetReturnType(func->Signature()->ReturnType());
-        } else {
-            call->Signature()->SetReturnType(NormalizeType(uctx_, call->Signature()->ReturnType()));
-        }
+        AdjustCallArgsForCallee(uctx_, func, call->Signature(), call->Arguments());
+        NormalizeCallSigReturn(uctx_, call->Signature(), func);
 
         if (call->Signature()->HasSignatureFlag(checker::SignatureFlags::THIS_RETURN_TYPE)) {
-            auto *callee = call->Callee();
-            auto isFuncRefCall = [&callee]() {
-                if (!callee->IsMemberExpression()) {
-                    return false;
-                };
-                auto *calleeObject = callee->AsMemberExpression()->Object();
-                return (calleeObject)
-                           ->TsType()
-                           ->IsETSFunctionType() ||  // NOTE(gogabr): How can this happen after lambdaLowering?
-                       (calleeObject->TsType()->IsETSObjectType() &&
-                        calleeObject->TsType()->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::FUNCTIONAL));
-            }();
-            if (callee->IsMemberExpression() && !isFuncRefCall) {
-                call->SetTsType(callee->AsMemberExpression()->Object()->TsType());
-            } else {
-                // Either a functional reference call, or
-                // function with receiver called in a "normal", "function-like" way:
-                // function f(x: this) : this { return this }
-                // f(new A)
-                ES2PANDA_ASSERT(!call->Arguments().empty());
-                call->SetTsType(call->Arguments()[0]->TsType());
-            }
+            SetThisReturnCallType(uctx_, call);
         } else if (auto *returnType = call->Signature()->ReturnType(); returnType->IsETSPrimitiveType()) {
             call->SetTsType(returnType);
         }
@@ -970,36 +995,12 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         auto *func = call->Signature()->Function();
         if (func == nullptr || func->Language() == Language::Id::JS) {
             // For dynamic call to js, all arguments and return type need to be boxed
-            // NOLINTNEXTLINE(modernize-loop-convert)
-            for (size_t i = 0; i < call->GetArguments().size(); i++) {
-                auto *arg = call->GetArguments()[i];
-                call->GetArguments()[i] = AdjustType(uctx_, arg, uctx_->checker->MaybeBoxType(arg->TsType()));
-            }
+            BoxDynamicOrJsArgs(uctx_, call->GetArguments());
             return;
         }
 
         HandleDeclarationNode(uctx_, func);
-
-        for (size_t i = 0; i < call->GetArguments().size(); i++) {
-            auto *arg = call->GetArguments()[i];
-
-            if (i >= func->Signature()->Params().size()) {
-                auto *restVar = call->Signature()->RestVar();
-                if (restVar != nullptr &&
-                    !arg->IsSpreadElement()) {  // NOTE(gogabr) should we try to unbox spread elements?
-                    auto *restElemType = GetArrayElementType(restVar->TsType());
-                    call->GetArguments()[i] = AdjustType(uctx_, arg, restElemType);
-                }
-            } else {
-                auto *origSigType = func->Signature()->Params()[i]->TsType();
-                if (origSigType->IsETSPrimitiveType()) {
-                    call->Signature()->Params()[i]->SetTsType(origSigType);
-                    call->GetArguments()[i] = AdjustType(uctx_, arg, origSigType);
-                } else {
-                    call->GetArguments()[i] = AdjustType(uctx_, arg, call->Signature()->Params()[i]->TsType());
-                }
-            }
-        }
+        AdjustCallArgsForCallee(uctx_, func, call->Signature(), call->GetArguments());
 
         call->SetTsType(call->GetTypeRef()->TsType());
     }

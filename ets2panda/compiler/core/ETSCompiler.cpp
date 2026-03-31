@@ -26,8 +26,26 @@
 #include "checker/types/ets/etsUnionType.h"
 #include "ETSGen-inl.h"
 #include "public/public.h"
+#include "checker/types/signature.h"
 
 namespace ark::es2panda::compiler {
+
+namespace {
+void NarrowSuperThisReturnIfNeeded(ETSGen *etsg, const ir::Expression *argument, const checker::Type *retType,
+                                   const ir::AstNode *node)
+{
+    if (!argument->IsCallExpression()) {
+        return;
+    }
+    auto *call = argument->AsCallExpression();
+    const auto *callee = call->Callee();
+    if (!callee->IsMemberExpression() || !callee->AsMemberExpression()->Object()->IsSuperExpression() ||
+        !call->Signature()->HasSignatureFlag(checker::SignatureFlags::THIS_RETURN_TYPE)) {
+        return;
+    }
+    etsg->CheckedReferenceNarrowing(node, etsg->Checker()->MaybeBoxType(retType));
+}
+}  // namespace
 
 ETSGen *ETSCompiler::GetETSGen() const
 {
@@ -1325,6 +1343,7 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
     }
     auto ttctx = compiler::TargetTypeContext(etsg, st->ReturnType());
     argument->Compile(etsg);
+    NarrowSuperThisReturnIfNeeded(etsg, argument, st->ReturnType(), argument);
     etsg->ApplyConversion(argument, st->ReturnType());
     if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
         return;

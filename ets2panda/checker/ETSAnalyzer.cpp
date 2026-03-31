@@ -942,6 +942,14 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
     auto calleeObj = calleeType->AsETSObjectType();
     expr->SetTsType(calleeType);
 
+    if (calleeType->IsETSResizableArrayType() && expr->GetArguments().size() == 2U &&
+        expr->GetArguments()[1]->IsArrowFunctionExpression()) {
+        expr->GetArguments()[1]->SetPreferredType(calleeType->AsETSResizableArrayType()->ElementType());
+        if (!checker->ValidateResizableArrayDimension(expr->GetArguments()[0])) {
+            return checker->InvalidateType(expr);
+        }
+    }
+
     auto *signature = checker->ResolveConstructExpression(calleeObj, expr);
 
     if (signature == nullptr) {
@@ -968,8 +976,10 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewMultiDimArrayInstanceExpression *exp
     CheckArrayElementType(checker, expr->AsETSNewMultiDimArrayInstanceExpression(), elementType);
 
     auto *fixedArrayType = elementType;
+    std::size_t dimensionIndex = 1U;
     for (auto *dim : expr->Dimensions()) {
-        checker->ValidateArrayIndex(dim, true);
+        checker->ValidateResizableArrayDimension(dim, dimensionIndex);
+        ++dimensionIndex;
         fixedArrayType = checker->CreateETSArrayType(fixedArrayType, false);
     }
     expr->SetTsType(checker->CreateETSMultiDimResizableArrayType(elementType, expr->Dimensions().size()));
@@ -2375,6 +2385,47 @@ static ETSObjectType *GetCallExpressionCalleeObject(ETSChecker *checker, ir::Cal
     return checker->Context().ContainingClass();
 }
 
+static Type *ResolveThisTypeForThisReturnCall(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
+{
+    auto *callee = expr->Callee();
+    if (callee->IsMemberExpression() && callee->AsMemberExpression()->Object()->IsSuperExpression()) {
+        return checker->Context().ContainingClass();
+    }
+    return GetCallExpressionCalleeObject(checker, expr, calleeType);
+}
+
+static bool CalleeIsBuiltinArrayStaticCreate(ir::CallExpression *expr)
+{
+    auto *callee = expr->Callee();
+    if (!callee->IsMemberExpression()) {
+        return false;
+    }
+    auto *mem = callee->AsMemberExpression();
+    auto *prop = mem->Property();
+    if (!prop->IsIdentifier()) {
+        return false;
+    }
+    static constexpr std::string_view ARRAY_CREATE = "create";
+    if (prop->AsIdentifier()->Name() != ARRAY_CREATE) {
+        return false;
+    }
+    auto *obj = mem->Object();
+    if (obj->TsType() == nullptr || !obj->TsType()->IsETSObjectType()) {
+        return false;
+    }
+    return obj->TsType()->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_ARRAY);
+}
+
+static void EmitBuiltinArrayCreateMismatch(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
+{
+    static constexpr std::string_view SIG_KIND_CALL = "call";
+    if (!calleeType->IsETSFunctionType()) {
+        return;
+    }
+    checker->LogSignatureMismatch(calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow(), expr->Arguments(),
+                                  expr->Start(), SIG_KIND_CALL);
+}
+
 static Type *GetReturnType(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
 {
     if (calleeType->IsTypeError()) {
@@ -2387,9 +2438,19 @@ static Type *GetReturnType(ETSChecker *checker, ir::CallExpression *expr, Type *
         return checker->GlobalTypeError();
     }
 
+    if (CalleeIsBuiltinArrayStaticCreate(expr) && expr->Arguments().size() == 2U) {
+        if (!checker->ValidateResizableArrayDimension(expr->Arguments()[0])) {
+            EmitBuiltinArrayCreateMismatch(checker, expr, calleeType);
+            return checker->GlobalTypeError();
+        }
+    }
+
     Signature *const signature = ResolveSignature(checker, expr, calleeType);
 
     if (signature == nullptr) {
+        if (CalleeIsBuiltinArrayStaticCreate(expr)) {
+            EmitBuiltinArrayCreateMismatch(checker, expr, calleeType);
+        }
         return checker->GlobalTypeError();
     }
 
@@ -2404,9 +2465,10 @@ static Type *GetReturnType(ETSChecker *checker, ir::CallExpression *expr, Type *
 
     // #22951: this type should not be encoded as a signature flag
     if (signature->HasSignatureFlag(SignatureFlags::THIS_RETURN_TYPE)) {
-        return signature->HasSignatureFlag(SignatureFlags::EXTENSION_FUNCTION)
-                   ? expr->Arguments()[0]->TsType()
-                   : GetCallExpressionCalleeObject(checker, expr, calleeType);
+        if (signature->HasSignatureFlag(SignatureFlags::EXTENSION_FUNCTION)) {
+            return expr->Arguments()[0]->TsType();
+        }
+        return ResolveThisTypeForThisReturnCall(checker, expr, calleeType);
     }
     return signature->ReturnType();
 }
@@ -4749,6 +4811,26 @@ checker::Type *ETSAnalyzer::Check(ir::LabelledStatement *st) const
     return ReturnTypeForStatement(st);
 }
 
+static bool ValidateThisReturnOperand(ir::Expression *arg, ir::ReturnStatement *st, ETSChecker *checker)
+{
+    if (arg->IsThisExpression()) {
+        return true;
+    }
+    if (arg->IsCallExpression()) {
+        auto *sig = arg->AsCallExpression()->Signature();
+        if (sig != nullptr && sig->HasSignatureFlag(SignatureFlags::THIS_RETURN_TYPE)) {
+            return true;
+        }
+    }
+    if (arg->IsConditionalExpression()) {
+        auto *br = arg->AsConditionalExpression();
+        return ValidateThisReturnOperand(br->Consequent(), st, checker) &&
+               ValidateThisReturnOperand(br->Alternate(), st, checker);
+    }
+    checker->LogError(diagnostic::RETURN_THIS_OUTSIDE_METHOD, {}, st->Start());
+    return false;
+}
+
 static bool CheckIsValidReturnTypeAnnotation(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                              ir::TypeNode *returnTypeAnnotation, ETSChecker *checker)
 {
@@ -4763,7 +4845,11 @@ static bool CheckIsValidReturnTypeAnnotation(ir::ReturnStatement *st, ir::Script
         return false;
     }
 
-    // only extension function and class method could return `this`;
+    if (!containingFunc->HasReceiver()) {
+        return true;
+    }
+
+    // only extension function could return `this` (instance methods validated after argument Check);
     bool inValidNormalFuncReturnThisType = st->Argument() == nullptr || !st->Argument()->IsThisExpression();
     bool inValidExtensionFuncReturnThisType =
         !containingFunc->HasReceiver() ||
@@ -4847,6 +4933,12 @@ bool ETSAnalyzer::CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::
     }
 
     checker::Type *argumentType = st->argument_->Check(checker);
+    auto *retAnn = containingFunc->ReturnTypeAnnotation();
+    if (retAnn != nullptr && retAnn->IsTSThisType() && !containingFunc->HasReceiver()) {
+        if (!ValidateThisReturnOperand(st->argument_, st, checker)) {
+            return false;
+        }
+    }
     if (funcReturnType->IsETSUnionType()) {
         IsAmbiguousUnionInit(funcReturnType->AsETSUnionType(), st->argument_, checker);
     }

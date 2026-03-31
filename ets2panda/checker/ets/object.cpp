@@ -18,6 +18,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/checkerContext.h"
 #include "checker/ets/typeRelationContext.h"
+#include "checker/types/ets/etsEnumType.h"
 #include "checker/types/ets/etsFunctionType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -2216,6 +2217,29 @@ void ETSChecker::CheckInnerClassMembers(const ETSObjectType *classType)
     }
 }
 
+namespace {
+
+bool ReportIfInvalidIntegralDimensionLiteral(ETSChecker *const checker, ir::Expression *const expr,
+                                             Type *const expressionType)
+{
+    ES2PANDA_ASSERT(expr->IsNumberLiteral());
+    lexer::Number const &num = expr->AsNumberLiteral()->Number();
+    if (num.IsInteger()) {
+        if (num.GetValue<int64_t>() < 0) {
+            checker->LogError(diagnostic::NEGATIVE_INDEX, {}, expr->Start());
+            return false;
+        }
+        return true;
+    }
+    if (num.IsReal()) {
+        checker->LogError(diagnostic::INVALID_INDEX_TYPE, {expressionType->ToString()}, expr->Start());
+        return false;
+    }
+    ES2PANDA_UNREACHABLE();
+}
+
+}  // namespace
+
 bool ETSChecker::ValidateArrayIndex(ir::Expression *const expr, bool relaxed)
 {
     auto const expressionType = expr->Check(this);
@@ -2241,20 +2265,36 @@ bool ETSChecker::ValidateArrayIndex(ir::Expression *const expr, bool relaxed)
     }
 
     ES2PANDA_ASSERT(expr->IsNumberLiteral());
-    double value = expr->AsNumberLiteral()->Number().GetDouble();
+    return ReportIfInvalidIntegralDimensionLiteral(this, expr, expressionType);
+}
 
-    double intPart;
-    if (std::modf(value, &intPart) != 0.0) {
-        LogError(diagnostic::INDEX_NONINTEGRAL_FLOAT, {}, expr->Start());
+bool ETSChecker::ValidateResizableArrayDimension(ir::Expression *const expr, size_t const dimensionIndex)
+{
+    Type *expressionType = expr->Check(this);
+    if (expressionType->IsTypeError()) {
         return false;
     }
-
-    if (intPart < 0.0) {
-        LogError(diagnostic::NEGATIVE_INDEX, {}, expr->Start());
+    if (expr->IsAssignmentExpression()) {
         return false;
     }
-
-    return true;
+    Type *const intType = GlobalIntBuiltinType();
+    const auto assignCtx = AssignmentContext(
+        Relation(), expr, expressionType, intType, expr->Start(),
+        util::DiagnosticWithParams {diagnostic::TYPE_MISMATCH_AT_IDX, {expressionType, intType, dimensionIndex}});
+    if (!assignCtx.IsAssignable()) {
+        return false;
+    }
+    if (expressionType->IsETSEnumType()) {
+        expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    } else if (expressionType->IsETSObjectType() &&
+               expressionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::NUMERIC_ENUM_OBJECT)) {
+        expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    }
+    if (!expressionType->IsConstantType() || !expr->IsNumberLiteral()) {
+        return true;
+    }
+    ES2PANDA_ASSERT(expr->IsNumberLiteral());
+    return ReportIfInvalidIntegralDimensionLiteral(this, expr, expressionType);
 }
 
 std::optional<std::size_t> ETSChecker::GetTupleElementAccessValue(const ir::Expression *expr)
