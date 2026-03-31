@@ -215,16 +215,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 111,
-            "column": 5,
-            "endLine": 111,
-            "endColumn": 27,
-            "problem": "ImportAssignment",
-            "suggest": "",
-            "rule": "\"require\" and \"import\" assignment are not supported (arkts-no-require)",
-            "severity": "ERROR"
-        },
-        {
             "line": 112,
             "column": 7,
             "endLine": 112,
@@ -232,16 +222,6 @@
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
-            "column": 7,
-            "endLine": 112,
-            "endColumn": 29,
-            "problem": "ImportAssignment",
-            "suggest": "",
-            "rule": "\"require\" and \"import\" assignment are not supported (arkts-no-require)",
             "severity": "ERROR"
         }
     ]
