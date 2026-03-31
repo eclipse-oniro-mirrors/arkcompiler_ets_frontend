@@ -986,7 +986,26 @@ void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExp
         AnalyzeExpr(assignExpr->Left());
     }
 
+    // handle arrow function assignment, where the arrow function is recursive, e.g. f = () => { ...;f();... };
+    NodeId provisionalInitAdr = INVALID_ID;
+    if (assignExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
+        assignExpr->Right()->IsArrowFunctionExpression()) {
+        const ir::AstNode *declNode = GetDeclaringNode(assignExpr->Left());
+        if (declNode != nullptr && !declNode->IsDeclare()) {
+            provisionalInitAdr = GetNodeId(declNode);
+            if (provisionalInitAdr != INVALID_ID && !inits_.IsMember(provisionalInitAdr)) {
+                inits_.Incl(provisionalInitAdr);
+            } else {
+                provisionalInitAdr = INVALID_ID;
+            }
+        }
+    }
+
     AnalyzeExpr(assignExpr->Right());
+
+    if (provisionalInitAdr != INVALID_ID) {
+        inits_.Excl(provisionalInitAdr);
+    }
 
     if (assignExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
         LetInit(assignExpr->Left());
