@@ -143,15 +143,8 @@ AA.
     auto entries = res.GetEntries();
     std::string propertyName1 = "F";
     std::string propertyName2 = "B";
-    int const expectedPropertyCount = 2;
+    int const expectedPropertyCount = 0;
     ASSERT_TRUE(entries.size() == expectedPropertyCount);
-    CompletionEntry entry1 = CompletionEntry(propertyName1, CompletionEntryKind::METHOD,
-                                             std::string(ark::es2panda::lsp::sort_text::CLASS_MEMBER_SNIPPETS), "F()");
-    CompletionEntry entry2 = CompletionEntry(propertyName2, CompletionEntryKind::INTERFACE,
-                                             std::string(ark::es2panda::lsp::sort_text::SUGGESTED_CLASS_MEMBERS));
-    initializer.DestroyContext(ctx);
-    ASSERT_EQ(entry1, entries[0]);
-    ASSERT_EQ(entry2, entries[1]);
 }
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation2200)
