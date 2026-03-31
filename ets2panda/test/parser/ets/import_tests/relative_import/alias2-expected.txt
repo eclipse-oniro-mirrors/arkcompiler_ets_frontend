@@ -251,8 +251,8 @@
             "program": "alias2.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "alias2.ets"
           }
         }
@@ -264,8 +264,8 @@
           "program": "alias2.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "alias2.ets"
         }
       }

@@ -630,7 +630,7 @@
             },
             "end": {
               "line": 27,
-              "column": 18,
+              "column": 17,
               "program": "test-export-named-decl.js"
             }
           }
@@ -643,7 +643,7 @@
           },
           "end": {
             "line": 27,
-            "column": 18,
+            "column": 17,
             "program": "test-export-named-decl.js"
           }
         }
@@ -658,7 +658,7 @@
         },
         "end": {
           "line": 27,
-          "column": 18,
+          "column": 17,
           "program": "test-export-named-decl.js"
         }
       }

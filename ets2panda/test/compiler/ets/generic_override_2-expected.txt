@@ -2877,8 +2877,8 @@
             "program": "generic_override_2.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "generic_override_2.ets"
           }
         }
@@ -2890,8 +2890,8 @@
           "program": "generic_override_2.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "generic_override_2.ets"
         }
       }

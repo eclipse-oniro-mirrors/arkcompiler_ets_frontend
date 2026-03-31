@@ -5941,8 +5941,8 @@
             "program": "MathCordic.ets"
           },
           "end": {
-            "line": 78,
-            "column": 9,
+            "line": 76,
+            "column": 2,
             "program": "MathCordic.ets"
           }
         }
@@ -5954,8 +5954,8 @@
           "program": "MathCordic.ets"
         },
         "end": {
-          "line": 78,
-          "column": 9,
+          "line": 76,
+          "column": 2,
           "program": "MathCordic.ets"
         }
       }

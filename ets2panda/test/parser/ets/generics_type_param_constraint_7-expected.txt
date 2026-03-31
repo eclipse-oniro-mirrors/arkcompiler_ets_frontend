@@ -290,8 +290,8 @@
             "program": "generics_type_param_constraint_7.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 17,
+            "column": 37,
             "program": "generics_type_param_constraint_7.ets"
           }
         }
@@ -303,8 +303,8 @@
           "program": "generics_type_param_constraint_7.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 17,
+          "column": 37,
           "program": "generics_type_param_constraint_7.ets"
         }
       }

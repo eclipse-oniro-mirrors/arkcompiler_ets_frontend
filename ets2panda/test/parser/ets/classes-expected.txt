@@ -133,8 +133,8 @@
             "program": "classes.ets"
           },
           "end": {
-            "line": 19,
-            "column": 9,
+            "line": 17,
+            "column": 2,
             "program": "classes.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "classes.ets"
         },
         "end": {
-          "line": 19,
-          "column": 9,
+          "line": 17,
+          "column": 2,
           "program": "classes.ets"
         }
       }
@@ -284,8 +284,8 @@
             "program": "classes.ets"
           },
           "end": {
-            "line": 22,
-            "column": 6,
+            "line": 20,
+            "column": 2,
             "program": "classes.ets"
           }
         }
@@ -297,8 +297,8 @@
           "program": "classes.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 2,
           "program": "classes.ets"
         }
       }
@@ -435,8 +435,8 @@
             "program": "classes.ets"
           },
           "end": {
-            "line": 25,
-            "column": 6,
+            "line": 23,
+            "column": 2,
             "program": "classes.ets"
           }
         }
@@ -448,8 +448,8 @@
           "program": "classes.ets"
         },
         "end": {
-          "line": 25,
-          "column": 6,
+          "line": 23,
+          "column": 2,
           "program": "classes.ets"
         }
       }
@@ -631,8 +631,8 @@
             "program": "classes.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "classes.ets"
           }
         }
@@ -644,8 +644,8 @@
           "program": "classes.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "classes.ets"
         }
       }

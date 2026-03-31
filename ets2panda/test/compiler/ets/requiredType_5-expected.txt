@@ -412,8 +412,8 @@
             "program": "requiredType_5.ets"
           },
           "end": {
-            "line": 21,
-            "column": 9,
+            "line": 19,
+            "column": 2,
             "program": "requiredType_5.ets"
           }
         }
@@ -425,8 +425,8 @@
           "program": "requiredType_5.ets"
         },
         "end": {
-          "line": 21,
-          "column": 9,
+          "line": 19,
+          "column": 2,
           "program": "requiredType_5.ets"
         }
       }

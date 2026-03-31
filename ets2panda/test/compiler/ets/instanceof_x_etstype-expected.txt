@@ -1895,8 +1895,8 @@
             "program": "instanceof_x_etstype.ets"
           },
           "end": {
-            "line": 24,
-            "column": 6,
+            "line": 23,
+            "column": 11,
             "program": "instanceof_x_etstype.ets"
           }
         }
@@ -1908,8 +1908,8 @@
           "program": "instanceof_x_etstype.ets"
         },
         "end": {
-          "line": 24,
-          "column": 6,
+          "line": 23,
+          "column": 11,
           "program": "instanceof_x_etstype.ets"
         }
       }
@@ -2046,8 +2046,8 @@
             "program": "instanceof_x_etstype.ets"
           },
           "end": {
-            "line": 26,
-            "column": 9,
+            "line": 24,
+            "column": 11,
             "program": "instanceof_x_etstype.ets"
           }
         }
@@ -2059,8 +2059,8 @@
           "program": "instanceof_x_etstype.ets"
         },
         "end": {
-          "line": 26,
-          "column": 9,
+          "line": 24,
+          "column": 11,
           "program": "instanceof_x_etstype.ets"
         }
       }

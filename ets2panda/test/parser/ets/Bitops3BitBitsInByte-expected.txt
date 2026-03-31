@@ -2197,8 +2197,8 @@
             "program": "Bitops3BitBitsInByte.ets"
           },
           "end": {
-            "line": 41,
-            "column": 9,
+            "line": 39,
+            "column": 2,
             "program": "Bitops3BitBitsInByte.ets"
           }
         }
@@ -2210,8 +2210,8 @@
           "program": "Bitops3BitBitsInByte.ets"
         },
         "end": {
-          "line": 41,
-          "column": 9,
+          "line": 39,
+          "column": 2,
           "program": "Bitops3BitBitsInByte.ets"
         }
       }

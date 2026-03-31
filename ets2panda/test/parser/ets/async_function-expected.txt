@@ -409,8 +409,8 @@
             "program": "async_function.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "async_function.ets"
           }
         }
@@ -422,8 +422,8 @@
           "program": "async_function.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "async_function.ets"
         }
       }

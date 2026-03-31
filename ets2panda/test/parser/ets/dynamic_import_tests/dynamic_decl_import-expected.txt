@@ -1748,8 +1748,8 @@
             "program": "dynamic_decl_import.ets"
           },
           "end": {
-            "line": 31,
-            "column": 9,
+            "line": 29,
+            "column": 2,
             "program": "dynamic_decl_import.ets"
           }
         }
@@ -1761,8 +1761,8 @@
           "program": "dynamic_decl_import.ets"
         },
         "end": {
-          "line": 31,
-          "column": 9,
+          "line": 29,
+          "column": 2,
           "program": "dynamic_decl_import.ets"
         }
       }

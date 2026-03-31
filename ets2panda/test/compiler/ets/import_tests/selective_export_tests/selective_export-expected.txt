@@ -305,8 +305,8 @@
             "program": "selective_export.ets"
           },
           "end": {
-            "line": 28,
-            "column": 6,
+            "line": 26,
+            "column": 2,
             "program": "selective_export.ets"
           }
         }
@@ -318,8 +318,8 @@
           "program": "selective_export.ets"
         },
         "end": {
-          "line": 28,
-          "column": 6,
+          "line": 26,
+          "column": 2,
           "program": "selective_export.ets"
         }
       }
@@ -673,8 +673,8 @@
             "program": "selective_export.ets"
           },
           "end": {
-            "line": 34,
-            "column": 5,
+            "line": 32,
+            "column": 2,
             "program": "selective_export.ets"
           }
         }
@@ -686,8 +686,8 @@
           "program": "selective_export.ets"
         },
         "end": {
-          "line": 34,
-          "column": 5,
+          "line": 32,
+          "column": 2,
           "program": "selective_export.ets"
         }
       }

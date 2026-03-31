@@ -1942,8 +1942,8 @@
             "program": "instanceof_x_dyndecl.ets"
           },
           "end": {
-            "line": 25,
-            "column": 9,
+            "line": 23,
+            "column": 11,
             "program": "instanceof_x_dyndecl.ets"
           }
         }
@@ -1955,8 +1955,8 @@
           "program": "instanceof_x_dyndecl.ets"
         },
         "end": {
-          "line": 25,
-          "column": 9,
+          "line": 23,
+          "column": 11,
           "program": "instanceof_x_dyndecl.ets"
         }
       }

@@ -950,8 +950,8 @@
             "program": "generics_instantiation_4.ets"
           },
           "end": {
-            "line": 26,
-            "column": 6,
+            "line": 24,
+            "column": 2,
             "program": "generics_instantiation_4.ets"
           }
         }
@@ -963,8 +963,8 @@
           "program": "generics_instantiation_4.ets"
         },
         "end": {
-          "line": 26,
-          "column": 6,
+          "line": 24,
+          "column": 2,
           "program": "generics_instantiation_4.ets"
         }
       }
@@ -1668,8 +1668,8 @@
             "program": "generics_instantiation_4.ets"
           },
           "end": {
-            "line": 36,
-            "column": 6,
+            "line": 34,
+            "column": 2,
             "program": "generics_instantiation_4.ets"
           }
         }
@@ -1681,8 +1681,8 @@
           "program": "generics_instantiation_4.ets"
         },
         "end": {
-          "line": 36,
-          "column": 6,
+          "line": 34,
+          "column": 2,
           "program": "generics_instantiation_4.ets"
         }
       }
@@ -2353,8 +2353,8 @@
             "program": "generics_instantiation_4.ets"
           },
           "end": {
-            "line": 44,
-            "column": 9,
+            "line": 42,
+            "column": 2,
             "program": "generics_instantiation_4.ets"
           }
         }
@@ -2366,8 +2366,8 @@
           "program": "generics_instantiation_4.ets"
         },
         "end": {
-          "line": 44,
-          "column": 9,
+          "line": 42,
+          "column": 2,
           "program": "generics_instantiation_4.ets"
         }
       }

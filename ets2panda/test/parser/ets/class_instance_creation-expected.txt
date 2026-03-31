@@ -1000,8 +1000,8 @@
             "program": "class_instance_creation.ets"
           },
           "end": {
-            "line": 30,
-            "column": 1,
+            "line": 29,
+            "column": 2,
             "program": "class_instance_creation.ets"
           }
         }
@@ -1013,8 +1013,8 @@
           "program": "class_instance_creation.ets"
         },
         "end": {
-          "line": 30,
-          "column": 1,
+          "line": 29,
+          "column": 2,
           "program": "class_instance_creation.ets"
         }
       }

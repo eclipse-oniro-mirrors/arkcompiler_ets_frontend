@@ -133,8 +133,8 @@
             "program": "class_default_module.ets"
           },
           "end": {
-            "line": 17,
-            "column": 1,
+            "line": 16,
+            "column": 43,
             "program": "class_default_module.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "class_default_module.ets"
         },
         "end": {
-          "line": 17,
-          "column": 1,
+          "line": 16,
+          "column": 43,
           "program": "class_default_module.ets"
         }
       }

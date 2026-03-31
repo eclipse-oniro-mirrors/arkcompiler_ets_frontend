@@ -402,8 +402,8 @@
             "program": "generic_override_1.ets"
           },
           "end": {
-            "line": 20,
-            "column": 10,
+            "line": 18,
+            "column": 57,
             "program": "generic_override_1.ets"
           }
         }
@@ -415,8 +415,8 @@
           "program": "generic_override_1.ets"
         },
         "end": {
-          "line": 20,
-          "column": 10,
+          "line": 18,
+          "column": 57,
           "program": "generic_override_1.ets"
         }
       }
@@ -2263,8 +2263,8 @@
             "program": "generic_override_1.ets"
           },
           "end": {
-            "line": 31,
-            "column": 1,
+            "line": 30,
+            "column": 2,
             "program": "generic_override_1.ets"
           }
         }
@@ -2276,8 +2276,8 @@
           "program": "generic_override_1.ets"
         },
         "end": {
-          "line": 31,
-          "column": 1,
+          "line": 30,
+          "column": 2,
           "program": "generic_override_1.ets"
         }
       }

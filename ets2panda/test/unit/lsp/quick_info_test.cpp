@@ -438,7 +438,7 @@ class A {};
     const std::string kind = "class";
     const std::string kindModifiers = "static public";
     const size_t start = 1;
-    const size_t length = 11;
+    const size_t length = 10;
     TextSpan span(start, length);
 
     auto expectedQuickInfo = QuickInfo(kind, kindModifiers, span, expected, document, tags, fileName);

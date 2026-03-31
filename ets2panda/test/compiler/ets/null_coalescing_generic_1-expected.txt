@@ -133,8 +133,8 @@
             "program": "null_coalescing_generic_1.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 23,
+            "column": 11,
             "program": "null_coalescing_generic_1.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "null_coalescing_generic_1.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 23,
+          "column": 11,
           "program": "null_coalescing_generic_1.ets"
         }
       }

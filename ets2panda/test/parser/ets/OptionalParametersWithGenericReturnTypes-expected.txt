@@ -650,8 +650,8 @@
             "program": "OptionalParametersWithGenericReturnTypes.ets"
           },
           "end": {
-            "line": 22,
-            "column": 6,
+            "line": 20,
+            "column": 2,
             "program": "OptionalParametersWithGenericReturnTypes.ets"
           }
         }
@@ -663,8 +663,8 @@
           "program": "OptionalParametersWithGenericReturnTypes.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 20,
+          "column": 2,
           "program": "OptionalParametersWithGenericReturnTypes.ets"
         }
       }
@@ -1395,8 +1395,8 @@
             "program": "OptionalParametersWithGenericReturnTypes.ets"
           },
           "end": {
-            "line": 28,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "OptionalParametersWithGenericReturnTypes.ets"
           }
         }
@@ -1408,8 +1408,8 @@
           "program": "OptionalParametersWithGenericReturnTypes.ets"
         },
         "end": {
-          "line": 28,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "OptionalParametersWithGenericReturnTypes.ets"
         }
       }

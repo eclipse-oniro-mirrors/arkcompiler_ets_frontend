@@ -734,8 +734,8 @@
             "program": "lambdaFunction1.ets"
           },
           "end": {
-            "line": 39,
-            "column": 9,
+            "line": 37,
+            "column": 2,
             "program": "lambdaFunction1.ets"
           }
         }
@@ -747,8 +747,8 @@
           "program": "lambdaFunction1.ets"
         },
         "end": {
-          "line": 39,
-          "column": 9,
+          "line": 37,
+          "column": 2,
           "program": "lambdaFunction1.ets"
         }
       }

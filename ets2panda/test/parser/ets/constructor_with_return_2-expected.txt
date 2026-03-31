@@ -299,8 +299,8 @@
             "program": "constructor_with_return_2.ets"
           },
           "end": {
-            "line": 24,
-            "column": 1,
+            "line": 23,
+            "column": 2,
             "program": "constructor_with_return_2.ets"
           }
         }
@@ -312,8 +312,8 @@
           "program": "constructor_with_return_2.ets"
         },
         "end": {
-          "line": 24,
-          "column": 1,
+          "line": 23,
+          "column": 2,
           "program": "constructor_with_return_2.ets"
         }
       }

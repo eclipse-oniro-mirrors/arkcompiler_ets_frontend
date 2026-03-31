@@ -456,8 +456,8 @@
             "program": "FunctionType.ets"
           },
           "end": {
-            "line": 26,
-            "column": 1,
+            "line": 25,
+            "column": 2,
             "program": "FunctionType.ets"
           }
         }
@@ -469,8 +469,8 @@
           "program": "FunctionType.ets"
         },
         "end": {
-          "line": 26,
-          "column": 1,
+          "line": 25,
+          "column": 2,
           "program": "FunctionType.ets"
         }
       }

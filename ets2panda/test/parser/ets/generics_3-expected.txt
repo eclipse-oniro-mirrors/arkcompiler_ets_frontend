@@ -212,8 +212,8 @@
             "program": "generics_3.ets"
           },
           "end": {
-            "line": 18,
-            "column": 9,
+            "line": 17,
+            "column": 19,
             "program": "generics_3.ets"
           }
         }
@@ -225,8 +225,8 @@
           "program": "generics_3.ets"
         },
         "end": {
-          "line": 18,
-          "column": 9,
+          "line": 17,
+          "column": 19,
           "program": "generics_3.ets"
         }
       }

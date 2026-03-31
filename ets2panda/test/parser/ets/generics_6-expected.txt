@@ -212,8 +212,8 @@
             "program": "generics_6.ets"
           },
           "end": {
-            "line": 19,
-            "column": 6,
+            "line": 18,
+            "column": 19,
             "program": "generics_6.ets"
           }
         }
@@ -225,8 +225,8 @@
           "program": "generics_6.ets"
         },
         "end": {
-          "line": 19,
-          "column": 6,
+          "line": 18,
+          "column": 19,
           "program": "generics_6.ets"
         }
       }
@@ -411,8 +411,8 @@
             "program": "generics_6.ets"
           },
           "end": {
-            "line": 21,
-            "column": 9,
+            "line": 19,
+            "column": 17,
             "program": "generics_6.ets"
           }
         }
@@ -424,8 +424,8 @@
           "program": "generics_6.ets"
         },
         "end": {
-          "line": 21,
-          "column": 9,
+          "line": 19,
+          "column": 17,
           "program": "generics_6.ets"
         }
       }

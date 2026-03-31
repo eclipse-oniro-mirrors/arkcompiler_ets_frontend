@@ -236,8 +236,8 @@
             "program": "launch_with_call_expression.ets"
           },
           "end": {
-            "line": 21,
-            "column": 4,
+            "line": 19,
+            "column": 2,
             "program": "launch_with_call_expression.ets"
           }
         }
@@ -249,8 +249,8 @@
           "program": "launch_with_call_expression.ets"
         },
         "end": {
-          "line": 21,
-          "column": 4,
+          "line": 19,
+          "column": 2,
           "program": "launch_with_call_expression.ets"
         }
       }

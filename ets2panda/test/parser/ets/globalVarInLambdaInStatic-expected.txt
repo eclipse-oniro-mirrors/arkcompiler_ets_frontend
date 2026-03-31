@@ -329,8 +329,8 @@
             "program": "globalVarInLambdaInStatic.ets"
           },
           "end": {
-            "line": 25,
-            "column": 9,
+            "line": 23,
+            "column": 2,
             "program": "globalVarInLambdaInStatic.ets"
           }
         }
@@ -342,8 +342,8 @@
           "program": "globalVarInLambdaInStatic.ets"
         },
         "end": {
-          "line": 25,
-          "column": 9,
+          "line": 23,
+          "column": 2,
           "program": "globalVarInLambdaInStatic.ets"
         }
       }
@@ -893,8 +893,8 @@
             "program": "globalVarInLambdaInStatic.ets"
           },
           "end": {
-            "line": 36,
-            "column": 1,
+            "line": 35,
+            "column": 2,
             "program": "globalVarInLambdaInStatic.ets"
           }
         }
@@ -906,8 +906,8 @@
           "program": "globalVarInLambdaInStatic.ets"
         },
         "end": {
-          "line": 36,
-          "column": 1,
+          "line": 35,
+          "column": 2,
           "program": "globalVarInLambdaInStatic.ets"
         }
       }

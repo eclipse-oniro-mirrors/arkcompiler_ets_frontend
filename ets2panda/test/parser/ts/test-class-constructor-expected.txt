@@ -805,8 +805,8 @@
             "program": "test-class-constructor.ts"
           },
           "end": {
-            "line": 29,
-            "column": 1,
+            "line": 28,
+            "column": 2,
             "program": "test-class-constructor.ts"
           }
         }
@@ -818,8 +818,8 @@
           "program": "test-class-constructor.ts"
         },
         "end": {
-          "line": 29,
-          "column": 1,
+          "line": 28,
+          "column": 2,
           "program": "test-class-constructor.ts"
         }
       }

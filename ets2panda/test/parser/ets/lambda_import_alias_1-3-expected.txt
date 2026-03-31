@@ -133,8 +133,8 @@
             "program": "lambda_import_alias_1-3.ets"
           },
           "end": {
-            "line": 17,
-            "column": 7,
+            "line": 16,
+            "column": 18,
             "program": "lambda_import_alias_1-3.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "lambda_import_alias_1-3.ets"
         },
         "end": {
-          "line": 17,
-          "column": 7,
+          "line": 16,
+          "column": 18,
           "program": "lambda_import_alias_1-3.ets"
         }
       }

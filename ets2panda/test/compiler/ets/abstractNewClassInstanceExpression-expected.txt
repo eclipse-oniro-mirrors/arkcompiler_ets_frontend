@@ -235,8 +235,8 @@
             "program": "abstractNewClassInstanceExpression.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "abstractNewClassInstanceExpression.ets"
           }
         }
@@ -248,8 +248,8 @@
           "program": "abstractNewClassInstanceExpression.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "abstractNewClassInstanceExpression.ets"
         }
       }
@@ -386,8 +386,8 @@
             "program": "abstractNewClassInstanceExpression.ets"
           },
           "end": {
-            "line": 24,
-            "column": 6,
+            "line": 22,
+            "column": 2,
             "program": "abstractNewClassInstanceExpression.ets"
           }
         }
@@ -399,8 +399,8 @@
           "program": "abstractNewClassInstanceExpression.ets"
         },
         "end": {
-          "line": 24,
-          "column": 6,
+          "line": 22,
+          "column": 2,
           "program": "abstractNewClassInstanceExpression.ets"
         }
       }
@@ -801,8 +801,8 @@
             "program": "abstractNewClassInstanceExpression.ets"
           },
           "end": {
-            "line": 32,
-            "column": 9,
+            "line": 30,
+            "column": 6,
             "program": "abstractNewClassInstanceExpression.ets"
           }
         }
@@ -814,8 +814,8 @@
           "program": "abstractNewClassInstanceExpression.ets"
         },
         "end": {
-          "line": 32,
-          "column": 9,
+          "line": 30,
+          "column": 6,
           "program": "abstractNewClassInstanceExpression.ets"
         }
       }

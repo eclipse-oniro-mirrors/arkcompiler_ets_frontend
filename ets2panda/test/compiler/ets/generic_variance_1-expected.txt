@@ -133,8 +133,8 @@
             "program": "generic_variance_1.ets"
           },
           "end": {
-            "line": 17,
-            "column": 6,
+            "line": 16,
+            "column": 11,
             "program": "generic_variance_1.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "generic_variance_1.ets"
         },
         "end": {
-          "line": 17,
-          "column": 6,
+          "line": 16,
+          "column": 11,
           "program": "generic_variance_1.ets"
         }
       }
@@ -329,8 +329,8 @@
             "program": "generic_variance_1.ets"
           },
           "end": {
-            "line": 19,
-            "column": 6,
+            "line": 17,
+            "column": 21,
             "program": "generic_variance_1.ets"
           }
         }
@@ -342,8 +342,8 @@
           "program": "generic_variance_1.ets"
         },
         "end": {
-          "line": 19,
-          "column": 6,
+          "line": 17,
+          "column": 21,
           "program": "generic_variance_1.ets"
         }
       }
@@ -529,8 +529,8 @@
             "program": "generic_variance_1.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 19,
+            "column": 18,
             "program": "generic_variance_1.ets"
           }
         }
@@ -542,8 +542,8 @@
           "program": "generic_variance_1.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 19,
+          "column": 18,
           "program": "generic_variance_1.ets"
         }
       }
@@ -729,8 +729,8 @@
             "program": "generic_variance_1.ets"
           },
           "end": {
-            "line": 22,
-            "column": 9,
+            "line": 20,
+            "column": 19,
             "program": "generic_variance_1.ets"
           }
         }
@@ -742,8 +742,8 @@
           "program": "generic_variance_1.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 19,
           "program": "generic_variance_1.ets"
         }
       }

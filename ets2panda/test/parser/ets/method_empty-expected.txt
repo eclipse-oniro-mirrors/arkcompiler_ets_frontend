@@ -582,8 +582,8 @@
             "program": "method_empty.ets"
           },
           "end": {
-            "line": 24,
-            "column": 1,
+            "line": 23,
+            "column": 2,
             "program": "method_empty.ets"
           }
         }
@@ -595,8 +595,8 @@
           "program": "method_empty.ets"
         },
         "end": {
-          "line": 24,
-          "column": 1,
+          "line": 23,
+          "column": 2,
           "program": "method_empty.ets"
         }
       }

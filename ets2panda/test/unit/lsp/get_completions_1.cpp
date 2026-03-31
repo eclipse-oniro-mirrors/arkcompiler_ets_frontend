@@ -676,4 +676,33 @@ TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation1)
     AssertCompletionsContainAndNotContainEntries(res2.GetEntries(), secondExpectedEntries, {});
     initializer.DestroyContext(ctx);
 }
+
+TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest5)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition6.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class A {
+}
+let a = new A();
+class B {
+}
+cla
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 45;
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string propertyName1 = "class";
+    CompletionEntry entry1 =
+        CompletionEntry(propertyName1, CompletionEntryKind::KEYWORD,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), propertyName1);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(entry1, entries[0]);
+}
+
 }  // namespace

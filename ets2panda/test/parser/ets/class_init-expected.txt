@@ -364,8 +364,8 @@
             "program": "class_init.ets"
           },
           "end": {
-            "line": 23,
-            "column": 1,
+            "line": 22,
+            "column": 2,
             "program": "class_init.ets"
           }
         }
@@ -377,8 +377,8 @@
           "program": "class_init.ets"
         },
         "end": {
-          "line": 23,
-          "column": 1,
+          "line": 22,
+          "column": 2,
           "program": "class_init.ets"
         }
       }

@@ -133,8 +133,8 @@
             "program": "array_indexing_without_chaining_non_nullish.ets"
           },
           "end": {
-            "line": 18,
-            "column": 4,
+            "line": 16,
+            "column": 11,
             "program": "array_indexing_without_chaining_non_nullish.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "array_indexing_without_chaining_non_nullish.ets"
         },
         "end": {
-          "line": 18,
-          "column": 4,
+          "line": 16,
+          "column": 11,
           "program": "array_indexing_without_chaining_non_nullish.ets"
         }
       }

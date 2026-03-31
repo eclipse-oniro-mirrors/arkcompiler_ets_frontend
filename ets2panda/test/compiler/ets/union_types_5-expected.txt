@@ -486,8 +486,8 @@
             "program": "union_types_5.ets"
           },
           "end": {
-            "line": 22,
-            "column": 6,
+            "line": 21,
+            "column": 2,
             "program": "union_types_5.ets"
           }
         }
@@ -499,8 +499,8 @@
           "program": "union_types_5.ets"
         },
         "end": {
-          "line": 22,
-          "column": 6,
+          "line": 21,
+          "column": 2,
           "program": "union_types_5.ets"
         }
       }
@@ -706,8 +706,8 @@
             "program": "union_types_5.ets"
           },
           "end": {
-            "line": 25,
-            "column": 6,
+            "line": 24,
+            "column": 2,
             "program": "union_types_5.ets"
           }
         }
@@ -719,8 +719,8 @@
           "program": "union_types_5.ets"
         },
         "end": {
-          "line": 25,
-          "column": 6,
+          "line": 24,
+          "column": 2,
           "program": "union_types_5.ets"
         }
       }
@@ -926,8 +926,8 @@
             "program": "union_types_5.ets"
           },
           "end": {
-            "line": 29,
-            "column": 9,
+            "line": 27,
+            "column": 2,
             "program": "union_types_5.ets"
           }
         }
@@ -939,8 +939,8 @@
           "program": "union_types_5.ets"
         },
         "end": {
-          "line": 29,
-          "column": 9,
+          "line": 27,
+          "column": 2,
           "program": "union_types_5.ets"
         }
       }

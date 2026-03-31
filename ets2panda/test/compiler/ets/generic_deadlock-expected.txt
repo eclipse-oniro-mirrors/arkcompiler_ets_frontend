@@ -817,8 +817,8 @@
             "program": "generic_deadlock.ets"
           },
           "end": {
-            "line": 25,
-            "column": 9,
+            "line": 23,
+            "column": 2,
             "program": "generic_deadlock.ets"
           }
         }
@@ -830,8 +830,8 @@
           "program": "generic_deadlock.ets"
         },
         "end": {
-          "line": 25,
-          "column": 9,
+          "line": 23,
+          "column": 2,
           "program": "generic_deadlock.ets"
         }
       }

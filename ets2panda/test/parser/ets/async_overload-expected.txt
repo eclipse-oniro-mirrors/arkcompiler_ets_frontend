@@ -889,8 +889,8 @@
             "program": "async_overload.ets"
           },
           "end": {
-            "line": 26,
-            "column": 6,
+            "line": 24,
+            "column": 2,
             "program": "async_overload.ets"
           }
         }
@@ -902,8 +902,8 @@
           "program": "async_overload.ets"
         },
         "end": {
-          "line": 26,
-          "column": 6,
+          "line": 24,
+          "column": 2,
           "program": "async_overload.ets"
         }
       }

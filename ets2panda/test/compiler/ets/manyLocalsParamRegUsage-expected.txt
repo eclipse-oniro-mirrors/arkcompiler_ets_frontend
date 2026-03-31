@@ -11911,8 +11911,8 @@
             "program": "manyLocalsParamRegUsage.ets"
           },
           "end": {
-            "line": 277,
-            "column": 9,
+            "line": 275,
+            "column": 2,
             "program": "manyLocalsParamRegUsage.ets"
           }
         }
@@ -11924,8 +11924,8 @@
           "program": "manyLocalsParamRegUsage.ets"
         },
         "end": {
-          "line": 277,
-          "column": 9,
+          "line": 275,
+          "column": 2,
           "program": "manyLocalsParamRegUsage.ets"
         }
       }
@@ -34729,8 +34729,8 @@
             "program": "manyLocalsParamRegUsage.ets"
           },
           "end": {
-            "line": 825,
-            "column": 9,
+            "line": 823,
+            "column": 2,
             "program": "manyLocalsParamRegUsage.ets"
           }
         }
@@ -34742,8 +34742,8 @@
           "program": "manyLocalsParamRegUsage.ets"
         },
         "end": {
-          "line": 825,
-          "column": 9,
+          "line": 823,
+          "column": 2,
           "program": "manyLocalsParamRegUsage.ets"
         }
       }

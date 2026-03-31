@@ -1390,8 +1390,8 @@
             "program": "optional_field_interface.ets"
           },
           "end": {
-            "line": 33,
-            "column": 1,
+            "line": 32,
+            "column": 2,
             "program": "optional_field_interface.ets"
           }
         }
@@ -1403,8 +1403,8 @@
           "program": "optional_field_interface.ets"
         },
         "end": {
-          "line": 33,
-          "column": 1,
+          "line": 32,
+          "column": 2,
           "program": "optional_field_interface.ets"
         }
       }

@@ -390,8 +390,8 @@
             "program": "test-class-definition.js"
           },
           "end": {
-            "line": 29,
-            "column": 6,
+            "line": 27,
+            "column": 2,
             "program": "test-class-definition.js"
           }
         }
@@ -403,8 +403,8 @@
           "program": "test-class-definition.js"
         },
         "end": {
-          "line": 29,
-          "column": 6,
+          "line": 27,
+          "column": 2,
           "program": "test-class-definition.js"
         }
       }

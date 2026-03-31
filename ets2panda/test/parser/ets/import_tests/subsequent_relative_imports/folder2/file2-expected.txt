@@ -213,8 +213,8 @@
             "program": "file2.ets"
           },
           "end": {
-            "line": 20,
-            "column": 1,
+            "line": 19,
+            "column": 2,
             "program": "file2.ets"
           }
         }
@@ -226,8 +226,8 @@
           "program": "file2.ets"
         },
         "end": {
-          "line": 20,
-          "column": 1,
+          "line": 19,
+          "column": 2,
           "program": "file2.ets"
         }
       }

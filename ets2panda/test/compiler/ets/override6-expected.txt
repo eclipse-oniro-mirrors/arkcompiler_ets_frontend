@@ -606,8 +606,8 @@
             "program": "override6.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "override6.ets"
           }
         }
@@ -619,8 +619,8 @@
           "program": "override6.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "override6.ets"
         }
       }

@@ -323,8 +323,8 @@
             "program": "constructor_with_optional_parameter.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 18,
+            "column": 2,
             "program": "constructor_with_optional_parameter.ets"
           }
         }
@@ -336,8 +336,8 @@
           "program": "constructor_with_optional_parameter.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 2,
           "program": "constructor_with_optional_parameter.ets"
         }
       }

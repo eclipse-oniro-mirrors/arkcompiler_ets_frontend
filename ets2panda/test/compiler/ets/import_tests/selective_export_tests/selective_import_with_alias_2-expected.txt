@@ -275,8 +275,8 @@
             "program": "selective_import_with_alias_2.ets"
           },
           "end": {
-            "line": 19,
-            "column": 1,
+            "line": 18,
+            "column": 45,
             "program": "selective_import_with_alias_2.ets"
           }
         }
@@ -288,8 +288,8 @@
           "program": "selective_import_with_alias_2.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 45,
           "program": "selective_import_with_alias_2.ets"
         }
       }

@@ -322,8 +322,8 @@
             "program": "import_interface.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 44,
             "program": "import_interface.ets"
           }
         }
@@ -335,8 +335,8 @@
           "program": "import_interface.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 44,
           "program": "import_interface.ets"
         }
       }
@@ -535,8 +535,8 @@
             "program": "import_interface.ets"
           },
           "end": {
-            "line": 21,
-            "column": 1,
+            "line": 20,
+            "column": 48,
             "program": "import_interface.ets"
           }
         }
@@ -548,8 +548,8 @@
           "program": "import_interface.ets"
         },
         "end": {
-          "line": 21,
-          "column": 1,
+          "line": 20,
+          "column": 48,
           "program": "import_interface.ets"
         }
       }

@@ -181,8 +181,8 @@
             "program": "generics_type_param_constraint_9.ets"
           },
           "end": {
-            "line": 18,
-            "column": 6,
+            "line": 17,
+            "column": 18,
             "program": "generics_type_param_constraint_9.ets"
           }
         }
@@ -194,8 +194,8 @@
           "program": "generics_type_param_constraint_9.ets"
         },
         "end": {
-          "line": 18,
-          "column": 6,
+          "line": 17,
+          "column": 18,
           "program": "generics_type_param_constraint_9.ets"
         }
       }
@@ -440,8 +440,8 @@
             "program": "generics_type_param_constraint_9.ets"
           },
           "end": {
-            "line": 19,
-            "column": 6,
+            "line": 18,
+            "column": 40,
             "program": "generics_type_param_constraint_9.ets"
           }
         }
@@ -453,8 +453,8 @@
           "program": "generics_type_param_constraint_9.ets"
         },
         "end": {
-          "line": 19,
-          "column": 6,
+          "line": 18,
+          "column": 40,
           "program": "generics_type_param_constraint_9.ets"
         }
       }
@@ -748,8 +748,8 @@
             "program": "generics_type_param_constraint_9.ets"
           },
           "end": {
-            "line": 20,
-            "column": 9,
+            "line": 19,
+            "column": 31,
             "program": "generics_type_param_constraint_9.ets"
           }
         }
@@ -761,8 +761,8 @@
           "program": "generics_type_param_constraint_9.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 19,
+          "column": 31,
           "program": "generics_type_param_constraint_9.ets"
         }
       }

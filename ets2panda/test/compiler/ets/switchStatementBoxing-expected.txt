@@ -557,8 +557,8 @@
             "program": "switchStatementBoxing.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "switchStatementBoxing.ets"
           }
         }
@@ -570,8 +570,8 @@
           "program": "switchStatementBoxing.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "switchStatementBoxing.ets"
         }
       }

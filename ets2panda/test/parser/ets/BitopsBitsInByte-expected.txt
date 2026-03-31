@@ -1943,8 +1943,8 @@
             "program": "BitopsBitsInByte.ets"
           },
           "end": {
-            "line": 44,
-            "column": 9,
+            "line": 42,
+            "column": 2,
             "program": "BitopsBitsInByte.ets"
           }
         }
@@ -1956,8 +1956,8 @@
           "program": "BitopsBitsInByte.ets"
         },
         "end": {
-          "line": 44,
-          "column": 9,
+          "line": 42,
+          "column": 2,
           "program": "BitopsBitsInByte.ets"
         }
       }

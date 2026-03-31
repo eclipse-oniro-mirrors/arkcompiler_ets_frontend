@@ -656,8 +656,8 @@
             "program": "ambient_object_iterable.ets"
           },
           "end": {
-            "line": 26,
-            "column": 8,
+            "line": 24,
+            "column": 2,
             "program": "ambient_object_iterable.ets"
           }
         }
@@ -669,8 +669,8 @@
           "program": "ambient_object_iterable.ets"
         },
         "end": {
-          "line": 26,
-          "column": 8,
+          "line": 24,
+          "column": 2,
           "program": "ambient_object_iterable.ets"
         }
       }
@@ -1088,8 +1088,8 @@
             "program": "ambient_object_iterable.ets"
           },
           "end": {
-            "line": 32,
-            "column": 9,
+            "line": 30,
+            "column": 2,
             "program": "ambient_object_iterable.ets"
           }
         }
@@ -1101,8 +1101,8 @@
           "program": "ambient_object_iterable.ets"
         },
         "end": {
-          "line": 32,
-          "column": 9,
+          "line": 30,
+          "column": 2,
           "program": "ambient_object_iterable.ets"
         }
       }

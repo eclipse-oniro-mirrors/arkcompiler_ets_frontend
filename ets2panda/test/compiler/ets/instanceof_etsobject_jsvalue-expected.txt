@@ -575,8 +575,8 @@
             "program": "instanceof_etsobject_jsvalue.ets"
           },
           "end": {
-            "line": 22,
-            "column": 9,
+            "line": 20,
+            "column": 11,
             "program": "instanceof_etsobject_jsvalue.ets"
           }
         }
@@ -588,8 +588,8 @@
           "program": "instanceof_etsobject_jsvalue.ets"
         },
         "end": {
-          "line": 22,
-          "column": 9,
+          "line": 20,
+          "column": 11,
           "program": "instanceof_etsobject_jsvalue.ets"
         }
       }

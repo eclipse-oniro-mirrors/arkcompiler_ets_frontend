@@ -7216,8 +7216,8 @@
             "program": "MathSpectralNorm.ets"
           },
           "end": {
-            "line": 91,
-            "column": 9,
+            "line": 89,
+            "column": 2,
             "program": "MathSpectralNorm.ets"
           }
         }
@@ -7229,8 +7229,8 @@
           "program": "MathSpectralNorm.ets"
         },
         "end": {
-          "line": 91,
-          "column": 9,
+          "line": 89,
+          "column": 2,
           "program": "MathSpectralNorm.ets"
         }
       }

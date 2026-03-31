@@ -484,8 +484,8 @@
             "program": "func-ref-private.ets"
           },
           "end": {
-            "line": 27,
-            "column": 1,
+            "line": 26,
+            "column": 2,
             "program": "func-ref-private.ets"
           }
         }
@@ -497,8 +497,8 @@
           "program": "func-ref-private.ets"
         },
         "end": {
-          "line": 27,
-          "column": 1,
+          "line": 26,
+          "column": 2,
           "program": "func-ref-private.ets"
         }
       }

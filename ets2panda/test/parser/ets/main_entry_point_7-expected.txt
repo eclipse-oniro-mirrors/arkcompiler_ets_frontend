@@ -512,8 +512,8 @@
             "program": "main_entry_point_7.ets"
           },
           "end": {
-            "line": 29,
-            "column": 1,
+            "line": 28,
+            "column": 2,
             "program": "main_entry_point_7.ets"
           }
         }
@@ -525,8 +525,8 @@
           "program": "main_entry_point_7.ets"
         },
         "end": {
-          "line": 29,
-          "column": 1,
+          "line": 28,
+          "column": 2,
           "program": "main_entry_point_7.ets"
         }
       }

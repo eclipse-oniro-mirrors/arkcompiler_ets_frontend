@@ -266,8 +266,8 @@
             "program": "infer_overriding_method_return_type.ets"
           },
           "end": {
-            "line": 20,
-            "column": 6,
+            "line": 18,
+            "column": 2,
             "program": "infer_overriding_method_return_type.ets"
           }
         }
@@ -279,8 +279,8 @@
           "program": "infer_overriding_method_return_type.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 2,
           "program": "infer_overriding_method_return_type.ets"
         }
       }

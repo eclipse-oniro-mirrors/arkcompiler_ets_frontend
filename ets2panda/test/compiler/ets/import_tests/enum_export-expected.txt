@@ -12472,7 +12472,7 @@
           },
           "end": {
             "line": 33,
-            "column": 3,
+            "column": 2,
             "program": "enum_export.ets"
           }
         }
@@ -12485,7 +12485,7 @@
         },
         "end": {
           "line": 33,
-          "column": 3,
+          "column": 2,
           "program": "enum_export.ets"
         }
       }

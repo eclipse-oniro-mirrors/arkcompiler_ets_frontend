@@ -1185,8 +1185,8 @@
             "program": "methodOverrideAsyncMethod.ets"
           },
           "end": {
-            "line": 33,
-            "column": 1,
+            "line": 32,
+            "column": 2,
             "program": "methodOverrideAsyncMethod.ets"
           }
         }
@@ -1198,8 +1198,8 @@
           "program": "methodOverrideAsyncMethod.ets"
         },
         "end": {
-          "line": 33,
-          "column": 1,
+          "line": 32,
+          "column": 2,
           "program": "methodOverrideAsyncMethod.ets"
         }
       }

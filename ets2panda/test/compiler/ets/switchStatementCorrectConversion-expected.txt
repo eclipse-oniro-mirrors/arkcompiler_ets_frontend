@@ -932,8 +932,8 @@
             "program": "switchStatementCorrectConversion.ets"
           },
           "end": {
-            "line": 42,
-            "column": 1,
+            "line": 41,
+            "column": 2,
             "program": "switchStatementCorrectConversion.ets"
           }
         }
@@ -945,8 +945,8 @@
           "program": "switchStatementCorrectConversion.ets"
         },
         "end": {
-          "line": 42,
-          "column": 1,
+          "line": 41,
+          "column": 2,
           "program": "switchStatementCorrectConversion.ets"
         }
       }

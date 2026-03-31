@@ -1847,8 +1847,8 @@
             "program": "assignments.ets"
           },
           "end": {
-            "line": 37,
-            "column": 1,
+            "line": 36,
+            "column": 2,
             "program": "assignments.ets"
           }
         }
@@ -1860,8 +1860,8 @@
           "program": "assignments.ets"
         },
         "end": {
-          "line": 37,
-          "column": 1,
+          "line": 36,
+          "column": 2,
           "program": "assignments.ets"
         }
       }

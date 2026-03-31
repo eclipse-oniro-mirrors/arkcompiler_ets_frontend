@@ -181,8 +181,8 @@
             "program": "exports.ets"
           },
           "end": {
-            "line": 24,
-            "column": 7,
+            "line": 22,
+            "column": 18,
             "program": "exports.ets"
           }
         }
@@ -194,8 +194,8 @@
           "program": "exports.ets"
         },
         "end": {
-          "line": 24,
-          "column": 7,
+          "line": 22,
+          "column": 18,
           "program": "exports.ets"
         }
       }

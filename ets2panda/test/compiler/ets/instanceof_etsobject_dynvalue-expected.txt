@@ -655,8 +655,8 @@
             "program": "instanceof_etsobject_dynvalue.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 11,
             "program": "instanceof_etsobject_dynvalue.ets"
           }
         }
@@ -668,8 +668,8 @@
           "program": "instanceof_etsobject_dynvalue.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 11,
           "program": "instanceof_etsobject_dynvalue.ets"
         }
       }

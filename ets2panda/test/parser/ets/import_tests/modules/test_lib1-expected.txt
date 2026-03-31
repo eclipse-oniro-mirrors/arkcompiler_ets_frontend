@@ -133,8 +133,8 @@
             "program": "test_lib1.ets"
           },
           "end": {
-            "line": 18,
-            "column": 1,
+            "line": 16,
+            "column": 18,
             "program": "test_lib1.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "test_lib1.ets"
         },
         "end": {
-          "line": 18,
-          "column": 1,
+          "line": 16,
+          "column": 18,
           "program": "test_lib1.ets"
         }
       }

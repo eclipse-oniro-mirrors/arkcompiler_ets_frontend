@@ -235,8 +235,8 @@
             "program": "method_modifier_check_14.ets"
           },
           "end": {
-            "line": 19,
-            "column": 1,
+            "line": 18,
+            "column": 2,
             "program": "method_modifier_check_14.ets"
           }
         }
@@ -248,8 +248,8 @@
           "program": "method_modifier_check_14.ets"
         },
         "end": {
-          "line": 19,
-          "column": 1,
+          "line": 18,
+          "column": 2,
           "program": "method_modifier_check_14.ets"
         }
       }

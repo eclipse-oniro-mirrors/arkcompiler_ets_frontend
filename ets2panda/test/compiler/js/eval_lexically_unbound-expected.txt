@@ -267,8 +267,8 @@
             "program": "eval_lexically_unbound.js"
           },
           "end": {
-            "line": 24,
-            "column": 5,
+            "line": 22,
+            "column": 2,
             "program": "eval_lexically_unbound.js"
           }
         }
@@ -280,8 +280,8 @@
           "program": "eval_lexically_unbound.js"
         },
         "end": {
-          "line": 24,
-          "column": 5,
+          "line": 22,
+          "column": 2,
           "program": "eval_lexically_unbound.js"
         }
       }

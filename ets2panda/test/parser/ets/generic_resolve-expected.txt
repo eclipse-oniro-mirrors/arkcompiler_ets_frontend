@@ -1295,8 +1295,8 @@
             "program": "generic_resolve.ets"
           },
           "end": {
-            "line": 31,
-            "column": 1,
+            "line": 30,
+            "column": 2,
             "program": "generic_resolve.ets"
           }
         }
@@ -1308,8 +1308,8 @@
           "program": "generic_resolve.ets"
         },
         "end": {
-          "line": 31,
-          "column": 1,
+          "line": 30,
+          "column": 2,
           "program": "generic_resolve.ets"
         }
       }

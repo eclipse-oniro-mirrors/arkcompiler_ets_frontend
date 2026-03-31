@@ -1,0 +1,1 @@
+[test_decorator.ts:17:1] Syntax error ESY0000: Decorators are not valid here

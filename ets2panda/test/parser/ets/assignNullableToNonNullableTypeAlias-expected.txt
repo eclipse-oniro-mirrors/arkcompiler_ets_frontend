@@ -133,8 +133,8 @@
             "program": "assignNullableToNonNullableTypeAlias.ets"
           },
           "end": {
-            "line": 18,
-            "column": 5,
+            "line": 16,
+            "column": 11,
             "program": "assignNullableToNonNullableTypeAlias.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "assignNullableToNonNullableTypeAlias.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 16,
+          "column": 11,
           "program": "assignNullableToNonNullableTypeAlias.ets"
         }
       }

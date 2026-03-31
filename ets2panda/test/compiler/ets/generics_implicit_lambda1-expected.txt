@@ -1163,8 +1163,8 @@
             "program": "generics_implicit_lambda1.ets"
           },
           "end": {
-            "line": 35,
-            "column": 9,
+            "line": 33,
+            "column": 2,
             "program": "generics_implicit_lambda1.ets"
           }
         }
@@ -1176,8 +1176,8 @@
           "program": "generics_implicit_lambda1.ets"
         },
         "end": {
-          "line": 35,
-          "column": 9,
+          "line": 33,
+          "column": 2,
           "program": "generics_implicit_lambda1.ets"
         }
       }

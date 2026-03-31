@@ -133,8 +133,8 @@
             "program": "null.ets"
           },
           "end": {
-            "line": 18,
-            "column": 4,
+            "line": 16,
+            "column": 13,
             "program": "null.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "null.ets"
         },
         "end": {
-          "line": 18,
-          "column": 4,
+          "line": 16,
+          "column": 13,
           "program": "null.ets"
         }
       }

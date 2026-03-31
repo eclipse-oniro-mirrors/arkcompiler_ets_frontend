@@ -881,8 +881,8 @@
             "program": "methodOverrideDifferentSignature.ets"
           },
           "end": {
-            "line": 31,
-            "column": 6,
+            "line": 29,
+            "column": 2,
             "program": "methodOverrideDifferentSignature.ets"
           }
         }
@@ -894,8 +894,8 @@
           "program": "methodOverrideDifferentSignature.ets"
         },
         "end": {
-          "line": 31,
-          "column": 6,
+          "line": 29,
+          "column": 2,
           "program": "methodOverrideDifferentSignature.ets"
         }
       }
@@ -1361,8 +1361,8 @@
             "program": "methodOverrideDifferentSignature.ets"
           },
           "end": {
-            "line": 39,
-            "column": 1,
+            "line": 38,
+            "column": 2,
             "program": "methodOverrideDifferentSignature.ets"
           }
         }
@@ -1374,8 +1374,8 @@
           "program": "methodOverrideDifferentSignature.ets"
         },
         "end": {
-          "line": 39,
-          "column": 1,
+          "line": 38,
+          "column": 2,
           "program": "methodOverrideDifferentSignature.ets"
         }
       }

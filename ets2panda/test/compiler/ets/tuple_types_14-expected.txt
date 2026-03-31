@@ -674,8 +674,8 @@
             "program": "tuple_types_14.ets"
           },
           "end": {
-            "line": 24,
-            "column": 9,
+            "line": 22,
+            "column": 2,
             "program": "tuple_types_14.ets"
           }
         }
@@ -687,8 +687,8 @@
           "program": "tuple_types_14.ets"
         },
         "end": {
-          "line": 24,
-          "column": 9,
+          "line": 22,
+          "column": 2,
           "program": "tuple_types_14.ets"
         }
       }

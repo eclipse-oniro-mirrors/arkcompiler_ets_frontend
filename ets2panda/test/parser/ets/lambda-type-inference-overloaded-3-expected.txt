@@ -361,8 +361,8 @@
             "program": "lambda-type-inference-overloaded-3.ets"
           },
           "end": {
-            "line": 21,
-            "column": 6,
+            "line": 19,
+            "column": 2,
             "program": "lambda-type-inference-overloaded-3.ets"
           }
         }
@@ -374,8 +374,8 @@
           "program": "lambda-type-inference-overloaded-3.ets"
         },
         "end": {
-          "line": 21,
-          "column": 6,
+          "line": 19,
+          "column": 2,
           "program": "lambda-type-inference-overloaded-3.ets"
         }
       }
@@ -1083,8 +1083,8 @@
             "program": "lambda-type-inference-overloaded-3.ets"
           },
           "end": {
-            "line": 30,
-            "column": 1,
+            "line": 29,
+            "column": 2,
             "program": "lambda-type-inference-overloaded-3.ets"
           }
         }
@@ -1096,8 +1096,8 @@
           "program": "lambda-type-inference-overloaded-3.ets"
         },
         "end": {
-          "line": 30,
-          "column": 1,
+          "line": 29,
+          "column": 2,
           "program": "lambda-type-inference-overloaded-3.ets"
         }
       }

@@ -1032,8 +1032,8 @@
             "program": "type_cast.ets"
           },
           "end": {
-            "line": 29,
-            "column": 1,
+            "line": 28,
+            "column": 2,
             "program": "type_cast.ets"
           }
         }
@@ -1045,8 +1045,8 @@
           "program": "type_cast.ets"
         },
         "end": {
-          "line": 29,
-          "column": 1,
+          "line": 28,
+          "column": 2,
           "program": "type_cast.ets"
         }
       }

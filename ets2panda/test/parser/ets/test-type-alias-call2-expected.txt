@@ -811,8 +811,8 @@
             "program": "test-type-alias-call2.ets"
           },
           "end": {
-            "line": 25,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "test-type-alias-call2.ets"
           }
         }
@@ -824,8 +824,8 @@
           "program": "test-type-alias-call2.ets"
         },
         "end": {
-          "line": 25,
-          "column": 1,
+          "line": 24,
+          "column": 2,
           "program": "test-type-alias-call2.ets"
         }
       }

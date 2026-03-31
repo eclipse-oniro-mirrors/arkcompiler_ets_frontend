@@ -133,8 +133,8 @@
             "program": "export_type.ets"
           },
           "end": {
-            "line": 17,
-            "column": 10,
+            "line": 16,
+            "column": 11,
             "program": "export_type.ets"
           }
         }
@@ -146,8 +146,8 @@
           "program": "export_type.ets"
         },
         "end": {
-          "line": 17,
-          "column": 10,
+          "line": 16,
+          "column": 11,
           "program": "export_type.ets"
         }
       }
@@ -332,8 +332,8 @@
             "program": "export_type.ets"
           },
           "end": {
-            "line": 20,
-            "column": 7,
+            "line": 19,
+            "column": 18,
             "program": "export_type.ets"
           }
         }
@@ -345,8 +345,8 @@
           "program": "export_type.ets"
         },
         "end": {
-          "line": 20,
-          "column": 7,
+          "line": 19,
+          "column": 18,
           "program": "export_type.ets"
         }
       }
@@ -483,8 +483,8 @@
             "program": "export_type.ets"
           },
           "end": {
-            "line": 22,
-            "column": 1,
+            "line": 21,
+            "column": 23,
             "program": "export_type.ets"
           }
         }
@@ -496,8 +496,8 @@
           "program": "export_type.ets"
         },
         "end": {
-          "line": 22,
-          "column": 1,
+          "line": 21,
+          "column": 23,
           "program": "export_type.ets"
         }
       }

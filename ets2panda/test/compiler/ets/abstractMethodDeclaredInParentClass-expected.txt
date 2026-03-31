@@ -917,8 +917,8 @@
             "program": "abstractMethodDeclaredInParentClass.ets"
           },
           "end": {
-            "line": 29,
-            "column": 10,
+            "line": 27,
+            "column": 2,
             "program": "abstractMethodDeclaredInParentClass.ets"
           }
         }
@@ -930,8 +930,8 @@
           "program": "abstractMethodDeclaredInParentClass.ets"
         },
         "end": {
-          "line": 29,
-          "column": 10,
+          "line": 27,
+          "column": 2,
           "program": "abstractMethodDeclaredInParentClass.ets"
         }
       }
@@ -1824,8 +1824,8 @@
             "program": "abstractMethodDeclaredInParentClass.ets"
           },
           "end": {
-            "line": 44,
-            "column": 9,
+            "line": 42,
+            "column": 2,
             "program": "abstractMethodDeclaredInParentClass.ets"
           }
         }
@@ -1837,8 +1837,8 @@
           "program": "abstractMethodDeclaredInParentClass.ets"
         },
         "end": {
-          "line": 44,
-          "column": 9,
+          "line": 42,
+          "column": 2,
           "program": "abstractMethodDeclaredInParentClass.ets"
         }
       }
@@ -2231,8 +2231,8 @@
             "program": "abstractMethodDeclaredInParentClass.ets"
           },
           "end": {
-            "line": 50,
-            "column": 10,
+            "line": 48,
+            "column": 2,
             "program": "abstractMethodDeclaredInParentClass.ets"
           }
         }
@@ -2244,8 +2244,8 @@
           "program": "abstractMethodDeclaredInParentClass.ets"
         },
         "end": {
-          "line": 50,
-          "column": 10,
+          "line": 48,
+          "column": 2,
           "program": "abstractMethodDeclaredInParentClass.ets"
         }
       }
@@ -2913,8 +2913,8 @@
             "program": "abstractMethodDeclaredInParentClass.ets"
           },
           "end": {
-            "line": 59,
-            "column": 1,
+            "line": 58,
+            "column": 2,
             "program": "abstractMethodDeclaredInParentClass.ets"
           }
         }
@@ -2926,8 +2926,8 @@
           "program": "abstractMethodDeclaredInParentClass.ets"
         },
         "end": {
-          "line": 59,
-          "column": 1,
+          "line": 58,
+          "column": 2,
           "program": "abstractMethodDeclaredInParentClass.ets"
         }
       }
