@@ -509,10 +509,7 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
                 expr->SetTsType(checker->GlobalTypeError());
                 break;
             }
-            auto exprType = expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
-            if (!expr->Argument()->TsType()->IsETSNumericEnumType()) {
-                expr->Argument()->SetTsType(exprType);
-            }
+            expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
             break;
         }
         case lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK: {

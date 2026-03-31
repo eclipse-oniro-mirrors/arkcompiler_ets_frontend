@@ -18,9 +18,11 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsEnumType.h"
 #include "checker/types/type.h"
+#include "compiler/lowering/ets/binaryExpressionLowering.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 #include "lexer/token/number.h"
+#include "util/es2pandaMacros.h"
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {
@@ -247,8 +249,11 @@ void EnumLoweringPhase::CreateEnumItemFields(const ir::TSEnumDeclaration *const 
         newExprArgs.push_back(ordinalLiteral);
 
         ir::Expression *valueArgument = CheckEnumTypeForItemFields(enumType, member);
-
         newExprArgs.push_back(valueArgument);
+
+        auto *const nameIdent = member->AsTSEnumMember()->Key()->AsIdentifier();
+        auto *const nameLiteral = AllocNode<ir::StringLiteral>(nameIdent->Name());
+        newExprArgs.push_back(nameLiteral);
 
         auto enumTypeAnnotation1 = enumTypeAnnotation->Clone(Allocator(), nullptr);
         auto *const newExpression =
@@ -267,22 +272,6 @@ void EnumLoweringPhase::CreateEnumItemFields(const ir::TSEnumDeclaration *const 
     for (auto *const member : enumDecl->Members()) {
         enumClass->EmplaceBody(createEnumItemField(member->AsTSEnumMember()));
     }
-}
-
-ir::Identifier *EnumLoweringPhase::CreateEnumNamesArray(const ir::TSEnumDeclaration *const enumDecl,
-                                                        ir::ClassDefinition *const enumClass)
-{
-    auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
-    auto *const arrayTypeAnnotation = AllocNode<ir::TSArrayType>(stringTypeAnnotation, Allocator());
-
-    // clang-format off
-    return MakeArray(enumDecl, enumClass, NAMES_ARRAY_NAME, arrayTypeAnnotation,
-                     [this](const ir::TSEnumMember *const member) {
-                        auto *const enumNameStringLiteral =
-                            AllocNode<ir::StringLiteral>(member->Key()->AsIdentifier()->Name());
-                        return enumNameStringLiteral;
-                    });
-    // clang-format on
 }
 
 ir::TypeNode *EnumLoweringPhase::CreateType(EnumLoweringPhase::EnumType enumType, ir::TSEnumDeclaration *enumDecl,
@@ -434,7 +423,10 @@ ir::ScriptFunction *EnumLoweringPhase::CreateFunctionForCtorOfEnumClass(ir::Clas
     auto *const inputValueParam = MakeFunctionParam(context_, PARAM_VALUE, enumType);
     params.push_back(inputValueParam);
 
-    auto *id = AllocNode<ir::Identifier>("constructor", Allocator());
+    auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);
+    auto *const inputNameParam = MakeFunctionParam(context_, PARAM_NAME, stringTypeAnnotation);
+    params.push_back(inputNameParam);
+
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
 
     auto *body = AllocNode<ir::BlockStatement>(Allocator(), std::move(statements));
@@ -450,7 +442,7 @@ ir::ScriptFunction *EnumLoweringPhase::CreateFunctionForCtorOfEnumClass(ir::Clas
                                                     ir::ModifierFlags::PRIVATE,  // CC-OFF(G.FMT.02) project code style
                                                 Language(Language::Id::ETS)});   // CC-OFF(G.FMT.02) project code style
 
-    func->SetIdent(id);
+    func->SetIdent(AllocNode<ir::Identifier>("constructor", Allocator()));
 
     if (enumClass->IsDeclare()) {
         // NOTE: In aliveAnalyzer call to super is processed and leads to error. Need to invetigate it
@@ -459,28 +451,28 @@ ir::ScriptFunction *EnumLoweringPhase::CreateFunctionForCtorOfEnumClass(ir::Clas
 
     auto *valueIdentifier = AllocNode<ir::Identifier>(PARAM_VALUE, Allocator());
     valueIdentifier->SetVariable(inputValueParam->Ident()->Variable());
+    auto *nameIdentifier = AllocNode<ir::Identifier>(PARAM_NAME, Allocator());
+    nameIdentifier->SetVariable(inputNameParam->Ident()->Variable());
 
     ArenaVector<ir::Expression *> callArguments(Allocator()->Adapter());
     auto *callee = AllocNode<ir::SuperExpression>();
     callArguments.push_back(valueIdentifier);
+    callArguments.push_back(nameIdentifier);
     auto *superConstructorCall = AllocNode<ir::CallExpression>(callee, std::move(callArguments), nullptr, false);
     auto *superCallStatement = AllocNode<ir::ExpressionStatement>(superConstructorCall);
     superCallStatement->SetParent(body);
     body->AddStatement(superCallStatement);
 
-    auto *thisExpr = Allocator()->New<ir::ThisExpression>();
-    auto *fieldIdentifier = Allocator()->New<ir::Identifier>(ORDINAL_NAME, Allocator());
-    auto *leftHandSide = AllocNode<ir::MemberExpression>(thisExpr, fieldIdentifier,
+    auto *leftHandSide = AllocNode<ir::MemberExpression>(Allocator()->New<ir::ThisExpression>(),
+                                                         Allocator()->New<ir::Identifier>(ORDINAL_NAME, Allocator()),
                                                          ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
     auto *rightHandSide = AllocNode<ir::Identifier>(PARAM_ORDINAL, Allocator());
     rightHandSide->SetVariable(inputOrdinalParam->Ident()->Variable());
-    if (!enumClass->IsDeclare()) {
-        auto *initializer =
-            AllocNode<ir::AssignmentExpression>(leftHandSide, rightHandSide, lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
-        auto initStatement = AllocNode<ir::ExpressionStatement>(initializer);
-        initStatement->SetParent(body);
-        body->AddStatement(initStatement);
-    }
+    auto *initializer =
+        AllocNode<ir::AssignmentExpression>(leftHandSide, rightHandSide, lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
+    auto initStatement = AllocNode<ir::ExpressionStatement>(initializer);
+    initStatement->SetParent(body);
+    body->AddStatement(initStatement);
 
     return func;
 }
@@ -567,29 +559,15 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateEnumNumericClassFromEnumDeclarati
     auto *const enumClass = enumClassDecl->Definition();
 
     CreateEnumItemFields(enumDecl, enumClass, TYPE);
-    auto *const namesArrayIdent = CreateEnumNamesArray(enumDecl, enumClass);
-
-    ir::Identifier *valuesArrayIdent;
-    if (TYPE != EnumType::STRING) {
-        valuesArrayIdent = CreateEnumValuesArray<ENUM_TYPE>(enumDecl, enumClass);
-    }
-
-    auto *const stringValuesArrayIdent = CreateEnumStringValuesArray(enumDecl, enumClass);
     auto *const itemsArrayIdent = CreateEnumItemsArray(enumDecl, enumClass);
 
-    CreateEnumGetNameMethod(enumDecl, enumClass, namesArrayIdent);
-
-    CreateEnumGetValueOfMethod(enumDecl, enumClass, namesArrayIdent, itemsArrayIdent);
+    CreateEnumGetValueOfMethod(enumDecl, enumClass, itemsArrayIdent);
 
     if (TYPE != EnumType::STRING) {
-        CreateEnumFromValueMethod(enumDecl, enumClass, valuesArrayIdent, itemsArrayIdent, ENUM_TYPE);
-        CreateEnumValueOfMethod(enumDecl, enumClass, valuesArrayIdent, ENUM_TYPE);
+        CreateEnumFromValueMethod(enumDecl, enumClass, itemsArrayIdent, ENUM_TYPE);
     } else {
-        CreateEnumFromValueMethod(enumDecl, enumClass, stringValuesArrayIdent, itemsArrayIdent, std::nullopt);
-        CreateEnumValueOfMethod(enumDecl, enumClass, stringValuesArrayIdent, std::nullopt);
+        CreateEnumFromValueMethod(enumDecl, enumClass, itemsArrayIdent, std::nullopt);
     }
-
-    CreateEnumToStringMethod(enumDecl, enumClass, stringValuesArrayIdent);
 
     CreateEnumValuesMethod(enumDecl, enumClass, itemsArrayIdent);
 
@@ -757,56 +735,6 @@ bool EnumLoweringPhase::PerformForProgram(parser::Program *program)
     return true;
 }
 
-template <ir::PrimitiveType TYPE>
-ir::Identifier *EnumLoweringPhase::CreateEnumValuesArray(ir::TSEnumDeclaration *const enumDecl,
-                                                         ir::ClassDefinition *const enumClass)
-{
-    ir::TypeNode *type;
-    if (enumDecl->TypeAnnotation() != nullptr) {
-        type = enumDecl->TypeAnnotation()->Clone(Allocator(), enumClass);
-    } else {
-        type = AllocNode<ir::ETSPrimitiveType>(TYPE, Allocator());
-    }
-
-    auto *const arrayTypeAnnotation = AllocNode<ir::TSArrayType>(type, Allocator());
-    // clang-format off
-    return MakeArray(enumDecl, enumClass, VALUES_ARRAY_NAME, arrayTypeAnnotation,
-                     [this](const ir::TSEnumMember *const member) {
-                        auto *const enumValueLiteral = AllocNode<ir::NumberLiteral>(
-                            lexer::Number(member->AsTSEnumMember()
-                                                ->Init()
-                                                ->AsNumberLiteral()
-                                                ->Number()));
-                        return enumValueLiteral;
-                    });
-    // clang-format on
-}
-
-ir::Identifier *EnumLoweringPhase::CreateEnumStringValuesArray(const ir::TSEnumDeclaration *const enumDecl,
-                                                               ir::ClassDefinition *const enumClass)
-{
-    auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
-    auto *const arrayTypeAnnotation = AllocNode<ir::TSArrayType>(stringTypeAnnotation, Allocator());
-
-    // clang-format off
-    return MakeArray(enumDecl, enumClass, STRING_VALUES_ARRAY_NAME, arrayTypeAnnotation,
-                     [this](const ir::TSEnumMember *const member) {
-                        auto *const init = member->AsTSEnumMember()->Init();
-                        util::StringView stringValue;
-                        std::ostringstream preciseFloatRepresentation;
-
-                        if (init->IsStringLiteral()) {
-                            stringValue = init->AsStringLiteral()->Str();
-                        } else {
-                            std::string str = init->AsNumberLiteral()->ToString();
-                            stringValue = util::UString(str, Allocator()).View();
-                        }
-                        auto *const enumValueStringLiteral = AllocNode<ir::StringLiteral>(stringValue);
-                        return enumValueStringLiteral;
-                    });
-    // clang-format on
-}
-
 ir::Identifier *EnumLoweringPhase::CreateEnumItemsArray(const ir::TSEnumDeclaration *const enumDecl,
                                                         ir::ClassDefinition *const enumClass)
 {
@@ -868,17 +796,6 @@ ir::ThrowStatement *CreateThrowStatement(public_lib::Context *ctx, ir::ETSParame
     return ctx->AllocNode<ir::ThrowStatement>(newExpr);
 }
 
-ir::ReturnStatement *CreateReturnStatement(public_lib::Context *ctx, ir::Identifier *const enumClassIdentifier,
-                                           ir::Identifier *const arrayIdentifier, ir::Expression *const parameter)
-{
-    auto *const propertyAccessExpr = CreateStaticAccessMemberExpression(ctx, enumClassIdentifier, arrayIdentifier);
-
-    auto *const arrayAccessExpr = ctx->AllocNode<ir::MemberExpression>(
-        propertyAccessExpr, parameter, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
-
-    return ctx->AllocNode<ir::ReturnStatement>(arrayAccessExpr);
-}
-
 ir::CallExpression *CreateCallInstanceMethod(public_lib::Context *ctx, std::string_view methodName,
                                              ir::Expression *thisArg)
 {
@@ -891,82 +808,6 @@ ir::CallExpression *CreateCallInstanceMethod(public_lib::Context *ctx, std::stri
 }
 
 }  // namespace
-
-void EnumLoweringPhase::CreateEnumToStringMethod(const ir::TSEnumDeclaration *const enumDecl,
-                                                 ir::ClassDefinition *const enumClass,
-                                                 ir::Identifier *const stringValuesArrayIdent)
-{
-    auto *ordinalAccessExpr = CreateOrdinalAccessExpression();
-    auto *const returnStmt =
-        CreateReturnStatement(context_, enumClass->Ident(), stringValuesArrayIdent, ordinalAccessExpr);
-
-    ArenaVector<ir::Statement *> body(Allocator()->Adapter());
-    body.push_back(returnStmt);
-
-    ArenaVector<ir::Expression *> params(Allocator()->Adapter());
-    auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
-    auto *const function =
-        MakeFunction({std::move(params), std::move(body), stringTypeAnnotation, enumDecl, ir::ModifierFlags::PUBLIC});
-
-    auto *const functionIdent = AllocNode<ir::Identifier>(checker::ETSEnumType::TO_STRING_METHOD_NAME, Allocator());
-
-    function->SetIdent(functionIdent);
-    MakeMethodDef(context_, enumClass, functionIdent, function);
-}
-
-void EnumLoweringPhase::CreateEnumValueOfMethod(ir::TSEnumDeclaration *const enumDecl,
-                                                ir::ClassDefinition *const enumClass,
-                                                ir::Identifier *const valuesArrayIdent,
-                                                std::optional<ir::PrimitiveType> primitiveType)
-{
-    auto *ordinalAccessExpr = CreateOrdinalAccessExpression();
-    auto *const returnStmt = CreateReturnStatement(context_, enumClass->Ident(), valuesArrayIdent, ordinalAccessExpr);
-
-    ArenaVector<ir::Statement *> body(Allocator()->Adapter());
-    body.push_back(returnStmt);
-
-    ArenaVector<ir::Expression *> params(Allocator()->Adapter());
-
-    ir::TypeNode *typeAnnotation;
-    if (primitiveType.has_value()) {
-        if (enumDecl->TypeAnnotation() != nullptr) {
-            typeAnnotation = enumDecl->TypeAnnotation()->Clone(Allocator(), enumClass);
-        } else {
-            typeAnnotation = AllocNode<ir::ETSPrimitiveType>(primitiveType.value(), Allocator())->AsTypeNode();
-        }
-    } else {
-        typeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE)->AsTypeNode();
-    }
-
-    auto *const function =
-        MakeFunction({std::move(params), std::move(body), typeAnnotation, enumDecl, ir::ModifierFlags::PUBLIC});
-    auto *const functionIdent = AllocNode<ir::Identifier>(checker::ETSEnumType::VALUE_OF_METHOD_NAME, Allocator());
-    function->SetIdent(functionIdent);
-
-    MakeMethodDef(context_, enumClass, functionIdent, function);
-}
-
-void EnumLoweringPhase::CreateEnumGetNameMethod(const ir::TSEnumDeclaration *const enumDecl,
-                                                ir::ClassDefinition *const enumClass,
-                                                ir::Identifier *const namesArrayIdent)
-{
-    auto ordinalAccessExpr = CreateOrdinalAccessExpression();
-    auto *const returnStmt = CreateReturnStatement(context_, enumClass->Ident(), namesArrayIdent, ordinalAccessExpr);
-
-    ArenaVector<ir::Statement *> body(Allocator()->Adapter());
-    body.push_back(returnStmt);
-
-    ArenaVector<ir::Expression *> params(Allocator()->Adapter());
-    auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
-
-    auto *const function =
-        MakeFunction({std::move(params), std::move(body), stringTypeAnnotation, enumDecl, ir::ModifierFlags::PUBLIC});
-    auto *const functionIdent = AllocNode<ir::Identifier>(checker::ETSEnumType::GET_NAME_METHOD_NAME, Allocator());
-
-    function->SetIdent(functionIdent);
-
-    MakeMethodDef(context_, enumClass, functionIdent, function);
-}
 
 namespace {
 
@@ -1015,48 +856,56 @@ ir::UpdateExpression *CreateForLoopUpdate(public_lib::Context *ctx, ir::Identifi
     return incrementExpr;
 }
 
-ir::IfStatement *CreateIf(public_lib::Context *ctx, ir::MemberExpression *propertyAccessExpr,
-                          ir::MemberExpression *itemAccessExpr, ir::Identifier *const loopIdentifier,
-                          ir::ETSParameterExpression *const parameter)
+ir::ForUpdateStatement *CreateForLoop(public_lib::Context *ctx, ir::ClassDefinition *const enumClass,
+                                      ir::Identifier *const itemsArrayIdent, std::string_view methodName,
+                                      ir::ETSParameterExpression *inputIdent)
 {
-    auto *const forLoopIdentClone1 = loopIdentifier->Clone(ctx->Allocator(), nullptr);
-    auto *const namesArrayElementExpr = ctx->AllocNode<ir::MemberExpression>(
-        propertyAccessExpr, forLoopIdentClone1, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
-
-    auto *const paramRefIdent = MakeParamRefIdent(ctx, parameter);
-    auto *const namesEqualExpr =
-        ctx->AllocNode<ir::BinaryExpression>(paramRefIdent, namesArrayElementExpr, lexer::TokenType::PUNCTUATOR_EQUAL);
-    paramRefIdent->SetParent(namesEqualExpr);
-
-    auto *const forLoopIdentClone2 = loopIdentifier->Clone(ctx->Allocator(), nullptr);
-
-    auto *const itemsArrayElementExpr = ctx->AllocNode<ir::MemberExpression>(
-        itemAccessExpr, forLoopIdentClone2, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
-
-    auto *const returnStmt = ctx->AllocNode<ir::ReturnStatement>(itemsArrayElementExpr);
-    return ctx->AllocNode<ir::IfStatement>(namesEqualExpr, returnStmt, nullptr);
+    auto *const forLoopIIdent = ctx->AllocNode<ir::Identifier>(EnumLoweringPhase::IDENTIFIER_I, ctx->Allocator());
+    auto *const forLoopInitVarDecl =
+        CreateForLoopInitVariableDeclaration(ctx, enumClass->Ident(), itemsArrayIdent, forLoopIIdent);
+    auto *const forLoopTest = CreateForLoopTest(ctx, forLoopIIdent);
+    auto *const forLoopUpdate = CreateForLoopUpdate(ctx, forLoopIIdent);
+    auto *const forLoopIdentCloneForCond = forLoopIIdent->Clone(ctx->Allocator(), nullptr);
+    auto *const itemsArrayStaticAccessForCond =
+        CreateStaticAccessMemberExpression(ctx, enumClass->Ident(), itemsArrayIdent);
+    auto *const itemsArrayElementForCond = ctx->AllocNode<ir::MemberExpression>(
+        itemsArrayStaticAccessForCond, forLoopIdentCloneForCond, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+    ir::BinaryExpression *condExpr = nullptr;
+    auto *const paramRefIdent = MakeParamRefIdent(ctx, inputIdent);
+    if (methodName == checker::ETSEnumType::GET_VALUE_OF_METHOD_NAME) {
+        auto *const getNameCall =
+            CreateCallInstanceMethod(ctx, checker::ETSEnumType::GET_NAME_METHOD_NAME, itemsArrayElementForCond);
+        condExpr = ctx->AllocNode<ir::BinaryExpression>(paramRefIdent, getNameCall, lexer::TokenType::PUNCTUATOR_EQUAL);
+    } else if (methodName == checker::ETSEnumType::FROM_VALUE_METHOD_NAME) {
+        auto *const valueOfCall =
+            CreateCallInstanceMethod(ctx, checker::ETSEnumType::VALUE_OF_METHOD_NAME, itemsArrayElementForCond);
+        condExpr = ctx->AllocNode<ir::BinaryExpression>(valueOfCall, paramRefIdent, lexer::TokenType::PUNCTUATOR_EQUAL);
+    }
+    ES2PANDA_ASSERT(condExpr != nullptr);
+    paramRefIdent->SetParent(condExpr);
+    auto *const forLoopIdentCloneForReturn = forLoopIIdent->Clone(ctx->Allocator(), nullptr);
+    auto *const itemsArrayStaticAccessForReturn =
+        CreateStaticAccessMemberExpression(ctx, enumClass->Ident(), itemsArrayIdent);
+    auto *const itemsArrayElementForReturn =
+        ctx->AllocNode<ir::MemberExpression>(itemsArrayStaticAccessForReturn, forLoopIdentCloneForReturn,
+                                             ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+    auto *const returnStmt = ctx->AllocNode<ir::ReturnStatement>(itemsArrayElementForReturn);
+    auto *const ifStmt = ctx->AllocNode<ir::IfStatement>(condExpr, returnStmt, nullptr);
+    auto *const forLoop =
+        ctx->AllocNode<ir::ForUpdateStatement>(forLoopInitVarDecl, forLoopTest, forLoopUpdate, ifStmt);
+    return forLoop;
 }
 
 }  // namespace
 
 void EnumLoweringPhase::CreateEnumGetValueOfMethod(const ir::TSEnumDeclaration *const enumDecl,
                                                    ir::ClassDefinition *const enumClass,
-                                                   ir::Identifier *const namesArrayIdent,
                                                    ir::Identifier *const itemsArrayIdent)
 {
-    auto *const forLoopIIdent = AllocNode<ir::Identifier>(IDENTIFIER_I, Allocator());
-    auto *const forLoopInitVarDecl =
-        CreateForLoopInitVariableDeclaration(context_, enumClass->Ident(), namesArrayIdent, forLoopIIdent);
-    auto *const forLoopTest = CreateForLoopTest(context_, forLoopIIdent);
-    auto *const forLoopUpdate = CreateForLoopUpdate(context_, forLoopIIdent);
     auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
     auto *const inputNameIdent = MakeFunctionParam(context_, PARAM_NAME, stringTypeAnnotation);
-    auto *const ifStmt =
-        CreateIf(context_, CreateStaticAccessMemberExpression(context_, enumClass->Ident(), namesArrayIdent),
-                 CreateStaticAccessMemberExpression(context_, enumClass->Ident(), itemsArrayIdent), forLoopIIdent,
-                 inputNameIdent);
-
-    auto *const forLoop = AllocNode<ir::ForUpdateStatement>(forLoopInitVarDecl, forLoopTest, forLoopUpdate, ifStmt);
+    auto *const forLoop = CreateForLoop(context_, enumClass, itemsArrayIdent,
+                                        checker::ETSEnumType::GET_VALUE_OF_METHOD_NAME, inputNameIdent);
 
     util::UString messageString(util::StringView("No enum constant "), Allocator());
     messageString.Append(enumClass->Ident()->Name());
@@ -1082,16 +931,9 @@ void EnumLoweringPhase::CreateEnumGetValueOfMethod(const ir::TSEnumDeclaration *
 
 void EnumLoweringPhase::CreateEnumFromValueMethod(ir::TSEnumDeclaration *const enumDecl,
                                                   ir::ClassDefinition *const enumClass,
-                                                  ir::Identifier *const valuesArrayIdent,
                                                   ir::Identifier *const itemsArrayIdent,
                                                   std::optional<ir::PrimitiveType> primitiveType)
 {
-    auto *const forLoopIIdent = AllocNode<ir::Identifier>(IDENTIFIER_I, Allocator());
-    auto *const forLoopInitVarDecl =
-        CreateForLoopInitVariableDeclaration(context_, enumClass->Ident(), valuesArrayIdent, forLoopIIdent);
-    auto *const forLoopTest = CreateForLoopTest(context_, forLoopIIdent);
-    auto *const forLoopUpdate = CreateForLoopUpdate(context_, forLoopIIdent);
-
     ir::TypeNode *typeAnnotation;
     if (primitiveType.has_value()) {
         if (enumDecl->TypeAnnotation() != nullptr) {
@@ -1104,12 +946,8 @@ void EnumLoweringPhase::CreateEnumFromValueMethod(ir::TSEnumDeclaration *const e
     }
 
     auto *const inputValueIdent = MakeFunctionParam(context_, PARAM_VALUE, typeAnnotation);
-    auto *const ifStmt =
-        CreateIf(context_, CreateStaticAccessMemberExpression(context_, enumClass->Ident(), valuesArrayIdent),
-                 CreateStaticAccessMemberExpression(context_, enumClass->Ident(), itemsArrayIdent), forLoopIIdent,
-                 inputValueIdent);
-
-    auto *const forLoop = AllocNode<ir::ForUpdateStatement>(forLoopInitVarDecl, forLoopTest, forLoopUpdate, ifStmt);
+    auto *const forLoop = CreateForLoop(context_, enumClass, itemsArrayIdent,
+                                        checker::ETSEnumType::FROM_VALUE_METHOD_NAME, inputValueIdent);
 
     util::UString messageString(util::StringView("No enum "), Allocator());
     messageString.Append(enumClass->Ident()->Name());

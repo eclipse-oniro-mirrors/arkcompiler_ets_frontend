@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -177,7 +177,7 @@ int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
 {
     auto const list = mem->AsClassProperty()->Value()->AsArrayExpression()->Elements();
     for (size_t index = 0; index < list.size(); index++) {
-        const auto nameD = std::string(list.at(index)->AsStringLiteral()->Str());
+        const auto nameD = std::string(list.at(index)->AsMemberExpression()->Property()->AsIdentifier()->Name());
         if (strstr(assignName.c_str(), nameD.c_str()) != nullptr) {
             return index;
         }
@@ -187,23 +187,33 @@ int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
 void SaveNumEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *result, int &enumValueIndex)
 {
     const int exitNum = -1;
-    const auto stringValuesArray = "#StringValuesArray";
+    const auto itemsArray = "#ItemsArray";
     if (!mem->IsClassProperty() || !mem->AsClassProperty()->Key()->IsIdentifier()) {
         return;
     }
-    if (mem->AsClassProperty()->Key()->AsIdentifier()->Name() != stringValuesArray) {
+    if (mem->AsClassProperty()->Key()->AsIdentifier()->Name() != itemsArray) {
         return;
     }
-    auto const list = mem->AsClassProperty()->Value()->AsArrayExpression()->Elements();
-    SaveToList(list.at(enumValueIndex), member, result);
+    auto const enumType =
+        mem->AsClassProperty()->Value()->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
+    if (enumType->IsETSNumericEnumType() == false) {
+        return;
+    }
+    auto valueLiteral = enumType->AsETSEnumType()->GetValueLiteralFromOrdinal(enumValueIndex);
+    SaveToList(valueLiteral, member, result);
     enumValueIndex = exitNum;
 }
 
 void SaveStringEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *result, int &enumValueIndex)
 {
     const int exitNum = -1;
-    auto const list = mem->AsClassProperty()->Value()->AsArrayExpression()->Elements();
-    SaveToList(list.at(enumValueIndex), member, result);
+    auto const enumType =
+        mem->AsClassProperty()->Value()->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
+    if (enumType->IsETSStringEnumType() == false) {
+        return;
+    }
+    auto valueLiteral = enumType->AsETSEnumType()->GetValueLiteralFromOrdinal(enumValueIndex);
+    SaveToList(valueLiteral, member, result);
     enumValueIndex = exitNum;
 }
 
@@ -215,19 +225,17 @@ void GetEnumIndexForSave(const ir::AstNode *enumMember, const ir::AstNode *membe
 
     enumMember->AsClassDefinition()->FindChild([member, assignName, &enumValueIndex, &result](ir::AstNode *mem) {
         const int exitNum = -1;
-        const auto namesArray = "#NamesArray";
-        const auto valuesArray = "#ValuesArray";
-        const auto stringValuesArray = "#StringValuesArray";
+        const auto itemsArray = "#ItemsArray";
         if (!mem->IsClassProperty() || !mem->AsClassProperty()->Key()->IsIdentifier()) {
             return false;
         }
         const auto keyName = mem->AsClassProperty()->Key()->AsIdentifier()->Name();
-        if (keyName == namesArray) {
+        if (keyName == itemsArray) {
             enumValueIndex = GetIndexForEnum(mem, assignName);
-        } else if (enumValueIndex != exitNum && keyName == valuesArray) {
-            SaveNumEnums(mem, member, result, enumValueIndex);
-        } else if (enumValueIndex != exitNum && keyName == stringValuesArray) {
-            SaveStringEnums(mem, member, result, enumValueIndex);
+            if (enumValueIndex != exitNum) {
+                SaveNumEnums(mem, member, result, enumValueIndex);
+                SaveStringEnums(mem, member, result, enumValueIndex);
+            }
         }
         return false;
     });

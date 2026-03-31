@@ -43,25 +43,22 @@ public:
     static constexpr std::string_view VALUES_METHOD_NAME {"values"};
     static constexpr std::string_view GET_ORDINAL_METHOD_NAME {"getOrdinal"};
     static constexpr std::string_view DOLLAR_GET_METHOD_NAME {"$_get"};
-
-    static constexpr std::string_view STRING_VALUES_ARRAY_NAME {"#StringValuesArray"};
-    static constexpr std::string_view VALUES_ARRAY_NAME {"#ValuesArray"};
-    static constexpr std::string_view NAMES_ARRAY_NAME {"#NamesArray"};
+    static constexpr std::string_view ITEMS_ARRAY_NAME {"#ItemsArray"};
 
     Type *Underlying()
     {
-        if (membersValues_->TsType() == nullptr) {
+        if (membersValues_.empty() || membersValues_[0]->TsType() == nullptr) {
             return nullptr;
         }
-        return membersValues_->TsType()->AsETSArrayType()->ElementType();
+        return membersValues_[0]->TsType();
     }
 
     Type const *Underlying() const
     {
-        if (membersValues_->TsType() == nullptr) {
+        if (membersValues_.empty() || membersValues_[0]->TsType() == nullptr) {
             return nullptr;
         }
-        return membersValues_->TsType()->AsETSArrayType()->ElementType();
+        return membersValues_[0]->TsType();
     }
 
     auto GetOrdinalFromMemberName(std::string_view name) const
@@ -71,8 +68,8 @@ public:
 
     auto GetValueLiteralFromOrdinal(size_t ord) const
     {
-        ES2PANDA_ASSERT(ord < membersValues_->Elements().size());
-        return membersValues_->Elements()[ord];
+        ES2PANDA_ASSERT(ord < membersValues_.size());
+        return membersValues_[ord];
     }
 
     bool NodeIsEnumLiteral(ir::Expression *node) const
@@ -125,28 +122,30 @@ protected:
 private:
     void InitElementsShortcuts(ir::ClassDefinition *declNode)
     {
-        Span<ir::Expression *> membersNames {};
-        for (auto elem : declNode->Body()) {
-            auto elemName = elem->AsClassElement()->Key()->AsIdentifier()->Name();
-            if (elemName == NAMES_ARRAY_NAME) {
-                membersNames = Span(elem->AsClassProperty()->Value()->AsArrayExpression()->Elements());
-            } else if (elemName == VALUES_ARRAY_NAME) {
-                membersValues_ = elem->AsClassProperty()->Value()->AsArrayExpression();  // int-enum
-            } else if ((elemName == STRING_VALUES_ARRAY_NAME) && (membersValues_ == nullptr)) {
-                membersValues_ = elem->AsClassProperty()->Value()->AsArrayExpression();  // string-enum
+        ArenaVector<util::StringView> membersNames(Allocator()->Adapter());
+        for (auto item : declNode->OrigEnumDecl()->Members()) {
+            membersNames.push_back(item->AsTSEnumMember()->Name());
+        }
+        for (auto name : membersNames) {
+            for (auto elem : declNode->Body()) {
+                if (elem->AsClassElement()->Key()->AsIdentifier()->Name() == name) {
+                    membersValues_.push_back(
+                        elem->AsClassElement()->Value()->AsETSNewClassInstanceExpression()->GetArguments()[1]);
+                    break;
+                }
             }
         }
-        auto membersValues = Span {membersValues_->Elements()};
+        auto membersValues = Span {membersValues_};
         ES2PANDA_ASSERT(membersValues.size() == membersNames.size());
         for (size_t i = 0; i < membersNames.size(); i++) {
-            memberNameToOrdinal_.insert({membersNames[i]->AsStringLiteral()->Str(), i});
+            memberNameToOrdinal_.insert({membersNames[i], i});
             ES2PANDA_ASSERT(membersValues[i]->IsStringLiteral() || membersValues[i]->IsNumberLiteral());
         }
     }
 
 private:
     ArenaMap<util::StringView, size_t> memberNameToOrdinal_;
-    ir::ArrayExpression *membersValues_;
+    ArenaVector<ir::Expression *> membersValues_;
 };
 
 class ETSNumericEnumType : public ETSEnumType {
