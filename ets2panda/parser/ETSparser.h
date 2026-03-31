@@ -371,6 +371,8 @@ private:
     bool TryParseAnnotations();
     void TryParseAnnotationsParams();
     bool IsAnnotationUsageStart(lexer::SourcePosition lastTokenEndIndex);
+    void ReportGapAfterAtIfAny(lexer::SourcePosition atExclusiveEnd);
+    void EatLeadingAtForAnnotation();
     ir::AstNode *ParseInnerTypeDeclaration(ir::ModifierFlags memberModifiers, lexer::LexerPosition savedPos,
                                            bool isStepToken, bool seenStatic);
     ir::AstNode *ParseInnerConstructorDeclaration(ir::ModifierFlags memberModifiers,

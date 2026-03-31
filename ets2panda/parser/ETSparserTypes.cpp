@@ -536,7 +536,8 @@ ir::TypeNode *ETSParser::ParseTypeAnnotationNoPreferParam(TypeAnnotationParsingO
 {
     bool const reportError = ((*options) & TypeAnnotationParsingOptions::REPORT_ERROR) != 0;
     ArenaVector<ir::AnnotationUsage *> annotations {Allocator()->Adapter()};
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         annotations = ParseAnnotations(false);
     }
     bool isTypeAliasContext = ((*options) & TypeAnnotationParsingOptions::TYPE_ALIAS_CONTEXT) != 0;

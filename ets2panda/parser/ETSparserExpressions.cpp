@@ -554,12 +554,15 @@ bool ETSParser::ProcessArrowParamToken(lexer::TokenType &tokenType, ArrowParamSt
         case lexer::TokenType::PUNCTUATOR_SEMI_COLON:
         case lexer::TokenType::PUNCTUATOR_BACK_TICK:
             return false;
-        case lexer::TokenType::PUNCTUATOR_AT:
+        case lexer::TokenType::PUNCTUATOR_AT: {
+            const lexer::SourcePosition atEnd = lexer->GetToken().End();
             lexer->NextToken();
+            ReportGapAfterAtIfAny(atEnd);
             ParseAnnotations(false);
             tokenType = lexer->GetToken().Type();
             skipNextToken = true;
             return true;
+        }
         default:
             if (!state.expectIdentifier) {
                 return true;
@@ -576,7 +579,8 @@ bool ETSParser::EatArrowFunctionParams(lexer::Lexer *lexer)
 {
     ES2PANDA_ASSERT(lexer->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
     lexer->NextToken();
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         ParseAnnotations(false);
     }
 
@@ -1020,7 +1024,8 @@ ir::Expression *ETSParser::ParseExpression(ExpressionParseFlags flags)
         return HandleDeepNesting();
     }
     ArenaVector<ir::AnnotationUsage *> annotations {Allocator()->Adapter()};
-    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
+        EatLeadingAtForAnnotation();
         annotations = ParseAnnotations(false);
     }
     const auto start = Lexer()->GetToken().Start();

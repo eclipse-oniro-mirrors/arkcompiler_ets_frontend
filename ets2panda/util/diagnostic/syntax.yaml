@@ -38,6 +38,10 @@ syntax:
   message: "Using '{}' function type notation in a union causes ambiguity. Parenthesize the function type or its return type
     to make the meaning explicit."
 
+- name: ANNOTATION_AT_NAME_GAP
+  id: 125879
+  message: "No white space or line separator is allowed between '@' and the annotation name."
+
 - name: ANNOTATION_DECLARATION_ACCESS_MODIFIER
   id: 210
   message: "Annotation declaration can not have access modifier."

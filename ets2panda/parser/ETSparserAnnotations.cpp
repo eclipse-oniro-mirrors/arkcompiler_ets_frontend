@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,11 +23,29 @@
 
 namespace ark::es2panda::parser {
 
+void ETSParser::ReportGapAfterAtIfAny(lexer::SourcePosition atExclusiveEnd)
+{
+    if (Lexer()->GetToken().Type() == lexer::TokenType::EOS) {
+        return;
+    }
+    if (Lexer()->GetToken().Start().index != atExclusiveEnd.index) {
+        LogError(diagnostic::ANNOTATION_AT_NAME_GAP, {}, Lexer()->GetToken().Start());
+    }
+}
+
+void ETSParser::EatLeadingAtForAnnotation()
+{
+    ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT);
+    const lexer::SourcePosition atEnd = Lexer()->GetToken().End();
+    Lexer()->NextToken();
+    ReportGapAfterAtIfAny(atEnd);
+}
+
 ir::Statement *ETSParser::ParseTopLevelAnnotation(ir::ModifierFlags memberModifiers)
 {
     ir::Statement *result = nullptr;
 
-    Lexer()->NextToken();  // eat '@'
+    EatLeadingAtForAnnotation();
     if (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_INTERFACE) {
         result = ParseAnnotationDeclaration(memberModifiers);
     } else {
@@ -257,7 +275,7 @@ ArenaVector<ir::AnnotationUsage *> ETSParser::ParseAnnotations(bool isTopLevelSt
             hasMoreAnnotations = false;
         } else {
             save = Lexer()->Save();
-            Lexer()->NextToken();
+            EatLeadingAtForAnnotation();
         }
     }
     return annotations;
@@ -444,7 +462,7 @@ bool ETSParser::TryParseAnnotations()
     std::vector<ir::AnnotationUsage *> annotations {};
 
     while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
-        Lexer()->NextToken();
+        EatLeadingAtForAnnotation();
 
         ir::Expression *ident = ParseAnnotationName<true>();
         ArenaVector<ir::AstNode *> properties(Allocator()->Adapter());
