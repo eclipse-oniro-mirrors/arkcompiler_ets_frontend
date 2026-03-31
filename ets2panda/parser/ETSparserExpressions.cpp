@@ -124,6 +124,18 @@ ir::Expression *ETSParser::CreateUnaryExpressionFromArgument(ir::Expression *arg
         }
         return literal != nullptr && ((beginningChar >= '0' && beginningChar <= '9') || (beginningChar == '.'));
     };
+    auto preserveNegativeZero = [argument]() {
+        ir::NumberLiteral *literal = nullptr;
+        if (argument->IsNumberLiteral()) {
+            literal = argument->AsNumberLiteral();
+        } else if (argument->IsCallExpression() && argument->AsCallExpression()->Callee()->IsMemberExpression() &&
+                   argument->AsCallExpression()->Callee()->AsMemberExpression()->Object()->IsNumberLiteral()) {
+            literal = argument->AsCallExpression()->Callee()->AsMemberExpression()->Object()->AsNumberLiteral();
+        }
+        if (literal != nullptr && !literal->Number().ConversionError() && literal->Number().IsZero()) {
+            literal->Number().SetNegativeZero(true);
+        }
+    };
 
     ir::Expression *returnExpr = nullptr;
     if (lexer::Token::IsUpdateToken(operatorType)) {
@@ -131,6 +143,7 @@ ir::Expression *ETSParser::CreateUnaryExpressionFromArgument(ir::Expression *arg
     } else if (operatorType == lexer::TokenType::KEYW_TYPEOF) {
         returnExpr = AllocNode<ir::TypeofExpression>(argument);
     } else if (operatorType == lexer::TokenType::PUNCTUATOR_MINUS && checkLiteral()) {
+        preserveNegativeZero();
         returnExpr = argument;
     } else {
         returnExpr = AllocNode<ir::UnaryExpression>(argument, operatorType);

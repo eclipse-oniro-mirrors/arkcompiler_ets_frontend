@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <cmath>
 #include <utility>
 #include <variant>
 #include "ETSGen-inl.h"
@@ -84,6 +85,28 @@ static util::StringView MakeView(ETSGen const *etsg, std::string const &str)
 {
     auto alloc = etsg->Allocator();
     return util::StringView(std::string_view(*alloc->New<SArenaString>(str, alloc->Adapter())));
+}
+
+static bool IsNegativeZeroNumberLiteral(const ir::AstNode *node)
+{
+    if (node == nullptr || !node->IsNumberLiteral()) {
+        return false;
+    }
+
+    return node->AsNumberLiteral()->Number().IsNegativeZero();
+}
+
+static bool IsNegativeZeroUnaryLiteral(const ir::AstNode *node)
+{
+    if (node == nullptr || !node->IsUnaryExpression()) {
+        return false;
+    }
+    auto *const unary = node->AsUnaryExpression();
+    if (unary->OperatorType() != lexer::TokenType::PUNCTUATOR_MINUS || !unary->Argument()->IsNumberLiteral()) {
+        return false;
+    }
+    const auto *const literal = unary->Argument()->AsNumberLiteral();
+    return literal->Number().CanGetValue<int64_t>() && literal->Number().GetValue<int64_t>() == 0;
 }
 
 void ETSGen::SetAccumulatorType(const checker::Type *type)
@@ -1146,6 +1169,9 @@ void ETSGen::CastToShort([[maybe_unused]] const ir::AstNode *node)
 void ETSGen::CastToDouble(const ir::AstNode *node)
 {
     auto typeKind = checker::ETSChecker::TypeKind(GetAccumulatorType());
+    const bool preserveNegativeZero = IsNegativeZeroUnaryLiteral(node);
+    bool needsNegate = false;
+
     switch (typeKind) {
         case checker::TypeFlag::DOUBLE: {
             return;
@@ -1159,10 +1185,12 @@ void ETSGen::CastToDouble(const ir::AstNode *node)
         case checker::TypeFlag::SHORT:
         case checker::TypeFlag::INT: {
             Sa().Emit<I32tof64>(node);
+            needsNegate = preserveNegativeZero;
             break;
         }
         case checker::TypeFlag::LONG: {
             Sa().Emit<I64tof64>(node);
+            needsNegate = preserveNegativeZero;
             break;
         }
         case checker::TypeFlag::FLOAT: {
@@ -1178,6 +1206,9 @@ void ETSGen::CastToDouble(const ir::AstNode *node)
         }
     }
 
+    if (needsNegate) {
+        Sa().Emit<FnegWide>(node);
+    }
     SetAccumulatorType(Checker()->GlobalDoubleType());
 }
 
@@ -2905,8 +2936,43 @@ util::StringView ETSGen::ToAssemblerType(const es2panda::checker::Type *type) co
 }
 
 template <typename T>
+bool ETSGen::EmitFloatingAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number)
+{
+    if (node == nullptr) {
+        return false;
+    }
+
+    const bool preserveNegativeZero = IsNegativeZeroNumberLiteral(node);
+    if (typeKind == checker::TypeFlag::FLOAT) {
+        if (preserveNegativeZero) {
+            Sa().Emit<Fldai>(node, -0.0F);
+        } else {
+            Sa().Emit<Fldai>(node, static_cast<checker::FloatType::UType>(number));
+        }
+        SetAccumulatorType(Checker()->GlobalFloatType());
+        return true;
+    }
+
+    if (typeKind == checker::TypeFlag::DOUBLE) {
+        if (preserveNegativeZero) {
+            Sa().Emit<FldaiWide>(node, -0.0);
+        } else {
+            Sa().Emit<FldaiWide>(node, static_cast<checker::DoubleType::UType>(number));
+        }
+        SetAccumulatorType(Checker()->GlobalDoubleType());
+        return true;
+    }
+
+    return false;
+}
+
+template <typename T>
 void ETSGen::SetAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number)
 {
+    if (EmitFloatingAccumulatorTargetType(node, typeKind, number)) {
+        return;
+    }
+
     switch (typeKind) {
         case checker::TypeFlag::ETS_BOOLEAN:
         case checker::TypeFlag::BYTE: {
@@ -2932,16 +2998,6 @@ void ETSGen::SetAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag
         case checker::TypeFlag::LONG: {
             Sa().Emit<LdaiWide>(node, static_cast<checker::LongType::UType>(number));
             SetAccumulatorType(Checker()->GlobalLongType());
-            break;
-        }
-        case checker::TypeFlag::FLOAT: {
-            Sa().Emit<Fldai>(node, static_cast<checker::FloatType::UType>(number));
-            SetAccumulatorType(Checker()->GlobalFloatType());
-            break;
-        }
-        case checker::TypeFlag::DOUBLE: {
-            Sa().Emit<FldaiWide>(node, static_cast<checker::DoubleType::UType>(number));
-            SetAccumulatorType(Checker()->GlobalDoubleType());
             break;
         }
         default: {

@@ -50,6 +50,11 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
     if (res != Lexer::ConversionResult::SUCCESS) {
         num_ = std::monostate {};
         flags_ |= NumberFlags::ERROR;
+        return;
+    }
+
+    if (!s.empty() && s.front() == LEX_CHAR_MINUS && IsZero()) {
+        SetNegativeZero(true);
     }
 }
 }  // namespace ark::es2panda::lexer
