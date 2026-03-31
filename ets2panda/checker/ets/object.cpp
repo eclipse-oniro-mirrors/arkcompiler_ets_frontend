@@ -2506,15 +2506,15 @@ void ETSChecker::CheckCyclicConstructorCall(Signature *signature)
         return;
     }
 
-    if (!funcBody->Statements().empty() && funcBody->Statements()[0]->IsExpressionStatement() &&
-        funcBody->Statements()[0]->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-        funcBody->Statements()[0]
-            ->AsExpressionStatement()  // CC-OFF(G.FMT.06-CPP,G.FMT.02-CPP) project code style
-            ->GetExpression()
-            ->AsCallExpression()
-            ->Callee()
-            ->IsThisExpression()) {
-        auto *constructorCall = funcBody->Statements()[0]->AsExpressionStatement()->GetExpression()->AsCallExpression();
+    for (auto *stmt : funcBody->Statements()) {
+        if (!stmt->IsExpressionStatement()) {
+            continue;
+        }
+        auto *expr = stmt->AsExpressionStatement()->GetExpression();
+        if (!expr->IsCallExpression() || !expr->AsCallExpression()->Callee()->IsThisExpression()) {
+            continue;
+        }
+        auto *constructorCall = expr->AsCallExpression();
         if (constructorCall->TsType() == nullptr || constructorCall->TsType()->HasTypeFlag(TypeFlag::TYPE_ERROR)) {
             LogError(diagnostic::NO_SUCH_CTOR_SIG, {}, constructorCall->Start());
             return;
