@@ -1035,6 +1035,24 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
             expect(() => generator.generateArkTSConfigFile(moduleInfo, false))
                 .toThrow();
         });
+
+        test('should add default alias for dynamic dependencies', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readdirSync as jest.Mock).mockReturnValue(['@ohos.app.ability.d.ets']);
+            (fs.statSync as jest.Mock).mockReturnValue({ isFile: () => true, isDirectory: () => false });
+
+            const config = createMockBuildConfig({
+                interopSDKPaths: new Set(['/mock/sdk'])
+            });
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.dependencies['dynamic/@ohos.app.ability']).toBeDefined();
+            expect(result.dependencies['dynamic/@ohos.app.ability'].alias).toContain('@ohos.app.ability');
+            expect(result.dependencies['dynamic/@ohos.app.ability'].alias).toContain('dynamic@ohos.app.ability')
+        });
     });
 
     describe('Alias Filtering', () => {
