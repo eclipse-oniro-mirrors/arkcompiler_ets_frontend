@@ -94,6 +94,9 @@ public:
         return true;
     }
 
+    static std::string NormalizePathSeparators(const std::string &path);
+    static std::string GetNormalizedSourceFilePath(const public_lib::Context *context);
+    static std::string GetNormalizedSourceFilePath(const CodeGen *cg);
     // Handle a broken dependence between annotation handling and shared emitter code
     std::vector<pandasm::AnnotationData> GenCustomAnnotations(
         const ArenaVector<ir::AnnotationUsage *> &annotationUsages, const std::string &baseName);
