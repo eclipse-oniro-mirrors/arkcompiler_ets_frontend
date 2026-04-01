@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -140,7 +140,7 @@ let lambdaParameter = (@anno a: number, @anno b: number): number => a + b;
 /* @@? 97:6 Error Semantic error ESE495032: Annotation 'anno' cannot be used on INTERFACE_GETTER. It is only allowed on: FUNCTION_WITH_RECEIVER. */
 /* @@? 101:6 Error Semantic error ESE495032: Annotation 'anno' cannot be used on INTERFACE_SETTER. It is only allowed on: FUNCTION_WITH_RECEIVER. */
 /* @@? 106:2 Error Semantic error ESE495032: Annotation 'anno' cannot be used on CLASS. It is only allowed on: FUNCTION_WITH_RECEIVER. */
-/* @@? 107:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 106:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 114:2 Error Semantic error ESE495032: Annotation 'anno' cannot be used on LAMBDA. It is only allowed on: FUNCTION_WITH_RECEIVER. */
 /* @@? 118:21 Error Semantic error ESE495032: Annotation 'anno' cannot be used on TYPE. It is only allowed on: FUNCTION_WITH_RECEIVER. */
 /* @@? 119:20 Error Semantic error ESE495032: Annotation 'anno' cannot be used on TYPE. It is only allowed on: FUNCTION_WITH_RECEIVER. */

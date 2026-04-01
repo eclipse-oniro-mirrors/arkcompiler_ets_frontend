@@ -142,7 +142,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "import_interface_test_1.ets"
         },
         "end": {

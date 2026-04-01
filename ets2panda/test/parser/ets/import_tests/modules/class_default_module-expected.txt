@@ -142,7 +142,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 16,
+          "column": 1,
           "program": "class_default_module.ets"
         },
         "end": {

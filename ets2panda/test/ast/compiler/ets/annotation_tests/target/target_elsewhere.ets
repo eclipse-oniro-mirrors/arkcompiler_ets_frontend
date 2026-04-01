@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -135,7 +135,7 @@ let lambdaParameter = (@Target([AnnotationTargets.CLASS]) a: number, @Target([An
 /* @@? 88:6 Error Semantic error ESE1122645: Annotation '@Target' can only be applied to annotation declarations. */
 /* @@? 92:6 Error Semantic error ESE1122645: Annotation '@Target' can only be applied to annotation declarations. */
 /* @@? 97:2 Error Semantic error ESE1122645: Annotation '@Target' can only be applied to annotation declarations. */
-/* @@? 98:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 97:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 105:2 Error Semantic error ESE1122645: Annotation '@Target' can only be applied to annotation declarations. */
 /* @@? 105:2 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
 /* @@? 109:21 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */

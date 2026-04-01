@@ -2563,7 +2563,7 @@
       "loc": {
         "start": {
           "line": 19,
-          "column": 8,
+          "column": 1,
           "program": "AccessNBody.ets"
         },
         "end": {
@@ -16966,7 +16966,7 @@
       "loc": {
         "start": {
           "line": 118,
-          "column": 8,
+          "column": 1,
           "program": "AccessNBody.ets"
         },
         "end": {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,5 +24,5 @@ function foo2(a:string){}
 overload /* @@ label2 */foo{foo2}
 
 
-/* @@@ label Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
-/* @@@ label2 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+/* @@? 19:5 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+/* @@? 24:1 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */

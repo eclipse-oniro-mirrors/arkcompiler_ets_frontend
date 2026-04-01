@@ -222,7 +222,7 @@
       "loc": {
         "start": {
           "line": 18,
-          "column": 8,
+          "column": 1,
           "program": "file2.ets"
         },
         "end": {

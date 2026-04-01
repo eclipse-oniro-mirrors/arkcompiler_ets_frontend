@@ -88,13 +88,14 @@ void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, const 
     if (spec->IsImportSpecifier() &&
         !varbinder_->AddSelectiveExportAlias(
             parser_, program->SourceFilePath(), spec->AsImportSpecifier()->Imported()->Name(),
-            spec->AsImportSpecifier()->Local()->Name(), stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+            spec->AsImportSpecifier()->Local(), stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
         return;
     }
     if (spec->IsImportNamespaceSpecifier()) {
         auto localName = spec->AsImportNamespaceSpecifier()->Local()->Name();
         if (!localName.Empty() &&
-            !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(), localName, localName,
+            !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(), localName,
+                                                 spec->AsImportNamespaceSpecifier()->Local(),
                                                  stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
             return;
         }
@@ -157,8 +158,7 @@ void ImportExportDecls::HandleGlobalStmts(parser::Program *program)
 void ImportExportDecls::PopulateAliasMap(const ir::ExportNamedDeclaration *decl, const util::StringView &path)
 {
     for (auto spec : decl->Specifiers()) {
-        if (!varbinder_->AddSelectiveExportAlias(parser_, path, spec->Local()->Name(), spec->Exported()->Name(),
-                                                 decl)) {
+        if (!varbinder_->AddSelectiveExportAlias(parser_, path, spec->Local()->Name(), spec->Exported(), decl)) {
             parser_->LogError(diagnostic::CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME,
                               {spec->Local()->Name().Mutf8()}, spec->Exported()->Start());
             lastExportErrorPos_ = lexer::SourcePosition();
@@ -181,7 +181,7 @@ void ImportExportDecls::AddExportFlags(ir::AstNode *node, util::StringView origi
 void ImportExportDecls::PopulateAliasMap(const ir::TSTypeAliasDeclaration *decl, const util::StringView &path)
 {
     if (!varbinder_->AddSelectiveExportAlias(parser_, path, decl->Id()->AsIdentifier()->Name(),
-                                             decl->Id()->AsIdentifier()->Name(), decl)) {
+                                             decl->Id()->AsIdentifier(), decl)) {
         parser_->LogError(diagnostic::CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME,
                           {decl->Id()->AsIdentifier()->Name().Mutf8()}, lastExportErrorPos_);
         lastExportErrorPos_ = lexer::SourcePosition();

@@ -570,7 +570,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 8,
+                "column": 1,
                 "program": "extdef.ets"
               },
               "end": {

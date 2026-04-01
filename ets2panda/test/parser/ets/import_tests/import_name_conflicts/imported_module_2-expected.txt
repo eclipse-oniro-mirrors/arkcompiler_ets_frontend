@@ -195,7 +195,7 @@
       "loc": {
         "start": {
           "line": 20,
-          "column": 8,
+          "column": 1,
           "program": "imported_module_2.ets"
         },
         "end": {
@@ -743,7 +743,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 8,
+                "column": 1,
                 "program": "imported_module_2.ets"
               },
               "end": {
@@ -940,7 +940,7 @@
             "loc": {
               "start": {
                 "line": 31,
-                "column": 8,
+                "column": 1,
                 "program": "imported_module_2.ets"
               },
               "end": {

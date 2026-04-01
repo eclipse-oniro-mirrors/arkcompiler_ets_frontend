@@ -190,8 +190,6 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
     switch (Lexer()->GetToken().Type()) {
         case lexer::TokenType::KEYW_FUNCTION: {
             result = ParseFunctionDeclaration(false, memberModifiers);
-            ES2PANDA_ASSERT(result != nullptr);
-            result->SetStart(startLoc);
             break;
         }
         case lexer::TokenType::KEYW_CONST:
@@ -216,9 +214,10 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
             break;
         case lexer::TokenType::LITERAL_IDENT: {
             if (IsNamespaceDecl()) {
-                return ParseNamespaceStatement(memberModifiers);
+                result = ParseNamespaceStatement(memberModifiers);
+            } else {
+                result = ParseIdentKeyword();
             }
-            result = ParseIdentKeyword();
             if (result == nullptr && (memberModifiers & (ir::ModifierFlags::EXPORTED)) != 0U) {
                 return ParseExport(startLoc, memberModifiers);
             }
@@ -228,6 +227,9 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
         }
     }
 
+    if (result != nullptr) {
+        result->SetStart(startLoc);
+    }
     if (result == nullptr && IsExportedDeclaration(memberModifiers)) {
         return ParseExport(startLoc, memberModifiers);
     }

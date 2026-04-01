@@ -68,7 +68,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "internals.ets"
         },
         "end": {
@@ -145,7 +145,7 @@
       "loc": {
         "start": {
           "line": 17,
-          "column": 8,
+          "column": 1,
           "program": "internals.ets"
         },
         "end": {
@@ -493,7 +493,7 @@
       "loc": {
         "start": {
           "line": 19,
-          "column": 8,
+          "column": 1,
           "program": "internals.ets"
         },
         "end": {

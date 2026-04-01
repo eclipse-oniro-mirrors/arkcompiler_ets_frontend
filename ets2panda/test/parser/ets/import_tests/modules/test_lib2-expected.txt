@@ -392,7 +392,7 @@
             "loc": {
               "start": {
                 "line": 17,
-                "column": 8,
+                "column": 1,
                 "program": "test_lib2.ets"
               },
               "end": {

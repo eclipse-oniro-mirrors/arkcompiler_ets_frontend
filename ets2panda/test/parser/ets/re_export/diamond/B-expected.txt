@@ -73,7 +73,7 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 8,
+            "column": 1,
             "program": "B.ets"
           },
           "end": {
@@ -86,7 +86,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "B.ets"
         },
         "end": {

@@ -1008,7 +1008,9 @@ ir::ExportNamedDeclaration *ETSParser::CreateExportNamedDeclaration(const Specif
     ArenaVector<ir::ExportSpecifier *> exports(Allocator()->Adapter());
     auto endLoc = startLoc;
     for (auto spec : specs.result) {
-        exports.emplace_back(AllocNode<ir::ExportSpecifier>(spec->Local(), spec->Imported()));
+        auto exportSpec = AllocNode<ir::ExportSpecifier>(spec->Local(), spec->Imported());
+        exportSpec->SetRange(spec->Range());
+        exports.emplace_back(exportSpec);
         endLoc = endLoc.index < spec->End().index ? spec->End() : endLoc;
     }
 

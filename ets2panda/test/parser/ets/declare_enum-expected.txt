@@ -30,12 +30,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -48,12 +48,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -62,12 +62,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -75,12 +75,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -88,12 +88,12 @@
           "loc": {
             "start": {
               "line": 16,
-              "column": 9,
+              "column": 1,
               "program": "declare_enum.ets"
             },
             "end": {
               "line": 16,
-              "column": 9,
+              "column": 1,
               "program": "declare_enum.ets"
             }
           }
@@ -108,12 +108,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -129,12 +129,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -143,12 +143,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -161,12 +161,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -186,12 +186,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -210,12 +210,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -223,12 +223,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -236,12 +236,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -256,12 +256,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -269,12 +269,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -282,12 +282,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -307,12 +307,12 @@
                             "loc": {
                               "start": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               },
                               "end": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               }
                             }
@@ -320,12 +320,12 @@
                           "loc": {
                             "start": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             },
                             "end": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             }
                           }
@@ -333,12 +333,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -346,12 +346,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -359,12 +359,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -376,12 +376,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -389,12 +389,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -402,12 +402,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -416,12 +416,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -456,12 +456,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -469,12 +469,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -482,12 +482,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -499,12 +499,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -515,12 +515,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -531,12 +531,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -571,12 +571,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -584,12 +584,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -597,12 +597,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -651,12 +651,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -664,12 +664,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -677,12 +677,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -694,12 +694,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -710,12 +710,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -726,12 +726,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -766,12 +766,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -779,12 +779,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -792,12 +792,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -824,12 +824,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -876,12 +876,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -925,12 +925,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -939,12 +939,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -967,12 +967,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -980,12 +980,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -993,12 +993,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1007,12 +1007,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1021,12 +1021,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1039,12 +1039,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1064,12 +1064,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1093,12 +1093,12 @@
                             "loc": {
                               "start": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               },
                               "end": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               }
                             }
@@ -1106,12 +1106,12 @@
                           "loc": {
                             "start": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             },
                             "end": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             }
                           }
@@ -1119,12 +1119,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -1132,12 +1132,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1145,12 +1145,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1166,12 +1166,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1179,12 +1179,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1192,12 +1192,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1206,12 +1206,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1219,12 +1219,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1233,12 +1233,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1251,12 +1251,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1276,12 +1276,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1300,12 +1300,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -1313,12 +1313,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1326,12 +1326,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1347,12 +1347,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1360,12 +1360,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1373,12 +1373,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1387,12 +1387,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1400,12 +1400,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1414,12 +1414,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1432,12 +1432,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1457,12 +1457,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1483,12 +1483,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -1496,12 +1496,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1509,12 +1509,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1523,12 +1523,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1537,12 +1537,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1550,12 +1550,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1564,12 +1564,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1582,12 +1582,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1607,12 +1607,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1626,12 +1626,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1640,12 +1640,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1653,12 +1653,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1667,12 +1667,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1685,12 +1685,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1710,12 +1710,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1739,12 +1739,12 @@
                             "loc": {
                               "start": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               },
                               "end": {
                                 "line": 16,
-                                "column": 9,
+                                "column": 1,
                                 "program": "declare_enum.ets"
                               }
                             }
@@ -1752,12 +1752,12 @@
                           "loc": {
                             "start": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             },
                             "end": {
                               "line": 16,
-                              "column": 9,
+                              "column": 1,
                               "program": "declare_enum.ets"
                             }
                           }
@@ -1765,12 +1765,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 9,
+                            "column": 1,
                             "program": "declare_enum.ets"
                           }
                         }
@@ -1778,12 +1778,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1791,12 +1791,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1812,12 +1812,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 9,
+                          "column": 1,
                           "program": "declare_enum.ets"
                         }
                       }
@@ -1825,12 +1825,12 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 9,
+                        "column": 1,
                         "program": "declare_enum.ets"
                       }
                     }
@@ -1838,12 +1838,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 9,
+                      "column": 1,
                       "program": "declare_enum.ets"
                     }
                   }
@@ -1852,12 +1852,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 9,
+                    "column": 1,
                     "program": "declare_enum.ets"
                   }
                 }
@@ -1865,12 +1865,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 9,
+                  "column": 1,
                   "program": "declare_enum.ets"
                 }
               }
@@ -1879,12 +1879,12 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               },
               "end": {
                 "line": 16,
-                "column": 9,
+                "column": 1,
                 "program": "declare_enum.ets"
               }
             }
@@ -1893,12 +1893,12 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 9,
+            "column": 1,
             "program": "declare_enum.ets"
           },
           "end": {
             "line": 16,
-            "column": 9,
+            "column": 1,
             "program": "declare_enum.ets"
           }
         }
@@ -1906,7 +1906,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 9,
+          "column": 1,
           "program": "declare_enum.ets"
         },
         "end": {

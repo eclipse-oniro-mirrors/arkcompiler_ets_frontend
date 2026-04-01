@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,4 @@ export default function TestFunc(): void {}
 export default /* @@ label */function TestFuncToo(): void {}
 
 
-/* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */
+/* @@? 17:1 Error Semantic error ESE0374: Only one default export is allowed in a module */
