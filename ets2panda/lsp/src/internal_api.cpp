@@ -992,7 +992,7 @@ std::string GetImportFilePath(es2panda_Context *context, size_t pos)
     }
     auto parent = node->Parent();
     if (parent != nullptr && parent->IsETSImportDeclaration() && parent->AsETSImportDeclaration()->Source() == node) {
-        res = std::string(parent->AsETSImportDeclaration()->ImportMetadata().ResolvedSource());
+        res = std::string(parent->AsETSImportDeclaration()->ImportInfo().ResolvedSource());
     }
     return res;
 }

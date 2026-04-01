@@ -1192,7 +1192,7 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
         return completions;
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto *program = ctx->parser->GetImportPathManager()->SearchResolved(importDecl->ImportMetadata());
+    auto *program = ctx->parser->GetImportPathManager()->SearchResolved(importDecl->ImportInfo());
     if (program == nullptr) {
         return completions;
     }

@@ -62,9 +62,9 @@ static bool IsESValueLoadCall(ir::AstNode *node)
 }
 
 static ir::AstNode *CreateModuleCallExpressionForDynamic(public_lib::Context *ctx, ir::CallExpression *callExpr,
-                                                         const util::ImportMetadata &importMetadata)
+                                                         const util::ImportInfo &importInfo)
 {
-    std::string_view ohmUrl {importMetadata.OhmUrl()};
+    std::string_view ohmUrl {importInfo.OhmUrl()};
     auto allocator = ctx->allocator;
     auto esvalueIdent = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::ESVALUE, allocator);
     auto loadOp = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::LOAD, allocator);
@@ -88,8 +88,8 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
     }
     auto *parser = ctx->parser->AsETSParser();
     auto *importPathStr = importPath->AsStringLiteral();
-    auto *gatheredImportMetaData = parser->GetImportPathManager()->GatherImportMetadata(program, importPathStr);
-    if (gatheredImportMetaData == nullptr) {
+    auto *gatheredImportInfo = parser->GetImportPathManager()->GatherImportInfo(program, importPathStr);
+    if (gatheredImportInfo == nullptr) {
         ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
         auto *allocator = ctx->allocator;
         auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
@@ -97,7 +97,7 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
         node->SetParent(callExpr->Parent());
         return node;
     }
-    auto metaData = gatheredImportMetaData->GetImportMetadata();
+    auto metaData = gatheredImportInfo->GetImportInfo();
     if (!metaData.OhmUrl().empty()) {
         return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData);
     }
@@ -110,7 +110,7 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
     auto *parser = ctx->parser->AsETSParser();
     auto *allocator = ctx->allocator;
     auto dependentProg =
-        parser->GetImportPathManager()->GatherImportMetadata(program, callExpr->Arguments().front()->AsStringLiteral());
+        parser->GetImportPathManager()->GatherImportInfo(program, callExpr->Arguments().front()->AsStringLiteral());
     if (dependentProg == nullptr) {
         // Replace the broken "InitModule" expression with error node. The error message has been logged in parser.
         ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
@@ -121,7 +121,7 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
     }
 
     if (dependentProg->IsDeclForDynamicStaticInterop()) {
-        return CreateModuleCallExpressionForDynamic(ctx, callExpr, dependentProg->GetImportMetadata());
+        return CreateModuleCallExpressionForDynamic(ctx, callExpr, dependentProg->GetImportInfo());
     }
 
     ArenaVector<ir::Expression *> params(allocator->Adapter());

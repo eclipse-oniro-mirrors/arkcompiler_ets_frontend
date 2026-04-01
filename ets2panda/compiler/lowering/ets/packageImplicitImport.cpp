@@ -44,7 +44,7 @@ static void ValidateImportDeclarationsSourcePath(const public_lib::Context *cons
 {
     for (const auto *const stmt : importDeclarations) {
         auto *importManager = ctx->parser->GetImportPathManager();
-        auto *referencedProg = importManager->SearchResolved(stmt->AsETSImportDeclaration()->ImportMetadata());
+        auto *referencedProg = importManager->SearchResolved(stmt->AsETSImportDeclaration()->ImportInfo());
         const bool doesImportFromPackage =
             (referencedProg != nullptr) && (referencedProg->ModuleName() == package->ModuleName());
         if (doesImportFromPackage) {

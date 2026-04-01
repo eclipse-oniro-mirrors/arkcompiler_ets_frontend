@@ -437,7 +437,7 @@ std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitt
         EmitRecordsImpl(true);
         DumpDebugInfo();
 
-        auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportMetadata());
+        auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo());
         outProgsHolder.emplace(abcPath, std::move(pandasmProg));
     }
 
@@ -1283,7 +1283,7 @@ void ETSEmitter::SetupDependenciesForTheProgram(const parser::Program *prg)
 detail::EmitterDependencies *ETSEmitter::GetOrCreateDependenciesForTheProgram(const parser::Program *prg)
 {
     ES2PANDA_ASSERT(prg != nullptr);
-    auto k = prg->GetImportMetadata().Key();
+    auto k = prg->GetImportInfo().Key();
     if (auto it = depMaps_.find(k); it != depMaps_.end()) {
         return it->second;
     }
@@ -1296,7 +1296,7 @@ detail::EmitterDependencies *ETSEmitter::GetOrCreateDependenciesForTheProgram(co
 pandasm::Program *ETSEmitter::GetOrCreatePandasmProgram(const parser::Program *prg)
 {
     ES2PANDA_ASSERT(prg != nullptr);
-    auto k = prg->GetImportMetadata().Key();
+    auto k = prg->GetImportInfo().Key();
     if (auto it = prgMaps_.find(k); it != prgMaps_.end()) {
         return it->second;
     }

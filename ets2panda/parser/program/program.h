@@ -193,7 +193,7 @@ class Program : public RecordTableHolder {
     };
 
 protected:
-    Program(const util::ImportMetadata &importMetadata, ArenaAllocator *allocator, varbinder::VarBinder *varbinder);
+    Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, varbinder::VarBinder *varbinder);
     friend ArenaAllocator;
 
 public:
@@ -207,7 +207,7 @@ public:
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
     template <util::ModuleKind KIND = util::ModuleKind::MODULE, typename VarBinderT = void>
-    static ProgramAdapter<KIND> *New(const util::ImportMetadata &importMetadata, public_lib::Context *context);
+    static ProgramAdapter<KIND> *New(const util::ImportInfo &importInfo, public_lib::Context *context);
 
     virtual ~Program();
 
@@ -230,9 +230,9 @@ public:
 
     void PushChecker(checker::Checker *checker);
 
-    const util::ImportMetadata &GetImportMetadata() const
+    const util::ImportInfo &GetImportInfo() const
     {
-        return importMetadata_;
+        return importInfo_;
     }
 
     // NOTE(dkofanov): this function is not needed as soon as packages are merged.
@@ -461,7 +461,7 @@ private:
     void VerifyDeclarationModule();
 
 private:
-    util::ImportMetadata importMetadata_;
+    util::ImportInfo importInfo_;
     ArenaAllocator *allocator_ {};
     ir::BlockStatement *ast_ {};
     util::Path sourceFile_;

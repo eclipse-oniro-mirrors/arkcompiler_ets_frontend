@@ -394,7 +394,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/primitiveConversionPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp
   compiler/lowering/ets/awaitLowering.cpp
-  compiler/metadata/metadataEmitter.cpp
+  compiler/metadata/emitter.cpp
   compiler/lowering/ets/internalAPICheck.cpp
   ir/astDump.cpp
   ir/srcDump.cpp
@@ -603,8 +603,8 @@ set(ES2PANDA_LIB_SRC
   parser/TSparser.cpp
   parser/ThrowingTypedParser.cpp
   parser/TypedParser.cpp
-  parser/program/DeclarationCache.cpp
   parser/program/entityNameVisitor.cpp
+  parser/program/ImportCache.cpp
   parser/program/program.cpp
   parser/statementParser.cpp
   parser/statementTSParser.cpp
@@ -829,10 +829,29 @@ endif()
 
 set(FLATBUFFERS_CXX_FLAGS "-Wno-error")
 set(FLATBUFFERS_DIR "${PANDA_THIRD_PARTY_SOURCES_DIR}/flatbuffers")
-set(METADATA_DIR "${ES2PANDA_ROOT}/compiler/metadata")
-set(METADATA_SCHEMA "${METADATA_DIR}/metadata.fbs")
-set(METADATA_TARGET_NAME "es2panda_generate_metadata_schema")
+set(FLATBUFFERS_BIN_DIR "${CMAKE_BINARY_DIR}/third_party/flatbuffers")
+set(FLATBUFFERS_GEN_DIR "${FLATBUFFERS_BIN_DIR}/generated")
 set(FLATBUFFERS_BUILD_TESTS OFF)
 
-panda_target_include_directories(es2panda-lib SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/)
-add_subdirectory(${FLATBUFFERS_DIR} ${CMAKE_BINARY_DIR}/third_party/flatbuffers EXCLUDE_FROM_ALL)
+set(METADATA_SCHEMA "${ES2PANDA_ROOT}/compiler/metadata/schema.fbs")
+set(METADATA_TARGET_NAME "es2panda_generate_metadata_schema")
+set(METADATA_SCHEMA_GEN_COMMAND ${FLATBUFFERS_BIN_DIR}/flatc --cpp -o ${FLATBUFFERS_GEN_DIR} -b ${METADATA_SCHEMA} --filename-suffix MetadataGenerated)
+
+if (NOT CROSS_VALUES_CONFIG)
+    message(STATUS "Configuring Flatbuffers")
+
+    # Building flatc
+    message(STATUS "  Building compiler (flatc) via `execute_process()`")
+    find_program(FB_MAKE_PROGRAM make)
+    execute_process(COMMAND ${CMAKE_COMMAND} -DFLATBUFFERS_BUILD_TESTS:BOOL=OFF -DCMAKE_TOOLCHAIN_FILE= -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} -DCMAKE_MAKE_PROGRAM:PATH=${FB_MAKE_PROGRAM} -S ${FLATBUFFERS_DIR} -B ${FLATBUFFERS_BIN_DIR} WORKING_DIRECTORY ${FLATBUFFERS_DIR} OUTPUT_QUIET ERROR_QUIET)
+    execute_process(COMMAND ${CMAKE_COMMAND} --build ${FLATBUFFERS_BIN_DIR} --target flatc WORKING_DIRECTORY ${FLATBUFFERS_DIR} OUTPUT_QUIET)
+
+    # Generating schema sources during configuration
+    message(STATUS "  Generating schema for metadata via `execute_process()`")
+    execute_process(COMMAND ${METADATA_SCHEMA_GEN_COMMAND} OUTPUT_QUIET)
+
+    panda_target_include_directories(es2panda-lib SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/ PRIVATE ${FLATBUFFERS_GEN_DIR})
+
+    # Add a target to re-generate schema sources manually
+    add_custom_target(${METADATA_TARGET_NAME} ${METADATA_SCHEMA_GEN_COMMAND})
+endif()

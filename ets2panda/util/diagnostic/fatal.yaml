@@ -122,6 +122,10 @@ fatal:
   id: 44
   message: "Module name '{}' contains invalid characters: ':'"
 
+- name: UNSUPPORTED_IMPORT_WITH_METADATA
+  id: 64778
+  message: "Importing module with metadata recorded is not supported yet: '{}'"
+
 - name: UNSUPPORTED_PATH
   id: 19
   message: "Not supported path: {}"

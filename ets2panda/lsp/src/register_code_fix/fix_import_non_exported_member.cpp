@@ -175,7 +175,7 @@ void FixImportNonExportedMember::ProcessExportPosition(es2panda_Context *context
     }
 
     auto *targetProgram =
-        ctx->parser->GetImportPathManager()->SearchResolved(funcDecl->AsETSImportDeclaration()->ImportMetadata());
+        ctx->parser->GetImportPathManager()->SearchResolved(funcDecl->AsETSImportDeclaration()->ImportInfo());
     if (targetProgram == nullptr || targetProgram->Ast() == nullptr) {
         return;
     }

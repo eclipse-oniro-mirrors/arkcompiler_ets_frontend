@@ -371,7 +371,7 @@ extern "C" __attribute__((unused)) void InvalidateFileCache(es2panda_GlobalConte
 
 static void InitializeContext(Context *res)
 {
-    parser::DeclarationCache::ActivateCache();
+    parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
@@ -754,7 +754,7 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
     } else {
         emitter->EmitRecords();
         std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
-        auto &imd = ctx->parserProgram->GetImportMetadata();
+        auto &imd = ctx->parserProgram->GetImportInfo();
         res.emplace(ctx->parser->GetImportPathManager()->FormAbcFilePath(imd),
                     std::unique_ptr<pandasm::Program>(emitter->DumpDebugInfo()));
         ctx->output = std::move(res);
@@ -876,7 +876,7 @@ extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramExternalSour
     // NOTE(dkofanov): only ctx->parserProgram has non-empty externalSources.
     auto programE2p = reinterpret_cast<parser::Program *>(program);
     programE2p->GetExternalSources()->Visit([vec, allocator](auto *extProgram) {
-        auto key = StringViewToCString(allocator, extProgram->GetImportMetadata().ModuleName());
+        auto key = StringViewToCString(allocator, extProgram->GetImportInfo().ModuleName());
         vec->emplace_back(allocator->New<ExternalSourceEntry>(key, extProgram));
     });
 
@@ -1453,7 +1453,7 @@ extern "C" __attribute__((unused)) char *FormOutputPathForFile(es2panda_Context 
     }
 
     return StdStringToCString(ctxImpl->Allocator(),
-                              ctxImpl->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportMetadata()));
+                              ctxImpl->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo()));
 }
 
 static bool HandleMultiFileModeTemplate(
@@ -1596,7 +1596,12 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
 
 extern "C" int ExtractDeclarationsFromAbcFile(const char *abcFile, const char *cacheDir)
 {
-    return util::ImportPathManager::UnpackAbc(abcFile, cacheDir);
+    const auto pf = panda_file::OpenPandaFile(abcFile);
+    if (pf == nullptr) {
+        return 1;
+    }
+    util::ImportPathManager::ExtractEtscacheToFile(*pf, abcFile, cacheDir);
+    return 0;
 }
 
 es2panda_Impl g_impl = {

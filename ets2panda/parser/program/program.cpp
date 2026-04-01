@@ -33,8 +33,8 @@
 
 namespace ark::es2panda::parser {
 
-Program::Program(const util::ImportMetadata &importMetadata, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
-    : importMetadata_(importMetadata),
+Program::Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
+    : importInfo_(importInfo),
       allocator_(allocator),
       sourceFile_(util::Path {allocator}),
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
@@ -42,32 +42,32 @@ Program::Program(const util::ImportMetadata &importMetadata, ArenaAllocator *all
 {
     PushVarBinder(varbinder);
 
-    // NOTE(dkofanov): #32416 remove 'SourceFile' in favor of 'ImportMetadata`.
+    // NOTE(dkofanov): #32416 remove 'SourceFile' in favor of 'ImportInfo`.
     std::string_view textView {};
-    switch (importMetadata_.Text().Kind()) {
+    switch (importInfo_.Data().Kind()) {
         case util::ModuleKind::PACKAGE:
         case util::ModuleKind::UNKNOWN:
+        case util::ModuleKind::METADATA_DECL:
             textView = "";
             break;
         default:
-            textView = importMetadata_.Text().Text();
+            textView = importInfo_.Data().DataFor<CacheType::SOURCES>();
     }
-    bool isDynamic = importMetadata_.Lang() != Language::Id::ETS;
-    es2panda::SourceFile sf {importMetadata_.TextSource(), textView, importMetadata_.ResolvedSource(), false,
-                             isDynamic};
+    bool isDynamic = importInfo_.Lang() != Language::Id::ETS;
+    es2panda::SourceFile sf {importInfo_.TextSource(), textView, importInfo_.ResolvedSource(), false, isDynamic};
     SetSource(sf);
 }
 
 std::string Program::RelativeFilePath(const public_lib::Context *context) const
 {
-    if (importMetadata_.Lang() != Language::Id::ETS) {
-        return std::string {importMetadata_.TextSource()};
+    if (importInfo_.Lang() != Language::Id::ETS) {
+        return std::string {importInfo_.TextSource()};
     }
     if (!Is<util::ModuleKind::MODULE>()) {
         return std::string {ModuleName()};
     }
     // NOTE(dkofanov): there should be rebasing abspath to baseurl.
-    return util::Path(importMetadata_.TextSource(), context->Allocator()).GetFileNameWithExtension().Mutf8();
+    return util::Path(importInfo_.TextSource(), context->Allocator()).GetFileNameWithExtension().Mutf8();
 }
 
 const lexer::LineIndex &Program::GetLineIndex() const
@@ -163,12 +163,12 @@ const varbinder::GlobalScope *Program::GlobalScope() const
 }
 
 // Obsolete interface
-// NOTE(dkofanov): #32416 enforce '=='-consistency between 'moduleInfo_' and 'importMetadata_', then remove
+// NOTE(dkofanov): #32416 enforce '=='-consistency between 'moduleInfo_' and 'importInfo_', then remove
 // 'moduleInfo_'.
 void Program::SetPackageInfo(std::string_view mname, util::ModuleKind kind)
 {
     // NOTE(vpukhov): the *unnamed* modules are to be removed entirely
-    ES2PANDA_ASSERT((importMetadata_.ModuleName() == mname) || mname.empty());
+    ES2PANDA_ASSERT((importInfo_.ModuleName() == mname) || mname.empty());
     moduleInfo_.moduleName = std::string(mname);
     moduleInfo_.modulePrefix = mname.empty() ? "" : std::string(mname).append(compiler::Signatures::METHOD_SEPARATOR);
     moduleInfo_.kind = kind;

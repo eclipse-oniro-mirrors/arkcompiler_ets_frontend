@@ -30,6 +30,7 @@ config("libes2panda_public_config") {
     "$target_gen_dir",
     "$target_gen_dir/include",
     "$ark_es2panda_root",
+    "$root_out_dir/third_party/flatbuffers/generated",
   ]
   if (ark_standalone_build || ark_static_standalone_build) {
     include_dirs += [
@@ -286,7 +287,7 @@ libes2panda_sources = [
   "compiler/lowering/scopesInit/savedBindingsCtx.cpp",
   "compiler/lowering/scopesInit/scopesInitPhase.cpp",
   "compiler/lowering/util.cpp",
-  "compiler/metadata/metadataEmitter.cpp",
+  "compiler/metadata/emitter.cpp",
   "es2panda.cpp",
   "evaluate/debugInfoDeserialization/classBuilder.cpp",
   "evaluate/debugInfoDeserialization/debugInfoDeserializer.cpp",
@@ -506,8 +507,8 @@ libes2panda_sources = [
   "parser/expressionParser.cpp",
   "parser/expressionTSParser.cpp",
   "parser/parserImpl.cpp",
-  "parser/program/DeclarationCache.cpp",
   "parser/program/entityNameVisitor.cpp",
+  "parser/program/ImportCache.cpp",
   "parser/program/program.cpp",
   "parser/statementParser.cpp",
   "parser/statementTSParser.cpp",
@@ -1214,6 +1215,33 @@ ohos_shared_library("libes2panda") {
   subsystem_name = "arkcompiler"
 }
 
+action("es2panda_build_flatc") {
+  if (host_os == "mac") {
+    _host_platform_dir = "darwin-universal"
+  } else {
+    _host_platform_dir = "linux-x86"
+  }
+  script = "./scripts/build-flatc.sh"
+  args = [
+    rebase_path("//third_party/flatbuffers"),
+    rebase_path("$root_out_dir/third_party/flatbuffers"),
+    rebase_path("//prebuilts/cmake/$_host_platform_dir/bin/cmake")
+  ]
+  outputs = [ "$root_out_dir/third_party/flatbuffers/flatc" ]
+}
+
+action("gen_es2panda_flatbuffers_schema") {
+  script = "$root_out_dir/third_party/flatbuffers/flatc"
+  deps = [":es2panda_build_flatc"]
+  args = [
+    "--cpp",
+    "-o", rebase_path("$root_out_dir/third_party/flatbuffers/generated"),
+    "-b", rebase_path("$ark_es2panda_root/compiler/metadata/schema.fbs"),
+    "--filename-suffix", "MetadataGenerated"
+  ]
+  outputs = [ "$root_out_dir/third_party/flatbuffers/generated" ]
+}
+
 template("es2panda_frontend_static") {
   ohos_source_set(target_name) {
     sources = libes2panda_sources
@@ -1260,6 +1288,7 @@ template("es2panda_frontend_static") {
         "flatbuffers:libflatbuffers_static",
       ]
     }
+    deps += [":gen_es2panda_flatbuffers_schema"]
     part_name = "ets_frontend"
     subsystem_name = "arkcompiler"
   }

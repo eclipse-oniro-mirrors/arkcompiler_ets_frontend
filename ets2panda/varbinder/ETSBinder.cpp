@@ -828,7 +828,7 @@ static std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInProg
 std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclInNamedExports(
     const ir::ETSImportDeclaration *const import, [[maybe_unused]] const util::StringView &imported)
 {
-    auto sourcePath = import->ImportMetadata().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
+    auto sourcePath = import->ImportInfo().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
     auto importMapIter = selectiveExportAliasMultimap_->find(sourcePath);
     if (importMapIter == selectiveExportAliasMultimap_->end()) {
         return std::make_pair(nullptr, nullptr);
@@ -1015,7 +1015,7 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(parser::Program *const imported
 
     auto imported = GetAdjustedImportedName(importSpecifier, import);
 
-    auto sourcePath = import->ImportMetadata().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
+    auto sourcePath = import->ImportInfo().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
     auto [nameToSearchFor, exportNode] = FindNameAndNodeInAliasMap(sourcePath, imported);
     if (nameToSearchFor.Empty()) {
         nameToSearchFor = imported;
@@ -1202,7 +1202,7 @@ varbinder::Variable *ETSBinder::FindStaticBinding(parser::Program *const importe
 
 parser::Program *ETSBinder::GetExternalProgram(const ir::ETSImportDeclaration *import)
 {
-    auto importee = GetContext()->parser->GetImportPathManager()->SearchResolved(import->ImportMetadata());
+    auto importee = GetContext()->parser->GetImportPathManager()->SearchResolved(import->ImportInfo());
     if (importee == nullptr) {
         if (ark::os::file::File::IsDirectory(std::string(import->ResolvedSource()))) {
             ThrowError(import->Start(), diagnostic::MODULE_INDEX_MISSING, {import->ResolvedSource()});

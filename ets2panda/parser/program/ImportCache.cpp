@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "DeclarationCache.h"
+#include "ImportCache.h"
 #include <mutex>
 #include <shared_mutex>
 #include <thread>
@@ -22,9 +22,11 @@
 
 namespace ark::es2panda::parser {
 
-std::shared_mutex DeclarationCache::globalGuard_;
+template <CacheType TYPE>
+std::shared_mutex ImportCache<TYPE>::globalGuard_;
 
-DeclarationCache *DeclarationCache::globalDeclarationCache_;
+template <CacheType TYPE>
+ImportCache<TYPE> *ImportCache<TYPE>::globalCache_;
 
 UniqueSpinMutex::~UniqueSpinMutex()
 {
@@ -85,87 +87,109 @@ bool ReadWriteSpinMutex::try_lock_shared()
            spin_.fetch_add(1, std::memory_order_acquire) > LOCK_OFF;
 }
 
-DeclarationCache::~DeclarationCache()
+template <CacheType TYPE>
+ImportCache<TYPE>::~ImportCache()
 {
     ClearAll();
 }
 
 constexpr std::size_t INITIAL_CACHE_SIZE = 256U;
 
-DeclarationCache::DeclarationCache()
+template <CacheType TYPE>
+ImportCache<TYPE>::ImportCache()
 {
-    declarations_.reserve(INITIAL_CACHE_SIZE);
+    cache_.reserve(INITIAL_CACHE_SIZE);
 }
 
 //--------------------------------------------------------------------------------------------------------//
-//  Creates the new instance of DeclarationCache class (a singleton object)
+//  Creates the new instance of ImportCache class (a singleton object)
 //--------------------------------------------------------------------------------------------------------//
-void DeclarationCache::ActivateCache()
+template <CacheType TYPE>
+void ImportCache<TYPE>::ActivateCache()
 {
     std::scoped_lock<std::shared_mutex> lock(globalGuard_);
-    if (DeclarationCache::globalDeclarationCache_ == nullptr) {
-        globalDeclarationCache_ = new DeclarationCache();
+    if (ImportCache::globalCache_ == nullptr) {
+        globalCache_ = new ImportCache();
     }
 }
 
-bool DeclarationCache::IsCacheActivated() noexcept
+template <CacheType TYPE>
+bool ImportCache<TYPE>::IsCacheActivated() noexcept
 {
     std::shared_lock<std::shared_mutex> lock(globalGuard_);
-    return static_cast<bool>(DeclarationCache::globalDeclarationCache_);
+    return static_cast<bool>(globalCache_);
 }
 
-DeclarationCache *DeclarationCache::Instance() noexcept
+template <CacheType TYPE>
+ImportCache<TYPE> *ImportCache<TYPE>::Instance() noexcept
 {
     std::shared_lock<std::shared_mutex> lock(globalGuard_);
-    return DeclarationCache::globalDeclarationCache_;
+    return globalCache_;
 }
 
-void DeclarationCache::ClearAll() noexcept
+template <CacheType TYPE>
+void ImportCache<TYPE>::ClearAll() noexcept
 {
-    if (auto cache = DeclarationCache::Instance(); static_cast<bool>(cache)) {
+    if (auto cache = ImportCache::Instance(); static_cast<bool>(cache)) {
         cache->Clear();
     }
 }
 
-void DeclarationCache::GetFromCache(DeclarationCache::CacheReference *importData) noexcept
+template <CacheType TYPE>
+void ImportCache<TYPE>::GetFromCache(CacheReference<> *importInfo) noexcept
 {
-    ES2PANDA_ASSERT(importData->Kind() == util::ModuleKind::UNKNOWN);
-    if (auto cache = DeclarationCache::Instance(); cache != nullptr) {
-        cache->Get(importData);
+    ES2PANDA_ASSERT(importInfo->Kind() == util::ModuleKind::UNKNOWN);
+    if (auto cache = ImportCache::Instance(); cache != nullptr) {
+        cache->Get(importInfo);
     }
 }
 
-std::string_view DeclarationCache::PromoteExistingEntryToLowdeclaration(
-    const DeclarationCache::CacheReference &importData, std::string &&text)
+template <CacheType TYPE>
+SelectCacheDataType<TYPE> ImportCache<TYPE>::PromoteExistingEntryToLowdeclaration(const CacheReference<> &importInfo,
+                                                                                  SelectCacheDataType<TYPE, true> data)
 {
-    auto cache = DeclarationCache::Instance();
-    ES2PANDA_ASSERT(cache != nullptr);
-    return cache->Add<util::ModuleKind::ETSCACHE_DECL, true>(importData, "", std::move(text)).Text();
+    if constexpr (TYPE == CacheType::SOURCES) {
+        auto cache = ImportCache::Instance();
+        ES2PANDA_ASSERT(cache != nullptr);
+        return cache->template Add<util::ModuleKind::ETSCACHE_DECL, true>(importInfo, "", std::move(data)).Data();
+    } else {
+        return nullptr;
+    }
 }
 
-void DeclarationCache::Clear() noexcept
+template <CacheType TYPE>
+void ImportCache<TYPE>::Clear() noexcept
 {
     std::scoped_lock lock(dataGuard_);
-    declarations_.clear();
+    cache_.clear();
 }
 
-void DeclarationCache::Get(DeclarationCache::CacheReference *importData) const noexcept
+template <CacheType TYPE>
+void ImportCache<TYPE>::Get(CacheReference<> *importInfo) const noexcept
 {
     std::shared_lock lock(dataGuard_);
-    const auto it = declarations_.find(std::string(importData->Key()));
-    if (it != declarations_.end()) {
-        importData->Set(it->second);
+    const auto it = cache_.find(std::string(importInfo->Key()));
+    if (it != cache_.end()) {
+        importInfo->Set(it->second);
     }
 }
 
-bool DeclarationCache::CacheReference::CanBePromoted() const
+template <typename D>
+bool CacheReference<D>::CanBePromoted() const
 {
     return kind_ != util::ModuleKind::ETSCACHE_DECL;
 }
 
-bool DeclarationCache::CacheReference::Absent() const
+template <typename D>
+bool CacheReference<D>::Absent() const
 {
     return kind_ == util::ModuleKind::UNKNOWN;
 }
+
+template class ImportCache<CacheType::SOURCES>;
+template class ImportCache<CacheType::METADATA>;
+
+template struct CacheReference<SelectCacheDataType<CacheType::SOURCES>>;
+template struct CacheReference<SelectCacheDataType<CacheType::METADATA>>;
 
 }  // namespace ark::es2panda::parser

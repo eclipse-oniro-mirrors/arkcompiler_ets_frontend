@@ -17,7 +17,7 @@
 #include <string_view>
 #include "ETSNolintParser.h"
 #include "program/program.h"
-#include "program/DeclarationCache.h"
+#include "program/ImportCache.h"
 #include "public/public.h"
 #include "driver/dependency_analyzer/dep_analyzer.h"
 
@@ -116,7 +116,7 @@ static void DoSomethingSpecificToMainProgram(ETSParser *parser)
     auto mainProg = parser->Context()->parserProgram;
     if (mainProg->ModuleInfo().kind == util::ModuleKind::PACKAGE) {
         // NOTE(dkofanov): import metadata of a fraction should "point" to the related package:
-        auto *package = parser->GetImportPathManager()->SearchResolved(mainProg->GetImportMetadata());
+        auto *package = parser->GetImportPathManager()->SearchResolved(mainProg->GetImportInfo());
 
         if (package->Is<util::ModuleKind::PACKAGE>()) {
             ES2PANDA_ASSERT(package != mainProg);
@@ -224,7 +224,7 @@ void ETSParser::AddDirectImportsToDirectExternalSources(
     ES2PANDA_ASSERT(GetProgram() == GetGlobalProgram());
     auto &directExtSourcesHolder = GetGlobalProgram()->GetExternalSources()->Direct();
     for (auto *prog : directImportsFromMainSource) {
-        auto key = prog->GetImportMetadata().ResolvedSource();
+        auto key = prog->GetImportInfo().ResolvedSource();
         directExtSourcesHolder.insert({ArenaString {key}, prog});
     }
 }
@@ -268,7 +268,7 @@ void ETSParser::ParseNotParsed(util::ImportPathManager::ParseInfo *notParsedElem
     ES2PANDA_ASSERT(!notParsedElement->isParsed);
     notParsedElement->isParsed = true;
 
-    const auto &data = notParsedElement->program->GetImportMetadata();
+    const auto &data = notParsedElement->program->GetImportInfo();
     ES2PANDA_ASSERT(notParsedElement->program != GetGlobalProgram());
     ES2PANDA_ASSERT(data.Lang() != Language::Id::COUNT);
     auto preservedLang = GetContext().SetLanguage(data.Lang());
@@ -1109,8 +1109,8 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
         auto errorLiteral = AllocNode<ir::StringLiteral>(str);
         ES2PANDA_ASSERT(errorLiteral != nullptr);
         errorLiteral->SetRange(Lexer()->GetToken().Loc());
-        auto *const importDeclaration = AllocNode<ir::ETSImportDeclaration>(errorLiteral, util::ImportMetadata {},
-                                                                            std::move(specifiers), importKind);
+        auto *const importDeclaration =
+            AllocNode<ir::ETSImportDeclaration>(errorLiteral, util::ImportInfo {}, std::move(specifiers), importKind);
         ES2PANDA_ASSERT(importDeclaration != nullptr);
         importDeclaration->SetRange({startLoc, errorLiteral->End()});
         return importDeclaration;
@@ -1138,10 +1138,10 @@ ir::ETSImportDeclaration *ETSParser::BuildImportDeclaration(ir::ImportKinds impo
                                                             ArenaVector<ir::AstNode *> &&specifiers,
                                                             ir::StringLiteral *pathToResolve, parser::Program *program)
 {
-    auto importedProg = GetImportPathManager()->GatherImportMetadata(program, pathToResolve);
+    auto importedProg = GetImportPathManager()->GatherImportInfo(program, pathToResolve);
     if (importedProg != nullptr) {
-        return AllocNode<ir::ETSImportDeclaration>(pathToResolve, importedProg->GetImportMetadata(),
-                                                   std::move(specifiers), importKind);
+        return AllocNode<ir::ETSImportDeclaration>(pathToResolve, importedProg->GetImportInfo(), std::move(specifiers),
+                                                   importKind);
     }
     return AllocNode<ir::ETSImportDeclaration>(pathToResolve, std::move(specifiers), importKind);
 }
