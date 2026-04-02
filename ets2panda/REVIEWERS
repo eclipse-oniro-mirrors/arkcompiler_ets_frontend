@@ -124,4 +124,5 @@
 /ets2panda/compiler/lowering/ets/spread* @ziziziiziziz @dkofanov ^akmaevaleksey ^igelhaus ^Prof
 /ets2panda/compiler/lowering/ets/spreadLowering.* @akmaevaleksey @tengtengh ^igelhaus ^Prof
 /ets2panda/compiler/lowering/ets/unionLowering.cpp  @akmaevaleksey ^vpukhov ^igelhaus ^Prof @tension16
+/ets2panda/util/diagnostic/warnings-lists/*yaml @ozerovnikita @igelhaus @Prof
 /ets2panda/compiler/lowering/ets/topLevelStmts/.* @lirismankarina @xuxjeeee ^akmaevaleksey ^vpukhov ^igelhaus ^Prof

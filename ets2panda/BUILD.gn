@@ -1465,8 +1465,8 @@ ark_gen("es2panda_options_gen") {
 
 ark_gen("es2panda_diagnostic_gen") {
   data = [
-    "util/diagnostic/exclusionlist.yaml",
-    "util/diagnostic/whitelist.yaml",
+    "util/diagnostic/warnings-lists/exclusionlist.yaml",
+    "util/diagnostic/warnings-lists/whitelist.yaml",
     "util/diagnostic/syntax.yaml",
     "util/diagnostic/semantic.yaml",
     "util/diagnostic/warning.yaml",
@@ -1543,8 +1543,6 @@ template("panda_code_fix_gen") {
 
 panda_code_fix_gen("es2panda_lsp_code_fix_register_gen") {
   data = [
-    "util/diagnostic/exclusionlist.yaml",
-    "util/diagnostic/whitelist.yaml",
     "util/diagnostic/syntax.yaml",
     "util/diagnostic/semantic.yaml",
     "util/diagnostic/warning.yaml",
