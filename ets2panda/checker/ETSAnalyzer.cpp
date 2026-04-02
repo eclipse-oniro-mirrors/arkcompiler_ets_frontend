@@ -25,6 +25,9 @@
 #include "compiler/lowering/ets/setJumpTarget.h"
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "ir/base/classProperty.h"
+#include "ir/base/methodDefinition.h"
+#include "ir/base/property.h"
 #include "ir/ets/etsDestructuring.h"
 
 namespace ark::es2panda::checker {
@@ -33,6 +36,47 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
 ETSChecker *ETSAnalyzer::GetETSChecker() const
 {
     return static_cast<ETSChecker *>(GetChecker());
+}
+
+static bool IsInsideObjectLiteralMethod(const ir::AstNode *ast)
+{
+    bool foundMethod = false;
+    for (const ir::AstNode *curr = ast->Parent(); curr != nullptr; curr = curr->Parent()) {
+        if (curr->IsProperty() && curr->AsProperty()->IsMethod()) {
+            foundMethod = true;
+        }
+        if (foundMethod && curr->IsObjectExpression()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static ETSObjectType *GetObjectLiteralMethodThisType(const ir::AstNode *ast)
+{
+    if (!IsInsideObjectLiteralMethod(ast)) {
+        return nullptr;
+    }
+
+    auto *ancestor = util::Helpers::FindAncestorGivenByType(ast, ir::AstNodeType::OBJECT_EXPRESSION);
+    if (ancestor == nullptr) {
+        return nullptr;
+    }
+
+    auto *preferredType = ancestor->AsObjectExpression()->PreferredType();
+    if (preferredType == nullptr) {
+        return nullptr;
+    }
+
+    if (preferredType->IsETSTypeAliasType()) {
+        preferredType = preferredType->AsETSTypeAliasType()->GetTargetType();
+    }
+
+    if (preferredType->IsETSUnionType()) {
+        preferredType = GetAppropriatePreferredType(preferredType, [](Type *type) { return type->IsETSObjectType(); });
+    }
+
+    return preferredType != nullptr && preferredType->IsETSObjectType() ? preferredType->AsETSObjectType() : nullptr;
 }
 
 //  Helper: checks that type was declared exported
@@ -3394,6 +3438,7 @@ checker::Type *ETSAnalyzer::CheckObjectExprBaseOnUnionType(ir::ObjectExpression 
             continue;
         }
 
+        expr->SetPreferredType(potentialObjType);
         InferMatchContext specificTypeMatchCtx(checker, util::DiagnosticType::SEMANTIC, expr->Range(), false);
         CheckObjectExprBaseOnObjectType(expr, potentialObjType);
         if (IsMapOrRecordBuiltinType(checker, potentialObjType)) {
@@ -3416,6 +3461,7 @@ checker::Type *ETSAnalyzer::CheckObjectExprBaseOnUnionType(ir::ObjectExpression 
 
     if (matchingObjectTypes.size() > 1) {
         if (auto *specificType = TryFindPublicBaseType(checker, matchingObjectTypes); specificType != nullptr) {
+            expr->SetPreferredType(specificType);
             CheckObjectExprBaseOnObjectType(expr, specificType->AsETSObjectType());
             return specificType;
         }
@@ -3794,7 +3840,12 @@ checker::Type *ETSAnalyzer::Check(ir::ThisExpression *expr) const
         ES2PANDA_ASSERT(variable != nullptr);
         expr->SetTsType(variable->TsType());
     } else {
-        expr->SetTsType(checker->CheckThisOrSuperAccess(expr, checker->Context().ContainingClass(), "this"));
+        auto *thisContextType = checker->Context().ContainingClass();
+        if (auto *objectLiteralThisType = GetObjectLiteralMethodThisType(expr); objectLiteralThisType != nullptr) {
+            // In object literal methods, ArkTS spec requires `this` to be the object literal type.
+            thisContextType = objectLiteralThisType;
+        }
+        expr->SetTsType(checker->CheckThisOrSuperAccess(expr, thisContextType, "this"));
     }
 
     return expr->TsType();
