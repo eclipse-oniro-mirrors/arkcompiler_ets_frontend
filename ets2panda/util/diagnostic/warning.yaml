@@ -108,7 +108,7 @@ warning:
   id: 52491
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
   strict: true
-  exclusionlist: ["override_field"]
+  whitelist: ["override_field_allowed"]
 
 - name: INITIALIZERS_IN_AMBIENT_CONTEXTS
   id: 125

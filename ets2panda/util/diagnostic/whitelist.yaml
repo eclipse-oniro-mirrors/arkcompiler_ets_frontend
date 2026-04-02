@@ -19,3 +19,9 @@ whitelist:
   - ".*/window/window_manager/.*"
   - ".*/arkui/ace_engine/.*"
   - ".*/generated/.*"
+
+- name: "override_field_allowed"
+  paths:
+  - ".*/taihe/out/distributeddatamgr/udmf/.*"
+  - ".*/arkui/ace_engine/.*"
+  - ".*/ohos-sdk/.+/ets/static/api/.*"
