@@ -422,18 +422,23 @@ bool ParserImpl::IsStartOfAbstractConstructorType() const
     return result;
 }
 
-ir::Expression *ParserImpl::ParseTsTypeLiteralOrTsMappedType(ir::Expression *typeAnnotation)
+ir::Expression *ParserImpl::ParseTsTypeLiteralOrTsMappedType(ir::Expression *typeAnnotation, bool throwError)
 {
     if (typeAnnotation) {
         return nullptr;
     }
 
     if (IsStartOfMappedType()) {
-        return ParseTsMappedType();
+        return ParseTsMappedType(throwError);
     }
 
     lexer::SourcePosition bodyStart = lexer_->GetToken().Start();
-    auto members = ParseTsTypeLiteralOrInterface();
+    auto members = ParseTsTypeLiteralOrInterface(throwError);
+
+    if (!throwError && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
+        return nullptr;
+    }
+
     lexer::SourcePosition bodyEnd = lexer_->GetToken().End();
     lexer_->NextToken();
 
@@ -659,10 +664,11 @@ ir::Expression *ParserImpl::ParsePostfixTypeOrHigher(ir::Expression *typeAnnotat
                 return ParseTsIndexAccessType(typeAnnotation, *options & TypeAnnotationParsingOptions::THROW_ERROR);
             }
 
-            return ParseTsTupleType();
+            return ParseTsTupleType(*options & TypeAnnotationParsingOptions::THROW_ERROR);
         }
         case lexer::TokenType::PUNCTUATOR_LEFT_BRACE: {
-            return ParseTsTypeLiteralOrTsMappedType(typeAnnotation);
+            return ParseTsTypeLiteralOrTsMappedType(
+                typeAnnotation, *options & TypeAnnotationParsingOptions::THROW_ERROR);
         }
         default: {
             break;
@@ -958,22 +964,108 @@ bool ParserImpl::IsTSNamedTupleMember()
     return isNamedMember;
 }
 
-void ParserImpl::HandleRestType(ir::AstNodeType elementType, bool *hasRestType) const
+bool ParserImpl::HandleRestType(ir::AstNodeType elementType, bool *hasRestType, bool throwError) const
 {
     if (elementType ==  ir::AstNodeType::TS_ARRAY_TYPE && *hasRestType) {
-        ThrowSyntaxError("A rest element cannot follow another rest element");
+        if (throwError) {
+            ThrowSyntaxError("A rest element cannot follow another rest element");
+        }
+        return false;
     }
     if (elementType ==  ir::AstNodeType::TS_ARRAY_TYPE) {
         *hasRestType = true;
     }
+    return true;
 }
 
-ir::Expression *ParserImpl::ParseTsTupleElement(ir::TSTupleKind *kind, bool *seenOptional, bool *hasRestType)
+ir::Expression *ParserImpl::ParseTsNamedTupleElement(const lexer::SourcePosition &startPos, bool isRestType,
+                                                     bool *seenOptional, bool *hasRestType,
+                                                     TypeAnnotationParsingOptions options)
+{
+    auto *elementIdent = AllocNode<ir::Identifier>(lexer_->GetToken().Ident());
+    elementIdent->SetRange(lexer_->GetToken().Loc());
+    lexer_->NextToken();  // eat identifier
+
+    bool throwError = (options & TypeAnnotationParsingOptions::THROW_ERROR) != 0;
+    bool isOptional = false;
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
+        lexer_->NextToken();  // eat '?'
+        isOptional = true;
+        *seenOptional = true;
+    } else if (*seenOptional && !isRestType) {
+        if (throwError) {
+            ThrowSyntaxError("A required element cannot follow an optional element");
+        }
+        return nullptr;
+    }
+
+    if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
+        if (throwError) {
+            ThrowSyntaxError("':' expected");
+        }
+        return nullptr;
+    }
+
+    lexer_->NextToken();  // eat ':'
+    auto *elementType = ParseTsTypeAnnotation(&options);
+
+    if (elementType == nullptr) {
+        return nullptr;
+    }
+
+    if (isRestType) {
+        if (!HandleRestType(elementType->Type(), hasRestType, throwError)) {
+            return nullptr;
+        }
+    }
+
+    auto *element = AllocNode<ir::TSNamedTupleMember>(elementIdent, elementType, isOptional, isRestType);
+    element->SetRange({startPos, elementType->End()});
+    return element;
+}
+
+ir::Expression *ParserImpl::ParseTsDefaultTupleElement(const lexer::SourcePosition &startPos, bool isRestType,
+                                                       bool *seenOptional, bool *hasRestType,
+                                                       TypeAnnotationParsingOptions options)
+{
+    bool throwError = (options & TypeAnnotationParsingOptions::THROW_ERROR) != 0;
+    ir::Expression *element = ParseTsTypeAnnotation(&options);
+
+    if (element == nullptr) {
+        return nullptr;
+    }
+
+    if (isRestType) {
+        if (!HandleRestType(element->Type(), hasRestType, throwError)) {
+            return nullptr;
+        }
+        lexer::SourcePosition endPos = element->End();
+        element = AllocNode<ir::TSRestType>(std::move(element));
+        element->SetRange({startPos, endPos});
+    }
+
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
+        lexer::SourcePosition elementStartPos = element->Start();
+        element = AllocNode<ir::TSOptionalType>(std::move(element));
+        element->SetRange({elementStartPos, lexer_->GetToken().End()});
+        lexer_->NextToken();  // eat '?'
+        *seenOptional = true;
+    } else if (*seenOptional && !isRestType) {
+        if (throwError) {
+            ThrowSyntaxError("A required element cannot follow an optional element");
+        }
+        return nullptr;
+    }
+    return element;
+}
+
+ir::Expression *ParserImpl::ParseTsTupleElement(ir::TSTupleKind *kind, bool *seenOptional, bool *hasRestType,
+                                                bool throwError)
 {
     lexer::SourcePosition startPos = lexer_->GetToken().Start();
-    ir::Expression *element = nullptr;
     bool isRestType = false;
-    TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::THROW_ERROR;
+    TypeAnnotationParsingOptions options = throwError ?
+        TypeAnnotationParsingOptions::THROW_ERROR : TypeAnnotationParsingOptions::NO_OPTS;
 
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
         isRestType = true;
@@ -982,66 +1074,26 @@ ir::Expression *ParserImpl::ParseTsTupleElement(ir::TSTupleKind *kind, bool *see
 
     if (IsTSNamedTupleMember()) {
         if (*kind == ir::TSTupleKind::DEFAULT) {
-            ThrowSyntaxError("Tuple members must all have or haven't names");
+            if (throwError) {
+                ThrowSyntaxError("Tuple members must all have or haven't names");
+            }
+            return nullptr;
         }
         *kind = ir::TSTupleKind::NAMED;
+        return ParseTsNamedTupleElement(startPos, isRestType, seenOptional, hasRestType, options);
+    }
 
-        auto *elementIdent = AllocNode<ir::Identifier>(lexer_->GetToken().Ident());
-        elementIdent->SetRange(lexer_->GetToken().Loc());
-        lexer_->NextToken();  // eat identifier
-
-        bool isOptional = false;
-        if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
-            lexer_->NextToken();  // eat '?'
-            isOptional = true;
-            *seenOptional = true;
-        } else if (*seenOptional && !isRestType) {
-            ThrowSyntaxError("A required element cannot follow an optional element");
-        }
-
-        if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
-            ThrowSyntaxError("':' expected");
-        }
-
-        lexer_->NextToken();  // eat ':'
-        auto *elementType = ParseTsTypeAnnotation(&options);
-        CHECK_NOT_NULL(elementType);
-
-        if (elementType && isRestType) {
-            HandleRestType(elementType->Type(), hasRestType);
-        }
-
-        element = AllocNode<ir::TSNamedTupleMember>(elementIdent, elementType, isOptional, isRestType);
-        element->SetRange({startPos, elementType->End()});
-    } else {
-        if (*kind == ir::TSTupleKind::NAMED) {
+    if (*kind == ir::TSTupleKind::NAMED) {
+        if (throwError) {
             ThrowSyntaxError("Tuple members must all have or haven't names");
         }
-        *kind = ir::TSTupleKind::DEFAULT;
-
-        element = ParseTsTypeAnnotation(&options);
-        ASSERT(element != nullptr);
-        if (element && isRestType) {
-            HandleRestType(element->Type(), hasRestType);
-            lexer::SourcePosition endPos = element->End();
-            element = AllocNode<ir::TSRestType>(std::move(element));
-            element->SetRange({startPos, endPos});
-        }
-
-        if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
-            lexer::SourcePosition elementStartPos = element->Start();
-            element = AllocNode<ir::TSOptionalType>(std::move(element));
-            element->SetRange({elementStartPos, lexer_->GetToken().End()});
-            lexer_->NextToken();  // eat '?'
-            *seenOptional = true;
-        } else if (*seenOptional && !isRestType) {
-            ThrowSyntaxError("A required element cannot follow an optional element");
-        }
+        return nullptr;
     }
-    return element;
+    *kind = ir::TSTupleKind::DEFAULT;
+    return ParseTsDefaultTupleElement(startPos, isRestType, seenOptional, hasRestType, options);
 }
 
-ir::TSTupleType *ParserImpl::ParseTsTupleType()
+ir::TSTupleType *ParserImpl::ParseTsTupleType(bool throwError)
 {
     ASSERT(lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET);
     lexer::SourcePosition tupleStart = lexer_->GetToken().Start();
@@ -1053,7 +1105,11 @@ ir::TSTupleType *ParserImpl::ParseTsTupleType()
     lexer_->NextToken();  // eat '['
 
     while (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET) {
-        ir::Expression *element = ParseTsTupleElement(&kind, &seenOptional, &hasRestType);
+        ir::Expression *element = ParseTsTupleElement(&kind, &seenOptional, &hasRestType, throwError);
+
+        if (element == nullptr) {
+            return nullptr;
+        }
 
         elements.push_back(element);
 
@@ -1062,6 +1118,9 @@ ir::TSTupleType *ParserImpl::ParseTsTupleType()
         }
 
         if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COMMA) {
+            if (!throwError) {
+                return nullptr;
+            }
             ThrowSyntaxError("',' expected.");
         }
 
@@ -1253,7 +1312,18 @@ ir::MappedOption ParserImpl::ParseMappedOption(lexer::TokenType tokenType)
     return result;
 }
 
-ir::TSMappedType *ParserImpl::ParseTsMappedType()
+bool ParserImpl::CheckExpectedTokenOrReturn(lexer::TokenType expected, const char *msg, bool throwError)
+{
+    if (lexer_->GetToken().Type() == expected) {
+        return true;
+    }
+    if (!throwError) {
+        return false;
+    }
+    ThrowSyntaxError(msg);
+}
+
+ir::TSMappedType *ParserImpl::ParseTsMappedType(bool throwError)
 {
     ASSERT(lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
 
@@ -1269,15 +1339,17 @@ ir::TSMappedType *ParserImpl::ParseTsMappedType()
     ir::Expression *nameKeyType = nullptr;
     if (lexer_->GetToken().KeywordType() == lexer::TokenType::KEYW_AS) {
         lexer_->NextToken();  // eat 'as'
-        TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::THROW_ERROR;
+        TypeAnnotationParsingOptions options = throwError ?
+            TypeAnnotationParsingOptions::THROW_ERROR : TypeAnnotationParsingOptions::NO_OPTS;
         nameKeyType = ParseTsTypeAnnotation(&options);
-        ASSERT(nameKeyType != nullptr);
+        if (!nameKeyType) {
+            return nullptr;
+        }
     }
 
-    if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET) {
-        ThrowSyntaxError("']' expected");
+    if (!CheckExpectedTokenOrReturn(lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET, "']' expected", throwError)) {
+        return nullptr;
     }
-
     lexer_->NextToken();  // eat ']'
 
     ir::MappedOption optional = ParseMappedOption(lexer::TokenType::PUNCTUATOR_QUESTION_MARK);
@@ -1285,12 +1357,17 @@ ir::TSMappedType *ParserImpl::ParseTsMappedType()
     ir::Expression *typeAnnotation = nullptr;
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COLON) {
         lexer_->NextToken();  // eat ':'
-        TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::THROW_ERROR;
+        TypeAnnotationParsingOptions options = throwError ?
+            TypeAnnotationParsingOptions::THROW_ERROR : TypeAnnotationParsingOptions::NO_OPTS;
         typeAnnotation = ParseTsTypeAnnotation(&options);
     }
 
-    if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SEMI_COLON &&
-        lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
+    bool semiOrBrace = lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SEMI_COLON ||
+                       lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE;
+    if (!semiOrBrace) {
+        if (!throwError) {
+            return nullptr;
+        }
         ThrowSyntaxError("';' expected");
     }
 
@@ -1298,8 +1375,8 @@ ir::TSMappedType *ParserImpl::ParseTsMappedType()
         lexer_->NextToken();  // eat ';'
     }
 
-    if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
-        ThrowSyntaxError("'}' expected");
+    if (!CheckExpectedTokenOrReturn(lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, "'}' expected", throwError)) {
+        return nullptr;
     }
 
     auto *mappedType = AllocNode<ir::TSMappedType>(typeParameter, nameKeyType, typeAnnotation, readonly, optional);
@@ -1684,7 +1761,28 @@ void ParserImpl::CheckObjectTypeForDuplicatedProperties(ir::Expression *member,
     }
 }
 
-ArenaVector<ir::Expression *> ParserImpl::ParseTsTypeLiteralOrInterface()
+bool ParserImpl::ParseTsTypeLiteralSeparator(bool throwError, ArenaVector<ir::Expression *> *members)
+{
+    if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA ||
+        lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
+        lexer_->NextToken(lexer::LexerNextTokenFlags::KEYWORD_TO_IDENT);
+        return true;
+    }
+
+    if (lexer_->GetToken().NewLine()) {
+        if (lexer_->GetToken().IsKeyword()) {
+            lexer_->GetToken().SetTokenType(lexer::TokenType::LITERAL_IDENT);
+        }
+        return true;
+    }
+
+    if (!throwError) {
+        return false;
+    }
+    ThrowSyntaxError("',' expected");
+}
+
+ArenaVector<ir::Expression *> ParserImpl::ParseTsTypeLiteralOrInterface(bool throwError)
 {
     ASSERT(lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
 
@@ -1703,20 +1801,9 @@ ArenaVector<ir::Expression *> ParserImpl::ParseTsTypeLiteralOrInterface()
             break;
         }
 
-        if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COMMA &&
-            lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
-            if (!lexer_->GetToken().NewLine()) {
-                ThrowSyntaxError("',' expected");
-            }
-
-            if (lexer_->GetToken().IsKeyword()) {
-                lexer_->GetToken().SetTokenType(lexer::TokenType::LITERAL_IDENT);
-            }
-
-            continue;
+        if (!ParseTsTypeLiteralSeparator(throwError, &members)) {
+            return members;
         }
-
-        lexer_->NextToken(lexer::LexerNextTokenFlags::KEYWORD_TO_IDENT);
     }
 
     return members;
