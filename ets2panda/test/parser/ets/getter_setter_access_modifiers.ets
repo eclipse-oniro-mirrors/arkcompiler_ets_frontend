@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,8 +24,8 @@ abstract class AbstractClass {
 }
 
 class ChildClass extends AbstractClass {
-    private _age: int;
-    private _value: int;
+    private _age: int = 0;
+    private _value: int = 0;
 
 
     override get age(): int {

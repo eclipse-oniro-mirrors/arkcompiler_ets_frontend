@@ -275,23 +275,23 @@ semantic:
 
 - name: CANNOT_OVERRIDE_INCOMPATIBLE_RETURN
   id: 141
-  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding return
-    type is not compatible with the other return type."
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding
+    return type is not compatible with the other return type."
 
 - name: CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM
   id: 150729
-  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding type
-    parameter's constraints are not compatible with type parameter constraints of the overridden method."
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding
+    type parameter's constraints are not compatible with type parameter constraints of the overridden method."
 
 - name: CANNOT_OVERRIDE_OVERRIDDEN_FINAL
   id: 1324203
-  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden method
-    is final."
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden
+    method is final."
 
 - name: CANNOT_OVERRIDE_OVERRIDDEN_WEAKER
   id: 873275
-  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden method
-    has weaker access privileges."
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden
+    method has weaker access privileges."
 
 - name: CAST_FAIL_UNREACHABLE
   id: 336

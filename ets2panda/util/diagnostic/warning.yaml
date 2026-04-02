@@ -158,6 +158,12 @@ warning:
   id: 14
   message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
 
+- name: OVERRIDE_FIELD_MUST_HAVE_INITIALIZER
+  id: 1049305
+  message: "An overridden field '{}' must be initialized explicitly, either by using an initializer or in a constructor."
+  strict: true
+  whitelist: ["override_field_init"]
+
 - name: PACKAGE_DEPRECATED_WARNING
   id: 163154
   message: "Consider do not use the keyword 'package'. This keyword will be deprecated soon"

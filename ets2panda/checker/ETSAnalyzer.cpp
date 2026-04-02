@@ -208,6 +208,70 @@ static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, 
     }
 }
 
+static bool CheckFieldInitializationInBody(ir::AstNode *body, ir::ClassProperty *st)
+{
+    bool isInitialized = false;
+
+    body->IterateRecursively([&](ir::AstNode *node) {
+        if (isInitialized) {
+            return;
+        }
+        if (!node->IsAssignmentExpression()) {
+            return;
+        }
+
+        auto *assign = node->AsAssignmentExpression();
+        auto *left = assign->Left();
+
+        if (left->IsMemberExpression()) {
+            auto *member = left->AsMemberExpression();
+            if (member->Object() && member->Object()->IsThisExpression() && member->Property() &&
+                member->Property()->IsIdentifier() && member->Property()->AsIdentifier()->Name() == st->Id()->Name()) {
+                isInitialized = true;
+            }
+        } else if (left->IsIdentifier() && left->AsIdentifier()->Name() == st->Id()->Name()) {
+            isInitialized = true;
+        }
+    });
+
+    return isInitialized;
+}
+
+static bool CheckOverridenFieldInitialization(ir::ClassProperty *st, ir::ClassDefinition *classDef)
+{
+    auto modifiers = st->Modifiers();
+    const bool isDefinite = (modifiers & ir::ModifierFlags::DEFINITE) != 0;
+    if (isDefinite) {
+        return true;
+    }
+    if (st->Value() != nullptr) {
+        return true;
+    }
+
+    for (const auto it : classDef->Body()) {
+        if (!it->IsMethodDefinition()) {
+            continue;
+        }
+
+        auto *methodDef = it->AsMethodDefinition();
+        if (!methodDef->IsConstructor() || !methodDef->IsDefaultAccessModifier()) {
+            continue;
+        }
+
+        auto *body = methodDef->Function()->Body();
+        if (body == nullptr) {
+            continue;
+        }
+
+        bool isInitialized = CheckFieldInitializationInBody(body, st);
+        if (isInitialized) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void CheckOverridenField(ir::ClassProperty *st, ETSChecker *checker, ir::ClassDefinition *classDef)
 {
     auto *superType = classDef->Super()->TsType()->AsETSObjectType();
@@ -227,6 +291,12 @@ static void CheckOverridenField(ir::ClassProperty *st, ETSChecker *checker, ir::
                               {classDef->Super()->TsType()->AsETSObjectType()->Name()}, st->Start());
         }
         ES2PANDA_ASSERT(st->BasePropertyVar() == nullptr);
+        return;
+    }
+
+    bool isInitialized = CheckOverridenFieldInitialization(st, classDef);
+    if (!isInitialized) {
+        checker->LogError(diagnostic::OVERRIDE_FIELD_MUST_HAVE_INITIALIZER, {st->Id()->Name()}, st->Start());
         return;
     }
 

@@ -18,7 +18,7 @@ class C {
 }
 
 class D extends C {
-    public foo: number;
+    public foo: number = 0;
 }
 
 class C1 {
@@ -26,7 +26,7 @@ class C1 {
 }
 
 class D1 extends C1 {
-    private foo: number;
+    private foo: number = 0;
 }
 
 class C2 {
@@ -34,7 +34,7 @@ class C2 {
 }
 
 class D2 extends C2 {
-    public foo: number;
+    public foo: number = 0;
 }
 
 class C3 {
@@ -42,7 +42,7 @@ class C3 {
 }
 
 class D3 extends C3 {
-    protected foo: number;
+    protected foo: number = 0;
 }
 
 /* @@? 21:12 Error Semantic error ESE1600001: Access modifier of field 'foo' in class 'D' and in the base class 'C' must be the same. */

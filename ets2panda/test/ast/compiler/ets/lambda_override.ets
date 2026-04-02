@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,8 @@ class aaa {
     /* @@ label */x: ()=>string
 }
 class bbb extends aaa {
-    x: ()=>string
+    /* @@ label1 */x: ()=>string
 }
 
 
-/* @@@ label Error Semantic error ESE0280: Property 'x' might not have been initialized. */
+/* @@@ label1 Error Semantic error ESE1049305: An overridden field 'x' must be initialized explicitly, either by using an initializer or in a constructor. */
