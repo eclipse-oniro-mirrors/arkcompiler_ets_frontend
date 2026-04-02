@@ -232,6 +232,21 @@ void ImportExportDecls::VisitFunctionDeclaration(ir::FunctionDeclaration *funcDe
     fieldMap_.emplace(funcDecl->Function()->Id()->Name(), funcDecl->Function());
 }
 
+void ImportExportDecls::ProcessDestructuringElements(ir::ETSDestructuring *destructuring,
+                                                     ir::VariableDeclaration *varDecl)
+{
+    for (auto *elem : destructuring->Elements()) {
+        if (elem->IsOmittedExpression()) {
+            continue;
+        }
+        if (elem->IsRestElement() || elem->IsAssignmentPattern() || elem->IsArrayPattern()) {
+            continue;
+        }
+        ES2PANDA_ASSERT(elem->IsIdentifier());
+        fieldMap_.emplace(elem->AsIdentifier()->Name(), varDecl);
+    }
+}
+
 void ImportExportDecls::VisitOverloadDeclaration(ir::OverloadDeclaration *overloadDeclaration)
 {
     fieldMap_.emplace(overloadDeclaration->Id()->Name(), overloadDeclaration);
@@ -240,6 +255,11 @@ void ImportExportDecls::VisitOverloadDeclaration(ir::OverloadDeclaration *overlo
 void ImportExportDecls::VisitVariableDeclaration(ir::VariableDeclaration *varDecl)
 {
     for (const auto &decl : varDecl->Declarators()) {
+        if (decl->Id()->IsETSDestructuring()) {
+            ProcessDestructuringElements(decl->Id()->AsETSDestructuring(), varDecl);
+            continue;
+        }
+
         fieldMap_.emplace(decl->Id()->AsIdentifier()->Name(), varDecl);
     }
 }

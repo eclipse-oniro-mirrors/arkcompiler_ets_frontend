@@ -94,6 +94,7 @@ public:
 
     ir::ExpressionStatement *CreateAssignmentStatement(ir::ClassProperty *classProperty, ir::Expression *initializer);
     ir::ExpressionStatement *InitTopLevelProperty(ir::ClassProperty *classProperty);
+    void ProcessDestructuringDeclarator(ir::VariableDeclarator *destructDecl, ir::VariableDeclaration *varDecl);
 
     [[nodiscard]] bool IsMultiInitializer() const
     {
