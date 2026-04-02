@@ -2012,6 +2012,119 @@ static bool CheckInterfaceOverride(ETSChecker *const checker, ETSObjectType *con
     return isOverriding;
 }
 
+static bool HasMultipleOverridesOfSameSuperInterfaceMethod(ETSChecker *const checker, ETSObjectType *const interface,
+                                                           Signature *const first, Signature *const second,
+                                                           Signature **const conflictingSuperMethod)
+{
+    PropertySearchFlags const flags =
+        PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
+    auto *const target = interface->GetProperty(first->Function()->Id()->Name(), flags);
+    if (target == nullptr || target->TsType() == nullptr || target->TsType()->IsTypeError()) {
+        for (auto *const superInterface : interface->Interfaces()) {
+            if (HasMultipleOverridesOfSameSuperInterfaceMethod(checker, superInterface, first, second,
+                                                               conflictingSuperMethod)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    for (auto *const base : target->TsType()->AsETSFunctionType()->CallSignatures()) {
+        auto *const firstSubst = checker->AdjustForTypeParameters(first, base);
+        auto *const secondSubst = checker->AdjustForTypeParameters(second, base);
+        if (firstSubst == nullptr || secondSubst == nullptr) {
+            continue;
+        }
+
+        if (IsMethodOverridesOther(checker, firstSubst, first) &&
+            IsMethodOverridesOther(checker, secondSubst, second)) {
+            if (conflictingSuperMethod != nullptr) {
+                *conflictingSuperMethod = base;
+            }
+            return true;
+        }
+    }
+
+    for (auto *const superInterface : interface->Interfaces()) {
+        if (HasMultipleOverridesOfSameSuperInterfaceMethod(checker, superInterface, first, second,
+                                                           conflictingSuperMethod)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool ShouldSkipOverrideConflictCandidate(Signature *const current, Signature *const other)
+{
+    auto const currentPos = current->Function()->Start();
+    auto const otherPos = other->Function()->Start();
+    auto const sameProgram = currentPos.Program() == otherPos.Program();
+    auto const hasPositionInfo = currentPos.line != 0 && otherPos.line != 0;
+    if (sameProgram && hasPositionInfo) {
+        return (currentPos.line < otherPos.line) ||
+               (currentPos.line == otherPos.line && currentPos.index <= otherPos.index);
+    }
+    return other < current;
+}
+
+static Signature *FindConflictingSuperInterfaceMethod(ETSChecker *const checker, ETSObjectType *const owner,
+                                                      Signature *const signature, Signature *const other)
+{
+    Signature *conflictingSuperMethod = nullptr;
+    for (auto *const superInterface : owner->Interfaces()) {
+        if (HasMultipleOverridesOfSameSuperInterfaceMethod(checker, superInterface, signature, other,
+                                                           &conflictingSuperMethod)) {
+            return conflictingSuperMethod != nullptr ? conflictingSuperMethod : other;
+        }
+    }
+    return nullptr;
+}
+
+static void ReportMultipleInterfaceOverrideConflict(ETSChecker *const checker, Signature *const signature,
+                                                    Signature *const other, Signature *const conflictingSuperMethod)
+{
+    checker->LogError(diagnostic::CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD,
+                      {signature->Function()->Id()->Name(), signature, signature->Owner(), signature->Owner(),
+                       other->Function()->Id()->Name(), other, other->Owner(),
+                       conflictingSuperMethod->Function()->Id()->Name(), conflictingSuperMethod,
+                       conflictingSuperMethod->Owner()},
+                      signature->Function()->Start());
+}
+
+static bool CheckMultipleInterfaceOverrides(ETSChecker *const checker, Signature *const signature)
+{
+    auto *const owner = signature->Owner();
+    ES2PANDA_ASSERT(owner != nullptr);
+    if (!owner->HasObjectFlag(ETSObjectFlags::INTERFACE) || owner->Interfaces().empty()) {
+        return false;
+    }
+
+    PropertySearchFlags const flags =
+        PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
+    auto *const target = owner->GetProperty(signature->Function()->Id()->Name(), flags);
+    if (target == nullptr || target->TsType() == nullptr || target->TsType()->IsTypeError()) {
+        return false;
+    }
+
+    for (auto *const other : target->TsType()->AsETSFunctionType()->CallSignatures()) {
+        if (other == signature || other->Function()->IsStatic() != signature->Function()->IsStatic()) {
+            continue;
+        }
+        // Report only on the second declaration.
+        if (ShouldSkipOverrideConflictCandidate(signature, other)) {
+            continue;
+        }
+
+        auto *const conflictingSuperMethod = FindConflictingSuperInterfaceMethod(checker, owner, signature, other);
+        if (conflictingSuperMethod != nullptr) {
+            ReportMultipleInterfaceOverrideConflict(checker, signature, other, conflictingSuperMethod);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void ETSChecker::CheckOverride(Signature *signature)
 {
     ES2PANDA_ASSERT(signature != nullptr);
@@ -2020,6 +2133,10 @@ void ETSChecker::CheckOverride(Signature *signature)
     bool isOverriding = false;
 
     if (!owner->HasObjectFlag(ETSObjectFlags::CLASS | ETSObjectFlags::INTERFACE)) {
+        return;
+    }
+
+    if (CheckMultipleInterfaceOverrides(this, signature)) {
         return;
     }
 
