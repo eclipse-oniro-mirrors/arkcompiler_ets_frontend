@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,8 @@ import {
   isAnnotationDeclaration,
   isVariableStatement,
   getIllegalDecorators,
-  getAnnotationsFromIllegalDecorators
+  getAnnotationsFromIllegalDecorators,
+  canHaveIllegalDecorators
 } from 'typescript';
 
 import type {
@@ -632,13 +633,21 @@ namespace secharmony {
         }
         endSingleFileForMoreTimeEvent(EventList.HANDLE_POSITION_INFO);
 
-        if (isVariableStatement(node)) {
+        if (canHaveIllegalDecorators(node)) {
+          const illegalDecorators = getIllegalDecorators(node);
+          const annotationDecorators = getAnnotationsFromIllegalDecorators(node);
+          if (!illegalDecorators?.length && !annotationDecorators?.length) {
+            return visitEachChild(node, renameIdentifiers, context);
+          }
           const reservedDecorators = factory.createNodeArray([
-            ...(getIllegalDecorators(node) ?? []),
-            ...(getAnnotationsFromIllegalDecorators(node) ?? []),
+            ...(illegalDecorators ?? []),
+            ...(annotationDecorators ?? []),
           ]);
           let updated = visitEachChild(node, renameIdentifiers, context);
-          return factory.updateIllegalDecorators(updated, reservedDecorators);
+          const visitedReservedDecorators = factory.createNodeArray(
+            reservedDecorators.map(decorator => visitEachChild(decorator, renameIdentifiers, context))
+          );
+          return factory.updateIllegalDecorators(updated, visitedReservedDecorators);
         }
 
         if (!isIdentifier(node) || !node.parent) {
@@ -935,6 +944,13 @@ namespace secharmony {
   export let classInfoInMemberMethodCache: Set<string> = new Set();
   // Generate obfuscated names for all property and variable names.
   export let globalGenerator: INameGenerator;
+
+  /** Used when only RenamePropertiesTransformer runs (e.g. tests) — identifier factory never created globalGenerator. */
+  export function ensureGlobalGenerator(nameGeneratorType: NameGeneratorType, options?: NameGeneratorOptions): void {
+    if (!globalGenerator) {
+      globalGenerator = getNameGenerator(nameGeneratorType, options ?? {});
+    }
+  }
 
   export function clearCaches(): void {
     nameCache.clear();

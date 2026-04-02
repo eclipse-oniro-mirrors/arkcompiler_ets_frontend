@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -781,6 +781,47 @@ describe('Teste Cases for <RenameFileNameTransformer>.', function () {
         const actualContent = textWriter.getText();
         const expectContent = `export @interface __$$ETS_ANNOTATION$$__a {
             prop1: number = 1;
+        }`;
+        assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
+        PropCollections.clearPropsCollections();
+      })
+
+      it('should obfuscate annotation name at usage site to match declaration (intermediate @interface)', function () {
+        clearCaches();
+        PropCollections.clearPropsCollections();
+        let options: IOptions = {
+          'mNameObfuscation': {
+            'mEnable': true,
+            'mNameGeneratorType': 1,
+            'mRenameProperties': false,
+            'mReservedProperties': [],
+            'mTopLevel': true,
+            'mKeepParameterNames': false
+          },
+          'mAllowEtsAnnotations': true,
+          'mExportObfuscation': true,
+        };
+        assert.strictEqual(options !== undefined, true);
+        const renameIdentifierFactory = secharmony.transformerPlugin.createTransformerFactory(options);
+        const fileContent = `export @interface __$$ETS_ANNOTATION$$__Anno1 { prop1: number = 1 }
+@__$$ETS_ANNOTATION$$__Anno1({prop: 1})
+export interface IFoo { bar: number; }`;
+        const textWriter = ts.createTextWriter('\n');
+        let arkobfuscator = new ArkObfuscatorForTest();
+        arkobfuscator.init(options);
+        const sourceFile: ts.SourceFile = ts.createSourceFile('demo.ts', fileContent, ts.ScriptTarget.ES2015, true, undefined, {
+          'etsAnnotationsEnable': true
+        }, true);
+        let transformedResult: ts.TransformationResult<ts.Node> = ts.transform(sourceFile, [renameIdentifierFactory], {});
+        let ast: ts.SourceFile = transformedResult.transformed[0] as ts.SourceFile;
+        arkobfuscator.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, textWriter, undefined);
+        const actualContent = textWriter.getText();
+        const expectContent = `export @interface __$$ETS_ANNOTATION$$__a {
+            prop1: number = 1;
+        }
+        @__$$ETS_ANNOTATION$$__a({ prop: 1 })
+        export interface b {
+            bar: number;
         }`;
         assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
         PropCollections.clearPropsCollections();

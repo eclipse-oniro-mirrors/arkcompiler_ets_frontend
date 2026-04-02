@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,6 @@ import ts, {
 } from 'typescript';
 import secharmony from '../../../src/transformers/rename/RenamePropertiesTransformer';
 import { ArkObfuscator } from '../../../src/ArkObfuscator';
-import { compareStringsIgnoreNewlines } from './RenameIdentifierTransformer.spec';
 import { ArkObfuscatorForTest } from '../../../src/ArkObfuscatorForTest'
 import { PropCollections } from '../../../src/utils/CommonCollections';
 
@@ -254,6 +253,94 @@ describe('Tester Cases for <RenamePropertiesTransformer>.', function () {
       PropCollections.clearPropsCollections();
     });
 
+    it('should not rename object literal property inside source-code annotation in .ets', function () {
+      ArkObfuscator.isKeptCurrentFile = false;
+      options = {
+        mNameObfuscation: {
+          mEnable: true,
+          mNameGeneratorType: 1,
+          mRenameProperties: true,
+          mKeepStringProperty: false,
+          mReservedProperties: []
+        },
+      };
+      const renameIdentifierFactory = secharmony.transformerPlugin.createTransformerFactory(options as IOptions);
+      const fileContent = `
+        annotation Anno2 {
+          value: number;
+        }
+        @Anno2({prop: 1})
+        class MyClass2 {
+          field1: number = 1;
+        }
+      `;
+      const textWriter = ts.createTextWriter('\n');
+      let arkobfuscator = new ArkObfuscatorForTest();
+      arkobfuscator.init(options);
+      const sourceFile: ts.SourceFile = ts.createSourceFile('demo.ets', fileContent, ts.ScriptTarget.ES2015, true, undefined, {
+        'etsAnnotationsEnable': true
+      }, false);
+      let transformedResult: ts.TransformationResult<ts.Node> = ts.transform(sourceFile, [renameIdentifierFactory], {});
+      let ast: ts.SourceFile = transformedResult.transformed[0] as ts.SourceFile;
+      arkobfuscator.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, textWriter, undefined);
+      const actualContent = textWriter.getText();
+      const expectContent = `
+        annotation;
+        Anno2;
+        {
+            value: number;
+        }
+        @Anno2({ prop: 1 })
+        class MyClass2 {
+            g: number = 1;
+        }
+      `;
+      assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
+      PropCollections.clearPropsCollections();
+    });
+
+    it('should preserve and visit illegalDecorators on function declaration with annotation usage', function () {
+      ArkObfuscator.isKeptCurrentFile = false;
+      options = {
+        mNameObfuscation: {
+          mEnable: true,
+          mNameGeneratorType: 1,
+          mRenameProperties: true,
+          mKeepStringProperty: false,
+          mReservedProperties: []
+        },
+      };
+      const renameIdentifierFactory = secharmony.transformerPlugin.createTransformerFactory(options as IOptions);
+      const fileContent = `
+        annotation Anno3 {
+          value: string;
+        }
+        @Anno3({x: 1})
+        function foo() {}
+      `;
+      const textWriter = ts.createTextWriter('\n');
+      let arkobfuscator = new ArkObfuscatorForTest();
+      arkobfuscator.init(options);
+      const sourceFile: ts.SourceFile = ts.createSourceFile('demo.ets', fileContent, ts.ScriptTarget.ES2015, true, undefined, {
+        'etsAnnotationsEnable': true
+      }, false);
+      let transformedResult: ts.TransformationResult<ts.Node> = ts.transform(sourceFile, [renameIdentifierFactory], {});
+      let ast: ts.SourceFile = transformedResult.transformed[0] as ts.SourceFile;
+      arkobfuscator.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, textWriter, undefined);
+      const actualContent = textWriter.getText();
+      const expectContent = `
+        annotation;
+        Anno3;
+        {
+            value: string;
+        }
+        @Anno3({ x: 1 })
+        function foo() { }
+      `;
+      assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
+      PropCollections.clearPropsCollections();
+    });
+
     it('should rename annotation called as prop when using prop obfuscation', function () {
       ArkObfuscator.isKeptCurrentFile = false;
       options = {
@@ -289,3 +376,8 @@ describe('Tester Cases for <RenamePropertiesTransformer>.', function () {
     });
   });
 });
+
+function compareStringsIgnoreNewlines(str1: string, str2: string): boolean {
+  const normalize = (str: string) => str.replace(/[\n\r\s]+/g, '');
+  return normalize(str1) === normalize(str2);
+}

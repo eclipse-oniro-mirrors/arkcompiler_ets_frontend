@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +28,9 @@ import {
   isIndexedAccessTypeNode,
   isLiteralTypeNode,
   isUnionTypeNode,
+  canHaveIllegalDecorators,
+  getIllegalDecorators,
+  getAnnotationsFromIllegalDecorators,
 } from 'typescript';
 
 import type {
@@ -63,6 +66,7 @@ import {
 } from '../../utils/TransformUtil';
 import {
   classInfoInMemberMethodCache,
+  ensureGlobalGenerator,
   globalGenerator,
   nameCache
 } from './RenameIdentifierTransformer';
@@ -84,6 +88,10 @@ namespace secharmony {
     if (!profile || !profile.mEnable || !profile.mRenameProperties) {
       return null;
     }
+
+    // Property mangling uses the same name generator as identifier obfuscation. If only this
+    // transformer runs (e.g. unit tests), RenameIdentifierTransformer never created globalGenerator.
+    ensureGlobalGenerator(profile.mNameGeneratorType, {});
 
     return renamePropertiesFactory;
 
@@ -119,6 +127,23 @@ namespace secharmony {
       function renameProperties(node: Node): Node {
         if (NodeUtils.isObjectLiteralInAnnotation(node, currentFileType)) {
           return node;
+        }
+
+        if (canHaveIllegalDecorators(node)) {
+          const illegalDecorators = getIllegalDecorators(node);
+          const annotationDecorators = getAnnotationsFromIllegalDecorators(node);
+          if (!illegalDecorators?.length && !annotationDecorators?.length) {
+            return visitEachChild(node, renameProperties, context);
+          }
+          const reservedDecorators = factory.createNodeArray([
+            ...(illegalDecorators ?? []),
+            ...(annotationDecorators ?? []),
+          ]);
+          let updated = visitEachChild(node, renameProperties, context);
+          const visitedReservedDecorators = factory.createNodeArray(
+            reservedDecorators.map(decorator => visitEachChild(decorator, renameProperties, context))
+          );
+          return factory.updateIllegalDecorators(updated, visitedReservedDecorators);
         }
 
         if (!NodeUtils.isPropertyNode(node)) {
