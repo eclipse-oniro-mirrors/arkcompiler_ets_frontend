@@ -298,7 +298,7 @@ public:
     void ToString(std::stringstream &ss, const varbinder::Variable *variable, bool printAsMethod = false,
                   bool precise = false) const;
     std::string ToString() const;
-    void IsSubtypeOf(TypeRelation *relation, Signature *super);
+    void IsSubtypeOf(TypeRelation *relation, Signature const *super) const;
     void AssignmentTarget(TypeRelation *relation, Signature *source);
     [[nodiscard]] Signature *ToArrowSignature(ETSChecker *checker);
     friend class ETSExtensionFuncHelperType;

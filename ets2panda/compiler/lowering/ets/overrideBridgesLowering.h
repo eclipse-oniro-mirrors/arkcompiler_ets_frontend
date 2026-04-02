@@ -1,4 +1,5 @@
-/* Copyright (c) 2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,35 +13,25 @@
  * limitations under the License.
  */
 
-interface I<T> {
-    foo(num: T): T{}
-    foo(num: T, a: T): T{}
-}
+#ifndef ES2PANDA_OVERRIDE_BRIDGE_LOWERING_H
+#define ES2PANDA_OVERRIDE_BRIDGE_LOWERING_H
 
+#include <string_view>
 
-class A<T> implements I<T>{
-    foo(num: T, a: T): T{
-        return a;
+#include "compiler/lowering/phase.h"
+
+namespace ark::es2panda::compiler {
+
+class OverrideBridgesPhase : public PhaseForProgramsWithBodies_LEGACY {
+public:
+    std::string_view Name() const override
+    {
+        return "CreateOverrideBridges";
     }
-}
 
-class B extends A<number>{
-    override foo(num: number): number {
-        num = num + 1;
-        return num;
-    }
-}
+    bool PerformForProgram(parser::Program *program) override;
+};
 
-function bar1(obj: I<number>):number {
-    return obj.foo(1);
-}
+}  // namespace ark::es2panda::compiler
 
-function bar2(obj: I<number>):number {
-    return obj.foo(1, 2);
-}
-
-function main() {
-    let b = new B()
-    arktest.assertEQ(bar1(b), 2);
-    arktest.assertEQ(bar2(b), 2);
-}
+#endif
