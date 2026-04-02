@@ -787,6 +787,12 @@ void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModul
 }
 
 // NOLINTBEGIN(readability-else-after-return)
+bool IsBigIntZeroLiteral(const ir::Expression *expr)
+{
+    ES2PANDA_ASSERT(expr->IsBigIntLiteral());
+    return expr->AsBigIntLiteral()->Str() == "0";
+}
+
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
 {
     if (expr->IsNullLiteral() || expr->IsUndefinedLiteral()) {
@@ -798,7 +804,7 @@ std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
     } else if (expr->IsCharLiteral()) {
         return {true, expr->AsCharLiteral()->Char() != 0};
     } else if (expr->IsBigIntLiteral()) {
-        return {true, expr->AsBigIntLiteral()->Str() != "0"};
+        return {true, !IsBigIntZeroLiteral(expr)};
     } else if (expr->IsNumberLiteral()) {
         auto num = expr->AsNumberLiteral()->Number();
         return {true, !num.IsZero()};

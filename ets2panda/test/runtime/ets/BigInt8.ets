@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,8 @@ function test_multiplication(): void {
 
     let err = false;
     try {
-        a / 0n
+        let zeroDiv: bigint = 1n - 1n
+        a / zeroDiv
     } catch (e) {
         if (e instanceof Error) {
             err = true
@@ -65,7 +66,8 @@ function test_multiplication(): void {
 
     err = false;
     try {
-        a % 0n
+        let zeroRem: bigint = 2n - 2n
+        a % zeroRem
     } catch (e) {
         if (e instanceof Error) {
             err = true
@@ -78,4 +80,3 @@ function main() {
     test_multiply()
     test_multiplication()
 }
-
