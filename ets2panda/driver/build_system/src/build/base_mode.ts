@@ -106,7 +106,6 @@ export abstract class BaseMode {
     protected mergedAbcFile: string;
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
-    private readonly moduleType: OHOS_MODULE_TYPE;
     public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
 
     constructor(buildConfig: BuildConfig) {
@@ -118,7 +117,6 @@ export abstract class BaseMode {
         this.abcDeclarationMap = new Map<string, DependencyModuleConfig>();
         this.logger = Logger.getInstance();
         this.abcFiles = new Set<string>();
-        this.moduleType = buildConfig.moduleType;
 
         this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_FILE_NAME), this.recordType,
                                                     `Build system with mode: ` +
@@ -757,7 +755,7 @@ export abstract class BaseMode {
             bundleName: mainModuleInfo?.bundleName,
             bundleType: mainModuleInfo?.bundleType,
             moduleRootPath: mainModuleInfo?.modulePath ?? this.mainModuleRootPath,
-            moduleType: mainModuleInfo?.moduleType ?? this.moduleType,
+            moduleType: mainModuleInfo?.moduleType ?? this.mainModuleType,
             sourceRoots: this.mainSourceRoots,
             entryFile: this.entryFile ?? '',
             arktsConfigFile: path.resolve(this.cacheDir, this.mainPackageName, ARKTSCONFIG_JSON_FILE),
