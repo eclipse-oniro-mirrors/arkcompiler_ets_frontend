@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,5 +22,5 @@ class B extends A<Object> {
 }
 
 
-/* @@? 21:14 Error Semantic error ESE0141: fn(t: Int): void in B cannot override fn(t: Int): Int in A<T> because overriding return type is not compatible with the other return type. */
+/* @@? 21:14 Error Semantic error ESE0141: Class member fn with type void in B cannot override fn with type Int field from class A<T> because the overriding return type is not compatible with the other return type. */
 /* @@? 21:14 Error Semantic error ESE0136: Method fn(t: Int): void in B not overriding any method */

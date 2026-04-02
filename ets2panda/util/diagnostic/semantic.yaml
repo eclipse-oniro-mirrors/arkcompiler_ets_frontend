@@ -264,13 +264,34 @@ semantic:
   id: 489430
   message: "Cannot annotate this overridden field {} in {}"
 
+- name: CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN
+  id: 985118
+  message: "Class member {} with type {} in {} cannot implement {} with type {} property from interface {} because the implementing
+    return type is not compatible with the interface return type."
+
 - name: CANNOT_INFER_OBJ_LIT
   id: 174
   message: "Cannot infer type for {} because class composite needs an explicit target type"
 
-- name: CANNOT_OVERRIDE
+- name: CANNOT_OVERRIDE_INCOMPATIBLE_RETURN
   id: 141
-  message: "{}{} in {} cannot override {}{} in {} because {}"
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding return
+    type is not compatible with the other return type."
+
+- name: CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM
+  id: 150729
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding type
+    parameter's constraints are not compatible with type parameter constraints of the overridden method."
+
+- name: CANNOT_OVERRIDE_OVERRIDDEN_FINAL
+  id: 1324203
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden method
+    is final."
+
+- name: CANNOT_OVERRIDE_OVERRIDDEN_WEAKER
+  id: 873275
+  message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overridden method
+    has weaker access privileges."
 
 - name: CAST_FAIL_UNREACHABLE
   id: 336

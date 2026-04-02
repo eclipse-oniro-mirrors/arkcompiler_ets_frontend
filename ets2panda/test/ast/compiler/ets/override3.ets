@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,5 +18,5 @@ interface I {
 }
 
 
-/* @@? 17:3 Error Semantic error ESE0141: toString(): Int in I cannot override toString(): String in Object because overriding return type is not compatible with the other return type. */
+/* @@? 17:3 Error Semantic error ESE0141: Class member toString with type Int in I cannot override toString with type String field from class Object because the overriding return type is not compatible with the other return type. */
 /* @@? 17:3 Error Semantic error ESE0136: Method toString(): Int in I not overriding any method */

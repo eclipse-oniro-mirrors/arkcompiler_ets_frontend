@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,11 +25,6 @@ class B extends A implements C{
     AAA = 2
 }
 
-/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
-/* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
-/* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error Semantic error ESE0136: Method AAA(%%property-AAA: Int): void in B not overriding any method */
-/* @@? 25:5 Error Semantic error ESE0141: AAA(): Int in B cannot override AAA(): Double in C because overriding return type is not compatible with the other return type. */
+/* @@? 25:5 Error Semantic error ESE985118: Class member AAA with type Int in B cannot implement AAA with type Double property from interface C because the implementing return type is not compatible with the interface return type. */
 /* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
 /* @@? 25:5 Error Semantic error ESE0136: Method AAA(%%property-AAA: Int): void in B not overriding any method */

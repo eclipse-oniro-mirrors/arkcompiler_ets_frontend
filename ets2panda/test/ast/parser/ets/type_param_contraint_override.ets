@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,5 +33,5 @@ function main() {
 }
 
 
-/* @@? 25:17 Error Semantic error ESE0141: foo<T>(x: T): void in B cannot override foo<T>(x: T): void in A because overriding type parameter's conatraints are not compatible with type parameter constraints of the overridden method. */
+/* @@? 25:17 Error Semantic error ESE150729: Class member foo with type void in B cannot override foo with type void field from class A because the overriding type parameter's constraints are not compatible with type parameter constraints of the overridden method. */
 /* @@? 25:17 Error Semantic error ESE0136: Method foo<T>(x: T): void in B not overriding any method */

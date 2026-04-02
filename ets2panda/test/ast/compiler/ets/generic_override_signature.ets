@@ -23,4 +23,4 @@ class Derived extends Base {
 
 
 /* @@? 21:17 Error Semantic error ESE0136: Method foo<C, D>(i: C, j: D): C in Derived not overriding any method */
-/* @@? 21:17 Error Semantic error ESE0141: foo<C, D>(i: C, j: D): C in Derived cannot override foo<A, B>(i: A, j: B): B in Base because overriding return type is not compatible with the other return type. */
+/* @@? 21:17 Error Semantic error ESE0141: Class member foo with type C in Derived cannot override foo with type B field from class Base because the overriding return type is not compatible with the other return type. */
