@@ -97,7 +97,7 @@
 /ets2panda/test/unit/lsp @Nojpg @jokerxd-liu ^igelhaus ^Prof @oh-rgx1 ^H_awson
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
-/ets2panda/util/diagnostic/*yaml @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
+/ets2panda/util/diagnostic/*yaml @ozerovnikita @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/checker/types/ets/Nullish.* ^vpukhov ^victor_petukhov @gogabr ^igelhaus ^Prof @ziziziiziziz
 /ets2panda/checker/types/ets/etsA* @xuxjeeee ^victor_petukhov ^gogabr ^igelhaus ^Prof @ziziziiziziz
 /ets2panda/checker/types/ets/etsE* @ziziziiziziz ^victor_petukhov ^zelentsovdmitry ^igelhaus ^Prof
