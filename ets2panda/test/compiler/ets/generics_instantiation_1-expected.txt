@@ -2404,3 +2404,4 @@
 }
 [generics_instantiation_1.ets:28:35] Warning W369037: Cast expression `as B<Object>` is type unsafe. 'CastClassError' exception can be thrown at runtime
 [generics_instantiation_1.ets:31:30] Warning W369037: Cast expression `as B<Object>` is type unsafe. 'CastClassError' exception can be thrown at runtime
+[generics_instantiation_1.ets:32:13] Warning W65001: The equality expression is always false.

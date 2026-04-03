@@ -61,6 +61,14 @@ warning:
   id: 20000
   message: "The source file '{}' is empty."
 
+- name: EQUALITY_EXPRESSION_ALWAYS_FALSE
+  id: 65001
+  message: "The equality expression is always false."
+
+- name: EQUALITY_EXPRESSION_ALWAYS_TRUE
+  id: 65000
+  message: "The equality expression is always true."
+
 - name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
   id: 71336
   message: "Exported {} '{}' requires type annotation."

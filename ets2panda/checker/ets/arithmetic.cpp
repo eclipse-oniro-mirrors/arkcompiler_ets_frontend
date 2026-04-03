@@ -759,13 +759,114 @@ static Type *HandelReferenceBinaryEquality(ETSChecker *checker, BinaryArithmOper
     if ((reducedL->IsETSReferenceType() || reducedR->IsETSReferenceType()) &&
         !(typeL->IsETSNullType() || typeL->IsETSUndefinedType()) &&
         !(typeR->IsETSNullType() || typeR->IsETSUndefinedType())) {
-        if (checker->CheckValidEqualReferenceType(checker->MaybeBoxType(typeL), checker->MaybeBoxType(typeR))) {
-            return checker->CreateETSUnionType(
-                {checker->MaybeBoxExpression(expr->Left()), checker->MaybeBoxExpression(expr->Right())});
+        auto *const boxedL = checker->MaybeBoxType(typeL);
+        auto *const boxedR = checker->MaybeBoxType(typeR);
+        checker->Relation()->SetNode(expr->Left());
+        if (!checker->CheckValidEqualReferenceType(boxedL, boxedR) ||
+            (!checker->Relation()->IsCastableTo(boxedL, boxedR) &&
+             !checker->Relation()->IsCastableTo(boxedR, boxedL))) {
+            LogOperatorCannotBeApplied(checker, ops);
+            return typeL;
         }
+
+        return checker->CreateETSUnionType(
+            {checker->MaybeBoxExpression(expr->Left()), checker->MaybeBoxExpression(expr->Right())});
     }
 
     return nullptr;
+}
+
+static bool IsStaticallyDistinctReference(const ir::Expression *left, const ir::Expression *right)
+{
+    if (left->IsETSNewClassInstanceExpression() && right->IsETSNewClassInstanceExpression()) {
+        return true;
+    }
+
+    auto isScriptFunctionReference = [](const ir::Expression *expr) {
+        if (!expr->IsIdentifier()) {
+            return false;
+        }
+
+        auto *var = expr->Variable();
+        if (var == nullptr || var->Declaration() == nullptr) {
+            return false;
+        }
+
+        return var->Declaration()->IsFunctionDecl();
+    };
+    if (isScriptFunctionReference(left) && isScriptFunctionReference(right) && left->Variable() != right->Variable()) {
+        return true;
+    }
+
+    return false;
+}
+
+static bool ShouldReturnFalseForEqualityExpressionResult(ETSChecker *checker, const ir::Expression *left,
+                                                         const ir::Expression *right, checker::Type *leftType,
+                                                         checker::Type *rightType)
+{
+    if (IsStaticallyDistinctReference(left, right)) {
+        return true;
+    }
+
+    if ((leftType->DefinitelyETSNullish() && !rightType->PossiblyETSNullish()) ||
+        (rightType->DefinitelyETSNullish() && !leftType->PossiblyETSNullish())) {
+        return true;
+    }
+
+    if (leftType->IsETSObjectType() && rightType->IsETSObjectType() &&
+        !checker->Relation()->IsCastableTo(leftType, rightType) &&
+        !checker->Relation()->IsCastableTo(rightType, leftType)) {
+        return true;
+    }
+
+    return false;
+}
+
+static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker, ir::Expression *left,
+                                                            ir::Expression *right, checker::Type *leftType,
+                                                            checker::Type *rightType)
+{
+    if (IsTypeError(leftType) || IsTypeError(rightType)) {
+        return std::nullopt;
+    }
+
+    leftType = checker->MaybeUnboxType(checker->GetApparentType(leftType));
+    rightType = checker->MaybeUnboxType(checker->GetApparentType(rightType));
+    if (leftType->IsETSEnumType() && rightType->IsETSEnumType() &&
+        !checker->Relation()->IsIdenticalTo(leftType, rightType)) {
+        return std::nullopt;
+    }
+
+    if (leftType->IsConstantType() && rightType->IsConstantType()) {
+        return checker->Relation()->IsIdenticalTo(leftType, rightType);
+    }
+
+    if (ShouldReturnFalseForEqualityExpressionResult(checker, left, right, leftType, rightType)) {
+        return false;
+    }
+
+    return std::nullopt;
+}
+
+static void MaybeLogCompileTimeEqualityWarning(ETSChecker *checker, const BinaryArithmOperands &ops,
+                                               lexer::TokenType operationType, const lexer::SourcePosition &pos)
+{
+    ir::Expression *left = ops.expr->Left();
+    ir::Expression *right = ops.expr->Right();
+    auto result = EvaluateEqualityExpressionResult(checker, left, right, ops.typeL, ops.typeR);
+    if (!result.has_value()) {
+        return;
+    }
+
+    if (operationType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
+        operationType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL) {
+        result = !result.value();
+    }
+
+    checker->LogDiagnostic(result.value() ? diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE
+                                          : diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE,
+                           pos);
 }
 
 static Type *CheckBinaryOperatorEqual(ETSChecker *checker, BinaryArithmOperands const &ops)
@@ -773,6 +874,17 @@ static Type *CheckBinaryOperatorEqual(ETSChecker *checker, BinaryArithmOperands 
     [[maybe_unused]] auto const [expr, typeL, typeR, reducedL, reducedR] = ops;
 
     ERROR_TYPE_CHECK(checker, typeL, return checker->GlobalTypeError());
+
+    auto *const appL = checker->GetApparentType(typeL);
+    auto *const appR = checker->GetApparentType(typeR);
+    auto isPrimitiveLikeRef = [](Type *tp) {
+        return tp->IsETSObjectType() && tp->AsETSObjectType()->IsBoxedPrimitive();
+    };
+    if ((appL->IsETSFunctionType() && (!appR->IsETSReferenceType() || isPrimitiveLikeRef(appR))) ||
+        (appR->IsETSFunctionType() && (!appL->IsETSReferenceType() || isPrimitiveLikeRef(appL)))) {
+        LogOperatorCannotBeApplied(checker, ops);
+        return typeL;
+    }
 
     if (reducedL->IsETSBooleanType() && reducedR->IsETSBooleanType()) {
         if (reducedL->IsConstantType() && reducedR->IsConstantType()) {
@@ -810,6 +922,14 @@ static bool NonNumericTypesAreAppropriateForComparison(ETSChecker *checker, Type
     return false;
 }
 
+static bool IsEqualityOperator(lexer::TokenType operationType)
+{
+    return operationType == lexer::TokenType::PUNCTUATOR_EQUAL ||
+           operationType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
+           operationType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL ||
+           operationType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
+}
+
 // NOTE(dkofanov): Deprecated operations on 'char' #28006
 std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expression *left, ir::Expression *right,
                                                                       lexer::TokenType operationType,
@@ -821,16 +941,21 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
     RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
-    if ((leftType->IsETSUnionType() || rightType->IsETSUnionType()) &&
-        operationType != lexer::TokenType::PUNCTUATOR_EQUAL &&
-        operationType != lexer::TokenType::PUNCTUATOR_NOT_EQUAL &&
-        operationType != lexer::TokenType::PUNCTUATOR_STRICT_EQUAL &&
-        operationType != lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL) {
+    if ((leftType->IsETSUnionType() || rightType->IsETSUnionType()) && !IsEqualityOperator(operationType)) {
         LogError(diagnostic::BINOP_UNION, {}, pos);
         return {GlobalETSBooleanBuiltinType(), leftType};
     }
 
     auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
+
+    auto *const ubL = MaybeUnboxType(leftType);
+    auto *const ubR = MaybeUnboxType(rightType);
+    if ((leftType->IsETSStringEnumType() || rightType->IsETSStringEnumType()) &&
+        ((ubL != nullptr && ubL->IsETSBooleanType()) || (ubR != nullptr && ubR->IsETSBooleanType()))) {
+        LogOperatorCannotBeApplied(this, operationType, ubL != nullptr ? ubL : leftType,
+                                   ubR != nullptr ? ubR : rightType, pos);
+        return {GlobalETSBooleanBuiltinType(), leftType};
+    }
 
     if (leftType->IsETSUnionType() || rightType->IsETSUnionType()) {
         return {GlobalETSBooleanBuiltinType(),
@@ -1108,6 +1233,14 @@ static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
         case lexer::TokenType::PUNCTUATOR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
             if (auto res = CheckBinaryOperatorEqual(checker, opsRepaired); res != nullptr) {
+                bool canEmitWarning = true;
+                if (opsRepaired.typeL->IsETSReferenceType() && opsRepaired.typeR->IsETSReferenceType()) {
+                    checker->Relation()->SetNode(left);
+                    canEmitWarning = checker->CheckValidEqualReferenceType(opsRepaired.typeL, opsRepaired.typeR);
+                }
+                if (canEmitWarning) {
+                    MaybeLogCompileTimeEqualityWarning(checker, opsRepaired, binaryParams.operationType, pos);
+                }
                 return {checker->GetGlobalTypesHolder()->GlobalETSBooleanBuiltinType(), res};
             }
             [[fallthrough]];
@@ -1231,6 +1364,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckArithmeticOperations(
         return {tsType, tsType};
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return CheckBinaryOperatorHelper(this, {left, right, expr, operationType, pos, isEqualOp},
                                      {leftType, rightType, unboxedL, unboxedR});
 }

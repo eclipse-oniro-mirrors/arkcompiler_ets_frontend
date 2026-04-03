@@ -1974,3 +1974,5 @@
     }
   }
 }
+[binary_operations.ets:37:28] Warning W65001: The equality expression is always false.
+[binary_operations.ets:38:28] Warning W65000: The equality expression is always true.

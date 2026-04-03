@@ -135,6 +135,7 @@ private:
                                                          const DeclarationFlags &flags, bool &hasLoggedError,
                                                          ir::TypeNode *typeAnnotation);
     checker::AstNodePtr TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast);
+    void CheckEnumInitializerConstraints(ir::TSEnumDeclaration *enumDecl);
     ArenaAllocator *Allocator();
 
     template <typename T, typename... Args>
