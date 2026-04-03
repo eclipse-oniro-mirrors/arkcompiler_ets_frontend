@@ -452,8 +452,9 @@ export class DependencyAnalyzer {
             const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
 
             if (!compileAbc && !genDecl) {
-                this.logger.printDebug(`Skipping file ${input} compilation`)
+                this.logger.printDebug(`Skipping file ${input} compilation`);
                 graph.removeNode(node);
+                continue;
             }
 
             node.data.jobType &= CompileJobType.NONE;

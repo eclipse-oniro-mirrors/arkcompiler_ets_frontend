@@ -28,7 +28,6 @@ jest.mock('../../../src/util/ets2panda', () => {
     const mockEts2pandaInstance = {
         initalize: jest.fn(),
         compile: jest.fn(),
-        compileSimultaneous: jest.fn(),
         finalize: jest.fn(),
     };
     return {
@@ -42,7 +41,6 @@ jest.mock('../../../src/util/ets2panda', () => {
 type MockEts2panda = {
     initalize: jest.Mock;
     compile: jest.Mock;
-    compileSimultaneous: jest.Mock;
     finalize: jest.Mock;
 };
 
@@ -101,17 +99,17 @@ describe('compile_process_worker', () => {
         expect(ets2panda.compile).toHaveBeenCalledWith(
             mockTaskId,
             task,
+            true,
             expect.any(Function),
             expect.any(Function)
         );
-        expect(ets2panda.compileSimultaneous).not.toHaveBeenCalled();
         expect(ets2panda.finalize).toHaveBeenCalled();
         expect(
             require('../../../src/util/ets2panda').Ets2panda.destroyInstance
         ).toHaveBeenCalled();
     });
 
-    test('compile_process_worker compileSimultaneous test', () => {
+    test('compile_process_worker compile test', () => {
         const task: Partial<ProcessCompileTask> = {
             ...baseTask,
             contentType: JobContentType.CLUSTER,
@@ -127,14 +125,13 @@ describe('compile_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        expect(ets2panda.compileSimultaneous).toHaveBeenCalledWith(
+        expect(ets2panda.compile).toHaveBeenCalledWith(
             mockTaskId,
             task,
             true,
             expect.any(Function),
             expect.any(Function)
         );
-        expect(ets2panda.compile).not.toHaveBeenCalled();
         expect(ets2panda.finalize).toHaveBeenCalled();
     });
 
@@ -149,7 +146,7 @@ describe('compile_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        const declCallback = ets2panda.compile.mock.calls[0][2];
+        const declCallback = ets2panda.compile.mock.calls[0][3];
         declCallback();
         expect((process as any).send).toHaveBeenCalledWith({
             type: WorkerMessageType.DECL_GENERATED,
@@ -168,7 +165,7 @@ describe('compile_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        const abcCallback = ets2panda.compile.mock.calls[0][3];
+        const abcCallback = ets2panda.compile.mock.calls[0][4];
         abcCallback();
         expect((process as any).send).toHaveBeenCalledWith({
             type: WorkerMessageType.ABC_COMPILED,
