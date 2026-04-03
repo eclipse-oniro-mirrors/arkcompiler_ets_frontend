@@ -72,21 +72,13 @@ public:
     using MemberAccessor = std::variant<checker::Signature *, varbinder::LocalVariable *>;
     using ComponentTypeMemberAccessors = ArenaVector<std::pair<checker::Type *, MemberAccessor>>;
 
-    // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit MemberExpression(Expression *object, Expression *property, MemberExpressionKind kind, bool computed,
-                              bool optional, ComponentTypeMemberAccessors componentTypeMemberAccessors)
+                              bool optional)
         : MaybeOptionalExpression(AstNodeType::MEMBER_EXPRESSION, optional),
           object_(object),
           property_(property),
           kind_(kind),
-          computed_(computed),
-          componentTypeMemberAccessors_(componentTypeMemberAccessors)
-    {
-    }
-
-    explicit MemberExpression(Expression *object, Expression *property, MemberExpressionKind kind, bool computed,
-                              bool optional)
-        : MemberExpression(object, property, kind, computed, optional, {})
+          computed_(computed)
     {
     }
 
