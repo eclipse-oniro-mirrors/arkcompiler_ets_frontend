@@ -1847,6 +1847,12 @@ signatures:
     return_type: BUILTIN_OBJECT
     ref: BUILTIN_ASYNCCONTEXT_RESULT
 
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: awaitResult
+    params: []
+    return_type: ANY_ASSEMBLY_TYPE
+    ref: BUILTIN_ASYNCCONTEXT_AWAIT_RESULT
+
 dynamiclangs:
   - name: js
     dynamic_class: BUILTIN_JSVALUE
