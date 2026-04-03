@@ -532,14 +532,27 @@ static ir::AstNode *TransformThisExpression(public_lib::Context *ctx, ir::ThisEx
     return static_cast<ir::AstNode *>(asExpression);
 }
 
+static bool IsVariableLocalToFunction(varbinder::Variable const *variable,
+                                      varbinder::FunctionScope const *functionScope)
+{
+    if (functionScope->FindLocal(variable->Name(), varbinder::ResolveBindingOptions::BINDINGS) != nullptr) {
+        return true;
+    }
+
+    auto const *scope = variable->GetScope();
+    while (scope != nullptr && scope != functionScope) {
+        scope = scope->Parent();
+    }
+    return scope == functionScope;
+}
+
 static ir::AstNode *TransformIdentifier(public_lib::Context *ctx, ir::Identifier *ident,
                                         varbinder::FunctionScope const *const functionScope,
                                         std::vector<CapturedVariable> &capturedVariables)
 {
     auto const *const variable = ident->Variable();
     if (variable->IsLocalVariable() && variable->HasFlag(varbinder::VariableFlags::LOCAL) &&
-        !variable->Name().StartsWith(compiler::GENSYM_CORE) &&
-        functionScope->FindLocal(variable->Name(), varbinder::ResolveBindingOptions::BINDINGS) == nullptr) {
+        !variable->Name().StartsWith(compiler::GENSYM_CORE) && !IsVariableLocalToFunction(variable, functionScope)) {
         auto *const parent = ident->Parent();
 
         util::StringView newName;
@@ -596,7 +609,8 @@ static void TransformMethodBody(public_lib::Context *ctx, ir::AstNode *const bod
             }
 
             // Process captured variables.
-            if (node->IsIdentifier() && node->Variable() != nullptr) {
+            if (node->IsIdentifier() && node->Variable() != nullptr &&
+                node->AsIdentifier()->IsReference(ScriptExtension::ETS)) {
                 return TransformIdentifier(ctx, node->AsIdentifier(), functionScope, capturedVariables);
             }
 
