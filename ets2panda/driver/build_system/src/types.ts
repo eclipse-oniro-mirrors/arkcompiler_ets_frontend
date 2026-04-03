@@ -220,6 +220,7 @@ export interface DependencyModuleConfig {
     bundleType?: string;
     bundleName?: string;
     packageVersion?: string;
+    originalPackageNameMap?: Map<string, string>;
 }
 
 export interface ModuleFile {
@@ -265,6 +266,7 @@ export interface ModuleInfo {
     bundleType?: string;
     bundleName?: string;
     packageVersion?: string;
+    originalPackageNameMap?: Map<string, string>;
 }
 
 export type SetupClusterOptions = {

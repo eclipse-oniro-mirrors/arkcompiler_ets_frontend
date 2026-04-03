@@ -1107,6 +1107,113 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
 });
 
 /**
+ * Private Method Testing: getAliasForPackage
+ */
+describe('ArkTSConfigGenerator - getAliasForPackage Private Method', () => {
+    let mockLogger: any;
+    let generator: ArkTSConfigGenerator;
+
+    beforeEach(() => {
+        mockLogger = setupBasicMocks();
+        const config = createMockBuildConfig();
+        generator = ArkTSConfigGenerator.getInstance(config);
+    });
+
+    afterEach(() => {
+        ArkTSConfigGenerator.destroyInstance();
+        jest.clearAllMocks();
+    });
+
+    describe('Edge Cases', () => {
+        test('should return undefined when originalPackageNameMap is undefined', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const result = getAliasForPackage('testPkg', undefined);
+            expect(result).toBeUndefined();
+        });
+
+        test('should return undefined when originalPackageNameMap is null', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const result = getAliasForPackage('testPkg', null);
+            expect(result).toBeUndefined();
+        });
+
+        test('should return undefined when originalPackageNameMap is empty', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const result = getAliasForPackage('testPkg', new Map());
+            expect(result).toBeUndefined();
+        });
+
+        test('should return undefined when packageName not found in map', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['alias1', 'original1'],
+                ['alias2', 'original2']
+            ]);
+            const result = getAliasForPackage('nonExistentPkg', map);
+            expect(result).toBeUndefined();
+        });
+    });
+
+    describe('Normal Cases', () => {
+        test('should return alias when packageName found and alias differs from original', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['aliasPkg', 'originalPkg'],
+                ['otherAlias', 'otherOriginal']
+            ]);
+            const result = getAliasForPackage('originalPkg', map);
+            expect(result).toBe('aliasPkg');
+        });
+
+        test('should return undefined when alias equals original name', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['sameName', 'sameName'],
+                ['alias2', 'original2']
+            ]);
+            const result = getAliasForPackage('sameName', map);
+            expect(result).toBeUndefined();
+        });
+    });
+
+    describe('Map Position Tests', () => {
+        test('should find alias when packageName is in middle of map', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['alias1', 'original1'],
+                ['middleAlias', 'middlePkg'],
+                ['alias3', 'original3']
+            ]);
+            const result = getAliasForPackage('middlePkg', map);
+            expect(result).toBe('middleAlias');
+        });
+
+        test('should find alias when packageName is at end of map', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['alias1', 'original1'],
+                ['alias2', 'original2'],
+                ['lastAlias', 'lastPkg']
+            ]);
+            const result = getAliasForPackage('lastPkg', map);
+            expect(result).toBe('lastAlias');
+        });
+    });
+
+    describe('Robustness Tests', () => {
+        test('should return first matching alias when duplicate originalName exists', () => {
+            const getAliasForPackage = (generator as any).getAliasForPackage.bind(generator);
+            const map = new Map([
+                ['alias1', 'duplicate'],
+                ['alias2', 'duplicate']
+            ]);
+            const result = getAliasForPackage('duplicate', map);
+            expect(result).toBe('alias1');
+        });
+    });
+});
+
+/**
  * System SDK Processing
  */
 describe('ArkTSConfigGenerator - System SDK Processing', () => {

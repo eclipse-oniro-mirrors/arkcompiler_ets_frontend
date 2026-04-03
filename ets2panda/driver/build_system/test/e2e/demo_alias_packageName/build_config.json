@@ -1,0 +1,67 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry/Main.ets",
+        "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/harB/index.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "entry",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry",
+    "sourceRoots": ["./"],
+    "loaderOutPath": "./dist/out/",
+    "cachePath": "./dist/cache",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "dependencyModuleList": [
+        {
+            "language": "1.2",
+            "packageName": "entry",
+            "moduleName": "entry",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry",
+            "moduleType": "feature",
+            "sourceRoots": ["./"],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry",
+            "dependencies": ["alias_harB"],
+            "originalPackageNameMap": {
+                "alias_harB": "harB"
+            }
+        },
+        {
+            "language": "1.2",
+            "packageName": "harB",
+            "moduleName": "alias_harB",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/harB/index.ets",
+            "moduleType": "har",
+            "sourceRoots": ["./"],
+            "entryFile": "index.ets",
+            "dependencies": []
+        }
+    ],
+    "dependentModuleList": [
+        {
+            "language": "1.2",
+            "packageName": "entry",
+            "moduleName": "entry",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry",
+            "moduleType": "feature",
+            "sourceRoots": ["./"],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/entry",
+            "dependencies": ["alias_harB"],
+            "originalPackageNameMap": {
+                "alias_harB": "harB"
+            }
+        },
+        {
+            "language": "1.2",
+            "packageName": "harB",
+            "moduleName": "alias_harB",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_alias_packageName/harB/index.ets",
+            "moduleType": "har",
+            "sourceRoots": ["./"],
+            "entryFile": "index.ets",
+            "dependencies": []
+        }
+    ],
+    "hasMainModule": true
+}
