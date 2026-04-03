@@ -1758,6 +1758,16 @@ static bool CheckOverloadedName(ETSChecker *checker, ir::OverloadDeclaration *no
     }
 
     auto *identDeclNode = overloadedName->Variable()->Declaration()->Node();
+    if (identDeclNode->IsImportSpecifier()) {
+        auto *importedVar = identDeclNode->AsImportSpecifier()->Imported()->Variable();
+        if (importedVar == nullptr || importedVar->Declaration() == nullptr) {
+            checker->LogError(diagnostic::OVERLOADED_NAME_MUST_FUNCTION, {}, overloadedName->Start());
+            overloadedName->SetTsType(checker->GlobalTypeError());
+            return false;
+        }
+        identDeclNode = importedVar->Declaration()->Node();
+    }
+
     if (!identDeclNode->IsMethodDefinition()) {
         checker->LogError(diagnostic::OVERLOADED_NAME_MUST_FUNCTION, {}, overloadedName->Start());
         overloadedName->SetTsType(checker->GlobalTypeError());
@@ -1776,6 +1786,38 @@ static bool CheckOverloadedName(ETSChecker *checker, ir::OverloadDeclaration *no
                                                      overloadedName->Start());
 }
 
+static bool ResolveFunctionOverloadIdentifier(ETSChecker *checker, ir::OverloadDeclaration *node,
+                                              ir::Expression *overloadedName)
+{
+    auto *ident = overloadedName->AsIdentifier();
+    auto *functionScope = node->Parent()->Scope();
+    if (ident->Variable() == nullptr) {
+        auto *identType = checker->ResolveIdentifier(ident->AsIdentifier());
+        if (identType->IsTypeError()) {
+            checker->LogError(diagnostic::OVERLOADED_NAME_MUST_FUNCTION, {}, ident->Start());
+            ident->SetTsType(checker->GlobalTypeError());
+            return false;
+        }
+    }
+
+    auto *variable = ident->Variable();
+    if (variable == nullptr) {
+        checker->LogError(diagnostic::OVERLOADED_NAME_MUST_FUNCTION, {}, ident->Start());
+        ident->SetTsType(checker->GlobalTypeError());
+        return false;
+    }
+
+    ident->SetTsType(variable->TsType());
+    ident->SetVariable(variable);
+
+    varbinder::Scope *identScope =
+        variable->Declaration() != nullptr ? variable->Declaration()->Node()->Parent()->Scope() : nullptr;
+    if (functionScope != identScope) {
+        checker->LogError(diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE, {}, overloadedName->Start());
+    }
+    return CheckOverloadedName(checker, node, overloadedName);
+}
+
 void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const
 {
     for (auto *overloadedName : node->OverloadedList()) {
@@ -1786,39 +1828,14 @@ void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::Overl
             if (var != nullptr) {
                 checker->LogError(diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE, {}, overloadedName->Start());
             }
-        } else if (overloadedName->IsIdentifier()) {
-            ir::Identifier *ident = overloadedName->AsIdentifier();
-            auto *functionScope = node->Parent()->Scope();
-
-            Type *classType = node->Parent()->AsClassDefinition()->TsType();
-            ES2PANDA_ASSERT(classType->IsETSObjectType());
-
-            PropertySearchFlags searchFlags = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::SEARCH_IN_BASE |
-                                              PropertySearchFlags::SEARCH_IN_INTERFACES |
-                                              PropertySearchFlags::IS_GETTER | PropertySearchFlags::IGNORE_OVERLOAD;
-            auto *variable =
-                checker->ResolveOverloadReference(ident->AsIdentifier(), classType->AsETSObjectType(), searchFlags);
-            if (variable == nullptr) {
-                checker->LogError(diagnostic::OVERLOADED_NAME_MUST_FUNCTION, {}, ident->Start());
-                ident->SetTsType(checker->GlobalTypeError());
-                continue;
-            }
-
-            ident->SetTsType(variable->TsType());
-            ident->SetVariable(variable);
-
-            varbinder::Scope *identScope =
-                variable->Declaration() != nullptr ? variable->Declaration()->Node()->Parent()->Scope() : nullptr;
-
-            if (functionScope != identScope) {
-                checker->LogError(diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE, {}, overloadedName->Start());
-            }
-
-            if (!CheckOverloadedName(checker, node, overloadedName)) {
-                continue;
-            }
-        } else {
+            continue;
+        }
+        if (!overloadedName->IsIdentifier()) {
             overloadedName->SetTsType(checker->GlobalTypeError());
+            continue;
+        }
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        if (!ResolveFunctionOverloadIdentifier(checker, node, overloadedName)) {
             continue;
         }
     }

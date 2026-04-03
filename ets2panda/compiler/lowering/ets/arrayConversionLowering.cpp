@@ -17,6 +17,7 @@
 #include "compiler/lowering/util.h"
 #include <iostream>
 #include <sstream>
+#include "compiler/lowering/scopesInit/scopesInitPhase.h"
 
 namespace ark::es2panda::compiler {
 ir::AstNode *ModifySyntaxToConstructorCall([[maybe_unused]] public_lib::Context *ctx, ir::AstNode *node)
@@ -25,6 +26,12 @@ ir::AstNode *ModifySyntaxToConstructorCall([[maybe_unused]] public_lib::Context 
     auto *arrInstance = node->AsETSNewArrayInstanceExpression();
     auto *size = arrInstance->Dimension();
     auto *typeRef = arrInstance->TypeReference();
+    if (size->IsNumberLiteral()) {
+        auto value = size->AsNumberLiteral()->Number().GetValue<double>();
+        if (value < 0) {
+            parser->LogError(diagnostic::ARRAY_SIZE_IS_NEGATIVE, {}, size->Start());
+        }
+    }
 
     auto *loweringResult = arrInstance->Initializer()->IsArrowFunctionExpression()
                                ? parser->CreateFormattedExpression("new Array<@@T1>(@@E2, @@E3)", typeRef, size,
@@ -33,6 +40,10 @@ ir::AstNode *ModifySyntaxToConstructorCall([[maybe_unused]] public_lib::Context 
                                                                    arrInstance->Initializer());
     SetSourceRangesRecursively(loweringResult, node->Range());
     loweringResult->SetParent(node->Parent());
+    ClearTypesVariablesAndScopes(loweringResult);
+    auto classCtx =
+        varbinder::LexicalScope<varbinder::Scope>::Enter(ctx->parserProgram->VarBinder(), NearestScope(node));
+    InitScopesPhaseETS::RunExternalNode(loweringResult, ctx->parserProgram);
     return loweringResult;
 }
 bool ArrayConversionLowering::PerformForProgram(parser::Program *program)

@@ -47,6 +47,7 @@ void FindA(es2panda_AstNode *ast, es2panda_AstNode *declarator, char *name)
         g_impl->AstNodeSetParent(g_ctx, expression, declarator);
         g_impl->AstNodeSetParent(g_ctx, dimension, expression);
         g_impl->AstNodeSetParent(g_ctx, typeReference, expression);
+        g_impl->AstNodeSetParent(g_ctx, initializer, expression);
         auto str = g_impl->AstNodeDumpEtsSrcConst(g_ctx, declarator);
         if (strcmp(str, "a = new string[5](\"\")") == 0) {
             g_count--;
@@ -71,6 +72,7 @@ void FindC(es2panda_AstNode *ast, es2panda_AstNode *declarator, char *name)
         g_impl->AstNodeSetParent(g_ctx, expression, declarator);
         g_impl->AstNodeSetParent(g_ctx, dimension, expression);
         g_impl->AstNodeSetParent(g_ctx, typeReference, expression);
+        g_impl->AstNodeSetParent(g_ctx, initializer, expression);
         auto str = g_impl->AstNodeDumpEtsSrcConst(g_ctx, declarator);
         if (strcmp(str, "c = new string[5](\"\")") == 0) {
             g_count--;

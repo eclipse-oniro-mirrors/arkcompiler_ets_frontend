@@ -202,6 +202,10 @@ semantic:
   id: 24
   message: "Setting the length of an array is not permitted"
 
+- name: ARRAY_SIZE_IS_NEGATIVE
+  id: 708183
+  message: "Array size cannot be negative."
+
 - name: ARROW_TYPE_MISMATCH
   id: 91
   message: "Type '{}' is not compatible with the enclosing method's return type '{}'"
