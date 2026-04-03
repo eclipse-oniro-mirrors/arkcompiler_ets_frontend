@@ -15,11 +15,14 @@
 
 #include "arithmetic.h"
 
+#include "checker/types/ets/etsObjectType.h"
+#include "checker/types/ets/etsObjectTypeConstants.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
 #include "ir/ets/etsUnionType.h"
 #include "lexer/token/token.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::checker {
 
@@ -1033,8 +1036,51 @@ static BinaryExpressionValidity AreTypesValidInInstanceofExpression(const ir::Ex
     return isRightTypeRetained ? BinaryExpressionValidity::NO_ERR : BinaryExpressionValidity::RHS_ERR;
 }
 
+constexpr std::string_view INSTANCEOF_ALWAYS_TRUE_WORD = "true";
+constexpr std::string_view INSTANCEOF_ALWAYS_FALSE_WORD = "false";
+
+static bool HasInterfaceConstituent(Type *t)
+{
+    if (t->IsETSUnionType()) {
+        return t->AsETSUnionType()->AnyOfConstituentTypes(
+            [](Type *ct) { return ct->IsETSObjectType() && ct->AsETSObjectType()->IsInterface(); });
+    }
+    return t->IsETSObjectType() && t->AsETSObjectType()->IsInterface();
+}
+
+static void ReportIfInstanceofTrivialKnown(ETSChecker *checker, Type *lhs, Type *rhs, lexer::SourcePosition pos)
+{
+    if (lhs == nullptr || rhs == nullptr || lhs->IsTypeError() || rhs->IsTypeError()) {
+        return;
+    }
+    if (lhs == checker->GlobalETSAnyType() || rhs == checker->GlobalETSAnyType()) {
+        return;
+    }
+    if ((lhs->IsETSObjectType() && lhs->AsETSObjectType()->IsGradual()) ||
+        (rhs->IsETSObjectType() && rhs->AsETSObjectType()->IsGradual())) {
+        return;
+    }
+
+    auto *intersectionType = checker->Context().GetIntersectionOfTypes(lhs, rhs);
+
+    if (intersectionType != nullptr && checker->Relation()->IsIdenticalTo(lhs, intersectionType)) {
+        checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
+                               util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_TRUE_WORD}, pos);
+        return;
+    }
+
+    if (intersectionType == nullptr) {
+        if (HasInterfaceConstituent(lhs) && HasInterfaceConstituent(rhs)) {
+            return;
+        }
+        checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
+                               util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_FALSE_WORD}, pos);
+    }
+}
+
 std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(const ir::Expression *right,
-                                                                     checker::Type *leftType, checker::Type *rightType)
+                                                                     checker::Type *leftType, checker::Type *rightType,
+                                                                     lexer::SourcePosition pos)
 {
     RepairTypeErrorsInOperands(&leftType, &rightType);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
@@ -1042,6 +1088,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(const ir::E
     const BinaryExpressionValidity exprValidity = AreTypesValidInInstanceofExpression(right, rightType);
     switch (exprValidity) {
         case BinaryExpressionValidity::NO_ERR: {
+            ReportIfInstanceofTrivialKnown(this, leftType, rightType, pos);
             break;
         }
         case BinaryExpressionValidity::RHS_ERR: {
@@ -1274,7 +1321,7 @@ static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
                                                            typeParams.unboxedL, typeParams.unboxedR);
         }
         case lexer::TokenType::KEYW_INSTANCEOF: {
-            return checker->CheckBinaryOperatorInstanceOf(right, leftType, rightType);
+            return checker->CheckBinaryOperatorInstanceOf(right, leftType, rightType, pos);
         }
         case lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING: {
             tsType = checker->CheckBinaryOperatorNullishCoalescing(left, right, pos);
