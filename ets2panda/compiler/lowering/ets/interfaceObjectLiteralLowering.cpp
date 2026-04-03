@@ -701,59 +701,58 @@ static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSigna
 static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
                            ir::ObjectExpression *objectExpr, InterfaceMethods &methods)
 {
-    //  Lambda checks if any method defined in object literal overrides empty method declared in interface.
-    auto const checkOverriding = [&methods, objectExpr, relation](ir::ScriptFunction const *const function,
-                                                                  checker::Signature *sig) -> void {
-        auto const &name = function->Id()->Name();
-        auto *const signature = const_cast<checker::Signature *>(function->Signature());
-        auto const hasBody = function->HasBody();
-
-        auto it = std::find_if(
-            methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
-                return std::get<0U>(item) == name && relation->SignatureIsSupertypeOf(std::get<1U>(item), signature);
-            });
+    auto checkOverriding = [&methods, objectExpr, relation](ir::MethodDefinition const *methodDef,
+                                                            checker::Signature *sig) {
+        auto *func = methodDef->Function();
+        auto &name = func->Id()->Name();
+        auto *signature = const_cast<checker::Signature *>(func->Signature());
+        bool hasBody = func->HasBody() || (methodDef->Modifiers() & ir::ModifierFlags::DEFAULT);
+        auto it = std::find_if(methods.begin(), methods.end(), [&name, signature, relation](auto &item) {
+            return std::get<0>(item) == name && relation->SignatureIsSupertypeOf(std::get<1>(item), signature);
+        });
         if (it == methods.end()) {
             methods.emplace_back(name, signature, hasBody);
             it = std::prev(methods.end());
         } else if (hasBody) {
-            std::get<2U>(*it) = true;
+            std::get<2>(*it) = true;
         }
 
-        if (std::get<2U>(*it)) {
+        if (std::get<2>(*it)) {
             return;
         }
 
-        for (ir::Expression *propExpr : objectExpr->Properties()) {
+        for (auto *propExpr : objectExpr->Properties()) {
             if (!propExpr->IsProperty()) {
                 continue;
             }
 
-            if (auto const *const key = propExpr->AsProperty()->Key();
-                !key->IsIdentifier() || !key->AsIdentifier()->Name().Is(name.Utf8())) {
+            auto *key = propExpr->AsProperty()->Key();
+            if (!key->IsIdentifier() || key->AsIdentifier()->Name() != name.Utf8()) {
                 continue;
             }
 
-            checker::SavedTypeRelationFlagsContext savedCtx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
-            checker::Type *const valueType = propExpr->AsProperty()->Value()->TsType();
-            if (valueType->IsETSArrowType() &&
-                relation->SignatureIsSupertypeOf(sig, valueType->AsETSFunctionType()->ArrowSignature())) {
-                std::get<2U>(*it) = true;
+            checker::SavedTypeRelationFlagsContext ctx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+            auto *valType = propExpr->AsProperty()->Value()->TsType();
+            if (valType->IsETSArrowType() &&
+                relation->SignatureIsSupertypeOf(sig, valType->AsETSFunctionType()->ArrowSignature())) {
+                std::get<2>(*it) = true;
             }
         }
     };
 
-    ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
-    for (auto const *const node : interfaceDecl->Body()->Body()) {
+    ES2PANDA_ASSERT(interfaceDecl->Body());
+    for (auto *node : interfaceDecl->Body()->Body()) {
         if (node->IsOverloadDeclaration()) {
             continue;
         }
-        auto methodDef = node->AsMethodDefinition();
-        auto targetType = objectExpr->TsType()->AsETSObjectType();
-        auto signatures = GetInterfaceGenericSignature(targetType, methodDef->Key()->AsIdentifier()->Name());
 
-        for (auto sig : signatures) {
+        auto *methodDef = node->AsMethodDefinition();
+        auto *objType = objectExpr->TsType()->AsETSObjectType();
+        auto signatures = GetInterfaceGenericSignature(objType, methodDef->Key()->AsIdentifier()->Name());
+
+        for (auto *sig : signatures) {
             if (!methodDef->Function()->IsGetterOrSetter()) {
-                checkOverriding(methodDef->Function(), sig);
+                checkOverriding(methodDef, sig);
             }
         }
     }
