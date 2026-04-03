@@ -62,6 +62,7 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 }
 
 namespace {
+
 TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingInstance1)
 {
     std::vector<std::string> files = {"getCompletionsIfTypeNarrowingInstance1.ets"};
@@ -1762,15 +1763,14 @@ TEST_F(LSPCompletionsTests, getImportKeywordCompletion3)
 export class A {
 }
 )",
-                                      R"(
-import * as aaa )"};
+                                      R"(import * as aaa )"};
     auto filePaths = CreateTempFile(files, texts);
 
     int const expectedFileCount = 2;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 17;
+    size_t const offset = 16;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -1802,6 +1802,221 @@ import)"};
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
     ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNewNamespaceClassInstanceMembers)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceVariableInScope.ets"};
+    const std::string text = R"delimiter(
+namespace ns {
+    export class CC {
+        valueCC: number = 10;
+        constructor(n: number) {
+            this.valueCC = n;
+        }
+    }
+    class CC1 {
+        valueCC1: number = 10;
+        constructor(n: number) {
+            this.valueCC1 = n;
+        }
+    }
+}
+new ns.CC(10).
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "new ns.CC(10).";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "valueCC", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(CLASS_MEMBER_SNIPPETS), "valueCC")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "valueCC1", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(CLASS_MEMBER_SNIPPETS), "valueCC1")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNewNamespaceClassInstanceMembersWithPrefix)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceVariableInScope1WithPrefix.ets"};
+    const std::string text = R"delimiter(
+namespace ns {
+    export class CC {
+        valueCC: number = 10;
+        constructor(n: number) {
+            this.valueCC = n;
+        }
+    }
+    class CC1 {
+        valueCC1: number = 10;
+        constructor(n: number) {
+            this.valueCC1 = n;
+        }
+    }
+}
+new ns.CC(10).v
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "new ns.CC(10).v";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "valueCC", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(CLASS_MEMBER_SNIPPETS), "valueCC")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "valueCC1", ark::es2panda::lsp::CompletionEntryKind::PROPERTY, std::string(CLASS_MEMBER_SNIPPETS), "valueCC1")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNamespaceLetVariableInScope)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceVariableInScope.ets"};
+    const std::string text = R"delimiter(
+namespace A {
+    let aaaa = 123;
+    let n = a
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "let n = a";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "aaaa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS), "aaaa")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNamespaceMultiLetDeclaratorsInScope)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceMultiDeclaratorsInScope.ets"};
+    const std::string text = R"delimiter(
+namespace A {
+    let aaa = 1, bbb = 2;
+    let n1 = a
+    let n2 = b
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string markerA = "let n1 = a";
+    auto markerPosA = text.find(markerA);
+    ASSERT_NE(markerPosA, std::string::npos);
+    size_t const offsetA = markerPosA + markerA.size();
+    const std::string markerB = "let n2 = b";
+    auto markerPosB = text.find(markerB);
+    ASSERT_NE(markerPosB, std::string::npos);
+    size_t const offsetB = markerPosB + markerB.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto resA = lspApi->getCompletionsAtPosition(ctx, offsetA);
+    auto expectedEntriesA = std::vector<CompletionEntry> {CompletionEntry(
+        "aaa", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS), "aaa")};
+    AssertCompletionsContainAndNotContainEntries(resA.GetEntries(), expectedEntriesA, {});
+
+    auto resB = lspApi->getCompletionsAtPosition(ctx, offsetB);
+    auto expectedEntriesB = std::vector<CompletionEntry> {CompletionEntry(
+        "bbb", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS), "bbb")};
+    AssertCompletionsContainAndNotContainEntries(resB.GetEntries(), expectedEntriesB, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNamespaceLetVariableNotAffectedByDeclarationOrder)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceLetVariableNotAffectedByDeclarationOrder.ets"};
+    const std::string text = R"delimiter(
+namespace A {
+    let n = lat
+    let later = 123;
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "let n = lat";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "later", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS), "later")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsNamespaceExportedClassOnly)
+{
+    std::vector<std::string> files = {"getCompletionsNamespaceVariableInScope.ets"};
+    const std::string text = R"delimiter(
+namespace ns {
+    export class CC {
+    }
+    class CC2 {
+    }
+}
+ns.
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "ns.";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("CC", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "CC")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "CC2", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "CC2")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
     initializer.DestroyContext(ctx);
 }
 

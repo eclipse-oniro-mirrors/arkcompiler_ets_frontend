@@ -804,6 +804,9 @@ ark::es2panda::varbinder::Variable *ResolveIdentifier(const ark::es2panda::ir::I
         ark::es2panda::varbinder::ResolveBindingOptions::ALL_VARIABLES;
 
     ark::es2panda::varbinder::Scope *scope = ark::es2panda::compiler::NearestScope(ident);
+    if (scope == nullptr) {
+        return nullptr;
+    }
     do {
         ark::es2panda::varbinder::Variable *res = scope->Find(ident->Name(), OPTION).variable;
         if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr) {
@@ -1046,12 +1049,12 @@ bool IsEnumDeclParent(const ir::AstNode *decl)
            decl->Parent()->OriginalNode()->Type() == ir::AstNodeType::TS_ENUM_DECLARATION;
 }
 
-static ArenaVector<ir::AstNode *> FilterNonTypeReferenceParts(const ArenaVector<ir::AstNode *> &nodes,
-                                                              ArenaAllocator *allocator)
+static ArenaVector<ir::AstNode *> FilterEnumSyntheticReferences(const ArenaVector<ir::AstNode *> &nodes,
+                                                                ArenaAllocator *allocator)
 {
     ArenaVector<ir::AstNode *> filtered(allocator->Adapter());
     for (auto *node : nodes) {
-        if (!(node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::ETS_TYPE_REFERENCE_PART)) {
+        if (node->Start().index < node->End().index) {
             filtered.push_back(node);
         }
     }
@@ -1072,8 +1075,10 @@ ArenaVector<ir::AstNode *> FindReferencesByName(ir::AstNode *ast, ir::AstNode *d
 
     auto uniqueReferences = RemoveRefDuplicates(references, allocator);
 
+    // Lowering for enum may synthesize bound identifiers with degenerate ranges.
+    // Keep only real source identifiers with non-empty spans.
     if (IsEnumDeclParent(decl)) {
-        uniqueReferences = FilterNonTypeReferenceParts(uniqueReferences, allocator);
+        uniqueReferences = FilterEnumSyntheticReferences(uniqueReferences, allocator);
     }
 
     std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {

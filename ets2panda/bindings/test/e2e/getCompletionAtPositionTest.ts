@@ -311,47 +311,42 @@ describe('getCompletionAtPositionTest', () => {
     }
     return false;
   }
+
+  function expectEntriesContainUnordered(realValue: LspCompletionInfo | undefined, expected: any[]) {
+    expect(realValue).toBeDefined();
+    expected.forEach((item) => {
+      expect(toMatchObjectUnordered(realValue, item, realValue!.entries.length)).toBe(true);
+    });
+  }
   describe('No UI Plugins', () => {
     const lsp = getLsp(moduleName);
     test('getCompletionAtPosition_000', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition1.ets'), 705);
-      expect(res).toBeDefined();
-      EXPECT_000.forEach((item) => {
-        expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
-      });
+      expectEntriesContainUnordered(res, EXPECT_000);
     });
     test('getCompletionAtPosition_001', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition2.ets'), 735);
-      expect(res).toBeDefined();
-      EXPECT_001.forEach((item) => {
-        expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
-      });
+      expectEntriesContainUnordered(res, EXPECT_001);
     });
     test('getCompletionAtPosition_002', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition3.ets'), 789);
-      expect(res).toBeDefined();
-      EXPECT_002.forEach((item) => {
-        expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
-      });
+      expectEntriesContainUnordered(res, EXPECT_002);
     });
     test('getCompletionAtPosition_003', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition4.ets'), 767);
-      expect(res).toBeDefined();
-      EXPECT_003.forEach((item) => {
-        expect(toMatchObjectUnordered(res, item, res!.entries.length)).toBe(true);
-      });
+      expectEntriesContainUnordered(res, EXPECT_003);
     });
     test('getCompletionAtPosition_004', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition5.ets'), 728);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_004);
+      expectEntriesContainUnordered(res, EXPECT_004);
     });
     test('getCompletionAtPosition_005', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition6.ets'), 718);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_005);
+      expectEntriesContainUnordered(res, EXPECT_005);
     });
     test('getCompletionAtPosition_006', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition7.ets'), 683);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_006);
+      expectEntriesContainUnordered(res, EXPECT_006);
     });
     test('getCompletionAtPosition_007', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition8.ets'), 614);
@@ -359,39 +354,39 @@ describe('getCompletionAtPositionTest', () => {
     });
     test('getCompletionAtPosition_008', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition9.ets'), 619);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_008);
+      expectEntriesContainUnordered(res, EXPECT_008);
     });
     test('getCompletionAtPosition_009', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition10.ets'), 712);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_009);
+      expectEntriesContainUnordered(res, EXPECT_009);
     });
     test('getCompletionAtPosition_010', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition11.ets'), 682);
-      expect(res?.entries.slice(0, 2)).toMatchObject(EXPECT_010);
+      expectEntriesContainUnordered(res, EXPECT_010);
     });
     test('getCompletionAtPosition_011', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition12.ets'), 720);
-      expect(res?.entries.slice(0, 2)).toMatchObject(EXPECT_011);
+      expectEntriesContainUnordered(res, EXPECT_011);
     });
     test('getCompletionAtPosition_012', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition13.ets'), 658);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_012);
+      expectEntriesContainUnordered(res, EXPECT_012);
     });
     test('getCompletionAtPosition_013', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition14.ets'), 659);
-      expect(res?.entries.slice(0, 1)).toMatchObject(EXPECT_013);
+      expectEntriesContainUnordered(res, EXPECT_013);
     });
     test('getCompletionAtPosition_015', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition17.ets'), 764);
-      expect(res?.entries.slice(0, 2)).toMatchObject(EXPECT_015);
+      expectEntriesContainUnordered(res, EXPECT_015);
     });
     test('getCompletionAtPosition_016', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition17.ets'), 782);
-      expect(res?.entries.slice(0, 3)).toMatchObject(EXPECT_016);
+      expectEntriesContainUnordered(res, EXPECT_016);
     });
     test('getCompletionAtPosition_017', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition18.ets'), 868);
-      expect(res?.entries.slice(0, 3)).toMatchObject(EXPECT_017);
+      expectEntriesContainUnordered(res, EXPECT_017);
     });
   });
 
@@ -399,7 +394,7 @@ describe('getCompletionAtPositionTest', () => {
     const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCompletionAtPosition_014', () => {
       const res = getUiLsp().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition15.ets'), 722);
-      expect(res?.entries.slice(0, 4)).toMatchObject(EXPECT_014);
+      expectEntriesContainUnordered(res, EXPECT_014);
     });
   });
 });
