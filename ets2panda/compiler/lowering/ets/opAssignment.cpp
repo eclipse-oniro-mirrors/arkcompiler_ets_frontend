@@ -184,7 +184,8 @@ static std::tuple<std::string, std::vector<ir::Expression *>> GenerateStringForA
     return {retStr, retVec};
 }
 
-static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *expr, std::vector<ir::Expression *> &vec)
+static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *expr, std::vector<ir::Expression *> &vec,
+                                 size_t placeholderOffset = 0)
 {
     auto type = expr->TsType();
     if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
@@ -193,7 +194,7 @@ static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *e
 
     vec.push_back(CreateProxyTypeNode(checker, expr));
 
-    return " as @@T" + std::to_string(vec.size());
+    return " as @@T" + std::to_string(placeholderOffset + vec.size());
 }
 
 static std::string GetCastString(ir::Expression *expr)
@@ -279,7 +280,7 @@ static ir::Expression *GenerateElementAccessLowering(const lexer::TokenType opEq
 
     auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, counter);
     retVec.push_back(additionalAssignmentExpression);
-    retStr += GetCastString(checker, expr, retVec);
+    retStr += GetCastString(checker, expr, retVec, tempDeclExpressions.size());
 
     retVec.insert(retVec.begin(), tempDeclExpressions.begin(), tempDeclExpressions.end());
     retStr = tempDeclStr + retStr;
@@ -305,7 +306,7 @@ static ir::Expression *GeneratePropertyAccessLowering(const lexer::TokenType opE
 
     auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, counter);
     retVec.push_back(additionalAssignmentExpression);
-    retStr += GetCastString(checker, expr, retVec);
+    retStr += GetCastString(checker, expr, retVec, tempDeclExpressions.size());
 
     retVec.insert(retVec.begin(), tempDeclExpressions.begin(), tempDeclExpressions.end());
     retStr = tempDeclStr + retStr;
