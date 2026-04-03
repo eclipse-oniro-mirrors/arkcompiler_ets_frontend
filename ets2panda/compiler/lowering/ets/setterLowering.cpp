@@ -98,6 +98,8 @@ bool SetterLowering::PerformForProgram(parser::Program *program)
             auto *assignmentExpr = node->AsAssignmentExpression();
             ir::AstNode *loweringResult = TransformSetterCall(ctx, assignmentExpr);
             loweringResult->SetParent(assignmentExpr->Parent());
+            loweringResult->SetRange(assignmentExpr->Range());
+            RefineSourceRanges(loweringResult);
 
             auto *const scope = NearestScope(assignmentExpr);
             auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);

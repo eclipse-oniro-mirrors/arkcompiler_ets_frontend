@@ -766,10 +766,6 @@ semantic:
   id: 366
   message: "Cannot capture variable '{}'."
 
-- name: INVALID_CAST
-  id: 326
-  message: "Cannot cast type '{}' to '{}'"
-
 - name: INVALID_CONST_ASSIGNMENT
   id: 97
   message: "Cannot assign a value to a constant variable {}"
@@ -1696,6 +1692,7 @@ graveyard:
 - 298
 - 302
 - 325
+- 326
 - 328
 - 339
 - 340

@@ -83,11 +83,6 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSUnionType *node) const
     ES2PANDA_UNREACHABLE();
 }
 
-checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSWildcardType *node) const
-{
-    ES2PANDA_UNREACHABLE();
-}
-
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ChainExpression *expr) const
 {
     ES2PANDA_UNREACHABLE();  // eliminated in OptionalLowering

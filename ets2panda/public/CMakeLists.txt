@@ -30,7 +30,7 @@ set(GENERATED_STAMP ${CHECK_OUTPUT_DIR}/build_consistency_check.stamp)
 find_package(Python3 REQUIRED)
 add_custom_command(
     OUTPUT ${GENERATED_STAMP}
-    COMMAND ${Python3_EXECUTABLE} 
+    COMMAND ${Python3_EXECUTABLE}
            ./../scripts/check_build_system_consistency.py
            "${CMAKE_CURRENT_SOURCE_DIR}/.."
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CHECK_OUTPUT_DIR}
@@ -272,10 +272,9 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/ir/expressions/directEvalExpression.h
     ${ES2PANDA_ROOT}/ir/ts/tsParameterProperty.h
     ${ES2PANDA_ROOT}/ir/statements/continueStatement.h
-    ${ES2PANDA_ROOT}/ir/ets/etsWildcardType.h
     ${ES2PANDA_ROOT}/ir/expressions/literals/undefinedLiteral.h
     ${ES2PANDA_ROOT}/ir/ts/tsIndexedAccessType.h
-    ${ES2PANDA_ROOT}/checker/types/ets/wildcardType.h
+    ${ES2PANDA_ROOT}/checker/types/ets/etsWildcardType.h
     ${ES2PANDA_ROOT}/checker/types/ts/booleanType.h
     ${ES2PANDA_ROOT}/ir/expressions/typeofExpression.h
     ${ES2PANDA_ROOT}/checker/types/ets/etsAsyncFuncReturnType.h
@@ -535,7 +534,7 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/ets/etsNullishTypes.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/typeofExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsEnumMember.yaml
-    ${LIBGEN_DIR}/gen/headers/checker/types/ets/wildcardType.yaml
+    ${LIBGEN_DIR}/gen/headers/checker/types/ets/etsWildcardType.yaml
     ${LIBGEN_DIR}/gen/headers/lexer/regexp/regexp.yaml
     ${LIBGEN_DIR}/gen/headers/ir/statements/switchStatement.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/etsBooleanType.yaml
@@ -559,7 +558,6 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/typeNode.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/newExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsParameterProperty.yaml
-    ${LIBGEN_DIR}/gen/headers/ir/ets/etsWildcardType.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/shortType.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsThisType.yaml
     ${LIBGEN_DIR}/gen/headers/varbinder/variable.yaml

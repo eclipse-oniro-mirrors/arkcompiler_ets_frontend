@@ -136,7 +136,6 @@ public:
     Type *GlobalETSNeverType() const;
     Type *GlobalETSStringLiteralType() const;
     Type *GlobalETSBigIntType() const;
-    Type *GlobalWildcardType() const;
 
     Type *GlobalByteBuiltinType() const;
     Type *GlobalShortBuiltinType() const;
@@ -982,7 +981,6 @@ private:
     TypeInstantiationCacheMap<Type> unionInstantiationCacheMap_;
     FunctionSignatureMap invokeToArrowSignatures_;
     FunctionInterfaceMap arrowToFuncInterfaces_;
-    std::unordered_map<Type *, Type *> awaitedTypeCache_;
     size_t constraintCheckScopesCount_ {0};
     GlobalArraySignatureMap globalArraySignatures_;
     std::unordered_set<util::StringView> unionAssemblerTypes_;

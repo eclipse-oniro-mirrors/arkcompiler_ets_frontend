@@ -280,11 +280,6 @@ void ETSCompiler::Compile(const ir::OpaqueTypeNode *node) const
     GetETSGen()->SetAccumulatorType(node->TsType());
 }
 
-void ETSCompiler::Compile([[maybe_unused]] const ir::ETSWildcardType *node) const
-{
-    ES2PANDA_UNREACHABLE();
-}
-
 void ETSCompiler::CompileTupleCreation(const ir::ArrayExpression *tupleInitializer) const
 {
     ETSGen *etsg = GetETSGen();

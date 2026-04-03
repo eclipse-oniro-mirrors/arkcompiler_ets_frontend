@@ -100,9 +100,6 @@ bool ETSTypeAliasType::IsArgumentsIdentical(TypeRelation *relation, Type *other)
     }
 
     for (size_t idx = 0U; idx < argsNumber; ++idx) {
-        if (typeArguments_[idx]->IsWildcardType() || otherTypeArguments[idx]->IsWildcardType()) {
-            continue;
-        }
         if (!relation->IsIdenticalTo(typeArguments_[idx], otherTypeArguments[idx])) {
             return false;
         }
@@ -159,7 +156,7 @@ void ETSTypeAliasType::Cast(TypeRelation *const relation, Type *const target)
         relation->IsIdenticalTo(this, target);
     }
 
-    if (!relation->IsTrue() && relation->IsAtTypeDepthLimit(GetBaseType())) {
+    if (!relation->IsTrue() && relation->IsAtTypeDepthLimit(GetBaseType()) && targetType_ != nullptr) {
         relation->IncreaseTypeRecursionCount(GetBaseType());
         targetType_->Cast(relation, target);
         relation->DecreaseTypeRecursionCount(GetBaseType());
@@ -172,7 +169,7 @@ void ETSTypeAliasType::CastTarget(TypeRelation *relation, Type *source)
         relation->IsIdenticalTo(this, source);
     }
 
-    if (!relation->IsTrue() && relation->IsAtTypeDepthLimit(GetBaseType())) {
+    if (!relation->IsTrue() && relation->IsAtTypeDepthLimit(GetBaseType()) && targetType_ != nullptr) {
         relation->IncreaseTypeRecursionCount(GetBaseType());
         targetType_->CastTarget(relation, source);
         relation->DecreaseTypeRecursionCount(GetBaseType());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 class Point {
-    foo<X extends short>(i:X = 0 as X): X {
+    foo<X extends short>(i:X = /* @@ label */0 as X): X {
        return i;
     }
 }
@@ -26,4 +26,4 @@ function main(): void {
 }
 
 
-/* @@? 17:32 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X' */
+/* @@@ label Warning Warning W0326: Attempt to cast the type 'Int' to 'X' can throw 'CastClassError' exception at runtime. */

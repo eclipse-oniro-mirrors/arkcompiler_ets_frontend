@@ -58,7 +58,7 @@ enum class CheckerStatus : uint32_t {
     IN_CONSTRUCTOR = 1U << 8U,
     IN_STATIC_BLOCK = 1U << 9U,
     INNER_CLASS = 1U << 10U,
-    IN_ENUM = 1U << 11U,
+    EMPTY_SLOT_1 = 1U << 11U,
     BUILTINS_INITIALIZED = 1U << 12U,
     IN_LAMBDA = 1U << 13U,
     IGNORE_VISIBILITY = 1U << 14U,
@@ -305,14 +305,15 @@ private:
     [[nodiscard]] std::optional<SmartCastTuple> ResolveSmartCastTypes();
     [[nodiscard]] bool CheckTestOrSmartCastCondition(SmartCastTuple const &types);
     void CheckAssignments(ir::AstNode const *node, ReassignedVariableMap &changedVariables) const noexcept;
+    [[nodiscard]] Type *CreateWildcardSubstitutedType(Type *testedType) const;
 };
 
 class SavedCheckerContextStatus final {
 public:
-    explicit SavedCheckerContextStatus(CheckerContext *context, CheckerStatus status)
-        : context_(context), storedStatus_(status), preStatus_(context_->status_)
+    explicit SavedCheckerContextStatus(CheckerContext *context, CheckerStatus const status)
+        : context_(context), preStatus_(context_->status_)
     {
-        context_->status_ = context_->status_ | storedStatus_;
+        context_->status_ = context_->status_ | status;
     }
 
     ~SavedCheckerContextStatus()
@@ -325,7 +326,6 @@ public:
 
 private:
     CheckerContext *context_;
-    CheckerStatus storedStatus_;
     CheckerStatus preStatus_;
 };
 }  // namespace ark::es2panda::checker

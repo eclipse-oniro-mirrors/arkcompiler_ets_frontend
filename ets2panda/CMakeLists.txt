@@ -522,7 +522,6 @@ set(ES2PANDA_LIB_SRC
   ir/ets/etsTypeReference.cpp
   ir/ets/etsTypeReferencePart.cpp
   ir/ets/etsUnionType.cpp
-  ir/ets/etsWildcardType.cpp
   ir/ts/tsAnyKeyword.cpp
   ir/ts/tsArrayType.cpp
   ir/ts/tsAsExpression.cpp
@@ -662,6 +661,7 @@ set(ES2PANDA_LIB_SRC
   checker/types/ets/shortType.cpp
   checker/types/ets/etsAnyType.cpp
   checker/types/ets/etsArrayType.cpp
+  checker/types/ets/etsAsyncFuncReturnType.cpp
   checker/types/ets/etsBooleanType.cpp
   checker/types/ets/etsEnumType.cpp
   checker/types/ets/etsExtensionFuncHelperType.cpp
@@ -682,8 +682,7 @@ set(ES2PANDA_LIB_SRC
   checker/types/ets/etsAwaitedType.cpp
   checker/types/ets/etsUnionType.cpp
   checker/types/ets/etsVoidType.cpp
-  checker/types/ets/wildcardType.cpp
-  checker/types/ets/etsAsyncFuncReturnType.cpp
+  checker/types/ets/etsWildcardType.cpp
   checker/types/ts/anyType.cpp
   checker/types/ts/arrayType.cpp
   checker/types/ts/bigintLiteralType.cpp

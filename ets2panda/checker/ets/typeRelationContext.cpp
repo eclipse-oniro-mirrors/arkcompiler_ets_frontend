@@ -93,9 +93,6 @@ static void CheckInstantiationConstraints(ETSChecker *checker, ArenaVector<Type 
         }
         auto typeParam = type->AsETSTypeParameter();
         auto typeArg = typeParam->Substitute(relation, substitution);
-        if (typeArg->IsWildcardType()) {
-            continue;
-        }
         if (typeArg->IsTypeError()) {
             continue;
         }

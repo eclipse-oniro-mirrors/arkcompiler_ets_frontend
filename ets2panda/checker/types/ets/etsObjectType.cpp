@@ -17,8 +17,6 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "checker/types/typeFlag.h"
-#include "compiler/lowering/phase.h"
 
 namespace ark::es2panda::checker {
 
@@ -708,7 +706,8 @@ void ETSObjectType::Identical(TypeRelation *relation, Type *other)
     }
 
     for (size_t idx = 0U; idx < argsNumber; ++idx) {
-        if (typeArguments_[idx]->IsWildcardType() || otherTypeArguments[idx]->IsWildcardType()) {
+        // Skip checking for wildcard types, because '* != *' but 'C<*> == C<*>'
+        if (typeArguments_[idx]->IsETSWildcardType() && otherTypeArguments[idx]->IsETSWildcardType()) {
             continue;
         }
         if (!relation->IsIdenticalTo(typeArguments_[idx], otherTypeArguments[idx])) {
@@ -903,47 +902,54 @@ bool ETSObjectType::CastNumericObject(TypeRelation *const relation, Type *const 
 
 void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
 {
+    conversion::Forbidden(relation);
     conversion::Identity(relation, this, target);
     if (relation->IsTrue()) {
         return;
     }
 
+    //  Lambda to avoid extra nesting level
+    auto const checkGenericCast = [this, relation](ETSObjectType *objectType) {
+        {
+            SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+            //   Don't use relation->IsIdenticalTo(this, target) because possible caching doesn't
+            //   take into account 'TypeRelationFlag::IGNORE_TYPE_PARAMETERS' flag usage.
+            Identical(relation, objectType);
+        }
+
+        if (!relation->IsTrue()) {
+            return;
+        }
+
+        auto *checker = relation->GetChecker()->AsETSChecker();
+        for (std::size_t i = 0U; i < TypeArguments().size(); ++i) {
+            auto *sourceTypeArgument = checker->GetApparentType(TypeArguments()[i]);
+            auto *targetTypeArgument = checker->GetApparentType(objectType->TypeArguments()[i]);
+            if (!relation->IsCastableTo(sourceTypeArgument, targetTypeArgument)) {
+                break;
+            }
+        }
+    };
+
     //  #16485: Probably temporary solution for generic bridges realization. Allows casting of generic classes
     //          in the form C<T> as C<U> (where U extends T) or C<T> as D (where D extends C<U>)
     if ((relation->GetChecker()->Context().Status() & CheckerStatus::IN_BRIDGE_TEST) != 0U) {
-        SavedTypeRelationFlagsContext const savedFlags(relation, relation->GetTypeRelationFlags() |
-                                                                     TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+        SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
         relation->IsSupertypeOf(this, target);
-        return;
-    }
-
-    if (CastNumericObject(relation, target)) {
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_ARRAY)) {
+    } else if (target->IsETSObjectType()) {
+        auto *objectType = target->AsETSObjectType();
+        if (conversion::WideningReference(relation, this, objectType); relation->IsTrue()) {
+        } else if (conversion::NarrowingReference(relation, this, objectType); relation->IsTrue()) {
+        } else if (IsGeneric()) {
+            checkGenericCast(objectType);
+        }
+    } else if (target->HasTypeFlag(TypeFlag::ETS_ARRAY)) {
         conversion::NarrowingReference(relation, this, target->AsETSArrayType());
-        return;
-    }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_TUPLE)) {
+    } else if (target->HasTypeFlag(TypeFlag::ETS_TUPLE)) {
         conversion::NarrowingReference(relation, this, target->AsETSTupleType());
-        return;
+    } else if (target->IsETSPrimitiveType()) {
+        CastNumericObject(relation, target);
     }
-
-    if (target->HasTypeFlag(TypeFlag::ETS_OBJECT)) {
-        conversion::WideningReference(relation, this, target->AsETSObjectType());
-        if (relation->IsTrue()) {
-            return;
-        }
-
-        conversion::NarrowingReference(relation, this, target->AsETSObjectType());
-        if (relation->IsTrue()) {
-            return;
-        }
-    }
-
-    conversion::Forbidden(relation);
 }
 
 void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
@@ -981,13 +987,6 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
             IsGenericSupertypeOf(relation, sourceObj);
         }
         if (relation->IsTrue()) {
-            return;
-        }
-    }
-    //  #16485: special case for generic bridges processing.
-    //          We need only to check if the type is immediate supertype of processing class.
-    if ((checker->Context().Status() & CheckerStatus::IN_BRIDGE_TEST) != 0U && relation->IsBridgeCheck()) {
-        if (sourceObj->Variable() == checker->Context().ContainingClass()->SuperType()->Variable()) {
             return;
         }
     }
@@ -1046,9 +1045,7 @@ void ETSObjectType::IsGenericSupertypeOf(TypeRelation *relation, ETSObjectType *
         auto *typeParam = typeParams[idx];
 
         relation->Result(false);
-        if (typeArg->IsWildcardType() || sourceTypeArg->IsWildcardType()) {
-            continue;
-        }
+
         if (typeParam->IsOut()) {
             relation->IsSupertypeOf(typeArg, sourceTypeArg);
         } else if (typeParam->IsIn()) {

@@ -190,7 +190,9 @@ void Checker::CleanUp()
     uncheckedCastableResults_.Clear();
     supertypeResults_.Clear();
     typeStack_.clear();
-    namedTypeStack_.clear();
+    for (auto &typeCache : cachedUtilityTypes_) {
+        typeCache.clear();
+    }
 }
 
 void InferMatchContext::CheckErrorInRange()

@@ -270,6 +270,14 @@ public:
         return nullptr;
     }
 
+    Phase *CurrentPhase()
+    {
+        if (next_ > 0 && next_ <= static_cast<int32_t>(phases_.size())) {
+            return phases_[next_ - 1];
+        }
+        return nullptr;
+    }
+
     std::vector<Phase *> AllPhases();
     std::vector<Phase *> RebindPhases();
     std::vector<Phase *> RecheckPhases();

@@ -150,11 +150,6 @@ public:
         return typeStack_;
     }
 
-    [[nodiscard]] std::unordered_set<Type *> &NamedTypeStack() noexcept
-    {
-        return namedTypeStack_;
-    }
-
     [[nodiscard]] virtual bool IsETSChecker() const noexcept
     {
         return false;
@@ -210,9 +205,7 @@ public:
 
     friend class ScopeContext;
     friend class TypeStackElement;
-    friend class NamedTypeStackElement;
     friend class SavedCheckerContext;
-    friend class NamedTypeStackElement;
 
     varbinder::VarBinder *VarBinder() const;
 
@@ -245,6 +238,15 @@ protected:
     parser::Program *Program() const;
     void SetProgram(parser::Program *program);
 
+    enum UtilityType : std::uint_fast8_t { PARTIAL = 0U, READONLY, REQUIRED, AWAITED, RETURN_TYPE, TOTAL };
+
+    template <std::size_t N>
+    [[nodiscard]] std::unordered_map<Type *, Type *> &CachedUtilityTypes() noexcept
+    {
+        static_assert(N < static_cast<std::size_t>(UtilityType::TOTAL), "Invalid array index.");
+        return cachedUtilityTypes_[N];
+    }
+
 private:
     ArenaAllocator *allocator_;
     CheckerContext context_;
@@ -263,26 +265,7 @@ private:
     RelationHolder supertypeResults_ {Allocator()};
 
     std::unordered_map<const void *, Type *> typeStack_;
-    std::unordered_set<Type *> namedTypeStack_;
-};
-
-class NamedTypeStackElement {
-public:
-    explicit NamedTypeStackElement(Checker *checker, Type *element) : checker_(checker), element_(element)
-    {
-        checker_->namedTypeStack_.insert(element);
-    }
-
-    ~NamedTypeStackElement()
-    {
-        checker_->namedTypeStack_.erase(element_);
-    }
-    NO_COPY_SEMANTIC(NamedTypeStackElement);
-    NO_MOVE_SEMANTIC(NamedTypeStackElement);
-
-private:
-    Checker *checker_;
-    Type *element_;
+    std::array<std::unordered_map<Type *, Type *>, static_cast<std::size_t>(UtilityType::TOTAL)> cachedUtilityTypes_ {};
 };
 
 class TypeStackElement {

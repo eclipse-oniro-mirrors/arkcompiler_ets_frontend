@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -214,11 +214,6 @@ void JSCompiler::Compile([[maybe_unused]] const ir::ETSKeyofType *expr) const
 }
 
 void JSCompiler::Compile([[maybe_unused]] const ir::ETSDestructuring *expr) const
-{
-    ES2PANDA_UNREACHABLE();
-}
-
-void JSCompiler::Compile([[maybe_unused]] const ir::ETSWildcardType *expr) const
 {
     ES2PANDA_UNREACHABLE();
 }

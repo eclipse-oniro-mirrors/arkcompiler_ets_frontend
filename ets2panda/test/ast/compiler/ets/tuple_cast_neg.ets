@@ -37,8 +37,9 @@ function main() {
 
 
 /* @@@ label1 Error Semantic error ESE0170: Type 'Tuple1<T0>' is generic but type argument were not provided. */
-/* @@@ label2 Error Semantic error ESE0326: Cannot cast type '[String, Int]' to 'Tuple1<Int>' */
 /* @@@ label2 Error Semantic error ESE0318: Type 'Tuple1<Int>' cannot be assigned to type '[String]' */
-/* @@@ label3 Error Semantic error ESE0326: Cannot cast type '[String]' to 'Tuple2<String,Int>' */
-/* @@@ label4 Error Semantic error ESE0326: Cannot cast type '[String, Double, Int]' to 'Tuple2<String,Int>' */
+/* @@@ label2 Warning Warning W0326: Attempt to cast the type '[String, Int]' to 'Tuple1<Int>' can throw 'CastClassError' exception at runtime. */
+/* @@@ label3 Warning Warning W0326: Attempt to cast the type '[String]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime. */
+/* @@@ label4 Warning Warning W0326: Attempt to cast the type '[String, Double, Int]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime. */
 /* @@@ label5 Error Semantic error ESE0318: Type 'Tuple3<String,Int,Double>' cannot be assigned to type '[String, Int, Double, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String]' */
+/* @@@ label5 Warning Warning W369037: Cast expression `as Tuple3<String,Int,Double>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */

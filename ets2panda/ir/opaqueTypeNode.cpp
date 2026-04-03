@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,13 @@
 #include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
+
+OpaqueTypeNode::OpaqueTypeNode(checker::Type *const type, ArenaAllocator *const allocator)
+    : TypeNode(AstNodeType::OPAQUE_TYPE_NODE, allocator)
+{
+    ES2PANDA_ASSERT(type != nullptr);
+    SetTsType(!type->IsETSWildcardType() ? type : type->AsETSWildcardType()->GetUnderlying()->GetConstraintType());
+}
 
 void OpaqueTypeNode::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
                                        [[maybe_unused]] std::string_view transformationName)

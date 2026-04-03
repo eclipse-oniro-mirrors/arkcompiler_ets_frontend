@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,4 +21,4 @@ function narrowing_reference_test(): void {
   let B_ = /* @@ label */A_ as B;
 }
 
-/* @@@ label Error Semantic error ESE0326: Cannot cast type 'A' to 'B' */
+/* @@@ label Warning Warning W0326: Attempt to cast the type 'A' to 'B' can throw 'CastClassError' exception at runtime. */

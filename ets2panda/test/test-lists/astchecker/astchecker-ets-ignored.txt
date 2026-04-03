@@ -103,3 +103,8 @@ ast/compiler/ets/package_namespace_static_block_multi/main_test.ets
 ast/compiler/ets/package_static_block_multi_files/main_test.ets
 ast/parser/ets/typenode_clone_comprehensive.ets
 ast/parser/ets/import_tests/import_name_conflict_2.ets
+
+#33835
+ast/compiler/ets/error_msg_rollback_test_5.ets
+ast/compiler/ets/invalid_cast_generic_type_neg_0.ets
+ast/compiler/ets/invalid_cast_generic_type_neg_1.ets

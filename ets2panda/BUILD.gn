@@ -136,11 +136,11 @@ libes2panda_sources = [
   "checker/types/ets/etsTypeParameter.cpp",
   "checker/types/ets/etsUnionType.cpp",
   "checker/types/ets/etsVoidType.cpp",
+  "checker/types/ets/etsWildcardType.cpp",
   "checker/types/ets/floatType.cpp",
   "checker/types/ets/intType.cpp",
   "checker/types/ets/longType.cpp",
   "checker/types/ets/shortType.cpp",
-  "checker/types/ets/wildcardType.cpp",
   "checker/types/globalTypesHolder.cpp",
   "checker/types/signature.cpp",
   "checker/types/ts/anyType.cpp",
@@ -219,17 +219,19 @@ libes2panda_sources = [
   "compiler/lowering/ets/ambientLowering.cpp",
   "compiler/lowering/ets/annotationCopyLowering.cpp",
   "compiler/lowering/ets/annotationCopyPostLowering.cpp",
+  "compiler/lowering/ets/arrayConversionLowering.cpp",
   "compiler/lowering/ets/arrayLiteralLowering.cpp",
   "compiler/lowering/ets/asyncMethodLowering.cpp",
   "compiler/lowering/ets/asyncMethodLoweringStackless.cpp",
+  "compiler/lowering/ets/awaitLowering.cpp",
   "compiler/lowering/ets/bigintLowering.cpp",
   "compiler/lowering/ets/binaryExpressionLowering.cpp",
   "compiler/lowering/ets/boxingForLocals.cpp",
   "compiler/lowering/ets/capturedVariables.cpp",
   "compiler/lowering/ets/cfgBuilderPhase.cpp",
   "compiler/lowering/ets/classFromExpressionLowering.cpp",
-  "compiler/lowering/ets/constantExpressionLowering.cpp",
   "compiler/lowering/ets/conditionalSimplifyLowering.cpp",
+  "compiler/lowering/ets/constantExpressionLowering.cpp",
   "compiler/lowering/ets/declGenPhase.cpp",
   "compiler/lowering/ets/declareOverloadLowering.cpp",
   "compiler/lowering/ets/defaultParametersLowering.cpp",
@@ -244,10 +246,10 @@ libes2panda_sources = [
   "compiler/lowering/ets/fixedarrayLowering.cpp",
   "compiler/lowering/ets/genericBridgesLowering.cpp",
   "compiler/lowering/ets/initModuleLowering.cpp",
-  "compiler/lowering/ets/internalAPICheck.cpp",
   "compiler/lowering/ets/insertOptionalParametersAnnotation.cpp",
   "compiler/lowering/ets/interfaceObjectLiteralLowering.cpp",
   "compiler/lowering/ets/interfacePropertyDeclarations.cpp",
+  "compiler/lowering/ets/internalAPICheck.cpp",
   "compiler/lowering/ets/lambdaLowering.cpp",
   "compiler/lowering/ets/lateInitialization.cpp",
   "compiler/lowering/ets/objectIndexAccess.cpp",
@@ -259,7 +261,6 @@ libes2panda_sources = [
   "compiler/lowering/ets/overloadMappingLowering.cpp",
   "compiler/lowering/ets/overrideBridgesLowering.cpp",
   "compiler/lowering/ets/packageImplicitImport.cpp",
-  "compiler/lowering/ets/arrayConversionLowering.cpp",
   "compiler/lowering/ets/partialExportClassGen.cpp",
   "compiler/lowering/ets/primitiveConversionPhase.cpp",
   "compiler/lowering/ets/promiseVoid.cpp",
@@ -280,7 +281,6 @@ libes2panda_sources = [
   "compiler/lowering/ets/topLevelStmts/topLevelStmts.cpp",
   "compiler/lowering/ets/typeFromLowering.cpp",
   "compiler/lowering/ets/unboxLowering.cpp",
-  "compiler/lowering/ets/awaitLowering.cpp",
   "compiler/lowering/ets/unionLowering.cpp",
   "compiler/lowering/phase.cpp",
   "compiler/lowering/plugin_phase.cpp",
@@ -349,7 +349,6 @@ libes2panda_sources = [
   "ir/ets/etsTypeReference.cpp",
   "ir/ets/etsTypeReferencePart.cpp",
   "ir/ets/etsUnionType.cpp",
-  "ir/ets/etsWildcardType.cpp",
   "ir/expression.cpp",
   "ir/expressions/arrayExpression.cpp",
   "ir/expressions/arrowFunctionExpression.cpp",
@@ -508,8 +507,8 @@ libes2panda_sources = [
   "parser/expressionParser.cpp",
   "parser/expressionTSParser.cpp",
   "parser/parserImpl.cpp",
-  "parser/program/entityNameVisitor.cpp",
   "parser/program/ImportCache.cpp",
+  "parser/program/entityNameVisitor.cpp",
   "parser/program/program.cpp",
   "parser/statementParser.cpp",
   "parser/statementTSParser.cpp",
@@ -777,10 +776,9 @@ HEADERS_TO_BE_PARSED = [
   "ir/expressions/directEvalExpression.h",
   "ir/ts/tsParameterProperty.h",
   "ir/statements/continueStatement.h",
-  "ir/ets/etsWildcardType.h",
   "ir/expressions/literals/undefinedLiteral.h",
   "ir/ts/tsIndexedAccessType.h",
-  "checker/types/ets/wildcardType.h",
+  "checker/types/ets/etsWildcardType.h",
   "checker/types/ts/booleanType.h",
   "ir/expressions/typeofExpression.h",
   "checker/types/ets/etsAsyncFuncReturnType.h",
@@ -1040,10 +1038,10 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/ets/etsNullishTypes.yaml",
   "$LIBGEN_DIR/gen/headers/ir/expressions/typeofExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsEnumMember.yaml",
-  "$LIBGEN_DIR/gen/headers/checker/types/ets/wildcardType.yaml",
   "$LIBGEN_DIR/gen/headers/lexer/regexp/regexp.yaml",
   "$LIBGEN_DIR/gen/headers/ir/statements/switchStatement.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ets/etsBooleanType.yaml",
+  "$LIBGEN_DIR/gen/headers/checker/types/ets/etsWildcardType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/statements/doWhileStatement.yaml",
   "$LIBGEN_DIR/gen/headers/ir/base/catchClause.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ts/constructorType.yaml",
@@ -1064,7 +1062,6 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/ir/typeNode.yaml",
   "$LIBGEN_DIR/gen/headers/ir/expressions/newExpression.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsParameterProperty.yaml",
-  "$LIBGEN_DIR/gen/headers/ir/ets/etsWildcardType.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ets/shortType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsThisType.yaml",
   "$LIBGEN_DIR/gen/headers/varbinder/variable.yaml",
@@ -1226,19 +1223,22 @@ action("es2panda_build_flatc") {
   args = [
     rebase_path("//third_party/flatbuffers"),
     rebase_path("$root_out_dir/third_party/flatbuffers"),
-    rebase_path("//prebuilts/cmake/$_host_platform_dir/bin/cmake")
+    rebase_path("//prebuilts/cmake/$_host_platform_dir/bin/cmake"),
   ]
   outputs = [ "$root_out_dir/third_party/flatbuffers/flatc" ]
 }
 
 action("gen_es2panda_flatbuffers_schema") {
   script = "$root_out_dir/third_party/flatbuffers/flatc"
-  deps = [":es2panda_build_flatc"]
+  deps = [ ":es2panda_build_flatc" ]
   args = [
     "--cpp",
-    "-o", rebase_path("$root_out_dir/third_party/flatbuffers/generated"),
-    "-b", rebase_path("$ark_es2panda_root/compiler/metadata/schema.fbs"),
-    "--filename-suffix", "MetadataGenerated"
+    "-o",
+    rebase_path("$root_out_dir/third_party/flatbuffers/generated"),
+    "-b",
+    rebase_path("$ark_es2panda_root/compiler/metadata/schema.fbs"),
+    "--filename-suffix",
+    "MetadataGenerated",
   ]
   outputs = [ "$root_out_dir/third_party/flatbuffers/generated" ]
 }
@@ -1274,22 +1274,22 @@ template("es2panda_frontend_static") {
     ]
     if (ark_standalone_build || ark_static_standalone_build) {
       deps += [
+        "$ark_third_party_root/flatbuffers:libflatbuffers_static",
         "$ark_third_party_root/icu/icu4c:static_icui18n",
         "$ark_third_party_root/icu/icu4c:static_icuuc",
-        "$ark_third_party_root/flatbuffers:libflatbuffers_static",
       ]
     } else {
       external_deps += [
+        "flatbuffers:libflatbuffers_static",
         "icu:static_icui18n",
         "icu:static_icuuc",
         "runtime_core:assembler_headers",
         "runtime_core:libpandabase_headers",
         "runtime_core:libpandafile_headers",
         "runtime_core:runtime_gen_headers",
-        "flatbuffers:libflatbuffers_static",
       ]
     }
-    deps += [":gen_es2panda_flatbuffers_schema"]
+    deps += [ ":gen_es2panda_flatbuffers_schema" ]
     part_name = "ets_frontend"
     subsystem_name = "arkcompiler"
   }
@@ -1300,16 +1300,12 @@ es2panda_frontend_static("libes2panda_frontend_static") {
 }
 
 es2panda_frontend_static("libes2panda_frontend_static_lsp") {
-  defines = [
-    "ES2PANDA_ENABLE_AST_HISTORY",
-  ]
+  defines = [ "ES2PANDA_ENABLE_AST_HISTORY" ]
 }
 
 ohos_shared_library("libes2panda_public") {
   configs = [ ":libes2panda_config" ]
-  deps = [
-    ":libes2panda_public_frontend_static"
-  ]
+  deps = [ ":libes2panda_public_frontend_static" ]
   if (is_mingw || is_win) {
     output_extension = "dll"
   } else {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -89,7 +89,6 @@
     _(ETS_STRING_LITERAL_TYPE, ETSStringLiteralType)                                      \
     _(ETS_INTRINSIC_NODE_TYPE, ETSIntrinsicNode)                                          \
     _(ETS_FUNCTION_TYPE, ETSFunctionType)                                                 \
-    _(ETS_WILDCARD_TYPE, ETSWildcardType)                                                 \
     _(ETS_GENERIC_INSTANTIATED_NODE, ETSGenericInstantiatedNode)                          \
     _(ETS_PRIMITIVE_TYPE, ETSPrimitiveType)                                               \
     _(ETS_PACKAGE_DECLARATION, ETSPackageDeclaration)                                     \

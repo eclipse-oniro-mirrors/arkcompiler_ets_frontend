@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,7 +67,7 @@ enum class TypeFlag : uint64_t {
     ETS_VOID = 1ULL << 39ULL,                 // ETS void type
     ETS_OBJECT = 1ULL << 40ULL,               // ETS class or interface type
     ETS_ARRAY = 1ULL << 41ULL,                // ETS array type
-    WILDCARD = 1ULL << 42ULL,                 // new A<?>()
+    ETS_WILDCARD = 1ULL << 42ULL,             // ETS internal wildcard type
     ETS_TYPE_PARAMETER = 1ULL << 43ULL,       // ETS type parameter
     GENERIC = 1ULL << 45ULL,                  // ETS Generic
     ETS_NUMERIC_ENUM = 1ULL << 46ULL,         // ETS Enum

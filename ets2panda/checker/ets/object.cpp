@@ -1270,8 +1270,7 @@ void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Sig
 {
     bool throwError = false;
     if (AreOverrideCompatible(this, sigFunc, sig) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
-        SavedTypeRelationFlagsContext const savedFlags(Relation(), Relation()->GetTypeRelationFlags() |
-                                                                       TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+        SavedTypeRelationFlagsContext const savedFlags(Relation(), TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
         // optional property has no ABSTRACT flag, and abstract method may not has GETTER_OR_SETTER flag
         if (sig->HasSignatureFlag(SignatureFlags::ABSTRACT | SignatureFlags::GETTER_OR_SETTER) ||
             sigFunc->HasSignatureFlag(SignatureFlags::ABSTRACT | SignatureFlags::GETTER_OR_SETTER)) {
@@ -3440,6 +3439,11 @@ Type *ETSChecker::GetApparentType(Type *type)
         return cached(GetApparentType(type->AsETSTypeParameter()->GetConstraintType()));
     }
 
+    if (type->IsETSWildcardType()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return cached(GetApparentType(type->AsETSWildcardType()->GetUnderlying()->GetConstraintType()));
+    }
+
     if (type->IsETSTypeAliasType()) {
         //  For the recursive type aliases its target type is not ready at the moment of union type creation
         //  (and assemblyLUB type constructing).
@@ -3456,9 +3460,11 @@ Type *ETSChecker::GetApparentType(Type *type)
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             GetNonNullishType(GetApparentType(type->AsETSNonNullishType()->GetUnderlying()->GetConstraintType())));
     }
+
     if (type->IsETSArrayType()) {
         return cached(type);
     }
+
     if (type->IsETSStringType()) {
         return GlobalBuiltinETSStringType();
     }

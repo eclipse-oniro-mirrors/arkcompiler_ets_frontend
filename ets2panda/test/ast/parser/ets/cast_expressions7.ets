@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,15 +18,16 @@ class B extends A {}
 
 function main(): void {
   let b: B[] = [new B()];
-  let a: A[] = b as A[];
-  let b2: B[] = a as B[];
+  let a: A[] = /* @@ label1 */b as A[];
+  let b2: B[] = /* @@ label2 */a as B[];
 
   let int_a: int[] = [1,2,3];
-  let int_a2 = int_a as int[];
+  let int_a2 = /* @@ label3 */int_a as int[];
 
-  let long_a: long[] = int_a as long[];
+  let long_a: long[] = /* @@ label4 */int_a as long[];
 }
 
-/* @@? 21:16 Error Semantic error ESE0326: Cannot cast type 'Array<B>' to 'Array<A>' */
-/* @@? 22:17 Error Semantic error ESE0326: Cannot cast type 'Array<A>' to 'Array<B>' */
-/* @@? 27:24 Error Semantic error ESE0326: Cannot cast type 'Array<Int>' to 'Array<Long>' */
+/* @@@ label1 Warning Warning W369037: Cast expression `as Array<A>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label2 Warning Warning W369037: Cast expression `as Array<B>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label3 Warning Warning W369037: Cast expression `as Array<Int>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label4 Warning Warning W0326: Attempt to cast the type 'Array<Int>' to 'Array<Long>' can throw 'CastClassError' exception at runtime. */

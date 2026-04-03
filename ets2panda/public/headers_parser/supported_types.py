@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 #
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -82,7 +82,6 @@ ast_nodes_supported = [
     "ETSNullType",
     "ETSUndefinedType",
     "ETSFunctionType",
-    "ETSWildcardType",
     "ETSPrimitiveType",
     "ETSGenericInstantiatedNode",
     "ETSPackageDeclaration",
@@ -234,13 +233,13 @@ all_types_supported = [
     "ETSArrayType",
     "ETSUnionType",
     "NonPrimitiveType",
-    "WildcardType",
     "ETSTypeParameter",
     "ETSNonNullishType",
     "ETSEnumType",
     "ETSStringEnumType",
     "ETSExtensionFuncHelperType",
     "ETSTupleType",
+    "ETSWildcardType",
     "FunctionType",
     "TupleType",
     "ObjectLiteralType",

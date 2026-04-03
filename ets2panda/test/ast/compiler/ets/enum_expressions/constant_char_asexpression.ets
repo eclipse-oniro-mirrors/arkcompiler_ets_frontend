@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,16 +38,19 @@ function main() {
 }
 
 
-
-/* @@? 19:29 Error Semantic error ESE0326: Cannot cast type 'Char' to 'Byte' */
+/* @@? 19:29 Warning Warning W0326: Attempt to cast the type 'Char' to 'Byte' can throw 'CastClassError' exception at runtime. */
 /* @@? 21:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 22:22 Error Semantic error ESE0143: Unresolved reference TestEnum1 */
-/* @@? 24:30 Error Semantic error ESE0326: Cannot cast type 'Char' to 'Short' */
+/* @@? 24:30 Warning Warning W0326: Attempt to cast the type 'Char' to 'Short' can throw 'CastClassError' exception at runtime. */
 /* @@? 26:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 27:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 27:22 Error Semantic error ESE0143: Unresolved reference TestEnum2 */
-/* @@? 29:28 Error Semantic error ESE0326: Cannot cast type 'Char' to 'Int' */
+/* @@? 29:28 Warning Warning W0326: Attempt to cast the type 'Char' to 'Int' can throw 'CastClassError' exception at runtime. */
 /* @@? 31:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 32:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 32:22 Error Semantic error ESE0143: Unresolved reference TestEnum3 */
-/* @@? 34:29 Error Semantic error ESE0326: Cannot cast type 'Char' to 'Long' */
+/* @@? 34:29 Warning Warning W0326: Attempt to cast the type 'Char' to 'Long' can throw 'CastClassError' exception at runtime. */
 /* @@? 36:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 37:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 37:22 Error Semantic error ESE0143: Unresolved reference TestEnum4 */

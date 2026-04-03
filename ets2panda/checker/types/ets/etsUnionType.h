@@ -87,8 +87,7 @@ public:
 
     [[nodiscard]] checker::Type *GetAssignableType(ETSChecker *checker, checker::Type *sourceType,
                                                    std::optional<double> value) const;
-    [[nodiscard]] std::pair<checker::Type *, checker::Type *> GetComplimentaryType(ETSChecker *checker,
-                                                                                   checker::Type *sourceType);
+    [[nodiscard]] std::pair<Type *, Type *> GetComplimentaryType(ETSChecker *checker, Type *sourceType);
     [[nodiscard]] Type *NormalizedType() const
     {
         return normalizedType_;
@@ -105,8 +104,8 @@ private:
 
     template <typename RelFN>
     void RelationTarget(TypeRelation *relation, Type *source, RelFN const &relFn);
-    [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::Type *source,
-                                          std::vector<Type *> &unionTypes) noexcept;
+    static void ExtractTypes(TypeRelation *relation, Type *testedType, std::vector<Type *> &consTypes,
+                             std::vector<Type *> &altTypes) noexcept;
 
     [[nodiscard]] checker::Type *GetAssignableBuiltinType(
         checker::ETSChecker *checker, checker::ETSObjectType *sourceType,
