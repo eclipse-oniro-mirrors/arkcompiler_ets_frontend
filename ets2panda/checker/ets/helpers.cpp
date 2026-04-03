@@ -178,6 +178,10 @@ void ETSChecker::NotResolvedError(ir::Identifier *const ident, const varbinder::
     if (IsVariableStatic(classVar)) {
         LogError(diagnostic::STATIC_PROP_INVALID_CTX, {ident->Name(), classType}, ident->Start());
     } else {
+        if (HasStatus(CheckerStatus::IN_STATIC_CONTEXT)) {
+            LogUnresolvedReferenceError(ident);
+            return;
+        }
         LogError(diagnostic::PROP_ACCESS_WITHOUT_THIS, {ident->Name()}, ident->Start());
     }
 }
