@@ -359,7 +359,7 @@ protected:
     bool InAmbientContext();
 
     ir::MethodDefinition *BuildImplicitConstructor(ir::ClassDefinitionModifiers modifiers,
-                                                   const lexer::SourcePosition &startLoc);
+                                                   const lexer::SourcePosition &startLoc, ir::ModifierFlags flags);
 
     virtual void CreateImplicitConstructor(ir::MethodDefinition *&ctor, ArenaVector<ir::AstNode *> &properties,
                                            ir::ClassDefinitionModifiers modifiers, ir::ModifierFlags flags,

@@ -281,22 +281,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 16,
-                      "column": 17,
-                      "program": "ambient_call_signature.ets"
-                    },
-                    "end": {
-                      "line": 16,
-                      "column": 17,
-                      "program": "ambient_call_signature.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 16,

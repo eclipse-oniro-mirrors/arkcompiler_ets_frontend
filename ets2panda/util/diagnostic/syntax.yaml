@@ -246,10 +246,6 @@ syntax:
   id: 276
   message: "All items of non-Integer enumeration should be explicitly initialized."
 
-- name: ERROR_ARKTS_NO_AMBIENT_DECLS
-  id: 308
-  message: "Ambient module declaration is not supported!"
-
 - name: ERROR_ARKTS_NO_COMMA_OUTSIDE_LOOPS
   id: 133681
   message: "Comma operator is supported only in 'for' loops."
@@ -486,6 +482,11 @@ syntax:
 - name: ILLEGAL_USE_STRICT
   id: 199
   message: "Illegal 'use strict' directive in function with non-simple parameter list."
+
+- name: IMPLEMENTATION_IN_AMBIENT_CONTEXT
+  id: 331
+  message: "Ambient functions, constructors, and methods cannot have bodies. Ambient modules and namespaces can contain only
+    ambient declarations."
 
 - name: IMPLEMENTS_CLAUSE_EMPTY
   id: 185

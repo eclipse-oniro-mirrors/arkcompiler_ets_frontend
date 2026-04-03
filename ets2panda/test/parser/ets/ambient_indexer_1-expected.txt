@@ -69,22 +69,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 16,
-                      "column": 18,
-                      "program": "ambient_indexer_1.ets"
-                    },
-                    "end": {
-                      "line": 16,
-                      "column": 18,
-                      "program": "ambient_indexer_1.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 16,

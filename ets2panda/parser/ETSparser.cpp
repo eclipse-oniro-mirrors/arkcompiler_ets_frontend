@@ -411,6 +411,10 @@ std::tuple<bool, ir::BlockStatement *, lexer::SourcePosition, bool> ETSParser::P
         return {false, nullptr, Lexer()->GetToken().End(), false};
     }
 
+    if (InAmbientContext()) {
+        LogError(diagnostic::IMPLEMENTATION_IN_AMBIENT_CONTEXT, {}, Lexer()->GetToken().Start());
+    }
+
     ir::BlockStatement *body = ParseBlockStatement();
     ES2PANDA_ASSERT(body != nullptr);
 
@@ -2177,7 +2181,7 @@ void ETSParser::CheckDeclare()
     Lexer()->NextToken();  // eat 'declare'
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT && Lexer()->GetToken().Ident().Is("module")) {
-        LogError(diagnostic::ERROR_ARKTS_NO_AMBIENT_DECLS);
+        LogError(diagnostic::IMPLEMENTATION_IN_AMBIENT_CONTEXT);
         return;
     }
 

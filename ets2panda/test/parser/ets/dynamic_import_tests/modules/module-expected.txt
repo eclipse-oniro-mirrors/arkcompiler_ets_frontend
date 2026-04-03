@@ -1982,22 +1982,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 35,
-                      "column": 39,
-                      "program": "module.ets"
-                    },
-                    "end": {
-                      "line": 35,
-                      "column": 39,
-                      "program": "module.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 35,
@@ -2217,22 +2202,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 39,
-                      "column": 25,
-                      "program": "module.ets"
-                    },
-                    "end": {
-                      "line": 39,
-                      "column": 25,
-                      "program": "module.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 39,
@@ -2508,22 +2478,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 45,
-                      "column": 26,
-                      "program": "module.ets"
-                    },
-                    "end": {
-                      "line": 45,
-                      "column": 26,
-                      "program": "module.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 45,
@@ -2814,22 +2769,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 49,
-                      "column": 51,
-                      "program": "module.ets"
-                    },
-                    "end": {
-                      "line": 49,
-                      "column": 51,
-                      "program": "module.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 49,
@@ -3803,22 +3743,7 @@
                 "async": false,
                 "expression": false,
                 "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 59,
-                      "column": 45,
-                      "program": "module.ets"
-                    },
-                    "end": {
-                      "line": 59,
-                      "column": 45,
-                      "program": "module.ets"
-                    }
-                  }
-                },
+                "declare": true,
                 "loc": {
                   "start": {
                     "line": 59,
@@ -5159,22 +5084,7 @@
                       "async": false,
                       "expression": false,
                       "params": [],
-                      "body": {
-                        "type": "BlockStatement",
-                        "statements": [],
-                        "loc": {
-                          "start": {
-                            "line": 56,
-                            "column": 21,
-                            "program": "module.ets"
-                          },
-                          "end": {
-                            "line": 56,
-                            "column": 21,
-                            "program": "module.ets"
-                          }
-                        }
-                      },
+                      "declare": true,
                       "loc": {
                         "start": {
                           "line": 56,
