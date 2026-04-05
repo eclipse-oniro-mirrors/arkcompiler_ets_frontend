@@ -1456,7 +1456,7 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
 checker::Type *ETSChecker::BuildMethodSignature(ir::MethodDefinition *method)
 {
     if (method->TsType() != nullptr) {
-        return method->TsType()->AsETSFunctionType();
+        return method->TsType();
     }
     auto *methodId = method->Id();
     ES2PANDA_ASSERT(methodId != nullptr);

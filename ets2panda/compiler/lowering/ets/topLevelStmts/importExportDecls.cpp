@@ -19,6 +19,19 @@
 
 namespace ark::es2panda::compiler {
 
+static std::string GetArkruntimeImports()
+{
+    static std::array IMPORTED_NAMES = {Signatures::BUILTIN_ASYNCCONTEXT_CLASS, std::string_view("stub")};
+
+    std::string importString = "import {";
+    for (const auto &name : IMPORTED_NAMES) {
+        importString +=
+            std::string(name) + " as " + std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + std::string(name) + ", ";
+    }
+    importString += "} from \'arkruntime\';";
+    return importString;
+}
+
 void ImportExportDecls::IntroduceStdlibImportProgram()
 {
     std::string importStdlibFile;
@@ -41,9 +54,7 @@ void ImportExportDecls::IntroduceStdlibImportProgram()
              * When both these blockers are resolved, this line should be reworked to the
              * importStdlibFile += "import * as %%arkruntime%% from \'arkruntime\';";
              */
-            importStdlibFile += "import {" + std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS) + " as " +
-                                std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) +
-                                std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS) + "} from \'arkruntime\';";
+            importStdlibFile += GetArkruntimeImports();
             continue;
         }
         importStdlibFile += "import * from \"" + path + "\";";

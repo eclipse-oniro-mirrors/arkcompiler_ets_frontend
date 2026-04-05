@@ -84,7 +84,7 @@ TEST_F(RestParameterTest, function_without_rest_parameters_1)
         function fn(args: FixedArray<int>): void {
         }
     )");
-    CheckNoRestParameterFlag("dummy.ETSGLOBAL.fn:i32[];void;", true);
+    CheckNoRestParameterFlag("dummy.ETSGLOBAL.fn:std.core.Int[];void;", true);
 }
 
 TEST_F(RestParameterTest, function_without_rest_parameters_2)
@@ -111,7 +111,7 @@ TEST_F(RestParameterTest, function_with_rest_parameter_1)
         function fn(o: Object, ...args: FixedArray<int>): void {
         }
     )");
-    CheckRestParameterFlag("dummy.ETSGLOBAL.fn:std.core.Object;i32[];void;", true);
+    CheckRestParameterFlag("dummy.ETSGLOBAL.fn:std.core.Object;std.core.Int[];void;", true);
 }
 
 // === Method of class ===
@@ -142,7 +142,7 @@ TEST_F(RestParameterTest, class_method_with_rest_parameters_0)
             fn(...args: FixedArray<int>) {};
         }
     )");
-    CheckRestParameterFlag("dummy.A.fn:i32[];void;", false);
+    CheckRestParameterFlag("dummy.A.fn:std.core.Int[];void;", false);
 }
 
 // === Static method of class ===
@@ -173,7 +173,7 @@ TEST_F(RestParameterTest, static_class_method_with_rest_parameters_0)
             static fn(...args: FixedArray<int>) {};
         }
     )");
-    CheckRestParameterFlag("dummy.A.fn:i32[];void;", true);
+    CheckRestParameterFlag("dummy.A.fn:std.core.Int[];void;", true);
 }
 
 TEST_F(RestParameterTest, static_class_method_with_rest_parameters_1)
@@ -183,7 +183,7 @@ TEST_F(RestParameterTest, static_class_method_with_rest_parameters_1)
             static fn(a: FixedArray<String>, ...args: FixedArray<int>) {};
         }
     )");
-    CheckRestParameterFlag("dummy.A.fn:std.core.String[];i32[];void;", true);
+    CheckRestParameterFlag("dummy.A.fn:std.core.String[];std.core.Int[];void;", true);
 }
 
 // === Constructor of class ===
@@ -214,7 +214,7 @@ TEST_F(RestParameterTest, class_constructor_with_rest_parameters_0)
             constructor(...args: FixedArray<int>) {};
         }
     )");
-    CheckRestParameterFlag("dummy.A.<ctor>:i32[];void;", false);
+    CheckRestParameterFlag("dummy.A.<ctor>:std.core.Int[];void;", false);
 }
 
 TEST_F(RestParameterTest, class_constructor_with_rest_parameters_1)
@@ -286,7 +286,7 @@ TEST_F(RestParameterTest, lambda_without_rest_parameters_1)
             return 1;
         }
     )");
-    CheckNoRestParameterFlag("dummy.ETSGLOBAL.lambda_invoke-0:i64[];i32;", true);
+    CheckNoRestParameterFlag("dummy.ETSGLOBAL.lambda_invoke-0:std.core.Long[];i32;", true);
 }
 
 // === Abstract method of abstract class ===

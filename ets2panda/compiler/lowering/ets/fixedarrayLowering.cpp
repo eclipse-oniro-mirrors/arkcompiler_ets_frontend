@@ -51,8 +51,7 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
     auto nodeParent = node->Parent();
     auto *genSymArray = Gensym(allocator);
     ir::Expression *idx = Gensym(allocator);
-    auto *elemtype = arrayInstance->TsType()->AsETSArrayType()->ElementType();
-    bool isPrimitiveType = checker->MaybeUnboxType(elemtype)->IsETSPrimitiveType();
+    bool isPrimitiveType = arrayInstance->TsType()->AsETSArrayType()->IsValueArray();
 
     std::vector<ir::AstNode *> newStmts;
     std::stringstream sourceCode;

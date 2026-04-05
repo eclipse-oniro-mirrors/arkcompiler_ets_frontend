@@ -141,6 +141,9 @@ static checker::Type *HandleArrayType(checker::ETSChecker *checker, ETSTypeRefer
     }
 
     checker::Type *elementType = typeParams->Params()[0]->GetType(checker);
+    if (!isValueArray) {
+        elementType = checker->MaybeBoxType(elementType);
+    }
 
     if (isValueArray && !checker->MaybeUnboxType(elementType)->IsETSPrimitiveType()) {
         checker->LogError(diagnostic::VALUE_ARRAY_PRIMITIVE_REQUIRED, {}, ref->Start());

@@ -191,7 +191,7 @@ TEST_F(UnionAsmTest, union_test_arrays)
         "{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.C}[],{Udummy.B,dummy.D}[],{Udummy.C,dummy.D}[]}",
         "{U{Udummy.A,dummy.D}[],{Udummy.B,dummy.D}[]}",
         "{U{Udummy.B,dummy.C}[],{Udummy.C,dummy.D}[]}",
-        "{Uf64[],i64[],{Uf64[],i32[]}[]}",
+        "{Ustd.core.Double[],std.core.Long[],{Ustd.core.Double[],std.core.Int[]}[]}",
         "{Ustd.core.Double,std.core.Long,{Ustd.core.Double,std.core.Int}[]}",
     });
 }

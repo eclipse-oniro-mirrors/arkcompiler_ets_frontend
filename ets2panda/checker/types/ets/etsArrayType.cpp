@@ -17,6 +17,8 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
+#include "compiler/lowering/phase.h"
+#include "public/public.h"
 
 namespace ark::es2panda::checker {
 void ETSArrayType::ToString(std::stringstream &ss, bool precise) const
@@ -36,14 +38,20 @@ void ETSArrayType::ToString(std::stringstream &ss, bool precise) const
     ss << ">";
 }
 
+static Type const *AssemblyElementType(ETSArrayType const *type)
+{
+    auto checker = compiler::GetPhaseManager()->Context()->GetChecker()->AsETSChecker();
+    return type->IsValueArray() ? checker->MaybeUnboxType(type->ElementType()) : type->ElementType();
+}
+
 void ETSArrayType::ToAssemblerType(std::stringstream &ss) const
 {
-    element_->ToAssemblerType(ss);
+    AssemblyElementType(this)->ToAssemblerType(ss);
 }
 
 void ETSArrayType::ToAssemblerTypeWithRank(std::stringstream &ss) const
 {
-    element_->ToAssemblerType(ss);
+    AssemblyElementType(this)->ToAssemblerType(ss);
 
     for (uint32_t i = Rank(); i > 0; --i) {
         ss << "[]";
@@ -53,7 +61,7 @@ void ETSArrayType::ToAssemblerTypeWithRank(std::stringstream &ss) const
 void ETSArrayType::ToDebugInfoType(std::stringstream &ss) const
 {
     ss << "[";
-    element_->ToDebugInfoType(ss);
+    AssemblyElementType(this)->ToDebugInfoType(ss);
 }
 
 uint32_t ETSArrayType::Rank() const
@@ -71,6 +79,10 @@ uint32_t ETSArrayType::Rank() const
 void ETSArrayType::Identical(TypeRelation *relation, Type *other)
 {
     if (other->IsETSArrayType()) {
+        if (IsValueArray() != other->AsETSArrayType()->IsValueArray()) {
+            relation->Result(false);
+            return;
+        }
         relation->IsIdenticalTo(element_, other->AsETSArrayType()->ElementType());
     }
 }

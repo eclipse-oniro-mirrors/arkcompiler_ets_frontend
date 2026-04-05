@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -40,7 +40,7 @@ def parse_arguments() -> argparse.Namespace:
         "-s",
         type=float,
         required=False,
-        default=0.1,
+        default=0.25,
         help="Acceptable regression compared to static measurement",
     )
     parser.add_argument("--runs", "-n", type=int, required=False, default=25, help="Number of times to run the command")

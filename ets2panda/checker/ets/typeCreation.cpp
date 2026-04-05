@@ -130,8 +130,6 @@ ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isValueArra
     auto *arrayType = ProgramAllocator()->New<ETSArrayType>(elementType, isValueArray);
 
     ES2PANDA_ASSERT(arrayType != nullptr);
-    std::stringstream ss;
-    arrayType->ToAssemblerTypeWithRank(ss);
 
     auto it = arrayTypes_.insert({{elementType, isValueArray}, arrayType});
     if (it.second && (!elementType->IsTypeParameter() || !elementType->IsETSTypeParameter())) {
