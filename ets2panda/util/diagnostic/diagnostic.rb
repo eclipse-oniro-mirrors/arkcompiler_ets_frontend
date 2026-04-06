@@ -32,6 +32,11 @@ module Diagnostic
     Kernel.exit 1
   end
 
+  def regex_error(msg)
+    warn "Regex Error: #{msg}"
+    Kernel.exit 1
+  end
+
   def configuration_error(msg)
     warn "Configuration Error: #{msg}"
     Kernel.exit 1
@@ -55,6 +60,7 @@ module Diagnostic
   end
 
   def try_parse_lists(data)
+    verify_lists(data)
     if data.respond_to?(:exclusionlist)
       blacklists_data = data.delete_field(:exclusionlist)
       if blacklists_data
@@ -75,6 +81,40 @@ module Diagnostic
       return true
     end
     return false
+  end
+
+  def validate_path_pattern!(path, context)
+    allowed = 'a-zA-Z0-9_\\-./\\\\*+?\\[\\]()@'
+    regex = /\A\.\*\/[#{allowed}]+(?:\.[*]|(?:\\.[a-zA-Z]+)+)\z/
+
+    unless path.match?(regex)
+      if !path.start_with?('.*/')
+        regex_error("Path '#{path}' in #{context} must start with '.*/'")
+      elsif !path.end_with?('.*') && !path.match?(/(\\.[a-zA-Z]+)+$/)
+        regex_error("Path '#{path}' in #{context} must end with '.*' or '\\.[a-z]+(\\.[a-z]+)*'")
+      else
+        regex_error("Path '#{path}' in #{context} contains forbidden characters.
+                     Allowed: a-z, A-Z, 0-9, _, -, ., /, \\, *, +, ?, [, ], (, ), @")
+      end
+    end
+  end
+
+  def verify_lists(data)
+    return unless data.respond_to?(:exclusionlist) || data.respond_to?(:whitelist)
+
+    list = data.respond_to?(:exclusionlist) ? data.exclusionlist : data.whitelist
+    list_name = data.respond_to?(:exclusionlist) ? 'exclusionlist' : 'whitelist'
+
+    names = Set.new
+    list.each do |item|
+      configuration_error("Duplicate name '#{item.name}' in #{list_name}") if names.include?(item.name)
+      names.add(item.name)
+
+      next unless item.paths
+      item.paths.each do |path|
+        validate_path_pattern!(path, "#{list_name} '#{item.name}'")
+      end
+    end
   end
 
   def set_lists(diagnostic, diagnostic_type)

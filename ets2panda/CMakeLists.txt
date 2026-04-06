@@ -193,10 +193,14 @@ set(DIAGNOSTIC_DIR
    ${CMAKE_CURRENT_SOURCE_DIR}/util/diagnostic/
 )
 
+set(WARNING_LISTS_DIR
+   ${CMAKE_CURRENT_SOURCE_DIR}/util/diagnostic/warnings-lists
+)
+
 panda_gen(
     DATA
-        ${DIAGNOSTIC_DIR}/exclusionlist.yaml
-        ${DIAGNOSTIC_DIR}/whitelist.yaml
+        ${WARNING_LISTS_DIR}/exclusionlist.yaml
+        ${WARNING_LISTS_DIR}/whitelist.yaml
         ${DIAGNOSTIC_DIR}/syntax.yaml
         ${DIAGNOSTIC_DIR}/semantic.yaml
         ${DIAGNOSTIC_DIR}/warning.yaml
