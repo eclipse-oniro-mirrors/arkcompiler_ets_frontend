@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -269,16 +269,13 @@ void UnboxingWideningPrimitive(TypeRelation *const relation, ETSObjectType *cons
 
 void NarrowingReferenceUnboxing(TypeRelation *const relation, ETSObjectType *const source, Type *const target)
 {
-    auto *const boxedTarget = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(target);
-    if (boxedTarget == nullptr) {
-        return;
-    }
-    ES2PANDA_ASSERT(boxedTarget != nullptr);
-    NarrowingReference(relation, source, boxedTarget->AsETSObjectType());
+    ES2PANDA_ASSERT(target->IsETSObjectType());
+    auto *const targetObj = target->AsETSObjectType();
+    NarrowingReference(relation, source, targetObj);
     if (!relation->IsTrue()) {
         return;
     }
-    Unboxing(relation, boxedTarget->AsETSObjectType());
+    Unboxing(relation, targetObj);
 }
 
 void BoxingWideningReference(TypeRelation *const relation, Type *const source, ETSObjectType *const target)

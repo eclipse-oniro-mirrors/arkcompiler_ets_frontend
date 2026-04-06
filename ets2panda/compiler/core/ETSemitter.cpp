@@ -1074,10 +1074,11 @@ static pandasm::AnnotationElement ChooseETSEnumType(const ir::Expression *initVa
     return pandasm::AnnotationElement {propName, std::move(numericEnumValue)};
 }
 
-static pandasm::AnnotationElement ProcessETSEnumType(const ir::ClassProperty *prop, const ir::Expression *init,
-                                                     const checker::Type *type)
+static pandasm::AnnotationElement ProcessETSEnumType(public_lib::Context const *ctx, const ir::ClassProperty *prop,
+                                                     const ir::Expression *init, const checker::Type *type)
 {
     ES2PANDA_ASSERT(init->AsMemberExpression()->PropVar() != nullptr);
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto propName = prop->Id()->Name().Mutf8();
     auto declNode = init->AsMemberExpression()->PropVar()->Declaration()->Node();
     auto *initValue = declNode->AsClassProperty()->OriginEnumMember()->Init();
@@ -1085,7 +1086,7 @@ static pandasm::AnnotationElement ProcessETSEnumType(const ir::ClassProperty *pr
         if (type->AsETSNumericEnumType()->EnumAnnotedType() != nullptr) {
             return ChooseETSEnumType(initValue, type, propName);
         }
-        if (type->AsETSNumericEnumType()->NonAnnotedHasDouble()) {
+        if (type->AsETSNumericEnumType()->NonAnnotedHasDouble(checker)) {
             auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
             auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
             return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
@@ -1108,7 +1109,7 @@ pandasm::AnnotationElement ETSEmitter::GenCustomAnnotationElement(const ir::Clas
         return ProcessArrayType(prop, baseName, init);
     }
     if (type->IsETSEnumType()) {
-        return ProcessETSEnumType(prop, init, type);
+        return ProcessETSEnumType(Context(), prop, init, type);
     }
     if (init->IsLiteral()) {
         auto typeKind = checker::ETSChecker::TypeKind(type);

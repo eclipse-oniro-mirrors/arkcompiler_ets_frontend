@@ -79,20 +79,6 @@ bool ETSChecker::IsOverloadDeclaration(ir::Expression *expr)
     return false;
 }
 
-static Type *MaybeBoxedType(ETSChecker *checker, Type *type, ir::Expression *expr)
-{
-    ES2PANDA_ASSERT(type != nullptr);
-    if (!type->IsETSPrimitiveType()) {
-        return type;
-    }
-    auto *relation = checker->Relation();
-    auto *oldNode = relation->GetNode();
-    relation->SetNode(expr);
-    auto *res = checker->MaybeBoxInRelation(type);
-    relation->SetNode(oldNode);
-    return res;
-}
-
 static Type *GetParamTypeForArgument(Signature const *signature, ETSChecker *checker, const SignatureInfo *sigInfo,
                                      size_t argIndex)
 {
@@ -291,7 +277,7 @@ static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChec
     ArenaVector<Type *> instArgs {checker->Allocator()->Adapter()};
 
     for (size_t ix = 0; ix < params.size(); ++ix) {
-        instArgs.push_back(MaybeBoxedType(checker, params[ix]->GetType(checker), params[ix]));
+        instArgs.push_back(params[ix]->GetType(checker));
         if (ix < sigParams.size()) {
             checker->EmplaceSubstituted(&constraintsSubstitution, sigParams[ix]->AsETSTypeParameter(), instArgs[ix]);
         }
@@ -993,9 +979,6 @@ static bool IsValidRestArgument(ETSChecker *checker, ir::Expression *const argum
     const auto argumentType = argument->Check(checker);
 
     auto targetType = checker->GetElementTypeOfArray(restParamType);
-    if (substitutedSig->OwnerVar() == nullptr) {
-        targetType = checker->MaybeBoxType(targetType);
-    }
     auto const invocationCtx = checker::InvocationContext(
         checker->Relation(), argument, argumentType, targetType, argument->Start(),
         {{diagnostic::REST_PARAM_INCOMPAT_AT, {argumentType, targetType, index + 1}}}, flags);
@@ -1017,9 +1000,6 @@ static bool SetPreferredTypeForArrayArgument(ETSChecker *checker, ir::ArrayExpre
         return true;
     }
     auto targetType = checker->GetElementTypeOfArray(restVarType);
-    if (substitutedSig->OwnerVar() == nullptr) {
-        targetType = checker->MaybeBoxType(targetType);
-    }
     // Validate tuple size before setting preferred type
     if (targetType->IsETSTupleType()) {
         auto *tupleType = targetType->AsETSTupleType();

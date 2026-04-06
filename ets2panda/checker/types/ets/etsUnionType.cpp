@@ -216,6 +216,8 @@ void ETSUnionType::RelationTarget(TypeRelation *relation, Type *source, RelFN co
         return;
     }
 
+    // The remainder only makes sense as part of computation in IsLegalBoxedPrimitiveConversion.
+
     bool related = false;
     for (auto *ct : ConstituentTypes()) {
         if (relFn(relation, source, checker->MaybeUnboxType(ct))) {

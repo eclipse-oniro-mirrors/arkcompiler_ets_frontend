@@ -1247,7 +1247,7 @@ static std::tuple<Type *, Type *> ResolveCheckBinaryOperatorForBigInt(ETSChecker
         case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
         case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
         case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
-            return {checker->GlobalETSBooleanType(), checker->GlobalETSBooleanType()};
+            return {checker->GlobalETSBooleanBuiltinType(), checker->GlobalETSBooleanBuiltinType()};
         default:
             return {leftType, rightType};
     }

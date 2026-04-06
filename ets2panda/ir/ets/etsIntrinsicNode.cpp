@@ -96,7 +96,11 @@ protected:
         bool hasError = false;
         for (size_t idx = 0; idx < intrin->Arguments().size(); ++idx) {
             auto &arg = intrin->Arguments()[idx];
-            arg->SetPreferredType(ExpectedTypeAt(checker, idx));
+            auto expectedType = ExpectedTypeAt(checker, idx);
+            if (expectedType != nullptr) {
+                expectedType = checker->MaybeBoxType(expectedType);
+            }
+            arg->SetPreferredType(expectedType);
             hasError |= arg->Check(checker)->IsTypeError();
         }
         return !hasError;

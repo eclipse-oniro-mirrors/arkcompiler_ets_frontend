@@ -29,10 +29,6 @@ static ir::ClassProperty *TransformerClassProperty(public_lib::Context *ctx, ir:
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
     auto allocator = ctx->allocator;
-    // Note: This code will be excluded after primitive type refactoring
-    if (property->TsType()->IsETSPrimitiveType()) {
-        return property;
-    }
 
     auto annotationType = checker->CreateETSUnionType({property->TsType(), checker->GlobalETSUndefinedType()});
     auto typeAnnotation = allocator->New<ir::OpaqueTypeNode>(annotationType, allocator);
@@ -53,17 +49,12 @@ static ir::AstNode *TransformerMemberExpression(ir::MemberExpression *memberExpr
     auto varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
     auto allocator = ctx->Allocator();
     auto originalType = memberExpr->TsType();
-    // Note: This code will be excluded after primitive type refactoring
-    if (originalType->IsETSPrimitiveType()) {
-        return memberExpr;
-    }
 
     auto parent = memberExpr->Parent();
     if (parent->IsAssignmentExpression() && parent->AsAssignmentExpression()->Left() == memberExpr &&
         parent->AsAssignmentExpression()->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-        auto maybeBoxType = checker->MaybeBoxType(originalType);
-        memberExpr->SetTsType(maybeBoxType);
-        parent->AsAssignmentExpression()->SetTsType(maybeBoxType);
+        memberExpr->SetTsType(originalType);
+        parent->AsAssignmentExpression()->SetTsType(originalType);
         return memberExpr;
     }
 

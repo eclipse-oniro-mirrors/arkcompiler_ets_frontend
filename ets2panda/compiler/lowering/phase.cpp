@@ -45,6 +45,7 @@
 #include "compiler/lowering/ets/genericBridgesLowering.h"
 #include "compiler/lowering/ets/initModuleLowering.h"
 #include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
+#include "compiler/lowering/ets/instantiateMethodsPhase.h"
 #include "compiler/lowering/ets/interfaceObjectLiteralLowering.h"
 #include "compiler/lowering/ets/interfacePropertyDeclarations.h"
 #include "compiler/lowering/ets/lambdaLowering.h"
@@ -180,6 +181,7 @@ std::vector<Phase *> GetETSPhaseList()
         new TypeFromLowering,
         new ClassFromExpressionLowering,
         new PrimitiveConversionPhase,
+        new InstantiateMethodsPhase,
         new UnboxPhase,
         // pluginsAfterLowerings has to come at the very end, nothing should go after it
         new PluginPhase{g_pluginsAfterLowering, ES2PANDA_STATE_LOWERED,

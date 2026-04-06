@@ -405,8 +405,8 @@ static bool CanSkipRestArgsLowering(checker::ETSChecker *checker, const checker:
                                     checker::Type *restParamType, const ArenaVector<ir::Expression *> &copiedArguments,
                                     bool isArrowType)
 {
-    auto isElementTypePrimitive =
-        checker->MaybeUnboxType(checker->GetElementTypeOfArray(restParamType))->IsETSPrimitiveType();
+    auto *elementType = checker->GetElementTypeOfArray(restParamType);
+    auto isElementTypePrimitive = elementType->IsETSObjectType() && elementType->AsETSObjectType()->IsBoxedPrimitive();
     bool hasSpreadArg = std::any_of(copiedArguments.begin(), copiedArguments.end(),
                                     [](ir::Expression *arg) { return arg->IsSpreadElement(); });
     bool hasOnlyOneSpreadArg = hasSpreadArg && copiedArguments.size() == 1;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,24 +13,23 @@
  * limitations under the License.
  */
 
-class Fgr {
-    readonly static BR = 97
-}
+#ifndef ES2PANDA_COMPILER_LOWERING_INSTANTIATE_METHODS_PHASE_H
+#define ES2PANDA_COMPILER_LOWERING_INSTANTIATE_METHODS_PHASE_H
 
-class Sqr {
-    readonly static BR = c'a'
-}
+#include "compiler/lowering/phase.h"
 
-function main() {
-    let a = c'a'
-    switch (a) {
-        /* @@ label */case Fgr.BR:
-         break;
-        case Sqr.BR:
-        break;
-        default: break;
+namespace ark::es2panda::compiler {
+
+class InstantiateMethodsPhase : public PhaseForProgramsToBeEmitted {
+public:
+    std::string_view Name() const override
+    {
+        return "InstantiateMethods";
     }
-}
 
+    bool PerformForProgram(parser::Program *program) override;
+};
 
-/* @@? 27:28 Error Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Char' */
+}  // namespace ark::es2panda::compiler
+
+#endif

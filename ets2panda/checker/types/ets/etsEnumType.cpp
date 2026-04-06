@@ -31,9 +31,9 @@ void ETSEnumType::SetEnumType(ir::TypeNode *typeNode, ETSChecker *checker) noexc
     enumType_ = typeNode->GetType(checker);
 }
 
-Type *ETSEnumType::GetBaseEnumElementType(ETSChecker *checker)
+Type *ETSEnumType::Underlying() const
 {
-    return checker->MaybeUnboxType(SuperType()->TypeArguments()[0]);
+    return SuperType()->TypeArguments()[0];
 }
 
 static void SetGenerateValueOfFlag(TypeRelation *relation)
@@ -130,7 +130,7 @@ bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
             if (EnumAnnotedType() != nullptr) {
                 elementType = EnumAnnotedType()->AsETSObjectType();
             } else {
-                elementType = checker->MaybeBoxType(GetBaseEnumElementType(checker));
+                elementType = Underlying();
             }
             elementType->AssignmentSource(relation, target);
             if (!relation->IsTrue()) {
@@ -197,4 +197,10 @@ void ETSNumericEnumType::CastTarget(TypeRelation *relation, Type *source)
     return checker->GlobalIntBuiltinType() != nullptr;
 }
 
+[[nodiscard]] bool ETSNumericEnumType::NonAnnotedHasDouble(ETSChecker *checker) const
+{
+    ES2PANDA_ASSERT(EnumAnnotedType() == nullptr);
+    auto underlyingUnboxed = checker->MaybeUnboxType(Underlying());
+    return underlyingUnboxed->IsDoubleType() || underlyingUnboxed->IsFloatType();
+}
 }  // namespace ark::es2panda::checker

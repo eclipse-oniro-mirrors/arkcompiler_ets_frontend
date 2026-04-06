@@ -99,9 +99,6 @@ void ETSArrayType::AssignmentTarget(TypeRelation *relation, Type *source)
             relation->Result(false);
             return;
         }
-        if (ElementType()->IsETSPrimitiveOrEnumType() || sourceArray->ElementType()->IsETSPrimitiveOrEnumType()) {
-            return;
-        }
         if (IsValueArray()) {
             relation->IsIdenticalTo(element_, sourceArray->ElementType());
         } else {

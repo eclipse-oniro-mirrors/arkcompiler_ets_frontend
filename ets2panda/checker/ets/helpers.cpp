@@ -451,7 +451,7 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
 
     if (type != nullptr && type->IsETSNumericEnumType()) {
         expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-        unboxedType = type->AsETSEnumType()->GetBaseEnumElementType(this);
+        unboxedType = MaybeUnboxType(type->AsETSEnumType()->Underlying());
     }
 
     if (unboxedType == nullptr) {
@@ -484,19 +484,6 @@ bool ETSChecker::IsNullLikeOrVoidExpression(const ir::Expression *expr) const
 {
     // NOTE(vpukhov): #19701 void refactoring
     return expr->TsType()->DefinitelyETSNullish() || expr->TsType()->IsETSVoidType();
-}
-
-std::tuple<bool, bool> ETSChecker::IsResolvedAndValue(const ir::Expression *expr, Type *type) const
-{
-    auto [isResolve, isValue] =
-        IsNullLikeOrVoidExpression(expr) ? std::make_tuple(true, false) : IsConstantTestValue(expr);
-
-    const Type *tsType = expr->TsType();
-    if (tsType->DefinitelyNotETSNullish() && !type->IsETSPrimitiveOrEnumType()) {
-        isResolve = true;
-        isValue = true;
-    }
-    return std::make_tuple(isResolve, isValue);
 }
 
 Type *ETSChecker::HandleBooleanLogicalOperators(Type *leftType, Type *rightType, lexer::TokenType tokenType)
@@ -544,8 +531,8 @@ void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, chec
     signature->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
 
     auto *funcReturnType = signature->ReturnType();
-    if (funcReturnType->IsETSPrimitiveOrEnumType() && argumentType->IsETSPrimitiveOrEnumType()) {
-        // function return type is of primitive type (including enums):
+    if (funcReturnType->IsETSEnumType() && argumentType->IsETSEnumType()) {
+        // function return type is of enum type:
         Relation()->SetFlags(checker::TypeRelationFlag::DIRECT_RETURN |
                              checker::TypeRelationFlag::IN_ASSIGNMENT_CONTEXT |
                              checker::TypeRelationFlag::ASSIGNMENT_CONTEXT);
@@ -558,24 +545,6 @@ void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, chec
     } else if (funcReturnType->IsETSReferenceType() || argumentType->IsETSReferenceType()) {
         // function return type should be of reference (object) type
         Relation()->SetFlags(checker::TypeRelationFlag::NONE);
-
-        if (!argumentType->IsETSReferenceType()) {
-            argumentType = MaybeBoxInRelation(argumentType);
-            if (argumentType == nullptr) {
-                LogError(diagnostic::INVALID_EXPR_IN_RETURN, {}, st->Argument()->Start());
-            }
-        }
-
-        if (!funcReturnType->IsETSReferenceType()) {
-            funcReturnType = MaybeBoxInRelation(funcReturnType);
-            if (funcReturnType == nullptr) {
-                LogError(diagnostic::INVALID_RETURN_FUNC_EXPR, {}, st->Start());
-            }
-        }
-
-        if (argumentType == nullptr || funcReturnType == nullptr) {
-            return;
-        }
 
         if (IsPromiseType(funcReturnType)) {
             ES2PANDA_ASSERT(containingFunc->IsAsyncFunc());
@@ -939,17 +908,6 @@ static bool NeedWidening(ir::Expression *e)
     return e->IsConditionalExpression() || e->IsLiteral() || isConstInit || e->IsTemplateLiteral();
 }
 
-// Isolated until 'constant' types are tracked in some cases
-static bool ShouldPreserveConstantTypeInVariableDeclaration(Type *annotation, Type *init)
-{
-    auto const isNumericWithConstTracking = [](Type *type) {
-        return type->HasTypeFlag(TypeFlag::ETS_NUMERIC) || type->IsCharType();
-    };
-
-    return ((isNumericWithConstTracking(init) && isNumericWithConstTracking(annotation)) ||
-            (init->IsETSStringType() && annotation->IsETSStringType()));
-}
-
 static void CheckAssignForDeclare(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                                   ir::ModifierFlags const flags, ETSChecker *check)
 {
@@ -1115,10 +1073,6 @@ checker::Type *ETSChecker::CheckVariableDeclaration(ir::Identifier *ident, ir::T
                 return GlobalTypeError();
             }
         }
-
-        if (IsOmitConstInit(flags) && ShouldPreserveConstantTypeInVariableDeclaration(annotationType, initType)) {
-            VariableTypeFromInitializer(bindingVar, MaybeUnboxType(annotationType), initType);
-        }
     } else {
         CheckEnumType(init, initType, ident->Name());
 
@@ -1128,22 +1082,6 @@ checker::Type *ETSChecker::CheckVariableDeclaration(ir::Identifier *ident, ir::T
     }
 
     return FixOptionalVariableType(bindingVar, flags);
-}
-
-void ETSChecker::VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType)
-{
-    if (!initType->IsConstantType()) {
-        return;
-    }
-
-    if (!initType->IsETSPrimitiveType()) {
-        variable->SetTsType(initType);
-        return;
-    }
-
-    ES2PANDA_ASSERT(annotationType->IsETSPrimitiveType());
-    //  We suppose here that all required checks were passed and correct conversion is possible without accuracy loss
-    variable->SetTsType(TypeConverter::ConvertConstantTypes(initType, annotationType, ProgramAllocator()));
 }
 
 static checker::Type *ResolveGetter(checker::ETSChecker *checker, ir::MemberExpression *const expr,
@@ -2170,7 +2108,7 @@ Type *ETSChecker::HandleStringConcatenation(Type *leftType, Type *rightType)
 
     if (!leftType->HasTypeFlag(checker::TypeFlag::CONSTANT) || !rightType->HasTypeFlag(checker::TypeFlag::CONSTANT) ||
         leftType->IsETSBigIntType() || rightType->IsETSBigIntType()) {
-        return GlobalETSStringLiteralType();
+        return GlobalBuiltinETSStringType();
     }
 
     util::UString concatenated(ProgramAllocator());
@@ -2306,7 +2244,7 @@ varbinder::VariableFlags ETSChecker::GetAccessFlagFromNode(const ir::AstNode *no
 Type *ETSChecker::CheckSwitchDiscriminant(ir::Expression *discriminant)
 {
     Type *discriminantType = discriminant->Check(this);
-    discriminantType = GetNonConstantType(MaybeUnboxType(discriminantType));
+    discriminantType = GetNonConstantType(discriminantType);
     ES2PANDA_ASSERT(discriminantType != nullptr);
 
     return discriminantType;
@@ -2649,8 +2587,7 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunction
 {
     if (lambda->ReturnTypeAnnotation() == nullptr) {
         Type *inferredReturnType = calleeType->ReturnType()->GetType(this);
-        bool isPrimitive = inferredReturnType != nullptr && inferredReturnType->IsETSPrimitiveType();
-        if (!isPrimitive && maybeSubstitutedFunctionSig != nullptr) {
+        if (maybeSubstitutedFunctionSig != nullptr) {
             inferredReturnType = maybeSubstitutedFunctionSig->ReturnType();
         }
         lambda->SetPreferredReturnType(inferredReturnType);
@@ -2672,8 +2609,7 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunction
 
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         Type *inferredType = calleeType->Params()[i]->AsETSParameterExpression()->TypeAnnotation()->Check(this);
-        bool isPrimitive = inferredType != nullptr && inferredType->IsETSPrimitiveType();
-        if (!isPrimitive && maybeSubstitutedFunctionSig != nullptr) {
+        if (maybeSubstitutedFunctionSig != nullptr) {
             auto sigParamSize = maybeSubstitutedFunctionSig->Params().size();
             ES2PANDA_ASSERT(
                 sigParamSize == calleeType->Params().size() ||

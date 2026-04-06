@@ -1016,8 +1016,7 @@ static ArenaVector<ir::Expression *> CreateCallArgumentsForLambdaClassInvokeN(pu
         const auto *lambdaParam = lciInfo->lambdaSignature->Params().at(idx);
         auto argName = lciInfo->restParameterIdentifier;
         auto *type = lambdaParam->TsType()->Substitute(checker->Relation(), lciInfo->substitution);
-        auto *arg = parser->CreateFormattedExpression("@@I1[" + std::to_string(idx) + "] as @@T2 as @@T3", argName,
-                                                      checker->MaybeBoxType(type), type);
+        auto *arg = parser->CreateFormattedExpression("@@I1[" + std::to_string(idx) + "] as @@T2", argName, type);
         callArguments.push_back(arg);
     }
 
@@ -1158,10 +1157,9 @@ static void AddRestParameterDestructuringToInvokeBodyStatements(public_lib::Cont
         auto argName = lciInfo->restParameterIdentifier;
         auto *type = lambdaParam->TsType()->Substitute(checker->Relation(), lciInfo->substitution);
         std::stringstream stream;
-        stream << "let @@I1 = @@I2.length > " << idx << " ? @@I3[" << idx << "] as @@T4 as @@T5 : undefined;";
+        stream << "let @@I1 = @@I2.length > " << idx << " ? @@I3[" << idx << "] as @@T4 : undefined;";
         tempVarNames->push_back(GenName(allocator));
-        auto *stmt = parser->CreateFormattedStatement(stream.str(), tempVarNames->back(), argName, argName,
-                                                      checker->MaybeBoxType(type), type);
+        auto *stmt = parser->CreateFormattedStatement(stream.str(), tempVarNames->back(), argName, argName, type);
         bodyStmts.push_back(stmt);
     }
 
@@ -1251,10 +1249,9 @@ static ir::BlockStatement *CreateLambdaClassInvokeNBody(public_lib::Context *ctx
         const auto argName = lciInfo->restParameterIdentifier;
         auto *type = lambdaParam->TsType()->Substitute(checker->Relation(), lciInfo->substitution);
         std::stringstream stream;
-        stream << "let @@I1 = @@I2.length > " << idx << " ? @@I3[" << idx << "] as @@T4 as @@T5 : undefined;";
+        stream << "let @@I1 = @@I2.length > " << idx << " ? @@I3[" << idx << "] as @@T4 : undefined;";
         tempVarNames->push_back(GenName(allocator));
-        auto *stmt = parser->CreateFormattedStatement(stream.str(), tempVarNames->back(), argName, argName,
-                                                      checker->MaybeBoxType(type), type);
+        auto *stmt = parser->CreateFormattedStatement(stream.str(), tempVarNames->back(), argName, argName, type);
         bodyStmts.push_back(stmt);
     }
 

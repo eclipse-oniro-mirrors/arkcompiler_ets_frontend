@@ -26,13 +26,8 @@ void ETSAnyType::Identical(TypeRelation *relation, Type *other)
     relation->Result(other->IsETSAnyType());
 }
 
-void ETSAnyType::AssignmentTarget(TypeRelation *relation, Type *source)
+void ETSAnyType::AssignmentTarget(TypeRelation *relation, [[maybe_unused]] Type *source)
 {
-    if (!source->IsETSPrimitiveType()) {
-        relation->Result(true);
-        return;
-    }
-
     relation->Result(true);
 }
 
@@ -54,14 +49,6 @@ void ETSAnyType::Cast(TypeRelation *relation, Type *target)
         return;
     }
 
-    if (!target->IsETSPrimitiveType()) {
-        relation->Result(true);
-        return;
-    }
-
-    auto *const boxedTarget = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(target);
-    ES2PANDA_ASSERT(boxedTarget != nullptr);
-    conversion::Unboxing(relation, boxedTarget->AsETSObjectType());
     relation->Result(true);
 }
 

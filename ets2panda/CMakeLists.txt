@@ -393,6 +393,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/annotationCopyLowering.cpp
   compiler/lowering/ets/annotationCopyPostLowering.cpp
   compiler/lowering/ets/primitiveConversionPhase.cpp
+  compiler/lowering/ets/instantiateMethodsPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp
   compiler/lowering/ets/awaitLowering.cpp
   compiler/metadata/emitter.cpp

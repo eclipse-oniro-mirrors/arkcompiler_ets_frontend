@@ -1373,14 +1373,14 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
         return this;
     }
 
-    auto *checker = relation->GetChecker()->AsETSChecker();
     auto substitution = Substitution {};
 
     ES2PANDA_ASSERT(baseType_ == nullptr);
     ES2PANDA_ASSERT(typeArguments_.size() == arguments.size());
 
     for (size_t ix = 0; ix < typeArguments_.size(); ix++) {
-        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(), checker->MaybeBoxType(arguments[ix]));
+        ES2PANDA_ASSERT(!arguments[ix]->IsETSPrimitiveType());
+        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(), arguments[ix]);
     }
 
     return Substitute(relation, &substitution);
@@ -1388,6 +1388,9 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
 
 void ETSObjectType::CheckAndInstantiateProperties() const
 {
+    if (IsETSAsyncFuncReturnType()) {
+        return;
+    }
     auto *checker = relation_->GetChecker()->AsETSChecker();
     auto *declNode = GetDeclNode();
     if (HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE) && declNode == nullptr) {
