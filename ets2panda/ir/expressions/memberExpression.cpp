@@ -313,7 +313,9 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         commonPropType = newType;
     };
 
-    this->componentTypeMemberAccessors_.clear();
+    if (componentTypeMemberAccessors_) {
+        componentTypeMemberAccessors_->clear();
+    }
     for (auto *const type : unionType->ConstituentTypes()) {
         auto *const apparent = checker->GetApparentType(type);
         ES2PANDA_ASSERT(apparent != nullptr);
@@ -341,6 +343,7 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
 
 checker::Type *MemberExpression::CheckUnionMember(checker::ETSChecker *checker, checker::Type *baseType)
 {
+    componentTypeMemberAccessors_ = ComponentTypeMemberAccessors {checker->Allocator()->Adapter()};
     auto *const unionType = baseType->AsETSUnionType();
     if (object_->Variable() != nullptr && object_->Variable()->Declaration() != nullptr &&
         object_->Variable()->Declaration()->IsTypeAliasDecl()) {
@@ -658,11 +661,11 @@ std::string MemberExpression::ToString() const
 
 void MemberExpression::AddComponentTypeMemberAccessor(checker::Type *t, MemberAccessor m)
 {
-    componentTypeMemberAccessors_.emplace_back(t, m);
+    componentTypeMemberAccessors_->emplace_back(t, m);
 }
 
 const MemberExpression::ComponentTypeMemberAccessors &MemberExpression::GetComponentTypeMemberAccessors() const
 {
-    return componentTypeMemberAccessors_;
+    return *componentTypeMemberAccessors_;
 }
 }  // namespace ark::es2panda::ir
