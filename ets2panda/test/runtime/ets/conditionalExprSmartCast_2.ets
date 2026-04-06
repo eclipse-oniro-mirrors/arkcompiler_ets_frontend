@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-enum StringEnumA {First = "a", Second = "b"}
-enum StringEnumB {Third = "c", Fourth = "d"}
-
 function foo() {
     return 100
 }
@@ -26,8 +23,8 @@ function foo(p: byte|string) {
 
 function main(): void {
     let t = foo() == 100
-    let x = StringEnumA.First
-    let y = StringEnumB.Third
+    let x = "a"
+    let y = "c"
     let z:string = "stringZ"
     arktest.assertEQ(foo(t ? x : y), 200)
     arktest.assertEQ(foo(t ? x : z), 200)

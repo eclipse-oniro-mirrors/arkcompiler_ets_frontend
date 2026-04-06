@@ -263,6 +263,7 @@ public:
     }
     bool IsLegalBoxedPrimitiveConversion(Type *target, Type *source);
     bool IsSupertypeOf(Type *super, Type *sub);
+    bool IsSubtypeOf(Type *sub, Type *super);
     bool IsIdenticalTo(IndexInfo *source, IndexInfo *target);
     bool SignatureIsSupertypeOf(Signature const *super, Signature const *sub);
     bool SignatureIsCoveredBy(Signature *super, Signature *sub);

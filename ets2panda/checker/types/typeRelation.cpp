@@ -368,6 +368,11 @@ bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
     return result_ == RelationResult::TRUE;
 }
 
+bool TypeRelation::IsSubtypeOf(Type *sub, Type *super)
+{
+    return IsSupertypeOf(super, sub);
+}
+
 bool TypeRelation::IsReadonlyTypeOf(Type *source, Type *target)
 {
     if (!source->HasTypeFlag(TypeFlag::READONLY)) {

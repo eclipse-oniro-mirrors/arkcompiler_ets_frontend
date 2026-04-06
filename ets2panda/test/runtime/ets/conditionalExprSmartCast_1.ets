@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-enum Num {One = 12345, Two = 2}
-
 function foo() {
     return 100
 }
@@ -29,7 +27,7 @@ function foo(p: int|string) {
 
 function main(): void {
     let t = foo() == 100
-    let x = Num.One
+    let x = 12345
     let y = "aaa"
     arktest.assertEQ(foo(t ? x : y), 300)
 }
