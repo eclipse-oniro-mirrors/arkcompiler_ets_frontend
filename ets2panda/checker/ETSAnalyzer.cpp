@@ -1022,7 +1022,7 @@ static void AddSpreadElementTypes(ETSChecker *checker, ir::SpreadElement *const 
     } else if (spreadArgumentType->IsETSArrayType()) {
         elementTypes.emplace_back(spreadArgumentType->AsETSArrayType()->ElementType(), element);
     } else {
-        ES2PANDA_ASSERT(spreadArgumentType->IsETSResizableArrayType());
+        ES2PANDA_ASSERT(spreadArgumentType->IsETSResizableArrayType() || spreadArgumentType->IsETSReadonlyArrayType());
         elementTypes.emplace_back(spreadArgumentType->AsETSObjectType()->TypeArguments().front(), element);
     }
 }
