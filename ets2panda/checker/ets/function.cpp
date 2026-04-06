@@ -2376,6 +2376,15 @@ static void TransformTraillingLambda(ETSChecker *checker, ir::CallExpression *ca
     auto *arrowFuncNode = checker->ProgramAllocNode<ir::ArrowFunctionExpression>(funcNode, checker->ProgramAllocator());
     arrowFuncNode->SetRange(trailingBlock->Range());
     arrowFuncNode->SetParent(callExpr);
+    // Add the undefined parameter before the trailinglambda parameter if need.
+    auto missingArgs = sig->Params().size() - callExpr->Arguments().size();
+    for (size_t i = 0; i < missingArgs - 1; ++i) {
+        auto undefArg = checker->ProgramAllocator()->New<ir::UndefinedLiteral>();
+        ES2PANDA_ASSERT(undefArg != nullptr);
+        undefArg->SetTsType(checker->GlobalETSUndefinedType());
+        callExpr->Arguments().push_back(undefArg);
+        undefArg->SetParent(callExpr);
+    }
     callExpr->Arguments().push_back(arrowFuncNode);
 }
 
