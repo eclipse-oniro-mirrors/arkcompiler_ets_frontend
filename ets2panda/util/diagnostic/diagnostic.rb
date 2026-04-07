@@ -56,6 +56,7 @@ module Diagnostic
       end
     end
     paths.uniq!
+    paths.map! { |path| path.gsub('/', '[\\\\\\\\\\\\\\\\/]') } # hack for win path
     paths
   end
 
