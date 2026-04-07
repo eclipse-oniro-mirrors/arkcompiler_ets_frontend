@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -118,6 +118,11 @@ public:
     }
 
     void ResolveReferences(const NodeTraverser &cb) const;
+
+    util::StringView Name() const
+    {
+        return Key()->AsIdentifier()->Name();
+    }
 
     PrivateFieldKind ToPrivateFieldKind(bool isStatic) const override;
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

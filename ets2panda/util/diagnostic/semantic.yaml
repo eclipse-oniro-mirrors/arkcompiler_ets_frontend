@@ -1221,6 +1221,10 @@ semantic:
   id: 388
   message: "The overload alias and the overloaded method must either both be constructors or both be non-constructors."
 
+- name: OVERLOAD_NAME_NOT_LISTED
+  id: 390
+  message: "Method '{}' is missed in the overridden explicit overload '{}', but listed in the parent explicit overload."
+
 - name: OVERLOAD_SAME_ACCESS_MODIFIERS
   id: 386
   message: "Access modifier mismatch: a 'public' overload requires all methods to be 'public'; a 'protected' overload cannot
@@ -1737,7 +1741,6 @@ graveyard:
 - 352
 - 354
 - 383
-- 390
 - 4101
 - 53205
 
