@@ -195,7 +195,22 @@ void Checker::CleanUp()
     }
 }
 
-void InferMatchContext::CheckErrorInRange()
+InferMatchContext::~InferMatchContext() noexcept
+{
+    if (isLogError_) {
+        return;
+    }
+
+    if (!ValidMatchStatus()) {
+        CheckErrorInRange();
+        diagnosticEngine_.Rollback(diagnosticCheckpoint_);
+        for (auto validLog : validUpdatedDiagnostics_) {
+            diagnosticEngine_.InsertLog(std::move(validLog));
+        }
+    }
+}
+
+void InferMatchContext::CheckErrorInRange() noexcept
 {
     std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
     const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
@@ -213,7 +228,29 @@ void InferMatchContext::CheckErrorInRange()
     }
 }
 
-bool InferMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const
+bool InferMatchContext::ValidMatchStatus() noexcept
+{
+    std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
+    const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
+    const size_t savedErrorCnt = diagnosticCheckpoint_[diagnosticKind_];
+
+    if (savedErrorCnt == currentErrorCnt) {
+        return true;
+    }
+
+    const util::DiagnosticStorage &currentErrorLog = diagnosticEngine_.GetDiagnosticStorage(diagnosticKind_);
+    bool allErrorsOutsideRange = true;
+    for (size_t idx = savedErrorCnt; idx < currentErrorCnt; ++idx) {
+        if (IsErrorInRange(*(currentErrorLog[idx]))) {
+            allErrorsOutsideRange = false;
+            break;
+        }
+    }
+
+    return allErrorsOutsideRange;
+}
+
+bool InferMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const noexcept
 {
     auto *pos = errorLog.Position();
 

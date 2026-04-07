@@ -802,6 +802,10 @@ semantic:
   id: 395
   message: "Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'."
 
+- name: INVALID_LITERAL_CAST
+  id: 326
+  message: "Cannot cast {} literal to '{}'"
+
 - name: INVALID_READONLY_ASSIGNMENT
   id: 98
   message: "Cannot assign a value to a readonly variable {}"
@@ -1107,10 +1111,6 @@ semantic:
 - name: NO_SUCH_SIG_WITH_TRAILING_LAMBDA
   id: 140
   message: "No matching call signature with trailing lambda"
-
-- name: NULLISH_CAST_TO_NONNULLISH
-  id: 304
-  message: "Cannot cast 'null' or 'undefined' to non-nullish type."
 
 - name: OBJECT_LITERAL_METHOD_KEY
   id: 74
@@ -1692,7 +1692,6 @@ graveyard:
 - 298
 - 302
 - 325
-- 326
 - 328
 - 339
 - 340

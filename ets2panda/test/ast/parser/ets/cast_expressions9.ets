@@ -19,5 +19,5 @@ function main(): void {
   let long_a: long[][] = /* @@ label2 */int_a as long[][];
 }
 
-/* @@@ label1 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label2 Warning Warning W0326: Attempt to cast the type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime. */
+/* @@@ label1 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime */

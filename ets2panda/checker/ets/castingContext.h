@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,10 +35,12 @@ public:
                    const util::DiagnosticMessageParams &list, ConstructorData &&data);
 
     [[nodiscard]] bool UncheckedCast() const noexcept;
+    [[nodiscard]] bool TrivialCast() const noexcept;
 
 private:
     TypeRelationFlag flags_ {TypeRelationFlag::CASTING_CONTEXT | TypeRelationFlag::IN_CASTING_CONTEXT};
     bool uncheckedCast_ {true};
+    bool trivialCast_ {false};
 };
 
 }  // namespace ark::es2panda::checker

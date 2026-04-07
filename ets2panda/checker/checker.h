@@ -496,44 +496,12 @@ public:
         diagnosticCheckpoint_ = diagnosticEngine_.Save();
     }
 
-    bool ValidMatchStatus()
-    {
-        std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
-        const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
-        const size_t savedErrorCnt = diagnosticCheckpoint_[diagnosticKind_];
-
-        if (savedErrorCnt == currentErrorCnt) {
-            return true;
-        }
-
-        const util::DiagnosticStorage &currentErrorLog = diagnosticEngine_.GetDiagnosticStorage(diagnosticKind_);
-        bool allErrorsOutsideRange = true;
-        for (size_t idx = savedErrorCnt; idx < currentErrorCnt; ++idx) {
-            if (IsErrorInRange(*(currentErrorLog[idx]))) {
-                allErrorsOutsideRange = false;
-                break;
-            }
-        }
-
-        return allErrorsOutsideRange;
-    }
-
-    void CheckErrorInRange();
-    bool IsErrorInRange(const util::DiagnosticBase &errorLog) const;
+    [[nodiscard]] bool ValidMatchStatus() noexcept;
+    void CheckErrorInRange() noexcept;
+    bool IsErrorInRange(const util::DiagnosticBase &errorLog) const noexcept;
 
     // NOLINTNEXTLINE(bugprone-exception-escape)
-    ~InferMatchContext()
-    {
-        if (isLogError_) {
-            return;
-        }
-
-        CheckErrorInRange();
-        diagnosticEngine_.Rollback(diagnosticCheckpoint_);
-        for (auto validLog : validUpdatedDiagnostics_) {
-            diagnosticEngine_.InsertLog(std::move(validLog));
-        }
-    }
+    ~InferMatchContext() noexcept;
 
     NO_COPY_SEMANTIC(InferMatchContext);
     NO_MOVE_SEMANTIC(InferMatchContext);

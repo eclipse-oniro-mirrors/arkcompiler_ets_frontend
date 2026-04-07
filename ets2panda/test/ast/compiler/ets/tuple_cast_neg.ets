@@ -26,20 +26,21 @@ function main() {
   t1 = t2 as /* @@ label1 */Tuple1;
 
   t1 = /* @@ label2 */t2 as Tuple1<Int>;
- 
+
   t2 = /* @@ label3 */t1 as Tuple2<string, Int>;
 
   t2 = /* @@ label4 */t3 as Tuple2<string, Int>;
 
-  let t = t16 as Tuple;
-  t21 = /* @@ label5 */t as Tuple3<String, Int, number>;
+  let t = /* @@ label5 */t16 as Tuple;
+  t21 = /* @@ label6 */t as Tuple3<String, Int, number>;
 }
 
 
 /* @@@ label1 Error Semantic error ESE0170: Type 'Tuple1<T0>' is generic but type argument were not provided. */
 /* @@@ label2 Error Semantic error ESE0318: Type 'Tuple1<Int>' cannot be assigned to type '[String]' */
-/* @@@ label2 Warning Warning W0326: Attempt to cast the type '[String, Int]' to 'Tuple1<Int>' can throw 'CastClassError' exception at runtime. */
-/* @@@ label3 Warning Warning W0326: Attempt to cast the type '[String]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime. */
-/* @@@ label4 Warning Warning W0326: Attempt to cast the type '[String, Double, Int]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime. */
-/* @@@ label5 Error Semantic error ESE0318: Type 'Tuple3<String,Int,Double>' cannot be assigned to type '[String, Int, Double, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String]' */
-/* @@@ label5 Warning Warning W369037: Cast expression `as Tuple3<String,Int,Double>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type '[String, Int]' to 'Tuple1<Int>' can throw 'CastClassError' exception at runtime */
+/* @@@ label3 Warning Warning W0326: Attempting to cast type '[String]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime */
+/* @@@ label4 Warning Warning W0326: Attempting to cast type '[String, Double, Int]' to 'Tuple2<String,Int>' can throw 'CastClassError' exception at runtime */
+/* @@@ label5 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label6 Error Semantic error ESE0318: Type 'Tuple3<String,Int,Double>' cannot be assigned to type '[String, Int, Double, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String, Int, String, Double, String]' */
+/* @@@ label6 Warning Warning W369037: Cast expression `as Tuple3<String,Int,Double>` is type unsafe. 'CastClassError' exception can be thrown at runtime */

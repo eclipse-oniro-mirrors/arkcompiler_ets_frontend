@@ -647,3 +647,4 @@
     }
   }
 }
+[cast_const_union.ets:20:22] Warning W670214: This cast can be excessive because it always succeeds

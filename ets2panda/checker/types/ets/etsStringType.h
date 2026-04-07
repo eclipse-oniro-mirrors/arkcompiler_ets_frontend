@@ -62,7 +62,7 @@ public:
 
     void ToString(std::stringstream &ss, [[maybe_unused]] bool precise) const override
     {
-        if (IsConstantType()) {
+        if (IsConstantType() && !value_.Is(ERROR_LITERAL)) {
             ss << "\"" << value_ << "\"";
         } else {
             ss << lexer::TokenToString(lexer::TokenType::KEYW_STRING);

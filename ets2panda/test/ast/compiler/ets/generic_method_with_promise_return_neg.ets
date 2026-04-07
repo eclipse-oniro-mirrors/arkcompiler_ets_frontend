@@ -22,9 +22,9 @@ class Point {
 function main(): void {
     const p = new Point();
     p.foo<short>().then((value: short) => {
-       arktest.assertEQ(value, 1 as short); 
-    });   
+       arktest.assertEQ(value, 1 as short);
+    });
 }
 
 
-/* @@@ label Error Semantic error ESE0091: Type 'Promise<*ERROR_TYPE*>' is not compatible with the enclosing method's return type 'Promise<X>' */
+/* @@@ label Error Semantic error ESE0091: Type 'Promise<Awaited<X>>' is not compatible with the enclosing method's return type 'Promise<X>' */

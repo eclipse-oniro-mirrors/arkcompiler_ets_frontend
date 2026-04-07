@@ -22,8 +22,8 @@ class Point {
 function main(): void {
     let p: Point = new Point();
     let result: short = p.foo<short>();
-    arktest.assertEQ(result, 0 as short);       
+    arktest.assertEQ(result, 0 as short);
 }
 
 
-/* @@@ label Warning Warning W0326: Attempt to cast the type 'Int' to 'X' can throw 'CastClassError' exception at runtime. */
+/* @@@ label Warning Warning W0326: Attempting to cast type 'Int' to 'X' can throw 'CastClassError' exception at runtime */

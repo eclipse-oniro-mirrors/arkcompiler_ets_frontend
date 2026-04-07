@@ -2474,7 +2474,8 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
 static bool IsNumericType(ETSChecker *checker, Type *type)
 {
     ES2PANDA_ASSERT(!type->IsETSNeverType());
-    return checker->Relation()->IsSupertypeOf(checker->GetGlobalTypesHolder()->GlobalNumericBuiltinType(), type);
+    return !type->IsETSTypeParameter() &&
+           checker->Relation()->IsSupertypeOf(checker->GetGlobalTypesHolder()->GlobalNumericBuiltinType(), type);
 }
 
 static Type *BiggerNumericType(ETSChecker *checker, Type *t1, Type *t2)
@@ -2585,8 +2586,6 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
         expr->SetTsType(consequentType);
     } else if (checker->IsTypeIdenticalTo(consequentType, alternateType)) {
         expr->SetTsType(consequentType);
-    } else if (IsNumericType(GetETSChecker(), consequentType) && IsNumericType(GetETSChecker(), alternateType)) {
-        expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentType, alternateType));
     } else {
         Type *consequentTypeUnderly =
             consequentType->IsETSNumericEnumType() ? consequentType->AsETSEnumType()->Underlying() : consequentType;
@@ -5036,43 +5035,78 @@ static bool ValueFitsTargetType(ir::TSAsExpression *expr)
     return true;
 }
 
+//  Extracted from 'ETSAnalyzer::Check(ir::TSAsExpression *expr)' function to reduce its size
 static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Type *sourceType,
                                            checker::Type *targetType, ETSChecker *checker)
 {
     if (sourceType->DefinitelyETSNullish() && !targetType->PossiblyETSNullish()) {
-        expr->SetTsType(checker->TypeError(expr, diagnostic::NULLISH_CAST_TO_NONNULLISH, expr->Start()));
+        checker->LogError(diagnostic::NULLISH_CAST_TO_NONNULLISH, expr->Expr()->Start());
+        expr->SetTsType(targetType);
         return false;
     }
 
-    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSTypeParameter()) {
-        expr->SetTsType(checker->TypeError(expr, diagnostic::INVALID_CAST,
-                                           {sourceType->ToString(), targetType->ToString()}, expr->Expr()->Start()));
-        return false;
-    }
-
-    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric() && targetType->IsETSUnionType()) {
-        bool allAreTypeParams = true;
-        for (auto *sub : targetType->AsETSUnionType()->ConstituentTypes()) {
-            if (!sub->IsETSTypeParameter()) {
-                allAreTypeParams = false;
-            }
-        }
-        if (allAreTypeParams) {
-            expr->SetTsType(checker->TypeError(expr, diagnostic::INVALID_CAST,
-                                               {sourceType->ToString(), targetType->ToString()},
-                                               expr->Expr()->Start()));
+    if (expr->Expr()->IsLiteral() && sourceType->IsBuiltinNumeric()) {
+        if (targetType->IsETSTypeParameter()) {
+            checker->LogError(diagnostic::INVALID_CAST, {sourceType, targetType}, expr->Expr()->Start());
+            expr->SetTsType(targetType);
+            return false;
+        } else if (targetType->IsETSUnionType() && targetType->AsETSUnionType()->AllOfConstituentTypes(
+                                                       // CC-OFFNXT(G.FMT.06-CPP) project code style
+                                                       [](Type *type) { return type->IsETSTypeParameter(); })) {
+            checker->LogError(diagnostic::INVALID_CAST, {sourceType, targetType}, expr->Expr()->Start());
+            expr->SetTsType(targetType);
             return false;
         }
     }
 
     if (!ValueFitsTargetType(expr)) {
-        expr->SetTsType(checker->TypeError(
-            expr, diagnostic::TOO_LARGE_TO_CAST,
-            {expr->Expr()->AsNumberLiteral()->ToString(), expr->TypeAnnotation()->AsETSPrimitiveType()->DumpEtsSrc()},
-            expr->Expr()->Start()));
+        checker->LogError(diagnostic::TOO_LARGE_TO_CAST,
+                          {expr->Expr()->AsNumberLiteral()->ToString(), expr->TypeAnnotation()->DumpEtsSrc()},
+                          expr->Expr()->Start());
+        expr->SetTsType(targetType);
         return false;
     }
+
     return true;
+}
+
+//  Extracted from 'ETSAnalyzer::Check(ir::TSAsExpression *expr)' function to reduce its size
+static checker::CastingContext const CheckTSAsExpressionCastable(ir::Expression *castExpr, checker::Type *sourceType,
+                                                                 checker::Type *targetType, ETSChecker *checker)
+{
+    diagnostic::DiagnosticKind const *message = &diagnostic::INVALID_CAST;
+    util::DiagnosticMessageParams parameters = {sourceType, targetType};
+    if (sourceType->IsBuiltinNumeric() && targetType->IsBuiltinNumeric()) {
+        message = &diagnostic::IMPROPER_NUMERIC_CAST;
+    } else if (castExpr->IsArrayExpression() || castExpr->IsObjectExpression() || castExpr->IsNumberLiteral() ||
+               castExpr->IsStringLiteral()) {
+        message = &diagnostic::INVALID_LITERAL_CAST;
+        char const *literalType = "array";
+        if (castExpr->IsObjectExpression()) {
+            literalType = "object";
+        } else if (castExpr->IsNumberLiteral()) {
+            literalType = "number";
+        } else if (castExpr->IsStringLiteral()) {
+            literalType = "string";
+        }
+        parameters = util::DiagnosticMessageParams {literalType, targetType};
+    }
+
+    const checker::CastingContext ctx(
+        checker->Relation(), *message, parameters,
+        checker::CastingContext::ConstructorData {castExpr, sourceType, targetType, castExpr->Start()});
+
+    if (checker->Relation()->IsTrue() && !ctx.TrivialCast() && targetType->IsETSObjectType() &&
+        targetType->AsETSObjectType()->IsGeneric() && !castExpr->IsArrayExpression() &&
+        !castExpr->IsObjectExpression() &&
+        compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
+        std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
+                    targetType->AsETSObjectType()->TypeArguments().end(),
+                    [](Type *item) { return !item->IsETSTypeParameter() && !item->IsETSWildcardType(); })) {
+        checker->LogDiagnostic(diagnostic::GENERIC_TYPE_CAST, {targetType->ToString()}, castExpr->Start());
+    }
+
+    return ctx;
 }
 
 checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
@@ -5087,13 +5121,14 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
     auto *const targetType = expr->TypeAnnotation()->AsTypeNode()->GetType(checker);
     FORWARD_TYPE_ERROR(checker, targetType, expr);
 
-    expr->Expr()->SetPreferredType(targetType);
+    auto *castExpr = expr->Expr();
+    castExpr->SetPreferredType(targetType);
 
     if (targetType == checker->GetGlobalTypesHolder()->GlobalETSNeverType()) {
         return expr->SetTsType(checker->TypeError(expr, diagnostic::CAST_TO_NEVER, expr->Start()));
     }
 
-    auto const sourceType = expr->Expr()->Check(checker);
+    auto const sourceType = castExpr->Check(checker);
     if (sourceType->IsTypeError() && checker->HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
         return expr->SetTsType(checker->GlobalTypeError());
     }
@@ -5103,23 +5138,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
         return expr->TsType();
     }
 
-    const checker::CastingContext ctx(
-        checker->Relation(),
-        sourceType->IsBuiltinNumeric() && targetType->IsBuiltinNumeric() ? diagnostic::IMPROPER_NUMERIC_CAST
-                                                                         : diagnostic::INVALID_CAST,
-        // CC-OFFNXT(G.FMT.03-CPP) project code style
-        {sourceType, targetType},
-        checker::CastingContext::ConstructorData {expr->Expr(), sourceType, targetType, expr->Expr()->Start()});
-
-    if (checker->Relation()->IsTrue() && targetType->IsETSObjectType() && targetType->AsETSObjectType()->IsGeneric() &&
-        !expr->Expr()->IsArrayExpression() && !expr->Expr()->IsObjectExpression() &&
-        compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
-        std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
-                    targetType->AsETSObjectType()->TypeArguments().end(),
-                    [](Type *item) { return !item->IsETSTypeParameter() && !item->IsETSWildcardType(); })) {
-        checker->LogDiagnostic(diagnostic::GENERIC_TYPE_CAST, {targetType->ToString()}, expr->Expr()->Start());
-    }
-
+    const checker::CastingContext ctx = CheckTSAsExpressionCastable(castExpr, sourceType, targetType, checker);
     expr->isUncheckedCast_ = ctx.UncheckedCast();
 
     // Make sure the array type symbol gets created for the assembler to be able to emit checkcast.

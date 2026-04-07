@@ -1245,3 +1245,5 @@
     }
   }
 }
+[cast_expressions4.ets:18:37] Warning W670214: This cast can be excessive because it always succeeds
+[cast_expressions4.ets:21:13] Warning W670214: This cast can be excessive because it always succeeds

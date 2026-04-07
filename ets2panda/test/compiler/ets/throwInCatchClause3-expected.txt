@@ -620,3 +620,4 @@
     }
   }
 }
+[throwInCatchClause3.ets:21:19] Warning W670214: This cast can be excessive because it always succeeds

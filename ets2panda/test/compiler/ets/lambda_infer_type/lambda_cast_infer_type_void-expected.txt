@@ -410,3 +410,4 @@
     }
   }
 }
+[lambda_cast_infer_type_void.ets:17:13] Warning W670214: This cast can be excessive because it always succeeds

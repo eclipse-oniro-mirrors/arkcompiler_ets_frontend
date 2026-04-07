@@ -19,15 +19,16 @@ function main(): void {
   let Object_a: Object[][] = /* @@ label2 */Int_a as Object[][];
   let Int_a3: Int[][] = /* @@ label3 */Object_a as Int[][];
 
-  let Object_: Object = Int_a as Object;
-  let Int_a4: Int[][] = /* @@ label4 */Object_ as Int[][];
+  let Object_: Object = /* @@ label4 */Int_a as Object;
+  let Int_a4: Int[][] = /* @@ label5 */Object_ as Int[][];
 
-  let Long_a: Long[][] = /* @@ label5 */Int_a as Long[][];
+  let Long_a: Long[][] = /* @@ label6 */Int_a as Long[][];
 }
 
 
-/* @@@ label1 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label2 Warning Warning W369037: Cast expression `as Array<Array<Object>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label3 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label4 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. Unexpected 'CastClassError' exception can occur at runtime. */
-/* @@@ label5 Warning Warning W0326: Attempt to cast the type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime. */
+/* @@@ label1 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label2 Warning Warning W369037: Cast expression `as Array<Array<Object>>` is type unsafe. 'CastClassError' exception can be thrown at runtime */
+/* @@@ label3 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. 'CastClassError' exception can be thrown at runtime */
+/* @@@ label4 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label5 Warning Warning W369037: Cast expression `as Array<Array<Int>>` is type unsafe. 'CastClassError' exception can be thrown at runtime */
+/* @@@ label6 Warning Warning W0326: Attempting to cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime */
