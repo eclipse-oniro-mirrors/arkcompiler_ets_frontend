@@ -1515,11 +1515,16 @@ void AssignAnalyzer::CheckInheritedReadonlyAssignment(const ir::AstNode *node, c
         return;
     }
 
+    NodeId adr = GetNodeId(declNode);
     util::StringView name = GetVariableName(declNode);
     const lexer::SourcePosition pos = GetVariablePosition(node);
 
     ++numErrors_;
-    checker_->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {name}, pos);
+    if (inits_.IsMember(adr)) {
+        checker_->LogError(diagnostic::FIELD_REASSIGNMENT, {"readonly", name}, pos);
+    } else {
+        checker_->LogError(diagnostic::FIELD_ASSIGN_TO_READONLY, {name}, pos);
+    }
 }
 
 void AssignAnalyzer::CheckInit(const ir::AstNode *node)
