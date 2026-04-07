@@ -52,7 +52,7 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         if (!sig->HasRestParameter()) {
             ss << "@@I8[@@I9] = new @@T10();";
         } else {
-            ss << "let restArgs = new Array<Any>(0);";
+            ss << "let restArgs = new Array<Any>();";
             ss << "@@I8[@@I9] = new @@T10(restArgs);";
         }
         newStmts.emplace_back(arraySymbol->Clone(Allocator(), nullptr));
@@ -78,7 +78,7 @@ static bool IsInAnnotationContext(ir::AstNode *node)
     }
     return false;
 }
-
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpression *literalArray,
                                                                 checker::ETSTupleType *tupleType)
 {
@@ -104,10 +104,13 @@ ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpress
     nodes.emplace_back(literalArray);
     literalArray->SetTsType(nullptr);
 
-    code += "let @@I3 = new Array<Any>(" + std::to_string(extraParamsNumber) + "); ";
+    code += "let @@I3 : Array<Any> = @@E4;";
     nodes.emplace_back(extraParams);
+    nodes.emplace_back(CreateUninitializedResizableArray(
+        Context(), parser_->CreateFormattedExpression(std::to_string(extraParamsNumber)),
+        checker_->CreateETSResizableArrayType(checker_->GlobalETSAnyType())));
 
-    code += "for (let i = 0; i < " + std::to_string(extraParamsNumber) + "; ++i) { @@I4[i] = @@I5[i+" +
+    code += "for (let i = 0; i < " + std::to_string(extraParamsNumber) + "; ++i) { @@I5[i] = @@I6[i+" +
             std::to_string(maxTupleTypes) + "]} ";
     nodes.emplace_back(extraParams->Clone(Allocator(), nullptr));
     nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
@@ -118,7 +121,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpress
         code += typeList[i]->ToString() + ", ";
     }
     code += typeList[maxTupleTypes]->ToString() + ">(";
-    std::size_t j = 6U;
+    std::size_t j = 7U;
     for (std::size_t i = 0U; i < maxTupleTypes; ++i, j += 2U) {
         code += "@@I" + std::to_string(j) + '[' + std::to_string(i) + "] as @@T" + std::to_string(j + 1U) + ", ";
         nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
@@ -139,7 +142,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpress
     CheckLoweredNode(varbinder_, checker_, loweringResult);
     return loweringResult;
 }
-
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayExpression *literalArray)
 {
     if (IsInAnnotationContext(literalArray)) {
@@ -162,7 +165,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     // NOTE(frontend):follow-up #30648
     if (literalArray->Elements().empty()) {
-        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(0); @@I4;";
+        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(); @@I4;";
         newStmts.emplace_back(genSymIdent);
         newStmts.emplace_back(type);
         newStmts.emplace_back(type->Clone(Allocator(), nullptr));
@@ -171,8 +174,8 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
         ir::Identifier *genSymIdent2 = Gensym(Allocator());
         bool elementIsUnboxable = arrayType->IsETSObjectType() && arrayType->AsETSObjectType()->IsBoxedPrimitive();
         ss << "let @@I1: " << (elementIsUnboxable ? "ValueArray" : "FixedArray") << "<@@T2> = @@E3;";
-        ss << "let @@I4: Array<@@T5> = new Array<@@T6>(@@I7.length);";
-        ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]} @@I11";
+        ss << "let @@I4: Array<@@T5> = Array.create<@@T6>(@@I7.length, @@I8[0]);";
+        ss << "for (let i = 1; i < @@I9.length; ++i) { @@I10[i] = @@I11[i]} @@I12";
         newStmts.emplace_back(genSymIdent);
         newStmts.emplace_back(type);
         newStmts.emplace_back(literalArray);
@@ -180,6 +183,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
         newStmts.emplace_back(genSymIdent2);
         newStmts.emplace_back(type->Clone(Allocator(), nullptr));
         newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
         newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
         newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
         newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
@@ -210,12 +214,11 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
     auto *genSymIdent = Gensym(Allocator());
 
     std::stringstream ss;
-    ss << "let @@I1 = new Array<@@T2>(@@E3.toInt());";
+    ss << "let @@I1: Array<@@T2> = @@E3;";
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
-    auto *dimension = newExpr->Dimension()->Clone(Allocator(), nullptr);
     newStmts.emplace_back(genSymIdent);
     newStmts.emplace_back(type);
-    newStmts.emplace_back(dimension);
+    CreateUninitializedResizableArray(Context(), newExpr->Dimension(), newExpr->TsType());
 
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
     auto *newArrStatement = parser_->CreateFormattedStatement(ss.str(), newStmts);
@@ -242,18 +245,19 @@ ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVec
     auto *lastDimIdent = identDims[currentDim - 1];
     auto *currentDimIdent = identDims[currentDim];
     auto *arrayType = type->AsETSResizableArrayType()->ElementType();
-    auto typeNode = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto arrayAccessExpr = checker_->AllocNode<ir::MemberExpression>(
         expr->Clone(Allocator(), nullptr)->AsExpression(), genSymIdent->Clone(Allocator(), nullptr),
         ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
 
     std::string creationTemplate =
-        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toInt()); @@E9 = @@I10}";
+        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 : Array<@@T7> = @@E8; "
+        "@@E9 = @@I10}";
     ir::Statement *forUpdateStmt = parser_->CreateFormattedStatement(
         creationTemplate, genSymIdent, genSymIdent->Clone(Allocator(), nullptr),
         lastDimIdent->Clone(Allocator(), nullptr), genSymIdent->Clone(Allocator(), nullptr),
-        genSymIdent->Clone(Allocator(), nullptr), arraySymbol, typeNode, currentDimIdent->Clone(Allocator(), nullptr),
-        arrayAccessExpr, arraySymbol->Clone(Allocator(), nullptr));
+        genSymIdent->Clone(Allocator(), nullptr), arraySymbol, arrayType,
+        CreateUninitializedResizableArray(Context(), currentDimIdent, type), arrayAccessExpr,
+        arraySymbol->Clone(Allocator(), nullptr));
     if (identDims.size() > currentDim + 1) {
         auto consequentStmt =
             CreateNestedArrayCreationStatement(identDims, currentDim + 1, arrayType, arrayAccessExpr, sig);
@@ -297,12 +301,12 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
     // Create outer forloop
     auto arrayType = newExpr->TsType()->AsETSResizableArrayType()->ElementType();
-    auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *genSymIdent = Gensym(Allocator());
-    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toInt())";
+    std::string newArray = "let @@I1 : Array<@@T2> = @@E3;";
     auto idents = TransformDimVectorToIdentVector(newExpr->Dimensions(), statements);
-    auto newArraystatement =
-        parser_->CreateFormattedStatements(newArray, genSymIdent, type, idents[0]->Clone(Allocator(), nullptr));
+    auto newArraystatement = parser_->CreateFormattedStatements(
+        newArray, genSymIdent, arrayType,
+        CreateUninitializedResizableArray(Context(), idents[0]->Clone(Allocator(), nullptr), newExpr->TsType()));
     auto nestedArrayCreationStmt =
         CreateNestedArrayCreationStatement(idents, 1, arrayType, genSymIdent, newExpr->Signature());
     auto returnStmt = parser_->CreateFormattedStatement("@@I1", genSymIdent->Clone(Allocator(), nullptr));

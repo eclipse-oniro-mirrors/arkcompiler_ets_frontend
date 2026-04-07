@@ -156,25 +156,6 @@ static size_t GetNonSpreadArgCount(const ArenaVector<ir::Expression *> &argument
     return nonSpreadArgCount;
 }
 
-static ir::TypeNode *GetConstraintTypeNode(checker::ETSChecker *checker, checker::Type *constraintType,
-                                           bool useConstraintType, checker::Type *arrayType)
-{
-    auto *allocator = checker->Allocator();
-    const auto elementType = checker->GetElementTypeOfArray(arrayType);
-    ir::TypeNode *constraintTypeNode = nullptr;
-    if (useConstraintType) {
-        // For rest parameter in arrow function and generic FixedArray rest parameter in normal function, we need to use
-        // the constraint type.
-        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(constraintType, allocator);
-    } else if (arrayType->IsETSArrayType()) {
-        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
-    } else {
-        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
-    }
-
-    return constraintTypeNode;
-}
-
 static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *context,
                                                           ArenaVector<ir::Expression *> &arguments,
                                                           checker::Type *constraintType, checker::Type *arrayType,
@@ -204,23 +185,20 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     for (size_t i = 0; i < spreadElements.size(); ++i) {
         auto arg = spreadElements[i];
         auto argType = arg->TsType();
-        auto argTypeNode = allocator->New<ir::OpaqueTypeNode>(argType, allocator);
-        addStmt("@@I1[" + std::to_string(i) + "] = @@E2 as @@T3;", data.spreadArgsArray, arg, argTypeNode);
+        addStmt("@@I1[" + std::to_string(i) + "] = @@E2 as @@T3;", data.spreadArgsArray, arg, argType);
         if (argType->IsETSTupleType() && argType->AsETSTupleType()->GetTupleSize() > 0) {
             addStmt("@@I1 = @@I2 + " + std::to_string(argType->AsETSTupleType()->GetTupleSize()) + " ;",
                     data.arrayLength->Clone(allocator, nullptr), data.arrayLength->Clone(allocator, nullptr));
         } else {
             addStmt("@@I1 = @@I2 + (@@I3[" + std::to_string(i) + "] as @@T4).length;",
                     data.arrayLength->Clone(allocator, nullptr), data.arrayLength->Clone(allocator, nullptr),
-                    data.spreadArgsArray, argTypeNode->Clone(allocator, nullptr));
+                    data.spreadArgsArray, argType);
         }
     }
     if (nonSpreadArgCount > 0) {
         addStmt("@@I1 = @@I2 + " + std::to_string(nonSpreadArgCount) + ";", data.arrayLength->Clone(allocator, nullptr),
                 data.arrayLength->Clone(allocator, nullptr));
     }
-
-    auto constraintTypeNode = GetConstraintTypeNode(checker, constraintType, useConstraintType, arrayType);
     // For rest paramter in arrow function(whether it is FixedArray or Array), we need to create a FixedArray, for
     // normal function it depends on the type of the rest parameter.
     bool isValueArray = arrayType->IsETSArrayType() && arrayType->AsETSArrayType()->IsValueArray();
@@ -230,7 +208,10 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
                     context, data.arrayLength->Clone(allocator, nullptr),
                     useConstraintType ? checker->CreateETSArrayType(constraintType, isValueArray) : arrayType));
     } else {
-        addStmt("let @@I1 = new Array<@@T2>(@@I3);", data.arraySymbol, constraintTypeNode, data.arrayLength);
+        auto elementType = checker->GetElementTypeOfArray(arrayType);
+        addStmt("let @@I1: Array<@@T2> = @@E3;", data.arraySymbol, elementType,
+                CreateUninitializedResizableArray(context, data.arrayLength->Clone(allocator, nullptr),
+                                                  checker->CreateETSResizableArrayType(elementType)));
     }
     // fill the array with the arguments in original callExpression.
     auto *arraySymbolWithoutTypeAnnotation = FillArrayWithArguments(context, blockStatements, arguments, data);
@@ -331,13 +312,13 @@ static bool ShouldProcessRestParameters(checker::Signature *signature, checker::
 
 static ir::Expression *CreateRestArgsArrayWithoutSpread(public_lib::Context *context,
                                                         ArenaVector<ir::Expression *> &copiedArguments,
-                                                        ir::TypeNode *arrayTypeNode)
+                                                        checker::Type *elemType)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
     auto *checker = context->GetChecker()->AsETSChecker();
     const lexer::SourceRange range = {copiedArguments.front()->Start(), copiedArguments.back()->End()};
-
+    auto arrayTypeNode = checker->AllocNode<ir::OpaqueTypeNode>(elemType, allocator);
     std::stringstream ss;
     auto *genSymIdent = Gensym(allocator);
     auto *genSymIdent2 = Gensym(allocator);
@@ -348,14 +329,15 @@ static ir::Expression *CreateRestArgsArrayWithoutSpread(public_lib::Context *con
     // NOTE: refactor me!
     ES2PANDA_ASSERT(genSymIdent != nullptr && genSymIdent2 != nullptr);
     ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
-    ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
-    ss << "@@I11;";
+    ss << "let @@I4 : Array<@@T5> = @@E6;";
+    ss << "for (let i = 0; i < @@I7.length; ++i) { @@I8[i] = @@I9[i]} @@I10";
     auto *arrayExpr = checker->AllocNode<ir::ArrayExpression>(std::move(copiedArguments), allocator);
     ES2PANDA_ASSERT(arrayTypeNode != nullptr);
     auto *loweringResult = parser->CreateFormattedExpression(
         ss.str(), genSymIdent, arrayTypeNode->Clone(allocator, nullptr), arrayExpr, genSymIdent2, arrayTypeNode,
-        arrayTypeNode->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
+        CreateUninitializedResizableArray(
+            context, parser->CreateFormattedExpression("@@I1.length", genSymIdent->Clone(allocator, nullptr)),
+            checker->CreateETSResizableArrayType(elemType)),
         genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr),
         genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr));
 
@@ -467,7 +449,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
     // If the rest parameter is resizable array and there are no extra arguments, return an empty array.For fixed array,
     // we don't need to handle it here.
     if (!restParamType->IsETSArrayType() && numExtraArgs == 0) {
-        return parser->CreateFormattedExpression("new Array<@@T1>(0)", arrayTypeNode);
+        return parser->CreateFormattedExpression("new Array<@@T1>()", arrayTypeNode);
     }
 
     ArenaVector<ir::Expression *> copiedArguments(arguments.begin() + numRegularParams, arguments.end(),
@@ -491,7 +473,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
         return blockExpression;
     }
 
-    return CreateRestArgsArrayWithoutSpread(context, copiedArguments, arrayTypeNode);
+    return CreateRestArgsArrayWithoutSpread(context, copiedArguments, checker->GetElementTypeOfArray(restParamType));
 }
 
 static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, ir::CallExpression *originalCall,
