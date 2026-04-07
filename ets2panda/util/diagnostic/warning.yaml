@@ -154,6 +154,14 @@ warning:
   id: 304
   message: "Possible cast of 'null' or 'undefined' to non-nullish type can throw 'CastClassError' exception at runtime"
 
+- name: NULLISH_COALESCING_ALWAYS_LEFT
+  id: 971874
+  message: "result of the nullish-coalescing expression is equal to its left-hand-side expression value."
+
+- name: NULLISH_COALESCING_ALWAYS_RIGHT
+  id: 1068706
+  message: "result of the nullish-coalescing expression is equal to its right-hand-side expression value."
+
 - name: NULLISH_OPERAND
   id: 14
   message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
