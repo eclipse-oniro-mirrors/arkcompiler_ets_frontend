@@ -118,11 +118,13 @@ warning:
   id: 125
   message: "Initializers are not allowed in ambient contexts."
   strict: true
+  whitelist: ["ambient_context"]
 
 - name: INIT_IN_AMBIENT
   id: 153
   message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
+  whitelist: ["ambient_context"]
 
 - name: INVALID_CAST
   id: 326
