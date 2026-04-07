@@ -312,118 +312,70 @@ static bool ShouldProcessRestParameters(checker::Signature *signature, checker::
 
 static ir::Expression *CreateRestArgsArrayWithoutSpread(public_lib::Context *context,
                                                         ArenaVector<ir::Expression *> &copiedArguments,
-                                                        checker::Type *elemType)
+                                                        checker::Type *restParamType)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
     auto *checker = context->GetChecker()->AsETSChecker();
     const lexer::SourceRange range = {copiedArguments.front()->Start(), copiedArguments.back()->End()};
+    auto elemType = checker->GetElementTypeOfArray(restParamType);
     auto arrayTypeNode = checker->AllocNode<ir::OpaqueTypeNode>(elemType, allocator);
+    auto *arrayExpr = checker->AllocNode<ir::ArrayExpression>(std::move(copiedArguments), allocator);
     std::stringstream ss;
     auto *genSymIdent = Gensym(allocator);
     auto *genSymIdent2 = Gensym(allocator);
-    // Was:
-    // ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    // ss << "Array.from<@@T4>(@@I5);";
-    // Now:
-    // NOTE: refactor me!
+    ES2PANDA_ASSERT(arrayTypeNode != nullptr);
     ES2PANDA_ASSERT(genSymIdent != nullptr && genSymIdent2 != nullptr);
     ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "let @@I4 : Array<@@T5> = @@E6;";
-    ss << "for (let i = 0; i < @@I7.length; ++i) { @@I8[i] = @@I9[i]} @@I10";
-    auto *arrayExpr = checker->AllocNode<ir::ArrayExpression>(std::move(copiedArguments), allocator);
-    ES2PANDA_ASSERT(arrayTypeNode != nullptr);
-    auto *loweringResult = parser->CreateFormattedExpression(
-        ss.str(), genSymIdent, arrayTypeNode->Clone(allocator, nullptr), arrayExpr, genSymIdent2, arrayTypeNode,
-        CreateUninitializedResizableArray(
-            context, parser->CreateFormattedExpression("@@I1.length", genSymIdent->Clone(allocator, nullptr)),
-            checker->CreateETSResizableArrayType(elemType)),
-        genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr),
-        genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr));
+    ir::Expression *loweringResult = nullptr;
+    if (restParamType->IsETSArrayType()) {
+        ss << "@@I4";
+        loweringResult = parser->CreateFormattedExpression(ss.str(), genSymIdent, arrayTypeNode, arrayExpr,
+                                                           genSymIdent->Clone(allocator, nullptr));
+    } else {
+        // At the moment we can't use Array.from here because of ark fail in such tests as
+        // 09.constructor_declaration/02.explicit_constructor_call/explicit_cons_call_7.ets
+        ss << "let @@I4 : Array<@@T5> = @@E6;";
+        ss << "for (let i = 0; i < @@I7.length; ++i) { @@I8[i] = @@I9[i]} @@I10";
+        loweringResult = parser->CreateFormattedExpression(
+            ss.str(), genSymIdent, arrayTypeNode->Clone(allocator, nullptr), arrayExpr, genSymIdent2, arrayTypeNode,
+            CreateUninitializedResizableArray(
+                context, parser->CreateFormattedExpression("@@I1.length", genSymIdent->Clone(allocator, nullptr)),
+                checker->CreateETSResizableArrayType(elemType)),
+            genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr),
+            genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr));
+    }
 
     loweringResult->SetRange(range);
     return loweringResult;
 }
 
-static std::pair<checker::Type *, bool> CalculateRestArgsConstraintInfo(checker::ETSChecker *checker,
-                                                                        const checker::Signature *signature,
-                                                                        bool isArrowType)
+static std::pair<checker::Type *, bool> CalculateRestArgsConstraintInfo(
+    checker::ETSChecker *checker, [[maybe_unused]] const checker::Signature *signature, bool isArrowType,
+    checker::Type *restParamType)
 {
-    // Due to the defects left after the Primitive Type refactoring, the type of FixedArray here must be constraintType
-    // to prevent unboxing.
     checker::Type *constraintType = nullptr;
     bool needsConstraintType = false;
     if (isArrowType) {
-        // the arrow function will be lowered in LambdaLowering, so the corresponding rest parameter type is
+        // The arrow function will be lowered in LambdaLowering, so the corresponding rest parameter type is
         // FixedArray<Any>.
-        constraintType = checker->GlobalETSAnyType();
+        // But we still should return FixedArray<RestElemType> to properly check signature in the CheckLoweredNode.
         needsConstraintType = true;
-    } else {
-        auto originalRestParamType = signature->Function()->Signature()->RestVar()->TsType();
-        auto paramRestType = checker->GetElementTypeOfArray(originalRestParamType);
-        needsConstraintType = originalRestParamType->IsETSArrayType() && paramRestType->IsETSTypeParameter();
-        constraintType = originalRestParamType->IsETSTypeParameter()
-                             ? originalRestParamType->AsETSTypeParameter()->GetConstraintType()
-                             : checker->GlobalETSAnyType();
+        constraintType = checker->GetElementTypeOfArray(restParamType);
     }
-
     return {constraintType, needsConstraintType};
 }
 
-static bool IsSameArrayType(checker::Type *arrayType1, checker::Type *arrayType2)
+// desc: Spec 1.2.1: 'Spread expression always copies values from original arrays.
+// A callee changes elements of its own copy, but not elements of arrays used in the call'.
+// To do so we have to complete lowering for call expressions with spread argument.
+// Without spread argument we can skip the lowering except some cases.
+static bool CanSkipRestArgsLowering(checker::Type *restParamType, bool isArrowType, bool hasSpreadArg)
 {
-    return (arrayType1->IsETSArrayType() && arrayType2->IsETSArrayType()) ||
-           (arrayType1->IsETSResizableArrayType() && arrayType2->IsETSResizableArrayType()) ||
-           (arrayType1->IsETSReadonlyArrayType() && arrayType2->IsETSReadonlyArrayType());
-}
-
-// desc: The following cases we can skip lowering:
-// Definition side: - Case 1: "function foo(...arr: FixedArray<T>) { ... }"
-//   - Case 2: "let foo = (...arr: FixedArray<T>) => { ... }"
-//   - Case 3: "let foo = (...arr: T[]) => { ... }"
-// Call side: - Direct arguments: "foo(arg1, arg2, arg3, ...)"
-//   - Only one spread argument: "let arr: FixedArray<T> = ...; foo(...arr);"
-static bool CanSkipRestArgsLowering(checker::ETSChecker *checker, const checker::Signature *signature,
-                                    checker::Type *restParamType, const ArenaVector<ir::Expression *> &copiedArguments,
-                                    bool isArrowType)
-{
-    auto *elementType = checker->GetElementTypeOfArray(restParamType);
-    auto isElementTypePrimitive = elementType->IsETSObjectType() && elementType->AsETSObjectType()->IsBoxedPrimitive();
-    bool hasSpreadArg = std::any_of(copiedArguments.begin(), copiedArguments.end(),
-                                    [](ir::Expression *arg) { return arg->IsSpreadElement(); });
-    bool hasOnlyOneSpreadArg = hasSpreadArg && copiedArguments.size() == 1;
-    bool hasIncompatibleArrayType =
-        std::any_of(copiedArguments.begin(), copiedArguments.end(), [&](ir::Expression *arg) {
-            if (arg->IsSpreadElement()) {
-                return !IsSameArrayType(arg->AsSpreadElement()->Argument()->TsType(),
-                                        isArrowType ? checker->CreateETSArrayType(checker->GlobalETSAnyType(), false)
-                                                    : restParamType);
-            }
-            return false;
-        });
-
-    // Due to the defects left after the Primitive Type refactoring, we can't skip lowering for generic rest
-    // parameter. Should be removed after the bug is fixed.
-    if ((isElementTypePrimitive && restParamType->IsETSArrayType()) || isArrowType) {
-        if (!hasSpreadArg) {
-            return true;
-        }
-        bool isRestParamGeneric =
-            isArrowType || checker->GetElementTypeOfArray(signature->Function()->Signature()->RestVar()->TsType())
-                               ->IsETSTypeParameter();
-        if (isRestParamGeneric) {
-            return false;
-        }
-        return hasOnlyOneSpreadArg && !hasIncompatibleArrayType;
-    }
-
-    if (!isArrowType && (restParamType->IsETSResizableArrayType() || restParamType->IsETSReadonlyArrayType())) {
-        return false;
-    }
     if (!hasSpreadArg) {
-        return true;
-    }
-    if (hasOnlyOneSpreadArg && !hasIncompatibleArrayType) {
+        if (!isArrowType && (restParamType->IsETSResizableArrayType() || restParamType->IsETSReadonlyArrayType())) {
+            return false;
+        }
         return true;
     }
     return false;
@@ -454,16 +406,14 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
 
     ArenaVector<ir::Expression *> copiedArguments(arguments.begin() + numRegularParams, arguments.end(),
                                                   allocator->Adapter());
-
     bool hasSpreadArg = std::any_of(copiedArguments.begin(), copiedArguments.end(),
                                     [](ir::Expression *arg) { return arg->IsSpreadElement(); });
-
-    if (CanSkipRestArgsLowering(checker, signature, restParamType, copiedArguments, isArrowType)) {
+    if (CanSkipRestArgsLowering(restParamType, isArrowType, hasSpreadArg)) {
         return nullptr;
     }
-
     if (hasSpreadArg) {
-        auto [constraintType, needsConstraintType] = CalculateRestArgsConstraintInfo(checker, signature, isArrowType);
+        auto [constraintType, needsConstraintType] =
+            CalculateRestArgsConstraintInfo(checker, signature, isArrowType, restParamType);
         const lexer::SourceRange range = {copiedArguments.front()->Start(), copiedArguments.back()->End()};
         auto *blockExpression =
             CreateRestArgsBlockExpression(context, copiedArguments, constraintType, restParamType, needsConstraintType);
@@ -473,7 +423,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
         return blockExpression;
     }
 
-    return CreateRestArgsArrayWithoutSpread(context, copiedArguments, checker->GetElementTypeOfArray(restParamType));
+    return CreateRestArgsArrayWithoutSpread(context, copiedArguments, restParamType);
 }
 
 static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, ir::CallExpression *originalCall,

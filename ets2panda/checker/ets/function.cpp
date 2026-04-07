@@ -1027,24 +1027,19 @@ static void PrepareComparisonTypes(ETSChecker *checker, Type **argumentType, Typ
 }
 
 static bool ValidateSpreadRestArgument(ETSChecker *checker, ir::Expression *argument, Signature *substitutedSig,
-                                       TypeRelationFlag flags, size_t index)
+                                       TypeRelationFlag flags, [[maybe_unused]] size_t index)
 {
     auto *const restArgument = argument->AsSpreadElement()->Argument();
     Type *targetType = substitutedSig->RestVar()->TsType();
 
-    // backing out of check that results in a signature mismatch would be difficult
-    // so only attempt it if there is only one candidate signature
     argument->SetPreferredType(targetType);
     Type *argumentType = argument->Check(checker);
 
-    if (argument->HasAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT)) {
-        return true;
-    }
-
+    // Types comparison here should be performed without error generation on fail
+    // because it may be a search of valid signature in the set of overloaded methods
     PrepareComparisonTypes(checker, &argumentType, &targetType);
-    auto const invocationCtx = checker::InvocationContext(
-        checker->Relation(), restArgument, argumentType, targetType, argument->Start(),
-        {{diagnostic::REST_PARAM_INCOMPAT_AT, {argumentType, targetType, index + 1}}}, flags);
+    auto const invocationCtx = checker::InvocationContext(checker->Relation(), restArgument, argumentType, targetType,
+                                                          argument->Start(), {}, flags);
     if (!invocationCtx.IsInvocable()) {
         if (restArgument->IsArrayExpression()) {
             checker->ModifyPreferredType(restArgument->AsArrayExpression(), nullptr);
