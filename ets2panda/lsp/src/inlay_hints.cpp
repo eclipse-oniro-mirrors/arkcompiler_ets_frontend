@@ -175,9 +175,17 @@ bool ShouldShowParameterNameHints(const UserPreferences &preferences)
 }
 int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
 {
-    auto const list = mem->AsClassProperty()->Value()->AsArrayExpression()->Elements();
+    auto *value = mem->AsClassProperty()->Value();
+    if (!value->IsArrayExpression()) {
+        return -1;
+    }
+    auto const list = value->AsArrayExpression()->Elements();
     for (size_t index = 0; index < list.size(); index++) {
-        const auto nameD = std::string(list.at(index)->AsMemberExpression()->Property()->AsIdentifier()->Name());
+        auto *item = list.at(index);
+        if (!item->IsMemberExpression() || !item->AsMemberExpression()->Property()->IsIdentifier()) {
+            continue;
+        }
+        const auto nameD = std::string(item->AsMemberExpression()->Property()->AsIdentifier()->Name());
         if (strstr(assignName.c_str(), nameD.c_str()) != nullptr) {
             return index;
         }
@@ -188,14 +196,14 @@ void SaveNumEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *re
 {
     const int exitNum = -1;
     const auto itemsArray = "#ItemsArray";
-    if (!mem->IsClassProperty() || !mem->AsClassProperty()->Key()->IsIdentifier()) {
-        return;
-    }
     if (mem->AsClassProperty()->Key()->AsIdentifier()->Name() != itemsArray) {
         return;
     }
-    auto const enumType =
-        mem->AsClassProperty()->Value()->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
+    auto *value = mem->AsClassProperty()->Value();
+    if (!value->IsArrayExpression() || !value->AsArrayExpression()->TsType()->IsETSArrayType()) {
+        return;
+    }
+    auto const enumType = value->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
     if (enumType->IsETSNumericEnumType() == false) {
         return;
     }
@@ -207,8 +215,11 @@ void SaveNumEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *re
 void SaveStringEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *result, int &enumValueIndex)
 {
     const int exitNum = -1;
-    auto const enumType =
-        mem->AsClassProperty()->Value()->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
+    auto *value = mem->AsClassProperty()->Value();
+    if (!value->IsArrayExpression() || !value->AsArrayExpression()->TsType()->IsETSArrayType()) {
+        return;
+    }
+    auto const enumType = value->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
     if (enumType->IsETSStringEnumType() == false) {
         return;
     }
@@ -221,6 +232,9 @@ void GetEnumIndexForSave(const ir::AstNode *enumMember, const ir::AstNode *membe
 {
     const int miles = -1;
     int enumValueIndex = miles;
+    if (!enumMember->IsClassDefinition() || !member->IsAssignmentExpression()) {
+        return;
+    }
     const auto assignName = std::string(member->AsAssignmentExpression()->Right()->ToString());
 
     enumMember->AsClassDefinition()->FindChild([member, assignName, &enumValueIndex, &result](ir::AstNode *mem) {

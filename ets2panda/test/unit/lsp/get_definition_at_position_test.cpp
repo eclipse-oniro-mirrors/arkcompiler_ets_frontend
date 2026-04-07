@@ -495,3 +495,47 @@ TEST_F(LspGetDefTests, DisableLoweringTest4)
     ASSERT_EQ(result.start, expectedStart);
     ASSERT_EQ(result.length, expectedLength);
 }
+
+TEST_F(LspGetDefTests, negativeTest1)
+{
+    std::vector<std::string> files = {"SetJumpTarget.ets"};
+    std::vector<std::string> texts = {R"(
+    Animal
+    {
+        name: string;
+        constructor(name:
+        string
+        )
+        {
+            this.name = name;
+        }
+        void {
+        hilog
+        .
+        info
+        (
+        DOMAIN_NAME,
+        TAG,
+        'Hello world()
+
+        export
+        function
+        AAA() {
+        }
+        }
+    }
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 234;
+    ark::es2panda::EHeap::Scope eheapScope;  // remove this line #32069
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    ASSERT_EQ(result.length, 0);
+}

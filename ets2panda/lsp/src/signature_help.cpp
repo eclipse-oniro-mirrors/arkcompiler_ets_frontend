@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,11 +28,14 @@ namespace ark::es2panda::lsp {
 ir::AstNode *FindTokenOnLeftOfPosition(es2panda_Context *context, size_t position)
 {
     auto const tokenAtPosition = GetTouchingToken(context, position, false);
+    if (tokenAtPosition == nullptr) {
+        return nullptr;
+    }
     if (tokenAtPosition->Start().index < position && tokenAtPosition->End().index > position) {
         return tokenAtPosition;
     }
     const auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    return FindPrecedingToken(position, ctx->parserProgram->Ast(), ctx->allocator);
+    return FindPrecedingToken(position, ctx->parserProgram->Ast());
 }
 
 TextSpan CreateTextSpanForNode(const ir::AstNode *node)
@@ -49,6 +52,9 @@ bool IsSyntacticOwner(const ir::AstNode *node)
 checker::Signature *GetResolvedSignatureForSignatureHelp(const ir::AstNode *call, const ir::AstNode *parent,
                                                          std::vector<checker::Signature *> &candidates)
 {
+    if (call == nullptr || parent == nullptr) {
+        return nullptr;
+    }
     parent->FindChild([&call, &candidates](ir::AstNode *n) {
         switch (n->Type()) {
             case ir::AstNodeType::METHOD_DEFINITION:
@@ -78,6 +84,9 @@ checker::Signature *GetResolvedSignatureForSignatureHelp(const ir::AstNode *call
 std::optional<InfoType> GetCandidateOrTypeInfo(const std::optional<ArgumentListInfo> info, ir::AstNode *parent,
                                                const bool onlyUseSyntacticOwners)
 {
+    if (!info.has_value()) {
+        return std::nullopt;
+    }
     if (const auto *call = std::get_if<CallInvocation>(&info->GetInvocation());
         call != nullptr && call->callExpressionNode != nullptr) {
         if (onlyUseSyntacticOwners && !IsSyntacticOwner(call->callExpressionNode)) {
@@ -183,6 +192,9 @@ SignatureHelpItems GetSignatureHelpItems(es2panda_Context *ctx, size_t position,
 }
 ir::AstNode *GetHighestBinary(ir::AstNode *node)
 {
+    if (node == nullptr || node->Parent() == nullptr) {
+        return node;
+    }
     return node->Parent()->IsBinaryExpression() ? GetHighestBinary(node->Parent()) : node;
 }
 
@@ -321,10 +333,13 @@ size_t GetArgumentIndexForTemplatePiece(size_t spanIndex, ir::AstNode *node, siz
 
 std::optional<ArgumentListInfo> GetImmediatelyContainingArgumentInfo(ir::AstNode *node, size_t position)
 {
-    if (position == 0) {
+    if (position == 0 || node == nullptr) {
         return std::nullopt;
     }
     auto parent = node->Parent();
+    if (parent == nullptr) {
+        return std::nullopt;
+    }
     if (parent->Type() == ir::AstNodeType::CALL_EXPRESSION || parent->Type() == ir::AstNodeType::NEW_EXPRESSION ||
         parent->Type() == ir::AstNodeType::MEMBER_EXPRESSION) {
         if (parent->IsMemberExpression() && parent->Parent() != nullptr && parent->Parent()->IsCallExpression()) {

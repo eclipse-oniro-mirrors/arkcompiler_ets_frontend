@@ -132,7 +132,7 @@ ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &spa
 ir::AstNode *GetTouchingTokenForIdentifier(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
 References GetFileReferencesImpl(es2panda_Context *referenceFileContext, char const *searchFileName,
                                  bool isPackageModule);
-ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, ArenaAllocator *allocator);
+ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode);
 ir::AstNode *GetIdentifierFromSuper(ir::AstNode *super);
 ir::AstNode *GetOriginalNode(ir::AstNode *astNode);
 checker::VerifiedType GetTypeOfSymbolAtLocation(checker::ETSChecker *checker, ir::AstNode *astNode);
@@ -158,8 +158,8 @@ ir::AstNode *GetOwner(ir::AstNode *node);
 std::string GetOwnerId(ir::AstNode *node);
 std::string GetIdentifierName(ir::AstNode *node);
 bool NodeHasTokens(const ir::AstNode *node);
-std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, ArenaAllocator *allocator);
-void FindAllChild(const ir::AstNode *ast, const ir::NodePredicate &cb, ArenaVector<ir::AstNode *> &results);
+std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node);
+void FindAllChild(const ir::AstNode *ast, const ir::NodePredicate &cb, std::vector<ir::AstNode *> &results);
 ir::AstNode *FindAncestor(ir::AstNode *node, const ir::NodePredicate &cb);
 std::vector<CodeFixActionInfo> GetCodeFixesAtPositionImpl(es2panda_Context *context, size_t startPosition,
                                                           size_t endPosition, std::vector<int> &errorCodes,

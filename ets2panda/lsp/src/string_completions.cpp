@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,11 @@ void ControlTypeAndAddToEntry(std::string name, ir::AstNode *referencePart, std:
     if (referencePart == nullptr) {
         return;
     }
-    auto type = std::string(referencePart->AsETSTypeReferencePart()->Name()->AsIdentifier()->Name());
+    auto *nameNode = referencePart->AsETSTypeReferencePart()->Name();
+    if (!nameNode->IsIdentifier()) {
+        return;
+    }
+    auto type = std::string(nameNode->AsIdentifier()->Name());
 
     std::string insertText = name += std::string(": ") += type;
     auto entry = lsp::CompletionEntry(name, CompletionEntryKind::TEXT, "", insertText);
@@ -50,7 +54,11 @@ void GetCompletionsFromBody(ArenaVector<ir::AstNode *> const &body, std::vector<
     for (auto property : body) {
         if (property->IsMethodDefinition()) {
             auto methodDefinition = property->AsMethodDefinition();
-            auto name = std::string(methodDefinition->Key()->AsIdentifier()->Name());
+            auto *key = methodDefinition->Key();
+            if (!key->IsIdentifier()) {
+                continue;
+            }
+            auto name = std::string(key->AsIdentifier()->Name());
             if (name == "constructor" || keys.count(name) == 1 || name.empty()) {
                 continue;
             }
@@ -61,7 +69,11 @@ void GetCompletionsFromBody(ArenaVector<ir::AstNode *> const &body, std::vector<
             ControlTypeAndAddToEntry(name, referencePart, entries, keys);
         } else if (property->IsClassProperty()) {
             auto classProperty = property->AsClassProperty();
-            auto name = std::string(classProperty->Key()->AsIdentifier()->Name());
+            auto *key = classProperty->Key();
+            if (!key->IsIdentifier()) {
+                continue;
+            }
+            auto name = std::string(key->AsIdentifier()->Name());
             if (name.empty() || keys.count(name) == 1) {
                 continue;
             }

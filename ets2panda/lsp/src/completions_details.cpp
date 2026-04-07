@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,9 +41,12 @@ void GetDisplayPartAndKind(ir::AstNode *node, std::vector<SymbolDisplayPart> &di
     } else if (node->IsClassProperty()) {
         // After enum refactoring, enum declaration is transformed to a class declaration
         if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
-            auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
-            auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
-            displayParts = ark::es2panda::lsp::CreateDisplayForEnumMember(enumMember);
+            auto *key = node->AsClassProperty()->Key();
+            if (key->IsIdentifier()) {
+                auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
+                auto enumMember = GetEnumMemberByName(enumDecl, key->AsIdentifier()->Name());
+                displayParts = ark::es2panda::lsp::CreateDisplayForEnumMember(enumMember);
+            }
         } else {
             displayParts = ark::es2panda::lsp::CreateDisplayForClassProperty(node);
         }

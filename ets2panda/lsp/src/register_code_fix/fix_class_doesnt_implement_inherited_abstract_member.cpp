@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -45,7 +45,7 @@ ir::AstNode *FixClassNotImplementingInheritedMembers::GetSuperClassDefinition(ir
     auto superClass = node->AsClassDefinition()->Super();
     if (superClass->IsETSTypeReference()) {
         auto part = superClass->AsETSTypeReference()->Part();
-        if (part->IsETSTypeReferencePart()) {
+        if (part->Name()->IsIdentifier()) {
             auto name = part->Name();
             return compiler::DeclarationFromIdentifier(name->AsIdentifier());
         }
@@ -58,8 +58,13 @@ std::string FixClassNotImplementingInheritedMembers::MakeMethodSignature(ir::Ast
     if (node == nullptr || !node->IsMethodDefinition()) {
         return "";
     }
-    auto methodName = node->AsMethodDefinition()->Key()->AsIdentifier()->Name();
-    return std::string(methodName) + node->AsMethodDefinition()->Function()->Signature()->ToString();
+    auto *key = node->AsMethodDefinition()->Key();
+    auto *func = node->AsMethodDefinition()->Function();
+    if (!key->IsIdentifier() || func->Signature() == nullptr) {
+        return "";
+    }
+    auto methodName = key->AsIdentifier()->Name();
+    return std::string(methodName) + func->Signature()->ToString();
 }
 
 std::string FixClassNotImplementingInheritedMembers::MakeNewText(ir::AstNode *node)
@@ -69,8 +74,13 @@ std::string FixClassNotImplementingInheritedMembers::MakeNewText(ir::AstNode *no
     }
     const std::string suffix = " {}";
     const std::string prefix = "  ";
-    auto methodName = node->AsMethodDefinition()->Key()->AsIdentifier()->Name();
-    auto newText = std::string(methodName) + node->AsMethodDefinition()->Function()->DumpEtsSrc();
+    auto *key = node->AsMethodDefinition()->Key();
+    auto *func = node->AsMethodDefinition()->Function();
+    if (!key->IsIdentifier()) {
+        return "";
+    }
+    auto methodName = key->AsIdentifier()->Name();
+    auto newText = std::string(methodName) + func->DumpEtsSrc();
     newText.insert(0, prefix);
     newText.insert(newText.size() - 1, suffix);
     return newText;

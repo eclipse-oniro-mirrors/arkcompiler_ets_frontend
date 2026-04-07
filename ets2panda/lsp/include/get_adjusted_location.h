@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,12 +27,11 @@
 namespace ark::es2panda::lsp {
 
 // Main location adjustment functions
-std::optional<ir::AstNode *> GetAdjustedLocation(ir::AstNode *node, ArenaAllocator *allocator);
-std::optional<ir::AstNode *> GetAdjustedLocationForClass(ir::AstNode *node, ArenaAllocator *allocator);
-std::optional<ir::AstNode *> GetAdjustedLocationForFunction(ir::AstNode *node, ArenaAllocator *allocator);
+std::optional<ir::AstNode *> GetAdjustedLocation(ir::AstNode *node);
+std::optional<ir::AstNode *> GetAdjustedLocationForClass(ir::AstNode *node);
+std::optional<ir::AstNode *> GetAdjustedLocationForFunction(ir::AstNode *node);
 std::optional<ir::AstNode *> GetAdjustedLocationForDeclaration(ir::AstNode *node,
-                                                               const std::vector<ir::AstNode *> &children,
-                                                               ArenaAllocator *allocator);
+                                                               const std::vector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForImportDeclaration(ir::AstNode *node,
                                                                      const std::vector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForExportDeclaration(ir::AstNode *node,
@@ -61,7 +60,7 @@ bool IsDeclarationOrModifier(ir::AstNode *node, ir::AstNode *parent);
 ir::AstNode *SkipOuterExpressions(ir::AstNode *node);
 
 // Children collection
-std::vector<ir::AstNode *> GetChildren(ir::AstNode *node, ArenaAllocator *allocator);
+std::vector<ir::AstNode *> GetChildren(ir::AstNode *node);
 
 }  // namespace ark::es2panda::lsp
 #endif  // ES2PANDA_LSP_GET_ADJUSTED_LOCATION_H

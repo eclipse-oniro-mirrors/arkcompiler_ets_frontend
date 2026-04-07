@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,7 @@ ark::es2panda::ir::AstNode *FindTokenOnLeftOfPosition(es2panda_Context *context,
         return tokenAtPosition;
     }
     const auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    return ark::es2panda::lsp::FindPrecedingToken(position, ctx->parserProgram->Ast(), ctx->allocator);
+    return ark::es2panda::lsp::FindPrecedingToken(position, ctx->parserProgram->Ast());
 }
 
 TEST_F(LSPSignatureHelpItemsTests, StdLibMapGet)

@@ -152,13 +152,13 @@ static bool PositionBelongsToNode(ir::AstNode *node, size_t position)
     return position >= nodeStart && position <= nodeEnd;
 }
 
-static ir::AstNode *FindNextToken(ir::AstNode *precedingNode, ir::AstNode *parent, public_lib::Context *ctx)
+static ir::AstNode *FindNextToken(ir::AstNode *precedingNode, ir::AstNode *parent)
 {
-    if (precedingNode == nullptr || parent == nullptr || ctx == nullptr || ctx->allocator == nullptr) {
+    if (precedingNode == nullptr || parent == nullptr) {
         return nullptr;
     }
 
-    auto children = GetChildren(parent, ctx->allocator);
+    auto children = GetChildren(parent);
     if (children.empty()) {
         return nullptr;
     }
@@ -183,7 +183,7 @@ static NextTokenKind NextTokenIsCurlyBraceOnSameLineAsCursor(ir::AstNode *preced
         return NextTokenKind::UNKNOWN;
     }
 
-    ir::AstNode *nextToken = FindNextToken(precedingNode, current, ctx);
+    ir::AstNode *nextToken = FindNextToken(precedingNode, current);
     if (nextToken == nullptr) {
         return NextTokenKind::UNKNOWN;
     }
@@ -360,7 +360,7 @@ static std::vector<ir::AstNode *> GetContainingList(ir::AstNode *node, public_li
     }
 
     auto *parent = node->Parent();
-    if (ctx == nullptr || ctx->allocator == nullptr) {
+    if (ctx == nullptr) {
         return {};
     }
 
@@ -373,11 +373,11 @@ static std::vector<ir::AstNode *> GetListByPosition(size_t position, ir::AstNode
         return {};
     }
 
-    if (ctx == nullptr || ctx->allocator == nullptr) {
+    if (ctx == nullptr) {
         return {};
     }
 
-    auto children = GetChildren(parent, ctx->allocator);
+    auto children = GetChildren(parent);
     std::vector<ir::AstNode *> result;
 
     for (auto *child : children) {
@@ -456,11 +456,11 @@ static size_t GetActualIndentationForListItemBeforeComma(const IndentContext &ct
     }
 
     auto *parent = commaNode->Parent();
-    if (ctx.context == nullptr || ctx.context->allocator == nullptr) {
+    if (ctx.context == nullptr) {
         return UNKNOWN_INDENT;
     }
 
-    auto children = GetChildren(parent, ctx.context->allocator);
+    auto children = GetChildren(parent);
     for (size_t i = ZERO; i < children.size(); ++i) {
         if (children[i] == commaNode && i > ZERO) {
             return DeriveActualIndentationFromList(ctx, children, i - ONE);
@@ -912,7 +912,7 @@ IndentationResult GetIndentation(es2panda_Context *context, size_t position, con
     IndentContext indentCtx {&index, &sourceCode, ctx->parserProgram, &settings, ctx};
 
     auto *ast = ctx->parserProgram->Ast();
-    ir::AstNode *precedingNode = FindPrecedingToken(position, ast, ctx->allocator);
+    ir::AstNode *precedingNode = FindPrecedingToken(position, ast);
     size_t lineAtPosition = (precedingNode != nullptr) ? precedingNode->Start().line : ZERO;
 
     ir::AstNode *currentNode = GetTouchingToken(context, position, false);

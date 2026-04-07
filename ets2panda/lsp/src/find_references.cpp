@@ -159,6 +159,10 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
         auto context = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED, fileContent.c_str());
 
         auto touchingToken = GetTouchingToken(context, position, false);
+        if (touchingToken == nullptr) {
+            initializer.DestroyContext(context);
+            return {};
+        }
         tokenName = GetIdentifierName(touchingToken);
         auto owner = GetOwner(touchingToken);
         tokenLocationId =
@@ -198,6 +202,9 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
         auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
 
         auto touchingToken = GetTouchingTokenForIdentifier(context, position, false);
+        if (touchingToken == nullptr) {
+            return {};
+        }
         tokenName = GetIdentifierName(touchingToken);
         auto owner = GetOwner(touchingToken);
         tokenLocationId = ::GetLocationId(owner, ctx->parserProgram);

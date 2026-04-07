@@ -471,7 +471,7 @@ ir::AstNode *FindRightmostChildNodeWithTokens(const std::vector<ir::AstNode *> &
     return nullptr;
 }
 
-std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, [[maybe_unused]] ArenaAllocator *allocator)
+std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node)
 {
     std::vector<ir::AstNode *> children {};
     if (node->Type() == ir::AstNodeType::ETS_MODULE) {
@@ -486,7 +486,7 @@ std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, [[maybe_unused]]
     return children;
 }
 
-ir::AstNode *FindRightmostToken(const ir::AstNode *node, ArenaAllocator *allocator)
+ir::AstNode *FindRightmostToken(const ir::AstNode *node)
 {
     if (node == nullptr) {
         return nullptr;
@@ -494,12 +494,12 @@ ir::AstNode *FindRightmostToken(const ir::AstNode *node, ArenaAllocator *allocat
     if (IsNonWhitespaceToken(node)) {
         return const_cast<ir::AstNode *>(node);
     }
-    auto children = GetChildren(node, allocator);
+    auto children = GetChildren(node);
     if (children.empty()) {
         return const_cast<ir::AstNode *>(node);
     }
     auto candidate = FindRightmostChildNodeWithTokens(children, children.size());
-    return FindRightmostToken(candidate, allocator);
+    return FindRightmostToken(candidate);
 }
 
 ir::AstNode *FindNodeBeforePosition(const std::vector<ir::AstNode *> &children, size_t pos)
@@ -548,7 +548,7 @@ static ir::AstNode *RefineFoundByModuleStatements(const ir::AstNode *startNode, 
     return found;
 }
 
-ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, ArenaAllocator *allocator)
+ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode)
 {
     auto *startProgram = startNode->Range().start.Program();
     auto checkFunc = [&pos, &startProgram](ir::AstNode *node) {
@@ -586,15 +586,15 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, 
 
         // found embraces the position, but none of its children do
         // (ie: in a comment or whitespace preceding `child node`)
-        auto children = GetChildren(found, allocator);
+        auto children = GetChildren(found);
         auto candidate = FindNodeBeforePosition(children, pos);
-        return FindRightmostToken(candidate, allocator);
+        return FindRightmostToken(candidate);
     }
 
     // position is in the global scope but not 0, found will be nullptr.
-    auto children = GetChildren(startNode, allocator);
+    auto children = GetChildren(startNode);
     auto candidate = FindNodeBeforePosition(children, pos);
-    return FindRightmostToken(candidate, allocator);
+    return FindRightmostToken(candidate);
 }
 
 ir::AstNode *GetOriginalNode(ir::AstNode *astNode)
@@ -630,7 +630,7 @@ std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position,
     if (preceding != nullptr) {
         node = preceding;
     } else {
-        node = FindPrecedingToken(position, ast, ctx->allocator);
+        node = FindPrecedingToken(position, ast);
     }
     return node != nullptr
                ? ReplaceQuotation(program->SourceCode().substr(node->Start().index, position - node->Start().index))
@@ -725,7 +725,7 @@ void GetRangeOfEnclosingComment(es2panda_Context *context, size_t pos, CommentRa
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     ir::AstNode *parent = touchingNode != nullptr ? touchingNode : ast;
-    auto children = GetChildren(parent, ctx->allocator);
+    auto children = GetChildren(parent);
     std::sort(children.begin(), children.end(), [](ir::AstNode *a, ir::AstNode *b) {
         if (a->Start().index < b->Start().index) {
             return true;
@@ -812,8 +812,9 @@ ark::es2panda::varbinder::Variable *ResolveIdentifier(const ark::es2panda::ir::I
         if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr) {
             auto *declNode = res->Declaration()->Node();
             auto *scopeNode = res->GetScope()->Node();
+            auto *identParent = ident->Parent();
 
-            if (ident->Parent()->IsMemberExpression() || !declNode->IsClassProperty() ||
+            if ((identParent != nullptr && identParent->IsMemberExpression()) || !declNode->IsClassProperty() ||
                 !scopeNode->IsClassDefinition() ||
                 (scopeNode->IsClassDefinition() && scopeNode->AsClassDefinition()->IsGlobal())) {
                 return res;
@@ -977,7 +978,11 @@ std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_
         return res;
     }
     if (node->IsCallExpression()) {
-        node = node->AsCallExpression()->Callee()->AsIdentifier();
+        auto *callee = node->AsCallExpression()->Callee();
+        if (!callee->IsIdentifier()) {
+            return res;
+        }
+        node = callee->AsIdentifier();
     }
     if (!node->IsIdentifier()) {
         return res;
@@ -1000,7 +1005,7 @@ std::string GetImportFilePath(es2panda_Context *context, size_t pos)
     return res;
 }
 
-ArenaVector<ir::AstNode *> RemoveRefDuplicates(const ArenaVector<ir::AstNode *> &nodes, ArenaAllocator *allocator)
+std::vector<ir::AstNode *> RemoveRefDuplicates(const std::vector<ir::AstNode *> &nodes)
 {
     auto hashFunc = [](const ir::AstNode *node) {
         return std::hash<int>()(node->Start().index) ^ std::hash<int>()(node->End().index);
@@ -1009,16 +1014,15 @@ ArenaVector<ir::AstNode *> RemoveRefDuplicates(const ArenaVector<ir::AstNode *> 
         return lhs->Start().index == rhs->Start().index && lhs->End().index == rhs->End().index;
     };
 
-    ArenaUnorderedSet<ir::AstNode *, decltype(hashFunc), decltype(equalFunc)> uniqueNodes(
-        nodes.size(), hashFunc, equalFunc, allocator->Adapter());
+    std::unordered_set<ir::AstNode *, decltype(hashFunc), decltype(equalFunc)> sets(nodes.size(), hashFunc, equalFunc);
     for (auto node : nodes) {
-        uniqueNodes.insert(node);
+        sets.insert(node);
     }
 
-    return ArenaVector<ir::AstNode *>(uniqueNodes.begin(), uniqueNodes.end(), allocator->Adapter());
+    return std::vector<ir::AstNode *>(sets.begin(), sets.end());
 }
 
-void FindAllChildHelper(ir::AstNode *ast, const ir::NodePredicate &cb, ArenaVector<ir::AstNode *> &results)
+void FindAllChildHelper(ir::AstNode *ast, const ir::NodePredicate &cb, std::vector<ir::AstNode *> &results)
 {
     if (cb(ast)) {
         results.push_back(ast);
@@ -1027,7 +1031,7 @@ void FindAllChildHelper(ir::AstNode *ast, const ir::NodePredicate &cb, ArenaVect
     ast->Iterate([&results, cb](ir::AstNode *child) { FindAllChildHelper(child, cb, results); });
 }
 
-void FindAllChild(const ir::AstNode *ast, const ir::NodePredicate &cb, ArenaVector<ir::AstNode *> &results)
+void FindAllChild(const ir::AstNode *ast, const ir::NodePredicate &cb, std::vector<ir::AstNode *> &results)
 {
     ast->Iterate([&results, cb](ir::AstNode *child) { FindAllChildHelper(child, cb, results); });
 }
@@ -1049,10 +1053,9 @@ bool IsEnumDeclParent(const ir::AstNode *decl)
            decl->Parent()->OriginalNode()->Type() == ir::AstNodeType::TS_ENUM_DECLARATION;
 }
 
-static ArenaVector<ir::AstNode *> FilterEnumSyntheticReferences(const ArenaVector<ir::AstNode *> &nodes,
-                                                                ArenaAllocator *allocator)
+static std::vector<ir::AstNode *> FilterEnumSyntheticReferences(const std::vector<ir::AstNode *> &nodes)
 {
-    ArenaVector<ir::AstNode *> filtered(allocator->Adapter());
+    std::vector<ir::AstNode *> filtered;
     for (auto *node : nodes) {
         if (node->Start().index < node->End().index) {
             filtered.push_back(node);
@@ -1061,24 +1064,25 @@ static ArenaVector<ir::AstNode *> FilterEnumSyntheticReferences(const ArenaVecto
     return filtered;
 }
 
-ArenaVector<ir::AstNode *> FindReferencesByName(ir::AstNode *ast, ir::AstNode *decl, ir::AstNode *node,
-                                                ArenaAllocator *allocator)
+std::vector<ir::AstNode *> FindReferencesByName(ir::AstNode *ast, ir::AstNode *decl, ir::AstNode *node)
 {
-    ASSERT(node->IsIdentifier());
+    if (node == nullptr || !node->IsIdentifier()) {
+        return {};
+    }
     auto name = node->AsIdentifier()->Name();
     auto checkFunc = [&name, &decl](ir::AstNode *child) {
         return child->IsIdentifier() && compiler::DeclarationFromIdentifier(child->AsIdentifier()) == decl &&
                child->AsIdentifier()->Name() == name;
     };
-    auto references = ArenaVector<ir::AstNode *>(allocator->Adapter());
+    auto references = std::vector<ir::AstNode *>();
     FindAllChild(ast, checkFunc, references);
 
-    auto uniqueReferences = RemoveRefDuplicates(references, allocator);
+    auto uniqueReferences = RemoveRefDuplicates(references);
 
     // Lowering for enum may synthesize bound identifiers with degenerate ranges.
     // Keep only real source identifiers with non-empty spans.
     if (IsEnumDeclParent(decl)) {
-        uniqueReferences = FilterEnumSyntheticReferences(uniqueReferences, allocator);
+        uniqueReferences = FilterEnumSyntheticReferences(uniqueReferences);
     }
 
     std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {
@@ -1115,16 +1119,15 @@ static std::vector<HighlightSpan> MakeHighlightSpans(const std::vector<ir::AstNo
     return highlightSpans;
 }
 
-static ArenaVector<ir::AstNode *> FindPrimitiveTypeReferences(ir::AstNode *ast, ir::PrimitiveType primitiveType,
-                                                              ArenaAllocator *allocator)
+static std::vector<ir::AstNode *> FindPrimitiveTypeReferences(ir::AstNode *ast, ir::PrimitiveType primitiveType)
 {
     auto checkFunc = [&primitiveType](ir::AstNode *child) {
         return child->IsETSPrimitiveType() && child->AsETSPrimitiveType()->GetPrimitiveType() == primitiveType;
     };
-    auto references = ArenaVector<ir::AstNode *>(allocator->Adapter());
+    auto references = std::vector<ir::AstNode *>();
     FindAllChild(ast, checkFunc, references);
 
-    auto uniqueReferences = RemoveRefDuplicates(references, allocator);
+    auto uniqueReferences = RemoveRefDuplicates(references);
 
     std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {
         return (a->Start().index != b->Start().index) ? a->Start().index < b->Start().index
@@ -1142,18 +1145,17 @@ static bool IsAnyTypeIdentifier(const ir::Identifier *identifier)
     return name.Is("Any");
 }
 
-static ArenaVector<ir::AstNode *> FindAnyTypeReferences(ir::AstNode *ast, const ir::Identifier *identifier,
-                                                        ArenaAllocator *allocator)
+static std::vector<ir::AstNode *> FindAnyTypeReferences(ir::AstNode *ast, const ir::Identifier *identifier)
 {
     auto const name = identifier->Name();
     auto checkFunc = [&name](ir::AstNode *child) {
         return child->IsIdentifier() && child->AsIdentifier()->Name() == name &&
                compiler::DeclarationFromIdentifier(child->AsIdentifier()) == nullptr;
     };
-    auto references = ArenaVector<ir::AstNode *>(allocator->Adapter());
+    auto references = std::vector<ir::AstNode *>();
     FindAllChild(ast, checkFunc, references);
 
-    auto uniqueReferences = RemoveRefDuplicates(references, allocator);
+    auto uniqueReferences = RemoveRefDuplicates(references);
 
     std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {
         return (a->Start().index != b->Start().index) ? a->Start().index < b->Start().index
@@ -1179,7 +1181,7 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
 
     if (isPrimitive) {
         auto primitiveType = touchingToken->AsETSPrimitiveType()->GetPrimitiveType();
-        auto primitiveReferences = FindPrimitiveTypeReferences(ast, primitiveType, ctx->allocator);
+        auto primitiveReferences = FindPrimitiveTypeReferences(ast, primitiveType);
         references.assign(primitiveReferences.begin(), primitiveReferences.end());
     } else if (touchingToken->IsIdentifier()) {
         auto decl = compiler::DeclarationFromIdentifier(touchingToken->AsIdentifier());
@@ -1187,7 +1189,7 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
             if (!IsAnyTypeIdentifier(touchingToken->AsIdentifier())) {
                 return DocumentHighlights(fileName, {});
             }
-            auto anyTypeReferences = FindAnyTypeReferences(ast, touchingToken->AsIdentifier(), ctx->allocator);
+            auto anyTypeReferences = FindAnyTypeReferences(ast, touchingToken->AsIdentifier());
             references.assign(anyTypeReferences.begin(), anyTypeReferences.end());
             isPrimitive = true;
         } else {
@@ -1205,7 +1207,7 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
             if (identifierDeclaration == nullptr) {
                 return DocumentHighlights(fileName, {});
             }
-            auto idReferences = FindReferencesByName(ast, decl, touchingToken, ctx->allocator);
+            auto idReferences = FindReferencesByName(ast, decl, touchingToken);
             references.assign(idReferences.begin(), idReferences.end());
         }
     } else {

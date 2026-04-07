@@ -143,8 +143,15 @@ std::vector<ir::AstNode *> GetEffectiveImplementsTypeNodes(const ir::AstNode *no
     }
     auto implements = node->AsClassDeclaration()->Definition()->Implements();
     for (auto imp : implements) {
-        result.emplace_back(compiler::DeclarationFromIdentifier(
-            imp->AsTSClassImplements()->Expr()->AsETSTypeReference()->Part()->Name()->AsIdentifier()));
+        auto *expr = imp->AsTSClassImplements()->Expr();
+        if (!expr->IsETSTypeReference()) {
+            continue;
+        }
+        auto *part = expr->AsETSTypeReference()->Part();
+        if (!part->Name()->IsIdentifier()) {
+            continue;
+        }
+        result.emplace_back(compiler::DeclarationFromIdentifier(part->Name()->AsIdentifier()));
     }
     return result;
 }

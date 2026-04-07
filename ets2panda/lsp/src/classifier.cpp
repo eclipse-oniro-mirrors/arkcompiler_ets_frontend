@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,6 @@
 #include "ir/astNode.h"
 #include "lexer/lexer.h"
 #include "libarkbase/macros.h"
-#include "libarkbase/mem/arena_allocator.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "varbinder/declaration.h"
@@ -131,11 +130,11 @@ char const *ClassificationTypeToString(ClassificationType type)
     }
 }
 
-ArenaVector<ClassifiedSpan *> GetSyntacticClassifications(es2panda_Context *context, size_t startPos, size_t length)
+std::vector<ClassifiedSpan *> GetSyntacticClassifications(es2panda_Context *context, size_t startPos, size_t length)
 {
     auto lexer = InitLexer(context);
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto result = ArenaVector<ClassifiedSpan *>(ctx->allocator->Adapter());
+    auto result = std::vector<ClassifiedSpan *>();
     lexer->NextToken();
     while (lexer->GetToken().Type() != lexer::TokenType::EOS) {
         ir::AstNode *currentNode = nullptr;
@@ -173,18 +172,18 @@ std::unordered_map<std::string, ir::AstNode *> GetDecls(ir::AstNode *astNode)
         auto node = decl->Node();
         // After enum refactoring, enum declaration is transformed to a class declaration
         if (node != nullptr && compiler::ClassDefinitionIsEnumTransformed(node)) {
-            node = node->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
+            node = node->AsClassDefinition()->OrigEnumDecl();
         }
         declNames[name] = node;
     }
     return declNames;
 }
 
-ArenaVector<ClassifiedSpan *> GetSemanticClassifications(es2panda_Context *context, size_t startPos, size_t length)
+std::vector<ClassifiedSpan *> GetSemanticClassifications(es2panda_Context *context, size_t startPos, size_t length)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    auto result = ArenaVector<ClassifiedSpan *>(ctx->allocator->Adapter());
+    auto result = std::vector<ClassifiedSpan *>();
 
     auto decls = GetDecls(ast);
     auto lexer = InitLexer(context);
