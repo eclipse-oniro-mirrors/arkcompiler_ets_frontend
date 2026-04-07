@@ -869,6 +869,11 @@ class CompilerProjectTest(Test):
         self.deps_json_path = os.path.join(os.path.join(self.projects_path, self.project), 'deps-json.json')
         # Merge hap need to modify package name
         self.modifyPkgNamePath = os.path.join(os.path.join(self.projects_path, self.project), 'modify_pkg_name.txt')
+        # bundlehar contains duplicate files test
+        self.dedupJsFile = os.path.join(os.path.join(self.projects_path, self.project), 'dedup_commonjs.js')
+        self.dedupJsonFile = os.path.join(os.path.join(self.projects_path, self.project), 'dedup_json.json')
+        if path.exists(self.dedupJsonFile):
+            self.test_paths.append(self.dedupJsonFile)
 
     def remove_project(self, runner):
         project_path = runner.build_dir + "/" + self.project
@@ -1015,6 +1020,18 @@ class CompilerProjectTest(Test):
             record_name = self.get_record_name(self.deps_json_path)
             file_info = ('%s;%s;%s;%s;%s;%s\n' % (self.deps_json_path, record_name, 'esm',
                                                os.path.relpath(self.deps_json_path, self.projects_path), record_name,
+                                               'false'))
+            f.writelines(file_info)
+        if (os.path.exists(self.dedupJsFile)):
+            record_name = self.get_record_name(self.dedupJsFile)
+            file_info = ('%s;%s;%s;%s;%s;%s\n' % (self.dedupJsFile, record_name, 'commonjs',
+                                               os.path.relpath(self.deps_json_path, self.projects_path), record_name,
+                                               'false'))
+            f.writelines(file_info)
+        if (os.path.exists(self.dedupJsonFile)):
+            record_name = self.get_record_name(self.dedupJsonFile)
+            file_info = ('%s;%s;%s;%s;%s;%s\n' % (self.dedupJsonFile, record_name, 'esm',
+                                               os.path.relpath(self.dedupJsonFile, self.projects_path), record_name,
                                                'false'))
             f.writelines(file_info)
         self.gen_abc_input_files_infos(runner, abc_files_infos, f, mod_files_info)

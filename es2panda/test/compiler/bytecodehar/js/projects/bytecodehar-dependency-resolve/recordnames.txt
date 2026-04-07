@@ -8,3 +8,7 @@ hap-file-exec:&myapp/hap-file-exec&
 test-require:&myapp/test-require&
 say:&myapp/say&
 deps-json:&myapp/deps-json&
+bundlehar-file:&bundlehar/bundlehar-file&1.0.0
+commonjs-say:&commonjs/commonjs-say&1.0.0
+dedup_commonjs:&dedup_commonjs/dedup_commonjs&1.0.0
+dedup_json:&dedup_commonjs/dedup_json&1.0.0

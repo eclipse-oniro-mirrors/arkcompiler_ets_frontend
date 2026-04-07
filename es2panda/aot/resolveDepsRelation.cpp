@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,9 @@ bool DepsRelationResolver::CollectCommonjsAndJsonRecords(const std::vector<panda
 {
     for (const auto &field: fieldList) {
         if (field.name == util::JSON_FilE_CONTENT) {
-            resolvedDepsRelation_[progKey].insert(recordName);
+            if (collectedCommonjsJsonRecords_.insert(recordName).second) {
+                resolvedDepsRelation_[progKey].insert(recordName);
+            }
             return true;
         }
         if (field.name.find(util::IS_COMMONJS) == std::string::npos) {
@@ -33,7 +35,9 @@ bool DepsRelationResolver::CollectCommonjsAndJsonRecords(const std::vector<panda
         ASSERT(field.metadata->GetValue().has_value());
         ASSERT(field.type.GetId() == panda_file::Type::TypeId::U8);
         if (field.metadata->GetValue().value().GetValue<uint8_t>() > 0) {
-            resolvedDepsRelation_[progKey].insert(recordName);
+            if (collectedCommonjsJsonRecords_.insert(recordName).second) {
+                resolvedDepsRelation_[progKey].insert(recordName);
+            }
             return true;
         }
     }
@@ -67,9 +71,8 @@ void DepsRelationResolver::CollectDepsIfNeeded(const std::string &ohmurl)
     if (ohmurl.find(util::NORMALIZED_OHMURL_NOT_SO) != std::string::npos &&
         !util::IsExternalPkgNames(ohmurl, compileContextInfo_.externalPkgNames)) {
         std::string collectRecord = util::GetRecordNameFromNormalizedOhmurl(ohmurl);
-        if (!collectRecord.empty() && this->resolvedRecords_.count(collectRecord) == 0) {
+        if (!collectRecord.empty() && this->resolvedRecords_.insert(collectRecord).second) {
             this->depsToBeResolved_.push(collectRecord);
-            this->resolvedRecords_.insert(collectRecord);
         }
     }
 }
