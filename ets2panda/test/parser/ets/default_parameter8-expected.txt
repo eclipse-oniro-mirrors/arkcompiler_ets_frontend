@@ -856,7 +856,7 @@
                           "type": "TSQualifiedName",
                           "left": {
                             "type": "Identifier",
-                            "name": "functions",
+                            "name": "__es2panda_internal__arkruntime_import_alias_annotation",
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -1741,7 +1741,7 @@
                           "type": "TSQualifiedName",
                           "left": {
                             "type": "Identifier",
-                            "name": "functions",
+                            "name": "__es2panda_internal__arkruntime_import_alias_annotation",
                             "loc": {
                               "start": {
                                 "line": 30,
@@ -2525,7 +2525,7 @@
                           "type": "TSQualifiedName",
                           "left": {
                             "type": "Identifier",
-                            "name": "functions",
+                            "name": "__es2panda_internal__arkruntime_import_alias_annotation",
                             "loc": {
                               "start": {
                                 "line": 36,

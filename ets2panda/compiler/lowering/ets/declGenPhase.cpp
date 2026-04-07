@@ -29,6 +29,8 @@ namespace ark::es2panda::compiler {
 constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
 constexpr std::string_view DECLARATION_STRING {"declaration"};
 
+using UAlloc = util::NodeAllocator;
+
 static void GenerateAnnotation(public_lib::Context *ctx, ir::ClassDefinition *globalClass, const std::string &decls)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
@@ -39,8 +41,19 @@ static void GenerateAnnotation(public_lib::Context *ctx, ir::ClassDefinition *gl
     auto *declaration = allocator->New<ArenaString>(decls, allocator->Adapter());
     ES2PANDA_ASSERT(declaration != nullptr);
 
-    auto *const annoUsageIdent = checker->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, checker->Allocator());
+    auto *const annoUsageIdent = checker->AllocNode<ir::Identifier>(
+        util::UString(std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + "annotation", allocator).View(), allocator);
     annoUsageIdent->SetAnnotationUsage();
+
+    auto *const annoName = checker->AllocNode<ir::Identifier>(MODULE_DECLARATION_NAME, allocator);
+    annoUsageIdent->SetAnnotationUsage();
+
+    auto defaultQualifiedAnnoName =
+        UAlloc::ForceSetParent<ir::TSQualifiedName>(allocator, annoUsageIdent, annoName, allocator);
+    auto defaultRefPart = UAlloc::ForceSetParent<ir::ETSTypeReferencePart>(allocator, defaultQualifiedAnnoName, nullptr,
+                                                                           nullptr, allocator);
+
+    auto defaultRef = UAlloc::ForceSetParent<ir::ETSTypeReference>(allocator, defaultRefPart, allocator);
 
     auto flags = ir::ModifierFlags::ANNOTATION_USAGE;
     ArenaVector<ir::AstNode *> properties(checker->Allocator()->Adapter());
@@ -50,7 +63,7 @@ static void GenerateAnnotation(public_lib::Context *ctx, ir::ClassDefinition *gl
                                                             checker->Allocator(), false);
     properties.push_back(valueProp);
 
-    auto *annotationUsage = checker->AllocNode<ir::AnnotationUsage>(annoUsageIdent, std::move(properties));
+    auto *annotationUsage = checker->AllocNode<ir::AnnotationUsage>(defaultRef, std::move(properties));
     annotationUsage->AddModifier(flags);
     annotationUsage->SetParent(globalClass);
 

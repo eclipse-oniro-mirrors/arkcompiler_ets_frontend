@@ -22,7 +22,10 @@ using UAlloc = util::NodeAllocator;
 
 static ir::Identifier *GenAnnoQualifiedLeft(ArenaAllocator *allocator)
 {
-    return UAlloc::ForceSetParent<ir::Identifier>(allocator, Signatures::DEFAULT_ANNO_QUALIFIED_LEFT, allocator);
+    return UAlloc::ForceSetParent<ir::Identifier>(
+        allocator,
+        util::UString(std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + std::string("annotation"), allocator).View(),
+        allocator);
 }
 
 static ir::Identifier *GenDefaultAnnoId(ArenaAllocator *allocator)

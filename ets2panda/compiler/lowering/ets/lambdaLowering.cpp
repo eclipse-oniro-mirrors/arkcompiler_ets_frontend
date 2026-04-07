@@ -1373,11 +1373,12 @@ static ir::ClassDeclaration *CreateEmptyLambdaClassDeclaration(public_lib::Conte
 
     std::stringstream ss;
     if (!info->originalFuncName.Empty()) {
-        ss << "@" << Signatures::NAMED_FUNCTION_OBJECT << "({name: \"" << info->originalFuncName << "\"})";
+        ss << "@" << ARKRUNTIME_IMPORT_ALIAS_PREFIX << "annotation." << Signatures::NAMED_FUNCTION_OBJECT
+           << "({name: \"" << info->originalFuncName << "\"})";
     }
 
     if (info->isFunctionAsync) {
-        ss << "@" << Signatures::ASYNC_FUNCTION_OBJECT << "()";
+        ss << "@" << ARKRUNTIME_IMPORT_ALIAS_PREFIX << "annotation." << Signatures::ASYNC_FUNCTION_OBJECT << "()";
     }
 
     std::vector<ir::AstNode *> statementParams;
