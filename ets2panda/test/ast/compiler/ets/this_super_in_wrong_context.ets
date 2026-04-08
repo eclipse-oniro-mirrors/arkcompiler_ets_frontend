@@ -43,4 +43,5 @@ class A extends Base {
 /* @@? 31:12 Warning Warning W0010: The instance field initializer expression cannot use the this. */
 /* @@? 32:12 Warning Warning W0010: The instance field initializer expression cannot use the this. */
 /* @@? 32:22 Warning Warning W0010: The instance field initializer expression cannot use the super. */
+/* @@? 33:5 Warning Warning W0010: The instance field initializer expression cannot use the this. */
 /* @@? 33:18 Warning Warning W0010: The instance field initializer expression cannot use the this. */

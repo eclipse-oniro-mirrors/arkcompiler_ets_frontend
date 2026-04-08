@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,6 @@ import * as all from "./selective_export"
 let test_var = new all.TestClass();
 
 
-/* @@? 18:24 Error Semantic error ESE0070: 'TestClass' type does not exist. */
+/* @@? namespace_import_wrong_access_name.ets:18:24 Error Semantic error ESE0070: 'TestClass' type does not exist. */
+
+/* @@? selective_export.ets:18:5 Warning Warning W71336: Exported variable 'msg' requires type annotation. */

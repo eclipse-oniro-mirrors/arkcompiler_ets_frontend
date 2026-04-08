@@ -23,4 +23,5 @@ function main() {
 }
 
 /* @@@ label1 Error Semantic error ESE0127: No matching call signature for println(Boolean) */
+/* @@? 22:34 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@@ label2 Error Semantic error ESE0232: 'void' used as type annotation. */

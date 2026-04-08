@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,5 +16,6 @@
 import {atomicTask} from "./file1"
 const task = new taskpool.Task(atomicTask);
 
+/* @@? file1.ets:17:1 Warning Warning W71336: Exported function 'atomicTask' requires type annotation. */
 /* @@? file1.ets:23:12 Error Semantic error ESE0127: No matching call signature for load(shareArray, Int) */
 /* @@? file1.ets:23:25 Error Semantic error ESE0143: Unresolved reference shareArray */

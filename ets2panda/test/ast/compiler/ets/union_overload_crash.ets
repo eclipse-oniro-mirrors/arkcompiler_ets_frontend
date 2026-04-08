@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,3 +26,4 @@ let a = new A<Boolean>();
 
 
 /* @@? 25:1 Error Semantic error ESE0307: Overloaded method is used as value */
+/* @@? 25:2 Warning Warning W670214: This cast can be excessive because it always succeeds */

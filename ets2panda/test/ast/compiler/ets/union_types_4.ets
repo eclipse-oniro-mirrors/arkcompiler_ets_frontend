@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,4 +31,7 @@ function main() {
 }
 
 
+/* @@? 25:23 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 27:25 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 29:23 Warning Warning W670214: This cast can be excessive because it always succeeds */
 /* @@@ label Error Semantic error ESE0318: Type 'B' cannot be assigned to type 'String|Short|A' */

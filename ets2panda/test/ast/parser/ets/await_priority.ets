@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,4 +44,4 @@ async function test() {
   arktest.assertEQ(r, "yes");
   let x = await p;
   arktest.assertEQ(x, 6);
-}
+}/* @@? 42:20 Warning Warning W1068706: result of the nullish-coalescing expression is equal to its right-hand-side expression value. */

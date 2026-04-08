@@ -37,4 +37,5 @@ foo(new C<A>(new A ()))
 foo(new C<B>(new B()))
 
 
+/* @@? 29:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@@ label Error Semantic error ESE0318: Type 'C<A>|C<B>' cannot be assigned to type 'C<A>' */

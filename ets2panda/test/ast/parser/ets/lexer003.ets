@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,9 @@
 
 `${message ?? 'ver
 /* @@? 18:4 Error Semantic error ESE0143: Unresolved reference message */
+/* @@? 18:4 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
 /* @@? 18:15 Error Syntax error ESY0265: Newline is not allowed in strings */
-/* @@? 24:76 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
-/* @@? 24:76 Error Syntax error ESY0253: Unterminated string. */
-/* @@? 24:76 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
-/* @@? 24:76 Error Syntax error ESY0228: Unexpected token, expected '`'. */
+/* @@? 25:65 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 25:65 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
+/* @@? 25:65 Error Syntax error ESY0228: Unexpected token, expected '`'. */
+/* @@? 25:65 Error Syntax error ESY0253: Unterminated string. */

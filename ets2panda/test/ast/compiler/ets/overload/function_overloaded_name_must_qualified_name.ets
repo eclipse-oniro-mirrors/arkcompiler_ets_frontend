@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,4 +24,9 @@ namespace NS {
 overload foo {NS.foo1, NS.A.foo2, /* @@ label1 */NS.A.foo2}
 
 
+/* @@? 18:5 Warning Warning W71336: Exported function 'foo1' requires type annotation. */
+/* @@? 20:16 Warning Warning W71336: Exported function 'foo2' requires type annotation. */
+/* @@? 24:15 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
+/* @@? 24:24 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
+/* @@@ label1 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@@ label1 Error Semantic error ESE0385: Duplicate overloaded method. */

@@ -28,3 +28,4 @@ function main(): void {
 
 
 /* @@@ label Error Semantic error ESE0091: Type 'Promise<Awaited<X>>' is not compatible with the enclosing method's return type 'Promise<X>' */
+/* @@? 18:45 Warning Warning W0326: Attempting to cast type 'Int' to 'X' can throw 'CastClassError' exception at runtime */

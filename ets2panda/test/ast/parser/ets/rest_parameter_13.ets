@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Huawei Device Co., Ltd.
+* Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -34,6 +34,12 @@ function main() {
   /* @@ label3 */new C<Long, Error>(new A<Long>, new B<Error>, new B<Error>)
 }
 
-/* @@? 32:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C() */
-/* @@? 33:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>) */
-/* @@? 34:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>, B<Error>, B<Error>) */
+/* @@? 23:18 Warning Warning W65001: The equality expression is always false. */
+/* @@? 23:18 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 23:26 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 27:18 Warning Warning W65001: The equality expression is always false. */
+/* @@? 27:18 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 27:26 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label1 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C() */
+/* @@@ label2 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>) */
+/* @@@ label3 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>, B<Error>, B<Error>) */

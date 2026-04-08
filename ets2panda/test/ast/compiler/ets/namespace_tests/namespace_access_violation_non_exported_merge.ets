@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,4 +26,6 @@ namespace A.B {
 
 A.B.bar(); // Error: 'bar()' cannot be accessed
 
+/* @@? 19:9 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+/* @@? 24:5 Warning Warning W71336: Exported function 'bar' requires type annotation. */
 /* @@? 27:5 Error Semantic error ESE0206: 'bar' is not exported in 'B' */

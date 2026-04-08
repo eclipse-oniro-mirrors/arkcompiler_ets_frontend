@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,3 +30,4 @@ Foo.s_instance = new Bar();
 Foo.foo<Bar>();
 arktest.assertTrue(Foo.s_instance?.value == true);
 arktest.assertTrue((Foo.s_instance as Bar).value);
+/* @@? 22:13 Warning Warning W65000: The equality expression is always true. */

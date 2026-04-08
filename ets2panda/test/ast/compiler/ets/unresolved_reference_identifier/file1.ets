@@ -23,4 +23,8 @@ export function atomicTask() {
     return Atomics.load(shareArray, 0);
 }
 
+/* @@? 17:1 Warning Warning W71336: Exported function 'atomicTask' requires type annotation. */
 /* @@? 21:5 Error Semantic error ESE0127: No matching call signature for add(shareArray, Int, Long) */
+/* @@? 21:17 Error Semantic error ESE0143: Unresolved reference shareArray */
+/* @@? 23:12 Error Semantic error ESE0127: No matching call signature for load(shareArray, Int) */
+/* @@? 23:25 Error Semantic error ESE0143: Unresolved reference shareArray */

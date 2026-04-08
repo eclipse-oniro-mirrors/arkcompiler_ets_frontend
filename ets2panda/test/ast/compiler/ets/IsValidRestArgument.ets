@@ -25,7 +25,7 @@ class C {
 
 /* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo(...) */
 /* @@? 23:15 Error Semantic error ESE0062: need to specify target type for class composite */
-/* @@? 23:34 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ 23:34 Error Syntax error ESY0228: Unexpected token, expected ':'. */
 /* @@? 24:1 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 32:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 32:1 Error Syntax error ESY0016: Unexpected token. */

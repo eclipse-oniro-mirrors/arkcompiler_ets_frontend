@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,3 +28,5 @@ export function foo2():void{ }
 let goo1 = 10;
 
 export let goo2 = 10;
+/* @@? 21:5 Warning Warning W71336: Exported function 'bar2' requires type annotation. */
+/* @@? 30:12 Warning Warning W71336: Exported variable 'goo2' requires type annotation. */

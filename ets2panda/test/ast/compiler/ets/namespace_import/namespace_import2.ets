@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,7 @@ import * as ns1 from "./namespace_import1"
 
 export function A() {
     return ns1.a;
-}
+}/* @@? namespace_import1.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */
+/* @@? namespace_import1.ets:22:12 Warning Warning W71336: Exported variable 'a' requires type annotation. */
+
+/* @@? namespace_import2.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */

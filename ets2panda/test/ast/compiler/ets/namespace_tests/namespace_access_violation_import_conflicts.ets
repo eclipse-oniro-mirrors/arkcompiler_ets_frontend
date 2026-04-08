@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,10 @@ if (Space1.variable == Space1.constant) { // CTE
 Space1.foo(); // CTE
 Space1.foo(1234); //ok
 
-/* @@? 19:31 Error Semantic error ESE0087: Property 'constant' does not exist on type 'Space2' */
-/* @@? 20:23 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
-/* @@? 23:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo() */
+/* @@? namespace_access_violation_import_conflicts.ets:19:31 Error Semantic error ESE0087: Property 'constant' does not exist on type 'Space2' */
+/* @@? namespace_access_violation_import_conflicts.ets:20:23 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? namespace_access_violation_import_conflicts.ets:23:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? namespace_access_violation_import_conflicts.ets:23:1 Error Semantic error ESE0127: No matching call signature for foo() */
+
+/* @@? src02.ets:23:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+/* @@? src02.ets:24:15 Warning Warning W71336: Exported class property 'variable' requires type annotation. */

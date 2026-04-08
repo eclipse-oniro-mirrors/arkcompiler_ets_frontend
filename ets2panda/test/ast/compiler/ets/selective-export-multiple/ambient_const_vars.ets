@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,3 +22,6 @@ export { double_3 }
 let double_4 = 1.0;
 let double_5 = 9007199254740991.0;
 export { double_5 }
+/* @@? 18:22 Warning Warning W71336: Exported variable 'double_1' requires type annotation. */
+/* @@? 19:32 Warning Warning W71336: Exported variable 'double_3' requires type annotation. */
+/* @@? 23:5 Warning Warning W71336: Exported variable 'double_5' requires type annotation. */

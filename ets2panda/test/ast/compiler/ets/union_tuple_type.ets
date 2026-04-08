@@ -51,6 +51,7 @@ let v17: Int|[(Int|(String|[(Boolean|undefined), Int])), Int] = [ [true, 10], 20
 let v18: Int|[(Int|String), (Int|(Boolean|[(String|null), Int]))] = [ "test", [null, 30] ]
 let v19: Int|[(Int|(String|[(Boolean|undefined), Int])), Int] = y
 
+/* @@? 20:9 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
 /* @@? 24:46 Error Semantic error ESE0318: Type 'Int|[Int|null|undefined, Int, Int]' cannot be assigned to type 'Int|[Int, Int, Int]|null|undefined' */
 /* @@? 25:46 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int|[Int|null|undefined, Int, Int]' */
 /* @@? 30:44 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int|[Int|null, String|undefined]' */

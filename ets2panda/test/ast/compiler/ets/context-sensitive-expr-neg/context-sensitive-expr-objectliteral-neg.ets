@@ -24,4 +24,5 @@ let d: U = /* @@ label1 */{"v2": "xxx"}
 let e: U = /* @@ label2 */{"v5": 77}
 
 /* @@@ label1 Error Semantic error ESE0061: Ambiguous reference to 'C|Record<String,String>' */
+/* @@? 23:28 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
 /* @@@ label2 Error Semantic error ESE0063: Target type for class composite needs to be an object type, found 'C|Record<String,String>' */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,5 +22,6 @@ namespace ConflictedSpace {
 }
 
 
-/* @@? 19:22 Error Semantic error ESE0351: Variable 'InnerSpace' has already been declared. */
+/* @@? 17:16 Warning Warning W71336: Exported class property 'InnerSpace' requires type annotation. */
 /* @@? 19:22 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 19:22 Error Semantic error ESE0351: Variable 'InnerSpace' has already been declared. */

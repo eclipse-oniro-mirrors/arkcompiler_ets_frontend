@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,5 @@ class A {
 }
 (new A() as A).bar
 
+/* @@? 19:2 Warning Warning W670214: This cast can be excessive because it always succeeds */
 /* @@? 19:16 Error Semantic error ESE0207: 'bar' is a static property of 'A' */

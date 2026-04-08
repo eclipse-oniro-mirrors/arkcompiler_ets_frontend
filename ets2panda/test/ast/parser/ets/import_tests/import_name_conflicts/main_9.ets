@@ -20,4 +20,7 @@ function main() {
   A()
 }
 
+/* @@? imported_module_3.ets:16:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+
 /* @@? imported_module_4.ets:16:1 Error Semantic error ESE0130: Function boo is already declared. */
+/* @@? imported_module_4.ets:16:1 Warning Warning W71336: Exported function 'boo' requires type annotation. */

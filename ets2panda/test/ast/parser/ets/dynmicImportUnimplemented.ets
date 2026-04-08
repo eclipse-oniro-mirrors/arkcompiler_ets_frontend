@@ -28,3 +28,4 @@ async function foo() {
 }
 
 /* @@? 18:15 Error Syntax error ESY0227: Unexpected token 'import'. */
+/* @@? 24:27 Warning Warning W670214: This cast can be excessive because it always succeeds */

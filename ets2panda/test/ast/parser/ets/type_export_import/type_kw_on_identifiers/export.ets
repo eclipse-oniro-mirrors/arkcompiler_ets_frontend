@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,3 +52,4 @@ let a = 0;
 /* @@@ second Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
 /* @@@ third Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
 /* @@@ fourth Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
+/* @@? 47:5 Warning Warning W71336: Exported variable 'a' requires type annotation. */

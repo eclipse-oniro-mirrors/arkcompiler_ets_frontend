@@ -48,12 +48,16 @@ declare const x51 = "abc"
 /* @@? 16:66 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_2 */
 /* @@? 17:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_12 */
 /* @@? 17:38 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 17:64 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
 /* @@? 17:64 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_22 */
+/* @@? 17:64 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
 /* @@? 18:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_13 */
 /* @@? 18:70 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_23 */
 /* @@? 19:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_14 */
+/* @@? 20:22 Warning Warning W71336: Exported variable 'int_1' requires type annotation. */
+/* @@? 22:22 Warning Warning W71336: Exported variable 'int_12' requires type annotation. */
+/* @@? 22:31 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: int_12 */
 /* @@? 24:36 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_16 */
+/* @@? 25:22 Warning Warning W71336: Exported variable 'int_17' requires type annotation. */
 /* @@? 26:39 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_18 */
 /* @@? 27:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x1 */
 /* @@? 28:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x2 */

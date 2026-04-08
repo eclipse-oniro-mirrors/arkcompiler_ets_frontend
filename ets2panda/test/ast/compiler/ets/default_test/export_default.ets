@@ -18,4 +18,5 @@ export { val as default };
 
 export { default } from '../default_export/export_default1';
 
+/* @@? 16:7 Warning Warning W71336: Exported variable 'val' requires type annotation. */
 /* @@? 19:1 Error Semantic error ESE0374: Only one default export is allowed in a module */

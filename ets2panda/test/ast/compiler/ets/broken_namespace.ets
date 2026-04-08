@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,4 +29,7 @@ if(entry != undefined){
 
 /* @@? 17:8 Error Semantic error ESE0143: Unresolved reference entry */
 /* @@? 18:9 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 19:13 Warning Warning W71336: Exported function 'bar' requires type annotation. */
+/* @@? 24:4 Error Semantic error ESE0143: Unresolved reference entry */
 /* @@? 25:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 26:9 Warning Warning W71336: Exported function 'bar' requires type annotation. */

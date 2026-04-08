@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,4 +22,5 @@ namespace ParentSpace {
 let result = ParentSpace.ChildSpace.value; // Error: 'ChildSpace' is not defined
 
 
+/* @@? 19:16 Warning Warning W71336: Exported class property 'value' requires type annotation. */
 /* @@? 22:26 Error Semantic error ESE0087: Property 'ChildSpace' does not exist on type 'ParentSpace' */

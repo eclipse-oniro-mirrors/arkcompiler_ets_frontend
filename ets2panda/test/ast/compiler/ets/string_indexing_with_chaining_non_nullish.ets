@@ -15,3 +15,4 @@
 
 let str = "";
 let first: string = str?.[0] || "";
+/* @@? 17:21 Warning Warning W65001: The equality expression is always false. */
