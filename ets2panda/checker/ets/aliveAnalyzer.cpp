@@ -78,6 +78,10 @@ void AliveAnalyzer::AnalyzeNode(const ir::AstNode *node)
             AnalyzeClassDecl(node->AsClassDeclaration());
             break;
         }
+        case ir::AstNodeType::TS_INTERFACE_DECLARATION: {
+            AnalyzeInterfaceDecl(node->AsTSInterfaceDeclaration());
+            break;
+        }
         case ir::AstNodeType::METHOD_DEFINITION: {
             AnalyzeMethodDef(node->AsMethodDefinition());
             break;
@@ -234,6 +238,17 @@ void AliveAnalyzer::AnalyzeClassDecl(const ir::ClassDeclaration *classDecl)
     LivenessStatus prevStatus = status_;
 
     for (const auto *it : classDecl->Definition()->Body()) {
+        AnalyzeNode(it);
+    }
+
+    status_ = prevStatus;
+}
+
+void AliveAnalyzer::AnalyzeInterfaceDecl(const ir::TSInterfaceDeclaration *ifaceDecl)
+{
+    LivenessStatus prevStatus = status_;
+
+    for (const auto *it : ifaceDecl->Body()->Body()) {
         AnalyzeNode(it);
     }
 
