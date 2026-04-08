@@ -101,6 +101,16 @@ static inline void RepairTypeErrorWithDefault(Type **type, Type *dflt)
     }
 }
 
+static bool IsNegativeBigIntLiteralExpression(const ir::Expression *expr)
+{
+    if (expr == nullptr || !expr->IsUnaryExpression()) {
+        return false;
+    }
+
+    auto const *unaryExpr = expr->AsUnaryExpression();
+    return unaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_MINUS && unaryExpr->Argument()->IsBigIntLiteral();
+}
+
 static bool CheckOpArgsTypeEq(ETSChecker *checker, Type *left, Type *right, Type *type)
 {
     return ((left != nullptr) && (right != nullptr) && checker->IsTypeIdenticalTo(left, type) &&
@@ -420,6 +430,11 @@ checker::Type *ETSChecker::CheckBinaryOperatorExponentiation(
     RepairTypeErrorsInOperands(&leftType, &rightType);
     RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
+
+    if (IsNegativeBigIntLiteralExpression(right)) {
+        LogError(diagnostic::EXPONENTIATION_BIGINT_NEGATIVE_EXPONENT, {}, right->Start());
+        return GlobalTypeError();
+    }
 
     auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
     if (promotedType == nullptr || !CheckIfNumeric(leftType) || !CheckIfNumeric(rightType)) {
@@ -1430,6 +1445,13 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
 
     ES2PANDA_ASSERT(operationType != lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
     bool isEqualOp = lexer::Token::IsBinaryLvalueToken(operationType) && !forcePromotion;
+
+    if ((operationType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION ||
+         operationType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL) &&
+        IsNegativeBigIntLiteralExpression(right)) {
+        LogError(diagnostic::EXPONENTIATION_BIGINT_NEGATIVE_EXPONENT, {}, right->Start());
+        return {GlobalTypeError(), GlobalTypeError()};
+    }
 
     if (CheckBinaryOperatorForBigInt(leftType, rightType, operationType)) {
         return ResolveCheckBinaryOperatorForBigInt(this, leftType, rightType, operationType);
