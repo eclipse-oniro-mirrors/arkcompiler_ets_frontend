@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,5 @@ class Klass implements Inter {
     a ?: string
 }
 
-/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
-/* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */
-/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
-/* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */
-/* @@? 21:5 Error Semantic error ESE0141: a(): undefined|String in Klass cannot override a(): Double|undefined in Inter because overriding return type is not compatible with the other return type. */
+/* @@? 21:5 Error Semantic error ESE985118: Class member a with type undefined|String in Klass cannot implement a with type Double|undefined property from interface Inter because the implementing return type is not compatible with the interface return type. */
 /* @@? 21:5 Error Semantic error ESE0136: Method a(): undefined|String in Klass not overriding any method */

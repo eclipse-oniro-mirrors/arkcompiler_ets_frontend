@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,5 +27,5 @@ final class T extends P {
 
 
 /* @@? 22:23 Error Semantic error ESE0178: Cannot inherit with 'final' modifier. */
-/* @@? 23:24 Error Semantic error ESE0141: foo(): Int in T cannot override foo(): Int in P because overridden method is final. */
+/* @@? 23:24 Error Semantic error ESE1324203: Class member foo with type Int in T cannot override foo with type Int field from class P because the overridden method is final. */
 /* @@? 23:24 Error Semantic error ESE0136: Method foo(): Int in T not overriding any method */

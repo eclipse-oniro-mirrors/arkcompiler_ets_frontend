@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+* Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -25,5 +25,5 @@ class Derived extends Base {
     }
 }
 
-/* @@? 23:17 Error Semantic error ESE0141: foo(): Object in Derived cannot override foo(): Base in Base because overriding return type is not compatible with the other return type. */
+/* @@? 23:17 Error Semantic error ESE0141: Class member foo with type Object in Derived cannot override foo with type Base field from class Base because the overriding return type is not compatible with the other return type. */
 /* @@? 23:17 Error Semantic error ESE0136: Method foo(): Object in Derived not overriding any method */

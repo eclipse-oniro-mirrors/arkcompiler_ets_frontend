@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,7 @@ class Hex extends Core {
 }
 
 
-/* @@? 33:22 Error Semantic error ESE0141: size(s: Int): void in Hex cannot override size(s: Int): void in Core because overridden method is final. */
+/* @@? 33:22 Error Semantic error ESE1324203: Class member size with type void in Hex cannot override size with type void field from class Core because the overridden method is final. */
 /* @@? 33:22 Error Semantic error ESE0136: Method size(s: Int): void in Hex not overriding any method */
-/* @@? 37:22 Error Semantic error ESE0141: size(): Int in Hex cannot override size(): Int in Core because overridden method is final. */
+/* @@? 37:22 Error Semantic error ESE1324203: Class member size with type Int in Hex cannot override size with type Int field from class Core because the overridden method is final. */
 /* @@? 37:22 Error Semantic error ESE0136: Method size(): Int in Hex not overriding any method */

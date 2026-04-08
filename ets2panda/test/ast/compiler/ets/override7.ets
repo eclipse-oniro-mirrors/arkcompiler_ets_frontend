@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,5 +24,5 @@ abstract class A implements I {
 }
 
 
-/* @@? 23:21 Error Semantic error ESE0141: fn(): Int in A cannot override fn(): void in J because overriding return type is not compatible with the other return type. */
+/* @@? 23:21 Error Semantic error ESE985118: Class member fn with type Int in A cannot implement fn with type void property from interface J because the implementing return type is not compatible with the interface return type. */
 /* @@? 23:21 Error Semantic error ESE0136: Method fn(): Int in A not overriding any method */

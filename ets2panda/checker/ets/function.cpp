@@ -1900,36 +1900,52 @@ Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *tar
 static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signature *overriddenSignature,
                                 const OverrideErrorCode &errorCode)
 {
-    const char *reason {};
+    if (overriddenSignature->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        checker->LogError(diagnostic::CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN,
+                          {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                           overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                           overriddenSignature->Owner()},
+                          signature->Function()->Start());
+        return;
+    }
+
     switch (errorCode) {
         case OverrideErrorCode::OVERRIDDEN_FINAL: {
-            reason = "overridden method is final.";
-            break;
+            checker->LogError(diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_FINAL,
+                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                               overriddenSignature->Owner()},
+                              signature->Function()->Start());
+            return;
         }
         case OverrideErrorCode::INCOMPATIBLE_RETURN: {
-            reason = "overriding return type is not compatible with the other return type.";
-            break;
+            checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_RETURN,
+                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                               overriddenSignature->Owner()},
+                              signature->Function()->Start());
+            return;
         }
         case OverrideErrorCode::OVERRIDDEN_WEAKER: {
-            reason = "overridden method has weaker access privilege.";
-            break;
+            checker->LogError(diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_WEAKER,
+                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                               overriddenSignature->Owner()},
+                              signature->Function()->Start());
+            return;
         }
         case OverrideErrorCode::INCOMPATIBLE_TYPEPARAM: {
-            reason =
-                "overriding type parameter's conatraints are not compatible with type parameter constraints of the "
-                "overridden method.";
-            break;
+            checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM,
+                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                               overriddenSignature->Owner()},
+                              signature->Function()->Start());
+            return;
         }
         default: {
             ES2PANDA_UNREACHABLE();
         }
     }
-
-    checker->LogError(diagnostic::CANNOT_OVERRIDE,
-                      {signature->Function()->Id()->Name(), signature, signature->Owner(),
-                       overriddenSignature->Function()->Id()->Name(), overriddenSignature, overriddenSignature->Owner(),
-                       reason},
-                      signature->Function()->Start());
 }
 
 static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectType *site)

@@ -32,5 +32,5 @@ abstract class C implements I
 }
 
 
-/* @@? 25:13 Error Semantic error ESE0141: field(): Object|String|undefined in C cannot override field(): undefined|String|Double in I because overriding return type is not compatible with the other return type. */
+/* @@? 25:13 Error Semantic error ESE985118: Class member field with type Object|String|undefined in C cannot implement field with type undefined|String|Double property from interface I because the implementing return type is not compatible with the interface return type. */
 /* @@? 25:13 Error Semantic error ESE0136: Method field(): Object|String|undefined in C not overriding any method */

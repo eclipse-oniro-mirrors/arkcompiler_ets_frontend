@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,5 +24,5 @@ abstract class A implements I {
 }
 
 
-/* @@@ label Error Semantic error ESE0141: foo(): A in A cannot override foo(): I in I because overriding return type is not compatible with the other return type. */
+/* @@@ label Error Semantic error ESE985118: Class member foo with type A in A cannot implement foo with type I property from interface I because the implementing return type is not compatible with the interface return type. */
 /* @@@ label Error Semantic error ESE0136: Method foo(): A in A not overriding any method */
