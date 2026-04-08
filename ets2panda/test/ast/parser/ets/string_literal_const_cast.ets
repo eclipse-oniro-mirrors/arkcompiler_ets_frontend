@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,5 @@ let x = "literal str" as const
 
 /* @@? 16:26 Error Syntax error ESY0311: 'as const' assertion is not supported. */
 /* @@? 16:26 Error Syntax error ESY0227: Unexpected token 'const'. */
-/* @@? 23:87 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
-/* @@? 23:87 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
-/* @@? 23:87 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 22:105 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 22:105 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

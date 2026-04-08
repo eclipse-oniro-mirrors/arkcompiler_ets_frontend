@@ -1821,6 +1821,9 @@ ir::VariableDeclarator *ETSParser::ParseVariableDeclarator(ir::Expression *init,
         LogError(diagnostic::MISSING_INIT_IN_DEST_DEC);
     } else if (init->AsIdentifier()->TypeAnnotation() == nullptr && (flags & VariableParsingFlags::FOR_OF) == 0U) {
         LogError(diagnostic::MISSING_INIT_OR_TYPE);
+    } else if (!IsExternal() && (flags & VariableParsingFlags::CONST) && !InAmbientContext() &&
+               (flags & (VariableParsingFlags::FOR_OF | VariableParsingFlags::IN_FOR)) == 0U) {
+        LogError(diagnostic::CONST_WITHOUT_INIT, {}, startLoc);
     }
 
     lexer::SourcePosition endLoc = init->End();
