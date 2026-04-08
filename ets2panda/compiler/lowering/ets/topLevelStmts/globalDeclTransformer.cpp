@@ -96,6 +96,10 @@ void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *fu
 void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *varDecl)
 {
     for (auto declarator : varDecl->Declarators()) {
+        if (declarator->Id()->IsETSDestructuring()) {
+            ProcessDestructuringDeclarator(declarator, varDecl);
+            continue;
+        }
         auto id = declarator->Id()->AsIdentifier();
         auto typeAnn = id->TypeAnnotation();
         id->SetTsTypeAnnotation(nullptr);
@@ -212,6 +216,55 @@ ir::ExpressionStatement *GlobalDeclTransformer::InitTopLevelProperty(ir::ClassPr
     // Code will be ignored, but checker is going to deduce the type.
     initializer = classProperty->Value()->Clone(allocator_, classProperty)->AsExpression();
     return CreateAssignmentStatement(classProperty, initializer);
+}
+
+void GlobalDeclTransformer::ProcessDestructuringDeclarator(ir::VariableDeclarator *destructDecl,
+                                                           ir::VariableDeclaration *varDecl)
+{
+    auto *destructuring = destructDecl->Id()->AsETSDestructuring();
+    auto *init = destructDecl->Init();
+    uint32_t index = 0;
+    for (auto *elem : destructuring->Elements()) {
+        if (elem->IsOmittedExpression()) {
+            index++;
+            continue;
+        }
+        if (elem->IsRestElement() || elem->IsAssignmentPattern() || elem->IsArrayPattern()) {
+            index++;
+            continue;
+        }
+        ES2PANDA_ASSERT(elem->IsIdentifier());
+        auto *id = elem->AsIdentifier();
+        auto *number = allocator_->New<ir::NumberLiteral>(lexer::Number(index++));
+        ir::Expression *elemInit = nullptr;
+        if (init != nullptr) {
+            // Cloning here is only used for type checking and will NOT be invoked.
+            auto *clonedInit = init->Clone(allocator_, nullptr)->AsExpression();
+            ES2PANDA_ASSERT(clonedInit != nullptr);
+            auto *memberExpr = allocator_->New<ir::MemberExpression>(
+                nullptr, nullptr, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+            memberExpr->SetObject(clonedInit);
+            memberExpr->SetProperty(number);
+            elemInit = memberExpr;
+        }
+        auto typeAnn = id->TypeAnnotation();
+        id->SetTsTypeAnnotation(nullptr);
+        auto modifiers = varDecl->Modifiers() | destructDecl->Modifiers();
+        auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
+            allocator_, id->Clone(allocator_, nullptr), elemInit, typeAnn, modifiers, allocator_, false);
+        field->SetRange(destructDecl->Range());
+        if (varDecl->HasAnnotations()) {
+            field->SetAnnotations(varDecl->Annotations());
+        }
+
+        result_.classProperties.emplace_back(field);
+        if (elemInit != nullptr) {
+            field->SetIsImmediateInit();
+            if (auto stmt = InitTopLevelProperty(field); stmt != nullptr) {
+                result_.immediateInit.emplace_back(stmt);
+            }
+        }
+    }
 }
 
 void GlobalDeclTransformer::HandleNode(ir::AstNode *node)

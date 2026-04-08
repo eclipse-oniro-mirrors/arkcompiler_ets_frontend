@@ -73,6 +73,8 @@ private:
     void VisitETSModule(ir::ETSModule *etsModule) override;
 
 private:
+    void ProcessDestructuringElements(ir::ETSDestructuring *destructuring, ir::VariableDeclaration *varDecl);
+
     varbinder::ETSBinder *varbinder_ {nullptr};
     std::map<util::StringView, ir::AstNode *> fieldMap_;
     std::map<util::StringView, lexer::SourcePosition> exportNameMap_;
