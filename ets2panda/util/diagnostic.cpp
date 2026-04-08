@@ -86,6 +86,9 @@ std::vector<std::string> FormatParams(const DiagnosticMessageParams &list)
 
 std::string Format(std::string_view formatString, const std::vector<std::string> &params)
 {
+    if (params.empty()) {
+        return std::string(formatString);
+    }
     std::string result;
     size_t pos = 0;
     size_t paramIndex = 0;
