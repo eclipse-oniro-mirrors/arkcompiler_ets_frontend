@@ -277,7 +277,7 @@ private:
     EPtr<checker::Type> uncheckedType_ {};
     EPtr<checker::ETSObjectType> objType_ {};
     EPtr<checker::ETSFunctionType> extensionAccessorType_ {};
-    ComponentTypeMemberAccessors componentTypeMemberAccessors_ {};
+    std::optional<ComponentTypeMemberAccessors> componentTypeMemberAccessors_ {};
 };
 }  // namespace ark::es2panda::ir
 
