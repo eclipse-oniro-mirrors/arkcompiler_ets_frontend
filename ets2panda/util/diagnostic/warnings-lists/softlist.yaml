@@ -52,7 +52,6 @@ softlist:
 
 - name: "allow_implicit_export"
   paths:
-  - ".*/static/api/arkui/component/tabContent\\.d\\.ets"
   - ".*/test/xts/acts/.*"
   - ".*/base/global/i18n/.*"
   - ".*/base/security/certificate_manager/.*"
