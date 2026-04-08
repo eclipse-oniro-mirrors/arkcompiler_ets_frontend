@@ -615,31 +615,43 @@ private:
     }
 
     ir::Literal *PerformRelationOperation(const ir::CharLiteral *left, const ir::CharLiteral *right,
-                                          lexer::TokenType opType)
+                                          lexer::TokenType opType, const ir::BinaryExpression *expr)
     {
         bool res {};
+        bool reportEqualityDiagnostic = false;
         switch (opType) {
             case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_EQUAL: {
                 res = *left == *right;
+                reportEqualityDiagnostic = true;
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
                 res = !(*left == *right);
+                reportEqualityDiagnostic = true;
                 break;
             }
             default: {
                 return nullptr;
             }
         }
-        return CreateBooleanLiteral(res);
+        auto *result = CreateBooleanLiteral(res);
+
+        if (reportEqualityDiagnostic) {
+            LogError(res ? diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE : diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE,
+                     {}, expr->Start());
+        }
+
+        return result;
     }
 
     template <typename InputType>
-    auto PerformRelationOperation(InputType left, InputType right, lexer::TokenType opType)
+    auto PerformRelationOperation(InputType left, InputType right, lexer::TokenType opType,
+                                  const ir::BinaryExpression *expr)
     {
         bool res {};
+        bool reportEqualityDiagnostic = false;
         switch (opType) {
             case lexer::TokenType::PUNCTUATOR_GREATER_THAN: {
                 res = left > right;
@@ -660,18 +672,26 @@ private:
             case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_EQUAL: {
                 res = left == right;
+                reportEqualityDiagnostic = true;
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
                 res = left != right;
+                reportEqualityDiagnostic = true;
                 break;
             }
             default: {
                 ES2PANDA_UNREACHABLE();
             }
         }
-        return CreateBooleanLiteral(res);
+        auto *result = CreateBooleanLiteral(res);
+        if (reportEqualityDiagnostic) {
+            LogError(res ? diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE : diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE,
+                     {}, expr->Start());
+        }
+
+        return result;
     }
 
     ir::Literal *HandleNumericalRelationalExpression(const ir::BinaryExpression *expr, const ir::NumberLiteral *left,
@@ -681,27 +701,27 @@ private:
         switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
             case TypeRank::DOUBLE: {
                 return PerformRelationOperation(ExtractFromLiteral<double>(left), ExtractFromLiteral<double>(right),
-                                                opType);
+                                                opType, expr);
             }
             case TypeRank::FLOAT: {
                 return PerformRelationOperation(ExtractFromLiteral<float>(left), ExtractFromLiteral<float>(right),
-                                                opType);
+                                                opType, expr);
             }
             case TypeRank::INT64: {
                 return PerformRelationOperation(ExtractFromLiteral<int64_t>(left), ExtractFromLiteral<int64_t>(right),
-                                                opType);
+                                                opType, expr);
             }
             case TypeRank::INT32: {
                 return PerformRelationOperation(ExtractFromLiteral<int32_t>(left), ExtractFromLiteral<int32_t>(right),
-                                                opType);
+                                                opType, expr);
             }
             case TypeRank::INT16: {
                 return PerformRelationOperation(ExtractFromLiteral<int16_t>(left), ExtractFromLiteral<int16_t>(right),
-                                                opType);
+                                                opType, expr);
             }
             case TypeRank::INT8: {
                 return PerformRelationOperation(ExtractFromLiteral<int8_t>(left), ExtractFromLiteral<int8_t>(right),
-                                                opType);
+                                                opType, expr);
             }
             default: {
                 ES2PANDA_UNREACHABLE();
@@ -715,15 +735,16 @@ private:
         auto opType = expr->OperatorType();
 
         if (left->IsStringLiteral() && right->IsStringLiteral()) {
-            return PerformRelationOperation(left->AsStringLiteral()->Str(), right->AsStringLiteral()->Str(), opType);
+            return PerformRelationOperation(left->AsStringLiteral()->Str(), right->AsStringLiteral()->Str(), opType,
+                                            expr);
         }
 
         if (left->IsBooleanLiteral() && right->IsBooleanLiteral()) {
-            return PerformRelationOperation(GetVal<bool>(left), GetVal<bool>(right), opType);
+            return PerformRelationOperation(GetVal<bool>(left), GetVal<bool>(right), opType, expr);
         }
 
         if (left->IsCharLiteral() && right->IsCharLiteral()) {
-            auto res = PerformRelationOperation(left->AsCharLiteral(), right->AsCharLiteral(), opType);
+            auto res = PerformRelationOperation(left->AsCharLiteral(), right->AsCharLiteral(), opType, expr);
             if (res != nullptr) {
                 return res;
             }

@@ -625,9 +625,31 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateEnumClassByPrimitiveType(ir::TSEn
     return nullptr;
 }
 
+void EnumLoweringPhase::CheckEnumInitializerConstraints(ir::TSEnumDeclaration *enumDecl)
+{
+    bool hasNonConstExplicitInitializer = false;
+
+    for (auto *member : enumDecl->Members()) {
+        auto *enumMember = member->AsTSEnumMember();
+        auto *init = enumMember->Init();
+
+        if (hasNonConstExplicitInitializer && enumMember->IsGenerated()) {
+            LogError(diagnostic::ENUM_IMPLICIT_AFTER_NON_CONST_INIT, {}, enumMember->Start());
+            continue;
+        }
+
+        if (!enumMember->IsGenerated() && init != nullptr && !init->IsLiteral()) {
+            hasNonConstExplicitInitializer = true;
+        }
+    }
+}
+
 checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(checker::AstNodePtr &ast)
 {
     auto *enumDecl = ast->AsTSEnumDeclaration();
+    // Always validate enum member initialization constraints even if enum is not lowered.
+    CheckEnumInitializerConstraints(enumDecl);
+
     auto const flags = GetDeclFlags(enumDecl);
     if (!flags.IsValid() || enumDecl->Members().empty()) {
         return ast;
@@ -676,6 +698,9 @@ checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(c
 checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker::AstNodePtr &ast)
 {
     auto *enumDecl = ast->AsTSEnumDeclaration();
+    // Always validate enum member initialization constraints even if enum is not lowered.
+    CheckEnumInitializerConstraints(enumDecl);
+
     auto const flags = GetDeclFlags(enumDecl);
     if (!flags.IsValid()) {
         return ast;

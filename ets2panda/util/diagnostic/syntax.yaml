@@ -238,6 +238,10 @@ syntax:
   id: 10292
   message: "The import clause contains an empty list."
 
+- name: ENUM_IMPLICIT_AFTER_NON_CONST_INIT
+  id: 133690
+  message: "If an initializer for an enumeration member is not a constant expression, then all subsequent members must be explicitly initialized."
+
 - name: ENUM_INVALID_INIT
   id: 36
   message: "Invalid enum initialization value"
