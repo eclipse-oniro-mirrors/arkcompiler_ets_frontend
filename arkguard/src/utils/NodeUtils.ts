@@ -351,7 +351,11 @@ export class NodeUtils {
  * When enabling property obfuscation and the compilation output is a TS file,
  * collect the Identifier names in the initialization expressions of enum members.
  */
-export function collectReservedNameForObf(obfuscationConfig: MergedConfig | undefined, shouldTransformToJs: boolean): TransformerFactory<SourceFile> {
+export function collectReservedNameForObf(
+  obfuscationConfig: MergedConfig | undefined,
+  shouldTransformToJs: boolean,
+  parentEvent?: CompileEvent): TransformerFactory<SourceFile> {
+  const eventCollectReservedNameForObf = createAndStartEvent(parentEvent, 'collectReservedNameForObf');
   const disableObf = obfuscationConfig?.options === undefined || obfuscationConfig.options.disableObfuscation;
   const enablePropertyObf = obfuscationConfig?.options.enablePropertyObfuscation;
   // process.env.compiler === 'on': indicates that during the Webpack packaging process,
@@ -366,6 +370,7 @@ export function collectReservedNameForObf(obfuscationConfig: MergedConfig | unde
       if (shouldCollect) {
         node = visitEachChild(node, collectReservedNames, context);
       }
+      stopEvent(eventCollectReservedNameForObf);
       return node;
     };
 
@@ -402,4 +407,48 @@ export function hasExportModifier(node: Node): boolean {
   }
 
   return false;
+}
+
+export interface CompileEvent {
+  createSubEvent?: (eventName: string) => CompileEvent;
+  createEvent: (eventName: string) => CompileEvent;
+  startAsyncEvent?: () => void;
+  start: () => void;
+  stopAsyncEvent?: () => void;
+  stop: () => void;
+  setTotalTime: (time: number) => void;
+}
+
+export function createAndStartEvent(eventOrEventFactory: CompileEvent | undefined, eventName: string,
+  isAsyncEvent = false): CompileEvent | undefined {
+  if (eventOrEventFactory === undefined || eventOrEventFactory === null) {
+    return undefined;
+  }
+  let event: CompileEvent;
+  if (isSubEvent(eventOrEventFactory)) {
+    event = eventOrEventFactory.createSubEvent(eventName);
+  } else {
+    event = eventOrEventFactory.createEvent(eventName);
+  }
+  if (isAsyncEvent) {
+    event.startAsyncEvent();
+  } else {
+    event.start();
+  }
+  return event;
+}
+
+function isSubEvent(event: CompileEvent): boolean {
+  return typeof event.createSubEvent === 'function';
+}
+
+export function stopEvent(event: CompileEvent | undefined, isAsyncEvent: boolean = false): void {
+  if (event === undefined || event === null) {
+    return;
+  }
+  if (isAsyncEvent) {
+    event.stopAsyncEvent();
+  } else {
+    event.stop();
+  }
 }
