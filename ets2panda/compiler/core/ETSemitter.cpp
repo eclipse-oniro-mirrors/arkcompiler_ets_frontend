@@ -117,9 +117,9 @@ static const std::unordered_set<std::string> ALWAYS_EMIT_RECORDS_LIST {
     // In JIT/AOT we use stringLength field instead of get-stringLength method
     // We need to emit std.core.StringBuilder too because
     // without it we can't emit methods of this object
-    "std.core.StringBuilder",
-    "std.core.StringBuilder.%%get-stringLength:i32;",
-};
+    "std.core.StringBuilder", "std.core.StringBuilder.%%get-stringLength:i32;",
+    // Necessary for StringBuilder internal buffer optimization in JIT/AOT mode
+    "std.core.Object[]"};
 
 // NOTE(aantipina): Issue #32028
 // Null and JSValue classes should not have any methods and constructors.

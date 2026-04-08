@@ -38,6 +38,7 @@ TEST_F(ETSEmitterTest, check_emitted_items_with_different_opt_level)
 
     std::vector<std::string_view> emitRecordsOnlyWithNonZeroOptLevelItems = {
         "std.core.StringBuilder",
+        "std.core.Object[]",
     };
 
     std::vector<std::string_view> emitFunctionsOnlyWithNonZeroOptLevelItems = {
@@ -47,7 +48,6 @@ TEST_F(ETSEmitterTest, check_emitted_items_with_different_opt_level)
     std::vector<std::string_view> noEmitRecordsByDefault = {
         "std.core.String",
         "std.core.String[]",
-        "std.core.Object[]",
     };
 
     std::array args = {
