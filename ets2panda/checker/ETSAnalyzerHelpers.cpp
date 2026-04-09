@@ -562,14 +562,35 @@ checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir:
     return checker->GetNonConstantType(iterType);
 }
 
-bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, const std::string &name,
+bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, ir::ScriptFunction *containingFunc,
                            ir::ReturnStatement *st)
 {
-    if (name.find(compiler::Signatures::ETS_MAIN_WITH_MANGLE_BEGIN) != std::string::npos) {
+    const auto name = containingFunc->Scope()->InternalName().Mutf8();
+    if (name.find(compiler::Signatures::ETS_MAIN_WITH_MANGLE_BEGIN) == std::string::npos) {
+        return true;
+    }
+
+    if (!containingFunc->IsDeclaredAsync()) {
         if (!funcReturnType->IsETSUndefinedType() &&
             !checker->Relation()->IsSupertypeOf(checker->GlobalIntBuiltinType(), funcReturnType)) {
             checker->LogError(diagnostic::MAIN_BAD_RETURN, {}, st->Start());
         }
+        return true;
+    }
+
+    [[maybe_unused]] auto promiseAnyType = checker->CreatePromiseOf(checker->GlobalETSAnyType());
+    ES2PANDA_ASSERT(checker->Relation()->IsSupertypeOf(promiseAnyType, funcReturnType) ||
+                    funcReturnType->IsETSAsyncFuncReturnType());
+
+    // NOTE(FE team): will be fixed after #34227
+    auto asyncRetType = funcReturnType->IsETSAsyncFuncReturnType()
+                            ? funcReturnType->AsETSAsyncFuncReturnType()->PromiseType()
+                            : funcReturnType;
+    auto promiseIntType = checker->CreatePromiseOf(checker->GlobalIntBuiltinType());
+    auto promiseUndefinedType = checker->CreatePromiseOf(checker->GlobalETSUndefinedType());
+    if (!checker->Relation()->IsSupertypeOf(promiseUndefinedType, asyncRetType) &&
+        !checker->Relation()->IsSupertypeOf(promiseIntType, asyncRetType)) {
+        checker->LogError(diagnostic::ASYNC_MAIN_BAD_RETURN, {}, st->Start());
     }
     return true;
 }
@@ -712,8 +733,7 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
         checker::Type *argumentType = checker->GetNonConstantType(stArgument->Check(checker));
 
         ES2PANDA_ASSERT(argumentType != nullptr);
-        const auto name = containingFunc->Scope()->InternalName().Mutf8();
-        if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
+        if (!CheckArgumentVoidType(funcReturnType, checker, containingFunc, st)) {
             return funcReturnType;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,4 @@ function main(): char {
 }
 
 
-/* @@@ label Error Semantic error ESE0088: Bad return type, main enable only void or int type. */
+/* @@@ label Error Semantic error ESE0088: The return type of the main function must be either void or int. */

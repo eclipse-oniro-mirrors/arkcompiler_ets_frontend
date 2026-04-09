@@ -4907,8 +4907,7 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
 bool ETSAnalyzer::CheckReturnStatementArgumentType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                                    checker::Type *funcReturnType, ETSChecker *checker) const
 {
-    const auto name = containingFunc->Scope()->InternalName().Mutf8();
-    if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
+    if (!CheckArgumentVoidType(funcReturnType, checker, containingFunc, st)) {
         return false;
     }
     // Note: First,handle this situation specially,and the ETSAsyncFuncReturnType needs to be restructured later.
