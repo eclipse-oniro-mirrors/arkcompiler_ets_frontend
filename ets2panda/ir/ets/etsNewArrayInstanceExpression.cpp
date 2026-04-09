@@ -34,18 +34,26 @@ void ETSNewArrayInstanceExpression::TransformChildren(const NodeTransformer &cb,
         dimension_->SetTransformedNode(transformationName, transformedNode);
         dimension_ = transformedNode->AsExpression();
     }
+
+    if (auto *transformedNode = cb(initializer_); initializer_ != transformedNode) {
+        initializer_->SetTransformedNode(transformationName, transformedNode);
+        initializer_ = transformedNode->AsExpression();
+    }
 }
 
 void ETSNewArrayInstanceExpression::Iterate(const NodeTraverser &cb) const
 {
     cb(typeReference_);
     cb(dimension_);
+    cb(initializer_);
 }
 
 void ETSNewArrayInstanceExpression::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add(
-        {{"type", "ETSNewArrayInstanceExpression"}, {"typeReference", typeReference_}, {"dimension", dimension_}});
+    dumper->Add({{"type", "ETSNewArrayInstanceExpression"},
+                 {"typeReference", typeReference_},
+                 {"dimension", dimension_},
+                 {"initializer", initializer_}});
 }
 
 void ETSNewArrayInstanceExpression::Dump(ir::SrcDumper *dumper) const
@@ -97,6 +105,10 @@ ETSNewArrayInstanceExpression *ETSNewArrayInstanceExpression::Clone(ArenaAllocat
 
     if (dimension != nullptr) {
         dimension->SetParent(clone);
+    }
+
+    if (initializer != nullptr) {
+        initializer->SetParent(clone);
     }
 
     if (parent != nullptr) {

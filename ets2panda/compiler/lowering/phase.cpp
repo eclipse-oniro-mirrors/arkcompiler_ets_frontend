@@ -113,7 +113,6 @@ std::vector<Phase *> GetETSPhaseList()
         new ExportAnonymousConstPhase,
         new InitModuleLowering,
         new TopLevelStatements,
-        new ArrayConversionLowering,
         new ResizableArrayConvert,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ExpressionLambdaConstructionPhase,
         new InsertOptionalParametersAnnotation,
@@ -125,6 +124,7 @@ std::vector<Phase *> GetETSPhaseList()
         new PromiseVoidInferencePhase,
         new InterfacePropertyDeclarationsPhase,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ConstantExpressionLowering,
+        new ArrayConversionLowering,
         new StringConstantsLowering,
         new EnumLoweringPhase,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ResolveIdentifiers,
