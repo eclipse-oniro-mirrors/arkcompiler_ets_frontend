@@ -2090,3 +2090,5 @@
     }
   }
 }
+[null_coalescing_generic_1.ets:26:25] Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value.
+[null_coalescing_generic_1.ets:31:12] Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value.

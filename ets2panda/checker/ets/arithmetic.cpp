@@ -1156,6 +1156,11 @@ Type *ETSChecker::CheckBinaryOperatorNullishCoalescing(ir::Expression *left, ir:
                                                        lexer::SourcePosition pos)
 {
     auto *leftType = left->TsType();
+    if (leftType->DefinitelyNotETSNullish()) {
+        LogDiagnostic(diagnostic::NULLISH_COALESCING_ALWAYS_LEFT, pos);
+    } else if (leftType->DefinitelyETSNullish()) {
+        LogDiagnostic(diagnostic::NULLISH_COALESCING_ALWAYS_RIGHT, pos);
+    }
     leftType = GetNonNullishType(leftType);
     if (leftType->IsTypeError() && HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
         return GlobalTypeError();
