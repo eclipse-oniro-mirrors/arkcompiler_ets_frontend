@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,6 @@ function main(): void {
     arktest.assertEQ(instance.getX(), true);
 }
 
-/* @@? 16:1 Error Semantic error ESE0215: Cannot inherit from interface A because method x is inherited with a different declaration type */
+/* @@? 16:1 Error Semantic error ESE0215: Class B cannot implement interface A because the declaration type for method x is not compatible with the declaration type required by the interface. */
 /* @@? 23:12 Error Semantic error ESE0136: Method x(%%property-x: Boolean): void in B not overriding any method */
 /* @@? 25:15 Error Semantic error ESE0002: Type 'Boolean' has no call signatures. */

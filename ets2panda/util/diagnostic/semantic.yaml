@@ -719,13 +719,17 @@ semantic:
   id: 132
   message: "The type of parameter '{}' cannot be inferred"
 
+- name: INHERITED_CLASS_MODIFIERS_MISMATCH
+  id: 1484256
+  message: "Class {} cannot extend class {} because {} {} has readonly modifier."
+
 - name: INHERITED_CLASS_TYPE_MISMATCH
   id: 216
-  message: "Cannot inherit from class {}, because {} {} is inherited with a different declaration type"
+  message: "Class {} cannot extend class {} because the overriding declaration type for {} {} is not compatible with the declaration type required by the base class."
 
 - name: INHERITED_INTERFACE_TYPE_MISMATCH
   id: 215
-  message: "Cannot inherit from interface {} because {} {} is inherited with a different declaration type"
+  message: "Class {} cannot implement interface {} because the declaration type for {} {} is not compatible with the declaration type required by the interface."
 
 - name: INIT_DOESNT_COMPLETE
   id: 101
