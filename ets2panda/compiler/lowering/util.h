@@ -38,6 +38,7 @@ void ResetGenSymCounter();
 void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept;
 ArenaSet<varbinder::Variable *> FindCaptured(ArenaAllocator *allocator, ir::AstNode *scopeBearer) noexcept;
 void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &range);
+[[nodiscard]] bool IsSyntheticIdentifier(const ir::AstNode *node) noexcept;
 
 // Rerun varbinder on the node.
 varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, ir::AstNode *node);

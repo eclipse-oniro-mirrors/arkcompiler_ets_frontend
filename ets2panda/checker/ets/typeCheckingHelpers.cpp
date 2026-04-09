@@ -1920,20 +1920,6 @@ void ETSChecker::CheckConstructorOverloadDeclaration(ETSChecker *checker, ir::Ov
             continue;
         }
 
-        ES2PANDA_ASSERT(identType->IsETSFunctionType());
-        const size_t singleSignatureSize = 1;
-        if (identType->AsETSFunctionType()->CallSignatures().size() > singleSignatureSize) {
-            size_t userDefinedConstructorSize =
-                std::count_if(identType->AsETSFunctionType()->CallSignatures().begin(),
-                              identType->AsETSFunctionType()->CallSignatures().end(),
-                              [](Signature *sig) { return !sig->Function()->IsSynthetic(); });
-            if (userDefinedConstructorSize > singleSignatureSize) {
-                checker->LogError(diagnostic::OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION, {ident->Name()},
-                                  node->Start());
-                continue;
-            }
-        }
-
         if (!CheckOverloadedName(checker, node, overloadedName)) {
             continue;
         }

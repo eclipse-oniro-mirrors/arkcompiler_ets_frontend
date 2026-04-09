@@ -114,6 +114,11 @@ void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &ran
     node->IterateRecursively([](ir::AstNode *n) { n->SetRange(n->Parent()->Range()); });
 }
 
+bool IsSyntheticIdentifier(const ir::AstNode *node) noexcept
+{
+    return node->IsIdentifier() && node->AsIdentifier()->Name().StartsWith(compiler::GENSYM_CORE);
+}
+
 ir::AstNode *RefineSourceRanges(ir::AstNode *node)
 {
     auto const isInvalidRange = [](lexer::SourceRange const &range) {
