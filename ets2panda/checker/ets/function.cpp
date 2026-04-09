@@ -1510,22 +1510,24 @@ bool ETSChecker::CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType 
     auto *overloadSig = overload->CallSignatures()[0];
     Relation()->SignatureIsIdenticalTo(funcSig, overloadSig);
     if (Relation()->IsTrue() && funcSig->GetSignatureInfo()->restVar == overloadSig->GetSignatureInfo()->restVar) {
-        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Mutf8()}, currentFunc->Start());
+        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Utf8()}, currentFunc->Start());
         return false;
     }
 
     if (funcSig->HasRestParameter() != overloadSig->HasRestParameter() &&
         !CheckRestParamOverload(funcSig, overloadSig, Relation())) {
-        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Mutf8()}, currentFunc->Start());
+        LogError(diagnostic::FUNCTION_REDECL_BY_TYPE_SIG, {overload->Name().Utf8()}, currentFunc->Start());
         return false;
     }
 
-    if (!HasSameAssemblySignatures(func, overload)) {
+    bool const returnTypeCheck = (relationFlags & TypeRelationFlag::NO_RETURN_TYPE_CHECK) ==
+                                 static_cast<std::underlying_type_t<TypeRelationFlag>>(0U);
+    if (!HasSameAssemblySignatures(func, overload, returnTypeCheck)) {
         return false;
     }
 
     if (!omitSameAsm) {
-        LogError(diagnostic::FUNCTION_REDECL_BY_ASM_SIG, {func->Name().Mutf8()}, currentFunc->Start());
+        LogError(diagnostic::FUNCTION_REDECL_BY_ASM_SIG, {func->Name().Utf8()}, currentFunc->Start());
         return false;
     }
 
@@ -2476,10 +2478,13 @@ size_t &ETSChecker::ConstraintCheckScopesCount()
     return constraintCheckScopesCount_;
 }
 
-bool ETSChecker::HasSameAssemblySignature(Signature const *const sig1, Signature const *const sig2) noexcept
+bool ETSChecker::HasSameAssemblySignature(Signature const *const sig1, Signature const *const sig2,
+                                          bool returnTypeCheck) noexcept
 {
-    if (sig1->ReturnType()->ToAssemblerTypeWithRank() != sig2->ReturnType()->ToAssemblerTypeWithRank()) {
-        return false;
+    if (returnTypeCheck) {
+        if (sig1->ReturnType()->ToAssemblerTypeWithRank() != sig2->ReturnType()->ToAssemblerTypeWithRank()) {
+            return false;
+        }
     }
 
     if (sig1->ArgCount() != sig2->ArgCount()) {
@@ -2505,12 +2510,12 @@ bool ETSChecker::HasSameAssemblySignature(Signature const *const sig1, Signature
     return (rv1->TsType()->ToAssemblerTypeWithRank() == rv2->TsType()->ToAssemblerTypeWithRank());
 }
 
-bool ETSChecker::HasSameAssemblySignatures(ETSFunctionType const *const func1,
-                                           ETSFunctionType const *const func2) noexcept
+bool ETSChecker::HasSameAssemblySignatures(ETSFunctionType const *const func1, ETSFunctionType const *const func2,
+                                           bool returnTypeCheck) noexcept
 {
     for (auto const *sig1 : func1->CallSignatures()) {
         for (auto const *sig2 : func2->CallSignatures()) {
-            if (HasSameAssemblySignature(sig1, sig2)) {
+            if (HasSameAssemblySignature(sig1, sig2, returnTypeCheck)) {
                 return true;
             }
         }

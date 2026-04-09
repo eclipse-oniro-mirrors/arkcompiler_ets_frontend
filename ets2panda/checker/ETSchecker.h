@@ -479,9 +479,10 @@ public:
     bool CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType *overload,
                                  const ir::MethodDefinition *currentFunc, bool omitSameAsm = false,
                                  TypeRelationFlag relationFlags = TypeRelationFlag::NO_RETURN_TYPE_CHECK);
-    static bool HasSameAssemblySignature(Signature const *const sig1, Signature const *const sig2) noexcept;
-    static bool HasSameAssemblySignatures(ETSFunctionType const *const func1,
-                                          ETSFunctionType const *const func2) noexcept;
+    static bool HasSameAssemblySignature(Signature const *const sig1, Signature const *const sig2,
+                                         bool returnTypeCheck = true) noexcept;
+    static bool HasSameAssemblySignatures(ETSFunctionType const *const func1, ETSFunctionType const *const func2,
+                                          bool returnTypeCheck) noexcept;
     static bool HasParameterlessConstructor(checker::Type *type);
     Signature *AdjustForTypeParameters(Signature *source, Signature *target);
     void CheckOverride(Signature *signature);
