@@ -26,20 +26,20 @@
 
 namespace ark::es2panda::diagnostic {
 
-% MAX_SIZE = Diagnostic::diagnostics.map(&:exclusionlist).map(&:size).max
-% WHITE_LIST_MAX_SIZE = Diagnostic::diagnostics.map(&:whitelist).map(&:size).max
+% MAX_SIZE = Diagnostic::diagnostics.map(&:hardlist).map(&:size).max
+% SOFT_LIST_MAX_SIZE = Diagnostic::diagnostics.map(&:softlist).map(&:size).max
 
 class DiagnosticKind {
 public:
     constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict,
-    const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist = {},
-    const std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>>& whitelist = {}, bool hasWhiteList = false) :
+    const std::array<std::string_view, <%= MAX_SIZE %>>& hardlist = {},
+    const std::array<std::string_view, <%= SOFT_LIST_MAX_SIZE %>>& softlist = {}, bool hasSoftList = false) :
 #ifdef ES2PANDA_STRICT
         type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message),
-        strict_(strict), exclusionlist_(exclusionlist), whitelist_(whitelist), hasWhiteList_(hasWhiteList) {}
+        strict_(strict), hardlist_(hardlist), softlist_(softlist), hasSoftList_(hasSoftList) {}
 #else
-        type_(type), id_(id), message_(message), strict_(strict), exclusionlist_(exclusionlist),
-        whitelist_(whitelist), hasWhiteList_(hasWhiteList) {}
+        type_(type), id_(id), message_(message), strict_(strict), hardlist_(hardlist),
+        softlist_(softlist), hasSoftList_(hasSoftList) {}
 #endif
 
     bool operator==(const DiagnosticKind &other) const
@@ -88,19 +88,19 @@ public:
         return false;
     }
 
-    bool IsInExclusionList(std::string_view path) const
+    bool IsInHardList(std::string_view path) const
     {
-        return IsInList<<%= MAX_SIZE %>>(path, exclusionlist_);
+        return IsInList<<%= MAX_SIZE %>>(path, hardlist_);
     }
 
-    bool IsInWhiteList(std::string_view path) const
+    bool IsInSoftList(std::string_view path) const
     {
-        return !hasWhiteList_ || IsInList<<%= WHITE_LIST_MAX_SIZE %>>(path, whitelist_);
+        return !hasSoftList_ || IsInList<<%= SOFT_LIST_MAX_SIZE %>>(path, softlist_);
     }
 
-    bool HasWhiteList() const
+    bool HasSoftList() const
     {
-        return hasWhiteList_;
+        return hasSoftList_;
     }
 
 private:
@@ -108,23 +108,23 @@ private:
     const uint32_t id_;
     const std::string_view message_;
     const bool strict_;
-    const std::array<std::string_view, <%= MAX_SIZE %>>& exclusionlist_;
-    const std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>>& whitelist_;
-    const bool hasWhiteList_;
+    const std::array<std::string_view, <%= MAX_SIZE %>>& hardlist_;
+    const std::array<std::string_view, <%= SOFT_LIST_MAX_SIZE %>>& softlist_;
+    const bool hasSoftList_;
 };
 
-constexpr static std::array<std::string_view, <%= MAX_SIZE %>> EMPTY_EXCLUSION_LIST = {};
-constexpr static std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>> EMPTY_WHITE_LIST = {};
+constexpr static std::array<std::string_view, <%= MAX_SIZE %>> EMPTY_HARD_LIST = {};
+constexpr static std::array<std::string_view, <%= SOFT_LIST_MAX_SIZE %>> EMPTY_SOFT_LIST = {};
 % Diagnostic::diagnostics.each do |desc|
-%   if !desc.exclusionlist.empty?
-constexpr static std::array<std::string_view, <%= MAX_SIZE %>> <%= desc.name %>_EXCLUSIONLIST = { <%= desc.exclusionlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
+%   if !desc.hardlist.empty?
+constexpr static std::array<std::string_view, <%= MAX_SIZE %>> <%= desc.name %>_HARDLIST = { <%= desc.hardlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
 %   end
-%   if !desc.whitelist.empty?
-constexpr static std::array<std::string_view, <%= WHITE_LIST_MAX_SIZE %>> <%= desc.name %>_WHITELIST = { <%= desc.whitelist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
+%   if !desc.softlist.empty?
+constexpr static std::array<std::string_view, <%= SOFT_LIST_MAX_SIZE %>> <%= desc.name %>_SOFTLIST = { <%= desc.softlist.map { |p| "R\"(#{p})\"" }.join(", ") %> };
 %   end
 constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>,
-    <% if !desc.exclusionlist.empty? %><%= desc.name %>_EXCLUSIONLIST<% else %>EMPTY_EXCLUSION_LIST<% end %>,
-    <% if !desc.whitelist.empty? %><%= desc.name %>_WHITELIST, true<% else %>EMPTY_WHITE_LIST, false<% end %>};
+    <% if !desc.hardlist.empty? %><%= desc.name %>_HARDLIST<% else %>EMPTY_HARD_LIST<% end %>,
+    <% if !desc.softlist.empty? %><%= desc.name %>_SOFTLIST, true<% else %>EMPTY_SOFT_LIST, false<% end %>};
 % end
 
 } // namespace ark::es2panda::diagnostic
