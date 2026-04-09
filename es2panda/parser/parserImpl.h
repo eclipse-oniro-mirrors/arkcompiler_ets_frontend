@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -266,8 +266,8 @@ private:
     static bool IsMethodDefinitionsAreSame(const ir::MethodDefinition *property, ir::MethodDefinition *overload);
     ir::TSTypeReference *ParseTsConstExpression();
     ir::Expression *ParseTsTypeOperatorOrTypeReference(bool throwError);
-    ir::Expression *ParseTsTypeOperator();
-    ir::Expression *ParseTsInferType();
+    ir::Expression *ParseTsTypeOperator(bool throwError);
+    ir::Expression *ParseTsInferType(bool throwError);
     ir::Expression *ParseTsIdentifierReference(TypeAnnotationParsingOptions options);
     ir::Expression *ParseTsBasicType(TypeAnnotationParsingOptions options);
     ir::TSIntersectionType *ParseTsIntersectionType(ir::Expression *type, bool inUnion, bool restrictExtends,
