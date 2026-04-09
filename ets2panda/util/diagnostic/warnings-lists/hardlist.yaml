@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-exclusionlist:
+hardlist:
 - name: "numeric_conversions"
   paths:
   - ".*/ability/ability_runtime/actsstartselfuiabilityteststatic/entry/src/main/src/test/AbilityStatic\\.test\\.ets"

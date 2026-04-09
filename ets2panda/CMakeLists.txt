@@ -199,8 +199,8 @@ set(WARNING_LISTS_DIR
 
 panda_gen(
     DATA
-        ${WARNING_LISTS_DIR}/exclusionlist.yaml
-        ${WARNING_LISTS_DIR}/whitelist.yaml
+        ${WARNING_LISTS_DIR}/hardlist.yaml
+        ${WARNING_LISTS_DIR}/softlist.yaml
         ${DIAGNOSTIC_DIR}/syntax.yaml
         ${DIAGNOSTIC_DIR}/semantic.yaml
         ${DIAGNOSTIC_DIR}/warning.yaml

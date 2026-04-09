@@ -113,26 +113,26 @@ warning:
   id: 29
   message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
   strict: true
-  exclusionlist: ["numeric_conversions"]
-  whitelist: ["allow_xts"]
+  hardlist: ["numeric_conversions"]
+  softlist: ["allow_xts"]
 
 - name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
   id: 52491
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
   strict: true
-  whitelist: ["override_field_allowed"]
+  softlist: ["override_field_allowed"]
 
 - name: INITIALIZERS_IN_AMBIENT_CONTEXTS
   id: 125
   message: "Initializers are not allowed in ambient contexts."
   strict: true
-  whitelist: ["ambient_context"]
+  softlist: ["ambient_context"]
 
 - name: INIT_IN_AMBIENT
   id: 153
   message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
-  whitelist: ["ambient_context"]
+  softlist: ["ambient_context"]
 
 - name: INVALID_CAST
   id: 326
@@ -211,7 +211,7 @@ warning:
   id: 1236581
   message: "Type '{}' used in export declaration(s) is not exported."
   strict: true
-  whitelist: ["allow_implicit_export"]
+  softlist: ["allow_implicit_export"]
 
 graveyard:
 - 27

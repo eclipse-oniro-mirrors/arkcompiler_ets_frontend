@@ -20,8 +20,8 @@ module Diagnostic
   module_function
 
   @diagnostics = []
-  @blacklists_map = {}
-  @whitelists_map = {}
+  @hardlists_map = {}
+  @softlists_map = {}
 
   def diagnostics
     @diagnostics
@@ -62,21 +62,21 @@ module Diagnostic
 
   def try_parse_lists(data)
     verify_lists(data)
-    if data.respond_to?(:exclusionlist)
-      blacklists_data = data.delete_field(:exclusionlist)
-      if blacklists_data
-        blacklists_data.each do |bl|
-          @blacklists_map[bl.name] = bl.paths || []
+    if data.respond_to?(:hardlist)
+      hardlists_data = data.delete_field(:hardlist)
+      if hardlists_data
+        hardlists_data.each do |bl|
+          @hardlists_map[bl.name] = bl.paths || []
         end
       end
       return true
     end
 
-    if data.respond_to?(:whitelist)
-      whitelists_data = data.delete_field(:whitelist)
-      if whitelists_data
-        whitelists_data.each do |wl|
-          @whitelists_map[wl.name] = wl.paths || []
+    if data.respond_to?(:softlist)
+      softlists_data = data.delete_field(:softlist)
+      if softlists_data
+        softlists_data.each do |wl|
+          @softlists_map[wl.name] = wl.paths || []
         end
       end
       return true
@@ -101,10 +101,10 @@ module Diagnostic
   end
 
   def verify_lists(data)
-    return unless data.respond_to?(:exclusionlist) || data.respond_to?(:whitelist)
+    return unless data.respond_to?(:hardlist) || data.respond_to?(:softlist)
 
-    list = data.respond_to?(:exclusionlist) ? data.exclusionlist : data.whitelist
-    list_name = data.respond_to?(:exclusionlist) ? 'exclusionlist' : 'whitelist'
+    list = data.respond_to?(:hardlist) ? data.hardlist : data.softlist
+    list_name = data.respond_to?(:hardlist) ? 'hardlist' : 'softlist'
 
     names = Set.new
     list.each do |item|
@@ -119,16 +119,16 @@ module Diagnostic
   end
 
   def set_lists(diagnostic, diagnostic_type)
-    if diagnostic.respond_to?(:exclusionlist) && diagnostic.exclusionlist
-      diagnostic.exclusionlist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.exclusionlist, @blacklists_map)
+    if diagnostic.respond_to?(:hardlist) && diagnostic.hardlist
+      diagnostic.hardlist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.hardlist, @hardlists_map)
     else
-      diagnostic.exclusionlist = []
+      diagnostic.hardlist = []
     end
 
-    if diagnostic.respond_to?(:whitelist) && diagnostic.whitelist
-      diagnostic.whitelist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.whitelist, @whitelists_map)
+    if diagnostic.respond_to?(:softlist) && diagnostic.softlist
+      diagnostic.softlist = create_diagnostic_pathlist(diagnostic_type, diagnostic, diagnostic.softlist, @softlists_map)
     else
-      diagnostic.whitelist = []
+      diagnostic.softlist = []
     end
   end
 

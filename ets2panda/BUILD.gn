@@ -1466,8 +1466,8 @@ ark_gen("es2panda_options_gen") {
 
 ark_gen("es2panda_diagnostic_gen") {
   data = [
-    "util/diagnostic/warnings-lists/exclusionlist.yaml",
-    "util/diagnostic/warnings-lists/whitelist.yaml",
+    "util/diagnostic/warnings-lists/hardlist.yaml",
+    "util/diagnostic/warnings-lists/softlist.yaml",
     "util/diagnostic/syntax.yaml",
     "util/diagnostic/semantic.yaml",
     "util/diagnostic/warning.yaml",
