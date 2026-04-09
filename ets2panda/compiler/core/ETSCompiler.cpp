@@ -840,20 +840,23 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     compiler::VReg objReg = etsg->AllocReg();
     etsg->StoreAccumulator(expr, objReg);
     ES2PANDA_ASSERT(expr->TsType() != nullptr);
+
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
-    ES2PANDA_ASSERT(expr->PropVar()->TsType() != nullptr);
-    const checker::Type *const variableType = expr->PropVar()->TsType();
-    ES2PANDA_ASSERT(variableType != nullptr);
-    if (variableType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
-        if (expr->Object()->IsSuperExpression()) {
-            etsg->CallExact(expr, variableType->AsETSFunctionType()->FindGetter()->InternalName(), objReg);
-        } else {
-            etsg->CallVirtual(expr, variableType->AsETSFunctionType()->FindGetter(), objReg);
-        }
-    } else if (objectType->IsETSUnionType()) {
-        etsg->LoadPropertyByName(expr, objReg, checker::ETSChecker::FormNamedAccessMetadata(expr->PropVar()));
+    if (objectType->IsETSUnionType()) {
+        etsg->LoadPropertyByName(expr, expr->GetComponentTypeMemberAccessors(), objReg);
     } else {
-        etsg->LoadProperty(expr, variableType, objReg, etsg->FormClassPropReference(expr->PropVar()));
+        ES2PANDA_ASSERT(expr->PropVar()->TsType() != nullptr);
+        const checker::Type *const variableType = expr->PropVar()->TsType();
+        ES2PANDA_ASSERT(variableType != nullptr);
+        if (variableType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
+            if (expr->Object()->IsSuperExpression()) {
+                etsg->CallExact(expr, variableType->AsETSFunctionType()->FindGetter()->InternalName(), objReg);
+            } else {
+                etsg->CallVirtual(expr, variableType->AsETSFunctionType()->FindGetter(), objReg);
+            }
+        } else {
+            etsg->LoadProperty(expr, variableType, objReg, etsg->FormClassPropReference(expr->PropVar()));
+        }
     }
 
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
@@ -887,7 +890,8 @@ bool ETSCompiler::HandleArrayTypeLengthProperty(const ir::MemberExpression *expr
 
 bool ETSCompiler::HandleStaticProperties(const ir::MemberExpression *expr, ETSGen *etsg) const
 {
-    if (auto const *const variable = expr->PropVar(); checker::ETSChecker::IsVariableStatic(variable)) {
+    if (auto const *const variable = expr->PropVar();
+        variable != nullptr && checker::ETSChecker::IsVariableStatic(variable)) {
         auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
 
         if (auto const *const varType = variable->TsType(); varType->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {

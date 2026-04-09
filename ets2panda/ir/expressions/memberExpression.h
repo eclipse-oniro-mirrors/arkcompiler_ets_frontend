@@ -20,6 +20,7 @@
 #include "checker/types/ets/etsObjectType.h"
 #include "ir/expression.h"
 #include "checker/resolveResult.h"
+#include "varbinder/variable.h"
 
 namespace ark::es2panda::compiler {
 class JSCompiler;
@@ -266,8 +267,8 @@ private:
                                                   std::string_view const methodName);
 
     void LoadRhs(compiler::PandaGen *pg) const;
-    void AddUnionSignature(checker::ETSChecker *checker, checker::Type *memberType, checker::Type *const type,
-                           checker::Type **commonPropType);
+    void CollectUnionSignatures(checker::ETSChecker *checker, checker::Type *memberType, checker::Type *const type,
+                                checker::Type **commonPropType, varbinder::LocalVariable *prop);
 
     EPtr<Expression> object_ = nullptr;
     EPtr<Expression> property_ = nullptr;
