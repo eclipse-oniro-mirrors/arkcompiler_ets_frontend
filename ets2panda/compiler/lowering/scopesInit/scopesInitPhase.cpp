@@ -1447,23 +1447,11 @@ void InitScopesPhaseETS::FilterOverloads(ArenaVector<ir::AstNode *> &props)
 
 void InitScopesPhaseETS::VisitClassProperty(ir::ClassProperty *classProp)
 {
-    auto curScope = VarBinder()->GetScope();
     const auto name = classProp->Key()->AsIdentifier()->Name();
 
     ES2PANDA_ASSERT(!classProp->IsClassStaticBlock());
 
     if (classProp->IsConst()) {
-        ES2PANDA_ASSERT(curScope->Parent() != nullptr);
-        const auto initializer = classProp->Value();
-        if (initializer == nullptr && curScope->Parent()->IsGlobalScope() && !classProp->IsDeclare() &&
-            !classProp->NeedInitInStaticBlock()) {
-            auto pos = classProp->End();
-            // NOTE: Just use property Name?
-            if (classProp->TypeAnnotation() != nullptr && !classProp->TypeAnnotation()->IsETSPrimitiveType()) {
-                --(pos.index);
-            }
-            LogDiagnostic(diagnostic::CONST_WITHOUT_INIT, pos);
-        }
         AddOrGetDecl<varbinder::ConstDecl>(VarBinder(), name, classProp, classProp->Key()->Start(), name, classProp);
     } else if (classProp->IsReadonly()) {
         AddOrGetDecl<varbinder::ReadonlyDecl>(VarBinder(), name, classProp, classProp->Key()->Start(), name, classProp);

@@ -172,8 +172,8 @@ function main(): void {
 /* @@? 37:33 Error Syntax error ESY0227: Unexpected token 'rethrows'. */
 /* @@? 37:33 Error Semantic error ESE0143: Unresolved reference rethrows */
 /* @@? 39:14 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 39:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 39:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 39:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 39:24 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 39:27 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 39:29 Error Syntax error ESY0227: Unexpected token '{'. */
@@ -184,22 +184,23 @@ function main(): void {
 /* @@? 41:6 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
 /* @@? 41:10 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */
 /* @@? 41:12 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 43:1 Error Semantic error ESE0143: Unresolved reference type */
 /* @@? 43:6 Error Syntax error ESY0227: Unexpected token 'null'. */
 /* @@? 43:6 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
 /* @@? 43:11 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */
 /* @@? 43:13 Error Syntax error ESY0227: Unexpected token 'byte'. */
+/* @@? 45:1 Error Semantic error ESE0143: Unresolved reference type */
 /* @@? 45:6 Error Syntax error ESY0227: Unexpected token 'this'. */
 /* @@? 45:6 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
 /* @@? 45:6 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
 /* @@? 45:11 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */
 /* @@? 47:8 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
-/* @@? 47:8 Error Semantic error ESE0363: Missing initializer in const declaration */
 /* @@? 49:13 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 51:25 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
 /* @@? 51:27 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 51:30 Error Syntax error ESY0227: Unexpected token 'p'. */
-/* @@? 51:33 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 51:33 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 51:33 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 51:38 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 51:39 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 51:41 Error Syntax error ESY0227: Unexpected token 'int'. */
@@ -224,15 +225,15 @@ function main(): void {
 /* @@? 83:7 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
 /* @@? 83:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
 /* @@? 84:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 92:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
 /* @@? 92:7 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 92:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
 /* @@? 93:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 103:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 104:21 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 115:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 115:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
-/* @@? 115:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 115:26 Error Syntax error ESY0227: Unexpected token 'case'. */
+/* @@? 115:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 115:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 115:30 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 115:32 Error Syntax error ESY0227: Unexpected token 'U'. */
 /* @@? 115:32 Error Semantic error ESE0143: Unresolved reference U */
@@ -244,30 +245,31 @@ function main(): void {
 /* @@? 116:5 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 116:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 119:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
-/* @@? 119:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 119:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 119:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 119:26 Error Syntax error ESY0227: Unexpected token 'case'. */
+/* @@? 119:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 119:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 119:30 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 119:32 Error Syntax error ESY0227: Unexpected token 'U'. */
+/* @@? 119:32 Error Semantic error ESE0143: Unresolved reference U */
 /* @@? 119:33 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 119:34 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 119:36 Error Syntax error ESY0227: Unexpected token 'T'. */
+/* @@? 119:36 Error Semantic error ESE0143: Unresolved reference T */
 /* @@? 119:38 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 120:5 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 120:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 123:5 Error Syntax error ESY0224: Identifier expected, got ','. */
-/* @@? 123:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error Syntax error ESY0227: Unexpected token 'abc'. */
+/* @@? 123:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error Semantic error ESE0143: Unresolved reference abc */
 /* @@? 125:1 Error Semantic error ESE0399: Method declaration `foo` must all ambient or non-ambient */
 /* @@? 127:1 Error Syntax error ESY0106: The modifier async cannot be used in an ambient context. */
 /* @@? 132:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
+/* @@? 137:16 Error Syntax error ESY0230: Expected ')', got '='. */
 /* @@? 137:16 Error Syntax error ESY0230: Expected '{', got '='. */
 /* @@? 137:16 Error Syntax error ESY0227: Unexpected token '='. */
-/* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
-/* @@? 137:16 Error Syntax error ESY0230: Expected '{', got '='. */
-/* @@? 137:16 Error Syntax error ESY0230: Expected ')', got '='. */
 /* @@? 137:18 Error Syntax error ESY0227: Unexpected token '0'. */
 /* @@? 137:19 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 137:21 Error Syntax error ESY0227: Unexpected token '{'. */
@@ -291,6 +293,6 @@ function main(): void {
 /* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
 /* @@? 164:5 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 165:5 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 297:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
+/* @@? 299:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
