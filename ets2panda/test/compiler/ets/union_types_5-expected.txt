@@ -4106,3 +4106,4 @@
     }
   }
 }
+[union_types_5.ets:32:16] Warning W1001506: the value of the instanceof expression is known at compile-time as true

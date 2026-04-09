@@ -4530,4 +4530,6 @@
   }
 }
 [union_types_1.ets:36:18] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_1.ets:54:9] Warning W1001506: the value of the instanceof expression is known at compile-time as true
 [union_types_1.ets:55:18] Warning W670214: This cast can be excessive because it always succeeds
+[union_types_1.ets:58:9] Warning W1001506: the value of the instanceof expression is known at compile-time as false

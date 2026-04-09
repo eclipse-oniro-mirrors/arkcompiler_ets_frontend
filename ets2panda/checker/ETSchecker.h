@@ -420,7 +420,7 @@ public:
                                                               bool isEqualOp, checker::Type *leftType,
                                                               checker::Type *rightType, Type *unboxedL, Type *unboxedR);
     std::tuple<Type *, Type *> CheckBinaryOperatorInstanceOf(const ir::Expression *right, checker::Type *leftType,
-                                                             checker::Type *rightType);
+                                                             checker::Type *rightType, lexer::SourcePosition pos);
     checker::Type *CheckBinaryOperatorNullishCoalescing(ir::Expression *left, ir::Expression *right,
                                                         lexer::SourcePosition pos);
     bool CheckIfNumeric(Type *type);

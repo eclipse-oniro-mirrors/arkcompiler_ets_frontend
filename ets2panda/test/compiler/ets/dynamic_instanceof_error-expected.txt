@@ -558,4 +558,5 @@
     }
   }
 }
+[dynamic_instanceof_error.ets:24:11] Warning W1001506: the value of the instanceof expression is known at compile-time as true
 [dynamic_instanceof_error.ets:24:24] Semantic error ESE0371: Cannot find type 'A'.

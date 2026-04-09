@@ -5285,4 +5285,5 @@
 }
 [binary_op.ets:25:10] Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value.
 [binary_op.ets:26:10] Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value.
+[binary_op.ets:53:11] Warning W1001506: the value of the instanceof expression is known at compile-time as true
 [binary_op.ets:77:11] Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value.
