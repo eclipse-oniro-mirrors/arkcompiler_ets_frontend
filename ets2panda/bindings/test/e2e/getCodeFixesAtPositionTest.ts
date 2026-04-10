@@ -15,8 +15,7 @@
 
 import { getLspWithUi, getRealPath } from '../utils';
 
-// ui-syntax rule is moved to after-check and can be enabled after adaptation
-xdescribe('getCodeFixesAtPositionTest', () => {
+describe('getCodeFixesAtPositionTest', () => {
   const moduleName: string = 'getCodeFixesAtPosition';
   const EXPECT_000 = [
     {
