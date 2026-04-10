@@ -74,3 +74,9 @@ softlist:
 - name: "override_field_init"
   paths:
   - ".*/ohos-sdk/.+/ets/static/api/.*"
+
+- name: "allow_reexport"
+  paths:
+  - ".*/@ohos\\.arkui\\.component\\.d\\.ets"
+  - ".*/koala_projects/arkoala-arkts/arkui-preprocessed/arkui/framework/index\\.ets"
+  - ".*/koala_projects/arkoala-arkts/arkui-preprocessed/arkui/index\\.ets"
