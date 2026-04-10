@@ -72,11 +72,6 @@ GenericBridges_01.ets
 GenericBridges_02.ets
 override_for_partial_01.ets
 
-# Arrays of primitives used interchangeably with arrays of reference (in generics and forOf)
-GenericArray_1.ets
-array-object.ets
-async_lambda_return_type_test.ets
-
 #HEAD FILE NO NEED TO RUN
 import_self_head_tests/B/test.d.ets
 
@@ -86,13 +81,9 @@ RecordKeyTypeCheck.ets
 # Rebase no-primitives pathch onto master with merger Array refactoring
 union_generic_class.ets
 
-# New failures at #FailKind.VERIFIER_FAIL
-inferTypeLambda_14.ets
-
 enum_const_variable.ets
 local_enum03.ets
 overload-primitive-and-object.ets
-finallyTryAbruptedByReturn.ets
 
 # No-primitives #24986 [end]
 
@@ -117,9 +108,9 @@ finallyClauseThrow.ets
 #31690 to review after merge
 namespace_tests/namespace_import_type_test/namespace_import.ets
 
-#33394
+#33394 
 element_access_compound_assignment.ets
 
-#34042
+#34042 
 InitialCheckForGeneric2.ets
 for-of-lambda-test.ets
