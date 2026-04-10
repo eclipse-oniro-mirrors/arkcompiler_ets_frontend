@@ -773,8 +773,8 @@ std::vector<std::string> const &Helpers::StdLib()
     static std::vector<std::string> stdlib {
         "std/core",        "std/math",        "std/containers",        "std/interop/js",
         "std/time",        "std/debug",       "std/debug/concurrency", "std/testing",
-        "escompat",        "std/concurrency", "std/annotations",       "std/interop",
-        "std/math/consts", "arkruntime"};
+        "std/concurrency", "std/annotations", "std/interop",           "std/math/consts",
+        "arkruntime"};
     return stdlib;
 }
 
