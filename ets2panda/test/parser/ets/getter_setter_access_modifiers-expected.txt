@@ -817,6 +817,22 @@
                 }
               }
             },
+            "value": {
+              "type": "NumberLiteral",
+              "value": 0,
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 25,
+                  "program": "getter_setter_access_modifiers.ets"
+                },
+                "end": {
+                  "line": 27,
+                  "column": 26,
+                  "program": "getter_setter_access_modifiers.ets"
+                }
+              }
+            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -847,7 +863,7 @@
               },
               "end": {
                 "line": 27,
-                "column": 22,
+                "column": 26,
                 "program": "getter_setter_access_modifiers.ets"
               }
             }
@@ -866,6 +882,22 @@
                 "end": {
                   "line": 28,
                   "column": 19,
+                  "program": "getter_setter_access_modifiers.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "NumberLiteral",
+              "value": 0,
+              "loc": {
+                "start": {
+                  "line": 28,
+                  "column": 27,
+                  "program": "getter_setter_access_modifiers.ets"
+                },
+                "end": {
+                  "line": 28,
+                  "column": 28,
                   "program": "getter_setter_access_modifiers.ets"
                 }
               }
@@ -900,7 +932,7 @@
               },
               "end": {
                 "line": 28,
-                "column": 24,
+                "column": 28,
                 "program": "getter_setter_access_modifiers.ets"
               }
             }

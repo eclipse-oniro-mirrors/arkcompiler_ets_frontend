@@ -240,7 +240,8 @@ syntax:
 
 - name: ENUM_IMPLICIT_AFTER_NON_CONST_INIT
   id: 133690
-  message: "If an initializer for an enumeration member is not a constant expression, then all subsequent members must be explicitly initialized."
+  message: "If an initializer for an enumeration member is not a constant expression, then all subsequent members must be
+    explicitly initialized."
 
 - name: ENUM_INVALID_INIT
   id: 36

@@ -18,7 +18,7 @@ class Base {
 }
 
 class Derived extends Base {
-    private field: number;
+    private field: number = 0;
 }
 
 /* @@? 21:13 Error Semantic error ESE1600001: Access modifier of field 'field' in class 'Derived' and in the base class 'Base' must be the same. */
