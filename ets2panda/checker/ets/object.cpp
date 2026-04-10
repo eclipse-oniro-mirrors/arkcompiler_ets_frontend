@@ -302,6 +302,39 @@ static bool CheckGetterSetterDecl(varbinder::LocalVariable const *child, varbind
     return checkChild && checkParent && (child->TsType()->IsETSFunctionType() || parent->TsType()->IsETSFunctionType());
 }
 
+bool ETSChecker::ReportInterfaceAccessorTypeMismatchIfNeeded(ETSFunctionType *propType, util::StringView propName,
+                                                             const lexer::SourcePosition &errorPos)
+{
+    if (propType == nullptr) {
+        return false;
+    }
+
+    auto *const getter = propType->FindGetter();
+    auto *const setter = propType->FindSetter();
+    if (getter == nullptr || setter == nullptr || setter->Params().empty()) {
+        return false;
+    }
+
+    auto *const getterType = getter->ReturnType();
+    auto *const setterType = setter->Params().front()->TsType();
+    if (getterType == nullptr || setterType == nullptr) {
+        return false;
+    }
+
+    if (Relation()->IsIdenticalTo(getterType, setterType)) {
+        return false;
+    }
+
+    // Keep `void` and `undefined` equivalent in this strict accessor consistency check.
+    if ((getterType->IsETSVoidType() && setterType->IsETSUndefinedType()) ||
+        (getterType->IsETSUndefinedType() && setterType->IsETSVoidType())) {
+        return false;
+    }
+
+    LogError(diagnostic::PROP_INCOMPAT, {getterType, setterType, propName}, errorPos);
+    return true;
+}
+
 static bool CheckOverloadDecl(varbinder::LocalVariable *child, varbinder::LocalVariable *parent)
 {
     if (!child->Declaration()->Node()->IsOverloadDeclaration() &&
@@ -346,6 +379,44 @@ static bool CheckFunctionDecl(varbinder::LocalVariable *child, varbinder::LocalV
     bool childIsField = (childType->FindGetter() != nullptr) || (childType->FindSetter() != nullptr);
     bool parentIsField = (parentType->FindGetter() != nullptr) || (parentType->FindSetter() != nullptr);
     return childIsField == parentIsField;
+}
+
+static bool CheckCompatibleDifferentDeclaration(ETSChecker *checker, varbinder::LocalVariable *it,
+                                                varbinder::LocalVariable *found)
+{
+    if (it->Declaration()->Type() == varbinder::DeclType::LET &&
+        found->Declaration()->Type() == varbinder::DeclType::READONLY) {
+        return true;
+    }
+
+    return CheckGetterSetterDecl(it, found, checker);
+}
+
+static const char *ResolveInheritedMemberTargetType(varbinder::LocalVariable *it)
+{
+    if (it->HasFlag(varbinder::VariableFlags::PROPERTY)) {
+        return "field";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::METHOD)) {
+        return "method";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::CLASS)) {
+        return "class";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::INTERFACE)) {
+        return "interface";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::NAMESPACE)) {
+        return "namespace";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::ENUM_LITERAL)) {
+        return "enum";
+    }
+    if (it->HasFlag(varbinder::VariableFlags::OVERLOAD)) {
+        return "overload";
+    }
+
+    ES2PANDA_UNREACHABLE();
 }
 
 static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type)
@@ -1467,36 +1538,38 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::ve
     auto superClassType = classType->SuperType();
     while (!functionOverridden && superClassType != nullptr) {
         for (auto *field : superClassType->Fields()) {
-            if (field->Declaration()->Node()->AsClassProperty()->IsStatic()) {
+            if (field->Declaration()->Node()->AsClassProperty()->IsStatic() || field->Name() != (*it)->Name()) {
                 continue;
             }
 
-            if (field->Name() == (*it)->Name()) {
-                auto *newProp = field->Declaration()
-                                    ->Node()
-                                    ->Clone(ProgramAllocator(), classType->GetDeclNode())
-                                    ->AsClassProperty();
-                newProp->AddModifier(ir::ModifierFlags::SUPER_OWNER);
-                newProp->AddModifier(isGetSet.isGetter && isGetSet.isSetter ? ir::ModifierFlags::GETTER_SETTER
-                                     : isGetSet.isGetter                    ? ir::ModifierFlags::GETTER
-                                                                            : ir::ModifierFlags::SETTER);
-                auto *newFieldDecl =
-                    ProgramAllocator()->New<varbinder::LetDecl>(newProp->Key()->AsIdentifier()->Name());
-                newFieldDecl->BindNode(newProp);
-
-                auto newFieldVar = classType->GetDeclNode()
-                                       ->Scope()
-                                       ->AsClassScope()
-                                       ->InstanceFieldScope()
-                                       ->AddDecl(ProgramAllocator(), newFieldDecl, ScriptExtension::ETS)
-                                       ->AsLocalVariable();
-                newFieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
-                newFieldVar->AddFlag(varbinder::VariableFlags::PUBLIC);
-                classType->AddProperty<PropertyType::INSTANCE_FIELD>(newFieldVar);
+            if (ReportInterfaceAccessorTypeMismatchIfNeeded(*it, (*it)->Name(),
+                                                            field->Declaration()->Node()->Start())) {
                 it = abstractsToBeImplemented.erase(it);
                 functionOverridden = true;
                 break;
             }
+
+            auto *newProp =
+                field->Declaration()->Node()->Clone(ProgramAllocator(), classType->GetDeclNode())->AsClassProperty();
+            newProp->AddModifier(ir::ModifierFlags::SUPER_OWNER);
+            newProp->AddModifier(isGetSet.isGetter && isGetSet.isSetter ? ir::ModifierFlags::GETTER_SETTER
+                                 : isGetSet.isGetter                    ? ir::ModifierFlags::GETTER
+                                                                        : ir::ModifierFlags::SETTER);
+            auto *newFieldDecl = ProgramAllocator()->New<varbinder::LetDecl>(newProp->Key()->AsIdentifier()->Name());
+            newFieldDecl->BindNode(newProp);
+
+            auto newFieldVar = classType->GetDeclNode()
+                                   ->Scope()
+                                   ->AsClassScope()
+                                   ->InstanceFieldScope()
+                                   ->AddDecl(ProgramAllocator(), newFieldDecl, ScriptExtension::ETS)
+                                   ->AsLocalVariable();
+            newFieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
+            newFieldVar->AddFlag(varbinder::VariableFlags::PUBLIC);
+            classType->AddProperty<PropertyType::INSTANCE_FIELD>(newFieldVar);
+            it = abstractsToBeImplemented.erase(it);
+            functionOverridden = true;
+            break;
         }
 
         superClassType = superClassType->SuperType();
@@ -1514,6 +1587,14 @@ void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunc
         }
 
         if (field->Name() == (*it)->Name()) {
+            if (ReportInterfaceAccessorTypeMismatchIfNeeded(*it, (*it)->Name(),
+                                                            field->Declaration()->Node()->Start())) {
+                // Spec 9.3.2: class field cannot implement interface property when getter/setter types differ.
+                it = abstractsToBeImplemented.erase(it);
+                functionOverridden = true;
+                break;
+            }
+
             field->Declaration()->Node()->AddModifier(isGetSetExternal.isGetter && isGetSetExternal.isSetter
                                                           ? ir::ModifierFlags::GETTER_SETTER
                                                       : isGetSetExternal.isGetter ? ir::ModifierFlags::GETTER
@@ -3236,39 +3317,14 @@ void ETSChecker::CheckProperties(ETSObjectType *classType, ir::ClassDefinition *
     }
 
     if (!IsSameDeclarationType(it, found)) {
-        if (it->Declaration()->Type() == varbinder::DeclType::LET &&
-            found->Declaration()->Type() == varbinder::DeclType::READONLY) {
+        if (CheckCompatibleDifferentDeclaration(this, it, found)) {
             return;
         }
-
-        if (CheckGetterSetterDecl(it, found, this)) {
-            return;
-        }
-    } else if (CheckOverloadDecl(it, found)) {
-        return;
-    } else if (CheckFunctionDecl(it, found)) {
+    } else if (CheckOverloadDecl(it, found) || CheckFunctionDecl(it, found)) {
         return;
     }
 
-    const char *targetType {};
-
-    if (it->HasFlag(varbinder::VariableFlags::PROPERTY)) {
-        targetType = "field";
-    } else if (it->HasFlag(varbinder::VariableFlags::METHOD)) {
-        targetType = "method";
-    } else if (it->HasFlag(varbinder::VariableFlags::CLASS)) {
-        targetType = "class";
-    } else if (it->HasFlag(varbinder::VariableFlags::INTERFACE)) {
-        targetType = "interface";
-    } else if (it->HasFlag(varbinder::VariableFlags::NAMESPACE)) {
-        targetType = "namespace";
-    } else if (it->HasFlag(varbinder::VariableFlags::ENUM_LITERAL)) {
-        targetType = "enum";
-    } else if (it->HasFlag(varbinder::VariableFlags::OVERLOAD)) {
-        targetType = "overload";
-    } else {
-        ES2PANDA_UNREACHABLE();
-    }
+    const char *targetType = ResolveInheritedMemberTargetType(it);
 
     if (interfaceFound != nullptr) {
         LogError(diagnostic::INHERITED_INTERFACE_TYPE_MISMATCH, {interfaceFound->Name(), targetType, it->Name()},

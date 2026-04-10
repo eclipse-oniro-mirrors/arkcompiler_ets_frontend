@@ -305,6 +305,8 @@ public:
     void CheckSuperclassAccessibleDefaultCtor(ETSObjectType *classType, ETSObjectType *superType,
                                               ir::ClassDefinition *classDef);
     void CheckValidInheritance(ETSObjectType *classType, ir::ClassDefinition *classDef);
+    bool ReportInterfaceAccessorTypeMismatchIfNeeded(ETSFunctionType *propType, util::StringView propName,
+                                                     const lexer::SourcePosition &errorPos);
     void CheckProperties(ETSObjectType *classType, ir::ClassDefinition *classDef, varbinder::LocalVariable *it,
                          varbinder::LocalVariable *found, ETSObjectType *interfaceFound);
     void CheckReadonlyClassPropertyInImplementedInterface(ETSObjectType *classType, varbinder::LocalVariable *field);
