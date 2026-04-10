@@ -16,6 +16,12 @@ if (PANDA_ENABLE_ADDRESS_SANITIZER)
     return()
 endif()
 
+option(ENABLE_LSP_BENCHMARK "Enable LSP benchmark build" OFF)
+
+if(ENABLE_LSP_BENCHMARK)
+    add_subdirectory(benchmark)
+endif()
+
 ets2panda_add_gtest(lsp_get_definition_at_position_test CPP_SOURCES
     get_definition_at_position_test.cpp
 )

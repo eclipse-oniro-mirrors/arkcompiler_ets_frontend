@@ -25,6 +25,10 @@ if (ark_standalone_build) {
   import("//build/ohos.gni")
 }
 
+declare_args() {
+  lsp_benchmark_build_enable = false
+}
+
 config("libes2panda_public_config") {
   include_dirs = [
     "$target_gen_dir",
@@ -1555,4 +1559,11 @@ panda_code_fix_gen("es2panda_lsp_code_fix_register_gen") {
   template_files = [ "code_fix_register.h.erb" ]
   sources = "lsp"
   destination = "$target_gen_dir/generated"
+}
+
+if (lsp_benchmark_build_enable) {
+  group("lsp_benchmark") {
+    testonly = true
+    deps = [ "test/unit/lsp/benchmark:lsp_benchmark" ]
+  }
 }
