@@ -14,6 +14,7 @@
  */
 
 #include "castingContext.h"
+#include "compiler/lowering/util.h"
 #include "compiler/lowering/checkerPhase.h"
 
 namespace ark::es2panda::checker {
@@ -33,7 +34,8 @@ CastingContext::CastingContext(TypeRelation *relation, const diagnostic::Diagnos
     } else {
         trivialCast_ = true;
         if (!data.node->IsArrayExpression() && !data.node->IsObjectExpression() && !data.node->IsLiteral() &&
-            compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME) {
+            compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
+            !compiler::IsSyntheticIdentifier(data.node)) {
             relation->RaiseError(diagnostic::TRIVIAL_CAST, {}, data.pos);
         }
     }

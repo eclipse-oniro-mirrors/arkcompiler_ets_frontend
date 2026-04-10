@@ -5271,7 +5271,7 @@ static checker::CastingContext const CheckTSAsExpressionCastable(ir::Expression 
 
     if (checker->Relation()->IsTrue() && !ctx.TrivialCast() && targetType->IsETSObjectType() &&
         targetType->AsETSObjectType()->IsGeneric() && !castExpr->IsArrayExpression() &&
-        !castExpr->IsObjectExpression() &&
+        !castExpr->IsObjectExpression() && !compiler::IsSyntheticIdentifier(castExpr) &&
         compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
         std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
                     targetType->AsETSObjectType()->TypeArguments().end(),

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,19 +35,16 @@ class Test4{
     constructor(a?:number,b?:number){}
     constructor(a:string){}
     constructor con1(){}
-    /* @@ label1 */constructor con1(){}
-    /* @@ label2 */overload constructor{con1}
+    /* @@ label */constructor con1(){}
+    overload constructor{con1}
 }
 
 class Test5{
     constructor(a:number,...args:[string,number]){}
     constructor(a:string){}
     constructor con1(){}
-    /* @@ label3 */overload constructor{con1}
+    overload constructor{con1}
 }
 
 
-/* @@@ label1 Error Semantic error ESE0130: Function con1 is already declared. */
-/* @@@ label2 Error Semantic error ESE0389: The overloaded name 'constructor' can't refer to a function with overload signatures. */
-/* @@@ label2 Error Semantic error ESE0389: The overloaded name 'con1' can't refer to a function with overload signatures. */
-/* @@@ label3 Error Semantic error ESE0389: The overloaded name 'constructor' can't refer to a function with overload signatures. */
+/* @@@ label Error Semantic error ESE0130: Function con1 is already declared. */
