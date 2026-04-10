@@ -799,6 +799,17 @@ static Signature *CollectParameterlessConstructor(ETSChecker *checker, ArenaVect
     return nullptr;
 }
 
+static bool HasBareTypeParameter(checker::Type const *elementType)
+{
+    if (elementType->IsETSTypeParameter()) {
+        return true;
+    }
+    if (elementType->IsETSUnionType()) {
+        return false;
+    }
+    return elementType->TypeExpressionContains([](checker::Type const *tp) { return tp->IsETSTypeParameter(); });
+}
+
 template <typename T, typename = typename std::enable_if_t<std::is_base_of_v<ir::Expression, T>>>
 static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, checker::Type *elementType)
 {
@@ -821,6 +832,10 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
             return false;
         }
     } else {
+        if (HasBareTypeParameter(elementType)) {
+            checker->LogError(diagnostic::TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE, {}, newArrayInstanceExpr->Start());
+            return false;
+        }
         if (!checker->Relation()->IsSupertypeOf(elementType, checker->GlobalETSUndefinedType()) &&
             !checker->Relation()->IsIdenticalTo(checker->GetApparentType(elementType), elementType)) {
             checker->LogError(diagnostic::TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE, {}, newArrayInstanceExpr->Start());
@@ -1402,7 +1417,19 @@ static Type *GetPreferredTypeFromArraySupertypes(ETSChecker *checker, Type *orig
     return nullptr;
 }
 
-static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayExpression *expr)
+static bool IsInitForSyntheticVariable(const ir::ArrayExpression *expr)
+{
+    bool hasSyntheticId = false;
+    if (expr->Parent() != nullptr && expr->Parent()->IsVariableDeclarator()) {
+        const auto *identifier = expr->Parent()->AsVariableDeclarator()->Id();
+        if (identifier != nullptr) {
+            hasSyntheticId = compiler::IsSyntheticIdentifier(identifier);
+        }
+    }
+    return hasSyntheticId;
+}
+
+static Type *ExtractPreferredType(ETSChecker *checker, ir::ArrayExpression *expr)
 {
     Type *preferredType = GetPreferredTypeFromArraySupertypes(checker, expr->PreferredType());
 
@@ -1422,6 +1449,13 @@ static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayE
         preferredType = checker->CreateETSResizableArrayType(elementType);
     }
 
+    return preferredType;
+}
+
+static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayExpression *expr)
+{
+    Type *preferredType = ExtractPreferredType(checker, expr);
+
     if (!IsArrayExpressionValidInitializerForType(checker, preferredType)) {
         checker->LogError(diagnostic::UNEXPECTED_ARRAY, {expr->PreferredType()}, expr->Start());
         return checker->InvalidateType(expr);
@@ -1439,6 +1473,13 @@ static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayE
 
     if (preferredType == nullptr) {
         return checker->TypeError(expr, diagnostic::UNRESOLVABLE_ARRAY, expr->Start());
+    }
+
+    if (preferredType->IsETSArrayType()) {
+        auto *elementType = preferredType->AsETSArrayType()->ElementType();
+        if (HasBareTypeParameter(elementType) && !IsInitForSyntheticVariable(expr)) {
+            return checker->TypeError(expr, diagnostic::TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE, expr->Start());
+        }
     }
 
     return preferredType;
