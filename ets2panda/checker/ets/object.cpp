@@ -3327,12 +3327,16 @@ void ETSChecker::CheckProperties(ETSObjectType *classType, ir::ClassDefinition *
     const char *targetType = ResolveInheritedMemberTargetType(it);
 
     if (interfaceFound != nullptr) {
-        LogError(diagnostic::INHERITED_INTERFACE_TYPE_MISMATCH, {interfaceFound->Name(), targetType, it->Name()},
+        LogError(diagnostic::INHERITED_INTERFACE_TYPE_MISMATCH,
+                 {classType->Name(), interfaceFound->Name(), targetType, it->Name()},
                  interfaceFound->GetDeclNode()->Start());
         return;
     }
     auto pos = classDef->Super() == nullptr ? classDef->Ident()->Start() : classDef->Super()->Start();
-    LogError(diagnostic::INHERITED_CLASS_TYPE_MISMATCH, {classType->SuperType()->Name(), targetType, it->Name()}, pos);
+    LogError(it->HasFlag(varbinder::VariableFlags::READONLY) && !found->HasFlag(varbinder::VariableFlags::READONLY)
+                 ? diagnostic::INHERITED_CLASS_MODIFIERS_MISMATCH
+                 : diagnostic::INHERITED_CLASS_TYPE_MISMATCH,
+             {classType->Name(), classType->SuperType()->Name(), targetType, it->Name()}, pos);
 }
 
 void ETSChecker::CheckReadonlyClassPropertyInImplementedInterface(ETSObjectType *classType,

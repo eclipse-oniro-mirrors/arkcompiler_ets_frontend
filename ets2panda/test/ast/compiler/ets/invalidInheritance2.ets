@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,5 +27,5 @@ class C extends B {
 }
 
 
-/* @@? 23:17 Error Semantic error ESE0216: Cannot inherit from class B, because class a is inherited with a different declaration type */
+/* @@? 23:17 Error Semantic error ESE0216: Class C cannot extend class B because the overriding declaration type for class a is not compatible with the declaration type required by the base class. */
 /* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

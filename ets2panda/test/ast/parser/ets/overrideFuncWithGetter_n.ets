@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,6 @@ class C implements A /* @@ label1 */{
 }
 
 
-/* @@@ label Error Semantic error ESE0215: Cannot inherit from interface A because method length is inherited with a different declaration type */
+/* @@@ label Error Semantic error ESE0215: Class C cannot implement interface A because the declaration type for method length is not compatible with the declaration type required by the interface. */
 /* @@@ label1 Error Semantic error ESE0190: C is not abstract and does not override abstract method length(): Double in A */
 /* @@@ label2 Error Semantic error ESE0136: Method length(): Double in C not overriding any method */
