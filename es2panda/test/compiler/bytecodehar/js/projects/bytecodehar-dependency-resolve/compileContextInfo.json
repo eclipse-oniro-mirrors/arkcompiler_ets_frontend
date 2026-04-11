@@ -1,6 +1,7 @@
 {
     "compileEntries": [
-        "&myapp/hap-file-exec&"
+        "&myapp/hap-file-exec&",
+        "&bundlehar/bundlehar-file&1.0.0"
     ],
     "hspPkgNames": [],
     "pkgContextInfo": {
