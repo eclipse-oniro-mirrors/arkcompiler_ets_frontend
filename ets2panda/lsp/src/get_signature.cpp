@@ -196,7 +196,8 @@ SignatureHelpItems GetSignature(es2panda_Context *context, size_t position)
     if (declNode == nullptr || !declNode->IsMethodDefinition()) {
         declNode = ClassPropertyHandler(std::string(sourceCode), targetPos, node, context);
     }
-    if (declNode->Parent() != nullptr && declNode->IsMethodDefinition() && declNode->Parent()->IsMethodDefinition()) {
+    if (declNode != nullptr && declNode->Parent() != nullptr && declNode->IsMethodDefinition() &&
+        declNode->Parent()->IsMethodDefinition()) {
         declNode = declNode->Parent();
     }
 

@@ -218,7 +218,7 @@ bool StartsWith(const std::string &str, const std::string &prefix);
 bool IsDefinedClassOrStruct(ir::AstNode *preNode);
 
 std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const std::string &triggerWord);
-std::string GetClassPropertyName(ir::AstNode *node);
+std::string GetClassPropertyName(const ir::AstNode *node);
 ir::AstNode *GetIdentifierFromTSInterfaceHeritage(ir::AstNode *node);
 
 }  // namespace ark::es2panda::lsp
