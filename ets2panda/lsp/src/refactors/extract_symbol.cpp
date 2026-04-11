@@ -184,11 +184,11 @@ static TextRange GetTrimmedSelectionSpan(const RefactorContext &context)
     size_t start = std::min(context.span.pos, source.size());
     size_t end = std::min(context.span.end, source.size());
     // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (start < end && std::isspace(static_cast<unsigned char>(source[start]))) {
+    while (start < end && isspace(source[start])) {
         ++start;
     }
     // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (end > start && std::isspace(static_cast<unsigned char>(source[end - 1]))) {
+    while (end > start && isspace(source[end - 1])) {
         --end;
     }
     if (start == end) {
@@ -801,7 +801,7 @@ bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::strin
     size_t pos = src.find(needle);
     while (pos != std::string::npos) {
         size_t next = pos + needle.size();
-        while (next < src.size() && (std::isspace(static_cast<unsigned char>(src[next])) != 0)) {
+        while (next < src.size() && isspace(src[next])) {
             ++next;
         }
         if (next < src.size() && (src[next] == '(' || src[next] == '<')) {
@@ -987,7 +987,7 @@ ir::AstNode *ScanTouchingTokenForward(const RefactorContext &context, std::strin
     size_t upper = std::min(context.span.end, source.size());
     for (size_t i = context.span.pos; i < upper; ++i) {
         // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-        if (std::isspace(static_cast<unsigned char>(source[i]))) {
+        if (isspace(source[i])) {
             continue;
         }
         if (auto *node = GetTouchingToken(context.context, i, false); node != nullptr) {
@@ -1003,7 +1003,7 @@ ir::AstNode *ScanTouchingTokenBackward(const RefactorContext &context, std::stri
     while (i > 0) {
         --i;
         // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-        if (std::isspace(static_cast<unsigned char>(source[i]))) {
+        if (isspace(source[i])) {
             continue;
         }
         if (auto *node = GetTouchingToken(context.context, i, false); node != nullptr) {
@@ -1153,11 +1153,11 @@ TextRange TrimSpanWhitespace(TextRange span, std::string_view source)
     size_t trimStart = std::min(span.pos, source.size());
     size_t trimEnd = std::min(span.end, source.size());
     // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (trimStart < trimEnd && std::isspace(static_cast<unsigned char>(source[trimStart]))) {
+    while (trimStart < trimEnd && isspace(source[trimStart])) {
         ++trimStart;
     }
     // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (trimEnd > trimStart && std::isspace(static_cast<unsigned char>(source[trimEnd - 1]))) {
+    while (trimEnd > trimStart && isspace(source[trimEnd - 1])) {
         --trimEnd;
     }
     return {trimStart, trimEnd};
@@ -1207,7 +1207,7 @@ bool IsSelectionSuffixSkippable(std::string_view source, size_t start, size_t en
     for (size_t i = start; i < end; ++i) {
         char ch = source[i];
         // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-        if (ch != ';' && !std::isspace(static_cast<unsigned char>(ch))) {
+        if (ch != ';' && !isspace(ch)) {
             return false;
         }
     }
@@ -1387,7 +1387,7 @@ ir::AstNode *FindBackwardNonWhitespaceToken(const RefactorContext &context, size
     size_t probe = std::min(pos, source.size());
     while (probe > 0) {
         --probe;
-        if (std::isspace(static_cast<unsigned char>(source[probe])) != 0) {
+        if (isspace(source[probe])) {
             continue;
         }
         return GetTouchingToken(context.context, probe, false);
@@ -1901,7 +1901,7 @@ size_t FindClassHelperInsertPos(public_lib::Context *ctx, ir::ClassDefinition *c
 
     const auto &source = ctx->sourceFile->source;
     size_t pos = std::min(classDef->End().index, source.size());
-    while (pos > 0 && (std::isspace(static_cast<unsigned char>(source[pos - 1])) != 0)) {
+    while (pos > 0 && isspace(source[pos - 1])) {
         --pos;
     }
     if (pos == 0) {
@@ -2355,7 +2355,7 @@ std::optional<size_t> FindVariableDeclKeywordStart(std::string_view source, size
             return false;
         }
         size_t tail = cursor + keyword.size();
-        return tail < source.size() && std::isspace(static_cast<unsigned char>(source[tail])) != 0;
+        return tail < source.size() && isspace(source[tail]);
     };
     if (matchesKeyword("let") || matchesKeyword("const") || matchesKeyword("var")) {
         return cursor;
@@ -2369,7 +2369,7 @@ bool ConsumeKeyword(std::string_view source, size_t &cursor, std::string_view ke
         return false;
     }
     size_t afterKeyword = cursor + keyword.size();
-    if (afterKeyword >= source.size() || std::isspace(static_cast<unsigned char>(source[afterKeyword])) == 0) {
+    if (afterKeyword >= source.size() || !isspace(source[afterKeyword])) {
         return false;
     }
     cursor = afterKeyword;
@@ -2378,7 +2378,7 @@ bool ConsumeKeyword(std::string_view source, size_t &cursor, std::string_view ke
 
 size_t SkipWhitespace(std::string_view source, size_t cursor, size_t limit)
 {
-    while (cursor < limit && std::isspace(static_cast<unsigned char>(source[cursor])) != 0) {
+    while (cursor < limit && isspace(source[cursor])) {
         ++cursor;
     }
     return cursor;
@@ -2396,7 +2396,7 @@ size_t SkipIdentifier(std::string_view source, size_t cursor, size_t limit)
 std::optional<size_t> FindAssignPosBeforeInitializer(std::string_view source, size_t lineStart, size_t initializerStart)
 {
     size_t eqPos = initializerStart;
-    while (eqPos > lineStart && std::isspace(static_cast<unsigned char>(source[eqPos - 1])) != 0) {
+    while (eqPos > lineStart && isspace(source[eqPos - 1])) {
         --eqPos;
     }
     if (eqPos == 0 || source[eqPos - 1] != '=') {
@@ -2412,11 +2412,11 @@ std::optional<std::string> ExtractTypeText(std::string_view source, size_t start
     }
     std::string typeText(source.substr(startPos, endPos - startPos));
     size_t start = 0;
-    while (start < typeText.size() && std::isspace(static_cast<unsigned char>(typeText[start])) != 0) {
+    while (start < typeText.size() && isspace(typeText[start])) {
         ++start;
     }
     size_t end = typeText.size();
-    while (end > start && std::isspace(static_cast<unsigned char>(typeText[end - 1])) != 0) {
+    while (end > start && isspace(typeText[end - 1])) {
         --end;
     }
     if (start == end) {
@@ -3863,7 +3863,7 @@ static std::optional<size_t> FindCallCalleeOffset(std::string_view callText)
         return std::nullopt;
     }
     size_t tokenEnd = parenPos;
-    while (tokenEnd > 0 && std::isspace(static_cast<unsigned char>(callText[tokenEnd - 1])) != 0) {
+    while (tokenEnd > 0 && isspace(callText[tokenEnd - 1])) {
         --tokenEnd;
     }
     if (tokenEnd == 0) {

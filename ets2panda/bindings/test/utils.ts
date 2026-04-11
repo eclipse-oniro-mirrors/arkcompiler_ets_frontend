@@ -24,7 +24,7 @@ export const DEFAULT_PATH_CONFIG: PathConfig = {
   declgenOutDir: ''
 };
 
-export const UI_PLUGIN_LIST: string[] = ['ui-plugins', 'memo-plugins'];
+export const UI_PLUGIN_LIST: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
 const DEFAULT_PLUGIN_LIST: string[] = [];
 const STDLIB_PATH_KEYS = ['std', 'escompat', 'arkruntime'];
 

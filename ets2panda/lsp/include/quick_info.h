@@ -23,6 +23,7 @@
 
 namespace ark::es2panda::lsp {
 
+bool IsSpace(char ch);
 bool IsIncludedToken(const ir::AstNode *node);
 ir::AstNode *GetTokenForQuickInfo(es2panda_Context *context, size_t position);
 bool IsObjectLiteralElement(ir::AstNode *node);

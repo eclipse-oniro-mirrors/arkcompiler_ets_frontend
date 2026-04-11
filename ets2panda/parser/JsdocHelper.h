@@ -58,13 +58,14 @@ public:
 
     void BackwardAndSkipSpace(size_t offset)
     {
-        Iterator().Backward(offset);
+        Backward(offset);
         SkipWhiteSpacesBackward();
     }
 
     void Backward(size_t offset)
     {
-        Iterator().Backward(offset);
+        const auto index = Iterator().Index();
+        Iterator().Backward(offset > index ? index : offset);
     }
 
     void Forward(size_t offset)
@@ -98,11 +99,11 @@ private:
             case lexer::LEX_CHAR_NARROW_NO_BREAK_SP:
             case lexer::LEX_CHAR_MATHEMATICAL_SP:
             case lexer::LEX_CHAR_IDEOGRAPHIC_SP:
-                Iterator().Backward(cpSize);
+                Backward(cpSize);
                 return true;
             default:
                 if (ch >= lexer::LEX_CHAR_ENQUAD && ch <= lexer::LEX_CHAR_ZERO_WIDTH_SP) {
-                    Iterator().Backward(cpSize);
+                    Backward(cpSize);
                     return true;
                 }
                 return false;
@@ -113,6 +114,9 @@ private:
     {
         bool skipContinue = true;
         while (skipContinue) {
+            if (Iterator().Index() == 0) {
+                break;
+            }
             auto cp = Iterator().Peek();
             switch (cp) {
                 case lexer::LEX_CHAR_CR:
@@ -122,7 +126,7 @@ private:
                 case lexer::LEX_CHAR_SP:
                 case lexer::LEX_CHAR_TAB:
                 case lexer::LEX_CHAR_NEXT_LINE:
-                    Iterator().Backward(1);
+                    Backward(1U);
                     continue;
                 default:
                     skipContinue = SkipWhiteSpacesBackwardHelper(cp);

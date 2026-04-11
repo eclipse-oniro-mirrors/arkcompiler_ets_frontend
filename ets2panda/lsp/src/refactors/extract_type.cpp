@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -413,7 +413,7 @@ bool NeedsLeadingNewline(std::string_view source, size_t pos)
 /// @brief Remove trailing whitespace from text
 void TrimTrailingWhitespace(std::string &text)
 {
-    while (!text.empty() && (std::isspace(static_cast<unsigned char>(text.back())) != 0)) {
+    while (!text.empty() && isspace(text.back())) {
         text.pop_back();
     }
 }
@@ -422,7 +422,7 @@ void TrimTrailingWhitespace(std::string &text)
 void TrimLeadingWhitespace(std::string &text)
 {
     size_t start = 0;
-    while (start < text.size() && (std::isspace(static_cast<unsigned char>(text[start])) != 0)) {
+    while (start < text.size() && isspace(text[start])) {
         ++start;
     }
     if (start > 0) {
@@ -441,7 +441,7 @@ void RemoveMethodBodyArtifacts(std::string &text)
         return;
     }
     size_t pos = text.size() - 2;
-    while (pos < text.size() && (std::isspace(static_cast<unsigned char>(text[pos])) != 0)) {
+    while (pos < text.size() && isspace(text[pos])) {
         if (pos == 0) {
             break;
         }

@@ -15,6 +15,7 @@
 
 #include "completions.h"
 #include "internal_api.h"
+#include "quick_info.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/ets/etsUnionType.h"
@@ -136,15 +137,14 @@ std::string GetTypeSig(ir::AstNode *node)
             } else {
                 typeStr = "any";
             }
-            typeStr.erase(
-                std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return std::isspace(c); }),
-                typeStr.end());
+            typeStr.erase(std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return IsSpace(c); }),
+                          typeStr.end());
             sig.append(typeStr);
         }
         sig.append(")");
         if (func->ReturnTypeAnnotation() != nullptr) {
             std::string retStr = func->ReturnTypeAnnotation()->DumpEtsSrc();
-            retStr.erase(std::remove_if(retStr.begin(), retStr.end(), [](unsigned char c) { return std::isspace(c); }),
+            retStr.erase(std::remove_if(retStr.begin(), retStr.end(), [](unsigned char c) { return IsSpace(c); }),
                          retStr.end());
             sig.append(":");
             sig.append(retStr);
@@ -155,9 +155,8 @@ std::string GetTypeSig(ir::AstNode *node)
         auto type = node->AsClassProperty()->TypeAnnotation();
         if (type != nullptr) {
             std::string typeStr = type->DumpEtsSrc();
-            typeStr.erase(
-                std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return std::isspace(c); }),
-                typeStr.end());
+            typeStr.erase(std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return IsSpace(c); }),
+                          typeStr.end());
             return typeStr;
         }
     }

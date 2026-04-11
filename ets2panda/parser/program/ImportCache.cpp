@@ -191,8 +191,10 @@ void ImportCache<TYPE>::UpdateModifyfile(std::string_view key, std::string textS
 {
     if constexpr (TYPE == CacheType::SOURCES) {
         std::scoped_lock lock(dataGuard_);
-        const auto &newElem = dataStorage_.emplace_back(
-            std::make_unique<NamedData>(std::string(key), std::move(textSource), std::move(text)));
+        auto *newElem =
+            dataStorage_
+                .emplace_back(std::make_unique<NamedData>(std::string(key), std::move(textSource), std::move(text)))
+                .get();
 
         CacheReference<SelectCacheDataType<TYPE>> ref {};
         std::tie(ref.key_, ref.textSource_, ref.data_) = *newElem;

@@ -1181,11 +1181,6 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     return program;
 }
 
-// template parser::Program *ImportPathManager::FindOrIntroduceProgram<true>(std::string_view absolutePath);
-// template parser::Program *ImportPathManager::FindOrIntroduceProgram<false>(std::string_view absolutePath);
-// template parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram<true>(ImportInfo *importInfo);
-// template parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram<false>(ImportInfo *importInfo);
-
 void ImportPathManager::LookupMemCache(ImportInfo *importInfo)
 {
     if (importInfo->Kind() == ModuleKind::METADATA_DECL) {

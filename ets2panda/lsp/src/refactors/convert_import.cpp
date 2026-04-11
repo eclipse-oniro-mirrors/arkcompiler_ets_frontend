@@ -59,14 +59,14 @@ static std::string RemoveDefaultKeywordAfterExport(std::string src)
     }
 
     size_t i = p + 6;
-    while (i < src.size() && (std::isspace(static_cast<unsigned char>(src[i])) != 0)) {
+    while (i < src.size() && isspace(src[i])) {
         ++i;
     }
     static constexpr std::string_view K_DEFAULT = "default";
     const size_t kLen = K_DEFAULT.size();
     if (i + kLen <= src.size() && src.compare(i, kLen, K_DEFAULT) == 0) {
         size_t j = i + kLen;
-        if (j < src.size() && (std::isspace(static_cast<unsigned char>(src[j])) != 0)) {
+        if (j < src.size() && isspace(src[j])) {
             ++j;
         }
         src.erase(i, j - i);

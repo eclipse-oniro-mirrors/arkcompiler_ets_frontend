@@ -481,4 +481,201 @@ type D = string;
 
     init.DestroyContext(ctx);
 }
+
+TEST_F(LspQuickInfoTests, CreateDisplayForDocument)
+{
+    const std::string src = R"(
+    /**
+     * This is a test document.
+     *
+     * @param param1 The first parameter.
+     * @since 23
+     */
+     class AAA {}
+)";
+    auto files = CreateTempFile({"document-test.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "document-test.ets";
+    const auto offset = src.find("AAA");
+    ASSERT_NE(offset, std::string::npos);
+
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+    auto context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    ASSERT_EQ(quickInfo.GetFileName(), std::string(context->parserProgram->SourceFilePath()));
+
+    std::vector<SymbolDisplayPart> expectedDocument;
+    expectedDocument.emplace_back("This is a test document.", "plaintext");
+    ASSERT_EQ(quickInfo.GetDocument(), expectedDocument);
+
+    std::vector<DocTagInfo> expectedTags;
+    expectedTags.emplace_back("param", "param1 The first parameter.");
+    expectedTags.emplace_back("since", "23");
+    ASSERT_EQ(quickInfo.GetTags(), expectedTags);
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, CreateDisplayForDocumentWithMultiJsdocIndex)
+{
+    const std::string src = R"(
+    /**
+     * This is a test document 1.
+     *
+     * @param param1 The first parameter.
+     * @since 23
+     */
+    /**
+     * This is a test document 0.
+     *
+     * @param param1 The first parameter.
+     * @since 23
+     */
+    class AAA {}
+)";
+    auto files = CreateTempFile({"document-multi-jsdoc-index-test.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "document-multi-jsdoc-index-test.ets";
+    const auto offset = src.find("AAA");
+    ASSERT_NE(offset, std::string::npos);
+
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+
+    std::vector<SymbolDisplayPart> expectedDocument;
+    expectedDocument.emplace_back("This is a test document 1.", "plaintext", 0);
+    expectedDocument.emplace_back("This is a test document 0.", "plaintext", 1);
+    ASSERT_EQ(quickInfo.GetDocument(), expectedDocument);
+
+    std::vector<DocTagInfo> expectedTags;
+    expectedTags.emplace_back("param", "param1 The first parameter.", 0);
+    expectedTags.emplace_back("since", "23", 0);
+    expectedTags.emplace_back("param", "param1 The first parameter.", 1);
+    expectedTags.emplace_back("since", "23", 1);
+    ASSERT_EQ(quickInfo.GetTags(), expectedTags);
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, CreateDisplayForDocumentWithMultiParagraphs)
+{
+    const std::string src = R"(
+    /**
+     * First paragraph line 1.
+     * Second line.
+     *
+     *
+     *
+     * Third paragraph.
+     */
+    class BBB {}
+)";
+    auto files = CreateTempFile({"document-multi-paragraph-test.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "document-multi-paragraph-test.ets";
+    const auto offset = src.find("BBB");
+    ASSERT_NE(offset, std::string::npos);
+
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+
+    std::vector<SymbolDisplayPart> expectedDocument;
+    expectedDocument.emplace_back("First paragraph line 1.\nSecond line.\n\nThird paragraph.", "plaintext");
+    ASSERT_EQ(quickInfo.GetDocument(), expectedDocument);
+    ASSERT_TRUE(quickInfo.GetTags().empty());
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, CreateDisplayForDocumentWithMultilineTags)
+{
+    const std::string src = R"(
+    /**
+     * Function docs.
+     * @param value first line
+     * second line of param.
+     * @returns result line1
+     * result line2
+     */
+    class CCC {}
+)";
+    auto files = CreateTempFile({"document-multiline-tags-test.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "document-multiline-tags-test.ets";
+    const auto offset = src.find("CCC");
+    ASSERT_NE(offset, std::string::npos);
+
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+
+    std::vector<SymbolDisplayPart> expectedDocument;
+    expectedDocument.emplace_back("Function docs.", "plaintext");
+    ASSERT_EQ(quickInfo.GetDocument(), expectedDocument);
+
+    std::vector<DocTagInfo> expectedTags;
+    expectedTags.emplace_back("param", "value first line second line of param.");
+    expectedTags.emplace_back("returns", "result line1 result line2");
+    ASSERT_EQ(quickInfo.GetTags(), expectedTags);
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, CreateDisplayForDocumentWithMultilineTags1)
+{
+    std::vector<std::string> files = {"document-multiline-tags-test-export.ets",
+                                      "document-multiline-tags-test-import.ets"};
+    std::vector<std::string> texts = {R"(
+/**
+* Function docs.
+* @param value first line
+* second line of param.
+* @returns result line1
+* result line2
+*/
+export class CCC {}
+)",
+                                      R"(
+import {CCC} from './document-multiline-tags-test-export'
+let a : CCC = new CCC()
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "document-multiline-tags-test-import.ets";
+    const auto offset = 68;
+
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+    ASSERT_EQ(quickInfo.GetFileName(), filePaths[0]);
+
+    std::vector<SymbolDisplayPart> expectedDocument;
+    expectedDocument.emplace_back("Function docs.", "plaintext");
+    ASSERT_EQ(quickInfo.GetDocument(), expectedDocument);
+
+    std::vector<DocTagInfo> expectedTags;
+    expectedTags.emplace_back("param", "value first line second line of param.");
+    expectedTags.emplace_back("returns", "result line1 result line2");
+    ASSERT_EQ(quickInfo.GetTags(), expectedTags);
+
+    init.DestroyContext(ctx);
+}
+
 }  // namespace
