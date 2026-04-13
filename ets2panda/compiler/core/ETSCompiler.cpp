@@ -732,6 +732,15 @@ void ETSCompiler::Compile(const ir::CallExpression *expr) const
     }
 
     EmitCall(expr, calleeReg, signature);
+
+    // NOTE(kurnevichstanislav): #34488
+    // BCO-workaround: a never-returning call diverts control, but the
+    // bytecode optimizer's IR builder doesn't know that and walks into the
+    // consumer ops with an undefined accumulator. Emit `throw createNeverError()`
+    // after the call so the basic block terminates cleanly. Statically dead.
+    if (signature->ReturnType()->IsETSNeverType()) {
+        etsg->EmitNeverError(expr);
+    }
 }
 
 void ETSCompiler::Compile(const ir::ConditionalExpression *expr) const
@@ -1382,6 +1391,10 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
         etsg->EmitReturnVoid(st);
         return;
     }
+    if (etsg->Checker()->GetApparentType(etsg->ReturnType())->IsETSNeverType()) {
+        etsg->EmitNeverError(st);
+        return;
+    }
     etsg->ReturnAcc(st);
 }
 
@@ -1584,6 +1597,12 @@ void ETSCompiler::CompileCast(const ir::TSAsExpression *expr, checker::Type cons
     ETSGen *etsg = GetETSGen();
 
     if (expr->Expr()->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr);
+        etsg->SetAccumulatorType(targetType);
+        return;
+    }
+
+    if (etsg->Checker()->GetApparentType(expr->Expr()->TsType())->IsETSNeverType()) {
         etsg->LoadAccumulatorUndefined(expr);
         etsg->SetAccumulatorType(targetType);
         return;

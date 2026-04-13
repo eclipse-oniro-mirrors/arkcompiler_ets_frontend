@@ -465,8 +465,8 @@ void AliveAnalyzer::AnalyzeCall(const ir::CallExpression *callExpr)
     for (const auto *it : callExpr->Arguments()) {
         AnalyzeNode(it);
     }
-    if (callExpr->Signature() != nullptr &&
-        callExpr->Signature()->ReturnType() == checker_->GetGlobalTypesHolder()->GlobalETSNeverType()) {
+    if (callExpr->Signature() != nullptr && callExpr->Signature()->ReturnType() != nullptr &&
+        callExpr->Signature()->ReturnType()->IsETSNeverType()) {
         MarkDead();
     }
 }
