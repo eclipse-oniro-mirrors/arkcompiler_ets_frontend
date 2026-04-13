@@ -268,21 +268,23 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir:
     if (IsVariableGetterSetter(variable) || IsInGeneratedSetterForReadonlyProperty()) {
         return;
     }
-
     const bool isConstVariable = variable->Declaration()->IsConstDecl();
     const bool isReadonlyVariable =
         variable->Declaration()->IsReadonlyDecl() || variable->HasFlag(varbinder::VariableFlags::READONLY);
     if (isConstVariable || isReadonlyVariable) {
         std::string_view fieldType = isConstVariable ? "constant" : "readonly";
-        if ((HasStatus(CheckerStatus::IN_CONSTRUCTOR | CheckerStatus::IN_STATIC_BLOCK) &&
-             !variable->HasFlag(varbinder::VariableFlags::EXPLICIT_INIT_REQUIRED)) ||
-            (variable->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK) &&
-             variable->HasFlag(varbinder::VariableFlags::INITIALIZED))) {
+        const bool inCtorOrStaticBlock = HasStatus(CheckerStatus::IN_CONSTRUCTOR | CheckerStatus::IN_STATIC_BLOCK);
+        // Definite-assignment / interface-accessor backing fields may be written again in ctor or static block.
+        const bool fieldAllowsExtraWriteInCtorOrStatic =
+            variable->HasFlag(varbinder::VariableFlags::EXPLICIT_INIT_REQUIRED) ||
+            IsVariableGetterSetterClassProperty(variable);
+        const bool isRepeatWriteInStaticInitBlock = variable->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK) &&
+                                                    variable->HasFlag(varbinder::VariableFlags::INITIALIZED);
+        if ((inCtorOrStaticBlock && !fieldAllowsExtraWriteInCtorOrStatic) || isRepeatWriteInStaticInitBlock) {
             std::ignore = TypeError(variable, diagnostic::FIELD_REASSIGNMENT, {fieldType, variable->Name()},
                                     variable->Declaration()->Node()->Start());
             return;
         }
-
         if (HasStatus(CheckerStatus::IN_CONSTRUCTOR)) {
             if (variable->HasFlag(varbinder::VariableFlags::STATIC) && isReadonlyVariable) {
                 std::ignore =
@@ -293,7 +295,6 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir:
                 isConstVariable ? diagnostic::FIELD_ASSIGN_TO_CONST : diagnostic::FIELD_ASSIGN_TO_READONLY;
             std::ignore = TypeError(variable, diagKind, {variable->Name()}, expr->Start());
         }
-
         if (variable->HasFlag(varbinder::VariableFlags::INIT_IN_STATIC_BLOCK)) {
             variable->AddFlag(varbinder::VariableFlags::INITIALIZED);
         }

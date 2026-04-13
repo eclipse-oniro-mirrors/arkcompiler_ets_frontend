@@ -164,7 +164,7 @@ static ir::ClassProperty *CreateAnonClassField(public_lib::Context *ctx, ir::Met
     // Field type annotation
     std::stringstream sourceCode;
     // Field modifiers flags
-    sourceCode << "private ";
+    sourceCode << "public ";
     // No overloads and the method is not setter, means no setter function with the same name so the field is readonly
     if (ifaceMethod->Overloads().empty() && !isSetter) {
         sourceCode << "readonly ";
@@ -220,25 +220,26 @@ static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<
     auto *fieldType = isSetter ? copyIfaceMethod->Function()->Signature()->Params()[0]->TsType()
                                : copyIfaceMethod->Function()->Signature()->ReturnType();
 
-    std::string newName = util::NameMangler::GetInstance()->CreateMangledNameByTypeAndName(util::NameMangler::PROPERTY,
-                                                                                           ifaceMethod->Id()->Name());
-    util::UString anonClassFieldName(newName, ctx->allocator);
+    util::UString anonClassFieldName(ifaceMethod->Id()->Name(), ctx->allocator);
 
     auto *field = CreateAnonClassField(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
     if (field->IsReadonly()) {
         readonlyFields.emplace_back(
             std::make_tuple(anonClassFieldName, ifaceMethod->Id()->Name(), field->TypeAnnotation()->TsType()));
     }
+    field->AddModifier(ir::ModifierFlags::GETTER_SETTER);
     classBody.emplace_back(field);
     SetSourceRangesRecursively(field, ifaceMethod->Range());
 
     auto *accessor = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
+    accessor->SetOriginalNode(field);
     classBody.emplace_back(accessor);
     SetSourceRangesRecursively(accessor, ifaceMethod->Range());
 
     if (copyIfaceMethod->Overloads().size() == 1) {
         auto *anotherAccessor =
             CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, !isSetter, anonClassFieldName);
+        anotherAccessor->SetOriginalNode(field);
         classBody.emplace_back(anotherAccessor);
         SetSourceRangesRecursively(anotherAccessor, ifaceMethod->Range());
     }
@@ -263,6 +264,9 @@ static void FillClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode *> &
         bool isSetter = ifaceMethod->Function()->IsSetter();
 
         auto iter = std::find_if(classBody.begin(), classBody.end(), [ifaceMethod](ir::AstNode *ast) -> bool {
+            if (ast->IsClassProperty()) {
+                return ast->AsClassProperty()->Id()->Name() == ifaceMethod->Id()->Name();
+            }
             return ast->IsMethodDefinition() && ast->AsMethodDefinition()->Function()->IsGetterOrSetter() &&
                    ast->AsMethodDefinition()->Id()->Name() == ifaceMethod->Id()->Name();
         });

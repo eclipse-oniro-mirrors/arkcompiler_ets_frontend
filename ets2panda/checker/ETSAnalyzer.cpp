@@ -193,6 +193,9 @@ static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, 
                           {st->Id()->Name(), classDef->Ident()->Name(), superTypeName}, st->Start());
     }
 
+    if ((st->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
+        return;
+    }
     if (!checker->Relation()->IsIdenticalTo(propVar->TsType(), st->TsType())) {
         checker->LogError(diagnostic::INCOMPATIBLE_TYPE_FOR_OVERRIDE,
                           {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "", superTypeName},

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,32 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface IX {
+    x: int
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+interface IY {
+    y: int
 }
 
+class XYImpl implements IX, IY {
+    x: int = 1
+    y: int = 2
+}
 
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+function main(): void {
+    let c = new XYImpl();
+    let ix: IX = c;
+    let iy: IY = c;
+
+    arktest.assertEQ(ix.x, 1);
+    arktest.assertEQ(iy.y, 2);
+
+    ix.x = 10;
+    iy.y = 20;
+
+    arktest.assertEQ(ix.x, 10);
+    arktest.assertEQ(iy.y, 20);
+    arktest.assertEQ(c.x, 10);
+    arktest.assertEQ(c.y, 20);
+}

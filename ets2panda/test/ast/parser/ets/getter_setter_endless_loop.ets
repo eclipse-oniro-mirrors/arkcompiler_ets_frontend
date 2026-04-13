@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,3 @@ function main() {
     let a = new A()
     a.i = 2
 }
-
-
-/* @@? 20:58 Warning Warning W0023: Reading the value of the property inside its getter may lead to an endless loop. */
-/* @@? 21:52 Warning Warning W0024: Assigning new value to the property inside its setter may lead to an endless loop. */

@@ -26,4 +26,4 @@ function main() {
   a.rd = "TEST";
 }
 
-/* @@? 26:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 26:3 Error Semantic error ESE4002: Cannot assign to a readonly field rd */

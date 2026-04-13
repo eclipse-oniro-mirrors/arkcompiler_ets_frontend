@@ -1298,15 +1298,15 @@ varbinder::Variable *AssignAnalyzer::GetBoundVariable(const ir::AstNode *node)
 static const ir::AstNode *CheckInterfaceProp(const ark::es2panda::ir::AstNode *const node,
                                              const ir::ClassDefinition *classDef)
 {
-    util::StringView methodName = node->AsMethodDefinition()->Key()->AsIdentifier()->Name();
-    // the property from interface should start with %%property- to distinguish from its getter/setter.
-    std::string interfaceProp = std::string("%%property-") + std::string(methodName.Utf8());
+    const util::StringView targetName = node->IsMethodDefinition()
+                                            ? node->AsMethodDefinition()->Key()->AsIdentifier()->Name()
+                                            : node->AsClassProperty()->Key()->AsIdentifier()->Name();
     for (const auto it : classDef->Body()) {
         // Check if there is corresponding class property in the same class.
         if (it->IsClassProperty() && !it->IsStatic()) {
             const auto *prop = it->AsClassProperty();
             auto *propIdentifier = prop->Key()->AsIdentifier();
-            if (propIdentifier->Name().Is(interfaceProp)) {
+            if (propIdentifier->Name().Is(std::string(targetName.Utf8()))) {
                 // Use property node as declNode to ensure obtaining NodeId and add it to inits.
                 return prop;
             }

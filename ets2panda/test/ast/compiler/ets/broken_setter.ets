@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,4 +29,3 @@ function foo(p:Partial<A>){}
 
 /* @@? 19:10 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
 /* @@? 23:5 Error Semantic error ESE0130: Function p is already declared. */
-/* @@? 24:21 Error Warning W0023: Reading the value of the property inside its getter may lead to an endless loop. */

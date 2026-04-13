@@ -83,6 +83,16 @@ bool ETSChecker::IsVariableGetterSetter(const varbinder::Variable *var)
     return var != nullptr && var->TsType() != nullptr && var->TsType()->HasTypeFlag(TypeFlag::GETTER_SETTER);
 }
 
+bool ETSChecker::IsVariableGetterSetterClassProperty(const varbinder::Variable *var)
+{
+    if (var == nullptr || var->Declaration() == nullptr) {
+        return false;
+    }
+    auto *node = var->Declaration()->Node();
+    return node != nullptr && node->IsClassProperty() &&
+           (node->AsClassProperty()->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U;
+}
+
 bool ETSChecker::IsVariableOverloadDeclaration(const varbinder::Variable *var)
 {
     return var != nullptr && var->Declaration() != nullptr && var->Declaration()->Node() != nullptr &&
@@ -2702,6 +2712,31 @@ ir::Expression *ETSChecker::GenerateImplicitInstantiateArg(const std::string &cl
     return argExpr;
 }
 
+static bool IsInterfaceObjectLiteralClass(const ir::ClassDefinition *classDef)
+{
+    if (classDef == nullptr || !classDef->HasAnnotations()) {
+        return false;
+    }
+
+    auto isInterfaceObjectLiteralAnno = [](ir::AnnotationUsage *annotation) -> bool {
+        if (annotation == nullptr || annotation->Expr() == nullptr) {
+            return false;
+        }
+        auto *expr = annotation->Expr();
+        if (expr->IsCallExpression()) {
+            expr = expr->AsCallExpression()->Callee();
+        }
+        return expr != nullptr && expr->IsIdentifier() &&
+               expr->AsIdentifier()->Name() == compiler::Signatures::INTERFACE_OBJ_LITERAL;
+    };
+    for (auto *annotation : classDef->Annotations()) {
+        if (isInterfaceObjectLiteralAnno(annotation)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void ReInitScopesForTypeAnnotation(ETSChecker *checker, ir::TypeNode *typeAnno, varbinder::Scope *paramScope)
 {
     if (typeAnno != nullptr) {
@@ -2709,40 +2744,6 @@ static void ReInitScopesForTypeAnnotation(ETSChecker *checker, ir::TypeNode *typ
         auto classCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), paramScope);
         compiler::InitScopesPhaseETS::RunExternalNode(typeAnno, checker->VarBinder());
     }
-}
-
-ir::ClassProperty *ETSChecker::ClassPropToImplementationProp(ir::ClassProperty *classProp, varbinder::ClassScope *scope)
-{
-    std::string newName = util::NameMangler::GetInstance()->CreateMangledNameByTypeAndName(
-        util::NameMangler::PROPERTY, classProp->Key()->AsIdentifier()->Name());
-
-    classProp->Key()->AsIdentifier()->SetName(util::UString(newName, ProgramAllocator()).View());
-    classProp->AddModifier(ir::ModifierFlags::PRIVATE);
-
-    auto *fieldDecl = ProgramAllocator()->New<varbinder::LetDecl>(classProp->Key()->AsIdentifier()->Name());
-    ES2PANDA_ASSERT(fieldDecl != nullptr);
-    fieldDecl->BindNode(classProp);
-
-    auto fieldVar = scope->InstanceFieldScope()->AddDecl(ProgramAllocator(), fieldDecl, ScriptExtension::ETS);
-    if (fieldVar == nullptr) {
-        VarBinder()->ThrowRedeclaration(classProp->Id()->Start(), fieldDecl->Name(), fieldDecl->Type());
-        fieldVar =
-            scope->InstanceFieldScope()->FindLocal(fieldDecl->Name(), varbinder::ResolveBindingOptions::BINDINGS);
-    }
-    ES2PANDA_ASSERT(fieldVar != nullptr);
-
-    fieldVar->AddFlag(varbinder::VariableFlags::PROPERTY);
-    fieldVar->SetScope(scope->InstanceFieldScope());
-
-    classProp->Key()->SetVariable(fieldVar);
-    fieldVar->SetTsType(classProp->TsType());
-
-    auto classCtx = varbinder::LexicalScope<varbinder::ClassScope>::Enter(VarBinder(), scope);
-    ReInitScopesForTypeAnnotation(this, classProp->TypeAnnotation(), scope);
-    compiler::InitScopesPhaseETS::RunExternalNode(classProp->Value(), VarBinder());
-    VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(classProp, scope);
-
-    return classProp;
 }
 
 static void SetTypeAnnotationForSetterParam(ETSChecker *checker, ir::Identifier *paramIdent, ir::ClassProperty *field,
@@ -2942,21 +2943,8 @@ ir::MethodDefinition *ETSChecker::GenerateDefaultGetterSetter(ir::ClassProperty 
     return method;
 }
 
-ir::ClassProperty *GetImplementationClassProp(ETSChecker *checker, ir::ClassProperty *interfaceProp,
-                                              ir::ClassProperty *originalProp, ETSObjectType *classType)
+ir::ClassProperty *GetSuperClassProp(ir::ClassProperty *interfaceProp, ETSObjectType *classType)
 {
-    bool isSuperOwner = ((originalProp->Modifiers() & ir::ModifierFlags::SUPER_OWNER) != 0U);
-    if (!isSuperOwner) {
-        auto *const classDef = classType->GetDeclNode()->AsClassDefinition();
-        auto *const scope = checker->Scope()->AsClassScope();
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *const classProp = checker->ClassPropToImplementationProp(
-            interfaceProp->Clone(checker->ProgramAllocator(), originalProp->Parent()), scope);
-        classType->AddProperty<PropertyType::INSTANCE_FIELD>(classProp->Key()->Variable()->AsLocalVariable());
-        classDef->EmplaceBody(classProp);
-        return classProp;
-    }
-
     auto *const classProp =
         classType
             ->GetProperty(interfaceProp->Key()->AsIdentifier()->Name(),
@@ -3008,21 +2996,27 @@ void ETSChecker::SetupGetterSetterFlags(ir::ClassProperty *originalProp, ETSObje
 void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *originalProp, ETSObjectType *classType)
 {
     auto *const classDef = classType->GetDeclNode()->AsClassDefinition();
+
+    originalProp->ClearModifier(ir::ModifierFlags::OVERRIDE);
+    auto isSuperClassProp = (originalProp->Modifiers() & ir::ModifierFlags::SUPER_OWNER) != 0U;
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *const classProp = isSuperClassProp ? GetSuperClassProp(originalProp, classType) : originalProp;
+    if (!isSuperClassProp) {
+        classType->AddProperty<PropertyType::INSTANCE_FIELD>(classProp->Key()->Variable()->AsLocalVariable());
+    }
+    if (IsInterfaceObjectLiteralClass(classDef)) {
+        return;
+    }
+
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *interfaceProp = originalProp->Clone(ProgramAllocator(), originalProp->Parent());
+    interfaceProp->SetRange(originalProp->Range());
     interfaceProp->ClearModifier(ir::ModifierFlags::GETTER_SETTER);
-    interfaceProp->ClearModifier(ir::ModifierFlags::OVERRIDE);
 
     auto *const scope = Scope()->AsClassScope();
-    scope->InstanceFieldScope()->EraseBinding(interfaceProp->Key()->AsIdentifier()->Name());
-    interfaceProp->SetRange(originalProp->Range());
 
     auto classCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(VarBinder(), scope);
     ReInitScopesForTypeAnnotation(this, interfaceProp->TypeAnnotation(), scope);
-    compiler::InitScopesPhaseETS::RunExternalNode(interfaceProp->Value(), VarBinder());
-
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *const classProp = GetImplementationClassProp(this, interfaceProp, originalProp, classType);
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ir::MethodDefinition *getter = GenerateDefaultGetterSetter(interfaceProp, classProp, scope, false, this);

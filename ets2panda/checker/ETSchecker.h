@@ -627,6 +627,7 @@ public:
     void ValidateResolvedIdentifier(ir::Identifier *ident);
     static bool IsVariableStatic(const varbinder::Variable *var);
     static bool IsVariableGetterSetter(const varbinder::Variable *var);
+    static bool IsVariableGetterSetterClassProperty(const varbinder::Variable *var);
     static bool IsVariableExtensionAccessor(const varbinder::Variable *var);
     static bool IsVariableOverloadDeclaration(const varbinder::Variable *var);
     bool IsOverloadDeclaration(ir::Expression *expr);
@@ -664,7 +665,6 @@ public:
     void ModifyPreferredType(ir::ArrayExpression *arrayExpr, Type *newPreferredType);
     Type *SelectGlobalIntegerTypeForNumeric(Type *type) const;
 
-    ir::ClassProperty *ClassPropToImplementationProp(ir::ClassProperty *classProp, varbinder::ClassScope *scope);
     ir::Expression *GenerateImplicitInstantiateArg(const std::string &className);
     void GenerateGetterSetterBody(ArenaVector<ir::Statement *> &stmts, ArenaVector<ir::Expression *> &params,
                                   ir::ClassProperty *field, varbinder::FunctionParamScope *paramScope, bool isSetter);

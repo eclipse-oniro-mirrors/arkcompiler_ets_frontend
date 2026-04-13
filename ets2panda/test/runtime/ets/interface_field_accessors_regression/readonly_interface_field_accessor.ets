@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,22 @@
  * limitations under the License.
  */
 
-interface A {
-  prop2: Object;
+interface IReadOnly {
+    readonly r: int
 }
 
-class AA implements A {
-    /* @@ label */prop2 = new Int();
+class ReadonlyImpl implements IReadOnly {
+    readonly r: int = 42
 }
 
+class DerivedReadonly extends ReadonlyImpl {
+    readonly r: int = 100
+}
 
-/* @@@ label Error Semantic error ESE0136: Method prop2(prop2: Int): void in AA not overriding any method */
+function main(): void {
+    let i1: IReadOnly = new ReadonlyImpl();
+    arktest.assertEQ(i1.r, 42);
+
+    let i2: IReadOnly = new DerivedReadonly();
+    arktest.assertEQ(i2.r, 100);
+}
