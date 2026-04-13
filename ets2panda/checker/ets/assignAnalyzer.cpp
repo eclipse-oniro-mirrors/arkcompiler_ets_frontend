@@ -45,6 +45,7 @@
 #include "ir/expressions/assignmentExpression.h"
 #include "ir/expressions/binaryExpression.h"
 #include "ir/expressions/conditionalExpression.h"
+#include "ir/expressions/functionExpression.h"
 #include "ir/expressions/memberExpression.h"
 #include "ir/expressions/objectExpression.h"
 #include "ir/expressions/unaryExpression.h"
@@ -71,6 +72,30 @@ static constexpr bool CHECK_ALL_PROPERTIES = true;
 static constexpr bool CHECK_GENERIC_NON_READONLY_PROPERTIES = false;
 static constexpr bool WARN_NO_INIT_ONCE_PER_VARIABLE = false;
 static constexpr int LOOP_PHASES = 2;
+
+static bool IsStaticClassProperty(const ir::AstNode *node)
+{
+    return node->IsClassProperty() && node->IsStatic();
+}
+
+static bool ShouldAnalyzeStaticFieldInitializer(const ir::ClassProperty *prop)
+{
+    return prop->Value() != nullptr && !prop->IsTopLevelLexicalDecl();
+}
+
+static bool IsStaticInitNode(const ir::AstNode *node)
+{
+    return node->IsClassStaticBlock() ||
+           (node->IsStatic() && node->IsMethodDefinition() &&
+            node->AsMethodDefinition()->Key()->AsIdentifier()->Name().Is(compiler::Signatures::INIT_METHOD));
+}
+
+static bool IsNamespaceInitializerBlockMethod(const ir::AstNode *node)
+{
+    return node->IsStatic() && node->IsMethodDefinition() &&
+           node->AsMethodDefinition()->Key()->AsIdentifier()->Name().StartsWith(
+               compiler::Signatures::INITIALIZER_BLOCK_INIT);
+}
 
 template <typename... Ts>
 struct ScopeGuard {
@@ -119,17 +144,18 @@ void AssignAnalyzer::Warning(const diagnostic::DiagnosticKind &kind, const util:
     checker_->LogDiagnostic(kind, list, pos);
 }
 
-void AssignAnalyzer::AnalyzeNodes(const ir::AstNode *node)
+void AssignAnalyzer::AnalyzeNodes(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
-    node->Iterate([this](auto *childNode) { AnalyzeNode(childNode); });
+    node->Iterate([this, currentTopLevelDecl](auto *childNode) { AnalyzeNode(childNode, currentTopLevelDecl); });
 }
 
-void AssignAnalyzer::AnalyzeNode(const ir::AstNode *node)
+void AssignAnalyzer::AnalyzeNode(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     ES2PANDA_ASSERT(node != nullptr);
 
     // NOTE(pantos) these are dummy methods to conform the CI's method size and complexity requirements
-    if (AnalyzeStmtNode1(node) || AnalyzeStmtNode2(node) || AnalyzeExprNode1(node) || AnalyzeExprNode2(node)) {
+    if (AnalyzeStmtNode1(node, currentTopLevelDecl) || AnalyzeStmtNode2(node, currentTopLevelDecl) ||
+        AnalyzeExprNode1(node, currentTopLevelDecl) || AnalyzeExprNode2(node, currentTopLevelDecl)) {
         return;
     }
 
@@ -157,7 +183,7 @@ void AssignAnalyzer::AnalyzeNode(const ir::AstNode *node)
             break;
         }
         default: {
-            AnalyzeNodes(node);
+            AnalyzeNodes(node, currentTopLevelDecl);
             if (node->IsExpression()) {
                 if (inits_.IsReset()) {
                     Merge();
@@ -168,35 +194,35 @@ void AssignAnalyzer::AnalyzeNode(const ir::AstNode *node)
     }
 }
 
-bool AssignAnalyzer::AnalyzeStmtNode1(const ir::AstNode *node)
+bool AssignAnalyzer::AnalyzeStmtNode1(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     switch (node->Type()) {
         case ir::AstNodeType::EXPRESSION_STATEMENT: {
-            AnalyzeNode(node->AsExpressionStatement()->GetExpression());
+            AnalyzeNode(node->AsExpressionStatement()->GetExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::BLOCK_STATEMENT: {
-            AnalyzeBlock(node->AsBlockStatement());
+            AnalyzeBlock(node->AsBlockStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::DO_WHILE_STATEMENT: {
-            AnalyzeDoLoop(node->AsDoWhileStatement());
+            AnalyzeDoLoop(node->AsDoWhileStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::WHILE_STATEMENT: {
-            AnalyzeWhileLoop(node->AsWhileStatement());
+            AnalyzeWhileLoop(node->AsWhileStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::FOR_UPDATE_STATEMENT: {
-            AnalyzeForLoop(node->AsForUpdateStatement());
+            AnalyzeForLoop(node->AsForUpdateStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::FOR_OF_STATEMENT: {
-            AnalyzeForOfLoop(node->AsForOfStatement());
+            AnalyzeForOfLoop(node->AsForOfStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::IF_STATEMENT: {
-            AnalyzeIf(node->AsIfStatement());
+            AnalyzeIf(node->AsIfStatement(), currentTopLevelDecl);
             break;
         }
         default:
@@ -206,19 +232,19 @@ bool AssignAnalyzer::AnalyzeStmtNode1(const ir::AstNode *node)
     return true;
 }
 
-bool AssignAnalyzer::AnalyzeStmtNode2(const ir::AstNode *node)
+bool AssignAnalyzer::AnalyzeStmtNode2(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     switch (node->Type()) {
         case ir::AstNodeType::LABELLED_STATEMENT: {
-            AnalyzeLabelled(node->AsLabelledStatement());
+            AnalyzeLabelled(node->AsLabelledStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::SWITCH_STATEMENT: {
-            AnalyzeSwitch(node->AsSwitchStatement());
+            AnalyzeSwitch(node->AsSwitchStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::TRY_STATEMENT: {
-            AnalyzeTry(node->AsTryStatement());
+            AnalyzeTry(node->AsTryStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::BREAK_STATEMENT: {
@@ -230,11 +256,11 @@ bool AssignAnalyzer::AnalyzeStmtNode2(const ir::AstNode *node)
             break;
         }
         case ir::AstNodeType::RETURN_STATEMENT: {
-            AnalyzeReturn(node->AsReturnStatement());
+            AnalyzeReturn(node->AsReturnStatement(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::THROW_STATEMENT: {
-            AnalyzeThrow(node->AsThrowStatement());
+            AnalyzeThrow(node->AsThrowStatement(), currentTopLevelDecl);
             break;
         }
         default:
@@ -244,31 +270,31 @@ bool AssignAnalyzer::AnalyzeStmtNode2(const ir::AstNode *node)
     return true;
 }
 
-bool AssignAnalyzer::AnalyzeExprNode1(const ir::AstNode *node)
+bool AssignAnalyzer::AnalyzeExprNode1(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     switch (node->Type()) {
         case ir::AstNodeType::ETS_NEW_CLASS_INSTANCE_EXPRESSION: {
-            AnalyzeNewClass(node->AsETSNewClassInstanceExpression());
+            AnalyzeNewClass(node->AsETSNewClassInstanceExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::CALL_EXPRESSION: {
-            AnalyzeCallExpr(node->AsCallExpression());
+            AnalyzeCallExpr(node->AsCallExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::IDENTIFIER: {
-            AnalyzeId(node->AsIdentifier());
+            AnalyzeId(node->AsIdentifier(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::ASSIGNMENT_EXPRESSION: {
-            AnalyzeAssignExpr(node->AsAssignmentExpression());
+            AnalyzeAssignExpr(node->AsAssignmentExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::CONDITIONAL_EXPRESSION: {
-            AnalyzeCondExpr(node->AsConditionalExpression());
+            AnalyzeCondExpr(node->AsConditionalExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::MEMBER_EXPRESSION: {
-            AnalyzeMemberExpr(node->AsMemberExpression());
+            AnalyzeMemberExpr(node->AsMemberExpression(), currentTopLevelDecl);
             break;
         }
         default:
@@ -278,23 +304,23 @@ bool AssignAnalyzer::AnalyzeExprNode1(const ir::AstNode *node)
     return true;
 }
 
-bool AssignAnalyzer::AnalyzeExprNode2(const ir::AstNode *node)
+bool AssignAnalyzer::AnalyzeExprNode2(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     switch (node->Type()) {
         case ir::AstNodeType::BINARY_EXPRESSION: {
-            AnalyzeBinaryExpr(node->AsBinaryExpression());
+            AnalyzeBinaryExpr(node->AsBinaryExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::UNARY_EXPRESSION: {
-            AnalyzeUnaryExpr(node->AsUnaryExpression());
+            AnalyzeUnaryExpr(node->AsUnaryExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::UPDATE_EXPRESSION: {
-            AnalyzeUpdateExpr(node->AsUpdateExpression());
+            AnalyzeUpdateExpr(node->AsUpdateExpression(), currentTopLevelDecl);
             break;
         }
         case ir::AstNodeType::ARROW_FUNCTION_EXPRESSION: {
-            AnalyzeArrowFunctionExpr(node->AsArrowFunctionExpression());
+            AnalyzeArrowFunctionExpr(node->AsArrowFunctionExpression(), currentTopLevelDecl);
             break;
         }
         default:
@@ -304,24 +330,24 @@ bool AssignAnalyzer::AnalyzeExprNode2(const ir::AstNode *node)
     return true;
 }
 
-void AssignAnalyzer::AnalyzeStat(const ir::AstNode *node)
+void AssignAnalyzer::AnalyzeStat(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     ES2PANDA_ASSERT(node != nullptr);
-    AnalyzeNode(node);
+    AnalyzeNode(node, currentTopLevelDecl);
 }
 
-void AssignAnalyzer::AnalyzeStats(const ArenaVector<ir::Statement *> &stats)
+void AssignAnalyzer::AnalyzeStats(const ArenaVector<ir::Statement *> &stats, const ir::AstNode *currentTopLevelDecl)
 {
     for (const auto it : stats) {
-        AnalyzeStat(it);
+        AnalyzeStat(it, currentTopLevelDecl);
     }
 }
 
-void AssignAnalyzer::AnalyzeBlock(const ir::BlockStatement *blockStmt)
+void AssignAnalyzer::AnalyzeBlock(const ir::BlockStatement *blockStmt, const ir::AstNode *currentTopLevelDecl)
 {
     ScopeGuard save(nextAdr_);
 
-    AnalyzeStats(blockStmt->Statements());
+    AnalyzeStats(blockStmt->Statements(), currentTopLevelDecl);
 }
 
 void AssignAnalyzer::AnalyzeStructDecl(const ir::ETSStructDeclaration *structDecl)
@@ -387,39 +413,40 @@ void AssignAnalyzer::AnalyzeClassDef(const ir::ClassDefinition *classDef)
 // NOTE (pantos) awkward methods to conform method length/complexity requirements of CI...
 void AssignAnalyzer::ProcessClassDefStaticFields(const ir::ClassDefinition *classDef)
 {
-    // define all the static fields
     for (const auto it : classDef->Body()) {
-        if (it->IsClassProperty() && it->IsStatic()) {
-            const auto prop = it->AsClassProperty();
-            NewVar(prop);
+        if (IsStaticClassProperty(it)) {
+            NewVar(it->AsClassProperty());
         }
     }
 
     for (const auto it : classDef->Body()) {
-        if (it->IsClassProperty() && it->IsStatic()) {
-            const auto prop = it->AsClassProperty();
-            if (prop->Value() != nullptr) {
-                inStaticFieldInit_ = true;
-                AnalyzeNode(prop->Value());
-                LetInit(prop);
-            }
-            inStaticFieldInit_ = false;
+        inStaticFieldInit_ = false;
+        if (!IsStaticClassProperty(it)) {
+            continue;
         }
-    }
 
-    // process all the static initializers
+        const auto prop = it->AsClassProperty();
+        if (!ShouldAnalyzeStaticFieldInitializer(prop)) {
+            continue;
+        }
+
+        inStaticFieldInit_ = true;
+        AnalyzeNode(prop->Value());
+        LetInit(prop);
+    }
     for (const auto it : classDef->Body()) {
-        if (it->IsClassStaticBlock() ||
-            (it->IsStatic() && it->IsMethodDefinition() &&
-             (it->AsMethodDefinition()->Key()->AsIdentifier()->Name().Is(compiler::Signatures::INIT_METHOD) ||
-              it->AsMethodDefinition()->Key()->AsIdentifier()->Name().StartsWith(
-                  compiler::Signatures::INITIALIZER_BLOCK_INIT)))) {
+        if (IsStaticInitNode(it)) {
             AnalyzeNodes(it);
             ClearPendingExits();
         }
     }
 
-    // verify all static const fields got initailized
+    for (const auto it : classDef->Body()) {
+        if (IsNamespaceInitializerBlockMethod(it)) {
+            AnalyzeNodes(it);
+            ClearPendingExits();
+        }
+    }
     if (!classDef->IsModule()) {
         for (int i = firstAdr_; i < nextAdr_; i++) {
             const ir::AstNode *var = varDecls_[i];
@@ -533,7 +560,7 @@ void AssignAnalyzer::AnalyzeVarDef(const ir::VariableDeclaration *varDef)
     }
 }
 
-void AssignAnalyzer::AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt)
+void AssignAnalyzer::AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt, const ir::AstNode *currentTopLevelDecl)
 {
     SetOldPendingExits(PendingExits());
 
@@ -545,11 +572,11 @@ void AssignAnalyzer::AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt)
         Set uninitsEntry = uninits_;
         uninitsEntry.ExcludeFrom(nextAdr_);
 
-        AnalyzeStat(doWhileStmt->Body());
+        AnalyzeStat(doWhileStmt->Body(), currentTopLevelDecl);
 
         ResolveContinues(doWhileStmt);
 
-        AnalyzeCond(doWhileStmt->Test());
+        AnalyzeCond(doWhileStmt->Test(), currentTopLevelDecl);
 
         if (phase == 1) {
             initsSkip = initsWhenFalse_;
@@ -571,7 +598,7 @@ void AssignAnalyzer::AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt)
     ResolveBreaks(doWhileStmt);
 }
 
-void AssignAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt)
+void AssignAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt, const ir::AstNode *currentTopLevelDecl)
 {
     SetOldPendingExits(PendingExits());
 
@@ -583,7 +610,7 @@ void AssignAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt)
     uninitsEntry.ExcludeFrom(nextAdr_);
 
     for (int phase = 1; phase <= LOOP_PHASES; phase++) {
-        AnalyzeCond(whileStmt->Test());
+        AnalyzeCond(whileStmt->Test(), currentTopLevelDecl);
 
         if (phase == 1) {
             initsSkip = initsWhenFalse_;
@@ -593,7 +620,7 @@ void AssignAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt)
         inits_ = initsWhenTrue_;
         uninits_ = uninitsWhenTrue_;
 
-        AnalyzeStat(whileStmt->Body());
+        AnalyzeStat(whileStmt->Body(), currentTopLevelDecl);
 
         ResolveContinues(whileStmt);
 
@@ -610,12 +637,12 @@ void AssignAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt)
     ResolveBreaks(whileStmt);
 }
 
-void AssignAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
+void AssignAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt, const ir::AstNode *currentTopLevelDecl)
 {
     ScopeGuard save(nextAdr_);
 
     if (forStmt->Init() != nullptr) {
-        AnalyzeNode(forStmt->Init());
+        AnalyzeNode(forStmt->Init(), currentTopLevelDecl);
     }
 
     Set initsSkip {};
@@ -629,7 +656,7 @@ void AssignAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
         uninitsEntry.ExcludeFrom(nextAdr_);
 
         if (forStmt->Test() != nullptr) {
-            AnalyzeCond(forStmt->Test());
+            AnalyzeCond(forStmt->Test(), currentTopLevelDecl);
 
             if (phase == 1) {
                 initsSkip = initsWhenFalse_;
@@ -645,12 +672,12 @@ void AssignAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
             uninitsSkip.InclRange(firstAdr_, nextAdr_);
         }
 
-        AnalyzeStat(forStmt->Body());
+        AnalyzeStat(forStmt->Body(), currentTopLevelDecl);
 
         ResolveContinues(forStmt);
 
         if (forStmt->Update() != nullptr) {
-            AnalyzeNode(forStmt->Update());
+            AnalyzeNode(forStmt->Update(), currentTopLevelDecl);
         }
 
         if (prevErrors != numErrors_ || phase == LOOP_PHASES || uninitsEntry.DiffSet(uninits_).Next(firstAdr_) == -1) {
@@ -666,7 +693,7 @@ void AssignAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
     ResolveBreaks(forStmt);
 }
 
-void AssignAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
+void AssignAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt, const ir::AstNode *currentTopLevelDecl)
 {
     ScopeGuard save(nextAdr_);
 
@@ -679,7 +706,7 @@ void AssignAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
         LetInit(forOfStmt->Left());
     }
 
-    AnalyzeNode(forOfStmt->Right());
+    AnalyzeNode(forOfStmt->Right(), currentTopLevelDecl);
 
     Set initsStart = inits_;
     Set uninitsStart = uninits_;
@@ -691,7 +718,7 @@ void AssignAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
         Set uninitsEntry = uninits_;
         uninitsEntry.ExcludeFrom(nextAdr_);
 
-        AnalyzeStat(forOfStmt->Body());
+        AnalyzeStat(forOfStmt->Body(), currentTopLevelDecl);
 
         ResolveContinues(forOfStmt);
 
@@ -708,16 +735,16 @@ void AssignAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
     ResolveBreaks(forOfStmt);
 }
 
-void AssignAnalyzer::AnalyzeIf(const ir::IfStatement *ifStmt)
+void AssignAnalyzer::AnalyzeIf(const ir::IfStatement *ifStmt, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeCond(ifStmt->Test());
+    AnalyzeCond(ifStmt->Test(), currentTopLevelDecl);
 
     Set initsBeforeElse = initsWhenFalse_;
     Set uninitsBeforeElse = uninitsWhenFalse_;
     inits_ = initsWhenTrue_;
     uninits_ = uninitsWhenTrue_;
 
-    AnalyzeStat(ifStmt->Consequent());
+    AnalyzeStat(ifStmt->Consequent(), currentTopLevelDecl);
 
     if (ifStmt->Alternate() != nullptr) {
         Set initsAfterThen = std::move(inits_);
@@ -725,7 +752,7 @@ void AssignAnalyzer::AnalyzeIf(const ir::IfStatement *ifStmt)
         inits_ = std::move(initsBeforeElse);
         uninits_ = std::move(uninitsBeforeElse);
 
-        AnalyzeStat(ifStmt->Alternate());
+        AnalyzeStat(ifStmt->Alternate(), currentTopLevelDecl);
 
         inits_.AndSet(initsAfterThen);
         uninits_.AndSet(uninitsAfterThen);
@@ -735,22 +762,22 @@ void AssignAnalyzer::AnalyzeIf(const ir::IfStatement *ifStmt)
     }
 }
 
-void AssignAnalyzer::AnalyzeLabelled(const ir::LabelledStatement *labelledStmt)
+void AssignAnalyzer::AnalyzeLabelled(const ir::LabelledStatement *labelledStmt, const ir::AstNode *currentTopLevelDecl)
 {
     SetOldPendingExits(PendingExits());
 
-    AnalyzeStat(labelledStmt->Body());
+    AnalyzeStat(labelledStmt->Body(), currentTopLevelDecl);
 
     ResolveBreaks(labelledStmt);
 }
 
-void AssignAnalyzer::AnalyzeSwitch(const ir::SwitchStatement *switchStmt)
+void AssignAnalyzer::AnalyzeSwitch(const ir::SwitchStatement *switchStmt, const ir::AstNode *currentTopLevelDecl)
 {
     SetOldPendingExits(PendingExits());
 
     ScopeGuard save(nextAdr_);
 
-    AnalyzeNode(switchStmt->Discriminant());
+    AnalyzeNode(switchStmt->Discriminant(), currentTopLevelDecl);
 
     Set initsSwitch = inits_;
     Set uninitsSwitch = uninits_;
@@ -764,7 +791,7 @@ void AssignAnalyzer::AnalyzeSwitch(const ir::SwitchStatement *switchStmt)
         if (caseClause->Test() == nullptr) {
             hasDefault = true;
         } else {
-            AnalyzeNode(caseClause->Test());
+            AnalyzeNode(caseClause->Test(), currentTopLevelDecl);
         }
 
         if (hasDefault) {
@@ -772,7 +799,7 @@ void AssignAnalyzer::AnalyzeSwitch(const ir::SwitchStatement *switchStmt)
             uninits_ = uninits_.AndSet(uninitsSwitch);
         }
 
-        AnalyzeStats(caseClause->Consequent());
+        AnalyzeStats(caseClause->Consequent(), currentTopLevelDecl);
 
         for (const auto stmt : caseClause->Consequent()) {
             if (!stmt->IsVariableDeclaration()) {
@@ -799,7 +826,7 @@ void AssignAnalyzer::AnalyzeSwitch(const ir::SwitchStatement *switchStmt)
     ResolveBreaks(switchStmt);
 }
 
-void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
+void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl)
 {
     Set uninitsTryPrev = uninitsTry_;
 
@@ -809,7 +836,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
     Set initsTry = inits_;
     uninitsTry_ = uninits_;
 
-    AnalyzeNode(tryStmt->Block());
+    AnalyzeNode(tryStmt->Block(), currentTopLevelDecl);
 
     uninitsTry_.AndSet(uninits_);
 
@@ -824,7 +851,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
         inits_ = initsCatchPrev;
         uninits_ = uninitsCatchPrev;
 
-        AnalyzeNode(catchClause->Body());
+        AnalyzeNode(catchClause->Body(), currentTopLevelDecl);
 
         initsEnd.AndSet(inits_);
         uninitsEnd.AndSet(uninits_);
@@ -838,7 +865,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
         PendingExitsSet exits = PendingExits();
         SetPendingExits(prevPendingExits);
 
-        AnalyzeNode(tryStmt->FinallyBlock());
+        AnalyzeNode(tryStmt->FinallyBlock(), currentTopLevelDecl);
 
         if (tryStmt->FinallyCanCompleteNormally()) {
             uninits_.AndSet(uninitsEnd);
@@ -874,37 +901,37 @@ void AssignAnalyzer::AnalyzeContinue(const ir::ContinueStatement *contStmt)
     RecordExit(AssignPendingExit(contStmt, inits_, uninits_, isInitialConstructor_, hasTryFinallyBlock_));
 }
 
-void AssignAnalyzer::AnalyzeReturn(const ir::ReturnStatement *retStmt)
+void AssignAnalyzer::AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir::AstNode *currentTopLevelDecl)
 {
     if (retStmt->Argument() != nullptr) {
-        AnalyzeNode(retStmt->Argument());
+        AnalyzeNode(retStmt->Argument(), currentTopLevelDecl);
     }
     RecordExit(AssignPendingExit(retStmt, inits_, uninits_, isInitialConstructor_, hasTryFinallyBlock_));
 }
 
-void AssignAnalyzer::AnalyzeThrow(const ir::ThrowStatement *throwStmt)
+void AssignAnalyzer::AnalyzeThrow(const ir::ThrowStatement *throwStmt, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeNode(throwStmt->Argument());
+    AnalyzeNode(throwStmt->Argument(), currentTopLevelDecl);
     MarkDead();
 }
 
-void AssignAnalyzer::AnalyzeExpr(const ir::AstNode *node)
+void AssignAnalyzer::AnalyzeExpr(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     ES2PANDA_ASSERT(node != nullptr);
-    AnalyzeNode(node);
+    AnalyzeNode(node, currentTopLevelDecl);
     if (inits_.IsReset()) {
         Merge();
     }
 }
 
-void AssignAnalyzer::AnalyzeExprs(const ArenaVector<ir::Expression *> &exprs)
+void AssignAnalyzer::AnalyzeExprs(const ArenaVector<ir::Expression *> &exprs, const ir::AstNode *currentTopLevelDecl)
 {
     for (const auto it : exprs) {
-        AnalyzeExpr(it);
+        AnalyzeExpr(it, currentTopLevelDecl);
     }
 }
 
-void AssignAnalyzer::AnalyzeCond(const ir::AstNode *node)
+void AssignAnalyzer::AnalyzeCond(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     ES2PANDA_ASSERT(node->IsExpression());
     const ir::Expression *expr = node->AsExpression();
@@ -931,7 +958,7 @@ void AssignAnalyzer::AnalyzeCond(const ir::AstNode *node)
             uninitsWhenFalse_ = uninits_;
         }
     } else {
-        AnalyzeNode(node);
+        AnalyzeNode(node, currentTopLevelDecl);
         if (!inits_.IsReset()) {
             Split(true);
         }
@@ -941,7 +968,7 @@ void AssignAnalyzer::AnalyzeCond(const ir::AstNode *node)
     uninits_.Reset();
 }
 
-void AssignAnalyzer::AnalyzeId(const ir::Identifier *id)
+void AssignAnalyzer::AnalyzeId(const ir::Identifier *id, const ir::AstNode *currentTopLevelDecl)
 {
     if (id->Parent()->IsProperty() && id->Parent()->AsProperty()->Key() == id &&
         id->Parent()->Parent()->IsObjectExpression()) {
@@ -966,7 +993,7 @@ void AssignAnalyzer::AnalyzeId(const ir::Identifier *id)
         }
     }
 
-    CheckInit(id);
+    CheckInit(id, currentTopLevelDecl);
 }
 
 static bool IsIdentOrThisDotIdent(const ir::AstNode *node)
@@ -975,22 +1002,64 @@ static bool IsIdentOrThisDotIdent(const ir::AstNode *node)
            (node->IsMemberExpression() && node->AsMemberExpression()->Object()->IsThisExpression());
 }
 
-void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr)
+static bool IsDeclaredBefore(const ir::AstNode *declNode, const ir::AstNode *node)
 {
+    return declNode->Start().Program() == node->Start().Program() && declNode->Start().index < node->Start().index;
+}
+
+static bool CanUseDefaultValueAtCurrentPoint(const ir::AstNode *declNode, const ir::AstNode *node,
+                                             const ir::AstNode *currentTopLevelDecl)
+{
+    if (declNode == currentTopLevelDecl) {
+        return false;
+    }
+
+    if (currentTopLevelDecl == nullptr || !declNode->IsClassProperty() || !currentTopLevelDecl->IsClassProperty()) {
+        return true;
+    }
+
+    const auto *declProp = declNode->AsClassProperty();
+    const auto *currentProp = currentTopLevelDecl->AsClassProperty();
+    if (!declProp->IsTopLevelLexicalDecl() || !currentProp->IsTopLevelLexicalDecl()) {
+        return true;
+    }
+
+    return IsDeclaredBefore(declNode, node);
+}
+
+static bool ShouldReportTopLevelAssignmentTargetUseBeforeInit(const ir::AstNode *declNode,
+                                                              const ir::AstNode *currentTopLevelDecl,
+                                                              const ir::AstNode *target)
+{
+    if (declNode == nullptr || currentTopLevelDecl == nullptr || !declNode->IsClassProperty() ||
+        !currentTopLevelDecl->IsClassProperty()) {
+        return false;
+    }
+
+    const auto *declProp = declNode->AsClassProperty();
+    const auto *currentProp = currentTopLevelDecl->AsClassProperty();
+    return declProp->IsTopLevelLexicalDecl() && currentProp->IsTopLevelLexicalDecl() &&
+           !IsDeclaredBefore(declNode, target);
+}
+
+void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr,
+                                       const ir::AstNode *currentTopLevelDecl)
+{
+    const ir::AstNode *declNode = GetDeclaringNode(assignExpr->Left());
+
     if (assignExpr->Left()->IsETSDestructuring()) {
         auto *dstrNode = assignExpr->Left()->AsETSDestructuring();
         for (auto *elem : dstrNode->Elements()) {
             LetInit(elem);
         }
     } else if (!IsIdentOrThisDotIdent(assignExpr->Left())) {
-        AnalyzeExpr(assignExpr->Left());
+        AnalyzeExpr(assignExpr->Left(), currentTopLevelDecl);
     }
 
     // handle arrow function assignment, where the arrow function is recursive, e.g. f = () => { ...;f();... };
     NodeId provisionalInitAdr = INVALID_ID;
     if (assignExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION &&
         assignExpr->Right()->IsArrowFunctionExpression()) {
-        const ir::AstNode *declNode = GetDeclaringNode(assignExpr->Left());
         if (declNode != nullptr && !declNode->IsDeclare()) {
             provisionalInitAdr = GetNodeId(declNode);
             if (provisionalInitAdr != INVALID_ID && !inits_.IsMember(provisionalInitAdr)) {
@@ -1001,22 +1070,29 @@ void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExp
         }
     }
 
-    AnalyzeExpr(assignExpr->Right());
+    const ir::AstNode *rhsCurrentTopLevelDecl = currentTopLevelDecl;
+    if (IsTopLevelDeclInitAssignment(assignExpr, declNode)) {
+        rhsCurrentTopLevelDecl = declNode;
+    }
+    AnalyzeExpr(assignExpr->Right(), rhsCurrentTopLevelDecl);
 
     if (provisionalInitAdr != INVALID_ID) {
         inits_.Excl(provisionalInitAdr);
     }
 
     if (assignExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
+        if (ShouldReportTopLevelAssignmentTargetUseBeforeInit(declNode, currentTopLevelDecl, assignExpr->Left())) {
+            ReportUseBeforeInit(assignExpr->Left(), declNode);
+        }
         LetInit(assignExpr->Left());
     } else {
-        CheckInit(assignExpr->Left());
+        CheckInit(assignExpr->Left(), currentTopLevelDecl);
     }
 }
 
-void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr)
+void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeCond(condExpr->Test());
+    AnalyzeCond(condExpr->Test(), currentTopLevelDecl);
 
     if (auto const testValue = TryResolveConditionalTestValue(condExpr->Test()); testValue.has_value()) {
         auto *const takenBranch = testValue.value() ? condExpr->Consequent() : condExpr->Alternate();
@@ -1024,9 +1100,9 @@ void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr)
         uninits_ = testValue.value() ? uninitsWhenTrue_ : uninitsWhenFalse_;
 
         if (auto *const branchType = takenBranch->TsType(); branchType != nullptr && branchType->IsETSBooleanType()) {
-            AnalyzeCond(takenBranch);
+            AnalyzeCond(takenBranch, currentTopLevelDecl);
         } else {
-            AnalyzeExpr(takenBranch);
+            AnalyzeExpr(takenBranch, currentTopLevelDecl);
         }
         return;
     }
@@ -1039,7 +1115,7 @@ void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr)
     ES2PANDA_ASSERT(condExpr->Consequent()->TsType() && condExpr->Alternate()->TsType());
 
     if (condExpr->Consequent()->TsType()->IsETSBooleanType() && condExpr->Alternate()->TsType()->IsETSBooleanType()) {
-        AnalyzeCond(condExpr->Consequent());
+        AnalyzeCond(condExpr->Consequent(), currentTopLevelDecl);
 
         Set initsAfterThenWhenTrue = initsWhenTrue_;
         Set initsAfterThenWhenFalse = initsWhenFalse_;
@@ -1048,55 +1124,56 @@ void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr)
         inits_ = std::move(initsBeforeElse);
         uninits_ = std::move(uninitsBeforeElse);
 
-        AnalyzeCond(condExpr->Alternate());
+        AnalyzeCond(condExpr->Alternate(), currentTopLevelDecl);
 
         initsWhenTrue_.AndSet(initsAfterThenWhenTrue);
         initsWhenFalse_.AndSet(initsAfterThenWhenFalse);
         uninitsWhenTrue_.AndSet(uninitsAfterThenWhenTrue);
         uninitsWhenFalse_.AndSet(uninitsAfterThenWhenFalse);
     } else {
-        AnalyzeExpr(condExpr->Consequent());
+        AnalyzeExpr(condExpr->Consequent(), currentTopLevelDecl);
 
         Set initsAfterThen = inits_;
         Set uninitsAfterThen = uninits_;
         inits_ = std::move(initsBeforeElse);
         uninits_ = std::move(uninitsBeforeElse);
 
-        AnalyzeExpr(condExpr->Alternate());
+        AnalyzeExpr(condExpr->Alternate(), currentTopLevelDecl);
 
         inits_.AndSet(initsAfterThen);
         uninits_.AndSet(uninitsAfterThen);
     }
 }
 
-void AssignAnalyzer::AnalyzeCallExpr(const ir::CallExpression *callExpr)
+void AssignAnalyzer::AnalyzeCallExpr(const ir::CallExpression *callExpr, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeExpr(callExpr->Callee());
-    AnalyzeExprs(callExpr->Arguments());
+    AnalyzeExpr(callExpr->Callee(), currentTopLevelDecl);
+    AnalyzeExprs(callExpr->Arguments(), currentTopLevelDecl);
 }
 
-void AssignAnalyzer::AnalyzeMemberExpr(const ir::MemberExpression *membExpr)
+void AssignAnalyzer::AnalyzeMemberExpr(const ir::MemberExpression *membExpr, const ir::AstNode *currentTopLevelDecl)
 {
     if (inStaticFieldInit_) {
-        CheckInit(membExpr);
+        CheckInit(membExpr, currentTopLevelDecl);
     }
     if (membExpr->Object()->IsThisExpression() && membExpr->HasMemberKind(ir::MemberExpressionKind::PROPERTY_ACCESS)) {
-        CheckInit(membExpr);
+        CheckInit(membExpr, currentTopLevelDecl);
     } else {
-        AnalyzeNode(membExpr->Object());
-        AnalyzeNode(membExpr->Property());
+        AnalyzeNode(membExpr->Object(), currentTopLevelDecl);
+        AnalyzeNode(membExpr->Property(), currentTopLevelDecl);
     }
 }
 
-void AssignAnalyzer::AnalyzeNewClass(const ir::ETSNewClassInstanceExpression *newClass)
+void AssignAnalyzer::AnalyzeNewClass(const ir::ETSNewClassInstanceExpression *newClass,
+                                     const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeExpr(newClass->GetTypeRef());
-    AnalyzeExprs(newClass->GetArguments());
+    AnalyzeExpr(newClass->GetTypeRef(), currentTopLevelDecl);
+    AnalyzeExprs(newClass->GetArguments(), currentTopLevelDecl);
 }
 
-void AssignAnalyzer::AnalyzeUnaryExpr(const ir::UnaryExpression *unaryExpr)
+void AssignAnalyzer::AnalyzeUnaryExpr(const ir::UnaryExpression *unaryExpr, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeCond(unaryExpr->Argument());
+    AnalyzeCond(unaryExpr->Argument(), currentTopLevelDecl);
 
     switch (unaryExpr->OperatorType()) {
         case lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK: {
@@ -1109,52 +1186,53 @@ void AssignAnalyzer::AnalyzeUnaryExpr(const ir::UnaryExpression *unaryExpr)
             break;
         }
         default: {
-            AnalyzeExpr(unaryExpr->Argument());
+            AnalyzeExpr(unaryExpr->Argument(), currentTopLevelDecl);
             break;
         }
     }
 }
 
-void AssignAnalyzer::AnalyzeBinaryExpr(const ir::BinaryExpression *binExpr)
+void AssignAnalyzer::AnalyzeBinaryExpr(const ir::BinaryExpression *binExpr, const ir::AstNode *currentTopLevelDecl)
 {
     switch (binExpr->OperatorType()) {
         case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
-            AnalyzeCond(binExpr->Left());
+            AnalyzeCond(binExpr->Left(), currentTopLevelDecl);
             Set initsWhenFalseLeft = initsWhenFalse_;
             Set uninitsWhenFalseLeft = uninitsWhenFalse_;
             inits_ = initsWhenTrue_;
             uninits_ = uninitsWhenTrue_;
-            AnalyzeCond(binExpr->Right());
+            AnalyzeCond(binExpr->Right(), currentTopLevelDecl);
             initsWhenFalse_.AndSet(initsWhenFalseLeft);
             uninitsWhenFalse_.AndSet(uninitsWhenFalseLeft);
             break;
         }
         case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-            AnalyzeCond(binExpr->Left());
+            AnalyzeCond(binExpr->Left(), currentTopLevelDecl);
             Set initsWhenTrueLeft = initsWhenTrue_;
             Set uninitsWhenTrueLeft = uninitsWhenTrue_;
             inits_ = initsWhenFalse_;
             uninits_ = uninitsWhenFalse_;
-            AnalyzeCond(binExpr->Right());
+            AnalyzeCond(binExpr->Right(), currentTopLevelDecl);
             initsWhenTrue_.AndSet(initsWhenTrueLeft);
             uninitsWhenTrue_.AndSet(uninitsWhenTrueLeft);
             break;
         }
         default: {
-            AnalyzeExpr(binExpr->Left());
-            AnalyzeExpr(binExpr->Right());
+            AnalyzeExpr(binExpr->Left(), currentTopLevelDecl);
+            AnalyzeExpr(binExpr->Right(), currentTopLevelDecl);
             break;
         }
     }
 }
 
-void AssignAnalyzer::AnalyzeUpdateExpr(const ir::UpdateExpression *updateExpr)
+void AssignAnalyzer::AnalyzeUpdateExpr(const ir::UpdateExpression *updateExpr, const ir::AstNode *currentTopLevelDecl)
 {
-    AnalyzeExpr(updateExpr->Argument());
+    AnalyzeExpr(updateExpr->Argument(), currentTopLevelDecl);
     LetInit(updateExpr->Argument());
 }
 
-void AssignAnalyzer::AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression *arrowFuncExpr)
+void AssignAnalyzer::AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression *arrowFuncExpr,
+                                              const ir::AstNode *currentTopLevelDecl)
 {
     auto *func = arrowFuncExpr->Function();
     ES2PANDA_ASSERT(func != nullptr);
@@ -1171,7 +1249,7 @@ void AssignAnalyzer::AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression 
     isInitialConstructor_ = false;
     firstAdr_ = nextAdr_;
 
-    AnalyzeStat(func->Body());
+    AnalyzeStat(func->Body(), currentTopLevelDecl);
     CheckPendingExits();
 
     inits_ = std::move(initsPrev);
@@ -1491,7 +1569,9 @@ bool AssignAnalyzer::CheckClassProperty(const ir::AstNode *node, const ir::AstNo
         }
 
         if (declNode->AsClassProperty()->IsImmediateInit()) {
-            return false;
+            if (!declNode->AsClassProperty()->IsTopLevelLexicalDecl()) {
+                return false;
+            }
         }
     }
     return true;
@@ -1527,7 +1607,97 @@ void AssignAnalyzer::CheckInheritedReadonlyAssignment(const ir::AstNode *node, c
     }
 }
 
-void AssignAnalyzer::CheckInit(const ir::AstNode *node)
+bool AssignAnalyzer::IsTopLevelDeclInitAssignment(const ir::AssignmentExpression *assignExpr,
+                                                  const ir::AstNode *declNode) const
+{
+    if (assignExpr->OperatorType() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION || declNode == nullptr ||
+        !declNode->IsClassProperty()) {
+        return false;
+    }
+
+    const auto *declProp = declNode->AsClassProperty();
+    if (!declProp->IsTopLevelLexicalDecl()) {
+        return false;
+    }
+
+    const auto *exprStmt = assignExpr->Parent();
+    if (exprStmt == nullptr || !exprStmt->IsExpressionStatement()) {
+        return false;
+    }
+
+    return exprStmt->Start().Program() == declNode->Start().Program() &&
+           exprStmt->Start().index == declNode->Start().index &&
+           exprStmt->End().Program() == declNode->End().Program() && exprStmt->End().index == declNode->End().index;
+}
+
+bool AssignAnalyzer::ReportTopLevelDeclInitViolationIfNeeded(const ir::AstNode *node, const ir::AstNode *declNode,
+                                                             const ir::AstNode *currentTopLevelDecl, NodeId adr)
+{
+    if (currentTopLevelDecl == nullptr || !declNode->IsClassProperty() || !currentTopLevelDecl->IsClassProperty()) {
+        return false;
+    }
+
+    const auto *declProp = declNode->AsClassProperty();
+    const auto *currentProp = currentTopLevelDecl->AsClassProperty();
+    if (!declProp->IsTopLevelLexicalDecl() || !currentProp->IsTopLevelLexicalDecl()) {
+        return false;
+    }
+
+    if (declNode->Start().Program() != currentTopLevelDecl->Start().Program()) {
+        return false;
+    }
+
+    if (!inits_.IsMember(adr)) {
+        ReportUseBeforeInit(node, declNode);
+        return true;
+    }
+
+    return false;
+}
+
+bool AssignAnalyzer::ShouldSkipRegularInitCheck(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr,
+                                                const ir::AstNode *currentTopLevelDecl)
+{
+    if (!CheckStaticFieldInit(node, declNode, adr)) {
+        return true;
+    }
+
+    if (VariableHasDefaultValue(declNode) && CanUseDefaultValueAtCurrentPoint(declNode, node, currentTopLevelDecl)) {
+        return true;
+    }
+
+    if (ReportTopLevelDeclInitViolationIfNeeded(node, declNode, currentTopLevelDecl, adr)) {
+        return true;
+    }
+
+    if (OwnerDef(declNode) != classDef_) {
+        return true;
+    }
+
+    return !CheckClassProperty(node, declNode);
+}
+
+bool AssignAnalyzer::ShouldReportRegularUseBeforeInit(NodeId adr) const
+{
+    const bool inCurrentInitRange = adr < classFirstAdr_ || adr >= firstAdr_;
+    const bool inGlobalClass = classDef_ == globalClass_;
+    return (inGlobalClass || inCurrentInitRange) && !inits_.IsMember(adr);
+}
+
+void AssignAnalyzer::ReportUseBeforeInit(const ir::AstNode *node, const ir::AstNode *declNode)
+{
+    util::StringView type = GetVariableType(declNode);
+    util::StringView name = GetVariableName(declNode);
+    const lexer::SourcePosition pos = GetVariablePosition(node);
+
+    if (node->IsClassProperty()) {
+        checker_->LogError(diagnostic::PROPERTY_MAYBE_MISSING_INIT, {name}, pos);
+    } else {
+        checker_->LogError(diagnostic::USE_BEFORE_INIT, {Capitalize(type), name}, pos);
+    }
+}
+
+void AssignAnalyzer::CheckInit(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl)
 {
     const ir::AstNode *declNode = GetDeclaringNode(node);
     if (declNode == nullptr || declNode->IsDeclare()) {
@@ -1539,39 +1709,19 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         return;
     }
 
-    if (!CheckStaticFieldInit(node, declNode, adr)) {
+    if (ShouldSkipRegularInitCheck(node, declNode, adr, currentTopLevelDecl)) {
         return;
     }
 
-    if (VariableHasDefaultValue(declNode)) {
-        // no explicit init is required (primitive, nullish)
+    if (!ShouldReportRegularUseBeforeInit(adr)) {
         return;
     }
 
-    if (OwnerDef(declNode) != classDef_) {
+    if (WARN_NO_INIT_ONCE_PER_VARIABLE && !foundErrors_.insert(declNode).second) {
         return;
     }
 
-    if (!CheckClassProperty(node, declNode)) {
-        return;
-    }
-
-    if ((classDef_ == globalClass_ || (adr < classFirstAdr_ || adr >= firstAdr_)) && !inits_.IsMember(adr)) {
-        if (WARN_NO_INIT_ONCE_PER_VARIABLE && !foundErrors_.insert(declNode).second) {
-            return;
-        }
-
-        util::StringView type = GetVariableType(declNode);
-        util::StringView name = GetVariableName(declNode);
-        const lexer::SourcePosition pos = GetVariablePosition(node);
-
-        std::stringstream ss;
-        if (node->IsClassProperty()) {
-            checker_->LogError(diagnostic::PROPERTY_MAYBE_MISSING_INIT, {name}, pos);
-        } else {
-            checker_->LogError(diagnostic::USE_BEFORE_INIT, {Capitalize(type), name}, pos);
-        }
-    }
+    ReportUseBeforeInit(node, declNode);
 }
 
 void AssignAnalyzer::Split(const bool setToNull)
