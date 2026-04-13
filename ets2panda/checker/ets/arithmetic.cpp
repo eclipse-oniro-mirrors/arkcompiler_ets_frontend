@@ -15,6 +15,7 @@
 
 #include "arithmetic.h"
 
+#include "checker/ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -1502,6 +1503,13 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
          operationType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL) &&
         IsNegativeBigIntLiteralExpression(right)) {
         LogError(diagnostic::EXPONENTIATION_BIGINT_NEGATIVE_EXPONENT, {}, right->Start());
+        return {GlobalTypeError(), GlobalTypeError()};
+    }
+
+    if (leftType->IsETSBigIntType() && rightType->IsETSBigIntType() &&
+        operationType == lexer::TokenType::PUNCTUATOR_DIVIDE && right->IsBigIntLiteral() &&
+        IsBigIntZeroLiteral(right)) {
+        LogError(diagnostic::BIGINT_DIVISION_BY_ZERO, {}, right->Start());
         return {GlobalTypeError(), GlobalTypeError()};
     }
 

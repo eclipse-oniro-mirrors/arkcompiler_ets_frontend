@@ -114,6 +114,10 @@ syntax:
   id: 213
   message: "'await' is a reserved identifier in module code."
 
+- name: BIGINT_DIVISION_BY_ZERO
+  id: 206401
+  message: "BigInt: division by zero"
+
 - name: BINDING_ARGS_INVALID
   id: 182
   message: "Binding 'arguments' in strict mode is invalid."
