@@ -1908,5 +1908,51 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             expect(result.dependencies['dep1/utils']).toBeDefined();
             expect(result.dependencies['dep2/helpers']).toBeDefined();
         });
+
+        test('should let higher-priority sourceRoot claim transformedKey when multiple files produce the same key', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/target3/ets/Foo': {
+                        declPath: '/mock/Foo3.d.ets',
+                        filePath: '/dep/src/target3/ets/Foo.ets',
+                        ohmUrl: 'depModule/ets/Foo'
+                    },
+                    'src/target2/ets/Foo': {
+                        declPath: '/mock/Foo2.d.ets',
+                        filePath: '/dep/src/target2/ets/Foo.ets',
+                        ohmUrl: 'depModule/ets/Foo'
+                    },
+                    'src/target1/ets/Foo': {
+                        declPath: '/mock/Foo1.d.ets',
+                        filePath: '/dep/src/target1/ets/Foo.ets',
+                        ohmUrl: 'depModule/ets/Foo'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src/target3', 'src/target2', 'src/target1'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.dependencies['depModule/ets/Foo']).toBeDefined();
+            expect(result.dependencies['depModule/ets/Foo'].path).toBe('/mock/Foo1.d.ets');
+
+            expect(result.dependencies['depModule/src/target1/ets/Foo']).toBeDefined();
+            expect(result.dependencies['depModule/src/target2/ets/Foo']).toBeUndefined();
+            expect(result.dependencies['depModule/src/target3/ets/Foo']).toBeUndefined();
+        });
     });
 });

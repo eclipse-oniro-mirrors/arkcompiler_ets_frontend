@@ -345,31 +345,6 @@ export class ArkTSConfigGenerator {
         return moduleInfo.packageName + '/' + unixFilePath;
     }
 
-    private getTransformedDependencyKey(file: string, moduleInfo: ModuleInfo): string {
-        let unixFilePath: string = file.replace(/\\/g, '/');
-        // Should reverse the sourceRoots.
-        // Since the later one will replace the previous one in IDE build rule.
-        /**
-         * eg:
-         *  packageName = "entry";
-         *  sourceRoots = ["./src/main"]
-         *  unixFilePath = "src/main/ets/test"
-         *  returnValue = "entry/ets/test"
-         */
-        const normalizedRoots = (moduleInfo.sourceRoots || [])
-            .map(root => root.replace(/\\/g, '/').replace(/^\.\//, ''))
-            .filter(root => root && root !== '.')
-            .reverse();
-
-        for (const root of normalizedRoots) {
-            const prefix = root.endsWith('/') ? root : `${root}/`;
-            if (unixFilePath.startsWith(prefix)) {
-                return `${moduleInfo.packageName}/${unixFilePath.substring(prefix.length)}`;
-            }
-        }
-        return '';
-    }
-
     private addEtsStdLibToDependencySection(arktsconfig: ArkTSConfig): void {
         const etsstdlibPackageNames: string[] = [
             'std/core',
@@ -450,52 +425,104 @@ export class ArkTSConfigGenerator {
         return urlParts.join('&');
     }
 
+    private isPackageEntryFile(file: string, depModuleInfo: ModuleInfo): boolean {
+        return file === changeFileExtension(depModuleInfo.entryFile, '');
+    }
+
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
-            if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
-                this.logger.printWarn(`Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
-                    `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
-                return;
-            }
+            this.addSingleModuleDependencies(moduleInfo, depModuleInfo, arktsconfig);
+        });
+        arktsconfig.addDependencies(this.systemDependenciesSection);
+    }
 
-            const declFilesObject = JSON.parse(fs.readFileSync(depModuleInfo.declFilesPath, 'utf-8'));
-            const files = declFilesObject.files;
-            
-            const alias = this.getAliasForPackage(depModuleInfo.packageName, moduleInfo.originalPackageNameMap);
+    private buildDepItem(
+        fileEntry: { declPath: string; filePath: string; ohmUrl: string },
+        depModuleInfo: ModuleInfo
+    ): DependencyItem {
+        return {
+            language: 'js',
+            path: fileEntry.declPath,
+            sourceFilePath: fileEntry.filePath,
+            ohmUrl: this.generateOhmUrl(fileEntry.ohmUrl, depModuleInfo)
+        };
+    }
 
-            Object.keys(files).forEach((file: string) => {
-                const transformedKey: string = this.getTransformedDependencyKey(file, depModuleInfo);
-                // `legacyKey` is to be removed in future and left for compat.
-                const legacyKey: string = this.getDependencyKey(file, depModuleInfo);
-                const depItem: DependencyItem = {
-                    language: 'js',
-                    path: files[file].declPath,
-                    sourceFilePath: files[file].filePath,
-                    ohmUrl: this.generateOhmUrl(files[file].ohmUrl, depModuleInfo)
-                };
+    private getNormalizedSourceRoots(depModuleInfo: ModuleInfo): string[] {
+        // Note: reverse the array
+        // hvigor will send the reversed order of sourceRoots in build-profile.json
+        return (depModuleInfo.sourceRoots || [])
+            .map(root => root.replace(/\\/g, '/').replace(/^\.\//, ''))
+            .filter(root => root && root !== '.')
+            .reverse();
+    }
 
-                arktsconfig.addDependency({
-                    name: legacyKey,
-                    item: depItem
-                });
+    private addSingleModuleDependencies(
+        moduleInfo: ModuleInfo, depModuleInfo: ModuleInfo, arktsconfig: ArkTSConfig
+    ): void {
+        if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
+            this.logger.printWarn(`Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
+                `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
+            return;
+        }
 
-                if (transformedKey !== '' && transformedKey !== legacyKey) {
-                    arktsconfig.addDependency({
-                        name: transformedKey,
-                        item: depItem
-                    });
+        const declFilesObject = JSON.parse(fs.readFileSync(depModuleInfo.declFilesPath, 'utf-8'));
+        const files = declFilesObject.files;
+        const alias = this.getAliasForPackage(depModuleInfo.packageName, moduleInfo.originalPackageNameMap);
+
+        // keys match the source roots rule.
+        const processedFiles = this.addTransformedDependencies(files, depModuleInfo, arktsconfig, alias);
+        // unmatch keys, add them as regular dependencies.
+        this.addRemainingDependencies(files, depModuleInfo, arktsconfig, processedFiles, alias);
+    }
+
+    private addTransformedDependencies(
+        files: Record<string, { declPath: string; filePath: string; ohmUrl: string }>,
+        depModuleInfo: ModuleInfo,
+        arktsconfig: ArkTSConfig,
+        alias?: string
+    ): Set<string> {
+        /**
+         * eg:
+         *  packageName = "entry";
+         *  sourceRoots = ["./src/main"]
+         *  unixFilePath = "src/main/ets/test"
+         *  availableKey = "entry/ets/test"
+         */
+        const allFiles = Object.keys(files);
+        const normalizedRoots = this.getNormalizedSourceRoots(depModuleInfo);
+        const processedFiles: Set<string> = new Set();
+        const claimedTransformedKeys: Set<string> = new Set();
+
+        // Files matching a higher-priority sourceRoot claim the transformed key first;
+        // lower-priority sourceRoots cannot overwrite it.
+        for (const root of normalizedRoots) {
+            const prefix = root.endsWith('/') ? root : `${root}/`;
+            for (const file of allFiles) {
+                const unixFilePath = file.replace(/\\/g, '/');
+                if (!unixFilePath.startsWith(prefix)) {
+                    continue;
                 }
+                // transformedKey is the key after transformation with sourceRoot,
+                // which is used for target build in IDE.
+                const transformedKey = `${depModuleInfo.packageName}/${unixFilePath.substring(prefix.length)}`;
+                if (claimedTransformedKeys.has(transformedKey)) {
+                    processedFiles.add(file);
+                    continue;
+                }
+                claimedTransformedKeys.add(transformedKey);
+                processedFiles.add(file);
+                // legacyKey is the key without transformation,
+                // which is used for compatibility with old versions of hvigor.
+                const legacyKey: string = this.getDependencyKey(file, depModuleInfo);
+                const depItem = this.buildDepItem(files[file], depModuleInfo);
 
-                // NOTE: workaround
-                // NOTE: to be refactored
-                const absFilePath: string = file;
-                const entryFileWithoutExtension: string = changeFileExtension(depModuleInfo.entryFile, '');
-
-                if (absFilePath === entryFileWithoutExtension) {
-                    arktsconfig.addDependency({
-                        name: depModuleInfo.packageName,
-                        item: depItem
-                    });
+                arktsconfig.addDependency({ name: legacyKey, item: depItem });
+                if (transformedKey !== legacyKey) {
+                    arktsconfig.addDependency({ name: transformedKey, item: depItem });
+                }
+                if (this.isPackageEntryFile(file, depModuleInfo)) {
+                    arktsconfig.addDependency({ name: depModuleInfo.packageName, item: depItem });
                 }
 
                 if (alias) {
@@ -504,28 +531,46 @@ export class ArkTSConfigGenerator {
                         ? alias + transformedKey.substring(depModuleInfo.packageName.length)
                         : '';
 
-                    arktsconfig.addDependency({
-                        name: aliasLegacyKey,
-                        item: depItem
-                    });
-
+                    arktsconfig.addDependency({ name: aliasLegacyKey, item: depItem });
                     if (aliasTransformedKey !== '' && aliasTransformedKey !== aliasLegacyKey) {
-                        arktsconfig.addDependency({
-                            name: aliasTransformedKey,
-                            item: depItem
-                        });
+                        arktsconfig.addDependency({ name: aliasTransformedKey, item: depItem });
                     }
-
-                    if (absFilePath === entryFileWithoutExtension) {
-                        arktsconfig.addDependency({
-                            name: alias,
-                            item: depItem
-                        });
+                    if (this.isPackageEntryFile(file, depModuleInfo)) {
+                        arktsconfig.addDependency({ name: alias, item: depItem });
                     }
                 }
-            });
-        });
-        arktsconfig.addDependencies(this.systemDependenciesSection);
+            }
+        }
+        return processedFiles;
+    }
+
+    private addRemainingDependencies(
+        files: Record<string, { declPath: string; filePath: string; ohmUrl: string }>,
+        depModuleInfo: ModuleInfo,
+        arktsconfig: ArkTSConfig,
+        processedFiles: Set<string>,
+        alias?: string
+    ): void {
+        for (const file of Object.keys(files)) {
+            if (processedFiles.has(file)) {
+                continue;
+            }
+            const key: string = this.getDependencyKey(file, depModuleInfo);
+            const depItem = this.buildDepItem(files[file], depModuleInfo);
+
+            arktsconfig.addDependency({ name: key, item: depItem });
+            if (this.isPackageEntryFile(file, depModuleInfo)) {
+                arktsconfig.addDependency({ name: depModuleInfo.packageName, item: depItem });
+            }
+
+            if (alias) {
+                const aliasKey = alias + key.substring(depModuleInfo.packageName.length);
+                arktsconfig.addDependency({ name: aliasKey, item: depItem });
+                if (this.isPackageEntryFile(file, depModuleInfo)) {
+                    arktsconfig.addDependency({ name: alias, item: depItem });
+                }
+            }
+        }
     }
 
     public generateArkTSConfigFile(moduleInfo: ModuleInfo, enableDeclgenEts2Ts: boolean): ArkTSConfig {
