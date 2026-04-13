@@ -14,3 +14,17 @@ export declare interface IState {
     num: string;
     var: number;
 }
+@Component
+export declare class UIComponent1 {
+    @StorageProp("language")
+    public language: string;
+    @LocalStorageProp("userName")
+    public userName: string;
+    @StorageLink("theme")
+    public theme: string;
+    @LocalStorageLink("counter")
+    public counter: number;
+    @Prop
+    public userName1: string;
+    constructor();
+}
