@@ -18,5 +18,5 @@ function main(): void {
     let c2: keyof Int = /* @@ label2 */"field1"
 }
 
-/* @@@ label1 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toLocaleString"|"toDouble"|"toString"|"toFloat"|"compareTo"|"toLong"|"isLessEqualThan"|"isLessThan"|"mul"|"isGreaterEqualThan"|"equals"|"toByte"|"add"|"isGreaterThan"|"sub"|"div"|"toInt"|"toShort"|"toChar"|"valueOf"|"parseInt"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"'*/
-/* @@@ label2 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toLocaleString"|"toDouble"|"toString"|"toFloat"|"compareTo"|"toLong"|"isLessEqualThan"|"isLessThan"|"mul"|"isGreaterEqualThan"|"equals"|"toByte"|"add"|"isGreaterThan"|"sub"|"div"|"toInt"|"toShort"|"toChar"|"valueOf"|"parseInt"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"'*/
+/* @@@ label1 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toLocaleString"|"toDouble"|"toString"|"toFloat"|"compareTo"|"toLong"|"isLessEqualThan"|"isLessThan"|"mul"|"isGreaterEqualThan"|"equals"|"toByte"|"add"|"isGreaterThan"|"sub"|"div"|"toInt"|"toShort"|"toChar"|"parseInt"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"'*/
+/* @@@ label2 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toLocaleString"|"toDouble"|"toString"|"toFloat"|"compareTo"|"toLong"|"isLessEqualThan"|"isLessThan"|"mul"|"isGreaterEqualThan"|"equals"|"toByte"|"add"|"isGreaterThan"|"sub"|"div"|"toInt"|"toShort"|"toChar"|"parseInt"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"'*/
