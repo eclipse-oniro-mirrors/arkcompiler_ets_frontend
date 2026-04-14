@@ -18,8 +18,12 @@ softlist:
   - ".*/test/xts/.*"
   - ".*/ability/ability_runtime/.*"
   - ".*/window/window_manager/.*"
-  - ".*/arkui/ace_engine/.*"
   - ".*/generated/.*"
+  - ".*/arkui/ace_engine/advanced_ui_component_static/.*"
+  - ".*/arkui/ace_engine/examples/.*"
+  - ".*/arkui/ace_engine/frameworks/.*"
+  - ".*/arkui/ace_engine/generative_ui/.*"
+  - ".*/arkui/ace_engine/interfaces/.*"
 
 - name: "ambient_context"
   paths:
