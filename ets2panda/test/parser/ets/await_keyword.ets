@@ -37,6 +37,6 @@ let lambda: () => Promise<void> = async (): Promise<void> => {
 
 let promise: Promise<Object | null> | null = null;
 let obj: Object | null;
-waitForCompletion(async () => {
+let topLevelAsyncCall: () => Promise<void> = async (): Promise<void> => {
     obj = await promise!;
-})
+}

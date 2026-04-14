@@ -27,9 +27,7 @@ async function bar2() {
     return result;
 }
 
-function main() {
-    waitForCompletion(async () => {
-        arktest.assertEQ(await bar1(), 1);
-        arktest.assertEQ(await bar2(), 1);
-    })
+async function main(): Promise<void> {
+    arktest.assertEQ(await bar1(), 1);
+    arktest.assertEQ(await bar2(), 1);
 }

@@ -2573,6 +2573,138 @@
                 "program": "await_keyword.ets"
               }
             }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "topLevelAsyncCall",
+              "loc": {
+                "start": {
+                  "line": 40,
+                  "column": 5,
+                  "program": "await_keyword.ets"
+                },
+                "end": {
+                  "line": 40,
+                  "column": 22,
+                  "program": "await_keyword.ets"
+                }
+              }
+            },
+            "accessibility": "public",
+            "static": true,
+            "readonly": false,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "ETSFunctionType",
+              "params": [],
+              "returnType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "Promise",
+                    "loc": {
+                      "start": {
+                        "line": 40,
+                        "column": 30,
+                        "program": "await_keyword.ets"
+                      },
+                      "end": {
+                        "line": 40,
+                        "column": 37,
+                        "program": "await_keyword.ets"
+                      }
+                    }
+                  },
+                  "typeParams": {
+                    "type": "TSTypeParameterInstantiation",
+                    "params": [
+                      {
+                        "type": "ETSPrimitiveType",
+                        "loc": {
+                          "start": {
+                            "line": 40,
+                            "column": 38,
+                            "program": "await_keyword.ets"
+                          },
+                          "end": {
+                            "line": 40,
+                            "column": 42,
+                            "program": "await_keyword.ets"
+                          }
+                        }
+                      }
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 40,
+                        "column": 37,
+                        "program": "await_keyword.ets"
+                      },
+                      "end": {
+                        "line": 40,
+                        "column": 43,
+                        "program": "await_keyword.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 40,
+                      "column": 30,
+                      "program": "await_keyword.ets"
+                    },
+                    "end": {
+                      "line": 40,
+                      "column": 43,
+                      "program": "await_keyword.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 40,
+                    "column": 30,
+                    "program": "await_keyword.ets"
+                  },
+                  "end": {
+                    "line": 40,
+                    "column": 43,
+                    "program": "await_keyword.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 40,
+                  "column": 24,
+                  "program": "await_keyword.ets"
+                },
+                "end": {
+                  "line": 40,
+                  "column": 43,
+                  "program": "await_keyword.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 40,
+                "column": 5,
+                "program": "await_keyword.ets"
+              },
+              "end": {
+                "line": 40,
+                "column": 52,
+                "program": "await_keyword.ets"
+              }
+            }
           }
         ],
         "loc": {

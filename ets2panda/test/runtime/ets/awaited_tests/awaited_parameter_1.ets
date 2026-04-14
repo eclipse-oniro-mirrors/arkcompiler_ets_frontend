@@ -17,12 +17,10 @@ async function foo<T>(awaited: Awaited<T>, expected: T) {
     arktest.assertEQ(awaited, expected)
 }
 
-function main() {
-    waitForCompletion(async () => {
-      await foo<string>(await new Promise<string>((resolve) => {
-          setTimeout(() => {
-            resolve("hello")
-          }, 1000)
-      }), "hello")
-    })
+async function main(): Promise<void> {
+    await foo<string>(await new Promise<string>((resolve) => {
+        setTimeout(() => {
+          resolve("hello")
+        }, 1000)
+    }), "hello")
 }
