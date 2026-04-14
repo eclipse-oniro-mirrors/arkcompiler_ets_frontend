@@ -1661,16 +1661,20 @@ static bool AppendSignatureInfoParams(ETSChecker *checker, SignatureInfo *signat
 
 static Type *ResolveRestParameterType(ETSChecker *checker, ir::ETSParameterExpression *param)
 {
+    Type *paramType = nullptr;
     if (param->TypeAnnotation() != nullptr) {
-        return param->RestParameter()->TypeAnnotation()->GetType(checker);
+        paramType = param->RestParameter()->TypeAnnotation()->GetType(checker);
+    } else if (param->Ident()->TsType() != nullptr) {
+        paramType = param->Ident()->TsType();
     }
 
-    if (param->Ident()->TsType() != nullptr) {
-        return param->Ident()->TsType();
+    if (paramType == nullptr) {
+        ES2PANDA_ASSERT(checker->IsAnyError());  // #23134
+    } else if (paramType->IsETSTypeParameter()) {
+        paramType = paramType->AsETSTypeParameter()->GetConstraintType();
     }
 
-    ES2PANDA_ASSERT(checker->IsAnyError());  // #23134
-    return nullptr;
+    return paramType;
 }
 
 static bool FinalizeRestParameter(ETSChecker *checker, SignatureInfo *signatureInfo,
