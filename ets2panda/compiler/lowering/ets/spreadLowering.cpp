@@ -194,8 +194,7 @@ static ir::Identifier *CreateNewTupleDeclareStatement(public_lib::Context *ctx, 
 
 static ir::Statement *CreateElementsAssignStatementBySpreadArr(public_lib::Context *ctx, ir::Identifier *spId,
                                                                std::vector<ir::AstNode *> &newArrayAndIndex,
-                                                               ir::Identifier *spreadArrIterator,
-                                                               checker::Type *arrayElementType)
+                                                               ir::Identifier *spreadArrIterator)
 {
     auto *const allocator = ctx->allocator;
     auto *const parser = ctx->parser->AsETSParser();
@@ -204,8 +203,8 @@ static ir::Statement *CreateElementsAssignStatementBySpreadArr(public_lib::Conte
 
     std::stringstream elementsAssignStr;
     elementsAssignStr << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4++) {";
-    elementsAssignStr << "@@I5[@@I6] = @@I7[@@I8] as @@T9;";
-    elementsAssignStr << "@@I10++;";
+    elementsAssignStr << "@@I5[@@I6] = @@I7[@@I8];";
+    elementsAssignStr << "@@I9++;";
     elementsAssignStr << "}";
 
     ES2PANDA_ASSERT(spreadArrIterator != nullptr);
@@ -214,7 +213,7 @@ static ir::Statement *CreateElementsAssignStatementBySpreadArr(public_lib::Conte
         spreadArrIterator->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
         spreadArrIterator->Clone(allocator, nullptr), newArrayId->Clone(allocator, nullptr),
         newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
-        spreadArrIterator->Clone(allocator, nullptr), arrayElementType, newArrayIndexId->Clone(allocator, nullptr));
+        spreadArrIterator->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr));
 
     return elementsAssignStatement;
 }
@@ -251,12 +250,11 @@ static std::vector<ir::Statement *> CreateElementsAssignForTupleElements(public_
 
     for (size_t idx = 0; idx < spreadType->GetTupleTypesList().size(); ++idx) {
         std::stringstream tupleAssignmentsStr {};
-        auto *elementType = spreadType->GetTupleTypesList()[idx];
-        tupleAssignmentsStr << "@@I1[@@I2] = (@@I3[" << idx << "] as @@T4);";
-        tupleAssignmentsStr << "@@I5++;";
+        tupleAssignmentsStr << "@@I1[@@I2] = (@@I3[" << idx << "]);";
+        tupleAssignmentsStr << "@@I4++;";
         tupleAssignmentStatements.emplace_back(parser->CreateFormattedStatement(
             tupleAssignmentsStr.str(), newArrayId->Clone(allocator, nullptr),
-            newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr), elementType,
+            newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
             newArrayIndexId->Clone(allocator, nullptr)));
     }
 
@@ -301,10 +299,8 @@ static void CreateNewArrayElementsAssignStatement(public_lib::Context *ctx, ir::
                                   newTupleAssignmentStatements.cend());
             } else {
                 ir::Identifier *spreadArrIterator = Gensym(allocator);
-                checker::Type *arrayElementType =
-                    ctx->GetChecker()->AsETSChecker()->GetElementTypeOfArray(array->TsType());
-                statements.emplace_back(CreateElementsAssignStatementBySpreadArr(
-                    ctx, spArrIds[spArrIdx++], newArrayAndIndex, spreadArrIterator, arrayElementType));
+                statements.emplace_back(CreateElementsAssignStatementBySpreadArr(ctx, spArrIds[spArrIdx++],
+                                                                                 newArrayAndIndex, spreadArrIterator));
             }
         } else {
             statements.emplace_back(CreateElementsAssignStatementBySingle(ctx, element, newArrayAndIndex));
