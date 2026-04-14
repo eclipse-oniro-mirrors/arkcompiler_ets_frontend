@@ -919,78 +919,91 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getTypeHierarchies', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let ctxFile: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
-      try {
-        ctxFile = fileCache.fileContext;
-        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
-      } catch (error) {
-        logger.error('failed to getTypeHierarchies by fileCache', error);
-        return;
-      }
-    } else {
-      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ctxFile = ctx;
-        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    let ref = new LspTypeHierarchiesInfo(ptr);
-    if (ref.fileName === '') {
-      return;
-    }
-    let result: LspTypeHierarchiesInfo[] = [];
-    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
-    for (let i = 0; i < compileFiles.length; i++) {
-      let searchPtr: KPointer;
-      let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
-      if (searchFileCache) {
+    let mainCfg: Config | undefined;
+    let mainCtx: KPointer | undefined;
+
+    try {
+      let fileCache = this.filesMap.get(filename.valueOf());
+      if (fileCache) {
         try {
-          searchPtr = global.es2panda._getTypeHierarchies(searchFileCache.fileContext, ctxFile, offset);
+          ctxFile = fileCache.fileContext;
+          ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
         } catch (error) {
           logger.error('failed to getTypeHierarchies by fileCache', error);
           return;
         }
       } else {
-        const [cfg, searchCtx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
-        if (!cfg || !searchCtx) { return; }
+        const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
+        if (!cfg || !ctx) { return; }
+        mainCfg = cfg;
+        mainCtx = ctx;
+        ctxFile = ctx;
         try {
-          searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctxFile, offset);
+          ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
         } catch (error) {
           logger.error('failed to getTypeHierarchies', error);
           return;
-        } finally {
-          this.destroyContext(cfg, searchCtx);
         }
       }
-      let refs = new LspTypeHierarchiesInfo(searchPtr);
-      if (i > 0) {
-        result[0].subHierarchies.subOrSuper = result[0].subHierarchies.subOrSuper.concat(
-          refs.subHierarchies.subOrSuper
+
+      let ref = new LspTypeHierarchiesInfo(ptr);
+      if (ref.fileName === '') {
+        return;
+      }
+      let result: LspTypeHierarchiesInfo[] = [];
+      let compileFiles = this.getMergedCompileFilesCrossModule(filename);
+      for (let i = 0; i < compileFiles.length; i++) {
+        let searchPtr: KPointer;
+        let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
+        if (searchFileCache) {
+          try {
+            searchPtr = global.es2panda._getTypeHierarchies(searchFileCache.fileContext, ctxFile, offset);
+          } catch (error) {
+            logger.error('failed to getTypeHierarchies by fileCache', error);
+            return;
+          }
+        } else {
+          const [cfg, searchCtx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
+          if (!cfg || !searchCtx) { return; }
+          try {
+            searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctxFile, offset);
+          } catch (error) {
+            logger.error('failed to getTypeHierarchies', error);
+            return;
+          } finally {
+            this.destroyContext(cfg, searchCtx);
+          }
+        }
+        let refs = new LspTypeHierarchiesInfo(searchPtr);
+        if (i > 0) {
+          result[0].subHierarchies.subOrSuper = result[0].subHierarchies.subOrSuper.concat(
+            refs.subHierarchies.subOrSuper
+          );
+        } else {
+          result.push(refs);
+        }
+      }
+      for (let j = 0; j < result[0].subHierarchies.subOrSuper.length; j++) {
+        let res = this.getTypeHierarchies(
+          result[0].subHierarchies.subOrSuper[j].fileName,
+          result[0].subHierarchies.subOrSuper[j].pos
         );
-      } else {
-        result.push(refs);
+        if (res) {
+          let subOrSuperTmp = result[0].subHierarchies.subOrSuper[j].subOrSuper.concat(res.subHierarchies.subOrSuper);
+          result[0].subHierarchies.subOrSuper[j].subOrSuper = Array.from(
+            new Map(
+              subOrSuperTmp.map((item) => [`${item.fileName}-${item.type}-${item.pos}-${item.name}`, item])
+            ).values()
+          );
+        }
+      }
+      perfScope?.end();
+      return result[0];
+    } finally {
+      if (mainCfg && mainCtx) {
+        this.destroyContext(mainCfg, mainCtx);
       }
     }
-    for (let j = 0; j < result[0].subHierarchies.subOrSuper.length; j++) {
-      let res = this.getTypeHierarchies(
-        result[0].subHierarchies.subOrSuper[j].fileName,
-        result[0].subHierarchies.subOrSuper[j].pos
-      );
-      if (res) {
-        let subOrSuperTmp = result[0].subHierarchies.subOrSuper[j].subOrSuper.concat(res.subHierarchies.subOrSuper);
-        result[0].subHierarchies.subOrSuper[j].subOrSuper = Array.from(
-          new Map(
-            subOrSuperTmp.map((item) => [`${item.fileName}-${item.type}-${item.pos}-${item.name}`, item])
-          ).values()
-        );
-      }
-    }
-    perfScope?.end();
-    return result[0];
   }
 
   getClassHierarchyInfo(filename: String, offset: number): LspClassHierarchy | undefined {
