@@ -2026,7 +2026,6 @@ void ETSChecker::CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig
     if (superTypeCtorSig == superTypeCtorSigs.end()) {
         LogError(diagnostic::CTOR_MISSING_SUPER_CALL, {}, ctorSig->Function()->Start());
     }
-
     ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED);
 }
 
@@ -2185,13 +2184,11 @@ void ETSChecker::CheckConstFieldInitialized(const Signature *signature, varbinde
 {
     bool initialized = false;
     const auto &stmts = signature->Function()->Body()->AsBlockStatement()->Statements();
-    const auto it = stmts.begin();
-    if (it != stmts.end()) {
-        if (const auto *first = *it;
-            first->IsExpressionStatement() && first->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-            first->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsThisExpression()) {
-            initialized = true;
-        }
+    auto firstCtorCallIt =
+        std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) { return IsConstructorCall(stmt); });
+    if (firstCtorCallIt != stmts.end()) {
+        auto *firstCtorCall = (*firstCtorCallIt)->AsExpressionStatement()->GetExpression()->AsCallExpression();
+        initialized = firstCtorCall->Callee()->IsThisExpression();
     }
 
     // NOTE: szd. control flow

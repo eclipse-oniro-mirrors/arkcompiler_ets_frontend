@@ -30,38 +30,11 @@
 #include "ir/ets/etsParameterExpression.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/expressions/identifier.h"
-#include "ir/expressions/superExpression.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/statements/expressionStatement.h"
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsEnumMember.h"
-#include "checker/types/ets/types.h"
 namespace ark::es2panda::compiler {
-
-// #22952: this should have been done in lowering
-void ETSFunction::CallImplicitCtor(ETSGen *etsg)
-{
-    RegScope rs(etsg);
-    auto *type = etsg->ContainingObjectType()->SuperType();
-    auto superType = type->AsETSObjectType();
-    if (superType == nullptr) {
-        etsg->CallExact(etsg->RootNode(), Signatures::BUILTIN_OBJECT_CTOR, etsg->GetThisReg());
-        return;
-    }
-
-    auto res = std::find_if(superType->ConstructSignatures().cbegin(), superType->ConstructSignatures().cend(),
-                            [](const checker::Signature *sig) { return sig->MinArgCount() == 0; });
-    if (res == superType->ConstructSignatures().cend()) {
-        ES2PANDA_ASSERT(superType->ConstructSignatures().empty());
-        return;
-    }
-    auto sig = *res;
-    if (sig->ArgCount() == 0) {
-        etsg->CallExact(etsg->RootNode(), (*res)->InternalName(), etsg->GetThisReg());
-    } else {
-        etsg->CallRangeFillUndefined(etsg->RootNode(), *res, etsg->GetThisReg());
-    }
-}
 
 void ETSFunction::CompileConstructorWithExplicitSuper(ETSGen *etsg, const ArenaVector<ir::Statement *> &statements)
 {
@@ -171,11 +144,8 @@ void ETSFunction::CompileInstanceFieldInitializers(ETSGen *etsg)
 
 void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc)
 {
-    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded() || !scriptFunc->IsExplicitThisCall() ||
-                    !scriptFunc->IsExplicitSuperCall());
-    if (scriptFunc->IsImplicitSuperCallNeeded()) {
-        CallImplicitCtor(etsg);
-    }
+    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded());
+    ES2PANDA_ASSERT(!scriptFunc->IsExplicitThisCall() || !scriptFunc->IsExplicitSuperCall());
 
     if (scriptFunc->IsExplicitSuperCall()) {
         return;

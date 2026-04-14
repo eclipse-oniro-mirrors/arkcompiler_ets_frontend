@@ -369,15 +369,16 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/asyncMethodLoweringStackless.cpp
   compiler/lowering/ets/bigintLowering.cpp
   compiler/lowering/ets/binaryExpressionLowering.cpp
-  compiler/lowering/ets/recordLowering.cpp
-  compiler/lowering/ets/relaxedAnyLowering.cpp
-  compiler/lowering/ets/resizableArrayLowering.cpp
-  compiler/lowering/ets/restArgsLowering.cpp
+  compiler/lowering/ets/constructorInitLowering.cpp
+  compiler/lowering/ets/expandBrackets.cpp
   compiler/lowering/ets/optionalArgumentsLowering.cpp
   compiler/lowering/ets/optionalLowering.cpp
   compiler/lowering/ets/overloadMappingLowering.cpp
   compiler/lowering/ets/overrideBridgesLowering.cpp
-  compiler/lowering/ets/expandBrackets.cpp
+  compiler/lowering/ets/recordLowering.cpp
+  compiler/lowering/ets/relaxedAnyLowering.cpp
+  compiler/lowering/ets/resizableArrayLowering.cpp
+  compiler/lowering/ets/restArgsLowering.cpp
   compiler/lowering/ets/packageImplicitImport.cpp
   compiler/lowering/ets/arrayConversionLowering.cpp
   compiler/lowering/ets/partialExportClassGen.cpp

@@ -29,6 +29,7 @@
 #include "compiler/lowering/ets/boxingForLocals.h"
 #include "compiler/lowering/ets/capturedVariables.h"
 #include "compiler/lowering/ets/constantExpressionLowering.h"
+#include "compiler/lowering/ets/constructorInitLowering.h"
 #include "compiler/lowering/ets/conditionalSimplifyLowering.h"
 #include "compiler/lowering/ets/declareOverloadLowering.h"
 #include "compiler/lowering/ets/cfgBuilderPhase.h"
@@ -143,6 +144,7 @@ std::vector<Phase *> GetETSPhaseList()
         new InternalAPICheck,
         // pluginsAfterCheck has to go right after checkerPhase
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
+        new ConstructorInitLowering,
         new AwaitLoweringPhase,
         new FixedArrayLowering,
         new DynamicImport,
@@ -175,6 +177,7 @@ std::vector<Phase *> GetETSPhaseList()
         new StringComparisonLowering,
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
+        new ConstructorInitLowering,
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new ObjectIndexLowering,
         new GenericBridgesPhase,
