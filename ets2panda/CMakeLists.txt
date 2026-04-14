@@ -110,7 +110,6 @@ if(PANDA_WITH_ETS)
                 "      \"std/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/annotations\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/interop\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
-                "      \"escompat\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"arkruntime\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"dynamic_import_tests\": {\"language\": \"js\", \"ohmUrl\": \"dynamic_import_tests\"},\n"
                 "      \"dynamic_import_tests/modules/instanceof\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\"},\n"

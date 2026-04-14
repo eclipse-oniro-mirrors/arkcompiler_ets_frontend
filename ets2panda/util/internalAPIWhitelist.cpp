@@ -54,7 +54,6 @@ std::vector<std::string_view> ComputeRestrictedAPIAnnotationsAt(std::string_view
          {
              "arkruntime",
              "std",
-             "escompat",
          }};
     addRestriction(ARKRUNTIME_INTERNAL_API_RESTRICTIONS);
 
