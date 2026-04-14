@@ -13,12 +13,10 @@
  * limitations under the License.
  */
  
-import {bar} from "./check_exported_3";
+import {/* @@ label */bar} from "./check_exported_3";
 
 function bar(): int {
     return 42;
 }
 
-//Throw error: Function already declared.
-
-/* @@? check_exported_3.ets:16:1 Error Semantic error ESE0130: Function bar is already declared. */
+/* @@@ label Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */

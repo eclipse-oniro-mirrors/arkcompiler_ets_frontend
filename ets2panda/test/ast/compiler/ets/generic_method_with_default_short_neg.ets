@@ -25,5 +25,5 @@ function main(): void {
     arktest.assertEQ(result, 0 as short);
 }
 
+/* @@? 17:46 Warning Warning W0326: Attempting to cast type 'Int' to 'X' can throw 'CastClassError' exception at runtime */
 
-/* @@@ label Warning Warning W0326: Attempting to cast type 'Int' to 'X' can throw 'CastClassError' exception at runtime */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,11 +17,12 @@ for (let i = 0; i < count; ++i /* @@ label */{
     result = result + p[i]!.awaitResolution() * /* @@label1 */a[i];
 }
 
-
 /* @@? 16:21 Error Semantic error ESE0143: Unresolved reference count */
-/* @@@ label Error Syntax error ESY0230: Expected ')', got '{'. */
+/* @@? 16:46 Error Syntax error ESY0230: Expected ')', got '{'. */
 /* @@? 17:5 Error Semantic error ESE0143: Unresolved reference result */
-/* @@? 17:23 Error Semantic error ESE0143: Unresolved reference p */
+/* @@? 17:14 Error Semantic error ESE0143: Unresolved reference result */
 /* @@? 17:23 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@@ label1 Error Semantic error ESE0143: Unresolved reference a */
-/* @@@ label1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 17:23 Error Semantic error ESE0143: Unresolved reference p */
+/* @@? 17:23 Warning Warning W0015: The operand of the ensure-not-nullish expression is always non-nullish. */
+/* @@? 17:63 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 17:63 Error Semantic error ESE0143: Unresolved reference a */

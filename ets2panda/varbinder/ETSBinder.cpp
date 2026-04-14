@@ -933,7 +933,7 @@ bool ETSBinder::DetectNameConflict(const util::StringView localName, Variable *c
     }
 
     if (var->Declaration()->IsFunctionDecl() && otherVar->Declaration()->IsFunctionDecl()) {
-        AddOverloadFlag(Allocator(), util::Helpers::IsStdLib(Program()), var, otherVar);
+        ThrowError(local->Start(), diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE);
         return true;
     }
 

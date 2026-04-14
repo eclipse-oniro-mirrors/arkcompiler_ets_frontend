@@ -14,13 +14,11 @@
  */
 
 import {default as A} from "./imported_module_3.ets"
-import A from "./imported_module_4.ets"
+import /* @@ label */A from "./imported_module_4.ets"
 
 function main() {
   A()
 }
 
 /* @@? imported_module_3.ets:16:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-
-/* @@? imported_module_4.ets:16:1 Error Semantic error ESE0130: Function boo is already declared. */
-/* @@? imported_module_4.ets:16:1 Warning Warning W71336: Exported function 'boo' requires type annotation. */
+/* @@? 17:22 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */

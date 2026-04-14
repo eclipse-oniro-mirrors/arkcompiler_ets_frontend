@@ -656,3 +656,6 @@
     }
   }
 }
+[import_function_overload.ets:16:9] Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope.
+[import_function_overload.ets:23:18] Semantic error ESE0124: Expected 1 arguments, got 0.
+[import_function_overload.ets:23:18] Semantic error ESE0127: No matching call signature for bar()

@@ -36,8 +36,8 @@ inline ir::Literal *AsSupportedLiteral(ir::Expression *const node)
     }
 
     auto literal = node->AsLiteral();
-    if (IsValidNumberLiteral(literal) || literal->IsCharLiteral() || literal->IsBooleanLiteral() ||
-        literal->IsStringLiteral()) {
+    if (IsValidNumberLiteral(literal) || literal->IsBigIntLiteral() || literal->IsCharLiteral() ||
+        literal->IsBooleanLiteral() || literal->IsStringLiteral()) {
         return literal;
     }
     return nullptr;

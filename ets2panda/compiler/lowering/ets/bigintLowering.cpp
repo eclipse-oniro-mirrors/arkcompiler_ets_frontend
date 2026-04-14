@@ -116,21 +116,6 @@ static bool IsEqualityOp(lexer::TokenType opType)
            (opType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL);
 }
 
-static bool ShouldPreventFromBigintImplicitCast(public_lib::Context *ctx, ir::BinaryExpression *expr)
-{
-    auto op = expr->OperatorType();
-    if (IsEqualityOp(op)) {
-        if ((op != lexer::TokenType::PUNCTUATOR_STRICT_EQUAL) &&
-            (op != lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL)) {
-            ctx->diagnosticEngine->LogDiagnostic(diagnostic::BIGINT_BUGPRONE_LOOSEEQUAL,
-                                                 util::DiagnosticMessageParams {}, expr->Start());
-        }
-        return true;
-    }
-
-    return false;
-}
-
 static bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpression *expr)
 {
     // Don't apply BigInt conversion to logical operators - they should preserve original types
@@ -148,7 +133,7 @@ static bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::Bin
     if (leftIsBigInt && !rightIsBigInt && IsNumericType(ctx, right->TsType())) {
         // If the right operand is a floating point, convert the left operand to a floating point to avoid loss of
         // precision
-        if (ShouldPreventFromBigintImplicitCast(ctx, expr)) {
+        if (IsEqualityOp(expr->OperatorType())) {
             return false;
         }
         if (IsFloatingPoint(right, ctx) && IsRelationOp(op)) {
@@ -164,7 +149,7 @@ static bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::Bin
     if (rightIsBigInt && !leftIsBigInt && IsNumericType(ctx, left->TsType())) {
         // If the left operand is a floating point, convert the right operand to a floating point to avoid loss of
         // precision
-        if (ShouldPreventFromBigintImplicitCast(ctx, expr)) {
+        if (IsEqualityOp(expr->OperatorType())) {
             return false;
         }
         if (IsFloatingPoint(left, ctx) && IsRelationOp(op)) {
