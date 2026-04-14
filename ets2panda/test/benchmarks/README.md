@@ -84,7 +84,7 @@ To update the static baseline values using multiple runs from CI:
 4. Run the update script:
 
 ```bash
-python3 <ets_frontend>/ets2panda/test/benchmarks/runner/update_static_values.py \
+python3 -B <ets_frontend>/ets2panda/test/benchmarks/runner/update_static_values.py \
   --test-dir=<static_core>/tools/es2panda/test/benchmarks \
   --zips-from-ci=./downloaded_artifacts
 ```
