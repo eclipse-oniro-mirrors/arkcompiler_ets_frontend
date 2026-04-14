@@ -1818,6 +1818,52 @@ static bool ResolveFunctionOverloadIdentifier(ETSChecker *checker, ir::OverloadD
     return CheckOverloadedName(checker, node, overloadedName);
 }
 
+static std::unordered_set<util::StringView> CollectInstanceOverloadDeclsTransitive(
+    ETSObjectType *classType, ir::OverloadDeclaration *currOverloadDecl)
+{
+    std::unordered_set<util::StringView> transitivePropNames;
+    for (auto const t : classType->TransitiveSupertypes()) {
+        for (auto const p : t->InstanceDecls()) {
+            auto *node = p.second->Declaration()->Node();
+            if (!node->IsOverloadDeclaration()) {
+                continue;
+            }
+            auto *superOverloadDecl = node->AsOverloadDeclaration();
+            if (!superOverloadDecl->Name().Is(currOverloadDecl->Name().Utf8())) {
+                continue;
+            }
+            for (auto *id : superOverloadDecl->OverloadedList()) {
+                transitivePropNames.insert(id->AsIdentifier()->Name());
+            }
+        }
+    }
+    return transitivePropNames;
+}
+
+static void CheckOverloadDeclInheritance(ETSChecker *checker, ir::OverloadDeclaration *currOverloadDecl,
+                                         const std::unordered_set<util::StringView> &currOverloadDeclNames)
+{
+    ETSObjectType *objType = nullptr;
+    if (currOverloadDecl->Parent()->IsClassDefinition()) {
+        objType = currOverloadDecl->Parent()->AsClassDefinition()->TsType()->AsETSObjectType();
+    } else if (currOverloadDecl->Parent()->Parent()->IsTSInterfaceDeclaration()) {
+        objType = currOverloadDecl->Parent()->Parent()->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType();
+    } else {
+        ES2PANDA_UNREACHABLE();
+    }
+    auto transitivePropNames = CollectInstanceOverloadDeclsTransitive(objType, currOverloadDecl);
+    if (transitivePropNames.empty()) {
+        return;
+    }
+    for (auto tp : transitivePropNames) {
+        if (currOverloadDeclNames.find(tp) == currOverloadDeclNames.end()) {
+            checker->LogError(diagnostic::OVERLOAD_NAME_NOT_LISTED,
+                              {tp, currOverloadDecl->AsClassElement()->Key()->AsIdentifier()->Name()},
+                              currOverloadDecl->Start());
+        }
+    }
+}
+
 void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const
 {
     for (auto *overloadedName : node->OverloadedList()) {
@@ -1848,6 +1894,7 @@ void ETSChecker::CheckClassMethodOverloadDeclaration(ETSChecker *checker, ir::Ov
         PropertySearchFlags::IS_GETTER | PropertySearchFlags::IGNORE_OVERLOAD |
         (node->IsStatic() ? PropertySearchFlags::SEARCH_STATIC_METHOD : PropertySearchFlags::SEARCH_INSTANCE_METHOD);
 
+    std::unordered_set<util::StringView> currOverloadedNames;
     for (auto *overloadedName : node->OverloadedList()) {
         if (!overloadedName->IsIdentifier()) {
             overloadedName->SetTsType(checker->GlobalTypeError());
@@ -1879,7 +1926,9 @@ void ETSChecker::CheckClassMethodOverloadDeclaration(ETSChecker *checker, ir::Ov
         if (!CheckOverloadedName(checker, node, overloadedName)) {
             continue;
         }
+        currOverloadedNames.insert(overloadedName->AsIdentifier()->Name());
     }
+    CheckOverloadDeclInheritance(checker, node, currOverloadedNames);
 }
 
 void ETSChecker::CheckInterfaceMethodOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const
@@ -1888,6 +1937,8 @@ void ETSChecker::CheckInterfaceMethodOverloadDeclaration(ETSChecker *checker, ir
         PropertySearchFlags::SEARCH_IN_BASE | PropertySearchFlags::SEARCH_IN_INTERFACES |
         PropertySearchFlags::IS_GETTER | PropertySearchFlags::IGNORE_OVERLOAD |
         (node->IsStatic() ? PropertySearchFlags::SEARCH_STATIC_METHOD : PropertySearchFlags::SEARCH_INSTANCE_METHOD);
+
+    std::unordered_set<util::StringView> currOverloadedNames;
     for (auto *overloadedName : node->OverloadedList()) {
         if (!overloadedName->IsIdentifier()) {
             overloadedName->SetTsType(checker->GlobalTypeError());
@@ -1918,7 +1969,9 @@ void ETSChecker::CheckInterfaceMethodOverloadDeclaration(ETSChecker *checker, ir
         if (!CheckOverloadedName(checker, node, overloadedName)) {
             continue;
         }
+        currOverloadedNames.insert(overloadedName->AsIdentifier()->Name());
     }
+    CheckOverloadDeclInheritance(checker, node, currOverloadedNames);
 }
 
 void ETSChecker::CheckConstructorOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const

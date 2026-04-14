@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,27 +13,20 @@
  * limitations under the License.
  */
 
-class Base{
-    overload foo {fooNumber,fooString}
-    fooNumber(a:number):string{
-        return "invoke1";
-    }
-    fooString(a:string):string{
-        return "invoke2";
-    }
+interface I1 {
+    overload foo {f1, f2}
+    f1 (a: int) { return 1 }
+    f2 (s: string) { return 2 }
 }
 
-class Sub1 extends Base{
-    override fooNumber(a:number):string{
-        return "invoke3";
-    }
+interface I2 {
+    overload foo {f3, f4}
+    f3 (a: byte) { return 3 }
+    f4 (u: string|int) { return 4 }
 }
 
-class Sub2 extends Base{
-    fooInt(a:int):string{
-        return "invoke4";
-    }
-    overload foo{fooInt,fooNumber,fooString}
+class C implements I1, I2 {
+    overload foo { f2, f3, f1, f4 }
 }
 
-
+arktest.assertEQ(new C().foo(1), 3)
