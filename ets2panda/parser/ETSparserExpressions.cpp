@@ -488,8 +488,12 @@ bool IsPunctuartorSpecialCharacter(lexer::TokenType tokenType)
 // This function was created to reduce the size of `EatArrowFunctionParams`.
 bool ETSParser::IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType)
 {
+    // EatArrowFunctionParams treats a comma at the outermost '(' as starting a new parameter; type arguments
+    // use the same comma (e.g. A<int, null>) so tokens that can begin a type after ',' must be accepted here.
     return (tokenType == lexer::TokenType::LITERAL_IDENT || IsPrimitiveType(tokenType) ||
-            tokenType == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD || tokenType == lexer::TokenType::KEYW_THIS);
+            tokenType == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD ||
+            tokenType == lexer::TokenType::KEYW_THIS || tokenType == lexer::TokenType::LITERAL_NULL ||
+            tokenType == lexer::TokenType::KEYW_UNDEFINED || tokenType == lexer::TokenType::LITERAL_STRING);
 }
 
 // This function was created to reduce the size of `EatArrowFunctionParams`.
