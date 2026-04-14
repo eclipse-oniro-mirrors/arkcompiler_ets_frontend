@@ -890,7 +890,7 @@
       "loc": {
         "start": {
           "line": 20,
-          "column": 10,
+          "column": 1,
           "program": "methodOverrideDifferentSignature.ets"
         },
         "end": {

@@ -1472,6 +1472,7 @@ std::pair<ir::ModifierFlags, lexer::SourcePosition> ETSParser::ParseMemberModifi
 {
     auto memberModifiers = ir::ModifierFlags::STATIC | ir::ModifierFlags::PUBLIC;
 
+    lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
     if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_EXPORT)) {
         const auto savedPos = Lexer()->Save();
         if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_DEFAULT)) {
@@ -1488,8 +1489,6 @@ std::pair<ir::ModifierFlags, lexer::SourcePosition> ETSParser::ParseMemberModifi
             memberModifiers |= ir::ModifierFlags::EXPORT;
         }
     }
-
-    lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
 
     if (InAmbientContext()) {
         memberModifiers |= ir::ModifierFlags::DECLARE;

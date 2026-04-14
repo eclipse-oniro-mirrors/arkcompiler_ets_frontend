@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,4 @@ interface I {}
 export type {I}
 export type MyI = I
 export type {MyI}
-/* @@? 20:13 Warning Warning W0000: Duplicated export aliases for 'MyI'. */
+/* @@? 20:14 Warning Warning W0000: Duplicated export aliases for 'MyI'. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,8 +51,8 @@ function g(x: int): int {
 
 
 
-/* @@? 16:10 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 20:10 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 16:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 20:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 20:27 Error Semantic error ESE0177: struct B is not extensible. */
 /* @@? 30:17 Error Syntax error ESY0214: Label already declared. */
 /* @@? 40:1 Error Syntax error ESY0163: return keyword should be used in function body. */

@@ -1,4 +1,4 @@
-[re_export_4.ets:17:8] Warning W0000: Duplicated export aliases for 'foo'.
+[re_export_4.ets:17:9] Warning W0000: Duplicated export aliases for 'foo'.
 {
   "type": "Program",
   "statements": [
@@ -74,7 +74,7 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 8,
+            "column": 1,
             "program": "re_export_4.ets"
           },
           "end": {
@@ -87,7 +87,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "re_export_4.ets"
         },
         "end": {
@@ -169,7 +169,7 @@
         "loc": {
           "start": {
             "line": 17,
-            "column": 8,
+            "column": 1,
             "program": "re_export_4.ets"
           },
           "end": {
@@ -182,7 +182,7 @@
       "loc": {
         "start": {
           "line": 17,
-          "column": 8,
+          "column": 1,
           "program": "re_export_4.ets"
         },
         "end": {
@@ -358,4 +358,4 @@
     }
   }
 }
-[re_export_4.ets:17:8] Semantic error ESE0362: Ambiguous export 'foo'
+[re_export_4.ets:17:1] Semantic error ESE0362: Ambiguous export 'foo'

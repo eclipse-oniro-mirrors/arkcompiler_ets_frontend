@@ -246,7 +246,7 @@ public:
     void ResolveReferencesForScopeWithContext(ir::AstNode *node, Scope *scope);
 
     [[nodiscard]] bool AddSelectiveExportAlias(parser::ETSParser *parser, util::StringView const &path,
-                                               util::StringView const &key, util::StringView const &value,
+                                               util::StringView const &key, ir::Identifier const *valueIdent,
                                                ir::AstNode const *decl) noexcept;
 
     [[nodiscard]] const ModulesToExportedNamesWithAliases &GetSelectiveExportAliasMultimap() const noexcept

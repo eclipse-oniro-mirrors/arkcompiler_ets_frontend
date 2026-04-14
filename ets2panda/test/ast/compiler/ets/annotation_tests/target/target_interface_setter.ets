@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -134,8 +134,8 @@ let lambdaParameter = (@anno a: number, @anno b: number): number => a + b;
 /* @@? 84:6 Error Semantic error ESE495032: Annotation 'anno' cannot be used on INTERFACE_PROPERTY. It is only allowed on: INTERFACE_SETTER. */
 /* @@? 88:6 Error Semantic error ESE495032: Annotation 'anno' cannot be used on INTERFACE_METHOD. It is only allowed on: INTERFACE_SETTER. */
 /* @@? 92:6 Error Semantic error ESE495032: Annotation 'anno' cannot be used on INTERFACE_GETTER. It is only allowed on: INTERFACE_SETTER. */
+/* @@? 101:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 101:2 Error Semantic error ESE495032: Annotation 'anno' cannot be used on CLASS. It is only allowed on: INTERFACE_SETTER. */
-/* @@? 102:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 109:2 Error Semantic error ESE495032: Annotation 'anno' cannot be used on LAMBDA. It is only allowed on: INTERFACE_SETTER. */
 /* @@? 113:21 Error Semantic error ESE495032: Annotation 'anno' cannot be used on TYPE. It is only allowed on: INTERFACE_SETTER. */
 /* @@? 114:20 Error Semantic error ESE495032: Annotation 'anno' cannot be used on TYPE. It is only allowed on: INTERFACE_SETTER. */

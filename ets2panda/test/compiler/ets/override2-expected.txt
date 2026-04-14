@@ -701,7 +701,7 @@
       "loc": {
         "start": {
           "line": 24,
-          "column": 10,
+          "column": 1,
           "program": "override2.ets"
         },
         "end": {

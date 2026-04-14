@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,5 +24,5 @@ namespace A{
     namespace B{}
 }
 
-/* @@? 24:5 Error Syntax error ESY0006: Unable to merge namespaces 'B', because their modifiers are different. */
-/* @@? 24:5 Error Syntax error ESY0007: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations. */
+/* @@? 23:5 Error Syntax error ESY0006: Unable to merge namespaces 'B', because their modifiers are different. */
+/* @@? 23:5 Error Syntax error ESY0007: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations. */

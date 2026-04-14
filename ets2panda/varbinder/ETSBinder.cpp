@@ -243,14 +243,15 @@ void ETSBinder::ResolveReferencesForScopeWithContext(ir::AstNode *node, Scope *s
 // export { a as b } value => a, key => b
 // value == value and key == key => Warning, value == value and key != key => Ok, value != value and key == key => CTE
 bool ETSBinder::AddSelectiveExportAlias(parser::ETSParser *parser, util::StringView const &path,
-                                        util::StringView const &key, util::StringView const &value,
+                                        util::StringView const &key, ir::Identifier const *valueIdent,
                                         ir::AstNode const *decl) noexcept
 {
+    const util::StringView &value = valueIdent->Name();
     if (auto foundMap = selectiveExportAliasMultimap_->find(path); foundMap != selectiveExportAliasMultimap_->end()) {
         auto inserted = foundMap->second.insert({key, std::make_pair(value, decl)}).second;
         if (UNLIKELY(!inserted && foundMap->second.find(key)->second.first == value)) {
             parser->DiagnosticEngine().Log(
-                {util::DiagnosticType::WARNING, diagnostic::DUPLICATE_EXPORT_ALIASES, {key}, decl->Start()});
+                {util::DiagnosticType::WARNING, diagnostic::DUPLICATE_EXPORT_ALIASES, {key}, valueIdent->Start()});
             return true;
         }
         return inserted;

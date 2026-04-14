@@ -1011,7 +1011,7 @@
       "loc": {
         "start": {
           "line": 31,
-          "column": 10,
+          "column": 1,
           "program": "inheritance.ets"
         },
         "end": {
@@ -1207,7 +1207,7 @@
       "loc": {
         "start": {
           "line": 34,
-          "column": 8,
+          "column": 1,
           "program": "inheritance.ets"
         },
         "end": {

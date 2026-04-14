@@ -380,7 +380,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 8,
+                "column": 1,
                 "program": "check_exported_2.ets"
               },
               "end": {

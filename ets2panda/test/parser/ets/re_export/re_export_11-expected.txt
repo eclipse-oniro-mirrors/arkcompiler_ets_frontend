@@ -57,7 +57,7 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 8,
+            "column": 1,
             "program": "re_export_11.ets"
           },
           "end": {
@@ -70,7 +70,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "re_export_11.ets"
         },
         "end": {
@@ -152,7 +152,7 @@
         "loc": {
           "start": {
             "line": 17,
-            "column": 8,
+            "column": 1,
             "program": "re_export_11.ets"
           },
           "end": {
@@ -165,7 +165,7 @@
       "loc": {
         "start": {
           "line": 17,
-          "column": 8,
+          "column": 1,
           "program": "re_export_11.ets"
         },
         "end": {

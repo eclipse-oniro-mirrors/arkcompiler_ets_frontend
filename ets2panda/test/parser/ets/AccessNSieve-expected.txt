@@ -3472,7 +3472,7 @@
       "loc": {
         "start": {
           "line": 16,
-          "column": 8,
+          "column": 1,
           "program": "AccessNSieve.ets"
         },
         "end": {

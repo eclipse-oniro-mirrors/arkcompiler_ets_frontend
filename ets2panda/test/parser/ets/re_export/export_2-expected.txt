@@ -234,7 +234,7 @@
             "loc": {
               "start": {
                 "line": 16,
-                "column": 8,
+                "column": 1,
                 "program": "export_2.ets"
               },
               "end": {
@@ -352,7 +352,7 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 8,
+                "column": 1,
                 "program": "export_2.ets"
               },
               "end": {

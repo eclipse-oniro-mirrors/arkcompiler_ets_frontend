@@ -163,7 +163,7 @@
       "loc": {
         "start": {
           "line": 17,
-          "column": 8,
+          "column": 1,
           "program": "lambda_import_alias_1-2.ets"
         },
         "end": {

@@ -142,7 +142,7 @@
       "loc": {
         "start": {
           "line": 20,
-          "column": 8,
+          "column": 1,
           "program": "imported_module_1.ets"
         },
         "end": {
@@ -743,7 +743,7 @@
             "loc": {
               "start": {
                 "line": 27,
-                "column": 8,
+                "column": 1,
                 "program": "imported_module_1.ets"
               },
               "end": {
@@ -940,7 +940,7 @@
             "loc": {
               "start": {
                 "line": 31,
-                "column": 8,
+                "column": 1,
                 "program": "imported_module_1.ets"
               },
               "end": {
@@ -1058,7 +1058,7 @@
             "loc": {
               "start": {
                 "line": 35,
-                "column": 16,
+                "column": 1,
                 "program": "imported_module_1.ets"
               },
               "end": {

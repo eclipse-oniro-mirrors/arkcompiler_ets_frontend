@@ -260,7 +260,7 @@
       "loc": {
         "start": {
           "line": 22,
-          "column": 8,
+          "column": 1,
           "program": "alias2.ets"
         },
         "end": {
@@ -556,7 +556,7 @@
             "loc": {
               "start": {
                 "line": 18,
-                "column": 8,
+                "column": 1,
                 "program": "alias2.ets"
               },
               "end": {
