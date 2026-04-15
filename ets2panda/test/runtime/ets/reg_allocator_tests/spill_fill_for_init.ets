@@ -18,7 +18,7 @@ class TestInit {
     name: String
     constructor(name: String, size: int) {
         this.name = name;
-        this.arr = new Array<int>(size);
+        this.arr = Array.create<int>(size, 0);
     }
 }
 
