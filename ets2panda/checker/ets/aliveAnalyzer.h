@@ -24,6 +24,7 @@ class AstNode;
 class Statement;
 class ClassDefinition;
 class MethodDefinition;
+class TSInterfaceDeclaration;
 class DoWhileStatement;
 class VariableDeclaration;
 class ScriptFunction;
@@ -63,6 +64,7 @@ private:
     void AnalyzeStats(const ArenaVector<ir::Statement *> &stats);
     void AnalyzeStructDecl(const ir::ETSStructDeclaration *structDecl);
     void AnalyzeClassDecl(const ir::ClassDeclaration *classDecl);
+    void AnalyzeInterfaceDecl(const ir::TSInterfaceDeclaration *ifaceDecl);
     void AnalyzeMethodDef(const ir::MethodDefinition *methodDef);
     void AnalyzeArrFuncExp(const ir::ArrowFunctionExpression *arrFuncExp);
     void AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnType, const lexer::SourcePosition &errorPos,
