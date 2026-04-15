@@ -227,6 +227,7 @@ public:
     void ResolveDeclaredMembersOfObject(const Type *type);
     std::optional<std::size_t> GetTupleElementAccessValue(const ir::Expression *expr);
     bool ValidateArrayIndex(ir::Expression *expr, bool relaxed = false);
+    bool ValidateResizableArrayDimension(ir::Expression *expr, size_t dimensionIndex = 1U);
     bool ValidateTupleIndex(const ETSTupleType *tuple, ir::MemberExpression *expr, bool reportError = true);
     bool ValidateTupleIndexFromEtsObject(const ETSTupleType *const tuple, ir::MemberExpression *expr);
     Type *CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg);
