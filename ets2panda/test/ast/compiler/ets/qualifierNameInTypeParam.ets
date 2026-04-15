@@ -34,3 +34,4 @@ function main(){
     arktest.assertEQ(firstElement.b, true);
     arktest.assertEQ(firstElement.array.length, 3);
 }
+/* @@? 32:24 Warning Warning W670214: This cast can be excessive because it always succeeds */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,9 @@ overload goo {M.fooM, fooN} // compile-time error
 }
 overload bar {foo2, N.fooN} // compile-time error
 
+/* @@? 19:15 Error Semantic error ESE0143: Unresolved reference foo1 */
 /* @@? 19:15 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 22:1 Warning Warning W71336: Exported function 'fooN' requires type annotation. */
+/* @@? 24:1 Warning Warning W71336: Exported function 'fooM' requires type annotation. */
 /* @@? 26:15 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@? 28:21 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */

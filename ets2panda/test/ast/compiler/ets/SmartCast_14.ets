@@ -50,3 +50,4 @@ arktest.assertEQ(a.A(1), "Generic");
 arktest.assertEQ(a.A([1, 2, 3]), "number[]")
 
 /* @@? 1:1 Error Syntax error ESY18871: Type parameter is erased from type 'Array' when used in instanceof expression. */
+/* @@? 18:13 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */

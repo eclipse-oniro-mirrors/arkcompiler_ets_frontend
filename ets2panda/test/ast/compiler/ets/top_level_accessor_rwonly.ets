@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,5 +21,6 @@ function main() {
     age = "1"
 }
 
+/* @@? 17:8 Warning Warning W71336: Exported function 'age' requires type annotation. */
 /* @@? 20:5 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
 /* @@? 21:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

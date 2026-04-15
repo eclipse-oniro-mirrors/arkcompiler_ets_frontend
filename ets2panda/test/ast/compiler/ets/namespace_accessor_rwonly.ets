@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,5 +26,6 @@ function main() {
     NS1.name;
 }
 
+/* @@? 17:12 Warning Warning W71336: Exported function 'name' requires type annotation. */
 /* @@? 25:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
 /* @@? 26:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */

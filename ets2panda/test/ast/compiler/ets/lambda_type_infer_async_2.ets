@@ -23,3 +23,5 @@ async function foo() {
 }
 
 /* @@? 19:26 Error Semantic error ESE0127: No matching call signature for then(((p1: null) => String|PromiseLike<String>)) */
+/* @@? 20:23 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
+/* @@? 20:23 Warning Warning W1068706: result of the nullish-coalescing expression is equal to its right-hand-side expression value. */

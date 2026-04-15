@@ -18,4 +18,6 @@ package package_with_errors
 // "importantInfo" is imported in "import_in_package_with_error.ets"
 export let moreImportantInfo = /* @@ label */importantInfo as number;
 
+/* @@? 16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
+/* @@? 19:12 Warning Warning W71336: Exported variable 'moreImportantInfo' requires type annotation. */
 /* @@@ label Error Semantic error ESE0143: Unresolved reference importantInfo */

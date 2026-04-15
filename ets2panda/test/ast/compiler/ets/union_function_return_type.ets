@@ -59,6 +59,7 @@ let v24: ((p0: Int|String) => Int|null|undefined) = (v) => null
 let v25: ((p0: Int|String) => Int|null|undefined) = (v) => undefined
 let v26: ((p0: Int|String) => Int|null|undefined) = 7
 
+/* @@? 21:9 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
 /* @@? 27:44 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int|((() => Int|null|undefined))' */
 /* @@? 28:44 Error Semantic error ESE0318: Type 'Int|((() => Int|null|undefined))' cannot be assigned to type 'Int|((() => Int))|null|undefined' */
 /* @@? 29:36 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type '(() => Int|null|undefined)' */

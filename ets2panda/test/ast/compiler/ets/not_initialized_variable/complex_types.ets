@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +36,7 @@ export let plug: Plug
 console.log(car, animal, mutant, jsvalue, plug)
 
 
+/* @@? 22:12 Warning Warning W71336: Exported class property 'age' requires type annotation. */
 /* @@? 36:13 Error Semantic error ESE0375: Variable 'car' is used before being assigned. */
 /* @@? 36:18 Error Semantic error ESE0375: Variable 'animal' is used before being assigned. */
 /* @@? 36:26 Error Semantic error ESE0375: Variable 'mutant' is used before being assigned. */

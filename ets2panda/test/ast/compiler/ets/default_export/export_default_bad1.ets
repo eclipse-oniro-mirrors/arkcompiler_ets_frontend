@@ -26,4 +26,5 @@ class B {
 
 export default /* @@ label */{A, B}
 
+/* @@? 18:12 Warning Warning W71336: Exported function 'foo' requires type annotation. */
 /* @@? 27:1 Error Syntax error ESY0005: export default is not allowed to export multiple specifiers. */

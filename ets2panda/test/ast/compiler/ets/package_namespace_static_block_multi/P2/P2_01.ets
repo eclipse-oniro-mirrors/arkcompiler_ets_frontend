@@ -19,3 +19,4 @@ export namespace NS {
         a = 1;
     }
 }
+/* @@? 19:9 Warning Warning W71336: Exported function '_$initializerBlockInit$_P2_01' requires type annotation. */

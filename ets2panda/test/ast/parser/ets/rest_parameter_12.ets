@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Huawei Device Co., Ltd.
+* Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -24,6 +24,6 @@ class C {
 /* @@ label2 */C.foo(new A<Long>)
 /* @@ label3 */C.foo(new A<Long>, new B<Error>, new B<Error>)
 
-/* @@? 23:16 Error Semantic error ESE0127: No matching call signature for foo() */
-/* @@? 24:16 Error Semantic error ESE0127: No matching call signature for foo(A<Long>) */
-/* @@? 25:16 Error Semantic error ESE0127: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo() */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(A<Long>) */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,4 +26,7 @@ export function fooImport() {
 // TypeError: Type 'int' cannot be assigned to type 'String' [export_and_import_top_level.ets:21:1]
 
 
+/* @@? export_and_import_top_level.ets:18:12 Warning Warning W71336: Exported variable 'inExport' requires type annotation. */
+
+/* @@? import_type_error_top_level.ets:20:1 Warning Warning W71336: Exported function 'fooImport' requires type annotation. */
 /* @@@ label Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

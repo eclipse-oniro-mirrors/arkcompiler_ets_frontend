@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,4 +48,5 @@ class C{
 
 /* @@? 29:4 Error Syntax error ESY0001: Missing type annotation for property 'b'. */
 /* @@? 42:11 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@? 42:38 Warning Warning W65000: The equality expression is always true. */
 /* @@? 44:16 Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */

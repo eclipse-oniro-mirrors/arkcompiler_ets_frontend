@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,3 +27,4 @@ function main(): void {
 }
 
 /* @@@ label Error Syntax error ESY0115: Duplicated modifier is not allowed. */
+/* @@? 25:22 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

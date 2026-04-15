@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,5 +22,8 @@ export let importantInfo = "All good!"
 export const notInit ;
 
 
+/* @@? 16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
+/* @@? 20:12 Warning Warning W71336: Exported variable 'importantInfo' requires type annotation. */
 /* @@? 22:14 Error Syntax error ESY0294: Missing initialization for const package property */
+/* @@? 22:14 Warning Warning W71336: Exported variable 'notInit' requires type annotation. */
 /* @@? 22:22 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

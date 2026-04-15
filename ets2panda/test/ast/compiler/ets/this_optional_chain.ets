@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,4 +20,5 @@ class A{
     }
 }
 
+/* @@? 19:9 Warning Warning W65001: The equality expression is always false. */
 /* @@? 19:20 Error Syntax error ESY115549: 'this?.' optional chaining is not supported. */

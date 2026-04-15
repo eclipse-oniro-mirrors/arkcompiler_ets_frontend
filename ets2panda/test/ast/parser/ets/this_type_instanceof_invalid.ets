@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,9 +62,13 @@ class C<T> {
 }
 
 
+/* @@? 20:8 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 20:28 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 36:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 36:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 43:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 43:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 50:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 50:27 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
 /* @@? 50:31 Error Syntax error ESY0230: Expected ')', got '.'. */
 /* @@? 50:31 Error Syntax error ESY0227: Unexpected token '.'. */
@@ -72,4 +76,5 @@ class C<T> {
 /* @@? 50:32 Error Semantic error ESE0145: Property 'b' must be accessed through 'this' */
 /* @@? 50:33 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 50:35 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 57:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 57:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */

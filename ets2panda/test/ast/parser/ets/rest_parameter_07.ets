@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Huawei Device Co., Ltd.
+* Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -19,4 +19,7 @@ function sum(...numbers: [number, number, number]): number {
 
 /* @@ label1 */sum(10, 20, /* @@ label2 */"one")
 
-/* @@? 20:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, "one") */
+/* @@? 17:12 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 17:25 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 17:38 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, "one") */

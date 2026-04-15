@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Huawei Device Co., Ltd.
+* Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
@@ -22,7 +22,10 @@ function sum(a: int, ...numbers: [number, number, number]): number {
 /* @@ label3 */sum(11,12,13)
 /* @@ label4 */sum(11,12,13,15,16)
 
-/* @@? 20:16 Error Semantic error ESE0127: No matching call signature for sum() */
-/* @@? 21:16 Error Semantic error ESE0127: No matching call signature for sum(Int) */
-/* @@? 22:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int) */
-/* @@? 23:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int, Int, Int) */
+/* @@? 17:12 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 17:25 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 17:38 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for sum() */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for sum(Int) */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int) */
+/* @@@ label4 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int, Int, Int) */

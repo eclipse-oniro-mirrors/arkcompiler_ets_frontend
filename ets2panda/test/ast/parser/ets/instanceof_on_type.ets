@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,11 @@ let d = X instanceof X
 let f = B instanceof Object
 
 
+/* @@? 19:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+/* @@? 20:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 21:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */
+/* @@? 21:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 22:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */
+/* @@? 22:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 23:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */
+/* @@? 23:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

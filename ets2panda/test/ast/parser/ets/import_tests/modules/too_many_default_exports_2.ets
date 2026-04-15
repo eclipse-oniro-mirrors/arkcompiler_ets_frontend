@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,4 +16,6 @@
 export default let a = 2, /* @@ label */b = 3;
 
 
+/* @@? 16:20 Warning Warning W71336: Exported variable 'a' requires type annotation. */
 /* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */
+/* @@@ label Warning Warning W71336: Exported variable 'b' requires type annotation. */

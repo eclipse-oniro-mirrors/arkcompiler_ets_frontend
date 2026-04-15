@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,5 +16,9 @@
 import * as a from './cyclic_export_file1.ets'
 import * as b from './cyclic_export_file2.ets'
 
-/* @@? 16:13 Error Semantic error ESE67633: Cyclic export detected re-exports */
-/* @@? 17:13 Error Semantic error ESE67633: Cyclic export detected re-exports */
+/* @@? cyclic_export_file1.ets:17:12 Warning Warning W71336: Exported variable 'fromA' requires type annotation. */
+
+/* @@? cyclic_export_file2.ets:17:12 Warning Warning W71336: Exported variable 'fromB' requires type annotation. */
+
+/* @@? cyclic_export_test.ets:16:13 Error Semantic error ESE67633: Cyclic export detected re-exports */
+/* @@? cyclic_export_test.ets:17:13 Error Semantic error ESE67633: Cyclic export detected re-exports */

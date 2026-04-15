@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,3 +43,4 @@ enum Colorj {
     B = "abc",
     M = ColorF.I == 4 ? ColorG.Red + ColorG.Green : "ac"
 }
+/* @@? 44:9 Warning Warning W65000: The equality expression is always true. */

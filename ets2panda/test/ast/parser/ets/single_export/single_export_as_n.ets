@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,3 +21,4 @@ let a = 2;
 /* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'as'. */
 /* @@? 16:13 Error Syntax error ESY0227: Unexpected token 'A'. */
 /* @@? 16:13 Error Semantic error ESE0143: Unresolved reference A */
+/* @@? 18:5 Warning Warning W71336: Exported variable 'a' requires type annotation. */
