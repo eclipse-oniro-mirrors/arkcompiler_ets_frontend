@@ -818,7 +818,14 @@ bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNod
         init->SetPreferredType(annotationType);
     }
     if (init->IsNumberLiteral() && annotationType != nullptr) {
-        init->SetPreferredType(annotationType);
+        auto *numberLiteral = init->AsNumberLiteral();
+        // 15.7.1 allows assignment-like contextual typing for integer constants, but an
+        // unsuffixed floating-point literal keeps its default 'double' type here and a
+        // suffixed one must keep its declared floating type. Overload resolution handles
+        // floating-point literal preference separately via invocation context.
+        if (!numberLiteral->Number().IsReal()) {
+            init->SetPreferredType(annotationType);
+        }
     }
     if (init->IsBinaryExpression() && annotationType != nullptr) {
         auto *binExpr = init->AsBinaryExpression();
