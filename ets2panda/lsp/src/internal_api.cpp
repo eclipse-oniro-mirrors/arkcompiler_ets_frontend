@@ -842,7 +842,7 @@ ir::AstNode *GetOwner(ir::AstNode *node)
         return nullptr;
     }
     auto var = ResolveIdentifier(id->AsIdentifier());
-    if (var == nullptr) {
+    if (var == nullptr || var->Declaration() == nullptr) {
         return nullptr;
     }
 

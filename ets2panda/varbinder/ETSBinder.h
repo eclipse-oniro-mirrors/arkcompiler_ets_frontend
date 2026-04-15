@@ -128,6 +128,14 @@ public:
         return externalRecordTable_;
     }
 
+    void CleanScopesAndRecordTables(parser::Program *program)
+    {
+        this->CleanScopes();
+        externalRecordTable_.clear();
+        globalRecordTable_->CleanUp();
+        reExportImports_.erase(program);
+    }
+
     void HandleCustomNodes(ir::AstNode *childNode) override;
 
     void IdentifierAnalysis() override;

@@ -49,8 +49,6 @@ void *FindLibrary();
 
 constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
 constexpr const char *G_LIB_ES2_PANDA_PUBLIC = LIB_PREFIX "es2panda-public" LIB_SUFFIX;
-constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS_LSP = LIB_PREFIX "es2panda_public_lsp" LIB_SUFFIX;
-constexpr const char *G_LIB_ES2_PANDA_PUBLIC_LSP = LIB_PREFIX "es2panda-public-lsp" LIB_SUFFIX;
 
 // CC-OFFNXT(G.NAM.01) false positive
 std::string GetString(KStringPtr ptr);
@@ -64,6 +62,5 @@ inline KUInt UnpackUInt(const KByte *bytes);
 
 // NOLINTBEGIN(fuchsia-statically-constructed-objects)
 static std::string g_pandaLibPath;
-static bool g_isLspUsage = false;
 // NOLINTEND(fuchsia-statically-constructed-objects)
 #endif  // COMMON_H_

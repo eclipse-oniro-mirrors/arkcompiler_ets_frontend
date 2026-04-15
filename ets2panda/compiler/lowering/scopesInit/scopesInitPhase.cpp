@@ -913,7 +913,7 @@ bool InitScopesPhaseETS::Perform()
 
     // NOTE(dkofanov): remove this when packages merge at PackageImplicitImport.
     for (auto *packageProg : Context()->parserProgram->GetExternalSources()->Get<Kind::PACKAGE>()) {
-        if (!packageProg->IsProgramModified()) {
+        if (!packageProg->IsProgramModified() || packageProg->IsASTLowered()) {
             continue;
         }
         packageProg->VarBinder()->InitTopScope();

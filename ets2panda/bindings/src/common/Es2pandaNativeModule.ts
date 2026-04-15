@@ -97,6 +97,14 @@ export class Es2pandaNativeModule {
   _CreateContextSimultaneousMode(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array): KPtr {
     throw new Error('Not implemented');
   }
+  _CreateContextSimultaneousModeForLsp(
+    configPtr: KPtr,
+    fileNamesCount: KInt,
+    filenames: string[] | Uint8Array,
+    isLspUsage: boolean
+  ): KPtr {
+    throw new Error('Not implemented');
+  }
   _GenerateStaticDeclarationsFromContext(context: KPtr, filename: String): KPtr {
     throw new Error('Not implemented');
   }
@@ -597,6 +605,30 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _initSymbolReferenceIndex(): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _clearSymbolReferenceIndex(): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _buildSymbolReferenceIndexForContext(context: KNativePointer): KBoolean {
+    throw new Error('Not implemented');
+  }
+
+  _buildSymbolReferenceIndexForContextWithExternal(context: KNativePointer): KBoolean {
+    throw new Error('Not implemented');
+  }
+
+  _removeSymbolReferenceIndexForFile(fileName: String): KBoolean {
+    throw new Error('Not implemented');
+  }
+
+  _getReferencesAtPositionFromIndex(context: KNativePointer, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _isPackageModule(context: KNativePointer): boolean {
     throw new Error('Not implemented');
   }
@@ -1060,6 +1092,14 @@ export class Es2pandaNativeModule {
   }
 
   _InvalidateFileCache(globalContextPtr: KPtr, filename: String): void {
+    throw new Error('Not implemented');
+  }
+
+  _IncrementalPrepareProgram(contextPtr: KPtr, filename: String, sourceText: String): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _DeleteProgramForFile(contextPtr: KPtr, filename: String): KInt {
     throw new Error('Not implemented');
   }
 

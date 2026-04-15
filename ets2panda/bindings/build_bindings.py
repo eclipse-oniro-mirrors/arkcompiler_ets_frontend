@@ -62,8 +62,6 @@ def copy_output(options):
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
                 os.path.join(options.output_path, 'public.node'), True)
-        copy_files(os.path.join(options.root_out_dir, 'arkcompiler/ets_frontend', 'libes2panda_public_lsp.dll'),
-                os.path.join(options.output_path, 'libes2panda_public_lsp.dll'), True)
         copy_files(os.path.join(options.root_out_dir, 'libts_bindings.dll'),
                    os.path.join(options.source_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'libpublic.dll'),
@@ -74,8 +72,6 @@ def copy_output(options):
                 os.path.join(options.output_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'public.node'),
                 os.path.join(options.output_path, 'public.node'), True)
-        copy_files(os.path.join(options.root_out_dir, 'arkcompiler/ets_frontend', 'libes2panda_public_lsp.so'),
-                os.path.join(options.output_path, 'libes2panda_public_lsp.so'), True)
         copy_files(os.path.join(options.root_out_dir, 'ts_bindings.node'),
                    os.path.join(options.source_path, 'ts_bindings.node'), True)
         copy_files(os.path.join(options.root_out_dir, 'public.node'),

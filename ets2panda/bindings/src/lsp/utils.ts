@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,3 +42,25 @@ export const TextPositionUtils = {
     return textDecoder.decode(buffer).length;
   }
 };
+
+export function formEts2pandaCmd(
+  defaultArkTsConfig: string,
+  simultaneous: boolean = false,
+  input: string
+): string[] {
+
+  const ets2pandaCmd: string[] = [
+      '-',
+      '--extension',
+      'ets',
+      '--arktsconfig',
+      defaultArkTsConfig
+  ]
+
+  if (simultaneous) {
+      ets2pandaCmd.push('--simultaneous')
+  }
+
+  ets2pandaCmd.push(input)
+  return ets2pandaCmd
+}

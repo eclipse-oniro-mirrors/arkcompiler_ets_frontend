@@ -28,23 +28,31 @@ function getMarkerOffset(filePath: string, marker: string): number {
   return markerIndex + marker.length;
 }
 
-function getReferenceText(filePath: string, start: number, length: number): string {
-  const source = fs.readFileSync(filePath, 'utf8');
-  return source.slice(start, start + length).trim();
-}
-
-function hasReference(refs: Array<{ fileName: string; text: string }>, filePath: string, text: string): boolean {
-  const targetFile = path.resolve(filePath);
-  return refs.some((ref) => ref.fileName === targetFile && ref.text === text);
-}
-
-function hasHarReference(refs: Array<{ fileName: string; text: string }>, harDir: string, text: string): boolean {
-  const normalizedHarDir = `${path.resolve(harDir)}${path.sep}`;
-  return refs.some((ref) => ref.fileName.startsWith(normalizedHarDir) && ref.text === text);
+function expectReferences(references: any, expected: { fileName: string; start: number; length: number }) {
+  references.fileName = path.basename(references.fileName);
+  expect(references).toMatchObject(expected);
 }
 
 describe('getReferencesAtPositionCrossModuleTest', () => {
   const projectName = 'getReferencesAtPositionCrossModule';
+  const REFERENCES_001 = [
+    { fileName: 'EntryReferences1.ets', start: 632, length: 3 },
+    { fileName: 'EntryReferences1.ets', start: 699, length: 3 },
+    { fileName: 'EntryReferences2.ets', start: 632, length: 3 },
+    { fileName: 'EntryReferences2.ets', start: 684, length: 3 },
+    { fileName: 'EntryReferences2.ets', start: 694, length: 3 },
+    { fileName: 'Index.ets', start: 632, length: 3 },
+    { fileName: 'Symbols.ets', start: 716, length: 3 },
+    { fileName: 'Symbols.ets', start: 735, length: 3 }
+  ];
+  const REFERENCES_002 = [
+    { fileName: 'EntryReferences1.ets', start: 637, length: 6 },
+    { fileName: 'EntryReferences1.ets', start: 735, length: 6 },
+    { fileName: 'EntryReferences2.ets', start: 637, length: 6 },
+    { fileName: 'EntryReferences2.ets', start: 721, length: 6 },
+    { fileName: 'Index.ets', start: 637, length: 6 },
+    { fileName: 'Symbols.ets', start: 814, length: 6 }
+  ];
   const modules: ModuleDescriptor[] = [
     { name: 'entry', moduleType: 'har', srcPath: 'entry' },
     { name: 'har', moduleType: 'har', srcPath: 'har' }
@@ -52,35 +60,30 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
   const lsp = getMultiModuleLsp(projectName, modules, []);
   const entryFile1 = getRealPath(projectName, 'entry/EntryReferences1.ets');
   const entryFile2 = getRealPath(projectName, 'entry/EntryReferences2.ets');
-  const harDir = getRealPath(projectName, 'har');
+  const harFile1 = getRealPath(projectName, 'har/Index.ets');
+  const harFile2 = getRealPath(projectName, 'har/Symbols.ets');
+  lsp.modifyFilesMap(harFile1, { newDoc: fs.readFileSync(harFile1, 'utf8') });
+  lsp.modifyFilesMap(harFile2, { newDoc: fs.readFileSync(harFile2, 'utf8') });
+  lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8') });
+  lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8') });
 
   test('getReferencesAtPosition_cross_module_class', () => {
     const offset = getMarkerOffset(entryFile1, '/*classTarget*/');
     const res = lsp.getReferencesAtPosition(entryFile1, offset);
-
-    expect(res).toBeDefined();
-    const refs = (res ?? []).map((ref) => ({
-      fileName: path.resolve(ref.fileName.valueOf()),
-      text: getReferenceText(path.resolve(ref.fileName.valueOf()), ref.start.valueOf(), ref.length.valueOf())
-    }));
-
-    expect(hasHarReference(refs, harDir, 'Foo')).toBe(true);
-    expect(hasReference(refs, entryFile1, 'Foo')).toBe(true);
-    expect(hasReference(refs, entryFile2, 'Foo')).toBe(true);
+    expect(res?.length).toBe(8);
+    const length = res ? res.length : 0;
+    for (let i = 0; i < length; i++) {
+      expectReferences(res ? res[i] : undefined, REFERENCES_001[i]);
+    }
   });
 
   test('getReferencesAtPosition_cross_module_const', () => {
     const offset = getMarkerOffset(entryFile1, '/*constTarget*/');
     const res = lsp.getReferencesAtPosition(entryFile1, offset);
-
-    expect(res).toBeDefined();
-    const refs = (res ?? []).map((ref) => ({
-      fileName: path.resolve(ref.fileName.valueOf()),
-      text: getReferenceText(path.resolve(ref.fileName.valueOf()), ref.start.valueOf(), ref.length.valueOf())
-    }));
-
-    expect(hasHarReference(refs, harDir, 'answer')).toBe(true);
-    expect(hasReference(refs, entryFile1, 'answer')).toBe(true);
-    expect(hasReference(refs, entryFile2, 'answer')).toBe(true);
+    expect(res?.length).toBe(6);
+    const length = res ? res.length : 0;
+    for (let i = 0; i < length; i++) {
+      expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);
+    }
   });
 });

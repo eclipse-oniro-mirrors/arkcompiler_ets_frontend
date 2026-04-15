@@ -232,6 +232,17 @@ bool Program::IsASTChecked()
     return isAstChecked_;
 }
 
+void Program::Clear()
+{
+    ResetAst();
+    RemoveASTLowered();
+    SetProgramModified(true);
+    VarBinder()->AsETSBinder()->CleanScopesAndRecordTables(this);
+    GetExternalSources()->Direct().clear();
+    GetExternalSources()->Get<util::ModuleKind::MODULE>().clear();
+    GetExternalSources()->Get<util::ModuleKind::SOURCE_DECL>().clear();
+}
+
 void Program::PromoteToMainProgram(public_lib::Context *ctx)
 {
     auto *oldMain = ctx->parserProgram;

@@ -126,6 +126,7 @@ public:
 
     void ParseSources();
     void ParseInSimultMode();
+    void IncrementalParse();
 
 private:
     void ParseNotParsed(util::ImportPathManager::ParseInfo *notParsedElement);

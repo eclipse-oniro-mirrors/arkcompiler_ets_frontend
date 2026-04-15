@@ -369,6 +369,57 @@ extern "C" __attribute__((unused)) void InvalidateFileCache(es2panda_GlobalConte
     AddFileCache(globalContext, fileName);
 }
 
+static void ResetContextAndProgram(Context *ctx, parser::Program *program)
+{
+    ctx->phaseManager->Reset();
+    ctx->diagnosticEngine->ClearDiagnostics();
+    ctx->state = ES2PANDA_STATE_NEW;
+    delete ctx->sourceFile;
+    ctx->sourceFile = nullptr;
+    program->Clear();
+}
+
+static void UpdateProgramTextForIncremental(Context *ctx, parser::Program *program, std::string &&text)
+{
+    auto *ImportInfo = const_cast<util::ImportInfo *>(&program->GetImportInfo());
+    auto sourcePath = std::string {ImportInfo->TextSource()};
+    auto resolvedPath = ImportInfo->ResolvedSource();
+    ImportInfo->UpdateTextForLSPIncremental(sourcePath, std::move(text));
+    auto textView = ImportInfo->DataFor<parser::CacheType::SOURCES>();
+    SourceFile updatedSource {sourcePath, textView, resolvedPath, ctx->config->options->IsModule(),
+                              program->IsDeclForDynamicStaticInterop()};
+    program->SetSource(updatedSource);
+}
+
+extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Context *context, const char *fileName,
+                                                                 const char *sourceText)
+{
+    ES2PANDA_ASSERT(context != nullptr);
+    auto *ctx = reinterpret_cast<Context *>(context);
+    parser::Program *targetProgram =
+        ctx->parser->GetImportPathManager()->FindOrIntroduceProgramForIncremental(fileName);
+    ResetContextAndProgram(ctx, targetProgram);
+    ctx->parserProgram = targetProgram;
+    ctx->sourceFileName = fileName;
+    ctx->input = std::string(sourceText);
+    ctx->sourceFile = new SourceFile(fileName, ctx->input, ctx->config->options->IsModule());
+    UpdateProgramTextForIncremental(ctx, targetProgram, std::string(sourceText));
+    ctx->parser->GetImportPathManager()->PrepareParseQueueForProgram(targetProgram);
+    return 0;
+}
+
+extern "C" __attribute__((unused)) int DeleteProgramForFile(es2panda_Context *context, const char *fileName)
+{
+    auto *ctx = reinterpret_cast<Context *>(context);
+    if (ctx->parserProgram->AbsoluteName() == fileName) {
+        return 0;
+    }
+    ArenaString key {fileName};
+    ctx->parserProgram->GetExternalSources()->Direct().erase(key);
+    ctx->parser->GetImportPathManager()->RemoveProgramFromResolvedSources(key);
+    return 0;
+}
+
 static void InitializeContext(Context *res)
 {
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
@@ -541,6 +592,16 @@ extern __attribute__((unused)) es2panda_Context *CreateContextSimultaneousMode(e
     return reinterpret_cast<es2panda_Context *>(res);
 }
 
+extern __attribute__((unused)) es2panda_Context *CreateContextSimultaneousModeForLsp(es2panda_Config *config,
+                                                                                     int fileNamesCount,
+                                                                                     char const *const *fileNames,
+                                                                                     bool isLspUsage)
+{
+    auto *ctx = reinterpret_cast<Context *>(CreateContextSimultaneousMode(config, fileNamesCount, fileNames));
+    ctx->isLspUsage = isLspUsage;
+    return reinterpret_cast<es2panda_Context *>(ctx);
+}
+
 extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExternalSourceFiles(
     es2panda_Config *config, int fileNamesCount, char const *const *fileNames)
 {
@@ -570,13 +631,13 @@ __attribute__((unused)) static Context *Parse(Context *ctx)
     ctx->phaseManager->Reset();
     ES2PANDA_PERF_SCOPE("@Parser");
 
-    ES2PANDA_ASSERT(ctx->parserProgram == nullptr);
-    if (ctx->isExternal && ctx->allocator != ctx->globalContext->stdLibAllocator) {
-        ctx->sourceFileNames.emplace_back(ctx->sourceFileName);
-        ctx->parser->AsETSParser()->ParseInSimultMode();
+    if (ctx->parserProgram != nullptr && ctx->isLspUsage) {
+        ctx->parser->AsETSParser()->IncrementalParse();
     } else if (ctx->config->options->IsSimultaneous()) {
+        ES2PANDA_ASSERT(ctx->parserProgram == nullptr);
         ctx->parser->AsETSParser()->ParseInSimultMode();
     } else {
+        ES2PANDA_ASSERT(ctx->parserProgram == nullptr);
         ctx->parser->ParseGlobal();
     }
     ES2PANDA_ASSERT(ctx->parserProgram != nullptr);
@@ -626,14 +687,20 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     });
 }
 
-__attribute__((unused)) static void MarkAndSaveCache(Context *ctx)
+__attribute__((unused)) static void MarkAsLowered(Context *ctx)
 {
-    ctx->parserProgram->GetExternalSources()->Visit([](auto *extProgram) {
-        if (!extProgram->IsASTLowered()) {
-            extProgram->MarkASTAsLowered();
+    auto markAsLowered = [](parser::Program *program) {
+        if (!program->IsASTLowered()) {
+            program->MarkASTAsLowered();
         }
+    };
+
+    markAsLowered(ctx->parserProgram);
+    ctx->parserProgram->GetExternalSources()->Visit<false>([&markAsLowered](auto *extProgram) {
+        markAsLowered(extProgram);
+        extProgram->MaybeIteratePackage(
+            [&markAsLowered](parser::Program *fractionOrSelf) { markAsLowered(fractionOrSelf); });
     });
-    SaveCache(ctx);
 }
 
 __attribute__((unused)) static Context *Check(Context *ctx)
@@ -657,7 +724,7 @@ __attribute__((unused)) static Context *Check(Context *ctx)
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_CHECKED : ES2PANDA_STATE_ERROR;
     if (ctx->isLspUsage) {
-        MarkAndSaveCache(ctx);
+        MarkAsLowered(ctx);
     }
     return ctx;
 }
@@ -1621,6 +1688,7 @@ es2panda_Impl g_impl = {
     CreateCacheContextFromString,
     CreateContextGenerateAbcForExternalSourceFiles,
     CreateContextSimultaneousMode,
+    CreateContextSimultaneousModeForLsp,
     ProceedToState,
     DestroyContext,
     CreateGlobalContext,
@@ -1685,6 +1753,8 @@ es2panda_Impl g_impl = {
     InvalidateFileCache,
     RemoveFileCache,
     AddFileCache,
+    IncrementalPrepareProgram,
+    DeleteProgramForFile,
     FreeCompilerPartMemory,
     ResetCounters,
     ExtractDeclarationsFromAbcFile,

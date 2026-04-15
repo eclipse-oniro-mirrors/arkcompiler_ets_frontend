@@ -151,6 +151,11 @@ public:
         return kind_;
     }
 
+    void ClearKind()
+    {
+        kind_ = util::ModuleKind::UNKNOWN;
+    }
+
 protected:
     template <typename T1>
     void Set(CacheReference<T1> ref)
@@ -228,6 +233,8 @@ public:
 
     static SelectCacheDataType<TYPE> PromoteExistingEntryToLowdeclaration(const CacheReference<> &importInfo,
                                                                           SelectCacheDataType<TYPE, true> data);
+    static void UpdateOnFileModification(std::string_view key, std::string textSource, std::string &&text,
+                                         util::ModuleKind kind) noexcept;
 
 private:
     static ImportCache *Instance() noexcept;
@@ -236,6 +243,7 @@ private:
 
     void Get(CacheReference<> *importInfo) const noexcept;
 
+    void UpdateModifyfile(std::string_view key, std::string textSource, std::string &&text, util::ModuleKind kind);
     template <util::ModuleKind KIND, bool SHOULD_CACHE>
     CacheReference<SelectCacheDataType<TYPE>> Add(const CacheReference<> &importInfo, const std::string &textSource,
                                                   SelectCacheDataType<TYPE, true> data)

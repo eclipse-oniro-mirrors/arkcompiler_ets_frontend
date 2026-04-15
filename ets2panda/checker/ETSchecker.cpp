@@ -89,7 +89,7 @@ void ETSChecker::ReputCheckerData()
     readdedChecker_.insert(this);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     Program()->GetExternalSources()->Visit([this](auto *extProg) {
-        if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
+        if (!extProg->IsProgramModified()) {
             ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
     });

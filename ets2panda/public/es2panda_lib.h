@@ -198,6 +198,8 @@ struct CAPI_EXPORT es2panda_Impl {
                                                                         char const *const *fileNames);
     es2panda_Context *(*CreateContextSimultaneousMode)(es2panda_Config *config, int fileNamesCount,
                                                        char const *const *fileNames);
+    es2panda_Context *(*CreateContextSimultaneousModeForLsp)(es2panda_Config *config, int fileNamesCount,
+                                                             char const *const *fileNames, bool isLspUsage);
     es2panda_Context *(*ProceedToState)(es2panda_Context *context, es2panda_ContextState state);  // context is consumed
     void (*DestroyContext)(es2panda_Context *context);
 
@@ -294,6 +296,8 @@ struct CAPI_EXPORT es2panda_Impl {
     void (*InvalidateFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*RemoveFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*AddFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
+    int (*IncrementalPrepareProgram)(es2panda_Context *context, const char *fileName, const char *sourceText);
+    int (*DeleteProgramForFile)(es2panda_Context *context, const char *fileName);
     void (*FreeCompilerPartMemory)(es2panda_Context *context);
     void (*ResetCounters)();
     int (*ExtractDeclarationsFromAbcFile)(const char *abcFile, const char *cacheDir);

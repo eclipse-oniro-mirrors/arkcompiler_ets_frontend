@@ -158,6 +158,17 @@ SelectCacheDataType<TYPE> ImportCache<TYPE>::PromoteExistingEntryToLowdeclaratio
 }
 
 template <CacheType TYPE>
+void ImportCache<TYPE>::UpdateOnFileModification(std::string_view key, std::string textSource, std::string &&text,
+                                                 util::ModuleKind kind) noexcept
+{
+    if constexpr (TYPE == CacheType::SOURCES) {
+        if (auto cache = ImportCache::Instance(); cache != nullptr) {
+            cache->UpdateModifyfile(key, std::move(textSource), std::move(text), kind);
+        }
+    }
+}
+
+template <CacheType TYPE>
 void ImportCache<TYPE>::Clear() noexcept
 {
     std::scoped_lock lock(dataGuard_);
@@ -171,6 +182,22 @@ void ImportCache<TYPE>::Get(CacheReference<> *importInfo) const noexcept
     const auto it = cache_.find(std::string(importInfo->Key()));
     if (it != cache_.end()) {
         importInfo->Set(it->second);
+    }
+}
+
+template <CacheType TYPE>
+void ImportCache<TYPE>::UpdateModifyfile(std::string_view key, std::string textSource, std::string &&text,
+                                         util::ModuleKind kind)
+{
+    if constexpr (TYPE == CacheType::SOURCES) {
+        std::scoped_lock lock(dataGuard_);
+        const auto &newElem = dataStorage_.emplace_back(
+            std::make_unique<NamedData>(std::string(key), std::move(textSource), std::move(text)));
+
+        CacheReference<SelectCacheDataType<TYPE>> ref {};
+        std::tie(ref.key_, ref.textSource_, ref.data_) = *newElem;
+        ref.kind_ = kind;
+        cache_[std::string(key)] = ref;
     }
 }
 

@@ -397,6 +397,9 @@ parser::Program *ImportPathManager::IntroduceStdlibImportProgram(std::string &&c
 {
     util::ImportInfo importInfo {*this, STDLIB_IMPORTS_MAIN_PROG_NAME};
     importInfo.SetData<ModuleKind::MODULE>(STDLIB_IMPORTS_MAIN_PROG_NAME, std::move(contents));
+    if (auto *existing = SearchResolved(importInfo); existing != nullptr) {
+        return existing;
+    }
     return IntroduceProgram<ModuleKind::MODULE>(importInfo);
 }
 
@@ -433,6 +436,15 @@ void ImportPathManager::InitParseQueueForSimult()
         auto program = LookupImportDataAndIntroduceProgram(&importInfo);
         program->SetIsBuiltSimultaneously();
     }
+}
+
+void ImportPathManager::PrepareParseQueueForProgram(parser::Program *program)
+{
+    ES2PANDA_ASSERT(program != nullptr);
+    ClearParseList();
+    GetFileDependencies().erase(ArenaString {program->AbsoluteName().Utf8()});
+    parseQueue_.emplace_back(ParseInfo {false, program});
+    srcPos_.SetProgram(program);
 }
 
 static bool IsExtensionForPackageFraction(const std::string &extension)
@@ -970,10 +982,40 @@ public:
 
     void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalSources *extSources)
     {
+        auto *globalProgram = ipm_->GetGlobalProgram();
+        if (newProg == globalProgram) {
+            return;
+        }
+
         [[maybe_unused]] bool isPackageFraction =
             (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
         ES2PANDA_ASSERT(!isPackageFraction);
         if (auto pointedProgram = SearchResolved(newProg->GetImportInfo()); pointedProgram == newProg) {
+            auto alreadyInExternalSources = [newProg, extSources]() -> bool {
+                switch (newProg->GetModuleKind()) {
+                    case ModuleKind::MODULE: {
+                        const auto &programs = extSources->Get<ModuleKind::MODULE>();
+                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+                    }
+                    case ModuleKind::SOURCE_DECL: {
+                        const auto &programs = extSources->Get<ModuleKind::SOURCE_DECL>();
+                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+                    }
+                    case ModuleKind::PACKAGE: {
+                        const auto &programs = extSources->Get<ModuleKind::PACKAGE>();
+                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+                    }
+                    case ModuleKind::ETSCACHE_DECL: {
+                        const auto &programs = extSources->Get<ModuleKind::ETSCACHE_DECL>();
+                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+                    }
+                    default:
+                        return false;
+                }
+            };
+            if (alreadyInExternalSources()) {
+                return;
+            }
             extSources->Add(newProg);
         } else {
             [[maybe_unused]] const auto &imd = newProg->GetImportInfo();
@@ -1022,6 +1064,12 @@ public:
         return newPkg;
     }
 
+    void RemoveProgramFromResolvedSources(ArenaString filename)
+    {
+        progsByResolvedPath_.erase(filename);
+        modules_.erase(filename);
+    }
+
 private:
     ImportPathManager *ipm_ {};
     ArenaMap<ArenaString, parser::Program *, CompareByLength> progsByResolvedPath_;
@@ -1060,6 +1108,23 @@ parser::Program *ImportPathManager::SearchResolved(const ImportInfo &importInfo)
     return resolvedSources_.SearchResolved(importInfo);
 }
 
+void ImportPathManager::RemoveProgramFromResolvedSources(ArenaString filename)
+{
+    resolvedSources_.RemoveProgramFromResolvedSources(filename);
+}
+
+parser::Program *ImportPathManager::FindOrIntroduceProgramForIncremental(std::string_view absolutePath)
+{
+    return FindOrIntroduceProgram<false>(absolutePath);
+}
+
+template <bool ATTACH_TO_GLOBAL_EXTERNAL_SOURCES>
+parser::Program *ImportPathManager::FindOrIntroduceProgram(std::string_view absolutePath)
+{
+    ImportInfo importInfo {*this, absolutePath, Language::Id::ETS};
+    return LookupImportDataAndIntroduceProgram<ATTACH_TO_GLOBAL_EXTERNAL_SOURCES>(&importInfo);
+}
+
 // NOTE(dkofanov): Packages are to be removed. Now 'ETSPackageDeclaration' is used to override modulename.
 parser::Program *ImportPathManager::EnsurePackageIsRegisteredByPackageFraction(parser::Program *fractionBeingParsed,
                                                                                ir::ETSPackageDeclaration *packageDecl)
@@ -1072,6 +1137,7 @@ parser::Program *ImportPathManager::EnsurePackageIsRegisteredByPackageFraction(p
     return resolvedSources_.FixupPackageByFraction(fractionBeingParsed, packageName);
 }
 
+template <bool ATTACH_TO_GLOBAL_EXTERNAL_SOURCES>
 parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportInfo *importInfo)
 {
     ES2PANDA_ASSERT(SearchResolved(GetGlobalProgram()->GetImportInfo()) != nullptr);
@@ -1081,6 +1147,10 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     // In order for a source-representation (i.e. "parser::Program") to be consistent during compilation routine, it
     // should always be resolved to the same program.
     if (auto resolved = SearchResolved(*importInfo); resolved != nullptr) {
+        // #32418.
+        if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
+            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalSources());
+        }
         return resolved;
     }
 
@@ -1103,11 +1173,18 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
 
         program = IntroduceProgram(*importInfo);
     }
-    if (program != nullptr) {
-        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalSources());
+    if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
+        if (program != nullptr) {
+            resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalSources());
+        }
     }
     return program;
 }
+
+// template parser::Program *ImportPathManager::FindOrIntroduceProgram<true>(std::string_view absolutePath);
+// template parser::Program *ImportPathManager::FindOrIntroduceProgram<false>(std::string_view absolutePath);
+// template parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram<true>(ImportInfo *importInfo);
+// template parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram<false>(ImportInfo *importInfo);
 
 void ImportPathManager::LookupMemCache(ImportInfo *importInfo)
 {
