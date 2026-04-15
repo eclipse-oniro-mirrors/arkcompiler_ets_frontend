@@ -35,24 +35,46 @@ interface I {
   $_iterator() { return new XIterator<string>(this.data) }
 }
 
+class ArrayRoArray implements RoArray<string> {
+  data: string[]
+  constructor(data: string[]) {
+    this.data = data
+  }
+  override val(i : int): string {
+    return this.data[i]
+  }
+  override len(): int {
+    return this.data.length
+  }
+}
+
 class D implements I {
   data: RoArray<string>
-  constructor(p: RoArray<string>) { this.data = p }
+  constructor(p: RoArray<string>) {
+    this.data = p
+  }
 }
 
 class Base extends D {
-  constructor(p: RoArray<string>) { super(p) }
+  constructor(p: RoArray<string>) {
+    super(p)
+  }
 }
 
 class C extends Base implements RoArray<string> {
   arr: string[] = ['a','b','c']
+  valCalls: int = 0
+  lenCalls: int = 0
   constructor() {
-    super(this)
+    super(new ArrayRoArray([]))
+    this.data = this
   }
   override val(i : int):string{
+     this.valCalls++
      return this.arr[i]
   }
   override len():int{
+      this.lenCalls++
       return this.arr.length
   }
 }
@@ -64,6 +86,8 @@ function main(): int {
     res += x
   }
     arktest.assertEQ(res,'abc')
-    if(res!='abc') return 1
+    arktest.assertEQ(c.valCalls, 3)
+    arktest.assertTrue(c.lenCalls > 0)
+    if(res!='abc' || c.valCalls != 3 || c.lenCalls == 0) return 1
     return 0
 }

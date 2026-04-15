@@ -30,29 +30,22 @@ class XIterator<T> implements Iterator<T>{
     }
 }
 
-class D{
-    data : RoArray<string>
-    constructor(p:RoArray<string>){
-        this.data = p
-    }
+abstract class D implements RoArray<string>{
     $_iterator(){
-        return new XIterator<string>(this.data)
+        return new XIterator<string>(this)
     }
+    abstract val(i : int): string
+    abstract len(): int
 }
 
-class E extends D {
-  constructor(p: RoArray<string>) { super(p); }
+abstract class E extends D {
 }
 
-class F extends E {
-  constructor(p: RoArray<string>) { super(p); }
+abstract class F extends E {
 }
 
-class C extends F implements RoArray<string>{
+class C extends F {
     arr : string[] = ['a' , 'b','c']
-    constructor(){
-        super(this)
-    }
     override val(i : int):string{
         return this.arr[i]
     }
