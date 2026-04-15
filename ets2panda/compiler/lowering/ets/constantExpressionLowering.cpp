@@ -151,6 +151,32 @@ static bool TestLiteral(const ir::Literal *lit)
     }
     ES2PANDA_UNREACHABLE();
 }
+
+static bool IsNegativeOddInteger(const lexer::Number &number)
+{
+    if (number.IsInteger()) {
+        const auto value = number.GetValue<int64_t>();
+        return value < 0 && (value & 1) != 0;
+    }
+
+    if (!number.IsReal()) {
+        return false;
+    }
+
+    const auto value = number.GetDouble();
+    if (!std::isfinite(value)) {
+        return false;
+    }
+
+    const auto integerPart = std::trunc(value);
+    if (integerPart != value || integerPart < static_cast<double>(std::numeric_limits<int64_t>::min()) ||
+        integerPart > static_cast<double>(std::numeric_limits<int64_t>::max())) {
+        return false;
+    }
+
+    const auto intValue = static_cast<int64_t>(integerPart);
+    return intValue < 0 && (intValue & 1) != 0;
+}
 // NOTE(recep) To avoid bad accumulator verifier
 // NOTE(dkofanov): DAG-collection stage shouldn't modify AST!
 static void HandleUndefinedInLogicalExpression(public_lib::Context *context, ir::Expression *node, ir::Expression *init)
@@ -300,10 +326,16 @@ private:
         switch (unary->OperatorType()) {
             case lexer::TokenType::PUNCTUATOR_PLUS: {
                 resNum = lexer::Number(ExtractFromLiteral<InputType>(node));
+                if (node->Number().IsNegativeZero()) {
+                    resNum.SetNegativeZero(true);
+                }
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_MINUS: {
                 resNum = lexer::Number(-ExtractFromLiteral<InputType>(node));
+                if (node->Number().IsZero()) {
+                    resNum.SetNegativeZero(!node->Number().IsNegativeZero());
+                }
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_TILDE: {
@@ -434,6 +466,10 @@ private:
             }
             case lexer::TokenType::PUNCTUATOR_EXPONENTIATION: {
                 const auto rightNumber = inputs_[1]->AsNumberLiteral()->Number();
+                if (inputs_[0]->AsNumberLiteral()->Number().IsNegativeZero() && IsNegativeOddInteger(rightNumber)) {
+                    return CreateNumberLiteral(-std::numeric_limits<double>::infinity());
+                }
+
                 if (leftNum < 0 && !rightNumber.IsInteger()) {
                     resNum = std::numeric_limits<TargetType>::quiet_NaN();
                     break;
@@ -950,7 +986,11 @@ static bool TryCastInteger(lexer::Number &number)
         return true;
     }
     if (number.CanGetValue<T>()) {
+        const bool preserveNegativeZero = number.IsNegativeZero();
         number = lexer::Number(number.GetValue<T>());
+        if (preserveNegativeZero && number.IsZero()) {
+            number.SetNegativeZero(true);
+        }
         return true;
     }
     return false;

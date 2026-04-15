@@ -917,6 +917,8 @@ private:
     void LoadAccumulatorNumber(const ir::AstNode *node, T number, checker::TypeFlag targetType);
     template <typename T>
     void SetAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number);
+    template <typename T>
+    bool EmitFloatingAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number);
     void InitializeContainingClass();
 
     friend class TargetTypeContext;

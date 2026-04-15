@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include "util/diagnosticEngine.h"
 #include "util/ustring.h"
 #include "util/enumbitops.h"
+#include <cmath>
 #include <type_traits>
 
 namespace ark::es2panda::lexer {
@@ -31,6 +32,7 @@ enum class NumberFlags : uint32_t {
     DECIMAL_POINT = 1U << 1U,
     EXPONENT = 1U << 2U,
     ERROR = 1U << 3U,
+    NEGATIVE_ZERO = 1U << 4U,
 };
 
 }  // namespace ark::es2panda::lexer
@@ -72,11 +74,15 @@ public:
     Number() noexcept : num_(std::monostate()), flags_ {NumberFlags::ERROR} {};
     // NOLINTNEXTLINE(bugprone-exception-escape)
     Number(util::StringView str, NumberFlags flags) noexcept;
-    Number(util::StringView str, double num) noexcept : str_(str), num_(num) {}
+    Number(util::StringView str, double num) noexcept : str_(str), num_(num)
+    {
+        RefreshNegativeZeroFlag();
+    }
 
     template <typename T, typename Signed = std::enable_if_t<std::is_signed_v<T>, std::nullptr_t>>
     explicit Number(T num, [[maybe_unused]] Signed unused = nullptr) noexcept : num_ {num}
     {
+        RefreshNegativeZeroFlag();
     }
     template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
     explicit Number(T num) noexcept : Number(static_cast<std::make_signed_t<T>>(num))
@@ -137,6 +143,23 @@ public:
         bool error = (flags_ & NumberFlags::ERROR) != 0;
         ES2PANDA_ASSERT(error == std::holds_alternative<std::monostate>(num_));
         return error;
+    }
+
+    bool IsNegativeZero() const
+    {
+        if (ConversionError()) {
+            return false;
+        }
+        return (flags_ & NumberFlags::NEGATIVE_ZERO) != 0;
+    }
+
+    void SetNegativeZero(bool value)
+    {
+        if (value) {
+            flags_ |= NumberFlags::NEGATIVE_ZERO;
+            return;
+        }
+        flags_ &= ~NumberFlags::NEGATIVE_ZERO;
     }
 
     // NOLINTBEGIN(readability-else-after-return)
@@ -250,7 +273,7 @@ public:
 
     bool IsZero() const
     {
-        return std::visit(overloaded {[]([[maybe_unused]] std::monostate value) -> bool { ES2PANDA_UNREACHABLE(); },
+        return std::visit(overloaded {[]([[maybe_unused]] std::monostate value) -> bool { return false; },
                                       [](auto &value) { return value == 0; }},
                           num_);
     }
@@ -265,12 +288,31 @@ public:
         if constexpr (std::is_same_v<T, int64_t> || std::is_same_v<T, int32_t> || std::is_same_v<T, int16_t> ||
                       std::is_same_v<T, int8_t> || std::is_same_v<T, double> || std::is_same_v<T, float>) {
             num_ = std::forward<RT>(value);
+            RefreshNegativeZeroFlag();
         } else {
             static_assert(dependent_false_v<T>, "Invalid value type was requested for Number.");
         }
     }
 
 private:
+    void RefreshNegativeZeroFlag()
+    {
+        SetNegativeZero(false);
+
+        std::visit(overloaded {[this](double value) {
+                                   if (value == 0.0 && std::signbit(value)) {
+                                       SetNegativeZero(true);
+                                   }
+                               },
+                               [this](float value) {
+                                   if (value == 0.0F && std::signbit(value)) {
+                                       SetNegativeZero(true);
+                                   }
+                               },
+                               []([[maybe_unused]] auto value) {}},
+                   num_);
+    }
+
     template <typename Dst, typename Src>
     static bool InRange(Src value)
     {
