@@ -33,7 +33,8 @@ module.exports = {
     '<rootDir>/test/ut/generate_arktsconfigTest/**/*.test.ts',
     '<rootDir>/test/ut/compile_process_workerTest/**/*.test.ts',
     '<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts',
-    '<rootDir>/test/ut/fileManagerTest/**/*.test.ts'
+    '<rootDir>/test/ut/fileManagerTest/**/*.test.ts',
+    '<rootDir>/test/ut/utilsTest/ets2panda_path_length.test.ts'
   ],
   testPathIgnorePatterns: [],
 };

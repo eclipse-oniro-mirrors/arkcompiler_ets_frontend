@@ -23,7 +23,8 @@ import {
     DECL_ETS_SUFFIX,
     LANGUAGE_VERSION,
     NATIVE_MODULE,
-    sdkConfigPrefix
+    sdkConfigPrefix,
+    MAX_PATH_LENGTH
 } from '../pre_define';
 import {
     Logger,
@@ -302,5 +303,21 @@ export function substituteEnvVarsInJSON(json: any): any {
     });
 
     return json;
+}
+
+export function validatePathLength(filePath: string, description: string): void {
+    if (!isWindows()) {
+        return;
+    }
+    if (filePath.length > MAX_PATH_LENGTH) {
+        throw new DriverError(
+            LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_PATH_TOO_LONG,
+                `${description} exceeds maximum length.`,
+                `Path length: ${filePath.length}, maximum: ${MAX_PATH_LENGTH}`,
+                filePath
+            )
+        );
+    }
 }
 

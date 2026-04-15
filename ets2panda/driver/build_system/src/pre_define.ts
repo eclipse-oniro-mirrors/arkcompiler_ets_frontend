@@ -71,6 +71,7 @@ export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plug
 
 
 // Build control constants
+export const MAX_PATH_LENGTH: number = 260;
 export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
 export const CLUSTER_FILES_TRESHOLD: number = 460;
