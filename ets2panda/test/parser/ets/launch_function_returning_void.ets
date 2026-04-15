@@ -14,10 +14,9 @@
  */
 
 import {launch} from "std/concurrency"
-import {Job} from "std/core"
 
 function foo(){}
 
 function main(){
-    let r: Job<void> = launch(foo)
+    let r: Promise<void> = launch(foo)
 }

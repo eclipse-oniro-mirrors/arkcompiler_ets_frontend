@@ -13,13 +13,13 @@
 * limitations under the License.
 */
 
-import {launch} from "std/concurrency"
+import {launch, waitForCompletion} from "std/concurrency"
 
 let count = 2
 let n = 9
 let a: int[] = new int[count](0);
 let v: int[] = new int[count](0);
-type P = Job<Int> | undefined
+type P = Promise<Int> | undefined
 function assert_eq(value1: int, value2: int): void {
     if (value1 == value2) {
         return;
@@ -39,7 +39,7 @@ function ufib(n: int) : Int {
     }
     let result = 0
     for (let i = 0; i < count; ++i) {
-        result = result + p[i]!.Await() * a[i];
+        result = result + waitForCompletion(async (): Promise<Int> => await p[i]!) * a[i];
     }
     return result;
 }
@@ -62,7 +62,7 @@ export function main(): int {
     let p = launch<Int>() {
         return ufib(n)
     };
-    let co_result = p.Await();
+    let co_result = waitForCompletion(async (): Promise<Int> => await p);
     assert_eq(co_result as int, seq_result);
     return 0;
 }

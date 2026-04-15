@@ -82,86 +82,6 @@
       }
     },
     {
-      "type": "ImportDeclaration",
-      "source": {
-        "type": "StringLiteral",
-        "value": "std/core",
-        "loc": {
-          "start": {
-            "line": 17,
-            "column": 19,
-            "program": "launch_function_returning_void.ets"
-          },
-          "end": {
-            "line": 17,
-            "column": 29,
-            "program": "launch_function_returning_void.ets"
-          }
-        }
-      },
-      "specifiers": [
-        {
-          "type": "ImportSpecifier",
-          "local": {
-            "type": "Identifier",
-            "name": "Job",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "launch_function_returning_void.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 12,
-                "program": "launch_function_returning_void.ets"
-              }
-            }
-          },
-          "imported": {
-            "type": "Identifier",
-            "name": "Job",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "launch_function_returning_void.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 12,
-                "program": "launch_function_returning_void.ets"
-              }
-            }
-          },
-          "loc": {
-            "start": {
-              "line": 17,
-              "column": 9,
-              "program": "launch_function_returning_void.ets"
-            },
-            "end": {
-              "line": 17,
-              "column": 12,
-              "program": "launch_function_returning_void.ets"
-            }
-          }
-        }
-      ],
-      "loc": {
-        "start": {
-          "line": 17,
-          "column": 1,
-          "program": "launch_function_returning_void.ets"
-        },
-        "end": {
-          "line": 17,
-          "column": 29,
-          "program": "launch_function_returning_void.ets"
-        }
-      }
-    },
-    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
@@ -190,12 +110,12 @@
               "name": "foo",
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 18,
                   "column": 10,
                   "program": "launch_function_returning_void.ets"
                 },
                 "end": {
-                  "line": 19,
+                  "line": 18,
                   "column": 13,
                   "program": "launch_function_returning_void.ets"
                 }
@@ -215,12 +135,12 @@
                   "name": "foo",
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 18,
                       "column": 10,
                       "program": "launch_function_returning_void.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 18,
                       "column": 13,
                       "program": "launch_function_returning_void.ets"
                     }
@@ -235,12 +155,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 18,
                       "column": 15,
                       "program": "launch_function_returning_void.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 18,
                       "column": 17,
                       "program": "launch_function_returning_void.ets"
                     }
@@ -248,12 +168,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 18,
                     "column": 10,
                     "program": "launch_function_returning_void.ets"
                   },
                   "end": {
-                    "line": 19,
+                    "line": 18,
                     "column": 17,
                     "program": "launch_function_returning_void.ets"
                   }
@@ -261,12 +181,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 18,
                   "column": 10,
                   "program": "launch_function_returning_void.ets"
                 },
                 "end": {
-                  "line": 19,
+                  "line": 18,
                   "column": 17,
                   "program": "launch_function_returning_void.ets"
                 }
@@ -275,12 +195,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 19,
+                "line": 18,
                 "column": 1,
                 "program": "launch_function_returning_void.ets"
               },
               "end": {
-                "line": 19,
+                "line": 18,
                 "column": 17,
                 "program": "launch_function_returning_void.ets"
               }
@@ -293,12 +213,12 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 20,
                   "column": 10,
                   "program": "launch_function_returning_void.ets"
                 },
                 "end": {
-                  "line": 21,
+                  "line": 20,
                   "column": 14,
                   "program": "launch_function_returning_void.ets"
                 }
@@ -318,12 +238,12 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 20,
                       "column": 10,
                       "program": "launch_function_returning_void.ets"
                     },
                     "end": {
-                      "line": 21,
+                      "line": 20,
                       "column": 14,
                       "program": "launch_function_returning_void.ets"
                     }
@@ -350,16 +270,16 @@
                                 "type": "ETSTypeReferencePart",
                                 "name": {
                                   "type": "Identifier",
-                                  "name": "Job",
+                                  "name": "Promise",
                                   "loc": {
                                     "start": {
-                                      "line": 22,
+                                      "line": 21,
                                       "column": 12,
                                       "program": "launch_function_returning_void.ets"
                                     },
                                     "end": {
-                                      "line": 22,
-                                      "column": 15,
+                                      "line": 21,
+                                      "column": 19,
                                       "program": "launch_function_returning_void.ets"
                                     }
                                   }
@@ -371,13 +291,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 22,
-                                          "column": 16,
+                                          "line": 21,
+                                          "column": 20,
                                           "program": "launch_function_returning_void.ets"
                                         },
                                         "end": {
-                                          "line": 22,
-                                          "column": 20,
+                                          "line": 21,
+                                          "column": 24,
                                           "program": "launch_function_returning_void.ets"
                                         }
                                       }
@@ -385,51 +305,51 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 22,
-                                      "column": 15,
+                                      "line": 21,
+                                      "column": 19,
                                       "program": "launch_function_returning_void.ets"
                                     },
                                     "end": {
-                                      "line": 22,
-                                      "column": 21,
+                                      "line": 21,
+                                      "column": 25,
                                       "program": "launch_function_returning_void.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 22,
+                                    "line": 21,
                                     "column": 12,
                                     "program": "launch_function_returning_void.ets"
                                   },
                                   "end": {
-                                    "line": 22,
-                                    "column": 21,
+                                    "line": 21,
+                                    "column": 25,
                                     "program": "launch_function_returning_void.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 22,
+                                  "line": 21,
                                   "column": 12,
                                   "program": "launch_function_returning_void.ets"
                                 },
                                 "end": {
-                                  "line": 22,
-                                  "column": 21,
+                                  "line": 21,
+                                  "column": 25,
                                   "program": "launch_function_returning_void.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 9,
                                 "program": "launch_function_returning_void.ets"
                               },
                               "end": {
-                                "line": 22,
+                                "line": 21,
                                 "column": 10,
                                 "program": "launch_function_returning_void.ets"
                               }
@@ -442,13 +362,13 @@
                               "name": "launch",
                               "loc": {
                                 "start": {
-                                  "line": 22,
-                                  "column": 24,
+                                  "line": 21,
+                                  "column": 28,
                                   "program": "launch_function_returning_void.ets"
                                 },
                                 "end": {
-                                  "line": 22,
-                                  "column": 30,
+                                  "line": 21,
+                                  "column": 34,
                                   "program": "launch_function_returning_void.ets"
                                 }
                               }
@@ -459,13 +379,13 @@
                                 "name": "foo",
                                 "loc": {
                                   "start": {
-                                    "line": 22,
-                                    "column": 31,
+                                    "line": 21,
+                                    "column": 35,
                                     "program": "launch_function_returning_void.ets"
                                   },
                                   "end": {
-                                    "line": 22,
-                                    "column": 34,
+                                    "line": 21,
+                                    "column": 38,
                                     "program": "launch_function_returning_void.ets"
                                   }
                                 }
@@ -474,26 +394,26 @@
                             "optional": false,
                             "loc": {
                               "start": {
-                                "line": 22,
-                                "column": 24,
+                                "line": 21,
+                                "column": 28,
                                 "program": "launch_function_returning_void.ets"
                               },
                               "end": {
-                                "line": 22,
-                                "column": 35,
+                                "line": 21,
+                                "column": 39,
                                 "program": "launch_function_returning_void.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 22,
+                              "line": 21,
                               "column": 9,
                               "program": "launch_function_returning_void.ets"
                             },
                             "end": {
-                              "line": 22,
-                              "column": 35,
+                              "line": 21,
+                              "column": 39,
                               "program": "launch_function_returning_void.ets"
                             }
                           }
@@ -502,13 +422,13 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 22,
+                          "line": 21,
                           "column": 5,
                           "program": "launch_function_returning_void.ets"
                         },
                         "end": {
-                          "line": 22,
-                          "column": 35,
+                          "line": 21,
+                          "column": 39,
                           "program": "launch_function_returning_void.ets"
                         }
                       }
@@ -516,12 +436,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 20,
                       "column": 16,
                       "program": "launch_function_returning_void.ets"
                     },
                     "end": {
-                      "line": 23,
+                      "line": 22,
                       "column": 2,
                       "program": "launch_function_returning_void.ets"
                     }
@@ -529,12 +449,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 21,
+                    "line": 20,
                     "column": 10,
                     "program": "launch_function_returning_void.ets"
                   },
                   "end": {
-                    "line": 23,
+                    "line": 22,
                     "column": 2,
                     "program": "launch_function_returning_void.ets"
                   }
@@ -542,12 +462,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 20,
                   "column": 10,
                   "program": "launch_function_returning_void.ets"
                 },
                 "end": {
-                  "line": 23,
+                  "line": 22,
                   "column": 2,
                   "program": "launch_function_returning_void.ets"
                 }
@@ -556,12 +476,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 21,
+                "line": 20,
                 "column": 1,
                 "program": "launch_function_returning_void.ets"
               },
               "end": {
-                "line": 23,
+                "line": 22,
                 "column": 2,
                 "program": "launch_function_returning_void.ets"
               }
@@ -602,7 +522,7 @@
       "program": "launch_function_returning_void.ets"
     },
     "end": {
-      "line": 24,
+      "line": 23,
       "column": 1,
       "program": "launch_function_returning_void.ets"
     }
