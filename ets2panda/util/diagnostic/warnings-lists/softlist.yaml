@@ -67,7 +67,6 @@ softlist:
 
 - name: "override_field_allowed"
   paths:
-  - ".*/arkui/ace_engine/.*"
   - ".*/ohos-sdk/.+/ets/static/api/.*"
 
 - name: "override_field_init"
