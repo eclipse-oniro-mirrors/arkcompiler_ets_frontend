@@ -976,12 +976,15 @@ static void TraverseObjectLiteralExpressions(parser::Program *program, F const &
 bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
 {
     auto ctx = Context();
+    auto *const savedProg = ctx->GetChecker()->VarBinder()->AsETSBinder()->Program();
+    ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(prog);
 
     TraverseObjectLiteralExpressions(prog, [ctx, prog](ir::ObjectExpression *expr) {
         GenerateAnonClassForDeclNode(ctx, prog, expr->TsType()->AsETSObjectType()->GetDeclNode());
         HandleInterfaceLowering(ctx, expr);
     });
 
+    ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(savedProg);
     return true;
 }
 

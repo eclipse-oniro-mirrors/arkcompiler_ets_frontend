@@ -451,7 +451,10 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
     Program()->lang = EXTENSION;
     auto const traverseRecords = [this, varbinder, isIncrementalBuild](bool traverseExternals) {
         EmitRecordTable(varbinder->GetGlobalRecordTable(), false, traverseExternals);
+
         auto *saveProgram = varbinder->Program();
+        auto *saveRecordTable = varbinder->GetRecordTable();
+
         for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
             if (recordTable == varbinder->GetGlobalRecordTable()) {
                 continue;
@@ -462,9 +465,13 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
                 programIsExternal &= !extProg->IsBuiltSimultaneously();
             }
             varbinder->SetProgram(extProg);
+            varbinder->SetRecordTable(recordTable);
             EmitRecordTable(recordTable, programIsExternal, traverseExternals);
         }
+
         varbinder->SetProgram(saveProgram);
+        varbinder->SetRecordTable(saveRecordTable);
+
         if (traverseExternals) {
             const auto *checker = Context()->GetChecker()->AsETSChecker();
             for (auto [arrType, _] : checker->GlobalArrayTypes()) {

@@ -1389,6 +1389,11 @@ static void TraverseAST(ETSBinder *binder, ArenaVector<ir::ETSImportDeclaration 
     }
 
     auto &stmts = binder->Program()->Ast()->StatementsForUpdates();
+    if (binder->Program()->GetImportInfo().ModuleName() == compiler::Signatures::SIMULT_MODULE_NAME) {
+        stmts.clear();
+        return;
+    }
+
     const auto etsGlobal = std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
         return stmt->IsClassDeclaration() && stmt->AsClassDeclaration()->Definition()->IsGlobal();
     });
