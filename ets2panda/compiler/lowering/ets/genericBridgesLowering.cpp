@@ -50,8 +50,7 @@ std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *
         signature << GetAdjustedParameterName(derivedFunction, derivedParameters[i]->Name().Utf8());
 
         // Add base parameter type
-        typeNodes.emplace_back(
-            Context()->AllocNode<ir::OpaqueTypeNode>(baseParameters[i]->TsType(), Context()->Allocator()));
+        typeNodes.emplace_back(AllocOpaqueTypeNode(baseParameters[i]->TsType()));
         signature << ": @@T" << typeNodes.size();
     }
 
@@ -59,8 +58,7 @@ std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *
 
     // Add return type (not for setters)
     if (!derivedFunction->IsSetter()) {
-        typeNodes.emplace_back(Context()->AllocNode<ir::OpaqueTypeNode>(
-            const_cast<checker::Type *>(baseSignature->ReturnType()), Context()->Allocator()));
+        typeNodes.emplace_back(AllocOpaqueTypeNode(baseSignature->ReturnType()));
         signature << ": @@T" << typeNodes.size();
     }
 
@@ -76,18 +74,19 @@ std::string GenericBridgesPhase::BuildMethodBody(ir::ClassDefinition const *clas
     auto const &functionName = derivedFunction->Id()->Name().Mutf8();
 
     // Add class type for casting
-    typeNodes.emplace_back(Context()->AllocNode<ir::OpaqueTypeNode>(
-        const_cast<checker::Type *>(classDefinition->TsType()), Context()->Allocator()));
+    typeNodes.emplace_back(AllocOpaqueTypeNode(classDefinition->TsType()));
     auto const classTypeIndex = typeNodes.size();
 
     if (derivedFunction->IsGetter()) {
-        body << "{ return (this as @@T" << classTypeIndex << ")." << functionName << "; }";
+        body << "{ return (this as @@T" << classTypeIndex << ")." << functionName;
+        body << "; }";
     } else if (derivedFunction->IsSetter()) {
         body << "{ (this as @@T" << classTypeIndex << ")." << functionName
              << BuildSetterAssignment(derivedFunction, typeNodes) << "; }";
     } else {
         body << "{ return (this as @@T" << classTypeIndex << ")." << functionName
-             << BuildMethodCall(derivedFunction, typeNodes) << "; }";
+             << BuildMethodCall(derivedFunction, typeNodes);
+        body << "; }";
     }
 
     return body.str();
@@ -120,8 +119,7 @@ std::string GenericBridgesPhase::BuildSetterAssignment(ir::ScriptFunction const 
         assignment << adjustedParameterName;
 
         // Add derived parameter type for casting
-        typeNodes.emplace_back(
-            Context()->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), Context()->Allocator()));
+        typeNodes.emplace_back(AllocOpaqueTypeNode(derivedParameters[i]->TsType()));
         assignment << " as @@T" << typeNodes.size();
     }
 
@@ -145,13 +143,17 @@ std::string GenericBridgesPhase::BuildMethodCall(ir::ScriptFunction const *deriv
         call << adjustedParameterName;
 
         // Add derived parameter type for casting
-        typeNodes.emplace_back(
-            Context()->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), Context()->Allocator()));
+        typeNodes.emplace_back(AllocOpaqueTypeNode(derivedParameters[i]->TsType()));
         call << " as @@T" << typeNodes.size();
     }
 
     call << ")";
     return call.str();
+}
+
+ir::OpaqueTypeNode *GenericBridgesPhase::AllocOpaqueTypeNode(checker::Type const *type) const noexcept
+{
+    return Context()->AllocNode<ir::OpaqueTypeNode>(const_cast<checker::Type *>(type), Context()->Allocator());
 }
 
 std::string GenericBridgesPhase::CreateMethodDefinitionString(ir::ClassDefinition const *classDefinition,

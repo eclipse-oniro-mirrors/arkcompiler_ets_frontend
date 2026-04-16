@@ -69,6 +69,8 @@ public:
 
 private:
     bool CheckElementsIdentical(TypeRelation *relation, const ETSTupleType *other) const;
+    bool IsBridgeContext(TypeRelation *relation) const;
+    bool CheckElementsCovariant(TypeRelation *relation, const ETSTupleType *source) const;
 
     const ArenaVector<Type *> typeList_;
     ETSObjectType *wrapperType_;
