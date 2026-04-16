@@ -29,51 +29,37 @@ std::string_view OptionalLowering::Name() const
     return "OptionalLowering";
 }
 
-template <typename Expr, typename GetSource, typename SetSource>
-static ir::AstNode *LowerOptionalExpr(GetSource const &getSource, SetSource const &setSource, public_lib::Context *ctx,
-                                      Expr *const expr, ir::ChainExpression *const chain)
+static ir::AstNode *LowerOptionalExpr(public_lib::Context *ctx, ir::Expression *const expr,
+                                      ir::ChainExpression *const chain)
 {
+    ES2PANDA_ASSERT(expr->IsMemberExpression() || expr->IsCallExpression());
+
     auto *const allocator = ctx->allocator;
     auto *const parser = ctx->parser->AsETSParser();
-    auto *const varbinder = ctx->parserProgram->VarBinder();
+    auto *const varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
 
     auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, NearestScope(expr));
-    auto *tmpIdent = Gensym(allocator);
-    ES2PANDA_ASSERT(tmpIdent != nullptr);
-    auto *tmpIdentClone = tmpIdent->Clone(allocator, nullptr);
 
-    // '0's act as placeholders
-    auto *sequenceExpr = parser->CreateFormattedExpression(
-        "let @@I1 = 0;"
-        "(@@I2 == null ? undefined : 0);",
-        tmpIdent, tmpIdentClone);
+    auto *ident = Gensym(allocator);
+    ir::Expression *source =
+        expr->IsMemberExpression() ? expr->AsMemberExpression()->Object() : expr->AsCallExpression()->Callee();
+
+    // '0' act as placeholder
+    auto *sequenceExpr = parser->CreateFormattedExpression("let @@I1 = @@E2; @@I3 == null ? undefined : 0", ident,
+                                                           source, ident->Clone(allocator, nullptr));
+
     sequenceExpr->SetParent(chain->Parent());
-    InitScopesPhaseETS::RunExternalNode(sequenceExpr, ctx->parserProgram->VarBinder());
+    SetSourceRangesRecursively(sequenceExpr, chain->Range());
+    InitScopesPhaseETS::RunExternalNode(sequenceExpr, varbinder);
 
     auto const &stmts = sequenceExpr->AsBlockExpression()->Statements();
-    stmts[0]->AsVariableDeclaration()->Declarators()[0]->SetInit(getSource(expr));
     stmts[1]->AsExpressionStatement()->GetExpression()->AsConditionalExpression()->SetAlternate(chain->GetExpression());
 
-    setSource(expr, parser->CreateFormattedExpression("@@I1", tmpIdentClone->Clone(allocator, nullptr)));
+    auto *identClone = ident->Clone(allocator, nullptr);
+    expr->IsMemberExpression() ? expr->AsMemberExpression()->SetObject(identClone)
+                               : expr->AsCallExpression()->SetCallee(identClone);
+
     return sequenceExpr;
-}
-
-static ir::AstNode *LowerExpression(public_lib::Context *ctx, ir::MemberExpression *const expr,
-                                    ir::ChainExpression *chain)
-{
-    ES2PANDA_ASSERT(expr->IsOptional());
-    expr->ClearOptional();
-    return LowerOptionalExpr<ir::MemberExpression>([](auto *e) { return e->Object(); },
-                                                   [](auto *e, auto *obj) { e->SetObject(obj); }, ctx, expr, chain);
-}
-
-static ir::AstNode *LowerExpression(public_lib::Context *ctx, ir::CallExpression *const expr,
-                                    ir::ChainExpression *chain)
-{
-    ES2PANDA_ASSERT(expr->IsOptional());
-    expr->ClearOptional();
-    return LowerOptionalExpr<ir::CallExpression>([](auto *e) { return e->Callee(); },
-                                                 [](auto *e, auto *callee) { e->SetCallee(callee); }, ctx, expr, chain);
 }
 
 static ir::Expression *FindOptionalInChain(ir::Expression *expr)
@@ -94,13 +80,21 @@ static ir::Expression *FindOptionalInChain(ir::Expression *expr)
 
 static ir::AstNode *LowerChain(public_lib::Context *ctx, ir::ChainExpression *const chain)
 {
-    auto optional = FindOptionalInChain(chain->GetExpression());
+    auto *optional = FindOptionalInChain(chain->GetExpression());
     if (optional->IsMemberExpression()) {
-        return LowerExpression(ctx, optional->AsMemberExpression(), chain);
+        auto *expr = optional->AsMemberExpression();
+        ES2PANDA_ASSERT(expr->IsOptional());
+        expr->ClearOptional();
+        return LowerOptionalExpr(ctx, expr, chain);
     }
+
     if (optional->IsCallExpression()) {
-        return LowerExpression(ctx, optional->AsCallExpression(), chain);
+        auto *expr = optional->AsCallExpression();
+        ES2PANDA_ASSERT(expr->IsOptional());
+        expr->ClearOptional();
+        return LowerOptionalExpr(ctx, expr, chain);
     }
+
     ES2PANDA_UNREACHABLE();
 }
 

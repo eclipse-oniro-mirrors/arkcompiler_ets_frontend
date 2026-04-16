@@ -604,9 +604,11 @@ static ir::BlockExpression *CreateTupleRestArgsBlockExpression(public_lib::Conte
 
     // Save original tuple to variable to avoid repeated evaluation
     auto *tupleVar = Gensym(allocator);
+    auto *tupleTypeNode = checker->AllocNode<ir::OpaqueTypeNode>(tupleType, allocator);
 
     ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1= @@E2;", tupleVar, spreadArg));
+    blockStatements.push_back(
+        parser->CreateFormattedStatement("let @@I1 = @@E2 as @@T3", tupleVar, spreadArg, tupleTypeNode));
 
     // Create new tuple with elements referencing original tuple
     ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
@@ -618,8 +620,8 @@ static ir::BlockExpression *CreateTupleRestArgsBlockExpression(public_lib::Conte
     auto *newTupleExpr = checker->AllocNode<ir::ArrayExpression>(std::move(tupleElements), allocator);
 
     // Create type annotation for the new tuple from the type
-    auto *newTypeAnnotation = checker->AllocNode<ir::OpaqueTypeNode>(tupleType, allocator);
-    auto *asExpression = context->AllocNode<ir::TSAsExpression>(newTupleExpr, newTypeAnnotation, false);
+    auto *asExpression =
+        context->AllocNode<ir::TSAsExpression>(newTupleExpr, tupleTypeNode->Clone(allocator, nullptr), false);
     blockStatements.push_back(parser->CreateFormattedStatement("@@E1", asExpression));
 
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));

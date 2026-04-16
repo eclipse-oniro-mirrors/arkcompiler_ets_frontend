@@ -43,8 +43,8 @@ function main() {
 /* @@? 30:18 Error Semantic error ESE0143: Unresolved reference x */
 /* @@? 31:14 Error Semantic error ESE0127: No matching call signature for f2(...) */
 /* @@? 31:18 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 32:14 Error Semantic error ESE0127: No matching call signature for f0(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
+/* @@? 32:14 Error Semantic error ESE0127: No matching call signature for f0(...) */
 /* @@? 32:17 Error Semantic error ESE0132: The type of parameter 'p' cannot be inferred */
-/* @@? 33:14 Error Semantic error ESE0127: No matching call signature for f1(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
+/* @@? 33:14 Error Semantic error ESE0127: No matching call signature for f1(...) */
 /* @@? 33:14 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'f1'. Specify the type argument explicitly. */
 /* @@? 33:17 Error Semantic error ESE0046: Type 'Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>' is not compatible with type 'T' at index 1 */

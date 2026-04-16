@@ -220,6 +220,7 @@ public:
     void CompileToRegs(compiler::PandaGen *pg, compiler::VReg object, compiler::VReg property) const;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
+
     void AddComponentTypeMemberAccessor(checker::Type *t, MemberAccessor m);
     const ComponentTypeMemberAccessors &GetComponentTypeMemberAccessors() const;
 

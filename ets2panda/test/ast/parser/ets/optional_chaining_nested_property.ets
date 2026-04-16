@@ -25,5 +25,4 @@ let car: Car = {
 }
 
 let companyLength = car?.company?.length;
-/* @@? 27:5 Warning Warning W65001: The equality expression is always false. */
 /* @@? 27:21 Warning Warning W65001: The equality expression is always false. */

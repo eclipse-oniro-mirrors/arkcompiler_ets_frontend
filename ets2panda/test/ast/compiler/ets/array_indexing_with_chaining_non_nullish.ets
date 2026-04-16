@@ -16,5 +16,5 @@
 class A {}
 
 let arr : Object[] = [new Object(), new A()];
-let elem : Object | undefined = arr?.[0];
-/* @@? 19:5 Warning Warning W65001: The equality expression is always false. */
+let elem : Object | undefined = /* @@ label */arr?.[0];
+/* @@@ label Warning Warning W65001: The equality expression is always false. */

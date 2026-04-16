@@ -16,9 +16,9 @@
 class A{
     private _x?:int = undefined;
     get x(): int |undefined{
-        return this?._x;
+        return /* @@ label1 */this/* @@ label2 */?._x;
     }
 }
 
-/* @@? 19:9 Warning Warning W65001: The equality expression is always false. */
-/* @@? 19:20 Error Syntax error ESY115549: 'this?.' optional chaining is not supported. */
+/* @@@ label1 Warning Warning W65001: The equality expression is always false. */
+/* @@@ label2 Error Syntax error ESY115549: 'this?.' optional chaining is not supported. */

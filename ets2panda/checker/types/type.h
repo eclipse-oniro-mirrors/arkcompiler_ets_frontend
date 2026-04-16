@@ -331,6 +331,7 @@ protected:
 // NOLINTBEGIN(readability-redundant-declaration)
 // To avoid including type.h from variable.h, astNode.h
 bool IsTypeError(Type const *tp);
+bool ContainsTypeError(Type const *type);
 // NOLINTEND(readability-redundant-declaration)
 
 }  // namespace ark::es2panda::checker

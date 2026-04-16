@@ -23,8 +23,8 @@ let dog: Dog = {
     name: "Scooby"
 }
 
-let hasSting = dog?.hasSting;
+let hasSting = /* @@ label */dog?.hasSting;
 
 
-/* @@? 26:5 Warning Warning W65001: The equality expression is always false. */
-/* @@? 26:21 Error Semantic error ESE0087: Property 'hasSting' does not exist on type 'Dog' */
+/* @@@ label Warning Warning W65001: The equality expression is always false. */
+/* @@? 26:35 Error Semantic error ESE0087: Property 'hasSting' does not exist on type 'Dog' */

@@ -19,6 +19,6 @@ function foo<T extends (p: number) => number>(a: T): T{
 
 let r = foo(x => x)
 
-/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for foo(((p1: *ERROR_TYPE*) => *ERROR_TYPE*)) */
+/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for foo(...) */
 /* @@? 20:9 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'foo'. Specify the type argument explicitly. */
 /* @@? 20:13 Error Semantic error ESE0132: The type of parameter 'x' cannot be inferred */

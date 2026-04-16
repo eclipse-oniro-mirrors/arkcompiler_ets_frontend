@@ -172,4 +172,9 @@ bool IsTypeError(Type const *tp)
     return tp != nullptr && tp->IsTypeError();
 }
 
+bool ContainsTypeError(Type const *type)
+{
+    return type != nullptr && type->TypeExpressionContains([](checker::Type const *tp) { return tp->IsTypeError(); });
+}
+
 }  // namespace ark::es2panda::checker

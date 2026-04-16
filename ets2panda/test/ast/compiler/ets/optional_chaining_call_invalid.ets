@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,16 @@
  * limitations under the License.
  */
 
- // arkts-no-with
-
-function main(): void {
-    /* @@ label */with(Math) {
-    let r: number = 42
-    console.log("Area: ", PI * r * r)
-  }
+interface I {
+    foo(): void;
 }
 
-/* @@@ label Error Semantic error ESE0127: No matching call signature for with(Math) */
+class C {
+}
+
+function foo(x?: C | I) {
+    /* @@ label */x?.foo();
+}
+
+/* @@@ label Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 24:22 Error Semantic error ESE0087: Property 'foo' does not exist on type 'C' */

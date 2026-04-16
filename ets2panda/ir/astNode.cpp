@@ -356,23 +356,27 @@ void AstNode::CleanCheckInformation()
     if (!IsTyped()) {
         return;
     }
+
     if (IsOpaqueTypeNode()) {
         return;
     }
+
     RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-    if (AsTyped()->TsType() != nullptr && IsTypeError(AsTyped()->TsType())) {
-        SetVariable(nullptr);
-        AsTyped()->SetTsType(nullptr);
-        AsTyped()->SetPreferredType(nullptr);
-        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
-    } else if (AsTyped()->PreferredType() != nullptr) {
-        AsTyped()->SetTsType(nullptr);
-        AsTyped()->SetPreferredType(nullptr);
-        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
-    } else if (AsTyped()->TsType() == nullptr) {
-        AsTyped()->SetPreferredType(nullptr);
-        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    auto *node = AsTyped();
+
+    if (node->PreferredType() != nullptr) {
+        node->SetTsType(nullptr);
+        node->SetPreferredType(nullptr);
+    } else if (auto *tp = node->TsType(); tp == nullptr) {
+        node->SetPreferredType(nullptr);
+    } else if (ContainsTypeError(tp)) {
+        node->SetTsType(nullptr);
+        node->SetPreferredType(nullptr);
+    } else {
+        return;
     }
+
+    Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
 }
 
 }  // namespace ark::es2panda::ir
