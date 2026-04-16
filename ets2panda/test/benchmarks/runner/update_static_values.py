@@ -17,6 +17,7 @@
 import argparse
 import shutil
 import sys
+import re
 import zipfile
 from collections import defaultdict
 from pathlib import Path
@@ -38,9 +39,14 @@ def unpack_archives(zips_dir: Path, output_dir: Path) -> List[Path]:
         shutil.rmtree(output_dir)
     output_dir.mkdir()
 
-    zip_files = list(zips_dir.glob("*.zip"))
+    pattern = re.compile(r"x86-es2panda-static-benchmarks-\d+\.zip")
+    zip_files = [
+        f for f in zips_dir.glob("*.zip")
+        if pattern.match(f.name)
+    ]
+
     if not zip_files:
-        raise RuntimeError(f"No zip files found in {zips_dir}")
+        raise RuntimeError(f"No matching zip files found in {zips_dir}")
 
     for zip_path in zip_files:
         extract_path = output_dir / zip_path.stem
