@@ -56,7 +56,6 @@ function g(x: int): int {
 /* @@? 20:27 Error Semantic error ESE0177: struct B is not extensible. */
 /* @@? 30:17 Error Syntax error ESY0214: Label already declared. */
 /* @@? 40:1 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 40:8 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 43:12 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */
 /* @@? 44:9 Error Syntax error ESY0230: Expected ')', got 'case'. */
 /* @@? 44:9 Error Syntax error ESY0230: Expected '{', got 'case'. */

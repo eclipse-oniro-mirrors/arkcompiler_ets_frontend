@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,11 +44,11 @@ public:
             return;
         }
 
-        SetResult(Convert(checker, source->AsETSObjectType()));
+        SetResult(Convert(checker, source));
         Relation()->Result(Result()->TypeFlags() == target->TypeFlags());
     }
 
-    static checker::Type *Convert(checker::ETSChecker const *checker, ETSObjectType *type);
+    static checker::Type *Convert(checker::ETSChecker const *checker, checker::Type *type);
 };
 }  // namespace ark::es2panda::checker
 

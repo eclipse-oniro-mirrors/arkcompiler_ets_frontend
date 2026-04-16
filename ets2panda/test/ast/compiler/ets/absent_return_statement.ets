@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +41,6 @@ function main(): void {
 /* @@@ label1 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
 /* @@@ label2 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
 /* @@@ label3 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label4 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@@ label4 Error Semantic error ESE0091: Type 'undefined' is not compatible with the enclosing method's return type 'Int|String' */
 /* @@@ label5 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label6 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@@ label6 Error Semantic error ESE0091: Type 'undefined' is not compatible with the enclosing method's return type 'Int|String' */

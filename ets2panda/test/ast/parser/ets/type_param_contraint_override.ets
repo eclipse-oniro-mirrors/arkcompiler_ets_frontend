@@ -33,5 +33,5 @@ function main() {
 }
 
 
-/* @@? 25:17 Error Semantic error ESE150729: Class member foo with type void in B cannot override foo with type void field from class A because the overriding type parameter's constraints are not compatible with type parameter constraints of the overridden method. */
-/* @@? 25:17 Error Semantic error ESE0136: Method foo<T>(x: T): void in B not overriding any method */
+/* @@? 25:17 Error Semantic error ESE150729: Class member foo with type undefined in B cannot override foo with type undefined field from class A because the overriding type parameter's constraints are not compatible with type parameter constraints of the overridden method. */
+/* @@? 25:17 Error Semantic error ESE0136: Method foo<T>(x: T): undefined in B not overriding any method */

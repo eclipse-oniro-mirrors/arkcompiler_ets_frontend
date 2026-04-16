@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,34 +14,35 @@
  */
 
 #include "boxingConverter.h"
-#include "checker/types/ets/types.h"
 #include "checker/ETSchecker.h"
 #include "util/helpers.h"
 #include "checker/types/globalTypesHolder.h"
 
 namespace ark::es2panda::checker {
 
-checker::ETSObjectType *BoxingConverter::Convert(ETSChecker const *checker, Type const *source)
+Type *BoxingConverter::Convert(ETSChecker const *checker, Type const *source)
 {
     auto typeHolder = checker->GetGlobalTypesHolder();
 
     switch (checker::ETSChecker::TypeKind(source)) {
         case checker::TypeFlag::ETS_BOOLEAN:
-            return typeHolder->GlobalETSBooleanBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalETSBooleanBuiltinType();
         case checker::TypeFlag::BYTE:
-            return typeHolder->GlobalByteBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalByteBuiltinType();
         case checker::TypeFlag::SHORT:
-            return typeHolder->GlobalShortBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalShortBuiltinType();
         case checker::TypeFlag::CHAR:
-            return typeHolder->GlobalCharBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalCharBuiltinType();
         case checker::TypeFlag::INT:
-            return typeHolder->GlobalIntegerBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalIntegerBuiltinType();
         case checker::TypeFlag::LONG:
-            return typeHolder->GlobalLongBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalLongBuiltinType();
         case checker::TypeFlag::FLOAT:
-            return typeHolder->GlobalFloatBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalFloatBuiltinType();
         case checker::TypeFlag::DOUBLE:
-            return typeHolder->GlobalDoubleBuiltinType()->AsETSObjectType();
+            return typeHolder->GlobalDoubleBuiltinType();
+        case checker::TypeFlag::ETS_VOID:
+            return typeHolder->GlobalETSUndefinedType();
         default:
             ES2PANDA_UNREACHABLE();
     }

@@ -456,8 +456,8 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
     ArgumentInfo argInfo {};
-    argInfo.objType = checker->GlobalVoidType();
-    argInfo.propType = checker->GlobalVoidType();
+    argInfo.objType = checker->GlobalETSUndefinedType();
+    argInfo.propType = checker->GlobalETSUndefinedType();
     argInfo.id3 = Gensym(allocator);
 
     // Parse ArkTS code string and create the corresponding AST node(s)

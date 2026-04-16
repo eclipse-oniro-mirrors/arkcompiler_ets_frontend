@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,6 @@ function main(): void {
 /* @@? 16:29 Error Semantic error ESE36530: Type '<string>' cannot be used as type parameter for ReturnType utilty type */
 /* @@? 17:29 Error Semantic error ESE36530: Type '<((()=> double) | int)>' cannot be used as type parameter for ReturnType utilty type */
 /* @@? 18:30 Error Semantic error ESE0371: Cannot find type 'foo3'. */
-/* @@? 19:29 Error Semantic error ESE0232: 'void' used as type annotation. */
 /* @@? 20:29 Error Semantic error ESE36530: Type '<null>' cannot be used as type parameter for ReturnType utilty type */
 /* @@? 21:29 Error Semantic error ESE36530: Type '<Any>' cannot be used as type parameter for ReturnType utilty type */
 /* @@? 22:29 Error Semantic error ESE36530: Type '<[(()=> double), (()=> int)]>' cannot be used as type parameter for ReturnType utilty type */

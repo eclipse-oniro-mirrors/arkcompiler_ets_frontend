@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,4 +27,3 @@ let a = (this: TextAttribute, this { this.width(width); return this;
 /* @@? 16:38 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
 /* @@? 16:57 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 16:64 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
-/* @@? 16:64 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */

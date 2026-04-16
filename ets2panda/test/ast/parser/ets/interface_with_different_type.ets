@@ -36,4 +36,4 @@ function main() {
 
 /* @@? 16:1 Error Semantic error ESE0215: Class Derived cannot implement interface Interface because the declaration type for field instance_field is not compatible with the declaration type required by the interface. */
 /* @@? 16:1 Error Semantic error ESE0215: Class Derived cannot implement interface Interface because the declaration type for method instance_field is not compatible with the declaration type required by the interface. */
-/* @@? 30:5 Error Semantic error ESE0136: Method instance_field(instance_field: Double): void in Derived not overriding any method */
+/* @@? 30:5 Error Semantic error ESE0136: Method instance_field(instance_field: Double): undefined in Derived not overriding any method */

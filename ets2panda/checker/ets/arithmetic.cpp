@@ -168,9 +168,13 @@ static Type *EffectivePrimitiveTypeOfNumericOp(ETSChecker *checker, Type *left, 
     return checker->GlobalIntType();  // return int in case of primitive types by default
 }
 
-static Type *TryConvertToPrimitiveType(ETSChecker *checker, Type *type)
+static Type *TryConvertToComparablePrimitiveType(ETSChecker *checker, Type *type)
 {
     if (type == nullptr) {
+        return nullptr;
+    }
+
+    if (type->IsETSUndefinedType()) {
         return nullptr;
     }
 
@@ -215,8 +219,8 @@ static Type *EffectiveTypeOfNumericOp(ETSChecker *checker, Type *left, Type *rig
 // NOTE(dkofanov): Deprecated operations on 'char' #28006
 static Type *BinaryGetPromotedType(ETSChecker *checker, Type *left, Type *right, bool const promote)
 {
-    Type *const unboxedL = TryConvertToPrimitiveType(checker, left);
-    Type *const unboxedR = TryConvertToPrimitiveType(checker, right);
+    Type *const unboxedL = TryConvertToComparablePrimitiveType(checker, left);
+    Type *const unboxedR = TryConvertToComparablePrimitiveType(checker, right);
     if (unboxedL == nullptr || unboxedR == nullptr) {
         return nullptr;
     }
@@ -339,14 +343,14 @@ static checker::Type *CheckBinaryOperatorForNumericEnums(ETSChecker *checker, ch
     if (TypeIsAppropriateForArithmetic(leftType, checker) && TypeIsAppropriateForArithmetic(rightType, checker)) {
         Type *leftNumeric;
         if (leftType->IsETSNumericEnumType()) {
-            leftNumeric = checker->MaybeBoxInRelation(TryConvertToPrimitiveType(checker, leftType));
+            leftNumeric = checker->MaybeBoxInRelation(TryConvertToComparablePrimitiveType(checker, leftType));
         } else {
             leftNumeric = leftType;
         }
 
         Type *rightNumeric;
         if (rightType->IsETSNumericEnumType()) {
-            rightNumeric = checker->MaybeBoxInRelation(TryConvertToPrimitiveType(checker, rightType));
+            rightNumeric = checker->MaybeBoxInRelation(TryConvertToComparablePrimitiveType(checker, rightType));
         } else {
             rightNumeric = rightType;
         }

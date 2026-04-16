@@ -422,7 +422,9 @@ static void CompileNullishCoalescing(compiler::ETSGen *etsg, ir::BinaryExpressio
 
     compileOperand(node->Left());
 
-    if (node->Left()->TsType()->DefinitelyNotETSNullish()) {
+    if (node->Left()->TsType()->IsETSVoidType()) {
+        compileOperand(node->Right());
+    } else if (node->Left()->TsType()->DefinitelyNotETSNullish()) {
         // fallthrough
     } else if (node->Left()->TsType()->DefinitelyETSNullish()) {
         compileOperand(node->Right());
@@ -471,6 +473,9 @@ static void CompileLogical(compiler::ETSGen *etsg, const ir::BinaryExpression *e
     auto endValue = etsg->AllocReg();
     auto orgValue = etsg->AllocReg();
 
+    if (expr->Left()->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr->Left());
+    }
     etsg->StoreAccumulator(expr->Left(), orgValue);
     etsg->ApplyConversionAndStoreAccumulator(expr->Left(), endValue, expr->OperationType());
     auto *endLabel = etsg->AllocLabel();
@@ -500,6 +505,9 @@ static void CompileInstanceof(compiler::ETSGen *etsg, const ir::BinaryExpression
     auto lhs = etsg->AllocReg();
 
     expr->Left()->Compile(etsg);
+    if (expr->Left()->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr->Left());
+    }
     etsg->ApplyConversionAndStoreAccumulator(expr->Left(), lhs, expr->OperationType());
 
     etsg->IsInstance(expr, lhs, expr->Right()->TsType());
@@ -1298,12 +1306,49 @@ void ETSCompiler::Compile(const ir::LabelledStatement *st) const
     CompileImpl(st, etsg);
 }
 
-static void CheckVoidReturnType(const ir::ReturnStatement *st, const ir::Expression *const argument, ETSGen *etsg)
+static void EmitDefaultValueOrVoidReturn(ETSGen *etsg, const ir::ReturnStatement *st)
 {
-    if (st->ReturnType()->IsETSVoidType() &&
-        etsg->Checker()->Relation()->IsSupertypeOf(etsg->Checker()->GlobalVoidType(), argument->TsType())) {
-        etsg->EmitReturnVoid(st);
+    if (!etsg->Context()->config->options->IsStacklessCoros() && etsg->IsAsync()) {
+        etsg->LoadAccumulatorUndefined(st);
+        etsg->ReturnAcc(st);
+        return;
     }
+
+    if (etsg->ReturnType()->IsETSVoidType()) {
+        etsg->EmitReturnVoid(st);
+        return;
+    }
+
+    etsg->LoadDefaultValue(st, etsg->ReturnType());
+    etsg->ReturnAcc(st);
+}
+
+static bool TryCompileVoidCallReturn(ETSGen *etsg, const ir::ReturnStatement *st, const ir::Expression *argument)
+{
+    if (!argument->IsCallExpression() || !argument->AsCallExpression()->Signature()->ReturnType()->IsETSVoidType()) {
+        return false;
+    }
+
+    argument->Compile(etsg);
+    EmitDefaultValueOrVoidReturn(etsg, st);
+    return true;
+}
+
+static void HandleControlFlowChangeOnReturn(ETSGen *etsg)
+{
+    if (etsg->CheckControlFlowChange()) {
+        etsg->ControlFlowChangeBreak();
+    }
+}
+
+static void CompileReturnWithoutArgument(ETSGen *etsg, const ir::ReturnStatement *st)
+{
+    if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
+        return;
+    }
+
+    HandleControlFlowChangeOnReturn(etsg);
+    EmitDefaultValueOrVoidReturn(etsg, st);
 }
 
 void ETSCompiler::Compile(const ir::ReturnStatement *st) const
@@ -1311,34 +1356,11 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
     ETSGen *etsg = GetETSGen();
     auto *const argument = st->Argument();
     if (argument == nullptr) {
-        if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
-            return;
-        }
-        if (etsg->CheckControlFlowChange()) {
-            etsg->ControlFlowChangeBreak();
-        }
-        if (!GetETSGen()->Context()->config->options->IsStacklessCoros() && etsg->IsAsync()) {
-            etsg->LoadAccumulatorUndefined(st);
-            etsg->ReturnAcc(st);
-            return;
-        }
-        etsg->EmitReturnVoid(st);
+        CompileReturnWithoutArgument(etsg, st);
         return;
     }
 
-    if (argument->IsCallExpression() && argument->AsCallExpression()->Signature()->ReturnType()->IsETSVoidType()) {
-        argument->Compile(etsg);
-        if (etsg->ReturnType()->IsETSVoidType()) {
-            if (!GetETSGen()->Context()->config->options->IsStacklessCoros() && etsg->IsAsync()) {
-                etsg->LoadAccumulatorUndefined(st);
-                etsg->ReturnAcc(st);
-            } else {
-                etsg->EmitReturnVoid(st);
-            }
-        } else {
-            etsg->LoadDefaultValue(st, etsg->ReturnType());
-            etsg->ReturnAcc(st);
-        }
+    if (TryCompileVoidCallReturn(etsg, st, argument)) {
         return;
     }
     auto ttctx = compiler::TargetTypeContext(etsg, st->ReturnType());
@@ -1356,7 +1378,10 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
         etsg->ControlFlowChangeBreak();
         etsg->LoadAccumulator(st, res);
     }
-    CheckVoidReturnType(st, argument, etsg);
+    if (etsg->ReturnType()->IsETSVoidType()) {
+        etsg->EmitReturnVoid(st);
+        return;
+    }
     etsg->ReturnAcc(st);
 }
 
@@ -1558,6 +1583,12 @@ void ETSCompiler::CompileCast(const ir::TSAsExpression *expr, checker::Type cons
 {
     ETSGen *etsg = GetETSGen();
 
+    if (expr->Expr()->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr);
+        etsg->SetAccumulatorType(targetType);
+        return;
+    }
+
     switch (checker::ETSChecker::TypeKind(targetType)) {
         case checker::TypeFlag::ETS_ARRAY:
         case checker::TypeFlag::ETS_TUPLE:
@@ -1624,6 +1655,9 @@ void ETSCompiler::Compile(const ir::TSNonNullExpression *expr) const
     compiler::RegScope rs(etsg);
 
     expr->Expr()->Compile(etsg);
+    if (etsg->GetAccumulatorType()->IsETSVoidType()) {
+        etsg->ApplyConversion(expr->Expr(), etsg->Checker()->GlobalETSUndefinedType());
+    }
 
     auto const *const originalType = etsg->Checker()->GetApparentType(expr->OriginalType());
 

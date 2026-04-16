@@ -27,5 +27,5 @@ function test() {
     })
 }
 
-/* @@? 26:5 Error Semantic error ESE0127: No matching call signature for ForEach(Array<String>, ((p1: String, p2: Double) => void)) */
-/* @@? 26:21 Error Semantic error ESE0046: Type '((p1: String, p2: Double) => void)' is not compatible with type '((p1: String, p2: Int) => void)' at index 2 */
+/* @@? 26:5 Error Semantic error ESE0127: No matching call signature for ForEach(Array<String>, ((p1: String, p2: Double) => undefined)) */
+/* @@? 26:21 Error Semantic error ESE0046: Type '((p1: String, p2: Double) => undefined)' is not compatible with type '((p1: String, p2: Int) => undefined)' at index 2 */

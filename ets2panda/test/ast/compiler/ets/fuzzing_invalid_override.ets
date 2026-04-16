@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ export default class HashMap<K, V> implements ReadonlyHashMap<K, V> {
 }
 
 
-/* @@? 20:69 Error Semantic error ESE0190: HashMap is not abstract and does not override abstract method forEach(callbackFn: ((p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => void)): void in ReadonlyHashMap */
+/* @@? 20:69 Error Semantic error ESE0190: HashMap is not abstract and does not override abstract method forEach(callbackFn: ((p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => undefined)): undefined in ReadonlyHashMap */
 /* @@? 21:12 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 21:17 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 21:17 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */

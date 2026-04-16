@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,5 +84,4 @@ class C {
 /* @@? 24:61 Error Semantic error ESE0371: Cannot find type 'V'. */
 /* @@? 24:67 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 25:9 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 25:16 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 27:1 Error Syntax error ESY0227: Unexpected token '}'. */

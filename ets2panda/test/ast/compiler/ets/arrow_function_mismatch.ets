@@ -17,4 +17,4 @@ let foo: (P: string, Q: string) => void
 
 foo((value: Object): void => { }, (err: Error): void => { })
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for (((p1: Object) => void), ((p1: Error) => void)) */
+/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for (((p1: Object) => undefined), ((p1: Error) => undefined)) */

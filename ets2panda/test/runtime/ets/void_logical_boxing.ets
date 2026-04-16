@@ -13,15 +13,32 @@
  * limitations under the License.
  */
 
-// NOTE! Temporary test - should be removed (or moved into runtime suite) after the `void` type refactoring
+let lhsCount: int = 0;
+let rhsCount: int = 0;
 
-type T<R> = R;
-
-function main() {
-  let x: NonNullable<int | undefined> = 5;
-  /* @@ label1 */console.println(x instanceof T<NonNullable</* @@ label2 */void>>);
+function returnsUndefined(): undefined {
+    lhsCount += 1;
 }
 
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for println(Boolean) */
-/* @@? 22:34 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
-/* @@@ label2 Error Semantic error ESE0232: 'void' used as type annotation. */
+function rhs(): string {
+    rhsCount += 1;
+    return "fallback";
+}
+
+function main(): void {
+    lhsCount = 0;
+    rhsCount = 0;
+    let andValue = returnsUndefined() && rhs();
+
+    arktest.assertEQ(andValue, undefined);
+    arktest.assertEQ(lhsCount, 1);
+    arktest.assertEQ(rhsCount, 0);
+
+    lhsCount = 0;
+    rhsCount = 0;
+    let orValue = returnsUndefined() || rhs();
+
+    arktest.assertEQ(orValue, "fallback");
+    arktest.assertEQ(lhsCount, 1);
+    arktest.assertEQ(rhsCount, 1);
+}

@@ -22,4 +22,4 @@ interface C extends I {
     foo(p: I): void
 }
 
-/* @@? 22:5 Error Semantic error ESE602430: Method foo(p: I): void from class or interface C, inherited into class or interface C, conflicts with the previous declaration of method foo(p: C): void from class or interface C because both declarations override method foo(p: C): void from class or interface I */
+/* @@? 22:5 Error Semantic error ESE602430: Method foo(p: I): undefined from class or interface C, inherited into class or interface C, conflicts with the previous declaration of method foo(p: C): undefined from class or interface C because both declarations override method foo(p: C): undefined from class or interface I */

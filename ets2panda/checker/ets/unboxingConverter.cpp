@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,9 +20,14 @@
 
 namespace ark::es2panda::checker {
 
-checker::Type *UnboxingConverter::Convert(checker::ETSChecker const *checker, ETSObjectType *type)
+checker::Type *UnboxingConverter::Convert(checker::ETSChecker const *checker, checker::Type *type)
 {
-    switch (type->UnboxableKind()) {
+    if (type->IsETSUndefinedType()) {
+        return checker->GlobalETSUndefinedType();
+    }
+
+    ES2PANDA_ASSERT(type->IsETSObjectType());
+    switch (type->AsETSObjectType()->UnboxableKind()) {
         case ETSObjectFlags::BUILTIN_BOOLEAN:
             return checker->GlobalETSBooleanType();
         case ETSObjectFlags::BUILTIN_BYTE:

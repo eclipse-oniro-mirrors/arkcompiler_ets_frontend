@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,6 @@ let fob:(...args:FixedArray<number>)=>number = (...args:FixedArray<number>) =>{}
 
 let foc:(c:string, ...args:FixedArray<number>)=>string = (c:number, ...args:FixedArray<string>):string=>{}
 
-/* @@? 16:56 Error Semantic error ESE0318: Type '((p1: Double, ...p2: FixedArray<Double>) => void)' cannot be assigned to type '((p1: String, ...p2: FixedArray<Double>) => void)' */
-/* @@? 18:48 Error Semantic error ESE0318: Type '((...p1: FixedArray<Double>) => void)' cannot be assigned to type '((...p1: FixedArray<Double>) => Double)' */
+/* @@? 16:56 Error Semantic error ESE0318: Type '((p1: Double, ...p2: FixedArray<Double>) => undefined)' cannot be assigned to type '((p1: String, ...p2: FixedArray<Double>) => undefined)' */
+/* @@? 18:48 Error Semantic error ESE0318: Type '((...p1: FixedArray<Double>) => undefined)' cannot be assigned to type '((...p1: FixedArray<Double>) => Double)' */
 /* @@? 20:58 Error Semantic error ESE0318: Type '((p1: Double, ...p2: FixedArray<String>) => String)' cannot be assigned to type '((p1: String, ...p2: FixedArray<Double>) => String)' */

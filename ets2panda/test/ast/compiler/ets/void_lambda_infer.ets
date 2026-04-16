@@ -91,17 +91,17 @@ foo(voidTest5);
 foo(voidTest6);
 foo(voidTest7);
 
-/* @@? 86:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 86:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 87:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 87:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 88:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 88:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 89:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 89:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 90:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 90:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 91:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 91:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
-/* @@? 92:1 Error Semantic error ESE0127: No matching call signature for foo((() => void)) */
-/* @@? 92:5 Error Semantic error ESE0046: Type '(() => void)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 86:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 86:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 87:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 87:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 88:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 88:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 89:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 89:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 90:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 90:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 91:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 91:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */
+/* @@? 92:1 Error Semantic error ESE0127: No matching call signature for foo((() => undefined)) */
+/* @@? 92:5 Error Semantic error ESE0046: Type '(() => undefined)' is not compatible with type '(() => never)' at index 1 */

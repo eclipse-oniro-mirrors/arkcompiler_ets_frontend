@@ -1,8 +1,8 @@
 import st from "@ohos.lang.interop";
 export declare class MixedClass {
-    public static success(): void;
-    public success(a: number): void;
-    public error(a: number, b: string): void;
+    public static success(): undefined;
+    public success(a: number): undefined;
+    public error(a: number, b: string): undefined;
     public message(a: string): string;
     constructor();
 }

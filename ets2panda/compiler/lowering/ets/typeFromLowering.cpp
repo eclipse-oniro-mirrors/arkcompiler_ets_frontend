@@ -68,9 +68,6 @@ std::string HandleSpecialTypes(checker::Type *type)
         return std::string(compiler::Signatures::NULLTYPE_REF);
     }
 
-    if (type->IsETSVoidType()) {
-        return std::string(compiler::Signatures::VOIDTYPE_VAL);
-    }
     return "";
 }
 

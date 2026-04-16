@@ -400,7 +400,7 @@ function func() {};
     expected.emplace_back(")", "punctuation");
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("void", "returnType");
+    expected.emplace_back("undefined", "returnType");
     const std::string kind = "method";
     const std::string kindModifiers = "static public";
     const size_t start = 1;

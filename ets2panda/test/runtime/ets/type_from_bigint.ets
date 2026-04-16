@@ -1,5 +1,5 @@
   /*
-   * Copyright (c) 2025 Huawei Device Co., Ltd.
+   * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
    * Licensed under the Apache License, Version 2.0 (the "License");
    * you may not use this file except in compliance with the License.
    * You may obtain a copy of the License at
@@ -13,9 +13,9 @@
    * limitations under the License.
    */
  function main(){
-   let bigintA = Type.from<bigint>();
-   let bigintB = Type.from<bigint>();
-   let bigintC = Type.from<BigInt>();
-   arktest.assertTrue(bigintA.toString() == bigintB.toString());
-   arktest.assertTrue(bigintA.toString() == bigintC.toString());
+   let bigintA = Class.from<bigint>();
+   let bigintB = Class.from<bigint>();
+   let bigintC = Class.from<BigInt>();
+   arktest.assertTrue(bigintA == bigintB);
+   arktest.assertTrue(bigintA == bigintC);
  }

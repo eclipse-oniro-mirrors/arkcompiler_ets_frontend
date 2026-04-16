@@ -40,7 +40,7 @@ class Hex extends Core {
 }
 
 
-/* @@? 33:22 Error Semantic error ESE1324203: Class member size with type void in Hex cannot override size with type void field from class Core because the overridden method is final. */
-/* @@? 33:22 Error Semantic error ESE0136: Method size(s: Int): void in Hex not overriding any method */
+/* @@? 33:22 Error Semantic error ESE1324203: Class member size with type undefined in Hex cannot override size with type undefined field from class Core because the overridden method is final. */
+/* @@? 33:22 Error Semantic error ESE0136: Method size(s: Int): undefined in Hex not overriding any method */
 /* @@? 37:22 Error Semantic error ESE1324203: Class member size with type Int in Hex cannot override size with type Int field from class Core because the overridden method is final. */
 /* @@? 37:22 Error Semantic error ESE0136: Method size(): Int in Hex not overriding any method */

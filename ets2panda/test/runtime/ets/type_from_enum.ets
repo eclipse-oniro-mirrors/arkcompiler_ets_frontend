@@ -1,5 +1,5 @@
   /*
-   * Copyright (c) 2025 Huawei Device Co., Ltd.
+   * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
    * Licensed under the Apache License, Version 2.0 (the "License");
    * you may not use this file except in compliance with the License.
    * You may obtain a copy of the License at
@@ -19,9 +19,9 @@ enum ColorNumber { Green = 1 , Red = 2, Blue = 3 }
 
 
  function main(){
-   let enumColorA = Type.from<Color>();
-   let enumColorB = Type.from<Color>();
-   let enumColorC = Type.from<ColorNumber>();
-   arktest.assertTrue(enumColorA.toString() == enumColorB.toString());
-   arktest.assertTrue(enumColorA.toString() != enumColorC.toString());
+   let enumColorA = Class.from<Color>();
+   let enumColorB = Class.from<Color>();
+   let enumColorC = Class.from<ColorNumber>();
+   arktest.assertTrue(enumColorA == enumColorB);
+   arktest.assertTrue(enumColorA != enumColorC);
  }

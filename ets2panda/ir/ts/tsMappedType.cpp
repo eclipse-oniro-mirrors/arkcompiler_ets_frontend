@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,15 +53,23 @@ void TSMappedType::Iterate(const NodeTraverser &cb) const
 
 void TSMappedType::Dump(ir::AstDumper *dumper) const
 {
+    auto makeMappedOptionProperty = [](const char *name, MappedOption option) -> AstDumper::Property {
+        if (option == MappedOption::PLUS) {
+            return {name, AstDumper::Optional("+")};
+        }
+
+        if (option == MappedOption::MINUS) {
+            return {name, AstDumper::Optional("-")};
+        }
+
+        return {name, AstDumper::Optional(false)};
+    };
+
     dumper->Add({{"type", "TSMappedType"},
                  {"typeParameter", typeParameter_},
                  {"typeAnnotation", AstDumper::Optional(typeAnnotation_)},
-                 {"readonly", readonly_ == MappedOption::NO_OPTS ? AstDumper::Optional(false)
-                              : readonly_ == MappedOption::PLUS  ? AstDumper::Optional("+")
-                                                                 : AstDumper::Optional("-")},
-                 {"optional", optional_ == MappedOption::NO_OPTS ? AstDumper::Optional(false)
-                              : optional_ == MappedOption::PLUS  ? AstDumper::Optional("+")
-                                                                 : AstDumper::Optional("-")},
+                 makeMappedOptionProperty("readonly", readonly_),
+                 makeMappedOptionProperty("optional", optional_),
                  {"annotations", AstDumper::Optional(Annotations())}});
 }
 

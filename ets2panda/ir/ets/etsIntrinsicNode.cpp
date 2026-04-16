@@ -680,7 +680,7 @@ public:
             return InvalidateIntrinsic(checker, intrin);
         }
 
-        return intrin->SetTsType(checker->GlobalVoidType());
+        return intrin->SetTsType(checker->GlobalETSUndefinedType());
     }
 
     void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a-2025 copy of the License at
@@ -20,4 +20,4 @@ class C {
 let c: C = /* @@ label */{};
 
 
-/* @@@ label Error Semantic error ESE0139: Signature constructor(): void is not visible here. */
+/* @@@ label Error Semantic error ESE0139: Signature constructor(): undefined is not visible here. */

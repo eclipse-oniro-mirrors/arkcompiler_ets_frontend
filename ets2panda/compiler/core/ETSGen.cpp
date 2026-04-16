@@ -66,6 +66,13 @@ static inline bool IsWidePrimitiveType(checker::Type const *type)
     return type->IsLongType() || type->IsDoubleType();
 }
 
+static inline void AssertAccumulatorValueMaterialized(ETSGen const *etsg)
+{
+    [[maybe_unused]] auto const *const accType = etsg->GetAccumulatorType();
+    ES2PANDA_ASSERT(accType != nullptr);
+    ES2PANDA_ASSERT(!accType->IsETSVoidType());
+}
+
 ETSGen::ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile) noexcept
     : CodeGen(allocator, spiller, context, toCompile),
@@ -211,9 +218,8 @@ VReg ETSGen::StoreError(const ir::AstNode *node)
 
 void ETSGen::StoreAccumulator(const ir::AstNode *const node, const VReg vreg)
 {
+    AssertAccumulatorValueMaterialized(this);
     const auto *const accType = GetAccumulatorType();
-
-    ES2PANDA_ASSERT(accType != nullptr);
     if (accType->IsETSReferenceType()) {
         Ra().Emit<StaObj>(node, vreg);
     } else if (IsWidePrimitiveType(accType)) {
@@ -738,6 +744,7 @@ const checker::Type *ETSGen::LoadDefaultValue(const ir::AstNode *node, const che
 
 void ETSGen::EmitReturnVoid(const ir::AstNode *node)
 {
+    SetAccumulatorType(nullptr);
     Sa().Emit<ReturnVoid>(node);
 }
 
@@ -832,7 +839,7 @@ void ETSGen::CheckedReferenceNarrowing(const ir::AstNode *node, const checker::T
     const auto srcReg = AllocReg();
 
     StoreAccumulator(node, srcReg);
-    if (target->IsETSVoidType() || target->IsETSAnyType()) {  // NOTE(vpukhov): #19701 void refactoring
+    if (target->IsETSVoidType() || target->IsETSAnyType()) {
         SetAccumulatorType(target);
         return;
     }
@@ -921,6 +928,16 @@ void ETSGen::ApplyConversion(const ir::AstNode *node, const checker::Type *targe
 {
     if (targetType == nullptr) {
         return;
+    }
+
+    auto *accType = GetAccumulatorType();
+    if (accType != nullptr && accType->IsETSVoidType()) {
+        auto *checker = const_cast<checker::ETSChecker *>(Checker());
+        if (checker->Relation()->IsSupertypeOf(targetType, checker->GlobalETSUndefinedType()) ||
+            targetType->IsETSBooleanType()) {
+            LoadAccumulatorUndefined(node);
+            return;
+        }
     }
 
     auto ttctx = TargetTypeContext(this, targetType);
@@ -1629,6 +1646,7 @@ void ETSGen::ResolveConditionalResult(const ir::AstNode *node, [[maybe_unused]] 
 {
     auto type = GetAccumulatorType();
     ES2PANDA_ASSERT(type != nullptr);
+    ES2PANDA_ASSERT(!type->IsETSVoidType());
 #ifdef PANDA_WITH_ETS
     if (type->IsETSReferenceType()) {
         VReg valReg = AllocReg();
@@ -1753,7 +1771,6 @@ void ETSGen::BranchIfNullish(const ir::AstNode *node, Label *ifNullish)
     ES2PANDA_ASSERT(type != nullptr);
 
     if (type->IsETSVoidType()) {
-        // NOTE(): #19701 need void refactoring
         Sa().Emit<Jmp>(node, ifNullish);
     } else if (type->DefinitelyNotETSNullish()) {
         // no action

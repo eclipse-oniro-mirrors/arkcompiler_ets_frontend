@@ -155,7 +155,7 @@ class CC {
     expected.emplace_back(")", "punctuation");
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("void", "returnType");
+    expected.emplace_back("undefined", "returnType");
 
     auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
                                                                  source, sourceDisplay, expectedFileName);

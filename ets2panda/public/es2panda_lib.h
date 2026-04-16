@@ -127,7 +127,6 @@ typedef struct es2panda_OverloadInfo {
     bool needHelperOverload;
     bool isDeclare;
     bool hasRestVar;
-    bool returnVoid;
 } es2panda_OverloadInfo;
 
 enum es2panda_ContextState {

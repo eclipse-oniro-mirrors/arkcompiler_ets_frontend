@@ -537,7 +537,7 @@ Signature *ETSChecker::CreateBuiltinArraySignature(const ETSArrayType *arrayType
     }
 
     auto [internalName, info] = CreateBuiltinArraySignatureInfo(arrayType, dim);
-    auto *signature = CreateSignature(info, GlobalVoidType(), ir::ScriptFunctionFlags::NONE, false);
+    auto *signature = CreateSignature(info, GlobalETSUndefinedType(), ir::ScriptFunctionFlags::NONE, false);
     ES2PANDA_ASSERT(signature != nullptr);
     signature->SetInternalName(internalName);
     globalArraySignatures.insert({arrayType, signature});

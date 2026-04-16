@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,5 +27,5 @@ class array_type  {
 
 /* @@@ label Error Semantic error ESE0280: Property 'a' might not have been initialized. */
 /* @@@ label1 Error Semantic error ESE0280: Property 'f' might not have been initialized. */
-/* @@@ label2 Error Semantic error ESE0103: Function with a non void return type must return a value. */
-/* @@@ label3 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label2 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */
+/* @@@ label3 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */

@@ -33,5 +33,5 @@ function main() {
 }
 
 
-/* @@? 19:5 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@? 19:5 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */
 /* @@? 25:5 Error Semantic error ESE0104: Not all code paths return a value. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the ermissions and
  * limitatioLicense.
@@ -29,4 +29,4 @@ function foo(bar: () => int) {
 /* @@? 18:16 Error Syntax error ESY0227: Unexpected token '('. */
 /* @@? 18:17 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 18:18 Error Syntax error ESY0228: Unexpected token, expected ')'. */
-/* @@? 22:14 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int' */
+/* @@? 22:14 Error Semantic error ESE0091: Type 'undefined' is not compatible with the enclosing method's return type 'Int' */

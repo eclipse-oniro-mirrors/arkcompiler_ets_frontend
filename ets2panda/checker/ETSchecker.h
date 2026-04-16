@@ -536,7 +536,6 @@ public:
     Type *GetNonConstantType(Type *type);
     checker::Type *GetElementTypeOfArray(checker::Type *type) const;
     const checker::Type *GetElementTypeOfArray(const checker::Type *type) const;
-    bool IsNullLikeOrVoidExpression(const ir::Expression *expr) const;
     void ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir::Expression *expr);
     void CheckFunctionSignatureAnnotations(const ArenaVector<ir::Expression *> &params,
                                            ir::TSTypeParameterDeclaration *typeParams,
@@ -682,7 +681,6 @@ public:
                                                   checker::ETSObjectType *lastObjectType, ir::Identifier *ident,
                                                   std::unordered_set<parser::Program *> *moduleStackCache = nullptr);
     bool CheckValidEqualReferenceType(checker::Type *const leftType, checker::Type *const rightType);
-    bool CheckVoidAnnotation(const ir::ETSPrimitiveType *typeAnnotation);
     void ETSObjectTypeDeclNode(ETSChecker *checker, ETSObjectType *const objectType);
     ir::CallExpression *CreateExtensionAccessorCall(ETSChecker *checker, ir::MemberExpression *expr,
                                                     ArenaVector<ir::Expression *> &&args);

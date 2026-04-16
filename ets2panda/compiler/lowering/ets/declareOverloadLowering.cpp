@@ -62,13 +62,13 @@ void BuildOverloadHelperFunction(public_lib::Context *ctx, ir::MethodDefinition 
     auto *allocator = ctx->allocator;
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
-    auto const &[minArg, maxArg, needHelperOverload, isDeclare, hasRestVar, returnVoid] = method->GetOverloadInfo();
+    auto const &[minArg, maxArg, needHelperOverload, isDeclare, hasRestVar] = method->GetOverloadInfo();
     ES2PANDA_ASSERT(needHelperOverload && method->Function() != nullptr);
 
     auto params = ArenaVector<ir::Expression *>(allocator->Adapter());
     GenerateOverloadHelperParams(ctx, minArg, maxArg, hasRestVar, params);
 
-    auto *returnType = returnVoid ? checker->GlobalVoidType() : checker->GlobalETSAnyType();
+    auto *returnType = checker->GlobalETSAnyType();
     auto *returnAnno = ctx->AllocNode<ir::OpaqueTypeNode>(returnType, allocator);
 
     ir::ScriptFunctionFlags functionFlag = method->Function()->Flags();

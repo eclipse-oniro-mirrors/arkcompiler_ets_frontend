@@ -13,14 +13,24 @@
  * limitations under the License.
  */
 
-function foo() {}
+let lhsCount: int = 0;
+let rhsCount: int = 0;
 
-function bar(a: int) {}
-function bar(...args: Any[]) {}
-
-function main() {
-    bar(foo())
+function returnsUndefined(): undefined {
+    lhsCount += 1;
 }
 
-/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for bar(...) */
-/* @@? 22:9 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+function rhs(): string {
+    rhsCount += 1;
+    return "fallback";
+}
+
+function main(): void {
+    lhsCount = 0;
+    rhsCount = 0;
+    let value = returnsUndefined() ?? rhs();
+
+    arktest.assertEQ(value, "fallback");
+    arktest.assertEQ(lhsCount, 1);
+    arktest.assertEQ(rhsCount, 1);
+}

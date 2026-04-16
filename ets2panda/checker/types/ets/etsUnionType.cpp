@@ -105,7 +105,7 @@ void ETSUnionType::CanonicalizedAssemblerType(ETSChecker *checker)
     bool hasNull = false;
     for (auto *type : constituentTypes_) {
         ES2PANDA_ASSERT(!type->IsETSUnionType());
-        if (type->IsETSUndefinedType() || type->IsETSVoidType()) {
+        if (type->IsETSUndefinedType()) {
             continue;
         }
         if (type->IsETSNullType() && !hasNull) {
@@ -543,11 +543,6 @@ std::pair<Type *, Type *> ETSUnionType::GetComplimentaryType(ETSChecker *const c
     }
 
     return std::make_pair(consequentType, alternateType);
-}
-
-Type *ETSUnionType::FindUnboxableType() const noexcept
-{
-    return FindSpecificType([](Type *t) { return t->IsETSUnboxableObject(); });
 }
 
 bool ETSUnionType::IsOverlapWith(TypeRelation *relation, Type const *type) const noexcept

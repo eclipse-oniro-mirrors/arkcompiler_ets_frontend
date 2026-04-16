@@ -26,5 +26,5 @@ function test() {
     })
 }
 
-/* @@? 24:5 Error Semantic error ESE0127: No matching call signature for foo(((p1: ((p1: String) => void)) => void)) */
-/* @@? 24:9 Error Semantic error ESE0046: Type '((p1: ((p1: String) => void)) => void)' is not compatible with type '((p1: ((p1: Double|undefined) => void)) => void)' at index 1 */
+/* @@? 24:5 Error Semantic error ESE0127: No matching call signature for foo(((p1: ((p1: String) => undefined)) => undefined)) */
+/* @@? 24:9 Error Semantic error ESE0046: Type '((p1: ((p1: String) => undefined)) => undefined)' is not compatible with type '((p1: ((p1: Double|undefined) => undefined)) => undefined)' at index 1 */

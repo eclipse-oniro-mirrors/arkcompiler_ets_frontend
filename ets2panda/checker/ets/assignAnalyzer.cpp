@@ -1018,7 +1018,7 @@ void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr)
 {
     AnalyzeCond(condExpr->Test());
 
-    if (auto const testValue = TryResolveConditionalTestValue(checker_, condExpr->Test()); testValue.has_value()) {
+    if (auto const testValue = TryResolveConditionalTestValue(condExpr->Test()); testValue.has_value()) {
         auto *const takenBranch = testValue.value() ? condExpr->Consequent() : condExpr->Alternate();
         inits_ = testValue.value() ? initsWhenTrue_ : initsWhenFalse_;
         uninits_ = testValue.value() ? uninitsWhenTrue_ : uninitsWhenFalse_;

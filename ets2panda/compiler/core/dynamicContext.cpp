@@ -244,22 +244,47 @@ void ETSTryContext::EmitFinalizer(
     etsg->SetLabel(tryStmt_, finalizerTable->LabelSet().CatchEnd());
 }
 
+struct FinalizerReturnState {
+    bool isReturn;
+    const ir::ReturnStatement *returnStmt;
+    const checker::Type *returnType;
+    bool isReturnVoid;
+};
+
+auto GetFinalizerReturnState(ETSGen *etsg, const ir::Statement *statement) -> FinalizerReturnState
+{
+    FinalizerReturnState state {false, nullptr, etsg->ReturnType(), false};
+    state.isReturn = statement->IsReturnStatement();
+    if (!state.isReturn) {
+        return state;
+    }
+
+    state.returnStmt = statement->AsReturnStatement();
+    if (state.returnType->IsETSAsyncFuncReturnType()) {
+        state.returnType = state.returnStmt->ReturnType();
+    }
+    state.isReturnVoid = state.returnType->IsETSVoidType();
+
+    return state;
+}
+
 void ETSTryContext::EmitFinalizerInsertion(ETSGen *etsg, compiler::LabelPair labelPair, const ir::Statement *statement)
 {
     etsg->SetLabel(tryStmt_, labelPair.Begin());
 
     ES2PANDA_ASSERT(statement != nullptr);
-    bool isReturn = statement->IsReturnStatement();
-    bool isReturnVoid = etsg->ReturnType()->IsETSVoidType();
-    if (etsg->ReturnType()->IsETSAsyncFuncReturnType()) {
-        isReturnVoid = statement->AsReturnStatement()->ReturnType()->IsETSVoidType();
-    }
+    const auto [isReturn, returnStmt, returnType, isReturnVoid] = GetFinalizerReturnState(etsg, statement);
+
     compiler::RegScope rs(etsg);
     compiler::VReg res = etsg->AllocReg();
     if (isReturn && !isReturnVoid) {
-        etsg->SetAccumulatorType(statement->AsReturnStatement()->ReturnType());
+        if (returnStmt->Argument() == nullptr) {
+            etsg->LoadDefaultValue(tryStmt_, returnType);
+        } else {
+            etsg->SetAccumulatorType(returnType);
+        }
         etsg->StoreAccumulator(tryStmt_, res);
-        etsg->SetVRegType(res, statement->AsReturnStatement()->ReturnType());
+        etsg->SetVRegType(res, returnType);
     }
 
     // Second compile of the finaly clause, executed if the statement executed normally, but abrupted by
@@ -267,7 +292,7 @@ void ETSTryContext::EmitFinalizerInsertion(ETSGen *etsg, compiler::LabelPair lab
     tryStmt_->FinallyBlock()->Compile(etsg);
 
     if (isReturn && !isReturnVoid) {
-        etsg->SetAccumulatorType(statement->AsReturnStatement()->ReturnType());
+        etsg->SetAccumulatorType(returnType);
         etsg->LoadAccumulator(tryStmt_, res);
     }
 

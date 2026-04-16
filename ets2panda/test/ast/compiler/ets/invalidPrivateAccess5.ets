@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ class Outer {
 
 /* @@? 17:19 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 21:20 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 24:13 Error Semantic error ESE0139: Signature a(): void is not visible here. */
+/* @@? 24:13 Error Semantic error ESE0139: Signature a(): undefined is not visible here. */
 /* @@? 24:13 Error Semantic error ESE0127: No matching call signature for a() */
-/* @@? 25:13 Error Semantic error ESE0139: Signature a(): void is not visible here. */
+/* @@? 25:13 Error Semantic error ESE0139: Signature a(): undefined is not visible here. */
 /* @@? 25:13 Error Semantic error ESE0127: No matching call signature for a() */

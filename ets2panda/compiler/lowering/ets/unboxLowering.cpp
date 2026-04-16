@@ -54,6 +54,15 @@ bool TypeIsBoxedPrimitive(checker::Type *tp)
     return tp->IsETSObjectType() && tp->AsETSObjectType()->IsBoxedPrimitive();
 }
 
+bool IsIntrinsicConvertiblePrimitive(checker::Type *tp)
+{
+    using checker::TypeFlag;
+    static constexpr TypeFlag ETS_CONVERTIBLE_PRIMITIVE =
+        TypeFlag::ETS_NUMERIC | TypeFlag::CHAR | TypeFlag::ETS_BOOLEAN | TypeFlag::ETS_VOID;
+
+    return tp->HasTypeFlag(ETS_CONVERTIBLE_PRIMITIVE);
+}
+
 bool IsUnboxingApplicable(checker::Type *t)
 {
     return TypeIsBoxedPrimitive(t) || AnyOfElementTypes(t, IsUnboxingApplicable);
@@ -286,7 +295,10 @@ static void HandleScriptFunctionHeader(UnboxContext *uctx, ir::ScriptFunction *f
         funcRestParam->Ident()->SetTsType(unboxedType);
         funcRestParam->Ident()->Variable()->SetTsType(unboxedType);
     }
-    if (IsUnboxingApplicable(sig->ReturnType())) {
+    const bool hasUndefinedReturnType = sig->ReturnType() != nullptr && sig->ReturnType()->IsETSUndefinedType();
+    if (hasUndefinedReturnType) {
+        sig->SetReturnType(uctx->checker->GlobalVoidType());
+    } else if (IsUnboxingApplicable(sig->ReturnType())) {
         sig->SetReturnType(MaybeRecursivelyUnboxType(uctx, sig->ReturnType()));
     }
 
@@ -427,6 +439,7 @@ static ir::Expression *CreateToIntrinsicCallExpression(UnboxContext *uctx, check
                                                        checker::Type *exprType, ir::Expression *expr)
 {
     auto *allocator = uctx->allocator;
+    ES2PANDA_ASSERT(IsIntrinsicConvertiblePrimitive(exprType));
 
     auto *parent = expr->Parent();
     auto *boxedToType = uctx->checker->MaybeBoxType(toType)->AsETSObjectType();
@@ -610,6 +623,9 @@ static ir::Expression *InsertPrimitiveConversionIfNeeded(UnboxContext *uctx, ir:
     if (relation->IsSupertypeOf(expectedType, uctx->checker->MaybeBoxType(actualType))) {
         return expr;
     }
+    if (!IsIntrinsicConvertiblePrimitive(actualType)) {
+        return expr;
+    }
 
     auto *toConvert = DetermineTypeToConvert(uctx, actualType, expectedType);
     if (toConvert == nullptr) {
@@ -685,6 +701,9 @@ static ir::Expression *InsertConversionBetweenPrimitivesIfNeeded(UnboxContext *u
     if (uctx->checker->Relation()->IsIdenticalTo(oldType, expectedType)) {
         return expr;
     }
+    if (!IsIntrinsicConvertiblePrimitive(oldType)) {
+        return expr;
+    }
 
     auto *parent = expr->Parent();
     ir::Expression *res;
@@ -739,6 +758,9 @@ static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, chec
     checker::Type *actualType = expr->Check(uctx->checker);
 
     if (expectedType->HasTypeFlag(checker::TypeFlag::ETS_NEVER)) {
+        return expr;
+    }
+    if (actualType->IsETSVoidType()) {
         return expr;
     }
     if (IsInAnnotationContext(expr) && actualType->IsETSPrimitiveType() && TypeIsBoxedPrimitive(expectedType)) {
@@ -1517,6 +1539,9 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
 
     void VisitTSNonNullExpression(ir::TSNonNullExpression *nnexpr) override
     {
+        if (nnexpr->Expr()->TsType()->IsETSVoidType()) {
+            return;
+        }
         if (nnexpr->Expr()->TsType()->IsETSPrimitiveType()) {
             ReplaceInParent(nnexpr, nnexpr->Expr());
             return;

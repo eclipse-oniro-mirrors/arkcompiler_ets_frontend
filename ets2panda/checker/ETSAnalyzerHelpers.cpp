@@ -244,19 +244,17 @@ void CheckPredefinedMethodReturnType(ETSChecker *checker, ir::ScriptFunction *sc
 
     auto const &position = scriptFunc->Start();
 
-    if (scriptFunc->IsGetter() && (scriptFunc->Signature()->ReturnType() == checker->GlobalVoidType())) {
-        checker->LogError(diagnostic::GETTER_VOID, {}, position);
-    }
+    bool isUndefined = scriptFunc->Signature()->ReturnType()->IsETSUndefinedType();
 
     auto const &name = scriptFunc->Id()->Name();
     auto const methodName = std::string {ir::PREDEFINED_METHOD} + std::string {name.Utf8()};
 
     if (name.Is(compiler::Signatures::GET_INDEX_METHOD)) {
-        if (scriptFunc->Signature()->ReturnType() == checker->GlobalVoidType()) {
+        if (isUndefined) {
             checker->LogError(diagnostic::UNEXPECTED_VOID, {util::StringView(methodName)}, position);
         }
     } else if (name.Is(compiler::Signatures::SET_INDEX_METHOD)) {
-        if (scriptFunc->Signature()->ReturnType() != checker->GlobalVoidType()) {
+        if (!isUndefined) {
             checker->LogError(diagnostic::UNEXPECTED_NONVOID, {util::StringView(methodName)}, position);
         }
     } else if (name.Is(compiler::Signatures::ITERATOR_METHOD)) {
@@ -568,7 +566,7 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
                            ir::ReturnStatement *st)
 {
     if (name.find(compiler::Signatures::ETS_MAIN_WITH_MANGLE_BEGIN) != std::string::npos) {
-        if (!funcReturnType->IsETSVoidType() &&
+        if (!funcReturnType->IsETSUndefinedType() &&
             !checker->Relation()->IsSupertypeOf(checker->GlobalIntBuiltinType(), funcReturnType)) {
             checker->LogError(diagnostic::MAIN_BAD_RETURN, {}, st->Start());
         }
@@ -642,7 +640,7 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
     //  First (or single) return statement in the function:
     const auto baseFuncReturnType =
         stArgument ? checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)))
-                   : checker->GlobalVoidType();
+                   : checker->GlobalETSUndefinedType();
     /**
      * Spec 15.7.2 If a function, a method, or a lambda is async (see Asynchronous execution), a return
      * type is inferred by applying the above rules, and the return type T is not Promise, then the
@@ -696,16 +694,10 @@ bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *c
 checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
                                        ir::Expression *stArgument)
 {
-    auto *const relation = checker->Relation();
     const auto funcReturnType = containingFunc->Signature()->ReturnType();
-    const auto voidType = containingFunc->IsDeclaredAsync() ? checker->CreatePromiseOf(checker->GlobalVoidType())
-                                                            : checker->GlobalVoidType();
-    const auto isReturnVoid = relation->IsIdenticalTo(funcReturnType, voidType);
 
     if (stArgument == nullptr) {
-        // previous return statement(s) have value
-        if (!isReturnVoid) {
-            checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, st->Start());
+        if (!funcReturnType->IsETSUndefinedType()) {
             return funcReturnType;
         }
     } else {
@@ -719,22 +711,13 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 
         checker::Type *argumentType = checker->GetNonConstantType(stArgument->Check(checker));
 
-        // previous return statement(s) don't have any value
         ES2PANDA_ASSERT(argumentType != nullptr);
-        /*
-         * NOTE(knazarov): Workaround for Promise<void> being initialized with
-         * undefined. Should become IsIdenticalTo after #32490 is done.
-         */
-        if (isReturnVoid && !relation->IsSupertypeOf(voidType, argumentType)) {
-            checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, stArgument->Start());
-            return funcReturnType;
-        }
-
         const auto name = containingFunc->Scope()->InternalName().Mutf8();
         if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
             return funcReturnType;
         }
 
+        auto *const relation = checker->Relation();
         relation->SetNode(stArgument);
 
         if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
@@ -954,9 +937,8 @@ static bool IsValueBasedTruthinessType(const Type *const conditionType)
            conditionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::VALUE_TYPED);
 }
 
-static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const checker, const ir::Expression *const test)
+static std::optional<bool> TryResolveTypeKnownTruthiness(const ir::Expression *const test)
 {
-    ES2PANDA_ASSERT(checker != nullptr);
     ES2PANDA_ASSERT(test != nullptr);
 
     auto *const testType = const_cast<Type *>(test->TsType());
@@ -964,7 +946,7 @@ static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const check
         return std::nullopt;
     }
 
-    if (checker->IsNullLikeOrVoidExpression(test)) {
+    if (test->TsType()->DefinitelyETSNullish()) {
         return false;
     }
 
@@ -984,9 +966,9 @@ static std::optional<bool> TryResolveTypeKnownTruthiness(ETSChecker *const check
     return std::nullopt;
 }
 
-std::optional<bool> TryResolveConditionalTestValue(ETSChecker *const checker, const ir::Expression *const test)
+std::optional<bool> TryResolveConditionalTestValue(const ir::Expression *const test)
 {
-    if (auto const value = TryResolveTypeKnownTruthiness(checker, test); value.has_value()) {
+    if (auto const value = TryResolveTypeKnownTruthiness(test); value.has_value()) {
         return value;
     }
 

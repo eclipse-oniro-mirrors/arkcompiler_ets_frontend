@@ -96,11 +96,9 @@ static void CheckInstantiationConstraints(ETSChecker *checker, ArenaVector<Type 
         if (typeArg->IsTypeError()) {
             continue;
         }
-        // NOTE(vpukhov): #19701 void refactoring
-        ES2PANDA_ASSERT(typeArg->IsETSReferenceType() || typeArg->IsETSVoidType());
-        auto maybeIrrelevantTypeArg = typeArg->IsETSVoidType() ? checker->GlobalETSUndefinedType() : typeArg;
+        ES2PANDA_ASSERT(typeArg->IsETSReferenceType());
         auto constraint = typeParam->GetConstraintType()->Substitute(relation, substitution);
-        if (!relation->IsSupertypeOf(constraint, maybeIrrelevantTypeArg)) {
+        if (!relation->IsSupertypeOf(constraint, typeArg)) {
             checker->LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING, {typeArg, constraint}, pos);
         }
     }

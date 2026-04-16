@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,6 @@ async function foo2(): Promise<boolean> {
 async function foo3(): Promise<String> {
 }
 
-/* @@? 16:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
-/* @@? 19:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
-/* @@? 22:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@? 16:16 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */
+/* @@? 19:16 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */
+/* @@? 22:16 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */

@@ -649,16 +649,6 @@ static ir::MethodDefinition *CreateCalleeStackfull(public_lib::Context *ctx, ir:
     cmInfo.forcedReturnType = forcedReturnType;
     if (isAsync) {
         cmInfo.auxFunctionFlags = ir::ScriptFunctionFlags::ASYNC_IMPL;
-        auto retTypeAnnotation = lambda->Function()->ReturnTypeAnnotation();
-        if (retTypeAnnotation != nullptr && retTypeAnnotation->TsType()->IsETSObjectType()) {
-            auto retType = retTypeAnnotation->TsType()->AsETSObjectType();
-            if ((retType->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType() ||
-                 retType->GetOriginalBaseType() == checker->GlobalBuiltinPromiseLikeType()) &&
-                retType->TypeArguments().front() == checker->GlobalVoidType()) {
-                cmInfo.auxFunctionFlags =
-                    ir::ScriptFunctionFlags::ASYNC_IMPL_RETURN_PROMISEVOID | cmInfo.auxFunctionFlags;
-            }
-        }
     }
     auto *method = CreateCalleeMethod(ctx, lambda, info, &cmInfo);
 
@@ -1124,7 +1114,7 @@ static void AddReturnStmtToInvokeBodyStatements(public_lib::Context *ctx, Lambda
     const auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *anyType = checker->GlobalETSAnyType();
 
-    if (lciInfo->lambdaSignature->ReturnType() != checker->GlobalVoidType()) {
+    if (!lciInfo->lambdaSignature->ReturnType()->IsETSUndefinedType()) {
         auto *returnExpr = parser->CreateFormattedExpression("@@E1 as @@T2", call, anyType);
         auto *returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(allocator, returnExpr);
         bodyStmts.push_back(returnStmt);
@@ -1655,7 +1645,7 @@ static ir::ScriptFunction *GetWrappingLambdaParentFunction(public_lib::Context *
     auto *callExpr = util::NodeAllocator::ForceSetParent<ir::CallExpression>(allocator, funcRef, std::move(callArgs),
                                                                              nullptr, false);
     ir::Statement *stmt;
-    if (signature->ReturnType() == ctx->GetChecker()->AsETSChecker()->GlobalVoidType()) {
+    if (signature->ReturnType()->IsETSUndefinedType()) {
         stmt = util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(allocator, callExpr);
     } else {
         stmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(allocator, callExpr);

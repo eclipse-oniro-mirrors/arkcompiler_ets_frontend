@@ -33,7 +33,7 @@ function bar(x: A|B) {
 
 /* @@? 27:19 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 27:19 Error Semantic error ESE0127: No matching call signature for foo("123") */
-/* @@? 27:19 Error Semantic error ESE0139: Signature foo(v: String): void is not visible here. */
+/* @@? 27:19 Error Semantic error ESE0139: Signature foo(v: String): undefined is not visible here. */
 /* @@? 31:20 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 31:20 Error Semantic error ESE0127: No matching call signature for bar("123") */
-/* @@? 31:20 Error Semantic error ESE0139: Signature bar(v: String): void is not visible here. */
+/* @@? 31:20 Error Semantic error ESE0139: Signature bar(v: String): undefined is not visible here. */

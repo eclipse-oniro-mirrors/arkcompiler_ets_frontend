@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,9 +18,7 @@
 namespace ark::es2panda::checker {
 void ETSVoidType::Identical(TypeRelation *relation, Type *other)
 {
-    if (other->IsETSVoidType()) {
-        relation->Result(true);
-    }
+    relation->Result(other->IsETSVoidType() || other->IsETSUndefinedType());
 }
 
 void ETSVoidType::IsSupertypeOf(TypeRelation *const relation, Type *source)
@@ -30,24 +28,13 @@ void ETSVoidType::IsSupertypeOf(TypeRelation *const relation, Type *source)
 
 bool ETSVoidType::AssignmentSource(TypeRelation *relation, Type *target)
 {
-    // NOTE(vpukhov): #19701 void refactoring
-    if (!target->IsETSUndefinedType()) {
-        Identical(relation, target);
-    } else {
-        relation->Result(true);
-    }
-
+    Identical(relation, target);
     return relation->IsTrue();
 }
 
 void ETSVoidType::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source)
 {
-    // NOTE(vpukhov): #19701 void refactoring
-    if (!source->IsETSUndefinedType()) {
-        Identical(relation, source);
-    } else {
-        relation->Result(true);
-    }
+    Identical(relation, source);
 }
 
 Type *ETSVoidType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,

@@ -216,7 +216,7 @@ bool ForOfStatement::CheckReturnTypeOfIteratorMethod(checker::ETSChecker *checke
                                                      checker::Signature *signature,
                                                      const lexer::SourcePosition &position)
 {
-    if ((signature->ReturnType() == nullptr || signature->ReturnType() == checker->GlobalVoidType()) &&
+    if ((signature->ReturnType() == nullptr || signature->ReturnType()->IsETSUndefinedType()) &&
         signature->Function()->HasBody() && signature->Function()->Body()->IsBlockStatement()) {
         for (auto *const it : signature->Function()->Body()->AsBlockStatement()->Statements()) {
             if (it->IsReturnStatement()) {

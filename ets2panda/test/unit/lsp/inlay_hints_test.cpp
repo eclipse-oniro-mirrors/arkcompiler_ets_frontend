@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -256,7 +256,7 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest2)
         };
 
     )"};
-    const std::string voidString = "void";
+    const std::string undefinedStr = "undefined";
     const std::string stdString = "String";
 
     const size_t greetIndex = 95;
@@ -283,7 +283,7 @@ TEST_F(LSPInlayHintsTests, VisitFunctionDeclarationLikeForReturnTypeTest2)
     });
     ASSERT_EQ(result.hints[i1].text, stdString);
     ASSERT_EQ(result.hints[i1].number, greetIndex);
-    ASSERT_EQ(result.hints[i2].text, voidString);
+    ASSERT_EQ(result.hints[i2].text, undefinedStr);
     ASSERT_EQ(result.hints[i2].number, sayHelloIndex);
     initializer.DestroyContext(ctx);
 }

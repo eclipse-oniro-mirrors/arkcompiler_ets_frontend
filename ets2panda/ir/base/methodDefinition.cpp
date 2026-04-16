@@ -407,8 +407,7 @@ void MethodDefinition::InitializeOverloadInfo()
     ES2PANDA_ASSERT(this->Function() != nullptr);
 
     SetOverloadInfo({this->Function()->Signature()->MinArgCount(), this->Function()->Signature()->ArgCount(), false,
-                     this->IsDeclare(), (this->Function()->Signature()->RestVar() != nullptr),
-                     this->Function()->Signature()->ReturnType()->IsETSVoidType()});
+                     this->IsDeclare(), (this->Function()->Signature()->RestVar() != nullptr)});
 }
 
 void MethodDefinition::ResetOverloads()

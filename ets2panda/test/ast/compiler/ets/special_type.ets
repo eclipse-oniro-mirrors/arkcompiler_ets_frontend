@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,8 +28,7 @@ foo5(()=>{})
 /* @@? 17:17 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
 /* @@? 18:17 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
 /* @@? 19:17 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
-/* @@? 22:1 Error Semantic error ESE0127: No matching call signature for foo2((() => void)) */
-/* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo3((() => void)) */
-/* @@? 24:1 Error Semantic error ESE0127: No matching call signature for foo4((() => void)) */
-/* @@? 25:1 Error Semantic error ESE0127: No matching call signature for foo5((() => void)) */
-
+/* @@? 22:1 Error Semantic error ESE0127: No matching call signature for foo2((() => undefined)) */
+/* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo3((() => undefined)) */
+/* @@? 24:1 Error Semantic error ESE0127: No matching call signature for foo4((() => undefined)) */
+/* @@? 25:1 Error Semantic error ESE0127: No matching call signature for foo5((() => undefined)) */

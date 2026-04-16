@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,36 +68,6 @@ bool GetterSetterValidation::ValidateGetter(ir::MethodDefinition const *const me
     // Check getter flag
     if (!function->IsGetter()) {
         report("GETTER METHOD DOES NOT HAVE GETTER FLAG");
-    }
-
-    // Check return type annotation if it exists
-    if (function->ReturnTypeAnnotation() != nullptr) {
-        auto const *const type = function->ReturnTypeAnnotation()->TsType();
-        if (type != nullptr && type->IsETSVoidType()) {
-            report("GETTER METHOD HAS VOID RETURN TYPE IN RETURN TYPE ANNOTATION");
-        }
-    }
-
-    // For non-abstract, non-ambient and non-native getters return statement should always exist
-    if (!function->HasReturnStatement() && !function->HasThrowStatement() && !function->IsAbstract() &&
-        !function->IsDeclare() && !function->IsNative()) {
-        report("MISSING RETURN STATEMENT IN GETTER METHOD");
-    }
-
-    // Check return statements
-    auto const &returns = function->ReturnStatements();
-    if (function->ReturnTypeAnnotation() == nullptr) {
-        if (returns.empty()) {
-            report("MISSING RETURN TYPE ANNOTATION AND RETURN STATEMENT IN GETTER METHOD");
-        }
-    }
-
-    // Check that all return statements are not void
-    for (auto const *const stmt : returns) {
-        if (stmt->ReturnType()->IsETSVoidType()) {
-            // All getters should have non-void return type
-            report("GETTER METHOD HAS VOID RETURN TYPE");
-        }
     }
 
     // Check number of arguments

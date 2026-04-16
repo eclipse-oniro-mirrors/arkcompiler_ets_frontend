@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,4 @@
 function void1(i: int) {}
 let fn: (i: int) => int = /* @@ label */void1;
 
-/* @@@ label Error Semantic error ESE0318: Type '((p1: Int) => void)' cannot be assigned to type '((p1: Int) => Int)' */
+/* @@@ label Error Semantic error ESE0318: Type '((p1: Int) => undefined)' cannot be assigned to type '((p1: Int) => Int)' */

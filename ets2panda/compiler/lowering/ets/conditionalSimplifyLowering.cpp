@@ -94,7 +94,7 @@ static bool IsSafeToEraseConstantTest(const ir::Expression *const test)
 
 static ir::AstNode *SimplifyConditional(checker::ETSChecker *const checker, ir::ConditionalExpression *const expr)
 {
-    auto const testValue = checker::TryResolveConditionalTestValue(checker, expr->Test());
+    auto const testValue = checker::TryResolveConditionalTestValue(expr->Test());
     if (!testValue.has_value() || !IsSafeToEraseConstantTest(expr->Test())) {
         return expr;
     }

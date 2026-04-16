@@ -27,4 +27,4 @@ class B extends A implements C{
 
 /* @@? 25:5 Error Semantic error ESE985118: Class member AAA with type Int in B cannot implement AAA with type Double property from interface C because the implementing return type is not compatible with the interface return type. */
 /* @@? 25:5 Error Semantic error ESE0136: Method AAA(): Int in B not overriding any method */
-/* @@? 25:5 Error Semantic error ESE0136: Method AAA(AAA: Int): void in B not overriding any method */
+/* @@? 25:5 Error Semantic error ESE0136: Method AAA(AAA: Int): undefined in B not overriding any method */
