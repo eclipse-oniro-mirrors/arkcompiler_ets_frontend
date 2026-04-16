@@ -219,6 +219,10 @@ semantic:
   message: "Return type of async function must be 'Promise'."
   code_fix_ids: [FixReturnTypeInAsyncFunction]
 
+- name: ASYNC_MAIN_BAD_RETURN
+  id: 1097099
+  message: "The return type of the async main function must be either Promise<void> or Promise<int>."
+
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
   message: "Await in non-aysnc function is deprecated, please move it to async function."
@@ -910,7 +914,7 @@ semantic:
 
 - name: MAIN_BAD_RETURN
   id: 88
-  message: "Bad return type, main enable only void or int type."
+  message: "The return type of the main function must be either void or int."
 
 - name: MAIN_INVALID_ARG_COUNT
   id: 133
