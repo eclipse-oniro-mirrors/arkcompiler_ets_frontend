@@ -174,7 +174,7 @@ warning:
   id: 1049305
   message: "An overridden field '{}' must be initialized explicitly, either by using an initializer or in a constructor."
   strict: true
-  whitelist: ["override_field_init"]
+  softlist: ["override_field_init"]
 
 - name: PACKAGE_DEPRECATED_WARNING
   id: 163154
