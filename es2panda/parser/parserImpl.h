@@ -280,25 +280,33 @@ private:
                                         bool abstractConstructor = false);
     ir::TSTypeParameter *ParseTsMappedTypeParameter();
     ir::MappedOption ParseMappedOption(lexer::TokenType tokenType);
-    ir::TSMappedType *ParseTsMappedType();
+    bool CheckExpectedTokenOrReturn(lexer::TokenType expected, const char *msg, bool throwError);
+    ir::TSMappedType *ParseTsMappedType(bool throwError);
     ir::TSTypePredicate *ParseTsTypePredicate();
     void ParseTsTypeLiteralOrInterfaceKeyModifiers(bool *isGetAccessor, bool *isSetAccessor);
     ir::Expression *ParseTsTypeLiteralOrInterfaceKey(bool *computed, bool *signature, bool *isIndexSignature);
     void ValidateIndexSignatureParameterType(ir::Expression *typeAnnotation);
     ir::Expression *ParseTsConditionalType(ir::Expression *checkType, bool restrictExtends);
     ir::Expression *ParseTsTypeLiteralOrInterfaceMember();
-    ArenaVector<ir::Expression *> ParseTsTypeLiteralOrInterface();
+    bool ParseTsTypeLiteralSeparator(bool throwError, ArenaVector<ir::Expression *> *members);
+    ArenaVector<ir::Expression *> ParseTsTypeLiteralOrInterface(bool throwError = true);
     ir::Expression *ParseTsThisType(bool throwError);
     ir::Expression *ParseTsIndexAccessType(ir::Expression *typeName, bool throwError);
     ir::Expression *ParseTsQualifiedReference(ir::Expression *typeName);
     ir::Expression *ParseTsTypeReferenceOrQuery(TypeAnnotationParsingOptions options, bool parseQuery = false);
     bool IsTSNamedTupleMember();
-    void HandleRestType(ir::AstNodeType elementType, bool *hasRestType) const;
-    ir::Expression *ParseTsTupleElement(ir::TSTupleKind *kind, bool *seenOptional, bool *hasRestType);
-    ir::TSTupleType *ParseTsTupleType();
+    bool HandleRestType(ir::AstNodeType elementType, bool *hasRestType, bool throwError) const;
+    ir::Expression *ParseTsNamedTupleElement(const lexer::SourcePosition &startPos, bool isRestType,
+                                             bool *seenOptional, bool *hasRestType,
+                                             TypeAnnotationParsingOptions options);
+    ir::Expression *ParseTsDefaultTupleElement(const lexer::SourcePosition &startPos, bool isRestType,
+                                               bool *seenOptional, bool *hasRestType,
+                                               TypeAnnotationParsingOptions options);
+    ir::Expression *ParseTsTupleElement(ir::TSTupleKind *kind, bool *seenOptional, bool *hasRestType, bool throwError);
+    ir::TSTupleType *ParseTsTupleType(bool throwError);
     ir::TSImportType *ParseTsImportType(const lexer::SourcePosition &startLoc, bool isTypeof = false);
     ir::Expression *ParseTsTypeAnnotation(TypeAnnotationParsingOptions *options);
-    ir::Expression *ParseTsTypeLiteralOrTsMappedType(ir::Expression *typeAnnotation);
+    ir::Expression *ParseTsTypeLiteralOrTsMappedType(ir::Expression *typeAnnotation, bool throwError);
     ir::Expression *ParseTsTypeReferenceOrTsTypePredicate(ir::Expression *typeAnnotation, bool canBeTsTypePredicate,
                                                           bool throwError);
     ir::Expression *ParseTsThisTypeOrTsTypePredicate(ir::Expression *typeAnnotation, bool canBeTsTypePredicate,
