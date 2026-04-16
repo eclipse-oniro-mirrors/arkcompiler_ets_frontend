@@ -26,7 +26,8 @@ import {
     FILE_HASH_CACHE,
     ETSCACHE_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
-    ENABLE_CLUSTERS
+    ENABLE_CLUSTERS,
+    ENABLE_DECL_FILE_CACHE
 } from './pre_define';
 
 import {
@@ -46,7 +47,8 @@ import {
     JobContentType,
     JobInfo,
     FileInfo,
-    OHOS_MODULE_TYPE
+    OHOS_MODULE_TYPE,
+    isHarOrHsp
 } from './types'
 
 import {
@@ -108,6 +110,7 @@ export class DependencyAnalyzer {
     private readonly statsRecorder: StatisticsRecorder;
     private readonly dumpGraph: boolean = false;
     private readonly clusteredBuild: boolean = false;
+    private readonly mainModuleType: OHOS_MODULE_TYPE;
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
@@ -132,6 +135,7 @@ export class DependencyAnalyzer {
 
         this.clusteredBuild = clusteredBuild;
         this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
+        this.mainModuleType = buildConfig.moduleType;
     }
 
     private loadHashCache(): Record<string, string> {
@@ -300,6 +304,16 @@ export class DependencyAnalyzer {
 
     private createDependencyGraph(entryFiles: Set<string>, fileToModule: Map<string, ModuleInfo>, dependencyMap: DependencyFileMap) {
         const dependencyGraphNodes: GraphNode<CompileJobInfo>[] = [];
+        /*
+         * Althrough we will set jobType in filterGraph again , but when there is a cycle in the dependency graph
+         * we should recompile abc for hap 
+         * recompile abc and regenerate decl for har and hsp
+         */
+        let jobType = CompileJobType.ABC;
+        if(isHarOrHsp(this.mainModuleType) && ENABLE_DECL_FILE_CACHE) {
+            jobType |= CompileJobType.DECL;
+        }
+
         for (const file of entryFiles) {
             const module: ModuleInfo = fileToModule.get(file)!
             const node = new GraphNode<CompileJobInfo>(computeHash(file), {
@@ -314,7 +328,7 @@ export class DependencyAnalyzer {
                 declgenConfig: {
                     output: module.declgenV2OutPath!
                 },
-                jobType: CompileJobType.NONE
+                jobType: jobType
             });
             if (dependencyMap.dependencies[file]) {
                 for (const dependency of dependencyMap.dependencies[file]) {
@@ -443,13 +457,12 @@ export class DependencyAnalyzer {
             const input = fi.input;
             const outputAbc = fi.output;
             const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
-
-            const module: ModuleInfo = fileToModule.get(input)!;
-            const isHarOrHsp: boolean = module.moduleType === OHOS_MODULE_TYPE.HAR ||
-                module.moduleType === OHOS_MODULE_TYPE.SHARED;
             const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
-            const genDecl: boolean = isHarOrHsp && (hashChanged || shouldBeUpdated(input, outputDecl));
             const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
+            let genDecl: boolean = false;
+            if(isHarOrHsp(this.mainModuleType)) {
+                genDecl = ENABLE_DECL_FILE_CACHE && (hashChanged || shouldBeUpdated(input, outputDecl));
+            }
 
             if (!compileAbc && !genDecl) {
                 this.logger.printDebug(`Skipping file ${input} compilation`);
