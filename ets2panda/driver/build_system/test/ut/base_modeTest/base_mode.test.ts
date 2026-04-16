@@ -1147,6 +1147,7 @@ describe('BaseMode', () => {
             enableDeclgenEts2Ts: false,
             logger: require('../../../src/logger').Logger.getInstance(),
             arktsConfigGenerator: genInstance,
+            generateDependencyOhmUrlMap: jest.fn(),
         };
 
         fn.call(ctx);

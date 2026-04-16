@@ -60,6 +60,9 @@ export const COMPONENT: string = 'component';
 
 export const DYNAMIC_PREFIX: string = 'dynamic/';
 
+export const CONTEXT_DATA_STORAGE_BUNDLE: string = '/data/storage/el1/bundle/';
+export const DYNAMIC_ABC_FILE: string = 'modules.abc';
+
 export const STATIC_RECORD_FILE_CONTENT: string = `// generated for static Record
 export type Record<K extends keyof any, T> = {
   [P in K]: T;

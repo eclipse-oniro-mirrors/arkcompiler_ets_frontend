@@ -33,6 +33,7 @@ export enum OHOS_MODULE_TYPE {
     FEATURE = 'feature',
     SHARED = 'shared',
     HAR = 'har',
+    ENTRY = 'entry'
 }
 
 export function isHarOrHsp(moduleType: OHOS_MODULE_TYPE): boolean {

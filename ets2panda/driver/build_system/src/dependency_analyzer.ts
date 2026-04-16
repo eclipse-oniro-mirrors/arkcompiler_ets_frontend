@@ -27,7 +27,8 @@ import {
     ETSCACHE_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
     ENABLE_CLUSTERS,
-    ENABLE_DECL_FILE_CACHE
+    ENABLE_DECL_FILE_CACHE,
+    ABC_SUFFIX
 } from './pre_define';
 
 import {
@@ -322,7 +323,7 @@ export class DependencyAnalyzer {
                 contentType: JobContentType.FILE,
                 content: {
                     input: file,
-                    output: dependencyMap.outputMatching[file],
+                    output: dependencyMap.outputMatching[file] ?? changeFileExtension(file, ABC_SUFFIX),
                 },
                 arktsConfig: module.arktsConfigFile,
                 moduleName: module.packageName,
@@ -365,7 +366,7 @@ export class DependencyAnalyzer {
 
         // NOTE(mshimenkov): Collect output files to pass them to the linker later
         dependencyGraph.nodes.forEach((node: GraphNode<CompileJobInfo>) => {
-            outputs.push(dependencyMap.outputMatching[(node.data.content as FileInfo).input]);
+            outputs.push((node.data.content as FileInfo).output);
         });
 
         this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));

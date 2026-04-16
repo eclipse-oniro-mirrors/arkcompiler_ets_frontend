@@ -42,68 +42,6 @@ static bool IsInitModuleCall(ir::AstNode *node)
     return false;
 }
 
-static bool IsESValueLoadCall(ir::AstNode *node)
-{
-    if (!node->IsCallExpression()) {
-        return false;
-    }
-    auto *callee = node->AsCallExpression()->Callee();
-    if (!callee->IsMemberExpression() || !callee->AsMemberExpression()->Object()->IsIdentifier() ||
-        !callee->AsMemberExpression()->Property()->IsIdentifier()) {
-        return false;
-    }
-    auto *object = callee->AsMemberExpression()->Object();
-    auto *property = callee->AsMemberExpression()->Property();
-    if (object->AsIdentifier()->Name() == compiler::Signatures::ESVALUE &&
-        property->AsIdentifier()->Name() == compiler::Signatures::LOAD) {
-        return true;  // NOLINT(readability-simplify-boolean-expr)
-    }
-    return false;
-}
-
-static ir::AstNode *CreateModuleCallExpressionForDynamic(public_lib::Context *ctx, ir::CallExpression *callExpr,
-                                                         const util::ImportInfo &importInfo)
-{
-    std::string_view ohmUrl {importInfo.OhmUrl()};
-    auto allocator = ctx->allocator;
-    auto esvalueIdent = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::ESVALUE, allocator);
-    auto loadOp = util::NodeAllocator::Alloc<ir::Identifier>(allocator, Signatures::LOAD, allocator);
-    auto memberExpr = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
-        allocator, esvalueIdent, loadOp, ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
-    ArenaVector<ir::Expression *> arguments(allocator->Adapter());
-    auto ohmurlPath = util::NodeAllocator::Alloc<ir::StringLiteral>(allocator, util::UString(ohmUrl, allocator).View());
-    arguments.emplace_back(ohmurlPath);
-    auto loweredCallExpr = util::NodeAllocator::ForceSetParent<ir::CallExpression>(
-        allocator, memberExpr, std::move(arguments), nullptr, false);
-    loweredCallExpr->SetParent(callExpr->Parent());
-    return loweredCallExpr;
-}
-
-static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callExpr, public_lib::Context *ctx,
-                                                       parser::Program *program)
-{
-    auto importPath = callExpr->Arguments().front();
-    if (!importPath->IsStringLiteral()) {
-        return callExpr;
-    }
-    auto *parser = ctx->parser->AsETSParser();
-    auto *importPathStr = importPath->AsStringLiteral();
-    auto *gatheredImportInfo = parser->GetImportPathManager()->GatherImportInfo(program, importPathStr);
-    if (gatheredImportInfo == nullptr) {
-        ES2PANDA_ASSERT(ctx->diagnosticEngine->IsAnyError());
-        auto *allocator = ctx->allocator;
-        auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
-        node->SetRange(callExpr->Range());
-        node->SetParent(callExpr->Parent());
-        return node;
-    }
-    auto metaData = gatheredImportInfo->GetImportInfo();
-    if (!metaData.OhmUrl().empty()) {
-        return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData);
-    }
-    return callExpr;
-}
-
 static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callExpr, public_lib::Context *ctx,
                                                       parser::Program *program)
 {
@@ -118,10 +56,6 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
         node->SetRange(callExpr->Range());
         node->SetParent(callExpr->Parent());
         return node;
-    }
-
-    if (dependentProg->IsDeclForDynamicStaticInterop()) {
-        return CreateModuleCallExpressionForDynamic(ctx, callExpr, dependentProg->GetImportInfo());
     }
 
     ArenaVector<ir::Expression *> params(allocator->Adapter());
@@ -148,9 +82,6 @@ bool InitModuleLowering::PerformForProgram(parser::Program *program)
         [ctx = Context(), program](checker::AstNodePtr node) -> checker::AstNodePtr {
             if (IsInitModuleCall(node)) {
                 return TransformInitModuleCallExpression(node->AsCallExpression(), ctx, program);
-            }
-            if (IsESValueLoadCall(node)) {
-                return TransformESValueLoadCallExpression(node->AsCallExpression(), ctx, program);
             }
             return node;
         },
