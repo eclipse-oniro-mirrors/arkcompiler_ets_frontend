@@ -452,7 +452,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorExponentiation(
         return GlobalTypeError();
     }
 
-    return promotedType;
+    // Exponentiation of non-bigint numeric types always produces double
+    return GlobalDoubleType();
 }
 
 static checker::Type *CheckBinaryOperatorPlusForEnums(ETSChecker *checker, checker::Type *const leftType,
