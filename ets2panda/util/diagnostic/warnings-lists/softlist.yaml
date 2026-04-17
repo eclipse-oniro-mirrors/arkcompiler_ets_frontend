@@ -17,7 +17,6 @@ softlist:
   - ".*/xts/acts/.*"
   - ".*/test/xts/.*"
   - ".*/ability/ability_runtime/.*"
-  - ".*/window/window_manager/.*"
   - ".*/generated/.*"
   - ".*/arkui/ace_engine/advanced_ui_component_static/.*"
   - ".*/arkui/ace_engine/examples/.*"
