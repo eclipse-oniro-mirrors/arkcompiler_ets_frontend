@@ -600,10 +600,9 @@ static ir::CallExpression *TransformCallExpressionWithRestArgs(ir::CallExpressio
     return RebuildCallExpression(context, callExpr, signature, arg);
 }
 
-static bool IsInsideSyntheticFunction(ir::CallExpression *callExpr)
+static bool IsInsideSyntheticFunction(ir::AstNode *node)
 {
-    // Check if the call is inside a synthetic function (proxy method)
-    for (ir::AstNode *curr = callExpr->Parent(); curr != nullptr; curr = curr->Parent()) {
+    for (ir::AstNode *curr = node->Parent(); curr != nullptr; curr = curr->Parent()) {
         if (curr->IsScriptFunction()) {
             auto *scriptFunc = curr->AsScriptFunction();
             if ((scriptFunc->Flags() & ir::ScriptFunctionFlags::SYNTHETIC) != 0) {
@@ -635,6 +634,9 @@ static bool ShouldTransformCallWithSpreadTuple(ir::CallExpression *callExpr)
     }
 
     const auto &args = callExpr->Arguments();
+    if (args.empty() || !args.back()->IsSpreadElement()) {
+        return false;
+    }
     return args.size() == callExpr->Signature()->Params().size() + 1;
 }
 
@@ -672,6 +674,42 @@ static ir::BlockExpression *CreateTupleRestArgsBlockExpression(public_lib::Conte
 
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
     return blockExpr;
+}
+
+static bool ShouldTransformNewClassWithSpreadTuple(ir::ETSNewClassInstanceExpression *expr)
+{
+    if (IsInsideSyntheticFunction(expr)) {
+        return false;
+    }
+
+    if (expr->Signature() == nullptr || !expr->Signature()->HasRestParameter()) {
+        return false;
+    }
+
+    auto *restVar = expr->Signature()->RestVar();
+    if (restVar == nullptr || !restVar->TsType()->IsETSTupleType()) {
+        return false;
+    }
+
+    const auto &args = expr->GetArguments();
+    if (args.empty() || !args.back()->IsSpreadElement()) {
+        return false;
+    }
+    return args.size() == expr->Signature()->Params().size() + 1;
+}
+
+static ir::ETSNewClassInstanceExpression *TransformNewClassWithSpreadTuple(public_lib::Context *ctx,
+                                                                           ir::ETSNewClassInstanceExpression *expr)
+{
+    auto *allocator = ctx->allocator;
+    auto *signature = expr->Signature();
+    auto *spreadElement = expr->GetArguments().back()->AsSpreadElement();
+
+    auto *restArgsBlock = CreateTupleRestArgsBlockExpression(ctx, spreadElement, signature);
+
+    auto *spreadArg = ctx->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, allocator, restArgsBlock);
+    spreadArg->SetRange(restArgsBlock->Range());
+    return RebuildNewClassInstanceExpression(ctx, expr, signature, spreadArg);
 }
 
 static ir::CallExpression *TransformCallWithSpreadTuple(public_lib::Context *ctx, ir::CallExpression *callExpr)
@@ -720,7 +758,11 @@ bool RestArgsLowering::PerformForProgram(parser::Program *program)
                 return TransformCallExpressionWithRestArgs(callExpr, ctx);
             }
             if (node->IsETSNewClassInstanceExpression()) {
-                return TransformCallConstructWithRestArgs(node->AsETSNewClassInstanceExpression(), ctx);
+                auto *newClassExpr = node->AsETSNewClassInstanceExpression();
+                if (ShouldTransformNewClassWithSpreadTuple(newClassExpr)) {
+                    return TransformNewClassWithSpreadTuple(ctx, newClassExpr);
+                }
+                return TransformCallConstructWithRestArgs(newClassExpr, ctx);
             }
             return node;
         },
