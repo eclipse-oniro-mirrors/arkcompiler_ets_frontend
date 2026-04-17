@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,8 @@ for (const v2 of vStr) {
     const leftTest = v1 << v0;
 }
 
-
+/* @@? 27:20 Warning Warning W65001: The equality expression is always false. */
+/* @@? 28:21 Warning Warning W65000: The equality expression is always true. */
 /* @@? 29:21 Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */
 /* @@? 30:21 Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */
 /* @@? 31:21 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */

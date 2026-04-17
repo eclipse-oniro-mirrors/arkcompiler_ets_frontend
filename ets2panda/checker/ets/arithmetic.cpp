@@ -677,6 +677,16 @@ static bool ContainsNumbers(ETSChecker *checker, Type *tp)
     return false;
 }
 
+static bool HasBigIntNonBigIntEqualityPairing(ETSChecker *checker, Type *leftType, Type *rightType)
+{
+    auto *ul = checker->MaybeUnboxType(checker->GetApparentType(leftType));
+    auto *ur = checker->MaybeUnboxType(checker->GetApparentType(rightType));
+    if (ul == nullptr || ur == nullptr) {
+        return false;
+    }
+    return ul->IsETSBigIntType() != ur->IsETSBigIntType();
+}
+
 // CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
 // NOTE: code inside this function follows the broken logic
 bool ETSChecker::CheckValidEqualReferenceType(checker::Type *const leftType, checker::Type *const rightType)
@@ -688,6 +698,11 @@ bool ETSChecker::CheckValidEqualReferenceType(checker::Type *const leftType, che
 
     // Equality expression is always allowed for *magic types*
     if (isRelaxedType(leftType) || isRelaxedType(rightType)) {
+        return true;
+    }
+
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    if (HasBigIntNonBigIntEqualityPairing(this, leftType, rightType)) {
         return true;
     }
 
@@ -753,6 +768,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorStrictEqual(ir::Expres
     }
 
     Relation()->SetNode(left);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (!CheckValidEqualReferenceType(leftType, rightType)) {
         LogOperatorCannotBeApplied(this, operationType, leftType, rightType, pos);
     } else if (!Relation()->IsCastableTo(leftType, rightType) && !Relation()->IsCastableTo(rightType, leftType)) {
@@ -854,6 +870,10 @@ static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker,
         return std::nullopt;
     }
 
+    if (HasBigIntNonBigIntEqualityPairing(checker, leftType, rightType)) {
+        return false;
+    }
+
     leftType = checker->MaybeUnboxType(checker->GetApparentType(leftType));
     rightType = checker->MaybeUnboxType(checker->GetApparentType(rightType));
     if (leftType->IsETSEnumType() && rightType->IsETSEnumType() &&
@@ -953,6 +973,12 @@ static bool IsEqualityOperator(lexer::TokenType operationType)
            operationType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
 }
 
+static bool HasMismatchedBooleanComparands(Type *promotedType, Type *unboxedL, Type *unboxedR)
+{
+    return promotedType != nullptr && unboxedL != nullptr && unboxedR != nullptr &&
+           unboxedL->IsETSBooleanType() != unboxedR->IsETSBooleanType();
+}
+
 // NOTE(dkofanov): Deprecated operations on 'char' #28006
 std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expression *left, ir::Expression *right,
                                                                       lexer::TokenType operationType,
@@ -985,8 +1011,11 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
                 CreateETSUnionType({MaybeBoxExpression(left), MaybeBoxExpression(right)})};
     }
 
-    if (promotedType != nullptr && unboxedL != nullptr && unboxedR != nullptr &&
-        unboxedL->IsETSBooleanType() != unboxedR->IsETSBooleanType()) {
+    if (HasMismatchedBooleanComparands(promotedType, unboxedL, unboxedR)) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        if (HasBigIntNonBigIntEqualityPairing(this, leftType, rightType)) {
+            return {GlobalETSBooleanBuiltinType(), GlobalETSBooleanBuiltinType()};
+        }
         LogOperatorCannotBeApplied(this, operationType, leftType, rightType, pos);
         return {GlobalETSBooleanBuiltinType(), leftType};
     }
@@ -1442,8 +1471,23 @@ std::tuple<Type *, Type *> ETSChecker::CheckArithmeticOperations(
 }
 
 static std::tuple<Type *, Type *> ResolveCheckBinaryOperatorForBigInt(ETSChecker *checker, Type *leftType,
-                                                                      Type *rightType, lexer::TokenType operationType)
+                                                                      Type *rightType, lexer::TokenType operationType,
+                                                                      lexer::SourcePosition pos)
 {
+    if (HasBigIntNonBigIntEqualityPairing(checker, leftType, rightType)) {
+        switch (operationType) {
+            case lexer::TokenType::PUNCTUATOR_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+                checker->LogDiagnostic(diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE, pos);
+                break;
+            case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
+                checker->LogDiagnostic(diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE, pos);
+                break;
+            default:
+                break;
+        }
+    }
     switch (operationType) {
         case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
@@ -1518,7 +1562,8 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
     }
 
     if (CheckBinaryOperatorForBigInt(leftType, rightType, operationType)) {
-        return ResolveCheckBinaryOperatorForBigInt(this, leftType, rightType, operationType);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return ResolveCheckBinaryOperatorForBigInt(this, leftType, rightType, operationType, pos);
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

@@ -121,6 +121,14 @@ static bool IsRelationalExpression(const ir::BinaryExpression *expr)
            opType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
 }
 
+static bool IsEqualityExpression(const ir::BinaryExpression *expr)
+{
+    auto opType = expr->OperatorType();
+    return opType == lexer::TokenType::PUNCTUATOR_EQUAL || opType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
+           opType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL ||
+           opType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL;
+}
+
 static bool IsShiftExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
@@ -133,6 +141,9 @@ static bool IsLogicalExpression(const ir::BinaryExpression *expr)
     auto opType = expr->OperatorType();
     return opType == lexer::TokenType::PUNCTUATOR_LOGICAL_AND || opType == lexer::TokenType::PUNCTUATOR_LOGICAL_OR;
 }
+
+using ParsedBigInt = std::pair<bool, std::string>;  // {negative, normalized_digits}
+static std::optional<ParsedBigInt> ParseBigIntLiteral(util::StringView token);
 
 static bool TestLiteral(const ir::Literal *lit)
 {
@@ -148,6 +159,10 @@ static bool TestLiteral(const ir::Literal *lit)
     }
     if (lit->IsNumberLiteral()) {
         return !lit->AsNumberLiteral()->Number().IsZero();
+    }
+    if (lit->IsBigIntLiteral()) {
+        auto parsed = ParseBigIntLiteral(lit->AsBigIntLiteral()->Str());
+        return parsed.has_value() && parsed->second != "0";
     }
     ES2PANDA_UNREACHABLE();
 }
@@ -177,6 +192,96 @@ static bool IsNegativeOddInteger(const lexer::Number &number)
     const auto intValue = static_cast<int64_t>(integerPart);
     return intValue < 0 && (intValue & 1) != 0;
 }
+
+static std::optional<ParsedBigInt> ParseBigIntLiteral(util::StringView token)
+{
+    std::string src {token.Utf8()};
+    if (src.empty()) {
+        return std::nullopt;
+    }
+    if (src.back() == 'n' || src.back() == 'N') {
+        src.pop_back();
+    }
+    if (src.empty()) {
+        return std::nullopt;
+    }
+
+    ParsedBigInt parsed {false, ""};
+    size_t pos = 0;
+    if (src[0] == '+' || src[0] == '-') {
+        parsed.first = (src[0] == '-');
+        pos = 1;
+    }
+    if (pos >= src.size()) {
+        return std::nullopt;
+    }
+
+    parsed.second.reserve(src.size() - pos);
+    for (; pos < src.size(); pos++) {
+        auto c = src[pos];
+        if (c == '_') {
+            continue;
+        }
+        if (c < '0' || c > '9') {
+            return std::nullopt;
+        }
+        parsed.second.push_back(c);
+    }
+
+    if (parsed.second.empty()) {
+        return std::nullopt;
+    }
+
+    const auto firstNonZero = parsed.second.find_first_not_of('0');
+    if (firstNonZero == std::string::npos) {
+        parsed.second = "0";
+        parsed.first = false;
+    } else if (firstNonZero > 0) {
+        parsed.second.erase(0, firstNonZero);
+    }
+    return parsed;
+}
+
+static int CompareBigIntMagnitude(const std::string &lhs, const std::string &rhs)
+{
+    if (lhs.size() != rhs.size()) {
+        return lhs.size() < rhs.size() ? -1 : 1;
+    }
+    if (lhs == rhs) {
+        return 0;
+    }
+    return lhs < rhs ? -1 : 1;
+}
+
+static int CompareBigInt(const ParsedBigInt &lhs, const ParsedBigInt &rhs)
+{
+    if (lhs.first != rhs.first) {
+        return lhs.first ? -1 : 1;
+    }
+
+    const auto magCmp = CompareBigIntMagnitude(lhs.second, rhs.second);
+    return lhs.first ? -magCmp : magCmp;
+}
+
+static ir::NumberLiteral *TryNumberLiteralFromBigIntToken(ArenaAllocator *allocator, util::StringView token)
+{
+    auto parsed = ParseBigIntLiteral(token);
+    if (!parsed.has_value()) {
+        return nullptr;
+    }
+
+    std::string compact = parsed->first ? "-" + parsed->second : parsed->second;
+    errno = 0;
+    char *endPtr = nullptr;
+    const auto v = std::strtoll(compact.c_str(), &endPtr, 10);
+    if (endPtr != compact.c_str() + compact.size() || errno == ERANGE) {
+        return nullptr;
+    }
+
+    auto num = lexer::Number(static_cast<int64_t>(v));
+    return util::NodeAllocator::Alloc<ir::NumberLiteral>(allocator, num);
+}
+
 // NOTE(recep) To avoid bad accumulator verifier
 // NOTE(dkofanov): DAG-collection stage shouldn't modify AST!
 static void HandleUndefinedInLogicalExpression(public_lib::Context *context, ir::Expression *node, ir::Expression *init)
@@ -379,6 +484,10 @@ private:
         auto lit = inputs_[0];
         if (lit->IsNumberLiteral()) {
             return FoldUnaryNumericConstant(unary, lit->AsNumberLiteral());
+        }
+        // Negative bigint literal folding is not implemented yet
+        if (lit->IsBigIntLiteral()) {
+            return nullptr;
         }
 
         LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_UNARY_EXPRESSION, {}, unary->Start());
@@ -875,6 +984,40 @@ private:
         return CreateBooleanLiteral(res);
     }
 
+    ir::Literal *HandleBinaryExpression(const ir::BinaryExpression *expr, ir::Literal *left, ir::Literal *right)
+    {
+        if (left->IsNumberLiteral() && right->IsNumberLiteral()) {
+            auto leftN = left->AsNumberLiteral();
+            auto rightN = right->AsNumberLiteral();
+            if (IsBitwiseLogicalExpression(expr)) {
+                return HandleNumericBitwiseLogicalExpression(expr, leftN, rightN);
+            }
+            if (IsMultiplicativeExpression(expr)) {
+                return HandleMultiplicativeExpression(expr, leftN, rightN);
+            }
+            if (IsAdditiveExpression(expr)) {
+                return HandleNumericAdditiveExpression(expr, leftN, rightN);
+            }
+            if (IsShiftExpression(expr)) {
+                return HandleShiftExpression(expr, leftN, rightN);
+            }
+            if (IsRelationalExpression(expr)) {
+                return HandleNumericalRelationalExpression(expr, leftN, rightN);
+            }
+        } else {
+            if (IsAdditiveExpression(expr)) {
+                return PerformStringAdditiveOperation(expr, left, right);
+            }
+            if (IsBitwiseLogicalExpression(expr)) {
+                return HandleNonNumericBitwiseLogicalExpression(expr, left, right);
+            }
+            if (IsRelationalExpression(expr)) {
+                return HandleNonNumericRelationalExpression(expr, left, right);
+            }
+        }
+        return nullptr;
+    }
+
     ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, ir::Literal *left, ir::Literal *right)
     {
         auto allocator = context_->allocator;
@@ -911,34 +1054,30 @@ private:
             return HandleLogicalExpression(expr, left, right);
         }
 
-        if (left->IsNumberLiteral() && right->IsNumberLiteral()) {
-            auto leftN = left->AsNumberLiteral();
-            auto rightN = right->AsNumberLiteral();
-            if (IsBitwiseLogicalExpression(expr)) {
-                return HandleNumericBitwiseLogicalExpression(expr, leftN, rightN);
+        if (left->IsBigIntLiteral() && right->IsBigIntLiteral() && IsEqualityExpression(expr)) {
+            auto *leftNum = TryNumberLiteralFromBigIntToken(context_->allocator, left->AsBigIntLiteral()->Str());
+            auto *rightNum = TryNumberLiteralFromBigIntToken(context_->allocator, right->AsBigIntLiteral()->Str());
+            if ((leftNum != nullptr) && (rightNum != nullptr)) {
+                return HandleNumericalRelationalExpression(expr, leftNum, rightNum);
             }
-            if (IsMultiplicativeExpression(expr)) {
-                return HandleMultiplicativeExpression(expr, leftN, rightN);
+
+            auto leftBig = ParseBigIntLiteral(left->AsBigIntLiteral()->Str());
+            auto rightBig = ParseBigIntLiteral(right->AsBigIntLiteral()->Str());
+            if (leftBig.has_value() && rightBig.has_value()) {
+                const auto cmp = CompareBigInt(*leftBig, *rightBig);
+                return PerformRelationOperation(cmp, 0, expr->OperatorType(), expr);
             }
-            if (IsAdditiveExpression(expr)) {
-                return HandleNumericAdditiveExpression(expr, leftN, rightN);
-            }
-            if (IsShiftExpression(expr)) {
-                return HandleShiftExpression(expr, leftN, rightN);
-            }
-            if (IsRelationalExpression(expr)) {
-                return HandleNumericalRelationalExpression(expr, leftN, rightN);
-            }
-        } else {
-            if (IsAdditiveExpression(expr)) {
-                return PerformStringAdditiveOperation(expr, left, right);
-            }
-            if (IsBitwiseLogicalExpression(expr)) {
-                return HandleNonNumericBitwiseLogicalExpression(expr, left, right);
-            }
-            if (IsRelationalExpression(expr)) {
-                return HandleNonNumericRelationalExpression(expr, left, right);
-            }
+        }
+
+        if (left->IsBigIntLiteral() || right->IsBigIntLiteral()) {
+            // BigInt handling in this phase is intentionally limited to bigint-bigint equality.
+            // Other bigint-involved expressions should be handled by checker/runtime to avoid
+            // emitting lowering-time wrong-operand diagnostics.
+            return nullptr;
+        }
+
+        if (auto *res = HandleBinaryExpression(expr, left, right); res != nullptr) {
+            return res;
         }
 
         // If the expression cannot be folded, it has no sence (like `1 ?? 2`), so raise type error.
@@ -1033,25 +1172,8 @@ static void LogErrorUnconverted(ir::PrimitiveType dst, ir::PrimitiveType src, ut
     }
 }
 
-static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constraint, ir::Literal *literal)
+static bool TryCastInteger(lexer::Number &number, ir::PrimitiveType dst)
 {
-    if (literal->IsStringLiteral()) {
-        return true;
-    }
-
-    auto dst = TryExtractPrimitiveType(constraint);
-    if (dst == ir::PrimitiveType::VOID) {
-        // NOTE(dkofanov): ConstFolding supported only for primitives or strings.
-        return false;
-    }
-
-    if (literal->IsBooleanLiteral() || literal->IsCharLiteral() || (dst == ir::PrimitiveType::BOOLEAN) ||
-        (dst == ir::PrimitiveType::CHAR)) {
-        return (literal->IsBooleanLiteral() && (dst == ir::PrimitiveType::BOOLEAN)) ||
-               (literal->IsCharLiteral() && (dst == ir::PrimitiveType::CHAR));
-    }
-
-    auto &number = literal->AsNumberLiteral()->Number();
     bool converted = false;
     switch (dst) {
         case ir::PrimitiveType::DOUBLE:
@@ -1075,7 +1197,43 @@ static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constrain
         default:
             ES2PANDA_UNREACHABLE();
     }
+    return converted;
+}
 
+static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constraint, ir::Literal *literal)
+{
+    if (literal->IsStringLiteral()) {
+        return true;
+    }
+
+    if (literal->IsBigIntLiteral()) {
+        if (constraint->IsTSBigintKeyword()) {
+            return true;
+        }
+
+        if (auto typeRef = Cast<ir::ETSTypeReference>(constraint); typeRef != nullptr) {
+            if (auto part = typeRef->Part(); part->Name()->IsIdentifier() && (part->Previous() == nullptr)) {
+                auto name = part->Name()->AsIdentifier()->Name().Utf8();
+                return name == "bigint" || name == "BigInt";
+            }
+        }
+        return false;
+    }
+
+    auto dst = TryExtractPrimitiveType(constraint);
+    if (dst == ir::PrimitiveType::VOID) {
+        // NOTE(dkofanov): ConstFolding supported only for primitives or strings.
+        return false;
+    }
+
+    if (literal->IsBooleanLiteral() || literal->IsCharLiteral() || (dst == ir::PrimitiveType::BOOLEAN) ||
+        (dst == ir::PrimitiveType::CHAR)) {
+        return (literal->IsBooleanLiteral() && (dst == ir::PrimitiveType::BOOLEAN)) ||
+               (literal->IsCharLiteral() && (dst == ir::PrimitiveType::CHAR));
+    }
+
+    auto &number = literal->AsNumberLiteral()->Number();
+    bool converted = TryCastInteger(number, dst);
     if (!converted) {
         LogErrorUnconverted(dst, GetPrimitiveType(number), de, constraint->Start());
     }
