@@ -37,5 +37,5 @@ All "bad warnings" are marked with `strict: true` flag in ets_frontend/ets2panda
 Some recommendations of which list is better to use:
 - If you have many files that you want to suppress - use soft list
 - If your repository/subdirectory is already in soft list, and you want to partly fix several files from it,
-it is better to add them into hard list, and do not modify whitelist. Remember that priority is higher for 
+it is better to add them into hard list, and do not modify soft list. Remember that priority is higher for 
 hard lists if there is an intersection between two lists for the same warning.
