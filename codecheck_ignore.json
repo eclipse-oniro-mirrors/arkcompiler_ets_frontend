@@ -34,6 +34,7 @@
     "ets2panda/bindings/native/include/dynamic-loader.h": "*",
     "ets2panda/arkts_bindings/src/global.ets": "*",
     "ets2panda/arkts_bindings/native/src/ets-types.h": "*",
+    "ets2panda/compiler/lowering/ets/interfaceObjectLiteralLowering.cpp": "*",
     "*": ["G.CMT.03", "G.FMT.11", "G.NAM.03", "huge_headerfile", "huge_non_headerfile", "bc-30001"]
 }
 
