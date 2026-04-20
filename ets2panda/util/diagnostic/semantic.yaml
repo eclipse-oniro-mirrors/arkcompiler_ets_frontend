@@ -1075,6 +1075,10 @@ semantic:
   id: 67
   message: "'{}' is not an annotation."
 
+- name: NOT_A_SUPERINTERFACE_OF_ARRAY
+  id: 1195013
+  message: "The type of array literal {} cannot be inferred as {}, as interface {} is not a superinterface of Array."
+
 - name: NOT_CONSTANT
   id: 163
   message: "Constant expression required"

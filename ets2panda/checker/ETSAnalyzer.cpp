@@ -1402,13 +1402,8 @@ static Type *GetPreferredTypeFromArraySupertypes(ETSChecker *checker, Type *orig
     return nullptr;
 }
 
-checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
+static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayExpression *expr)
 {
-    ETSChecker *checker = GetETSChecker();
-    if (expr->TsType() != nullptr) {
-        return expr->TsType();
-    }
-
     Type *preferredType = GetPreferredTypeFromArraySupertypes(checker, expr->PreferredType());
 
     if (preferredType == nullptr) {
@@ -1444,6 +1439,21 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
 
     if (preferredType == nullptr) {
         return checker->TypeError(expr, diagnostic::UNRESOLVABLE_ARRAY, expr->Start());
+    }
+
+    return preferredType;
+}
+
+checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
+{
+    ETSChecker *checker = GetETSChecker();
+    if (expr->TsType() != nullptr) {
+        return expr->TsType();
+    }
+
+    Type *preferredType = ResolvePreferredTypeForArrayLiteral(checker, expr);
+    if (preferredType->IsTypeError()) {
+        return preferredType;
     }
 
     if (!ValidArrayExprSizeForTupleSize(checker, preferredType, expr) ||
@@ -5395,6 +5405,14 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
 
     if (!CheckTSAsExpressionInvalidCast(expr, sourceType, targetType, checker)) {
         return expr->TsType();
+    }
+
+    if (castExpr->IsArrayExpression() && targetType->IsETSObjectType() &&
+        targetType->AsETSObjectType()->IsInterface() &&
+        GetPreferredTypeFromArraySupertypes(checker, targetType) == nullptr) {
+        checker->LogError(diagnostic::NOT_A_SUPERINTERFACE_OF_ARRAY, {castExpr->DumpEtsSrc(), targetType, targetType},
+                          expr->Start());
+        return expr->SetTsType(targetType);
     }
 
     const checker::CastingContext ctx = CheckTSAsExpressionCastable(castExpr, sourceType, targetType, checker);
