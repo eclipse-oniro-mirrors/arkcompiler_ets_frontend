@@ -26,7 +26,7 @@ class TestRangeInit {
         this.no2 = no2;
         this.no3 = no3;
         this.no4 = no4;
-        this.arr = new Array<int>(size);
+        this.arr = Array.create<int>(size, 0);
     }
 }
 

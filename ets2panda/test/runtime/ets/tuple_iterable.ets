@@ -48,7 +48,7 @@ function main() {
   }
   arktest.assertEQ("TEST2", x);
  
-  let a = new Array<Any>(5);
+  let a = Array.create<Any>(5, undefined);
   a[0] = 'seventeen';
   a[1] = 18;
   a[2] = "19";

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +47,7 @@ class A {
 }
 
 function test_inference_from_return() {
-    let arr = new Array<"default"|"invisible"|number>(3);
+    let arr = Array.create<"default"|"invisible"|number>(3, 0);
     arr[0] = "default"
     arr[1] = 42
     arr[2] = "invisible"
