@@ -12,11 +12,10 @@
 # limitations under the License.
 
 softlist:
-- name: "allow_xts"
+- name: "numeric_conversions"
   paths:
   - ".*/xts/acts/.*"
   - ".*/test/xts/.*"
-  - ".*/ability/ability_runtime/.*"
   - ".*/generated/.*"
   - ".*/arkui/ace_engine/advanced_ui_component_static/.*"
   - ".*/arkui/ace_engine/examples/.*"
