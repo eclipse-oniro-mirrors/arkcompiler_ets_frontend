@@ -762,19 +762,37 @@ private:
     ir::Literal *PerformRelationOperation(const ir::CharLiteral *left, const ir::CharLiteral *right,
                                           lexer::TokenType opType, const ir::BinaryExpression *expr)
     {
+        auto leftVal = left->Char();
+        auto rightVal = right->Char();
         bool res {};
         bool reportEqualityDiagnostic = false;
         switch (opType) {
             case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_EQUAL: {
-                res = *left == *right;
+                res = leftVal == rightVal;
                 reportEqualityDiagnostic = true;
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
-                res = !(*left == *right);
+                res = leftVal != rightVal;
                 reportEqualityDiagnostic = true;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN: {
+                res = leftVal > rightVal;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL: {
+                res = leftVal >= rightVal;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN: {
+                res = leftVal < rightVal;
+                break;
+            }
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL: {
+                res = leftVal <= rightVal;
                 break;
             }
             default: {
@@ -893,6 +911,18 @@ private:
             if (res != nullptr) {
                 return res;
             }
+        }
+
+        if (left->IsCharLiteral() && right->IsNumberLiteral()) {
+            auto leftVal = static_cast<double>(left->AsCharLiteral()->Char());
+            return PerformRelationOperation(leftVal, ExtractFromLiteral<double>(right->AsNumberLiteral()), opType,
+                                            expr);
+        }
+
+        if (left->IsNumberLiteral() && right->IsCharLiteral()) {
+            auto rightVal = static_cast<double>(right->AsCharLiteral()->Char());
+            return PerformRelationOperation(ExtractFromLiteral<double>(left->AsNumberLiteral()), rightVal, opType,
+                                            expr);
         }
 
         LogError(diagnostic::WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION, {}, expr->Start());
