@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { getLsp, getLspWithUi, getRealPath } from '../utils';
+import { getLsp, getLspWithUi, getRealPath, getSDKPath } from '../utils';
 
 describe('getQuickInfoAtPositionTest', () => {
   const moduleName: string = 'getQuickInfoAtPosition';
@@ -125,7 +125,7 @@ describe('getQuickInfoAtPositionTest', () => {
       start: 708,
       length: 4
     },
-    fileName: getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'),
+    fileName: getSDKPath('@ohos.util.Stack.d.ets'),
     displayParts: [
       {
         text: 'Stack',
@@ -174,6 +174,48 @@ describe('getQuickInfoAtPositionTest', () => {
       {
         text: 'T',
         kind: 'returnType'
+      }
+    ],
+    documentation: [
+      {
+        text: 'Adds an element at the top of this Stack.',
+        kind: 'plaintext',
+        index: 0
+      }
+    ],
+    tags: [
+      {
+        name: 'param',
+        text: '{ T } item - Target element.',
+        index: 0
+      },
+      {
+        name: 'returns',
+        text: '{ T } Element added.',
+        index: 0
+      },
+      {
+        name: 'throws',
+        text: '{ BusinessError } 10200011 - The push method cannot be bound.',
+        index: 0
+      },
+      {
+        name: 'syscap',
+        text: 'SystemCapability.Utils.Lang',
+        index: 0
+      },
+      {
+        name: 'crossplatform',
+        index: 0
+      },
+      {
+        name: 'atomicservice',
+        index: 0
+      },
+      {
+        name: 'since',
+        text: '23',
+        index: 0
       }
     ]
   };
@@ -227,8 +269,8 @@ describe('getQuickInfoAtPositionTest', () => {
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
       expect(res).toMatchObject(EXPECT_003);
-      expect(res?.documentation).toEqual([]);
-      expect(res?.tags).toEqual([]);
+      expect(res?.documentation).toEqual(EXPECT_003.documentation);
+      expect(res?.tags).toEqual(EXPECT_003.tags);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
