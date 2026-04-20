@@ -35,6 +35,10 @@ export enum OHOS_MODULE_TYPE {
     HAR = 'har',
 }
 
+export function isHarOrHsp(moduleType: OHOS_MODULE_TYPE): boolean {
+    return moduleType === OHOS_MODULE_TYPE.HAR || moduleType === OHOS_MODULE_TYPE.SHARED;
+}
+
 export enum WorkerMessageType {
     DECL_GENERATED = 'DECL_GENERATED',
     ABC_COMPILED = 'ABC_COMPILED',

@@ -47,9 +47,7 @@ import {
     STATIC_RECORD_FILE_CONTENT,
     TS_SUFFIX,
     ENABLE_DECLARATION_BARRIER,
-    ETSCACHE_SUFFIX,
-    MERGED_INTERMEDIATE_FILE,
-    ENABLE_DECL_FILE_CACHE
+    MERGED_INTERMEDIATE_FILE
 } from '../pre_define';
 import {
     PluginDriver,
@@ -298,7 +296,7 @@ export class Ets2panda {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Checked');
 
-            if (ENABLE_DECL_FILE_CACHE && job.jobType & CompileJobType.DECL) {
+            if (job.jobType & CompileJobType.DECL) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
                 for (const fi of (job.content as FileInfo[])) {
                     // emit declarations based on relative location of the file in a project,
