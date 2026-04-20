@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,8 @@ function main() {
     arktest.assertEQ(Foo.Baz, 1)
 }
 
- 
 /* @@? 19:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 20:5 Error Semantic error ESE0127: No matching call signature for assertEQ(Foo.Bar, Int) */
 /* @@? 20:22 Error Semantic error ESE0143: Unresolved reference Foo */
+/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for assertEQ(Foo.Baz, Int) */
+/* @@? 22:22 Error Semantic error ESE0143: Unresolved reference Foo */

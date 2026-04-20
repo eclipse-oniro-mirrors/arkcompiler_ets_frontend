@@ -71,6 +71,13 @@ warning:
   id: 65000
   message: "The equality expression is always true."
 
+- name: ERROR_NO_ENUM_MIXED_TYPES
+  id: 2501
+  message: "Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the
+    same type."
+  strict: true
+  softlist: ["allow_implicit_enum_long"]
+
 - name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
   id: 71336
   message: "Exported {} '{}' requires type annotation."
@@ -230,6 +237,12 @@ warning:
   id: 26
   message: "Unreachable statement."
   code_fix_ids: [FixUnreachableCode]
+
+- name: UNSUPPORTED_CONST_ENUM
+  id: 440
+  message: "Const enum is not yet supported."
+  strict: true
+  softlist: ["allow_const_enum"]
 
 - name: USED_TYPE_IS_NOT_EXPORTED
   id: 1236581

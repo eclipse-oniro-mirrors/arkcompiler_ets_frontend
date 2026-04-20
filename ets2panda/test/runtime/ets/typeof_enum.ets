@@ -21,7 +21,7 @@ enum ShortEnum:short{
      a = 1,
 }
 
-enum LongEnum{
+enum LongEnum:long{
      a = -0x1_1111_1111,
 }
 

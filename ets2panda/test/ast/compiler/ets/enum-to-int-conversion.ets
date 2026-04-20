@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- enum E {
+ enum E:long {
     FIRST = 1,
     SECOND = 12345678910
  }
