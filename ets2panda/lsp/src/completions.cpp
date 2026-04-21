@@ -112,7 +112,7 @@ std::vector<CompletionEntry> GetKeywordCompletions(const std::string &input)
     return completions;
 }
 
-std::string GetTypeSig(ir::AstNode *node)
+std::string GetTypeSig(const ir::AstNode *node)
 {
     if (!node->IsMethodDefinition() && !node->IsClassProperty()) {
         return "";
@@ -164,6 +164,153 @@ std::string GetTypeSig(ir::AstNode *node)
     return "";
 }
 
+static std::string NormalizeTypeTextForCompletion(std::string typeText)
+{
+    std::string normalized;
+    normalized.reserve(typeText.size());
+    bool pendingSpace = false;
+    for (unsigned char c : typeText) {
+        if (std::isspace(c)) {
+            pendingSpace = !normalized.empty();
+            continue;
+        }
+        if (pendingSpace) {
+            normalized.push_back(' ');
+            pendingSpace = false;
+        }
+        normalized.push_back(static_cast<char>(c));
+    }
+    return normalized;
+}
+
+static std::string GetTypeTextForCompletion(const ir::TypeNode *typeAnnotation, const checker::Type *tsType)
+{
+    if (typeAnnotation != nullptr) {
+        auto typeText = typeAnnotation->TsType() != nullptr
+                            ? NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString())
+                            : NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+        if (!typeText.empty()) {
+            return typeText;
+        }
+    }
+    if (tsType != nullptr) {
+        auto typeText = NormalizeTypeTextForCompletion(tsType->ToString());
+        if (!typeText.empty()) {
+            return typeText;
+        }
+    }
+    return "";
+}
+
+static std::string BuildValueCompletionName(const std::string &name, const std::string &typeText)
+{
+    if (name.empty() || typeText.empty()) {
+        return name;
+    }
+    return name + ": " + typeText;
+}
+
+static std::string GetDeclTypeForCompletion(const ir::AstNode *decl)
+{
+    if (decl == nullptr) {
+        return "";
+    }
+    if (decl->IsIdentifier()) {
+        auto *id = decl->AsIdentifier();
+        auto *tsType = id->TsType();
+        if (id->Variable() != nullptr && id->Variable()->TsType() != nullptr) {
+            tsType = id->Variable()->TsType();
+        }
+        return GetTypeTextForCompletion(id->TypeAnnotation(), tsType);
+    }
+    if (decl->IsClassProperty()) {
+        auto *prop = decl->AsClassProperty();
+        return GetTypeTextForCompletion(prop->TypeAnnotation(), prop->TsType());
+    }
+    if (decl->IsVariableDeclaration()) {
+        for (auto *declarator : decl->AsVariableDeclaration()->Declarators()) {
+            if (declarator == nullptr || declarator->Id() == nullptr || !declarator->Id()->IsIdentifier()) {
+                continue;
+            }
+            auto *id = declarator->Id()->AsIdentifier();
+            return GetTypeTextForCompletion(id->TypeAnnotation(), id->TsType());
+        }
+    }
+    return "";
+}
+
+static std::string GetFunctionReturnTypeForCompletion(const ir::ScriptFunction *func)
+{
+    if (func == nullptr) {
+        return "void";
+    }
+    if (func->ReturnTypeAnnotation() != nullptr && func->ReturnTypeAnnotation()->TsType() != nullptr) {
+        auto ret = NormalizeTypeTextForCompletion(func->ReturnTypeAnnotation()->TsType()->ToString());
+        return ret.empty() ? "void" : ret;
+    }
+    auto *signature = func->Signature();
+    if (signature != nullptr && signature->ReturnType() != nullptr) {
+        auto ret = NormalizeTypeTextForCompletion(signature->ReturnType()->ToString());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
+    return "void";
+}
+
+static std::string BuildFunctionCompletionName(const std::string &functionName, const ir::ScriptFunction *func)
+{
+    if (func == nullptr || functionName.empty()) {
+        return "";
+    }
+
+    std::string completionName = functionName;
+    completionName.append("(");
+    bool first = true;
+    for (auto *param : func->Params()) {
+        if (!first) {
+            completionName.append(", ");
+        }
+        first = false;
+
+        std::string paramName;
+        std::string paramType = "any";
+        if (param->IsETSParameterExpression()) {
+            auto *etsParam = param->AsETSParameterExpression();
+            paramName = etsParam->Name().Mutf8();
+            auto *typeAnnotation = etsParam->TypeAnnotation();
+            if (typeAnnotation != nullptr && typeAnnotation->TsType() != nullptr) {
+                paramType = NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString());
+            } else if (typeAnnotation != nullptr) {
+                paramType = NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+            }
+        } else if (param->IsIdentifier()) {
+            paramName = param->AsIdentifier()->Name().Mutf8();
+            auto *typeAnnotation = param->AsIdentifier()->TypeAnnotation();
+            if (typeAnnotation != nullptr && typeAnnotation->TsType() != nullptr) {
+                paramType = NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString());
+            } else if (typeAnnotation != nullptr) {
+                paramType = NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+            }
+        } else {
+            paramName = param->DumpEtsSrc();
+            paramType.clear();
+        }
+
+        completionName.append(paramName);
+        if (!paramType.empty()) {
+            completionName.append(": ");
+            completionName.append(paramType);
+        }
+    }
+    completionName.append(")");
+
+    completionName.append(": ");
+    completionName.append(GetFunctionReturnTypeForCompletion(func));
+
+    return completionName;
+}
+
 CompletionEntry GetDeclarationEntry(ir::AstNode *node)
 {
     if (node == nullptr) {
@@ -188,13 +335,18 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
             return CompletionEntry();
         }
         name = std::string(key->AsIdentifier()->Name());
-        return CompletionEntry(name, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+        auto completionName = BuildFunctionCompletionName(name, node->AsMethodDefinition()->Function());
+        if (completionName.empty()) {
+            completionName = name;
+        }
+        return CompletionEntry(completionName, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
                                name + "()", std::nullopt, GetTypeSig(node));
     }
     if (node->IsClassProperty()) {
         name = GetClassPropertyName(node);
-        return CompletionEntry(name, CompletionEntryKind::PROPERTY, std::string(sort_text::GLOBALS_OR_KEYWORDS), name,
-                               std::nullopt, GetTypeSig(node));
+        auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(node));
+        return CompletionEntry(completionName, CompletionEntryKind::PROPERTY,
+                               std::string(sort_text::GLOBALS_OR_KEYWORDS), name, std::nullopt, GetTypeSig(node));
     }
     if (node->IsETSStructDeclaration()) {
         if (node->AsETSStructDeclaration()->Definition() == nullptr) {
@@ -422,12 +574,17 @@ std::vector<ir::AstNode *> FilterFromInterfaceBody(const ArenaVector<ir::AstNode
         if (member->IsMethodDefinition() &&
             IsWordPartOfIdentifierName(member->AsMethodDefinition()->Key(), triggerWord)) {
             res.emplace_back(member);
+            continue;
+        }
+        if (member->IsClassProperty() && IsWordPartOfIdentifierName(member->AsClassProperty()->Key(), triggerWord)) {
+            res.emplace_back(member);
+            continue;
         }
     }
     return res;
 }
 
-std::string GetClassPropertyName(ir::AstNode *node)
+std::string GetClassPropertyName(const ir::AstNode *node)
 {
     // property in class
     if (node->IsClassProperty()) {
@@ -475,6 +632,21 @@ std::string GetMethodDefinitionName(ir::AstNode *node)
         return "";
     }
     return std::string(key->AsIdentifier()->Name());
+}
+
+static const ir::AstNode *GetInterfacePropertyFromMethod(const ir::AstNode *node)
+{
+    if (node == nullptr || !node->IsMethodDefinition()) {
+        return nullptr;
+    }
+    if (node->Parent() == nullptr || !node->Parent()->IsTSInterfaceBody()) {
+        return nullptr;
+    }
+    auto *originalNode = node->OriginalNode();
+    if (originalNode == nullptr) {
+        return nullptr;
+    }
+    return originalNode;
 }
 
 ir::AstNode *GetDefinitionFromTypeAnnotation(ir::TypeNode *type)
@@ -609,7 +781,8 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
     for (auto node : propertyNodes) {
         if (node->IsClassProperty()) {
             name = GetClassPropertyName(node);
-            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::PROPERTY,
+            auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(node));
+            completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::PROPERTY,
                                                           std::string(sort_text::SUGGESTED_CLASS_MEMBERS), name,
                                                           std::nullopt, GetTypeSig(node)));
         }
@@ -620,7 +793,11 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
         }
         if (node->IsMethodDefinition()) {
             name = GetMethodDefinitionName(node);
-            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
+            auto completionName = BuildFunctionCompletionName(name, node->AsMethodDefinition()->Function());
+            if (completionName.empty()) {
+                completionName = name;
+            }
+            completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::METHOD,
                                                           std::string(sort_text::CLASS_MEMBER_SNIPPETS), name + "()",
                                                           std::nullopt, GetTypeSig(node)));
         }
@@ -642,18 +819,37 @@ std::vector<CompletionEntry> GetEntriesForTSInterfaceDeclaration(
     completions.reserve(propertyNodes.size());
     std::string name;
     for (auto node : propertyNodes) {
-        if (!node->IsMethodDefinition()) {
+        if (auto *interfaceProperty = GetInterfacePropertyFromMethod(node); interfaceProperty != nullptr) {
+            name = GetClassPropertyName(interfaceProperty);
+            auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(interfaceProperty));
+            completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::PROPERTY,
+                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS), name,
+                                                          std::nullopt, GetTypeSig(interfaceProperty)));
             continue;
         }
-        name = GetMethodDefinitionName(node);
-        if (node->AsMethodDefinition()->IsGetter() || node->AsMethodDefinition()->IsSetter()) {
-            // Each of properties in interface no need to add '()'
-            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
+        if (node->IsMethodDefinition()) {
+            name = GetMethodDefinitionName(node);
+            auto completionName = BuildFunctionCompletionName(name, node->AsMethodDefinition()->Function());
+            if (completionName.empty()) {
+                completionName = name;
+            }
+            if (node->AsMethodDefinition()->IsGetter() || node->AsMethodDefinition()->IsSetter()) {
+                // Each of properties in interface no need to add '()'
+                completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::METHOD,
+                                                              std::string(sort_text::CLASS_MEMBER_SNIPPETS), name,
+                                                              std::nullopt, GetTypeSig(node)));
+            } else {
+                completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::METHOD,
+                                                              std::string(sort_text::CLASS_MEMBER_SNIPPETS),
+                                                              name + "()", std::nullopt, GetTypeSig(node)));
+            }
+            continue;
+        }
+        if (node->IsClassProperty()) {
+            name = GetClassPropertyName(node);
+            auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(node));
+            completions.emplace_back(lsp::CompletionEntry(completionName, CompletionEntryKind::PROPERTY,
                                                           std::string(sort_text::CLASS_MEMBER_SNIPPETS), name,
-                                                          std::nullopt, GetTypeSig(node)));
-        } else {
-            completions.emplace_back(lsp::CompletionEntry(name, CompletionEntryKind::METHOD,
-                                                          std::string(sort_text::CLASS_MEMBER_SNIPPETS), name + "()",
                                                           std::nullopt, GetTypeSig(node)));
         }
     }
@@ -726,7 +922,11 @@ static void AddVariableCompletion(ir::Statement *stmt, const std::string &trigge
         auto kind = stmt->AsVariableDeclaration()->Kind() == ir::VariableDeclaration::VariableDeclarationKind::CONST
                         ? CompletionEntryKind::CONSTANT
                         : CompletionEntryKind::VARIABLE;
-        completions.emplace_back(name, kind, std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name);
+        auto completionName =
+            BuildValueCompletionName(name, GetTypeTextForCompletion(declarator->Id()->AsIdentifier()->TypeAnnotation(),
+                                                                    declarator->Id()->AsIdentifier()->TsType()));
+        completions.emplace_back(completionName, kind, std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT),
+                                 name);
     }
 }
 
@@ -737,10 +937,11 @@ static void AddFunctionCompletion(ir::Statement *stmt, const std::string &trigge
     if (func == nullptr || func->Id() == nullptr) {
         return;
     }
-    std::string name = func->Id()->Name().Mutf8();
-    if (name.find(triggerWord) == 0) {
-        completions.emplace_back(name, CompletionEntryKind::FUNCTION,
-                                 std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name + "()");
+    std::string functionName = func->Id()->Name().Mutf8();
+    if (functionName.find(triggerWord) == 0) {
+        std::string completionName = BuildFunctionCompletionName(functionName, func);
+        completions.emplace_back(completionName, CompletionEntryKind::FUNCTION,
+                                 std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), functionName + "()");
     }
 }
 
@@ -1041,6 +1242,11 @@ void IntersectCompletions(std::vector<CompletionEntry> &completions, const std::
 {
     auto it = std::remove_if(completions.begin(), completions.end(), [&currentItems](const CompletionEntry &existing) {
         auto compare = [&existing](const CompletionEntry &current) {
+            if (existing.GetCompletionKind() == CompletionEntryKind::METHOD &&
+                current.GetCompletionKind() == CompletionEntryKind::METHOD) {
+                return existing.GetInsertText() == current.GetInsertText() &&
+                       existing.GetTypeSig() == current.GetTypeSig();
+            }
             return existing.GetName() == current.GetName() &&
                    existing.GetCompletionKind() == current.GetCompletionKind() &&
                    existing.GetTypeSig() == current.GetTypeSig();
@@ -1270,7 +1476,8 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
                    child->Parent()->AsClassDefinition() == globalDefinition;
         });
         if (cctor == nullptr) {
-            return CompletionEntry(name, CompletionEntryKind::CONSTANT, std::string(sortText), name);
+            auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(decl));
+            return CompletionEntry(completionName, CompletionEntryKind::CONSTANT, std::string(sortText), name);
         }
         auto found = cctor->FindChild([&name](ir::AstNode *child) {
             return child->IsAssignmentExpression() && child->AsAssignmentExpression()->Left()->IsIdentifier() &&
@@ -1284,9 +1491,19 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
         }
     } else if (decl->IsMethodDefinition()) {
         kind = CompletionEntryKind::FUNCTION;
-        insertText = name + "()";
+        auto completionName = BuildFunctionCompletionName(name, decl->AsMethodDefinition()->Function());
+        if (!completionName.empty()) {
+            name = std::move(completionName);
+        }
+        insertText.append("()");
     } else if (decl->IsClassDefinition()) {
         kind = CompletionEntryKind::MODULE;
+    }
+    if (kind == CompletionEntryKind::VARIABLE || kind == CompletionEntryKind::CONSTANT) {
+        auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(decl));
+        if (!completionName.empty()) {
+            name = std::move(completionName);
+        }
     }
     return CompletionEntry(name, kind, std::string(sortText), insertText);
 }

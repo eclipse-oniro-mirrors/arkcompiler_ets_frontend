@@ -42,10 +42,12 @@ let a = MyModule.
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
-    std::string expectedName = "myVar";
+    std::string insertName = "myVar";
+    std::string name = "myVar: Double";
     bool found = false;
     for (const auto &entry : entries) {
-        if (entry.GetName() == expectedName && entry.GetCompletionKind() == CompletionEntryKind::PROPERTY) {
+        if (entry.GetCompletionKind() == CompletionEntryKind::PROPERTY && entry.GetInsertText() == insertName &&
+            (entry.GetName() == name)) {
             found = true;
             break;
         }
@@ -72,10 +74,10 @@ let a = MyModule.
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
-    std::string expectedName = "myFunc";
     bool found = false;
     for (const auto &entry : entries) {
-        if (entry.GetName() == expectedName && entry.GetCompletionKind() == CompletionEntryKind::METHOD) {
+        if (entry.GetCompletionKind() == CompletionEntryKind::METHOD && entry.GetInsertText() == "myFunc()" &&
+            entry.GetName() == "myFunc(): undefined") {
             found = true;
             break;
         }

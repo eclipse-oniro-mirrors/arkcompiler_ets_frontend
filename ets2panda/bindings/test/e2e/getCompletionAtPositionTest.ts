@@ -20,14 +20,14 @@ describe('getCompletionAtPositionTest', () => {
   const moduleName: string = 'getCompletionAtPosition';
   const EXPECT_000 = [
     {
-      name: 'num2',
+      name: 'num2(): Int',
       sortText: '15',
       insertText: 'num2()',
       kind: 3,
       data: null
     },
     {
-      name: 'num1',
+      name: 'num1(): Int',
       sortText: '15',
       insertText: 'num1()',
       kind: 3,
@@ -36,21 +36,21 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_001 = [
     {
-      name: 'axx',
+      name: 'axx(): Int',
       sortText: '15',
       insertText: 'axx()',
       kind: 3,
       data: null
     },
     {
-      name: 'aaa',
+      name: 'aaa: Int',
       sortText: '15',
       insertText: 'aaa',
       kind: 6,
       data: null
     },
     {
-      name: 'abb',
+      name: 'abb: Int',
       sortText: '15',
       insertText: 'abb',
       kind: 21,
@@ -59,28 +59,28 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_002 = [
     {
-      name: 'baa',
+      name: 'baa: Int',
       sortText: '15',
       insertText: 'baa',
       kind: 6,
       data: null
     },
     {
-      name: 'bbb',
+      name: 'bbb: Int',
       sortText: '15',
       insertText: 'bbb',
       kind: 6,
       data: null
     },
     {
-      name: 'bxx',
+      name: 'bxx(): Int',
       sortText: '15',
       insertText: 'bxx()',
       kind: 3,
       data: null
     },
     {
-      name: 'bcc',
+      name: 'bcc: Int',
       sortText: '15',
       insertText: 'bcc',
       kind: 6,
@@ -89,21 +89,21 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_003 = [
     {
-      name: 'bxx',
+      name: 'bxx(): Int',
       sortText: '15',
       insertText: 'bxx()',
       kind: 3,
       data: null
     },
     {
-      name: 'baa',
+      name: 'baa: Int',
       sortText: '15',
       insertText: 'baa',
       kind: 6,
       data: null
     },
     {
-      name: 'bbb',
+      name: 'bbb: Int',
       sortText: '15',
       insertText: 'bbb',
       kind: 6,
@@ -112,7 +112,7 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_004 = [
     {
-      name: 'myProp',
+      name: 'myProp: Double',
       sortText: '14',
       insertText: 'myProp',
       kind: 10,
@@ -174,14 +174,14 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_011 = [
     {
-      name: 'myProp',
+      name: 'myProp: Double',
       sortText: '14',
       insertText: 'myProp',
       kind: 10,
       data: null
     },
     {
-      name: 'prop',
+      name: 'prop: Double',
       sortText: '14',
       insertText: 'prop',
       kind: 10,
@@ -190,46 +190,46 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_012 = [
     {
-      name: 'key',
+      name: 'key: string',
       sortText: '17',
       insertText: 'key',
-      kind: 2,
+      kind: 10,
       data: null
     }
   ];
   const EXPECT_013 = [
     {
-      name: 'key',
+      name: 'key: string',
       sortText: '17',
       insertText: 'key',
-      kind: 2,
+      kind: 10,
       data: null
     }
   ];
   const EXPECT_014 = [
     {
-      name: 'isEmpty',
+      name: 'isEmpty(): Boolean',
       sortText: '17',
       insertText: 'isEmpty()',
       kind: 2,
       data: null
     },
     {
-      name: 'peek',
+      name: 'peek(): T',
       sortText: '17',
       insertText: 'peek()',
       kind: 2,
       data: null
     },
     {
-      name: 'pop',
+      name: 'pop(): T',
       sortText: '17',
       insertText: 'pop()',
       kind: 2,
       data: null
     },
     {
-      name: 'push',
+      name: 'push(item: T): T',
       sortText: '17',
       insertText: 'push()',
       kind: 2,
@@ -277,21 +277,21 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_017 = [
     {
-      name: 'name',
+      name: 'name: String',
       sortText: '14',
       insertText: 'name',
       kind: 10,
       data: null
     },
     {
-      name: 'age',
+      name: 'age: Double',
       sortText: '14',
       insertText: 'age',
       kind: 10,
       data: null
     },
     {
-      name: 'introduce',
+      name: 'introduce(name: String, age: Double): undefined',
       sortText: '17',
       insertText: 'introduce()',
       kind: 2,
