@@ -30,12 +30,10 @@ async function multipleReturns(flag: boolean): Promise<string|int> {
     return "string2"
 }
 
-function main() {
-    waitForCompletion(async () => {
-        let a: int|string = await multipleReturns(true, 42);
-        let b: int|string = await multipleReturns(false);
+async function main(): Promise<void> {
+    let a: int|string = await multipleReturns(true, 42);
+    let b: int|string = await multipleReturns(false);
 
-        arktest.assertEQ(a, 42)
-        arktest.assertEQ(b, "string2")
-    })
+    arktest.assertEQ(a, 42)
+    arktest.assertEQ(b, "string2")
 }

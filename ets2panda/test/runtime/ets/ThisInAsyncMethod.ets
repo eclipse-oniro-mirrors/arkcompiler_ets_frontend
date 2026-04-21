@@ -17,11 +17,9 @@ class X {
     async m(): Promise<X> /* #19874 */ { return this }
 }
 
-function main() {
-    let f = (): object | null | undefined => {
-        return waitForCompletion(async () => {
-            return await new X().m()
-        })
+async function main(): Promise<void> {
+    let f = async (): Promise<object | null | undefined> => {
+        return await new X().m()
     }
-    arktest.assertTrue(f() instanceof X)
+    arktest.assertTrue(await f() instanceof X)
 }

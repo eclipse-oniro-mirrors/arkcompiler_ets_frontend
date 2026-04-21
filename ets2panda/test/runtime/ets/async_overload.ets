@@ -25,10 +25,8 @@ async function foo(a: int) {
     return 3
 }
 
-function main() {
-    waitForCompletion(async () => {
-        arktest.assertEQ(foo("test"), 1);
-        arktest.assertEQ(await foo(), 2);
-        arktest.assertEQ(await foo(1), 3);
-    })
+async function main(): Promise<void> {
+    arktest.assertEQ(foo("test"), 1);
+    arktest.assertEQ(await foo(), 2);
+    arktest.assertEQ(await foo(1), 3);
 }

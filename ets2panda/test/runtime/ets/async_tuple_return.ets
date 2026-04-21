@@ -45,42 +45,40 @@ async function returnTupleWithNestedArray(): Promise<[number, [string, number]]>
   return [1, ["a", 2]]
 }
 
-function main(): void {
-  waitForCompletion(async () => {
-    let pair = await fetchPairAsync()
-    arktest.assertEQ(pair[0], 1.0)
-    arktest.assertEQ(pair[1], "hello")
+async function main(): Promise<void> {
+  let pair = await fetchPairAsync()
+  arktest.assertEQ(pair[0], 1.0)
+  arktest.assertEQ(pair[1], "hello")
 
-    let triple = await fetchTripleAsync()
-    arktest.assertEQ(triple[0], 42)
-    arktest.assertEQ(triple[1], "world")
-    arktest.assertEQ(triple[2], true)
+  let triple = await fetchTripleAsync()
+  arktest.assertEQ(triple[0], 42)
+  arktest.assertEQ(triple[1], "world")
+  arktest.assertEQ(triple[2], true)
 
-    let single = await fetchSingleAsync()
-    arktest.assertEQ(single[0], 100)
+  let single = await fetchSingleAsync()
+  arktest.assertEQ(single[0], 100)
 
-    let nested = await fetchNestedAsync()
-    arktest.assertEQ(nested[0][0], 1)
-    arktest.assertEQ(nested[0][1], "a")
-    arktest.assertEQ(nested[1], true)
+  let nested = await fetchNestedAsync()
+  arktest.assertEQ(nested[0][0], 1)
+  arktest.assertEQ(nested[0][1], "a")
+  arktest.assertEQ(nested[1], true)
 
-    let diffTypes = await fetchDifferentTypesAsync()
-    arktest.assertEQ(diffTypes[0], "first")
-    arktest.assertEQ(diffTypes[1], 2)
-    arktest.assertEQ(diffTypes[2], false)
-    arktest.assertEQ(diffTypes[3], "last")
+  let diffTypes = await fetchDifferentTypesAsync()
+  arktest.assertEQ(diffTypes[0], "first")
+  arktest.assertEQ(diffTypes[1], 2)
+  arktest.assertEQ(diffTypes[2], false)
+  arktest.assertEQ(diffTypes[3], "last")
 
-    let empty = await returnEmptyTuple()
-    arktest.assertEQ(empty.length, 0)
+  let empty = await returnEmptyTuple()
+  arktest.assertEQ(empty.length, 0)
 
-    let withArray = await returnTupleWithArray()
-    arktest.assertEQ(withArray[0], 1)
-    arktest.assertEQ(withArray[1][0], "a")
-    arktest.assertEQ(withArray[1][1], "b")
+  let withArray = await returnTupleWithArray()
+  arktest.assertEQ(withArray[0], 1)
+  arktest.assertEQ(withArray[1][0], "a")
+  arktest.assertEQ(withArray[1][1], "b")
 
-    let nestedArray = await returnTupleWithNestedArray()
-    arktest.assertEQ(nestedArray[0], 1)
-    arktest.assertEQ(nestedArray[1][0], "a")
-    arktest.assertEQ(nestedArray[1][1], 2)
-  })
+  let nestedArray = await returnTupleWithNestedArray()
+  arktest.assertEQ(nestedArray[0], 1)
+  arktest.assertEQ(nestedArray[1][0], "a")
+  arktest.assertEQ(nestedArray[1][1], 2)
 }
