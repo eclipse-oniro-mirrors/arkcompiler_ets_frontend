@@ -2052,6 +2052,12 @@ bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const 
 
 static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expression *initExpr, ETSChecker *checker)
 {
+    // A folded `as` expression already carries the explicit target type; the
+    // ambiguity rule applies only to untyped integer literals.
+    if (initExpr->IsNumberLiteral() && initExpr->AsNumberLiteral()->IsFolded() && initExpr->TsType() != nullptr) {
+        return;
+    }
+
     lexer::Number initNumber;
     std::string str;
     // CC-OFFNXT(G.FMT.17-CPP) false positive

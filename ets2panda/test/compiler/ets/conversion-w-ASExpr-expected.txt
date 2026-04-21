@@ -156,38 +156,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 0,
-                              "loc": {
-                                "start": {
-                                  "line": 17,
-                                  "column": 24,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 17,
-                                  "column": 25,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 17,
-                                  "column": 29,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 17,
-                                  "column": 33,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 0,
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -297,38 +267,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 1,
-                              "loc": {
-                                "start": {
-                                  "line": 18,
-                                  "column": 26,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 18,
-                                  "column": 27,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 18,
-                                  "column": 31,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 18,
-                                  "column": 36,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 1,
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -438,38 +378,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 2,
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 25,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 29,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 32,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 2,
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -579,38 +489,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 3,
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 23,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 24,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 28,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 32,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 3,
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -720,38 +600,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 4,
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 30,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 31,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 35,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 40,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 4,
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -972,38 +822,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 5,
-                              "loc": {
-                                "start": {
-                                  "line": 23,
-                                  "column": 26,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 23,
-                                  "column": 27,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 23,
-                                  "column": 31,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 23,
-                                  "column": 37,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 5,
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -1113,38 +933,8 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 5,
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 34,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 37,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 41,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 47,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
+                            "type": "NumberLiteral",
+                            "value": 5,
                             "loc": {
                               "start": {
                                 "line": 24,

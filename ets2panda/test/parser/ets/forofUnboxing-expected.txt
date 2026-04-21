@@ -336,38 +336,8 @@
                                 },
                                 "arguments": [
                                   {
-                                    "type": "TSAsExpression",
-                                    "expression": {
-                                      "type": "NumberLiteral",
-                                      "value": 10,
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 33,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 35,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
-                                    "typeAnnotation": {
-                                      "type": "ETSPrimitiveType",
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 39,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 43,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
+                                    "type": "NumberLiteral",
+                                    "value": 10,
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -445,38 +415,8 @@
                                 },
                                 "arguments": [
                                   {
-                                    "type": "TSAsExpression",
-                                    "expression": {
-                                      "type": "NumberLiteral",
-                                      "value": 12,
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 55,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 57,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
-                                    "typeAnnotation": {
-                                      "type": "ETSPrimitiveType",
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 61,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 65,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
+                                    "type": "NumberLiteral",
+                                    "value": 12,
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -554,38 +494,8 @@
                                 },
                                 "arguments": [
                                   {
-                                    "type": "TSAsExpression",
-                                    "expression": {
-                                      "type": "NumberLiteral",
-                                      "value": 33,
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 77,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 79,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
-                                    "typeAnnotation": {
-                                      "type": "ETSPrimitiveType",
-                                      "loc": {
-                                        "start": {
-                                          "line": 18,
-                                          "column": 83,
-                                          "program": "forofUnboxing.ets"
-                                        },
-                                        "end": {
-                                          "line": 18,
-                                          "column": 87,
-                                          "program": "forofUnboxing.ets"
-                                        }
-                                      }
-                                    },
+                                    "type": "NumberLiteral",
+                                    "value": 33,
                                     "loc": {
                                       "start": {
                                         "line": 18,

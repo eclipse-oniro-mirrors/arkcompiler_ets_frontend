@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,5 +27,7 @@ class A {
 }
 
 
-/* @@? 24:32 Error Semantic error ESE0198: Element accessor value is out of tuple size bounds. */
-/* @@? 25:32 Error Semantic error ESE0198: Element accessor value is out of tuple size bounds. */
+/* @@? 24:9 Error Semantic error ESE0127: No matching call signature for assertEQ(tuple[A.KEY], Int) */
+/* @@? 24:32 Error Semantic error ESE0199: Only constant expression allowed for element access on tuples. */
+/* @@? 25:9 Error Semantic error ESE0127: No matching call signature for assertEQ(tuple[A.KEY1], "a") */
+/* @@? 25:32 Error Semantic error ESE0199: Only constant expression allowed for element access on tuples. */

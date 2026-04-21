@@ -2310,10 +2310,7 @@ std::optional<std::size_t> ETSChecker::GetTupleElementAccessValue(const ir::Expr
 
     if (expr->IsNumberLiteral()) {
         auto num = expr->AsNumberLiteral()->Number();
-        if (num.IsInt()) {
-            return checkLongValBounds(num.GetInt(), expr->Start());
-        }
-        if (num.IsLong()) {
+        if (num.IsInteger()) {
             return checkLongValBounds(num.GetLong(), expr->Start());
         }
         ES2PANDA_UNREACHABLE();
@@ -2351,77 +2348,26 @@ std::optional<std::size_t> ETSChecker::GetTupleElementAccessValue(const ir::Expr
 bool ETSChecker::ValidateTupleIndex(const ETSTupleType *const tuple, ir::MemberExpression *const expr,
                                     const bool reportError)
 {
-    auto const exprType = expr->Property()->Check(this);
-    auto const *const unboxedExpressionType = MaybeUnboxInRelation(exprType);
-
-    ES2PANDA_ASSERT(exprType != nullptr);
-
-    if (!exprType->HasTypeFlag(TypeFlag::CONSTANT)) {
-        if (exprType->IsETSObjectType() && (unboxedExpressionType != nullptr)) {
-            return ValidateTupleIndexFromEtsObject(tuple, expr);
-        }
+    auto *const property = expr->Property();
+    if (!property->IsNumberLiteral()) {
         if (reportError) {
-            LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, expr->Property()->Start());
+            LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, property->Start());
         }
         return false;
     }
 
-    if (!Relation()->IsSupertypeOf(GlobalIntBuiltinType(), exprType) &&
-        !Relation()->IsSupertypeOf(GlobalLongBuiltinType(), exprType)) {
-        LogError(diagnostic::TUPLE_INDEX_NOT_INT, {}, expr->Property()->Start());
-        return false;
-    }
-
-    if (expr->Property()->IsAssignmentExpression()) {
+    if (!property->AsNumberLiteral()->Number().IsInteger()) {
         if (reportError) {
-            LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, expr->Property()->Start());
+            LogError(diagnostic::TUPLE_INDEX_NOT_INT, {}, property->Start());
         }
         return false;
     }
 
-    auto exprValue = GetTupleElementAccessValue(expr->Property());
+    auto exprValue = GetTupleElementAccessValue(property);
     if (!exprValue.has_value() || (*exprValue >= tuple->GetTupleSize())) {
         if (reportError) {
-            LogError(diagnostic::TUPLE_INDEX_OOB, {}, expr->Property()->Start());
+            LogError(diagnostic::TUPLE_INDEX_OOB, {}, property->Start());
         }
-        return false;
-    }
-
-    return true;
-}
-
-bool ETSChecker::ValidateTupleIndexFromEtsObject(const ETSTupleType *const tuple, ir::MemberExpression *const expr)
-{
-    if (expr->Property() == nullptr || expr->Property()->Variable() == nullptr ||
-        expr->Property()->Variable()->Declaration() == nullptr ||
-        expr->Property()->Variable()->Declaration()->Node() == nullptr ||
-        !(expr->Property()->Variable()->Declaration()->Node()->IsMethodDefinition() ||
-          expr->Property()->Variable()->Declaration()->Node()->IsClassProperty() ||
-          expr->Property()->Variable()->Declaration()->Node()->IsClassStaticBlock() ||
-          expr->Property()->Variable()->Declaration()->Node()->IsOverloadDeclaration())) {
-        LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, expr->Start());
-        return false;
-    }
-    auto *value = expr->Property()->Variable()->Declaration()->Node()->AsClassElement()->Value();
-    if (value == nullptr) {
-        LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, expr->Property()->Start());
-        return false;
-    }
-    auto *exprType = value->TsType();
-    ES2PANDA_ASSERT(exprType != nullptr);
-    if (!exprType->HasTypeFlag(TypeFlag::CONSTANT)) {
-        LogError(diagnostic::TUPLE_INDEX_NONCONST, {}, expr->Property()->Start());
-        return false;
-    }
-
-    if (!exprType->HasTypeFlag(TypeFlag::ETS_ARRAY_INDEX | TypeFlag::LONG)) {
-        LogError(diagnostic::TUPLE_INDEX_NOT_INT, {}, expr->Property()->Start());
-        return false;
-    }
-
-    auto exprValue = GetTupleElementAccessValue(expr);
-    if (!exprValue.has_value() || (*exprValue >= tuple->GetTupleSize())) {
-        LogError(diagnostic::TUPLE_INDEX_OOB, {}, expr->Property()->Start());
         return false;
     }
 

@@ -28,7 +28,7 @@
 @MyAnno({a = 1 + -1, b = 1554.4 ^ 10, c = 12 >= 10})
 function foo() {}
 
-@MyAnno({a = 10, b = 1451.1 ^ 10, c = 123 > 10})
+@MyAnno({a = 10 as int, b = 1.0f as float, c = (123 as int) > (10 as int)})
 function foo1() {}
 
 function main() {
