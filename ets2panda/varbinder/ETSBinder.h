@@ -303,6 +303,7 @@ private:
     void ImportAllForeignBindings(const parser::Program *importedProgram);
     void ThrowRedeclarationError(const lexer::SourcePosition &pos, const Variable *const var,
                                  const Variable *const variable, util::StringView localName);
+    void ThrowReexportError(const parser::Program *importedProgram, const ir::ETSImportDeclaration *const import);
 
     // NOTE(dkofanov): #32418.
     RecordTable *globalRecordTable_;

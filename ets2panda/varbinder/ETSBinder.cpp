@@ -1560,6 +1560,22 @@ void ETSBinder::ValidateReexports()
     reexportedNames_.clear();
 }
 
+void ETSBinder::ThrowReexportError(const parser::Program *importedProgram, const ir::ETSImportDeclaration *const import)
+{
+    const auto *const importGlobalScope = importedProgram->GlobalScope();
+    for (const auto &[bindingName, var] : importGlobalScope->Bindings()) {
+        if (!var->Declaration()->Node()->IsValidInCurrentPhase() || util::Helpers::IsGlobalVar(var)) {
+            continue;
+        }
+        if (!importGlobalScope->IsForeignBinding(bindingName) && !var->Declaration()->Node()->IsDefaultExported() &&
+            var->AsLocalVariable()->Declaration()->Node()->IsExported()) {
+            if (!reexportedNames_.insert(bindingName).second) {
+                ThrowError(import->Start(), diagnostic::ALREADY_EXPORTED, {bindingName});
+            }
+        }
+    }
+}
+
 void ETSBinder::ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl)
 {
     // Reexport declarations are available in all files, see ReExportImports()
@@ -1592,11 +1608,12 @@ void ETSBinder::ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl)
         }
 
         if (specifier->IsImportNamespaceSpecifier()) {
-            // NOTE(kkonkuznetsov): See #20658
-            // How to validate ambiguous exports with namespace specifiers?
-            // Example:
-            // export * from "./A"
-            // export * from "./B"
+            // NOTE: See issue #1122
+            auto *importedProgram = GetExternalProgram(import);
+            if (importedProgram == nullptr || !specifier->AsImportNamespaceSpecifier()->Local()->Name().Empty()) {
+                continue;
+            }
+            ThrowReexportError(importedProgram, import);
         }
     }
 }

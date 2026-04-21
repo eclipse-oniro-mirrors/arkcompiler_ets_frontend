@@ -25,10 +25,6 @@ syntax:
   id: 120
   message: "Access modifier must precede field and method modifiers."
 
-- name: ALREADY_EXPORTED
-  id: 282
-  message: "Cannot export '{}', it was already exported."
-
 - name: AMBIENT_CLASS_MISSING_BODY
   id: 4
   message: "Ambient class declarations must have a body."
@@ -1432,6 +1428,7 @@ graveyard:
 - 272
 - 274
 - 275
+- 282
 - 283
 - 284
 - 285

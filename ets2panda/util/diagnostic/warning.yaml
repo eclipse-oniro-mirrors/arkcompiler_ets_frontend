@@ -13,6 +13,12 @@
 
 warning:
 
+- name: ALREADY_EXPORTED
+  id: 685267
+  message: "Entity named '{}' is already exported"
+  strict: true
+  softlist: ["allow_reexport"]
+
 - name: ANNOTATION_UNUSED_GENERIC_ALIAS_WARN
   id: 9
   message: "Type alias generic parameter '{}' is not used in type annotation"
