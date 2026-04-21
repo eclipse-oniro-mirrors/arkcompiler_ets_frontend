@@ -18,6 +18,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/phase.h"
+#include "util/es2pandaMacros.h"
 #include "util/perfMetrics.h"
 
 namespace ark::es2panda::checker {
@@ -210,23 +211,44 @@ static bool SignatureIsSupertypeOf(TypeRelation *relation, Signature *super, Sig
     if (super->MinArgCount() < sub->MinArgCount()) {
         return false;
     }
-    if ((super->RestVar() != nullptr && sub->RestVar() == nullptr) ||
-        (super->RestVar() == nullptr && sub->RestVar() != nullptr)) {
+
+    if (super->ArgCount() < sub->ArgCount()) {
         return false;
     }
+
+    if ((sub->RestVar() != nullptr && super->RestVar() == nullptr)) {
+        return false;
+    }
+
     if (!sub->GetSignatureInfo()->typeParams.empty()) {
         sub = EnhanceSignatureSubstitution(relation, super, sub);
         if (sub == nullptr) {
             return false;
         }
     }
-    auto count = std::min(sub->ArgCount(), super->ArgCount());
-    for (size_t idx = 0; idx < count; idx++) {
+
+    for (size_t idx = 0; idx < sub->ArgCount(); idx++) {
         if (!relation->IsSupertypeOf(sub->Params()[idx]->TsType(), super->Params()[idx]->TsType())) {
             return false;
         }
     }
-    if (super->RestVar() != nullptr && !relation->IsSupertypeOf(sub->RestVar()->TsType(), super->RestVar()->TsType())) {
+
+    // Check additional parameters in super when sub has rest parameter
+    if (sub->RestVar() != nullptr && super->ArgCount() > sub->ArgCount()) {
+        ES2PANDA_ASSERT(super->RestVar() != nullptr);
+        auto *subRestType = sub->RestVar()->TsType();
+        // Get element type of sub's rest parameter
+        auto *checker = relation->GetChecker()->AsETSChecker();
+        auto *subRestElementType =
+            !subRestType->IsETSTupleType() ? checker->GetElementTypeOfArray(subRestType) : checker->GlobalETSAnyType();
+        for (size_t idx = sub->ArgCount(); idx < super->ArgCount(); idx++) {
+            if (!relation->IsSupertypeOf(subRestElementType, super->Params()[idx]->TsType())) {
+                return false;
+            }
+        }
+    }
+    if (super->RestVar() != nullptr && sub->RestVar() != nullptr &&
+        !relation->IsSupertypeOf(sub->RestVar()->TsType(), super->RestVar()->TsType())) {
         return false;
     }
     if (!relation->IsSupertypeOf(super->ReturnType(), sub->ReturnType())) {

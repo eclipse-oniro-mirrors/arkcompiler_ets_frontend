@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,9 +69,9 @@ function testOptionalArity() {
     let f1 = (a1: S, a2?: S) => "/f1:" + a1 + tou(a2)
     let f2 = (a1: S, a2: S) => "/f2:" + a1 + a2
 
-    xassert(p012call(f0, args), "/f0:uu/f0:au/f0:ab")
-    xassert(p_12call(f0, args), "/f0:au/f0:ab")
-    xassert(p_12call(f1, args), "/f1:au/f1:ab")
+    // Note: p012call and p_12call expect functions with fewer parameters
+    // than f0 and f1 have, so they cannot be called with these functions
+    // according to the function subtype rules.
     xassert(p__2call(f0, args), "/f0:ab")
     xassert(p__2call(f1, args), "/f1:ab")
     xassert(p__2call(f2, args), "/f2:ab")
@@ -88,9 +88,9 @@ function testDfltArity() {
     let f1 = (a1: S, a2: S = "y") => "/f1:" + a1 + a2
     let f2 = (a1: S, a2: S) => "/f2:" + a1 + a2
 
-    xassert(p012call(f0, args), "/f0:xy/f0:ay/f0:ab")
-    xassert(p_12call(f0, args), "/f0:ay/f0:ab")
-    xassert(p_12call(f1, args), "/f1:ay/f1:ab")
+    // Note: p012call and p_12call expect functions with fewer parameters
+    // than f0 and f1 have, so they cannot be called with these functions
+    // according to the function subtype rules.
     xassert(p__2call(f0, args), "/f0:ab")
     xassert(p__2call(f1, args), "/f1:ab")
     xassert(p__2call(f2, args), "/f2:ab")

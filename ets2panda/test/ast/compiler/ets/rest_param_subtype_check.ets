@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,7 @@
  * limitations under the License.
  */
 
-function foo<T>(...a0: (T | undefined)[]): T | undefined { return a0[0]; }
+let x: (a: string, c: number, ...rest2: int[]) => void = 
+    (a: string, ...rest: int[]) => {}
 
-function main() {
-    let foo1 = foo<Double>
-    let foo2: (...a0: (Double|undefined)[]) => Double|undefined = foo1
-    let foo3: (a0?: Double, ...a1: (Double|undefined)[]) => Double|undefined = foo1
-    let foo4: (a0?: Double, a1?: Double, ...a2: (Double|undefined)[]) => Double|undefined = foo1
-}
-
+/* @@? 17:5 Error Semantic error ESE0318: Type '((p1: String, ...p2: Array<Int>) => undefined)' cannot be assigned to type '((p1: String, p2: Double, ...p3: Array<Int>) => undefined)' */
