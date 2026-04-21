@@ -359,7 +359,8 @@ void ETSFunctionEmitter::GenVariableSignature(pandasm::debuginfo::LocalVariable 
 
 void ETSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
 {
-    func->sourceFile = ETSEmitter::GetNormalizedSourceFilePath(Cg());
+    auto *program = GetProgram(const_cast<ir::AstNode *>(Cg()->RootNode()));
+    func->sourceFile = ETSEmitter::NormalizePathSeparators(std::string {program->RelativeFilePath(Cg()->Context())});
 
     if (!Cg()->IsDebug()) {
         return;

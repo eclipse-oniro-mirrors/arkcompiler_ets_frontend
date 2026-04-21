@@ -1002,6 +1002,28 @@ std::string Helpers::CalcRelativePath(const std::string &target, const std::stri
     return ret;
 }
 
+std::string Helpers::RelPathByStrippingPrefix(const std::string &absPath, const std::string &prefix)
+{
+    auto normalizeSlashes = [](std::string path) {
+        std::replace(path.begin(), path.end(), '\\', '/');
+        return path;
+    };
+    auto normAbsPath = normalizeSlashes(absPath);
+    auto normPrefix = normalizeSlashes(prefix);
+    if (normPrefix.empty() || !StartsWith(normAbsPath, normPrefix) ||
+        (normAbsPath.size() > normPrefix.size() && normAbsPath[normPrefix.size()] != '/')) {
+        return "";
+    }
+    auto relPath = normAbsPath.substr(normPrefix.size());
+    if (!relPath.empty() && relPath.front() == '/') {
+        relPath = relPath.substr(1);
+    }
+    if (!relPath.empty() && relPath.back() == '/') {
+        relPath.pop_back();
+    }
+    return relPath;
+}
+
 bool Helpers::IsArrayType(checker::Type *type)
 {
     return type->IsETSArrayType() || type->IsETSResizableArrayType() || type->IsETSReadonlyArrayType();

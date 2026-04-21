@@ -220,6 +220,7 @@ public:
 
     static std::vector<std::string> Split(const std::string &str, char delimiter);
     static std::string CalcRelativePath(const std::string &target, const std::string &base);
+    static std::string RelPathByStrippingPrefix(const std::string &absPath, const std::string &prefix);
 };
 
 template <typename T>
