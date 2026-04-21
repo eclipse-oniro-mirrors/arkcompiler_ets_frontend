@@ -15,13 +15,11 @@
 
 // this file is imported and used by `./import_ambient_const_neg.ets`
 
-export declare const double_1 = 3.14E14;
-declare const double_2 = -0.0, double_3 = 9007199254740991.0;
+export declare const double_1: double;
+declare const double_2: double, double_3: double;
 export { double_3 }
 
 let double_4 = 1.0;
 let double_5 = 9007199254740991.0;
 export { double_5 }
-/* @@? 18:22 Warning Warning W71336: Exported variable 'double_1' requires type annotation. */
-/* @@? 19:32 Warning Warning W71336: Exported variable 'double_3' requires type annotation. */
 /* @@? 23:5 Warning Warning W71336: Exported variable 'double_5' requires type annotation. */

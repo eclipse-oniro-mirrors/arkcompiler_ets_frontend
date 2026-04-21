@@ -104,6 +104,9 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
         auto typeAnn = id->TypeAnnotation();
         id->SetTsTypeAnnotation(nullptr);
         auto modifiers = varDecl->Modifiers() | declarator->Modifiers();
+        if ((modifiers & ir::ModifierFlags::DECLARE) && declarator->Init() != nullptr) {
+            parser_->LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS, {id->Name()}, declarator->Init()->Start());
+        }
         auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
             allocator_, id->Clone(allocator_, nullptr), declarator->Init(), typeAnn, modifiers, allocator_, false);
         ES2PANDA_ASSERT(field != nullptr);

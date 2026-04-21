@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 declare const type typeA = int;
 
 
-/* @@? 16:20 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 16:15 Error Semantic error ESE1111: Missing type annotation for the 'type'. */
 /* @@? 16:20 Error Syntax error ESY0227: Unexpected token 'typeA'. */
 /* @@? 16:20 Error Semantic error ESE0143: Unresolved reference typeA */
 /* @@? 16:28 Error Syntax error ESY0227: Unexpected token 'int'. */

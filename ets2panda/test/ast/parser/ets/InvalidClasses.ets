@@ -101,8 +101,7 @@ interface I1 {
 /* @@? 47:11 Error Syntax error ESY0223: The special predefined method '$_iterator' should not have parameters. */
 /* @@? 47:21 Error Semantic error ESE0096: The return type of '$_iterator' must be a type that implements Iterator interface. */
 /* @@? 47:21 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
-/* @@? 54:21 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x */
-/* @@? 54:23 Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
+/* @@? 54:21 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x */
 /* @@? 58:1 Error Semantic error ESE0143: Unresolved reference declare */
 /* @@? 58:9 Error Syntax error ESY0227: Unexpected token 'native'. */
 /* @@? 58:16 Error Syntax error ESY0203: 'native' flags must be used for functions only at top-level. */

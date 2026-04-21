@@ -1372,3 +1372,4 @@
     }
   }
 }
+[test-keyword-declare.ts:24:22] Semantic error ESE125125: Initializers are not allowed in ambient contexts: var6

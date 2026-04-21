@@ -514,11 +514,12 @@ ir::ClassElement *ParserImpl::ParseClassProperty(ClassElementDescriptor *desc,
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
         lexer_->NextToken();  // eat equals
 
+        value = ParseExpression();
+
         if (InAmbientContext() || (desc->modifiers & ir::ModifierFlags::DECLARE) != 0) {
-            LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS);
+            LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS, {propName->AsIdentifier()->Name()}, value->Start());
         }
 
-        value = ParseExpression();
         propEnd = value->End();
     }
 

@@ -881,10 +881,6 @@ syntax:
   id: 301
   message: "Missing condition in {} statement"
 
-- name: MISSING_TYPE_ANNOTATION
-  id: 1
-  message: "Missing type annotation for property '{}'."
-
 - name: MODIFIERS_OF_GET_SET_LIMITED
   id: 107
   message: "Modifiers of getter and setter are limited to ('abstract', 'static', 'final', 'override', 'native')."

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@
 
 
 /* @@? 17:8 Error Syntax error ESY0025: Annotation can not have method as property. */
-/* @@? 17:8 Error Syntax error ESY0001: Missing type annotation for property 'foo'. */
+/* @@? 17:8 Error Semantic error ESE1111: Missing type annotation for the 'foo'. */
 /* @@? 17:8 Error Syntax error ESY0224: Identifier expected, got '('. */
 /* @@? 17:9 Error Syntax error ESY0224: Identifier expected, got ')'. */
 /* @@? 17:10 Error Syntax error ESY0224: Identifier expected, got '{'. */

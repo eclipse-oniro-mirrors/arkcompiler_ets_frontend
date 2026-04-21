@@ -1460,16 +1460,16 @@ ir::VariableDeclarator *ParserImpl::ParseVariableDeclaratorInitializer(ir::Expre
 
     lexer_->NextToken();
 
-    if (InAmbientContext() && (flags & VariableParsingFlags::CONST) == 0) {
-        LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS);
-    }
-
     auto exprFlags = ((flags & VariableParsingFlags::STOP_AT_IN) != 0 ? ExpressionParseFlags::STOP_AT_IN
                                                                       : ExpressionParseFlags::NO_OPTS);
 
     ir::Expression *initializer = ParseExpression(exprFlags);
     if (initializer == nullptr) {  // Error processing.
         return nullptr;
+    }
+
+    if (InAmbientContext()) {
+        LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS, {init->AsIdentifier()->Name()}, initializer->Start());
     }
 
     lexer::SourcePosition endLoc = initializer->End();
