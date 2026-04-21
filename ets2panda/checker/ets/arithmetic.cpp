@@ -51,6 +51,11 @@ struct TypeParams {
     Type *unboxedR;
 };
 
+struct RelationalContext {
+    lexer::TokenType op;
+    lexer::SourcePosition pos;
+};
+
 enum class BinaryExpressionValidity {
     NO_ERR = 0U,
     LHS_ERR = 1U << 0U,
@@ -979,6 +984,61 @@ static bool HasMismatchedBooleanComparands(Type *promotedType, Type *unboxedL, T
            unboxedL->IsETSBooleanType() != unboxedR->IsETSBooleanType();
 }
 
+static bool CheckUnionRelationalError(ETSChecker *checker, Type *leftType, Type *rightType,
+                                      const RelationalContext &ctx)
+{
+    if ((leftType->IsETSUnionType() || rightType->IsETSUnionType()) && !IsEqualityOperator(ctx.op)) {
+        checker->LogError(diagnostic::BINOP_UNION, {}, ctx.pos);
+        return true;
+    }
+    return false;
+}
+
+static bool CheckStringEnumBooleanConflict(ETSChecker *checker, Type *leftType, Type *rightType,
+                                           const RelationalContext &ctx)
+{
+    auto *ubL = checker->MaybeUnboxType(leftType);
+    auto *ubR = checker->MaybeUnboxType(rightType);
+    if ((leftType->IsETSStringEnumType() || rightType->IsETSStringEnumType()) &&
+        ((ubL && ubL->IsETSBooleanType()) || (ubR && ubR->IsETSBooleanType()))) {
+        LogOperatorCannotBeApplied(checker, ctx.op, ubL ? ubL : leftType, ubR ? ubR : rightType, ctx.pos);
+        return true;
+    }
+    return false;
+}
+
+static bool CharRelationalOperandIsValid(ETSChecker *checker, Type *leftType, Type *rightType)
+{
+    auto const leftUnboxed = checker->MaybeUnboxType(leftType);
+    auto const rightUnboxed = checker->MaybeUnboxType(rightType);
+    if (leftUnboxed == nullptr || rightUnboxed == nullptr) {
+        return true;
+    }
+    auto const leftIsChar = leftUnboxed->IsCharType();
+    auto const rightIsChar = rightUnboxed->IsCharType();
+    if (!leftIsChar && !rightIsChar) {
+        return true;
+    }
+    if (leftIsChar && rightIsChar) {
+        return true;
+    }
+    auto const &otherUnboxed = leftIsChar ? rightUnboxed : leftUnboxed;
+    // Check original type to exclude enums — enum is not a "numeric type" per spec
+    auto const &otherOriginal = leftIsChar ? rightType : leftType;
+    return checker->CheckIfNumeric(otherUnboxed) && !otherOriginal->IsETSEnumType() &&
+           !otherOriginal->IsETSStringEnumType();
+}
+
+static bool CheckCharRelationalError(ETSChecker *checker, Type *leftType, Type *rightType, const RelationalContext &ctx)
+{
+    if (!CharRelationalOperandIsValid(checker, leftType, rightType)) {
+        LogOperatorCannotBeApplied(checker, ctx.op, checker->GetNonConstantType(leftType),
+                                   checker->GetNonConstantType(rightType), ctx.pos);
+        return true;
+    }
+    return false;
+}
+
 // NOTE(dkofanov): Deprecated operations on 'char' #28006
 std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expression *left, ir::Expression *right,
                                                                       lexer::TokenType operationType,
@@ -990,19 +1050,13 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
     RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
-    if ((leftType->IsETSUnionType() || rightType->IsETSUnionType()) && !IsEqualityOperator(operationType)) {
-        LogError(diagnostic::BINOP_UNION, {}, pos);
+    if (CheckUnionRelationalError(this, leftType, rightType, {operationType, pos})) {
         return {GlobalETSBooleanBuiltinType(), leftType};
     }
 
     auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
 
-    auto *const ubL = MaybeUnboxType(leftType);
-    auto *const ubR = MaybeUnboxType(rightType);
-    if ((leftType->IsETSStringEnumType() || rightType->IsETSStringEnumType()) &&
-        ((ubL != nullptr && ubL->IsETSBooleanType()) || (ubR != nullptr && ubR->IsETSBooleanType()))) {
-        LogOperatorCannotBeApplied(this, operationType, ubL != nullptr ? ubL : leftType,
-                                   ubR != nullptr ? ubR : rightType, pos);
+    if (CheckStringEnumBooleanConflict(this, leftType, rightType, {operationType, pos})) {
         return {GlobalETSBooleanBuiltinType(), leftType};
     }
 
@@ -1017,6 +1071,9 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
             return {GlobalETSBooleanBuiltinType(), GlobalETSBooleanBuiltinType()};
         }
         LogOperatorCannotBeApplied(this, operationType, leftType, rightType, pos);
+    }
+
+    if (CheckCharRelationalError(this, leftType, rightType, {operationType, pos})) {
         return {GlobalETSBooleanBuiltinType(), leftType};
     }
 
