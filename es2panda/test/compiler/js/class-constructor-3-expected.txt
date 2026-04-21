@@ -1,0 +1,7 @@
+v =  test
+typeof(v) =  string
+TypeError: undefined is not callable
+v =  [object Object]
+typeof(v) =  object
+TypeError: undefined is not callable
+ReferenceError: undefinedsuper() forbidden re-bind 'this'

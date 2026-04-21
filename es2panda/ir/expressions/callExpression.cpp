@@ -129,6 +129,7 @@ void CallExpression::CompileSuperCall(compiler::PandaGen *pg, bool containsSprea
         pg->LoadLexicalVar(this, level, slot);
 
         pg->CallInit(this, thisReg);
+        pg->GetThis(this);
     }
 }
 
