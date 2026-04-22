@@ -35,14 +35,14 @@ void VarBinder::InitTopScope()
     varScope_ = topScope_;
 }
 
-Variable *VarBinder::AddParamDecl(ir::Expression *param)
+Variable *VarBinder::AddParamDecl(ir::Expression *param, bool throwRedeclaration)
 {
     ES2PANDA_ASSERT(scope_->IsFunctionParamScope() || scope_->IsCatchParamScope());
 
     auto [var, node] = static_cast<ParamScope *>(scope_)->AddParamDecl(Allocator(), this, param);
     ES2PANDA_ASSERT(var != nullptr);
 
-    if (node != nullptr) {
+    if ((node != nullptr) && throwRedeclaration) {
         ThrowRedeclaration(node->Start(), var->Name(), var->Declaration()->Type());
     }
 

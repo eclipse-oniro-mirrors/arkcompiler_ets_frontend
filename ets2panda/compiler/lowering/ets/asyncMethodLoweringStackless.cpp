@@ -308,11 +308,8 @@ static void WrapBodyInTryCatchBlock(public_lib::Context *ctx, ir::ScriptFunction
 
     ClearTypesVariablesAndScopes(body);
 
-    const auto emptyFinalizer =
-        util::NodeAllocator::Alloc<ir::BlockStatement>(alloc, alloc, ArenaVector<ir::Statement *>({}));
-    ES2PANDA_ASSERT(emptyFinalizer);
     const auto tryStatement = util::NodeAllocator::ForceSetParent<ir::TryStatement>(
-        alloc, body, CreateCatchClauses(ctx, func), emptyFinalizer,
+        alloc, body, CreateCatchClauses(ctx, func), nullptr,
         ArenaVector<std::pair<compiler::LabelPair, const ir::Statement *>>({}));
     ES2PANDA_ASSERT(tryStatement);
     const auto newBody = util::NodeAllocator::ForceSetParent<ir::BlockStatement>(
