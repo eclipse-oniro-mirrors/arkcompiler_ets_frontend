@@ -22,7 +22,9 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#if !defined(_WIN32)
 #include <sys/resource.h>
+#endif
 
 namespace {
 size_t ParseStatusValueKb(std::string_view key)
@@ -52,6 +54,9 @@ size_t ParseStatusValueKb(std::string_view key)
 
 size_t GetPeakRSS()
 {
+#if defined(_WIN32)
+    return 0;
+#else
     struct rusage usage;
     if (getrusage(RUSAGE_SELF, &usage) == 0) {
 #ifdef __linux__
@@ -61,6 +66,7 @@ size_t GetPeakRSS()
 #endif
     }
     return 0;
+#endif
 }
 
 size_t GetCurrentRSS()
@@ -79,6 +85,9 @@ const std::string &ResolveCasesDir()
             return configured;
         }
 
+#if defined(_WIN32)
+        return configured;
+#else
         std::error_code ec;
         auto exePath = std::filesystem::read_symlink("/proc/self/exe", ec);
         if (ec) {
@@ -94,6 +103,7 @@ const std::string &ResolveCasesDir()
 
         std::string resolved = exePathStr.substr(0, outPos) + configured.substr(1);
         return std::filesystem::exists(resolved) ? resolved : configured;
+#endif
     }();
     return kCasesDir;
 }
@@ -107,23 +117,26 @@ void ConfigureBuildFolderForBenchmarks()
             return true;
         }
 
+#if defined(_WIN32)
+        // Keep host mingw build compile-safe; benchmark runtime path fix is only needed for Linux host runs.
+        return _putenv_s("BUILD_FOLDER", "") == 0;
+#else
         std::error_code ec;
         auto exePath = std::filesystem::read_symlink("/proc/self/exe", ec);
         if (ec) {
             return false;
         }
 
-        const std::string exePathStr = exePath.string();
-        constexpr const char *marker = "/tests/unittest/arkcompiler/ets_frontend/";
-        const auto markerPos = exePathStr.find(marker);
-        if (markerPos == std::string::npos) {
+        const auto exeDir = exePath.parent_path();
+        if (exeDir.empty()) {
             return false;
         }
 
-        // Initializer passes BUILD_FOLDER as argv[0], options then resolve arktsconfig via dirname(argv[0]).
-        const std::string toolchainOutDir = exePathStr.substr(0, markerPos);
-        const std::string fakeExecPath = toolchainOutDir + "/arkcompiler/ets_frontend/es2panda";
+        // Initializer treats BUILD_FOLDER as argv[0], then resolves arktsconfig via dirname(argv[0]).
+        // Use a stable fake executable path in the same directory as current benchmark binary.
+        const std::string fakeExecPath = (exeDir / "es2panda").string();
         return setenv("BUILD_FOLDER", fakeExecPath.c_str(), 1) == 0;
+#endif
     }();
     (void)kConfigured;
 }

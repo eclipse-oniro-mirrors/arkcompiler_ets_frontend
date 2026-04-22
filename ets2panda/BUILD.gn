@@ -1302,6 +1302,9 @@ ohos_shared_library("libes2panda_public") {
     ":libes2panda_public_frontend_static",
     "./lsp:libes2panda_lsp_static",
   ]
+  if (lsp_benchmark_build_enable) {
+    deps += [ "test/unit/lsp/benchmark:lsp_benchmark_build" ]
+  }
   if (is_mingw || is_win) {
     output_extension = "dll"
   } else {
@@ -1489,11 +1492,4 @@ panda_code_fix_gen("es2panda_lsp_code_fix_register_gen") {
   template_files = [ "code_fix_register.h.erb" ]
   sources = "lsp"
   destination = "$target_gen_dir/generated"
-}
-
-if (lsp_benchmark_build_enable) {
-  group("lsp_benchmark") {
-    testonly = true
-    deps = [ "test/unit/lsp/benchmark:lsp_benchmark" ]
-  }
 }

@@ -17,29 +17,18 @@
 #define LSP_BENCHMARK_UTILS_H
 
 #include <cstddef>
-#include <fstream>
-#include <sstream>
 #include <string>
+#include "lspMemoryManager.h"
 
 #ifndef CASES_DIR
 #define CASES_DIR "./cases"
 #endif
 
-inline std::string MakeCasePath(const std::string &relativeFileName)
-{
-    return std::string(CASES_DIR) + "/" + relativeFileName;
-}
+// CC-OFFNXT(G.NAM.01) false positive
+std::string MakeCasePath(const std::string &relativeFileName);
 
-inline std::string ReadCaseFile(const std::string &filePath)
-{
-    std::ifstream in(filePath);
-    if (!in.is_open()) {
-        return "";
-    }
-    std::ostringstream ss;
-    ss << in.rdbuf();
-    return ss.str();
-}
+// CC-OFFNXT(G.NAM.01) false positive
+std::string ReadCaseFile(const std::string &filePath);
 
 inline bool TryResolveAnchorOffset(const std::string &source, const std::string &anchorText, size_t anchorOffset,
                                    size_t &resolvedOffset)
