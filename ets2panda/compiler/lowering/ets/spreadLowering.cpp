@@ -88,21 +88,6 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     auto *const parser = ctx->parser->AsETSParser();
     ir::Identifier *newArrayId = Gensym(allocator);
     ES2PANDA_ASSERT(newArrayId != nullptr);
-    checker::Type *arrayElementType = checker->GetElementTypeOfArray(array->TsType());
-    bool isValueArray = array->TsType()->IsETSArrayType() && array->TsType()->AsETSArrayType()->IsValueArray();
-
-    // NOTE: If arrayElementType is ETSUnionType(String|Int) or ETSObjectType(private constructor) or ..., we cannot
-    //       use "new Type[]" to declare an array, so we generate a new UnionType "arrayElementType|null" to solve
-    //       array initialization problems temporarily.
-    //       We probably need to use cast Expression in the end of the generated source code to remove "|null", such as
-    //       "newArrayName as arrayType[]".
-    //       But now cast Expression doesn't support built-in array (cast fatherType[] to sonType[]), so "newArrayName
-    //       as arrayType" should be added after cast Expression is implemented completely.
-    //       Related issue: #issue20162
-    if (checker->IsReferenceType(arrayElementType) &&
-        !(arrayElementType->IsETSObjectType() && arrayElementType->AsETSObjectType()->IsBoxedPrimitive())) {
-        arrayElementType = checker->CreateETSUnionType({arrayElementType, checker->GlobalETSUndefinedType()});
-    }
 
     std::stringstream newArrayDeclareStr;
     std::vector<ir::AstNode *> newStmts;
@@ -115,8 +100,7 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     } else {
         newArrayDeclareStr << "let @@I1 = @@E2;" << std::endl;
         newStmts.emplace_back(newArrayId->Clone(allocator, nullptr));
-        newStmts.emplace_back(CreateUninitializedFixedArray(
-            ctx, newArrayLengthId, checker->CreateETSArrayType(arrayElementType, isValueArray)));
+        newStmts.emplace_back(CreateUninitializedFixedArray(ctx, newArrayLengthId, array->TsType()));
     }
 
     ES2PANDA_ASSERT(newArrayLengthId != nullptr);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ function main() {
     let arg1: number[] = [1, 2]
     let arg2: FixedArray<number> = [3, 4]
     let arg3: [number, number] = [5, 6]
+    let arg4: ValueArray<number> = [7, 8]
     let fn = (...args: FixedArray<number>) => {
         let sum = 0;
         for (let e of args) {
@@ -25,9 +26,23 @@ function main() {
         return sum;
     }
     arktest.assertEQ(fn(1, 2, 3, 4), 10);
+
     arktest.assertEQ(fn(...arg1), 3);
     arktest.assertEQ(fn(...[...arg1]), 3);
     arktest.assertEQ(fn(1, 2, 3, 4, ...arg1), 13);
-    arktest.assertEQ(fn(...arg1, ...arg2, 7, ...arg3, 8), 36);
+
+    arktest.assertEQ(fn(...arg2), 7);
+    arktest.assertEQ(fn(...[...arg2]), 7);
+    arktest.assertEQ(fn(1, 2, 3, 4, ...arg2), 17);
+
+    arktest.assertEQ(fn(...arg3), 11);
+    arktest.assertEQ(fn(...[...arg3]), 11);
+    arktest.assertEQ(fn(1, 2, 3, 4, ...arg3), 21);
+
+    arktest.assertEQ(fn(...arg4), 15);
+    arktest.assertEQ(fn(...[...arg4]), 15);
+    arktest.assertEQ(fn(1, 2, 3, 4, ...arg4), 25);
+
+    arktest.assertEQ(fn(...arg1, ...arg2, 7, ...arg3, ...arg4, 8), 51);
 }
 
