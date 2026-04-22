@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,37 @@
  * limitations under the License.
  */
 
-declare namespace NS {
-    export type valueTypeOutside = int | string
-    export namespace NS1 {
-        export type valueTypeInside = number | string
+
+class A<T extends Object> {
+    public a : T;
+    constructor(a: T) {
+        this.a = a;
+    }
+    bar() {
+        fooB(this.a);
     }
 }
 
-export default NS;
+function fooB<T>(a : T) {
+    arktest.assertEQ(a, 10);
+}
+
+function testA<T extends int>(a: T) : void {
+    arktest.assertEQ(a, 5);
+}
+
+function testB<S extends int>(a: S) : void {
+    testA(a);
+}
+
+function testC<T extends S, S extends int>(a: T, b: S) : void {
+    arktest.assertEQ(a, 8);
+}
+
+function main() {
+    let a = new A<number>(10);
+    a.bar();
+
+    testB(5);
+    testC(8, 1);
+}
