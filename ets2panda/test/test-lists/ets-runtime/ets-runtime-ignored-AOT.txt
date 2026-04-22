@@ -1,0 +1,2 @@
+#33394
+element_access_compound_assignment.ets

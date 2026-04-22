@@ -5,6 +5,5 @@ lambda_promise_type_infer.ets
 lambda_promise_type_infer_2.ets
 
 
-# Arrays of primitives used interchangeably with arrays of reference (in generics and forOf)
+#34314 
 async_lambda_return_type_test.ets
-finallyTryAbruptedByReturn.ets
