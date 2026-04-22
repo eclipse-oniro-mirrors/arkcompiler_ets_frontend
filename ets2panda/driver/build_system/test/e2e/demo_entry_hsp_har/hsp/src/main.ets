@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export function hello1() {
+export function hello1(): void {
     let b: string = "hello world!!!";
     console.log(b)
 }

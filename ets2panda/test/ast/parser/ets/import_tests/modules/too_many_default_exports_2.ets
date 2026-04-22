@@ -16,6 +16,6 @@
 export default let a = 2, /* @@ label */b = 3;
 
 
-/* @@? 16:20 Warning Warning W71336: Exported variable 'a' requires type annotation. */
+/* @@? 16:20 Error Semantic error ESE71336: Exported variable 'a' requires type annotation. */
 /* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */
-/* @@@ label Warning Warning W71336: Exported variable 'b' requires type annotation. */
+/* @@@ label Error Semantic error ESE71336: Exported variable 'b' requires type annotation. */

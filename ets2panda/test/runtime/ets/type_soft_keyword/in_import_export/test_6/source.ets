@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@ tags: [not-a-test]
 
 export {a, b, type, c }
 
-let type = 0
-let a = 1
-let b = 2
-let c = 3
+let type: number = 0
+let a: number = 1
+let b: number = 2
+let c: number = 3

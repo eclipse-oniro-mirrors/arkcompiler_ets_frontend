@@ -13,5 +13,4 @@
  * limitations under the License.
  */
 
-export default function foo() { console.log("mod3") }
-/* @@? 16:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+export default function foo(): void { console.log("mod3") }

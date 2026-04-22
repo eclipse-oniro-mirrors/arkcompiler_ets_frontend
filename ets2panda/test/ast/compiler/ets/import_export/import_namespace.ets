@@ -17,4 +17,4 @@ import {ns} from "./export_namespace_with_alias"
 
 function main(){
     ns.num
-}/* @@? export_namespace_with_alias.ets:17:16 Warning Warning W71336: Exported class property 'num' requires type annotation. */
+}

@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-function f(){
+function f(): int {
     return 1;
 }
 
 export type {f}
-/* @@? 16:1 Warning Warning W71336: Exported function 'f' requires type annotation. */

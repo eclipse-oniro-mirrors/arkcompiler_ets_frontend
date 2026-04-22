@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,7 @@ TEST_F(LoweringTest, TestTopLevelStmtsSyntheticModuleClass)
 {
     char const *text = R"(
         namespace X {
-            export function bar() { } // bar is a member of another *module* class
+            export function bar(): void { } // bar is a member of another *module* class
         }
     )";
 
@@ -131,7 +131,7 @@ TEST_F(LoweringTest, TestTopLevelStmtsExportedNamespaceNested)
 TEST_F(LoweringTest, TestTopLevelStmtsExportedEnum)
 {
     char const *text = R"(
-        export let a = 10;
+        export let a: int = 10;
         export enum Color {
             Red = 1
         }

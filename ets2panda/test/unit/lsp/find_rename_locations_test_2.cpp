@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -88,8 +88,8 @@ export function add(a: number, b: number) {
   return sum;
 }
 export const arrowFunc = () => "arrow";
-export let xxx = 123;
-export const yyy = 456;
+export let xxx: int = 123;
+export const yyy: int = 456;
 export type Status = "pending" | "completed" | "failed";
 export enum Color {
   Red = "red",

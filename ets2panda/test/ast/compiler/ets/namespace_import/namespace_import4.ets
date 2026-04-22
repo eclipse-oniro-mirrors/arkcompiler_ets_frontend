@@ -17,7 +17,5 @@ import * as ns from './namespace_export3.ets'
 
 arktest.assertEQ(/* @@ label1 */ns, 1)
 
-/* @@? namespace_export3.ets:17:9 Warning Warning W71336: Exported class property 'x' requires type annotation. */
-
 /* @@? namespace_import4.ets:18:1 Error Semantic error ESE0127: No matching call signature for assertEQ(ns, Int) */
 /* @@@ label1 Error Semantic error ESE43831: Namespace 'ns' cannot be used as object */

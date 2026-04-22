@@ -27,6 +27,3 @@ Space1.foo(1234); //ok
 /* @@? namespace_access_violation_import_conflicts.ets:20:23 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
 /* @@? namespace_access_violation_import_conflicts.ets:23:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? namespace_access_violation_import_conflicts.ets:23:1 Error Semantic error ESE0127: No matching call signature for foo() */
-
-/* @@? src02.ets:23:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-/* @@? src02.ets:24:15 Warning Warning W71336: Exported class property 'variable' requires type annotation. */

@@ -13,5 +13,10 @@
  * limitations under the License.
  */
 
-let x = null;
-export { x as default };/* @@? 16:5 Warning Warning W71336: Exported variable 'x' requires type annotation. */
+import * as ns2 from "./namespace_import2"
+
+export function A(): int {
+    return ns2.A()
+}
+
+export let a: int = 1

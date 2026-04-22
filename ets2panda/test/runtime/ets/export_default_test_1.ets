@@ -27,7 +27,7 @@ export class Http {
         this.url = 'https'
     }
 
-    request() {
+    request(): string {
         let result = request1(this.url)
         return result
     }

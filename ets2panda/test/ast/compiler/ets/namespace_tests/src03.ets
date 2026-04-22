@@ -14,6 +14,5 @@
  */
 
 export default namespace A{
-   function foo(){}
+   function foo(): void {}
 }
-/* @@? 17:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */

@@ -17,8 +17,7 @@ class C /* @@ label */{}
 
 export class B<T> { x: T }
 
-export function bar() { return new B<C>() };
+export function bar(): B<C> { return new B<C>() };
 
 
 /* @@@ label Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */
-/* @@? 20:1 Warning Warning W71336: Exported function 'bar' requires type annotation. */

@@ -74,6 +74,7 @@ warning:
 - name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
   id: 71336
   message: "Exported {} '{}' requires type annotation."
+  softlist: ["export_type_anno"]
 
 - name: EXTENSION_MISMATCH
   id: 25

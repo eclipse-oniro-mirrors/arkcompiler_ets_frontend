@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,7 +137,7 @@ function test() {
 
 TEST_F(LspClassChangeTracker, DeleteHelpers_BasicTest2)
 {
-    const char *source = "export async function test() { \n let a = 1; \n let b = 2; \n let c = 3; \n}";
+    const char *source = "export async function test(): void { \n let a = 1; \n let b = 2; \n let c = 3; \n}";
     ark::es2panda::lsp::Initializer initializer;
     es2panda_Context *ctx = initializer.CreateContext("deleteHelpers_BasicTest2.ets", ES2PANDA_STATE_CHECKED, source);
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);

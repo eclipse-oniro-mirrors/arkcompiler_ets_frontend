@@ -18,5 +18,3 @@ import A from "./src03"
 A.foo()
 
 /* @@? namespace_default_import.ets:18:3 Error Semantic error ESE0206: 'foo' is not exported in 'A' */
-
-/* @@? src03.ets:17:4 Warning Warning W71336: Exported function 'foo' requires type annotation. */

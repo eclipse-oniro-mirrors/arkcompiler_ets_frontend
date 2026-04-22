@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export function foo<R=number>(){
+export function foo<R=number>(): void {
     let prop: R
     return
 }
-/* @@? 15:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */

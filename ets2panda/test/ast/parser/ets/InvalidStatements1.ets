@@ -56,7 +56,7 @@ throw
 /* @@? 22:5 Error Semantic error ESE0351: Variable 'x' has already been declared. */
 /* @@? 25:5 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 28:1 Error Semantic error ESE0130: Function f is already declared. */
-/* @@? 28:1 Warning Warning W71336: Exported function 'f' requires type annotation. */
+/* @@? 28:1 Error Semantic error ESE71336: Exported function 'f' requires type annotation. */
 /* @@? 29:5 Error Syntax error ESY0040: Illegal start of STRUCT expression. */
 /* @@? 30:9 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 32:5 Error Syntax error ESY0135: Nested functions are not allowed. */

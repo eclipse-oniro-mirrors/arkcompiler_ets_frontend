@@ -52,4 +52,4 @@ let a = 0;
 /* @@@ second Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
 /* @@@ third Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
 /* @@@ fourth Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
-/* @@? 47:5 Warning Warning W71336: Exported variable 'a' requires type annotation. */
+/* @@? 47:5 Error Semantic error ESE71336: Exported variable 'a' requires type annotation. */

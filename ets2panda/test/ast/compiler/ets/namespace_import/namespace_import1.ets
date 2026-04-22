@@ -13,13 +13,5 @@
  * limitations under the License.
  */
 
-import * as ns2 from "./namespace_import2"
-
-export function A() {
-    return ns2.A()
-}
-
-export let a = 1/* @@? namespace_import1.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */
-/* @@? namespace_import1.ets:22:12 Warning Warning W71336: Exported variable 'a' requires type annotation. */
-
-/* @@? namespace_import2.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */
+let x: null = null;
+export { x as default };

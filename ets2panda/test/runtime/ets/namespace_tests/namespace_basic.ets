@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +15,14 @@
 
 namespace BasicNamespace {
     // Exported members
-    export function greet() {
+    export function greet(): string {
         return "Hello, BasicNamespace!";
     }
 
-    export let counter = 0;
-    export const maxCounter = 100;
+    export let counter: number = 0;
+    export const maxCounter: number = 100;
 
-    export function incrementCounter() {
+    export function incrementCounter(): void {
         if (counter < maxCounter) {
             counter++;
         }

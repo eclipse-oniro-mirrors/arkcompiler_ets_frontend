@@ -19,9 +19,9 @@ function foo2() {}
 overload foo {foo1, foo2} // compile-time error
 
 namespace N {
-export function fooN() {}
+export function fooN(): void{}
 namespace M {
-export function fooM() {}
+export function fooM(): void {}
 }
 overload goo {M.fooM, fooN} // compile-time error
 }
@@ -29,7 +29,5 @@ overload bar {foo2, N.fooN} // compile-time error
 
 /* @@? 19:15 Error Semantic error ESE0143: Unresolved reference foo1 */
 /* @@? 19:15 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
-/* @@? 22:1 Warning Warning W71336: Exported function 'fooN' requires type annotation. */
-/* @@? 24:1 Warning Warning W71336: Exported function 'fooM' requires type annotation. */
 /* @@? 26:15 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@? 28:21 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */

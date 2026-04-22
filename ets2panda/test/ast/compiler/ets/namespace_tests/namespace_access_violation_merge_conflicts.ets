@@ -14,6 +14,5 @@
  */
 
 export namespace MergeSpace {
-    export function foo() { return 42; }
+    export function foo(): int { return 42; }
 }
-/* @@? 17:5 Warning Warning W71336: Exported function 'foo' requires type annotation. */

@@ -18,4 +18,4 @@ while (null) export function foo() {}
 
 /* @@? 16:14 Error Syntax error ESY0300: Missing body in while statement */
 /* @@? 16:14 Error Syntax error ESY0227: Unexpected token 'export'. */
-/* @@? 16:14 Warning Warning W71336: Exported function 'foo' requires type annotation. */
+/* @@? 16:14 Error Semantic error ESE71336: Exported function 'foo' requires type annotation. */

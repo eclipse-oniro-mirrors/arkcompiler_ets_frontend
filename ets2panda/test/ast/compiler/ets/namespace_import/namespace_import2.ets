@@ -15,9 +15,7 @@
 
 import * as ns1 from "./namespace_import1"
 
-export function A() {
+export function A(): int {
     return ns1.a;
-}/* @@? namespace_import1.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */
-/* @@? namespace_import1.ets:22:12 Warning Warning W71336: Exported variable 'a' requires type annotation. */
-
-/* @@? namespace_import2.ets:18:1 Warning Warning W71336: Exported function 'A' requires type annotation. */
+}
+/* @@? 19:16 Error Semantic error ESE0087: Property 'a' does not exist on type 'namespace_import1' */

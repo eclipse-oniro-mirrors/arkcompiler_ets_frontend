@@ -20,6 +20,6 @@ namespace DuplicateSpace {
 }
 
 
-/* @@? 18:16 Warning Warning W71336: Exported class property 'shared' requires type annotation. */
+/* @@? 18:16 Error Semantic error ESE71336: Exported class property 'shared' requires type annotation. */
 /* @@? 19:16 Error Semantic error ESE0351: Variable 'shared' has already been declared. */
-/* @@? 19:16 Warning Warning W71336: Exported class property 'shared' requires type annotation. */
+/* @@? 19:16 Error Semantic error ESE71336: Exported class property 'shared' requires type annotation. */

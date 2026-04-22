@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,23 +15,23 @@
 
 namespace ComprehensiveNamespace {
     // 1. Variable assignment
-    export let counter = 0;
-    export let message = "Initial message";
+    export let counter: number = 0;
+    export let message: string = "Initial message";
 
     // 2. Assignment expression
     counter = counter + 5;
 
     // 3. Function declaration and call
-    export function incrementCounter() {
+    export function incrementCounter(): void {
         counter++;
     }
 
-    export function resetMessage() {
+    export function resetMessage(): void {
         message = "Message reset inside namespace";
     }
 
     // 4. Conditional statement
-    export function checkCounter() {
+    export function checkCounter(): void {
         if (counter > 5) {
             message = "Counter is greater than 5";
         } else {
@@ -40,7 +40,7 @@ namespace ComprehensiveNamespace {
     }
 
     // 5. Loop statement
-    export function loopTest() {
+    export function loopTest(): number {
         let sum = 0;
         for (let i = 1; i <= 5; i++) {
             sum += i;
@@ -49,7 +49,7 @@ namespace ComprehensiveNamespace {
     }
 
     // Utility function to reset the state of the namespace
-    export function resetState() {
+    export function resetState(): void {
         counter = 0;
         message = "Initial message";
         counter = counter + 5; // Reapply the assignment expression

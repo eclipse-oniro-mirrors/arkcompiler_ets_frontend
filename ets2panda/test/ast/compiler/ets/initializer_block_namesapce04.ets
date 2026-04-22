@@ -24,7 +24,6 @@ export namespace xml {
 }
 
 
-/* @@? 1:1 Warning Warning W71336: Exported function '_$initializerBlockInit$_initializer_block_namesapce04' requires type annotation. */
 /* @@? 17:3 Error Syntax error ESY0227: Unexpected token 'static'. */
 /* @@? 17:10 Error Syntax error ESY0227: Unexpected token 'a'. */
 /* @@? 17:13 Error Syntax error ESY0038: Label must be followed by a loop statement. */

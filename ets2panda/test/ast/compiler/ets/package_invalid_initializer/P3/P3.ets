@@ -45,7 +45,7 @@ static {
 
 /* @@? 16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
 /* @@? 29:14 Error Syntax error ESY0294: Missing initialization for const package property */
-/* @@? 29:14 Warning Warning W71336: Exported variable 'c_nn' requires type annotation. */
+/* @@? 29:14 Error Semantic error ESE71336: Exported variable 'c_nn' requires type annotation. */
 /* @@? 29:18 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 30:30 Error Syntax error ESY0288: Non-constant initializer of Package should be apply in Initializer Block. */
 /* @@? 31:14 Error Semantic error ESE0297: Cannot reassign constant c_nn2 */

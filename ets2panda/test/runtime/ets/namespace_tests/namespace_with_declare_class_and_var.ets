@@ -20,7 +20,7 @@
  */
 namespace ns {
     export declare class A {}
-    export let a = 10
+    export let a: int = 10
 }
 
 function main(): void {

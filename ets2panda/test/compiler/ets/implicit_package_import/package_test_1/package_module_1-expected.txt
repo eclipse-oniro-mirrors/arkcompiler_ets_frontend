@@ -309,6 +309,7 @@
     }
   ]
 }
+[package_module_1.ets:16:9] Syntax error ESY139148: The package keyword is deprecated.
 [package_module_1.ets:19:10] Semantic error ESE0143: Unresolved reference myvar3
 [package_module_1.ets:23:12] Semantic error ESE0371: Cannot find type 'TestClass'.
 [package_module_1.ets:23:28] Semantic error ESE0371: Cannot find type 'TestClass'.

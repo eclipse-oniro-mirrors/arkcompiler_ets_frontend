@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,11 +23,11 @@ static std::string g_source = R"(
 namespace NS1 {
     export namespace NS2 {
         export enum E {EE};
-        export const x = () => {};
+        export const x: () => void = () => {};
     }
 }
 export class A {
-    public static readonly SOME_FIELD = NS1.NS2.E.EE;
+    public static readonly SOME_FIELD: NS1.NS2.E = NS1.NS2.E.EE;
 }
 )";
 

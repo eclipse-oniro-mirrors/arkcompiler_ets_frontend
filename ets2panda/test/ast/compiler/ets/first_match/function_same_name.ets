@@ -14,8 +14,8 @@
  */
 
 namespace NS{
-    export function foo(a:number){}
-    export function foo2(a:string){}
+    export function foo(a:number): void {}
+    export function foo2(a:string): void {}
     export overload /* @@ label */foo{foo2}
 }
 
@@ -24,7 +24,5 @@ function foo2(a:string){}
 overload /* @@ label2 */foo{foo2}
 
 
-/* @@? 17:5 Warning Warning W71336: Exported function 'foo' requires type annotation. */
-/* @@? 18:5 Warning Warning W71336: Exported function 'foo2' requires type annotation. */
 /* @@? 19:5 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
 /* @@? 24:1 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */

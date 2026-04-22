@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,8 @@
  */
 
 namespace NS {
-    export function foo(a: number) { return "namespace.invoke1" }
-    export function foo(a: string) { return "namespace.invoke2" }
+    export function foo(a: number): string { return "namespace.invoke1" }
+    export function foo(a: string): string { return "namespace.invoke2" }
 }
 
 function foo(a: number) { return "invoke1" }

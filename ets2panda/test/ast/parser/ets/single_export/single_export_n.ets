@@ -21,4 +21,4 @@ let m = 2
 
 /* @@? 16:9 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'm'. */
-/* @@? 18:5 Warning Warning W71336: Exported variable 'v' requires type annotation. */
+/* @@? 18:5 Error Semantic error ESE71336: Exported variable 'v' requires type annotation. */

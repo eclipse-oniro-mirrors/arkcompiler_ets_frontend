@@ -21,4 +21,4 @@ let a = 2;
 /* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'as'. */
 /* @@? 16:13 Error Syntax error ESY0227: Unexpected token 'A'. */
 /* @@? 16:13 Error Semantic error ESE0143: Unresolved reference A */
-/* @@? 18:5 Warning Warning W71336: Exported variable 'a' requires type annotation. */
+/* @@? 18:5 Error Semantic error ESE71336: Exported variable 'a' requires type annotation. */

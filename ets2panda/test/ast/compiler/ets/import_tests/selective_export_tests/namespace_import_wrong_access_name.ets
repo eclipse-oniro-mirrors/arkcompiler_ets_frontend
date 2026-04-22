@@ -17,7 +17,4 @@ import * as all from "./selective_export"
 
 let test_var = new all.TestClass();
 
-
-/* @@? namespace_import_wrong_access_name.ets:18:24 Error Semantic error ESE0070: 'TestClass' type does not exist. */
-
-/* @@? selective_export.ets:18:5 Warning Warning W71336: Exported variable 'msg' requires type annotation. */
+/* @@? 18:24 Error Semantic error ESE0070: 'TestClass' type does not exist. */

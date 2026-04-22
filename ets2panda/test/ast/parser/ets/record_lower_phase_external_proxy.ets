@@ -17,7 +17,6 @@
 export class A {
     x:number;
 }
-export function foo(y:number) {
+export function foo(y:number): void {
     let a:A={x:y}
 }
-/* @@? 20:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */

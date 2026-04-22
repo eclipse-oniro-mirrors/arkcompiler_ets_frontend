@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-export /* @@ label */{};
-const MyValue = 111111;
+export {};
+const MyValue: int = 111111;
 export MyValue;
-export const MyValue2 = 111111;
+export const MyValue2: int = 111111;
 
-
-/* @@? 17:7 Warning Warning W71336: Exported variable 'MyValue' requires type annotation. */
-/* @@? 19:14 Warning Warning W71336: Exported variable 'MyValue2' requires type annotation. */
 /* @@? 16:1 Warning Warning W3614: Nothing is exported. */

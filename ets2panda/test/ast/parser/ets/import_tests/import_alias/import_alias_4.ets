@@ -19,9 +19,4 @@ function main():void{
     all.goo1;
 }
 
-
-
-/* @@? export.ets:21:5 Warning Warning W71336: Exported function 'bar2' requires type annotation. */
-/* @@? export.ets:30:12 Warning Warning W71336: Exported variable 'goo2' requires type annotation. */
-
 /* @@? import_alias_4.ets:19:9 Error Semantic error ESE0087: Property 'goo1' does not exist on type 'export' */

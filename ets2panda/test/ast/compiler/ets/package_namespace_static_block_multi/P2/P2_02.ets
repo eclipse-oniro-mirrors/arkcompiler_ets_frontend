@@ -21,4 +21,3 @@ export namespace NS {
 
 
 /* @@@ label Error Semantic error ESE0143: Unresolved reference a */
-/* @@@ label Warning Warning W71336: Exported function '_$initializerBlockInit$_P2_02' requires type annotation. */

@@ -26,6 +26,6 @@ function main() {
     NS1.name;
 }
 
-/* @@? 17:12 Warning Warning W71336: Exported function 'name' requires type annotation. */
+/* @@? 17:12 Error Semantic error ESE71336: Exported function 'name' requires type annotation. */
 /* @@? 25:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
 /* @@? 26:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */

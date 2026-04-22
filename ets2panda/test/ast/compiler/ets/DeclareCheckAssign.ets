@@ -17,12 +17,12 @@ export declare const byte_1: byte = -127 as byte, byte_2: byte = 126 as byte;
 export declare const byte_12: byte = -127 + 1, byte_22: byte = 126 - 1;
 export declare const byte_13: byte = Byte.MIN_VALUE, byte_23: byte = 126;
 export declare const byte_14: byte = new Byte().toByte()
-export declare const int_1 = 1 + 2 + 3 + 4
+export declare const int_1: int = 1 + 2 + 3 + 4
 const v = 42
-export declare const int_12 = v
+export declare const int_12: int = v
 export declare const int_15: int
 export declare const int_16: int = 12345
-export declare const int_17 = 12345
+export declare const int_17: int = 12345
 export declare const int_18: number = 12345
 declare const x1: int = 5
 declare const x2: int = -5
@@ -52,16 +52,10 @@ declare const notype
 /* @@? 18:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_13 */
 /* @@? 18:70 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_23 */
 /* @@? 19:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_14 */
-/* @@? 20:22 Error Semantic error ESE1111: Missing type annotation for the 'int_1'. */
-/* @@? 20:22 Warning Warning W71336: Exported variable 'int_1' requires type annotation. */
-/* @@? 20:30 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_1 */
-/* @@? 22:22 Error Semantic error ESE1111: Missing type annotation for the 'int_12'. */
-/* @@? 22:22 Warning Warning W71336: Exported variable 'int_12' requires type annotation. */
-/* @@? 22:31 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_12 */
+/* @@? 20:35 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_1 */
+/* @@? 22:36 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_12 */
 /* @@? 24:36 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_16 */
-/* @@? 25:22 Error Semantic error ESE1111: Missing type annotation for the 'int_17'. */
-/* @@? 25:22 Warning Warning W71336: Exported variable 'int_17' requires type annotation. */
-/* @@? 25:31 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_17 */
+/* @@? 25:36 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_17 */
 /* @@? 26:39 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: int_18 */
 /* @@? 27:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x1 */
 /* @@? 28:25 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: x2 */
