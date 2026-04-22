@@ -14,7 +14,6 @@
 softlist:
 - name: "numeric_conversions"
   paths:
-  - ".*/xts/acts/.*"
   - ".*/test/xts/.*"
   - ".*/generated/.*"
   - ".*/arkui/ace_engine/advanced_ui_component_static/.*"
