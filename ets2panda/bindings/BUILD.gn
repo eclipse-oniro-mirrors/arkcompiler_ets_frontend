@@ -251,11 +251,13 @@ shared_library("public") {
   } else {
     external_deps = [
       "runtime_core:assembler_headers",
-      "runtime_core:libarktsbytecodeopt_package",
       "runtime_core:libpandabase_headers",
       "runtime_core:libpandafile_headers",
       sdk_libc_secshared_dep,
     ]
+    if (!is_mac) {
+      external_deps += [ "runtime_core:libarktsbytecodeopt_package" ]
+    }
   }
 
   defines = [
