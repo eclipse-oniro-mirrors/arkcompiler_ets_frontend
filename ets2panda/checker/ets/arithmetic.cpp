@@ -85,21 +85,21 @@ static void LogOperatorCannotBeApplied(ETSChecker *checker, BinaryArithmOperands
     LogOperatorCannotBeApplied(checker, ops.expr->OperatorType(), ops.typeL, ops.typeR, ops.expr->Start());
 }
 
-static inline void RepairTypeErrorsInOperands(Type **left, Type **right)
+static inline void RepairTypeErrorsInOperands(ETSChecker *checker, Type **left, Type **right)
 {
     if (IsTypeError(*left)) {
-        *left = *right;
+        *left = checker->GetNonConstantType(*right);
     }
     if (IsTypeError(*right)) {
-        *right = *left;
+        *right = checker->GetNonConstantType(*left);
     }
 }
 
-static inline BinaryArithmOperands RepairTypeErrorsInOperands(BinaryArithmOperands const &ops)
+static inline BinaryArithmOperands RepairTypeErrorsInOperands(ETSChecker *checker, BinaryArithmOperands const &ops)
 {
     BinaryArithmOperands res = ops;
-    RepairTypeErrorsInOperands(&res.typeL, &res.typeR);
-    RepairTypeErrorsInOperands(&res.reducedL, &res.reducedR);
+    RepairTypeErrorsInOperands(checker, &res.typeL, &res.typeR);
+    RepairTypeErrorsInOperands(checker, &res.reducedL, &res.reducedR);
     return res;
 }
 
@@ -374,8 +374,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorMulDivMod(
     auto [leftType, rightType, unboxedL, unboxedR] = types;
 
     // Try to handle errors on a lower level
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
     auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
@@ -440,8 +440,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorExponentiation(
     auto [leftType, rightType, unboxedL, unboxedR] = types;
 
     // Try to handle errors on a lower level
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
     if (IsNegativeBigIntLiteralExpression(right)) {
@@ -481,8 +481,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorPlus(
     auto [leftType, rightType, unboxedL, unboxedR] = types;
 
     // Try to handle errors on a lower level
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
     if (leftType->IsETSStringType() || rightType->IsETSStringType()) {
@@ -594,8 +594,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorBitwise(
     auto [left, right, operationType, pos] = op;
     auto [leftType, rightType, unboxedL, unboxedR] = types;
 
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
     if (leftType->IsETSUnionType() || rightType->IsETSUnionType()) {
@@ -638,8 +638,8 @@ checker::Type *ETSChecker::CheckBinaryOperatorLogical(ir::Expression *left, ir::
                                                       checker::Type *leftType, checker::Type *rightType, Type *unboxedL,
                                                       Type *unboxedR)
 {
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
 
     // Don't do any boxing for primitive type when another operand is Enum. Enum will become primitive type later.
@@ -763,7 +763,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorStrictEqual(ir::Expres
                                                                       lexer::SourcePosition pos,
                                                                       checker::Type *leftType, checker::Type *rightType)
 {
-    RepairTypeErrorsInOperands(&leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
     // We still know that operation result should be boolean, so recover.
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalETSObjectType()));
 
@@ -1046,8 +1046,8 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
                                                                       checker::Type *leftType, checker::Type *rightType,
                                                                       Type *unboxedL, Type *unboxedR)
 {
-    RepairTypeErrorsInOperands(&leftType, &rightType);
-    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &unboxedL, &unboxedR);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
     if (CheckUnionRelationalError(this, leftType, rightType, {operationType, pos})) {
@@ -1173,7 +1173,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(const ir::E
                                                                      checker::Type *leftType, checker::Type *rightType,
                                                                      lexer::SourcePosition pos)
 {
-    RepairTypeErrorsInOperands(&leftType, &rightType);
+    RepairTypeErrorsInOperands(this, &leftType, &rightType);
     ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
     const BinaryExpressionValidity exprValidity = AreTypesValidInInstanceofExpression(right, rightType);
@@ -1377,7 +1377,7 @@ static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
     checker::Type *tsType {};
 
     BinaryArithmOperands ops = GetBinaryOperands(checker, binaryParams.expr->AsBinaryExpression());
-    BinaryArithmOperands opsRepaired = RepairTypeErrorsInOperands(ops);
+    BinaryArithmOperands opsRepaired = RepairTypeErrorsInOperands(checker, ops);
 
     switch (binaryParams.operationType) {
         case lexer::TokenType::PUNCTUATOR_LOGICAL_AND:
