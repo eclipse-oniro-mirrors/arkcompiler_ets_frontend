@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,12 @@ class ETSAnalyzer;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::ir {
-enum class InitMode : uint8_t { NONE = 0U, IMMEDIATE_INIT = 1U << 0U, NEED_INIT_IN_STATIC_BLOCK = 1U << 1U };
+enum class InitMode : uint8_t {
+    NONE = 0U,
+    IMMEDIATE_INIT = 1U << 0U,
+    NEED_INIT_IN_STATIC_BLOCK = 1U << 1U,
+    TOP_LEVEL_LEXICAL_DECL = 1U << 2U
+};
 }  // namespace ark::es2panda::ir
 
 namespace enumbitops {
@@ -120,6 +125,16 @@ public:
     void SetIsImmediateInit()
     {
         initMode_ |= InitMode::IMMEDIATE_INIT;
+    }
+
+    [[nodiscard]] bool IsTopLevelLexicalDecl() const
+    {
+        return (initMode_ & InitMode::TOP_LEVEL_LEXICAL_DECL) != 0;
+    }
+
+    void SetIsTopLevelLexicalDecl()
+    {
+        initMode_ |= InitMode::TOP_LEVEL_LEXICAL_DECL;
     }
 
 protected:

@@ -23,6 +23,7 @@
 
 namespace ark::es2panda::ir {
 class AstNode;
+class AssignmentExpression;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::checker {
@@ -386,15 +387,15 @@ public:
 
 private:
     // node visitors
-    void AnalyzeNodes(const ir::AstNode *node);
-    void AnalyzeNode(const ir::AstNode *node);
-    bool AnalyzeStmtNode1(const ir::AstNode *node);
-    bool AnalyzeStmtNode2(const ir::AstNode *node);
-    bool AnalyzeExprNode1(const ir::AstNode *node);
-    bool AnalyzeExprNode2(const ir::AstNode *node);
-    void AnalyzeStat(const ir::AstNode *node);
-    void AnalyzeStats(const ArenaVector<ir::Statement *> &stats);
-    void AnalyzeBlock(const ir::BlockStatement *blockStmt);
+    void AnalyzeNodes(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeNode(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    bool AnalyzeStmtNode1(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    bool AnalyzeStmtNode2(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    bool AnalyzeExprNode1(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    bool AnalyzeExprNode2(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeStat(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeStats(const ArenaVector<ir::Statement *> &stats, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeBlock(const ir::BlockStatement *blockStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     void AnalyzeStructDecl(const ir::ETSStructDeclaration *structDecl);
     void AnalyzeClassDecl(const ir::ClassDeclaration *classDecl);
     void AnalyzeClassDef(const ir::ClassDefinition *classDef);
@@ -402,31 +403,34 @@ private:
     void CheckAnonymousClassCtor(const ir::ClassDefinition *classDef);
     void AnalyzeMethodDef(const ir::MethodDefinition *methodDef);
     void AnalyzeVarDef(const ir::VariableDeclaration *varDef);
-    void AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt);
-    void AnalyzeWhileLoop(const ir::WhileStatement *whileStmt);
-    void AnalyzeForLoop(const ir::ForUpdateStatement *forStmt);
-    void AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt);
-    void AnalyzeIf(const ir::IfStatement *ifStmt);
-    void AnalyzeLabelled(const ir::LabelledStatement *labelledStmt);
-    void AnalyzeSwitch(const ir::SwitchStatement *switchStmt);
-    void AnalyzeTry(const ir::TryStatement *tryStmt);
+    void AnalyzeDoLoop(const ir::DoWhileStatement *doWhileStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeWhileLoop(const ir::WhileStatement *whileStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeForLoop(const ir::ForUpdateStatement *forStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeIf(const ir::IfStatement *ifStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeLabelled(const ir::LabelledStatement *labelledStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeSwitch(const ir::SwitchStatement *switchStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     void AnalyzeBreak(const ir::BreakStatement *breakStmt);
     void AnalyzeContinue(const ir::ContinueStatement *contStmt);
-    void AnalyzeReturn(const ir::ReturnStatement *retStmt);
-    void AnalyzeThrow(const ir::ThrowStatement *throwStmt);
-    void AnalyzeExpr(const ir::AstNode *node);
-    void AnalyzeExprs(const ArenaVector<ir::Expression *> &exprs);
-    void AnalyzeCond(const ir::AstNode *node);
-    void AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr);
-    void AnalyzeBinaryExpr(const ir::BinaryExpression *binExpr);
-    void AnalyzeCallExpr(const ir::CallExpression *callExpr);
-    void AnalyzeCondExpr(const ir::ConditionalExpression *condExpr);
-    void AnalyzeId(const ir::Identifier *id);
-    void AnalyzeMemberExpr(const ir::MemberExpression *membExpr);
-    void AnalyzeNewClass(const ir::ETSNewClassInstanceExpression *newClass);
-    void AnalyzeUnaryExpr(const ir::UnaryExpression *unaryExpr);
-    void AnalyzeUpdateExpr(const ir::UpdateExpression *updateExpr);
-    void AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression *arrowFuncExpr);
+    void AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeThrow(const ir::ThrowStatement *throwStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeExpr(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeExprs(const ArenaVector<ir::Expression *> &exprs, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeCond(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr,
+                           const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeBinaryExpr(const ir::BinaryExpression *binExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeCallExpr(const ir::CallExpression *callExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeCondExpr(const ir::ConditionalExpression *condExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeId(const ir::Identifier *id, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeMemberExpr(const ir::MemberExpression *membExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeNewClass(const ir::ETSNewClassInstanceExpression *newClass,
+                         const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeUnaryExpr(const ir::UnaryExpression *unaryExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeUpdateExpr(const ir::UpdateExpression *updateExpr, const ir::AstNode *currentTopLevelDecl = nullptr);
+    void AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression *arrowFuncExpr,
+                                  const ir::AstNode *currentTopLevelDecl = nullptr);
 
     // utils
     void Warning(const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &list,
@@ -436,7 +440,7 @@ private:
     bool IsConstUninitializedStaticField(const ir::AstNode *node) const;
     void NewVar(const ir::AstNode *node);
     void LetInit(const ir::AstNode *node);
-    void CheckInit(const ir::AstNode *node);
+    void CheckInit(const ir::AstNode *node, const ir::AstNode *currentTopLevelDecl = nullptr);
     void Split(const bool setToNull);
     void Merge();
     void CheckPendingExits();
@@ -449,7 +453,14 @@ private:
     bool VariableHasDefaultValue(const ir::AstNode *node);
     bool CheckStaticFieldInit(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr);
     bool CheckClassProperty(const ir::AstNode *node, const ir::AstNode *declNode);
+    bool IsTopLevelDeclInitAssignment(const ir::AssignmentExpression *assignExpr, const ir::AstNode *declNode) const;
+    bool ReportTopLevelDeclInitViolationIfNeeded(const ir::AstNode *node, const ir::AstNode *declNode,
+                                                 const ir::AstNode *currentTopLevelDecl, NodeId adr);
+    bool ShouldSkipRegularInitCheck(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr,
+                                    const ir::AstNode *currentTopLevelDecl);
+    bool ShouldReportRegularUseBeforeInit(NodeId adr) const;
     void CheckInheritedReadonlyAssignment(const ir::AstNode *node, const ir::AstNode *declNode);
+    void ReportUseBeforeInit(const ir::AstNode *node, const ir::AstNode *declNode);
 
     ETSChecker *checker_;
     Set inits_ {};

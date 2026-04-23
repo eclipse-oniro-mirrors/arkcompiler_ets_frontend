@@ -178,6 +178,7 @@ protected:
         operator_ = other.operator_;
         target_ = other.target_;
         operationType_ = other.operationType_;
+        ignoreConstAssign_ = other.ignoreConstAssign_;
     }
 
 private:

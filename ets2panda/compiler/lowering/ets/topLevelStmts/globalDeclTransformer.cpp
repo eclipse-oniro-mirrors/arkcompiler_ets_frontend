@@ -17,6 +17,7 @@
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
+
 void GlobalDeclTransformer::FilterDeclarations(ArenaVector<ir::Statement *> &stmts)
 {
     const auto isDeclCb = [&](const ir::AstNode *node) {
@@ -110,6 +111,7 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
         auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
             allocator_, id->Clone(allocator_, nullptr), declarator->Init(), typeAnn, modifiers, allocator_, false);
         ES2PANDA_ASSERT(field != nullptr);
+        field->SetIsTopLevelLexicalDecl();
         if (declarator->Init() != nullptr) {
             field->SetIsImmediateInit();
         } else if ((modifiers & ir::ModifierFlags::CONST) != 0 && isPackageFraction_) {
@@ -256,6 +258,7 @@ void GlobalDeclTransformer::ProcessDestructuringDeclarator(ir::VariableDeclarato
         auto *field = util::NodeAllocator::ForceSetParent<ir::ClassProperty>(
             allocator_, id->Clone(allocator_, nullptr), elemInit, typeAnn, modifiers, allocator_, false);
         field->SetRange(destructDecl->Range());
+        field->SetIsTopLevelLexicalDecl();
         if (varDecl->HasAnnotations()) {
             field->SetAnnotations(varDecl->Annotations());
         }
