@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,37 @@ void TSTypeParameter::SetDefaultType(TypeNode *defaultType)
 void TSTypeParameter::SetName(Identifier *name)
 {
     this->GetOrCreateHistoryNodeAs<TSTypeParameter>()->name_ = name;
+}
+
+TSTypeParameter *TSTypeParameter::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    auto *clonedName = Name()->Clone(allocator, nullptr)->AsIdentifier();
+    auto *clonedConstraint = Constraint() != nullptr ? Constraint()->Clone(allocator, nullptr)->AsTypeNode() : nullptr;
+    auto *clonedDefaultType =
+        DefaultType() != nullptr ? DefaultType()->Clone(allocator, nullptr)->AsTypeNode() : nullptr;
+
+    auto *clone =
+        allocator->New<TSTypeParameter>(clonedName, clonedConstraint, clonedDefaultType, Modifiers(), allocator);
+
+    clonedName->SetParent(clone);
+    if (clonedConstraint != nullptr) {
+        clonedConstraint->SetParent(clone);
+    }
+    if (clonedDefaultType != nullptr) {
+        clonedDefaultType->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
+    }
+
+    return clone;
 }
 
 void TSTypeParameter::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
