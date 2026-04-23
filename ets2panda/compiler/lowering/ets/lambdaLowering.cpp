@@ -1780,6 +1780,24 @@ static bool IsVariableOriginalAccessor(const varbinder::Variable *var)
     return checker::ETSChecker::IsVariableGetterSetter(var) && !(checker::ETSChecker::IsVariableExtensionAccessor(var));
 }
 
+static varbinder::Variable *GetNodeOrPropertyVariable(ir::AstNode const *node)
+{
+    if (auto *const variable = node->Variable(); variable != nullptr) {
+        return variable;
+    }
+
+    if (!node->IsMemberExpression()) {
+        return nullptr;
+    }
+
+    auto *const memberExpr = node->AsMemberExpression();
+    if (!memberExpr->HasMemberKind(ir::MemberExpressionKind::PROPERTY_ACCESS)) {
+        return nullptr;
+    }
+
+    return memberExpr->Property()->Variable();
+}
+
 static bool IsFunctionOrMethodCall(checker::ETSChecker *checker, ir::CallExpression const *node)
 {
     auto const *callee = node->Callee();
@@ -1798,14 +1816,7 @@ static bool IsFunctionOrMethodCall(checker::ETSChecker *checker, ir::CallExpress
         }
     }
 
-    varbinder::Variable *var = nullptr;
-    if (callee->IsMemberExpression() &&
-        (callee->AsMemberExpression()->Kind() & ir::MemberExpressionKind::PROPERTY_ACCESS) != 0) {
-        var = callee->AsMemberExpression()->Property()->Variable();
-    } else if (callee->IsIdentifier()) {
-        var = callee->AsIdentifier()->Variable();
-    }
-
+    auto *const var = GetNodeOrPropertyVariable(callee);
     return var != nullptr && !IsVariableOriginalAccessor(var) && (var->Flags() & varbinder::VariableFlags::METHOD) != 0;
 }
 
@@ -1998,6 +2009,58 @@ static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::Ast
     return node;
 }
 
+static void SetLoweredType(ir::AstNode *node, checker::Type *loweredType)
+{
+    if (node == nullptr) {
+        return;
+    }
+
+    if (node->IsTyped()) {
+        node->AsTyped()->SetTsType(loweredType);
+    }
+
+    if (node->Variable() != nullptr) {
+        node->Variable()->SetTsType(loweredType);
+    }
+
+    if (node->IsMemberExpression()) {
+        auto *const memberExpr = node->AsMemberExpression();
+        if (memberExpr->HasMemberKind(ir::MemberExpressionKind::PROPERTY_ACCESS)) {
+            SetLoweredType(memberExpr->Property(), loweredType);
+        }
+        return;
+    }
+
+    if (node->IsSpreadElement()) {
+        SetLoweredType(node->AsSpreadElement()->Argument(), loweredType);
+        return;
+    }
+
+    if (node->IsClassProperty()) {
+        SetLoweredType(node->AsClassProperty()->Key(), loweredType);
+    }
+}
+
+static bool IsLowerableBindingOwner(ir::AstNode *node)
+{
+    return GetNodeOrPropertyVariable(node) != nullptr;
+}
+
+static bool CanSetLoweredTypeOnAnnotationParent(ir::AstNode *node)
+{
+    return IsLowerableBindingOwner(node) || node->IsSpreadElement() || node->IsClassProperty();
+}
+
+static void SetLoweredTypeAnnotationOwnerType(ir::AstNode *typeAnnotation, checker::Type *loweredType)
+{
+    auto *const parent = typeAnnotation->Parent();
+    if (parent == nullptr || !CanSetLoweredTypeOnAnnotationParent(parent)) {
+        return;
+    }
+
+    SetLoweredType(parent, loweredType);
+}
+
 static ir::AstNode *LowerTypeNodeIfNeeded(public_lib::Context *ctx, ir::AstNode *node)
 {
     if (!node->IsExpression() || !node->AsExpression()->IsTypeNode()) {
@@ -2011,9 +2074,10 @@ static ir::AstNode *LowerTypeNodeIfNeeded(public_lib::Context *ctx, ir::AstNode 
 
     auto allocator = ctx->allocator;
     auto checker = ctx->GetChecker()->AsETSChecker();
+    auto *functionalInterface = type->AsETSFunctionType()->ArrowToFunctionalInterface(checker);
 
-    auto newTypeNode =
-        allocator->New<ir::OpaqueTypeNode>(type->AsETSFunctionType()->ArrowToFunctionalInterface(checker), allocator);
+    SetLoweredTypeAnnotationOwnerType(node, functionalInterface);
+    auto newTypeNode = allocator->New<ir::OpaqueTypeNode>(functionalInterface, allocator);
     newTypeNode->SetParent(node->Parent());
     return newTypeNode;
 }
