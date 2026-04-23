@@ -106,6 +106,7 @@ if(PANDA_WITH_ETS)
                 "      \"std/time\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/debug\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/debug/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/dfx\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/testing\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
                 "      \"std/annotations\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"

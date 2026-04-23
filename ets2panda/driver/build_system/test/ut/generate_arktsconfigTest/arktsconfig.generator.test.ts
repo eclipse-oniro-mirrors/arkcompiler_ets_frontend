@@ -452,6 +452,7 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
                 'std/time',
                 'std/debug',
                 'std/debug/concurrency',
+                'std/dfx',
                 'std/testing',
                 'std/concurrency',
                 'std/annotations',
