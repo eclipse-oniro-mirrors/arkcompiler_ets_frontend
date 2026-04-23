@@ -133,3 +133,15 @@ softlist:
   - ".*/api/@ohos\\.pasteboard\\.d\\.ts"
   - ".*/api/@ohos\\.request\\.d\\.ts"
   - ".*/api/@ohos\\.userIAM\\.userAuth\\.d\\.ts"
+
+- name: "allow_implicit_enum_long"
+  paths:
+  - ".*/api/@ohos\\.multimedia\\.audio\\.d\\.ets"
+  - ".*/api/@ohos\\.ability\\.screenLockFileManager\\.d\\.ets"
+
+- name: "allow_const_enum"
+  paths:
+  - ".*/api/@ohos\\.arkui\\.UIContext\\.d\\.ets"
+  - ".*/api/@ohos\\.app\\.ability\\.childProcessManager\\.d\\.ets"
+  - ".*/api/@ohos\\.arkui\\.dragController\\.d\\.ets"
+  - ".*/api/@ohos\\.data\\.unifiedDataChannel\\.d\\.ets"

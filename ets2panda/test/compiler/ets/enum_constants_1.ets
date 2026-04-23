@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
-const constbyte: byte = 101
-const constchar: char = constbyte.toChar()
-
-function main() {
-    enum TestEnum { One = constchar }
-    arktest.assertEQ(constchar,101)
-    arktest.assertEQ(TestEnum.One.valueOf(),101)
+enum E1 {
+    A = 1,
+    B = 2,
+    C = 0x80000000
 }
 
-/* @@? 20:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
-/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
-/* @@? 22:22 Error Semantic error ESE0143: Unresolved reference TestEnum */
+enum E2: long {
+    A = 0x80000000, B = 1, C = 2
+}
+
+/* @@? 19:9 Error Semantic error ESE2501: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */

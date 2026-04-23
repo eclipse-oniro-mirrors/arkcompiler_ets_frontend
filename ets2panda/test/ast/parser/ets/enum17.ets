@@ -19,4 +19,5 @@ enum InvalidInitTypeEnum {
   Blue
 }
 
-/* @@? 19:7 Error Semantic error ESE0342: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@? 18:25 Error Semantic error ESE2501: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */
+/* @@? 19:7 Error Semantic error ESE2501: Type of enumeration constants must be any integer or string type or explicitly defined and they must be of the same type. */

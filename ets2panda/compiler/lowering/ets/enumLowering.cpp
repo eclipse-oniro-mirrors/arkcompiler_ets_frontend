@@ -78,6 +78,21 @@ void EnumLoweringPhase::LogError(const diagnostic::DiagnosticKind &diagnostic,
     context_->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
 }
 
+// This function was created to reduce the size of `CheckEnumMemberType`
+template <EnumLoweringPhase::EnumType TYPE_NODE>
+void EnumLoweringPhase::HandleIntEnumLongLiteralError(ir::TSEnumMember *member, const lexer::Number &asNumber,
+                                                      bool &hasLoggedError, bool *hasLongLiteral)
+{
+    if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::INT) {
+        *hasLongLiteral = true;
+        LogError(diagnostic::ERROR_NO_ENUM_MIXED_TYPES, {}, member->Init()->Start());
+        if (member->IsGenerated() && asNumber.GetLong() == std::numeric_limits<int64_t>::min()) {
+            LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, member->Init()->Start());
+            hasLoggedError = true;
+        }
+    }
+}
+
 template <EnumLoweringPhase::EnumType TYPE_NODE>
 bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &enumMembers, bool &hasLoggedError,
                                             bool isAnnoted, bool *hasLongLiteral)
@@ -116,11 +131,8 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
             if (!mixedTypesError(asNumber.IsInteger(), false) || !asNumber.IsLong()) {
                 continue;
             }
-            *hasLongLiteral = true;
-            if (member->AsTSEnumMember()->IsGenerated() && asNumber.GetLong() == std::numeric_limits<int64_t>::min()) {
-                LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, init->Start());
-                hasLoggedError = true;
-            }
+            HandleIntEnumLongLiteralError<TYPE_NODE>(member->AsTSEnumMember(), asNumber, hasLoggedError,
+                                                     hasLongLiteral);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::LONG) {
             mixedTypesError(asNumber.CanGetValue<int64_t>(), false);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::FLOAT) {

@@ -91,6 +91,10 @@ private:
                              bool *hasLongLiteral = nullptr);
     // clang-format on
 
+    template <EnumLoweringPhase::EnumType TYPE_NODE>
+    void HandleIntEnumLongLiteralError(ir::TSEnumMember *member, const lexer::Number &asNumber, bool &hasLoggedError,
+                                       bool *hasLongLiteral);
+
     [[nodiscard]] ir::ScriptFunction *MakeFunction(FunctionInfo &&functionInfo);
     ir::ClassDeclaration *CreateClass(ir::TSEnumDeclaration *const enumDecl, const DeclarationFlags flags,
                                       EnumType enumType);

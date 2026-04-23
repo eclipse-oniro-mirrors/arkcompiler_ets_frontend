@@ -138,11 +138,10 @@ ir::Statement *ETSParser::ParsePotentialConstEnum(VariableParsingFlags flags)
 {
     if ((flags & VariableParsingFlags::CONST) == 0) {
         LogError(diagnostic::VAR_DEC_EXPECTED);
+    } else {
+        LogError(diagnostic::UNSUPPORTED_CONST_ENUM);
     }
 
-    // According to the ArkTS specification:
-    // const enum is supported for source-level compatibility with TypeScript,
-    // and const is skipped as it has no impact on enum semantics in ArkTS.
     return ParseEnumDeclaration(false);
 }
 
