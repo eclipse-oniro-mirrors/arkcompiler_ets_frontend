@@ -2213,7 +2213,7 @@ export class Lsp {
   // Call `initAstCache` before invoking the language service interface to enable AST cache
   public initAstCache(): void {
     let files: string[] = Array.from(Object.keys(this.moduleInfos));
-    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, true, files[0]);
+    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true);
     let lspDriverHelper = new LspDriverHelper();
     let config = lspDriverHelper.createCfg(ets2pandaCmd, files[0]);
     const ctx = lspDriverHelper.createContextSimultaneousModeForLsp(config.peer, files.length, files, true);

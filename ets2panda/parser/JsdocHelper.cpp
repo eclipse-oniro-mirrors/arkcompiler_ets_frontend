@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,7 +77,9 @@ static const ArenaVector<ir::AnnotationUsage *> &GetAstAnnotationUsage(const ir:
 static void HandlePotentialPrefix(parser::JsdocHelper *jsdocHelper)
 {
     jsdocHelper->Iterator().Reset(jsdocHelper->Node()->Start().index);
-    jsdocHelper->BackwardAndSkipSpace(1);
+    if (jsdocHelper->Iterator().Index() != START_POS) {
+        jsdocHelper->BackwardAndSkipSpace(1U);
+    }
     for (auto prefix : POTENTIAL_PREFIX) {
         auto currentSv = jsdocHelper->SourceView(START_POS, jsdocHelper->Iterator().Index() + COLLECT_CURRENT_POS);
         if (currentSv.EndsWith(prefix)) {
@@ -99,11 +101,17 @@ static void HandlePotentialPrefixOrAnnotationUsage(parser::JsdocHelper *jsdocHel
         return;
     }
 
+    const auto annoStartIndex = annoUsage[0]->Range().start.index;
+    if (annoStartIndex == START_POS) {
+        jsdocHelper->Iterator().Reset(START_POS);
+        return;
+    }
+
     // Note: eat current iter.
-    jsdocHelper->Iterator().Reset(annoUsage[0]->Range().start.index - 1);
+    jsdocHelper->Iterator().Reset(annoStartIndex - 1U);
     if (jsdocHelper->Iterator().Index() != START_POS) {
         // Note: eat token `@`
-        jsdocHelper->BackwardAndSkipSpace(1);
+        jsdocHelper->BackwardAndSkipSpace(1U);
     }
 }
 

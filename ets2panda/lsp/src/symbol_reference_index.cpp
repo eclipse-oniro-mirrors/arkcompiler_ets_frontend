@@ -16,6 +16,11 @@
 #include "lsp/include/symbol_reference_index.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
+#include "ir/ets/etsImportDeclaration.h"
+#include "ir/module/exportSpecifier.h"
+#include "ir/module/importDefaultSpecifier.h"
+#include "ir/module/importNamespaceSpecifier.h"
+#include "ir/module/importSpecifier.h"
 #include "lsp/include/internal_api.h"
 #include "parser/program/program.h"
 #include "public/public.h"
@@ -58,16 +63,112 @@ std::string GetNodeFileName(const ir::AstNode *node, const public_lib::Context *
     return "";
 }
 
+bool IsImportOwnerIdentifier(const ir::Identifier *declIdentifier)
+{
+    if (declIdentifier == nullptr) {
+        return false;
+    }
+
+    auto *parent = declIdentifier->Parent();
+    if (parent == nullptr || parent->Parent() == nullptr) {
+        return false;
+    }
+    if (!parent->Parent()->IsETSImportDeclaration()) {
+        return false;
+    }
+
+    return parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier();
+}
+
+std::string GetImportSourcePath(const ir::Identifier *declIdentifier)
+{
+    if (!IsImportOwnerIdentifier(declIdentifier)) {
+        return "";
+    }
+
+    auto *importDecl = declIdentifier->Parent()->Parent()->AsETSImportDeclaration();
+    std::string sourcePath = std::string(importDecl->ResolvedSource());
+    if (sourcePath.empty() && importDecl->ImportInfo().HasSpecifiedDeclPath()) {
+        sourcePath = std::string(importDecl->DeclPath());
+    }
+    if (sourcePath.empty() && importDecl->Source() != nullptr) {
+        sourcePath = std::string(importDecl->Source()->Str());
+    }
+    return sourcePath;
+}
+
+std::string BuildModuleSymbolKey(const ir::Identifier *declIdentifier, const public_lib::Context *ctx)
+{
+    if (declIdentifier == nullptr || declIdentifier->Parent() == nullptr) {
+        return "";
+    }
+
+    auto *parent = declIdentifier->Parent();
+    if (IsImportOwnerIdentifier(declIdentifier)) {
+        const auto sourcePath = GetImportSourcePath(declIdentifier);
+        if (sourcePath.empty()) {
+            return "";
+        }
+
+        std::string exportedName;
+        if (parent->IsImportSpecifier()) {
+            auto *specifier = parent->AsImportSpecifier();
+            if (specifier->Imported() != nullptr) {
+                exportedName = std::string(specifier->Imported()->Name());
+            }
+        } else if (parent->IsImportDefaultSpecifier()) {
+            exportedName = "default";
+        } else if (parent->IsImportNamespaceSpecifier()) {
+            exportedName = "*";
+        }
+
+        if (exportedName.empty()) {
+            return "";
+        }
+        return "module:" + sourcePath + ":" + exportedName;
+    }
+
+    if (!declIdentifier->IsExported() && !declIdentifier->IsDefaultExported() && !declIdentifier->HasExportAlias()) {
+        return "";
+    }
+
+    const auto moduleFileName = GetNodeFileName(declIdentifier, ctx);
+    if (moduleFileName.empty()) {
+        return "";
+    }
+
+    std::string exportedName;
+    if (declIdentifier->IsDefaultExported()) {
+        exportedName = "default";
+    } else if (parent->IsExportSpecifier() && parent->AsExportSpecifier()->Exported() != nullptr) {
+        exportedName = std::string(parent->AsExportSpecifier()->Exported()->Name());
+    } else {
+        exportedName = std::string(declIdentifier->Name());
+    }
+
+    if (exportedName.empty()) {
+        return "";
+    }
+    return "module:" + moduleFileName + ":" + exportedName;
+}
+
 SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identifier, const public_lib::Context *ctx)
 {
     if (declNode == nullptr || identifier == nullptr) {
         return 0;
     }
 
-    const auto declFileName = GetNodeFileName(declNode, ctx);
-    const auto key = declFileName + ":" + std::to_string(declNode->Start().index) + ":" +
-                     std::to_string(declNode->End().index) + ":" + std::string(identifier->Name()) + ":" +
-                     std::to_string(static_cast<int>(declNode->Type()));
+    std::string key;
+    if (declNode->IsIdentifier()) {
+        key = BuildModuleSymbolKey(declNode->AsIdentifier(), ctx);
+    }
+    if (key.empty()) {
+        const auto declFileName = GetNodeFileName(declNode, ctx);
+        key = declFileName + ":" + std::to_string(declNode->Start().index) + ":" +
+              std::to_string(declNode->End().index) + ":" + std::string(identifier->Name()) + ":" +
+              std::to_string(static_cast<int>(declNode->Type()));
+    }
+
     return static_cast<SymbolId>(std::hash<std::string> {}(key));
 }
 
@@ -167,7 +268,8 @@ void ProcessNodeForSymbolIndex(const public_lib::Context *ctx, ir::AstNode *node
     fileIndex.references.emplace_back(symbolId, ref);
     g_symbolReferences[symbolId].push_back(ref);
 
-    if (IsDefinitionNode(targetNode, owner)) {
+    const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
+    if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
         g_symbolDefinitions[symbolId] =
             ReferenceInfo(GetNodeFileName(owner, ctx), owner->Start().index, owner->End().index - owner->Start().index);
     }

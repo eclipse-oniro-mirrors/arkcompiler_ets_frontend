@@ -44,10 +44,11 @@ struct SymbolDisplayPart {
 private:
     std::string text_;
     std::string kind_;
+    size_t index_ {0};
 
 public:
-    explicit SymbolDisplayPart(std::string text = "", std::string kind = "")
-        : text_ {std::move(text)}, kind_ {std::move(kind)}
+    explicit SymbolDisplayPart(std::string text = "", std::string kind = "", size_t index = 0)
+        : text_ {std::move(text)}, kind_ {std::move(kind)}, index_ {index}
     {
     }
 
@@ -67,10 +68,14 @@ public:
     {
         return kind_;
     }
+    size_t GetIndex() const
+    {
+        return index_;
+    }
 
     bool operator==(const SymbolDisplayPart &other) const
     {
-        return text_ == other.text_ && kind_ == other.kind_;
+        return text_ == other.text_ && kind_ == other.kind_ && index_ == other.index_;
     }
     bool operator!=(const SymbolDisplayPart &other) const
     {
@@ -288,9 +293,11 @@ struct DocTagInfo {
 private:
     std::string name_;
     std::string text_;
+    size_t index_ {0};
 
 public:
-    explicit DocTagInfo(std::string name = "", std::string text = "") : name_ {std::move(name)}, text_ {std::move(text)}
+    explicit DocTagInfo(std::string name = "", std::string text = "", size_t index = 0)
+        : name_ {std::move(name)}, text_ {std::move(text)}, index_ {index}
     {
     }
 
@@ -302,15 +309,28 @@ public:
     {
         return text_;
     }
+    size_t GetIndex() const
+    {
+        return index_;
+    }
 
     bool operator==(const DocTagInfo &other) const
     {
-        return name_ == other.name_ && text_ == other.text_;
+        return name_ == other.name_ && text_ == other.text_ && index_ == other.index_;
     }
     bool operator!=(const DocTagInfo &other) const
     {
         return !(*this == other);
     }
+};
+
+struct JsdocParseState {
+    std::string documentText;
+    std::string currentTagName;
+    std::string currentTagText;
+    bool hasCurrentTag {false};
+    bool hasDocText {false};
+    bool pendingBlankLine {false};
 };
 
 struct QuickInfo {

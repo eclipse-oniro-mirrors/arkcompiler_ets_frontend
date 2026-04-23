@@ -941,6 +941,13 @@ KNativePointer impl_getDisplayPartsKind(KNativePointer ref)
 }
 TS_INTEROP_1(getDisplayPartsKind, KNativePointer, KNativePointer)
 
+KInt impl_getDisplayPartsIndex(KNativePointer ref)
+{
+    auto *refPtr = reinterpret_cast<SymbolDisplayPart *>(ref);
+    return static_cast<KInt>(refPtr->GetIndex());
+}
+TS_INTEROP_1(getDisplayPartsIndex, KInt, KNativePointer)
+
 KNativePointer impl_getQuickInfoKind(KNativePointer quickInfoPtr)
 {
     auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
@@ -1341,6 +1348,49 @@ KNativePointer impl_getSymbolDisplayPart(KNativePointer quickInfoPtr)
     return new std::vector<void *>(ptrs);
 }
 TS_INTEROP_1(getSymbolDisplayPart, KNativePointer, KNativePointer)
+
+KNativePointer impl_getQuickInfoDocument(KNativePointer quickInfoPtr)
+{
+    auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    std::vector<void *> ptrs;
+    for (auto &el : quickInfo->GetDocument()) {
+        ptrs.push_back(new SymbolDisplayPart(el));
+    }
+    return new std::vector<void *>(ptrs);
+}
+TS_INTEROP_1(getQuickInfoDocument, KNativePointer, KNativePointer)
+
+KNativePointer impl_getQuickInfoTags(KNativePointer quickInfoPtr)
+{
+    auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    std::vector<void *> ptrs;
+    for (auto &el : quickInfo->GetTags()) {
+        ptrs.push_back(new DocTagInfo(el));
+    }
+    return new std::vector<void *>(ptrs);
+}
+TS_INTEROP_1(getQuickInfoTags, KNativePointer, KNativePointer)
+
+KNativePointer impl_getDocTagName(KNativePointer docTagInfoPtr)
+{
+    auto *docTagInfo = reinterpret_cast<DocTagInfo *>(docTagInfoPtr);
+    return new std::string(docTagInfo->GetName());
+}
+TS_INTEROP_1(getDocTagName, KNativePointer, KNativePointer)
+
+KNativePointer impl_getDocTagText(KNativePointer docTagInfoPtr)
+{
+    auto *docTagInfo = reinterpret_cast<DocTagInfo *>(docTagInfoPtr);
+    return new std::string(docTagInfo->GetText());
+}
+TS_INTEROP_1(getDocTagText, KNativePointer, KNativePointer)
+
+KInt impl_getDocTagIndex(KNativePointer docTagInfoPtr)
+{
+    auto *docTagInfo = reinterpret_cast<DocTagInfo *>(docTagInfoPtr);
+    return static_cast<KInt>(docTagInfo->GetIndex());
+}
+TS_INTEROP_1(getDocTagIndex, KInt, KNativePointer)
 
 KInt impl_getTextSpanStart(KNativePointer textSpanPtr)
 {

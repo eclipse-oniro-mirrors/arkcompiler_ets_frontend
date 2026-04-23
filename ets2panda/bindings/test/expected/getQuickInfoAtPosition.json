@@ -44,7 +44,9 @@
         "text": "\"",
         "kind": "punctuation"
       }
-    ]
+    ],
+    "documentation": [],
+    "tags": []
   },
   "2": {
     "kind": "class",
@@ -67,7 +69,9 @@
         "text": "MyClass",
         "kind": "className"
       }
-    ]
+    ],
+    "documentation": [],
+    "tags": []
   },
   "3": {
     "kind": "get",
@@ -102,7 +106,9 @@
         "text": "string",
         "kind": "returnType"
       }
-    ]
+    ],
+    "documentation": [],
+    "tags": []
   },
   "4": {
     "kind": "method",
@@ -161,7 +167,9 @@
         "text": "T",
         "kind": "returnType"
       }
-    ]
+    ],
+    "documentation": [],
+    "tags": []
   },
   "5": {
     "kind": "struct",
@@ -184,6 +192,8 @@
         "text": "Index",
         "kind": "structName"
       }
-    ]
+    ],
+    "documentation": [],
+    "tags": []
   }
 }

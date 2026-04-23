@@ -26,6 +26,236 @@
 
 namespace ark::es2panda::lsp {
 
+constexpr std::string_view JSDOC_DOC_COMMENT_OPEN = "/**";
+constexpr std::string_view JSDOC_BLOCK_COMMENT_OPEN = "/*";
+constexpr std::string_view JSDOC_COMMENT_CLOSE = "*/";
+constexpr std::string_view JSDOC_STAR = "*";
+constexpr std::string_view JSDOC_SLASH = "/";
+constexpr std::string_view JSDOC_SPACE = " ";
+constexpr std::string_view JSDOC_TAG_PREFIX = "@";
+constexpr std::string_view JSDOC_TAG_SEPARATOR = " \t";
+constexpr std::string_view JSDOC_DOCUMENT_KIND = "plaintext";
+constexpr char JSDOC_NEWLINE = '\n';
+constexpr char JSDOC_CARRIAGE_RETURN = '\r';
+constexpr size_t NEXT_LINE_OFFSET = 1;
+constexpr size_t JSDOC_PRIMARY_INDEX = 0;
+
+bool IsSpace(char ch)
+{
+    return std::isspace(static_cast<unsigned char>(ch)) != 0;
+}
+
+std::string_view RemoveStrLeftSpace(std::string_view value)
+{
+    while (!value.empty() && IsSpace(value.front())) {
+        value.remove_prefix(NEXT_LINE_OFFSET);
+    }
+    return value;
+}
+
+std::string_view RemoveStrRightSpace(std::string_view value)
+{
+    while (!value.empty() && IsSpace(value.back())) {
+        value.remove_suffix(NEXT_LINE_OFFSET);
+    }
+    return value;
+}
+
+std::string_view RemoveStrSpace(std::string_view value)
+{
+    return RemoveStrRightSpace(RemoveStrLeftSpace(value));
+}
+
+std::string_view NormalizeJsdocLineView(std::string_view line)
+{
+    line = RemoveStrLeftSpace(line);
+    if (util::Helpers::StartsWith(line, JSDOC_COMMENT_CLOSE)) {
+        return {};
+    }
+
+    if (util::Helpers::StartsWith(line, JSDOC_DOC_COMMENT_OPEN)) {
+        line.remove_prefix(JSDOC_DOC_COMMENT_OPEN.size());
+        line = RemoveStrLeftSpace(line);
+    } else if (util::Helpers::StartsWith(line, JSDOC_BLOCK_COMMENT_OPEN)) {
+        line.remove_prefix(JSDOC_BLOCK_COMMENT_OPEN.size());
+        line = RemoveStrLeftSpace(line);
+    }
+
+    if (!line.empty() && line.front() == JSDOC_STAR.front()) {
+        line.remove_prefix(JSDOC_STAR.size());
+        if (!line.empty() && line.front() == JSDOC_SPACE.front()) {
+            line.remove_prefix(JSDOC_SPACE.size());
+        }
+    }
+
+    if (util::Helpers::EndsWith(line, JSDOC_COMMENT_CLOSE)) {
+        line.remove_suffix(JSDOC_COMMENT_CLOSE.size());
+        line = RemoveStrRightSpace(line);
+    }
+
+    line = RemoveStrRightSpace(line);
+    if (line == JSDOC_SLASH || line == JSDOC_STAR) {
+        return {};
+    }
+    return line;
+}
+
+void FlushCurrentTag(JsdocParseState &state, std::vector<DocTagInfo> &tags, size_t jsdocIndex)
+{
+    if (state.hasCurrentTag && !state.currentTagName.empty()) {
+        tags.emplace_back(std::move(state.currentTagName), std::move(state.currentTagText), jsdocIndex);
+    }
+    state.currentTagName.clear();
+    state.currentTagText.clear();
+    state.hasCurrentTag = false;
+}
+
+bool TryStartTag(std::string_view normalized, JsdocParseState &state, std::vector<DocTagInfo> &tags, size_t jsdocIndex)
+{
+    if (normalized.empty() || normalized.front() != JSDOC_TAG_PREFIX.front()) {
+        return false;
+    }
+
+    FlushCurrentTag(state, tags, jsdocIndex);
+    auto remaining = normalized.substr(JSDOC_TAG_PREFIX.size());
+    auto firstWhitespace = remaining.find_first_of(JSDOC_TAG_SEPARATOR);
+    if (firstWhitespace == std::string_view::npos) {
+        state.currentTagName.assign(remaining.data(), remaining.size());
+        state.currentTagText.clear();
+        state.hasCurrentTag = !state.currentTagName.empty();
+        return true;
+    }
+    if (firstWhitespace == 0) {
+        return true;
+    }
+
+    state.currentTagName.assign(remaining.data(), firstWhitespace);
+    auto tagText = RemoveStrLeftSpace(remaining.substr(firstWhitespace + 1));
+    state.currentTagText.assign(tagText.data(), tagText.size());
+    state.hasCurrentTag = true;
+    return true;
+}
+
+void AppendTagContinuation(std::string_view normalized, JsdocParseState &state)
+{
+    auto continuation = RemoveStrSpace(normalized);
+    if (continuation.empty()) {
+        return;
+    }
+    if (!state.currentTagText.empty()) {
+        state.currentTagText.push_back(JSDOC_SPACE.front());
+    }
+    state.currentTagText.append(continuation.data(), continuation.size());
+}
+
+void AppendDocumentLine(std::string_view normalized, JsdocParseState &state)
+{
+    if (normalized.empty()) {
+        if (state.hasDocText) {
+            state.pendingBlankLine = true;
+        }
+        return;
+    }
+
+    if (state.hasDocText) {
+        state.documentText.push_back(JSDOC_NEWLINE);
+        if (state.pendingBlankLine) {
+            state.documentText.push_back(JSDOC_NEWLINE);
+        }
+    }
+    state.documentText.append(normalized.data(), normalized.size());
+    state.hasDocText = true;
+    state.pendingBlankLine = false;
+}
+
+std::string_view GetNextLine(std::string_view source, size_t &start)
+{
+    auto end = source.find(JSDOC_NEWLINE, start);
+    if (end == std::string_view::npos) {
+        end = source.size();
+        auto line = source.substr(start, end - start);
+        if (!line.empty() && line.back() == JSDOC_CARRIAGE_RETURN) {
+            line.remove_suffix(NEXT_LINE_OFFSET);
+        }
+        start = source.size() + NEXT_LINE_OFFSET;
+        return line;
+    }
+
+    auto line = source.substr(start, end - start);
+    if (!line.empty() && line.back() == JSDOC_CARRIAGE_RETURN) {
+        line.remove_suffix(NEXT_LINE_OFFSET);
+    }
+    start = end + NEXT_LINE_OFFSET;
+    return line;
+}
+
+void AppendDocumentOutput(const JsdocParseState &state, std::vector<SymbolDisplayPart> &document, size_t jsdocIndex)
+{
+    auto docText = RemoveStrSpace(std::string_view(state.documentText));
+    if (!docText.empty()) {
+        document.emplace_back(std::string(docText), std::string(JSDOC_DOCUMENT_KIND), jsdocIndex);
+    }
+}
+
+std::vector<std::string_view> ExtractJsdocBlocks(std::string_view source)
+{
+    std::vector<std::string_view> blocks;
+    size_t start = 0;
+    while (start < source.size()) {
+        auto blockStart = source.find(JSDOC_DOC_COMMENT_OPEN, start);
+        if (blockStart == std::string_view::npos) {
+            break;
+        }
+        auto blockEnd = source.find(JSDOC_COMMENT_CLOSE, blockStart + JSDOC_DOC_COMMENT_OPEN.size());
+        if (blockEnd == std::string_view::npos) {
+            break;
+        }
+        blockEnd += JSDOC_COMMENT_CLOSE.size();
+        blocks.emplace_back(source.substr(blockStart, blockEnd - blockStart));
+        start = blockEnd;
+    }
+    return blocks;
+}
+
+void ParseSingleJsdocBlock(std::string_view source, size_t jsdocIndex, std::vector<SymbolDisplayPart> &document,
+                           std::vector<DocTagInfo> &tags)
+{
+    JsdocParseState state;
+    size_t start = 0;
+    while (start <= source.size()) {
+        auto normalized = NormalizeJsdocLineView(GetNextLine(source, start));
+        if (TryStartTag(normalized, state, tags, jsdocIndex)) {
+            continue;
+        }
+        if (state.hasCurrentTag && !normalized.empty()) {
+            AppendTagContinuation(normalized, state);
+            continue;
+        }
+        AppendDocumentLine(normalized, state);
+    }
+
+    FlushCurrentTag(state, tags, jsdocIndex);
+    AppendDocumentOutput(state, document, jsdocIndex);
+}
+
+void ParseJsdocToDocumentationAndTags(const std::string &rawDoc, std::vector<SymbolDisplayPart> &document,
+                                      std::vector<DocTagInfo> &tags)
+{
+    if (rawDoc.empty()) {
+        return;
+    }
+
+    auto source = std::string_view(rawDoc);
+    auto blocks = ExtractJsdocBlocks(source);
+    if (blocks.empty()) {
+        ParseSingleJsdocBlock(source, JSDOC_PRIMARY_INDEX, document, tags);
+        return;
+    }
+    for (size_t i = 0; i < blocks.size(); ++i) {
+        ParseSingleJsdocBlock(blocks[i], i, document, tags);
+    }
+}
+
 ir::AstNode *GetEnumMemberByName(ir::AstNode *node, const util::StringView &name)
 {
     if (node->Type() != ir::AstNodeType::TS_ENUM_DECLARATION) {
@@ -1397,6 +1627,17 @@ void BuildClassPropertyDisplayParts(ir::AstNode *node, std::vector<SymbolDisplay
     }
 }
 
+std::string GetDocumentationFileName(ir::AstNode *node, const std::string &fallbackFileName,
+                                     const std::vector<SymbolDisplayPart> &document,
+                                     const std::vector<DocTagInfo> &tags)
+{
+    if (node == nullptr || (document.empty() && tags.empty()) || node->Range().start.Program() == nullptr) {
+        return fallbackFileName;
+    }
+    auto fileName = std::string(node->Range().start.Program()->SourceFilePath());
+    return fileName.empty() ? fallbackFileName : fileName;
+}
+
 QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNode *nodeForQuickInfo,
                        const std::string &fileName, checker::ETSChecker *checker)
 {
@@ -1439,8 +1680,10 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
     } else if (node->Type() == ir::AstNodeType::ANNOTATION_DECLARATION) {
         displayParts = CreateDisplayForAnnotationDeclaration(node);
     }
+    ParseJsdocToDocumentationAndTags(compiler::JsdocStringFromDeclaration(node).Mutf8(), document, tags);
+    auto quickInfoFileName = GetDocumentationFileName(node, fileName, document, tags);
     // Unify this kind
-    return QuickInfo(kind, kindModifiers, span, displayParts, document, tags, fileName);
+    return QuickInfo(kind, kindModifiers, span, displayParts, document, tags, quickInfoFileName);
 }
 
 QuickInfo GetQuickInfoAtPositionImpl(es2panda_Context *context, size_t position, std::string fileName)

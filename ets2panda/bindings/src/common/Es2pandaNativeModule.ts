@@ -657,6 +657,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _getDisplayPartsIndex(ptr: KNativePointer): KInt {
+    throw new Error('Not implemented');
+  }
+
   _getQuickInfoKind(ptr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
@@ -670,6 +674,26 @@ export class Es2pandaNativeModule {
   }
 
   _getSymbolDisplayPart(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getQuickInfoDocument(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getQuickInfoTags(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getDocTagName(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getDocTagText(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getDocTagIndex(ptr: KNativePointer): KInt {
     throw new Error('Not implemented');
   }
 

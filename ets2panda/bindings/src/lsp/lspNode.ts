@@ -250,13 +250,36 @@ export interface TextSpan {
 }
 
 export class LspSymbolDisplayPart extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, withIndex: boolean = false) {
     super(peer);
     this.text = unpackString(global.es2panda._getDisplayPartsText(peer));
     this.kind = unpackString(global.es2panda._getDisplayPartsKind(peer));
+    this.index = withIndex ? global.es2panda._getDisplayPartsIndex(peer) : 0;
+    if (!withIndex) {
+      Object.defineProperty(this, 'index', {
+        value: this.index,
+        enumerable: false
+      });
+    }
   }
   readonly text: String;
   readonly kind: String;
+  readonly index: number;
+}
+
+export class JSDocTagInfo extends LspNode {
+  constructor(peer: KNativePointer) {
+    super(peer);
+    this.name = unpackString(global.es2panda._getDocTagName(peer));
+    const text = unpackString(global.es2panda._getDocTagText(peer));
+    if (text.length > 0) {
+      this.text = text;
+    }
+    this.index = global.es2panda._getDocTagIndex(peer);
+  }
+  name: string;
+  text?: string | LspSymbolDisplayPart[];
+  readonly index: number;
 }
 
 export class LspClassHierarchyItem extends LspNode {
@@ -435,12 +458,24 @@ export class LspQuickInfo extends LspNode {
       .map((elPeer: KNativePointer) => {
         return new LspSymbolDisplayPart(elPeer);
       });
+    this.documentation = new NativePtrDecoder()
+      .decode(global.es2panda._getQuickInfoDocument(peer))
+      .map((elPeer: KNativePointer) => {
+        return new LspSymbolDisplayPart(elPeer, true);
+      });
+    this.tags = new NativePtrDecoder()
+      .decode(global.es2panda._getQuickInfoTags(peer))
+      .map((elPeer: KNativePointer) => {
+        return new JSDocTagInfo(elPeer);
+      });
   }
   readonly kind: String;
   readonly kindModifier: String;
   readonly textSpan: LspTextSpan;
   readonly fileName: String;
   readonly displayParts: LspSymbolDisplayPart[];
+  readonly documentation: LspSymbolDisplayPart[];
+  readonly tags: JSDocTagInfo[];
 }
 
 export enum LspHighlightSpanKind {

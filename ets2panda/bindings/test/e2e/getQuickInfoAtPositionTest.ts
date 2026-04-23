@@ -205,14 +205,20 @@ describe('getQuickInfoAtPositionTest', () => {
     test('getQuickInfoAtPosition_000', () => {
       const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition1.ets'), 639);
       expect(res).toMatchObject(EXPECT_000);
+      expect(res?.documentation).toEqual([]);
+      expect(res?.tags).toEqual([]);
     });
     test('getQuickInfoAtPosition_001', () => {
       const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition2.ets'), 631);
       expect(res).toMatchObject(EXPECT_001);
+      expect(res?.documentation).toEqual([]);
+      expect(res?.tags).toEqual([]);
     });
     test('getQuickInfoAtPosition_002', () => {
       const res = lsp.getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition3.ets'), 676);
       expect(res).toMatchObject(EXPECT_002);
+      expect(res?.documentation).toEqual([]);
+      expect(res?.tags).toEqual([]);
     });
   });
 
@@ -221,10 +227,14 @@ describe('getQuickInfoAtPositionTest', () => {
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
       expect(res).toMatchObject(EXPECT_003);
+      expect(res?.documentation).toEqual([]);
+      expect(res?.tags).toEqual([]);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
       expect(res).toMatchObject(EXPECT_004);
+      expect(res?.documentation).toEqual([]);
+      expect(res?.tags).toEqual([]);
     });
   });
 });

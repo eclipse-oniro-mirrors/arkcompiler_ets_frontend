@@ -45,8 +45,8 @@ export const TextPositionUtils = {
 
 export function formEts2pandaCmd(
   defaultArkTsConfig: string,
-  simultaneous: boolean = false,
-  input: string
+  input: string,
+  simultaneous: boolean = false
 ): string[] {
 
   const ets2pandaCmd: string[] = [
