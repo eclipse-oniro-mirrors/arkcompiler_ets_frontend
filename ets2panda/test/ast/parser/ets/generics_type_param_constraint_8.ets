@@ -31,4 +31,4 @@ class D {}
 /* @@@ label Error Semantic error ESE0228: Type argument 'Char' should be a subtype of 'Comparable<String>' constraint */
 
 /* @@@ label2 Error Semantic error ESE0127: No matching call signature for f(D) */
-/* @@@ label2 Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A' constraint */
+/* @@@ label2 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'f'. Specify the type argument explicitly. */

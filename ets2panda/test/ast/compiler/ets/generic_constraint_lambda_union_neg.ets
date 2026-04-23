@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,13 @@
  * limitations under the License.
  */
 
-function foo<T extends (p: number) => number>(a: T): T{
-    return a
+class A {}
+
+function h4<T extends A>(x: T | ((p: T) => void)): void {}
+
+function main() {
+    /* @@ label */h4((p) => {})
 }
 
-let r = foo(x => x)
-
-/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for foo(((p1: *ERROR_TYPE*) => *ERROR_TYPE*)) */
-/* @@? 20:9 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'foo'. Specify the type argument explicitly. */
-/* @@? 20:13 Error Semantic error ESE0132: The type of parameter 'x' cannot be inferred */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for h4(((p1: T) => undefined)) */
+/* @@@ label Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'h4'. Specify the type argument explicitly. */

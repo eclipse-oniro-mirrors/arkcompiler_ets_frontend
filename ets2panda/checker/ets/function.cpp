@@ -592,8 +592,13 @@ static bool EnhanceSubstitutionTypeParameter(ETSChecker *checker, ETSTypeParamet
     }
 
     // #23068 substitution happens before the constraint check, should be restored
+    auto trialSubstitution = *substitution;
+    checker->EmplaceSubstituted(&trialSubstitution, originalTparam, argumentType);
+    if (!IsCompatibleTypeArgument(checker, paramType, argumentType, &trialSubstitution)) {
+        return false;
+    }
     checker->EmplaceSubstituted(substitution, originalTparam, argumentType);
-    return IsCompatibleTypeArgument(checker, paramType, argumentType, substitution);
+    return true;
 }
 
 static bool EnhanceSubstitutionForFunction(ETSChecker *checker, const ArenaVector<Type *> &typeParams,
