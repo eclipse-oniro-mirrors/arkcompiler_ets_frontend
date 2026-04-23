@@ -121,6 +121,8 @@ export class Lsp {
   private defaultArkTsConfig: string;
   private defaultBuildConfig: BuildConfig;
   private fileDependencies: string;
+  private pendingInvalidationRoot?: string;
+  private compiledFileHashes: Map<string, string> = new Map<string, string>();
   private buildConfigs: Record<string, BuildConfig>; // Map<moduleName, build_config.json>
   private moduleInfos: Record<string, ModuleInfo>; // Map<fileName, ModuleInfo>
   private reverseModuleDeps: Map<string, Set<string>>;
@@ -188,10 +190,14 @@ export class Lsp {
 
   deleteFile(fileName: string): void {
     if (this.filesMap.size === 1) {
-      const activeEntry = Array.from(this.filesMap.entries())[0];
-      const activeFileCache = activeEntry[1];
-      const ret = global.es2pandaPublic._DeleteProgramForFile(activeFileCache.fileContext, fileName);
+      const [, activeFileCache] = Array.from(this.filesMap.entries())[0];
+      this.invalidateDependantsByRoot(activeFileCache.fileContext, fileName);
+      global.es2pandaPublic._DeleteProgramForFile(activeFileCache.fileContext, fileName);
       this.tryRemoveSymbolReferenceIndex(fileName);
+      this.compiledFileHashes.delete(fileName);
+      if (this.pendingInvalidationRoot === fileName) {
+        this.pendingInvalidationRoot = undefined;
+      }
     }
   }
 
@@ -199,24 +205,35 @@ export class Lsp {
     if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
       return;
     }
-    const hash = createHash(fileContent.newDoc);
+    const hash = this.computeContentHash(fileContent.newDoc);
     if (this.filesMap.get(fileName)?.fileHash === hash) {
       return;
     }
 
     if (this.filesMap.size === 1) {
       const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
+      if (activeFilePath !== fileName && this.shouldInvalidateDependantsOnSwitch(activeFilePath)) {
+        this.invalidatePendingDependants(activeFileCache.fileContext);
+      }
+      const previousCompiledHash = this.compiledFileHashes.get(fileName);
+      const diskHash = previousCompiledHash === undefined ? this.readDiskHash(fileName) : undefined;
+      const isChanged =
+        previousCompiledHash !== undefined ? previousCompiledHash !== hash : diskHash !== undefined ? diskHash !== hash : true;
       const ret = global.es2pandaPublic._IncrementalPrepareProgram(
         activeFileCache.fileContext,
         fileName,
-        fileContent.newDoc
+        fileContent.newDoc,
+        isChanged ? 1 : 0
       );
-      if (ret !== 0) {
+      if (ret !== 0 && ret !== 1) {
         logger.error('incremental update failed for ', fileName);
         return;
       }
-      this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
-      this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
+      if (ret !== 1) {
+        this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
+        this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
+      }
+      this.recordCompilationState(fileName, hash, ret !== 1);
       this.filesMap.clear();
       this.filesMap.set(fileName, {
         fileContent: fileContent.newDoc,
@@ -231,7 +248,13 @@ export class Lsp {
       return;
     }
     this.tryBuildSymbolReferenceIndex(fileName, ctx);
-    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx, fileHash: hash });
+    this.recordCompilationState(fileName, hash);
+    this.filesMap.set(fileName, {
+      fileContent: fileContent.newDoc,
+      fileConfig: cfg,
+      fileContext: ctx,
+      fileHash: hash
+    });
   }
 
   deleteFromFilesMap(fileName: string): void {
@@ -268,6 +291,57 @@ export class Lsp {
       logger.error('File content not found for path: ', filePath);
     }
     return getSource.replace(/\r\n/g, '\n');
+  }
+
+  private readDiskHash(fileName: string): string | undefined {
+    try {
+      const diskSource = fs.readFileSync(fileName, 'utf8');
+      return this.computeContentHash(diskSource);
+    } catch (error) {
+      logger.warn(`readDiskHash failed for ${fileName}: ${String(error)}`);
+      return undefined;
+    }
+  }
+
+  private computeContentHash(fileSource: string): string {
+    return createHash(fileSource.replace(/\r\n/g, '\n'));
+  }
+
+  private shouldInvalidateDependantsOnSwitch(activeFilePath: string): boolean {
+    return this.pendingInvalidationRoot === activeFilePath;
+  }
+
+  private recordCompilationState(
+    fileName: string,
+    hash: string,
+    allowDiskBaseline: boolean = true
+  ): void {
+    const previousHash = this.compiledFileHashes.get(fileName);
+    const baselineHash = previousHash ?? (allowDiskBaseline ? this.readDiskHash(fileName) : undefined);
+    if (baselineHash !== undefined && baselineHash !== hash) {
+      this.pendingInvalidationRoot = fileName;
+    }
+
+    this.compiledFileHashes.set(fileName, hash);
+  }
+
+  private invalidatePendingDependants(context: KNativePointer): void {
+    if (!this.pendingInvalidationRoot) {
+      return;
+    }
+
+    this.invalidateDependantsByRoot(context, this.pendingInvalidationRoot);
+    this.pendingInvalidationRoot = undefined;
+  }
+
+  private invalidateDependantsByRoot(
+    context: KNativePointer,
+    rootFilePath: string
+  ): void {
+    const ret = global.es2pandaPublic._DeleteDependantProgramsForFiles(context, rootFilePath);
+    if (ret !== 0) {
+      logger.warn(`batch delete dependant programs failed, ret=${ret}`);
+    }
   }
 
   private proceedPreparedContext(filePath: string, context: KNativePointer, processToCheck: boolean = true): void {
@@ -1635,107 +1709,39 @@ export class Lsp {
       return result;
     }
 
-    let fileCache = this.filesMap.get(filename.valueOf());
-
-    const processRenameLocations = (ctx: KNativePointer, isCached: boolean = false, cfg?: Config) => {
-      const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, offset);
-      if (!needsCrossFileRename) {
-        let ptr: KPointer;
-        try {
-          ptr = global.es2panda._findRenameLocationsInCurrentFile(ctx, offset);
-        } catch (error) {
-          logger.error('failed to findRenameLocations', error);
-          if (!isCached && cfg) {
-            this.destroyContext(cfg, ctx);
-          }
-          return undefined;
-        }
-        if (!isCached && cfg) {
-          this.destroyContext(cfg, ctx);
-        }
-        const result = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
-          return new LspRenameLocation(elPeer);
-        });
-        const uniqueResult = Array.from(new Set(result));
-        perfScope?.end();
-        return uniqueResult;
-      } else {
-        let compileFiles = this.getMergedCompileFilesCrossModule(filename);
-        const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
-        if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
-          this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
-        }
-
-        const fileContexts: KPointer[] = [];
-        const fileConfigs: Config[] = [];
-        const tempContexts: { ctx: KNativePointer, cfg: Config }[] = [];
-
-        for (let i = 0; i < compileFiles.length; i++) {
-          let filePath = path.resolve(compileFiles[i]);
-          if (filePath === path.resolve(filename.valueOf()) && isCached) {
-            fileContexts.push(ctx);
-            continue;
-          }
-          let searchFileCache = this.filesMap.get(filePath);
-          if (searchFileCache) {
-            fileContexts.push(searchFileCache.fileContext);
-          } else {
-            const [compileFileCfg, compileFileCtx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
-            if (!compileFileCfg || !compileFileCtx) {
-              tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
-              return undefined;
-            }
-            fileContexts.push(compileFileCtx);
-            tempContexts.push({ ctx: compileFileCtx, cfg: compileFileCfg });
-          }
-        }
-
-        let ptr: KPointer;
-        try {
-          ptr = global.es2panda._findRenameLocations(
-            fileContexts.length,
-            passPointerArray(fileContexts),
-            ctx,
-            offset
-          );
-        } catch (error) {
-          logger.error('failed to findRenameLocations', error);
-          tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
-          if (!isCached && cfg) {
-            this.destroyContext(cfg, ctx);
-          }
-          return undefined;
-        }
-
-        const result: LspRenameLocation[] = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
-          return new LspRenameLocation(elPeer);
-        });
-
-        result.forEach((ref) => {
-          const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
-          if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
-            ref.nodeInfos = nodeInfoTemp;
-          }
-        });
-
-        tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
-        if (!isCached && cfg) {
-          this.destroyContext(cfg, ctx);
-        }
-
-        const uniqueResult = Array.from(new Set(result));
-        perfScope?.end();
-        return uniqueResult;
-      }
-    };
-
+    let ptr: KPointer;
+    const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
+    filename = isWindows ? filename.replace(/\//g, '\\') : filename;
+    const fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
-      return processRenameLocations(fileCache.fileContext, true);
+      ptr = global.es2panda._findRenameLocationsFromIndex(fileCache.fileContext, offset);
     } else {
-      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      return processRenameLocations(ctx, false, cfg);
+      const [cfg, ctx] = this.createContext(filename) ?? [];
+      if (!cfg || !ctx) {
+        return;
+      }
+      try {
+        global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+        ptr = global.es2panda._findRenameLocationsFromIndex(ctx, offset);
+      } finally {
+        this.destroyContext(cfg, ctx);
+      }
     }
+
+    const result: LspRenameLocation[] = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
+      return new LspRenameLocation(elPeer);
+    });
+
+    result.forEach((ref) => {
+      const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
+      if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
+        ref.nodeInfos = nodeInfoTemp;
+      }
+    });
+
+    const uniqueResult = Array.from(new Set(result));
+    perfScope?.end();
+    return uniqueResult;
   }
 
   getRenameInfo(filename: String, offset: number): LspRenameInfoType | undefined {
@@ -2231,11 +2237,20 @@ export class Lsp {
     PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
 
     global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+    this.compiledFileHashes.clear();
+    for (let i = 0; i < files.length; ++i) {
+      if (!fs.existsSync(files[i]) || fs.statSync(files[i]).isDirectory()) {
+        continue;
+      }
+      const normalizedContent = fs.readFileSync(files[i], 'utf8');
+      this.compiledFileHashes.set(files[i], this.computeContentHash(normalizedContent));
+    }
+    const content = fs.readFileSync(files[0], 'utf8').replace(/\r\n/g, '\n');
     this.filesMap.set(files[0], {
-      fileContent: fs.readFileSync(files[0], 'utf8').replace(/\r\n/g, '\n'),
+      fileContent: content,
       fileConfig: config,
       fileContext: ctx,
-      fileHash: createHash(files[0])
+      fileHash: this.computeContentHash(content)
     });
   }
 

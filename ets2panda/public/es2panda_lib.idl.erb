@@ -244,8 +244,7 @@ interface es2panda_Impl {
     void InvalidateFileCache(es2panda_GlobalContext globalContext, String fileName);
     void RemoveFileCache(es2panda_GlobalContext globalContext, String fileName);
     void AddFileCache(es2panda_GlobalContext globalContext, String fileName);
-    i32 IncrementalPrepareProgram(es2panda_Context context, String fileName, String sourceText);
-    i32 DeleteProgramForFile(es2panda_Context context, String fileName);
+    i32 IncrementalPrepareProgram(es2panda_Context context, String fileName, String sourceText, boolean isChanged);
     void FreeCompilerPartMemory(es2panda_Context context);
     void ResetCounters();
     i32 ExtractDeclarationsFromAbcFile(String abcFile, String cacheDir);

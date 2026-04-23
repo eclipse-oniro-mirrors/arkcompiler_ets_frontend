@@ -296,8 +296,8 @@ struct CAPI_EXPORT es2panda_Impl {
     void (*InvalidateFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*RemoveFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*AddFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
-    int (*IncrementalPrepareProgram)(es2panda_Context *context, const char *fileName, const char *sourceText);
-    int (*DeleteProgramForFile)(es2panda_Context *context, const char *fileName);
+    int (*IncrementalPrepareProgram)(es2panda_Context *context, const char *fileName, const char *sourceText,
+                                     bool isChanged);
     void (*FreeCompilerPartMemory)(es2panda_Context *context);
     void (*ResetCounters)();
     int (*ExtractDeclarationsFromAbcFile)(const char *abcFile, const char *cacheDir);

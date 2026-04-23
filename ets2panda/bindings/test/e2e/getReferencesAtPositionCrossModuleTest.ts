@@ -62,10 +62,10 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
   const entryFile2 = getRealPath(projectName, 'entry/EntryReferences2.ets');
   const harFile1 = getRealPath(projectName, 'har/Index.ets');
   const harFile2 = getRealPath(projectName, 'har/Symbols.ets');
-  lsp.modifyFilesMap(harFile1, { newDoc: fs.readFileSync(harFile1, 'utf8') });
-  lsp.modifyFilesMap(harFile2, { newDoc: fs.readFileSync(harFile2, 'utf8') });
-  lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8') });
-  lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8') });
+  lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8')});
+  lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8')});
+  lsp.modifyFilesMap(harFile1, { newDoc: fs.readFileSync(harFile1, 'utf8')});
+  lsp.modifyFilesMap(harFile2, { newDoc: fs.readFileSync(harFile2, 'utf8')});
 
   test('getReferencesAtPosition_cross_module_class', () => {
     const offset = getMarkerOffset(entryFile1, '/*classTarget*/');

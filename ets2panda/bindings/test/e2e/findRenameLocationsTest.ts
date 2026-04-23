@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,23 +19,28 @@ describe('findRenameLocationsTest', () => {
   const moduleName: string = 'findRenameLocations';
   const EXPECT_000 = [
     {
+      fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
+      start: 708,
+      end: 711,
+      line: 22,
+    },
+    {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 630,
       end: 633,
-      line: 15,
-      prefixText: 'Foo as '
+      line: 16,
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 738,
       end: 741,
-      line: 23
+      line: 24
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 781,
       end: 784,
-      line: 24
+      line: 25
     }
   ];
   const EXPECT_001 = [
@@ -43,49 +48,49 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 625,
       end: 628,
-      line: 15
+      line: 16
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 1259,
       end: 1262,
-      line: 49
+      line: 50
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 1267,
       end: 1270,
-      line: 50
+      line: 51
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 1275,
       end: 1278,
-      line: 51
+      line: 52
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 625,
       end: 628,
-      line: 15
+      line: 16
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 694,
       end: 697,
-      line: 19
+      line: 20
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 702,
       end: 705,
-      line: 20
+      line: 21
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 711,
       end: 714,
-      line: 21
+      line: 22
     }
   ];
   const EXPECT_002 = [
@@ -93,37 +98,37 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 667,
       end: 672,
-      line: 18
+      line: 19
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 1239,
       end: 1244,
-      line: 47
+      line: 48
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 1249,
       end: 1254,
-      line: 48
+      line: 49
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 618,
       end: 623,
-      line: 15
+      line: 16
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 673,
       end: 678,
-      line: 17
+      line: 18
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 683,
       end: 688,
-      line: 18
+      line: 19
     }
   ];
   const EXPECT_003 = [
@@ -131,46 +136,45 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 718,
       end: 722,
-      line: 22
+      line: 23
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 882,
       end: 886,
-      line: 27
+      line: 28
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 866,
       end: 870,
-      line: 28
-    },
-    {
-      fileName: getRealPath(moduleName, 'findRenameLocations3.ets'),
-      start: 728,
-      end: 732,
-      line: 18
+      line: 29
     }
   ];
   const EXPECT_004 = [
     {
+      fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
+      start: 667,
+      end: 672,
+      line: 19
+    },
+    {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 618,
       end: 623,
-      line: 15,
-      prefixText: 'dummy as '
+      line: 16,
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 673,
       end: 678,
-      line: 17
+      line: 18
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 683,
       end: 688,
-      line: 18
+      line: 19
     }
   ];
   const EXPECT_005 = [
@@ -178,25 +182,13 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 718,
       end: 722,
-      line: 22
-    },
-    {
-      fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
-      start: 882,
-      end: 886,
-      line: 27
+      line: 23
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 866,
       end: 870,
-      line: 28
-    },
-    {
-      fileName: getRealPath(moduleName, 'findRenameLocations3.ets'),
-      start: 728,
-      end: 732,
-      line: 18
+      line: 29
     }
   ];
   const EXPECT_006 = [
@@ -204,25 +196,19 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 718,
       end: 722,
-      line: 22
+      line: 23
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations1.ets'),
       start: 882,
       end: 886,
-      line: 27
+      line: 28
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations2.ets'),
       start: 866,
       end: 870,
-      line: 28
-    },
-    {
-      fileName: getRealPath(moduleName, 'findRenameLocations3.ets'),
-      start: 728,
-      end: 732,
-      line: 18
+      line: 29
     }
   ];
   const EXPECT_007 = [
@@ -230,13 +216,13 @@ describe('findRenameLocationsTest', () => {
       fileName: getRealPath(moduleName, 'findRenameLocations3.ets'),
       start: 625,
       end: 629,
-      line: 15
+      line: 16
     },
     {
       fileName: getRealPath(moduleName, 'findRenameLocations3.ets'),
       start: 685,
       end: 689,
-      line: 17
+      line: 18
     }
   ];
 

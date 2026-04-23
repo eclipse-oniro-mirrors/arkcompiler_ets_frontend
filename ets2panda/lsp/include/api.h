@@ -430,6 +430,9 @@ typedef struct LSPAPI {
     bool (*buildSymbolReferenceIndexForContextWithExternal)(es2panda_Context *context);
     bool (*removeSymbolReferenceIndexForFile)(const char *fileName);
     References (*getReferencesAtPositionFromIndex)(es2panda_Context *context, size_t position);
+    std::string (*getIndexedFileSource)(const std::string &fileName);
+    int (*DeleteProgramForFile)(es2panda_Context *context, const char *fileName);
+    int (*DeleteDependantProgramsForFiles)(es2panda_Context *context, const char *fileName);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

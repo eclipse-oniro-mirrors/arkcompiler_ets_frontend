@@ -1125,11 +1125,18 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _IncrementalPrepareProgram(contextPtr: KPtr, filename: String, sourceText: String): KInt {
+  _IncrementalPrepareProgram(contextPtr: KPtr, filename: String, sourceText: String, isChanged: KBoolean): KInt {
     throw new Error('Not implemented');
   }
 
   _DeleteProgramForFile(contextPtr: KPtr, filename: String): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _DeleteDependantProgramsForFiles(
+    contextPtr: KPtr,
+    filename: String
+  ): KInt {
     throw new Error('Not implemented');
   }
 
@@ -1162,6 +1169,10 @@ export class Es2pandaNativeModule {
   }
 
   _findRenameLocationsFromNode(context: KPtr, nodeInfoPtrs: Uint8Array, arraySize: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _findRenameLocationsFromIndex(context: KNativePointer, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 

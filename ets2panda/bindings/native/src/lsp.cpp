@@ -196,6 +196,40 @@ KNativePointer impl_findRenameLocationsInCurrentFile(KNativePointer context, KIn
 }
 TS_INTEROP_2(findRenameLocationsInCurrentFile, KNativePointer, KNativePointer, KInt)
 
+KNativePointer impl_findRenameLocationsFromIndex(KNativePointer context, KInt position)
+{
+    auto *activeContext = reinterpret_cast<es2panda_Context *>(context);
+    LSPAPI const *ctx = GetLspApiImpl();
+    auto refs = ctx->getReferencesAtPositionFromIndex(activeContext, static_cast<std::size_t>(position));
+
+    std::set<ark::es2panda::lsp::RenameLocation> locations;
+    auto buildRenameLocationWithLine = [ctx](const std::string &fileName, size_t start, size_t length) {
+        size_t line = 0;
+        auto source = ctx->getIndexedFileSource(fileName);
+        if (!source.empty()) {
+            line = ctx->getColAndLineByOffset(source, start).first;
+        }
+        return ark::es2panda::lsp::RenameLocation(fileName, start, start + length, line);
+    };
+
+    if (!refs.definitionInfo.fileName.empty()) {
+        locations.emplace(buildRenameLocationWithLine(refs.definitionInfo.fileName, refs.definitionInfo.start,
+                                                      refs.definitionInfo.length));
+    }
+
+    for (const auto &ref : refs.referenceInfos) {
+        locations.emplace(buildRenameLocationWithLine(ref.fileName, ref.start, ref.length));
+    }
+
+    auto ptrs = std::make_unique<std::vector<void *>>();
+    ptrs->reserve(locations.size());
+    for (const auto &loc : locations) {
+        ptrs->push_back(new ark::es2panda::lsp::RenameLocation(loc));
+    }
+    return ptrs.release();
+}
+TS_INTEROP_2(findRenameLocationsFromIndex, KNativePointer, KNativePointer, KInt)
+
 KBoolean impl_needsCrossFileRename(KNativePointer context, KInt position)
 {
     LSPAPI const *ctx = GetLspApiImpl();
@@ -2403,3 +2437,17 @@ KInt impl_destroyFormattingTextChanges(KNativePointer textChangesVecPtr)
     return 0;
 }
 TS_INTEROP_1(destroyFormattingTextChanges, KInt, KNativePointer)
+
+KInt impl_DeleteProgramForFile(KNativePointer contextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return GetLspApiImpl()->DeleteProgramForFile(context, filenamePtr.Data());
+}
+TS_INTEROP_2(DeleteProgramForFile, KInt, KNativePointer, KStringPtr)
+
+KInt impl_DeleteDependantProgramsForFiles(KNativePointer contextPtr, KStringPtr &filenamePtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    return GetLspApiImpl()->DeleteDependantProgramsForFiles(context, filenamePtr.Data());
+}
+TS_INTEROP_2(DeleteDependantProgramsForFiles, KInt, KNativePointer, KStringPtr)
