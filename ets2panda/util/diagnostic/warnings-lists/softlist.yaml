@@ -77,11 +77,6 @@ softlist:
 - name: "export_type_anno"
   paths:
   - ".*/test/xts/.*"
-  - ".*/msdp/device_status/.*"
-  - ".*/telephony/call_manager/.*"
-  - ".*/inputmethod/imf/.*"
-  - ".*/base/notification/eventhandler/.*"
-  - ".*/base/security/certificate_manager/.*"
   - ".*/foundation/ability/ability_runtime/.*"
   - ".*/ability/dmsfwk/.*"
   - ".*/foundation/ability/form_fwk/.*"
