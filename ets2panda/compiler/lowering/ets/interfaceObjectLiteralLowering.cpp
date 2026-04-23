@@ -338,15 +338,15 @@ static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDe
 
 ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringView const className,
                                         ir::AstNode const *const decl,
-                                        const checker::ETSChecker::ClassBuilder &bodyBuilder, checker::Type *declTsType)
+                                        const checker::ETSChecker::ClassBuilder &bodyBuilder, checker::Type *declTsType,
+                                        varbinder::Scope *useSiteScope)
 {
     ES2PANDA_ASSERT(decl != nullptr && (decl->IsTSInterfaceDeclaration() || decl->IsClassDefinition()));
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *allocator = ctx->Allocator();
 
-    auto *scope = compiler::NearestScope(decl);
-    auto scopeCtx = checker::ScopeContext(checker, scope);
-    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
+    auto scopeCtx = checker::ScopeContext(checker, useSiteScope);
+    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), useSiteScope);
 
     auto *classDecl = BuildClass(checker, className, bodyBuilder);
     RefineSourceRanges(classDecl);
@@ -392,7 +392,8 @@ ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringVi
     return classDecl;
 }
 
-static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
+static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode,
+                                                     ir::ObjectExpression *objExpr)
 {
     if (ifaceNode->GetAnonClass() != nullptr) {
         return ifaceNode->GetAnonClass()->Definition()->TsType();
@@ -408,8 +409,9 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
     };
 
     auto anonClassName = util::UString(GenerateAnonClassName(ifaceNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder,
-                                        ifaceNode->AsTSInterfaceDeclaration()->TsType());
+    auto *classDecl =
+        GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder,
+                          ifaceNode->AsTSInterfaceDeclaration()->TsType(), compiler::NearestScope(objExpr));
 
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         ifaceNode->SetAnonClass(classDecl);
@@ -418,7 +420,8 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
     return classDecl->Definition()->TsType();
 }
 
-static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode)
+static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode,
+                                               ir::ObjectExpression *objExpr)
 {
     if (abstractClassNode->GetAnonClass() != nullptr) {
         return;
@@ -437,8 +440,9 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
-                                        abstractClassNode->AsClassDefinition()->TsType());
+    auto *classDecl =
+        GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                          abstractClassNode->AsClassDefinition()->TsType(), compiler::NearestScope(objExpr));
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         abstractClassNode->SetAnonClass(classDecl);
     }
@@ -693,7 +697,7 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
     auto anonClassName =
         util::UString(GenerateAnonClassName(interfaceDecl->InternalName().Utf8(), true), ctx->Allocator());
     auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), interfaceDecl, classBodyBuilder,
-                                        objectExpr->AsObjectExpression()->TsType());
+                                        objectExpr->AsObjectExpression()->TsType(), compiler::NearestScope(objectExpr));
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
@@ -826,7 +830,7 @@ static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::
         // because of lazy checker auxilary classes can be no created here
         interfaceDecl->Check(checker);
         if (CheckInterfaceShouldGenerateAnonClass(checker, interfaceDecl)) {
-            return GenerateAnonClassFromInterface(ctx, interfaceDecl);
+            return GenerateAnonClassFromInterface(ctx, interfaceDecl, objectExpr);
         }
     }
 
@@ -857,8 +861,9 @@ static checker::Type *GenerateAnonClassFromAbstractClassWithMethods(public_lib::
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8(), true), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
-                                        abstractClassNode->AsClassDefinition()->TsType());
+    auto *classDecl =
+        GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                          abstractClassNode->AsClassDefinition()->TsType(), compiler::NearestScope(objectExpr));
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
@@ -946,15 +951,16 @@ static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *class
     return true;
 }
 
-static void GenerateAnonClassForDeclNode(public_lib::Context *ctx, parser::Program *program, ir::AstNode *ast)
+static void GenerateAnonClassForDeclNode(public_lib::Context *ctx, parser::Program *program, ir::AstNode *ast,
+                                         ir::ObjectExpression *objExpr)
 {
     if (ast->IsTSInterfaceDeclaration() &&
         CheckInterfaceShouldGenerateAnonClass(ctx->GetChecker()->AsETSChecker(), ast->AsTSInterfaceDeclaration())) {
-        GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration());
+        GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration(), objExpr);
     } else if (ast->IsClassDefinition() && ast != program->GlobalClass() && ast->AsClassDefinition()->IsAbstract() &&
                !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
                CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
-        GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition());
+        GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition(), objExpr);
     }
 }
 
@@ -980,7 +986,7 @@ bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
     ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(prog);
 
     TraverseObjectLiteralExpressions(prog, [ctx, prog](ir::ObjectExpression *expr) {
-        GenerateAnonClassForDeclNode(ctx, prog, expr->TsType()->AsETSObjectType()->GetDeclNode());
+        GenerateAnonClassForDeclNode(ctx, prog, expr->TsType()->AsETSObjectType()->GetDeclNode(), expr);
         HandleInterfaceLowering(ctx, expr);
     });
 
