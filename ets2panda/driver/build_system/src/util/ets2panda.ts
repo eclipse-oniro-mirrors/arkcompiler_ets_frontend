@@ -39,6 +39,7 @@ import {
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
+    validatePathLength,
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
@@ -60,7 +61,6 @@ import {
     RecordEvent,
     StatisticsRecorder,
 } from '../util/statsRecorder'
-
 
 enum Ets2pandaEvent {
     CREATE_INSTANCE = 'Create instance',
@@ -281,10 +281,12 @@ export class Ets2panda {
             if (job.contentType === JobContentType.CLUSTER) {
                 (job.content as FileInfo[]).forEach((fi: FileInfo) => {
                     fi.output = arkts.formOutputPathForFile(fi.input);
+                    validatePathLength(fi.output, 'Output file path');
                 })
             } else {
                 const fi: FileInfo = job.content as FileInfo;
                 fi.output = arkts.formOutputPathForFile(fi.input);
+                validatePathLength(fi.output, 'Output file path');
             }
 
             statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
@@ -311,6 +313,7 @@ export class Ets2panda {
                     )
                     ensurePathExists(declEtsOutputPath);
                     // .etscache files are generated separately from .abc file right now
+                    validatePathLength(declEtsOutputPath, 'Declaration output path');
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${fi.input}`)
                 }
@@ -340,6 +343,9 @@ export class Ets2panda {
                 this.logger.printInfo(`[Ets2panda] Compiled abc file for cycle ${jobId}`)
             }
         } catch (error) {
+            if (error instanceof DriverError) {
+                throw error;
+            }
             if (error instanceof Error) {
                 throw new DriverError(
                     LogDataFactory.newInstance(
@@ -379,10 +385,13 @@ export class Ets2panda {
         );
         ensurePathExists(declEtsOutputPath);
         ensurePathExists(etsOutputPath);
+        validatePathLength(declEtsOutputPath, 'Declaration file path');
+        validatePathLength(etsOutputPath, 'Bridge code file path');
         const staticRecordPath = path.join(
             jobInfo.declgenConfig.output,
             STATIC_RECORD_FILE
         )
+        validatePathLength(staticRecordPath, 'Static record file path');
         const declEtsOutputDir = path.dirname(declEtsOutputPath);
         const staticRecordRelativePath = changeFileExtension(
             path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
