@@ -78,6 +78,8 @@ private:
 
     std::string BuildMethodCall(ir::ScriptFunction const *derivedFunction,
                                 std::vector<ir::AstNode *> &typeNodes) const noexcept;
+
+    ir::OpaqueTypeNode *AllocOpaqueTypeNode(checker::Type const *type) const noexcept;
 };
 }  // namespace ark::es2panda::compiler
 

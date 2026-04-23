@@ -101,6 +101,24 @@ bool ETSTupleType::CheckElementsIdentical(TypeRelation *relation, const ETSTuple
     return true;
 }
 
+// CC-OFFNXT(G.FMT.14-CPP) project code style
+bool ETSTupleType::IsBridgeContext(TypeRelation *relation) const
+{
+    auto status = relation->GetChecker()->Context().Status();
+    return (status & CheckerStatus::IN_BRIDGE_TEST) != 0U;
+}
+
+bool ETSTupleType::CheckElementsCovariant(TypeRelation *relation, const ETSTupleType *source) const
+{
+    ES2PANDA_ASSERT(GetTupleSize() <= source->GetTupleSize());
+    for (TupleSizeType idx = 0U; idx < GetTupleSize(); ++idx) {
+        if (!relation->IsSupertypeOf(GetTypeAtIndex(idx), source->GetTypeAtIndex(idx))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void ETSTupleType::Identical(TypeRelation *const relation, Type *const other)
 {
     relation->Result(false);
@@ -145,15 +163,28 @@ void ETSTupleType::IsSubtypeOf(TypeRelation *const relation, Type *target)
 
     relation->Result(false);
 
-    if (!HasTypeFlag(TypeFlag::READONLY) || target->HasTypeFlag(TypeFlag::READONLY)) {
-        if (target->IsETSObjectType()) {
-            relation->IsSupertypeOf(target, GetWrapperType());
-        } else if (target->IsETSTupleType()) {
-            auto *tupleType = target->AsETSTupleType();
-            if (GetTupleSize() >= tupleType->GetTupleSize() && tupleType->CheckElementsIdentical(relation, this)) {
-                relation->Result(true);
-            }
-        }
+    if (HasTypeFlag(TypeFlag::READONLY) && !target->HasTypeFlag(TypeFlag::READONLY)) {
+        return;
+    }
+
+    if (target->IsETSObjectType()) {
+        relation->IsSupertypeOf(target, GetWrapperType());
+        return;
+    }
+
+    if (!target->IsETSTupleType()) {
+        return;
+    }
+
+    auto *tupleType = target->AsETSTupleType();
+    if (GetTupleSize() < tupleType->GetTupleSize()) {
+        return;
+    }
+
+    const bool isCompatible = IsBridgeContext(relation) ? tupleType->CheckElementsCovariant(relation, this)
+                                                        : tupleType->CheckElementsIdentical(relation, this);
+    if (isCompatible) {
+        relation->Result(true);
     }
 }
 
@@ -161,15 +192,28 @@ void ETSTupleType::IsSupertypeOf(TypeRelation *relation, Type *source)
 {
     relation->Result(false);
 
-    if (!source->HasTypeFlag(TypeFlag::READONLY) || HasTypeFlag(TypeFlag::READONLY)) {
-        if (source->IsETSTupleType()) {
-            auto *tupleType = source->AsETSTupleType();
-            if (GetTupleSize() <= tupleType->GetTupleSize() && CheckElementsIdentical(relation, tupleType)) {
-                relation->Result(true);
-            }
-        } else if (source->IsETSObjectType()) {
-            relation->IsSupertypeOf(GetWrapperType(), source);
-        }
+    if (source->HasTypeFlag(TypeFlag::READONLY) && !HasTypeFlag(TypeFlag::READONLY)) {
+        return;
+    }
+
+    if (source->IsETSObjectType()) {
+        relation->IsSupertypeOf(GetWrapperType(), source);
+        return;
+    }
+
+    if (!source->IsETSTupleType()) {
+        return;
+    }
+
+    auto *tupleType = source->AsETSTupleType();
+    if (GetTupleSize() > tupleType->GetTupleSize()) {
+        return;
+    }
+
+    const bool isCompatible = IsBridgeContext(relation) ? CheckElementsCovariant(relation, tupleType)
+                                                        : CheckElementsIdentical(relation, tupleType);
+    if (isCompatible) {
+        relation->Result(true);
     }
 }
 
