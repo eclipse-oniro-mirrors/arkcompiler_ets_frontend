@@ -73,6 +73,28 @@ static inline void AssertAccumulatorValueMaterialized(ETSGen const *etsg)
     ES2PANDA_ASSERT(!accType->IsETSVoidType());
 }
 
+static const ir::AstNode *MakeInvalidDebugNode(ETSGen *etsg)
+{
+    auto *debugNode = etsg->Context()->allocator->New<ir::Identifier>(etsg->Context()->allocator);
+    debugNode->SetRange(lexer::SourceRange {});
+    return debugNode;
+}
+
+static bool IsLambdaInvokeCall(const ir::AstNode *node)
+{
+    if (!node->IsCallExpression()) {
+        return false;
+    }
+
+    const auto *callee = node->AsCallExpression()->Callee();
+    if (!callee->IsMemberExpression()) {
+        return false;
+    }
+
+    const auto *object = callee->AsMemberExpression()->Object();
+    return object->TsType() != nullptr && object->TsType()->IsETSArrowType();
+}
+
 ETSGen::ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile) noexcept
     : CodeGen(allocator, spiller, context, toCompile),
@@ -858,13 +880,16 @@ void ETSGen::GuardUncheckedType(const ir::AstNode *node, const checker::Type *un
 {
     if (unchecked != nullptr) {
         SetAccumulatorType(unchecked);
+        // Hide compiler-generated guards for erased lambda/Any calls from source-level stepping.
+        const auto *debugNode =
+            IsLambdaInvokeCall(node) && unchecked->IsETSAnyType() ? MakeInvalidDebugNode(this) : node;
         // this check guards possible type violations, **do not relax it**
-        CheckedReferenceNarrowing(node, Checker()->MaybeBoxType(target));
+        CheckedReferenceNarrowing(debugNode, Checker()->MaybeBoxType(target));
         // Because on previous step accumulator type may be set in CheckerReferenceNarrowing to boxed counterpart of
         // target We need to apply unbox conversion if needed to avoid RTE
         ES2PANDA_ASSERT(GetAccumulatorType() != nullptr);
         if (target->IsETSPrimitiveType() && GetAccumulatorType()->IsETSUnboxableObject()) {
-            ApplyConversion(node, target);
+            ApplyConversion(debugNode, target);
         }
     }
     SetAccumulatorType(target);
