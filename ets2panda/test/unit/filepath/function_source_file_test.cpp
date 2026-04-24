@@ -16,7 +16,15 @@
 #include <gtest/gtest.h>
 #include "test/utils/asm_test.h"
 
+#include <filesystem>
+
 namespace test::unit {
+
+static bool IsUserDefined(std::string_view name)
+{
+    return name.find("std.") == std::string_view::npos && name.find("std:") == std::string_view::npos &&
+           name.find("arkruntime") == std::string_view::npos;
+}
 
 class SourceFilePathSeparatorTest : public test::utils::AsmTest {
 protected:
@@ -38,6 +46,28 @@ protected:
                 << "Static function '" << funcName << "' has sourceFile: '" << func.sourceFile
                 << "' which contains backslashes";
         }
+    }
+
+    std::string CreateTempFile(std::string_view relativePath, std::string_view content)
+    {
+        std::filesystem::path filePath(testing::TempDir());
+        filePath.append("sourcefile_test").append(relativePath);
+        std::filesystem::create_directories(filePath.parent_path());
+        std::ofstream ofs(filePath);
+        ofs << content;
+        ofs.close();
+        return filePath.string();
+    }
+
+    std::string CreateFileInCwd(std::string_view relativePath, std::string_view content)
+    {
+        std::filesystem::path filePath(std::filesystem::current_path());
+        filePath.append("sourcefile_test_cwd").append(relativePath);
+        std::filesystem::create_directories(filePath.parent_path());
+        std::ofstream ofs(filePath);
+        ofs << content;
+        ofs.close();
+        return filePath.string();
     }
 };
 
@@ -114,6 +144,60 @@ TEST_F(SourceFilePathSeparatorTest, CheckAnnotationRecordSourceFilePathSeparator
     }
 
     CheckAllFunctionsSourceFile(program);
+}
+
+TEST_F(SourceFilePathSeparatorTest, FunctionSourceFileContainsRelativePathUnderRootDir)
+{
+    std::string src = R"(
+        function main() {
+            return 0;
+        }
+    )";
+    std::string realPath = CreateFileInCwd("src/module/Test.ets", src);
+
+    const char *args[] = {ES2PANDA_BIN_PATH};
+    auto program = GetProgram(ark::Span<const char *const>(args, 1), realPath.c_str(), src);
+    ASSERT_NE(program, nullptr);
+
+    for (const auto &[funcName, func] : program->functionStaticTable) {
+        if (!IsUserDefined(funcName)) {
+            continue;
+        }
+        EXPECT_NE(func.sourceFile, "Test.ets")
+            << "Function '" << funcName << "' sourceFile should be relative path, not just filename";
+        EXPECT_TRUE(func.sourceFile.find('/') != std::string::npos)
+            << "Function '" << funcName << "' sourceFile should contain path separators: '" << func.sourceFile << "'";
+        EXPECT_NE(func.sourceFile.front(), '/')
+            << "Function '" << funcName << "' sourceFile should not be absolute: '" << func.sourceFile << "'";
+        EXPECT_TRUE(HasOnlyForwardSlashes(func.sourceFile))
+            << "Function '" << funcName << "' sourceFile contains backslashes: '" << func.sourceFile << "'";
+    }
+    std::filesystem::path cleanupPath(std::filesystem::current_path());
+    cleanupPath.append("sourcefile_test_cwd");
+    std::filesystem::remove_all(cleanupPath);
+}
+
+TEST_F(SourceFilePathSeparatorTest, SourceFileFallbackToFilenameOutsideRootDir)
+{
+    std::string src = R"(
+        function main() {
+            return 0;
+        }
+    )";
+    std::string realPath = CreateTempFile("src/module/Test.ets", src);
+
+    const char *args[] = {ES2PANDA_BIN_PATH};
+    auto program = GetProgram(ark::Span<const char *const>(args, 1), realPath.c_str(), src);
+    ASSERT_NE(program, nullptr);
+
+    for (const auto &[funcName, func] : program->functionStaticTable) {
+        if (!IsUserDefined(funcName)) {
+            continue;
+        }
+        EXPECT_EQ(func.sourceFile, "Test.ets")
+            << "Function '" << funcName << "' sourceFile should be just filename when outside rootDir: '"
+            << func.sourceFile << "'";
+    }
 }
 
 }  // namespace test::unit

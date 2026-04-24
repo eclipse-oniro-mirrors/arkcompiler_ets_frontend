@@ -27,6 +27,7 @@
 
 #include "compiler/lowering/phase.h"
 
+#include "util/helpers.h"
 #include "util/importPathManager.h"
 
 #include <memory>
@@ -66,8 +67,10 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
     if (!Is<util::ModuleKind::MODULE>()) {
         return std::string {ModuleName()};
     }
-    // NOTE(dkofanov): there should be rebasing abspath to baseurl.
-    return util::Path(importInfo_.TextSource(), context->Allocator()).GetFileNameWithExtension().Mutf8();
+    auto relPath = util::Helpers::RelPathByStrippingPrefix(
+        sourceFile_.GetAbsolutePath().Mutf8(),
+        ark::os::GetAbsolutePath(context->config->options->ArkTSConfig().RootDir()));
+    return relPath.empty() ? std::string {sourceFile_.GetFileNameWithExtension().Mutf8()} : relPath;
 }
 
 const lexer::LineIndex &Program::GetLineIndex() const
