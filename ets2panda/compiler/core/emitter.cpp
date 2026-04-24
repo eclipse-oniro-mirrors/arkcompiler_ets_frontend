@@ -143,6 +143,13 @@ util::StringView FunctionEmitter::SourceCode() const
 
 void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *pandaIns)
 {
+    constexpr auto INVALID_LINE_NO = static_cast<std::uint32_t>(-1);
+    const auto *rootNode = cg_->RootNode();
+    if (rootNode->IsScriptFunction() && rootNode->HasAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO)) {
+        pandaIns->insDebug.SetLineNumber(INVALID_LINE_NO);
+        return;
+    }
+
     const ir::AstNode *astNode = ins->Node();
 
     ES2PANDA_ASSERT(astNode != nullptr);
@@ -154,8 +161,6 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
         }
     }
 
-    // CC-OFFNXT(G.NAM.03-CPP) project code style
-    constexpr auto INVALID_LINE_NO = static_cast<std::uint32_t>(-1);
     auto nodeRange = astNode->Range();
     pandaIns->insDebug.SetLineNumber(nodeRange.start.line == 0 ? INVALID_LINE_NO : nodeRange.start.line + 1U);
 }

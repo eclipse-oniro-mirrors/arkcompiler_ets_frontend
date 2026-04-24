@@ -35,6 +35,7 @@ enum class AstNodeFlags : uint16_t {
     DEFAULT_PARAM = 1U << 7U,
     // Moved out of the ir::Expression
     IS_GROUPED = 1U << 8U,
+    NO_DEBUG_LINE_INFO = 1U << 9U,
     /* do not introduce new flags. all the existing to be removed */
 };
 

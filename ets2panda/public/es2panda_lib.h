@@ -248,6 +248,7 @@ struct CAPI_EXPORT es2panda_Impl {
     size_t (*SourcePositionLine)(es2panda_Context *context, es2panda_SourcePosition *position);
     es2panda_SourcePosition *(*SourceRangeStart)(es2panda_Context *context, es2panda_SourceRange *range);
     es2panda_SourcePosition *(*SourceRangeEnd)(es2panda_Context *context, es2panda_SourceRange *range);
+    void (*AstNodeSetNoDebugLineFlag)(es2panda_Context *context, es2panda_AstNode *node);
     const es2panda_DiagnosticKind *(*CreateDiagnosticKind)(es2panda_Context *context, const char *dmessage,
                                                            es2panda_PluginDiagnosticType etype);
     es2panda_DiagnosticInfo *(*CreateDiagnosticInfo)(es2panda_Context *context, const es2panda_DiagnosticKind *kind,

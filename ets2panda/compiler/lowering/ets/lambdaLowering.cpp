@@ -592,6 +592,9 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
              ir::FunctionSignature(newTypeParams, std::move(params), returnTypeAnnotation,
                                    lambda->Function()->HasReceiver()),
              ir::ScriptFunctionFlags::METHOD | cmInfo->auxFunctionFlags, modifierFlags});
+    if (lambda->HasAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO)) {
+        func->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
+    }
     auto *funcScope = cmInfo->body == nullptr ? allocator->New<varbinder::FunctionScope>(allocator, paramScope)
                                               : cmInfo->body->Scope()->AsFunctionScope();
     ES2PANDA_ASSERT(funcScope);
