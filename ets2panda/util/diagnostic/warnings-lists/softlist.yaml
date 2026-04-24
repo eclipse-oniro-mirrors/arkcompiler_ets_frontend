@@ -82,7 +82,6 @@ softlist:
   - ".*/inputmethod/imf/.*"
   - ".*/base/notification/eventhandler/.*"
   - ".*/base/security/certificate_manager/.*"
-  - ".*/commonlibrary/ets_utils/.*"
   - ".*/foundation/ability/ability_runtime/.*"
   - ".*/ability/dmsfwk/.*"
   - ".*/foundation/ability/form_fwk/.*"
