@@ -79,6 +79,26 @@ static ETSObjectType *GetObjectLiteralMethodThisType(const ir::AstNode *ast)
     return preferredType != nullptr && preferredType->IsETSObjectType() ? preferredType->AsETSObjectType() : nullptr;
 }
 
+static bool IsNotInStructFieldInitializer(const ir::AstNode *node)
+{
+    for (const ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (current->IsClassDefinition() && current->AsClassDefinition()->IsFromStruct()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool IsExpressionInClassPropertyInitializer(const ir::Expression *expr)
+{
+    for (const ir::AstNode *node = expr; node != nullptr && !node->IsClassDefinition(); node = node->Parent()) {
+        if (node->IsClassProperty() && IsNotInStructFieldInitializer(node)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 //  Helper: checks that type was declared exported
 static void CheckExport(ETSChecker *checker, checker::Type const *type)
 {
@@ -3050,6 +3070,9 @@ checker::Type *ETSAnalyzer::Check(ir::MemberExpression *expr) const
     }
     ES2PANDA_ASSERT(!expr->IsOptional());
     ETSChecker *checker = GetETSChecker();
+    if (expr->Object()->IsSuperExpression() && IsExpressionInClassPropertyInitializer(expr)) {
+        checker->LogDiagnostic(diagnostic::THIS_OR_SUPER_IN_FIELD_INITIALIZER, {"super"}, expr->Object()->Start());
+    }
     auto *baseType = checker->GetNonConstantType(checker->GetApparentType(expr->Object()->Check(checker)));
     //  Note: don't use possible smart cast to null-like types.
     //        Such situation should be correctly resolved in the subsequent lowering.
