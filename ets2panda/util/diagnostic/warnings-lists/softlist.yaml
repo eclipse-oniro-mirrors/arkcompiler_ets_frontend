@@ -79,13 +79,7 @@ softlist:
 - name: "export_type_anno"
   paths:
   - ".*/test/xts/.*"
-  - ".*/foundation/ability/ability_runtime/.*"
-  - ".*/ability/dmsfwk/.*"
-  - ".*/foundation/ability/form_fwk/.*"
   - ".*/arkui/ace_engine/.*"
-  - ".*/foundation/barrierfree/accessibilit./.*"
-  - ".*/foundation/bundlemanager/bundle_framework/.*"
-  - ".*/foundation/bundlemanager/distributed_bundle_framework/.*"
   - ".*/multimodalinput/input/.*"
   - ".*/foundation/window/window_manager/.*"
   - ".*/base/useriam/user_auth_framework/.*"
