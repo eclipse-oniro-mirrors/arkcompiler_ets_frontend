@@ -24,7 +24,7 @@ final class StaticClass<T> implements AInterface<T>{
 }
 
 function func (arg: B<String>) {
-    return /* @@ label1 */StaticClass.staticFunction(arg);
+    return /* @@ label1 */StaticClass.staticFunction(/* @@ label2 */arg);
 }
 
 function main() {
@@ -32,4 +32,5 @@ function main() {
 }
 
 /* @@@ label1 Error Semantic error ESE0127: No matching call signature for staticFunction(B<String>) */
-/* @@@ label1 Error Semantic error ESE0228: Type argument 'String' should be a subtype of 'Double' constraint */
+/* @@@ label1 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'staticFunction'. Specify the type argument explicitly. */
+/* @@@ label2 Error Semantic error ESE0046: Type 'B<String>' is not compatible with type 'AInterface<T>' at index 1 */
