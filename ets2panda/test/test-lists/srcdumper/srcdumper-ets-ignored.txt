@@ -128,3 +128,4 @@ runtime/ets/call_by_name_tests/call_by_name_generics_basic.ets
 
 #34002 FailKind.SRC_DUMPER_FAIL
 runtime/ets/interfaceObjectLiteral_catch_param.ets
+runtime/ets/interfaceObjectLiteral_genericMethod.ets

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,27 @@ void TSTypeParameterDeclaration::SetScope(varbinder::LocalScope *source)
 void TSTypeParameterDeclaration::SetRequiredParams(size_t source)
 {
     this->GetOrCreateHistoryNodeAs<TSTypeParameterDeclaration>()->requiredParams_ = source;
+}
+
+TSTypeParameterDeclaration *TSTypeParameterDeclaration::Clone(ArenaAllocator *allocator, AstNode *parent)
+{
+    ArenaVector<TSTypeParameter *> clonedParams(allocator->Adapter());
+    for (auto *param : Params()) {
+        clonedParams.push_back(param->Clone(allocator, nullptr)->AsTSTypeParameter());
+    }
+
+    auto *clone = allocator->New<TSTypeParameterDeclaration>(std::move(clonedParams), RequiredParams());
+
+    for (auto *param : clone->Params()) {
+        param->SetParent(clone);
+    }
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    clone->SetRange(Range());
+    return clone;
 }
 
 void TSTypeParameterDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
