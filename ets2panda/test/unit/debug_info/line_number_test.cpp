@@ -34,6 +34,11 @@ namespace ark::es2panda::compiler::test {
 
 class ScopeLineInfoTest : public ::test::utils::AsmTest {
 public:
+    struct LambdaInvokeGuardCheckResult {
+        bool sawLambdaInvoke {false};
+        bool sawNextUserLine {false};
+    };
+
     const pandasm::Function *FindFunctionByName(const pandasm::Program &program, const std::string &name)
     {
         auto itS = program.functionStaticTable.find(name);
@@ -88,6 +93,50 @@ public:
     static bool IsIllegalLine(uint32_t ln) noexcept
     {
         return ln > static_cast<uint32_t>(std::numeric_limits<int32_t>::max());
+    }
+
+    static bool ExpectNextUserLine(const pandasm::Function &func, size_t startIndex, uint32_t nextUserLine)
+    {
+        for (size_t j = startIndex; j < func.ins.size(); j++) {
+            const uint32_t lineNo = func.ins[j].insDebug.LineNumber();
+            if (IsIllegalLine(lineNo)) {
+                continue;
+            }
+
+            EXPECT_EQ(lineNo, nextUserLine) << "Step-out should continue on the next user-authored line.";
+            return true;
+        }
+
+        return false;
+    }
+
+    static LambdaInvokeGuardCheckResult CheckLambdaInvokeGuardLineInfo(const pandasm::Function &func, uint32_t callLine,
+                                                                       uint32_t nextUserLine)
+    {
+        LambdaInvokeGuardCheckResult result;
+
+        for (size_t i = 0; i + 2U < func.ins.size(); i++) {
+            const auto &ins = func.ins[i];
+            if (ins.opcode != pandasm::Opcode::CALL_VIRT_SHORT || ins.insDebug.LineNumber() != callLine) {
+                continue;
+            }
+
+            const auto &guardStore = func.ins[i + 1U];
+            const auto &guardCheckCast = func.ins[i + 2U];
+            if (guardStore.opcode != pandasm::Opcode::STA_OBJ || guardCheckCast.opcode != pandasm::Opcode::CHECKCAST) {
+                continue;
+            }
+
+            result.sawLambdaInvoke = true;
+            EXPECT_TRUE(IsIllegalLine(guardStore.insDebug.LineNumber()))
+                << "The compiler-generated store after lambda invoke must not map to the source call line.";
+            EXPECT_TRUE(IsIllegalLine(guardCheckCast.insDebug.LineNumber()))
+                << "The compiler-generated checkcast after lambda invoke must not map to the source call line.";
+            result.sawNextUserLine = ExpectNextUserLine(func, i + 3U, nextUserLine);
+            break;
+        }
+
+        return result;
     }
 };
 
@@ -157,6 +206,43 @@ TEST_F(ScopeLineInfoTest, LoweringGeneratedCode_LineNumberValidityAndInvalidMark
 
     EXPECT_TRUE(sawSpr) << "No instruction in ETSGLOBAL.foo:void; mapped to the user spread line.";
     EXPECT_TRUE(sawLam) << "No instruction in ETSGLOBAL.foo:void; mapped to the user lambda line.";
+}
+
+TEST_F(ScopeLineInfoTest, LambdaInvokeGuardUsesIllegalLineNumberInFunction)
+{
+    std::string_view text = R"(function func():void{
+    let test:()=>void=()=>{
+        console.log("111");
+        return;
+    }
+    test();
+    console.log("2222222");
+}
+)";
+
+    std::array args = {
+        ES2PANDA_BIN_PATH,
+        "--debug-info=true",
+        "--opt-level=0",
+        "--ets-unnamed",
+    };
+
+    auto program = GetCurrentProgramWithArgs({args.data(), args.size()}, text);
+    ASSERT_NE(program, nullptr);
+
+    const auto lines = SplitLines(text);
+    const auto *func = FindFunctionByName(*program, "ETSGLOBAL.func:void;");
+    ASSERT_NE(func, nullptr);
+
+    const uint32_t callLine = FindLineNo(lines, "test();");
+    const uint32_t nextUserLine = FindLineNo(lines, R"(console.log("2222222");)");
+    ASSERT_GT(callLine, 0U);
+    ASSERT_GT(nextUserLine, 0U);
+
+    const auto checkResult = CheckLambdaInvokeGuardLineInfo(*func, callLine, nextUserLine);
+    EXPECT_TRUE(checkResult.sawLambdaInvoke)
+        << "Failed to find the lambda invoke followed by its compiler-generated store and checkcast.";
+    EXPECT_TRUE(checkResult.sawNextUserLine) << "Failed to find the next user-authored line after the lambda invoke.";
 }
 
 }  // namespace ark::es2panda::compiler::test
