@@ -585,11 +585,12 @@ ETSObjectType *ETSObjectType::ProcessInterfaceBaseType(std::unordered_set<Type *
 }
 
 void ETSChecker::ValidateImplementedInterface(ETSObjectType *type, Type *interface,
-                                              std::unordered_set<Type *> *extendsSet, const lexer::SourcePosition &pos)
+                                              std::unordered_set<Type *> *extendsSet, const lexer::SourcePosition &pos,
+                                              bool isImplementsClause)
 {
     ES2PANDA_ASSERT(interface != nullptr);
     if (interface->IsETSObjectType() && interface->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS)) {
-        LogError(diagnostic::INTERFACE_EXTENDS_CLASS, {}, pos);
+        LogError(isImplementsClause ? diagnostic::NOT_INTERFACE : diagnostic::INTERFACE_EXTENDS_CLASS, {}, pos);
         return;
     }
     if (!interface->IsETSObjectType() || !interface->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
@@ -620,7 +621,7 @@ void ETSChecker::GetInterfacesOfClass(ETSObjectType *type)
 
     std::unordered_set<Type *> extendsSet;
     for (auto *it : declNode->Implements()) {
-        ValidateImplementedInterface(type, it->Expr()->AsTypeNode()->GetType(this), &extendsSet, it->Start());
+        ValidateImplementedInterface(type, it->Expr()->AsTypeNode()->GetType(this), &extendsSet, it->Start(), true);
     }
     type->AddObjectFlag(ETSObjectFlags::RESOLVED_INTERFACES);
 }
@@ -642,7 +643,7 @@ void ETSChecker::GetInterfacesOfInterface(ETSObjectType *type)
 
     std::unordered_set<Type *> extendsSet;
     for (auto *it : declNode->Extends()) {
-        ValidateImplementedInterface(type, it->Expr()->AsTypeNode()->GetType(this), &extendsSet, it->Start());
+        ValidateImplementedInterface(type, it->Expr()->AsTypeNode()->GetType(this), &extendsSet, it->Start(), false);
     }
     type->AddObjectFlag(ETSObjectFlags::RESOLVED_INTERFACES);
 }
