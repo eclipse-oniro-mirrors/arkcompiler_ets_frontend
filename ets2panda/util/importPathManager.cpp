@@ -521,6 +521,9 @@ inline Span<const uint8_t> ImportInfo::GetMetadata(const panda_file::File &pf)
 void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package, ImportInfo *importInfo)
 {
     auto *fraction = SearchResolved(*importInfo);
+    if (fraction == GetGlobalProgram()) {
+        return;
+    }
     // The fraction may be previously added via direct import of it (by real path). Since the program is parsed later
     // that step, it's impossible to decide, whether it's part of a package or just module until now. So here the
     // already registered fraction is being aligned to the others fractions.
