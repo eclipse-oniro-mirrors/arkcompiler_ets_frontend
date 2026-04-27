@@ -317,8 +317,12 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     auto *scope = newVar->GetScope();
     newVar->AddFlag(varbinder::VariableFlags::INITIALIZED);
 
-    auto *res = parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3) as @@T4", newVar->Name(), ass->Right(),
-                                                  oldVar->TsType(), ass->TsType());
+    // `as never` is prohibited.
+    auto *res = ass->TsType()->IsETSNeverType()
+                    ? parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3)", newVar->Name(), ass->Right(),
+                                                        oldVar->TsType())
+                    : parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3) as @@T4", newVar->Name(), ass->Right(),
+                                                        oldVar->TsType(), ass->TsType());
     res->SetParent(ass->Parent());
 
     // NOTE(gogabr) -- The `get` and `set` properties remain without variable; this is OK for the current checker, but
@@ -330,7 +334,7 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     varBinder->ResolveReferencesForScopeWithContext(res, scope);
     res->Check(checker);
 
-    ES2PANDA_ASSERT(res->TsType() == ass->TsType());
+    ES2PANDA_ASSERT(ass->TsType()->IsETSNeverType() || res->TsType() == ass->TsType());
 
     return res;
 }

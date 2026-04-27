@@ -46,9 +46,7 @@ declare const notype
 /* @@? 16:37 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_1 */
 /* @@? 16:66 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_2 */
 /* @@? 17:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_12 */
-/* @@? 17:38 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
 /* @@? 17:64 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_22 */
-/* @@? 17:64 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
 /* @@? 18:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_13 */
 /* @@? 18:70 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_23 */
 /* @@? 19:38 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: byte_14 */

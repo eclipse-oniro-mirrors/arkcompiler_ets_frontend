@@ -1380,9 +1380,24 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         if (targetType->IsETSPrimitiveType() || TypeIsBoxedPrimitive(targetType)) {
             if (exprType->IsETSPrimitiveType() || TypeIsBoxedPrimitive(exprType)) {
                 auto *primTargetType = MaybeRecursivelyUnboxType(uctx_, targetType);
-                asExpr->TypeAnnotation()->SetTsType(primTargetType);
-                asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), MaybeRecursivelyUnboxType(uctx_, exprType)));
-                asExpr->SetTsType(primTargetType);
+                auto *primExprType = MaybeRecursivelyUnboxType(uctx_, exprType);
+                const bool isBooleanPrimitiveCast =
+                    primTargetType->IsETSPrimitiveType() && primExprType->IsETSPrimitiveType() &&
+                    !primTargetType->IsETSVoidType() && !primExprType->IsETSVoidType() &&
+                    (primTargetType->IsETSBooleanType() != primExprType->IsETSBooleanType());
+                if (isBooleanPrimitiveCast) {
+                    // Keep boolean/non-boolean primitive casts as reference casts so forbidden conversions
+                    // such as byte as Boolean fail with ClassCastError instead of becoming primitive conversions.
+                    auto *boxedExprType = uctx_->checker->MaybeBoxType(exprType);
+                    auto *boxedTargetType = uctx_->checker->MaybeBoxType(targetType);
+                    asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), boxedExprType));
+                    asExpr->TypeAnnotation()->SetTsType(boxedTargetType);
+                    asExpr->SetTsType(boxedTargetType);
+                } else {
+                    asExpr->TypeAnnotation()->SetTsType(primTargetType);
+                    asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), primExprType));
+                    asExpr->SetTsType(primTargetType);
+                }
             } else {
                 auto *boxedTargetType = uctx_->checker->MaybeBoxType(targetType);
                 asExpr->TypeAnnotation()->SetTsType(boxedTargetType);

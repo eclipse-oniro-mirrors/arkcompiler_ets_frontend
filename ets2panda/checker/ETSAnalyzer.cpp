@@ -4393,8 +4393,7 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
 
     if (auto *preferredType =
             GetAppropriatePreferredType(expr->PreferredType(), [&](Type *tp) { return checker->CheckIfNumeric(tp); });
-        preferredType != nullptr && !expr->IsFolded() &&
-        CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
+        preferredType != nullptr && CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
         type = preferredType;
     } else if (expr->Number().IsDouble()) {
         type = checker->GlobalDoubleBuiltinType();
