@@ -488,48 +488,90 @@ static bool IsNamespaceBodyMember(const ir::AstNode *node)
     return classDef != nullptr && classDef->IsModule();
 }
 
+static void AppendUniqueNode(std::vector<ir::AstNode *> &res, ir::AstNode *candidate)
+{
+    if (candidate != nullptr && std::find(res.begin(), res.end(), candidate) == res.end()) {
+        res.emplace_back(candidate);
+    }
+}
+
+static void AppendMethodIfMatch(std::vector<ir::AstNode *> &res, ir::MethodDefinition *method,
+                                const std::string &triggerWord, std::optional<bool> isStatic)
+{
+    if (method == nullptr) {
+        return;
+    }
+    if (isStatic.has_value() && isStatic.value() && !method->IsStatic()) {
+        return;
+    }
+    if (IsWordPartOfIdentifierName(method->Key(), triggerWord)) {
+        AppendUniqueNode(res, method);
+    }
+}
+
+static void AppendMethodAndOverloadsIfMatch(std::vector<ir::AstNode *> &res, ir::MethodDefinition *method,
+                                            const std::string &triggerWord, std::optional<bool> isStatic)
+{
+    AppendMethodIfMatch(res, method, triggerWord, isStatic);
+    if (method == nullptr) {
+        return;
+    }
+    for (auto *overload : method->Overloads()) {
+        AppendMethodIfMatch(res, overload, triggerWord, isStatic);
+    }
+}
+
+static void AppendClassPropertyIfMatch(std::vector<ir::AstNode *> &res, ir::ClassProperty *property,
+                                       const std::string &triggerWord, bool isStatic)
+{
+    if (property == nullptr) {
+        return;
+    }
+    if (isStatic && !property->IsStatic()) {
+        return;
+    }
+    if (IsWordPartOfIdentifierName(property->Key(), triggerWord)) {
+        AppendUniqueNode(res, property);
+    }
+}
+
+static void AppendClassDeclarationIfMatch(std::vector<ir::AstNode *> &res, ir::ClassDeclaration *decl,
+                                          const std::string &triggerWord)
+{
+    if (decl == nullptr || decl->Definition() == nullptr) {
+        return;
+    }
+    auto *def = decl->Definition()->AsClassDefinition();
+    if (def != nullptr && def->Ident() != nullptr && IsWordPartOfIdentifierName(def->Ident(), triggerWord)) {
+        AppendUniqueNode(res, decl);
+    }
+}
+
+static bool ShouldSkipNamespaceMember(const ir::AstNode *node)
+{
+    return IsNamespaceBodyMember(node) && !node->IsExported();
+}
+
 static void TryAppendBodyNodeCompletion(ir::AstNode *node, const std::string &triggerWord, bool isStatic,
                                         std::vector<ir::AstNode *> &res)
 {
-    bool isNamespaceMember = IsNamespaceBodyMember(node);
-    bool shouldSkipForNamespaceExport = isNamespaceMember && !node->IsExported();
-
+    if (node == nullptr || ShouldSkipNamespaceMember(node)) {
+        return;
+    }
     if (node->IsClassProperty()) {
-        if (shouldSkipForNamespaceExport || (isStatic && !node->AsClassProperty()->IsStatic())) {
-            return;
-        }
-        if (IsWordPartOfIdentifierName(node->AsClassProperty()->Key(), triggerWord)) {
-            res.emplace_back(node);
-        }
+        AppendClassPropertyIfMatch(res, node->AsClassProperty(), triggerWord, isStatic);
         return;
     }
-
     if (node->IsClassDeclaration()) {
-        if (shouldSkipForNamespaceExport) {
-            return;
-        }
-        auto def = node->AsClassDeclaration()->Definition()->AsClassDefinition();
-        if (def != nullptr && def->Ident() != nullptr && IsWordPartOfIdentifierName(def->Ident(), triggerWord)) {
-            res.emplace_back(node);
-        }
+        AppendClassDeclarationIfMatch(res, node->AsClassDeclaration(), triggerWord);
         return;
     }
-
     if (node->IsMethodDefinition()) {
-        if (shouldSkipForNamespaceExport) {
-            return;
-        }
-        if (isStatic && !node->AsMethodDefinition()->IsStatic()) {
-            return;
-        }
-        if (IsWordPartOfIdentifierName(node->AsMethodDefinition()->Key(), triggerWord)) {
-            res.emplace_back(node);
-        }
+        AppendMethodAndOverloadsIfMatch(res, node->AsMethodDefinition(), triggerWord, isStatic);
         return;
     }
-
-    if (node->IsTSInterfaceDeclaration() && !shouldSkipForNamespaceExport) {
-        res.emplace_back(node);
+    if (node->IsTSInterfaceDeclaration()) {
+        AppendUniqueNode(res, node);
     }
 }
 
@@ -570,14 +612,12 @@ std::vector<ir::AstNode *> FilterFromInterfaceBody(const ArenaVector<ir::AstNode
         return res;
     }
     for (auto member : members) {
-        if (member->IsMethodDefinition() &&
-            IsWordPartOfIdentifierName(member->AsMethodDefinition()->Key(), triggerWord)) {
-            res.emplace_back(member);
+        if (member->IsMethodDefinition()) {
+            AppendMethodAndOverloadsIfMatch(res, member->AsMethodDefinition(), triggerWord, std::nullopt);
             continue;
         }
         if (member->IsClassProperty() && IsWordPartOfIdentifierName(member->AsClassProperty()->Key(), triggerWord)) {
-            res.emplace_back(member);
-            continue;
+            AppendUniqueNode(res, member);
         }
     }
     return res;

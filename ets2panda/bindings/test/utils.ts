@@ -184,3 +184,7 @@ export function getMultiModuleLsp(
 export function getRealPath(moduleName: string, fileName: string): string {
   return path.resolve('test/testcases/', moduleName, fileName);
 }
+
+export function getSDKPath(fileName: string): string {
+  return path.resolve('test/testcases/', fileName);
+}
