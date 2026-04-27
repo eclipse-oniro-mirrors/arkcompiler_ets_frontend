@@ -213,9 +213,13 @@ static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, 
                           {st->Id()->Name(), classDef->Ident()->Name(), superTypeName}, st->Start());
     }
 
-    if ((st->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
-        return;
+    if (!st->TsType()->IsETSTypeParameter() && propVar->Declaration()->Node()->IsClassProperty()) {
+        auto *baseProp = propVar->Declaration()->Node()->AsClassProperty();
+        if (baseProp->TsType() != nullptr && baseProp->TsType()->IsETSTypeParameter()) {
+            return;
+        }
     }
+
     if (!checker->Relation()->IsIdenticalTo(propVar->TsType(), st->TsType())) {
         checker->LogError(diagnostic::INCOMPATIBLE_TYPE_FOR_OVERRIDE,
                           {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "", superTypeName},
@@ -1277,6 +1281,10 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
             return originalType;
         }
         originalType = originalType->AsETSTypeAliasType()->GetTargetType();
+    }
+
+    if (originalType->IsETSTypeParameter()) {
+        return GetAppropriatePreferredType(originalType->AsETSTypeParameter()->GetConstraintType(), predicate);
     }
 
     if (predicate(originalType)) {

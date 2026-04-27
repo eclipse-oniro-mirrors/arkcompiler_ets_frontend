@@ -48,6 +48,3 @@ function main() {
 /* @@? 33:14 Error Semantic error ESE0127: No matching call signature for f1(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
 /* @@? 33:14 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'f1'. Specify the type argument explicitly. */
 /* @@? 33:17 Error Semantic error ESE0046: Type 'Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>' is not compatible with type 'T' at index 1 */
-/* @@? 34:14 Error Semantic error ESE0127: No matching call signature for f2(Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>) */
-/* @@? 34:14 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'f2'. Specify the type argument explicitly. */
-/* @@? 34:17 Error Semantic error ESE0046: Type 'Array<((p1: *ERROR_TYPE*) => *ERROR_TYPE*)>' is not compatible with type 'T' at index 1 */
