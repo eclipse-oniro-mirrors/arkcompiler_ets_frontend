@@ -676,7 +676,7 @@ public:
     {
         CheckParams(checker, intrin);
 
-        if (intrin->Arguments().size() != 1U) {
+        if (intrin->Arguments().size() != 0U) {
             return InvalidateIntrinsic(checker, intrin);
         }
 
@@ -685,14 +685,69 @@ public:
 
     void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
     {
+        etsg->EmitEtsAsyncDispatch(intrin);
+    }
+};
+
+class ETSIntrinsicAsyncResolve final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "asyncresolve";
+    }
+
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+
+        if (intrin->Arguments().size() != 1U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+
+        return intrin->SetTsType(checker->GlobalETSAnyType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
         compiler::RegScope rs(etsg);
 
-        const auto [asyncCtx] = Args<1U>(intrin);
-        asyncCtx->Compile(etsg);
+        const auto [value] = Args<1U>(intrin);
+        value->Compile(etsg);
 
         const auto resultReg = etsg->AllocReg();
         etsg->StoreAccumulator(intrin, resultReg);
-        etsg->EmitEtsAsyncDispatch(intrin, resultReg);
+        etsg->EmitEtsAsyncResolve(intrin, resultReg);
+    }
+};
+
+class ETSIntrinsicAsyncReject final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "asyncreject";
+    }
+
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+
+        if (intrin->Arguments().size() != 1U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+
+        return intrin->SetTsType(checker->GlobalETSAnyType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
+        compiler::RegScope rs(etsg);
+
+        const auto [error] = Args<1U>(intrin);
+        error->Compile(etsg);
+
+        const auto resultReg = etsg->AllocReg();
+        etsg->StoreAccumulator(intrin, resultReg);
+        etsg->EmitEtsAsyncReject(intrin, resultReg);
     }
 };
 
@@ -719,6 +774,8 @@ EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
     registerIntrin(std::make_unique<ETSIntrinsicCreateRawFixedArray>());
     registerIntrin(std::make_unique<ETSIntrinsicCreateRawResizableArray>());
     registerIntrin(std::make_unique<ETSIntrinsicAsyncDispatch>());
+    registerIntrin(std::make_unique<ETSIntrinsicAsyncResolve>());
+    registerIntrin(std::make_unique<ETSIntrinsicAsyncReject>());
     return infos;
 }
 

@@ -705,21 +705,51 @@ void ETSGen::CreateBigIntObject(const ir::AstNode *node, VReg arg0, std::string_
     Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(signature), arg0, dummyReg_);
 }
 
-void ETSGen::EmitEtsAsyncSuspend([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg asyncContext)
+void ETSGen::EmitEtsAsyncAwait([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg promise)
 {
 #ifdef PANDA_WITH_ETS
     ES2PANDA_ASSERT(IsAsync());
-    Ra().Emit<EtsAsyncSuspend, 1>(node, asyncContext);
+    Ra().Emit<EtsAsyncAwait, 1>(node, promise);
 #else
     ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
 }
 
-void ETSGen::EmitEtsAsyncDispatch([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg asyncContext)
+void ETSGen::EmitEtsAsyncDispatch([[maybe_unused]] const ir::AstNode *node)
 {
 #ifdef PANDA_WITH_ETS
     ES2PANDA_ASSERT(IsAsync());
-    Ra().Emit<EtsAsyncDispatch, 1>(node, asyncContext);
+    Ra().Emit<EtsAsyncDispatch, 0>(node);
+#else
+    ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
+}
+
+void ETSGen::EmitEtsAsyncUnpack([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg promise)
+{
+#ifdef PANDA_WITH_ETS
+    ES2PANDA_ASSERT(IsAsync());
+    Ra().Emit<EtsAsyncUnpack, 1>(node, promise);
+#else
+    ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
+}
+
+void ETSGen::EmitEtsAsyncResolve([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg value)
+{
+#ifdef PANDA_WITH_ETS
+    ES2PANDA_ASSERT(IsAsync());
+    Ra().Emit<EtsAsyncResolve, 1>(node, value);
+#else
+    ES2PANDA_UNREACHABLE();
+#endif  // PANDA_WITH_ETS
+}
+
+void ETSGen::EmitEtsAsyncReject([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] const VReg error)
+{
+#ifdef PANDA_WITH_ETS
+    ES2PANDA_ASSERT(IsAsync());
+    Ra().Emit<EtsAsyncReject, 1>(node, error);
 #else
     ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
