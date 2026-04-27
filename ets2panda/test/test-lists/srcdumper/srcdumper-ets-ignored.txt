@@ -115,6 +115,9 @@ parser/ets/import_tests/enum/xml/export.ets
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
 
+#Issue 34454 FailKind.SRC_DUMPER_FAIL
+runtime/ets/objectLiteralMethodNestedLambdaThis.ets
+
 #Issue 32584 FailKind.SRC_DUMPER_FAIL
 runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_1.ets
 runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_2.ets

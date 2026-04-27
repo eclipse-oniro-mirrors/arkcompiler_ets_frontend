@@ -165,6 +165,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ObjectIteratorLowering,
         new ConditionalSimplifyLowering,
         new OverloadMappingLowering,
+        new InterfaceMethodObjectLiteralLowering,
         new LambdaConversionPhase,
         new ExpandBracketsPhase,
         new PartialExportClassGen,

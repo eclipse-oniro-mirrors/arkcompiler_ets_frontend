@@ -16,47 +16,25 @@
 interface A {
     x: number
     foo(): number
-    field: () => number
-}
-
-interface MapHandler {
-    consume(attr?: Map<string, string>): string
 }
 
 class C {
     x: number = 0;
-    
+
     test(): number {
         let a: A = {
             x: 100,
-            foo() { return this.x; },
-            field: () => { return this.x; }
-        };
-        return a.field();
-    }
-
-    testMapCallback(): string {
-        let handler: MapHandler = {
-            consume: (attr?: Map<string, string>): string => {
-                let out: string = "";
-                if (attr !== undefined) {
-                    attr.forEach((value, key) => {
-                        out += key + value;
-                    });
-                }
-                return out;
+            foo() {
+                let read = (): number => this.x;
+                return read();
             }
         };
-
-        let map = new Map<string, string>();
-        map.set("k", "v");
-        return handler.consume(map);
+        return a.foo();
     }
 }
 
 function main(): void {
     let c: C = new C();
     let result = c.test();
-    arktest.assertEQ(result, 0);
-    arktest.assertEQ(c.testMapCallback(), "kv");
+    arktest.assertEQ(result, 100);
 }

@@ -125,6 +125,22 @@ std::string_view InterfaceObjectLiteralLowering::Name() const
     return LoweringName();
 }
 
+std::string_view InterfaceMethodObjectLiteralLowering::Name() const
+{
+    return "InterfaceMethodObjectLiteralLowering";
+}
+
+bool InterfaceObjectLiteralLowering::ShouldLowerObjectLiteral(
+    [[maybe_unused]] const ir::ObjectExpression *objectExpr) const
+{
+    return true;
+}
+
+bool InterfaceMethodObjectLiteralLowering::ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const
+{
+    return objectExpr->HasMethodDefinition();
+}
+
 static inline bool IsInterfaceType(const checker::Type *type)
 {
     return type != nullptr && type->IsETSObjectType() &&
@@ -640,10 +656,13 @@ static void AddMethodsFromLiteral(public_lib::Context *ctx, ArenaVector<ir::AstN
     auto it = properties.begin();
     while (it != properties.end()) {
         ES2PANDA_ASSERT((*it)->IsProperty());
-        if (auto *const value = (*it)->AsProperty()->Value(); !value->IsArrowFunctionExpression()) {
+        auto *const property = (*it)->AsProperty();
+        auto *const value = property->Value();
+        if (!value->IsArrowFunctionExpression() || property->TsType() == nullptr ||
+            !property->TsType()->IsETSMethodType()) {
             ++it;
         } else {
-            auto *const key = (*it)->AsProperty()->Key();
+            auto *const key = property->Key();
             ES2PANDA_ASSERT(key->IsIdentifier());
 
             ir::ScriptFunction *function = value->AsArrowFunctionExpression()->Function();
@@ -985,7 +1004,12 @@ bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
     auto *const savedProg = ctx->GetChecker()->VarBinder()->AsETSBinder()->Program();
     ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(prog);
 
-    TraverseObjectLiteralExpressions(prog, [ctx, prog](ir::ObjectExpression *expr) {
+    // NOTE: InterfaceObjectLiteralLowering runs twice in the pipeline (before and after lambda conversion).
+    // We automatically derive the mode from the current phase position to avoid constructor/call parameters.
+    TraverseObjectLiteralExpressions(prog, [this, ctx, prog](ir::ObjectExpression *expr) {
+        if (!ShouldLowerObjectLiteral(expr)) {
+            return;
+        }
         GenerateAnonClassForDeclNode(ctx, prog, expr->TsType()->AsETSObjectType()->GetDeclNode(), expr);
         HandleInterfaceLowering(ctx, expr);
     });
