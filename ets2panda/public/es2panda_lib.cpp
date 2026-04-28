@@ -1469,25 +1469,49 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     return apiRes;
 }
 
-extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2panda_Context *ctx,
-                                                                         const char *outputDeclEts,
-                                                                         const char *outputEts, bool exportAll,
-                                                                         bool isolated, const char *recordFile,
-                                                                         bool genAnnotations)
+extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(
+    es2panda_Context *ctx, size_t fileNamesCount, const char *const *inputFiles, const char *const *outputDeclEts,
+    const char *const *outputEts, bool exportAll, bool isolated, const char *recordFile, bool genAnnotations)
 {
     auto *ctxImpl = reinterpret_cast<Context *>(ctx);
     auto *checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctxImpl->GetChecker());
-
     ark::es2panda::declgen_ets2ts::DeclgenOptions declgenOptions;
     declgenOptions.exportAll = exportAll;
-    declgenOptions.outputDeclEts = outputDeclEts ? outputDeclEts : "";
-    declgenOptions.outputEts = outputEts ? outputEts : "";
     declgenOptions.isolated = isolated;
-    declgenOptions.recordFile = recordFile ? recordFile : "";
     declgenOptions.genAnnotations = genAnnotations;
+    declgenOptions.recordFile = recordFile ? recordFile : "";
+    if (!ctxImpl->config->options->IsSimultaneous()) {
+        ES2PANDA_ASSERT(fileNamesCount == 1);
+        declgenOptions.outputDeclEts = outputDeclEts[0] ? outputDeclEts[0] : "";
+        declgenOptions.outputEts = outputEts[0] ? outputEts[0] : "";
+        return ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions)
+                   ? 0
+                   : 1;
+    }
 
-    return ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions) ? 0
-                                                                                                                  : 1;
+    std::unordered_map<std::string_view, size_t> inputFileIndexMap;
+    for (size_t i = 0; i < fileNamesCount; ++i) {
+        inputFileIndexMap.emplace(inputFiles[i], i);
+    }
+
+    int result = 0;
+    ctxImpl->parserProgram->GetExternalSources()->Visit([&](parser::Program *prog) {
+        if (!prog->IsBuiltSimultaneously()) {
+            return;
+        }
+        std::string_view sourcePath = prog->SourceFilePath().Utf8();
+        auto it = inputFileIndexMap.find(sourcePath);
+        if (it == inputFileIndexMap.end()) {
+            return;
+        }
+        size_t idx = it->second;
+        declgenOptions.outputDeclEts = outputDeclEts[idx] ? outputDeclEts[idx] : "";
+        declgenOptions.outputEts = outputEts[idx] ? outputEts[idx] : "";
+        if (!ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, prog, declgenOptions)) {
+            result = 1;
+        }
+    });
+    return result;
 }
 
 inline static parser::Program *FindProgramInContextByPath(Context *ctxImpl, const std::string &inputPathStr)

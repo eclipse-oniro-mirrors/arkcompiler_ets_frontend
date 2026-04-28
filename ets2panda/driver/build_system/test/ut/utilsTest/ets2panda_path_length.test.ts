@@ -123,15 +123,28 @@ function createMockBuildConfig(): any {
 }
 
 function createDeclgenV1JobInfo(outputPath: string, bridgeCodePath: string, inputPath?: string): any {
+    const input = inputPath ?? '/short/input.ets';
     return {
         contentType: JobContentType.FILE,
-        content: { input: inputPath ?? '/short/input.ets', output: '/short/output.abc' },
+        content: { input, output: '/short/output.abc' },
         moduleName: 'testModule',
         moduleRoot: '/short/root',
         arktsConfig: '/short/arktsconfig.json',
-        declgenConfig: {
-            output: outputPath,
-            bridgeCode: bridgeCodePath
+        fileToModuleMap: {
+            [input]: {
+                isMainModule: true,
+                packageName: 'testPackage',
+                moduleRootPath: '/short/root',
+                moduleType: 'ets',
+                sourceRoots: ['src'],
+                entryFile: 'index.ets',
+                arktsConfigFile: '/short/arktsconfig.json',
+                declgenV1OutPath: outputPath,
+                declgenBridgeCodePath: bridgeCodePath,
+                dependencies: [],
+                staticDependencyModules: new Map(),
+                dynamicDependencyModules: new Map()
+            }
         }
     };
 }

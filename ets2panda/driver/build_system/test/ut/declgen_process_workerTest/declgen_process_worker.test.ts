@@ -126,8 +126,7 @@ describe('declgen_process_worker', () => {
         (process as any).emit('message', message);
 
         const ets2panda = getMockEts2panda();
-        expect(ets2panda.declgenV1).toHaveBeenCalledTimes(2);
-        expect(require('path').resolve).toHaveBeenCalledTimes(2);
+        expect(ets2panda.declgenV1).toHaveBeenCalledTimes(1);
         expect(ets2panda.finalize).toHaveBeenCalled();
         expect((process as any).send).toHaveBeenCalledWith({
             type: WorkerMessageType.DECL_GENERATED,

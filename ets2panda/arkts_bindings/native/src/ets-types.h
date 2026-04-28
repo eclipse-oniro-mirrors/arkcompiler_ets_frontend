@@ -141,6 +141,8 @@ using EtsBoolean = bool;
 using EtsByte = int8_t;
 using EtsChar = uint16_t;
 using EtsShort = int16_t;
+// CC-OFFNXT(G.NAM.01-CPP) project code style
+using EtsUInt = uint32_t;
 using EtsInt = int32_t;
 using EtsFloat = float;
 using EtsLong = int64_t;

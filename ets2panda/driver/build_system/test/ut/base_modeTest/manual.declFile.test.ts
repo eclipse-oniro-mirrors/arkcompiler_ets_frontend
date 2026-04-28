@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 import {BaseMode} from '../../../src/build/base_mode';
+import {buildDeclgenOutputPath} from '../../../src/util/utils';
 import {
     BuildConfig,
     ModuleInfo,
@@ -70,21 +71,19 @@ jest.mock(
 
 jest.mock('../../../src/build/generate_arktsconfig',
     () => ({
-        ArkTSConfigGenerator: {
-            getInstance: jest.fn(() => ({
-                generateArkTSConfigFile: jest.fn(),
-                getArktsConfigByPackageName: jest.fn().mockReturnValue({
-                    object: {},
-                    mergeArktsConfig: jest.fn(),
-                    mergeArktsConfigByDependencies: jest.fn()
-                }),
-                addPathSection: jest.fn(),
-                addDependenciesSection: jest.fn(),
-                addCompilerOptionsSection: jest.fn(),
-                addReferencesSection: jest.fn(),
+        ArkTSConfigGenerator: jest.fn(() => ({
+            generateArkTSConfigFile: jest.fn(),
+            getArktsConfigByPackageName: jest.fn().mockReturnValue({
+                object: {},
+                mergeArktsConfig: jest.fn(),
                 mergeArktsConfigByDependencies: jest.fn()
-            }))
-        }
+            }),
+            addPathSection: jest.fn(),
+            addDependenciesSection: jest.fn(),
+            addCompilerOptionsSection: jest.fn(),
+            addReferencesSection: jest.fn(),
+            mergeArktsConfigByDependencies: jest.fn()
+        }))
     })
 );
 
@@ -190,55 +189,20 @@ class TestableBaseMode extends BaseMode {
     }
 
     public testGetOutputFilePaths(file: string): {declEtsOutputPath: string, glueCodeOutputPath: string} {
-        // tmp solution
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
-        let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             contentType: JobContentType.FILE,
-                                             content: { input: file, output: "" },
-                                             arktsConfig: "",
-                                             moduleName: moduleInfo.packageName,
-                                             moduleRoot: moduleInfo.moduleRootPath
-                                           };
-        return (this as any).getOutputFilePaths(declgenJob);
+        return buildDeclgenOutputPath(file, moduleInfo, (this as any).cacheDir);
     }
 
     public async testNeedsBackup(file: string): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
-        // tmp solution
-        let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
-        let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             contentType: JobContentType.FILE,
-                                             content: { input: file, output: "" },
-                                             arktsConfig: "",
-                                             moduleName: moduleInfo.packageName,
-                                             moduleRoot: moduleInfo.moduleRootPath
-                                           };
-        return (this as any).needsBackup(declgenJob);
+        return (this as any).needsBackup(file);
     }
 
     public async testBackupFiles(file: string, needsDecl: boolean, needsGlue: boolean): Promise<void> {
-        // tmp solution
-        let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
-        let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             contentType: JobContentType.FILE,
-                                             content: { input: file, output: "" },
-                                             arktsConfig: "",
-                                             moduleName: moduleInfo.packageName,
-                                             moduleRoot: moduleInfo.moduleRootPath
-                                           };
-        return (this as any).backupFiles(declgenJob, needsDecl, needsGlue);
+        return (this as any).backupFiles(file, needsDecl, needsGlue);
     }
 
     public async testUpdateDeclFileMapAsync(file: string): Promise<void> {
-        // tmp solution
-        let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
-        let declgenJob: DeclgenV1JobInfo = { declgenConfig: { output: moduleInfo.declgenV1OutPath!, bridgeCode: moduleInfo.declgenBridgeCodePath! },
-                                             contentType: JobContentType.FILE,
-                                             content: { input: file, output: "" },
-                                             arktsConfig: "",
-                                             moduleName: moduleInfo.packageName,
-                                             moduleRoot: moduleInfo.moduleRootPath
-                                           };
-        return (this as any).updateDeclFileMapAsync(declgenJob);
+        return (this as any).updateDeclFileMapAsync(file);
     }
 
     public testNeedsRegeneration(file: string): boolean {
@@ -304,7 +268,7 @@ function createMockDeclgenV1JobInfo(overrides: Partial<DeclgenV1JobInfo> = {}): 
         arktsConfig: '',
         moduleName: 'test-package',
         moduleRoot: '/test/module/root',
-        declgenConfig: {output: '/test/declgen/v1', bridgeCode: '/test/bridge/code'},
+        fileToModuleMap: {},
         ...overrides
     } as DeclgenV1JobInfo;
 }
@@ -505,7 +469,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         await testMode.testBackupFiles(file, true, true);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(2);
+        expect(fs.existsSync).toHaveBeenCalledTimes(4);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(2);
     });
 
@@ -523,7 +487,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         await testMode.testBackupFiles(file, true, false);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(1);
+        expect(fs.existsSync).toHaveBeenCalledTimes(3);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
@@ -541,7 +505,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         await testMode.testBackupFiles(file, false, true);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(1);
+        expect(fs.existsSync).toHaveBeenCalledTimes(3);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
@@ -850,20 +814,17 @@ describe('BaseMode declaration file map management tests', () => {
             return fileList.includes(fileB);
         });
 
-        const backupFilesCalls: DeclgenV1JobInfo[] = [];
-        (testMode as any).needsBackup = jest.fn().mockImplementation((jobInfo: DeclgenV1JobInfo) => {
-            backupFilesCalls.push(jobInfo);
-            const needsDeclBackup = (jobInfo.content as FileInfo).input === fileB;
-            return Promise.resolve({needsDeclBackup, needsGlueCodeBackup: false});
-        });
-
-        const updateCalls: string[] = [];
-        (testMode as any).updateDeclFileMapAsync = jest.fn().mockImplementation((file: string) => {
-            updateCalls.push(file);
+        const backupDeclgenFilesCalls: DeclgenV1JobInfo[][] = [];
+        (testMode as any).backupDeclgenFiles = jest.fn().mockImplementation((declgenJobs: DeclgenV1JobInfo[]) => {
+            backupDeclgenFilesCalls.push(declgenJobs);
             return Promise.resolve();
         });
 
-        (testMode as any).backupFiles = jest.fn();
+        const updateCalls: DeclgenV1JobInfo[][] = [];
+        (testMode as any).updateDeclFileMapForJobs = jest.fn().mockImplementation((declgenJobs: DeclgenV1JobInfo[]) => {
+            updateCalls.push(declgenJobs);
+            return Promise.resolve();
+        });
         (testMode as any).loadDeclFileMap = jest.fn();
         (testMode as any).saveDeclFileMap = jest.fn();
 
@@ -914,21 +875,22 @@ describe('BaseMode declaration file map management tests', () => {
 
         expect(nodeNeedsRegenerationCalls.length).toBe(3);
 
-        expect(backupFilesCalls[0].contentType).toEqual(JobContentType.FILE);
-        expect(backupFilesCalls[0].content).toEqual({ input: fileB, output: "" });
+        expect(backupDeclgenFilesCalls.length).toBe(1);
+        expect(backupDeclgenFilesCalls[0].length).toBe(1);
+        expect(backupDeclgenFilesCalls[0][0].contentType).toEqual(JobContentType.FILE);
+        expect(backupDeclgenFilesCalls[0][0].content).toEqual({ input: fileB, output: "" });
 
-        expect((testMode as any).backupFiles).toHaveBeenCalledTimes(1);
         let declgenJobCalledWith: DeclgenV1JobInfo = {
-            declgenConfig: { output: "/output", bridgeCode: "/bridge" },
+            fileToModuleMap: { [fileB]: mockModuleInfo },
             contentType: JobContentType.FILE,
             content: { input: fileB, output: "" },
             arktsConfig: "",
             moduleName: moduleName,
             moduleRoot: moduleRoot
         };
-        expect((testMode as any).backupFiles).toHaveBeenCalledWith(declgenJobCalledWith, true, false);
+        expect((testMode as any).backupDeclgenFiles).toHaveBeenCalledWith([declgenJobCalledWith]);
 
-        expect(updateCalls).toEqual([declgenJobCalledWith]);
+        expect(updateCalls).toEqual([[declgenJobCalledWith]]);
         expect(updateCalls.length).toBe(1);
 
         expect((testMode as any).loadDeclFileMap).toHaveBeenCalled();

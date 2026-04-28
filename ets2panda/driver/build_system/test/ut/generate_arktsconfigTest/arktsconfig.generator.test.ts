@@ -93,72 +93,56 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
     describe('Instance Creation', () => {
-        test('should require buildConfig for first getInstance call', () => {
-            expect(() => ArkTSConfigGenerator.getInstance()).toThrow(
-                'buildConfig and moduleInfos is required for the first instantiation'
-            );
-        });
-
         test('should create instance with valid buildConfig', () => {
             const config = createMockBuildConfig();
-            const instance = ArkTSConfigGenerator.getInstance(config);
+            const instance = new ArkTSConfigGenerator(config);
             expect(instance).toBeInstanceOf(ArkTSConfigGenerator);
         });
 
-        test('subsequent getInstance calls should return same instance', () => {
+        test('each construction creates an independent instance', () => {
             const config = createMockBuildConfig();
-            const instance1 = ArkTSConfigGenerator.getInstance(config);
-            const instance2 = ArkTSConfigGenerator.getInstance();
-            const instance3 = ArkTSConfigGenerator.getInstance();
+            const instance1 = new ArkTSConfigGenerator(config);
+            const instance2 = new ArkTSConfigGenerator(config);
 
-            expect(instance1).toBe(instance2);
-            expect(instance2).toBe(instance3);
+            expect(instance1).not.toBe(instance2);
         });
 
-        test('subsequent calls should not require buildConfig parameter', () => {
+        test('constructor always requires buildConfig parameter', () => {
             const config = createMockBuildConfig();
-            ArkTSConfigGenerator.getInstance(config);
-
-            expect(() => ArkTSConfigGenerator.getInstance()).not.toThrow();
+            expect(() => new ArkTSConfigGenerator(config)).not.toThrow();
         });
     });
 
-    describe('Instance Destruction', () => {
-        test('instance should be cleared after destroyInstance', () => {
+    describe('Instance Isolation', () => {
+        test('instances have isolated arktsconfigs state', () => {
             const config = createMockBuildConfig();
-            ArkTSConfigGenerator.getInstance(config);
+            const gen1 = new ArkTSConfigGenerator(config);
+            const gen2 = new ArkTSConfigGenerator(config);
 
-            ArkTSConfigGenerator.destroyInstance();
-
-            expect(() => ArkTSConfigGenerator.getInstance()).toThrow();
+            expect(gen1.getArktsConfigByPackageName('any')).toBeUndefined();
+            expect(gen2.getArktsConfigByPackageName('any')).toBeUndefined();
         });
 
-        test('can recreate with new buildConfig after destruction', () => {
+        test('can create multiple instances with different configs', () => {
             const config1 = createMockBuildConfig({ cachePath: '/cache1' });
-            const instance1 = ArkTSConfigGenerator.getInstance(config1);
-
-            ArkTSConfigGenerator.destroyInstance();
-
             const config2 = createMockBuildConfig({ cachePath: '/cache2' });
-            const instance2 = ArkTSConfigGenerator.getInstance(config2);
+            const instance1 = new ArkTSConfigGenerator(config1);
+            const instance2 = new ArkTSConfigGenerator(config2);
 
             expect(instance1).not.toBe(instance2);
             expect(instance2).toBeInstanceOf(ArkTSConfigGenerator);
         });
 
-        test('multiple destroyInstance calls should not throw error', () => {
+        test('multiple instantiations should not throw error', () => {
             const config = createMockBuildConfig();
-            ArkTSConfigGenerator.getInstance(config);
-
             expect(() => {
-                ArkTSConfigGenerator.destroyInstance();
-                ArkTSConfigGenerator.destroyInstance();
-                ArkTSConfigGenerator.destroyInstance();
+                new ArkTSConfigGenerator(config);
+                new ArkTSConfigGenerator(config);
+                new ArkTSConfigGenerator(config);
             }).not.toThrow();
         });
     });
@@ -169,7 +153,7 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
                 'pkg': { 'alias': { originalAPIName: '@ohos.test', isStatic: false } }
             };
             const config = createMockBuildConfig({ aliasConfig });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             expect(generator.aliasConfig).toBe(aliasConfig);
         });
@@ -178,7 +162,7 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
             const sdkPaths = new Set(['/sdk1', '/sdk2']);
             const config = createMockBuildConfig({ interopSDKPaths: sdkPaths });
             (fs.existsSync as jest.Mock).mockReturnValue(true);
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             expect(generator.dynamicSDKPaths).toBe(sdkPaths);
             expect(generator.dynamicSDKPaths.size).toBe(2);
@@ -187,7 +171,7 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
         test('should access externalApiPaths', () => {
             const apiPaths = ['/api1', '/api2', '/api3'];
             const config = createMockBuildConfig({ externalApiPaths: apiPaths });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             expect(generator.externalApiPaths).toEqual(apiPaths);
             expect(generator.externalApiPaths.length).toBe(3);
@@ -197,7 +181,7 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
     describe('Config Caching', () => {
         test('generated config should be cached', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'pkg1' });
 
             const generated = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -208,14 +192,14 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
 
         test('non-existent package name should return undefined', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             expect(generator.getArktsConfigByPackageName('nonexistent')).toBeUndefined();
         });
 
         test('should support caching multiple package configs', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             const config1 = generator.generateArkTSConfigFile(
                 createMockModuleInfo({ packageName: 'pkg1' }),
@@ -237,7 +221,7 @@ describe('ArkTSConfigGenerator - Singleton Pattern and Lifecycle', () => {
 
         test('regenerating same package should update cache', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             const config1 = generator.generateArkTSConfigFile(
                 createMockModuleInfo({ packageName: 'pkg' }),
@@ -264,11 +248,10 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
     beforeEach(() => {
         mockLogger = setupBasicMocks();
         const config = createMockBuildConfig();
-        generator = ArkTSConfigGenerator.getInstance(config);
+        generator = new ArkTSConfigGenerator(config);
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -328,14 +311,13 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
     describe('Framework Mode Processing', () => {
         // Destroy parent's instance before each test to allow custom config
         beforeEach(() => {
-            ArkTSConfigGenerator.destroyInstance();
         });
         test('should set useEmptyPackage when frameworkMode is true', () => {
             const config = createMockBuildConfig({
                 frameworkMode: true,
                 useEmptyPackage: true
             });
-            const gen = ArkTSConfigGenerator.getInstance(config);
+            const gen = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
             const result = gen.generateArkTSConfigFile(moduleInfo, false);
 
@@ -344,7 +326,7 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
 
         test('should not set useEmptyPackage when frameworkMode is false', () => {
             const config = createMockBuildConfig({ frameworkMode: false });
-            const gen = ArkTSConfigGenerator.getInstance(config);
+            const gen = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = gen.generateArkTSConfigFile(moduleInfo, false);
@@ -356,7 +338,7 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
                 frameworkMode: true,
                 useEmptyPackage: undefined
             });
-            const gen = ArkTSConfigGenerator.getInstance(config);
+            const gen = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = gen.generateArkTSConfigFile(moduleInfo, false);
@@ -368,7 +350,7 @@ describe('ArkTSConfigGenerator - Config File Generation', () => {
                 frameworkMode: true,
                 useEmptyPackage: false
             });
-            const gen = ArkTSConfigGenerator.getInstance(config);
+            const gen = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = gen.generateArkTSConfigFile(moduleInfo, false);
@@ -449,11 +431,10 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
     beforeEach(() => {
         mockLogger = setupBasicMocks();
         const config = createMockBuildConfig();
-        generator = ArkTSConfigGenerator.getInstance(config);
+        generator = new ArkTSConfigGenerator(config);
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -507,11 +488,10 @@ describe('ArkTSConfigGenerator - Standard Library Dependencies', () => {
 
     describe('Standard Library Path Configuration', () => {
         test('should use pandaSdkPath from buildConfig', () => {
-            ArkTSConfigGenerator.destroyInstance();
             const customConfig = createMockBuildConfig({
                 pandaSdkPath: '/custom/panda/sdk'
             });
-            const customGen = ArkTSConfigGenerator.getInstance(customConfig);
+            const customGen = new ArkTSConfigGenerator(customConfig);
             const moduleInfo = createMockModuleInfo();
 
             const result = customGen.generateArkTSConfigFile(moduleInfo, false);
@@ -543,7 +523,6 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -556,7 +535,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             const config = createMockBuildConfig({
                 externalApiPaths: ['/custom/api']
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -570,7 +549,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             const config = createMockBuildConfig({
                 externalApiPaths: ['/nonexistent']
             });
-            ArkTSConfigGenerator.getInstance(config);
+            new ArkTSConfigGenerator(config);
 
             expect(mockLogger.printWarn).toHaveBeenCalledWith(
                 expect.stringContaining('not exist')
@@ -584,7 +563,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             const config = createMockBuildConfig({
                 externalApiPaths: ['/api1', '/api2', '/api3']
             });
-            ArkTSConfigGenerator.getInstance(config);
+            new ArkTSConfigGenerator(config);
 
             expect(fs.existsSync).toHaveBeenCalledWith('/api1');
             expect(fs.existsSync).toHaveBeenCalledWith('/api2');
@@ -605,7 +584,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             const config = createMockBuildConfig({
                 externalApiPaths: ['/api']
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -617,7 +596,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
     describe('Module Path Mapping', () => {
         test('should add module own path mapping', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'myModule',
                 moduleRootPath: '/my/module'
@@ -629,7 +608,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
 
         test('empty package name should skip path mapping', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: '' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -638,7 +617,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
 
         test('ArkTS 1.1 should skip path mapping', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'arkts11Pkg',
                 language: LANGUAGE_VERSION.ARKTS_1_1
@@ -650,7 +629,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
 
         test('should add entryFile path mapping with /Index suffix', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'myModule',
                 moduleRootPath: '/my/module',
@@ -670,7 +649,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
                     'anotherAlias': ['/another/path.d.ets']
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -687,7 +666,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
                 externalApiPaths: ['/sys/api'],
                 paths: { 'custom': ['/custom'] }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'myModule',
                 moduleRootPath: '/module'
@@ -712,17 +691,15 @@ describe('ArkTSConfigGenerator - Dynamic Dependencies Resolution', () => {
     beforeEach(() => {
         mockLogger = setupBasicMocks();
         const config = createMockBuildConfig();
-        generator = ArkTSConfigGenerator.getInstance(config);
+        generator = new ArkTSConfigGenerator(config);
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
     describe('Decl File Parsing', () => {
         test('should load dependencies from decl file', () => {
-            ArkTSConfigGenerator.destroyInstance();
             (fs.existsSync as jest.Mock).mockReturnValue(true);
             (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
                 files: {
@@ -919,12 +896,10 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
     beforeEach(() => {
         mockLogger = setupBasicMocks();
         (fs.existsSync as jest.Mock).mockReturnValue(true);
-        ArkTSConfigGenerator.destroyInstance();
 
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -937,7 +912,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -957,7 +932,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -973,7 +948,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -993,7 +968,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1010,7 +985,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1029,7 +1004,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             expect(() => generator.generateArkTSConfigFile(moduleInfo, false))
@@ -1044,7 +1019,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/mock/sdk'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1065,7 +1040,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1076,7 +1051,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
 
         test('modules without aliasConfig should be handled normally', () => {
             const config = createMockBuildConfig({ aliasConfig: {} });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1094,7 +1069,7 @@ describe('ArkTSConfigGenerator - Alias Processing', () => {
                     }
                 }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'testModule' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1116,11 +1091,10 @@ describe('ArkTSConfigGenerator - getAliasForPackage Private Method', () => {
     beforeEach(() => {
         mockLogger = setupBasicMocks();
         const config = createMockBuildConfig();
-        generator = ArkTSConfigGenerator.getInstance(config);
+        generator = new ArkTSConfigGenerator(config);
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -1224,7 +1198,6 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -1237,7 +1210,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/interop/sdk'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1252,7 +1225,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/sdk/kits'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1269,7 +1242,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/sdk/component'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1284,7 +1257,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
                 interopSDKPaths: new Set(['/nonexistent/sdk'])
             });
 
-            expect(() => ArkTSConfigGenerator.getInstance(config))
+            expect(() => new ArkTSConfigGenerator(config))
                 .toThrow();
         });
     });
@@ -1298,7 +1271,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/sdk'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1320,7 +1293,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/sdk'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1343,7 +1316,7 @@ describe('ArkTSConfigGenerator - System SDK Processing', () => {
             const config = createMockBuildConfig({
                 interopSDKPaths: new Set(['/sdk'])
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo();
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1367,7 +1340,6 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
     });
 
     afterEach(() => {
-        ArkTSConfigGenerator.destroyInstance();
         jest.clearAllMocks();
     });
 
@@ -1394,7 +1366,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
                 },
                 paths: { 'customPath': ['/custom'] }
             });
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 declFilesPath: '/mock/decl.json',
@@ -1420,7 +1392,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
     describe('Edge Cases', () => {
         test('empty package name should be handled correctly', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: '' });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1432,7 +1404,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('module with no dependencies should only contain stdlib', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ dynamicDependencyModules: new Map() });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1444,7 +1416,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should support generating configs for multiple modules', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             const config1 = generator.generateArkTSConfigFile(
                 createMockModuleInfo({ packageName: 'module1' }),
@@ -1470,7 +1442,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should support config merging', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             const base = generator.generateArkTSConfigFile(
                 createMockModuleInfo({ packageName: 'base' }),
@@ -1492,7 +1464,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
     describe('Concurrent and Repeated Generation', () => {
         test('regenerating same module should return different instances', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({ packageName: 'test' });
 
             const result1 = generator.generateArkTSConfigFile(moduleInfo, false);
@@ -1504,7 +1476,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should handle large number of modules correctly', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
 
             for (let i = 0; i < 100; i++) {
                 const result = generator.generateArkTSConfigFile(
@@ -1523,7 +1495,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
     describe('Test arktsconfig', () => {
         test('should add module source root mapping', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'myModule',
                 moduleRootPath: '/my/module',
@@ -1537,7 +1509,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should handle empty sourceRoots gracefully', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'emptyPkg',
                 moduleRootPath: '/mod',
@@ -1550,7 +1522,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should reverse sourceRoots order in path mappings', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'testPkg',
                 moduleRootPath: '/project/module',
@@ -1569,7 +1541,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should handle single source root correctly', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'singleRoot',
                 moduleRootPath: '/app',
@@ -1582,7 +1554,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should resolve absolute paths for source roots', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'absPkg',
                 moduleRootPath: '/base/path',
@@ -1600,7 +1572,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
         test('should handle sourceRoots with various path formats', () => {
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const moduleInfo = createMockModuleInfo({
                 packageName: 'mixedPaths',
                 moduleRootPath: '/root',
@@ -1634,7 +1606,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1672,7 +1644,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1705,7 +1677,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1737,7 +1709,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1769,7 +1741,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1802,7 +1774,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1834,7 +1806,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',
@@ -1880,7 +1852,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             });
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDep1 = createMockModuleInfo({
                 packageName: 'dep1',
                 moduleRootPath: '/dep1',
@@ -1932,7 +1904,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             }));
 
             const config = createMockBuildConfig();
-            const generator = ArkTSConfigGenerator.getInstance(config);
+            const generator = new ArkTSConfigGenerator(config);
             const mockDepModule = createMockModuleInfo({
                 packageName: 'depModule',
                 moduleRootPath: '/dep',

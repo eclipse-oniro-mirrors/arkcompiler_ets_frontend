@@ -111,11 +111,13 @@ export class DependencyAnalyzer {
     private readonly dumpGraph: boolean = false;
     private readonly clusteredBuild: boolean = false;
     private readonly mainModuleType: OHOS_MODULE_TYPE;
+    private readonly generator: ArkTSConfigGenerator;
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
-    constructor(buildConfig: BuildConfig, clusteredBuild: boolean = ENABLE_CLUSTERS) {
+    constructor(buildConfig: BuildConfig, generator: ArkTSConfigGenerator, clusteredBuild: boolean = ENABLE_CLUSTERS) {
         this.logger = Logger.getInstance();
+        this.generator = generator;
 
         this.entryFiles = new Set<string>(buildConfig.compileFiles);
 
@@ -181,7 +183,7 @@ export class DependencyAnalyzer {
                 return;
             }
             resArkTSConfig.mergeArktsConfig(
-                ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(module.packageName)!
+                this.generator.getArktsConfigByPackageName(module.packageName)!
             )
         });
 
@@ -189,7 +191,7 @@ export class DependencyAnalyzer {
     }
 
     private getArktsConfigByPackageName(name: string): ArkTSConfig | undefined {
-        return ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(name)
+        return this.generator.getArktsConfigByPackageName(name);
     }
 
     private formExecCmd(input: string, output: string, config: string): string {

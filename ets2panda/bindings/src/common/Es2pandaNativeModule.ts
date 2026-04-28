@@ -82,8 +82,10 @@ export class Es2pandaNativeModule {
   }
   _GenerateTsDeclarationsFromContext(
     config: KPtr,
-    outputDeclEts: String,
-    outputEts: String,
+    fileNamesCount: KUInt,
+    inputFiles: Uint8Array /* string[], 4 bytes head + contents */,
+    outputDeclEts: Uint8Array /* string[], 4 bytes head + contents */,
+    outputEts: Uint8Array /* string[], 4 bytes head + contents */,
     exportAll: KBoolean,
     isolated: KBoolean,
     recordFile: String,
@@ -1076,6 +1078,10 @@ export class Es2pandaNativeModule {
   }
 
   _MemFinalize(): void {
+    throw new Error('Not implemented');
+  }
+
+  _SetUpSoPath(soPath: string): void {
     throw new Error('Not implemented');
   }
 

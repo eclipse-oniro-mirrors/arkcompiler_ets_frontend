@@ -107,6 +107,12 @@ KNativePointer impl_CreateConfig(KInt argc, KStringArray argvPtr, KStringPtr &pa
 }
 TS_INTEROP_3(CreateConfig, KNativePointer, KInt, KStringArray, KStringPtr)
 
+void impl_SetUpSoPath(KStringPtr &soPath)
+{
+    g_pandaLibPath = std::string(soPath.CStr());
+}
+TS_INTEROP_V1(SetUpSoPath, KStringPtr)
+
 KNativePointer impl_DestroyConfig(KNativePointer configPtr)
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);

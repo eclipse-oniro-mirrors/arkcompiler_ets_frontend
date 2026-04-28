@@ -393,17 +393,14 @@ export interface ProcessCompileTask extends CompileJobInfo {
     buildConfig: BuildConfig;
 }
 
-export interface DeclgenV1JobConfig {
-    output: string;
-    bridgeCode: string;
-}
-
 export interface DeclgenV2JobConfig {
     output: string;
 }
 
 export interface DeclgenV1JobInfo extends JobInfo {
-    declgenConfig: DeclgenV1JobConfig
+    // Map from file path to its module info, needed when fileList contains files from different modules
+    // Uses Record instead of Map for JSON-serializable IPC compatibility (process.send uses JSON)
+    fileToModuleMap: Record<string, ModuleInfo>;
 }
 
 export interface ProcessDeclgenV1Task extends DeclgenV1JobInfo {
