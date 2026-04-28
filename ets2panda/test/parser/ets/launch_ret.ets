@@ -14,12 +14,11 @@
  */
 
 import {launch} from "std/concurrency"
-import {Job} from "std/core"
 
 function fooInt(): int {
     return 5;
 }
 
 function main(): void {
-    let p: Job<int> = launch(fooInt);
+    let p: Promise<int> = launch(fooInt);
 }

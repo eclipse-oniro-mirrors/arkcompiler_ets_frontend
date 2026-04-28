@@ -14,10 +14,9 @@
  */
 
 import {launch} from "std/concurrency"
-import {Job} from "std/core"
 
 class Foo {
-  public  bar(): Job<Foo> {
+  public  bar(): Promise<Foo> {
     return launch<Foo>() {
       return this.baz(this)
     };
@@ -27,7 +26,7 @@ class Foo {
     return x;
   }
 
-  public  bar2(): Job<Foo> {
+  public  bar2(): Promise<Foo> {
     return launch<Foo>() {
       return this.baz2(this, 1)
     };
