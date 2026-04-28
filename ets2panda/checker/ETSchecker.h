@@ -223,7 +223,7 @@ public:
     void GetInterfacesOfClass(ETSObjectType *type);
     void GetInterfacesOfInterface(ETSObjectType *type);
     void ValidateImplementedInterface(ETSObjectType *type, Type *interface, std::unordered_set<Type *> *extendsSet,
-                                      const lexer::SourcePosition &pos);
+                                      const lexer::SourcePosition &pos, bool isImplementsClause);
     void ResolveDeclaredMembersOfObject(const Type *type);
     std::optional<std::size_t> GetTupleElementAccessValue(const ir::Expression *expr);
     bool ValidateArrayIndex(ir::Expression *expr, bool relaxed = false);
