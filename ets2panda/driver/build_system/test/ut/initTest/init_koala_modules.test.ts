@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,7 @@ const fakeKoalaModule = {
     },
 };
 
-jest.mock('/mock/build/path/build-tools/koala-wrapper/build/lib/es2panda', () => fakeKoalaModule, { virtual: true });
+jest.mock('/mock/build/path/build-tools/libarkts/build/lib/es2panda', () => fakeKoalaModule, { virtual: true });
 
 describe('initKoalaModules', () => {
     let buildConfig: BuildConfig;
