@@ -1567,6 +1567,13 @@ KInt impl_getKindFromEntry(KNativePointer entryPtr)
 }
 TS_INTEROP_1(getKindFromEntry, KInt, KNativePointer)
 
+KBoolean impl_getHasActionFromEntry(KNativePointer entryPtr)
+{
+    auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
+    return static_cast<KBoolean>(entry->GetHasAction());
+}
+TS_INTEROP_1(getHasActionFromEntry, KBoolean, KNativePointer)
+
 KNativePointer impl_getDataFromEntry(KNativePointer entryPtr)
 {
     auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
@@ -1845,6 +1852,13 @@ KNativePointer impl_getFixAllDescriptionFromCodeFixActionInfo(KNativePointer inf
     return new std::string(info->fixAllDescription_);
 }
 TS_INTEROP_1(getFixAllDescriptionFromCodeFixActionInfo, KNativePointer, KNativePointer)
+
+KNativePointer impl_getFixAdditionalMessageFromCodeFixActionInfo(KNativePointer infoPtr)
+{
+    auto *info = reinterpret_cast<CodeFixActionInfo *>(infoPtr);
+    return new std::string(info->additionalMessage_);
+}
+TS_INTEROP_1(getFixAdditionalMessageFromCodeFixActionInfo, KNativePointer, KNativePointer)
 
 KNativePointer impl_getSpanOfEnclosingComment(KNativePointer context, KInt position, KBoolean onlyMultiLine)
 {
@@ -2451,3 +2465,11 @@ KInt impl_DeleteDependantProgramsForFiles(KNativePointer contextPtr, KStringPtr 
     return GetLspApiImpl()->DeleteDependantProgramsForFiles(context, filenamePtr.Data());
 }
 TS_INTEROP_2(DeleteDependantProgramsForFiles, KInt, KNativePointer, KStringPtr)
+
+KBoolean impl_collectApiInfo(KNativePointer context)
+{
+    LSPAPI const *impl = GetLspApiImpl();
+    auto ok = impl->collectApiInfo(reinterpret_cast<es2panda_Context *>(context));
+    return ok ? 1 : 0;
+}
+TS_INTEROP_1(collectApiInfo, KBoolean, KNativePointer)

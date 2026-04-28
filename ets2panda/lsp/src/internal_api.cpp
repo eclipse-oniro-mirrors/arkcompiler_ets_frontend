@@ -1242,7 +1242,7 @@ CodeFixActionInfo CreateCodeFixActionInfo(CodeFixAction &codeFixAction)
     CodeActionInfo codeActionInfo {codeFixAction.description, codeFixAction.changes, infos};
 
     return CodeFixActionInfo {codeActionInfo, codeFixAction.fixName, codeFixAction.fixId,
-                              codeFixAction.fixAllDescription};
+                              codeFixAction.fixAllDescription, codeFixAction.additionalMessage};
 }
 
 CombinedCodeActionsInfo CreateCombinedCodeActionsInfo(CombinedCodeActions &combinedCodeActions)

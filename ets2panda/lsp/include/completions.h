@@ -118,17 +118,20 @@ private:
     std::string insertText_;
     std::optional<CompletionEntryData> data_;
     std::string typeSig_;
+    bool hasAction_;
 
 public:
     explicit CompletionEntry(std::string name = "", CompletionEntryKind kind = CompletionEntryKind::TEXT,
                              std::string sortText = "", std::string insertText = "",
-                             std::optional<CompletionEntryData> data = std::nullopt, std::string typeSig = "")
+                             std::optional<CompletionEntryData> data = std::nullopt, std::string typeSig = "",
+                             bool hasAction = false)
         : name_(std::move(name)),
           kind_(kind),
           sortText_(std::move(sortText)),
           insertText_(std::move(insertText)),
           data_(std::move(data)),
-          typeSig_(std::move(typeSig))
+          typeSig_(std::move(typeSig)),
+          hasAction_(hasAction)
     {
     }
     std::string GetTypeSig() const
@@ -150,6 +153,10 @@ public:
     std::string GetName() const
     {
         return name_;
+    }
+    bool GetHasAction()
+    {
+        return hasAction_;
     }
     bool operator==(const CompletionEntry &other) const
     {
@@ -196,6 +203,15 @@ public:
     }
 };
 
+struct ExternalApiCollectInfo {
+    std::string importDeclaration;
+    CompletionEntryKind kind = CompletionEntryKind::VARIABLE;
+    std::string insertText;
+    bool isDefault = false;
+};
+
+bool CollectApiCompletionInfo(es2panda_Context *context);
+std::vector<ExternalApiCollectInfo> GetExternalApiCollectInfos(const std::string &name);
 std::vector<CompletionEntry> AllKeywordsCompletions();
 std::vector<CompletionEntry> GetKeywordCompletions(const std::string &input);
 std::vector<CompletionEntry> GetMemberCompletions(es2panda_Context *context, size_t position);

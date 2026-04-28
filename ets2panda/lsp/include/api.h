@@ -315,6 +315,7 @@ struct CodeFixActionInfo : CodeActionInfo {
     std::string fixName_;
     std::string fixId_ = {};
     std::string fixAllDescription_ = {};
+    std::string additionalMessage_ = {};
 };
 
 struct CodeFixActionInfoList {
@@ -433,6 +434,7 @@ typedef struct LSPAPI {
     std::string (*getIndexedFileSource)(const std::string &fileName);
     int (*DeleteProgramForFile)(es2panda_Context *context, const char *fileName);
     int (*DeleteDependantProgramsForFiles)(es2panda_Context *context, const char *fileName);
+    bool (*collectApiInfo)(es2panda_Context *context);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

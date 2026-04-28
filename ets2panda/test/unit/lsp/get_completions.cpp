@@ -16,6 +16,7 @@
 #include "lsp_api_test.h"
 #include "lsp/include/completions.h"
 #include "lsp/include/internal_api.h"
+#include "public/es2panda_lib.h"
 
 class LSPCompletionsTests : public LSPAPITests {};
 
@@ -2052,6 +2053,141 @@ ns.
         "CC2", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "CC2")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
     initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition1)
+{
+    std::vector<std::string> apiFiles = {"@kit.api1.d.ets", "@kit.api2.d.ets", "@kit.api3.d.ets", "@kit.kits.d.ets",
+                                         "query1.ets"};
+    std::vector<std::string> texts = {R"('use static'
+namespace Accesiblity {}
+export default Accesiblity
+)",
+                                      R"('use static'
+export class Accee{}
+)",
+                                      R"('use static'
+export interface Accaa{}
+)",
+                                      R"(
+import { Accesiblity } from './@kit.api1'
+import { Accee } from './@kit.api2'
+import { Accaa } from './@kit.api3'
+export {Accesiblity, Accee, Accaa};
+)",
+                                      R"(
+import {Accesiblity, Accee, Accaa} from './@kit.kits'
+Acc
+)"};
+    auto filePaths = CreateTempFile(apiFiles, texts);
+    int const expectedFileCount = 5;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[4].c_str(), ES2PANDA_STATE_BOUND);
+    auto collected = lspApi->collectApiInfo(context);
+    ASSERT_TRUE(collected);
+
+    size_t const offset = 58;
+    auto res = lspApi->getCompletionsAtPosition(context, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Accesiblity", CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "Accesiblity"),
+        CompletionEntry("Accee", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Accee"),
+        CompletionEntry("Accaa", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "Accaa")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition2)
+{
+    std::vector<std::string> apiFiles = {"@kit.api4.d.ets", "@kit.api5.d.ets", "@kit.api6.d.ets", "@kit.kits2.d.ets",
+                                         "query2.ets"};
+    std::vector<std::string> texts = {R"('use static'
+namespace Accesiblity {
+    export enum Acc {}
+    export interface AccInf{}
+}
+export default Accesiblity
+)",
+                                      R"('use static'
+export class Accee{}
+)",
+                                      R"('use static'
+export struct Accaa{}
+)",
+                                      R"(
+import { Accesiblity } from './@kit.api4';
+import { Accee } from './@kit.api5';
+import { Accaa } from './@kit.api6';
+export { Accesiblity, Accee, Accaa };
+)",
+                                      R"(
+import {Accesiblity, Accee, Accaa} from './@kit.kits2'
+Acc
+)"};
+    auto filePaths = CreateTempFile(apiFiles, texts);
+    int const expectedFileCount = 5;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[4].c_str(), ES2PANDA_STATE_CHECKED);
+    auto collected = lspApi->collectApiInfo(context);
+    ASSERT_TRUE(collected);
+
+    size_t const offset = 58;
+    auto res = lspApi->getCompletionsAtPosition(context, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Accesiblity", CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "Accesiblity"),
+        CompletionEntry("Accee", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Accee"),
+        CompletionEntry("Accaa", CompletionEntryKind::STRUCT, std::string(GLOBALS_OR_KEYWORDS), "Accaa"),
+        CompletionEntry("AccInf", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "AccInf")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition3)
+{
+    std::vector<std::string> apiFiles = {"@kit.unapi1.d.ets", "@kit.unapi2.d.ets", "@kit.unapi3.d.ets",
+                                         "@kit.kits3.d.ets", "query3.ets"};
+    std::vector<std::string> texts = {R"('use static'
+export class foo1 {}
+)",
+                                      R"('use static'
+export enum foo2 {};
+)",
+                                      R"('use static'
+export interface foo3 {};
+)",
+                                      R"(
+import { foo1 } from './@kit.unapi1'
+import { foo2 } from './@kit.unapi2'
+import { foo3 } from './@kit.unapi3'
+export {foo1, foo2, foo3};
+)",
+                                      R"(
+import {foo1, foo2, foo3} from './@kit.kits3'
+foo
+)"};
+    auto filePaths = CreateTempFile(apiFiles, texts);
+    int const expectedFileCount = 5;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[4].c_str(), ES2PANDA_STATE_BOUND);
+    auto collected = lspApi->collectApiInfo(context);
+    ASSERT_TRUE(collected);
+
+    size_t const offset = 50;
+    auto res = lspApi->getCompletionsAtPosition(context, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("foo1", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "foo1"),
+        CompletionEntry("foo3", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "foo3"),
+        CompletionEntry("foo2", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "foo2")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(context);
 }
 
 }  // namespace

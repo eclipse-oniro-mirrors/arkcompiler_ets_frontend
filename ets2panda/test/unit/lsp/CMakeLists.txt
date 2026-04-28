@@ -242,6 +242,10 @@ ets2panda_add_gtest(lsp_api_ui_suggest_test CPP_SOURCES
     code_fix/ui_plugin_suggest.cpp
 )
 
+ets2panda_add_gtest(lsp_api_import_fixes_test CPP_SOURCES
+    code_fix/import_fixes.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_get_class_hierarchy_info CPP_SOURCES
     class_hierarchy_info_test.cpp
 )

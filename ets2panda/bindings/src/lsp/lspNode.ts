@@ -581,12 +581,14 @@ export class LspCompletionEntry extends LspNode {
     this.insertText = unpackString(global.es2panda._getInsertTextFromEntry(peer));
     this.kind = global.es2panda._getKindFromEntry(peer);
     this.data = this.getCompletionEntryData(peer);
+    this.hasAction = global.es2panda._getHasActionFromEntry(peer);
   }
   readonly name: String;
   readonly sortText: String;
   readonly insertText: String;
   readonly kind: LspCompletionEntryKind;
   readonly data: LspCompletionEntryData | null;
+  readonly hasAction: boolean;
   private getCompletionEntryData(peer: KNativePointer): LspCompletionEntryData | null {
     const dataPtr = global.es2panda._getDataFromEntry(peer);
     if (dataPtr) {
@@ -751,10 +753,12 @@ export class CodeFixActionInfo extends CodeActionInfo {
     this.fixName = unpackString(global.es2panda._getFixNameFromCodeFixActionInfo(peer));
     this.fixId_ = unpackString(global.es2panda._getFixIdFromCodeFixActionInfo(peer));
     this.fixAllDescription_ = unpackString(global.es2panda._getFixAllDescriptionFromCodeFixActionInfo(peer));
+    this.additionalMessage_ = unpackString(global.es2panda._getFixAdditionalMessageFromCodeFixActionInfo(peer));
   }
   readonly fixName: String;
   readonly fixId_: String;
   readonly fixAllDescription_: String;
+  readonly additionalMessage_: String;
 }
 
 export class CodeFixActionInfoList extends LspNode {
