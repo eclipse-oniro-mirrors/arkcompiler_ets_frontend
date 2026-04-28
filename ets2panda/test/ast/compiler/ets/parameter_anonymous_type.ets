@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 const _innerFunc = (arg: { x: number } | undefined): number => {
-    if (arg === undefined) {
+    if (/* @@ label */arg === undefined) {
         return 12;
     }
     return arg.x;
@@ -22,3 +22,4 @@ const _innerFunc = (arg: { x: number } | undefined): number => {
 
 
 /* @@? 16:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@@ label Warning Warning W65000: The equality expression is always true. */

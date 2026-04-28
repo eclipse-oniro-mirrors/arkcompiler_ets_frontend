@@ -20,5 +20,5 @@ class A{
     }
 }
 
-/* @@@ label1 Warning Warning W65001: The equality expression is always false. */
+/* @@@ label1 Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */
 /* @@@ label2 Error Syntax error ESY115549: 'this?.' optional chaining is not supported. */

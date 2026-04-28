@@ -30,7 +30,7 @@ for (let i? /* @@ label11 */: Number = 1;;)  { break; }
 /* @@? 17:29 Error Semantic error ESE0143: Unresolved reference result */
 /* @@? 17:53 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 17:53 Error Semantic error ESE0143: Unresolved reference p */
-/* @@? 17:53 Warning Warning W0015: The operand of the ensure-not-nullish expression is always non-nullish. */
+/* @@? 17:53 Warning Warning W0015: Operand of the ensure-not-nullish expression is always non-nullish. */
 /* @@? 17:95 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 17:95 Error Semantic error ESE0143: Unresolved reference a */
 /* @@? 19:29 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */

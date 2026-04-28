@@ -25,7 +25,7 @@ let dog: Dog = {
 
 let name = dog?.name ?? "Pluto";
 let legCount: int = dog?.legs ?? 4;
-/* @@? 26:12 Warning Warning W65001: The equality expression is always false. */
+/* @@? 26:12 Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */
 /* @@? 26:12 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
-/* @@? 27:21 Warning Warning W65001: The equality expression is always false. */
+/* @@? 27:21 Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */
 /* @@? 27:21 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */

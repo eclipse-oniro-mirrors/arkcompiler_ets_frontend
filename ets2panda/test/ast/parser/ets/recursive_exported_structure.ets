@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -89,6 +89,7 @@ const _exported: ExportedType = _exportedStructure;
 export default _exported;
 
 /* @@? 26:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 27:9 Warning Warning W65000: The equality expression is always true. */
 /* @@? 61:66 Error Syntax error ESY145527: Intersection types are not supported, use inheritance instead! */
 /* @@? 62:12 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 62:12 Error Semantic error ESE0144: Type name 'IndexableType' used in the wrong context */

@@ -23,6 +23,6 @@ for (let i = 0; i < count; ++i /* @@ label */{
 /* @@? 17:14 Error Semantic error ESE0143: Unresolved reference result */
 /* @@? 17:23 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 17:23 Error Semantic error ESE0143: Unresolved reference p */
-/* @@? 17:23 Warning Warning W0015: The operand of the ensure-not-nullish expression is always non-nullish. */
+/* @@? 17:23 Warning Warning W0015: Operand of the ensure-not-nullish expression is always non-nullish. */
 /* @@? 17:63 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 17:63 Error Semantic error ESE0143: Unresolved reference a */

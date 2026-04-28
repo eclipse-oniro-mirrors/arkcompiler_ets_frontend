@@ -26,4 +26,5 @@ let a = new A<Boolean>();
 
 
 /* @@? 25:1 Error Semantic error ESE0307: Overloaded method is used as value */
+/* @@? 25:1 Warning Warning W65001: The equality expression is always false. */
 /* @@? 25:2 Warning Warning W670214: This cast can be excessive because it always succeeds */

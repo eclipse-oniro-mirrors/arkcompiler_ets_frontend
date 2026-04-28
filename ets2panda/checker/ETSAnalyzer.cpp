@@ -5542,16 +5542,19 @@ checker::Type *ETSAnalyzer::Check(ir::TSNonNullExpression *expr) const
     if (expr->TsType() != nullptr) {
         return expr->TsType();
     }
+
     ETSChecker *checker = GetETSChecker();
     auto exprType = expr->expr_->Check(checker);
+
     checker::Type *currentType = exprType;
     while (currentType->IsETSTypeParameter()) {
         currentType = currentType->AsETSTypeParameter()->GetConstraintType();
     }
+
     //  If the actual [smart] type is definitely 'null' or 'undefined' then probably CTE should be thrown.
     //  Anyway we'll definitely obtain NullPointerError at runtime.
     if (currentType->DefinitelyETSNullish()) {
-        checker->LogDiagnostic(diagnostic::NULLISH_OPERAND, expr->Expr()->Start());
+        checker->LogDiagnostic(diagnostic::NULLISH_OPERAND, {"ensure-not-nullish"}, expr->Expr()->Start());
 
         if (expr->expr_->IsIdentifier()) {
             ES2PANDA_ASSERT(expr->expr_->AsIdentifier()->Variable() != nullptr);
@@ -5561,12 +5564,13 @@ checker::Type *ETSAnalyzer::Check(ir::TSNonNullExpression *expr) const
             }
         }
     } else if (currentType->DefinitelyNotETSNullish()) {
-        checker->LogDiagnostic(diagnostic::NON_NULLISH_OPERAND, expr->Expr()->Start());
+        checker->LogDiagnostic(diagnostic::NON_NULLISH_OPERAND, {"ensure-not-nullish"}, expr->Expr()->Start());
     }
 
     if (expr->TsType() == nullptr) {
         expr->SetTsType(checker->GetNonNullishType(exprType));
     }
+
     expr->SetOriginalType(expr->TsType());
     return expr->TsType();
 }

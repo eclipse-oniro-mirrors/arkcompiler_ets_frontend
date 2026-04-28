@@ -25,4 +25,4 @@ let car: Car = {
 }
 
 let companyLength = car?.company?.length;
-/* @@? 27:21 Warning Warning W65001: The equality expression is always false. */
+/* @@? 27:21 Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */
