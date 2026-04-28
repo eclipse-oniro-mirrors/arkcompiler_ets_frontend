@@ -14,7 +14,6 @@
 softlist:
 - name: "numeric_conversions"
   paths:
-  - ".*/xts/acts/.*"
   - ".*/test/xts/.*"
 
 - name: "ambient_context_and_missing_type_annotation"
