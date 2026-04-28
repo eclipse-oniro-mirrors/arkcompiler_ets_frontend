@@ -214,6 +214,10 @@ semantic:
   id: 209
   message: "Cannot assign to this property because it is readonly."
 
+- name: ASYNC_CALL_IN_STATIC_INIT
+  id: 1339359
+  message: "An async function call is not allowed in a static initializer"
+
 - name: ASYNC_FUNCTION_RETURN_TYPE
   id: 1
   message: "Return type of async function must be 'Promise'."

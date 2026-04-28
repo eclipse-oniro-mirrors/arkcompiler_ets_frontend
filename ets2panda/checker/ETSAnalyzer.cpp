@@ -2644,6 +2644,37 @@ static void CheckAbstractCall(ETSChecker *checker, ir::CallExpression *expr)
     }
 }
 
+static bool IsDirectlyInStaticInit(const ir::AstNode *node)
+{
+    for (auto *iter = node->Parent(); iter != nullptr; iter = iter->Parent()) {
+        if (iter->IsClassProperty()) {
+            return iter->IsStatic();
+        }
+        if (iter->IsScriptFunction()) {
+            auto *func = iter->AsScriptFunction();
+            if (func->IsStaticBlock()) {
+                return true;
+            }
+            if (func->Id() != nullptr && IsInitializerBlockTransfer(func->Id()->Name().Utf8())) {
+                return true;
+            }
+            return false;
+        }
+    }
+    return false;
+}
+
+static void CheckAsyncCallInStaticInit(ETSChecker *checker, ir::CallExpression *expr)
+{
+    auto *sig = expr->Signature();
+    if (sig == nullptr || !sig->HasFunction() || !sig->Function()->IsAsyncFunc()) {
+        return;
+    }
+    if (IsDirectlyInStaticInit(expr)) {
+        checker->LogError(diagnostic::ASYNC_CALL_IN_STATIC_INIT, {}, expr->Start());
+    }
+}
+
 static void CheckCallee(ETSChecker *checker, ir::CallExpression *expr)
 {
     checker->CheckNonNullish(expr->Callee());
@@ -2804,6 +2835,7 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
 
     CheckOverloadCall(checker, expr);
     CheckAbstractCall(checker, expr);
+    CheckAsyncCallInStaticInit(checker, expr);
     return expr->TsType();
 }
 
