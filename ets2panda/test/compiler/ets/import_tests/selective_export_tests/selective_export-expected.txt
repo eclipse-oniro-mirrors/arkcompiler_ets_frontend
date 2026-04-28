@@ -333,12 +333,12 @@
           "loc": {
             "start": {
               "line": 28,
-              "column": 7,
+              "column": 14,
               "program": "selective_export.ets"
             },
             "end": {
               "line": 28,
-              "column": 17,
+              "column": 24,
               "program": "selective_export.ets"
             }
           }
@@ -571,12 +571,12 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 19,
+                  "column": 26,
                   "program": "selective_export.ets"
                 },
                 "end": {
                   "line": 28,
-                  "column": 19,
+                  "column": 26,
                   "program": "selective_export.ets"
                 }
               }
@@ -595,12 +595,12 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 19,
+                      "column": 26,
                       "program": "selective_export.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 19,
+                      "column": 26,
                       "program": "selective_export.ets"
                     }
                   }
@@ -615,12 +615,12 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 19,
+                      "column": 26,
                       "program": "selective_export.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 19,
+                      "column": 26,
                       "program": "selective_export.ets"
                     }
                   }
@@ -628,12 +628,12 @@
                 "loc": {
                   "start": {
                     "line": 28,
-                    "column": 19,
+                    "column": 26,
                     "program": "selective_export.ets"
                   },
                   "end": {
                     "line": 28,
-                    "column": 19,
+                    "column": 26,
                     "program": "selective_export.ets"
                   }
                 }
@@ -641,12 +641,12 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 19,
+                  "column": 26,
                   "program": "selective_export.ets"
                 },
                 "end": {
                   "line": 28,
-                  "column": 19,
+                  "column": 26,
                   "program": "selective_export.ets"
                 }
               }
@@ -669,7 +669,7 @@
         "loc": {
           "start": {
             "line": 28,
-            "column": 18,
+            "column": 25,
             "program": "selective_export.ets"
           },
           "end": {

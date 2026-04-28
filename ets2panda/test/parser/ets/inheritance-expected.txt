@@ -106,12 +106,12 @@
           "loc": {
             "start": {
               "line": 22,
-              "column": 7,
+              "column": 14,
               "program": "inheritance.ets"
             },
             "end": {
               "line": 22,
-              "column": 17,
+              "column": 24,
               "program": "inheritance.ets"
             }
           }
@@ -127,12 +127,12 @@
               "loc": {
                 "start": {
                   "line": 22,
-                  "column": 20,
+                  "column": 27,
                   "program": "inheritance.ets"
                 },
                 "end": {
                   "line": 22,
-                  "column": 20,
+                  "column": 27,
                   "program": "inheritance.ets"
                 }
               }
@@ -151,12 +151,12 @@
                   "loc": {
                     "start": {
                       "line": 22,
-                      "column": 20,
+                      "column": 27,
                       "program": "inheritance.ets"
                     },
                     "end": {
                       "line": 22,
-                      "column": 20,
+                      "column": 27,
                       "program": "inheritance.ets"
                     }
                   }
@@ -171,12 +171,12 @@
                   "loc": {
                     "start": {
                       "line": 22,
-                      "column": 20,
+                      "column": 27,
                       "program": "inheritance.ets"
                     },
                     "end": {
                       "line": 22,
-                      "column": 20,
+                      "column": 27,
                       "program": "inheritance.ets"
                     }
                   }
@@ -184,12 +184,12 @@
                 "loc": {
                   "start": {
                     "line": 22,
-                    "column": 20,
+                    "column": 27,
                     "program": "inheritance.ets"
                   },
                   "end": {
                     "line": 22,
-                    "column": 20,
+                    "column": 27,
                     "program": "inheritance.ets"
                   }
                 }
@@ -197,12 +197,12 @@
               "loc": {
                 "start": {
                   "line": 22,
-                  "column": 20,
+                  "column": 27,
                   "program": "inheritance.ets"
                 },
                 "end": {
                   "line": 22,
-                  "column": 20,
+                  "column": 27,
                   "program": "inheritance.ets"
                 }
               }
@@ -225,7 +225,7 @@
         "loc": {
           "start": {
             "line": 22,
-            "column": 19,
+            "column": 26,
             "program": "inheritance.ets"
           },
           "end": {

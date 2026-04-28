@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,26 +13,15 @@
  * limitations under the License.
  */
 
-function test_func(): void {}
+type Version = number[];
 
-let msg: string = "hello";
-
-class TestClass {
-    test_member = "test_member";
-
-    test_method(): void {}
+@interface my_anno {
+    fromVersion: Version;
 }
 
-export class AliasClass {
-    alias_class_method(): void {
-        console.print("alias_class_method");
-    }
-}
+@my_anno([1, 1])
+export function bar() {}
 
-type aliased = AliasClass;
 
-export {
-    test_func as func, msg,
-    TestClass as tc,
-    aliased
-}
+/* @@? 22:1 Error Semantic error ESE71336: Exported function 'bar' requires type annotation. */
+/* @@? 22:2 Error Semantic error ESE1236581: Type 'my_anno' used in export declaration(s) is not exported. */

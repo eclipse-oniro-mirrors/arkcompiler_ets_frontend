@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,26 +13,9 @@
  * limitations under the License.
  */
 
-function test_func(): void {}
+class Arg /* @@ label */{}
 
-let msg: string = "hello";
+export function foo<T = Arg>(): void {}
 
-class TestClass {
-    test_member = "test_member";
 
-    test_method(): void {}
-}
-
-export class AliasClass {
-    alias_class_method(): void {
-        console.print("alias_class_method");
-    }
-}
-
-type aliased = AliasClass;
-
-export {
-    test_func as func, msg,
-    TestClass as tc,
-    aliased
-}
+/* @@@ label Error Semantic error ESE1236581: Type 'Arg' used in export declaration(s) is not exported. */

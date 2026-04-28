@@ -18,5 +18,5 @@ export namespace NS {
 }
 
 type VT = RC;
-type RC = NS.RecordData;
+export type RC = NS.RecordData;
 arktest.assertTrue(true);
