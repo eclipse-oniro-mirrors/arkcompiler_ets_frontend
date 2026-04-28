@@ -2229,7 +2229,9 @@ void ETSParser::CheckDeclare()
         case lexer::TokenType::KEYW_OVERLOAD:
         case lexer::TokenType::KEYW_TYPE:
         case lexer::TokenType::KEYW_ASYNC:
-        case lexer::TokenType::KEYW_STRUCT: {
+        case lexer::TokenType::KEYW_STRUCT:
+        case lexer::TokenType::KEYW_GET:
+        case lexer::TokenType::KEYW_SET: {
             return;
         }
         default: {
