@@ -93,7 +93,7 @@ static void CallDeclgen(public_lib::Context *ctx, parser::Program *prog)
 static void HandleGenStdlib(public_lib::Context *ctx)
 {
     // Should be handled the same way as other packages.
-    for (auto *pkg : ctx->parserProgram->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+    for (auto *pkg : ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::PACKAGE>()) {
         CallDeclgen(ctx, pkg);
     }
 }
@@ -112,7 +112,7 @@ bool DeclGenPhase::Perform()
     auto program = Context()->parserProgram;
     CallDeclgen(Context(), program);
 
-    program->GetExternalSources()->Visit<true, util::ModuleKind::MODULE>(
+    program->GetExternalDecls()->Visit<true, false, util::ModuleKind::MODULE>(
         [ctx = Context()](auto *extProg) { CallDeclgen(ctx, extProg); });
 
     return true;

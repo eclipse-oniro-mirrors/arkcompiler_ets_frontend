@@ -167,7 +167,7 @@ static bool CheckOptionsAfterPhase(const public_lib::Context &context, const std
 static void GenDeclsForStdlib(public_lib::Context *context)
 {
     ES2PANDA_ASSERT(context->config->options->IsGenStdlib());
-    context->parserProgram->GetExternalSources()->Visit([context](parser::PackageProgram *extProgram) {
+    context->parserProgram->GetExternalDecls()->Visit([context](parser::PackageProgram *extProgram) {
         ir::Declgen dg {context};
         ir::SrcDumper dumper {&dg};
         ES2PANDA_ASSERT(!extProgram->GetUnmergedPackagePrograms().empty());
@@ -286,7 +286,7 @@ using PhaseListGetter = std::function<std::vector<compiler::Phase *>(ScriptExten
 
 static void MarkAsLowered(public_lib::Context *ctx)
 {
-    ctx->parserProgram->GetExternalSources()->Visit([](auto *extProg) {
+    ctx->parserProgram->GetExternalDecls()->Visit([](auto *extProg) {
         if (!extProg->IsASTLowered()) {
             extProg->MarkASTAsLowered();
         }
@@ -363,7 +363,7 @@ static void ResetLineIndexCaches(public_lib::Context *context)
     }
 
     context->parserProgram->ResetLineIndexCache();
-    context->parserProgram->GetExternalSources()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
+    context->parserProgram->GetExternalDecls()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
 }
 
 static void ClearContext(public_lib::Context *context)

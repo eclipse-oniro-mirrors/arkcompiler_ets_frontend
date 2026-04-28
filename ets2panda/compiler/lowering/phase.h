@@ -111,9 +111,18 @@ struct ProgramsByKindSelector {
     {
         bool result = true;
 
-        // 1. external sources:
-        context->parserProgram->GetExternalSources()->template Visit<true, PROGRAM_KINDS_TO_VISIT...>(
-            [&cb, &result](auto *extProg) { result &= extProg->IsASTLowered() || cb(extProg); });
+        // 1. external declarations:
+        context->parserProgram->GetExternalDecls()->template Visit<true, false, PROGRAM_KINDS_TO_VISIT...>(
+            [&cb, &result](auto *extProg) {
+                bool precondition = extProg->IsASTLowered();
+                if constexpr ((sizeof...(PROGRAM_KINDS_TO_VISIT) != 1) &&
+                              ((PROGRAM_KINDS_TO_VISIT == util::ModuleKind::METADATA_DECL) || ...)) {
+                    // Don't invoke callback for metadata-based programs if the metadata has not been loaded yet
+                    // except the case when invoking callback for the metadata-based programs only, to load them.
+                    precondition = precondition || !extProg->IsMetadataLoadedIfApplicable();
+                }
+                result &= precondition || cb(extProg);
+            });
 
         // 2. main program if match:
         if (((PROGRAM_KINDS_TO_VISIT == context->parserProgram->GetModuleKind()) || ...)) {
@@ -134,21 +143,21 @@ struct ProgramsToBeEmittedSelector {
         parser::Program *program = context->parserProgram;
 
         if (mode == CompilationMode::GEN_STD_LIB) {
-            program->GetExternalSources()->Visit([&cb](auto *extProg) {
+            program->GetExternalDecls()->Visit([&cb](auto *extProg) {
                 if (extProg->IsASTLowered()) {
                     return;
                 }
                 cb(extProg);
             });
         } else if (mode == CompilationMode::SIMULTANEOUS) {
-            program->GetExternalSources()->Visit([&cb](auto *extProg) {
+            program->GetExternalDecls()->Visit([&cb](auto *extProg) {
                 if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
                     return;
                 }
                 cb(extProg);
             });
         } else if (mode == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
-            program->GetExternalSources()->Visit([&cb, context](auto *extProg) {
+            program->GetExternalDecls()->Visit([&cb, context](auto *extProg) {
                 if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
                     return;
                 }
@@ -177,9 +186,9 @@ struct ProgramsToBeEmittedSelector {
 // NOTE(dkofanov): 'PACKAGE' is to be removed.
 using PhaseForSourcePrograms = PhaseForSelectedPrograms<
     ProgramsByKindSelector<util::ModuleKind::PACKAGE, util::ModuleKind::MODULE, util::ModuleKind::SOURCE_DECL>>;
-using PhaseForAllPrograms =
-    PhaseForSelectedPrograms<ProgramsByKindSelector<util::ModuleKind::PACKAGE, util::ModuleKind::MODULE,
-                                                    util::ModuleKind::SOURCE_DECL, util::ModuleKind::ETSCACHE_DECL>>;
+using PhaseForAllPrograms = PhaseForSelectedPrograms<
+    ProgramsByKindSelector<util::ModuleKind::PACKAGE, util::ModuleKind::MODULE, util::ModuleKind::SOURCE_DECL,
+                           util::ModuleKind::ETSCACHE_DECL, util::ModuleKind::METADATA_DECL>>;
 
 using PhaseForProgramsToBeEmitted = PhaseForSelectedPrograms<ProgramsToBeEmittedSelector>;
 
@@ -192,6 +201,8 @@ using PhaseForProgramsToBeEmitted = PhaseForSelectedPrograms<ProgramsToBeEmitted
 using PhaseForProgramsWithBodies_LEGACY = PhaseForProgramsToBeEmitted;  // NOLINT(readability-identifier-naming)
 using PhaseForProgramsWithBodies =
     PhaseForSelectedPrograms<ProgramsByKindSelector<util::ModuleKind::PACKAGE, util::ModuleKind::MODULE>>;
+
+using PhaseForMetadataBasedPrograms = PhaseForSelectedPrograms<ProgramsByKindSelector<util::ModuleKind::METADATA_DECL>>;
 
 class PhaseManager {
 public:

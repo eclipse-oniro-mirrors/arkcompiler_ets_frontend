@@ -250,7 +250,7 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
             return nullptr;
         }
 
-        program->GetExternalSources()->Visit([](auto *extProg) { ClearHelper(extProg); });
+        program->GetExternalDecls()->Visit([](auto *extProg) { ClearHelper(extProg); });
 
         ClearHelper(program);
 
@@ -282,7 +282,7 @@ static std::vector<parser::Program *> CollectDirectExtSources(public_lib::Contex
 
     std::map<std::string_view, parser::Program *> path2prog;
     path2prog.emplace(prog->AbsoluteName().Utf8(), prog);
-    ctx->parserProgram->GetExternalSources()->Visit(
+    ctx->parserProgram->GetExternalDecls()->Visit(
         [&path2prog](auto *prg) { path2prog.emplace(prg->AbsoluteName().Utf8(), prg); });
 
     std::vector<parser::Program *> res;
@@ -357,8 +357,8 @@ static void RecheckDependencies(public_lib::Context *ctx, parser::Program *prg, 
         // In simultaneous build mode all programs to be built are added as direct external sources to the synthetic
         // main module. And there is no info aboud that in importPathManager::fileDependencies since those programs are
         // not explicitly imported from the main module
-        directExtSources.reserve(prg->GetExternalSources()->Direct().size());
-        for (auto &[_, directExtSrc] : prg->GetExternalSources()->Direct()) {
+        directExtSources.reserve(prg->GetExternalDecls()->Direct().size());
+        for (auto &[_, directExtSrc] : prg->GetExternalDecls()->Direct()) {
             directExtSources.emplace_back(directExtSrc);
         }
     } else {
@@ -402,7 +402,7 @@ static void ExtendModifiedFlagOnPackagePrograms(parser::Program *globalProg)
 {
     std::unordered_set<parser::ProgramAdapter<util::ModuleKind::PACKAGE> *> modifiedPackagePrograms {};
 
-    for (auto *packageProg : globalProg->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+    for (auto *packageProg : globalProg->GetExternalDecls()->Get<util::ModuleKind::PACKAGE>()) {
         if (packageProg->GetUnmergedPackagePrograms().empty()) {
             continue;
         }
@@ -445,9 +445,9 @@ static bool ExtendModifiedFlagOnDependentPrograms(public_lib::Context *ctx, pars
 template <typename CB>
 static void IterateExternalProgramsForBinderAndCheckerPushing(parser::Program *program, const CB &cb)
 {
-    program->GetExternalSources()->Visit(cb);
+    program->GetExternalDecls()->Visit(cb);
     // push binders to package-top-programs since in the call above only package fractions were iterated:
-    for (auto *packageProg : program->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+    for (auto *packageProg : program->GetExternalDecls()->Get<util::ModuleKind::PACKAGE>()) {
         cb(packageProg);
     }
 }
@@ -455,7 +455,7 @@ static void IterateExternalProgramsForBinderAndCheckerPushing(parser::Program *p
 static void RestoreGlobalTypesHolder(checker::ETSChecker *newChecker, parser::Program *program)
 {
     checker::GlobalTypesHolder *globalTypesHolder = nullptr;
-    program->GetExternalSources()->Visit([&globalTypesHolder](auto *extProg) {
+    program->GetExternalDecls()->Visit([&globalTypesHolder](auto *extProg) {
         if ((globalTypesHolder == nullptr) && (!extProg->IsProgramModified() || extProg->IsASTLowered())) {
             globalTypesHolder = extProg->Checker()->GetGlobalTypesHolder();
         }

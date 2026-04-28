@@ -416,7 +416,7 @@ std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitt
 
     // NOTE(mshimenkov): Treat every 'direct' external source as the main module and emit records for it.
     // In simultaneous mode every 'direct' external source is a separate program
-    const auto &programsHolder = Context()->parserProgram->GetExternalSources()->Direct();
+    const auto &programsHolder = Context()->parserProgram->GetExternalDecls()->Direct();
     std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> outProgsHolder = {};
     outProgsHolder.reserve(programsHolder.size());
 

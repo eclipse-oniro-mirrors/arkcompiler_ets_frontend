@@ -71,7 +71,7 @@ static auto ExtractASTs(const public_lib::Context &context)
     auto astToCheck = AstToCheck {allocator->Adapter()};
     astToCheck.insert(std::make_pair(program->SourceFilePath().Utf8(), program->Ast()));
     if (context.config->options->IsAstVerifierFullProgram()) {
-        program->GetExternalSources()->Visit([&astToCheck](parser::Program *external) {
+        program->GetExternalDecls()->Visit([&astToCheck](parser::Program *external) {
             ES2PANDA_ASSERT(external->Ast() != nullptr);
             astToCheck.insert(std::make_pair(external->SourceFilePath().Utf8(), external->Ast()));
         });

@@ -389,7 +389,7 @@ parser::Program *ImportPathManager::SetupProgramForDebugInfoPlugin(std::string_v
     auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
                                                     emptyIdent, ir::ModuleFlag::ETSSCRIPT, importInfo.Lang(), program);
     program->SetAst(etsModule);
-    Context()->parserProgram->GetExternalSources()->Add(program);
+    Context()->parserProgram->GetExternalDecls()->Add(program);
     return program;
 }
 
@@ -532,7 +532,7 @@ void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package,
         fraction = IntroduceProgram<ModuleKind::MODULE>(*importInfo);
     } else {
         // remove a package-fraction that was mistakenly added as a module without enclosing package:
-        auto &modules = GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::MODULE>();
+        auto &modules = GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modules.begin(), modules.end(), fraction);
         modules.erase(newEndIt, modules.end());
     }
@@ -891,9 +891,12 @@ parser::Program *ImportPathManager::IntroduceProgram(const ImportInfo &importInf
         case ModuleKind::PACKAGE:
             return IntroduceProgram<ModuleKind::PACKAGE>(importInfo);
         case ModuleKind::METADATA_DECL:
+            if (!ctx_.config->options->IsReadMetadata()) {
+                DE()->LogDiagnostic(diagnostic::UNSUPPORTED_IMPORT_WITH_METADATA,
+                                    DiagnosticMessageParams {importInfo.AbcPath()});
+                return nullptr;
+            }
             ES2PANDA_ASSERT(importInfo.ReferencesABC());
-            DE()->LogDiagnostic(diagnostic::UNSUPPORTED_IMPORT_WITH_METADATA,
-                                util::DiagnosticMessageParams {importInfo.AbcPath()});
             return IntroduceProgram<ModuleKind::METADATA_DECL>(importInfo);
         default: {
             ES2PANDA_ASSERT(DE()->IsAnyError());
@@ -961,7 +964,7 @@ public:
         modulePrograms.implProg = program;
         if (ipm_->GetGlobalProgram() != nullptr) {
             // replace registered at this point decl-progs with the impl-prog:
-            auto &extProgramsDecls = ipm_->GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::SOURCE_DECL>();
+            auto &extProgramsDecls = ipm_->GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::SOURCE_DECL>();
             auto extProgramsDeclsNewEnd = extProgramsDecls.end();
             for (auto *declProg : modulePrograms.declProgs) {
                 progsByResolvedPath_.at(ArenaString {declProg->GetImportInfo().Key()}) = program;
@@ -980,7 +983,7 @@ public:
         return nullptr;
     }
 
-    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalSources *extSources)
+    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
     {
         auto *globalProgram = ipm_->GetGlobalProgram();
         if (newProg == globalProgram) {
@@ -991,22 +994,26 @@ public:
             (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
         ES2PANDA_ASSERT(!isPackageFraction);
         if (auto pointedProgram = SearchResolved(newProg->GetImportInfo()); pointedProgram == newProg) {
-            auto alreadyInExternalSources = [newProg, extSources]() -> bool {
+            auto alreadyInExternalSources = [newProg, extDecls]() -> bool {
                 switch (newProg->GetModuleKind()) {
                     case ModuleKind::MODULE: {
-                        const auto &programs = extSources->Get<ModuleKind::MODULE>();
+                        const auto &programs = extDecls->Get<ModuleKind::MODULE>();
                         return std::find(programs.begin(), programs.end(), newProg) != programs.end();
                     }
                     case ModuleKind::SOURCE_DECL: {
-                        const auto &programs = extSources->Get<ModuleKind::SOURCE_DECL>();
+                        const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
                         return std::find(programs.begin(), programs.end(), newProg) != programs.end();
                     }
                     case ModuleKind::PACKAGE: {
-                        const auto &programs = extSources->Get<ModuleKind::PACKAGE>();
+                        const auto &programs = extDecls->Get<ModuleKind::PACKAGE>();
                         return std::find(programs.begin(), programs.end(), newProg) != programs.end();
                     }
                     case ModuleKind::ETSCACHE_DECL: {
-                        const auto &programs = extSources->Get<ModuleKind::ETSCACHE_DECL>();
+                        const auto &programs = extDecls->Get<ModuleKind::ETSCACHE_DECL>();
+                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+                    }
+                    case ModuleKind::METADATA_DECL: {
+                        const auto &programs = extDecls->Get<ModuleKind::METADATA_DECL>();
                         return std::find(programs.begin(), programs.end(), newProg) != programs.end();
                     }
                     default:
@@ -1016,7 +1023,7 @@ public:
             if (alreadyInExternalSources()) {
                 return;
             }
-            extSources->Add(newProg);
+            extDecls->Add(newProg);
         } else {
             [[maybe_unused]] const auto &imd = newProg->GetImportInfo();
             ES2PANDA_ASSERT((imd.Kind() == ModuleKind::SOURCE_DECL) || (imd.Kind() == ModuleKind::ETSCACHE_DECL));
@@ -1048,11 +1055,11 @@ public:
         newPkg->AppendFraction(fractionBeingParsed->As<ModuleKind::MODULE>());
 
         // fixup externalSources:
-        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::MODULE>();
+        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modulePrograms.begin(), modulePrograms.end(), fractionBeingParsed);
         if (newEndIt != modulePrograms.end()) {
             modulePrograms.erase(newEndIt, modulePrograms.end());
-            ipm_->GetGlobalProgram()->GetExternalSources()->Add(newPkg);
+            ipm_->GetGlobalProgram()->GetExternalDecls()->Add(newPkg);
         } else {
             ES2PANDA_ASSERT(ipm_->GetGlobalProgram() == fractionBeingParsed);
         }
@@ -1091,10 +1098,13 @@ void ImportPathManager::RegisterProgram(parser::Program *program)
 
     // Packages are "synthetic" programs (w/o text), so they can't be parsed.
     // Mind the difference with package-fraction programs, constituting packages.
+    // Also, metadata-based programs are not source-based so no need to parse them,
+    // they are being handled further within a separate compilation phase.
     switch (program->GetModuleKind()) {
         case ModuleKind::PACKAGE:
         case ModuleKind::SIMULT_MAIN:
         case ModuleKind::DECLLESS_DYNAMIC:
+        case ModuleKind::METADATA_DECL:
             return;
         default: {
             bool isParsed = program->Ast() != nullptr;
@@ -1149,7 +1159,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     if (auto resolved = SearchResolved(*importInfo); resolved != nullptr) {
         // #32418.
         if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
-            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalSources());
+            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalDecls());
         }
         return resolved;
     }
@@ -1175,7 +1185,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     }
     if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
         if (program != nullptr) {
-            resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalSources());
+            resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
         }
     }
     return program;

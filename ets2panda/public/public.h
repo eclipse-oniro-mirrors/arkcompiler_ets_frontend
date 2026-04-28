@@ -48,7 +48,7 @@ struct ConfigImpl {
     std::list<diagnostic::DiagnosticKind> diagnosticKindStorage;
 };
 
-using ArenaExternalSources = parser::Program::ExternalSources;
+using ArenaExternalSources = parser::Program::ExternalDecls;
 using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;

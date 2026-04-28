@@ -1418,12 +1418,12 @@ void ETSBinder::BuildProgram()
     Program()->SetRecordTable(globalRecordTable_);
     // A tmp solution caused by #23877, needs to check stdlib first to avoid a bug in std/math/math.ets
     // After the bug fixed, we can merge these 2 loop.
-    Program()->GetExternalSources()->Visit([this](auto *extProg) {
+    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
         if (extProg->ModuleName().substr(0, STD_PREFIX.length()) == STD_PREFIX) {
             BuildExternalProgram(extProg);
         }
     });
-    Program()->GetExternalSources()->Visit([this](auto *extProg) {
+    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
         if (extProg->ModuleName().substr(0, STD_PREFIX.length()) != STD_PREFIX) {
             BuildExternalProgram(extProg);
         }
@@ -1477,7 +1477,7 @@ bool ETSBinder::CheckRecordTablesConsistency(parser::Program *program /* = nullp
     ok &= (mainProg->GetRecordTable() == GetGlobalRecordTable());
 
     if (program == nullptr) {
-        mainProg->GetExternalSources()->Visit([this, &ok](auto *extProgram) {
+        mainProg->GetExternalDecls()->Visit([this, &ok](auto *extProgram) {
             ok &= (extProgram->GetRecordTable() == GetExternalRecordTable().find(extProgram)->second);
             ok &= (extProgram->GetRecordTable() != GetGlobalRecordTable());
         });

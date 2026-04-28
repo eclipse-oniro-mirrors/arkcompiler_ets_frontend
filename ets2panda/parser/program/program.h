@@ -75,123 +75,126 @@ private:
     varbinder::RecordTable *recordTable_ {};
 };
 
-class Program : public RecordTableHolder {
-    // To be moved from 'Program'.
-    template <util::ModuleKind... KINDS>
-    class ExternalSourcesImpl {
-    public:
-        template <util::ModuleKind KIND>
-        using ProgramsSubmap = ArenaVector<ProgramAdapter<KIND> *>;
-        using TransitiveExternals = std::tuple<ProgramsSubmap<KINDS>...>;
+template <util::ModuleKind... KINDS>
+class ExternalDeclsImpl {
+public:
+    template <util::ModuleKind KIND>
+    using ProgramsSubmap = ArenaVector<ProgramAdapter<KIND> *>;
+    using TransitiveExternals = std::tuple<ProgramsSubmap<KINDS>...>;
 
-        explicit ExternalSourcesImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...) {}
+    explicit ExternalDeclsImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...) {}
 
-        template <typename SubmapT>
-        static constexpr auto GetModuleKindFromSubmapType()
-        {
-            using SubmapProgramT = std::remove_pointer_t<typename std::remove_reference_t<SubmapT>::value_type>;
-            return SubmapProgramT::MODULE_KIND;
-        }
+    template <typename SubmapT>
+    static constexpr auto GetModuleKindFromSubmapType()
+    {
+        using SubmapProgramT = std::remove_pointer_t<typename std::remove_reference_t<SubmapT>::value_type>;
+        return SubmapProgramT::MODULE_KIND;
+    }
 
-        bool Empty() const
-        {
-            bool emptyTransitive = (std::get<ProgramsSubmap<KINDS>>(transitiveExternals_).empty() && ...);
-            bool emptyDirect = direct_.empty();
-            return emptyTransitive && emptyDirect;
-        }
+    bool Empty() const
+    {
+        bool emptyTransitive = (std::get<ProgramsSubmap<KINDS>>(transitiveExternals_).empty() && ...);
+        bool emptyDirect = direct_.empty();
+        return emptyTransitive && emptyDirect;
+    }
 
-        template <util::ModuleKind KIND>
-        const auto &Get() const
-        {
-            return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
-        }
+    template <util::ModuleKind KIND>
+    const auto &Get() const
+    {
+        return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
+    }
 
-        template <util::ModuleKind KIND>
-        auto &Get()
-        {
-            return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
-        }
+    template <util::ModuleKind KIND>
+    auto &Get()
+    {
+        return std::get<ProgramsSubmap<KIND>>(transitiveExternals_);
+    }
 
-        template <typename ProgVisitor, util::ModuleKind SUBMAP_KIND>
-        static constexpr bool INVOCABLE = std::is_invocable_v<ProgVisitor, ProgramAdapter<SUBMAP_KIND> *>;
+    template <typename ProgVisitor, util::ModuleKind SUBMAP_KIND>
+    static constexpr bool INVOCABLE = std::is_invocable_v<ProgVisitor, ProgramAdapter<SUBMAP_KIND> *>;
 
-        // Visits submaps selected by the following constraints:
-        // - explicitly specified 'KINDS_TO_VISIT';
-        // - callback parameter type.
-        // NOTE(dkofanov): 'SHOULD_UNPACK_PACKAGE' should be removed when packages are merged.
-        template <bool SHOULD_UNPACK_PACKAGE = true, util::ModuleKind... KINDS_TO_VISIT, typename ProgramVisitor>
-        void Visit(const ProgramVisitor &cb)
-        {
-            static_assert(((INVOCABLE<ProgramVisitor, KINDS>) || ...),
-                          "Visitor isn't invocable for any kind of programs");
-            auto submapVisitor = [&cb](const auto &submap) {
-                // CC-OFFNXT(G.NAM.03-CPP) project codestyle
-                constexpr auto CUR_SUBMAP_KIND = GetModuleKindFromSubmapType<decltype(submap)>();
-                // NOTE(dkofanov): Packages are to be removed from common externals.
-                if constexpr (SHOULD_UNPACK_PACKAGE && (CUR_SUBMAP_KIND == util::ModuleKind::PACKAGE) &&
-                              std::is_invocable_v<ProgramVisitor, SourceProgram *>) {
-                    // "Unpack" package and iterate contents:
-                    for (auto *pkg : submap) {
-                        // As this is to be removed, do not handle variant with passing a key.
-                        pkg->MaybeIteratePackage(cb);
-                    }
-                    return;
+    // Visits submaps selected by the following constraints:
+    // - explicitly specified 'KINDS_TO_VISIT';
+    // - callback parameter type;
+    // - explicitly requested metadata-based programs to include
+    //     can be included either by 'WITH_METADATA_PROGRAMS' flag or by mention in 'KINDS_TO_VISIT'
+    // NOTE(dkofanov): 'SHOULD_UNPACK_PACKAGE' should be removed when packages are merged.
+    template <bool SHOULD_UNPACK_PACKAGE = true, bool WITH_METADATA_PROGRAMS = false,
+              util::ModuleKind... KINDS_TO_VISIT, typename ProgramVisitor>
+    void Visit(const ProgramVisitor &cb)
+    {
+        static_assert(((INVOCABLE<ProgramVisitor, KINDS>) || ...), "Visitor isn't invocable for any kind of programs");
+        auto submapVisitor = [&cb](const auto &submap) {
+            // CC-OFFNXT(G.NAM.03-CPP) project codestyle
+            constexpr auto CUR_SUBMAP_KIND = GetModuleKindFromSubmapType<decltype(submap)>();
+            // NOTE(dkofanov): Packages are to be removed from common externals.
+            if constexpr (SHOULD_UNPACK_PACKAGE && (CUR_SUBMAP_KIND == util::ModuleKind::PACKAGE) &&
+                          std::is_invocable_v<ProgramVisitor, SourceProgram *>) {
+                // "Unpack" package and iterate contents:
+                for (auto *pkg : submap) {
+                    // As this is to be removed, do not handle variant with passing a key.
+                    pkg->MaybeIteratePackage(cb);
                 }
+                return;
+            }
 
-                for (auto *prog : submap) {
-                    ES2PANDA_ASSERT(prog->GetModuleKind() == CUR_SUBMAP_KIND);
-                    if constexpr (INVOCABLE<ProgramVisitor, CUR_SUBMAP_KIND>) {
+            for (auto *prog : submap) {
+                ES2PANDA_ASSERT(prog->GetModuleKind() == CUR_SUBMAP_KIND);
+                if constexpr (INVOCABLE<ProgramVisitor, CUR_SUBMAP_KIND>) {
+                    // Invoke callback directly only if there are no metadata-based programs in the requested kinds,
+                    // or only metadata-based programs are being handled (it happens to load metadata itself)
+                    if constexpr (((sizeof...(KINDS_TO_VISIT) == 1) ||
+                                   ((KINDS_TO_VISIT != util::ModuleKind::METADATA_DECL) || ...)) &&
+                                  (sizeof...(KINDS_TO_VISIT) != 0)) {
+                        cb(prog);
+                        continue;
+                    }
+                    if (prog->IsMetadataLoadedIfApplicable()) {
                         cb(prog);
                     }
                 }
-            };
+            }
+        };
+        if constexpr (WITH_METADATA_PROGRAMS && ((KINDS_TO_VISIT != util::ModuleKind::METADATA_DECL) || ...)) {
+            VisitSubmaps<KINDS_TO_VISIT..., util::ModuleKind::METADATA_DECL>(submapVisitor);
+        } else {
             VisitSubmaps<KINDS_TO_VISIT...>(submapVisitor);
         }
+    }
 
-        // This shouldn't try insert package fractions to packages.
-        void Add(Program *progToInsert)
-        {
-            auto inserter = [progToInsert](auto &submap) {
-                // CC-OFFNXT(G.NAM.03-CPP) project code style
-                constexpr auto SUBMAP_KIND = GetModuleKindFromSubmapType<decltype(submap)>();
-                if (progToInsert->Is<SUBMAP_KIND>()) {
-                    submap.push_back(progToInsert->As<SUBMAP_KIND>());
-                }
-            };
+    void Add(Program *progToInsert);
 
-            VisitSubmaps(inserter);
+    auto &Direct()
+    {
+        return direct_;
+    }
+
+    const auto &Direct() const
+    {
+        return direct_;
+    }
+
+private:
+    template <util::ModuleKind... KINDS_TO_VISIT, typename SubmapVisitor>
+    void VisitSubmaps(SubmapVisitor &cb)
+    {
+        if constexpr (sizeof...(KINDS_TO_VISIT) == 0) {
+            ((cb(std::get<ProgramsSubmap<KINDS>>(transitiveExternals_))), ...);
+        } else {
+            ((cb(std::get<ProgramsSubmap<KINDS_TO_VISIT>>(transitiveExternals_))), ...);
         }
+    }
 
-        auto &Direct()
-        {
-            return direct_;
-        }
+private:
+    TransitiveExternals transitiveExternals_;
 
-        const auto &Direct() const
-        {
-            return direct_;
-        }
+    using DirectExternalPrograms = ArenaUnorderedMap<ArenaString, Program *>;
+    DirectExternalPrograms direct_;
 
-    private:
-        template <util::ModuleKind... KINDS_TO_VISIT, typename SubmapVisitor>
-        void VisitSubmaps(SubmapVisitor &cb)
-        {
-            if constexpr (sizeof...(KINDS_TO_VISIT) == 0) {
-                ((cb(std::get<ProgramsSubmap<KINDS>>(transitiveExternals_))), ...);
-            } else {
-                ((cb(std::get<ProgramsSubmap<KINDS_TO_VISIT>>(transitiveExternals_))), ...);
-            }
-        }
+    friend Program;
+};
 
-    private:
-        TransitiveExternals transitiveExternals_;
-
-        using DirectExternalPrograms = ArenaUnorderedMap<ArenaString, Program *>;
-        DirectExternalPrograms direct_;
-
-        friend Program;
-    };
-
+class Program : public RecordTableHolder {
 protected:
     Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, varbinder::VarBinder *varbinder);
     friend ArenaAllocator;
@@ -201,8 +204,8 @@ public:
 
     // NOTE(dkofanov): 'ModuleKind::PACKAGE' should be replaced from here and stored there implicitly. They should be
     // merged at 'PackageImplicitImport' phase and added as just a 'ModuleKind::MODULE' with a single AST-tree.
-    using ExternalSources = ExternalSourcesImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
-                                                ModuleKind::ETSCACHE_DECL>;
+    using ExternalDecls = ExternalDeclsImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
+                                            ModuleKind::ETSCACHE_DECL, ModuleKind::METADATA_DECL>;
 
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
@@ -306,14 +309,14 @@ public:
 
     void SetGlobalClass(ir::ClassDefinition *globalClass);
 
-    ExternalSources *GetExternalSources()
+    ExternalDecls *GetExternalDecls()
     {
-        return &externalSources_;
+        return &externalDecls_;
     }
 
-    const ExternalSources *GetExternalSources() const
+    const ExternalDecls *GetExternalDecls() const
     {
-        return &externalSources_;
+        return &externalDecls_;
     }
 
     // NOTE(dkofanov): this should be called exactly once. It is needed as soon as there is a special "main"-program and
@@ -399,6 +402,12 @@ public:
         return isASTlowered_;
     }
 
+    // Returns true if not applicable
+    bool IsMetadataLoadedIfApplicable() const
+    {
+        return !Is<ModuleKind::METADATA_DECL>() || ast_ != nullptr;
+    }
+
     void SetProgramModified(bool isModified)
     {
         isModified_ = isModified;
@@ -472,9 +481,9 @@ private:
         isASTlowered_ = false;
     }
 
-    void SetExternalSources(const ExternalSources *externalSources)
+    void SetExternalDecls(const ExternalDecls *externalDecls)
     {
-        externalSources_ = *externalSources;
+        externalDecls_ = *externalDecls;
     }
 
 private:
@@ -496,7 +505,7 @@ private:
 
     // NOTE(dkofanov): externalSources_ are stored only in main program. This field should be moved to
     // 'public_lib::Context'.
-    ExternalSources externalSources_;
+    ExternalDecls externalDecls_;
 
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;

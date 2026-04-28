@@ -11,8 +11,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+add_subdirectory(utils)
+
 ets2panda_add_gtest(es2panda_metadata_test
     CPP_SOURCES abc.cpp
     CPP_SOURCES import.cpp
     CPP_SOURCES serialization.cpp
 )
+
+panda_target_compile_definitions(es2panda_metadata_test PRIVATE TEST_DATA_PATH="${CMAKE_CURRENT_SOURCE_DIR}/testData/")
