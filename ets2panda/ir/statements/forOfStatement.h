@@ -136,9 +136,6 @@ protected:
     [[nodiscard]] checker::Type *CheckIteratorMethod(checker::ETSChecker *checker);
     [[nodiscard]] checker::Type *CheckIteratorMethodForObject(checker::ETSChecker *checker,
                                                               checker::ETSObjectType *sourceType);
-    static bool CheckReturnTypeOfIteratorMethod(checker::ETSChecker *checker, checker::ETSObjectType *sourceType,
-                                                checker::Signature *signature, const lexer::SourcePosition &position);
-    static bool CheckIteratorInterfaceForObject(checker::ETSChecker *checker, checker::ETSObjectType *obj);
 
 private:
     checker::Type *CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::ETSUnionType *exprType);

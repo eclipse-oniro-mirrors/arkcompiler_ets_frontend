@@ -367,80 +367,175 @@ static std::pair<util::StringView, util::StringView> GetObjectTypeDeclNames(ir::
     return {node->AsAnnotationDeclaration()->GetBaseName()->Name(), node->AsAnnotationDeclaration()->InternalName()};
 }
 
-// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic, big switch case
+static bool IsStdCoreBuiltin(ir::AstNode *declNode, std::string_view internalName)
+{
+    return GetObjectTypeDeclNames(declNode).second.Utf8() == internalName;
+}
+
+static ETSObjectType *CreateBuiltinObjectType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags,
+                                              ETSObjectFlags addFlags = ETSObjectFlags::NO_OPTS)
+{
+    return checker->CreateETSObjectType(declNode, flags | addFlags);
+}
+
+static Type *SetGlobalTypeIfAbsent(ETSChecker *checker, GlobalTypeId slotId, Type *type)
+{
+    auto &slot = checker->GetGlobalTypesHolder()->GlobalTypes()[helpers::ToUnderlying(slotId)];
+    if (slot == nullptr) {
+        slot = type;
+    }
+    return slot;
+}
+
+static ETSObjectType *InitializeObjectBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    auto *objectType = CreateBuiltinObjectType(checker, declNode, flags);
+    auto *objType = SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_OBJECT_BUILTIN, objectType)->AsETSObjectType();
+    auto null = checker->GlobalETSNullType();
+    auto undef = checker->GlobalETSUndefinedType();
+    SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_UNION_UNDEFINED_NULL_OBJECT,
+                          checker->CreateETSUnionType({objType, null, undef}));
+    SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_UNION_UNDEFINED_NULL, checker->CreateETSUnionType({null, undef}));
+    return objType;
+}
+
+static ETSObjectType *InitializeStringBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    auto *const allocator = checker->Allocator();
+    auto stringFlags = ETSObjectFlags::BUILTIN_STRING | ETSObjectFlags::STRING;
+    auto *stringType = CreateBuiltinObjectType(checker, declNode, flags, stringFlags);
+    auto *stringObj = SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_STRING_BUILTIN, stringType)->AsETSObjectType();
+    SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_STRING,
+                          allocator->New<ETSStringType>(allocator, stringObj, checker->Relation()));
+    return stringObj;
+}
+
+static ETSObjectType *InitializeBigIntBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    auto *bigIntType = CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_BIGINT);
+    auto *bigIntObj = SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_BIG_INT_BUILTIN, bigIntType)->AsETSObjectType();
+    SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_BIG_INT,
+                          checker->Allocator()->New<ETSBigIntType>(checker->Allocator(), bigIntObj));
+    return bigIntObj;
+}
+
+static ETSObjectType *InitializeArrayBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    if (declNode->AsClassDefinition()->InternalName().Utf8() != compiler::Signatures::STD_CORE_ARRAY) {
+        return checker->CreateETSObjectType(declNode, flags);
+    }
+
+    auto *arrayType = CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_ARRAY);
+    auto *arrayObj = SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_ARRAY_BUILTIN, arrayType)->AsETSObjectType();
+    SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_ARRAY,
+                          checker->Allocator()->New<ETSResizableArrayType>(checker->Allocator(), arrayObj));
+    return arrayObj;
+}
+
+static ETSObjectType *InitializeReadonlyArrayBuiltinType(ETSChecker *checker, ir::AstNode *declNode,
+                                                         ETSObjectFlags flags)
+{
+    if (declNode->IsClassDefinition() ||
+        declNode->AsTSInterfaceDeclaration()->InternalName().Utf8() != compiler::Signatures::STD_CORE_READONLYARRAY) {
+        return checker->CreateETSObjectType(declNode, flags);
+    }
+
+    auto *readonlyArrayType = CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_READONLY_ARRAY);
+    return SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_READONLY_ARRAY, readonlyArrayType)->AsETSObjectType();
+}
+
+static ETSObjectType *InitializeIterableBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    if (!declNode->IsTSInterfaceDeclaration() || !IsStdCoreBuiltin(declNode, "std.core.Iterable")) {
+        return checker->CreateETSObjectType(declNode, flags);
+    }
+
+    return SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_ITERABLE_BUILTIN,
+                                 CreateBuiltinObjectType(checker, declNode, flags))
+        ->AsETSObjectType();
+}
+
+static ETSObjectType *InitializeIteratorBuiltinType(ETSChecker *checker, ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    if (!declNode->IsTSInterfaceDeclaration() || !IsStdCoreBuiltin(declNode, "std.core.Iterator")) {
+        return checker->CreateETSObjectType(declNode, flags);
+    }
+
+    return SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_ITERATOR_BUILTIN,
+                                 CreateBuiltinObjectType(checker, declNode, flags))
+        ->AsETSObjectType();
+}
+
+static ETSObjectType *InitializeIteratorResultBuiltinType(ETSChecker *checker, ir::AstNode *declNode,
+                                                          ETSObjectFlags flags)
+{
+    if (!declNode->IsClassDefinition() || !IsStdCoreBuiltin(declNode, "std.core.IteratorResult")) {
+        return checker->CreateETSObjectType(declNode, flags);
+    }
+
+    return SetGlobalTypeIfAbsent(checker, GlobalTypeId::ETS_ITERATOR_RESULT_BUILTIN,
+                                 CreateBuiltinObjectType(checker, declNode, flags))
+        ->AsETSObjectType();
+}
+
+static ETSObjectType *InitializeComplexGlobalBuiltinObjectType(ETSChecker *checker, GlobalTypeId globalId,
+                                                               ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    switch (globalId) {
+        case GlobalTypeId::ETS_OBJECT_BUILTIN:
+            return InitializeObjectBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_STRING_BUILTIN:
+            return InitializeStringBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_BIG_INT_BUILTIN:
+            return InitializeBigIntBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_ARRAY_BUILTIN:
+            return InitializeArrayBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_READONLY_ARRAY:
+            return InitializeReadonlyArrayBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_ITERABLE_BUILTIN:
+            return InitializeIterableBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_ITERATOR_BUILTIN:
+            return InitializeIteratorBuiltinType(checker, declNode, flags);
+        case GlobalTypeId::ETS_ITERATOR_RESULT_BUILTIN:
+            return InitializeIteratorResultBuiltinType(checker, declNode, flags);
+        default:
+            return nullptr;
+    }
+}
+
+static ETSObjectType *InitializeSimpleGlobalBuiltinObjectType(ETSChecker *checker, GlobalTypeId globalId,
+                                                              ir::AstNode *declNode, ETSObjectFlags flags)
+{
+    switch (globalId) {
+        case GlobalTypeId::ETS_BOOLEAN_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_BOOLEAN);
+        case GlobalTypeId::ETS_BYTE_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_BYTE);
+        case GlobalTypeId::ETS_CHAR_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_CHAR);
+        case GlobalTypeId::ETS_SHORT_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_SHORT);
+        case GlobalTypeId::ETS_INT_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_INT);
+        case GlobalTypeId::ETS_LONG_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_LONG);
+        case GlobalTypeId::ETS_FLOAT_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_FLOAT);
+        case GlobalTypeId::ETS_DOUBLE_BUILTIN:
+            return CreateBuiltinObjectType(checker, declNode, flags, ETSObjectFlags::BUILTIN_DOUBLE);
+        default:
+            return CreateBuiltinObjectType(checker, declNode, flags);
+    }
+}
+
 static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, GlobalTypeId globalId,
                                                         ir::AstNode *declNode, ETSObjectFlags flags)
 {
-    auto const create = [checker, declNode, flags](ETSObjectFlags addFlags = ETSObjectFlags::NO_OPTS) {
-        return checker->CreateETSObjectType(declNode, flags | addFlags);
-    };
-
-    auto const setType = [checker](GlobalTypeId slotId, Type *type) {
-        auto &slot = checker->GetGlobalTypesHolder()->GlobalTypes()[helpers::ToUnderlying(slotId)];
-        if (slot == nullptr) {
-            slot = type;
-        }
-        return slot;
-    };
-
-    auto *const allocator = checker->Allocator();
-
-    switch (globalId) {
-        case GlobalTypeId::ETS_OBJECT_BUILTIN: {
-            auto *objType = setType(GlobalTypeId::ETS_OBJECT_BUILTIN, create())->AsETSObjectType();
-            auto null = checker->GlobalETSNullType();
-            auto undef = checker->GlobalETSUndefinedType();
-            setType(GlobalTypeId::ETS_UNION_UNDEFINED_NULL_OBJECT, checker->CreateETSUnionType({objType, null, undef}));
-            setType(GlobalTypeId::ETS_UNION_UNDEFINED_NULL, checker->CreateETSUnionType({null, undef}));
-            return objType;
-        }
-        case GlobalTypeId::ETS_STRING_BUILTIN: {
-            auto *stringObj = setType(GlobalTypeId::ETS_STRING_BUILTIN,
-                                      create(ETSObjectFlags::BUILTIN_STRING | ETSObjectFlags::STRING))
-                                  ->AsETSObjectType();
-            setType(GlobalTypeId::ETS_STRING, allocator->New<ETSStringType>(allocator, stringObj, checker->Relation()));
-            return stringObj;
-        }
-        case GlobalTypeId::ETS_BIG_INT_BUILTIN: {
-            auto *bigIntObj =
-                setType(GlobalTypeId::ETS_BIG_INT_BUILTIN, create(ETSObjectFlags::BUILTIN_BIGINT))->AsETSObjectType();
-            setType(GlobalTypeId::ETS_BIG_INT, allocator->New<ETSBigIntType>(allocator, bigIntObj));
-            return bigIntObj;
-        }
-        case GlobalTypeId::ETS_ARRAY_BUILTIN: {
-            if (declNode->AsClassDefinition()->InternalName().Utf8() != compiler::Signatures::STD_CORE_ARRAY) {
-                return checker->CreateETSObjectType(declNode, flags);
-            }
-            auto *arrayObj =
-                setType(GlobalTypeId::ETS_ARRAY_BUILTIN, create(ETSObjectFlags::BUILTIN_ARRAY))->AsETSObjectType();
-            setType(GlobalTypeId::ETS_ARRAY, allocator->New<ETSResizableArrayType>(allocator, arrayObj));
-            return arrayObj;
-        }
-        case GlobalTypeId::ETS_READONLY_ARRAY:
-            if (declNode->IsClassDefinition() || declNode->AsTSInterfaceDeclaration()->InternalName().Utf8() !=
-                                                     compiler::Signatures::STD_CORE_READONLYARRAY) {
-                return checker->CreateETSObjectType(declNode, flags);
-            }
-            return setType(globalId, create(ETSObjectFlags::BUILTIN_READONLY_ARRAY))->AsETSObjectType();
-        case GlobalTypeId::ETS_BOOLEAN_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_BOOLEAN);
-        case GlobalTypeId::ETS_BYTE_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_BYTE);
-        case GlobalTypeId::ETS_CHAR_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_CHAR);
-        case GlobalTypeId::ETS_SHORT_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_SHORT);
-        case GlobalTypeId::ETS_INT_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_INT);
-        case GlobalTypeId::ETS_LONG_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_LONG);
-        case GlobalTypeId::ETS_FLOAT_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_FLOAT);
-        case GlobalTypeId::ETS_DOUBLE_BUILTIN:
-            return create(ETSObjectFlags::BUILTIN_DOUBLE);
-        default:
-            return create();
+    auto *const complexType = InitializeComplexGlobalBuiltinObjectType(checker, globalId, declNode, flags);
+    if (complexType != nullptr) {
+        return complexType;
     }
+    return InitializeSimpleGlobalBuiltinObjectType(checker, globalId, declNode, flags);
 }
 
 ETSObjectType *ETSChecker::CreateETSObjectTypeOrBuiltin(ir::AstNode *declNode, ETSObjectFlags flags)

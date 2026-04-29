@@ -98,6 +98,9 @@ enum class GlobalTypeId : std::size_t {
     ETS_TYPES_BUILTIN,
     ETS_PROMISE_BUILTIN,
     ETS_FUNCTION_BUILTIN,
+    ETS_ITERABLE_BUILTIN,
+    ETS_ITERATOR_BUILTIN,
+    ETS_ITERATOR_RESULT_BUILTIN,
     ETS_REGEXP_BUILTIN,
     ETS_ARRAY_BUILTIN,
     ETS_BOX_BUILTIN,
@@ -303,6 +306,9 @@ public:
     Type *GlobalTypesBuiltinType();
     Type *GlobalPromiseBuiltinType();
     Type *GlobalFunctionBuiltinType();
+    Type *GlobalIterableBuiltinType();
+    Type *GlobalIteratorBuiltinType();
+    Type *GlobalIteratorResultBuiltinType();
     Type *GlobalBoxBuiltinType();
     Type *GlobalBooleanBoxBuiltinType();
     Type *GlobalByteBoxBuiltinType();

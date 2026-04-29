@@ -187,6 +187,9 @@ void GlobalTypesHolder::AddEtsSpecificBuiltinTypes()
     builtinNameMappings_.emplace("Types", GlobalTypeId::ETS_TYPES_BUILTIN);
     builtinNameMappings_.emplace("Promise", GlobalTypeId::ETS_PROMISE_BUILTIN);
     builtinNameMappings_.emplace("Function", GlobalTypeId::ETS_FUNCTION_BUILTIN);
+    builtinNameMappings_.emplace("Iterable", GlobalTypeId::ETS_ITERABLE_BUILTIN);
+    builtinNameMappings_.emplace("Iterator", GlobalTypeId::ETS_ITERATOR_BUILTIN);
+    builtinNameMappings_.emplace("IteratorResult", GlobalTypeId::ETS_ITERATOR_RESULT_BUILTIN);
     builtinNameMappings_.emplace("Box", GlobalTypeId::ETS_BOX_BUILTIN);
     builtinNameMappings_.emplace("BooleanBox", GlobalTypeId::ETS_BOOLEAN_BOX_BUILTIN);
     builtinNameMappings_.emplace("ByteBox", GlobalTypeId::ETS_BYTE_BOX_BUILTIN);
@@ -612,6 +615,21 @@ Type *GlobalTypesHolder::GlobalPromiseBuiltinType()
 Type *GlobalTypesHolder::GlobalFunctionBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_FUNCTION_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalIterableBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_ITERABLE_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalIteratorBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_ITERATOR_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalIteratorResultBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_ITERATOR_RESULT_BUILTIN));
 }
 
 Type *GlobalTypesHolder::GlobalRegExpBuiltinType()

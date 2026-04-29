@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
-let a1: Object|null|undefined = new Object
-
-function main() {
-    arktest.assertEQ([...a1, new Object].length, 2);
+function choose(useString: boolean): string | [string, string] {
+    let tuple: [string, string] = ["x", "y"]
+    return useString ? "xy" : tuple
 }
 
+function main(): void {
+    let source: string | [string, string] = choose(false)
+    let copied: string[] = [...source]
+}
 
-
-/* @@? 19:23 Error Semantic error ESE0049: The spread expression of type 'Object|null|undefined' must be of iterable or tuple type. */
+/* @@? 23:29 Error Semantic error ESE0049: The spread expression of type 'String|[String, String]' must be of iterable or tuple type. */

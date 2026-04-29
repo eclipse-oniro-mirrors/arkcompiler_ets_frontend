@@ -100,6 +100,8 @@ using MaybeDiagnosticInfo =
 using AstNodePtr = ir::AstNode *;
 using TypePtr = Type *;
 
+bool IsSignatureAccessible(Signature *sig, ETSObjectType *containingClass, TypeRelation *relation);
+
 class ETSChecker final : public Checker {
 public:
     explicit ETSChecker(ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
@@ -158,6 +160,9 @@ public:
     ETSObjectType *GlobalStringBuilderBuiltinType() const;
     ETSObjectType *GlobalBuiltinPromiseType() const;
     ETSObjectType *GlobalBuiltinFunctionType() const;
+    ETSObjectType *GlobalBuiltinIterableType() const;
+    ETSObjectType *GlobalBuiltinIteratorType() const;
+    ETSObjectType *GlobalBuiltinIteratorResultType() const;
     ETSObjectType *GlobalBuiltinBoxType(Type *contents);
 
     ETSObjectType *GlobalBuiltinFunctionType(size_t nargs, bool hasRest) const;
@@ -529,6 +534,12 @@ public:
     Type *GetNonConstantType(Type *type);
     checker::Type *GetElementTypeOfArray(checker::Type *type) const;
     const checker::Type *GetElementTypeOfArray(const checker::Type *type) const;
+    Type *GetElementTypeOfIteratorMethod(ETSObjectType *sourceType, const ir::Expression *expr, bool reportDiagnostics);
+    [[nodiscard]] bool HasStandardLibraryIterableInterface(ETSObjectType *type);
+    Type *NormalizeSpreadType(Type *type);
+    [[nodiscard]] bool IsValidSpreadType(Type *type);
+    [[nodiscard]] bool IsIterableSpreadType(Type *type);
+    Type *GetElementTypeOfSpreadType(Type *type);
     void ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir::Expression *expr);
     void CheckFunctionSignatureAnnotations(const ArenaVector<ir::Expression *> &params,
                                            ir::TSTypeParameterDeclaration *typeParams,

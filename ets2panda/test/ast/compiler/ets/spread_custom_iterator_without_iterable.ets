@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,20 @@
  * limitations under the License.
  */
 
-let a1: Object|null|undefined = new Object
-
-function main() {
-    arktest.assertEQ([...a1, new Object].length, 2);
+class IteratorLike implements Iterator<string> {
+    next(): IteratorResult<string> {
+        return new IteratorResult<string>()
+    }
 }
 
+class NotIterable {
+    $_iterator(): Iterator<string> {
+        return new IteratorLike()
+    }
+}
 
+function main(): void {
+    let copied: string[] = [...new NotIterable()]
+}
 
-/* @@? 19:23 Error Semantic error ESE0049: The spread expression of type 'Object|null|undefined' must be of iterable or tuple type. */
+/* @@? 29:29 Error Semantic error ESE0049: The spread expression of type 'NotIterable' must be of iterable or tuple type. */

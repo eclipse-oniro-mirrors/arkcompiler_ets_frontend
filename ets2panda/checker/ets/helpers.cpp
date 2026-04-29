@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <functional>
 #include <type_traits>
 #include <utility>
 #include "checker/ETSchecker.h"
@@ -25,11 +26,13 @@
 #include "checker/ets/typeRelationContext.h"
 #include "checker/ets/typeConverter.h"
 #include "checker/types/type.h"
-#include "evaluate/scopedDebugInfoPlugin.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
+#include "evaluate/scopedDebugInfoPlugin.h"
 #include "generated/diagnostic.h"
+#include "generated/signatures.h"
 #include "ir/astNode.h"
+#include "ir/statements/forOfStatement.h"
 #include "util/es2pandaMacros.h"
 #include "util/helpers.h"
 #include "util/nameMangler.h"
@@ -653,10 +656,8 @@ checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
             continue;
         }
 
-        if (elementNode->IsSpreadElement() &&
-            (elementType->IsETSArrayType() || elementType->IsETSResizableArrayType() ||
-             elementType->IsETSReadonlyArrayType())) {
-            elementType = GetElementTypeOfArray(elementType);
+        if (elementNode->IsSpreadElement()) {
+            elementType = GetElementTypeOfSpreadType(elementType);
         }
 
         elementTypes.emplace_back(elementType);
@@ -992,8 +993,8 @@ static void CheckRecordSpreadElement(ir::SpreadElement *spreadElement, ArenaVect
     }
     // Verify type parameters match
     auto spreadTypeArgs = spreadType->AsETSObjectType()->TypeArguments();
-    constexpr size_t EXPECTED_TYPE_ARGUMENTS_SIZE = 2;
-    if (spreadTypeArgs.size() != EXPECTED_TYPE_ARGUMENTS_SIZE) {
+    constexpr size_t expectedTypeArgumentsSize = 2;
+    if (spreadTypeArgs.size() != expectedTypeArgumentsSize) {
         checker->LogError(diagnostic::INVALID_RECORD_PROPERTY, start);
         return;
     }
@@ -2081,6 +2082,393 @@ const checker::Type *ETSChecker::GetElementTypeOfArray(const checker::Type *type
     return GetElementTypeOfArray(const_cast<Type *>(type));
 }
 
+Type *ETSChecker::NormalizeSpreadType(Type *type)
+{
+    while (type != nullptr && type->IsETSTypeAliasType()) {
+        type = GetNonConstantType(type->AsETSTypeAliasType()->GetTargetType());
+    }
+
+    return type == nullptr ? GlobalTypeError() : GetNonConstantType(type);
+}
+
+static PropertySearchFlags BuildIteratorMethodSearchFlags(ETSObjectType *sourceType)
+{
+    auto searchFlags = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::SEARCH_IN_BASE |
+                       PropertySearchFlags::SEARCH_IN_INTERFACES;
+    if (sourceType->HasTypeFlag(TypeFlag::GENERIC)) {
+        searchFlags |= PropertySearchFlags::SEARCH_ALL;
+    }
+    return searchFlags;
+}
+
+static bool IsSignatureVisibleFromCurrentContext(ETSChecker *checker, Signature *signature)
+{
+    if ((checker->Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
+        return true;
+    }
+
+    auto *const containingClass = checker->Context().ContainingClass();
+    if (containingClass == nullptr) {
+        return !signature->HasSignatureFlag(SignatureFlags::PRIVATE | SignatureFlags::PROTECTED);
+    }
+
+    return IsSignatureAccessible(signature, containingClass, checker->Relation());
+}
+
+static Signature *FindZeroArgSignature(ETSChecker *checker, ETSFunctionType *functionType)
+{
+    if (functionType == nullptr) {
+        return nullptr;
+    }
+
+    for (auto *const signature : functionType->CallSignatures()) {
+        if (signature->Params().empty() && IsSignatureVisibleFromCurrentContext(checker, signature)) {
+            return signature;
+        }
+    }
+
+    return nullptr;
+}
+
+static bool IsSameBuiltinObject(const ETSObjectType *type, ETSObjectType *builtin)
+{
+    return builtin != nullptr && type->GetConstOriginalBaseType() == builtin->GetOriginalBaseType();
+}
+
+static bool IsStandardLibraryIterableInterface(ETSChecker *checker, ETSObjectType *type)
+{
+    return type->IsInterface() && IsSameBuiltinObject(type, checker->GlobalBuiltinIterableType());
+}
+
+static bool IsStandardLibraryIteratorInterface(ETSChecker *checker, ETSObjectType *type)
+{
+    return type->IsInterface() && IsSameBuiltinObject(type, checker->GlobalBuiltinIteratorType());
+}
+
+static bool CheckIteratorInterfaceForObject(ETSChecker *checker, ETSObjectType *obj)
+{
+    if (IsStandardLibraryIteratorInterface(checker, obj)) {
+        return true;
+    }
+
+    for (auto *const it : obj->Interfaces()) {
+        if (CheckIteratorInterfaceForObject(checker, it)) {
+            return true;
+        }
+    }
+
+    return obj->SuperType() != nullptr && obj->SuperType()->IsETSObjectType() &&
+           CheckIteratorInterfaceForObject(checker, obj->SuperType()->AsETSObjectType());
+}
+
+bool ETSChecker::HasStandardLibraryIterableInterface(ETSObjectType *type)
+{
+    if (IsStandardLibraryIterableInterface(this, type)) {
+        return true;
+    }
+
+    for (auto *const it : type->Interfaces()) {
+        if (HasStandardLibraryIterableInterface(it)) {
+            return true;
+        }
+    }
+
+    return type->SuperType() != nullptr && type->SuperType()->IsETSObjectType() &&
+           HasStandardLibraryIterableInterface(type->SuperType()->AsETSObjectType());
+}
+
+static bool CheckReturnTypeOfIteratorMethod(ETSChecker *checker, ETSObjectType *sourceType, Signature *signature,
+                                            const lexer::SourcePosition &position, bool reportDiagnostics)
+{
+    if ((signature->ReturnType() == nullptr || signature->ReturnType()->IsETSUndefinedType()) &&
+        signature->Function()->HasBody() && signature->Function()->Body()->IsBlockStatement()) {
+        for (auto *const it : signature->Function()->Body()->AsBlockStatement()->Statements()) {
+            if (it->IsReturnStatement()) {
+                SavedCheckerContext savedContext(checker, CheckerStatus::IN_CLASS, sourceType);
+                it->AsReturnStatement()->Check(checker);
+                break;
+            }
+        }
+    }
+
+    if (signature->ReturnType() != nullptr && signature->ReturnType()->IsETSObjectType() &&
+        CheckIteratorInterfaceForObject(checker, signature->ReturnType()->AsETSObjectType())) {
+        return true;
+    }
+
+    if (reportDiagnostics) {
+        checker->LogError(diagnostic::ITERATOR_DOESNT_RETURN_ITERABLE, {}, position);
+    }
+    return false;
+}
+
+static Signature *GetIteratorMethodSignature(ETSChecker *checker, Type *methodType,
+                                             const lexer::SourcePosition &position, bool reportDiagnostics)
+{
+    auto *const methodFunctionType = methodType->AsETSFunctionType();
+    if (methodFunctionType == nullptr) {
+        if (reportDiagnostics) {
+            checker->LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
+        }
+        return nullptr;
+    }
+
+    auto *const signature = FindZeroArgSignature(checker, methodFunctionType);
+    if (signature == nullptr && reportDiagnostics) {
+        checker->LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
+    }
+    return signature;
+}
+
+static Type *GetIteratorResultElementType(ETSChecker *checker, Signature *signature, PropertySearchFlags searchFlags,
+                                          const lexer::SourcePosition &position, bool reportDiagnostics)
+{
+    auto *const returnType = signature->ReturnType();
+    if (returnType == nullptr || !returnType->IsETSObjectType()) {
+        if (reportDiagnostics) {
+            checker->LogError(diagnostic::ITERATOR_DOESNT_RETURN_ITERABLE, {}, position);
+        }
+        return checker->GlobalTypeError();
+    }
+
+    auto *const nextMethod = returnType->AsETSObjectType()->GetProperty(ir::ITERATOR_INTERFACE_METHOD, searchFlags);
+    if (nextMethod == nullptr || !nextMethod->HasFlag(varbinder::VariableFlags::METHOD)) {
+        if (reportDiagnostics) {
+            checker->LogError(diagnostic::ITERATOR_MISSING_NEXT, {}, position);
+        }
+        return checker->GlobalTypeError();
+    }
+
+    auto *const nextMethodType = checker->GetTypeOfVariable(nextMethod);
+    if (nextMethodType == nullptr || !nextMethodType->IsETSFunctionType()) {
+        return checker->GlobalTypeError();
+    }
+
+    auto const *const nextSignature = FindZeroArgSignature(checker, nextMethodType->AsETSFunctionType());
+    if (nextSignature != nullptr && nextSignature->ReturnType()->IsETSObjectType()) {
+        auto *const resultType = nextSignature->ReturnType()->AsETSObjectType();
+        if (IsSameBuiltinObject(resultType, checker->GlobalBuiltinIteratorResultType())) {
+            return resultType->TypeArguments()[0];
+        }
+    }
+
+    return checker->GlobalTypeError();
+}
+
+Type *ETSChecker::GetElementTypeOfIteratorMethod(ETSObjectType *sourceType, const ir::Expression *expr,
+                                                 bool reportDiagnostics)
+{
+    auto const position = expr != nullptr ? expr->Start() : lexer::SourcePosition {};
+    auto const searchFlags = BuildIteratorMethodSearchFlags(sourceType);
+
+    auto *const method = sourceType->GetProperty(compiler::Signatures::ITERATOR_METHOD, searchFlags);
+    if (method == nullptr || !method->HasFlag(varbinder::VariableFlags::METHOD)) {
+        if (reportDiagnostics) {
+            LogError(diagnostic::MISSING_ITERATOR_METHOD, {}, position);
+        }
+        return GlobalTypeError();
+    }
+
+    if (method->TsType() != nullptr && method->TsType()->IsETSFunctionType()) {
+        auto *const functionType = method->TsType()->AsETSFunctionType();
+        auto const &callSignatures = functionType->CallSignatures();
+        if (callSignatures.empty() || callSignatures[0] == nullptr || callSignatures[0]->Owner() == nullptr) {
+            if (reportDiagnostics) {
+                LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
+            }
+            return GlobalTypeError();
+        }
+        sourceType = callSignatures[0]->Owner();
+    }
+
+    auto *const methodType = GetTypeOfVariable(method);
+    if (methodType == nullptr || !methodType->IsETSFunctionType()) {
+        if (reportDiagnostics) {
+            LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
+        }
+        return GlobalTypeError();
+    }
+
+    auto *const signature = GetIteratorMethodSignature(this, methodType, position, reportDiagnostics);
+    if (signature == nullptr) {
+        return GlobalTypeError();
+    }
+
+    ES2PANDA_ASSERT(signature->Function() != nullptr);
+    if (!CheckReturnTypeOfIteratorMethod(this, sourceType, signature, position, reportDiagnostics)) {
+        return GlobalTypeError();
+    }
+
+    if (IsClassStaticMethod(sourceType, signature)) {
+        if (reportDiagnostics) {
+            LogError(diagnostic::PROP_IS_STATIC, {compiler::Signatures::ITERATOR_METHOD, sourceType->Name()}, position);
+        }
+        return GlobalTypeError();
+    }
+
+    return GetIteratorResultElementType(this, signature, searchFlags, position, reportDiagnostics);
+}
+
+class SpreadElementTypeCollector final {
+public:
+    static bool Collect(ETSChecker *checker, Type *type, std::vector<Type *> &elementTypes)
+    {
+        return Collect(checker, type, elementTypes, true);
+    }
+
+    static bool IsValid(ETSChecker *checker, Type *type)
+    {
+        return IsValid(checker, type, true);
+    }
+
+    static bool IsIterable(ETSChecker *checker, Type *type)
+    {
+        return IsValid(checker, type, false);
+    }
+
+private:
+    static bool IsValidUnion(ETSChecker *checker, ETSUnionType *unionType)
+    {
+        for (auto *const constituentType : unionType->ConstituentTypes()) {
+            auto *const normalizedConstituent = checker->NormalizeSpreadType(constituentType);
+            if (normalizedConstituent->IsETSTupleType() || !IsValid(checker, constituentType, false)) {
+                return false;
+            }
+        }
+
+        return !unionType->ConstituentTypes().empty();
+    }
+
+    static bool IsValid(ETSChecker *checker, Type *type, bool allowTuple)
+    {
+        type = checker->NormalizeSpreadType(type);
+        if (type->IsTypeError()) {
+            return false;
+        }
+
+        if (type->IsETSUnionType()) {
+            return IsValidUnion(checker, type->AsETSUnionType());
+        }
+
+        if (type->IsETSStringType() || util::Helpers::IsArrayType(type)) {
+            return true;
+        }
+
+        if (type->IsETSTupleType()) {
+            return allowTuple;
+        }
+
+        if (!type->IsETSObjectType()) {
+            return false;
+        }
+
+        if (!checker->HasStandardLibraryIterableInterface(type->AsETSObjectType())) {
+            return false;
+        }
+
+        auto *const iterableElementType =
+            checker->GetElementTypeOfIteratorMethod(type->AsETSObjectType(), nullptr, false);
+        return iterableElementType != nullptr && !iterableElementType->IsTypeError();
+    }
+
+    static bool CollectUnion(ETSChecker *checker, ETSUnionType *unionType, std::vector<Type *> &elementTypes)
+    {
+        auto const initialSize = elementTypes.size();
+        for (auto *const constituentType : unionType->ConstituentTypes()) {
+            auto *const normalizedConstituent = checker->NormalizeSpreadType(constituentType);
+            if (normalizedConstituent->IsETSTupleType()) {
+                elementTypes.resize(initialSize);
+                return false;
+            }
+
+            if (!Collect(checker, constituentType, elementTypes, false)) {
+                elementTypes.resize(initialSize);
+                return false;
+            }
+        }
+
+        return elementTypes.size() != initialSize;
+    }
+
+    static bool Collect(ETSChecker *checker, Type *type, std::vector<Type *> &elementTypes, bool allowTuple)
+    {
+        type = checker->NormalizeSpreadType(type);
+        if (type->IsTypeError()) {
+            return false;
+        }
+
+        if (type->IsETSUnionType()) {
+            return CollectUnion(checker, type->AsETSUnionType(), elementTypes);
+        }
+
+        if (type->IsETSStringType()) {
+            elementTypes.emplace_back(checker->GlobalBuiltinETSStringType());
+            return true;
+        }
+
+        if (type->IsETSTupleType()) {
+            if (!allowTuple) {
+                return false;
+            }
+            auto const &tupleTypes = type->AsETSTupleType()->GetTupleTypesList();
+            if (tupleTypes.empty()) {
+                elementTypes.emplace_back(checker->GlobalETSNeverType());
+                return true;
+            }
+            elementTypes.insert(elementTypes.end(), tupleTypes.begin(), tupleTypes.end());
+            return true;
+        }
+
+        if (util::Helpers::IsArrayType(type)) {
+            elementTypes.emplace_back(checker->GetElementTypeOfArray(type));
+            return true;
+        }
+
+        if (!type->IsETSObjectType()) {
+            return false;
+        }
+
+        if (!checker->HasStandardLibraryIterableInterface(type->AsETSObjectType())) {
+            return false;
+        }
+
+        auto *const iterableElementType =
+            checker->GetElementTypeOfIteratorMethod(type->AsETSObjectType(), nullptr, false);
+        if (iterableElementType != nullptr && !iterableElementType->IsTypeError()) {
+            elementTypes.emplace_back(iterableElementType);
+            return true;
+        }
+
+        return false;
+    }
+};
+
+bool ETSChecker::IsValidSpreadType(Type *type)
+{
+    return SpreadElementTypeCollector::IsValid(this, type);
+}
+
+bool ETSChecker::IsIterableSpreadType(Type *type)
+{
+    return SpreadElementTypeCollector::IsIterable(this, type);
+}
+
+Type *ETSChecker::GetElementTypeOfSpreadType(Type *type)
+{
+    std::vector<Type *> elementTypes;
+    if (!SpreadElementTypeCollector::Collect(this, type, elementTypes) || elementTypes.empty()) {
+        return GlobalTypeError();
+    }
+
+    if (elementTypes.size() == 1U) {
+        return elementTypes.front();
+    }
+
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *const unionType = CreateETSUnionType(std::move(elementTypes));
+    return GetNonConstantType(unionType->IsETSUnionType() ? unionType->AsETSUnionType()->NormalizedType() : unionType);
+}
+
 void ETSChecker::ConcatConstantString(util::UString &target, Type *type)
 {
     switch (ETSType(type)) {
@@ -2583,7 +2971,7 @@ bool ETSChecker::ValidateArrayTypeInitializerByElement(ir::ArrayExpression *node
             currentArrayElementType =
                 util::Helpers::CreateUnionOfTupleConstituentTypes(this, currentArrayElementType->AsETSTupleType());
         } else if (currentArrayElem->IsSpreadElement()) {
-            currentArrayElementType = GetElementTypeOfArray(currentArrayElementType);
+            currentArrayElementType = GetElementTypeOfSpreadType(currentArrayElementType);
         }
         auto assignCtx =
             AssignmentContext(Relation(), currentArrayElem, currentArrayElementType, GetElementTypeOfArray(target),

@@ -809,27 +809,64 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::Property *expr) const
     return checker->GlobalTypeError();
 }
 
+static ir::SpreadElement::ResolvedSpreadKind GetResolvedSpreadKind(ETSChecker *checker, Type *type)
+{
+    auto *const normalizedType = checker->NormalizeSpreadType(type);
+    if (normalizedType->IsTypeError()) {
+        return ir::SpreadElement::ResolvedSpreadKind::INVALID;
+    }
+
+    if (normalizedType->IsETSTupleType()) {
+        return ir::SpreadElement::ResolvedSpreadKind::TUPLE;
+    }
+
+    if (normalizedType->IsETSUnionType()) {
+        return ir::SpreadElement::ResolvedSpreadKind::ITERABLE;
+    }
+
+    if (normalizedType->IsETSStringType() || util::Helpers::IsArrayType(normalizedType)) {
+        return ir::SpreadElement::ResolvedSpreadKind::INDEXABLE;
+    }
+
+    return ir::SpreadElement::ResolvedSpreadKind::ITERABLE;
+}
+
+static void SetResolvedSpread(ETSChecker *checker, ir::SpreadElement *expr, Type *sourceType)
+{
+    auto const kind = GetResolvedSpreadKind(checker, sourceType);
+    auto *const elementType = kind == ir::SpreadElement::ResolvedSpreadKind::INVALID
+                                  ? checker->GlobalTypeError()
+                                  : checker->GetElementTypeOfSpreadType(sourceType);
+    expr->SetResolvedSpread(kind, sourceType, elementType);
+}
+
 checker::Type *ETSAnalyzer::Check(ir::SpreadElement *expr) const
 {
+    ETSChecker *checker = GetETSChecker();
     if (expr->TsType() != nullptr) {
+        if (expr->GetResolvedSpreadKind() == ir::SpreadElement::ResolvedSpreadKind::INVALID &&
+            checker->IsValidSpreadType(expr->TsType())) {
+            SetResolvedSpread(checker, expr, expr->TsType());
+        }
         return expr->TsType();
     }
 
-    ETSChecker *checker = GetETSChecker();
     if (expr->PreferredType() != nullptr) {
         expr->Argument()->SetPreferredType(expr->PreferredType());
     }
 
     auto const exprType = expr->Argument()->Check(checker);
-    if (!exprType->IsETSResizableArrayType() && !exprType->IsETSArrayType() && !exprType->IsETSTupleType() &&
-        !exprType->IsETSReadonlyArrayType()) {
+    if (!checker->IsValidSpreadType(exprType)) {
         if (!exprType->IsTypeError()) {
             // Don't duplicate error messages for the same error
             checker->LogError(diagnostic::SPREAD_OF_INVALID_TYPE, {exprType}, expr->Start());
         }
+        expr->SetResolvedSpread(ir::SpreadElement::ResolvedSpreadKind::INVALID, checker->GlobalTypeError(),
+                                checker->GlobalTypeError());
         return checker->InvalidateType(expr);
     }
 
+    SetResolvedSpread(checker, expr, exprType);
     return expr->SetTsType(exprType);
 }
 
@@ -1236,11 +1273,8 @@ static void AddSpreadElementTypes(ETSChecker *checker, ir::SpreadElement *const 
         for (Type *type : spreadArgumentType->AsETSTupleType()->GetTupleTypesList()) {
             elementTypes.emplace_back(type, element);
         }
-    } else if (spreadArgumentType->IsETSArrayType()) {
-        elementTypes.emplace_back(spreadArgumentType->AsETSArrayType()->ElementType(), element);
     } else {
-        ES2PANDA_ASSERT(spreadArgumentType->IsETSResizableArrayType() || spreadArgumentType->IsETSReadonlyArrayType());
-        elementTypes.emplace_back(spreadArgumentType->AsETSObjectType()->TypeArguments().front(), element);
+        elementTypes.emplace_back(checker->GetElementTypeOfSpreadType(spreadArgumentType), element);
     }
 }
 
@@ -1355,9 +1389,8 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
             continue;
         }
 
-        if (element->IsSpreadElement() && (elementType->IsETSArrayType() || elementType->IsETSResizableArrayType() ||
-                                           elementType->IsETSReadonlyArrayType())) {
-            elementType = checker->GetElementTypeOfArray(elementType);
+        if (element->IsSpreadElement()) {
+            elementType = checker->GetElementTypeOfSpreadType(elementType);
         }
 
         arrayExpressionElementTypes.emplace_back(elementType);
