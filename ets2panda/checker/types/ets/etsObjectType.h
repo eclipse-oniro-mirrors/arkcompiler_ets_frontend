@@ -514,7 +514,11 @@ private:
     void SubstitutePartialTypes(TypeRelation *relation, Type *other);
     void IsGenericSupertypeOf(TypeRelation *relation, ETSObjectType *source);
 
+    varbinder::LocalVariable *SearchBaseFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
+    varbinder::LocalVariable *SearchInterfacesProperty(util::StringView name, PropertySearchFlags flags) const;
+    varbinder::LocalVariable *SearchMethods(util::StringView name, PropertySearchFlags flags) const;
+    varbinder::LocalVariable *SearchOwnMethod(util::StringView name, PropertySearchFlags flags) const;
 
     void SetCopiedTypeProperties(TypeRelation *const relation, ETSObjectType *const copiedType,
                                  std::vector<Type *> &&newTypeArgs, ETSObjectType *base);

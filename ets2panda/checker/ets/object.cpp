@@ -3125,6 +3125,26 @@ static ResolvedKind DecideResolvedKind(Type *typeOfGlobalFunctionVar)
     return ResolvedKind::EXTENSION_FUNCTION;
 }
 
+static varbinder::LocalVariable *PreferPartialInheritedField(ETSChecker *checker, ETSObjectType *target,
+                                                             util::StringView searchName,
+                                                             PropertySearchFlags searchFlag)
+{
+    auto *prop = target->GetProperty(searchName, searchFlag);
+    if (prop == nullptr || !target->IsPartial() || !target->GetDeclNode()->IsClassDefinition() ||
+        !checker->IsVariableGetterSetter(prop) || (searchFlag & PropertySearchFlags::SEARCH_FIELD) == 0) {
+        return prop;
+    }
+
+    constexpr auto PARTIAL_FIELD_FLAGS =
+        PropertySearchFlags::SEARCH_FIELD | PropertySearchFlags::SEARCH_DECL | PropertySearchFlags::SEARCH_IN_BASE;
+    auto *fieldProp = target->GetProperty(searchName, PARTIAL_FIELD_FLAGS);
+    if (fieldProp != nullptr && !checker->IsVariableGetterSetter(fieldProp)) {
+        return fieldProp;
+    }
+
+    return prop;
+}
+
 void ETSChecker::CheckAnnotationReference(const ir::MemberExpression *memberExpr, const varbinder::LocalVariable *prop)
 {
     // Note: there might be a better way to handle annotations
@@ -3165,7 +3185,7 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
         searchFlag |= PropertySearchFlags::SEARCH_INSTANCE;
     }
     auto searchName = target->GetReExportAliasValue(memberExpr->Property()->AsIdentifier()->Name());
-    auto *prop = target->GetProperty(searchName, searchFlag);
+    auto *prop = PreferPartialInheritedField(this, target, searchName, searchFlag);
 
     CheckAnnotationReference(memberExpr, prop);
 

@@ -58,6 +58,22 @@ static bool InvalidBaseTypeOfRequiredPartialAndReadonly(Type *type, const std::s
     return false;
 }
 
+static bool HasUnresolvedRecursiveAlias(const Type *type)
+{
+    bool hasUnresolvedRecursiveAlias = false;
+
+    type->IterateRecursivelyPreorder([&hasUnresolvedRecursiveAlias](const Type *child) {
+        if (hasUnresolvedRecursiveAlias || child == nullptr || !child->IsETSTypeAliasType()) {
+            return;
+        }
+
+        auto *aliasType = const_cast<ETSTypeAliasType *>(child->AsETSTypeAliasType());
+        hasUnresolvedRecursiveAlias = aliasType->IsRecursive() && aliasType->GetTargetType() == nullptr;
+    });
+
+    return hasUnresolvedRecursiveAlias;
+}
+
 Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstantiation *const typeParams,
                                                  const ir::Identifier *const ident)
 {
@@ -75,6 +91,11 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
 
     if (baseType->IsTypeError()) {
         return baseType;
+    }
+
+    if (utilityType == compiler::Signatures::AWAITED_TYPE_NAME && HasUnresolvedRecursiveAlias(baseType)) {
+        LogError(diagnostic::CYCLIC_ALIAS, {}, typeParams->Start());
+        return GlobalTypeError();
     }
 
     if ((utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
@@ -285,6 +306,21 @@ static std::pair<util::StringView, util::StringView> GetPartialClassName(ETSChec
     auto internalName = typeNode->IsClassDefinition() ? typeNode->AsClassDefinition()->InternalName()
                                                       : typeNode->AsTSInterfaceDeclaration()->InternalName();
     return {addSuffix(declIdent->Name()), addSuffix(internalName)};
+}
+
+static bool HasInterfaceInHierarchy(const ETSObjectType *type, const ETSObjectType *interfaceType)
+{
+    if (type == nullptr || interfaceType == nullptr) {
+        return false;
+    }
+
+    for (auto *existingInterface : type->Interfaces()) {
+        if (existingInterface->GetOriginalBaseType() == interfaceType->GetOriginalBaseType()) {
+            return true;
+        }
+    }
+
+    return HasInterfaceInHierarchy(type->SuperType(), interfaceType);
 }
 
 static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassProgram(
@@ -1140,9 +1176,14 @@ Type *ETSChecker::CreatePartialTypeClassDef(ir::ClassDefinition *const partialCl
     // Run checker
     auto *const partialType = partialClassDef->Check(this)->AsETSObjectType();
     partialType->SetBaseType(typeToBePartial);
+    auto *partialSuperType = partialSuper->AsETSObjectType();
     for (auto *interface : typeToBePartial->Interfaces()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        partialType->AddInterface(CreatePartialType(interface)->AsETSObjectType());
+        auto *partialInterface = CreatePartialType(interface)->AsETSObjectType();
+        if (HasInterfaceInHierarchy(partialSuperType, partialInterface)) {
+            continue;
+        }
+        partialType->AddInterface(partialInterface);
     }
 
     if (IsTypeIdenticalTo(partialSuper, partialType)) {
