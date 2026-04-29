@@ -3020,6 +3020,17 @@ static Type *HandleNonMethodAndCallSite(ETSChecker *checker, ir::Expression *use
         if (parent->IsOverloadDeclaration()) {
             return type;
         }
+        if (parent->IsAssignmentExpression() && parent->AsAssignmentExpression()->Left() == expr) {
+            return type;
+        }
+    }
+
+    ES2PANDA_ASSERT(type->IsETSMethodType());
+    const auto *funcType = type->AsETSFunctionType();
+    for (auto *sig : funcType->CallSignatures()) {
+        if (sig->Function() != nullptr && sig->Function()->IsGetter()) {
+            return sig->ReturnType();
+        }
     }
 
     return nullptr;

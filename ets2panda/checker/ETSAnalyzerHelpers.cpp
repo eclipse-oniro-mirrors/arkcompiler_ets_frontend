@@ -391,7 +391,13 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
         // function call.
         auto *memberExpr = expr->Callee()->AsMemberExpression();
         expr->Arguments().insert(expr->Arguments().begin(), memberExpr->Object());
-        auto *signature = checker->FirstMatchSignatures(signatures, expr);
+        ArenaVector<Signature *> extSignatures(checker->ProgramAllocator()->Adapter());
+        for (auto *sig : signatures) {
+            if (sig->HasSignatureFlag(checker::SignatureFlags::EXTENSION_FUNCTION)) {
+                extSignatures.push_back(sig);
+            }
+        }
+        auto *signature = checker->FirstMatchSignatures(extSignatures, expr);
         if (signature == nullptr) {
             expr->Arguments().erase(expr->Arguments().begin());
             return nullptr;

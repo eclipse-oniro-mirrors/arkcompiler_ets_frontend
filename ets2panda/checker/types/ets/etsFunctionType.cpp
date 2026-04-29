@@ -162,6 +162,9 @@ void ETSFunctionType::AddCallSignature(Signature *signature)
     } else if (signature->Function()->IsSetter()) {
         AddTypeFlag(TypeFlag::SETTER);
     }
+
+    hasExtensionSignatures_ |= signature->IsExtensionFunction() || signature->IsExtensionAccessor();
+    hasExtensionAccessorSignatures_ |= signature->IsExtensionAccessor();
     callSignatures_.push_back(signature);
 }
 
