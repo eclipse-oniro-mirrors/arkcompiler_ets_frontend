@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
+#include <algorithm>
+
 #include "ETSAnalyzerHelpers.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/typeError.h"
 #include "util/diagnostic.h"
 
@@ -288,7 +289,8 @@ void DoBodyTypeChecking(ETSChecker *checker, ir::MethodDefinition *node, ir::Scr
          */
         if (scriptFunc->IsAsyncImplFunc()) {
             const auto oldReturnType = scriptFunc->Signature()->ReturnType();
-            const auto newReturnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(oldReturnType);
+            const auto newReturnType =
+                checker->CreateETSUnionType({checker->CreatePromiseOf(oldReturnType), oldReturnType});
             scriptFunc->Signature()->SetReturnType(newReturnType);
         }
 
@@ -633,12 +635,12 @@ checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir:
     return checker->GetNonConstantType(iterType);
 }
 
-bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, ir::ScriptFunction *containingFunc,
-                           ir::ReturnStatement *st)
+void CheckMainFunctionReturnType(checker::Type *funcReturnType, ETSChecker *checker, ir::ScriptFunction *containingFunc,
+                                 ir::ReturnStatement *st)
 {
     const auto name = containingFunc->Scope()->InternalName().Mutf8();
     if (name.find(compiler::Signatures::ETS_MAIN_WITH_MANGLE_BEGIN) == std::string::npos) {
-        return true;
+        return;
     }
 
     if (!containingFunc->IsDeclaredAsync()) {
@@ -646,82 +648,94 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, i
             !checker->Relation()->IsSupertypeOf(checker->GlobalIntBuiltinType(), funcReturnType)) {
             checker->LogError(diagnostic::MAIN_BAD_RETURN, {}, st->Start());
         }
+        return;
+    }
+
+    if (!checker->IsPromiseType(funcReturnType) || !funcReturnType->IsETSObjectType()) {
+        checker->LogError(diagnostic::ASYNC_MAIN_BAD_RETURN, {}, st->Start());
+        return;
+    }
+
+    const auto rType = checker->PromiseTypeArg(funcReturnType->AsETSObjectType());
+    if (!checker->Relation()->IsSupertypeOf(checker->GlobalETSUndefinedType(), rType) &&
+        !checker->Relation()->IsSupertypeOf(checker->GlobalIntBuiltinType(), rType)) {
+        checker->LogError(diagnostic::ASYNC_MAIN_BAD_RETURN, {}, st->Start());
+        return;
+    }
+}
+
+static bool CheckReturnTypeAssignability(ETSChecker *checker, checker::Type *funcReturnType,
+                                         checker::Type *argumentType, ir::Expression *stArgument)
+{
+    if (checker::AssignmentContext(checker->Relation(), stArgument, argumentType, funcReturnType, stArgument->Start(),
+                                   std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN)
+            // CC-OFFNXT(G.FMT.02) project code style
+            .IsAssignable()) {
         return true;
     }
 
-    [[maybe_unused]] auto promiseAnyType = checker->CreatePromiseOf(checker->GlobalETSAnyType());
-    ES2PANDA_ASSERT(checker->Relation()->IsSupertypeOf(promiseAnyType, funcReturnType) ||
-                    funcReturnType->IsETSAsyncFuncReturnType());
-
-    // NOTE(FE team): will be fixed after #34227
-    auto asyncRetType = funcReturnType->IsETSAsyncFuncReturnType()
-                            ? funcReturnType->AsETSAsyncFuncReturnType()->PromiseType()
-                            : funcReturnType;
-    auto promiseIntType = checker->CreatePromiseOf(checker->GlobalIntBuiltinType());
-    auto promiseUndefinedType = checker->CreatePromiseOf(checker->GlobalETSUndefinedType());
-    if (!checker->Relation()->IsSupertypeOf(promiseUndefinedType, asyncRetType) &&
-        !checker->Relation()->IsSupertypeOf(promiseIntType, asyncRetType)) {
-        checker->LogError(diagnostic::ASYNC_MAIN_BAD_RETURN, {}, st->Start());
-    }
-    return true;
-}
-
-static bool CheckAsyncReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
-                                 ir::Expression *stArgument)
-{
-    auto const checkPromiseType = [checker, argumentType, stArgument](checker::Type *type) -> bool {
-        if (type->IsETSObjectType() && checker->IsPromiseType(type->AsETSObjectType())) {
-            auto promiseArg = type->AsETSObjectType()->TypeArguments()[0];
-            checker::AssignmentContext(checker->Relation(), stArgument, argumentType, promiseArg, stArgument->Start(),
-                                       std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN);
-            if (checker->Relation()->IsTrue()) {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    if (funcReturnType->IsETSObjectType()) {
-        if (checkPromiseType(funcReturnType)) {
+    // InterfaceMethodObjectLiteralLowering replaces the literal TsType with a synthetic class before lambda
+    // conversion; DIRECT_RETURN assignability still uses a relation that rejects that class vs the interface even
+    // though the class implements it. Accept when the synthetic class is known to implement the declared return
+    // interface.
+    if (argumentType->IsETSObjectType() && funcReturnType->IsETSObjectType()) {
+        auto *argObj = argumentType->AsETSObjectType();
+        auto *retObj = funcReturnType->AsETSObjectType();
+        if (IsIfaceMethodLiteralSyntheticClass(argObj) &&
+            SyntheticIfaceLiteralImplementsReturnInterface(checker, argObj, retObj)) {
             return true;
         }
-    } else if (funcReturnType->IsETSUnionType()) {
-        for (auto *type : funcReturnType->AsETSUnionType()->ConstituentTypes()) {
-            if (checkPromiseType(type)) {
-                return true;
-            }
-        }
     }
+
     return false;
 }
 
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc)
 {
-    if (containingFunc->IsDeclaredAsync() && CheckAsyncReturnType(checker, funcReturnType, argumentType, stArgument)) {
-        return true;
-    }
-
-    if (!checker::AssignmentContext(checker->Relation(), stArgument, argumentType, funcReturnType, stArgument->Start(),
-                                    std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN)
-             // CC-OFFNXT(G.FMT.02) project code style
-             .IsAssignable()) {
-        // InterfaceMethodObjectLiteralLowering replaces the literal TsType with a synthetic class before lambda
-        // conversion; DIRECT_RETURN assignability still uses a relation that rejects that class vs the interface even
-        // though the class implements it. Accept when the synthetic class is known to implement the declared return
-        // interface.
-        if (argumentType->IsETSObjectType() && funcReturnType->IsETSObjectType()) {
-            auto *argObj = argumentType->AsETSObjectType();
-            auto *retObj = funcReturnType->AsETSObjectType();
-            if (IsIfaceMethodLiteralSyntheticClass(argObj) &&
-                SyntheticIfaceLiteralImplementsReturnInterface(checker, argObj, retObj)) {
+    // NOTE(knazarov): if false, funcReturnType is either invalid or under inference;
+    // In first case, CTE will be thrown down the line;
+    // In second case, no action is needed;
+    if (containingFunc->IsAsyncFunc() && checker->IsPromiseType(funcReturnType)) {
+        ES2PANDA_ASSERT(funcReturnType->IsETSObjectType() || funcReturnType->IsETSUnionType());
+        if (funcReturnType->IsETSObjectType()) {
+            if (CheckReturnTypeAssignability(checker, checker->PromiseTypeArg(funcReturnType->AsETSObjectType()),
+                                             argumentType, stArgument)) {
+                return true;
+            }
+        } else {
+            /**
+             * NOTE(knazarov): Since PREFERRED return type can be union (Promise<T1> | Promise<T2> <: Promise<Any>), we
+             * should separately try and match the return statement arg to it's constituent types;
+             * We do not match argumentType against Promise<T1 | T2>, since according to spec, such argumentType would
+             * be invalid for preferred type Promise<T1> | Promise<T2> (actual return type can only be
+             * Promise<T> <: Promise<T1> | Promise<T2>):
+             * 16.3.1: An asynchronous function with the return type Promise<T> can explicitly return a Promise<T>
+             * instance (in this case, the returned value is returned “as is”) or a value of type T;
+             */
+            // Check that we are indeed checking against PREFERRED return type; Otherwise, an error should have been
+            // thrown before;
+            ES2PANDA_ASSERT(containingFunc->ReturnTypeAnnotation() == nullptr);
+            ES2PANDA_ASSERT(funcReturnType == containingFunc->GetPreferredReturnType());
+            const auto constituentTypes = funcReturnType->AsETSUnionType()->ConstituentTypes();
+            const auto isReturnTypeAssignable = [checker, argumentType, stArgument](checker::Type *t) {
+                ES2PANDA_ASSERT(checker->IsPromiseType(t));
+                ES2PANDA_ASSERT(t->IsETSObjectType());
+                return CheckReturnTypeAssignability(checker, checker->PromiseTypeArg(t->AsETSObjectType()),
+                                                    argumentType, stArgument);
+            };
+            if (std::any_of(constituentTypes.begin(), constituentTypes.end(), isReturnTypeAssignable)) {
                 return true;
             }
         }
-        checker->LogError(diagnostic::ARROW_TYPE_MISMATCH, {argumentType, funcReturnType}, stArgument->Start());
-        return false;
     }
-    return true;
+
+    if (CheckReturnTypeAssignability(checker, funcReturnType, argumentType, stArgument)) {
+        return true;
+    }
+
+    checker->LogError(diagnostic::ARROW_TYPE_MISMATCH, {argumentType, funcReturnType}, stArgument->Start());
+    return false;
 }
 
 bool HasSingleReturnStatement(const ir::AstNode *node)
@@ -746,14 +760,14 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
         stArgument ? checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)))
                    : checker->GlobalETSUndefinedType();
     /**
-     * Spec 15.7.2 If a function, a method, or a lambda is async (see Asynchronous execution), a return
-     * type is inferred by applying the above rules, and the return type T is not Promise, then the
-     * return type is assumed to be Promise<T>.
+     * 15.7.2: If a function, a method, or a lambda is async, a return type is inferred by applying the above rules, and
+     * if the return type T is not Promise, then the return type is assumed to be Promise<T>;
      */
-    const auto funcReturnType = containingFunc->IsAsyncFunc() && !checker->IsPromiseType(baseFuncReturnType)
-                                    ? checker->CreatePromiseOf(baseFuncReturnType)
+    // NOTE(knazarov): Already implemented as `... and the return type is assumed to be Promise<Awaited<T>>` here, need
+    // to consult with the spec before merge;
+    const auto funcReturnType = containingFunc->IsAsyncFunc()
+                                    ? checker->CreatePromiseOf(checker->UnwrapPromiseType(baseFuncReturnType))
                                     : baseFuncReturnType;
-
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
 
     ES2PANDA_ASSERT(funcReturnType != nullptr);
@@ -800,10 +814,17 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 {
     const auto funcReturnType = containingFunc->Signature()->ReturnType();
 
+    checker::Type *argumentType = nullptr;
     if (stArgument == nullptr) {
-        if (!funcReturnType->IsETSUndefinedType()) {
-            return funcReturnType;
-        }
+        // Assert that we did not deduce the type as `never` beforehand;
+        ES2PANDA_ASSERT(
+            !(containingFunc->IsDeclaredAsync() && checker->UnwrapPromiseType(funcReturnType)->IsETSNeverType()) &&
+            !(!containingFunc->IsDeclaredAsync() && funcReturnType->IsETSNeverType()));
+        /**
+         * 15.7.2: If at least one of return statements has no expression, then type undefined is added to the return
+         * type union.
+         */
+        argumentType = checker->GlobalETSUndefinedType();
     } else {
         if (stArgument->IsObjectExpression()) {
             stArgument->AsObjectExpression()->SetPreferredType(funcReturnType);
@@ -813,23 +834,29 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
             checker->SetArrayPreferredTypeForNestedMemberExpressions(stArgument->AsMemberExpression(), funcReturnType);
         }
 
-        checker::Type *argumentType = checker->GetNonConstantType(stArgument->Check(checker));
-
-        ES2PANDA_ASSERT(argumentType != nullptr);
-        if (!CheckArgumentVoidType(funcReturnType, checker, containingFunc, st)) {
-            return funcReturnType;
-        }
-
-        auto *const relation = checker->Relation();
-        relation->SetNode(stArgument);
-
-        if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
-            checker->ResolveReturnStatement(containingFunc, argumentType, st);
-        }
-
-        relation->SetNode(nullptr);
-        relation->SetFlags(checker::TypeRelationFlag::NONE);
+        argumentType = checker->GetNonConstantType(stArgument->Check(checker));
     }
+
+    CheckMainFunctionReturnType(funcReturnType, checker, containingFunc, st);
+    ES2PANDA_ASSERT(argumentType != nullptr);
+
+    auto *const relation = checker->Relation();
+
+    /*
+     * 15.7.2: If there are k return statements (where k is 1 or more) with the identical type (see Type Identity)
+     * expression R, then R is the return type;
+     */
+    if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
+        /*
+         * 15.7.2: If there are k return statements (where k is 2 or more) with expressions of types T1, ..., Tk,
+         * then R is the union type of these types (T1 | ... | Tk), and its normalized version is the return type.
+         * If at least one of return statements has no expression, then type undefined is added to the return type
+         * union;
+         */
+        checker->ResolveReturnStatement(containingFunc, argumentType, st);
+    }
+
+    relation->SetFlags(checker::TypeRelationFlag::NONE);
 
     return containingFunc->Signature()->ReturnType();
 }

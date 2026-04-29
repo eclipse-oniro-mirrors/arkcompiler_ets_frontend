@@ -260,9 +260,6 @@ auto GetFinalizerReturnState(ETSGen *etsg, const ir::Statement *statement) -> Fi
     }
 
     state.returnStmt = statement->AsReturnStatement();
-    if (state.returnType->IsETSAsyncFuncReturnType()) {
-        state.returnType = state.returnStmt->ReturnType();
-    }
     state.isReturnVoid = state.returnType->IsETSVoidType();
 
     return state;

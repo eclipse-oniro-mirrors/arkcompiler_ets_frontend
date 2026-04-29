@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,24 @@
  * limitations under the License.
  */
 
-async function foo(): Promise<Object> {
-    let obj: Object = /* @@ label */await null;
-    return /* @@ label1 */null;
+async function main(): Promise<void> {
+    const lam1 = async () : Promise<int> => {
+        return Promise.resolve(1)
+            .then((val: int) => val * 2)
+            .then(async (val: int) => {
+                const d = await Promise.resolve(val * 2)
+                return d
+            })
+    }
+
+    const lam2 = async () : Promise<int> => {
+        return Promise.resolve(1)
+            .then((val: int) => val * 2)
+            .then(async (val: int) => {
+                return val * 2
+            })
+    }
+
+    arktest.assertEQ(await lam1(), 4)
+    arktest.assertEQ(await lam2(), 4)
 }
-
-
-/* @@@ label Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Object' */
-/* @@@ label1 Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object>' */

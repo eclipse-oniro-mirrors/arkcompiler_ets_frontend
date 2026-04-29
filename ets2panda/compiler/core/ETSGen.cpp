@@ -54,7 +54,6 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsTupleType.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "parser/program/program.h"
 #include "checker/types/globalTypesHolder.h"
 #include "public/public.h"
@@ -769,11 +768,6 @@ VReg ETSGen::GetThisReg() const
 
 const checker::Type *ETSGen::LoadDefaultValue(const ir::AstNode *node, const checker::Type *type)
 {
-    if (type->IsETSAsyncFuncReturnType()) {
-        LoadDefaultValue(node, type->AsETSAsyncFuncReturnType()->GetPromiseTypeArg());
-        return type;
-    }
-
     auto const checker = const_cast<checker::ETSChecker *>(Checker());
 
     if (type->IsETSReferenceType()) {

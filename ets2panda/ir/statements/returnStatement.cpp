@@ -77,21 +77,22 @@ checker::VerifiedType ReturnStatement::Check(checker::ETSChecker *checker)
 void ReturnStatement::SetReturnType(checker::ETSChecker *checker, checker::Type *type)
 {
     returnType_ = type;
-    if (argument_ != nullptr) {
-        checker::Type *argumentType = argument_->Check(checker);
-        if (type->IsETSReferenceType() && !argumentType->IsETSReferenceType()) {
-            auto *const relation = checker->Relation();
-            relation->SetNode(argument_);
-            relation->SetFlags(checker::TypeRelationFlag::NONE);
+    if (argument_ == nullptr) {
+        return;
+    }
+    checker::Type *argumentType = argument_->Check(checker);
+    if (type->IsETSReferenceType() && !argumentType->IsETSReferenceType()) {
+        auto *const relation = checker->Relation();
+        relation->SetNode(argument_);
+        relation->SetFlags(checker::TypeRelationFlag::NONE);
 
-            argumentType = checker->MaybeBoxInRelation(argumentType);
-            if (argumentType == nullptr) {
-                checker->LogError(diagnostic::INVALID_EXPR_IN_RETURN, {}, argument_->Start());
-                return;
-            }
-
-            relation->SetNode(nullptr);
+        argumentType = checker->MaybeBoxInRelation(argumentType);
+        if (argumentType == nullptr) {
+            checker->LogError(diagnostic::INVALID_EXPR_IN_RETURN, {}, argument_->Start());
+            return;
         }
+
+        relation->SetNode(nullptr);
     }
 }
 

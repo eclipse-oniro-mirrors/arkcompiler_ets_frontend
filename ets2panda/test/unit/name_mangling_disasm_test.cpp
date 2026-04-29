@@ -59,28 +59,39 @@ public:
 TEST_F(NameManglingAsmTest, asyncFunctionNameGen)
 {
     std::string_view input = R"(
-      async function TestFunc() {}
+      async function TestFunc0() {}
+      async function TestFunc1(i: int | undefined) {}
+      async function TestFunc2(i: int | undefined, j: number | undefined) {}
     )";
 
     SetCurrentProgram(input);
 
-    std::string_view expectedGeneratedName = "dummy.ETSGLOBAL.%%async-TestFunc:Y;";
+    auto result0 = GetFunction("dummy.ETSGLOBAL.%%async-TestFunc0:std.core.Promise;", program_->functionStaticTable);
+    ASSERT_NE(result0, nullptr);
 
-    auto result = GetFunction(expectedGeneratedName, program_->functionStaticTable);
-    ASSERT_NE(result, nullptr);
+    auto result1 =
+        GetFunction("dummy.ETSGLOBAL.%%async-TestFunc1:std.core.Int;std.core.Promise;", program_->functionStaticTable);
+    ASSERT_NE(result1, nullptr);
+
+    auto result2 = GetFunction("dummy.ETSGLOBAL.%%async-TestFunc2:std.core.Int;std.core.Double;std.core.Promise;",
+                               program_->functionStaticTable);
+    ASSERT_NE(result2, nullptr);
 }
 
 TEST_F(NameManglingAsmTest, asyncMethodNameGen)
 {
     std::string_view input = R"(
         class TestClass {
-            async testMethod() {}
+            async testMethod0() {}
+            async testMethod1(i: int | undefined) {}
+            async testMethod2(i: int | undefined, j: number | undefined) {}
         }
     )";
 
-    std::string_view expectedGeneratedName = "dummy.TestClass.%%async-testMethod:Y;";
-
-    CheckUsingFunctionInstanceTable(input, expectedGeneratedName);
+    CheckUsingFunctionInstanceTable(input, "dummy.TestClass.%%async-testMethod0:std.core.Promise;");
+    CheckUsingFunctionInstanceTable(input, "dummy.TestClass.%%async-testMethod1:std.core.Int;std.core.Promise;");
+    CheckUsingFunctionInstanceTable(
+        input, "dummy.TestClass.%%async-testMethod2:std.core.Int;std.core.Double;std.core.Promise;");
 }
 
 TEST_F(NameManglingAsmTest, interfaceGetterNameGen)

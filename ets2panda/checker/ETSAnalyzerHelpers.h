@@ -52,8 +52,8 @@ ArenaVector<checker::Signature *> GetUnionTypeSignatures(ETSChecker *checker, ch
 void ProcessExclamationMark(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType);
 void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr, checker::Type *operandType);
 checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir::AstNode *left);
-bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, ir::ScriptFunction *containingFunc,
-                           ir::ReturnStatement *st);
+void CheckMainFunctionReturnType(checker::Type *funcReturnType, ETSChecker *checker, ir::ScriptFunction *containingFunc,
+                                 ir::ReturnStatement *st);
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc);
 bool HasSingleReturnStatement(const ir::AstNode *node);

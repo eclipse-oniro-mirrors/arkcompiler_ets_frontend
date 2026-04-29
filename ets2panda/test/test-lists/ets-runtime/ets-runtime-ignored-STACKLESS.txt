@@ -1,9 +1,2 @@
 # Here are listed tests that fail due to existing implementation bugs
 
-# 33782 -- PromiseLike is not viable type for async function's return type
-lambda_promise_type_infer.ets
-lambda_promise_type_infer_2.ets
-
-
-#34314 
-async_lambda_return_type_test.ets

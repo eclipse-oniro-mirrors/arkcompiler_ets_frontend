@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@ enum class ETSObjectFlags : std::uint64_t {
     INCOMPLETE_INSTANTIATION = 1U << 11U,
     INNER = 1U << 12U,
     GRADUAL = 1U << 13U,
-    ASYNC_FUNC_RETURN_TYPE = 1U << 14U,
     CHECKED_INVOKE_LEGITIMACY = 1U << 15U,
     REQUIRED = 1U << 16U,
     READONLY = 1U << 17U,

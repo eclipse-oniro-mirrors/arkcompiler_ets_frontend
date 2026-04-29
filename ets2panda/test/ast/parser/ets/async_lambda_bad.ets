@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,5 +14,7 @@
  */
 
 let lambda: () => int = async (): int => { return 1; }
+let lambda2 = async (): Any => { throw new Error }
 
 /* @@? 16:35 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
+/* @@? 17:34 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */

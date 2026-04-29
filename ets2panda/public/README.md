@@ -477,7 +477,6 @@ All the types/classes listed below are represented in the IDL without any change
     - `Type`
 - ast_type_additional_children:
     - `ETSStringType`
-    - `ETSAsyncFuncReturnType`
     - `ETSEnumType`
     - `ETSBigIntType`
 - ast_variables:
