@@ -20,6 +20,59 @@
 
 namespace ark::es2panda::checker {
 
+static bool IsInterfaceObjLiteralAnnotation(ir::AnnotationUsage *annotation)
+{
+    if (annotation == nullptr || annotation->Expr() == nullptr) {
+        return false;
+    }
+    ir::Expression *expr = annotation->Expr();
+    if (expr->IsCallExpression()) {
+        expr = expr->AsCallExpression()->Callee();
+    }
+    if (expr == nullptr || !expr->IsIdentifier()) {
+        return false;
+    }
+    util::StringView const name = expr->AsIdentifier()->Name();
+    return name == compiler::Signatures::INTERFACE_OBJ_LITERAL ||
+           name == compiler::Signatures::ARKRUNTIME_ANNOTATION_INTERFACE_OBJECT_LITERAL;
+}
+
+static constexpr std::string_view OBJECT_LITERAL_SUFFIX = "$ObjectLiteral";
+
+static bool IsIfaceMethodLiteralSyntheticClass(ETSObjectType *ty)
+{
+    if (ty == nullptr || ty->GetDeclNode() == nullptr || !ty->GetDeclNode()->IsClassDefinition() ||
+        !ty->GetDeclNode()->AsClassDefinition()->HasAnnotations()) {
+        return false;
+    }
+    auto *classDef = ty->GetDeclNode()->AsClassDefinition();
+    for (auto *annotation : classDef->Annotations()) {
+        if (IsInterfaceObjLiteralAnnotation(annotation)) {
+            return true;
+        }
+    }
+    std::string_view const mangled = ty->Name().Utf8();
+    return mangled.find(OBJECT_LITERAL_SUFFIX) != std::string_view::npos;
+}
+
+static bool SyntheticIfaceLiteralImplementsReturnInterface(ETSChecker *checker, ETSObjectType *literalClass,
+                                                           ETSObjectType *returnIface)
+{
+    if (returnIface == nullptr || !returnIface->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return false;
+    }
+    ir::AstNode *const returnDecl = returnIface->GetDeclNode();
+    for (auto *impl : checker->GetInterfaces(literalClass)) {
+        if (impl->GetDeclNode() == returnDecl) {
+            return true;
+        }
+        if (checker->Relation()->IsIdenticalTo(impl, returnIface)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool IsValidReceiverParameter(Type *const thisType)
 {
     if (thisType == nullptr) {
@@ -635,6 +688,18 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
                                     std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN)
              // CC-OFFNXT(G.FMT.02) project code style
              .IsAssignable()) {
+        // InterfaceMethodObjectLiteralLowering replaces the literal TsType with a synthetic class before lambda
+        // conversion; DIRECT_RETURN assignability still uses a relation that rejects that class vs the interface even
+        // though the class implements it. Accept when the synthetic class is known to implement the declared return
+        // interface.
+        if (argumentType->IsETSObjectType() && funcReturnType->IsETSObjectType()) {
+            auto *argObj = argumentType->AsETSObjectType();
+            auto *retObj = funcReturnType->AsETSObjectType();
+            if (IsIfaceMethodLiteralSyntheticClass(argObj) &&
+                SyntheticIfaceLiteralImplementsReturnInterface(checker, argObj, retObj)) {
+                return true;
+            }
+        }
         checker->LogError(diagnostic::ARROW_TYPE_MISMATCH, {argumentType, funcReturnType}, stArgument->Start());
         return false;
     }
