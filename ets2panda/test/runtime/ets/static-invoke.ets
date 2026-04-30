@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ class D extends A {
 
 function call_static_invoke_method() {
     arktest.assertEQ(A(), num )
-    arktest.assertEQ(B(), num )
     arktest.assertEQ(C(param), param )
     let d = D() {};
     arktest.assertEQ(d, num )

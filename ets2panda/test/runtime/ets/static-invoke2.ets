@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,13 @@ interface Options {}
 
 class StsTestComponent extends StructBase<StsTestComponent, Options>{
     child_value: number = 20;
+
+    static $_instantiate<S extends StructBase<S, OptionsS>, OptionsS>(
+        factory: () => S,
+        options: OptionsS
+    ): S {
+        return StructBase.$_instantiate(factory, options);
+    }
 
     build() {
         let s1 = StsTestComponent.$_instantiate(() => new StsTestComponent(), {} as Options);

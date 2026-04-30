@@ -3153,6 +3153,69 @@ std::vector<ResolveResult *> ETSChecker::HandlePropertyResolution(varbinder::Loc
     return resolveRes;
 }
 
+static bool IsClassStaticAccessTarget(const varbinder::Variable *targetRef)
+{
+    return targetRef != nullptr && (targetRef->HasFlag(varbinder::VariableFlags::CLASS) ||
+                                    (targetRef->HasFlag(varbinder::VariableFlags::TYPE_ALIAS) &&
+                                     targetRef->TsType() != nullptr && targetRef->TsType()->Variable() != nullptr &&
+                                     targetRef->TsType()->Variable()->HasFlag(varbinder::VariableFlags::CLASS)));
+}
+
+static bool IsStaticInvokeOrInstantiate(const ir::Identifier *ident)
+{
+    return ident->Name().Is(compiler::Signatures::STATIC_INVOKE_METHOD) ||
+           ident->Name().Is(compiler::Signatures::STATIC_INSTANTIATE_METHOD);
+}
+
+static const ETSObjectType *GetStaticPropertyDeclType(const varbinder::LocalVariable *property)
+{
+    if (!ETSChecker::IsVariableStatic(property)) {
+        return nullptr;
+    }
+    if (property->TsType() != nullptr && property->TsType()->IsETSMethodType()) {
+        auto *funcType = property->TsType()->AsETSFunctionType();
+        if (funcType->CallSignatures().empty()) {
+            return nullptr;
+        }
+        auto *owner = funcType->CallSignatures()[0]->Owner();
+        if (owner == nullptr || owner->GetDeclNode() == nullptr || !owner->GetDeclNode()->IsClassDefinition()) {
+            return nullptr;
+        }
+        return owner;
+    }
+
+    if (property->Declaration() == nullptr || property->Declaration()->Node() == nullptr) {
+        return nullptr;
+    }
+    auto *owner = property->Declaration()->Node()->Parent();
+    if (owner == nullptr || !owner->IsClassDefinition() || owner->AsClassDefinition()->TsType() == nullptr) {
+        return nullptr;
+    }
+    auto *ownerTsType = owner->AsClassDefinition()->TsType();
+    if (ownerTsType == nullptr || !ownerTsType->IsETSObjectType()) {
+        return nullptr;
+    }
+    return ownerTsType->AsETSObjectType();
+}
+
+static void CheckDerivedStaticMemberAccess(ETSChecker *checker, const varbinder::Variable *targetRef,
+                                           const ETSObjectType *target, const varbinder::LocalVariable *prop,
+                                           const ir::Identifier *ident)
+{
+    if (prop == nullptr || !IsClassStaticAccessTarget(targetRef) || !checker->IsVariableStatic(prop) ||
+        IsStaticInvokeOrInstantiate(ident)) {
+        return;
+    }
+
+    const auto *declaringType = GetStaticPropertyDeclType(prop);
+    if (declaringType == nullptr || declaringType->IsSameBasedGeneric(checker->Relation(), target)) {
+        return;
+    }
+
+    checker->LogDiagnostic(diagnostic::STATIC_PROP_INVALID_CTX_DEPRECATED, {ident->Name(), declaringType},
+                           ident->Start());
+}
+
 // NOLINTNEXTLINE(readability-function-size)
 std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::MemberExpression *const memberExpr,
                                                                 ETSObjectType *const target)
@@ -3169,6 +3232,7 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
     auto *prop = target->GetProperty(searchName, searchFlag);
 
     CheckAnnotationReference(memberExpr, prop);
+    CheckDerivedStaticMemberAccess(this, targetRef, target, prop, memberExpr->Property()->AsIdentifier());
 
     varbinder::Variable *const globalFunctionVar = ResolveInstanceExtension(memberExpr);
     if (targetRef != nullptr && targetRef->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE)) {
