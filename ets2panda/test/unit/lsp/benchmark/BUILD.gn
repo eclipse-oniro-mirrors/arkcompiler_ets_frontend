@@ -14,185 +14,137 @@
 import("//arkcompiler/ets_frontend/test_helper.gni")
 
 config("lsp_benchmark_config") {
-  # Use an absolute host path so benchmarks can be run from any working directory.
   cases_dir = get_path_info(
           "//arkcompiler/ets_frontend/ets2panda/test/unit/lsp/benchmark/cases",
           "abspath")
-
-  # internal_api::Initializer uses BUILD_FOLDER to resolve $ORIGIN/arktsconfig.json.
-  # For host benchmarks under GN, point it to the host frontend output directory.
   benchmark_build_folder =
       get_path_info("$root_out_dir/arkcompiler/ets_frontend", "abspath")
   defines = [
+    "BENCHMARK_STATIC_DEFINE",
     "CASES_DIR=\"$cases_dir\"",
     "BUILD_FOLDER=\"$benchmark_build_folder\"",
   ]
   include_dirs = [
     "${root_gen_dir}/arkcompiler/ets_frontend/ets2panda",
+    "${root_gen_dir}/arkcompiler/runtime_core/static_core",
     "//arkcompiler/runtime_core/static_core/assembler",
     "${root_gen_dir}/arkcompiler/runtime_core/static_core/assembler",
   ]
   if (current_toolchain != default_toolchain) {
     include_dirs += [
       "$root_out_dir/../gen/arkcompiler/ets_frontend/ets2panda",
+      "$root_out_dir/../gen/arkcompiler/runtime_core/static_core",
       "$root_out_dir/../gen/arkcompiler/runtime_core/static_core/assembler",
     ]
   }
 }
 
-template("ets2panda_lsp_benchmark_unittest") {
-  host_unittest_action(target_name) {
+template("ets2panda_lsp_benchmark_executable") {
+  ohos_executable(target_name) {
     use_exceptions = true
-    testonly = true
-    sources = invoker.sources + [ "src/lspMemoryManager.cpp" ]
+    sources = invoker.sources + [
+      "src/lspMemoryManager.cpp",
+      "src/lsp_benchmark_utils.cpp",
+    ]
+    output_name = invoker.output_name
 
     configs = [
       "//build/config/components/runtime_core/static_core:ark_common_config",
       "//arkcompiler/ets_frontend/ets2panda:libes2panda_public_config",
       "//arkcompiler/ets_frontend/ets2panda:libes2panda_config",
+      "//arkcompiler/ets_frontend/ets2panda/lsp:libes2panda_lsp_config",
+      ":lsp_benchmark_config",
     ]
-    if (defined(invoker.configs)) {
-      configs += invoker.configs
-    }
 
     include_dirs = [
       "//arkcompiler/ets_frontend/ets2panda",
       "${target_out_dir}",
+      "include",
+      "../benchmark",
+      "../../../../lsp/include",
+      "../../../../public",
+      "../../../../",
     ]
-    if (defined(invoker.include_dirs)) {
-      include_dirs += invoker.include_dirs
+
+    deps = [ "//arkcompiler/ets_frontend/ets2panda/lsp:libes2panda_lsp_static" ]
+    external_deps = [
+      "benchmark:benchmark",
+      "icu:static_icuuc",
+      "json:nlohmann_json_static",
+      "runtime_core:arkabc2program_public_headers",
+      "runtime_core:arkassembler_public_headers",
+      "runtime_core:arkbase_public_headers",
+      "runtime_core:arkfile_public_headers",
+      "runtime_core:libpandabase_headers",
+      sdk_libc_secshared_dep,
+    ]
+
+    libs = platform_libs
+    ldflags = platform_ldflags
+    if (is_linux) {
+      libs += [ "stdc++fs" ]
     }
 
-    if (defined(invoker.deps)) {
-      deps = invoker.deps
-    }
-
-    if (defined(invoker.external_deps)) {
-      external_deps = invoker.external_deps
-    } else {
-      external_deps = [
-        "googletest:gtest_main",
-        "icu:static_icuuc",
-        "json:nlohmann_json_static",
-        "runtime_core:arkabc2program_public_headers",
-        "runtime_core:arkassembler_public_headers",
-        "runtime_core:arkbase_public_headers",
-        "runtime_core:arkfile_public_headers",
-        "runtime_core:libpandabase_headers",
-        sdk_libc_secshared_dep,
-      ]
-    }
-
-    module_out_path = "arkcompiler/ets_frontend"
+    install_enable = false
+    part_name = "ets_frontend"
+    subsystem_name = "arkcompiler"
   }
 }
 
-lsp_benchmark_test_cases = [
-  {
-    name = "lsp_start_perf"
-    source = "src/start_perf.cpp"
-  },
-  {
-    name = "lsp_get_definition_at_position_perf"
-    source = "src/get_definition_at_position_perf.cpp"
-  },
-  {
-    name = "lsp_find_rename_locations_perf"
-    source = "src/find_rename_locations_perf.cpp"
-  },
-  {
-    name = "lsp_to_line_column_offset_perf"
-    source = "src/to_line_column_offset_perf.cpp"
-  },
-  {
-    name = "lsp_get_completion_at_position_perf"
-    source = "src/get_completion_at_position_perf.cpp"
-  },
-  {
-    name = "lsp_get_document_high_lights_perf"
-    source = "src/get_document_high_lights_perf.cpp"
-  },
-  {
-    name = "lsp_get_formatting_edits_perf"
-    source = "src/get_formatting_edits_perf.cpp"
-  },
-  {
-    name = "lsp_get_offset_by_col_and_line_perf"
-    source = "src/get_offset_by_col_and_line_perf.cpp"
-  },
-  {
-    name = "lsp_get_organize_imports_perf"
-    source = "src/get_organize_imports_perf.cpp"
-  },
-  {
-    name = "lsp_get_quick_info_at_position_perf"
-    source = "src/get_quick_info_at_position_perf.cpp"
-  },
-  {
-    name = "lsp_get_references_at_position_perf"
-    source = "src/get_references_at_position_perf.cpp"
-  },
-  {
-    name = "lsp_get_rename_info_perf"
-    source = "src/get_rename_info_perf.cpp"
-  },
-  {
-    name = "lsp_refactor_extract_symbol_perf"
-    source = "src/refactor_extract_symbol_perf.cpp"
-  },
-  {
-    name = "lsp_get_implementation_location_perf"
-    source = "src/get_implementation_location_perf.cpp"
-  },
-  {
-    name = "lsp_get_syntactic_diagnostics_perf"
-    source = "src/get_syntactic_diagnostics_perf.cpp"
-  },
-  {
-    name = "lsp_get_semantic_diagnostics_perf"
-    source = "src/get_semantic_diagnostics_perf.cpp"
-  },
-  {
-    name = "lsp_get_safe_delete_info_perf"
-    source = "src/get_safe_delete_info_perf.cpp"
-  },
-  {
-    name = "lsp_get_current_token_value_perf"
-    source = "src/get_current_token_value_perf.cpp"
-  },
-]
+lsp_benchmark_build_deps = []
 
-lsp_benchmark_target_configs = [
-  "//arkcompiler/ets_frontend/ets2panda/lsp:libes2panda_lsp_config",
-  ":lsp_benchmark_config",
-]
+if (current_toolchain == host_toolchain) {
+  lsp_benchmark_build_cases = [
+    "lsp_start_perf",
+    "lsp_get_definition_at_position_perf",
+    "lsp_find_rename_locations_perf",
+    "lsp_to_line_column_offset_perf",
+    "lsp_get_completion_at_position_perf",
+    "lsp_get_document_high_lights_perf",
+    "lsp_get_formatting_edits_perf",
+    "lsp_get_offset_by_col_and_line_perf",
+    "lsp_get_organize_imports_perf",
+    "lsp_get_quick_info_at_position_perf",
+    "lsp_get_references_at_position_perf",
+    "lsp_get_rename_info_perf",
+    "lsp_refactor_extract_symbol_perf",
+    "lsp_get_implementation_location_perf",
+    "lsp_get_syntactic_diagnostics_perf",
+    "lsp_get_semantic_diagnostics_perf",
+    "lsp_get_safe_delete_info_perf",
+    "lsp_get_current_token_value_perf",
+  ]
 
-lsp_benchmark_target_include_dirs = [
-  "include",
-  "../benchmark",
-  "../../../../lsp/include",
-  "../../../../public",
-  "../../../../",
-]
+  lsp_benchmark_build_sources = {
+    lsp_start_perf = "src/start_perf.cpp"
+    lsp_get_definition_at_position_perf = "src/get_definition_at_position_perf.cpp"
+    lsp_find_rename_locations_perf = "src/find_rename_locations_perf.cpp"
+    lsp_to_line_column_offset_perf = "src/to_line_column_offset_perf.cpp"
+    lsp_get_completion_at_position_perf = "src/get_completion_at_position_perf.cpp"
+    lsp_get_document_high_lights_perf = "src/get_document_high_lights_perf.cpp"
+    lsp_get_formatting_edits_perf = "src/get_formatting_edits_perf.cpp"
+    lsp_get_offset_by_col_and_line_perf = "src/get_offset_by_col_and_line_perf.cpp"
+    lsp_get_organize_imports_perf = "src/get_organize_imports_perf.cpp"
+    lsp_get_quick_info_at_position_perf = "src/get_quick_info_at_position_perf.cpp"
+    lsp_get_references_at_position_perf = "src/get_references_at_position_perf.cpp"
+    lsp_get_rename_info_perf = "src/get_rename_info_perf.cpp"
+    lsp_refactor_extract_symbol_perf = "src/refactor_extract_symbol_perf.cpp"
+    lsp_get_implementation_location_perf = "src/get_implementation_location_perf.cpp"
+    lsp_get_syntactic_diagnostics_perf = "src/get_syntactic_diagnostics_perf.cpp"
+    lsp_get_semantic_diagnostics_perf = "src/get_semantic_diagnostics_perf.cpp"
+    lsp_get_safe_delete_info_perf = "src/get_safe_delete_info_perf.cpp"
+    lsp_get_current_token_value_perf = "src/get_current_token_value_perf.cpp"
+  }
 
-lsp_benchmark_target_deps = [
-  "//arkcompiler/ets_frontend/ets2panda/lsp:libes2panda_lsp_static",
-  "//third_party/benchmark:benchmark",
-]
-
-group("lsp_benchmark") {
-  testonly = true
-  deps = []
-  foreach(test_case, lsp_benchmark_test_cases) {
-    deps += [ ":${test_case.name}" ]
+  foreach(case_name, lsp_benchmark_build_cases) {
+    ets2panda_lsp_benchmark_executable("${case_name}_build") {
+      sources = [ lsp_benchmark_build_sources[case_name] ]
+      output_name = case_name
+    }
+    lsp_benchmark_build_deps += [ ":${case_name}_build" ]
   }
 }
 
-foreach(test_case, lsp_benchmark_test_cases) {
-  ets2panda_lsp_benchmark_unittest(test_case.name) {
-    sources = [ test_case.source ]
-    configs = lsp_benchmark_target_configs
-    include_dirs = lsp_benchmark_target_include_dirs
-    deps = lsp_benchmark_target_deps
-  }
+group("lsp_benchmark_build") {
+  deps = lsp_benchmark_build_deps
 }

@@ -54,6 +54,7 @@ function(lsp_add_benchmark TARGET)
 
     set(LSP_BENCHMARK_COMMON_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/lspMemoryManager.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/lsp_benchmark_utils.cpp
     )
 
     panda_add_executable(${TARGET}

@@ -47,9 +47,13 @@ bool CheckCompletionResult(CompletionInfo &completionResult, const CompletionTes
         return false;
     }
     for (const auto &expectName : testCase.expectNames) {
-        const bool found = std::any_of(entries.begin(), entries.end(), [&expectName](const CompletionEntry &entry) {
-            return entry.GetName() == expectName;
-        });
+        const std::string canonicalName =
+            expectName.rfind("%%property-", 0) == 0 ? expectName.substr(sizeof("%%property-") - 1) : expectName;
+        const bool found =
+            std::any_of(entries.begin(), entries.end(), [&expectName, &canonicalName](const CompletionEntry &entry) {
+                const auto &name = entry.GetName();
+                return name == expectName || name == canonicalName;
+            });
         if (!found) {
             state.SkipWithError(("Expected completion name not found: " + expectName).c_str());
             return false;

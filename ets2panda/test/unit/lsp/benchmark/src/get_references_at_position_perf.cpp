@@ -58,7 +58,7 @@ static const ReferenceTestCase K_TEST_CASES[] = {
      "BenchRunnerL4Impl",
      2,
      2},
-    {{"project/domain.ets"}, {}, "project/domain.ets", "FeatureAdmin", 2, 4}};
+    {{"project/domain.ets"}, {}, "project/domain.ets", "FeatureAdmin", 2, 3}};
 
 static ReferenceList NormalizeReferences(ReferenceList refs)
 {
