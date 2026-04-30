@@ -5466,10 +5466,6 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
     auto *castExpr = expr->Expr();
     castExpr->SetPreferredType(targetType);
 
-    if (targetType == checker->GetGlobalTypesHolder()->GlobalETSNeverType()) {
-        return expr->SetTsType(checker->TypeError(expr, diagnostic::CAST_TO_NEVER, expr->Start()));
-    }
-
     auto const sourceType = castExpr->Check(checker);
     if (sourceType->IsTypeError() && checker->HasStatus(checker::CheckerStatus::IN_TYPE_INFER)) {
         return expr->SetTsType(checker->GlobalTypeError());

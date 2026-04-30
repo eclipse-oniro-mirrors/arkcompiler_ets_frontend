@@ -258,7 +258,9 @@ void ETSGen::LoadAccumulator(const ir::AstNode *node, VReg vreg)
     const auto *const vregType = GetVRegType(vreg);
 
     ES2PANDA_ASSERT(vregType != nullptr);
-    if (vregType->IsETSReferenceType()) {
+    if (Checker()->GetApparentType(vregType)->IsETSNeverType()) {
+        EmitNeverError(node);
+    } else if (vregType->IsETSReferenceType()) {
         Ra().Emit<LdaObj>(node, vreg);
     } else if (IsWidePrimitiveType(vregType)) {
         Ra().Emit<LdaWide>(node, vreg);
@@ -471,7 +473,9 @@ void ETSGen::LoadStaticProperty(const ir::AstNode *const node, const checker::Ty
                                 const util::StringView &fullName)
 {
     ES2PANDA_ASSERT(propType != nullptr);
-    if (propType->IsETSReferenceType()) {
+    if (Checker()->GetApparentType(propType)->IsETSNeverType()) {
+        EmitNeverError(node);
+    } else if (propType->IsETSReferenceType()) {
         Sa().Emit<LdstaticObj>(node, fullName);
         if (StaticAccessRequiresReferenceSafetyCheck(node, propType)) {
             EmitNullcheck(node);
@@ -516,7 +520,9 @@ void ETSGen::LoadPropertyByNameAny(const ir::AstNode *const node, const VReg obj
 void ETSGen::LoadProperty(const ir::AstNode *const node, const checker::Type *propType, const VReg objReg,
                           const util::StringView &fullName)
 {
-    if (propType->IsETSReferenceType()) {
+    if (Checker()->GetApparentType(propType)->IsETSNeverType()) {
+        EmitNeverError(node);
+    } else if (propType->IsETSReferenceType()) {
         Ra().Emit<LdobjObj>(node, objReg, fullName);
     } else if (IsWidePrimitiveType(propType)) {
         Ra().Emit<LdobjWide>(node, objReg, fullName);
@@ -870,6 +876,8 @@ void ETSGen::CheckedReferenceNarrowing(const ir::AstNode *node, const checker::T
         EmitCheckCast(node, ToAssemblerType(Checker()->GlobalETSNeverType()), false);
     } else if (target->IsETSNeverType()) {
         EmitCheckCast(node, ToAssemblerType(Checker()->GlobalETSNeverType()), true);
+        // NOTE(kurnevichstanislav): #34489 Workaround for verifier and BCO.
+        EmitNeverError(node);
     } else {
         EmitCheckCast(node, ToAssemblerType(target), source->PossiblyETSUndefined() && !target->PossiblyETSUndefined());
     }
@@ -1862,6 +1870,18 @@ void ETSGen::EmitNullishException(const ir::AstNode *node)
 
     EmitThrow(node, exception);
     SetAccumulatorType(nullptr);
+}
+
+void ETSGen::EmitNeverError(const ir::AstNode *node)
+{
+    auto *savedAccType = GetAccumulatorType();
+    RegScope rs(this);
+    VReg exception = AllocReg();
+    CallExact(node, Signatures::BUILTIN_RUNTIME_CREATE_NEVER_ERROR);
+    SetAccumulatorType(Checker()->GlobalETSObjectType());
+    StoreAccumulator(node, exception);
+    EmitThrow(node, exception);
+    SetAccumulatorType(savedAccType);
 }
 
 void ETSGen::EmitClassCastException(const ir::AstNode *node, ark::es2panda::util::StringView err)

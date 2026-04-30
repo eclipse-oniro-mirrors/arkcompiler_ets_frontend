@@ -110,7 +110,7 @@ void ETSUndefinedType::ToString(std::stringstream &ss, [[maybe_unused]] bool pre
 
 void ETSUndefinedType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
+    ss << compiler::Signatures::NEVER_ASSEMBLY_TYPE;
 }
 
 void ETSUndefinedType::ToDebugInfoType(std::stringstream &ss) const
