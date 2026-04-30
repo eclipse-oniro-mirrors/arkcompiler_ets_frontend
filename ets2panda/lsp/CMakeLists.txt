@@ -144,9 +144,13 @@ set(ES2PANDA_LSP_SRC
   ./src/register_code_fix/fix_add_function_return_statement.cpp
   ./src/register_code_fix/ui_plugin_suggest.cpp
   ./src/register_code_fix/fix_spelling.cpp
+  ./src/register_code_fix/fix_spelling_for_type.cpp
+  ./src/register_code_fix/fix_spelling_for_property.cpp
   ./src/register_code_fix/fix_class_incorrectly_implements_interface.cpp
   ./src/get_signature.cpp
   ./src/register_code_fix/fix_unreachable_code.cpp
+  ./src/register_code_fix/fix_remove_illegal_await.cpp
+  ./src/register_code_fix/fix_remove_duplicate_export_import.cpp
   ./src/get_name_or_dotted_name_span.cpp
   ./src/get_node.cpp
   ./src/node_matchers.cpp

@@ -105,6 +105,7 @@ syntax:
 - name: AWAIT_IN_ARROW_FUN_PARAM
   id: 46
   message: "await is not allowed in arrow function parameters."
+  code_fix_ids: [FixRemoveIllegalAwait]
 
 - name: AWAIT_RESERVED_IDENTIFIER_IN_MODULE
   id: 213

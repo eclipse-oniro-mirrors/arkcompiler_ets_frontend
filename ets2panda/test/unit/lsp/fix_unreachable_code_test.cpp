@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 #include "lsp_api_test.h"
+#include "util/diagnostic.h"
 #include <gtest/gtest.h>
 #include <iostream>
 #include "lsp/include/api.h"
@@ -24,9 +25,12 @@ namespace {
 
 using ark::es2panda::lsp::Initializer;
 using ark::es2panda::lsp::codefixes::FIX_UNREACHABLE_CODE;
+using ark::es2panda::util::DiagnosticType;
 
 constexpr std::string_view EXPECTED_FIX_NAME = FIX_UNREACHABLE_CODE.GetFixId();
 constexpr auto ERROR_CODES = FIX_UNREACHABLE_CODE.GetSupportedCodeNumbers();
+// UNREACHABLE_STMT: DiagnosticType::WARNING * DIAGNOSTIC_CODE_MULTIPLIER + 26
+constexpr int UNREACHABLE_STMT_CODE = 3026;
 constexpr std::string_view EXPECTED_FIX_DESCRIPTION = "Remove unreachable code";
 constexpr int DEFAULT_THROTTLE = 20;
 
@@ -95,6 +99,9 @@ console.log("log");
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    // Verify target error code: UNREACHABLE_STMT(3026)
+    ASSERT_EQ(errorCodes.size(), 1U);
+    ASSERT_EQ(errorCodes[0], UNREACHABLE_STMT_CODE);
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
@@ -272,7 +279,7 @@ console.log("log");
     const size_t start = LineColToPos(context, 4, 1);
     const size_t length = 1;
     const size_t expectedTextChangeStart = 34;
-    const size_t expectedTextChangeLength = 19;
+    const size_t expectedTextChangeLength = 39;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());

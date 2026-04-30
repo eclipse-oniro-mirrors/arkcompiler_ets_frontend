@@ -250,8 +250,8 @@ bool ETSBinder::AddSelectiveExportAlias(parser::ETSParser *parser, util::StringV
     if (auto foundMap = selectiveExportAliasMultimap_->find(path); foundMap != selectiveExportAliasMultimap_->end()) {
         auto inserted = foundMap->second.insert({key, std::make_pair(value, decl)}).second;
         if (UNLIKELY(!inserted && foundMap->second.find(key)->second.first == value)) {
-            parser->DiagnosticEngine().Log(
-                {util::DiagnosticType::WARNING, diagnostic::DUPLICATE_EXPORT_ALIASES, {key}, valueIdent->Start()});
+            parser->DiagnosticEngine().LogDiagnostic(diagnostic::DUPLICATE_EXPORT_ALIASES,
+                                                     util::DiagnosticMessageParams {key}, valueIdent->Start());
             return true;
         }
         return inserted;

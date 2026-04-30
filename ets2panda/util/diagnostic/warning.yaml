@@ -50,10 +50,12 @@ warning:
 - name: DUPLICATE_EXPORT_ALIASES
   id: 73
   message: "Duplicated export aliases for '{}'."
+  code_fix_ids: [FixRemoveDuplicateExportImport]
 
 - name: DUPLICATE_IMPORT
   id: 125428
   message: "'{}' has already imported"
+  code_fix_ids: [FixRemoveDuplicateExportImport]
 
 - name: DUPLICATE_SIGS
   id: 12

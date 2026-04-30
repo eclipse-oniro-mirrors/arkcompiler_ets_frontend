@@ -1796,11 +1796,11 @@ KNativePointer impl_getCodeFixesAtPosition(KNativePointer context, KInt startPos
 }
 TS_INTEROP_5(getCodeFixesAtPosition, KNativePointer, KNativePointer, KInt, KInt, KInt *, KInt)
 
-KNativePointer impl_getCodeFixActionInfos(KNativePointer codeFixActionInfoListPtr)
+KNativePointer impl_getCodeFixActionInfos(KNativePointer codeFixActionInfosPtr)
 {
-    auto *getCodeFixActionInfoList = reinterpret_cast<CodeFixActionInfoList *>(codeFixActionInfoListPtr);
+    auto *codeFixActionInfos = reinterpret_cast<std::vector<CodeFixActionInfo> *>(codeFixActionInfosPtr);
     std::vector<void *> ptrs;
-    for (auto &el : getCodeFixActionInfoList->infos_) {
+    for (auto &el : *codeFixActionInfos) {
         ptrs.push_back(new CodeFixActionInfo(el));
     }
     return new std::vector<void *>(ptrs);

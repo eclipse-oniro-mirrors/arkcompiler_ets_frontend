@@ -20,6 +20,7 @@
 #include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
+#include "lsp/include/symbol_reference_index.h"
 #include "public/es2panda_lib.h"
 
 namespace ark::es2panda::lsp {
@@ -27,40 +28,7 @@ using codefixes::FIX_SPELLING;
 
 FixSpelling::FixSpelling()
 {
-    auto errorCodes = FIX_SPELLING.GetSupportedCodeNumbers();
-    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
-    SetFixIds({FIX_SPELLING.GetFixId().data()});
-}
-double JaccardSimilarity(const std::string &a, const std::string &b)
-{
-    std::unordered_set<char> setA;
-    std::unordered_set<char> setB;
-
-    for (char ch : a) {
-        if (isalpha(ch) != 0) {
-            setA.insert(tolower(ch));
-        }
-    }
-
-    for (char ch : b) {
-        if (isalpha(ch) != 0) {
-            setB.insert(tolower(ch));
-        }
-    }
-
-    size_t intersectionSize = 0;
-    for (char ch : setA) {
-        if (setB.find(ch) != setB.end()) {
-            intersectionSize++;
-        }
-    }
-
-    size_t unionSize = setA.size() + setB.size() - intersectionSize;
-    if (unionSize == 0) {
-        return 0.0;
-    }
-
-    return static_cast<double>(intersectionSize) / unionSize;
+    // #34663
 }
 
 std::string FindClosestWordJaccard(const ir::AstNode *astNode, const std::string &search)

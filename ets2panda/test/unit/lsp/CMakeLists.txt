@@ -455,6 +455,22 @@ ets2panda_add_gtest(lsp_api_fix_unreachable_code_test CPP_SOURCES
     fix_unreachable_code_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_fix_spelling_for_type_test CPP_SOURCES
+    fix_spelling_for_type_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_remove_illegal_await_test CPP_SOURCES
+    fix_remove_illegal_await_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_remove_duplicate_export_import_test CPP_SOURCES
+    fix_remove_duplicate_export_import_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_spelling_for_property_test CPP_SOURCES
+    fix_spelling_for_property_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_get_node_etsstring_literal_test CPP_SOURCES
     get_node_string_literal_test.cpp
 )
