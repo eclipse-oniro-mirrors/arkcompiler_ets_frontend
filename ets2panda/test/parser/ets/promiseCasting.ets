@@ -14,7 +14,7 @@
  */
 
 import {launch} from "std/concurrency"
-import {Job} from "std/core"
+
 
 type Cb = (p: int) => int;
 
@@ -24,7 +24,7 @@ function foo(i: int): Cb {
     return fs[i]
 }
 
-function main() {
+async function main() {
     fs = [
         (p: int): int => p + 1,
         (p: int): int => p + 2,
@@ -48,7 +48,7 @@ function main() {
 
     let cnt = 0
     for (let i = 9; i >= 0; i--) {
-        cnt += ((ps[i] as Job<Cb>).Await())(i) // <- complains on this line
+        cnt += (await (ps[i] as Promise<Cb>))(i) // <- complains on this line
     }
     arktest.assertEQ(cnt, 90);
 }
