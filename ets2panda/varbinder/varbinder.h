@@ -72,7 +72,7 @@ public:
     template <typename T, typename... Args>
     std::tuple<T *, varbinder::Variable *> NewVarDecl(const lexer::SourcePosition &pos, Args &&...args);
 
-    Variable *AddParamDecl(ir::Expression *param);
+    Variable *AddParamDecl(ir::Expression *param, bool throwRedeclaration = true);
 
     void SetProgram(parser::Program *program) noexcept
     {

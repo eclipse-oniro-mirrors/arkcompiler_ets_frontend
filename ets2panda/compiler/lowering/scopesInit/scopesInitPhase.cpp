@@ -227,7 +227,7 @@ void ScopesInitPhase::VisitCatchClause(ir::CatchClause *catchClause)
     CallNode(param);
 
     if (param != nullptr) {
-        auto *const var = VarBinder()->AddParamDecl(param);
+        auto *const var = VarBinder()->AddParamDecl(param, false);
         if (param->IsIdentifier()) {
             var->SetScope(catchParamScope);
             param->AsIdentifier()->SetVariable(var);
