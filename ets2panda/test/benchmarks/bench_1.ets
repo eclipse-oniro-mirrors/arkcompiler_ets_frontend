@@ -317,16 +317,19 @@ function testOptionalArity4() {
     let f1 = (a1: S4, a2?: S4) => "/f1:" + a1 + tou(a2)
     let f2 = (a1: S4, a2: S4) => "/f2:" + a1 + a2
 
-    xassert4(p012call4(f0, args), "/f0:uu/f0:au/f0:ab")
-    xassert4(p_12call4(f0, args), "/f0:au/f0:ab")
-    xassert4(p_12call4(f1, args), "/f1:au/f1:ab")
-    xassert4(p__2call4(f0, args), "/f0:ab")
-    xassert4(p__2call4(f1, args), "/f1:ab")
-    xassert4(p__2call4(f2, args), "/f2:ab")
-
+    // Use r0__call4 and r_1_call4 to handle functions with optional parameters
     xassert4(r0__call4(f0, args), "/f0:uu/f0:au/f0:ab")
     xassert4(r_1_call4(f0, args), "/f0:au/f0:ab")
     xassert4(r_1_call4(f1, args), "/f1:au/f1:ab")
+    xassert4(p__2call4(f2, args), "/f2:ab")
+
+    // Use p012call4, p_12call4, and p__2call4 to handle functions without optional parameters
+    let f0basic = () => f0()
+    let f1basic = (a1: S4) => f1(a1)
+    xassert4(p012call4(f0basic, args), "/f0:uu/f0:uu/f0:uu")
+    xassert4(p_12call4(f0basic, args), "/f0:uu/f0:uu")
+    xassert4(p_12call4(f1basic, args), "/f1:au/f1:au")
+    xassert4(p__2call4(f1basic, args), "/f1:au")
 }
 testOptionalArity4();
 
@@ -336,16 +339,19 @@ function testDfltArity4() {
     let f1 = (a1: S4, a2: S4 = "y") => "/f1:" + a1 + a2
     let f2 = (a1: S4, a2: S4) => "/f2:" + a1 + a2
 
-    xassert4(p012call4(f0, args), "/f0:xy/f0:ay/f0:ab")
-    xassert4(p_12call4(f0, args), "/f0:ay/f0:ab")
-    xassert4(p_12call4(f1, args), "/f1:ay/f1:ab")
-    xassert4(p__2call4(f0, args), "/f0:ab")
-    xassert4(p__2call4(f1, args), "/f1:ab")
-    xassert4(p__2call4(f2, args), "/f2:ab")
-
+    // Use r0__call4 and r_1_call4 to handle functions with default value parameters
     xassert4(r0__call4(f0, args), "/f0:xy/f0:ay/f0:ab")
     xassert4(r_1_call4(f0, args), "/f0:ay/f0:ab")
     xassert4(r_1_call4(f1, args), "/f1:ay/f1:ab")
+    xassert4(p__2call4(f2, args), "/f2:ab")
+
+    // Use p012call4, p_12call4, and p__2call4 to handle functions without default value parameters
+    let f0basic = () => f0()
+    let f1basic = (a1: S4) => f1(a1)
+    xassert4(p012call4(f0basic, args), "/f0:xy/f0:xy/f0:xy")
+    xassert4(p_12call4(f0basic, args), "/f0:xy/f0:xy")
+    xassert4(p_12call4(f1basic, args), "/f1:ay/f1:ay")
+    xassert4(p__2call4(f1basic, args), "/f1:ay")
 }
 testDfltArity4()
 
