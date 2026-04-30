@@ -22,7 +22,6 @@
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
-#include "checker/ets/wideningConverter.h"
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
@@ -32,7 +31,6 @@
 #include "checker/types/typeError.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "generated/signatures.h"
-#include "ir/astNodeFlags.h"
 #include "ir/base/catchClause.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
@@ -1332,18 +1330,18 @@ void ETSChecker::LogSignatureMismatch(ArenaVector<Signature *> const &signatures
 
         if (someSignature->HasFunction()) {
             if (someSignature->Function()->IsConstructor()) {
-                msg.append(util::Helpers::GetClassDefinition(someSignature->Function())->InternalName().Mutf8());
+                msg += util::Helpers::GetClassDefinition(someSignature->Function())->InternalName().Utf8();
             } else {
-                msg.append(someSignature->Function()->Id()->Name().Mutf8());
+                msg += someSignature->Function()->Id()->Name().Utf8();
             }
         }
 
-        msg += "(";
+        msg += '(';
 
         for (std::size_t index = 0U; index < arguments.size(); ++index) {
             auto const &argument = arguments[index];
             Type const *const argumentType = argument->Check(this);
-            if (!argumentType->IsTypeError()) {
+            if (argumentType != nullptr && !ContainsTypeError(argumentType)) {
                 msg += argumentType->ToString();
             } else {
                 //  NOTE (DZ): extra cases for some specific nodes can be added here (as for
@@ -1352,7 +1350,7 @@ void ETSChecker::LogSignatureMismatch(ArenaVector<Signature *> const &signatures
             }
 
             if (index == arguments.size() - 1U) {
-                msg += ")";
+                msg += ')';
                 LogError(diagnostic::NO_MATCHING_SIG, {signatureKind, msg.c_str()}, pos);
                 return;
             }
@@ -2736,9 +2734,12 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
         expr->IsCallExpression() ? expr->AsCallExpression()->TypeParams() : nullptr;
 
     const lexer::SourcePosition &pos = expr->Start();
+    auto const signaturesNumber = signatures.size();
+    bool const reportErrorsWhileChecking = signaturesNumber == 1;
 
-    bool reportErrorsWhileChecking = signatures.size() == 1;
-    for (auto *sig : signatures) {
+    for (std::size_t i = 0U; i < signaturesNumber; ++i) {
+        auto *sig = signatures[i];
+
         if (notVisibleSignature != nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
             continue;
         }
@@ -2856,22 +2857,6 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
                                                     ir::Expression *argument, std::size_t index,
                                                     TypeRelationFlag flags);
 
-static bool ContainsTypeErrorRecursively(Type *type)
-{
-    if (type == nullptr) {
-        return false;
-    }
-
-    bool hasTypeError = false;
-    type->IterateRecursively([&hasTypeError](Type const *currentType) {
-        if (currentType != nullptr && currentType->IsTypeError()) {
-            hasTypeError = true;
-        }
-    });
-
-    return hasTypeError;
-}
-
 static bool ValidateTypeInferenceRequiredArgument(ETSChecker *checker, Signature *substitutedSig,
                                                   const ArenaVector<ir::Expression *> &arguments,
                                                   const std::tuple<ir::Expression *, Type *, ir::AstNode *> &argInfo,
@@ -2887,7 +2872,7 @@ static bool ValidateTypeInferenceRequiredArgument(ETSChecker *checker, Signature
                TypeInference(checker, substitutedSig, arguments, flags);
     }
 
-    if (!argument->IsArrayExpression() || !ContainsTypeErrorRecursively(paramType)) {
+    if (!argument->IsArrayExpression() || !ContainsTypeError(paramType)) {
         return true;
     }
 
@@ -3044,14 +3029,13 @@ static void LogOverloadMismatch(ETSChecker *checker, util::StringView callName,
                                 const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
                                 std::string_view signatureKind)
 {
-    std::string msg {};
-    msg.append(callName.Mutf8());
-    msg += "(";
+    std::string msg = callName.Mutf8();
+    msg += '(';
 
     for (std::size_t index = 0U; index < arguments.size(); ++index) {
         auto const &argument = arguments[index];
         Type const *const argumentType = argument->Check(checker);
-        if (!argumentType->IsTypeError()) {
+        if (argumentType != nullptr && !ContainsTypeError(argumentType)) {
             msg += argumentType->ToString();
         } else {
             //  NOTE (DZ): extra cases for some specific nodes can be added here (as for 'ArrowFunctionExpression')
@@ -3062,7 +3046,7 @@ static void LogOverloadMismatch(ETSChecker *checker, util::StringView callName,
             msg += ", ";
         }
     }
-    msg += ")";
+    msg += ')';
     checker->LogError(diagnostic::NO_MATCHING_SIG, {signatureKind, msg.c_str()}, pos);
 }
 

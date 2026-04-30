@@ -639,8 +639,9 @@ checker::Type *MemberExpression::CheckComputed(checker::ETSChecker *checker, che
         SetObjectType(baseType->AsETSObjectType());
         return CheckIndexAccessMethod(checker);
     }
+
     checker->LogError(diagnostic::INDEX_ON_INVALID_TYPE, {}, Object()->Start());
-    return nullptr;
+    return checker->GlobalTypeError();
 }
 
 checker::VerifiedType MemberExpression::Check(checker::ETSChecker *checker)

@@ -1174,7 +1174,7 @@ static std::vector<std::pair<Type *, ir::Expression *>> GetElementTypes(ETSCheck
             continue;
         }
 
-        if (exprTupleType != nullptr && exprPreferredType->IsETSTupleType()) {
+        if (exprTupleType != nullptr) {
             if (idx >= exprTupleType->GetTupleSize() ||
                 !ValidArrayExprSizeForTupleSize(checker, exprTupleType->GetTypeAtIndex(idx), element)) {
                 elementTypes.emplace_back(element->SetTsType(checker->GlobalTypeError()), element);

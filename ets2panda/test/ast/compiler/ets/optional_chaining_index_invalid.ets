@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,14 @@
  * limitations under the License.
  */
 
- // arkts-no-with
-
-function main(): void {
-    /* @@ label */with(Math) {
-    let r: number = 42
-    console.log("Area: ", PI * r * r)
-  }
+class C {
+    name: string = "";
 }
 
-/* @@@ label Error Semantic error ESE0127: No matching call signature for with(Math) */
+type UT = string | C | (string | C)[];
+
+function foo(x?: UT) {
+    /* @@ label */x?.[0];
+}
+
+/* @@@ label Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
