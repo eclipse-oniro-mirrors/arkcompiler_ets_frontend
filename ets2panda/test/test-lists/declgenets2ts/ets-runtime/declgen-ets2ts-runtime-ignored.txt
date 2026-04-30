@@ -106,3 +106,6 @@ overload_methods_with_primitive_types/override_accessors.ets
 #33327 TSC Fail
 override_tests/overload_override_2.ets
 override_tests/mixed_override.ets
+
+# TSC Fail
+for_of_union_array_string.ets

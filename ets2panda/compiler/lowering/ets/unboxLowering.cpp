@@ -860,44 +860,9 @@ static void SetThisReturnCallType(UnboxContext *uctx, ir::CallExpression *call)
     }
 }
 
-static void HandleForOfStatement(UnboxContext *uctx, ir::ForOfStatement *forOf)
+static void HandleForOfStatement([[maybe_unused]] UnboxContext *uctx, [[maybe_unused]] ir::ForOfStatement *forOf)
 {
-    auto *left = forOf->Left();
-
-    ir::Identifier *id = nullptr;
-    if (left->IsIdentifier()) {
-        id = left->AsIdentifier();
-    } else if (left->IsVariableDeclaration()) {
-        ES2PANDA_ASSERT(left->AsVariableDeclaration()->Declarators().size() == 1);
-        id = left->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
-    }
-    ES2PANDA_ASSERT(id != nullptr);
-
-    // NOTE(gogabr): we need to recompute the right side type instead of just unboxing;
-    // this may be, for example, a generic call that returns a boxed array.
-    auto *tp = MaybeRecursivelyUnboxType(uctx, forOf->Right()->TsType());
-    if (tp->IsETSAnyType()) {
-        return;
-    }
-
-    checker::Type *elemTp = nullptr;
-    if (tp->IsETSArrayType()) {
-        elemTp = tp->AsETSArrayType()->ElementType();
-    } else if (tp->IsETSStringType()) {
-        elemTp = uctx->checker->GlobalCharType();
-    } else {
-        ES2PANDA_ASSERT(tp->IsETSUnionType());
-        ES2PANDA_ASSERT(id->Variable()->TsType()->IsETSUnionType() || id->Variable()->TsType()->IsETSAnyType());
-        // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-        elemTp = id->Variable()->TsType();  // always a union type, no need to change
-    }
-
-    /* This type assignment beats other assignment that could be produced during normal handling of id's declaration
-     */
-    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-    id->SetTsType(elemTp);
-    id->Variable()->SetTsType(elemTp);
-    id->Variable()->Declaration()->Node()->AsTyped()->SetTsType(elemTp);
+    ES2PANDA_UNREACHABLE();
 }
 
 // Borrowed from arithmetic.cpp, didn't want to make it public -- gogabr
@@ -1300,10 +1265,18 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         }
 
         auto getVarType = [this](const auto memberAccessor) {
-            return uctx_->checker->GetTypeOfVariable(std::get<varbinder::LocalVariable *>(memberAccessor));
+            auto *var = std::get<varbinder::LocalVariable *>(memberAccessor);
+            if (var == nullptr) {  //  array.length
+                return uctx_->checker->GlobalIntType();
+            }
+            return uctx_->checker->GetTypeOfVariable(var);
         };
         for (size_t i = 0; i < accessors.size(); ++i) {
             auto var = std::get<varbinder::LocalVariable *>(accessors[i].second);
+            if (var == nullptr) {  /// array.length
+                ES2PANDA_ASSERT(accessors[i].first->IsETSArrayType());
+                continue;
+            }
             HandleDeclarationIfNeeded(mexpr, var);
             // NOTE(ermolaevavarvara): TsType for DeclarationNode was setted, but not for all the variables
             if (accessors[i].first->HasTypeFlag(checker::TypeFlag::READONLY)) {

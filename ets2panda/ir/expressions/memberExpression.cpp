@@ -350,6 +350,9 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             }
             addPropType(memberType);
             CollectUnionSignatures(checker, memberType, type, &commonPropType, resolvedMember.second);
+        } else if (type->IsETSArrayType() && Property()->AsIdentifier()->Name() == "length") {
+            addPropType(checker->GlobalIntBuiltinType());
+            this->AddComponentTypeMemberAccessor(type, static_cast<varbinder::LocalVariable *>(nullptr));
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
             commonPropType = checker->GlobalTypeError();

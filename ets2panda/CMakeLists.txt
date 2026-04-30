@@ -365,6 +365,10 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/interfacePropertyDeclarations.cpp
   compiler/lowering/ets/opAssignment.cpp
   compiler/lowering/ets/ambientLowering.cpp
+  compiler/lowering/ets/annotationCopyLowering.cpp
+  compiler/lowering/ets/annotationCopyPostLowering.cpp
+  compiler/lowering/ets/arrayConversionLowering.cpp
+  compiler/lowering/ets/arrayForOfLowering.cpp
   compiler/lowering/ets/asyncMethodLowering.cpp
   compiler/lowering/ets/asyncMethodLoweringStackless.cpp
   compiler/lowering/ets/bigintLowering.cpp
@@ -379,7 +383,6 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/overrideBridgesLowering.cpp
   compiler/lowering/ets/expandBrackets.cpp
   compiler/lowering/ets/packageImplicitImport.cpp
-  compiler/lowering/ets/arrayConversionLowering.cpp
   compiler/lowering/ets/partialExportClassGen.cpp
   compiler/lowering/ets/promiseVoid.cpp
   compiler/lowering/ets/objectLiteralLowering.cpp
@@ -392,8 +395,6 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/enumPostCheckLowering.cpp
   compiler/lowering/ets/setJumpTarget.cpp
   compiler/lowering/ets/setterLowering.cpp
-  compiler/lowering/ets/annotationCopyLowering.cpp
-  compiler/lowering/ets/annotationCopyPostLowering.cpp
   compiler/lowering/ets/primitiveConversionPhase.cpp
   compiler/lowering/ets/instantiateMethodsPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp

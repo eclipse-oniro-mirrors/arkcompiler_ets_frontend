@@ -608,6 +608,10 @@ semantic:
   id: 76
   message: "'For-of' statement source expression is not of iterable type."
 
+- name: FOROF_UNSUPPORTED_MIXED_ITERABLE_UNION
+  id: 402
+  message: "Unions of types with iterator and fixed/value arrays are currently unsupported in an iteration: {}."
+
 - name: FUNCTION_REDECLERATION
   id: 160
   message: "Function '{}{}' is redeclared with different signature '{}{}'"
