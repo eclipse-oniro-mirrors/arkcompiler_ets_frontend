@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,16 @@
 let O = new Object();
 let I = new Int(3);
 
-class C 
+class C
 {
    field? : Object;
-   method(s: string) : int 
+   method(s: string) : int
    {
       return 1;
    }
 
    method (s? : string) : int
-   { 
+   {
       return 2;
    }
 }
@@ -58,3 +58,4 @@ function main() : int
 /* @@? 41:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
 /* @@? 42:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
 /* @@? 43:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 50:23 Warning Warning W65000: The equality expression is always true. */

@@ -1590,7 +1590,7 @@ void ETSCompiler::Compile(const ir::TSNonNullExpression *expr) const
         }
     }
 
-    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), originalType));
+    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsSupertypeOf(etsg->GetAccumulatorType(), originalType));
 }
 
 void ETSCompiler::Compile([[maybe_unused]] const ir::TSTypeAliasDeclaration *st) const {}
