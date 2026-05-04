@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,14 @@
  * limitations under the License.
  */
 
-enum Color { Red }
-enum Color2 { Red }
+enum E1 { A, B }
+enum E2 { C, D }
 
-function main(): void {
-  arktest.assertTrue(/* @@ label */Color.Red == Color2.Red);
+function main() {
+    let x = E1.A > E2.C;
+    let y = E1.A < E2.C;
 }
 
+/* @@? 20:13 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 21:13 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
 
-/* @@@ label Warning  Warning W65002: Comparison of different enumeration types appears to be unintentional. */

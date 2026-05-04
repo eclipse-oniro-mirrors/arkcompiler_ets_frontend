@@ -1457,12 +1457,19 @@ static void CheckEnumInOperatorContext(ir::Expression *expression, lexer::TokenT
         case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
         case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
-        case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_EQUAL:
-        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
+        case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL: {
             if (lType->IsETSEnumType() && rType->IsETSEnumType() && !checker->Relation()->IsIdenticalTo(lType, rType)) {
                 checker->LogError(diagnostic::BINOP_INCOMPARABLE, {}, expression->Start());
                 return;
+            }
+            [[fallthrough]];
+        }
+        case lexer::TokenType::PUNCTUATOR_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL: {
+            if (lType->IsETSEnumType() && rType->IsETSEnumType() && !checker->Relation()->IsIdenticalTo(lType, rType)) {
+                checker->LogDiagnostic(diagnostic::DIFFERENT_ENUM_EQUALITY, {}, expression->Start());
             }
             [[fallthrough]];
         }
