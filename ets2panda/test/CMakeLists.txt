@@ -57,6 +57,7 @@ function(ets2panda_add_gtest TARGET)
             SOURCES
                 ${ES2PANDA_ROOT}/test/utils/asm_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/ast_verifier_test.cpp
+                ${ES2PANDA_ROOT}/test/utils/metadata_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/checker_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/plugin_conversion_rule_test.cpp
                 ${ES2PANDA_ROOT}/test/utils/panda_executable_path_getter.cpp
@@ -96,3 +97,10 @@ add_subdirectory(options)
 add_subdirectory(unit)
 add_subdirectory(depanalyzer)
 add_subdirectory(arkts_bindings)
+add_subdirectory(metadata)
+
+set(FLATBUFFERS_CXX_FLAGS "-Wno-error")
+set(FLATBUFFERS_DIR "${PANDA_THIRD_PARTY_SOURCES_DIR}/flatbuffers")
+set(FLATBUFFERS_BIN_DIR "${CMAKE_BINARY_DIR}/third_party/flatbuffers")
+
+panda_target_include_directories(es2panda_metadata_test SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/ PRIVATE ${FLATBUFFERS_BIN_DIR}/generated/)

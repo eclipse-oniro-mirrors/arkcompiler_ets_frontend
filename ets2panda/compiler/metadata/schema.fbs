@@ -39,8 +39,7 @@ union RefType {
 
 union Type {
     Builtin:BuiltinType,
-    RefInternal:InternalTypeRef,
-    RefExternal:ExternalTypeRef,
+    Ref:TypeRef,
     Function:FunctionType,
     Tuple:TupleType,
     Union:UnionType,
@@ -85,6 +84,7 @@ table TypeDecl {
 table FunctionDecl {
     name:string (required);
     return_type:Type;
+    is_static:bool;
     value_params:[ValueParamDecl];
     type_params:[TypeParamDecl];
     overloads:[FunctionDecl];
@@ -93,6 +93,7 @@ table FunctionDecl {
 table VarDecl {
     name:string (required);
     return_type:Type (required);
+    is_static:bool;
 }
 
 table PropertyDecl {
@@ -149,11 +150,7 @@ table BuiltinType {
     type_args:[Type];
 }
 
-table InternalTypeRef {
-    decl:RefType (required);
-}
-
-table ExternalTypeRef {
+table TypeRef {
     fqname:string (required);
 }
 

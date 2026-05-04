@@ -241,9 +241,9 @@ void Program::Clear()
     RemoveASTLowered();
     SetProgramModified(true);
     VarBinder()->AsETSBinder()->CleanScopesAndRecordTables(this);
-    GetExternalSources()->Direct().clear();
-    GetExternalSources()->Get<util::ModuleKind::MODULE>().clear();
-    GetExternalSources()->Get<util::ModuleKind::SOURCE_DECL>().clear();
+    GetExternalDecls()->Direct().clear();
+    GetExternalDecls()->Get<ModuleKind::MODULE>().clear();
+    GetExternalDecls()->Get<ModuleKind::SOURCE_DECL>().clear();
 }
 
 void Program::PromoteToMainProgram(public_lib::Context *ctx)
@@ -251,9 +251,9 @@ void Program::PromoteToMainProgram(public_lib::Context *ctx)
     auto *oldMain = ctx->parserProgram;
     // NOTE(dkofanov): externals sources should be bound to context, not programs.
     ES2PANDA_ASSERT(Is<util::ModuleKind::PACKAGE>());
-    ES2PANDA_ASSERT(GetExternalSources()->Empty());
+    ES2PANDA_ASSERT(GetExternalDecls()->Empty());
 
-    auto *packages = &oldMain->externalSources_.Get<util::ModuleKind::PACKAGE>();
+    auto *packages = &oldMain->externalDecls_.Get<ModuleKind::PACKAGE>();
     auto toRemove = std::find(packages->begin(), packages->end(), this);
     // NOTE(dkofanov): the later 'if' should be an assert. The case handled by 'if' relates to the broken functionality
     // of 'ETSPackageDeclaration' expressed in `EnsurePackageIsRegisteredByPackageFraction`.
@@ -261,10 +261,10 @@ void Program::PromoteToMainProgram(public_lib::Context *ctx)
         packages->erase(toRemove);
     }
 
-    externalSources_.transitiveExternals_ = std::move(oldMain->externalSources_.transitiveExternals_);
-    externalSources_.direct_ = std::move(oldMain->externalSources_.direct_);
+    externalDecls_.transitiveExternals_ = std::move(oldMain->externalDecls_.transitiveExternals_);
+    externalDecls_.direct_ = std::move(oldMain->externalDecls_.direct_);
 
-    oldMain->externalSources_ = ExternalSources();
+    oldMain->externalDecls_ = ExternalDecls();
     ctx->parserProgram = this;
 }
 
@@ -299,5 +299,24 @@ const compiler::CFG *Program::GetCFG() const
 {
     return cfg_;
 }
+
+// This shouldn't try insert package fractions to packages.
+template <util::ModuleKind... KINDS>
+void ExternalDeclsImpl<KINDS...>::Add(Program *progToInsert)
+{
+    auto inserter = [progToInsert](auto &submap) {
+        // CC-OFFNXT(G.NAM.03-CPP) project code style
+        constexpr auto submapKind = GetModuleKindFromSubmapType<decltype(submap)>();
+        if (progToInsert->Is<submapKind>()) {
+            submap.push_back(progToInsert->As<submapKind>());
+        }
+    };
+
+    VisitSubmaps(inserter);
+}
+
+using ModuleKind = util::ModuleKind;
+template class ExternalDeclsImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
+                                 ModuleKind::ETSCACHE_DECL, ModuleKind::METADATA_DECL>;
 
 }  // namespace ark::es2panda::parser

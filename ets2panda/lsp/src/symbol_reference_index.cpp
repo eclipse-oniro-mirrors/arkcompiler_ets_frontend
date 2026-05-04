@@ -349,7 +349,7 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
 
     buildIfNeeded(ctx->parserProgram);
 
-    auto *externalSources = ctx->parserProgram->GetExternalSources();
+    auto *externalSources = ctx->parserProgram->GetExternalDecls();
     if (externalSources == nullptr) {
         return buildSuccess;
     }

@@ -83,7 +83,8 @@
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/ets/fixedarrayLowering.h"
-#include "compiler/metadata/emitter.h"
+#include "compiler/metadata/serialization.h"
+#include "compiler/metadata/deserialization.h"
 #include "generated/diagnostic.h"
 #include "lexer/token/sourceLocation.h"
 #include "public/es2panda_lib.h"
@@ -127,6 +128,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ArrayConversionLowering,
         new StringConstantsLowering,
         new EnumLoweringPhase,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
+        new MetadataDeserializationPhase,
         new ResolveIdentifiers,
         new PluginPhase {g_pluginsAfterBind, ES2PANDA_STATE_BOUND, &util::Plugin::AfterBind},
         new CapturedVariables,
@@ -136,7 +138,7 @@ std::vector<Phase *> GetETSPhaseList()
         // please DO NOT change order of these two phases: checkerPhase and pluginsAfterCheck
         new CheckerPhase,
         // Metadata emitting and declarations dumping are right after the checker
-        new MetadataEmittingPhase,
+        new MetadataSerializationPhase,
         new DeclGenPhase,
         new InternalAPICheck,
         // pluginsAfterCheck has to go right after checkerPhase

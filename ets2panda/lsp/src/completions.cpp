@@ -405,7 +405,7 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
     std::vector<CompletionEntry> completions;
     std::string lowerInput = ToLowerCase(input);
 
-    program->GetExternalSources()->Visit([&allExternalSourceExports](auto *extProg) {
+    program->GetExternalDecls()->Visit([&allExternalSourceExports](auto *extProg) {
         auto exports = GetExportsFromProgram(extProg);
         if (!exports.empty()) {
             allExternalSourceExports.insert(allExternalSourceExports.end(), exports.begin(), exports.end());

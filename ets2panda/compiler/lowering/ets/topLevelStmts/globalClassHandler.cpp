@@ -84,7 +84,7 @@ void GlobalClassHandler::CollectReExportedClasses(parser::Program *program, ir::
     parser::Program *extProg = nullptr;
     // Search Correct external program by comparing importPath and absolutePath
     // NOTE(dkofanov): This works "as intended" only for main-program.
-    for (auto &[_, prog] : program->GetExternalSources()->Direct()) {
+    for (auto &[_, prog] : program->GetExternalDecls()->Direct()) {
         if (prog->AbsoluteName() == importPath) {
             extProg = prog;
             break;

@@ -398,7 +398,8 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/instantiateMethodsPhase.cpp
   compiler/lowering/ets/unboxLowering.cpp
   compiler/lowering/ets/awaitLowering.cpp
-  compiler/metadata/emitter.cpp
+  compiler/metadata/serialization.cpp
+  compiler/metadata/deserialization.cpp
   compiler/lowering/ets/internalAPICheck.cpp
   ir/astDump.cpp
   ir/srcDump.cpp

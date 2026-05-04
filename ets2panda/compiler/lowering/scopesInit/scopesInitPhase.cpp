@@ -908,11 +908,12 @@ bool InitScopesPhaseETS::Perform()
     };
 
     using Kind = util::ModuleKind;
-    Context()->parserProgram->GetExternalSources()->Visit<true, Kind::MODULE, Kind::SOURCE_DECL, Kind::ETSCACHE_DECL>(
-        runIfNecessary);
+    Context()
+        ->parserProgram->GetExternalDecls()
+        ->Visit<true, false, Kind::MODULE, Kind::SOURCE_DECL, Kind::ETSCACHE_DECL>(runIfNecessary);
 
     // NOTE(dkofanov): remove this when packages merge at PackageImplicitImport.
-    for (auto *packageProg : Context()->parserProgram->GetExternalSources()->Get<Kind::PACKAGE>()) {
+    for (auto *packageProg : Context()->parserProgram->GetExternalDecls()->Get<Kind::PACKAGE>()) {
         if (!packageProg->IsProgramModified() || packageProg->IsASTLowered()) {
             continue;
         }

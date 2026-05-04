@@ -31,7 +31,6 @@ add_subdirectory(any_ins_test)
 add_subdirectory(source_file_message)
 add_subdirectory(reg_allocator)
 add_subdirectory(debug_info)
-add_subdirectory(metadata) 
 add_subdirectory(filepath)
 
 ets2panda_add_gtest(es2panda_astdumper_tests
@@ -96,8 +95,3 @@ add_subdirectory(ets_specific_optimizer)
 ets2panda_add_gtest(es2panda_checker_tests
     CPP_SOURCES checker_test.cpp
 )
-
-set(FLATBUFFERS_CXX_FLAGS "-Wno-error")
-set(FLATBUFFERS_DIR "${PANDA_THIRD_PARTY_SOURCES_DIR}/flatbuffers")
-set(FLATBUFFERS_BIN_DIR "${CMAKE_BINARY_DIR}/third_party/flatbuffers")
-panda_target_include_directories(es2panda_metadata_test SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/ PRIVATE ${FLATBUFFERS_BIN_DIR}/generated/)
