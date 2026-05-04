@@ -27,6 +27,10 @@ warning:
   id: 16
   message: "Cannot assign to '{}' because it is a read-only property."
 
+- name: AWAIT_ASYNC_USAGE
+  id: 67
+  message: "Avoid using the awaitSync method unless it is absolutely necessary: please refer to its description in standard library documentation to make sure that you fully understand the implications and consequences."
+
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."

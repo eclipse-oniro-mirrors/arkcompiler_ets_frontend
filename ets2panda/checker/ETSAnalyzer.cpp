@@ -3305,6 +3305,11 @@ checker::Type *ETSAnalyzer::Check(ir::MemberExpression *expr) const
         baseType = baseType->AsETSTupleType()->GetWrapperType();
     }
 
+    if (checker->IsPromiseType(baseType) &&
+        expr->Property()->AsIdentifier()->Name().Is(compiler::Signatures::AWAIT_SYNC)) {
+        checker->LogDiagnostic(diagnostic::AWAIT_ASYNC_USAGE, {}, expr->Start());
+    }
+
     return ResolveMemberExpressionByBaseType(checker, baseType, expr);
 }
 

@@ -283,6 +283,8 @@ defines:
     ref: LOAD
   - name: 'InvalidStoreAccessError'
     ref: INVALID_STOREACCESS_ERROR
+  - name: 'awaitSync'
+    ref : AWAIT_SYNC
 
 packages:
   - name: 'std.core'
