@@ -421,23 +421,6 @@ void ImportPathManager::IntroduceMainProgramForSimult()
     Context()->parserProgram = program;
 }
 
-void ImportPathManager::InitParseQueueForSimult()
-{
-    ES2PANDA_ASSERT(GetParseQueue().empty());
-
-    IntroduceMainProgramForSimult();
-    srcPos_.SetProgram(Context()->parserProgram);
-
-    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS);
-    ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
-    for (auto &sourceName : Context()->sourceFileNames) {
-        // Build of `importInfo` should be refined.
-        util::ImportInfo importInfo {*this, sourceName};
-        auto program = LookupImportDataAndIntroduceProgram(&importInfo);
-        program->SetIsBuiltSimultaneously();
-    }
-}
-
 void ImportPathManager::PrepareParseQueueForProgram(parser::Program *program)
 {
     ES2PANDA_ASSERT(program != nullptr);
@@ -758,18 +741,23 @@ private:
             return Pointer {new ExlusiveFileWriter(fd, filename)};
         }
 
-        void Write(std::string_view text) const
+        void Write(std::string_view text)
         {
             FlockTrace("- Write");
+            ES2PANDA_ASSERT(!written_);
 #ifdef PANDA_TARGET_WINDOWS
             DWORD bytesWritten = 0;
             if (!::WriteFile(fd_, text.data(), text.size(), &bytesWritten, NULL)) {
                 std::cerr << "Error writing to the file '" << filename_ << "': " << GetErrorMessage(::GetLastError())
                           << std::endl;
+            } else {
+                written_ = true;
             }
 #else
             if (::write(fd_, text.data(), text.size()) == -1) {
                 std::cerr << "Error writing to the file '" << filename_ << "': " << ::strerror(errno) << std::endl;
+            } else {
+                written_ = true;
             }
 #endif
         }
@@ -778,7 +766,9 @@ private:
         {
             FlockTrace("Close");
 #ifdef PANDA_TARGET_WINDOWS
-            ::SetEndOfFile(fd_);
+            if (written_) {
+                ::SetEndOfFile(fd_);
+            }
             OVERLAPPED ov = {};
             if (!::UnlockFileEx(fd_, 0, MAXDWORD, MAXDWORD, &ov)) {
                 std::cerr << "File truncate error '" << filename_ << "': " << GetErrorMessage(::GetLastError())
@@ -786,9 +776,11 @@ private:
             }
             ::CloseHandle(fd_);
 #else
-            auto const curPos = ::lseek(fd_, 0, SEEK_CUR);
-            if (::ftruncate(fd_, curPos) != 0) {
-                std::cerr << "File truncate error '" << filename_ << "': " << ::strerror(errno) << std::endl;
+            if (written_) {
+                auto const curPos = ::lseek(fd_, 0, SEEK_CUR);
+                if (::ftruncate(fd_, curPos) != 0) {
+                    std::cerr << "File truncate error '" << filename_ << "': " << ::strerror(errno) << std::endl;
+                }
             }
             ::flock(fd_, LOCK_UN);
             ::close(fd_);
@@ -845,6 +837,7 @@ private:
     private:
         FD fd_;
         std::string filename_;
+        bool written_ = false;
     };
 
 private:
@@ -1089,6 +1082,25 @@ private:
     };
     ArenaMap<ArenaString, Module, CompareByLength> modules_;
 };
+
+void ImportPathManager::InitParseQueueForSimult()
+{
+    ES2PANDA_ASSERT(GetParseQueue().empty());
+
+    IntroduceMainProgramForSimult();
+    srcPos_.SetProgram(Context()->parserProgram);
+
+    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS);
+    ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
+    for (auto &sourceName : Context()->sourceFileNames) {
+        // Build of `importInfo` should be refined.
+        util::ImportInfo importInfo {*this, sourceName};
+        importInfo.SetTextFile<ModuleKind::MODULE>(std::string(sourceName), DE());
+        auto *program = IntroduceProgram(importInfo);
+        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+        program->SetIsBuiltSimultaneously();
+    }
+}
 
 void ImportPathManager::RegisterProgram(parser::Program *program)
 {
