@@ -258,16 +258,20 @@ static void CheckGetterSetterOverride(varbinder::LocalVariable const *child, var
         return;
     }
     auto pos = child->Declaration()->Node()->Start();
-    // If the getter or setter methods are generated due to "class implements interface", then skip the check.
-    if (checker->IsVariableGetterSetter(parent) && parentDeclNode->OriginalNode() == nullptr) {
-        checker->LogError(diagnostic::PROP_OVERRIDE_ACCESSOR,
-                          {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
-        return;
-    }
-
     if (checker->IsVariableGetterSetter(child) && !checker->IsVariableGetterSetterClassProperty(parent) &&
         childDeclNode->OriginalNode() == nullptr) {
         checker->LogError(diagnostic::ACCESSOR_OVERRIDE_PROP,
+                          {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
+        return;
+    }
+    // If the getter or setter methods are generated due to "class implements interface", then skip the check.
+    if ((!checker->IsVariableGetterSetter(parent) && checker->IsVariableGetterSetter(child) &&
+         parentDeclNode->Parent()->IsClassDefinition()) ||
+        (checker->IsVariableGetterSetter(parent) && !checker->IsVariableGetterSetter(child))) {
+        if (childDeclNode->OriginalNode() != nullptr) {
+            return;
+        }
+        checker->LogError(diagnostic::PROP_OVERRIDE_ACCESSOR,
                           {child->Name(), superClass->Ident()->Name(), subClass->Ident()->Name()}, pos);
     }
 }
