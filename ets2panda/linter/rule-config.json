@@ -126,7 +126,8 @@
     "arkts-builtin-thisArgs",
     "arkts-builtin-symbol-iterator",
     "arkts-builtin-no-property-descriptor",
-    "arkts-builtin-cotr"
+    "arkts-builtin-cotr",
+    "builtin-api-num2int"
   ],
   "OHMURL": [
     "arkts-require-fullpath-name"
