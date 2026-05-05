@@ -48,7 +48,6 @@ softlist:
   - ".*/distributeddatamgr/udmf/.*"
   - ".*/developtools/ace_ets2bundle/.*"
   - ".*/foundation/arkui/ace_engine/frameworks/.*"
-  - ".*/foundation/arkui/ace_engine/advanced_ui_component_static/.*"
   - ".*/@ohos\\.util\\.stream\\.d\\.ets"
   - ".*/@ohos\\.rpc\\.d\\.ets"
   - ".*/@ohos\\.app\\.ability\\.insightIntent\\.d\\.ets"
