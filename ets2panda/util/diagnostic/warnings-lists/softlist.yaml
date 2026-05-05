@@ -58,6 +58,10 @@ softlist:
   - ".*/foundation/arkui/ace_engine/frameworks/.*"
   - ".*/foundation/arkui/ace_engine/advanced_ui_component_static/.*"
   - ".*/foundation/multimedia/av_session/.*"
+  - ".*/@ohos\\.util\\.stream\\.d\\.ets"
+  - ".*/@ohos\\.rpc\\.d\\.ets"
+  - ".*/@ohos\\.app\\.ability\\.insightIntent\\.d\\.ets"
+  - ".*/@ohos\\.uri\\.d\\.ets"
 
 - name: "override_field_allowed"
   paths:

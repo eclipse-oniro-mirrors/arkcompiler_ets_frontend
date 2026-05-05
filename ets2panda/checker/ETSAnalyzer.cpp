@@ -133,6 +133,43 @@ static void CheckExport(ETSChecker *checker, checker::Type const *type)
     type->IterateRecursively(checkExported);
 }
 
+//  Helper: checks that type parameter default types and constraints were declared exported
+static void CheckExportForTypeParams(ETSChecker *checker, ir::TSTypeParameterDeclaration *typeParams)
+{
+    if (typeParams == nullptr) {
+        return;
+    }
+
+    for (auto *typeParam : typeParams->Params()) {
+        auto *constraintType = typeParam->Constraint();
+        if (constraintType != nullptr) {
+            CheckExport(checker, constraintType->GetType(checker));
+        }
+        auto *defaultType = typeParam->DefaultType();
+        if (defaultType != nullptr) {
+            CheckExport(checker, defaultType->GetType(checker));
+        }
+    }
+}
+
+//  Helper: checks that type alias was declared exported
+static void CheckExportForTypeAlias(checker::ETSChecker *checker, const ir::AstNode *node)
+{
+    if (!node->IsETSTypeReferencePart()) {
+        return;
+    }
+    auto *typeRef = node->AsETSTypeReferencePart();
+    auto *baseName = typeRef->Name();
+    if (baseName == nullptr || baseName->Variable() == nullptr) {
+        return;
+    }
+    auto *declNode = baseName->Variable()->Declaration()->Node();
+    if (declNode->IsTSTypeAliasDeclaration() && !util::Helpers::IsExported(declNode)) {
+        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {baseName->AsIdentifier()->Name().Utf8()},
+                          baseName->Start());
+    }
+}
+
 //  from base folder
 checker::Type *ETSAnalyzer::Check(ir::CatchClause *st) const
 {
@@ -186,6 +223,13 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
         checker->CheckClassDefinition(node);
     }
 
+    if ((node->IsExported() || node->IsDefaultExported()) && node->TsType() != nullptr) {
+        const auto *classType = node->TsType();
+        if (classType->IsETSObjectType() && classType->AsETSObjectType()->SuperType() != nullptr) {
+            CheckExport(checker, classType->AsETSObjectType()->SuperType());
+        }
+        CheckExportForTypeParams(checker, node->TypeParams());
+    }
     return node->TsType();
 }
 
@@ -512,6 +556,7 @@ static checker::Type *CheckMethodDefinitionHelper(ETSChecker *checker, ir::Metho
     if (!method->IsPrivate() && method->Function() != nullptr && util::Helpers::IsExported(method) &&
         method->Id()->Name().Utf8().find("lambda_invoke-") == std::string_view::npos) {
         CheckExport(checker, methodType);
+        CheckExportForTypeParams(checker, method->Function()->TypeParams());
         TypeAnnoCheckForExportedMethod(checker, method);
     }
 
@@ -4596,6 +4641,18 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationDeclaration *st) const
         }
     }
 
+    // Check if types used in properties are exported (for exported annotation declarations)
+    if (st->IsExported() || st->IsDefaultExported()) {
+        const auto checkTypeNode = [checker](const ir::AstNode *node) { CheckExportForTypeAlias(checker, node); };
+        for (auto *it : st->Properties()) {
+            auto *property = it->AsClassProperty();
+            if (property->TypeAnnotation() == nullptr) {
+                continue;
+            }
+            property->TypeAnnotation()->IterateRecursively(checkTypeNode);
+        }
+    }
+
     auto baseName = st->GetBaseName();
     if (!baseName->IsErrorPlaceHolder() && baseName->Variable()->Declaration()->Node()->IsAnnotationDeclaration()) {
         auto *annoDecl = baseName->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
@@ -4646,6 +4703,13 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
 
     auto *annoDecl = baseName->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
     annoDecl->Check(checker);
+
+    auto *parentNode = st->Parent();
+    if (parentNode != nullptr && (parentNode->IsExported() || parentNode->IsDefaultExported())) {
+        if (!util::Helpers::IsExported(annoDecl)) {
+            checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {baseName->Name()}, st->Start());
+        }
+    }
 
     ArenaUnorderedMap<util::StringView, ir::ClassProperty *> fieldMap {checker->ProgramAllocator()->Adapter()};
     for (auto *it : annoDecl->Properties()) {
@@ -5688,7 +5752,9 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
         if (st->TypeAnnotation()->TsType() == nullptr) {
             st->TypeAnnotation()->Check(checker);
         }
-
+        if ((st->IsExported() || st->IsDefaultExported()) && st->TypeAnnotation()->TsType() != nullptr) {
+            CheckExport(checker, st->TypeAnnotation()->TsType());
+        }
         return ReturnTypeForStatement(st);
     }
 
@@ -5708,6 +5774,9 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
 
     if (st->TypeAnnotation()->TsType() == nullptr) {
         st->TypeAnnotation()->Check(checker);
+    }
+    if ((st->IsExported() || st->IsDefaultExported()) && st->TypeAnnotation()->TsType() != nullptr) {
+        CheckExport(checker, st->TypeAnnotation()->TsType());
     }
 
     return ReturnTypeForStatement(st);

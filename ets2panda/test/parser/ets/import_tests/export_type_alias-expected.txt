@@ -10,12 +10,12 @@
           "loc": {
             "start": {
               "line": 16,
-              "column": 7,
+              "column": 14,
               "program": "export_type_alias.ets"
             },
             "end": {
               "line": 16,
-              "column": 16,
+              "column": 23,
               "program": "export_type_alias.ets"
             }
           }
@@ -31,12 +31,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 18,
+                  "column": 25,
                   "program": "export_type_alias.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 18,
+                  "column": 25,
                   "program": "export_type_alias.ets"
                 }
               }
@@ -55,12 +55,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 18,
+                      "column": 25,
                       "program": "export_type_alias.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 18,
+                      "column": 25,
                       "program": "export_type_alias.ets"
                     }
                   }
@@ -75,12 +75,12 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 18,
+                      "column": 25,
                       "program": "export_type_alias.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 18,
+                      "column": 25,
                       "program": "export_type_alias.ets"
                     }
                   }
@@ -88,12 +88,12 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 18,
+                    "column": 25,
                     "program": "export_type_alias.ets"
                   },
                   "end": {
                     "line": 16,
-                    "column": 18,
+                    "column": 25,
                     "program": "export_type_alias.ets"
                   }
                 }
@@ -101,12 +101,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 18,
+                  "column": 25,
                   "program": "export_type_alias.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 18,
+                  "column": 25,
                   "program": "export_type_alias.ets"
                 }
               }
@@ -129,12 +129,12 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 17,
+            "column": 24,
             "program": "export_type_alias.ets"
           },
           "end": {
             "line": 16,
-            "column": 19,
+            "column": 26,
             "program": "export_type_alias.ets"
           }
         }
@@ -147,7 +147,7 @@
         },
         "end": {
           "line": 16,
-          "column": 19,
+          "column": 26,
           "program": "export_type_alias.ets"
         }
       }
