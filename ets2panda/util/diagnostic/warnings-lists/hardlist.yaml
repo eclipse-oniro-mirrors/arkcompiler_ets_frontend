@@ -206,6 +206,7 @@ hardlist:
   - ".*/test/xts/acts/arkui/ace_ets_module_ui/.*"
   - ".*/test/xts/acts/arkui/ace_ets_ux_five/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/.*"
+  - ".*/test/xts/acts/web/.*"
 
 - name: "explicit_export"
   paths:
