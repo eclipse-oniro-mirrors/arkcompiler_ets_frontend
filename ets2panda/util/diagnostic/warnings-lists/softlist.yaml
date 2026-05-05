@@ -155,3 +155,4 @@ softlist:
   - ".*/developtools/.*"
   - ".*/xts/.*"
   - ".*/Pre_Merge_ArkUI_Integration/.*"
+  - ".*/Index\\.ets"
