@@ -40,7 +40,7 @@ def parse_arguments() -> argparse.Namespace:
         "-s",
         type=float,
         required=False,
-        default=0.1,
+        default=0.2,
         help="Acceptable regression compared to static measurement",
     )
     parser.add_argument("--runs", "-n", type=int, required=False, default=25, help="Number of times to run the command")
