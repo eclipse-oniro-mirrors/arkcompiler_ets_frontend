@@ -161,7 +161,7 @@ warning:
 
 - name: NON_NULLISH_OPERAND
   id: 15
-  message: "The operand of the ensure-not-nullish expression is always non-nullish."
+  message: "Operand of the {} expression is always non-nullish."
 
 - name: NO_OHMURL
   id: 11
@@ -181,7 +181,7 @@ warning:
 
 - name: NULLISH_OPERAND
   id: 14
-  message: "Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'."
+  message: "Operand of the {} expression is 'null' or 'undefined'."
 
 - name: OVERRIDE_FIELD_MUST_HAVE_INITIALIZER
   id: 1049305

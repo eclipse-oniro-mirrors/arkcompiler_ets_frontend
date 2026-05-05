@@ -18,12 +18,11 @@
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
-#include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
 #include "ir/ets/etsUnionType.h"
 #include "lexer/token/token.h"
-#include "parser/program/program.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::checker {
 
@@ -846,26 +845,32 @@ static bool IsStaticallyDistinctReference(const ir::Expression *left, const ir::
     return false;
 }
 
-static bool ShouldReturnFalseForEqualityExpressionResult(ETSChecker *checker, const ir::Expression *left,
-                                                         const ir::Expression *right, checker::Type *leftType,
-                                                         checker::Type *rightType)
+static std::optional<bool> ShouldReturnPredefinedEqualityExpressionResult(ETSChecker *checker,
+                                                                          const ir::Expression *left,
+                                                                          const ir::Expression *right,
+                                                                          checker::Type *leftType,
+                                                                          checker::Type *rightType)
 {
     if (IsStaticallyDistinctReference(left, right)) {
-        return true;
+        return false;
     }
 
     if ((leftType->DefinitelyETSNullish() && !rightType->PossiblyETSNullish()) ||
         (rightType->DefinitelyETSNullish() && !leftType->PossiblyETSNullish())) {
+        return false;
+    }
+
+    if (leftType->DefinitelyETSNullish() && rightType->DefinitelyETSNullish()) {
         return true;
     }
 
     if (leftType->IsETSObjectType() && rightType->IsETSObjectType() &&
         !checker->Relation()->IsCastableTo(leftType, rightType) &&
         !checker->Relation()->IsCastableTo(rightType, leftType)) {
-        return true;
+        return false;
     }
 
-    return false;
+    return std::nullopt;
 }
 
 static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker, ir::Expression *left,
@@ -891,11 +896,7 @@ static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker,
         return checker->Relation()->IsIdenticalTo(leftType, rightType);
     }
 
-    if (ShouldReturnFalseForEqualityExpressionResult(checker, left, right, leftType, rightType)) {
-        return false;
-    }
-
-    return std::nullopt;
+    return ShouldReturnPredefinedEqualityExpressionResult(checker, left, right, leftType, rightType);
 }
 
 static void MaybeLogCompileTimeEqualityWarning(ETSChecker *checker, const BinaryArithmOperands &ops,
@@ -908,14 +909,32 @@ static void MaybeLogCompileTimeEqualityWarning(ETSChecker *checker, const Binary
         return;
     }
 
+    auto value = *result;
     if (operationType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL ||
         operationType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL) {
-        result = !result.value();
+        value = !value;
     }
 
-    checker->LogDiagnostic(result.value() ? diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE
-                                          : diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE,
-                           pos);
+    //  Check that equality expression was synthetically generated from optional chaining expression
+    //  via Optional Lowering (that is structural lowering thus we don't have types on that phase)
+    bool isOptionalChaining =
+        left->IsIdentifier() && left->AsIdentifier()->Name().StartsWith(compiler::GENSYM_CORE) &&
+        util::Helpers::FindAncestorGivenByType(ops.expr, ir::AstNodeType::CONDITIONAL_EXPRESSION) != nullptr;
+    if (isOptionalChaining) {
+        auto blockExpression = util::Helpers::FindAncestorGivenByType(ops.expr, ir::AstNodeType::BLOCK_EXPRESSION);
+        if (blockExpression == nullptr || blockExpression->OriginalNode() == nullptr ||
+            !blockExpression->OriginalNode()->IsChainExpression()) {
+            isOptionalChaining = false;
+        }
+    }
+
+    if (isOptionalChaining) {
+        checker->LogDiagnostic(value ? diagnostic::NULLISH_OPERAND : diagnostic::NON_NULLISH_OPERAND,
+                               {"optional-chaining"}, pos);
+    } else {
+        checker->LogDiagnostic(
+            value ? diagnostic::EQUALITY_EXPRESSION_ALWAYS_TRUE : diagnostic::EQUALITY_EXPRESSION_ALWAYS_FALSE, pos);
+    }
 }
 
 static Type *CheckBinaryOperatorEqual(ETSChecker *checker, BinaryArithmOperands const &ops)

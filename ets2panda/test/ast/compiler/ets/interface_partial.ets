@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,9 +31,12 @@ function main() {
 }
 
 /* @@? 18:1 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:9 Warning Warning W65001: The equality expression is always false. */
 /* @@? 21:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type '%%partial-I' */
 /* @@? 22:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type '%%partial-I' */
 /* @@? 27:18 Error Semantic error ESE0065: type I has no property named var_one */
+/* @@? 27:46 Error Semantic error ESE0065: type I has no property named var_two */
+/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for foo(a.var_one) */ 
 /* @@? 28:11 Error Semantic error ESE0087: Property 'var_one' does not exist on type 'I' */
 /* @@? 29:9 Error Semantic error ESE0351: Variable 'a' has already been declared. */
 /* @@? 29:18 Error Semantic error ESE0065: type I has no property named var_two */

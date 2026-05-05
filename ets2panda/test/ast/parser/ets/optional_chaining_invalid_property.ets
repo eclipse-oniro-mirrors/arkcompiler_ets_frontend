@@ -26,5 +26,5 @@ let dog: Dog = {
 let hasSting = /* @@ label */dog?.hasSting;
 
 
-/* @@@ label Warning Warning W65001: The equality expression is always false. */
+/* @@@ label Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */
 /* @@? 26:35 Error Semantic error ESE0087: Property 'hasSting' does not exist on type 'Dog' */

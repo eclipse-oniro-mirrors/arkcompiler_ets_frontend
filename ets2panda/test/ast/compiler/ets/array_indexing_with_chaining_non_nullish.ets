@@ -17,4 +17,4 @@ class A {}
 
 let arr : Object[] = [new Object(), new A()];
 let elem : Object | undefined = /* @@ label */arr?.[0];
-/* @@@ label Warning Warning W65001: The equality expression is always false. */
+/* @@@ label Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */

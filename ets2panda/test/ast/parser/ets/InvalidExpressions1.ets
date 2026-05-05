@@ -74,6 +74,7 @@ let a = [1, 2, 3);
 /* @@? 33:5 Error Semantic error ESE0201: Call to 'super' must be first statement in constructor */
 /* @@? 33:10 Error Syntax error ESY0061: Unexpected super keyword. */
 /* @@? 36:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 36:1 Warning Warning W0014: Operand of the optional-chaining expression is 'null' or 'undefined'. */
 /* @@? 36:8 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 38:5 Error Semantic error ESE0351: Variable 'a' has already been declared. */
 /* @@? 38:17 Error Syntax error ESY0227: Unexpected token ')'. */

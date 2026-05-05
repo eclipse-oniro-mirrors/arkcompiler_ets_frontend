@@ -17,11 +17,12 @@ async function foo() {
     const p = Promise.resolve(null);
 
     const result = await p.then(obj => {
-        const value = obj?.prop ?? "default";
+        const value = /* @@ label */obj?.prop ?? "default";
         return typeof value;
     });
 }
 
 /* @@? 19:26 Error Semantic error ESE0127: No matching call signature for then(((p1: null) => String|PromiseLike<String>)) */
-/* @@? 20:23 Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
-/* @@? 20:23 Warning Warning W1068706: result of the nullish-coalescing expression is equal to its right-hand-side expression value. */
+/* @@@ label Warning Warning W0014: Operand of the optional-chaining expression is 'null' or 'undefined'. */
+/* @@@ label Warning Warning W971874: result of the nullish-coalescing expression is equal to its left-hand-side expression value. */
+/* @@@ label Warning Warning W1068706: result of the nullish-coalescing expression is equal to its right-hand-side expression value. */

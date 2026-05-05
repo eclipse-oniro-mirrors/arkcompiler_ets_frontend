@@ -14,5 +14,7 @@
  */
 
 let str = "";
-let first: string = str?.[0] || "";
-/* @@? 17:21 Warning Warning W65001: The equality expression is always false. */
+let first: string = /* @@ label */str?.[0] || "";
+
+
+/* @@@ label Warning Warning W0015: Operand of the optional-chaining expression is always non-nullish. */

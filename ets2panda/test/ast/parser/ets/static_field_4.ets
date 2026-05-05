@@ -27,5 +27,5 @@ function main() {
 }
 
 /* @@? 25:7 Error Semantic error ESE0207: 'foo' is a static property of 'A' */
-/* @@? 26:3 Warning Warning W0015: The operand of the ensure-not-nullish expression is always non-nullish. */
+/* @@? 26:3 Warning Warning W0015: Operand of the ensure-not-nullish expression is always non-nullish. */
 /* @@? 26:8 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

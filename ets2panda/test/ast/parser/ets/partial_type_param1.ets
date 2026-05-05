@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,3 +39,5 @@ function main() {
 }
 
 /* @@? 32:41 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 33:12 Warning Warning W65001: The equality expression is always false. */
+/* @@? 33:26 Warning Warning W65001: The equality expression is always false. */

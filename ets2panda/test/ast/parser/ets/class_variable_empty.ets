@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +15,17 @@
 
 function main(): void {
   {
-    class A {}
-    let a: A = new A;
-    arktest.assertTrue(a != null)
+    /* @@ label1 */class A {}
+    let a: /* @@ label2 */A = new /* @@ label3 */A;
+    arktest.assertTrue(/* @@ label4 */a != null)
   }
   arktest.assertTrue(a != null)
 }
 
-/* @@? 18:5 Error Syntax error ESY0040: Illegal start of CLASS expression. */
-/* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'A'. */
-/* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@@ label2 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@@ label3 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@@ label4 Warning Warning W65001: The equality expression is always false. */
+/* @@? 22:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 22:22 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 22:22 Warning Warning W65001: The equality expression is always false. */

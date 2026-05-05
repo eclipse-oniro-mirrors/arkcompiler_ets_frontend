@@ -16,7 +16,8 @@
 const p = Promise.resolve(undefined);
 
 p.then(obj => {
-    const result = typeof obj?.prop;
+    const result = typeof /* @@ label */obj?.prop;
 });
 
 /* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => undefined|PromiseLike<undefined>)) */
+/* @@@ label Warning Warning W0014: Operand of the optional-chaining expression is 'null' or 'undefined'. */

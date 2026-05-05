@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2025 Huawei Device Co., Ltd.
+* Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at 
@@ -22,4 +22,4 @@ function main() {
 
 /* @@? 20:5 Error Semantic error ESE0127: No matching call signature for sum(...) */
 /* @@? 20:9 Error Semantic error ESE0049: Spread expression can be applied only to array or tuple type, but 'never' is provided */
-/* @@? 20:12 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 20:12 Warning Warning W0014: Operand of the ensure-not-nullish expression is 'null' or 'undefined'. */

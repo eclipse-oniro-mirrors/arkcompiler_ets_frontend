@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
 function bar(p1: number) {}
 function foo(): number {
     let n: number|undefined = undefined
-    if (n != undefined) {
+    if (/* @@ label1 */n != undefined) {
         let a: Number = n
         bar(n)
         let b: FixedArray<number> = [2.7, n, 3.14]
@@ -27,5 +27,6 @@ function foo(): number {
 }
 
 
+/* @@@ label1 Warning Warning W65001: The equality expression is always false. */
 /* @@? 23:17 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 26:12 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 26:12 Warning Warning W0014: Operand of the ensure-not-nullish expression is 'null' or 'undefined'. */

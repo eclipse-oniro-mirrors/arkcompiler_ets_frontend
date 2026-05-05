@@ -28,8 +28,10 @@ if(entry != undefined){
 }
 
 /* @@? 17:8 Error Semantic error ESE0143: Unresolved reference entry */
+/* @@? 17:8 Warning Warning W65001: The equality expression is always false. */
 /* @@? 18:9 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
 /* @@? 19:13 Error Semantic error ESE71336: Exported function 'bar' requires type annotation. */
 /* @@? 24:4 Error Semantic error ESE0143: Unresolved reference entry */
+/* @@? 24:4 Warning Warning W65001: The equality expression is always false. */
 /* @@? 25:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
 /* @@? 26:9 Error Semantic error ESE71336: Exported function 'bar' requires type annotation. */
