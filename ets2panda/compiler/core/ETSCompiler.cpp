@@ -394,14 +394,12 @@ void ETSCompiler::Compile([[maybe_unused]] const ir::AwaitExpression *expr) cons
     compiler::VReg argumentReg = etsg->AllocReg();
     expr->Argument()->Compile(etsg);
     etsg->StoreAccumulator(expr, argumentReg);
-    etsg->CallVirtual(expr->Argument(), compiler::Signatures::BUILTIN_PROMISE_AWAIT_RESOLUTION, argumentReg);
 
     if (etsg->Context()->config->options->IsStacklessCoros()) {
-        const auto resultReg = etsg->AllocReg();
-        etsg->EmitCheckCast(expr, compiler::Signatures::BUILTIN_ASYNCCONTEXT, false);
-        etsg->StoreAccumulator(expr, resultReg);
-        etsg->EmitEtsAsyncSuspend(expr, resultReg);
-        etsg->CallVirtual(expr->Argument(), compiler::Signatures::BUILTIN_ASYNCCONTEXT_AWAIT_RESULT, resultReg);
+        etsg->EmitEtsAsyncAwait(expr, argumentReg);
+        etsg->EmitEtsAsyncUnpack(expr, argumentReg);
+    } else {
+        etsg->CallVirtual(expr->Argument(), compiler::Signatures::BUILTIN_PROMISE_AWAIT_RESOLUTION, argumentReg);
     }
 
     etsg->CastToReftype(expr->Argument(), expr->TsType(), IS_UNCHECKED_CAST);

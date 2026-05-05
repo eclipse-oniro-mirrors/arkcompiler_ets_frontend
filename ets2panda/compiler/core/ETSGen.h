@@ -500,8 +500,11 @@ public:
         }
     }
 
-    void EmitEtsAsyncSuspend(const ir::AstNode *node, const VReg asyncContext);
-    void EmitEtsAsyncDispatch(const ir::AstNode *node, const VReg asyncContext);
+    void EmitEtsAsyncAwait(const ir::AstNode *node, const VReg promise);
+    void EmitEtsAsyncDispatch(const ir::AstNode *node);
+    void EmitEtsAsyncUnpack(const ir::AstNode *node, const VReg promise);
+    void EmitEtsAsyncResolve(const ir::AstNode *node, const VReg value);
+    void EmitEtsAsyncReject(const ir::AstNode *node, const VReg error);
 
     ~ETSGen() override = default;
     NO_COPY_SEMANTIC(ETSGen);

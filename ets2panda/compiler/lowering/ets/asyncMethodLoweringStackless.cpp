@@ -42,41 +42,14 @@ static void CheckNode(public_lib::Context *ctx, ir::AstNode *node)
     CheckLoweredNode(binder, checker, node);
 }
 
-static ir::CallExpression *CreateAsyncContextCurrentCall(public_lib::Context *ctx)
-{
-    ES2PANDA_ASSERT(ctx);
-
-    const auto alloc = ctx->Allocator();
-
-    const auto asyncCtxImportAlias = util::UString {
-        std::string(ARKRUNTIME_IMPORT_ALIAS_PREFIX) + std::string(Signatures::BUILTIN_ASYNCCONTEXT_CLASS), alloc};
-    const auto asyncCtxIdent = alloc->New<ir::Identifier>(asyncCtxImportAlias.View(), alloc);
-    ES2PANDA_ASSERT(asyncCtxIdent);
-
-    const auto asyncCtxCurrentIdent = alloc->New<ir::Identifier>("current", alloc);
-    ES2PANDA_ASSERT(asyncCtxIdent);
-
-    const auto asyncCtxCurrentMemberExpression = util::NodeAllocator::ForceSetParent<ir::MemberExpression>(
-        alloc, asyncCtxIdent, asyncCtxCurrentIdent, ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
-    ES2PANDA_ASSERT(asyncCtxCurrentMemberExpression);
-
-    const auto asyncCtxCurrentCall = util::NodeAllocator::ForceSetParent<ir::CallExpression>(
-        alloc, asyncCtxCurrentMemberExpression, ArenaVector<ir::Expression *>({}), nullptr, false, false);
-    ES2PANDA_ASSERT(asyncCtxCurrentCall);
-
-    return asyncCtxCurrentCall;
-}
-
 static ArenaVector<ir::Statement *> CreatePrologue(public_lib::Context *ctx)
 {
     ES2PANDA_ASSERT(ctx);
 
     const auto alloc = ctx->Allocator();
 
-    const auto asyncCtxCurrentCall = CreateAsyncContextCurrentCall(ctx);
-
     const auto dispatchCall = util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(
-        alloc, "asyncdispatch", ArenaVector<ir::Expression *>({asyncCtxCurrentCall}));
+        alloc, "asyncdispatch", ArenaVector<ir::Expression *>());
     ES2PANDA_ASSERT(dispatchCall);
 
     const auto dispatchStmt = util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(alloc, dispatchCall);
@@ -177,46 +150,23 @@ static ir::ReturnStatement *CreateReturnFromAsync(public_lib::Context *ctx, ir::
 {
     ES2PANDA_ASSERT(ctx);
     ES2PANDA_ASSERT(val);
+    ES2PANDA_ASSERT(explicitTypeAnno);
 
     const auto parser = ctx->parser->AsETSParser();
     const auto alloc = ctx->Allocator();
 
-    const auto resolveValIdent = Gensym(alloc);
-    ES2PANDA_ASSERT(resolveValIdent);
-    const auto resolveValDecl = parser->CreateFormattedStatement("let @@I1 = @@E2", resolveValIdent, val);
-    ES2PANDA_ASSERT(resolveValDecl);
+    const auto completeSignature = isResolve ? "asyncresolve" : "asyncreject";
 
-    const auto asyncCtxCurrent = CreateAsyncContextCurrentCall(ctx);
-    ES2PANDA_ASSERT(asyncCtxCurrent);
+    const auto completeCall = util::NodeAllocator::ForceSetParent<ir::ETSIntrinsicNode>(
+        alloc, completeSignature, ArenaVector<ir::Expression *>({val}));
+    ES2PANDA_ASSERT(completeCall);
 
-    const auto asyncCtxIdent = Gensym(alloc);
-    ES2PANDA_ASSERT(asyncCtxIdent);
-    const auto asyncCtxDecl = parser->CreateFormattedStatement("let @@I1 = @@E2", asyncCtxIdent, asyncCtxCurrent);
-    ES2PANDA_ASSERT(asyncCtxDecl);
-
-    const auto resolveSig = isResolve ? "resolve" : "reject";
-
-    ir::Statement *returnArgDecl = nullptr;
-    std::stringstream formattedStmt;
-    if (explicitTypeAnno) {
-        formattedStmt << "@@I1 ? @@I2." << resolveSig << "<@@T3>(@@I4) : Promise." << resolveSig << "<@@T5>(@@I6)";
-        returnArgDecl = parser->CreateFormattedStatement(formattedStmt.str(), asyncCtxIdent->Clone(alloc, nullptr),
-                                                         asyncCtxIdent->Clone(alloc, nullptr), explicitTypeAnno,
-                                                         resolveValIdent->Clone(alloc, nullptr), explicitTypeAnno,
-                                                         resolveValIdent->Clone(alloc, nullptr));
-    } else {
-        formattedStmt << "@@I1 ? @@I2." << resolveSig << "(@@I3) : Promise." << resolveSig << "(@@I4)";
-        returnArgDecl = parser->CreateFormattedStatement(
-            formattedStmt.str(), asyncCtxIdent->Clone(alloc, nullptr), asyncCtxIdent->Clone(alloc, nullptr),
-            resolveValIdent->Clone(alloc, nullptr), resolveValIdent->Clone(alloc, nullptr));
-    }
+    const auto returnArgDecl = parser->CreateFormattedStatement("@@E1 as @@T2", completeCall, explicitTypeAnno);
     ES2PANDA_ASSERT(returnArgDecl);
-
-    auto returnArg = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(
-        alloc, ArenaVector<ir::Statement *>({resolveValDecl, asyncCtxDecl, returnArgDecl}));
+    const auto returnArg =
+        util::NodeAllocator::ForceSetParent<ir::BlockExpression>(alloc, ArenaVector<ir::Statement *>({returnArgDecl}));
     ES2PANDA_ASSERT(returnArg);
-
-    auto returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(alloc, returnArg);
+    const auto returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(alloc, returnArg);
     ES2PANDA_ASSERT(returnStmt);
 
     return returnStmt;
@@ -233,7 +183,9 @@ static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, [[ma
 
     const auto val = CreateAsyncContextResolveValue(ctx, stmt);
     ES2PANDA_ASSERT(val);
-    const auto returnStmt = CreateReturnFromAsync(ctx, val, nullptr, true);
+    const auto promiseT = func->Signature()->ReturnType();
+    ES2PANDA_ASSERT(promiseT);
+    const auto returnStmt = CreateReturnFromAsync(ctx, val, promiseT, true);
     ES2PANDA_ASSERT(returnStmt);
 
     returnStmt->SetParent(stmt->Parent());
