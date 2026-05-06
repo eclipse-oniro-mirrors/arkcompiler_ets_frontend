@@ -14,6 +14,11 @@
 hardlist:
 - name: "numeric_conversions"
   paths:
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api15_static/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api18_static/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_noware_api14_static/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_noware_api11_static/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_nowear_api11_static/.*"
   - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/.*"
   - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_draw/.*"
   - ".*/test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/.*"
