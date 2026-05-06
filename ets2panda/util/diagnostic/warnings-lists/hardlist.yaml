@@ -211,6 +211,13 @@ hardlist:
   - ".*/interfaces/ets/ani/observer/ets/@ohos\\.arkui\\.observer\\.ets"
   - ".*/interfaces/ets/ani/prefetcher/ets/@ohos\\.arkui\\.Prefetcher\\.ets"
 
+- name: "disallow_implicit_export"
+  paths:
+  - ".*/test/xts/acts/arkcompiler/arkts_module_test/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_noui/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_module_ui/.*"
+  - ".*/test/xts/acts/arkui/ace_ets_ux_five/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/.*"
 
 - name: "explicit_export"
   paths:

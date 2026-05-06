@@ -259,6 +259,7 @@ warning:
   message: "Type '{}' used in export declaration(s) is not exported."
   strict: true
   softlist: ["allow_implicit_export"]
+  hardlist: ["disallow_implicit_export"]
 
 graveyard:
 - 18
