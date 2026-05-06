@@ -38,6 +38,10 @@ Type *ETSEnumType::Underlying() const
 
 static void SetGenerateValueOfFlag(TypeRelation *relation)
 {
+    if (relation->GetNode() == nullptr) {
+        return;
+    }
+
     if (!relation->GetNode()->TsType()->IsETSUnionType()) {
         relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         return;

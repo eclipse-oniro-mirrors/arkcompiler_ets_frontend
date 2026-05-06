@@ -183,6 +183,12 @@ warning:
   id: 14
   message: "Operand of the {} expression is 'null' or 'undefined'."
 
+
+- name: OVERLOAD_UNREACHABLE_WARNING
+  id: 2323
+  message: "The order of entities in an overload set implies that the overloaded entity with the signature '{}' will never
+    be selected for a call, as the preceding entity with the signature '{}' prevails."
+
 - name: OVERRIDE_FIELD_MUST_HAVE_INITIALIZER
   id: 1049305
   message: "An overridden field '{}' must be initialized explicitly, either by using an initializer or in a constructor."

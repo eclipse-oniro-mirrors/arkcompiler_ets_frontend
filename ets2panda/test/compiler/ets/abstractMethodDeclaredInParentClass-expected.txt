@@ -3098,3 +3098,4 @@
     }
   }
 }
+[abstractMethodDeclaredInParentClass.ets:21:5] Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Byte) => Int' will never be selected for a call, as the preceding entity with the signature '(a: Int) => undefined' prevails.

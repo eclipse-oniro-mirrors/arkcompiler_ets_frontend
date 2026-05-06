@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,3 +24,4 @@ interface A {
 /* @@? 17:5 Error Semantic error ESE0130: Function color is already declared. */
 /* @@? 18:9 Error Semantic error ESE0351: Variable 'color' has already been declared. */
 /* @@? 18:14 Error Syntax error ESY0031: Getter and setter methods must be abstracts in the interface body. */
+/* @@? 17:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => String' will never be selected for a call, as the preceding entity with the signature '() => String' prevails. */

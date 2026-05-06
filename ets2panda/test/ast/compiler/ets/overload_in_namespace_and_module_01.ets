@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,3 +28,4 @@ overload goo { M.fooM, fooN };
 }
 
 /* @@? 27:16 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
+/* @@? 27:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Long) => Int' will never be selected for a call, as the preceding entity with the signature '(a: Double) => Int' prevails. */

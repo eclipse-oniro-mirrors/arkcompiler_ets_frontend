@@ -2204,3 +2204,4 @@
     }
   }
 }
+[method-resolution-class-and-interface-in-signatures_5.ets:32:10] Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(x: B) => String' will never be selected for a call, as the preceding entity with the signature '(x: I) => String' prevails.

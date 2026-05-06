@@ -36,3 +36,4 @@ namespace A.C {
 /* @@? 21:9 Error Semantic error ESE71336: Exported function 'too' requires type annotation. */
 /* @@? 29:5 Error Semantic error ESE0130: Function foo is already declared. */
 /* @@? 33:5 Error Semantic error ESE71336: Exported function 'moo' requires type annotation. */
+/* @@? 29:14 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -172,3 +172,9 @@ class C extends B {
 /* errors in foo_c(c: C) */
 /* @@? 80:28 Error Semantic error ESE0293: Property a_priv is not visible here. */
 /* @@? 81:28 Error Semantic error ESE0293: Property b_priv is not visible here. */
+/* @@? 30:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(b: B) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */
+/* @@? 34:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(c: C) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */
+/* @@? 53:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(b: B) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */
+/* @@? 57:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(c: C) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */
+/* @@? 76:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(b: B) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */
+/* @@? 80:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(c: C) => Int' will never be selected for a call, as the preceding entity with the signature '(a: A) => Int' prevails. */

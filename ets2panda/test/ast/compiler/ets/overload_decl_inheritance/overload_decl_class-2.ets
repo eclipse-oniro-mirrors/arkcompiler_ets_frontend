@@ -37,3 +37,4 @@ class D3 extends Base {
 
 /* @@? 26:32 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
 /* @@? 35:5 Error Semantic error ESE0390: Method 'processNumber' is missed in the overridden explicit overload 'process', but listed in the parent explicit overload. */
+/* @@? 31:24 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(u: String|Double) => undefined' will never be selected for a call, as the preceding entity with the signature '(u: String|Int|Double) => undefined' prevails. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,3 +35,4 @@ function foo(this:Banana, id2: int, k2: String): int/* @@ label */{
 
 
 /* @@@ label Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class Yellow */
+/* @@? 32:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(=t: Banana, id2: Int, k2: String) => Int' will never be selected for a call, as the preceding entity with the signature '(=t: Fruit, id1: Int, k1: String) => Int' prevails. */

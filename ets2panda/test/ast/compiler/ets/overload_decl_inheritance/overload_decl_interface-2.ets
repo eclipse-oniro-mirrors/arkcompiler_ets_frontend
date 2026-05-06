@@ -35,3 +35,5 @@ interface I4 extends I1, I2 {
 
 /* @@? 33:5 Error Semantic error ESE0390: Method 'f2' is missed in the overridden explicit overload 'foo', but listed in the parent explicit overload. */
 /* @@? 33:5 Error Semantic error ESE0390: Method 'f4' is missed in the overridden explicit overload 'foo', but listed in the parent explicit overload. */
+/* @@? 29:14 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Byte) => undefined' will never be selected for a call, as the preceding entity with the signature '(a: Int) => undefined' prevails. */
+/* @@? 33:14 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Byte) => undefined' will never be selected for a call, as the preceding entity with the signature '(a: Int) => undefined' prevails. */

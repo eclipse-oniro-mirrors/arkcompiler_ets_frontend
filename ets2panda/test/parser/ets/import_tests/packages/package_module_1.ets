@@ -15,10 +15,10 @@
 
 export const dbl: double = 1.23456789;
 
-export function foo(v: double): double {
+export function foo(v: float): float {
     return 0;
 }
 
-export function foo(v: float): float {
+export function foo(v: double): double {
     return 0;
 }

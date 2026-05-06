@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,26 @@
  * limitations under the License.
  */
 
-
-class E {
-    foo1() {}
-    foo2() {}
-    overload foo{foo1, foo2}
-    foo3() {
-        let f = this.foo;
-    }
+function f1(a: string) {
+    return 1;
+}
+function f2<T extends string>(a: T) {
+    return 2;
 }
 
+function f3(a: number) {
+    return 3;
+}
+function f4<T extends number>(a: T) {
+    return 4;
+}
 
+overload foo1{ f1, f2 }
+overload foo2{ f3, f4 }
 
-/* @@? 22:22 Error Semantic error ESE0307: Overloaded method is used as value */
-/* @@? 20:14 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */
+function main(): void {
+    arktest.assertEQ(foo1("aa"), 1)
+    arktest.assertEQ(foo1<string>("aa"), 2)
+    arktest.assertEQ(foo2(1), 3)
+    arktest.assertEQ(foo2<number>(1), 4)
+}

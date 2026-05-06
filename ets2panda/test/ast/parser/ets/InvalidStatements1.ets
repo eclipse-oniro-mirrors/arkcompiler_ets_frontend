@@ -57,6 +57,7 @@ throw
 /* @@? 25:5 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 28:1 Error Semantic error ESE0130: Function f is already declared. */
 /* @@? 28:1 Error Semantic error ESE71336: Exported function 'f' requires type annotation. */
+/* @@? 28:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */
 /* @@? 29:5 Error Syntax error ESY0040: Illegal start of STRUCT expression. */
 /* @@? 30:9 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 32:5 Error Syntax error ESY0135: Nested functions are not allowed. */
@@ -70,4 +71,4 @@ throw
 /* @@? 47:1 Error Syntax error ESY0040: Illegal start of CLASS expression. */
 /* @@? 48:5 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 52:1 Error Syntax error ESY0172: Illegal newline after throw. */
-/* @@? 74:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 75:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -31,3 +31,5 @@ overload bar {foo2, N.fooN} // compile-time error
 /* @@? 19:15 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
 /* @@? 26:15 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@? 28:21 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
+/* @@? 26:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */
+/* @@? 28:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,3 +18,4 @@ function foo (tuple: readonly [number, string, boolean], arr: ReadonlyArray<int>
 /* @@ label */function foo (tuple: readonly [number, string, boolean], arr: readonly int[]) {}
 
 /* @@@ label Error Semantic error ESE0130: Function foo is already declared. */
+/* @@? 18:24 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(tuple: readonly [Double, String, Boolean], arr: ReadonlyArray<Int>) => undefined' will never be selected for a call, as the preceding entity with the signature '(tuple: readonly [Double, String, Boolean], arr: ReadonlyArray<Int>) => undefined' prevails. */

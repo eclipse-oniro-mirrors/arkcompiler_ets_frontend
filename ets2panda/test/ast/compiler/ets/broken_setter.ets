@@ -30,3 +30,4 @@ function foo(p:Partial<A>){}
 /* @@? 19:10 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
 /* @@? 23:5 Error Semantic error ESE0130: Function p is already declared. */
 /* @@? 24:21 Warning Warning W0023: Reading the value of the property inside its getter may lead to an endless loop. */
+/* @@? 23:9 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => Double' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */
