@@ -108,6 +108,35 @@ bool ETSTypeAliasType::IsArgumentsIdentical(TypeRelation *relation, Type *other)
     return true;
 }
 
+Type *ETSTypeAliasType::GetIdenticalTarget(TypeRelation *relation)
+{
+    if (targetType_ != nullptr) {
+        return targetType_;
+    }
+
+    if ((relation->GetTypeRelationFlags() &
+         (TypeRelationFlag::IN_ASSIGNMENT_CONTEXT | TypeRelationFlag::IN_CASTING_CONTEXT)) == 0) {
+        return nullptr;
+    }
+
+    if (base_ == nullptr || substitution_ == nullptr) {
+        return nullptr;
+    }
+
+    relation->IncreaseTypeRecursionCount(GetBaseType());
+    Substitution substitution;
+    // Rebuild the substitution from the alias instance arguments: stored substitutions can describe an outer alias.
+    auto const &baseTypeArguments = GetBaseType()->typeArguments_;
+    ES2PANDA_ASSERT(baseTypeArguments.size() == typeArguments_.size());
+    for (size_t index = 0; index < baseTypeArguments.size(); index++) {
+        ES2PANDA_ASSERT(baseTypeArguments[index]->IsETSTypeParameter());
+        substitution.emplace(baseTypeArguments[index]->AsETSTypeParameter(), typeArguments_[index]);
+    }
+    auto *target = base_->targetType_ != nullptr ? base_->targetType_->Substitute(relation, &substitution) : nullptr;
+    relation->DecreaseTypeRecursionCount(GetBaseType());
+    return target;
+}
+
 void ETSTypeAliasType::Identical(TypeRelation *relation, Type *other)
 {
     if (other->IsETSTypeAliasType() && other->AsETSTypeAliasType()->IsRecursive() && isRecursive_) {
@@ -117,8 +146,8 @@ void ETSTypeAliasType::Identical(TypeRelation *relation, Type *other)
         }
     }
 
-    if (targetType_ != nullptr) {
-        relation->IsIdenticalTo(other, targetType_);
+    if (auto *targetType = GetIdenticalTarget(relation); targetType != nullptr) {
+        relation->IsIdenticalTo(other, targetType);
     }
 }
 

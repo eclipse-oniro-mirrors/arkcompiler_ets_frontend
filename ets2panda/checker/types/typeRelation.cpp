@@ -21,9 +21,20 @@
 #include "checker/types/signature.h"
 
 namespace ark::es2panda::checker {
+static bool IsUnresolvedRecursiveAlias(Type const *type)
+{
+    return type->IsETSTypeAliasType() && type->AsETSTypeAliasType()->IsUnresolvedRecursive();
+}
+
 ArenaAllocator *TypeRelation::Allocator()
 {
     return checker_->ProgramAllocator();
+}
+
+bool TypeRelation::IsIdenticalRelationInProgress(RelationHolder::RelationKey key) const
+{
+    return std::find(identicalRelationStack_.begin(), identicalRelationStack_.end(), key) !=
+           identicalRelationStack_.end();
 }
 
 RelationResult TypeRelation::CacheLookup(const Type *source, const Type *target, const RelationHolder &holder,
@@ -79,14 +90,27 @@ bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
         return Result(true);
     }
 
+    auto key = RelationHolder::MakeKey(source->Id(), target->Id());
+    auto reverseKey = RelationHolder::MakeKey(target->Id(), source->Id());
+    // Recursive types are equal coinductively: reaching the same proof obligation closes the cycle.
+    if (IsIdenticalRelationInProgress(key) || IsIdenticalRelationInProgress(reverseKey)) {
+        return Result(true);
+    }
+
     result_ = CacheLookup(source, target, checker_->IdenticalResults(), RelationType::IDENTICAL);
     if (result_ == RelationResult::CACHE_MISS) {
+        identicalRelationStack_.push_back(key);
         checker_->ResolveStructuredTypeMembers(source);
         checker_->ResolveStructuredTypeMembers(target);
         result_ = RelationResult::FALSE;
         target->Identical(this, source);
-        auto key = RelationHolder::MakeKey(source->Id(), target->Id());
-        checker_->IdenticalResults().Insert(key, {result_, RelationType::IDENTICAL});
+        if (!IsTrue() && source->IsETSTypeAliasType() && source->AsETSTypeAliasType()->IsRecursive()) {
+            source->Identical(this, target);
+        }
+        if (IsTrue() || (!IsUnresolvedRecursiveAlias(source) && !IsUnresolvedRecursiveAlias(target))) {
+            checker_->IdenticalResults().Insert(key, {result_, RelationType::IDENTICAL});
+        }
+        identicalRelationStack_.pop_back();
     }
 
     return IsTrue();
