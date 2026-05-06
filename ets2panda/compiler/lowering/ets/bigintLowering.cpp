@@ -118,10 +118,11 @@ static bool IsEqualityOp(lexer::TokenType opType)
 
 static bool ConvertToSuitableCompareExpression(public_lib::Context *ctx, ir::BinaryExpression *expr)
 {
-    // Don't apply BigInt conversion to logical operators - they should preserve original types
+    // Don't apply BigInt conversion to logical operators or instanceof - they should preserve original types
     auto op = expr->OperatorType();
     if (op == lexer::TokenType::PUNCTUATOR_LOGICAL_AND || op == lexer::TokenType::PUNCTUATOR_LOGICAL_OR ||
-        op == lexer::TokenType::PUNCTUATOR_LOGICAL_AND_EQUAL || op == lexer::TokenType::PUNCTUATOR_LOGICAL_OR_EQUAL) {
+        op == lexer::TokenType::PUNCTUATOR_LOGICAL_AND_EQUAL || op == lexer::TokenType::PUNCTUATOR_LOGICAL_OR_EQUAL ||
+        op == lexer::TokenType::KEYW_INSTANCEOF) {
         return false;
     }
 
