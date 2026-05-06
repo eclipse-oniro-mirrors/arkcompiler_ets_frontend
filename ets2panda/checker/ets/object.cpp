@@ -1376,9 +1376,11 @@ void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Sig
                      {sig->Function()->Id()->Name(), sig->Owner()->Name(), sigFunc->Owner()->Name()},
                      classType->GetDeclNode()->Start());
         } else {
-            LogError(diagnostic::INTERFACE_METHOD_COLLISION,
-                     {sig->Function()->Id()->Name(), sig->Owner()->Name(), sigFunc->Owner()->Name()},
-                     classType->GetDeclNode()->Start());
+            DiagnosticEngine().LogDiagnostic(diagnostic::INTERFACE_METHOD_COLLISION,
+                                             util::DiagnosticMessageParams {sig->Function()->Id()->Name(),
+                                                                            sig->Owner()->Name(),
+                                                                            sigFunc->Owner()->Name()},
+                                             classType->GetDeclNode()->Start());
         }
     }
 }
