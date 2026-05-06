@@ -39,6 +39,10 @@ warning:
   id: 32597
   message: "Call to public API '{}' is deprecated."
 
+- name: DIFFERENT_ENUM_EQUALITY
+  id: 65002
+  message: "Comparison of different enumeration types appears to be unintentional."
+
 - name: DUPLICATE_ALIAS
   id: 32596
   message: "'{}' is explicitly used with alias several times"
