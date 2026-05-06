@@ -1895,13 +1895,13 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
     if (other->IsFinal()) {
         return OverrideErrorCode::OVERRIDDEN_FINAL;
     }
+    if (signature->ProtectionFlag() > other->ProtectionFlag()) {
+        return OverrideErrorCode::OVERRIDDEN_WEAKER;
+    }
+
     // #26838: handle lambdas as normal generics and remove check on IsETSAnyType()
     if (!signature->ReturnType()->IsETSAnyType() && !checker->IsReturnTypeSubstitutable(signature, other)) {
         return OverrideErrorCode::INCOMPATIBLE_RETURN;
-    }
-
-    if (signature->ProtectionFlag() > other->ProtectionFlag()) {
-        return OverrideErrorCode::OVERRIDDEN_WEAKER;
     }
 
     return OverrideErrorCode::NO_ERROR;
@@ -1930,15 +1930,6 @@ Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *tar
 static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signature *overriddenSignature,
                                 const OverrideErrorCode &errorCode)
 {
-    if (overriddenSignature->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
-        checker->LogError(diagnostic::CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN,
-                          {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                           overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                           overriddenSignature->Owner()},
-                          signature->Function()->Start());
-        return;
-    }
-
     switch (errorCode) {
         case OverrideErrorCode::OVERRIDDEN_FINAL: {
             checker->LogError(diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_FINAL,
@@ -1949,6 +1940,14 @@ static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signa
             return;
         }
         case OverrideErrorCode::INCOMPATIBLE_RETURN: {
+            if (overriddenSignature->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+                checker->LogError(diagnostic::CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN,
+                                  {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
+                                   overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
+                                   overriddenSignature->Owner()},
+                                  signature->Function()->Start());
+                return;
+            }
             checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_RETURN,
                               {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
                                overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
