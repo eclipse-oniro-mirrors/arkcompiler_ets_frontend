@@ -719,6 +719,9 @@ void ETSCompiler::Compile(const ir::CallExpression *expr) const
     } else if (callee->IsMemberExpression()) {
         if (!isStatic) {
             callee->AsMemberExpression()->Object()->Compile(etsg);
+            if (etsg->GetAccumulatorType()->IsETSNeverType()) {
+                return;
+            }
             etsg->StoreAccumulator(expr, calleeReg);
         }
     } else if (callee->IsSuperExpression() || callee->IsThisExpression()) {
@@ -826,6 +829,11 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
     auto ottctx = compiler::TargetTypeContext(etsg, objectType);
     etsg->CompileAndCheck(expr->Object());
 
+    if (objectType->IsETSNeverType()) {
+        etsg->SetAccumulatorType(objectType);
+        return true;
+    }
+
     compiler::VReg objReg = etsg->AllocReg();
     etsg->StoreAccumulator(expr, objReg);
 
@@ -868,6 +876,11 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
 
     auto ottctx = compiler::TargetTypeContext(etsg, expr->Object()->TsType());
     etsg->CompileAndCheck(expr->Object());
+
+    if (objectType->IsETSNeverType()) {
+        etsg->SetAccumulatorType(objectType);
+        return;
+    }
 
     etsg->ApplyConversion(expr->Object());
     compiler::VReg objReg = etsg->AllocReg();
