@@ -35,6 +35,7 @@ module.exports = {
     '<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts',
     '<rootDir>/test/ut/fileManagerTest/**/*.test.ts',
     '<rootDir>/test/ut/loggerTest/**/*.test.ts',
+    '<rootDir>/test/ut/dependencyAnalyzerTest/**/*.test.ts',
     '<rootDir>/test/ut/utilsTest/ets2panda_path_length.test.ts'
   ],
   testPathIgnorePatterns: [],
