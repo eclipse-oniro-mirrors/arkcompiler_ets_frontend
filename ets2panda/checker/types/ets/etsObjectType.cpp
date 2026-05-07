@@ -79,47 +79,88 @@ varbinder::LocalVariable *ETSObjectType::SearchFieldsDecls(util::StringView name
     return res;
 }
 
+varbinder::LocalVariable *ETSObjectType::SearchOwnMethod(util::StringView name, PropertySearchFlags flags) const
+{
+    if ((flags & PropertySearchFlags::SEARCH_INSTANCE_METHOD) != 0) {
+        if (auto *res = GetOwnProperty<PropertyType::INSTANCE_METHOD>(name); res != nullptr) {
+            return res;
+        }
+    }
+
+    if ((flags & PropertySearchFlags::SEARCH_STATIC_METHOD) != 0) {
+        if (auto *res = GetOwnProperty<PropertyType::STATIC_METHOD>(name); res != nullptr) {
+            return res;
+        }
+    }
+
+    return nullptr;
+}
+
+varbinder::LocalVariable *ETSObjectType::SearchBaseFieldsDecls(util::StringView name, PropertySearchFlags flags) const
+{
+    if ((flags & PropertySearchFlags::SEARCH_IN_BASE) == 0 ||
+        (flags & (PropertySearchFlags::SEARCH_FIELD | PropertySearchFlags::SEARCH_DECL)) == 0) {
+        return nullptr;
+    }
+
+    constexpr auto FIELD_DECL_FLAGS =
+        PropertySearchFlags::SEARCH_INSTANCE_FIELD | PropertySearchFlags::SEARCH_STATIC_FIELD |
+        PropertySearchFlags::SEARCH_INSTANCE_DECL | PropertySearchFlags::SEARCH_STATIC_DECL;
+    const auto fieldDeclFlags =
+        static_cast<PropertySearchFlags>(flags & FIELD_DECL_FLAGS) | PropertySearchFlags::SEARCH_IN_BASE;
+
+    for (auto type = SuperType(); type != nullptr; type = type->SuperType()) {
+        if (auto *res = type->SearchFieldsDecls(name, fieldDeclFlags); res != nullptr) {
+            return res;
+        }
+    }
+
+    return nullptr;
+}
+
+varbinder::LocalVariable *ETSObjectType::SearchMethods(util::StringView name, PropertySearchFlags flags) const
+{
+    if ((flags & PropertySearchFlags::SEARCH_METHOD) == 0) {
+        return nullptr;
+    }
+
+    if ((flags & PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION) != 0) {
+        return SearchOwnMethod(name, flags);
+    }
+
+    return CreateSyntheticVarFromEverySignature(name, flags);
+}
+
+varbinder::LocalVariable *ETSObjectType::SearchInterfacesProperty(util::StringView name,
+                                                                  PropertySearchFlags flags) const
+{
+    if (((flags & PropertySearchFlags::SEARCH_INSTANCE) == 0 && (flags & PropertySearchFlags::SEARCH_STATIC) != 0) ||
+        (flags & PropertySearchFlags::SEARCH_IN_INTERFACES) == 0) {
+        return nullptr;
+    }
+
+    EnsureInterfacesInitialized();
+    for (auto *interface : *interfaces_) {
+        if (auto *res = interface->GetProperty(name, flags); res != nullptr) {
+            return res;
+        }
+    }
+
+    return nullptr;
+}
+
 varbinder::LocalVariable *ETSObjectType::GetProperty(util::StringView name, PropertySearchFlags flags) const
 {
-    // CC-OFFNXT(G.FMT.14-CPP) project code style
-    auto const searchOwnMethod = [this, flags, name]() -> varbinder::LocalVariable * {
-        if ((flags & PropertySearchFlags::SEARCH_INSTANCE_METHOD) != 0) {
-            if (auto res = GetOwnProperty<PropertyType::INSTANCE_METHOD>(name); res != nullptr) {
-                return res;
-            }
-        }
-        if ((flags & PropertySearchFlags::SEARCH_STATIC_METHOD) != 0) {
-            if (auto res = GetOwnProperty<PropertyType::STATIC_METHOD>(name); res != nullptr) {
-                return res;
-            }
-        }
-        return nullptr;
-    };
-
-    if (auto res = SearchFieldsDecls(name, flags); res != nullptr) {
+    if (auto *res = SearchFieldsDecls(name, flags); res != nullptr) {
         return res;
     }
 
-    if ((flags & PropertySearchFlags::SEARCH_METHOD) != 0) {
-        if ((flags & PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION) != 0) {
-            if (auto res = searchOwnMethod(); res != nullptr) {
-                return res;
-            }
-        } else {
-            if (auto res = CreateSyntheticVarFromEverySignature(name, flags)) {
-                return res;
-            }
-        }
+    if (auto *res = SearchMethods(name, flags); res != nullptr) {
+        return res;
     }
 
-    if (((flags & PropertySearchFlags::SEARCH_INSTANCE) != 0 || (flags & PropertySearchFlags::SEARCH_STATIC) == 0) &&
-        (flags & PropertySearchFlags::SEARCH_IN_INTERFACES) != 0) {
-        EnsureInterfacesInitialized();
-        for (auto *interface : *interfaces_) {
-            if (auto res = interface->GetProperty(name, flags); res != nullptr) {
-                return res;
-            }
-        }
+    if (auto *res = SearchInterfacesProperty(name, flags); res != nullptr) {
+        return res;
     }
 
     if ((flags & PropertySearchFlags::SEARCH_IN_BASE) != 0 && superType_ != nullptr) {
