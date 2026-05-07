@@ -1834,6 +1834,50 @@ static std::unordered_set<util::StringView> CollectInstanceOverloadDeclsTransiti
     return transitivePropNames;
 }
 
+void ETSChecker::CheckInheritedExplicitOverloadRedeclarationRequirement(ETSObjectType *objectType)
+{
+    auto isOverloadDecl = [](const auto prop) {
+        auto *decl = prop ? prop->Declaration() : nullptr;
+        return decl && decl->Node() && decl->Node()->IsOverloadDeclaration();
+    };
+
+    std::unordered_map<util::StringView, std::vector<ETSObjectType *>> inheritedOverloads;
+
+    objectType->EnsureTransitiveSupertypesInitialized();
+    for (auto *superType : objectType->TransitiveSupertypes()) {
+        for (auto const [propName, prop] : superType->InstanceDecls()) {
+            if (isOverloadDecl(prop)) {
+                inheritedOverloads[propName].push_back(superType);
+            }
+        }
+    }
+
+    auto const loc = objectType->GetDeclNode() ? objectType->GetDeclNode()->Start() : lexer::SourcePosition {};
+    auto const &localDecls = objectType->InstanceDecls();
+
+    for (auto const &entry : inheritedOverloads) {
+        auto const &name = entry.first;
+        auto const &types = entry.second;
+
+        if (types.size() <= 1) {
+            continue;
+        }
+
+        if (auto it = localDecls.find(name); it != localDecls.end() && isOverloadDecl(it->second)) {
+            continue;
+        }
+
+        auto independentCount = std::count_if(types.begin(), types.end(), [&](ETSObjectType *typeA) {
+            return !std::any_of(types.begin(), types.end(), [&](ETSObjectType *typeB) {
+                return typeA != typeB && Relation()->IsSupertypeOf(typeA, typeB);
+            });
+        });
+        if (independentCount > 1) {
+            LogError(diagnostic::NO_EXPLICIT_OVERLOAD_OVERRIDING, {name, objectType->Name()}, loc);
+        }
+    }
+}
+
 static void CheckOverloadDeclInheritance(ETSChecker *checker, ir::OverloadDeclaration *currOverloadDecl,
                                          const std::unordered_set<util::StringView> &currOverloadDeclNames)
 {

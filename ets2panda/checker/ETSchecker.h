@@ -653,6 +653,7 @@ public:
     void CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const;
     void CheckClassMethodOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const;
     void CheckInterfaceMethodOverloadDeclaration(ETSChecker *checker, ir::OverloadDeclaration *node) const;
+    void CheckInheritedExplicitOverloadRedeclarationRequirement(ETSObjectType *objectType);
 
     ETSObjectType *GetRelevantArgumentedTypeFromChild(ETSObjectType *child, ETSObjectType *target);
     util::StringView GetHashFromTypeArguments(const ArenaVector<Type *> &typeArgTypes);

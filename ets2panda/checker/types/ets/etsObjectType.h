@@ -435,6 +435,13 @@ public:
         return propertiesInstantiated_;
     }
 
+    void EnsureTransitiveSupertypesInitialized() const
+    {
+        if (transitiveSupertypes_ == nullptr) {
+            transitiveSupertypes_ = allocator_->New<ArenaSet<ETSObjectType *>>(allocator_->Adapter());
+        }
+    }
+
 protected:
     virtual ETSFunctionType *CreateMethodTypeForProp(util::StringView name) const;
 
@@ -499,13 +506,6 @@ private:
     {
         if (reExportAlias_ == nullptr) {
             reExportAlias_ = allocator_->New<ArenaMap<util::StringView, util::StringView>>(allocator_->Adapter());
-        }
-    }
-
-    void EnsureTransitiveSupertypesInitialized() const
-    {
-        if (transitiveSupertypes_ == nullptr) {
-            transitiveSupertypes_ = allocator_->New<ArenaSet<ETSObjectType *>>(allocator_->Adapter());
         }
     }
 

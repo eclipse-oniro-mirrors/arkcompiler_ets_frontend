@@ -1096,6 +1096,11 @@ semantic:
   message: "Type '{}' has no call signatures."
   code_fix_ids: [FixAddMissingNewOperator, RemoveAccidentalCallParentheses]
 
+- name: NO_EXPLICIT_OVERLOAD_OVERRIDING
+  id: 464
+  message: "When multiple explicit overloads with the same name '{}' are inherited, the new explicit overload must be declared
+    instead in '{}'."
+
 - name: NO_INDEX_ACCESS_METHOD
   id: 250
   message: "Object type doesn't have proper index access method."
