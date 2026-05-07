@@ -1207,10 +1207,16 @@ static bool TryCastInteger(lexer::Number &number, ir::PrimitiveType dst)
     bool converted = false;
     switch (dst) {
         case ir::PrimitiveType::DOUBLE:
-            converted = TryCastInteger<double>(number);
+            // Keep the original floating-point literal kind. An unsuffixed real literal
+            // must stay 'double', while an 'f'-suffixed literal must stay 'float'.
+            // The checker applies regular assignment/widening rules afterwards.
+            converted = number.IsReal() || TryCastInteger<double>(number);
             break;
         case ir::PrimitiveType::FLOAT:
-            converted = TryCastInteger<float>(number);
+            // Do not narrow a real literal to 'float' during constant-expression lowering:
+            // `3.14` must remain `double` so the checker can report the CTE for
+            // `double -> float`, while `3.14f` already has the correct type.
+            converted = number.IsReal() || TryCastInteger<float>(number);
             break;
         case ir::PrimitiveType::LONG:
             converted = TryCastInteger<int64_t>(number);

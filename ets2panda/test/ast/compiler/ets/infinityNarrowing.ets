@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@ export const shortInf: /* @@ dst_type3 */short = /* @@ value3 */1.0 / 0.0
 
 
 
-/* @@@ dst_type1 Error Semantic error ESE0344: Invalid destination type for floating-point constant value */
 /* @@@ value1 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
 /* @@@ dst_type2 Error Semantic error ESE0344: Invalid destination type for floating-point constant value */
 /* @@@ value2 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Byte' */
