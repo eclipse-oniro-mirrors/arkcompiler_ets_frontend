@@ -51,7 +51,6 @@ softlist:
   - ".*/base/global/i18n/.*"
   - ".*/base/security/certificate_manager/.*"
   - ".*/distributeddatamgr/udmf/.*"
-  - ".*/foundation/filemanagement/.*"
   - ".*/foundation/systemabilitymgr/.*"
   - ".*/developtools/ace_ets2bundle/.*"
   - ".*/test/testfwk/arkxtest/.*"
