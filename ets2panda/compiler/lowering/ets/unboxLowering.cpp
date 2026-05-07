@@ -322,8 +322,9 @@ void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop)
     if (propType == nullptr) {
         propType = prop->Key()->Variable()->TsType();
     }
-    ES2PANDA_ASSERT(propType != nullptr);
-
+    if (propType == nullptr) {
+        return;
+    }
     if (IsUnboxingApplicable(propType) && prop->Key()->IsIdentifier()) {
         auto *unboxedType = MaybeRecursivelyUnboxType(uctx, propType);
         prop->SetTsType(unboxedType);
@@ -1533,7 +1534,19 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
 
     void VisitClassProperty(ir::ClassProperty *prop) override
     {
-        prop->SetValue(AdjustType(uctx_, prop->Value(), prop->Key()->Variable()->TsType()));
+        if (prop->Value() == nullptr) {
+            return;
+        }
+
+        auto *expectedType = prop->TsType();
+        if (expectedType == nullptr && prop->Key() != nullptr && prop->Key()->Variable() != nullptr) {
+            expectedType = prop->Key()->Variable()->TsType();
+        }
+        if (expectedType == nullptr) {
+            return;
+        }
+
+        prop->SetValue(AdjustType(uctx_, prop->Value(), expectedType));
     }
 
     void VisitETSParameterExpression(ir::ETSParameterExpression *pexpr) override

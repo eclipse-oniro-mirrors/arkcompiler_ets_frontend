@@ -1403,7 +1403,8 @@ void ETSChecker::CheckStandardAnnotation(ir::AnnotationUsage *anno)
     ES2PANDA_ASSERT(anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration() != nullptr);
     auto *annoDecl = anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
     auto annoName = annoDecl->InternalName().Mutf8();
-    if (annoName.rfind(compiler::Signatures::STD_ANNOTATIONS) != 0) {
+    if (annoName.rfind(compiler::Signatures::STD_ANNOTATIONS) != 0 &&
+        annoName != "arkruntime.annotation.AccessRestriction") {  // #34625
         LogError(diagnostic::STANDARD_ANNOTATION_REQUIRED, {}, anno->Start());
     }
     if (annoName == compiler::Signatures::STD_ANNOTATIONS_RETENTION) {
@@ -1446,7 +1447,7 @@ static auto IsValidAnnotationPropInitializer(ir::Expression *init)
 static bool ValidateAnnotationPropertyType(checker::Type *type, ETSChecker *checker)
 {
     if (type == nullptr || type->IsTypeError()) {
-        ES2PANDA_ASSERT(checker->IsAnyError());
+        ES2PANDA_ASSERT(type == nullptr || !type->IsTypeError() || checker->IsAnyError());
         return false;
     }
 
@@ -1485,6 +1486,32 @@ void ETSChecker::CheckAnnotationPropertyType(ir::ClassProperty *property)
     LogError(diagnostic::ANNOTATION_FIELD_NONLITERAL, {}, property->Value()->Start());
 }
 
+static void ValidateAnnotationArgumentProperty(ETSChecker *checker, ir::ClassProperty *param,
+                                               ir::ClassProperty *declaredProperty)
+{
+    auto *value = param->Value();
+    if (value == nullptr || declaredProperty == nullptr) {
+        return;
+    }
+
+    auto *declaredType = declaredProperty->TsType();
+    if (declaredType != nullptr) {
+        value->SetPreferredType(declaredType);
+    }
+
+    Type *valueType = value->Check(checker);
+    if (declaredType != nullptr && valueType != nullptr && !valueType->IsTypeError()) {
+        AssignmentContext(checker->Relation(), value, valueType, declaredType, value->Start(),
+                          {{diagnostic::INVALID_ASSIGNMNENT, {valueType, declaredType}}})
+            .IsAssignable();
+    }
+
+    param->SetTsType(declaredType);
+    if (declaredType != nullptr) {
+        checker->CheckAnnotationPropertyType(param);
+    }
+}
+
 void ETSChecker::CheckSinglePropertyAnnotation(ir::AnnotationUsage *st, ir::AnnotationDeclaration *annoDecl)
 {
     auto *param = st->Properties().at(0)->AsClassProperty();
@@ -1492,9 +1519,9 @@ void ETSChecker::CheckSinglePropertyAnnotation(ir::AnnotationUsage *st, ir::Anno
         LogError(diagnostic::ANNOT_MULTIPLE_FIELD, {st->GetBaseName()->Name()}, st->Start());
     }
 
-    ScopeContext scopeCtx(this, st->Scope());
-    param->Check(this);
-    CheckAnnotationPropertyType(param);
+    auto *declaredProperty =
+        annoDecl->Properties().empty() ? nullptr : annoDecl->Properties().front()->AsClassProperty();
+    ValidateAnnotationArgumentProperty(this, param, declaredProperty);
 }
 
 void ETSChecker::CheckMultiplePropertiesAnnotation(ir::AnnotationUsage *st, util::StringView const &baseName,
@@ -1510,9 +1537,7 @@ void ETSChecker::CheckMultiplePropertiesAnnotation(ir::AnnotationUsage *st, util
             continue;
         }
 
-        ScopeContext scopeCtx(this, st->Scope());
-        param->Check(this);
-        CheckAnnotationPropertyType(param);
+        ValidateAnnotationArgumentProperty(this, param, result->second);
         fieldMap.erase(result);
     }
 }

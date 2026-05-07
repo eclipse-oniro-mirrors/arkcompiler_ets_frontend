@@ -626,21 +626,16 @@ checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
         LogError(diagnostic::UNRESOLVABLE_ARRAY, {}, init->Start());
         return GetGlobalTypesHolder()->GlobalTypeError();
     }
-    auto const isNumericLiteral = [this](checker::Type *&ct) {
-        auto const rc =
-            ct->IsConstantType() && Relation()->IsSupertypeOf(GetGlobalTypesHolder()->GlobalNumericBuiltinType(), ct);
-        ct = GetNonConstantType(ct);
-        return rc;
-    };
-    auto const isChar = [this](checker::Type *ct) {
-        return Relation()->IsSupertypeOf(GetGlobalTypesHolder()->GlobalCharBuiltinType(), ct);
-    };
-    auto const elementType =
-        std::all_of(elementTypes.begin(), elementTypes.end(), isNumericLiteral)
-            ? (std::all_of(elementTypes.begin(), elementTypes.end(), isChar)
-                   ? GlobalCharBuiltinType()
-                   : GetElementTypeFromNumericLiterals(this, init->AsArrayExpression()->Elements()))
-            : CreateETSUnionType(std::move(elementTypes));
+    for (auto *&elementType : elementTypes) {
+        elementType = GetNonConstantType(elementType);
+    }
+
+    auto const allNumericLiterals =
+        std::all_of(init->AsArrayExpression()->Elements().begin(), init->AsArrayExpression()->Elements().end(),
+                    [](ir::Expression *elementNode) { return elementNode->IsNumberLiteral(); });
+    auto const elementType = allNumericLiterals
+                                 ? GetElementTypeFromNumericLiterals(this, init->AsArrayExpression()->Elements())
+                                 : CreateETSUnionType(std::move(elementTypes));
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return CreateETSResizableArrayType(elementType);

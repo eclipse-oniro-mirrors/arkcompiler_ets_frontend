@@ -528,7 +528,8 @@ libes2panda_sources = [
   "util/es2pandaMacros.cpp",
   "util/helpers.cpp",
   "util/importPathManager.cpp",
-  "util/internalAPIWhitelist.cpp",
+
+
   "util/nameMangler.cpp",
   "util/path.cpp",
   "util/perfMetrics.cpp",
