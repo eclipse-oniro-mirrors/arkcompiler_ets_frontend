@@ -147,6 +147,10 @@ warning:
   id: 1001506
   message: "the value of the instanceof expression is known at compile-time as {}"
 
+- name: INTERFACE_METHOD_COLLISION
+  id: 90187
+  message: "Method '{}' is declared in {} and {} interfaces."
+
 - name: INVALID_CAST
   id: 326
   message: "Attempting to cast type '{}' to '{}' can throw 'CastClassError' exception at runtime"

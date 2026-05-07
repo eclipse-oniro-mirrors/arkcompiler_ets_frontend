@@ -755,10 +755,6 @@ semantic:
   id: 275
   message: "{} is an interface therefore cannot be instantiated."
 
-- name: INTERFACE_METHOD_COLLISION
-  id: 187
-  message: "Method '{}' is declared in {} and {} interfaces."
-
 - name: INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC
   id: 24143
   message: "{} {} can not {} {} {} which is from dynamic declaration file."
