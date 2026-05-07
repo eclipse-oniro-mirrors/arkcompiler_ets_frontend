@@ -84,6 +84,7 @@ warning:
 
 - name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
   id: 71336
+  strict: true
   message: "Exported {} '{}' requires type annotation."
   softlist: ["export_type_anno"]
 
@@ -139,6 +140,7 @@ warning:
 - name: INITIALIZERS_IN_AMBIENT_CONTEXTS
   id: 125125
   message: "Initializers are not allowed in ambient contexts: {}"
+  strict: true
   softlist: ["ambient_context_and_missing_type_annotation"]
 
 - name: INSTANCEOF_ALWAYS_KNOWN
@@ -225,6 +227,7 @@ warning:
 - name: STATIC_PROP_INVALID_CTX_DEPRECATED
   id: 696291
   message: "Class static member {} must be accessed with the class name {} qualification only. Access using the derived class name will be deprecated soon."
+  strict: true
   softlist: ["static_member_inheritance"]
 
 - name: SUGGEST_FINAL_MODIFIER_FOR_CLASS

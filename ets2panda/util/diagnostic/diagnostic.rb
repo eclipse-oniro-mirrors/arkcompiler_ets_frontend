@@ -221,7 +221,14 @@ module Diagnostic
       end
       diagnostics.each do |diagnostic|
         diagnostic.type = diagnostic_type
-        diagnostic.strict ||= false
+        if (diagnostic.softlist || diagnostic.hardlist) && !diagnostic.strict
+          warn "=========="
+          warn "Diagnostic with id '#{diagnostic.id}' has soft or hard list, but not marked with 'strict: true' flag. Please fix"
+          warn "=========="
+          normalization_error
+        else
+          diagnostic.strict ||= false
+        end
 
         set_lists(diagnostic, diagnostic_type)
 
