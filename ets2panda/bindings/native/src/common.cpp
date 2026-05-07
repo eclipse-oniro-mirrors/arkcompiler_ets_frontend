@@ -220,16 +220,11 @@ void impl_InvalidateFileCache(KNativePointer globalContextPtr, KStringPtr &filen
 }
 TS_INTEROP_V2(InvalidateFileCache, KNativePointer, KStringPtr)
 
-KInt impl_IncrementalPrepareProgram(KNativePointer contextPtr, KStringPtr &filenamePtr, KStringPtr &sourceTextPtr)
+KInt impl_IncrementalPrepareProgram(KNativePointer contextPtr, KStringPtr &filenamePtr, KStringPtr &sourceTextPtr,
+                                    KBoolean isChanged)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
-    return GetPublicImpl()->IncrementalPrepareProgram(context, filenamePtr.Data(), sourceTextPtr.Data());
+    return GetPublicImpl()->IncrementalPrepareProgram(context, filenamePtr.Data(), sourceTextPtr.Data(),
+                                                      isChanged != 0);
 }
-TS_INTEROP_3(IncrementalPrepareProgram, KInt, KNativePointer, KStringPtr, KStringPtr)
-
-KInt impl_DeleteProgramForFile(KNativePointer contextPtr, KStringPtr &filenamePtr)
-{
-    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
-    return GetPublicImpl()->DeleteProgramForFile(context, filenamePtr.Data());
-}
-TS_INTEROP_2(DeleteProgramForFile, KInt, KNativePointer, KStringPtr)
+TS_INTEROP_4(IncrementalPrepareProgram, KInt, KNativePointer, KStringPtr, KStringPtr, KBoolean)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Foo, answer } from 'har';
+import { Foo, answer } from '../har/Index';
 
 const foo = new /*classTarget*/Foo();
 const value = /*constTarget*/answer;

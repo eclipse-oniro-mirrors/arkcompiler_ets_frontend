@@ -38,7 +38,7 @@ function escapeRegExp(source: string): string {
 }
 
 function getLineNumber(source: string, offset: number): number {
-  return source.slice(0, offset).split('\n').length - 1;
+  return source.slice(0, offset).split('\n').length;
 }
 
 function getWordOccurrences(filePath: string, word: string) {
@@ -78,8 +78,18 @@ describe('findRenameLocationsCrossModuleTest', () => {
   ];
   const lsp = getMultiModuleLsp(projectName, modules, []);
   const entryFile1 = getRealPath(projectName, 'entry/EntryRename1.ets');
-  const EXPECT_CLASS = sortRenameLocations(getWordOccurrences(entryFile1, 'Foo'));
-  const EXPECT_CONST = sortRenameLocations(getWordOccurrences(entryFile1, 'answer'));
+  const harIndex = getRealPath(projectName, 'har/Index.ets');
+  const harSymbols = getRealPath(projectName, 'har/Symbols.ets');
+  const EXPECT_CLASS = sortRenameLocations([
+    ...getWordOccurrences(entryFile1, 'Foo'),
+    ...getWordOccurrences(harIndex, 'Foo'),
+    ...getWordOccurrences(harSymbols, 'Foo')
+  ]);
+  const EXPECT_CONST = sortRenameLocations([
+    ...getWordOccurrences(entryFile1, 'answer'),
+    ...getWordOccurrences(harIndex, 'answer'),
+    ...getWordOccurrences(harSymbols, 'answer')
+  ]);
 
   test('findRenameLocations_imported_class_stays_in_current_file', () => {
     const offset = getMarkerOffset(entryFile1, '/*classTarget*/');

@@ -15,7 +15,11 @@
 
 #include "api.h"
 #include <cstddef>
+#include <queue>
 #include <string>
+#include <string_view>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "class_hierarchy.h"
 #include "get_node.h"
@@ -294,6 +298,11 @@ References GetReferencesAtPositionFromIndexWrapper(es2panda_Context *context, si
     };
     RemoveDuplicates(result.referenceInfos, compare);
     return result;
+}
+
+std::string GetIndexedFileSourceWrapper(const std::string &fileName)
+{
+    return GetIndexedFileSource(fileName);
 }
 
 es2panda_AstNode *GetPrecedingToken(es2panda_Context *context, const size_t pos)
@@ -1076,6 +1085,91 @@ std::vector<TextChange> GetFormattingEditsAfterKeystroke(es2panda_Context *conte
     return result;
 }
 
+static int BatchDeleteProgramsForFiles(public_lib::Context *ctx,
+                                       const std::unordered_set<std::string> &uniqueDeleteNames)
+{
+    if (uniqueDeleteNames.empty()) {
+        return 0;
+    }
+
+    std::unordered_set<std::string_view> deleteLookup {};
+    deleteLookup.reserve(uniqueDeleteNames.size());
+    auto *importPathManager = ctx->parser->GetImportPathManager();
+    auto &fileDependencies = importPathManager->GetFileDependencies();
+    for (const auto &file : uniqueDeleteNames) {
+        if (file.empty()) {
+            continue;
+        }
+        deleteLookup.insert(file);
+        ArenaString key {file};
+        importPathManager->RemoveProgramFromResolvedSources(key);
+        fileDependencies.erase(key);
+    }
+
+    // Scan all remaining deps and remove entries that point to deleted files.
+    for (auto &[_, deps] : fileDependencies) {
+        for (auto depIt = deps.begin(); depIt != deps.end();) {
+            if (deleteLookup.find(std::string_view {depIt->data(), depIt->size()}) != deleteLookup.end()) {
+                depIt = deps.erase(depIt);
+            } else {
+                ++depIt;
+            }
+        }
+    }
+    return 0;
+}
+
+int DeleteProgramForFile(es2panda_Context *context, const char *fileName)
+{
+    if (fileName == nullptr) {
+        return 0;
+    }
+
+    std::unordered_set<std::string> filesToDelete {};
+    filesToDelete.emplace(fileName);
+    return BatchDeleteProgramsForFiles(reinterpret_cast<public_lib::Context *>(context), filesToDelete);
+}
+
+int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileName)
+{
+    if (fileName == nullptr) {
+        return 0;
+    }
+
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto root = std::string_view {fileName};
+    auto &fileDependencies = ctx->parser->GetImportPathManager()->GetFileDependencies();
+    std::unordered_map<std::string_view, std::vector<std::string_view>> reverseDependencies {};
+    reverseDependencies.reserve(fileDependencies.size());
+    for (const auto &[file, deps] : fileDependencies) {
+        auto dependantFile = std::string_view {file.data(), file.size()};
+        for (const auto &dep : deps) {
+            reverseDependencies[std::string_view {dep.data(), dep.size()}].emplace_back(dependantFile);
+        }
+    }
+
+    std::unordered_set<std::string> visited {};
+    visited.reserve(reverseDependencies.size());
+    std::queue<std::string_view> queue {};
+    queue.emplace(root);
+    while (!queue.empty()) {
+        auto current = queue.front();
+        queue.pop();
+        auto it = reverseDependencies.find(current);
+        if (it == reverseDependencies.end()) {
+            continue;
+        }
+        for (const auto dependant : it->second) {
+            if (dependant == root || !visited.emplace(dependant).second) {
+                continue;
+            }
+            queue.push(dependant);
+        }
+    }
+
+    return BatchDeleteProgramsForFiles(ctx, visited);
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetEditsForRefactor,
@@ -1138,7 +1232,10 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     BuildSymbolReferenceIndexForContextWrapper,
                     BuildSymbolReferenceIndexForContextWithExternalWrapper,
                     RemoveSymbolReferenceIndexForFileWrapper,
-                    GetReferencesAtPositionFromIndexWrapper};
+                    GetReferencesAtPositionFromIndexWrapper,
+                    GetIndexedFileSourceWrapper,
+                    DeleteProgramForFile,
+                    DeleteDependantProgramsForFiles};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

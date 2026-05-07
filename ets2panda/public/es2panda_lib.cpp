@@ -389,13 +389,47 @@ static void UpdateProgramTextForIncremental(Context *ctx, parser::Program *progr
     program->SetSource(updatedSource);
 }
 
+static void AddDirectDependenciesToExternalSourcesForIncremental(Context *ctx, parser::Program *targetProgram)
+{
+    auto *importPathManager = ctx->parser->GetImportPathManager();
+    auto &externalSources = *targetProgram->GetExternalDecls();
+    externalSources.Direct().clear();
+    externalSources.Get<util::ModuleKind::MODULE>().clear();
+    externalSources.Get<util::ModuleKind::SOURCE_DECL>().clear();
+
+    auto depsIt = importPathManager->GetFileDependencies().find(ArenaString {targetProgram->AbsoluteName().Utf8()});
+    if (depsIt == importPathManager->GetFileDependencies().end()) {
+        return;
+    }
+
+    for (const auto &dep : depsIt->second) {
+        auto *depProgram =
+            importPathManager->FindOrIntroduceProgramForIncremental(std::string_view {dep.data(), dep.size()});
+        if (depProgram == nullptr || depProgram == targetProgram) {
+            continue;
+        }
+        externalSources.Add(depProgram);
+    }
+}
+
 extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Context *context, const char *fileName,
-                                                                 const char *sourceText)
+                                                                 const char *sourceText, bool isChanged)
 {
     ES2PANDA_ASSERT(context != nullptr);
     auto *ctx = reinterpret_cast<Context *>(context);
     parser::Program *targetProgram =
         ctx->parser->GetImportPathManager()->FindOrIntroduceProgramForIncremental(fileName);
+    // If source is unchanged, reuse existing AST and skip recompilation.
+    if (!isChanged && targetProgram->Ast() != nullptr) {
+        ctx->parserProgram = targetProgram;
+        ctx->sourceFileName = fileName;
+        ctx->input = std::string(sourceText);
+        delete ctx->sourceFile;
+        ctx->sourceFile = new SourceFile(fileName, ctx->input, ctx->config->options->IsModule());
+        AddDirectDependenciesToExternalSourcesForIncremental(ctx, targetProgram);
+        return 1;
+    }
+
     ResetContextAndProgram(ctx, targetProgram);
     ctx->parserProgram = targetProgram;
     ctx->sourceFileName = fileName;
@@ -403,18 +437,6 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
     ctx->sourceFile = new SourceFile(fileName, ctx->input, ctx->config->options->IsModule());
     UpdateProgramTextForIncremental(ctx, targetProgram, std::string(sourceText));
     ctx->parser->GetImportPathManager()->PrepareParseQueueForProgram(targetProgram);
-    return 0;
-}
-
-extern "C" __attribute__((unused)) int DeleteProgramForFile(es2panda_Context *context, const char *fileName)
-{
-    auto *ctx = reinterpret_cast<Context *>(context);
-    if (ctx->parserProgram->AbsoluteName() == fileName) {
-        return 0;
-    }
-    ArenaString key {fileName};
-    ctx->parserProgram->GetExternalDecls()->Direct().erase(key);
-    ctx->parser->GetImportPathManager()->RemoveProgramFromResolvedSources(key);
     return 0;
 }
 
@@ -691,9 +713,13 @@ __attribute__((unused)) static void MarkAsLowered(Context *ctx)
         if (!program->IsASTLowered()) {
             program->MarkASTAsLowered();
         }
+        if (!program->IsProgramModified()) {
+            program->SetProgramModified(true);
+        }
     };
 
     markAsLowered(ctx->parserProgram);
+    ctx->parserProgram->SetProgramModified(true);
     ctx->parserProgram->GetExternalDecls()->Visit<false>([&markAsLowered](auto *extProgram) {
         markAsLowered(extProgram);
         extProgram->MaybeIteratePackage(
@@ -1776,7 +1802,6 @@ es2panda_Impl g_impl = {
     RemoveFileCache,
     AddFileCache,
     IncrementalPrepareProgram,
-    DeleteProgramForFile,
     FreeCompilerPartMemory,
     ResetCounters,
     ExtractDeclarationsFromAbcFile,

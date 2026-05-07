@@ -111,7 +111,7 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
 }
 
 // temp solution: support right match
-ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, bool flagFindFirstMatch)
+ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, [[maybe_unused]] bool flagFindFirstMatch)
 {
     if (context == nullptr) {
         return nullptr;
@@ -132,13 +132,14 @@ ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, b
 
     for (auto *stmt : ast->AsETSModule()->Statements()) {
         ir::AstNode *stmtMatch = stmt->FindChild(checkFunc);
-        if (stmtMatch != nullptr && stmtMatch->Start().index <= pos && stmtMatch->End().index >= pos &&
-            !flagFindFirstMatch) {
-            bestMatch = stmtMatch;
+        if (stmtMatch == nullptr ||
+            (stmtMatch->Start().index < bestMatch->Start().index && stmtMatch->End().index > bestMatch->End().index)) {
+            continue;
         }
+        bestMatch = stmtMatch;
     }
 
-    while (bestMatch != nullptr && !flagFindFirstMatch) {
+    while (bestMatch != nullptr) {
         ir::AstNode *nestedMatch = bestMatch->FindChild(checkFunc);
         if (nestedMatch == nullptr) {
             break;
@@ -994,7 +995,7 @@ std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_
 std::string GetImportFilePath(es2panda_Context *context, size_t pos)
 {
     std::string res;
-    auto node = GetTouchingToken(context, pos, false);
+    auto node = GetTouchingTokenRightMatch(context, pos, false);
     if (node == nullptr) {
         return res;
     }
