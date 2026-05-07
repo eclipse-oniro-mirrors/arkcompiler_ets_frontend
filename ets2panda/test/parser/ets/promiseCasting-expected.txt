@@ -82,86 +82,6 @@
       }
     },
     {
-      "type": "ImportDeclaration",
-      "source": {
-        "type": "StringLiteral",
-        "value": "std/core",
-        "loc": {
-          "start": {
-            "line": 17,
-            "column": 19,
-            "program": "promiseCasting.ets"
-          },
-          "end": {
-            "line": 17,
-            "column": 29,
-            "program": "promiseCasting.ets"
-          }
-        }
-      },
-      "specifiers": [
-        {
-          "type": "ImportSpecifier",
-          "local": {
-            "type": "Identifier",
-            "name": "Job",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "promiseCasting.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 12,
-                "program": "promiseCasting.ets"
-              }
-            }
-          },
-          "imported": {
-            "type": "Identifier",
-            "name": "Job",
-            "loc": {
-              "start": {
-                "line": 17,
-                "column": 9,
-                "program": "promiseCasting.ets"
-              },
-              "end": {
-                "line": 17,
-                "column": 12,
-                "program": "promiseCasting.ets"
-              }
-            }
-          },
-          "loc": {
-            "start": {
-              "line": 17,
-              "column": 9,
-              "program": "promiseCasting.ets"
-            },
-            "end": {
-              "line": 17,
-              "column": 12,
-              "program": "promiseCasting.ets"
-            }
-          }
-        }
-      ],
-      "loc": {
-        "start": {
-          "line": 17,
-          "column": 1,
-          "program": "promiseCasting.ets"
-        },
-        "end": {
-          "line": 17,
-          "column": 29,
-          "program": "promiseCasting.ets"
-        }
-      }
-    },
-    {
       "type": "TSTypeAliasDeclaration",
       "id": {
         "type": "Identifier",
@@ -708,12 +628,12 @@
               "loc": {
                 "start": {
                   "line": 27,
-                  "column": 10,
+                  "column": 16,
                   "program": "promiseCasting.ets"
                 },
                 "end": {
                   "line": 27,
-                  "column": 14,
+                  "column": 20,
                   "program": "promiseCasting.ets"
                 }
               }
@@ -733,20 +653,98 @@
                   "loc": {
                     "start": {
                       "line": 27,
-                      "column": 10,
+                      "column": 16,
                       "program": "promiseCasting.ets"
                     },
                     "end": {
                       "line": 27,
-                      "column": 14,
+                      "column": 20,
                       "program": "promiseCasting.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 27,
+                          "column": 20,
+                          "program": "promiseCasting.ets"
+                        },
+                        "end": {
+                          "line": 27,
+                          "column": 20,
+                          "program": "promiseCasting.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 27,
+                              "column": 20,
+                              "program": "promiseCasting.ets"
+                            },
+                            "end": {
+                              "line": 27,
+                              "column": 20,
+                              "program": "promiseCasting.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 27,
+                          "column": 20,
+                          "program": "promiseCasting.ets"
+                        },
+                        "end": {
+                          "line": 27,
+                          "column": 20,
+                          "program": "promiseCasting.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 27,
+                        "column": 20,
+                        "program": "promiseCasting.ets"
+                      },
+                      "end": {
+                        "line": 27,
+                        "column": 20,
+                        "program": "promiseCasting.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 27,
+                      "column": 20,
+                      "program": "promiseCasting.ets"
+                    },
+                    "end": {
+                      "line": 27,
+                      "column": 20,
+                      "program": "promiseCasting.ets"
+                    }
+                  }
+                },
                 "body": {
                   "type": "BlockStatement",
                   "statements": [
@@ -3544,156 +3542,30 @@
                               "right": {
                                 "type": "CallExpression",
                                 "callee": {
-                                  "type": "CallExpression",
-                                  "callee": {
-                                    "type": "MemberExpression",
-                                    "object": {
-                                      "type": "TSAsExpression",
-                                      "expression": {
-                                        "type": "MemberExpression",
-                                        "object": {
-                                          "type": "Identifier",
-                                          "name": "ps",
-                                          "loc": {
-                                            "start": {
-                                              "line": 51,
-                                              "column": 18,
-                                              "program": "promiseCasting.ets"
-                                            },
-                                            "end": {
-                                              "line": 51,
-                                              "column": 20,
-                                              "program": "promiseCasting.ets"
-                                            }
-                                          }
-                                        },
-                                        "property": {
-                                          "type": "Identifier",
-                                          "name": "i",
-                                          "loc": {
-                                            "start": {
-                                              "line": 51,
-                                              "column": 21,
-                                              "program": "promiseCasting.ets"
-                                            },
-                                            "end": {
-                                              "line": 51,
-                                              "column": 22,
-                                              "program": "promiseCasting.ets"
-                                            }
-                                          }
-                                        },
-                                        "computed": true,
-                                        "optional": false,
+                                  "type": "AwaitExpression",
+                                  "argument": {
+                                    "type": "TSAsExpression",
+                                    "expression": {
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "ps",
                                         "loc": {
                                           "start": {
                                             "line": 51,
-                                            "column": 18,
+                                            "column": 24,
                                             "program": "promiseCasting.ets"
                                           },
                                           "end": {
                                             "line": 51,
-                                            "column": 23,
+                                            "column": 26,
                                             "program": "promiseCasting.ets"
                                           }
                                         }
                                       },
-                                      "typeAnnotation": {
-                                        "type": "ETSTypeReference",
-                                        "part": {
-                                          "type": "ETSTypeReferencePart",
-                                          "name": {
-                                            "type": "Identifier",
-                                            "name": "Job",
-                                            "loc": {
-                                              "start": {
-                                                "line": 51,
-                                                "column": 27,
-                                                "program": "promiseCasting.ets"
-                                              },
-                                              "end": {
-                                                "line": 51,
-                                                "column": 30,
-                                                "program": "promiseCasting.ets"
-                                              }
-                                            }
-                                          },
-                                          "typeParams": {
-                                            "type": "TSTypeParameterInstantiation",
-                                            "params": [
-                                              {
-                                                "type": "ETSTypeReference",
-                                                "part": {
-                                                  "type": "ETSTypeReferencePart",
-                                                  "name": {
-                                                    "type": "Identifier",
-                                                    "name": "Cb",
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 51,
-                                                        "column": 31,
-                                                        "program": "promiseCasting.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 51,
-                                                        "column": 33,
-                                                        "program": "promiseCasting.ets"
-                                                      }
-                                                    }
-                                                  },
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 51,
-                                                      "column": 31,
-                                                      "program": "promiseCasting.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 51,
-                                                      "column": 33,
-                                                      "program": "promiseCasting.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 51,
-                                                    "column": 31,
-                                                    "program": "promiseCasting.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 51,
-                                                    "column": 33,
-                                                    "program": "promiseCasting.ets"
-                                                  }
-                                                }
-                                              }
-                                            ],
-                                            "loc": {
-                                              "start": {
-                                                "line": 51,
-                                                "column": 30,
-                                                "program": "promiseCasting.ets"
-                                              },
-                                              "end": {
-                                                "line": 51,
-                                                "column": 34,
-                                                "program": "promiseCasting.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 51,
-                                              "column": 27,
-                                              "program": "promiseCasting.ets"
-                                            },
-                                            "end": {
-                                              "line": 51,
-                                              "column": 34,
-                                              "program": "promiseCasting.ets"
-                                            }
-                                          }
-                                        },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "i",
                                         "loc": {
                                           "start": {
                                             "line": 51,
@@ -3702,7 +3574,118 @@
                                           },
                                           "end": {
                                             "line": 51,
-                                            "column": 34,
+                                            "column": 28,
+                                            "program": "promiseCasting.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": true,
+                                      "optional": false,
+                                      "loc": {
+                                        "start": {
+                                          "line": 51,
+                                          "column": 24,
+                                          "program": "promiseCasting.ets"
+                                        },
+                                        "end": {
+                                          "line": 51,
+                                          "column": 29,
+                                          "program": "promiseCasting.ets"
+                                        }
+                                      }
+                                    },
+                                    "typeAnnotation": {
+                                      "type": "ETSTypeReference",
+                                      "part": {
+                                        "type": "ETSTypeReferencePart",
+                                        "name": {
+                                          "type": "Identifier",
+                                          "name": "Promise",
+                                          "loc": {
+                                            "start": {
+                                              "line": 51,
+                                              "column": 33,
+                                              "program": "promiseCasting.ets"
+                                            },
+                                            "end": {
+                                              "line": 51,
+                                              "column": 40,
+                                              "program": "promiseCasting.ets"
+                                            }
+                                          }
+                                        },
+                                        "typeParams": {
+                                          "type": "TSTypeParameterInstantiation",
+                                          "params": [
+                                            {
+                                              "type": "ETSTypeReference",
+                                              "part": {
+                                                "type": "ETSTypeReferencePart",
+                                                "name": {
+                                                  "type": "Identifier",
+                                                  "name": "Cb",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 51,
+                                                      "column": 41,
+                                                      "program": "promiseCasting.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 51,
+                                                      "column": 43,
+                                                      "program": "promiseCasting.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 51,
+                                                    "column": 41,
+                                                    "program": "promiseCasting.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 51,
+                                                    "column": 43,
+                                                    "program": "promiseCasting.ets"
+                                                  }
+                                                }
+                                              },
+                                              "loc": {
+                                                "start": {
+                                                  "line": 51,
+                                                  "column": 41,
+                                                  "program": "promiseCasting.ets"
+                                                },
+                                                "end": {
+                                                  "line": 51,
+                                                  "column": 43,
+                                                  "program": "promiseCasting.ets"
+                                                }
+                                              }
+                                            }
+                                          ],
+                                          "loc": {
+                                            "start": {
+                                              "line": 51,
+                                              "column": 40,
+                                              "program": "promiseCasting.ets"
+                                            },
+                                            "end": {
+                                              "line": 51,
+                                              "column": 44,
+                                              "program": "promiseCasting.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 51,
+                                            "column": 33,
+                                            "program": "promiseCasting.ets"
+                                          },
+                                          "end": {
+                                            "line": 51,
+                                            "column": 44,
                                             "program": "promiseCasting.ets"
                                           }
                                         }
@@ -3710,49 +3693,29 @@
                                       "loc": {
                                         "start": {
                                           "line": 51,
-                                          "column": 17,
+                                          "column": 33,
                                           "program": "promiseCasting.ets"
                                         },
                                         "end": {
                                           "line": 51,
-                                          "column": 35,
+                                          "column": 44,
                                           "program": "promiseCasting.ets"
                                         }
                                       }
                                     },
-                                    "property": {
-                                      "type": "Identifier",
-                                      "name": "Await",
-                                      "loc": {
-                                        "start": {
-                                          "line": 51,
-                                          "column": 36,
-                                          "program": "promiseCasting.ets"
-                                        },
-                                        "end": {
-                                          "line": 51,
-                                          "column": 41,
-                                          "program": "promiseCasting.ets"
-                                        }
-                                      }
-                                    },
-                                    "computed": false,
-                                    "optional": false,
                                     "loc": {
                                       "start": {
                                         "line": 51,
-                                        "column": 17,
+                                        "column": 23,
                                         "program": "promiseCasting.ets"
                                       },
                                       "end": {
                                         "line": 51,
-                                        "column": 41,
+                                        "column": 45,
                                         "program": "promiseCasting.ets"
                                       }
                                     }
                                   },
-                                  "arguments": [],
-                                  "optional": false,
                                   "loc": {
                                     "start": {
                                       "line": 51,
@@ -3761,7 +3724,7 @@
                                     },
                                     "end": {
                                       "line": 51,
-                                      "column": 44,
+                                      "column": 46,
                                       "program": "promiseCasting.ets"
                                     }
                                   }
@@ -3773,12 +3736,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 51,
-                                        "column": 45,
+                                        "column": 47,
                                         "program": "promiseCasting.ets"
                                       },
                                       "end": {
                                         "line": 51,
-                                        "column": 46,
+                                        "column": 48,
                                         "program": "promiseCasting.ets"
                                       }
                                     }
@@ -3793,7 +3756,7 @@
                                   },
                                   "end": {
                                     "line": 51,
-                                    "column": 47,
+                                    "column": 49,
                                     "program": "promiseCasting.ets"
                                   }
                                 }
@@ -3806,7 +3769,7 @@
                                 },
                                 "end": {
                                   "line": 51,
-                                  "column": 47,
+                                  "column": 49,
                                   "program": "promiseCasting.ets"
                                 }
                               }
@@ -3819,7 +3782,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 47,
+                                "column": 49,
                                 "program": "promiseCasting.ets"
                               }
                             }
@@ -3969,7 +3932,7 @@
                   "loc": {
                     "start": {
                       "line": 27,
-                      "column": 17,
+                      "column": 23,
                       "program": "promiseCasting.ets"
                     },
                     "end": {
@@ -3982,7 +3945,7 @@
                 "loc": {
                   "start": {
                     "line": 27,
-                    "column": 10,
+                    "column": 16,
                     "program": "promiseCasting.ets"
                   },
                   "end": {
@@ -3995,7 +3958,7 @@
               "loc": {
                 "start": {
                   "line": 27,
-                  "column": 10,
+                  "column": 16,
                   "program": "promiseCasting.ets"
                 },
                 "end": {
@@ -4060,4 +4023,4 @@
     }
   }
 }
-[promiseCasting.ets:51:18] Warning W369037: Cast expression `as Job<((p1: Int) => Int)>` is type unsafe. 'CastClassError' exception can be thrown at runtime
+[promiseCasting.ets:51:24] Warning W369037: Cast expression `as Promise<((p1: Int) => Int)>` is type unsafe. 'CastClassError' exception can be thrown at runtime
