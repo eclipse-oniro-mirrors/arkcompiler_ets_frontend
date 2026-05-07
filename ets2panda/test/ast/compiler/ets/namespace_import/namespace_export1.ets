@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 
+/*---
+    files: [./namespace_import2.ets]
+---*/
+
 import * as ns2 from "./namespace_import2"
 
 export function A(): int {

@@ -13,5 +13,9 @@
  * limitations under the License.
  */
 
+/*---
+    files: [./file1.ets]
+---*/
+
 import {atomicTask} from "./file1"
 const task = new taskpool.Task(atomicTask);
