@@ -3647,11 +3647,6 @@ void ETSChecker::CheckGetterSetterProperties(ETSObjectType *classType)
                 return;
             }
         }
-        if ((sigSetter != nullptr && sigGetter != nullptr) &&
-            ((sigGetter->Function()->Modifiers() ^ sigSetter->Function()->Modifiers()) &
-             ir::ModifierFlags::ACCESSOR_MODIFIERS) != 0) {
-            LogError(diagnostic::ACCESSORS_MOD_MISMATCH, {}, sigGetter->Function()->Start());
-        }
     };
 
     for (const auto &[name, var] : classType->InstanceMethods()) {
