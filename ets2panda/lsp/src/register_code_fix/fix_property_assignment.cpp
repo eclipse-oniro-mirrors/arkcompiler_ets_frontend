@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -117,16 +117,10 @@ CombinedCodeActions FixPropertyAssignment::GetAllCodeActions(const CodeFixAllCon
     CodeFixProvider provider;
     std::vector<ir::AstNode *> fixedNodes;
 
-    const auto changes = provider.CodeFixAll(
-        codeFixAll, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
-            Initializer initializer;
-            std::string fileName = std::string(diag.GetFile().filePath);
-            std::string fileContent = std::string(diag.GetFile().source);
-            es2panda_Context *ctx =
-                initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, fileContent.c_str());
-            MakeChange(tracker, ctx, diag.GetStart(), fixedNodes);
-            initializer.DestroyContext(ctx);
-        });
+    const auto changes = provider.CodeFixAll(codeFixAll, GetErrorCodes(),
+                                             [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+                                                 MakeChange(tracker, codeFixAll.context, diag.GetStart(), fixedNodes);
+                                             });
 
     CombinedCodeActions combinedCodeActions;
     combinedCodeActions.changes = changes.changes;

@@ -348,7 +348,12 @@ struct StartandEndOfNode {
 
 StartandEndOfNode GetClassOrObjectBraceEnds(ir::AstNode *node)
 {
-    const auto open = node->FindChild([](ir::AstNode *) { return true; })->Start().index;
+    if (node == nullptr) {
+        return StartandEndOfNode {0, 0};
+    }
+
+    const auto *firstChild = node->FindChild([](ir::AstNode *) { return true; });
+    const auto open = firstChild != nullptr ? firstChild->Start().index : node->Start().index;
     const auto close = node->End().index;
     return StartandEndOfNode {open, close};
 }

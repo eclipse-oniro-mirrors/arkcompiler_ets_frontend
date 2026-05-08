@@ -83,7 +83,11 @@ void FixReturnTypeInAsyncFunction::MakeChangeReturnTypeInAsyncFunction(ChangeTra
     newReturnType->SetParent(returnTypeNode->Parent());
     originalInnerType1->SetParent(newReturnType);
     newReturnType->SetStart(returnTypeNode->Start());
-    auto returnTypeNodeIdent = returnTypeNode->AsETSTypeReference()->Part()->Name()->AsIdentifier();
+    auto *part = returnTypeNode->AsETSTypeReference()->Part();
+    if (part == nullptr || part->Name() == nullptr) {
+        return;
+    }
+    auto returnTypeNodeIdent = part->Name()->AsIdentifier();
 
     lexer::SourcePosition endPos(newReturnType->Start().index + promiseName->Name().Length() +
                                      returnTypeNodeIdent->Name().Length() + K_GENERIC_BRACKETS_LENGTH,

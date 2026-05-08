@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -71,6 +71,9 @@ Info GetInfo(es2panda_Context *context, size_t position)
     const auto token = GetDefinitionAtPositionImpl(context, position);
     const auto node = token.first;
     const auto declaration = FindAncessor(node);
+    if (declaration == nullptr) {
+        return Info(nullptr, nullptr, {});
+    }
     if (!declaration->IsFunctionExpression()) {
         return Info(nullptr, nullptr, {});
     }
@@ -136,6 +139,9 @@ void AddReturnStatement(ChangeTracker &changes, es2panda_Context *context, std::
 
 ir::AstNode *FindAncessor(ir::AstNode *node)
 {
+    if (node == nullptr) {
+        return nullptr;
+    }
     if (node->IsFunctionDeclaration() || node->IsFunctionExpression()) {
         return node;
     }

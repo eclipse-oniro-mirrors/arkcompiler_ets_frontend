@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,7 +108,7 @@ ir::AstNode *AscendToRootName(ir::AstNode *node)
     return node;
 }
 
-TextSpan *GetNameOrDottedNameSpanImpl(es2panda_Context *context, int startPos)
+std::unique_ptr<TextSpan> GetNameOrDottedNameSpanImpl(es2panda_Context *context, int startPos)
 {
     ir::AstNode *astNode = ark::es2panda::lsp::GetTouchingPropertyName(context, startPos);
     if (astNode == nullptr) {
@@ -139,7 +139,6 @@ TextSpan *GetNameOrDottedNameSpanImpl(es2panda_Context *context, int startPos)
         return nullptr;
     }
 
-    auto span = new TextSpan(start, end - start);
-    return span;
+    return std::make_unique<TextSpan>(start, end - start);
 }
 }  // namespace ark::es2panda::lsp

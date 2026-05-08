@@ -850,7 +850,7 @@ CombinedCodeActionsInfo GetCombinedCodeFix(const char *fileName, const std::stri
 TextSpan *GetNameOrDottedNameSpan(es2panda_Context *context, int startPos)
 {
     auto result = ark::es2panda::lsp::GetNameOrDottedNameSpanImpl(context, startPos);
-    return result;
+    return result.release();
 }
 
 es2panda_AstNode *GetProgramAst(es2panda_Context *context)
