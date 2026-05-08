@@ -525,58 +525,26 @@
                         },
                         {
                           "type": "SwitchCase",
-                          "test": null,
+                          "test": {
+                            "type": "NumberLiteral",
+                            "value": 127,
+                            "loc": {
+                              "start": {
+                                "line": 28,
+                                "column": 8,
+                                "program": "switch2.ets"
+                              },
+                              "end": {
+                                "line": 28,
+                                "column": 11,
+                                "program": "switch2.ets"
+                              }
+                            }
+                          },
                           "consequent": [
                             {
-                              "type": "ExpressionStatement",
-                              "expression": {
-                                "type": "AssignmentExpression",
-                                "operator": "=",
-                                "left": {
-                                  "type": "Identifier",
-                                  "name": "result",
-                                  "loc": {
-                                    "start": {
-                                      "line": 29,
-                                      "column": 4,
-                                      "program": "switch2.ets"
-                                    },
-                                    "end": {
-                                      "line": 29,
-                                      "column": 10,
-                                      "program": "switch2.ets"
-                                    }
-                                  }
-                                },
-                                "right": {
-                                  "type": "NumberLiteral",
-                                  "value": -1,
-                                  "loc": {
-                                    "start": {
-                                      "line": 29,
-                                      "column": 13,
-                                      "program": "switch2.ets"
-                                    },
-                                    "end": {
-                                      "line": 29,
-                                      "column": 15,
-                                      "program": "switch2.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 29,
-                                    "column": 4,
-                                    "program": "switch2.ets"
-                                  },
-                                  "end": {
-                                    "line": 29,
-                                    "column": 15,
-                                    "program": "switch2.ets"
-                                  }
-                                }
-                              },
+                              "type": "BreakStatement",
+                              "label": null,
                               "loc": {
                                 "start": {
                                   "line": 29,
@@ -585,7 +553,7 @@
                                 },
                                 "end": {
                                   "line": 29,
-                                  "column": 16,
+                                  "column": 10,
                                   "program": "switch2.ets"
                                 }
                               }
@@ -599,6 +567,185 @@
                             },
                             "end": {
                               "line": 29,
+                              "column": 10,
+                              "program": "switch2.ets"
+                            }
+                          }
+                        },
+                        {
+                          "type": "SwitchCase",
+                          "test": {
+                            "type": "NumberLiteral",
+                            "value": 128,
+                            "loc": {
+                              "start": {
+                                "line": 30,
+                                "column": 8,
+                                "program": "switch2.ets"
+                              },
+                              "end": {
+                                "line": 30,
+                                "column": 11,
+                                "program": "switch2.ets"
+                              }
+                            }
+                          },
+                          "consequent": [
+                            {
+                              "type": "BreakStatement",
+                              "label": null,
+                              "loc": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 4,
+                                  "program": "switch2.ets"
+                                },
+                                "end": {
+                                  "line": 31,
+                                  "column": 10,
+                                  "program": "switch2.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 30,
+                              "column": 3,
+                              "program": "switch2.ets"
+                            },
+                            "end": {
+                              "line": 31,
+                              "column": 10,
+                              "program": "switch2.ets"
+                            }
+                          }
+                        },
+                        {
+                          "type": "SwitchCase",
+                          "test": {
+                            "type": "NumberLiteral",
+                            "value": -129,
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 8,
+                                "program": "switch2.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 12,
+                                "program": "switch2.ets"
+                              }
+                            }
+                          },
+                          "consequent": [
+                            {
+                              "type": "BreakStatement",
+                              "label": null,
+                              "loc": {
+                                "start": {
+                                  "line": 33,
+                                  "column": 4,
+                                  "program": "switch2.ets"
+                                },
+                                "end": {
+                                  "line": 33,
+                                  "column": 10,
+                                  "program": "switch2.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 32,
+                              "column": 3,
+                              "program": "switch2.ets"
+                            },
+                            "end": {
+                              "line": 33,
+                              "column": 10,
+                              "program": "switch2.ets"
+                            }
+                          }
+                        },
+                        {
+                          "type": "SwitchCase",
+                          "test": null,
+                          "consequent": [
+                            {
+                              "type": "ExpressionStatement",
+                              "expression": {
+                                "type": "AssignmentExpression",
+                                "operator": "=",
+                                "left": {
+                                  "type": "Identifier",
+                                  "name": "result",
+                                  "loc": {
+                                    "start": {
+                                      "line": 35,
+                                      "column": 4,
+                                      "program": "switch2.ets"
+                                    },
+                                    "end": {
+                                      "line": 35,
+                                      "column": 10,
+                                      "program": "switch2.ets"
+                                    }
+                                  }
+                                },
+                                "right": {
+                                  "type": "NumberLiteral",
+                                  "value": -1,
+                                  "loc": {
+                                    "start": {
+                                      "line": 35,
+                                      "column": 13,
+                                      "program": "switch2.ets"
+                                    },
+                                    "end": {
+                                      "line": 35,
+                                      "column": 15,
+                                      "program": "switch2.ets"
+                                    }
+                                  }
+                                },
+                                "loc": {
+                                  "start": {
+                                    "line": 35,
+                                    "column": 4,
+                                    "program": "switch2.ets"
+                                  },
+                                  "end": {
+                                    "line": 35,
+                                    "column": 15,
+                                    "program": "switch2.ets"
+                                  }
+                                }
+                              },
+                              "loc": {
+                                "start": {
+                                  "line": 35,
+                                  "column": 4,
+                                  "program": "switch2.ets"
+                                },
+                                "end": {
+                                  "line": 35,
+                                  "column": 16,
+                                  "program": "switch2.ets"
+                                }
+                              }
+                            }
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 34,
+                              "column": 3,
+                              "program": "switch2.ets"
+                            },
+                            "end": {
+                              "line": 35,
                               "column": 16,
                               "program": "switch2.ets"
                             }
@@ -612,7 +759,7 @@
                           "program": "switch2.ets"
                         },
                         "end": {
-                          "line": 30,
+                          "line": 36,
                           "column": 3,
                           "program": "switch2.ets"
                         }
@@ -626,7 +773,7 @@
                       "program": "switch2.ets"
                     },
                     "end": {
-                      "line": 31,
+                      "line": 37,
                       "column": 2,
                       "program": "switch2.ets"
                     }
@@ -639,7 +786,7 @@
                     "program": "switch2.ets"
                   },
                   "end": {
-                    "line": 31,
+                    "line": 37,
                     "column": 2,
                     "program": "switch2.ets"
                   }
@@ -652,7 +799,7 @@
                   "program": "switch2.ets"
                 },
                 "end": {
-                  "line": 31,
+                  "line": 37,
                   "column": 2,
                   "program": "switch2.ets"
                 }
@@ -666,7 +813,7 @@
                 "program": "switch2.ets"
               },
               "end": {
-                "line": 31,
+                "line": 37,
                 "column": 2,
                 "program": "switch2.ets"
               }
@@ -707,12 +854,11 @@
       "program": "switch2.ets"
     },
     "end": {
-      "line": 32,
+      "line": 38,
       "column": 1,
       "program": "switch2.ets"
     }
   }
 }
-[switch2.ets:21:8] Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Byte'
-[switch2.ets:22:8] Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Byte'
-[switch2.ets:25:8] Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Byte'
+[switch2.ets:30:8] Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Byte'
+[switch2.ets:32:8] Semantic error ESE0262: Switch case type 'Int' is not comparable to discriminant type 'Byte'

@@ -107,6 +107,7 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
 {
     auto *relation = checker->Relation();
     if (test_ != nullptr) {
+        test_->SetPreferredType(comparedExprType);
         checker::Type *caseType = test_->Check(checker);
         bool validCaseType = true;
 
