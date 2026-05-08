@@ -118,6 +118,17 @@ bool TypeRelation::SignatureIsSupertypeOf(Signature const *super, Signature cons
     return IsTrue();
 }
 
+bool TypeRelation::SignatureIsCoveredBy(Signature *super, Signature *sub)
+{
+    if (super == sub) {
+        return Result(true);
+    }
+
+    Result(false);
+    sub->IsCoveredBy(this, super);
+    return IsTrue();
+}
+
 bool TypeRelation::IsIdenticalTo(IndexInfo *source, IndexInfo *target)
 {
     if (source == target) {

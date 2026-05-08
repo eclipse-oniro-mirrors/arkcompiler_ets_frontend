@@ -30,3 +30,4 @@ overload foo {NS.foo1, NS.A.foo2, /* @@ label1 */NS.A.foo2}
 /* @@? 24:24 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@@ label1 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
 /* @@@ label1 Error Semantic error ESE0385: Duplicate overloaded method. */
+/* @@? 24:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,3 +31,4 @@ function main(): void {
 /* @@? 20:13 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
 /* @@? 26:5 Error Semantic error ESE0139: Signature foo(a: Double|undefined): Int is not visible here. */
 /* @@? 26:5 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 20:13 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Double) => Int' will never be selected for a call, as the preceding entity with the signature '(a: Double|undefined) => Int' prevails. */

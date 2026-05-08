@@ -299,6 +299,7 @@ public:
                   bool precise = false) const;
     std::string ToString() const;
     void IsSubtypeOf(TypeRelation *relation, Signature const *super) const;
+    void IsCoveredBy(TypeRelation *relation, Signature *super);
     void AssignmentTarget(TypeRelation *relation, Signature *source);
     [[nodiscard]] Signature *ToArrowSignature(ETSChecker *checker);
     friend class ETSExtensionFuncHelperType;

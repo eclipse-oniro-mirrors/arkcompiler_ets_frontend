@@ -48,3 +48,4 @@ class Test5{
 
 
 /* @@@ label Error Semantic error ESE0130: Function con1 is already declared. */
+/* @@? 38:31 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */

@@ -24,3 +24,5 @@ export overload bar4 { foo1, /* @@ label2 */foo2 }
 /* @@? 16:1 Error Semantic error ESE71336: Exported function 'foo1' requires type annotation. */
 /* @@@ label1 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
 /* @@@ label2 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
+/* @@? 20:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */
+/* @@? 22:17 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => undefined' will never be selected for a call, as the preceding entity with the signature '() => undefined' prevails. */

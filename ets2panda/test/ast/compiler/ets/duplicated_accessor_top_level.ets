@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,3 +22,4 @@ set duplicateSetter(x: string) {}
 /* @@? 17:1 Error Semantic error ESE0130: Function duplicateGetter is already declared. */
 /* @@? 17:5 Error Semantic error ESE0219: Duplicate accessor definition */
 /* @@? 20:5 Error Semantic error ESE0219: Duplicate accessor definition */
+/* @@? 17:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => String' will never be selected for a call, as the preceding entity with the signature '() => Double' prevails. */

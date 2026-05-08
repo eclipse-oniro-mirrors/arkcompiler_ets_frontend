@@ -23,3 +23,4 @@ interface C extends I {
 }
 
 /* @@? 22:5 Error Semantic error ESE602430: Method foo(p: C): undefined from class or interface C, inherited into class or interface C, conflicts with the previous declaration of method foo(p: I): undefined from class or interface C because both declarations override method foo(p: C): undefined from class or interface I */
+/* @@? 22:5 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(p: C) => undefined' will never be selected for a call, as the preceding entity with the signature '(p: I) => undefined' prevails. */

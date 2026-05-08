@@ -569,6 +569,42 @@ static bool IsInitializerBlockTransfer(std::string_view str)
     return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
 }
 
+// CC-OFFNXT(G.NAM.03-CPP) project code style
+static bool IsSignatureUnreachable(ETSChecker *checker, Signature *currSig, Signature *prevSig,
+                                   std::optional<lexer::SourcePosition> start_pos)
+{
+    SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK);
+    if (checker->Relation()->SignatureIsCoveredBy(currSig, prevSig)) {
+        auto start = start_pos.has_value() ? start_pos.value() : currSig->Function()->Id()->Start();
+        checker->LogError(diagnostic::OVERLOAD_UNREACHABLE_WARNING, {currSig->ToString(), prevSig->ToString()}, start);
+        return true;
+    }
+    return false;
+}
+
+static Type *CheckUnreachableSignatureInFunctionType(
+    ETSChecker *checker, Type *type,
+    std::optional<lexer::SourcePosition> start_pos = std::optional<lexer::SourcePosition>())
+{
+    if (type == nullptr || !type->IsETSFunctionType()) {
+        return type;
+    }
+
+    auto &signatures = type->AsETSFunctionType()->CallSignatures();
+    for (size_t j = 1; j < signatures.size(); ++j) {
+        for (size_t i = 0; i < j; ++i) {
+            auto *currSig = signatures[j];
+            auto *prevSig = signatures[i];
+
+            if (IsSignatureUnreachable(checker, currSig, prevSig, start_pos)) {
+                break;
+            }
+        }
+    }
+
+    return type;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::MethodDefinition *node) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -626,7 +662,8 @@ checker::Type *ETSAnalyzer::Check(ir::MethodDefinition *node) const
         return node->TsType();
     }
 
-    return CheckMethodDefinitionHelper(checker, node);
+    auto *type = CheckMethodDefinitionHelper(checker, node);
+    return CheckUnreachableSignatureInFunctionType(checker, type);
 }
 
 void ETSAnalyzer::CheckMethodModifiers(ir::MethodDefinition *node) const
@@ -746,7 +783,8 @@ checker::Type *ETSAnalyzer::Check(ir::OverloadDeclaration *node) const
         checker->CheckInterfaceMethodOverloadDeclaration(checker, node);
     }
 
-    return checker->CreateSyntheticTypeFromOverload(node->Id()->Variable());
+    auto *type = checker->CreateSyntheticTypeFromOverload(node->Id()->Variable());
+    return CheckUnreachableSignatureInFunctionType(checker, type, node->Id()->Start());
 }
 
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::Property *expr) const

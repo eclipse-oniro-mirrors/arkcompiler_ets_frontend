@@ -262,6 +262,7 @@ public:
     bool IsSupertypeOf(Type *super, Type *sub);
     bool IsIdenticalTo(IndexInfo *source, IndexInfo *target);
     bool SignatureIsSupertypeOf(Signature const *super, Signature const *sub);
+    bool SignatureIsCoveredBy(Signature *super, Signature *sub);
     bool CheckVarianceRecursively(Type *type, VarianceFlag varianceFlag);
     bool IsReadonlyTypeOf(Type *source, Type *target);
     VarianceFlag TransferVariant(VarianceFlag variance, VarianceFlag posVariance);

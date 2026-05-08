@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,3 +27,4 @@ function name(this: Fruit) {
 
 
 /* @@@ label Error Semantic error ESE0130: Function name is already declared. */
+/* @@? 24:24 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(fruit: Fruit) => undefined' will never be selected for a call, as the preceding entity with the signature '(=t: Fruit) => undefined' prevails. */

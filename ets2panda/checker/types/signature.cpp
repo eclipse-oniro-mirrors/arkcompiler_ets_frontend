@@ -247,6 +247,92 @@ void Signature::IsSubtypeOf(TypeRelation *relation, Signature const *super) cons
     relation->Result(MethodSignaturesAreCompatible(relation, !relation->IsOverridingCheck(), super, sub));
 }
 
+static bool IsCoveredByDetailedCheck(TypeRelation *relation, Signature *super, Signature *sub)
+{
+    auto *checker = relation->GetChecker()->AsETSChecker();
+    SavedTypeRelationFlagsContext trCtx(relation, TypeRelationFlag::IN_ASSIGNMENT_CONTEXT);
+
+    auto const checkCompatibility = [relation](Type *subT, Type *superT) -> bool {
+        if (subT->IsTypeError() || superT->IsTypeError()) {
+            return false;
+        }
+
+        if (subT == superT) {
+            return true;
+        }
+
+        if (relation->IsAssignableTo(superT, subT)) {
+            return true;
+        }
+
+        return (relation->IsLegalBoxedPrimitiveConversion(subT, superT));
+    };
+
+    if (!relation->NoReturnTypeCheck()) {
+        if (!checkCompatibility(super->ReturnType(), sub->ReturnType())) {
+            return false;
+        }
+    }
+
+    size_t const argsToProcess =
+        std::max(sub->ArgCount(), super->ArgCount()) + (sub->HasRestParameter() || super->HasRestParameter());
+
+    for (size_t idx = 0; idx < argsToProcess; ++idx) {
+        Type *subParamType = nullptr;
+        Type *superParamType = nullptr;
+
+        if (idx < sub->ArgCount()) {
+            subParamType = sub->Params()[idx]->TsType();
+        } else if (sub->HasRestParameter() && util::Helpers::IsArrayType(sub->RestVar()->TsType())) {
+            subParamType = checker->GetElementTypeOfArray(sub->RestVar()->TsType());
+        } else {
+            return false;
+        }
+
+        if (idx < super->ArgCount()) {
+            superParamType = super->Params()[idx]->TsType();
+        } else if (super->HasRestParameter() && util::Helpers::IsArrayType(super->RestVar()->TsType())) {
+            superParamType = checker->GetElementTypeOfArray(super->RestVar()->TsType());
+        } else {
+            break;
+        }
+
+        if (!checkCompatibility(subParamType, superParamType)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void Signature::IsCoveredBy(TypeRelation *relation, Signature *super)
+{
+    auto *sub = this;
+
+    if (sub->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER) !=
+        super->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER)) {
+        relation->Result(false);
+        return;
+    }
+
+    if (sub->GetSignatureInfo()->typeParams.size() != super->GetSignatureInfo()->typeParams.size()) {
+        relation->Result(false);
+        return;
+    }
+
+    if (sub->MinArgCount() > super->MinArgCount()) {
+        relation->Result(false);
+        return;
+    }
+
+    if (super->HasRestParameter() && !sub->HasRestParameter()) {
+        relation->Result(false);
+        return;
+    }
+
+    relation->Result(IsCoveredByDetailedCheck(relation, super, sub));
+}
+
 // This function is not used by ets extension
 void Signature::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Signature *source)
 {

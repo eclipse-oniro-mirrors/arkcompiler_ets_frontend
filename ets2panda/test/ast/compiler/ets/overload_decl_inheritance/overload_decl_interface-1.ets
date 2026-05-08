@@ -57,3 +57,5 @@ class C4 implements I1, I2 {
 /* @@? 47:5 Error Semantic error ESE0390: Method 'f2' is missed in the overridden explicit overload 'foo', but listed in the parent explicit overload. */
 /* @@? 47:5 Error Semantic error ESE0390: Method 'f3' is missed in the overridden explicit overload 'foo', but listed in the parent explicit overload. */
 /* @@? 47:5 Error Semantic error ESE0390: Method 'f4' is missed in the overridden explicit overload 'foo', but listed in the parent explicit overload. */
+/* @@? 29:14 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Byte) => undefined' will never be selected for a call, as the preceding entity with the signature '(a: Int) => undefined' prevails. */
+/* @@? 41:22 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Byte) => undefined' will never be selected for a call, as the preceding entity with the signature '(a: Int) => undefined' prevails. */
