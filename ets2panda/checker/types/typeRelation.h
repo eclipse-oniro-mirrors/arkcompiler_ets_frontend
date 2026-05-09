@@ -117,7 +117,10 @@ private:
 class TypeRelation {
 public:
     explicit TypeRelation(Checker *checker)
-        : checker_(checker), result_(RelationResult::FALSE), instantiationRecursionMap_(Allocator()->Adapter())
+        : checker_(checker),
+          result_(RelationResult::FALSE),
+          instantiationRecursionMap_(Allocator()->Adapter()),
+          identicalRelationStack_(Allocator()->Adapter())
     {
     }
 
@@ -304,6 +307,7 @@ public:
 private:
     RelationResult CacheLookup(const Type *source, const Type *target, const RelationHolder &holder,
                                RelationType type) const;
+    bool IsIdenticalRelationInProgress(RelationHolder::RelationKey key) const;
 
     std::mutex mtx_;
     Checker *checker_;
@@ -311,6 +315,7 @@ private:
     TypeRelationFlag flags_ {};
     ir::Expression *node_ {};
     ArenaMap<checker::Type *, int8_t> instantiationRecursionMap_;
+    ArenaVector<RelationHolder::RelationKey> identicalRelationStack_;
 };
 class SavedTypeRelationFlagsContext {
 public:

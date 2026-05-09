@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,6 +62,11 @@ public:
         return isRecursive_;
     }
 
+    bool IsUnresolvedRecursive() const
+    {
+        return isRecursive_ && targetType_ == nullptr;
+    }
+
     void ToString(std::stringstream &ss, bool precise) const override;
 
     void ToAssemblerType(std::stringstream &ss) const override;
@@ -89,6 +94,7 @@ private:
     void EmplaceInstantiatedType(util::StringView hash, ETSTypeAliasType *emplaceType);
     bool SubstituteTypeArgs(TypeRelation *const relation, ArenaVector<Type *> &newTypeArgs,
                             const Substitution *const substitution);
+    Type *GetIdenticalTarget(TypeRelation *relation);
 
     bool IsArgumentsIdentical(TypeRelation *relation, Type *other);
 
