@@ -19,13 +19,14 @@ import {
     toUnixPath,
     readFirstLineSync
 } from '../util/utils';
-import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION } from '../pre_define';
+import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION, PANDA_STDLIB_PATH_FROM_SDK } from '../pre_define';
 
 export class FileManager {
     private static instance: FileManager | undefined = undefined;
     static arkTSModuleMap: Map<string, DependencyModuleConfig> = new Map();
     static staticApiPath: Set<string> = new Set();
     static dynamicApiPath: Set<string> = new Set();
+    static stdLibPath: Set<string> = new Set();
     static buildConfig: BuildConfig;
     private constructor() { }
     static init(buildConfig: BuildConfig): void {
@@ -33,6 +34,7 @@ export class FileManager {
             FileManager.instance = new FileManager();
             FileManager.initLanguageVersionFromDependencyModuleMap(buildConfig.dependencyModuleList);
             FileManager.initSDK(new Set(buildConfig.externalApiPaths), buildConfig.buildSdkPath);
+            FileManager.initStdlib(buildConfig.buildSdkPath);
             FileManager.buildConfig = buildConfig;
         }
     }
@@ -48,6 +50,11 @@ export class FileManager {
         if (this.instance) {
             this.instance = undefined;
         }
+    }
+
+    static initStdlib(buildSdkPath: string): void {
+        const stdLibPath = path.resolve(buildSdkPath, PANDA_STDLIB_PATH_FROM_SDK);
+        FileManager.stdLibPath.add(toUnixPath(stdLibPath));
     }
 
     static initSDK(externalApiPath: Set<string>, buildSDKPath: string): void {
@@ -93,6 +100,12 @@ export class FileManager {
         for (const apiPath of FileManager.dynamicApiPath) {
             if (path.startsWith(apiPath)) {
                 return LANGUAGE_VERSION.ARKTS_1_1;
+            }
+        }
+        // This patch should be revert after the ets sources are removed.
+        for (const stdLibPath of FileManager.stdLibPath) {
+            if (path.startsWith(stdLibPath)) {
+                return LANGUAGE_VERSION.ARKTS_1_2;
             }
         }
         if (FileManager.buildConfig.compileFiles.includes(filePath)) {

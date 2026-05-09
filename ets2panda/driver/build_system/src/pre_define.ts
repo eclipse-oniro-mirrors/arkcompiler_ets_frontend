@@ -38,6 +38,7 @@ export enum LANGUAGE_VERSION {
 };
 
 export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
+export const PANDA_STDLIB_PATH_FROM_SDK: string = './build-tools/ets2panda/lib';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
 export const KIT_CONFIGS_PATH_FROM_SDK: string = '../dynamic/build-tools/ets-loader/kit_configs';
 

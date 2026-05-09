@@ -37,6 +37,7 @@ describe('class FileManager', () => {
         FileManager.arkTSModuleMap.clear();
         FileManager.staticApiPath.clear();
         FileManager.dynamicApiPath.clear();
+        FileManager.stdLibPath.clear();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
         FileManager.buildConfig = undefined;
@@ -49,6 +50,7 @@ describe('class FileManager', () => {
         expect(FileManager.staticApiPath.size).toBe(1);
         expect(FileManager.dynamicApiPath.size).toBe(2);
         expect(FileManager.arkTSModuleMap.size).toBe(1);
+        expect(FileManager.stdLibPath.size).toBe(1);
         FileManager.init(mockBuildConfig as any);
         const instance = FileManager.getInstance();
         FileManager.init({
@@ -63,6 +65,13 @@ describe('class FileManager', () => {
         expect(FileManager.staticApiPath.has('/api1')).toBe(true);
         expect(FileManager.staticApiPath.has('/api2')).toBe(true);
         expect(FileManager.dynamicApiPath.size).toBe(2);
+    });
+
+    test('add stdLibPath in initStdlib', () => {
+        FileManager.initStdlib('/sdk/path');
+        expect(FileManager.stdLibPath.size).toBe(1);
+        const [stdLibPath] = Array.from(FileManager.stdLibPath);
+        expect(stdLibPath).toBe('/sdk/path/build-tools/ets2panda/lib');
     });
 
     test('empty externalApiPath in initSDK', () => {
@@ -80,6 +89,7 @@ describe('class FileManager', () => {
         expect(fm.getLanguageVersionByFilePath('/mock/project/main.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
         expect(fm.getLanguageVersionByFilePath('/mock/path/modA/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
         expect(fm.getLanguageVersionByFilePath('/other/path/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
+        expect(fm.getLanguageVersionByFilePath('/mock/sdk/build-tools/ets2panda/lib/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
         FileManager.init({
             ...mockBuildConfig,
             dependencyModuleList: [
