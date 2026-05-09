@@ -48,6 +48,8 @@ static std::vector<CompletionEntry> GetCompletionsForDeclaration(ir::AstNode *de
 static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preNode, const std::string &triggerWord,
                                                                std::optional<bool> staticContextOverride);
 
+static std::unordered_map<std::string, std::vector<ExternalApiCollectInfo>> g_externalApiCollects {};
+
 inline fs::path NormalizePath(const fs::path &p)
 {
 #if defined(__cpp_lib_filesystem)
@@ -84,6 +86,346 @@ std::string ToLowerCase(const std::string &str)
     std::string lowerStr = str;
     std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), [](unsigned char c) { return std::tolower(c); });
     return lowerStr;
+}
+
+static void AddCollectApiEntry(const std::string &name, const std::string &path, CompletionEntryKind kind,
+                               const std::string &insertText = "", const bool isDefault = false)
+{
+    if (name.empty() || path.empty()) {
+        return;
+    }
+
+    auto resolvedInsertText = insertText.empty() ? name : insertText;
+    g_externalApiCollects[name].push_back({path, kind, resolvedInsertText, isDefault});
+}
+
+static bool AddCollectApiEntryByDecl(const std::string &name, const std::string &path, const ir::AstNode *decl,
+                                     const bool isDefault = false)
+{
+    if (decl == nullptr) {
+        return false;
+    }
+
+    if (decl->IsClassDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::CLASS, "", isDefault);
+        return true;
+    } else if (decl->IsClassDefinition() && decl->AsClassDefinition()->IsNamespaceTransformed()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::MODULE, "", isDefault);
+        return true;
+    } else if (decl->IsClassDefinition() && decl->AsClassDefinition()->IsEnumTransformed()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::ENUM, "", isDefault);
+        return true;
+    } else if (decl->IsETSStructDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::STRUCT, "", isDefault);
+        return true;
+    } else if (decl->IsAnnotationDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::ANNOTATION, "", isDefault);
+        return true;
+    } else if (decl->IsTSTypeAliasDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::ALIAS_TYPE, "", isDefault);
+        return true;
+    } else if (decl->IsTSInterfaceDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::INTERFACE, "", isDefault);
+        return true;
+    } else if (decl->IsFunctionDeclaration() || decl->IsMethodDefinition()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::FUNCTION, name + "()", isDefault);
+        return true;
+    } else if (decl->IsVariableDeclaration()) {
+        auto kind = decl->AsVariableDeclaration()->Kind() == ir::VariableDeclaration::VariableDeclarationKind::CONST
+                        ? CompletionEntryKind::CONSTANT
+                        : CompletionEntryKind::VARIABLE;
+        AddCollectApiEntry(name, path, kind, "", isDefault);
+        return true;
+    } else if (decl->IsClassProperty()) {
+        auto kind = decl->AsClassProperty()->IsConst() ? CompletionEntryKind::CONSTANT : CompletionEntryKind::VARIABLE;
+        AddCollectApiEntry(name, path, kind, "", isDefault);
+        return true;
+    } else if (decl->IsTSModuleDeclaration()) {
+        AddCollectApiEntry(name, path, CompletionEntryKind::MODULE, "", isDefault);
+        return true;
+    }
+    return false;
+}
+
+static void CollectExportFromSpecifier(const ir::ExportSpecifier *specifier, const std::string &path)
+{
+    if (specifier == nullptr || specifier->Local() == nullptr) {
+        return;
+    }
+
+    auto localName = std::string(specifier->Local()->Name());
+    auto *decl = compiler::DeclarationFromIdentifier(specifier->Local());
+    if (!AddCollectApiEntryByDecl(localName, path, decl, specifier->IsDefault())) {
+        AddCollectApiEntry(localName, path, CompletionEntryKind::VARIABLE, "", specifier->IsDefault());
+    }
+}
+
+static bool IsKitApiFile(const std::string &path)
+{
+    return fs::path(path).filename().string().rfind("@kit", 0) == 0;
+}
+
+static bool IsAtPrefixedFileName(const std::string &path)
+{
+    auto fileName = fs::path(path).filename().string();
+    return !fileName.empty() && fileName.front() == '@';
+}
+
+static void CollectFromKitImportSpecifier(const ir::AstNode *specifier, const std::string &importPath)
+{
+    if (specifier == nullptr || importPath.empty()) {
+        return;
+    }
+
+    if (specifier->IsImportSpecifier()) {
+        auto *importSpecifier = specifier->AsImportSpecifier();
+        if (importSpecifier->Local() == nullptr) {
+            return;
+        }
+        auto localName = std::string(importSpecifier->Local()->Name());
+        auto *decl = compiler::DeclarationFromIdentifier(importSpecifier->Imported());
+        if (decl == nullptr) {
+            decl = compiler::DeclarationFromIdentifier(importSpecifier->Local());
+        }
+        if (!AddCollectApiEntryByDecl(localName, importPath, decl)) {
+            AddCollectApiEntry(localName, importPath, CompletionEntryKind::VARIABLE);
+        }
+        return;
+    }
+}
+
+static void CollectExportsFromKitImports(parser::Program *program)
+{
+    if (program == nullptr || program->Ast() == nullptr) {
+        return;
+    }
+    auto importPath = std::string(program->SourceFilePath());
+    if (importPath.empty()) {
+        return;
+    }
+
+    for (auto *statement : program->Ast()->Statements()) {
+        if (statement == nullptr || !statement->IsETSImportDeclaration()) {
+            continue;
+        }
+
+        for (auto *specifier : statement->AsETSImportDeclaration()->Specifiers()) {
+            CollectFromKitImportSpecifier(specifier, importPath);
+        }
+    }
+}
+
+static bool TryCollectClassExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsClassDeclaration()) {
+        return false;
+    }
+
+    auto *definition = node->AsClassDeclaration()->Definition();
+    auto *ident = definition == nullptr ? nullptr : definition->Ident();
+    auto kind = CompletionEntryKind::CLASS;
+    if (definition->IsEnumTransformed()) {
+        kind = CompletionEntryKind::ENUM;
+    } else if (definition->IsNamespaceTransformed()) {
+        kind = CompletionEntryKind::MODULE;
+    }
+    if (ident != nullptr) {
+        AddCollectApiEntry(std::string(ident->Name()), path, kind, "", isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectStructExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsETSStructDeclaration()) {
+        return false;
+    }
+
+    auto *definition = node->AsETSStructDeclaration()->Definition();
+    auto *ident = definition == nullptr ? nullptr : definition->Ident();
+    if (ident != nullptr) {
+        AddCollectApiEntry(std::string(ident->Name()), path, CompletionEntryKind::STRUCT, "", isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectAnnotationExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsAnnotationDeclaration()) {
+        return false;
+    }
+
+    auto *expr = node->AsAnnotationDeclaration()->Expr();
+    if (expr != nullptr && expr->IsIdentifier()) {
+        AddCollectApiEntry(std::string(expr->AsIdentifier()->Name()), path, CompletionEntryKind::ANNOTATION, "",
+                           isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectTypeAliasExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsTSTypeAliasDeclaration()) {
+        return false;
+    }
+
+    auto *id = node->AsTSTypeAliasDeclaration()->Id();
+    if (id != nullptr) {
+        AddCollectApiEntry(std::string(id->Name()), path, CompletionEntryKind::ALIAS_TYPE, "", isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectInterfaceExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsTSInterfaceDeclaration()) {
+        return false;
+    }
+
+    auto *id = node->AsTSInterfaceDeclaration()->Id();
+    if (id != nullptr) {
+        AddCollectApiEntry(std::string(id->Name()), path, CompletionEntryKind::INTERFACE, "", isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectFunctionExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsFunctionDeclaration()) {
+        return false;
+    }
+
+    auto *func = node->AsFunctionDeclaration()->Function();
+    if (func != nullptr && func->Id() != nullptr) {
+        auto name = std::string(func->Id()->Name());
+        AddCollectApiEntry(name, path, CompletionEntryKind::FUNCTION, name + "()", isDefault);
+    }
+    return true;
+}
+
+static bool TryCollectVariableExport(const ir::AstNode *node, const std::string &path, bool isDefault)
+{
+    if (!node->IsVariableDeclaration()) {
+        return false;
+    }
+
+    auto kind = node->AsVariableDeclaration()->Kind() == ir::VariableDeclaration::VariableDeclarationKind::CONST
+                    ? CompletionEntryKind::CONSTANT
+                    : CompletionEntryKind::VARIABLE;
+    for (auto *declarator : node->AsVariableDeclaration()->Declarators()) {
+        if (declarator == nullptr || declarator->Id() == nullptr || !declarator->Id()->IsIdentifier()) {
+            continue;
+        }
+        AddCollectApiEntry(std::string(declarator->Id()->AsIdentifier()->Name()), path, kind, "", isDefault);
+    }
+    return true;
+}
+
+static void CollectExportFromNode(const ir::AstNode *node, const std::string &path, const bool isDefault = false)
+{
+    if (node == nullptr) {
+        return;
+    }
+
+    switch (node->Type()) {
+        case ir::AstNodeType::CLASS_DECLARATION:
+            TryCollectClassExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::STRUCT_DECLARATION:
+            TryCollectStructExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::ANNOTATION_DECLARATION:
+            TryCollectAnnotationExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+            TryCollectTypeAliasExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+            TryCollectInterfaceExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::FUNCTION_DECLARATION:
+            TryCollectFunctionExport(node, path, isDefault);
+            return;
+        case ir::AstNodeType::VARIABLE_DECLARATION:
+            TryCollectVariableExport(node, path, isDefault);
+            return;
+        default:
+            return;
+    }
+}
+
+static void CollectExportsFromProgram(parser::Program *program, const std::string &path)
+{
+    if (program == nullptr || program->Ast() == nullptr) {
+        return;
+    }
+
+    if (IsKitApiFile(path)) {
+        CollectExportsFromKitImports(program);
+        return;
+    }
+
+    for (auto *statement : program->Ast()->Statements()) {
+        if (statement == nullptr) {
+            continue;
+        }
+
+        if (statement->IsExportNamedDeclaration()) {
+            auto *exportDecl = statement->AsExportNamedDeclaration();
+            for (auto *specifier : exportDecl->Specifiers()) {
+                CollectExportFromSpecifier(specifier, path);
+            }
+            CollectExportFromNode(statement->AsExportNamedDeclaration()->Decl(), path);
+            continue;
+        }
+
+        if (statement->IsExportDefaultDeclaration()) {
+            CollectExportFromNode(statement->AsExportDefaultDeclaration()->Decl(), path, true);
+            continue;
+        }
+
+        if (!statement->IsExported() && !statement->IsDefaultExported()) {
+            continue;
+        }
+
+        CollectExportFromNode(statement, path, statement->IsDefaultExported());
+    }
+}
+
+bool CollectApiCompletionInfo(es2panda_Context *context)
+{
+    if (context == nullptr) {
+        return false;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->GetExternalDecls() == nullptr) {
+        return false;
+    }
+
+    g_externalApiCollects.clear();
+
+    const auto &externalSource = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
+    for (const auto &extProg : externalSource) {
+        if (extProg == nullptr) {
+            continue;
+        }
+        auto path = std::string(extProg->SourceFilePath());
+        if (!IsAtPrefixedFileName(path)) {
+            continue;
+        }
+        CollectExportsFromProgram(extProg, path);
+    }
+    return true;
+}
+
+std::vector<ExternalApiCollectInfo> GetExternalApiCollectInfos(const std::string &name)
+{
+    auto it = g_externalApiCollects.find(name);
+    if (it == g_externalApiCollects.end()) {
+        return {};
+    }
+
+    return it->second;
 }
 
 std::vector<CompletionEntry> AllKeywordsCompletions()
@@ -1793,6 +2135,28 @@ std::vector<CompletionEntry> SortCompletionEntries(std::vector<CompletionEntry> 
     return completions;
 }
 
+static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string &prefix, const char *fileName,
+                                                               const std::unordered_set<std::string> &existingNames)
+{
+    std::vector<CompletionEntry> completions;
+    auto lowerPrefix = ToLowerCase(prefix);
+
+    for (const auto &[name, infos] : g_externalApiCollects) {
+        if (ToLowerCase(name).find(lowerPrefix) == std::string::npos ||
+            existingNames.find(name) != existingNames.end()) {
+            continue;
+        }
+
+        for (const auto &info : infos) {
+            completions.emplace_back(name, info.kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), info.insertText,
+                                     CompletionEntryData(fileName, name, info.importDeclaration, info.insertText), "",
+                                     true);
+        }
+    }
+
+    return completions;
+}
+
 // Support: global variables, local variables, functions, keywords
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
@@ -1819,6 +2183,16 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     completions.insert(completions.end(), keywordCompletions.begin(), keywordCompletions.end());
     auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
     completions.insert(completions.end(), systemInterfaceCompletions.begin(), systemInterfaceCompletions.end());
+
+    std::unordered_set<std::string> existingCompletionNames;
+    existingCompletionNames.reserve(completions.size());
+    for (const auto &entry : completions) {
+        existingCompletionNames.insert(entry.GetName());
+    }
+
+    auto collectedApiCompletions =
+        GetCollectedApiCompletions(prefix, ctx->sourceFileName.c_str(), existingCompletionNames);
+    completions.insert(completions.end(), collectedApiCompletions.begin(), collectedApiCompletions.end());
     return SortCompletionEntries(completions, prefix);
 }
 

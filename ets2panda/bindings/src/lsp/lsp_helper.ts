@@ -91,6 +91,7 @@ import * as os from 'os';
 import { changeDeclgenFileExtension } from '../common/utils';
 import { logger } from './logger';
 import { TextPositionUtils, formEts2pandaCmd } from './utils';
+import { ArkTSConfigGenerator } from '../common/arkTSConfigGenerator'
 
 const ets2pandaCmdPrefix = ['-', '--extension', 'ets', '--arktsconfig'];
 
@@ -131,7 +132,8 @@ export class Lsp {
   private lspDriverHelper = new LspDriverHelper();
   private declFileMap: Record<string, string> = {}; // Map<declFilePath, sourceFilePath>
   private enablePerfMetric: boolean = false;
-  private perfMetricLogFilePath: string = "";
+  private perfMetricLogFilePath: string = '';
+  private kitFiles: string[] = [];
 
   constructor(
     pathConfig: PathConfig,
@@ -152,7 +154,7 @@ export class Lsp {
     this.filesMap = new Map<string, mainFileCache>();
     this.getFileContent = getContentCallback || ((path: string): string => fs.readFileSync(path, 'utf8'));
     this.buildConfigs = generateBuildConfigs(pathConfig, modules ? modules : [], plugins);
-    this.moduleInfos = generateArkTsConfigs(this.buildConfigs);
+    this.moduleInfos = generateArkTsConfigs(this.buildConfigs, this.kitFiles);
     this.reverseModuleDeps = this.buildReverseModuleDeps();
     this.pathConfig = pathConfig;
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
@@ -2219,9 +2221,26 @@ export class Lsp {
     }
   }
 
+  public compileKits(kitfiles: string[]): void {
+    if (kitfiles.length === 0) {
+      logger.error('SDK directory not found.');
+      return;
+    }
+    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, kitfiles[0], true);
+    let lspDriverHelper = new LspDriverHelper();
+    let config = lspDriverHelper.createCfg(ets2pandaCmd, kitfiles[0]);
+    const ctx = lspDriverHelper.createContextSimultaneousModeForLsp(config.peer, kitfiles.length, kitfiles, true);
+    this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, ctx);
+    this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_BOUND, ctx);
+    global.es2panda._collectApiInfo(ctx);
+    this.destroyContext(config, ctx);
+  }
+
   // AST caching is not enabled by default.
   // Call `initAstCache` before invoking the language service interface to enable AST cache
   public initAstCache(): void {
+    // Collect all the exported API in the SDK.
+    this.compileKits(this.kitFiles);
     let files: string[] = Array.from(Object.keys(this.moduleInfos));
     const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true);
     let lspDriverHelper = new LspDriverHelper();

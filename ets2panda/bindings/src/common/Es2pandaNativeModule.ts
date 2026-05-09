@@ -787,6 +787,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _getHasActionFromEntry(ptr: KNativePointer): boolean {
+    throw new Error('Not implemented');
+  }
+
   _getDataFromEntry(ptr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
@@ -870,6 +874,10 @@ export class Es2pandaNativeModule {
   }
 
   _getFixAllDescriptionFromCodeFixActionInfo(infoPtr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getFixAdditionalMessageFromCodeFixActionInfo(infoPtr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
 
@@ -1189,6 +1197,10 @@ export class Es2pandaNativeModule {
   }
 
   _GetTypeFromTypeInfo(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _collectApiInfo(context: KNativePointer): KBoolean {
     throw new Error('Not implemented');
   }
 

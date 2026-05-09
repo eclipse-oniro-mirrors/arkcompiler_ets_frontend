@@ -50,6 +50,7 @@ export class ArkTSConfigGenerator {
 
   private moduleInfos: Record<string, ModuleInfo>;
   private pathSection: Record<string, string[]>;
+  private kitsDirectoryFiles: string[];
 
   private constructor(buildConfig: BuildConfig, moduleInfos: Record<string, ModuleInfo>) {
     let pandaSdkPath = path.resolve(buildConfig.buildSdkPath, PANDA_SDK_PATH_FROM_SDK);
@@ -63,6 +64,7 @@ export class ArkTSConfigGenerator {
 
     this.moduleInfos = moduleInfos;
     this.pathSection = {};
+    this.kitsDirectoryFiles = [];
   }
 
   public static getInstance(buildConfig?: BuildConfig, moduleInfos?: Record<string, ModuleInfo>): ArkTSConfigGenerator {
@@ -83,6 +85,14 @@ export class ArkTSConfigGenerator {
     ArkTSConfigGenerator.instance = undefined;
   }
 
+  public getkitsDirectoryFiles(): string[] {
+    return this.kitsDirectoryFiles;
+  }
+
+  public getsystemSdkPath(): string {
+    return this.systemSdkPath;
+  }
+
   private traverse(
     pathSection: Record<string, string[] | DependencyItem>,
     currentDir: string,
@@ -91,7 +101,8 @@ export class ArkTSConfigGenerator {
     isInteropSdk: boolean = false,
     relativePath: string = '',
     isExcludedDir: boolean = false,
-    allowedExtensions: string[] = ['.d.ets']
+    allowedExtensions: string[] = ['.d.ets'],
+    collectKitsFile: boolean = false
   ): void {
     const items = fs.readdirSync(currentDir);
     for (const item of items) {
@@ -114,6 +125,9 @@ export class ArkTSConfigGenerator {
             alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
           }
           : [changeFileExtension(itemPath, '', '.d.ets')];
+          if (collectKitsFile && isAllowedFile) {
+            this.kitsDirectoryFiles.push(itemPath);
+          }
       }
       if (stat.isDirectory()) {
         // For files under api dir excluding arkui/runtime-api dir,
@@ -140,6 +154,15 @@ export class ArkTSConfigGenerator {
     directoryNames.forEach((dir) => {
       let systemSdkPath = path.resolve(this.systemSdkPath, dir);
       let externalApiPath = path.resolve(this.externalApiPath, dir);
+      if (fs.existsSync(systemSdkPath)) {
+        if (dir === 'kits') {
+          this.traverse(pathSection, systemSdkPath, undefined, '', false, '', false, ['.d.ets'], true);
+        } else {
+          this.traverse(pathSection, systemSdkPath, undefined);
+        }
+      } else {
+        logger.debug(`sdk path ${systemSdkPath} not exist.`);
+      }
       fs.existsSync(systemSdkPath)
         ? this.traverse(pathSection, systemSdkPath, undefined)
         : logger.debug(`sdk path ${systemSdkPath} not exist.`);

@@ -1170,6 +1170,14 @@ int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileN
     return BatchDeleteProgramsForFiles(ctx, visited);
 }
 
+bool CollectApiInfoWrapper(es2panda_Context *context)
+{
+    if (context == nullptr) {
+        return false;
+    }
+    return ark::es2panda::lsp::CollectApiCompletionInfo(context);
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetEditsForRefactor,
@@ -1235,7 +1243,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetReferencesAtPositionFromIndexWrapper,
                     GetIndexedFileSourceWrapper,
                     DeleteProgramForFile,
-                    DeleteDependantProgramsForFiles};
+                    DeleteDependantProgramsForFiles,
+                    CollectApiInfoWrapper};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

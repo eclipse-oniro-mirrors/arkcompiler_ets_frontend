@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+import { lspData } from 'src/common/private';
+import fs from 'fs';
+import path from 'path';
 import { LspCompletionInfo } from '../../src';
 import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
@@ -298,15 +301,168 @@ describe('getCompletionAtPositionTest', () => {
       data: null
     }
   ];
+  const EXPECT_018 = [
+    {
+      name: 'ability',
+      sortText: '16',
+      insertText: 'ability',
+      kind: 9,
+      data: {
+        namedExport: 'ability',
+        importDeclaration: '@ohos.ability.ability.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'abilityManager',
+      sortText: '16',
+      insertText: 'abilityManager',
+    kind: 9,
+      data: {
+        namedExport: 'abilityManager',
+        importDeclaration: '@ohos.app.ability.abilityManager.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'Ability',
+      sortText: '16',
+      insertText: 'Ability',
+      kind: 7,
+      data: {
+        namedExport: 'Ability',
+        importDeclaration: '@ohos.app.ability.Ability.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'AbilityLifecycleCallback',
+      sortText: '16',
+      insertText: 'AbilityLifecycleCallback',
+      kind: 7,
+      data: {
+        namedExport: 'AbilityLifecycleCallback',
+        importDeclaration: '@ohos.app.ability.AbilityLifecycleCallback.d.ets'
+      },
+      hasAction: true
+    }
+  ];
+  const EXPECT_019 = [
+    {
+      name: 'accessibility',
+      sortText: '16',
+      insertText: 'accessibility',
+      kind: 9,
+      data: {
+        namedExport: 'accessibility',
+        importDeclaration: '@ohos.accessibility.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'AccessibilityExtensionAbility',
+      sortText: '16',
+      insertText: 'AccessibilityExtensionAbility',
+      kind: 7,
+      data: {
+        namedExport: 'AccessibilityExtensionAbility',
+        importDeclaration: '@ohos.application.AccessibilityExtensionAbility.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'access',
+      sortText: '16',
+      insertText: 'access',
+      kind: 9,
+      data: {
+        namedExport: 'access',
+        importDeclaration: '@ohos.bluetooth.access.d.ets'
+      },
+      hasAction: true
+    }
+  ];
+  const EXPECT_020 = [
+    {
+      name: 'StartOptions',
+      sortText: '16',
+      insertText: 'StartOptions',
+      kind: 7,
+      data: {
+        namedExport: 'StartOptions',
+        importDeclaration: '@ohos.app.ability.StartOptions.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'StartupConfig',
+      sortText: '16',
+      insertText: 'StartupConfig',
+      kind: 8,
+      data: {
+        namedExport: 'StartupConfig',
+        importDeclaration: '@ohos.app.appstartup.StartupConfig.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'StartupListener',
+      sortText: '16',
+      insertText: 'StartupListener',
+      kind: 7,
+      data: {
+        namedExport: 'StartupListener',
+        importDeclaration: '@ohos.app.appstartup.StartupListener.d.ets'
+      },
+      hasAction: true
+    },
+    {
+      name: 'startupManager',
+      sortText: '16',
+      insertText: 'startupManager',
+      kind: 9,
+      data: {
+        namedExport: 'startupManager',
+        importDeclaration: '@ohos.app.appstartup.startupManager.d.ets'
+      },
+      hasAction: true
+    }
+  ];
+
   function toMatchObjectUnordered(realValue: LspCompletionInfo | undefined, expect: any, sliceSize: number) {
-    for (let i = 0; i <= sliceSize; i++) {
+    for (let i = 0; i < sliceSize; i++) {
+      const entry = realValue?.entries[i];
       if (
-        realValue?.entries[i].name === expect.name &&
-        realValue?.entries[i].sortText === expect.sortText &&
-        realValue?.entries[i].insertText === expect.insertText &&
-        realValue?.entries[i].kind === expect.kind
+        entry?.name === expect.name &&
+        entry?.sortText === expect.sortText &&
+        entry?.insertText === expect.insertText &&
+        entry?.kind === expect.kind
       ) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  function toMatchData(realValue: LspCompletionInfo | undefined, expect: any, sliceSize: number) {
+    for (let i = 0; i < sliceSize; i++) {
+      const entry = realValue?.entries[i];
+      const hasActionMatched = expect.hasAction === undefined || entry?.hasAction === expect.hasAction;
+      if (
+        entry?.name === expect.name &&
+        entry?.sortText === expect.sortText &&
+        entry?.insertText === expect.insertText &&
+        entry?.kind === expect.kind &&
+        hasActionMatched
+      ) {
+        if (!entry?.data) {
+          continue;
+        }
+        const namedExportMatched = String(entry.data.namedExport) === expect.data.namedExport;
+        const importDeclarationMatched = String(entry.data.importDeclaration).endsWith(expect.data.importDeclaration);
+        if (namedExportMatched && importDeclarationMatched) {
+          return true;
+        }
       }
     }
     return false;
@@ -316,6 +472,13 @@ describe('getCompletionAtPositionTest', () => {
     expect(realValue).toBeDefined();
     expected.forEach((item) => {
       expect(toMatchObjectUnordered(realValue, item, realValue!.entries.length)).toBe(true);
+    });
+  }
+
+  function expectEntriesContainUnorderedWithData(realValue: LspCompletionInfo | undefined, expected: any[]) {
+    expect(realValue).toBeDefined();
+    expected.forEach((item) => {
+      expect(toMatchData(realValue, item, realValue!.entries.length)).toBe(true);
     });
   }
   describe('No UI Plugins', () => {
@@ -392,9 +555,44 @@ describe('getCompletionAtPositionTest', () => {
 
   describe('With UI Plugins', () => {
     const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
+    const collectFilesRecursively = (dirPath: string): string[] => {
+      if (!fs.existsSync(dirPath)) {
+        return [];
+      }
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+      const files: string[] = [];
+      entries.forEach((entry) => {
+        const fullPath = path.resolve(dirPath, entry.name);
+        if (entry.isDirectory()) {
+          files.push(...collectFilesRecursively(fullPath));
+        } else if (entry.isFile()) {
+          files.push(fullPath);
+        }
+      });
+      return files;
+    };
+    const kitsDir = path.resolve('test', 'ets', 'static', 'kits');
+    const kitFiles = collectFilesRecursively(kitsDir);
+    const getUiLspWithKits = (): ReturnType<typeof getLspWithUi> => {
+      const lsp = getUiLsp();
+      lsp.compileKits(kitFiles);
+      return lsp;
+    };
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCompletionAtPosition_014', () => {
-      const res = getUiLsp().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition15.ets'), 722);
+      const res = getUiLspWithKits().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition15.ets'), 722);
       expectEntriesContainUnordered(res, EXPECT_014);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCompletionAtPosition_018', () => {
+      const res = getUiLspWithKits().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition19.ets'), 613);
+      expectEntriesContainUnorderedWithData(res, EXPECT_018);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCompletionAtPosition_019', () => {
+      const res = getUiLspWithKits().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition20.ets'), 614);
+      expectEntriesContainUnorderedWithData(res, EXPECT_019);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCompletionAtPosition_020', () => {
+      const res = getUiLspWithKits().getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition21.ets'), 614);
+      expectEntriesContainUnorderedWithData(res, EXPECT_020);
     });
   });
 });
