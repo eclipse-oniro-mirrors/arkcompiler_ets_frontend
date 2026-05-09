@@ -191,9 +191,9 @@ public:
         return (flags_ & flag) != 0;
     }
 
-    void SetInSendable()
+    void SetInSendable(bool inSendable)
     {
-        inSendable_ = true;
+        inSendable_ = inSendable;
     }
 
     void IncreasePropertyCount()

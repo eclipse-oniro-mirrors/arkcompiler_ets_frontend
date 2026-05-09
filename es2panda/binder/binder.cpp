@@ -784,9 +784,9 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
         case ir::AstNodeType::SCRIPT_FUNCTION: {
             util::SaveValue<bool> saveInSendableFunction {inSendableFunction_};
             auto *scriptFunc = childNode->AsScriptFunction();
-            if (inSendableClass_ || inSendableFunction_) {
-                scriptFunc->SetInSendable();
-            }
+            // Note: After ts tranformer, there could exist two ast nodes with same pointer in ast, one for ts and the
+            //       other for js. Should set the flag 'inSendable' explicitly to process js node correctly.
+            scriptFunc->SetInSendable(inSendableClass_ || inSendableFunction_);
             util::DirectiveScanConfig scanInfos {
                 Program()->GetLineIndex(),
                 program_->TargetApiVersion() >= util::Helpers::SENDABLE_CLASS_MIN_SUPPORTED_API_VERSION,
@@ -795,10 +795,10 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
             util::Helpers::ScanDirectives(const_cast<ir::ScriptFunction *>(scriptFunc), scanInfos);
 
             if (scriptFunc->IsConstructor() && util::Helpers::GetClassDefiniton(scriptFunc)->IsSendable()) {
-                scriptFunc->SetInSendable();
+                scriptFunc->SetInSendable(true);
                 inSendableClass_ = true;
             } else if (scriptFunc->IsSendable()) {
-                scriptFunc->SetInSendable();
+                scriptFunc->SetInSendable(true);
                 inSendableFunction_ = true;
             }
 
