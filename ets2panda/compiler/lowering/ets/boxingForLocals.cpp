@@ -185,6 +185,69 @@ static void HandleFunctionParam(public_lib::Context *ctx, ir::ETSParameterExpres
     varsMap->emplace(oldVar, newVar);
 }
 
+static ir::Expression *ConvertInitExpression(public_lib::Context *ctx, ir::Expression *init, checker::Type *targetType)
+{
+    auto *allocator = ctx->allocator;
+    auto *parser = ctx->parser->AsETSParser();
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *initType = init->TsType();
+    auto range = init->Range();
+
+    if (checker->IsTypeIdenticalTo(initType, targetType)) {
+        return init;
+    }
+
+    if (initType != nullptr && initType->IsBuiltinNumeric() && targetType->IsBuiltinNumeric()) {
+        auto targetTypeStr = targetType->ToString();
+        if (!targetTypeStr.empty()) {
+            std::string format = "@@E1.to" + targetTypeStr + "()";
+            auto *arg = parser->CreateFormattedExpression(format, init);
+            arg->SetRange(range);
+            return arg;
+        }
+    }
+
+    auto *arg = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
+        allocator, init, allocator->New<ir::OpaqueTypeNode>(targetType, allocator), false);
+    arg->AsTSAsExpression()->TypeAnnotation()->SetRange(range);
+    arg->SetRange(range);
+    return arg;
+}
+
+static ir::VariableDeclarator *CreateBoxedDeclarator(ArenaAllocator *allocator, ir::VariableDeclarator *declarator,
+                                                     checker::Type *boxedType, ArenaVector<ir::Expression *> &&initArgs)
+{
+    auto *newInit = util::NodeAllocator::ForceSetParent<ir::ETSNewClassInstanceExpression>(
+        allocator, allocator->New<ir::OpaqueTypeNode>(boxedType, allocator), std::move(initArgs));
+    auto *id = declarator->Id()->AsIdentifier();
+    auto *newDeclarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
+        allocator, declarator->Flag(), allocator->New<ir::Identifier>(id->Name(), allocator), newInit);
+
+    newDeclarator->SetParent(declarator->Parent());
+    newInit->GetTypeRef()->SetRange(declarator->Range());
+    newInit->SetRange(declarator->Range());
+    newDeclarator->Id()->SetRange(declarator->Range());
+    newDeclarator->SetRange(declarator->Range());
+
+    return newDeclarator;
+}
+
+static varbinder::LocalVariable *SetupNewVariable(ArenaAllocator *allocator, ir::VariableDeclarator *newDeclarator,
+                                                  varbinder::Variable *oldVar, varbinder::Scope *scope)
+{
+    auto *newDecl = allocator->New<varbinder::ConstDecl>(oldVar->Name(), newDeclarator);
+    auto *newVar = allocator->New<varbinder::LocalVariable>(newDecl, oldVar->Flags());
+
+    newDeclarator->Id()->AsIdentifier()->SetVariable(newVar);
+    newVar->AddFlag(varbinder::VariableFlags::INITIALIZED);
+    newVar->SetScope(scope);
+
+    scope->EraseBinding(oldVar->Name());
+    scope->InsertBinding(newVar->Name(), newVar);
+
+    return newVar;
+}
+
 static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::VariableDeclarator *declarator,
                                              ArenaMap<varbinder::Variable *, varbinder::Variable *> *varsMap)
 {
@@ -197,6 +260,7 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
     auto *scope = oldVar->GetScope();
     auto *type = oldVar->TsType();
     auto *boxedType = checker->GlobalBuiltinBoxType(type);
+
     bool inForInit = (declarator->Parent() != nullptr) && (declarator->Parent()->Parent() != nullptr) &&
                      declarator->Parent()->Parent()->IsForUpdateStatement();
     if (inForInit && oldVar->HasFlag(varbinder::VariableFlags::PER_ITERATION)) {
@@ -205,44 +269,18 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
 
     auto initArgs = ArenaVector<ir::Expression *>(allocator->Adapter());
     if (declarator->Init() != nullptr) {
-        auto *arg = declarator->Init();
-        if (!checker->IsTypeIdenticalTo(arg->TsType(), type)) {
-            arg = util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
-                allocator, arg, allocator->New<ir::OpaqueTypeNode>(type, allocator), false);
-            arg->AsTSAsExpression()->TypeAnnotation()->SetRange(declarator->Init()->Range());
-            arg->SetRange(declarator->Init()->Range());
-        }
+        auto *arg = ConvertInitExpression(ctx, declarator->Init(), type);
         initArgs.push_back(arg);
     }
-    auto *newInit = util::NodeAllocator::ForceSetParent<ir::ETSNewClassInstanceExpression>(
-        allocator, allocator->New<ir::OpaqueTypeNode>(boxedType, allocator), std::move(initArgs));
-    auto *newDeclarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
-        allocator, declarator->Flag(), allocator->New<ir::Identifier>(id->Name(), allocator), newInit);
-    ES2PANDA_ASSERT(newDeclarator != nullptr);
 
-    newDeclarator->SetParent(declarator->Parent());
-
-    newInit->GetTypeRef()->SetRange(declarator->Range());
-    newInit->SetRange(declarator->Range());
-    newDeclarator->Id()->SetRange(declarator->Range());
-    newDeclarator->SetRange(declarator->Range());
-
-    auto *newDecl = allocator->New<varbinder::ConstDecl>(oldVar->Name(), newDeclarator);
-    auto *newVar = allocator->New<varbinder::LocalVariable>(newDecl, oldVar->Flags());
-    ES2PANDA_ASSERT(newVar != nullptr);
-    newDeclarator->Id()->AsIdentifier()->SetVariable(newVar);
-    newVar->AddFlag(varbinder::VariableFlags::INITIALIZED);
-    newVar->SetScope(scope);
-
-    scope->EraseBinding(oldVar->Name());
-    scope->InsertBinding(newVar->Name(), newVar);
+    auto *newDeclarator = CreateBoxedDeclarator(allocator, declarator, boxedType, std::move(initArgs));
+    auto *newVar = SetupNewVariable(allocator, newDeclarator, oldVar, scope);
 
     auto lexScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, scope);
     auto savedContext = checker::SavedCheckerContext(checker, checker::CheckerStatus::NO_OPTS);
     auto scopeContext = checker::ScopeContext(checker, scope);
 
     newDeclarator->Check(checker);
-
     varsMap->emplace(oldVar, newVar);
 
     return newDeclarator;
@@ -305,7 +343,6 @@ static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id
 static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExpression *ass,
                                      ArenaMap<varbinder::Variable *, varbinder::Variable *> const &varsMap)
 {
-    // Should be true after opAssignment lowering
     ES2PANDA_ASSERT(ass->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
 
     auto *parser = ctx->parser->AsETSParser();
@@ -317,12 +354,24 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     auto *scope = newVar->GetScope();
     newVar->AddFlag(varbinder::VariableFlags::INITIALIZED);
 
+    auto *rightType = ass->Right()->TsType();
+    auto *targetType = oldVar->TsType();
+    auto *resultType = ass->TsType();
+
+    ir::Expression *res = nullptr;
     // `as never` is prohibited.
-    auto *res = ass->TsType()->IsETSNeverType()
-                    ? parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3)", newVar->Name(), ass->Right(),
-                                                        oldVar->TsType())
-                    : parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3) as @@T4", newVar->Name(), ass->Right(),
-                                                        oldVar->TsType(), ass->TsType());
+    if (resultType->IsETSNeverType()) {
+        res = parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3)", newVar->Name(), ass->Right(), targetType);
+    } else if (rightType != nullptr && rightType->IsBuiltinNumeric() && targetType->IsBuiltinNumeric()) {
+        // Use explicit conversion for numeric types instead of implicit 'as'
+        auto targetTypeStr = targetType->ToString();
+        std::string format = "@@I1.set((@@E2).to" + targetTypeStr + "()) as @@T3";
+        res = parser->CreateFormattedExpression(format, newVar->Name(), ass->Right(), resultType);
+    } else {
+        // Non-numeric types: use 'as' expression
+        res = parser->CreateFormattedExpression("@@I1.set(@@E2 as @@T3) as @@T4", newVar->Name(), ass->Right(),
+                                                targetType, resultType);
+    }
     res->SetParent(ass->Parent());
 
     // NOTE(gogabr) -- The `get` and `set` properties remain without variable; this is OK for the current checker, but
@@ -334,7 +383,7 @@ static ir::AstNode *HandleAssignment(public_lib::Context *ctx, ir::AssignmentExp
     varBinder->ResolveReferencesForScopeWithContext(res, scope);
     res->Check(checker);
 
-    ES2PANDA_ASSERT(ass->TsType()->IsETSNeverType() || res->TsType() == ass->TsType());
+    ES2PANDA_ASSERT(resultType->IsETSNeverType() || res->TsType() == ass->TsType());
 
     return res;
 }
