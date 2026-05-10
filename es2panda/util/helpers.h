@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -241,6 +241,7 @@ public:
     static const int8_t SENDABLE_CLASS_USING_LOCAL_MODULE_VAR_MIN_SUPPORTED_API_VERSION = 18;
     static const int8_t ENABLE_EXPECTED_PROPERTY_COUNT_MIN_SUPPORTED_API_VERSION = 18;
     static const int8_t ANNOTATION_SUPPORTED_API_VERSION = 20;
+    static const int8_t SET_SOURCE_FILE_MIN_SUPPORTED_API_VERSION = 26;
     static constexpr std::string_view SUB_API_VERSION_1 = "beta1";
     static constexpr std::string_view SUB_API_VERSION_2 = "beta2";
     static constexpr std::string_view DEFAULT_SUB_API_VERSION = SUB_API_VERSION_1;
