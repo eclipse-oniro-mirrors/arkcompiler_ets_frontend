@@ -39,6 +39,7 @@ static void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationU
                            [name](ir::AstNode *property) { return property->AsClassProperty()->Id()->Name() == name; });
     };
 
+    auto *checker = ctx->GetChecker()->AsETSChecker();
     for (auto *it : annoDecl->Properties()) {
         auto *field = it->AsClassProperty();
         if (propertyExist(field->Id()->Name())) {
@@ -46,6 +47,7 @@ static void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationU
         }
         auto *clone = field->Clone(ctx->Allocator(), st);
         st->AddProperty(clone);
+        clone->Check(checker);
     }
 }
 

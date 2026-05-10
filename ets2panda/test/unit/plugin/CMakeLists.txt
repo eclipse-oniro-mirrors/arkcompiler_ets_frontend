@@ -137,9 +137,11 @@ set(PLUGIN_TESTS
     "pugin_proceed_to_state_async_func_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_lower_phase compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_recheck_optimize_test recheck_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "annotation_recheck_test annotation_recheck_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_source_range_of_func_on_staticblock compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_this_bar_line compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_reset_counters compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_get_annotation_decl_properties compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS

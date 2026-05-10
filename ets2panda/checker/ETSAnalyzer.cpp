@@ -4908,10 +4908,6 @@ static void ProcessRequiredFields(ArenaUnorderedMap<util::StringView, ir::ClassP
             checker->LogError(diagnostic::ANNOT_FIELD_NO_VAL, {entry.first}, st->Start());
             continue;
         }
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *clone = entry.second->Clone(checker->Allocator(), st);
-        st->AddProperty(clone);
-        clone->Check(checker);
     }
 }
 
