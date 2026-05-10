@@ -18,6 +18,7 @@
 #include <compiler/core/compileQueue.h>
 #include <compiler/core/compilerContext.h>
 #include <compiler/core/emitter/emitter.h>
+#include <util/helpers.h>
 
 namespace panda::es2panda::compiler {
 
@@ -47,7 +48,12 @@ panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const e
     queue_->Wait();
 
     if (context.IsMergeAbc()) {
-        context.GetEmitter()->SetSourceFile(debugInfoSourceFile);
+        // SetSourceFile sets record-level source_file to debugInfoSourceFile.
+        // When enabled, EmitDebugInfo skips per-function EmitSetSourceCode/EmitSetFile
+        // since func.source_file == record_source_file. Enable from API 26 onwards.
+        if (options.targetApiVersion >= util::Helpers::SET_SOURCE_FILE_MIN_SUPPORTED_API_VERSION) {
+            context.GetEmitter()->SetSourceFile(debugInfoSourceFile);
+        }
         context.GetEmitter()->GenRecordNameInfo();
     }
 

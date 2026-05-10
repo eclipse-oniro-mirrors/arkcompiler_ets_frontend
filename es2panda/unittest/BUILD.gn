@@ -48,3 +48,7 @@ es2panda_frontend_unittest("resolveDepsRelation_test") {
     "../aot/options.cpp",
   ]
 }
+
+es2panda_frontend_unittest("compilerImpl_test") {
+  sources = [ "compiler/compilerImpl_test.cpp" ]
+}
