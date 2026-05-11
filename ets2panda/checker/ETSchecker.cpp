@@ -286,9 +286,11 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
         return;
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto const objectName = InitBuiltin(this, compiler::Signatures::BUILTIN_OBJECT_CLASS);
 
     for (auto sig : BUILTINS_TO_INIT) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         InitBuiltin(this, sig);
     }
 
@@ -306,6 +308,7 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
 
         if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
             if (var->TsType() == nullptr) {
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 InitializeBuiltin(var, name);
             } else {
                 GetGlobalTypesHolder()->InitializeBuiltin(name, var->TsType());
@@ -323,6 +326,7 @@ void ETSChecker::InitializeBuiltin(varbinder::Variable *var, const util::StringV
         type = BuildBasicClassProperties(var->Declaration()->Node()->AsClassDefinition());
     } else {
         ES2PANDA_ASSERT(var->Declaration()->Node()->IsTSInterfaceDeclaration());
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         type = BuildBasicInterfaceProperties(var->Declaration()->Node()->AsTSInterfaceDeclaration());
     }
     GetGlobalTypesHolder()->InitializeBuiltin(name, type);
@@ -334,8 +338,11 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
         return false;
     }
     permitRelaxedAny_ = options.IsPermitRelaxedAny();
+    resolvedExportCaches_.clear();
+    exportClosureResolver_->Clear();
 
     auto *etsBinder = varbinder->AsETSBinder();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     InitializeBuiltins(etsBinder);
 
     bool isEvalMode = (debugInfoPlugin_ != nullptr);
@@ -364,6 +371,17 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     CheckWarnings(Program(), options);
 
     return !IsAnyError();
+}
+
+const ResolvedExportCache &ETSChecker::ResolveExportClosure(parser::Program *program)
+{
+    if (auto it = resolvedExportCaches_.find(program); it != resolvedExportCaches_.end()) {
+        return *(it->second);
+    }
+
+    auto *cache = Allocator()->New<ResolvedExportCache>(Allocator(), exportClosureResolver_, program);
+    resolvedExportCaches_.emplace(program, cache);
+    return *cache;
 }
 
 evaluate::ScopedDebugInfoPlugin *ETSChecker::GetDebugInfoPlugin()
@@ -406,6 +424,10 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     });
 
     ES2PANDA_ASSERT(Program()->Ast()->IsProgram());
+    if (!HasStatus(checker::CheckerStatus::IN_EXTERNAL) || Program()->IsBuiltSimultaneously()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        exportClosureResolver_->ValidateExportSurface(Program());
+    }
 
     if (runAnalysis) {
         Program()->Ast()->Check(this);
@@ -814,6 +836,7 @@ bool ETSChecker::HasParameterlessConstructor(checker::Type *type)
     }
 
     auto *objType = type->AsETSObjectType();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (auto *ctorSig : objType->ConstructSignatures()) {
         if (ctorSig != nullptr && ctorSig->Params().empty() && !ctorSig->HasRestParameter()) {
             return true;

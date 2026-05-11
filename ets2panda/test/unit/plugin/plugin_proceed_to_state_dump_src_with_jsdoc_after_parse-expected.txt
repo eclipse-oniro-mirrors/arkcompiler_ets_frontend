@@ -6,7 +6,7 @@ PROCEED TO PARSE SUCCESS
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-import { PI as PI, E as E } from "std/math/consts";
+import { PI, E } from "std/math/consts";
 
 /**
  * ==== import specifier jsdoc2 ====
@@ -26,7 +26,7 @@ export { JsDocClassOutside as JsDocClassOutside, jsdocVal1 as jsdocVal1, jsDocFu
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-export { PI as PI, E as E } from "std/math/consts";
+export { PI, E } from "std/math/consts";
 
 /**
  * ==== export specifier jsdoc3 ====

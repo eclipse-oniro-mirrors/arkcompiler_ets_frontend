@@ -78,6 +78,7 @@ describe('findRenameLocationsCrossModuleTest', () => {
   ];
   const lsp = getMultiModuleLsp(projectName, modules, []);
   const entryFile1 = getRealPath(projectName, 'entry/EntryRename1.ets');
+  const harAliasIndex = getRealPath(projectName, 'har/AliasIndex.ets');
   const harIndex = getRealPath(projectName, 'har/Index.ets');
   const harSymbols = getRealPath(projectName, 'har/Symbols.ets');
   const EXPECT_CLASS = sortRenameLocations([
@@ -129,5 +130,13 @@ describe('findRenameLocationsCrossModuleTest', () => {
       ...ref,
       text: 'answer'
     })));
+  });
+
+  test('getDefinitionAtPosition_named_reexport_alias_imported_identifier', () => {
+    const offset = getMarkerOffset(harAliasIndex, '/*aliasSource*/');
+    const res = lsp.getDefinitionAtPosition(harAliasIndex, offset);
+
+    expect(res).toBeDefined();
+    expect(path.resolve(res?.fileName.valueOf() ?? '')).toBe(path.resolve(harSymbols));
   });
 });

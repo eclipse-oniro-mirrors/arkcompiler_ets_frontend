@@ -14,6 +14,7 @@
  */
 #include <cstddef>
 #include <optional>
+#include "compiler/lowering/util.h"
 #include "refactors/convert_import.h"
 #include "ir/astNode.h"
 #include "refactor_provider.h"
@@ -59,14 +60,14 @@ static std::string RemoveDefaultKeywordAfterExport(std::string src)
     }
 
     size_t i = p + 6;
-    while (i < src.size() && isspace(src[i])) {
+    while (i < src.size() && isspace(src[i]) != 0) {
         ++i;
     }
     static constexpr std::string_view K_DEFAULT = "default";
     const size_t kLen = K_DEFAULT.size();
     if (i + kLen <= src.size() && src.compare(i, kLen, K_DEFAULT) == 0) {
         size_t j = i + kLen;
-        if (j < src.size() && isspace(src[j])) {
+        if (j < src.size() && isspace(src[j]) != 0) {
             ++j;
         }
         src.erase(i, j - i);
@@ -366,11 +367,12 @@ static std::unique_ptr<RefactorEditInfo> HandleDefaultCase(const RefactorContext
         return nullptr;
     }
     auto *localId = defSpec->Local()->AsIdentifier();
-    auto *var = localId->Variable();
-    if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr) {
+    // Before export resolution is materialized, export declarations can still point to import-binding placeholders.
+    // Use DeclarationFromIdentifier to reach the real exported declaration node.
+    auto *exportNode = compiler::DeclarationFromIdentifier(localId);
+    if (exportNode == nullptr) {
         return nullptr;
     }
-    ir::AstNode *exportNode = var->Declaration()->Node();
 
     auto nameOpt = TryGetExportedNameFromDefaultExport(exportNode);
     if (!nameOpt.has_value()) {

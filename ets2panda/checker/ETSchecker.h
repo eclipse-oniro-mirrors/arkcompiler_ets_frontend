@@ -21,6 +21,7 @@
 
 #include "checker/checker.h"
 
+#include "checker/exportClosureResolver.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/ets/etsResizableArrayType.h"
 #include "checker/types/ets/types.h"
@@ -50,6 +51,20 @@ class ScopedDebugInfoPlugin;
 }  // namespace ark::es2panda::evaluate
 
 namespace ark::es2panda::checker {
+
+enum class ImportResolutionStatus {
+    RESOLVED_VARIABLE,
+    RESOLVED_SURFACE,
+    INVALID,
+    AMBIGUOUS,
+    NOT_FOUND,
+};
+
+struct ResolvedImportResult {
+    ImportResolutionStatus status {ImportResolutionStatus::NOT_FOUND};
+    ResolvedExportEntry entry {};
+    varbinder::ExportSurfaceId surface {};
+};
 
 struct Accessor {
     bool isGetter {false};
@@ -106,8 +121,9 @@ class ETSChecker final : public Checker {
 public:
     explicit ETSChecker(ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         // NOLINTNEXTLINE(readability-redundant-member-init)
-        : Checker(allocator, diagnosticEngine)
+        : Checker(allocator, diagnosticEngine), resolvedExportCaches_(allocator->Adapter())
     {
+        exportClosureResolver_ = allocator->New<ExportClosureResolver>(allocator, this);
     }
 
     ~ETSChecker() override = default;
@@ -203,6 +219,7 @@ public:
     void InitializeBuiltins(varbinder::ETSBinder *varbinder);
     void InitializeBuiltin(varbinder::Variable *var, const util::StringView &name);
     bool StartChecker([[maybe_unused]] varbinder::VarBinder *varbinder, const util::Options &options) override;
+    const ResolvedExportCache &ResolveExportClosure(parser::Program *program);
     Type *CheckTypeCached(ir::Expression *expr) override;
     void ResolveStructuredTypeMembers([[maybe_unused]] Type *type) override {};
     Type *GetTypeFromVariableDeclaration(varbinder::Variable *const var);
@@ -221,6 +238,7 @@ public:
     // Object
     void CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties);
     Type *BuildBasicClassProperties(ir::ClassDefinition *classDef);
+    void BuildExportedFunctionSignature(varbinder::Variable *var);
     Type *BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl);
     ETSObjectType *GetSuperType(ETSObjectType *type);
     ArenaVector<ETSObjectType *> const &GetInterfaces(ETSObjectType *type);
@@ -517,8 +535,26 @@ public:
     void SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjType, const util::StringView &importPath,
                                       ir::ETSImportDeclaration *importDecl = nullptr);
     void SetrModuleObjectTsType(ir::Identifier *local, checker::ETSObjectType *moduleObjType);
+    Type *GetImportSurfaceObjectType(varbinder::ExportSurfaceId surface, ir::Identifier *ident,
+                                     varbinder::LocalVariable *localVar);
+    Type *GetImportNamespaceObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident);
+    bool MaterializeNamespaceMember(checker::ETSObjectType *namespaceObject, util::StringView memberName,
+                                    const lexer::SourcePosition &pos);
+    bool IsCallArgument(const ir::Identifier *ident) const;
+    bool IsNamespaceObjectValueUse(const ir::Identifier *ident, const Type *type) const;
     Type *GetReferencedTypeFromBase(Type *baseType, ir::Expression *name);
     Type *GetReferencedTypeBase(ir::Expression *name);
+    varbinder::Variable *ResolveEffectiveVariable(varbinder::Variable *var);
+    ResolvedImportResult ResolveImportBinding(varbinder::LocalVariable *localVar,
+                                              ImportBindingResolveOptions options = {});
+    Type *ResolveImportBindingType(varbinder::LocalVariable *localVar, ir::Identifier *useSite);
+    Type *MaterializeImportIdentifier(ir::Identifier *ident, varbinder::LocalVariable *localVar);
+    Type *MaterializePrecheckedImportIdentifier(ir::Identifier *ident);
+    void MaterializeAnnotationUsageBaseName(ir::AnnotationUsage *annotation);
+    void MaterializeImportTypeReferences(ir::TypeNode *typeNode);
+    Type *GetTypeFromTypeAnnotation(ir::TypeNode *typeNode);
+    Type *ResolveImportReferencedType(varbinder::LocalVariable *refVar, const ir::Expression *name);
+    void ResolveAndMaterializeImportSpecifier(ir::ImportDeclaration *importDecl, ir::AstNode *specifier);
     Type *ResolveReferencedType(varbinder::LocalVariable *refVar, const ir::Expression *name);
     Type *GetTypeFromInterfaceReference(varbinder::Variable *var);
     Type *GetTypeFromTypeAliasReference(varbinder::Variable *var);
@@ -871,6 +907,9 @@ public:
         constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
         elementStack_.clear();
+        resolvingImportBindings_.clear();
+        resolvedExportCaches_.clear();
+        exportClosureResolver_->Clear();
     }
 
     // This helper finds the intersection of two callSignatures sets
@@ -985,8 +1024,11 @@ private:
     evaluate::ScopedDebugInfoPlugin *debugInfoPlugin_ {nullptr};
     std::unordered_set<ir::TSTypeAliasDeclaration *> elementStack_;
     std::unordered_set<ETSChecker *> readdedChecker_;
+    std::unordered_set<varbinder::LocalVariable *> resolvingImportBindings_;
     bool permitRelaxedAny_ {false};
     std::unordered_map<std::string, checker::ETSStringType *> stringLiteralTypes_;
+    ArenaMap<parser::Program *, ResolvedExportCache *> resolvedExportCaches_;
+    ExportClosureResolver *exportClosureResolver_ {nullptr};
 };
 
 }  // namespace ark::es2panda::checker

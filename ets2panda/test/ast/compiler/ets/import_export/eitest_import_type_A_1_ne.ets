@@ -20,4 +20,4 @@ function main(){
 }
 
 
-/* @@? 16:1 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */
+/* @@? 16:9 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */

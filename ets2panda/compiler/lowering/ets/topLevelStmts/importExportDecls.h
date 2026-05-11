@@ -43,7 +43,6 @@ public:
      * @param global_stmts program global statements
      */
     void HandleGlobalStmts(parser::Program *programs);
-    void AddSelectiveExportAlias(parser::Program *program, const ir::Statement *stmt, const ir::AstNode *spec);
     void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements);
     void VerifyTypeExports(parser::Program *programs);
     void VerifyType(ir::Statement *stmt, std::set<util::StringView> &exportedStatements,
@@ -51,12 +50,14 @@ public:
     void HandleSimpleType(std::set<util::StringView> &exportedStatements, ir::Statement *stmt, util::StringView name);
 
     void VerifySingleExportDefault(parser::Program *programs);
-    void AddExportFlags(ir::AstNode *node, util::StringView originalFieldName, bool exportedWithAlias);
-    void HandleSelectiveExportWithAlias(util::StringView originalFieldName, util::StringView exportName,
+    void AddExportFlags(ir::AstNode *node, bool hasAliasName);
+    void AddTypeOnlyExportFlags(util::StringView originalFieldName);
+    bool HandleSelectiveExportWithAlias(util::StringView originalFieldName, util::StringView exportName,
                                         lexer::SourcePosition startLoc);
-    void PopulateAliasMap(const ir::ExportNamedDeclaration *decl, const util::StringView &path);
-    void PopulateAliasMap(const ir::TSTypeAliasDeclaration *decl, const util::StringView &path);
+    void PopulateAliasMap(parser::Program *program, const ir::ExportNamedDeclaration *decl);
+    void PopulateAliasMap(parser::Program *program, const ir::TSTypeAliasDeclaration *decl);
     void VerifyCollectedExportName(const parser::Program *program);
+    void CollectNamespaceDeclarations(const parser::Program *program);
     void PreMergeNamespaces(parser::Program *program);
 
 private:
@@ -69,44 +70,44 @@ private:
     void VisitTSTypeAliasDeclaration(ir::TSTypeAliasDeclaration *typeAliasDecl) override;
     void VisitTSInterfaceDeclaration(ir::TSInterfaceDeclaration *interfaceDecl) override;
     void VisitETSImportDeclaration(ir::ETSImportDeclaration *importDecl) override;
+    void VisitETSReExportDeclaration(ir::ETSReExportDeclaration *reExportDecl) override;
     void VisitAnnotationDeclaration(ir::AnnotationDeclaration *annotationDecl) override;
     void VisitETSModule(ir::ETSModule *etsModule) override;
 
 private:
     void ProcessDestructuringElements(ir::ETSDestructuring *destructuring, ir::VariableDeclaration *varDecl);
+    void CheckDuplicateExportName(util::StringView exportName, util::StringView localName,
+                                  const ir::AstNode *reportNode);
+    void CheckDuplicateReExportName(util::StringView exportName, util::StringView importedName,
+                                    util::StringView sourceName, const ir::AstNode *reportNode);
 
     varbinder::ETSBinder *varbinder_ {nullptr};
     std::map<util::StringView, ir::AstNode *> fieldMap_;
-    std::map<util::StringView, lexer::SourcePosition> exportNameMap_;
+    std::map<util::StringView, util::StringView> exportNameMap_;
+    std::map<util::StringView, std::pair<util::StringView, util::StringView>> reExportNameMap_;
     std::set<util::StringView> exportedTypes_;
     parser::ETSParser *parser_ {nullptr};
     public_lib::Context *ctx_ {nullptr};
     std::map<util::StringView, util::StringView> importedSpecifiersForExportCheck_;
     lexer::SourcePosition lastExportErrorPos_ {};
     util::StringView exportDefaultName_;
+    size_t namespaceDepth_ {0};
 
     friend class SavedImportExportDeclsContext;
 };
 
 class SavedImportExportDeclsContext {
 public:
-    explicit SavedImportExportDeclsContext(ImportExportDecls *imExDecl, parser::Program *program)
+    explicit SavedImportExportDeclsContext(ImportExportDecls *imExDecl)
         : imExDecl_(imExDecl),
-          program_(program),
           fieldMapPrev_(imExDecl_->fieldMap_),
           exportNameMapPrev_(imExDecl_->exportNameMap_),
+          reExportNameMapPrev_(imExDecl_->reExportNameMap_),
           exportedTypesPrev_(imExDecl_->exportedTypes_),
           exportDefaultNamePrev_(imExDecl_->exportDefaultName_),
-          exportAliasMultimapPrev_(SaveExportAliasMultimap())
+          namespaceDepthPrev_(imExDecl_->namespaceDepth_)
     {
         ClearImportExportDecls();
-        UpdateExportMap();
-    }
-
-    void RecoverExportAliasMultimap() &&
-    {
-        auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
-        exportMap[program_->SourceFilePath()] = std::move(exportAliasMultimapPrev_);
     }
 
     NO_COPY_SEMANTIC(SavedImportExportDeclsContext);
@@ -122,47 +123,30 @@ private:
     {
         imExDecl_->fieldMap_.clear();
         imExDecl_->exportNameMap_.clear();
+        imExDecl_->reExportNameMap_.clear();
         imExDecl_->exportedTypes_.clear();
         imExDecl_->exportDefaultName_ = nullptr;
-    }
-
-    void UpdateExportMap()
-    {
-        auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
-        if (auto it = exportMap.find(program_->SourceFilePath()); it != exportMap.end()) {
-            exportAliasMultimapPrev_ = it->second;
-            exportMap.erase(it);
-        }
-
-        exportMap.insert({program_->SourceFilePath(), {}});
+        imExDecl_->namespaceDepth_ = 0;
     }
 
     void RestoreImportExportDecls() noexcept
     {
         imExDecl_->fieldMap_ = fieldMapPrev_;
         imExDecl_->exportNameMap_ = exportNameMapPrev_;
+        imExDecl_->reExportNameMap_ = reExportNameMapPrev_;
         imExDecl_->exportedTypes_ = exportedTypesPrev_;
         imExDecl_->exportDefaultName_ = exportDefaultNamePrev_;
-    }
-
-    varbinder::AliasesByExportedNames SaveExportAliasMultimap()
-    {
-        auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
-        const auto found = exportMap.find(program_->SourceFilePath());
-        if (found == exportMap.end()) {
-            return varbinder::AliasesByExportedNames {};
-        }
-        return found->second;
+        imExDecl_->namespaceDepth_ = namespaceDepthPrev_;
     }
 
 private:
     ImportExportDecls *imExDecl_;
-    parser::Program *program_;
     std::map<util::StringView, ir::AstNode *> fieldMapPrev_;
-    std::map<util::StringView, lexer::SourcePosition> exportNameMapPrev_;
+    std::map<util::StringView, util::StringView> exportNameMapPrev_;
+    std::map<util::StringView, std::pair<util::StringView, util::StringView>> reExportNameMapPrev_;
     std::set<util::StringView> exportedTypesPrev_;
     util::StringView exportDefaultNamePrev_;
-    varbinder::AliasesByExportedNames exportAliasMultimapPrev_;
+    size_t namespaceDepthPrev_;
 };
 }  // namespace ark::es2panda::compiler
 

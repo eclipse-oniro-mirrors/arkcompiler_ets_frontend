@@ -17,4 +17,5 @@ export { ClassA } from './export.ets'
 export { ClassA as ClassB } from './export.ets'
 export /* @@ label */{ ClassB } from './export.ets'
 
-/* @@? 18:1 Error Semantic error ESE0362: Ambiguous export 'ClassB' */
+/* @@? 18:24 Error Semantic error ESE0362: Ambiguous export 'ClassB' */
+/* @@? 18:24 Warning Warning W0073: Duplicated export aliases for 'ClassB'. */

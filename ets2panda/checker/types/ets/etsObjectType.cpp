@@ -1690,6 +1690,21 @@ const ArenaVector<ETSObjectType *> &ETSObjectType::ReExports() const
     return *reExports_;
 }
 
+void ETSObjectType::SetExportSurface(varbinder::ExportSurfaceId surface)
+{
+    exportSurface_ = surface;
+}
+
+const varbinder::ExportSurfaceId &ETSObjectType::ExportSurface() const
+{
+    return exportSurface_;
+}
+
+bool ETSObjectType::HasExportSurface() const
+{
+    return exportSurface_.program != nullptr;
+}
+
 util::StringView ETSObjectType::AssemblerName() const
 {
     if (IsGradual()) {

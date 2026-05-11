@@ -19,6 +19,8 @@
 #include "util/helpers.h"
 #include "varbinder/ETSBinder.h"
 
+#include <unordered_set>
+
 namespace ark::es2panda::ir {
 
 SrcDumper::SrcDumper(Declgen *dg) : dg_(dg) {}
@@ -183,16 +185,20 @@ void SrcDumper::DumpExports()
     if (!varbinder->IsETSBinder()) {
         return;
     }
-    auto const &exportMap = varbinder->AsETSBinder()->GetSelectiveExportAliasMultimap();
-    if (auto const it = exportMap.find(dg_->GetCtx()->sourceFile->filePath);
-        it != exportMap.cend() && !it->second.empty()) {
-        for (auto const &[_, data] : it->second) {
-            if (data.second->IsExportNamedDeclaration() &&
-                data.second->AsExportNamedDeclaration()->HasDumpData(HasDefaultExport())) {
-                ss_ << '\n';
-                data.second->Dump(this);
-                ss_ << ';';
-            }
+    auto *program = dg_->GetCtx()->parserProgram;
+    if (program == nullptr) {
+        return;
+    }
+
+    auto const &aliases = varbinder->AsETSBinder()->PendingLocalExportAliases(program);
+    std::unordered_set<const ir::AstNode *> dumpedExports;
+    for (auto const &alias : aliases) {
+        if (alias.kind == varbinder::LocalExportKind::ALIAS && alias.exportDecl != nullptr &&
+            alias.exportDecl->IsExportNamedDeclaration() && dumpedExports.insert(alias.exportDecl).second &&
+            alias.exportDecl->AsExportNamedDeclaration()->HasDumpData(HasDefaultExport())) {
+            ss_ << '\n';
+            alias.exportDecl->Dump(this);
+            ss_ << ';';
         }
     }
 }

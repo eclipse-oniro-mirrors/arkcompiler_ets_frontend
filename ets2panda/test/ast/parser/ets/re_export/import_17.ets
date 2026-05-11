@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,8 @@ import * as A from "./re_export_12"
 
 function main() : void
 {
-    /* @@ label */A.foo();
+    A.foo();
 }
 
 
-/* @@@ label Error Semantic error ESE0061: Ambiguous reference to 'foo' */
+/* @@? 20:7 Error Semantic error ESE0061: Ambiguous reference to 'foo' */

@@ -29,6 +29,11 @@ bool ContainsTypeError(Type const *type);
 // NOLINTEND(readability-redundant-declaration)
 }  // namespace ark::es2panda::checker
 
+namespace ark::es2panda::ir {
+class AstNode;
+class ETSImportDeclaration;
+}  // namespace ark::es2panda::ir
+
 namespace ark::es2panda::varbinder {
 class Decl;
 class Scope;
@@ -39,6 +44,21 @@ class VariableScope;
 #define DECLARE_CLASSES(type, className) class className;  // CC-OFF(G.PRE.02) name part
 VARIABLE_TYPES(DECLARE_CLASSES)
 #undef DECLARE_CLASSES
+
+enum class ImportBindingKind { NAMED, DEFAULT, NAMESPACE };
+
+class Variable;
+
+struct ImportBindingInfo {
+    const ir::ETSImportDeclaration *importDecl {};
+    util::StringView importedName {};
+    util::StringView localName {};
+    const ir::AstNode *origin {};
+    Variable *resolvedVariable {};
+    Variable *conflictingLocalVariable {};
+    ImportBindingKind kind {ImportBindingKind::NAMED};
+    bool isTypeOnly {};
+};
 
 class Variable {
 public:
@@ -189,11 +209,47 @@ public:
         return vreg_.GetIndex();
     }
 
+    [[nodiscard]] const ImportBindingInfo *ImportBinding() const noexcept
+    {
+        return importBinding_;
+    }
+
+    [[nodiscard]] ImportBindingInfo *ImportBinding() noexcept
+    {
+        return importBinding_;
+    }
+
+    void SetImportBinding(ImportBindingInfo *importBinding) noexcept
+    {
+        importBinding_ = importBinding;
+        if (importBinding != nullptr) {
+            AddFlag(VariableFlags::IMPORT_BINDING);
+        } else {
+            RemoveFlag(VariableFlags::IMPORT_BINDING);
+        }
+    }
+
+    [[nodiscard]] bool IsImportBinding() const noexcept
+    {
+        return importBinding_ != nullptr && HasFlag(VariableFlags::IMPORT_BINDING);
+    }
+
+    [[nodiscard]] bool IsNamespaceImportBinding() const noexcept
+    {
+        return IsImportBinding() && importBinding_->kind == ImportBindingKind::NAMESPACE;
+    }
+
+    [[nodiscard]] bool IsNonNamespaceImportBinding() const noexcept
+    {
+        return IsImportBinding() && importBinding_->kind != ImportBindingKind::NAMESPACE;
+    }
+
     void SetLexical([[maybe_unused]] Scope *scope) override;
     LocalVariable *Copy(ArenaAllocator *allocator, Decl *decl) const;
 
 private:
     compiler::VReg vreg_ {};
+    EPtr<ImportBindingInfo> importBinding_ {};
 };
 
 class GlobalVariable : public Variable {

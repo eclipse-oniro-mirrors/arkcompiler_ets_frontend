@@ -16,9 +16,12 @@
 #include "util.h"
 
 #include "checker/checkerContext.h"
+#include "checker/exportClosureResolver.h"
 #include "checker/types/globalTypesHolder.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/memberExpression.h"
+#include "ir/module/importSpecifier.h"
 #include "checker/checker.h"
 #include "checker/ETSAnalyzer.h"
 #include "parser/JsdocHelper.h"
@@ -26,7 +29,42 @@
 #include "util/ustring.h"
 #include "varbinder/varbinder.h"
 
+#include <set>
+
 namespace ark::es2panda::compiler {
+
+namespace {
+
+varbinder::Variable *VariableFromMemberProperty(const ir::Identifier *node)
+{
+    auto *parent = node == nullptr ? nullptr : node->Parent();
+    if (parent == nullptr || !parent->IsMemberExpression() || parent->AsMemberExpression()->Property() != node) {
+        return nullptr;
+    }
+    return const_cast<varbinder::LocalVariable *>(parent->AsMemberExpression()->PropVar());
+}
+
+varbinder::Variable *VariableFromImportSpecifierLocal(const ir::Identifier *node)
+{
+    auto *parent = node == nullptr ? nullptr : node->Parent();
+    if (parent == nullptr || !parent->IsImportSpecifier()) {
+        return nullptr;
+    }
+    return parent->AsImportSpecifier()->Local()->Variable();
+}
+
+varbinder::Variable *VariableForIdentifier(const ir::Identifier *node)
+{
+    if (auto *memberVar = VariableFromMemberProperty(node); memberVar != nullptr) {
+        return memberVar;
+    }
+    if (auto *importVar = VariableFromImportSpecifierLocal(node); importVar != nullptr) {
+        return importVar;
+    }
+    return node == nullptr ? nullptr : node->Variable();
+}
+
+}  // namespace
 
 bool HasGlobalClassParent(const ir::AstNode *node)
 {
@@ -604,6 +642,26 @@ std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
     }
 }
 
+static varbinder::Variable *EffectiveVariableFromIdentifier(const ir::Identifier *node)
+{
+    auto *idVar = VariableForIdentifier(node);
+    if (idVar == nullptr || !idVar->IsLocalVariable() || !idVar->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return idVar;
+    }
+
+    auto *bindingInfo = idVar->AsLocalVariable()->ImportBinding();
+    if (bindingInfo == nullptr) {
+        return idVar;
+    }
+
+    if (bindingInfo->resolvedVariable != nullptr) {
+        return bindingInfo->resolvedVariable;
+    }
+
+    auto *resolved = checker::ExportClosureResolver::ResolveEffectiveImportVariableForDeclaration(bindingInfo);
+    return resolved != nullptr ? resolved : idVar;
+}
+
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
 ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
 {
@@ -611,7 +669,7 @@ ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
         return nullptr;
     }
 
-    auto idVar = node->Variable();
+    auto idVar = EffectiveVariableFromIdentifier(node);
     if (idVar == nullptr) {
         return nullptr;
     }

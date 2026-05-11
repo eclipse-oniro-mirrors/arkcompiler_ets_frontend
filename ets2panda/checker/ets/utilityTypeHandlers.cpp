@@ -116,10 +116,12 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
     }
 
     if (utilityType == compiler::Signatures::READONLY_TYPE_NAME) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         return GetReadonlyType(baseType);
     }
 
     if (utilityType == compiler::Signatures::REQUIRED_TYPE_NAME) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         return HandleRequiredType(baseType);
     }
 
@@ -1093,6 +1095,9 @@ ir::ClassDefinition *ETSChecker::CreateClassPrototype(util::StringView name, par
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const classDecl = ProgramAllocNode<ir::ClassDeclaration>(classDef, ProgramAllocator());
     ES2PANDA_ASSERT(classDecl != nullptr);
+    classDecl->SetProgram(classDeclProgram);
+    classDef->SetProgram(classDeclProgram);
+    classId->SetProgram(classDeclProgram);
 
     // Class definition is scope bearer, not class declaration
     classDef->Scope()->BindNode(classDecl->Definition());
@@ -1303,8 +1308,10 @@ Type *ETSChecker::GetReadonlyType(Type *type)
     }
 
     if (type->IsETSObjectType()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         type->AsETSObjectType()->InstanceFields();
         auto *clonedType = type->Clone(this)->AsETSObjectType();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertiesReadonly(clonedType);
         return cacheType(clonedType);
     }
@@ -1316,6 +1323,7 @@ Type *ETSChecker::GetReadonlyType(Type *type)
     if (type->IsETSUnionType()) {
         std::vector<Type *> unionTypes;
         for (auto *t : type->AsETSUnionType()->ConstituentTypes()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             unionTypes.emplace_back(t->IsETSObjectType() ? GetReadonlyType(t) : t->Clone(this));
         }
         return cacheType(CreateETSUnionType(std::move(unionTypes)));
@@ -1342,16 +1350,21 @@ void ETSChecker::MakePropertiesReadonly(ETSObjectType *const classType)
 {
     classType->AddTypeFlag(TypeFlag::READONLY);
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (auto const &prop : classType->InstanceFields()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertyReadonly<PropertyType::INSTANCE_FIELD>(classType, prop.second);
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (auto const &prop : classType->StaticFields()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertyReadonly<PropertyType::STATIC_FIELD>(classType, prop.second);
     }
 
     if (classType->SuperType() != nullptr) {
         auto *const superProp = classType->SuperType()->Clone(this)->AsETSObjectType();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertiesReadonly(superProp);
         if (classType->SuperType() == GlobalETSObjectType()) {
             superProp->SetSuperType(GlobalETSObjectType());
@@ -1388,6 +1401,7 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
             if (type->IsETSObjectType()) {
                 type = type->Clone(this);
                 ES2PANDA_ASSERT(type != nullptr);
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 MakePropertiesNonNullish(type->AsETSObjectType());
             }
 
@@ -1402,11 +1416,13 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
     }
 
     if (typeToBeRequired->IsETSObjectType()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         typeToBeRequired->AsETSObjectType()->InstanceFields();  // call to instantiate properties
     }
 
     typeToBeRequired = typeToBeRequired->Clone(this);
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     MakePropertiesNonNullish(typeToBeRequired->AsETSObjectType());
 
     return cacheType(typeToBeRequired);
@@ -1415,18 +1431,24 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
 void ETSChecker::MakePropertiesNonNullish(ETSObjectType *const classType)
 {
     classType->AddObjectFlag(ETSObjectFlags::REQUIRED);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     classType->InstanceFields();
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (const auto &[_, propVar] : classType->InstanceFields()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertyNonNullish<PropertyType::INSTANCE_FIELD>(classType, propVar);
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (const auto &[_, propVar] : classType->StaticFields()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertyNonNullish<PropertyType::STATIC_FIELD>(classType, propVar);
     }
 
     if (classType->SuperType() != nullptr) {
         auto *const superRequired = classType->SuperType()->Clone(this)->AsETSObjectType();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertiesNonNullish(superRequired);
         if (classType->SuperType() == GlobalETSObjectType()) {
             superRequired->SetSuperType(GlobalETSObjectType());
@@ -1492,6 +1514,7 @@ void ETSChecker::ValidateObjectLiteralForRequiredType(const ETSObjectType *const
         return;
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (const auto &[propName, _] : requiredType->InstanceFields()) {
         if (!initObjExprContainsField(propName)) {
             LogError(diagnostic::REQUIRED_PROP_MISSING_INIT, {propName, requiredType->Name()}, initObjExpr->Start());

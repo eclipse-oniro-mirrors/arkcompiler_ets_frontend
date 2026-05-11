@@ -1,0 +1,6 @@
+import st from "@ohos.lang.interop";
+declare const default_anonymous: A;
+export default default_anonymous;
+export declare class A {
+    constructor();
+}

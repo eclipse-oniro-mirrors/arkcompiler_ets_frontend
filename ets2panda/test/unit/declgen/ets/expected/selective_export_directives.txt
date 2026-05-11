@@ -1,0 +1,7 @@
+'use static'
+
+export declare class C {
+
+}
+
+export { foo as bar };

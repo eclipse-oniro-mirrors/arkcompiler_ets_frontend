@@ -45,6 +45,7 @@
 
 #include "ir/module/importSpecifier.h"
 #include "ir/module/importDefaultSpecifier.h"
+#include "ir/module/importNamespaceSpecifier.h"
 
 #include "ir/ets/etsDestructuring.h"
 #include "ir/ets/etsImportDeclaration.h"
@@ -544,6 +545,20 @@ void Helpers::CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specif
     }
 }
 
+varbinder::Variable *Helpers::ImportSpecifierLocalVariable(ir::AstNode *specifier)
+{
+    if (specifier->IsImportSpecifier()) {
+        return specifier->AsImportSpecifier()->Local()->Variable();
+    }
+    if (specifier->IsImportDefaultSpecifier()) {
+        return specifier->AsImportDefaultSpecifier()->Local()->Variable();
+    }
+    if (specifier->IsImportNamespaceSpecifier()) {
+        return specifier->AsImportNamespaceSpecifier()->Local()->Variable();
+    }
+    return nullptr;
+}
+
 void Helpers::CheckDefaultImportedName(const ArenaVector<ir::ImportDefaultSpecifier *> &specifiers,
                                        const ir::ImportDefaultSpecifier *specifier, const std::string &fileName)
 {
@@ -941,9 +956,9 @@ bool Helpers::IsExported(ir::AstNode const *node) noexcept
         return true;
     }
 
-    bool exported;
+    bool exported = node->HasExportAlias();
     do {
-        exported = node->IsExported() || node->IsDefaultExported() || node->HasExportAlias();
+        exported = exported || node->IsExported() || node->IsDefaultExported() || node->HasExportAlias();
         node = node->Parent();
     } while (!exported && node != nullptr);
 

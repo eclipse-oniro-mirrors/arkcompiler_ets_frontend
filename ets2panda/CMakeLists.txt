@@ -280,6 +280,7 @@ set(ES2PANDA_LIB_SRC
   varbinder/TSBinder.cpp
   varbinder/TypedBinder.cpp
   varbinder/ETSBinder.cpp
+  varbinder/exportFacts.cpp
   varbinder/JSBinder.cpp
   varbinder/varbinder.cpp
   varbinder/declaration.cpp
@@ -623,6 +624,7 @@ set(ES2PANDA_LIB_SRC
   checker/ETSAnalyzerHelpers.cpp
   checker/ETSAnalyzerUnreachable.cpp
   checker/ETSchecker.cpp
+  checker/exportClosureResolver.cpp
   checker/TSchecker.cpp
   checker/ASchecker.cpp
   checker/TSAnalyzer.cpp
@@ -641,6 +643,8 @@ set(ES2PANDA_LIB_SRC
   checker/ets/validateHelpers.cpp
   checker/ets/typeCheckingHelpers.cpp
   checker/ets/helpers.cpp
+  checker/ets/importBindingResolver.cpp
+  checker/ets/namespaceImportObject.cpp
   checker/ets/object.cpp
   checker/ets/typeConverter.cpp
   checker/ets/typeCreation.cpp

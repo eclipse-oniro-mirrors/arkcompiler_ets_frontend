@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/* @@ label */import {MyAnno as NA} from "./annotation_export"
+import {MyAnno as NA} from "./annotation_export"
 
 
-/* @@@ label Error Semantic error ESE0357: Can not rename annotation 'MyAnno' in export or import statements. */
+/* @@? 16:9 Error Semantic error ESE0357: Can not rename annotation 'MyAnno' in export or import statements. */

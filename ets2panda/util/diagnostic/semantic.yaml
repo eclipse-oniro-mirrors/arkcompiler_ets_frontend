@@ -53,6 +53,10 @@ semantic:
   id: 771273
   message: "`{}` narrows the access modifier of the implemented field."
 
+- name: ALREADY_EXPORTED
+  id: 130586
+  message: "The entity named '{}' is already exported."
+
 - name: AMBIENT_ANNOT_FIELD_INIT_MISMATCH
   id: 36
   message: "The initial value does not match the expected value."
@@ -426,6 +430,10 @@ semantic:
   id: 314
   message: "'{}' is referenced directly or indirectly in its own initializer or type annotation."
 
+- name: DECLARATION_PROPERTY_MISSING_IN_IMPLEMENTATION
+  id: 159111
+  message: "Property '{}' is declared in the declaration file for class '{}', but is missing from the implementation class."
+
 - name: DEFAULT_EXPORT_DIRECT_IMPORTED
   id: 353
   message: "Use the default import syntax to import a default exported element"
@@ -746,7 +754,8 @@ semantic:
 
 - name: INIT_MODULE_REFERENCES
   id: 467
-  message: "ArkTS code that is compiled statically cannot invoke the initModule() function to initialize the ArkTS dynamic code module '{}'."
+  message: "ArkTS code that is compiled statically cannot invoke the initModule() function to initialize the ArkTS dynamic
+    code module '{}'."
 
 - name: INNER_CLASS_MUTABLE_STATIC_PROP
   id: 196
@@ -1408,6 +1417,10 @@ semantic:
 - name: RTYPE_PARAM_COUNT_MISMATCH
   id: 273
   message: "Expected {} type arguments, got {} ."
+
+- name: SAME_NAMED_TYPES_FROM_DIFFERENT_SOURCES
+  id: 249556
+  message: "Type '{}' comes from both '{}' and '{}'."
 
 - name: SETTER_MISSING_IMPL
   id: 189

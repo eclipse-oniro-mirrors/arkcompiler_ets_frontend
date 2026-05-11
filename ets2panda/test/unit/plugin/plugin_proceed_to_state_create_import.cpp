@@ -175,7 +175,7 @@ bool Find(es2panda_AstNode *ast)
             g_impl->BlockStatementSetStatements(g_ctx, parent, statements, sizeOfStatements);
             g_impl->AstNodeSetParent(g_ctx, importDeclaration, parent);
             std::string str(g_impl->AstNodeDumpEtsSrcConst(g_ctx, parent));
-            if (str.find("import { A as A } from \"./export\"") != std::string::npos) {
+            if (str.find("import { A } from \"./export\"") != std::string::npos) {
                 return true;
             }
         }

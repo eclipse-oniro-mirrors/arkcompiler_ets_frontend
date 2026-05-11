@@ -50,7 +50,7 @@ export { B }
 
 /* @@? 16:1 Error Semantic error ESE71336: Exported function 'foo' requires type annotation. */
 /* @@? 21:12 Error Semantic error ESE71336: Exported variable 'x' requires type annotation. */
-/* @@? 23:8 Error Semantic error ESE71336: Exported function 'exportedFunc' requires type annotation. */
+/* @@? 23:1 Error Semantic error ESE71336: Exported function 'exportedFunc' requires type annotation. */
 /* @@? 28:5 Error Semantic error ESE71336: Exported class property 'a' requires type annotation. */
 /* @@? 30:5 Error Semantic error ESE71336: Exported function 'foo' requires type annotation. */
 /* @@? 39:5 Error Semantic error ESE71336: Exported class property 'a' requires type annotation. */

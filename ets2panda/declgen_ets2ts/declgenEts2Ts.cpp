@@ -101,6 +101,20 @@ constexpr std::string_view TS_DECL_SUFFIX = ".d.ts";
            outputPath.compare(outputPath.size() - TS_DECL_SUFFIX.size(), TS_DECL_SUFFIX.size(), TS_DECL_SUFFIX) == 0;
 }
 
+[[nodiscard]] std::string ExportSpecifierName(const ir::Identifier *identifier)
+{
+    ES2PANDA_ASSERT(identifier != nullptr);
+    const auto name = identifier->Name();
+    return name.Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) ? std::string(compiler::Signatures::DEFAULT)
+                                                                       : name.Mutf8();
+}
+
+[[nodiscard]] bool IsInternalDefaultExportSpecifier(const ir::ExportSpecifier *specifier)
+{
+    return specifier->Local()->Name().Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) ||
+           specifier->Exported()->Name().Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY);
+}
+
 }  // namespace
 
 // Jsdoc parser
@@ -1634,13 +1648,19 @@ void TSDeclGen::GenImportDeclaration(const ir::ETSImportDeclaration *importDecla
     }
     auto source = importDeclaration->Source()->Str().Mutf8();
     source = RemoveModuleExtensionName(source);
-    const auto specifierFirst = specifiers[0];
     bool isTypeKind = importDeclaration->IsTypeKind();
-    if (specifierFirst->IsImportNamespaceSpecifier()) {
-        GenNamespaceImport(specifierFirst, source);
-    } else if (specifierFirst->IsImportDefaultSpecifier()) {
-        GenDefaultImport(specifierFirst, source, isTypeKind);
-    } else if (specifierFirst->IsImportSpecifier()) {
+    // There are cases like `import A, {a}`, where we need to reclassify each specifier independently.
+    bool hasNamedImport = false;
+    for (auto *specifier : specifiers) {
+        if (specifier->IsImportNamespaceSpecifier()) {
+            GenNamespaceImport(specifier, source);
+        } else if (specifier->IsImportDefaultSpecifier()) {
+            GenDefaultImport(specifier, source, isTypeKind);
+        } else if (specifier->IsImportSpecifier()) {
+            hasNamedImport = true;
+        }
+    }
+    if (hasNamedImport) {
         GenNamedImports(importDeclaration, specifiers, isTypeKind);
     }
 }
@@ -1788,8 +1808,8 @@ void TSDeclGen::GenSingleNamedImport(ir::AstNode *specifier, const ir::ETSImport
     if (!specifier->IsImportSpecifier()) {
         LogError(diagnostic::IMPORT_SPECIFIERS_SUPPORT, {}, importDeclaration->Start());
     }
-    const auto local = specifier->AsImportSpecifier()->Local()->Name().Mutf8();
-    const auto imported = specifier->AsImportSpecifier()->Imported()->Name().Mutf8();
+    const auto local = ExportSpecifierName(specifier->AsImportSpecifier()->Local());
+    const auto imported = ExportSpecifierName(specifier->AsImportSpecifier()->Imported());
     if (local != imported) {
         isGlueCode ? OutTs(imported, " as ", local) : OutDts(imported, " as ", local);
     } else {
@@ -1799,8 +1819,8 @@ void TSDeclGen::GenSingleNamedImport(ir::AstNode *specifier, const ir::ETSImport
 
 void TSDeclGen::GenSingleNamedExport(ir::AstNode *specifier, bool isGlueCode)
 {
-    const auto local = specifier->AsExportSpecifier()->Local()->Name().Mutf8();
-    const auto imported = specifier->AsExportSpecifier()->Exported()->Name().Mutf8();
+    const auto local = ExportSpecifierName(specifier->AsExportSpecifier()->Local());
+    const auto imported = ExportSpecifierName(specifier->AsExportSpecifier()->Exported());
     AddImport(imported);
     if (local != imported) {
         isGlueCode ? OutTs(imported, " as ", local) : OutDts(imported, " as ", local);
@@ -1813,6 +1833,9 @@ std::vector<ir::AstNode *> TSDeclGen::FilterValidExportSpecifiers(const ArenaVec
 {
     std::vector<ir::AstNode *> exportSpecifiers;
     for (auto specifier : specifiers) {
+        if (IsInternalDefaultExportSpecifier(specifier)) {
+            continue;
+        }
         const auto local = specifier->AsExportSpecifier()->Local()->Name().Mutf8();
         if (exportSet_.find(local) == exportSet_.end()) {
             exportSpecifiers.push_back(specifier);
@@ -1837,6 +1860,9 @@ std::vector<ir::AstNode *> TSDeclGen::FilterValidImportSpecifiers(const ArenaVec
 {
     std::vector<ir::AstNode *> importSpecifiers;
     for (auto specifier : specifiers) {
+        if (!specifier->IsImportSpecifier()) {
+            continue;
+        }
         if (specifier->AsImportSpecifier()->IsRemovable()) {
             continue;
         }
@@ -1918,8 +1944,8 @@ void TSDeclGen::GenSingleNamedReExport(ir::AstNode *specifier, const ir::ETSImpo
                                        bool isGlueCode)
 {
     if (specifier->IsImportSpecifier()) {
-        const auto local = specifier->AsImportSpecifier()->Local()->Name().Mutf8();
-        const auto imported = specifier->AsImportSpecifier()->Imported()->Name().Mutf8();
+        const auto local = ExportSpecifierName(specifier->AsImportSpecifier()->Local());
+        const auto imported = ExportSpecifierName(specifier->AsImportSpecifier()->Imported());
         AddImport(local);
         if (local != imported) {
             isGlueCode ? OutTs(imported, " as ", local) : OutDts(imported, " as ", local);

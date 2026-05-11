@@ -29,10 +29,6 @@ static void InsertReExported(parser::Program *program, varbinder::ETSBinder *pVa
             reExportedImports[progWithReexports] = reexports;
         }
     }
-
-    auto &aliasMap = pVarBinder->GetSelectiveExportAliasMultimap();
-    aliasMap.insert(etsBinder->GetSelectiveExportAliasMultimap().begin(),
-                    etsBinder->GetSelectiveExportAliasMultimap().end());
 }
 
 void ResolveIdentifiers::Setup()

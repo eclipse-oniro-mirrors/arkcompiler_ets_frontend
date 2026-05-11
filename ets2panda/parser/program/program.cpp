@@ -23,7 +23,13 @@
 #include "varbinder/ETSBinder.h"
 #include "ir/astDump.h"
 #include "ir/base/classDefinition.h"
+#include "ir/base/methodDefinition.h"
+#include "ir/base/scriptFunction.h"
+#include "ir/module/exportDefaultDeclaration.h"
+#include "ir/module/exportNamedDeclaration.h"
 #include "ir/statements/blockStatement.h"
+#include "ir/statements/classDeclaration.h"
+#include "ir/statements/functionDeclaration.h"
 
 #include "compiler/lowering/phase.h"
 
@@ -33,6 +39,96 @@
 #include <memory>
 
 namespace ark::es2panda::parser {
+namespace {
+
+void MarkDeclarationAsAmbient(ir::AstNode *node);
+
+void MarkClassMemberAsAmbient(ir::AstNode *member)
+{
+    if (member == nullptr) {
+        return;
+    }
+
+    if (member->IsMethodDefinition()) {
+        auto *method = member->AsMethodDefinition();
+        auto *func = method->Function();
+        if (func != nullptr && method->IsConstructor() && func->IsSynthetic()) {
+            func->SetBody(nullptr);
+            func->AddFlag(ir::ScriptFunctionFlags::EXTERNAL);
+        }
+
+        if (func == nullptr || !func->HasBody()) {
+            member->AddModifier(ir::ModifierFlags::DECLARE);
+        }
+        if (func != nullptr && !func->HasBody()) {
+            func->AddModifier(ir::ModifierFlags::DECLARE);
+        }
+        for (auto *overload : method->Overloads()) {
+            MarkClassMemberAsAmbient(overload);
+        }
+    } else {
+        MarkDeclarationAsAmbient(member);
+    }
+}
+
+void MarkClassDeclarationAsAmbient(ir::ClassDeclaration *classDecl)
+{
+    classDecl->AddModifier(ir::ModifierFlags::DECLARE);
+    auto *classDef = classDecl->Definition();
+    if (classDef == nullptr) {
+        return;
+    }
+
+    classDef->AddModifier(ir::ModifierFlags::DECLARE);
+    for (auto *member : classDef->Body()) {
+        MarkClassMemberAsAmbient(member);
+    }
+}
+
+void MarkFunctionDeclarationAsAmbient(ir::FunctionDeclaration *funcDecl)
+{
+    auto *func = funcDecl->Function();
+    if (func == nullptr || !func->HasBody()) {
+        funcDecl->AddModifier(ir::ModifierFlags::DECLARE);
+    }
+    if (func != nullptr && !func->HasBody()) {
+        func->AddModifier(ir::ModifierFlags::DECLARE);
+    }
+}
+
+void MarkDeclarationAsAmbient(ir::AstNode *node)
+{
+    if (node == nullptr || node->IsDeclare() || node->IsETSImportDeclaration() || node->IsETSReExportDeclaration() ||
+        node->IsTSTypeAliasDeclaration() || node->IsTSInterfaceDeclaration()) {
+        return;
+    }
+
+    if (node->IsExportNamedDeclaration()) {
+        auto *decl = const_cast<ir::AstNode *>(node->AsExportNamedDeclaration()->Decl());
+        MarkDeclarationAsAmbient(decl);
+        return;
+    }
+
+    if (node->IsExportDefaultDeclaration()) {
+        auto *decl = const_cast<ir::AstNode *>(node->AsExportDefaultDeclaration()->Decl());
+        MarkDeclarationAsAmbient(decl);
+        return;
+    }
+
+    if (node->IsClassDeclaration()) {
+        MarkClassDeclarationAsAmbient(node->AsClassDeclaration());
+        return;
+    }
+
+    if (node->IsFunctionDeclaration()) {
+        MarkFunctionDeclarationAsAmbient(node->AsFunctionDeclaration());
+        return;
+    }
+
+    node->AddModifier(ir::ModifierFlags::DECLARE);
+}
+
+}  // namespace
 
 namespace {
 
@@ -253,11 +349,7 @@ void Program::VerifyDeclarationModule()
             continue;
         }
 
-        if (stmt->IsDeclare() || stmt->IsTSTypeAliasDeclaration() || stmt->IsETSImportDeclaration() ||
-            stmt->IsExportNamedDeclaration() || stmt->IsETSReExportDeclaration() || stmt->IsTSInterfaceDeclaration()) {
-            continue;
-        }
-        stmt->AddModifier(ir::ModifierFlags::DECLARE);
+        MarkDeclarationAsAmbient(stmt);
     }
 }
 
@@ -363,7 +455,6 @@ template <util::ModuleKind... KINDS>
 void ExternalDeclsImpl<KINDS...>::Add(Program *progToInsert)
 {
     auto inserter = [progToInsert](auto &submap) {
-        // CC-OFFNXT(G.NAM.03-CPP) project code style
         constexpr auto submapKind = GetModuleKindFromSubmapType<decltype(submap)>();
         if (progToInsert->Is<submapKind>()) {
             submap.push_back(progToInsert->As<submapKind>());

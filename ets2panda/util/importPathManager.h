@@ -303,7 +303,9 @@ public:
     parser::Program *SetupProgramForDebugInfoPlugin(std::string_view sourceFilePath, std::string_view moduleName);
 
     parser::Program *SearchResolved(const ImportInfo &importInfo) const;
-    void RemoveProgramFromResolvedSources(ArenaString filename);
+    parser::Program *SearchResolvedExact(const ImportInfo &importInfo) const;
+    bool IsReplacedExactSource(const parser::Program *program) const;
+    void RemoveProgramFromResolvedSources(const ArenaString &filename);
 
     parser::Program *FindOrIntroduceProgramForIncremental(std::string_view absolutePath);
 

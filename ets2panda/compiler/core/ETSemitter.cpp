@@ -417,6 +417,9 @@ std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitt
     outProgsHolder.reserve(programsHolder.size());
 
     for (const auto &[path, prog] : programsHolder) {
+        if (Context()->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
+            continue;
+        }
         ES2PANDA_ASSERT(prog->IsBuiltSimultaneously());
 
         auto pandasmProg = std::unique_ptr<pandasm::Program>(GetOrCreatePandasmProgram(prog));
@@ -449,6 +452,9 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
 
         for (auto [extProg, recordTable] : varbinder->GetExternalRecordTable()) {
             if (recordTable == varbinder->GetGlobalRecordTable()) {
+                continue;
+            }
+            if (Context()->parser->GetImportPathManager()->IsReplacedExactSource(extProg)) {
                 continue;
             }
             bool programIsExternal = !(varbinder->IsGenStdLib());

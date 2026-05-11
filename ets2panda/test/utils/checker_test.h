@@ -52,6 +52,11 @@ public:
 
     ~CheckerTest() override
     {
+        if (publicContext_->parserProgram != nullptr) {
+            publicContext_->parserProgram->ResetLineIndexCache();
+            publicContext_->parserProgram->GetExternalDecls()->Visit(
+                [](auto *program) { program->ResetLineIndexCache(); });
+        }
         delete publicContext_->phaseManager;
     }
 
@@ -63,6 +68,11 @@ public:
     static void SetUpTestCase()
     {
         ark::es2panda::ScopedAllocatorsManager::Initialize();
+    }
+
+    static void TearDownTestCase()
+    {
+        ark::es2panda::ScopedAllocatorsManager::Finalize();
     }
 
     checker_alias::ETSChecker *Checker()
