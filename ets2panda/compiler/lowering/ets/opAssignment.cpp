@@ -371,10 +371,6 @@ static ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentE
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
-    if (assignment->TsType() == nullptr) {  // hasn't been through checker
-        return assignment;
-    }
-
     auto *loweringResult = ConstructOpAssignmentResult(ctx, assignment);
 
     loweringResult->SetParent(assignment->Parent());

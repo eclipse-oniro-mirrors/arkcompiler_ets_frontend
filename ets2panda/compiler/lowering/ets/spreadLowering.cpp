@@ -186,18 +186,19 @@ static ir::Statement *CreateElementsAssignStatementBySpreadArr(public_lib::Conte
     auto *const newArrayIndexId = newArrayAndIndex[1];
 
     std::stringstream elementsAssignStr;
-    elementsAssignStr << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4++) {";
-    elementsAssignStr << "@@I5[@@I6] = @@I7[@@I8];";
-    elementsAssignStr << "@@I9++;";
+    elementsAssignStr << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4 = @@I5 + 1) {";
+    elementsAssignStr << "@@I6[@@I7] = @@I8[@@I9];";
+    elementsAssignStr << "@@I10 = @@I11 + 1;";
     elementsAssignStr << "}";
 
     ES2PANDA_ASSERT(spreadArrIterator != nullptr);
     ir::Statement *elementsAssignStatement = parser->CreateFormattedStatement(
         elementsAssignStr.str(), spreadArrIterator->Clone(allocator, nullptr),
         spreadArrIterator->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
-        spreadArrIterator->Clone(allocator, nullptr), newArrayId->Clone(allocator, nullptr),
-        newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
-        spreadArrIterator->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr));
+        spreadArrIterator->Clone(allocator, nullptr), spreadArrIterator->Clone(allocator, nullptr),
+        newArrayId->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr),
+        spId->Clone(allocator, nullptr), spreadArrIterator->Clone(allocator, nullptr),
+        newArrayIndexId->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr));
 
     return elementsAssignStatement;
 }
@@ -211,11 +212,12 @@ static ir::Statement *CreateElementsAssignStatementBySingle(public_lib::Context 
     auto *const newArrayIndexId = newArrayAndIndex[1];
     std::stringstream elementsAssignStr;
     elementsAssignStr << "@@I1[@@I2] = (@@E3);";
-    elementsAssignStr << "@@I4++;";
+    elementsAssignStr << "@@I4 = @@I5 + 1;";
 
     ir::Statement *elementsAssignStatement = parser->CreateFormattedStatement(
         elementsAssignStr.str(), newArrayId->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr),
-        element->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr));
+        element->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr),
+        newArrayIndexId->Clone(allocator, nullptr));
 
     return elementsAssignStatement;
 }
@@ -235,11 +237,11 @@ static std::vector<ir::Statement *> CreateElementsAssignForTupleElements(public_
     for (size_t idx = 0; idx < spreadType->GetTupleTypesList().size(); ++idx) {
         std::stringstream tupleAssignmentsStr {};
         tupleAssignmentsStr << "@@I1[@@I2] = (@@I3[" << idx << "]);";
-        tupleAssignmentsStr << "@@I4++;";
+        tupleAssignmentsStr << "@@I4 = @@I5 + 1;";
         tupleAssignmentStatements.emplace_back(parser->CreateFormattedStatement(
             tupleAssignmentsStr.str(), newArrayId->Clone(allocator, nullptr),
             newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
-            newArrayIndexId->Clone(allocator, nullptr)));
+            newArrayIndexId->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr)));
     }
 
     return tupleAssignmentStatements;

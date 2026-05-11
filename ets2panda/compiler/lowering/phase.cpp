@@ -145,6 +145,7 @@ std::vector<Phase *> GetETSPhaseList()
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
         new AwaitLoweringPhase,
         new FixedArrayLowering,
+        new OpAssignmentLowering,
         new DynamicImport,
         new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
@@ -157,7 +158,6 @@ std::vector<Phase *> GetETSPhaseList()
         new DestructuringPhase,
         new ArrayLiteralLowering,
         new BigIntLowering,
-        new OpAssignmentLowering,
         new BinaryExpressionLowering, // should be after BigIntLowering and OpAssignmentLowering
         new SetterLowering,  // must be put before ObjectIndexLowering
         new LateInitializationConvert,
