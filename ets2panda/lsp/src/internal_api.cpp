@@ -557,7 +557,11 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode)
         if (startProgram != nullptr && (program == nullptr || program != startProgram)) {
             return false;
         }
-        return node->Start().index <= pos && pos <= node->End().index;
+        // Use half-open interval for non-token nodes; allow token end-boundary hit.
+        if (IsToken(node)) {
+            return node->Start().index <= pos && pos <= node->End().index;
+        }
+        return node->Start().index <= pos && pos < node->End().index;
     };
     auto found = startNode->FindChild(checkFunc);
     found = RefineFoundByModuleStatements(startNode, pos, checkFunc, found);

@@ -44,9 +44,11 @@
 namespace ark::es2panda::lsp {
 
 static std::vector<CompletionEntry> GetCompletionsForDeclaration(ir::AstNode *decl, const std::string &triggerWord,
-                                                                 bool isStatic = false);
+                                                                 bool isStatic = false,
+                                                                 const ir::ClassDefinition *accessClass = nullptr);
 static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preNode, const std::string &triggerWord,
                                                                std::optional<bool> staticContextOverride);
+static std::string NormalizeCompletionMatchPrefix(const std::string &prefix);
 
 static std::unordered_map<std::string, std::vector<ExternalApiCollectInfo>> g_externalApiCollects {};
 
@@ -1151,7 +1153,8 @@ std::vector<ir::AstNode *> GetDefinitionFromIdentifier(ir::AstNode *node)
 }
 
 std::vector<CompletionEntry> GetEntriesForClassDeclaration(
-    const std::vector<ark::es2panda::ir::AstNode *> &propertyNodes)
+    const std::vector<ark::es2panda::ir::AstNode *> &propertyNodes, bool includePrivateMembers = false,
+    bool includeProtectedMembers = false)
 {
     if (propertyNodes.empty()) {
         return {};
@@ -1160,6 +1163,18 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
     completions.reserve(propertyNodes.size());
     std::string name;
     for (auto node : propertyNodes) {
+        if (!includePrivateMembers && node->IsMethodDefinition() && node->AsMethodDefinition()->IsPrivate()) {
+            continue;
+        }
+        if (!includeProtectedMembers && node->IsMethodDefinition() && node->AsMethodDefinition()->IsProtected()) {
+            continue;
+        }
+        if (!includePrivateMembers && node->IsClassProperty() && node->AsClassProperty()->IsPrivate()) {
+            continue;
+        }
+        if (!includeProtectedMembers && node->IsClassProperty() && node->AsClassProperty()->IsProtected()) {
+            continue;
+        }
         if (node->IsClassProperty()) {
             name = GetClassPropertyName(node);
             auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(node));
@@ -1188,6 +1203,65 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
         }
     }
     return completions;
+}
+
+static const ir::ClassDefinition *GetEnclosingClassDefinition(const ir::AstNode *node)
+{
+    auto *current = node;
+    while (current != nullptr) {
+        if (current->IsClassDefinition()) {
+            return current->AsClassDefinition();
+        }
+        if (current->IsClassDeclaration()) {
+            return current->AsClassDeclaration()->Definition();
+        }
+        current = current->Parent();
+    }
+    return nullptr;
+}
+
+static const ir::ClassDefinition *ResolveDirectBaseClass(const ir::ClassDefinition *classDef)
+{
+    if (classDef == nullptr || classDef->Super() == nullptr) {
+        return nullptr;
+    }
+
+    auto *ident = GetIdentifierFromSuper(const_cast<ir::Expression *>(classDef->Super()));
+    if (ident == nullptr) {
+        return nullptr;
+    }
+
+    auto decls = GetDefinitionFromIdentifier(ident);
+    for (auto *decl : decls) {
+        if (decl != nullptr && decl->IsClassDefinition()) {
+            return decl->AsClassDefinition();
+        }
+    }
+    return nullptr;
+}
+
+static bool IsSameOrDerivedClass(const ir::ClassDefinition *candidate, const ir::ClassDefinition *base)
+{
+    if (candidate == nullptr || base == nullptr) {
+        return false;
+    }
+    if (candidate == base) {
+        return true;
+    }
+
+    const ir::ClassDefinition *current = candidate;
+    std::unordered_set<const ir::ClassDefinition *> visited;
+    while (current != nullptr && visited.insert(current).second) {
+        const ir::ClassDefinition *next = ResolveDirectBaseClass(current);
+        if (next == nullptr) {
+            return false;
+        }
+        if (next == base) {
+            return true;
+        }
+        current = next;
+    }
+    return false;
 }
 
 std::vector<CompletionEntry> GetEntriesForTSInterfaceDeclaration(
@@ -1378,7 +1452,8 @@ ir::AstNode *GetIdentifierFromSuper(ir::AstNode *super)
 }
 
 std::vector<CompletionEntry> GetCompletionFromClassDefinition(ir::ClassDefinition *decl, const std::string &triggerWord,
-                                                              bool isStatic)
+                                                              bool isStatic,
+                                                              const ir::ClassDefinition *accessClass = nullptr)
 {
     // After enum refactoring, enum declaration is transformed to a class declaration
     if (compiler::ClassDefinitionIsEnumTransformed(decl)) {
@@ -1397,13 +1472,15 @@ std::vector<CompletionEntry> GetCompletionFromClassDefinition(ir::ClassDefinitio
         if (ident != nullptr) {
             auto decls = GetDefinitionFromIdentifier(ident);
             for (auto superDecl : decls) {
-                auto superItems = GetCompletionsForDeclaration(superDecl, triggerWord, isStatic);
+                auto superItems = GetCompletionsForDeclaration(superDecl, triggerWord, isStatic, accessClass);
                 extendCompletions.insert(extendCompletions.end(), superItems.begin(), superItems.end());
             }
         }
     }
     auto propertyNodes = FilterFromBody(bodyNodes, triggerWord, isStatic);
-    auto res = GetEntriesForClassDeclaration(propertyNodes);
+    const bool includePrivateMembers = accessClass != nullptr && accessClass == decl;
+    const bool includeProtectedMembers = IsSameOrDerivedClass(accessClass, decl);
+    auto res = GetEntriesForClassDeclaration(propertyNodes, includePrivateMembers, includeProtectedMembers);
     res.insert(res.end(), extendCompletions.begin(), extendCompletions.end());
     return res;
 }
@@ -1593,7 +1670,8 @@ std::vector<CompletionEntry> GetCompletionFromThisExpression(ir::AstNode *preNod
         return {};
     }
     if (def->IsClassDefinition()) {
-        return GetCompletionFromClassDefinition(def->AsClassDefinition(), triggerWord, false);
+        auto *defClass = def->AsClassDefinition();
+        return GetCompletionFromClassDefinition(defClass, triggerWord, false, defClass);
     }
     if (def->IsTSInterfaceDeclaration()) {
         return GetCompletionFromTSInterfaceDeclaration(def->AsTSInterfaceDeclaration(), triggerWord);
@@ -1602,7 +1680,7 @@ std::vector<CompletionEntry> GetCompletionFromThisExpression(ir::AstNode *preNod
 }
 
 std::vector<CompletionEntry> GetCompletionsForDeclaration(ir::AstNode *decl, const std::string &triggerWord,
-                                                          bool isStatic)
+                                                          bool isStatic, const ir::ClassDefinition *accessClass)
 {
     if (decl->IsMethodDefinition()) {
         return GetCompletionFromMethodDefinition(decl->AsMethodDefinition(), triggerWord);
@@ -1611,7 +1689,7 @@ std::vector<CompletionEntry> GetCompletionsForDeclaration(ir::AstNode *decl, con
         return GetCompletionFromTSInterfaceDeclaration(decl->AsTSInterfaceDeclaration(), triggerWord);
     }
     if (decl->IsClassDefinition()) {
-        return GetCompletionFromClassDefinition(decl->AsClassDefinition(), triggerWord, isStatic);
+        return GetCompletionFromClassDefinition(decl->AsClassDefinition(), triggerWord, isStatic, accessClass);
     }
     if (decl->IsTSModuleDeclaration()) {
         return GetCompletionFromTSModuleDeclaration(decl->AsTSModuleDeclaration(), triggerWord);
@@ -1698,12 +1776,13 @@ static ir::AstNode *NormalizePropertyCompletionReceiver(ir::AstNode *preNode)
 }
 
 static std::vector<CompletionEntry> CollectCompletionsFromDecls(const std::vector<ir::AstNode *> &decls,
-                                                                const std::string &triggerWord, bool isStatic)
+                                                                const std::string &triggerWord, bool isStatic,
+                                                                const ir::ClassDefinition *accessClass)
 {
     std::vector<CompletionEntry> completions;
     bool isFirst = true;
     for (auto *decl : decls) {
-        auto currentItems = GetCompletionsForDeclaration(decl, triggerWord, isStatic);
+        auto currentItems = GetCompletionsForDeclaration(decl, triggerWord, isStatic, accessClass);
         if (isFirst) {
             completions = std::move(currentItems);
             isFirst = false;
@@ -1737,7 +1816,16 @@ static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preN
     }
 
     bool isStatic = staticContextOverride.has_value() ? staticContextOverride.value() : IsStaticContext(preNode);
-    return CollectCompletionsFromDecls(decls, triggerWord, isStatic);
+    const bool isDirectMemberReceiver = preNode->Parent() != nullptr && preNode->Parent()->IsMemberExpression() &&
+                                        preNode->Parent()->AsMemberExpression()->Object() == preNode;
+    const bool isTypeOnlyReceiver = std::all_of(decls.begin(), decls.end(), [](const ir::AstNode *decl) {
+        return decl != nullptr && (decl->IsTSInterfaceDeclaration() || decl->IsTSTypeAliasDeclaration());
+    });
+    if (isDirectMemberReceiver && isStatic && isTypeOnlyReceiver) {
+        return {};
+    }
+    auto *accessClass = GetEnclosingClassDefinition(preNode);
+    return CollectCompletionsFromDecls(decls, triggerWord, isStatic, accessClass);
 }
 
 Request KeywordCompletionData(const std::string &input)
@@ -2157,6 +2245,122 @@ static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string
     return completions;
 }
 
+static std::string NormalizeCompletionMatchPrefix(const std::string &prefix)
+{
+    if (prefix.empty()) {
+        return prefix;
+    }
+    size_t end = prefix.size();
+    while (end > 0) {
+        auto c = static_cast<unsigned char>(prefix[end - 1]);
+        if (std::isalnum(c) != 0 || c == '_' || c == '$') {
+            break;
+        }
+        --end;
+    }
+    size_t start = end;
+    while (start > 0) {
+        auto c = static_cast<unsigned char>(prefix[start - 1]);
+        if (std::isalnum(c) == 0 && c != '_' && c != '$') {
+            break;
+        }
+        --start;
+    }
+    if (start == end) {
+        return prefix;
+    }
+    return prefix.substr(start, end - start);
+}
+
+static bool IsInsideTypeAnnotationNode(ir::AstNode *token, const ir::TypeNode *typeAnno)
+{
+    return token != nullptr && typeAnno != nullptr &&
+           (typeAnno == token ||
+            typeAnno->FindChild([token](ir::AstNode *child) { return child == token; }) != nullptr);
+}
+
+static bool IsTypeContextNode(ir::AstNode *token)
+{
+    if (token == nullptr) {
+        return false;
+    }
+    for (auto *node = token; node != nullptr; node = node->Parent()) {
+        if (node->IsETSParameterExpression() &&
+            IsInsideTypeAnnotationNode(token, node->AsETSParameterExpression()->TypeAnnotation())) {
+            return true;
+        }
+        if (node->IsClassProperty() && IsInsideTypeAnnotationNode(token, node->AsClassProperty()->TypeAnnotation())) {
+            return true;
+        }
+        if (node->IsIdentifier() && IsInsideTypeAnnotationNode(token, node->AsIdentifier()->TypeAnnotation())) {
+            return true;
+        }
+        if (node->IsScriptFunction() &&
+            IsInsideTypeAnnotationNode(token, node->AsScriptFunction()->ReturnTypeAnnotation())) {
+            return true;
+        }
+        if (node->IsTSTypeAliasDeclaration() &&
+            IsInsideTypeAnnotationNode(token, node->AsTSTypeAliasDeclaration()->TypeAnnotation())) {
+            return true;
+        }
+        if (node->IsTSPropertySignature() &&
+            IsInsideTypeAnnotationNode(token, node->AsTSPropertySignature()->TypeAnnotation())) {
+            return true;
+        }
+        if (node->IsTSTypeParameter()) {
+            auto *param = node->AsTSTypeParameter();
+            if (IsInsideTypeAnnotationNode(token, param->Constraint()) ||
+                IsInsideTypeAnnotationNode(token, param->DefaultType())) {
+                return true;
+            }
+        }
+        if (node->IsTSInterfaceBody() || node->IsTSSignatureDeclaration()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static std::string GetCompletionMatchPrefixFromToken(ir::AstNode *precedingToken, const std::string &fallbackPrefix)
+{
+    auto normalizedFallback = NormalizeCompletionMatchPrefix(fallbackPrefix);
+    if (!normalizedFallback.empty()) {
+        return normalizedFallback;
+    }
+    if (precedingToken != nullptr && precedingToken->IsIdentifier()) {
+        return std::string(precedingToken->AsIdentifier()->Name());
+    }
+    return normalizedFallback;
+}
+
+template <class DeclSet>
+static void AppendTypeContextInterfaceCompletions(const DeclSet &decls, const std::string &matchPrefix,
+                                                  std::vector<CompletionEntry> *completions)
+{
+    ES2PANDA_ASSERT(completions != nullptr);
+    std::unordered_set<std::string> existingNames;
+    existingNames.reserve(completions->size());
+    for (const auto &entry : *completions) {
+        existingNames.insert(entry.GetName());
+    }
+    for (auto decl : decls) {
+        if (decl == nullptr || !decl->IsTSInterfaceDeclaration()) {
+            continue;
+        }
+        auto name = GetDeclName(decl);
+        static constexpr std::string_view SUFFIX = "Interface";
+        if (name.size() < SUFFIX.size() || name.compare(name.size() - SUFFIX.size(), SUFFIX.size(), SUFFIX) != 0) {
+            continue;
+        }
+        if (name.find(matchPrefix) == std::string::npos || existingNames.find(name) != existingNames.end()) {
+            continue;
+        }
+        completions->emplace_back(name, CompletionEntryKind::KEYWORD, std::string(sort_text::SUGGESTED_CLASS_MEMBERS),
+                                  name);
+        existingNames.insert(name);
+    }
+}
+
 // Support: global variables, local variables, functions, keywords
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
@@ -2167,16 +2371,29 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     }
     auto scopePath = BuildScopePath(compiler::NearestScope(precedingToken));
     auto prefix = GetCurrentTokenValueImpl(context, position, precedingToken);
+    auto matchPrefix = GetCompletionMatchPrefixFromToken(precedingToken, prefix);
+    bool inTypeContext = IsTypeContextNode(precedingToken);
+    if (!inTypeContext && position > 0) {
+        auto *precedingAtLeft = FindPrecedingToken(position - 1, ctx->parserProgram->Ast());
+        inTypeContext = IsTypeContextNode(precedingAtLeft);
+    }
     auto decls = GetDeclByScopePath(scopePath);
     std::vector<CompletionEntry> completions;
 
     for (auto decl : decls) {
+        if (!inTypeContext && decl != nullptr && decl->IsTSInterfaceDeclaration()) {
+            continue;
+        }
         auto entry = InitEntry(decl);
-        if (entry.GetName().find(prefix) == std::string::npos) {
+        if (entry.GetName().find(matchPrefix) == std::string::npos) {
             continue;
         }
         entry = ProcessAutoImportForEntry(entry);
         completions.push_back(entry);
+    }
+
+    if (inTypeContext) {
+        AppendTypeContextInterfaceCompletions(decls, matchPrefix, &completions);
     }
 
     auto keywordCompletions = GetKeywordCompletions(prefix);
