@@ -1113,6 +1113,13 @@ extern "C" es2panda_DiagnosticInfo *CreateDiagnosticInfo(es2panda_Context *conte
     return diagnosticInfo;
 }
 
+extern "C" void AstNodeSetNoDebugLineFlag([[maybe_unused]] es2panda_Context *context, es2panda_AstNode *node)
+{
+    auto *e2pNode = reinterpret_cast<ir::AstNode *>(node);
+    ES2PANDA_ASSERT(e2pNode != nullptr);
+    e2pNode->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
+}
+
 extern "C" es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
                                                          const char **args, size_t argc, const char *substitutionCode,
                                                          const char *title, es2panda_SourceRange *range)
@@ -1770,6 +1777,7 @@ es2panda_Impl g_impl = {
     SourcePositionLine,
     SourceRangeStart,
     SourceRangeEnd,
+    AstNodeSetNoDebugLineFlag,
     CreateDiagnosticKind,
     CreateDiagnosticInfo,
     CreateSuggestionInfo,
