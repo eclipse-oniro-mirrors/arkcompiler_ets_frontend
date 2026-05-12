@@ -3238,8 +3238,7 @@ static void CheckDerivedStaticMemberAccess(ETSChecker *checker, const varbinder:
         return;
     }
 
-    checker->LogDiagnostic(diagnostic::STATIC_PROP_INVALID_CTX_DEPRECATED, {ident->Name(), declaringType},
-                           ident->Start());
+    checker->LogDiagnostic(diagnostic::STATIC_PROP_INHERITANCE, {ident->Name(), declaringType}, ident->Start());
 }
 
 // NOLINTNEXTLINE(readability-function-size)

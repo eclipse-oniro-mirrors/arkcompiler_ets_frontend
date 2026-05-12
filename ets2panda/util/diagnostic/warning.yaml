@@ -233,13 +233,6 @@ warning:
   id: 19
   message: "This output option has no effect in simultaneous incremental build."
 
-
-- name: STATIC_PROP_INVALID_CTX_DEPRECATED
-  id: 696291
-  message: "Class static member {} must be accessed with the class name {} qualification only. Access using the derived class name will be deprecated soon."
-  strict: true
-  softlist: ["static_member_inheritance"]
-
 - name: SUGGEST_FINAL_MODIFIER_FOR_CLASS
   id: 1
   message: "Suggest 'final' modifier for class."
@@ -285,4 +278,5 @@ graveyard:
 - 49710
 - 59220
 - 122948
+- 696291
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

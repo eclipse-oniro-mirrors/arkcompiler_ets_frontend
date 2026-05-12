@@ -27,5 +27,5 @@ function main() {
     B.foo()
 }
 
-/* @@? 26:19 Error Semantic error ESE696291: Class static member x must be accessed with the class name A qualification only. Access using the derived class name will be deprecated soon. */
-/* @@? 27:7 Error Semantic error ESE696291: Class static member foo must be accessed with the class name A qualification only. Access using the derived class name will be deprecated soon. */
+/* @@? 26:19 Error Semantic error ESE854298: Class static member x must be accessed with the class name A qualification only. */
+/* @@? 27:7 Error Semantic error ESE854298: Class static member foo must be accessed with the class name A qualification only. */

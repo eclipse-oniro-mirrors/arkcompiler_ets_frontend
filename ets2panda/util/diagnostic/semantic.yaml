@@ -347,7 +347,8 @@ semantic:
 
 - name: CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD
   id: 602430
-  message: "Method {}{} from class or interface {}, inherited into class or interface {}, conflicts with the previous declaration of method {}{} from class or interface {} because both declarations override method {}{} from class or interface {}"
+  message: "Method {}{} from class or interface {}, inherited into class or interface {}, conflicts with the previous declaration
+    of method {}{} from class or interface {} because both declarations override method {}{} from class or interface {}"
 
 - name: CONFLICTS_WITH_GLOBAL_IDENTIFIER
   id: 121810
@@ -721,11 +722,13 @@ semantic:
 
 - name: INHERITED_CLASS_TYPE_MISMATCH
   id: 216
-  message: "Class {} cannot extend class {} because the overriding declaration type for {} {} is not compatible with the declaration type required by the base class."
+  message: "Class {} cannot extend class {} because the overriding declaration type for {} {} is not compatible with the declaration
+    type required by the base class."
 
 - name: INHERITED_INTERFACE_TYPE_MISMATCH
   id: 215
-  message: "Class {} cannot implement interface {} because the declaration type for {} {} is not compatible with the declaration type required by the interface."
+  message: "Class {} cannot implement interface {} because the declaration type for {} {} is not compatible with the declaration
+    type required by the interface."
 
 - name: INIT_DOESNT_COMPLETE
   id: 101
@@ -1430,6 +1433,10 @@ semantic:
 - name: STATIC_OVERRIDE
   id: 225047
   message: "Static field {} cannot override base field."
+
+- name: STATIC_PROP_INHERITANCE
+  id: 854298
+  message: "Class static member {} must be accessed with the class name {} qualification only."
 
 - name: STATIC_PROP_INVALID_CTX
   id: 173
