@@ -188,7 +188,7 @@ semantic:
 
 - name: ARKRUNTIME_INTERNAL_API_ACCESS
   id: 154780
-  message: "'{}' cannot be used here as it is an arkruntime internal API"
+  message: "Access to '{}' is restricted by '{}'"
 
 - name: ARRAY_ELEMENT_INIT_TYPE_INCOMPAT
   id: 227

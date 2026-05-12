@@ -13,16 +13,28 @@
  * limitations under the License.
  */
 
-import { annotation, /* @@ label1 */stub } from 'arkruntime'
+import { annotation } from 'arkruntime'
+import { /* @@ label1 */restrictedNs, RestrictedMembers, ConstructorRestrictedApi } from './internalApiLocalApi'
 
-@/* @@ label2 */annotation.Async
+@annotation.Async
 class X {
     p: number = 0
 }
 
-/* @@ label3 */stub;
+restrictedNs.restrictedFunction()
+let a = restrictedNs.restrictedValue
+let c = new RestrictedMembers()
+let d = c.value
+c.ping()
+let e = new /* @@ label2 */ConstructorRestrictedApi()
 
-/* @@@ label1 Error Semantic error ESE154780: 'stub' cannot be used here as it is an arkruntime internal API */
-/* @@@ label2 Error Semantic error ESE154780: 'Async' cannot be used here as it is an arkruntime internal API */
-/* @@@ label3 Error Syntax error ESY0318: Namespace cannot be used as object. */
-/* @@@ label3 Error Semantic error ESE154780: 'stub' cannot be used here as it is an arkruntime internal API */
+/* @@@ label1 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */
+/* @@? 19:2 Error Semantic error ESE154780: Access to 'Async' is restricted by 'BytecodeAPI' */
+/* @@? 19:13 Error Semantic error ESE154780: Access to 'Async' is restricted by 'BytecodeAPI' */
+/* @@? 24:1 Error Semantic error ESE154780: Access to 'restrictedFunction' is restricted by 'TestRestriction' */
+/* @@? 24:1 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */
+/* @@? 25:9 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */
+/* @@? 25:9 Error Semantic error ESE154780: Access to 'restrictedValue' is restricted by 'TestRestriction' */
+/* @@? 27:9 Error Semantic error ESE154780: Access to 'value' is restricted by 'TestRestriction' */
+/* @@? 28:1 Error Semantic error ESE154780: Access to 'ping' is restricted by 'TestRestriction' */
+/* @@@ label2 Error Semantic error ESE154780: Access to 'constructor' is restricted by 'myapi' */
