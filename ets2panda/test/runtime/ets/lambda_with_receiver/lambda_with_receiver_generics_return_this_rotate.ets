@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,8 +31,8 @@ class D<T> extends B<T> {
 }
 
 type F<T> = (this: B<T>) => this;
-let rotate:F<int> = (this: B<int>): this => { return this }
-let rotate2 = (this: B<int>): this => { return this }
+function rotate(this: B<int>): this { return this }
+function rotate2(this: B<int>): this { return this }
 function main() {
     let d = new D<int>(1).setX(3).rotate().setY(33);
     arktest.assertEQ(d.x, 3)

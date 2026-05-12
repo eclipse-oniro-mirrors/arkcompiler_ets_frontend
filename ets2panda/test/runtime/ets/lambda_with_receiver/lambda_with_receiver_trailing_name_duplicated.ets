@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 class A {
     data: number = 0;
     foo(n: number, f: (this: A) => void) {
-        this.f();
+        f(this);
     }
 
     foo(n: number, f: () => void) {
@@ -25,7 +25,7 @@ class A {
 }
 
 function foo(this: A, f: (this: A) => void) {
-    this.f();
+    f(this);
 }
 
 function foo(this: A, n: number, n2: number, f: () => void) {
@@ -33,11 +33,11 @@ function foo(this: A, n: number, n2: number, f: () => void) {
 }
 
 function foo(this: A, f: (this: A) => void, n: number) {
-    this.f();
+    f(this);
 }
 
 function foo(a: A, n: number, f: (this: A) => void) {
-    a.f();
+    f(a);
 }
 
 function foo(a: A, n: number, f: () => void) {

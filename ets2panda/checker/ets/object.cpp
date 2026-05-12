@@ -2733,7 +2733,7 @@ void ETSChecker::ValidateResolvedProperty(varbinder::LocalVariable **property, c
 }
 
 using VO = varbinder::ResolveBindingOptions;
-varbinder::Variable *ETSChecker::GetExtensionFuncVarInGlobalFunction(const ir::MemberExpression *const memberExpr)
+varbinder::Variable *ETSChecker::ResolveInstanceExtension(const ir::MemberExpression *const memberExpr)
 {
     auto propertyName = memberExpr->Property()->AsIdentifier()->Name();
     auto *globalFunctionVar = Scope()->FindInGlobal(propertyName, VO::STATIC_METHODS).variable;
@@ -2746,43 +2746,6 @@ varbinder::Variable *ETSChecker::GetExtensionFuncVarInGlobalFunction(const ir::M
     }
 
     return globalFunctionVar;
-}
-
-varbinder::Variable *ETSChecker::GetExtensionFuncVarInGlobalField(const ir::MemberExpression *const memberExpr)
-{
-    auto propertyName = memberExpr->Property()->AsIdentifier()->Name();
-    auto *globalFieldVar = Scope()->FindInGlobal(propertyName, VO::STATIC_VARIABLES).variable;
-    if (globalFieldVar == nullptr || !IsExtensionETSFunctionType(globalFieldVar->TsType())) {
-        return nullptr;
-    }
-
-    return globalFieldVar;
-}
-
-varbinder::Variable *ETSChecker::GetExtensionFuncVarInFunctionScope(const ir::MemberExpression *const memberExpr)
-{
-    auto propertyName = memberExpr->Property()->AsIdentifier()->Name();
-    auto *funcScopeVar = Scope()->FindInFunctionScope(propertyName, VO::ALL).variable;
-    if (funcScopeVar == nullptr || !IsExtensionETSFunctionType(funcScopeVar->TsType())) {
-        return nullptr;
-    }
-    return funcScopeVar;
-}
-
-varbinder::Variable *ETSChecker::ResolveInstanceExtension(const ir::MemberExpression *const memberExpr)
-{
-    auto *globalFunctionVar = GetExtensionFuncVarInGlobalFunction(memberExpr);
-    if (globalFunctionVar != nullptr) {
-        return globalFunctionVar;
-    }
-
-    auto *globalFieldVar = GetExtensionFuncVarInGlobalField(memberExpr);
-    if (globalFieldVar != nullptr) {
-        return globalFieldVar;
-    }
-
-    // extension function maybe a parameter, or some lambda function defined in function.
-    return GetExtensionFuncVarInFunctionScope(memberExpr);
 }
 
 PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::Expression *const expr)
@@ -3234,8 +3197,7 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
             LogError(diagnostic::EXTENSION_ACCESSOR_INVALID_CALL, {}, memberExpr->Start());
             return resolveRes;
         }
-        if (resolvedKind == ResolvedKind::EXTENSION_FUNCTION && !globalFunctionVar->TsType()->IsETSArrowType() &&
-            !memberExpr->Parent()->IsCallExpression()) {
+        if (resolvedKind == ResolvedKind::EXTENSION_FUNCTION && !memberExpr->Parent()->IsCallExpression()) {
             LogError(diagnostic::PROPERTY_NONEXISTENT,
                      {memberExpr->Property()->AsIdentifier()->Name(), memberExpr->ObjType()},
                      memberExpr->Property()->Start());

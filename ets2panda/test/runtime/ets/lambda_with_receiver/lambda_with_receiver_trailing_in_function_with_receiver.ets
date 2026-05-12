@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +26,11 @@ class B {
 }
 
 function foo(this: A, f: (this: A) => void) {
-    this.f();
+    f(this);
 }
 
 function goo(this: B, f: (this: A) => void) {
-    this.a.f();
+    f(this.a);
     arktest.assertEQ(this.a.data, 555);
 
     this.a.foo(){this.data = 55;}

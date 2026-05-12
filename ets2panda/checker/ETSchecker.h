@@ -293,9 +293,7 @@ public:
     varbinder::LocalVariable *ResolveOverloadReference(const ir::Identifier *ident, ETSObjectType *objType,
                                                        PropertySearchFlags searchFlags);
     void WarnForEndlessLoopInGetterSetter(const ir::MemberExpression *const memberExpr);
-    varbinder::Variable *GetExtensionFuncVarInGlobalFunction(const ir::MemberExpression *const memberExpr);
-    varbinder::Variable *GetExtensionFuncVarInGlobalField(const ir::MemberExpression *const memberExpr);
-    varbinder::Variable *GetExtensionFuncVarInFunctionScope(const ir::MemberExpression *const memberExpr);
+
     varbinder::Variable *ResolveInstanceExtension(const ir::MemberExpression *memberExpr);
     void CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig);
     void CheckThisOrSuperCallInConstructor(ETSObjectType *classType, Signature *ctorSig);
