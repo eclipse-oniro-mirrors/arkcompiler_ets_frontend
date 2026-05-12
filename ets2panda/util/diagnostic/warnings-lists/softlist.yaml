@@ -12,10 +12,6 @@
 # limitations under the License.
 
 softlist:
-- name: "numeric_conversions"
-  paths:
-  - ".*/test/xts/.*"
-
 - name: "ambient_context_and_missing_type_annotation"
   paths:
   - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ets"

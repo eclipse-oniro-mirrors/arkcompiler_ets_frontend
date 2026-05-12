@@ -692,6 +692,10 @@ semantic:
   id: 357
   message: "Can not rename annotation '{}' in export or import statements."
 
+- name: IMPROPER_NUMERIC_CAST
+  id: 123811
+  message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
+
 - name: INDEX_NEGATIVE_OR_FRACTIONAL
   id: 248
   message: "Index value cannot be less than zero or fractional."

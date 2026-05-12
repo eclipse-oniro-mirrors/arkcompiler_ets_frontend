@@ -124,13 +124,6 @@ warning:
   id: 8
   message: "Implicit Unboxing to {}{}."
 
-- name: IMPROPER_NUMERIC_CAST
-  id: 29
-  message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
-  strict: true
-  hardlist: ["numeric_conversions"]
-  softlist: ["numeric_conversions"]
-
 - name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
   id: 52491
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
@@ -271,6 +264,7 @@ graveyard:
 - 18
 - 27
 - 28
+- 29
 - 30
 - 125
 - 153
