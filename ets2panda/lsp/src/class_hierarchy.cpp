@@ -191,7 +191,7 @@ ir::AstNode *GetCurrentClassOrInterfaceDeclaration(ir::AstNode *node)
 
 ir::AstNode *GetTargetDeclarationNodeByPosition(es2panda_Context *context, size_t pos)
 {
-    auto node = ark::es2panda::lsp::GetTouchingTokenRightMatch(context, pos, false);
+    auto node = ark::es2panda::lsp::GetTouchingTokenRightMatch(context, pos);
     if (node == nullptr) {
         return nullptr;
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +59,7 @@ class Document1 implements Printable {
 TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -67,7 +67,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 460;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -75,7 +75,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 33;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"obj", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"obj", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
@@ -92,7 +92,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 103;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"Document1", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Document1", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
@@ -116,7 +116,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 16;
     const size_t expectedSize = 4;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_PROPERTY},
@@ -139,7 +139,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 9;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"PI", ark::es2panda::ir::AstNodeType::IMPORT_SPECIFIER},
                                             {"PI", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -160,7 +160,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 7;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"PI", ark::es2panda::ir::AstNodeType::IMPORT_DEFAULT_SPECIFIER},
                                             {"PI", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -181,7 +181,7 @@ TEST_F(LspGetNodeInfoClassPropertyImportTests, GetNodeInfoClassPropertyImportTes
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 12;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"All", ark::es2panda::ir::AstNodeType::IMPORT_NAMESPACE_SPECIFIER},
                                             {"All", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);

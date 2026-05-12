@@ -36,7 +36,7 @@ FixRemoveIllegalAwait::FixRemoveIllegalAwait()
 void FixRemoveIllegalAwait::MakeChangeForRemoveIllegalAwait(ChangeTracker &changeTracker, es2panda_Context *context,
                                                             size_t pos)
 {
-    auto *token = GetTouchingTokenRightMatch(context, pos, false);
+    auto *token = GetTouchingTokenRightMatch(context, pos);
     if (token == nullptr) {
         return;
     }

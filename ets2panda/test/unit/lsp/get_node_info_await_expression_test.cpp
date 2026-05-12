@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +60,7 @@ async function foo2(): Promise<void> {
 TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -68,7 +68,7 @@ TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest2)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 252;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -76,7 +76,7 @@ TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest3)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 106;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 5;
     std::vector<NodeInfo> expectedResult = {{"foo1", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
                                             {"foo1", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
@@ -94,7 +94,7 @@ TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest4)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 239;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 6;
     std::vector<NodeInfo> expectedResult = {{"foo2", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
                                             {"foo2", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},

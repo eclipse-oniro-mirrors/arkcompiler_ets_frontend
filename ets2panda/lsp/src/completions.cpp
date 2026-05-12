@@ -827,7 +827,7 @@ static bool IsNamespaceBodyMember(const ir::AstNode *node)
         return false;
     }
     auto *classDef = node->Parent()->AsClassDefinition();
-    return classDef != nullptr && classDef->IsModule();
+    return classDef != nullptr && classDef->IsModule() && !classDef->IsDeclare();
 }
 
 static void AppendUniqueNode(std::vector<ir::AstNode *> &res, ir::AstNode *candidate)
@@ -1150,6 +1150,20 @@ std::vector<ir::AstNode *> GetDefinitionFromIdentifier(ir::AstNode *node)
     return definitions;
 }
 
+static void GetClassDeclarationCompletion(ir::AstNode *node, std::vector<CompletionEntry> &completions)
+{
+    std::string name = GetClassPropertyName(node);
+    auto kind = CompletionEntryKind::CLASS;
+    auto def = node->AsClassDeclaration()->Definition();
+    if (def != nullptr && def->IsEnumTransformed()) {
+        kind = CompletionEntryKind::ENUM;
+    } else if (def != nullptr && def->IsNamespaceTransformed()) {
+        kind = CompletionEntryKind::MODULE;
+    }
+    completions.emplace_back(
+        lsp::CompletionEntry(name, kind, std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name));
+}
+
 std::vector<CompletionEntry> GetEntriesForClassDeclaration(
     const std::vector<ark::es2panda::ir::AstNode *> &propertyNodes)
 {
@@ -1168,9 +1182,7 @@ std::vector<CompletionEntry> GetEntriesForClassDeclaration(
                                                           std::nullopt, GetTypeSig(node)));
         }
         if (node->IsClassDeclaration()) {
-            name = GetClassPropertyName(node);
-            completions.emplace_back(lsp::CompletionEntry(
-                name, CompletionEntryKind::CLASS, std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name));
+            GetClassDeclarationCompletion(node, completions);
         }
         if (node->IsMethodDefinition()) {
             name = GetMethodDefinitionName(node);

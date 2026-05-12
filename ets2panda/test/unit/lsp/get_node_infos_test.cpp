@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +60,7 @@ declare class Foo {
 TEST_F(LspGetNodeInfosTests, GetNodeInfosTests1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -68,7 +68,7 @@ TEST_F(LspGetNodeInfosTests, GetNodeInfosTests2)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 150;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -76,7 +76,7 @@ TEST_F(LspGetNodeInfosTests, GetNodeInfosTests3)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 27;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 3;
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
@@ -93,7 +93,7 @@ TEST_F(LspGetNodeInfosTests, GetMethodDefinitionInfo)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 54;
     const size_t expectedSize = 4;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"bar", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION},
@@ -110,7 +110,7 @@ TEST_F(LspGetNodeInfosTests, GetTsEnumDeclarationInfo)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 72;
     const size_t expectedSize = 4;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},
@@ -127,7 +127,7 @@ TEST_F(LspGetNodeInfosTests, GetTsEnumMemberInfo)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 101;
     const size_t expectedSize = 5;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
                                             {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},

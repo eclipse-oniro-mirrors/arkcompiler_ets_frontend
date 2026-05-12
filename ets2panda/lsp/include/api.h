@@ -408,7 +408,8 @@ typedef struct LSPAPI {
                                                   CodeFixOptions &codeFixOptions);
     TextSpan *(*GetNameOrDottedNameSpan)(es2panda_Context *context, int startPos);
     es2panda_AstNode *(*getProgramAst)(es2panda_Context *context);
-    std::vector<NodeInfo> (*getNodeInfosByDefinitionData)(es2panda_Context *context, size_t position);
+    std::vector<NodeInfo> (*getNodeInfosByDefinitionData)(es2panda_Context *context, const char *fileName,
+                                                          size_t position);
     es2panda_AstNode *(*getClassDefinition)(es2panda_AstNode *astNode, const std::string &nodeName);
     es2panda_AstNode *(*getIdentifier)(es2panda_AstNode *astNode, const std::string &nodeName);
     DefinitionInfo (*getDefinitionDataFromNode)(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos);

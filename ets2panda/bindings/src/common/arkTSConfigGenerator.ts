@@ -299,12 +299,13 @@ export class ArkTSConfigGenerator {
       if (dirName === 'component') {
         this.traverse(dependencySection, basePath, aliasConfigObj, 'component/', true);
       } else {
-        this.traverse(dependencySection, basePath, aliasConfigObj, 'dynamic/', true);
+        this.traverse(dependencySection, basePath, aliasConfigObj, 'dynamic', true);
       }
     });
   }
 
   private getDependenciesSection(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
+    this.generateSystemSdkDependenciesSection(dependencySection, moduleInfo);
     let depModules: string[] = moduleInfo.dynamicDepModuleInfos;
     depModules.forEach((depModuleName: string) => {
       let depModuleInfo = this.moduleInfos[depModuleName];

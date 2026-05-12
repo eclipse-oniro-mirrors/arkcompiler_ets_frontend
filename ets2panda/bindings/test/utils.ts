@@ -186,5 +186,5 @@ export function getRealPath(moduleName: string, fileName: string): string {
 }
 
 export function getSDKPath(fileName: string): string {
-  return path.resolve('test/testcases/', fileName);
+  return path.resolve('test/ets/static/api/', fileName);
 }

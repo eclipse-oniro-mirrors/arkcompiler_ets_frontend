@@ -62,7 +62,7 @@ std::string NormalizeImportModulePath(const std::string &rawPath)
 
 std::string GetUnresolvedIdentifierName(es2panda_Context *context, size_t position)
 {
-    auto *token = GetTouchingTokenRightMatch(context, position, false);
+    auto *token = GetTouchingTokenRightMatch(context, position);
     if (token == nullptr || !token->IsIdentifier()) {
         return "";
     }

@@ -59,7 +59,7 @@ void FixSpellingForProperty::MakeChangeForFixSpellingForProperty(ChangeTracker &
                                                                  es2panda_Context *context, size_t pos,
                                                                  const std::string &target)
 {
-    auto *token = GetTouchingTokenRightMatch(context, pos, false);
+    auto *token = GetTouchingTokenRightMatch(context, pos);
     if (token == nullptr || !token->IsIdentifier()) {
         return;
     }
@@ -82,7 +82,7 @@ std::vector<CodeFixAction> FixSpellingForProperty::GetCodeActions(const CodeFixC
 {
     std::vector<CodeFixAction> returnedActions;
 
-    auto *token = GetTouchingTokenRightMatch(context.context, context.span.start, false);
+    auto *token = GetTouchingTokenRightMatch(context.context, context.span.start);
     if (token == nullptr || !token->IsIdentifier()) {
         return returnedActions;
     }
@@ -133,7 +133,7 @@ CombinedCodeActions FixSpellingForProperty::GetAllCodeActions(const CodeFixAllCo
     CodeFixProvider provider;
     const auto changes = provider.CodeFixAll(
         codeFixAllCtx, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
-            auto *token = GetTouchingTokenRightMatch(codeFixAllCtx.context, diag.GetStart(), false);
+            auto *token = GetTouchingTokenRightMatch(codeFixAllCtx.context, diag.GetStart());
             if (token == nullptr || !token->IsIdentifier()) {
                 return;
             }

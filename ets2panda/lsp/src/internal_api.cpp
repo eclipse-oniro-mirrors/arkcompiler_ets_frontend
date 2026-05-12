@@ -111,19 +111,20 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
 }
 
 // temp solution: support right match
-ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, [[maybe_unused]] bool flagFindFirstMatch)
+ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, parser::Program *program)
 {
     if (context == nullptr) {
         return nullptr;
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+    auto *targetProgram = program != nullptr ? program : ctx->parserProgram;
+    if (targetProgram == nullptr || targetProgram->Ast() == nullptr) {
         return nullptr;
     }
-    auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
-    auto checkFunc = [&pos, &ctx](ir::AstNode *node) {
-        auto program = node->Range().start.Program();
-        if (program == nullptr || program != ctx->parserProgram) {
+    auto ast = reinterpret_cast<ir::AstNode *>(targetProgram->Ast());
+    auto checkFunc = [&pos, targetProgram](ir::AstNode *node) {
+        auto nodeProgram = node->Range().start.Program();
+        if (nodeProgram == nullptr || nodeProgram != targetProgram) {
             return false;
         }
         return pos >= node->Start().index && pos <= node->End().index;
@@ -1022,7 +1023,7 @@ size_t GetTokenPosOfNode(const ir::AstNode *astNode)
 std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_Context *context, size_t pos)
 {
     std::pair<ir::AstNode *, util::StringView> res;
-    auto node = GetTouchingTokenRightMatch(context, pos, false);
+    auto node = GetTouchingTokenRightMatch(context, pos);
     if (node == nullptr) {
         return res;
     }
@@ -1043,13 +1044,18 @@ std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_
 std::string GetImportFilePath(es2panda_Context *context, size_t pos)
 {
     std::string res;
-    auto node = GetTouchingTokenRightMatch(context, pos, false);
+    auto node = GetTouchingTokenRightMatch(context, pos);
     if (node == nullptr) {
         return res;
     }
     auto parent = node->Parent();
     if (parent != nullptr && parent->IsETSImportDeclaration() && parent->AsETSImportDeclaration()->Source() == node) {
-        res = std::string(parent->AsETSImportDeclaration()->ImportInfo().ResolvedSource());
+        const auto &importInfo = parent->AsETSImportDeclaration()->ImportInfo();
+        if (node->IsStringLiteral() && node->AsStringLiteral()->Str().StartsWith("dynamic@")) {
+            res = std::string(importInfo.TextSource());
+        } else {
+            res = std::string(importInfo.ResolvedSource());
+        }
     }
     return res;
 }

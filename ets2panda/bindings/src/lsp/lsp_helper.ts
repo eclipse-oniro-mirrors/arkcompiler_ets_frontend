@@ -937,10 +937,13 @@ export class Lsp {
         fileName.startsWith(this.buildConfigs[moduleName].interopApiPath!))
     ) {
       let ptr: KPointer;
-      let fileCache = this.filesMap.get(fileName.valueOf());
+      let fileCache = this.filesMap.get(paramFileName.valueOf());
       if (fileCache) {
         try {
-          ptr = global.es2panda._getNodeInfosByDefinitionData(fileCache.fileContext, start);
+          ptr = global.es2panda._getNodeInfosByDefinitionData(fileCache.fileContext, fileName, start);
+          nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
+            return new LspNodeInfo(elPeer);
+          });
         } catch (error) {
           logger.error('failed to getNodeInfos by fileCache', error);
           return;
@@ -949,7 +952,7 @@ export class Lsp {
         const [declFileCfg, declFileCtx] = this.createContext(fileName) ?? [];
         if (!declFileCfg || !declFileCtx) { return; }
         try {
-          ptr = global.es2panda._getNodeInfosByDefinitionData(declFileCtx, start);
+          ptr = global.es2panda._getNodeInfosByDefinitionData(declFileCtx, fileName, start);
           nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
             return new LspNodeInfo(elPeer);
           });

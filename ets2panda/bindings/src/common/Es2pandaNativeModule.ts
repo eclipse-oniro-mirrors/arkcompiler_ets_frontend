@@ -1168,7 +1168,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getNodeInfosByDefinitionData(context: KPtr, position: KInt): KPtr {
+  _getNodeInfosByDefinitionData(context: KPtr, fileName: String, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 

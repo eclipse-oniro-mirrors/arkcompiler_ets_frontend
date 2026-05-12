@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,7 +87,7 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetSimpleAnnotationDeclarationInfo
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 24;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Validate", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
                                             {"Validate", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -102,7 +102,7 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetAnnotationDeclarationWithProper
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 73;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Log", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
                                             {"Log", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -117,7 +117,7 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetComplexAnnotationDeclarationInf
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 148;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Component", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
                                             {"Component", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -132,7 +132,7 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetAnotherSimpleAnnotationDeclarat
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 261;
     const size_t expectedSize = 2;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Deprecated", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
                                             {"Deprecated", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -146,7 +146,7 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetAnnotationDeclarationInfo_Error
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 660;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     ASSERT_TRUE(result.empty());
 }
 }  // namespace
