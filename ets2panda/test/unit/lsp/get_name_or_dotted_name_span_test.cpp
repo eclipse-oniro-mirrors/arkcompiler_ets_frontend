@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,7 +56,7 @@ myMethod();
     auto content = fileContents[0];
     auto span = ark::es2panda::lsp::GetNameOrDottedNameSpanImpl(context, IDENTIFIER_ONLY_IDX);
     ASSERT_NE(span, nullptr);
-    EXPECT_EQ(ExtractSpanText(content, span), "myMethod");
+    EXPECT_EQ(ExtractSpanText(content, span.get()), "myMethod");
     initializer.DestroyContext(context);
 }
 
@@ -79,7 +79,7 @@ A.myMethod();
     auto content = fileContents[0];
     auto span = ark::es2panda::lsp::GetNameOrDottedNameSpanImpl(context, PROPERTY_ACCESS_IDX);
     ASSERT_NE(span, nullptr);
-    EXPECT_EQ(ExtractSpanText(content, span), "A.myMethod");
+    EXPECT_EQ(ExtractSpanText(content, span.get()), "A.myMethod");
     initializer.DestroyContext(context);
 }
 
@@ -104,7 +104,7 @@ A.B.foo();
     auto content = fileContents[0];
     auto span = ark::es2panda::lsp::GetNameOrDottedNameSpanImpl(context, FULL_DOTTED_EXPR_IDX);
     ASSERT_NE(span, nullptr);
-    EXPECT_EQ(ExtractSpanText(content, span), "A.B.foo");
+    EXPECT_EQ(ExtractSpanText(content, span.get()), "A.B.foo");
     initializer.DestroyContext(context);
 }
 
@@ -147,7 +147,7 @@ Outer.Inner.greet();
     auto content = fileContents[0];
     auto span = ark::es2panda::lsp::GetNameOrDottedNameSpanImpl(context, MODULE_DECLARATION_QUALIFIED_NAME_IDX);
     ASSERT_NE(span, nullptr);
-    EXPECT_EQ(ExtractSpanText(content, span), "Outer.Inner.greet");
+    EXPECT_EQ(ExtractSpanText(content, span.get()), "Outer.Inner.greet");
     initializer.DestroyContext(context);
 }
 }  // namespace

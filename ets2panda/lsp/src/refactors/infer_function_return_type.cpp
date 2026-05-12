@@ -94,7 +94,12 @@ ir::AstNode *GetTypeNode(ir::AstNode *declaration)
         });
     } else if (parent->IsArrowFunctionExpression()) {
         type = declaration->FindChild([](ir::AstNode *child) { return child->IsReturnStatement(); });
-        type = type == nullptr ? parent->AsArrowFunctionExpression()->Function()->ReturnStatements().at(0) : type;
+        if (type == nullptr) {
+            const auto &returnStatements = parent->AsArrowFunctionExpression()->Function()->ReturnStatements();
+            if (!returnStatements.empty()) {
+                type = returnStatements.front();
+            }
+        }
         if (type != nullptr) {
             type = type->AsReturnStatement()->Argument();
         }
