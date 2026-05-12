@@ -129,6 +129,7 @@
 #include "refactor_provider.h"
 #include "internal_api.h"
 #include "services/text_change/change_tracker.h"
+#include "services/import_utils.h"
 #include "refactors/refactor_types.h"
 #include "rename.h"
 #include "types.h"
@@ -276,11 +277,6 @@ constexpr size_t CRLF_LENGTH = 2;
 constexpr std::string_view WINDOWS_LINE_BREAK = "\r\n";
 #endif
 
-inline bool IsLineBreakChar(char ch)
-{
-    return ch == LINE_FEED || ch == CARRIAGE_RETURN;
-}
-
 inline bool IsIndentChar(char ch)
 {
     return ch == SPACE_CHAR || ch == TAB_CHAR;
@@ -320,7 +316,7 @@ std::pair<size_t, size_t> ComputeLineIndent(util::StringView source, size_t pos)
     size_t cursor = std::min(pos, sv.size());
     while (cursor > 0) {
         char ch = sv[cursor - 1];
-        if (IsLineBreakChar(ch)) {
+        if (IsLineBreak(ch)) {
             break;
         }
         --cursor;
@@ -466,7 +462,7 @@ std::string GetDeclaratorIdText(public_lib::Context *ctx, const VariableBindingI
     if (text.empty()) {
         return IdentifierNameMutf8(binding.identifier);
     }
-    while (!text.empty() && IsLineBreakChar(text.back())) {
+    while (!text.empty() && IsLineBreak(text.back())) {
         text.pop_back();
     }
     return text;
@@ -897,11 +893,6 @@ std::string GetIndentAtPosition(public_lib::Context *ctx, size_t pos)
         return "";
     }
     return std::string(source.substr(lineStart, indentEnd - lineStart));
-}
-
-bool IsLineBreak(char ch)
-{
-    return ch == '\n' || ch == '\r';
 }
 
 std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos);
@@ -1729,10 +1720,10 @@ size_t ExtendToLineEnd(util::StringView source, size_t index)
     auto sv = source.Utf8();
     size_t pos = std::min(index, sv.size());
 
-    while (pos < sv.size() && !IsLineBreakChar(sv[pos])) {
+    while (pos < sv.size() && !IsLineBreak(sv[pos])) {
         ++pos;
     }
-    while (pos < sv.size() && IsLineBreakChar(sv[pos])) {
+    while (pos < sv.size() && IsLineBreak(sv[pos])) {
         ++pos;
     }
     return pos;
@@ -1740,7 +1731,7 @@ size_t ExtendToLineEnd(util::StringView source, size_t index)
 
 void TrimTrailingNewlines(std::string &text)
 {
-    while (!text.empty() && IsLineBreakChar(text.back())) {
+    while (!text.empty() && IsLineBreak(text.back())) {
         text.pop_back();
     }
 }
@@ -1917,7 +1908,7 @@ size_t FindClassHelperInsertPos(public_lib::Context *ctx, ir::ClassDefinition *c
     }
 
     size_t lineStart = bracePos;
-    while (lineStart > 0 && !IsLineBreakChar(source[lineStart - 1])) {
+    while (lineStart > 0 && !IsLineBreak(source[lineStart - 1])) {
         --lineStart;
     }
     return lineStart;
@@ -2320,7 +2311,7 @@ size_t SkipSpacesBackward(std::string_view source, size_t pos)
 std::pair<size_t, size_t> CountAndSkipLineBreaksBackward(std::string_view source, size_t pos)
 {
     size_t lineBreaks = 0;
-    while (pos > 0 && IsLineBreakChar(source[pos - 1])) {
+    while (pos > 0 && IsLineBreak(source[pos - 1])) {
         if (source[pos - 1] == LINE_FEED) {
             ++lineBreaks;
         }
@@ -2331,7 +2322,7 @@ std::pair<size_t, size_t> CountAndSkipLineBreaksBackward(std::string_view source
 
 size_t FindLineStart(std::string_view source, size_t pos)
 {
-    while (pos > 0 && !IsLineBreakChar(source[pos - 1])) {
+    while (pos > 0 && !IsLineBreak(source[pos - 1])) {
         --pos;
     }
     return pos;
@@ -3548,7 +3539,7 @@ static bool ShouldPrependNamespaceNewline(public_lib::Context *ctx, size_t inser
         return false;
     }
     const auto &source = ctx->sourceFile->source;
-    return insertPos < source.size() && IsLineBreakChar(source[insertPos]);
+    return insertPos < source.size() && IsLineBreak(source[insertPos]);
 }
 
 static std::string_view TrimHorizontalWhitespace(std::string_view text)
@@ -3570,14 +3561,14 @@ static bool PreviousLineIsTerminatedExport(std::string_view source, size_t inser
         return false;
     }
     size_t lineEnd = insertPos;
-    while (lineEnd > 0 && IsLineBreakChar(source[lineEnd - 1])) {
+    while (lineEnd > 0 && IsLineBreak(source[lineEnd - 1])) {
         --lineEnd;
     }
     if (lineEnd == 0) {
         return false;
     }
     size_t lineStart = lineEnd;
-    while (lineStart > 0 && !IsLineBreakChar(source[lineStart - 1])) {
+    while (lineStart > 0 && !IsLineBreak(source[lineStart - 1])) {
         --lineStart;
     }
     const auto prevLine = TrimHorizontalWhitespace(source.substr(lineStart, lineEnd - lineStart));
@@ -3640,7 +3631,7 @@ static void MaybePrependNamespaceNewlinesForValueExtraction(
 
 static size_t SkipLineBreak(std::string_view source, size_t pos)
 {
-    if (pos >= source.size() || !IsLineBreakChar(source[pos])) {
+    if (pos >= source.size() || !IsLineBreak(source[pos])) {
         return pos;
     }
     if (source[pos] == CARRIAGE_RETURN && pos + 1 < source.size() && source[pos + 1] == LINE_FEED) {

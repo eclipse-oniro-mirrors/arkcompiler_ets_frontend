@@ -14,6 +14,7 @@
  */
 
 #include "lsp/include/services/text_change/change_tracker.h"
+#include "lsp/include/services/import_utils.h"
 #include "get_adjusted_location.h"
 #include <cstddef>
 #include <iostream>
@@ -537,12 +538,6 @@ void ChangeTracker::ReplaceConstructorBody(es2panda_Context *context, ir::AstNod
     }
 }
 
-bool ChangeTracker::IsLineBreak(char ch)
-{
-    const auto lineFeed = '\n';
-    const auto carriageReturn = '\r';
-    return ch == lineFeed || ch == carriageReturn;
-}
 void ChangeTracker::InsertNodeAt(es2panda_Context *context, size_t pos, const ir::AstNode *newNode,
                                  InsertNodeOptions &options)
 {

@@ -70,6 +70,19 @@ public:
         ASSERT_EQ(info.changes_[0].textChanges[0].newText, expected.newText);
     }
 
+    static void FindAndValidateFix(const std::vector<CodeFixActionInfo> &fixes, std::string_view fixName,
+                                   const ExpectedCodeFixInfo &expected, int expectedCount = 1)
+    {
+        std::vector<CodeFixActionInfo> matched;
+        for (const auto &fix : fixes) {
+            if (fix.fixName_ == fixName) {
+                matched.push_back(fix);
+            }
+        }
+        ASSERT_EQ(matched.size(), expectedCount);
+        ValidateCodeFixActionInfo(matched[0], expected);
+    }
+
 private:
     class NullCancellationToken : public ark::es2panda::lsp::HostCancellationToken {
     public:
@@ -110,12 +123,11 @@ function calculate() {
     CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult =
         ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, emptyOptions);
-    ASSERT_EQ(fixResult.size(), expectedFixResultSize);
 
     ExpectedCodeFixInfo expected = {
         expectedTextChangeStart, expectedTextChangeLength,   filePaths[0],
         expectedNewText,         EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
-    ValidateCodeFixActionInfo(fixResult[0], expected);
+    FindAndValidateFix(fixResult, EXPECTED_FUNCTION_FIX_NAME, expected, expectedFixResultSize);
 
     initializer.DestroyContext(context);
 }
@@ -212,37 +224,20 @@ function process() {
     Initializer initializer = Initializer();
     auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
 
-    const size_t start1 = LineColToPos(context, 3, 5);
-    const size_t length1 = 5;
-    const size_t start2 = LineColToPos(context, 4, 5);
-    const size_t length2 = 7;
-    const size_t expectedTextChangeStart1 = 21;
-    const size_t expectedTextChangeLength1 = 0;
-    const std::string expectedNewText1 = "  let count: Double;";
-    const size_t expectedTextChangeStart2 = 21;
-    const size_t expectedTextChangeLength2 = 0;
-    const std::string expectedNewText2 = "  let message: String;";
-    const int expectedFixResultSize = 1;
-
     std::vector<int> errorCodes(FUNCTION_ERROR_CODES.begin(), FUNCTION_ERROR_CODES.end());
     CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
-    auto fixResult1 =
-        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start1, start1 + length1, errorCodes, emptyOptions);
-    auto fixResult2 =
-        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start2, start2 + length2, errorCodes, emptyOptions);
-
-    ASSERT_EQ(fixResult1.size(), expectedFixResultSize);
-    ASSERT_EQ(fixResult2.size(), expectedFixResultSize);
+    auto fixResult1 = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(
+        context, LineColToPos(context, 3, 5), LineColToPos(context, 3, 5) + 5, errorCodes, emptyOptions);
+    auto fixResult2 = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(
+        context, LineColToPos(context, 4, 5), LineColToPos(context, 4, 5) + 7, errorCodes, emptyOptions);
 
     ExpectedCodeFixInfo expected1 = {
-        expectedTextChangeStart1, expectedTextChangeLength1,  filePaths[0],
-        expectedNewText1,         EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
+        21, 0, filePaths[0], "  let count: Double;", EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
     ExpectedCodeFixInfo expected2 = {
-        expectedTextChangeStart2, expectedTextChangeLength2,  filePaths[0],
-        expectedNewText2,         EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
-    ValidateCodeFixActionInfo(fixResult1[0], expected1);
-    ValidateCodeFixActionInfo(fixResult2[0], expected2);
+        21, 0, filePaths[0], "  let message: String;", EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
+    FindAndValidateFix(fixResult1, EXPECTED_FUNCTION_FIX_NAME, expected1, 1);
+    FindAndValidateFix(fixResult2, EXPECTED_FUNCTION_FIX_NAME, expected2, 1);
 
     initializer.DestroyContext(context);
 }

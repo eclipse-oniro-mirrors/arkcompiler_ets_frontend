@@ -425,7 +425,7 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
         ctx->sourceFileName = fileName;
         ctx->input = std::string(sourceText);
         delete ctx->sourceFile;
-        ctx->sourceFile = new SourceFile(fileName, ctx->input, ctx->config->options->IsModule());
+        ctx->sourceFile = new SourceFile(ctx->sourceFileName, ctx->input, ctx->config->options->IsModule());
         AddDirectDependenciesToExternalSourcesForIncremental(ctx, targetProgram);
         return 1;
     }
@@ -434,7 +434,7 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
     ctx->parserProgram = targetProgram;
     ctx->sourceFileName = fileName;
     ctx->input = std::string(sourceText);
-    ctx->sourceFile = new SourceFile(fileName, ctx->input, ctx->config->options->IsModule());
+    ctx->sourceFile = new SourceFile(ctx->sourceFileName, ctx->input, ctx->config->options->IsModule());
     UpdateProgramTextForIncremental(ctx, targetProgram, std::string(sourceText));
     ctx->parser->GetImportPathManager()->PrepareParseQueueForProgram(targetProgram);
     return 0;

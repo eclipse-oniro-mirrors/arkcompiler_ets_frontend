@@ -177,6 +177,7 @@ semantic:
 - name: ANY_TYPE_ANNOTATION_FORBIDDEN
   id: 153545
   message: "'any' type annotation is forbidden"
+  code_fix_ids: [FixForbiddenAnyType]
 
 - name: ARG_IS_CLASS_ID
   id: 122
@@ -1014,6 +1015,7 @@ semantic:
 - name: MULTI_CATCH_DEPRECATED
   id: 33781
   message: "The catch statement with type annotation is deprecated, use catch(e) instead."
+  code_fix_ids: [RemoveCatchTypeAnnotation]
 
 - name: MUST_BE_CLASS_INTERFACE_TYPE
   id: 124644
@@ -1619,7 +1621,7 @@ semantic:
 - name: UNRESOLVED_REF
   id: 143
   message: "Unresolved reference {}"
-  code_fix_ids: [FixSpelling, AddLocalVariable]
+  code_fix_ids: [FixSpelling, AddLocalVariable, FixImportSource]
 
 - name: UNSAFE_VARIANCE_ONLY_IN_STDLIB
   id: 154779

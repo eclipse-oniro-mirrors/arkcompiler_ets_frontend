@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -201,7 +201,6 @@ public:
     TextRange CreateRange(size_t pos, size_t end = 0);
     void ReplacePropertyAssignment(es2panda_Context *context, ir::AstNode *oldNode, ir::AstNode *newNode);
     void InsertNodeAt(es2panda_Context *context, size_t pos, const ir::AstNode *newNode, InsertNodeOptions &options);
-    bool IsLineBreak(char ch);
     void FinishClassesWithNodesInsertedAtStart();
     size_t GetInsertionPositionAtSourceFileTop(ir::AstNode *sourceFileAst);
     void InsertNodeAtTopOfFile(es2panda_Context *context, ir::AstNode *newNode, bool blankLineBetween);
