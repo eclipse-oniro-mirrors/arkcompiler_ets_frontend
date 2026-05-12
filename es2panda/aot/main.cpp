@@ -53,16 +53,21 @@ public:
     }
 };
 
-static void GenerateBase64Output(panda::pandasm::Program *prog,
+static bool GenerateBase64Output(panda::pandasm::Program *prog,
                                  const std::unique_ptr<panda::es2panda::aot::Options> &options)
 {
     auto pandaFile = panda::pandasm::AsmEmitter::Emit(*prog, nullptr, options->CompilerOptions().targetApiVersion,
         options->CompilerOptions().targetApiSubVersion);
+    if (pandaFile == nullptr) {
+        std::cerr << "Error: Failed to emit program" << std::endl;
+        return false;
+    }
     const uint8_t *buffer = pandaFile->GetBase();
     size_t size = pandaFile->GetPtr().GetSize();
     std::string content(reinterpret_cast<const char*>(buffer), size);
     std::string base64Output = util::Base64Encode(content);
     std::cout << base64Output << std::endl;
+    return true;
 }
 
 static void DumpPandaFileSizeStatistic(std::map<std::string, size_t> &stat)
@@ -184,8 +189,7 @@ static bool GenerateProgram(std::map<std::string, panda::es2panda::util::Program
     if (programsInfo.size() == 1) {
         auto *prog = &(programsInfo.begin()->second->program);
         if (options->OutputFiles().empty() && options->CompilerOutput().empty()) {
-            GenerateBase64Output(prog, options);
-            return true;
+            return GenerateBase64Output(prog, options);
         }
 
         // Disable generating cached files when cross-program optimization is required, to prevent cached files from

@@ -34,6 +34,10 @@ bool DepsRelationResolver::CollectCommonjsAndJsonRecords(const std::vector<panda
         }
         ASSERT(field.metadata->GetValue().has_value());
         ASSERT(field.type.GetId() == panda_file::Type::TypeId::U8);
+        if (!field.metadata->GetValue().has_value() ||
+            field.type.GetId() != panda::panda_file::Type::TypeId::U8) {
+            return false;
+        }
         if (field.metadata->GetValue().value().GetValue<uint8_t>() > 0) {
             if (collectedCommonjsJsonRecords_.insert(recordName).second) {
                 resolvedDepsRelation_[progKey].insert(recordName);
