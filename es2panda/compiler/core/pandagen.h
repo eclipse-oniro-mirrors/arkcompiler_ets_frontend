@@ -351,6 +351,7 @@ public:
     void EmitAwait(const ir::AstNode *node);
 
     void CallThis(const ir::AstNode *node, VReg startReg, size_t argCount);
+    void CallThisWithName(const ir::AstNode *node, VReg startReg, size_t argCount, const util::StringView &name);
     void Call(const ir::AstNode *node, VReg startReg, size_t argCount);
     void CallSpread(const ir::AstNode *node, VReg func, VReg thisReg, VReg args);
     void SuperCall(const ir::AstNode *node, VReg startReg, size_t argCount);

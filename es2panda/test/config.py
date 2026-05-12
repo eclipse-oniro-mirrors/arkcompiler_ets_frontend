@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2024 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -29,17 +29,20 @@ API_VERSION_MAP = {
     "API18": "13.0.1.0",
     "API19": "13.0.1.0",
     "API20": "13.0.1.0",
+    "API24": "24.0.0.0",
 }
 
-ARK_JS_VM_LIST = {"API9", "API10", "API11", "API12beta1", "API12beta3", "API18"}
+ARK_JS_VM_LIST = {"API9", "API10", "API11", "API12beta1", "API12beta3", "API18", "API24"}
 
 ES2ABC_API_SUPPORT = {
     "default": ["API9", "API10", "API11", "API12beta1", "API12beta2", "API12beta3",
-                "API13", "API14", "API15", "API16", "API17", "API18"],
+                "API13", "API14", "API15", "API16", "API17", "API18", "API24"],
     "5.0": ["API9", "API10", "API11", "API12beta1", "API12beta2", "API12beta3",
             "API13", "API14", "API15", "API16", "API17"],
     "5.1": ["API9", "API10", "API11", "API12beta1", "API12beta2", "API12beta3",
             "API13",  "API14", "API15", "API16", "API17", "API18"],
+    "6.1": ["API9", "API10", "API11", "API12beta1", "API12beta2", "API12beta3",
+            "API13",  "API14", "API15", "API16", "API17", "API18", "API24"],
 }
 
 MIN_SUPPORT_BC_VERSION = "API12beta1"

@@ -1,0 +1,54 @@
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:31:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:38:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:44:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:52:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:59:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:65:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:73:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:80:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:86:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:94:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:101:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:107:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:115:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:122:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:128:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:136:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:155:1)
+
+b is not callable
+    at func_main_0 (test/compiler/js/callExpression/call-this-range-with-name.js:173:1)
+

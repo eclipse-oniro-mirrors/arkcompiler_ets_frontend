@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const e
     CompilerContext context(program->Binder(), options.isDebug, options.isDebuggerEvaluateExpressionMode,
                             options.mergeAbc, false, options.recordDebugSource,
                             debugInfoSourceFile, pkgName, program->RecordName(), patchFixHelper_,
-                            options.enableColumn);
+                            options.enableColumn, options.enableCallableName);
 
     ArenaAllocator localAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
 
