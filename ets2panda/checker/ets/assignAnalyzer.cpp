@@ -521,11 +521,9 @@ void AssignAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
     Set initsPrev = inits_;
     Set uninitsPrev = uninits_;
 
-    ScopeGuard save(firstAdr_, nextAdr_, returnAdr_, isInitialConstructor_);
+    ScopeGuard save(firstAdr_, nextAdr_, returnAdr_, isInitialConstructor_, tryFinallyDepth_);
 
-    hasTryFinallyBlock_ = func->IsAnyChild([](ir::AstNode *ast) {
-        return (ast->Type() == ir::AstNodeType::TRY_STATEMENT && ast->AsTryStatement()->FinallyBlock() != nullptr);
-    });
+    tryFinallyDepth_ = 0;
     isInitialConstructor_ = IsInitialConstructor(methodDef);
     if (!isInitialConstructor_) {
         firstAdr_ = nextAdr_;
@@ -836,29 +834,21 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNo
     Set initsTry = inits_;
     uninitsTry_ = uninits_;
 
+    const bool hasFinallyBlock = tryStmt->FinallyBlock() != nullptr;
+    if (hasFinallyBlock) {
+        ++tryFinallyDepth_;
+    }
+
     AnalyzeNode(tryStmt->Block(), currentTopLevelDecl);
 
     uninitsTry_.AndSet(uninits_);
 
-    Set initsEnd = inits_;
-    Set uninitsEnd = uninits_;
-    int nextAdrCatch = nextAdr_;
+    auto [initsEnd, uninitsEnd] = AnalyzeTryCatchClauses(tryStmt, currentTopLevelDecl, initsTry, nextAdr_);
 
-    Set initsCatchPrev = initsTry;  // NOLINT(performance-unnecessary-copy-initialization)
-    Set uninitsCatchPrev = uninitsTry_;
+    if (hasFinallyBlock) {
+        ES2PANDA_ASSERT(tryFinallyDepth_ > 0);
+        --tryFinallyDepth_;
 
-    for (const auto catchClause : tryStmt->CatchClauses()) {
-        inits_ = initsCatchPrev;
-        uninits_ = uninitsCatchPrev;
-
-        AnalyzeNode(catchClause->Body(), currentTopLevelDecl);
-
-        initsEnd.AndSet(inits_);
-        uninitsEnd.AndSet(uninits_);
-        nextAdr_ = nextAdrCatch;
-    }
-
-    if (tryStmt->FinallyBlock() != nullptr) {
         inits_ = std::move(initsTry);
         uninits_ = uninitsTry_;
 
@@ -891,14 +881,38 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNo
     uninitsTry_.AndSet(uninitsTryPrev).AndSet(uninits_);
 }
 
+std::pair<Set, Set> AssignAnalyzer::AnalyzeTryCatchClauses(const ir::TryStatement *tryStmt,
+                                                           const ir::AstNode *currentTopLevelDecl, const Set &initsTry,
+                                                           int nextAdrCatch)
+{
+    Set initsEnd = inits_;
+    Set uninitsEnd = uninits_;
+
+    Set initsCatchPrev = initsTry;  // NOLINT(performance-unnecessary-copy-initialization)
+    Set uninitsCatchPrev = uninitsTry_;
+
+    for (const auto catchClause : tryStmt->CatchClauses()) {
+        inits_ = initsCatchPrev;
+        uninits_ = uninitsCatchPrev;
+
+        AnalyzeNode(catchClause->Body(), currentTopLevelDecl);
+
+        initsEnd.AndSet(inits_);
+        uninitsEnd.AndSet(uninits_);
+        nextAdr_ = nextAdrCatch;
+    }
+
+    return {std::move(initsEnd), std::move(uninitsEnd)};
+}
+
 void AssignAnalyzer::AnalyzeBreak(const ir::BreakStatement *breakStmt)
 {
-    RecordExit(AssignPendingExit(breakStmt, inits_, uninits_, isInitialConstructor_, hasTryFinallyBlock_));
+    RecordExit(AssignPendingExit(breakStmt, inits_, uninits_, isInitialConstructor_, tryFinallyDepth_ != 0));
 }
 
 void AssignAnalyzer::AnalyzeContinue(const ir::ContinueStatement *contStmt)
 {
-    RecordExit(AssignPendingExit(contStmt, inits_, uninits_, isInitialConstructor_, hasTryFinallyBlock_));
+    RecordExit(AssignPendingExit(contStmt, inits_, uninits_, isInitialConstructor_, tryFinallyDepth_ != 0));
 }
 
 void AssignAnalyzer::AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir::AstNode *currentTopLevelDecl)
@@ -906,7 +920,7 @@ void AssignAnalyzer::AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir:
     if (retStmt->Argument() != nullptr) {
         AnalyzeNode(retStmt->Argument(), currentTopLevelDecl);
     }
-    RecordExit(AssignPendingExit(retStmt, inits_, uninits_, isInitialConstructor_, hasTryFinallyBlock_));
+    RecordExit(AssignPendingExit(retStmt, inits_, uninits_, isInitialConstructor_, tryFinallyDepth_ != 0));
 }
 
 void AssignAnalyzer::AnalyzeThrow(const ir::ThrowStatement *throwStmt, const ir::AstNode *currentTopLevelDecl)
@@ -1242,10 +1256,8 @@ void AssignAnalyzer::AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression 
 
     Set initsPrev = inits_;
     Set uninitsPrev = uninits_;
-    ScopeGuard save(firstAdr_, nextAdr_, returnAdr_, isInitialConstructor_);
-    hasTryFinallyBlock_ = func->IsAnyChild([](ir::AstNode *ast) {
-        return (ast->Type() == ir::AstNodeType::TRY_STATEMENT && ast->AsTryStatement()->FinallyBlock() != nullptr);
-    });
+    ScopeGuard save(firstAdr_, nextAdr_, returnAdr_, isInitialConstructor_, tryFinallyDepth_);
+    tryFinallyDepth_ = 0;
     isInitialConstructor_ = false;
     firstAdr_ = nextAdr_;
 
