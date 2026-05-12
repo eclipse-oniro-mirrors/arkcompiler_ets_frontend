@@ -2747,6 +2747,9 @@ void ETSGen::ConcatTemplateString(const ir::TemplateLiteral *node)
     }
     const auto node2str = [this, reg](const ir::Expression *expr) {
         expr->Compile(this);
+        if (GetAccumulatorType()->IsETSVoidType()) {
+            LoadAccumulatorUndefined(expr);
+        }
         StoreAccumulator(expr, reg);
         ToString(expr, reg);
         ES2PANDA_ASSERT(GetAccumulatorType()->IsETSStringType());
