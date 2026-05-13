@@ -181,22 +181,49 @@ ETS_INTEROP_2(ProceedToState, EtsNativePointer, EtsNativePointer, EtsInt)
 
 // CC-OFFNXT(G.FUN.01-CPP) solid logic
 // CC-OFFNXT(G.NAM.03-CPP) project code style
-EtsInt impl_GenerateTsDeclarationsFromContext(EtsNativePointer contextPtr, EtsInt fileNamesCount,
-                                              EtsStringArray inputFiles, EtsStringArray outputDeclEts,
-                                              EtsStringArray outputEts, EtsBoolean exportAll, EtsBoolean isolated,
-                                              EtsStringPtr &recordFile, EtsBoolean genAnnotations)
+EtsNativePointer impl_CreateTsDeclgen(EtsNativePointer contextPtr, EtsInt fileNamesCount, EtsStringArray inputFiles,
+                                      EtsStringArray outputDeclEts, EtsStringArray outputEts, EtsBoolean exportAll,
+                                      EtsBoolean isolated, EtsStringPtr &recordFile, EtsBoolean genAnnotations)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
     if (fileNamesCount <= 0) {
-        return 0;
+        return nullptr;
     }
 
-    return static_cast<EtsInt>(GetPublicImpl()->GenerateTsDeclarationsFromContext(
+    return static_cast<EtsNativePointer>(GetPublicImpl()->CreateTsDeclgen(
         context, fileNamesCount, const_cast<const char **>(inputFiles), const_cast<const char **>(outputDeclEts),
         const_cast<const char **>(outputEts), exportAll, isolated, recordFile.Data(), genAnnotations));
 }
-ETS_INTEROP_9(GenerateTsDeclarationsFromContext, EtsInt, EtsNativePointer, EtsInt, EtsStringArray, EtsStringArray,
+ETS_INTEROP_9(CreateTsDeclgen, EtsNativePointer, EtsNativePointer, EtsInt, EtsStringArray, EtsStringArray,
               EtsStringArray, EtsBoolean, EtsBoolean, EtsStringPtr, EtsBoolean)
+
+EtsInt impl_GenerateTsDeclarationsAfterParsed(EtsNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<EtsInt>(GetPublicImpl()->GenerateTsDeclarationsAfterParsed(declgen));
+}
+ETS_INTEROP_1(GenerateTsDeclarationsAfterParsed, EtsInt, EtsNativePointer)
+
+EtsInt impl_GenerateTsDeclarationsAfterCheck(EtsNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<EtsInt>(GetPublicImpl()->GenerateTsDeclarationsAfterCheck(declgen));
+}
+ETS_INTEROP_1(GenerateTsDeclarationsAfterCheck, EtsInt, EtsNativePointer)
+
+EtsInt impl_WriteTsDeclarations(EtsNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<EtsInt>(GetPublicImpl()->WriteTsDeclarations(declgen));
+}
+ETS_INTEROP_1(WriteTsDeclarations, EtsInt, EtsNativePointer)
+
+void impl_DestroyTsDeclgen(EtsNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    GetPublicImpl()->DestroyTsDeclgen(declgen);
+}
+ETS_INTEROP_V1(DestroyTsDeclgen, EtsNativePointer)
 
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 EtsInt impl_GenerateStaticDeclarationsFromContext(EtsNativePointer contextPtr, EtsStringPtr &outputPath)

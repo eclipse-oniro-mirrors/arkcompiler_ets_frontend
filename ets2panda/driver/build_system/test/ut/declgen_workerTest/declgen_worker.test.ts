@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -105,7 +105,11 @@ const fakeArkts = {
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
-    generateTsDeclarationsFromContext: jest.fn(),
+    createTsDeclgen: jest.fn(),
+    generateTsDeclarationsAfterParsed: jest.fn(),
+    generateTsDeclarationsAfterCheck: jest.fn(),
+    writeTsDeclarations: jest.fn(),
+    destroyTsDeclgen: jest.fn(),
     destroyConfig: jest.fn(),
     EtsScript: { fromContext: jest.fn(() => ({})) }
 };
@@ -202,7 +206,11 @@ describe('declgen_worker', () => {
         expect(fakeArkts.proceedToState).toHaveBeenCalledWith(1, 'peer', true);
         expect(fakeArkts.proceedToState).toHaveBeenCalledWith(2, 'peer', true);
         expect(fakeArkts.EtsScript.fromContext).toHaveBeenCalled();
-        expect(fakeArkts.generateTsDeclarationsFromContext).toHaveBeenCalled();
+        expect(fakeArkts.createTsDeclgen).toHaveBeenCalled();
+        expect(fakeArkts.generateTsDeclarationsAfterParsed).toHaveBeenCalled();
+        expect(fakeArkts.generateTsDeclarationsAfterCheck).toHaveBeenCalled();
+        expect(fakeArkts.writeTsDeclarations).toHaveBeenCalled();
+        expect(fakeArkts.destroyTsDeclgen).toHaveBeenCalled();
         expect(fakeArkts.destroyConfig).toHaveBeenCalled();
         expect(fakeArktsGlobal.es2panda._DestroyContext).toHaveBeenCalled();
         expect(process.send).toHaveBeenCalledWith({

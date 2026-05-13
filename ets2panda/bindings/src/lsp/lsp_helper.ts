@@ -347,7 +347,7 @@ export class Lsp {
   }
 
   private proceedPreparedContext(filePath: string, context: KNativePointer, processToCheck: boolean = true): void {
-      const packageName = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
+    const packageName = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
       ? this.moduleInfos[filePath].packageName
       : undefined;
     const buildConfig = packageName ? this.buildConfigs[packageName] : this.defaultBuildConfig;
@@ -432,7 +432,7 @@ export class Lsp {
   private generateDeclFile(filePath: string): void {
     const fileSource = this.getFileSource(filePath);
     if (getFileLanguageVersion(fileSource) === LANGUAGE_VERSION.ARKTS_1_2) {
-      const [cfg, ctx] = this.createContext(filePath) ?? [];
+      const [cfg, ctx] = this.createContext(filePath, false) ?? [];
       if (!cfg || !ctx) {
         return;
       }
@@ -450,11 +450,21 @@ export class Lsp {
         this.declFileMap[declEtsOutputPath] = filePath;
         ensurePathExists(declEtsOutputPath);
         ensurePathExists(etsOutputPath);
-        global.es2pandaPublic._GenerateTsDeclarationsFromContext(ctx, 1,
-          passStringArray([filePath]),
-          passStringArray([declEtsOutputPath]),
-          passStringArray([etsOutputPath]), 1, 0, '', 1
+        const declgen = global.es2pandaPublic._CreateTsDeclgen(ctx, 1,
+        passStringArray([filePath]),
+        passStringArray([declEtsOutputPath]),
+        passStringArray([etsOutputPath]), 1, 0, '', 1
         );
+        try {
+          global.es2pandaPublic._GenerateTsDeclarationsAfterParsed(declgen);
+          this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+          global.es2pandaPublic._GenerateTsDeclarationsAfterCheck(declgen);
+          global.es2pandaPublic._WriteTsDeclarations(declgen);
+        }
+        finally {
+          global.es2pandaPublic._DestroyTsDeclgen(declgen);
+        }
       } finally {
         this.destroyContext(cfg, ctx);
       }

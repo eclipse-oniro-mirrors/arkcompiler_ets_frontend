@@ -26,8 +26,28 @@
 
 static es2panda_Impl *impl = nullptr;
 
+int RunDeclgen(es2panda_TsDeclgen *declgen, es2panda_Context *context)
+{
+    if (auto result = impl->GenerateTsDeclarationsAfterParsed(declgen); result != 0) {
+        std::cerr << "FAILED TO GENERATE DECLARATIONS AFTER PARSED" << std::endl;
+        return result;
+    }
+    impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
+    CheckForErrors("CHECKED", context);
+    if (auto result = impl->GenerateTsDeclarationsAfterCheck(declgen); result != 0) {
+        std::cerr << "FAILED TO GENERATE DECLARATIONS AFTER CHECKED" << std::endl;
+        return result;
+    }
+    if (auto result = impl->WriteTsDeclarations(declgen); result != 0) {
+        std::cerr << "FAILED TO WRITE GENERATED DECLARATIONS" << std::endl;
+        return result;
+    }
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
+    es2panda_TsDeclgen *declgen = nullptr;
     if (argc < MIN_ARGC) {
         return INVALID_ARGC_ERROR_CODE;
     }
@@ -43,25 +63,29 @@ int main(int argc, char **argv)
     auto context = impl->CreateContextFromFile(config, argv[argc - 1]);
     if (context == nullptr) {
         std::cerr << "FAILED TO CREATE CONTEXT" << std::endl;
+        impl->DestroyConfig(config);
         return NULLPTR_CONTEXT_ERROR_CODE;
     }
 
-    impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
-    CheckForErrors("CHECKED", context);
+    impl->ProceedToState(context, ES2PANDA_STATE_PARSED);
+    CheckForErrors("PARSED", context);
+
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
     const char *inputFiles[] = {argv[argc - 1]};
     const char *outputDeclEts[] = {declName.c_str()};
     const char *outputEts[] = {"dump.ets"};
-    int result = impl->GenerateTsDeclarationsFromContext(context, 1, inputFiles, outputDeclEts, outputEts, false, true,
-                                                         "", true);
-    if (result != 0) {
-        std::cerr << "FAILED TO GENERATE DECLARATIONS" << std::endl;
-        return result;
+    declgen = impl->CreateTsDeclgen(context, 1, inputFiles, outputDeclEts, outputEts, false, true, "", true);
+    if (declgen == nullptr) {
+        std::cerr << "[ERROR] FAILED TO CREATE DECLGEN for output: " << declName << std::endl;
     }
+    std::cout << "[INFO] Created declgen for output file: " << declName << std::endl;
 
+    auto result = RunDeclgen(declgen, context);
+
+    impl->DestroyTsDeclgen(declgen);
+    impl->DestroyContext(context);
     impl->DestroyConfig(config);
-
-    return 0;
+    return result;
 }
 
 // NOLINTEND

@@ -80,7 +80,7 @@ export class Es2pandaNativeModule {
   _CreateContextFromStringWithHistory(config: KPtr, source: String, filename: String): KPtr {
     throw new Error('Not implemented');
   }
-  _GenerateTsDeclarationsFromContext(
+  _CreateTsDeclgen(
     config: KPtr,
     fileNamesCount: KUInt,
     inputFiles: Uint8Array /* string[], 4 bytes head + contents */,
@@ -90,7 +90,19 @@ export class Es2pandaNativeModule {
     isolated: KBoolean,
     recordFile: String,
     genAnnotations: KBoolean
-  ): KInt {
+  ): KPtr {
+    throw new Error('Not implemented');
+  }
+  _GenerateTsDeclarationsAfterParsed(declgen: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+  _GenerateTsDeclarationsAfterCheck(declgen: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+  _WriteTsDeclarations(declgen: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+  _DestroyTsDeclgen(declgen: KPtr): void {
     throw new Error('Not implemented');
   }
   _FormOutputPathForFile(context: KPtr, inputPath: String): KPtr {

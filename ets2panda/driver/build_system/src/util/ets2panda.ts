@@ -399,24 +399,15 @@ export class Ets2panda {
         this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
 
         let { arkts, arktsGlobal } = this.koalaModule;
+        let declgen: any = null;
         try {
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
             arktsGlobal.compilerContext = arkts.Context.createContextSimultaneousMode(
                 inputFiles
             );
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, skipDeclCheck);
-            let ast = arkts.EtsScript.fromContext();
-            this.pluginDriver.getPluginContext().setArkTSAst(ast);
-            this.pluginDriver.runPluginHook(PluginHook.PARSED);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer, skipDeclCheck);
-            ast = arkts.EtsScript.fromContext();
-            this.pluginDriver.getPluginContext().setArkTSAst(ast);
-            this.pluginDriver.runPluginHook(PluginHook.CHECKED);
-
-            arkts.generateTsDeclarationsFromContext(
+            declgen = arkts.createTsDeclgen(
                 inputFiles,
                 outputDeclEtsPaths,
                 outputEtsPaths,
@@ -425,6 +416,19 @@ export class Ets2panda {
                 staticRecordRelativePath,
                 genDeclAnnotations
             );
+            let ast = arkts.EtsScript.fromContext();
+            this.pluginDriver.getPluginContext().setArkTSAst(ast);
+            this.pluginDriver.runPluginHook(PluginHook.PARSED);
+            arkts.generateTsDeclarationsAfterParsed(declgen);
+
+            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer, skipDeclCheck);
+            ast = arkts.EtsScript.fromContext();
+            this.pluginDriver.getPluginContext().setArkTSAst(ast);
+            this.pluginDriver.runPluginHook(PluginHook.CHECKED);
+            arkts.generateTsDeclarationsAfterCheck(declgen);
+
+            arkts.writeTsDeclarations(declgen);
+
             this.logger.printInfo(`[Ets2panda] Generated 1.0 declaration file for ${inputFiles[0]}`)
         } catch (error) {
             if (error instanceof Error) {
@@ -439,6 +443,7 @@ export class Ets2panda {
             }
         } finally {
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
+            arkts.destroyTsDeclgen(declgen);
             arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
             arkts.destroyConfig(arktsGlobal.config);
         }
