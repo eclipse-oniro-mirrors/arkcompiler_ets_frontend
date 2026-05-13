@@ -152,6 +152,15 @@ void CheckExtensionIsShadowedByMethod(checker::ETSChecker *checker, checker::ETS
     CheckExtensionIsShadowedByMethod(checker, objType->SuperType(), extensionFunc, signature);
 }
 
+static bool IsThisAssignmentTarget(const ir::ThisExpression *thisNode)
+{
+    auto *parent = thisNode->Parent();
+    if (parent == nullptr || !parent->IsAssignmentExpression()) {
+        return false;
+    }
+    return parent->AsAssignmentExpression()->Left() == thisNode;
+}
+
 static void ReplaceThisInExtensionMethod(checker::ETSChecker *checker, ir::ScriptFunction *extensionFunc)
 {
     //  Skip processing of possibly invalid extension method
@@ -165,6 +174,9 @@ static void ReplaceThisInExtensionMethod(checker::ETSChecker *checker, ir::Scrip
     extensionFunc->Body()->TransformChildrenRecursively(
         [=](ir::AstNode *ast) {
             if (ast->IsThisExpression()) {
+                if (IsThisAssignmentTarget(ast->AsThisExpression())) {
+                    checker->LogError(diagnostic::ASSIGNMENT_INVALID_LHS, {}, ast->Start());
+                }
                 auto *thisParam = checker->ProgramAllocator()->New<ir::Identifier>(
                     varbinder::TypedBinder::MANDATORY_PARAM_THIS, checker->ProgramAllocator());
                 thisParam->SetRange(ast->Range());
