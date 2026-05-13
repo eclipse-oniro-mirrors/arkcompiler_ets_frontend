@@ -89,7 +89,6 @@ enum class SignatureFlags : uint32_t {
     THROWS = 1U << 16U,
     RETHROWS = 1U << 17U,
     EXTENSION_FUNCTION = 1U << 18U,
-    DUPLICATE_ASM = 1U << 19U,
     BRIDGE = 1U << 20U,
     DEFAULT = 1U << 21U,
 

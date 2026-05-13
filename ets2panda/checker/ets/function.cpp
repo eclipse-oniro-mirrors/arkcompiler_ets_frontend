@@ -1407,17 +1407,9 @@ Signature *ETSChecker::ResolveConstructExpression(ETSObjectType *type, ir::ETSNe
 // Note: this function is extracted to reduce the size of `BuildMethodSignature`
 static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *method, ETSFunctionType *funcType)
 {
-    ir::OverloadInfo &ldInfo = method->GetOverloadInfoForUpdate();
     std::vector<ETSFunctionType *> overloads {};
 
     for (ir::MethodDefinition *const currentFunc : method->Overloads()) {
-        if (currentFunc->IsDeclare() != ldInfo.isDeclare) {
-            checker->LogError(diagnostic::AMBIGUOUS_AMBIENT, {currentFunc->Id()->Name()}, currentFunc->Start());
-            method->Id()->Variable()->SetTsType(checker->GlobalTypeError());
-            return false;
-        }
-        ES2PANDA_ASSERT(currentFunc->Function() != nullptr);
-        ES2PANDA_ASSERT(currentFunc->Id() != nullptr);
         currentFunc->Function()->Id()->SetVariable(currentFunc->Id()->Variable());
         checker->BuildFunctionSignature(currentFunc->Function(), method->IsConstructor());
         if (currentFunc->Function()->Signature() == nullptr) {
@@ -1427,10 +1419,8 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
             return false;
         }
 
-        auto *const overloadType = currentFunc->TsType() != nullptr ? currentFunc->TsType()->AsETSFunctionType()
-                                                                    : checker->BuildMethodType(currentFunc->Function());
-        ldInfo.needHelperOverload |=
-            checker->CheckIdenticalOverloads(funcType, overloadType, currentFunc, ldInfo.isDeclare);
+        auto *const overloadType = checker->BuildMethodType(currentFunc->Function());
+        checker->CheckIdenticalOverloads(funcType, overloadType, currentFunc);
 
         if (currentFunc->TsType() == nullptr) {
             currentFunc->SetTsType(overloadType);
@@ -1439,20 +1429,6 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
         auto overloadSig = currentFunc->Function()->Signature();
         funcType->AddCallSignature(overloadSig);
         overloads.push_back(overloadType);
-
-        ldInfo.minArg = std::min(ldInfo.minArg, currentFunc->Function()->Signature()->MinArgCount());
-        ldInfo.maxArg = std::max(ldInfo.maxArg, currentFunc->Function()->Signature()->ArgCount());
-        ldInfo.hasRestVar |= (currentFunc->Function()->Signature()->RestVar() != nullptr);
-    }
-
-    for (size_t baseFuncCounter = 0; baseFuncCounter < overloads.size(); ++baseFuncCounter) {
-        auto *overloadType = overloads.at(baseFuncCounter);
-        for (size_t compareFuncCounter = baseFuncCounter + 1; compareFuncCounter < overloads.size();
-             compareFuncCounter++) {
-            auto *compareOverloadType = overloads.at(compareFuncCounter);
-            ldInfo.needHelperOverload |= checker->CheckIdenticalOverloads(
-                overloadType, compareOverloadType, method->Overloads()[compareFuncCounter], ldInfo.isDeclare);
-        }
     }
     return true;
 }
@@ -1463,26 +1439,14 @@ checker::Type *ETSChecker::BuildMethodSignature(ir::MethodDefinition *method)
         return method->TsType();
     }
     auto *methodId = method->Id();
-    ES2PANDA_ASSERT(methodId != nullptr);
-    ES2PANDA_ASSERT(method->Function() != nullptr);
-    if (methodId->AsIdentifier()->IsErrorPlaceHolder()) {
-        return methodId->Variable()->SetTsType(GlobalTypeError());
-    }
     method->Function()->Id()->SetVariable(methodId->Variable());
     BuildFunctionSignature(method->Function(), method->IsConstructor());
     if (method->Function()->Signature() == nullptr) {
         return methodId->Variable()->SetTsType(GlobalTypeError());
     }
     auto *funcType = BuildMethodType(method->Function());
-    method->InitializeOverloadInfo();
     if (!CollectOverload(this, method, funcType)) {
         return GlobalTypeError();
-    }
-    ir::OverloadInfo &ldInfo = method->GetOverloadInfoForUpdate();
-
-    ldInfo.needHelperOverload &= ldInfo.isDeclare;
-    if (ldInfo.needHelperOverload) {
-        LogDiagnostic(diagnostic::FUNCTION_ASM_SIG_COLLISION, {std::string(funcType->Name())}, method->Start());
     }
 
     return methodId->Variable()->SetTsType(funcType);
@@ -1554,9 +1518,6 @@ bool ETSChecker::CheckIdenticalOverloads(ETSFunctionType *func, ETSFunctionType 
         LogError(diagnostic::FUNCTION_REDECL_BY_ASM_SIG, {func->Name().Utf8()}, currentFunc->Start());
         return false;
     }
-
-    func->CallSignatures()[0]->AddSignatureFlag(SignatureFlags::DUPLICATE_ASM);
-    overload->CallSignatures()[0]->AddSignatureFlag(SignatureFlags::DUPLICATE_ASM);
 
     return true;
 }

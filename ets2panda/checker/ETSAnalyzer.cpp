@@ -2635,17 +2635,6 @@ static Signature *CreateRelaxedAnySyntheticCallSignature(ETSChecker *checker)
 
 static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Type *calleeType)
 {
-    if (calleeType->IsETSFunctionType() && calleeType->AsETSFunctionType()->HasHelperSignature() &&
-        expr->Signature() != nullptr) {
-        // Note: Only works when rechecking in DeclareOveloadLowering phase
-        auto *helperSignature = calleeType->AsETSFunctionType()->GetHelperSignature();
-        checker->LogDiagnostic(diagnostic::DUPLICATE_SIGS, {helperSignature->Function()->Id()->Name(), helperSignature},
-                               expr->Start());
-        checker->CreateOverloadSigContainer(helperSignature);
-        auto arenaSigs = StdVectorToArenaVector(checker->GetOverloadSigContainer(), checker->Allocator());
-        return checker->FirstMatchSignatures(arenaSigs, expr);
-    }
-
     if (calleeType->IsETSExtensionFuncHelperType()) {
         auto *signature =
             ResolveCallForETSExtensionFuncHelperType(calleeType->AsETSExtensionFuncHelperType(), checker, expr);

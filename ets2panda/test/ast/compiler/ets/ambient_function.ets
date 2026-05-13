@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,4 +25,5 @@ function main() {
 }
 
 
-/* @@? 21:1 Error Semantic error ESE0399: Method declaration `capset` must all ambient or non-ambient */
+/* @@? 21:1 Error Semantic error ESE0131: Function capset with this assembly signature already declared. */
+/* @@? 21:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(_: Double) => undefined' will never be selected for a call, as the preceding entity with the signature '(_: Double) => undefined' prevails. */

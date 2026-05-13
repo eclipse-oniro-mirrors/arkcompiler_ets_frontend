@@ -171,6 +171,7 @@ function main(): void {
 /* @@? 34:14 Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, protected, public), and 'native' modifiers. */
 /* @@? 37:33 Error Syntax error ESY0227: Unexpected token 'rethrows'. */
 /* @@? 37:33 Error Semantic error ESE0143: Unresolved reference rethrows */
+/* @@? 39:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 39:14 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 39:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 39:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
@@ -195,6 +196,7 @@ function main(): void {
 /* @@? 45:11 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */
 /* @@? 47:8 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 49:13 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 51:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 51:35 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
 /* @@? 51:37 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 51:40 Error Syntax error ESY0227: Unexpected token 'p'. */
@@ -207,9 +209,12 @@ function main(): void {
 /* @@? 52:5 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 52:12 Error Semantic error ESE0143: Unresolved reference q */
 /* @@? 52:23 Error Semantic error ESE0143: Unresolved reference p */
+/* @@? 55:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(...p: *ERROR_TYPE*) => Object' will never be selected for a call, as the preceding entity with the signature '(...q: FixedArray<Int>) => undefined' prevails. */
 /* @@? 55:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 59:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 59:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(...p: *ERROR_TYPE*) => Int' will never be selected for a call, as the preceding entity with the signature '(...q: FixedArray<Int>) => undefined' prevails. */
 /* @@? 59:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 63:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Int, ...p: *ERROR_TYPE*) => Int' will never be selected for a call, as the preceding entity with the signature '(...q: FixedArray<Int>) => undefined' prevails. */
 /* @@? 63:22 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 63:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 67:7 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
@@ -228,9 +233,12 @@ function main(): void {
 /* @@? 92:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
 /* @@? 93:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 103:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 103:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(...a: *ERROR_TYPE*) => undefined' will never be selected for a call, as the preceding entity with the signature '(...q: FixedArray<Int>) => undefined' prevails. */
 /* @@? 103:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 104:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 104:17 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(...b: *ERROR_TYPE*) => Long' will never be selected for a call, as the preceding entity with the signature '(...q: FixedArray<Int>) => undefined' prevails. */
 /* @@? 104:21 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 115:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 115:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 115:26 Error Syntax error ESY0227: Unexpected token 'case'. */
 /* @@? 115:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
@@ -245,6 +253,7 @@ function main(): void {
 /* @@? 115:38 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 116:5 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 119:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 119:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 119:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 119:26 Error Syntax error ESY0227: Unexpected token 'case'. */
 /* @@? 119:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
@@ -262,7 +271,7 @@ function main(): void {
 /* @@? 123:6 Error Syntax error ESY0227: Unexpected token 'abc'. */
 /* @@? 123:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error Semantic error ESE0143: Unresolved reference abc */
-/* @@? 125:1 Error Semantic error ESE0399: Method declaration `foo` must all ambient or non-ambient */
+/* @@? 125:24 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => Promise<undefined>' will never be selected for a call, as the preceding entity with the signature '(param: Object|undefined) => undefined' prevails. */
 /* @@? 127:1 Error Syntax error ESY0106: The modifier async cannot be used in an ambient context. */
 /* @@? 132:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
@@ -272,8 +281,8 @@ function main(): void {
 /* @@? 137:18 Error Syntax error ESY0227: Unexpected token '0'. */
 /* @@? 137:19 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 137:21 Error Syntax error ESY0227: Unexpected token '{'. */
-/* @@? 141:5 Error Semantic error ESE0127: No matching call signature for assertTrue(..., undefined) */
-/* @@? 141:24 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 141:5 Error Semantic error ESE0127: No matching call signature for assertTrue(undefined, undefined) */
+/* @@? 141:24 Error Semantic error ESE0046: Type 'undefined' is not compatible with type 'Boolean' at index 1 */
 /* @@? 145:18 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
 /* @@? 146:5 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 146:28 Error Semantic error ESE0087: Property 'getInner' does not exist on type 'A' */
@@ -290,8 +299,6 @@ function main(): void {
 /* @@? 162:9 Error Syntax error ESY0224: Identifier expected, got 'const'. */
 /* @@? 163:9 Error Syntax error ESY0316: Hard keyword 'new' cannot be used as identifier */
 /* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
-/* @@? 164:5 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 165:5 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
-/* @@? 298:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 305:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

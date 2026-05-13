@@ -39,14 +39,6 @@ enum class MethodDefinitionKind : uint8_t {
     EXTENSION_SET,
 };
 
-struct OverloadInfo {
-    uint32_t minArg = 0;
-    size_t maxArg = 0;
-    bool needHelperOverload = false;
-    bool isDeclare = false;
-    bool hasRestVar = false;
-};
-
 class MethodDefinition : public ClassElement {
 public:
     MethodDefinition() = delete;
@@ -153,35 +145,6 @@ public:
         return GetHistoryNodeAs<MethodDefinition>()->asyncPairMethod_;
     }
 
-    [[nodiscard]] const OverloadInfo &GetOverloadInfo() noexcept
-    {
-        auto newNode = this->GetHistoryNode()->AsMethodDefinition();
-        return newNode->overloadInfo_;
-    }
-
-    [[nodiscard]] OverloadInfo &GetOverloadInfoForUpdate() noexcept
-    {
-        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
-        return newNode->overloadInfo_;
-    }
-
-    [[nodiscard]] const OverloadInfo &GetOverloadInfo() const noexcept
-    {
-        return GetHistoryNodeAs<MethodDefinition>()->overloadInfo_;
-    }
-
-    void SetOverloadInfo(OverloadInfo &&overloadInfo)
-    {
-        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
-        newNode->overloadInfo_ = overloadInfo;
-    }
-
-    void SetOverloadInfo(OverloadInfo &overloadInfo)
-    {
-        auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
-        newNode->overloadInfo_ = overloadInfo;
-    }
-
     void SetOverloads(OverloadsT &&overloadsList)
     {
         auto newNode = this->GetOrCreateHistoryNode()->AsMethodDefinition();
@@ -215,7 +178,6 @@ public:
 
     ScriptFunction *Function();
     const ScriptFunction *Function() const;
-    void InitializeOverloadInfo();
     PrivateFieldKind ToPrivateFieldKind(bool isStatic) const override;
 
     [[nodiscard]] MethodDefinition *Clone(ArenaAllocator *allocator, AstNode *parent) override;
@@ -263,7 +225,6 @@ private:
     // Pair method points at the original async method in case of an implement method and vice versa an implement
     // method's point at the async method
     EPtr<MethodDefinition> asyncPairMethod_;
-    OverloadInfo overloadInfo_;
     MethodDefinitionKind kind_;
     bool isDefault_ = false;
 };

@@ -825,21 +825,6 @@ public:
     void WrongContextErrorClassifyByType(ir::Identifier *ident);
     Type *CreateSyntheticTypeFromOverload(varbinder::Variable *const var);
 
-    void CreateOverloadSigContainer(Signature *overloadHelperSig)
-    {
-        if (!overloadSigContainer_.empty()) {
-            overloadSigContainer_.pop_back();
-        }
-        ES2PANDA_ASSERT(overloadSigContainer_.empty());
-        overloadSigContainer_.insert(overloadSigContainer_.end(), overloadHelperSig);
-    }
-
-    std::vector<Signature *> &GetOverloadSigContainer()
-    {
-        ES2PANDA_ASSERT(overloadSigContainer_.size() == 1);
-        return overloadSigContainer_;
-    }
-
     ObjectInstantiationMap &GetObjectInstantiationMap()
     {
         return objectInstantiationMap_;
@@ -873,7 +858,6 @@ public:
         constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
         elementStack_.clear();
-        overloadSigContainer_.clear();
     }
 
     // This helper finds the intersection of two callSignatures sets
@@ -985,7 +969,6 @@ private:
     std::recursive_mutex mtx_;
     evaluate::ScopedDebugInfoPlugin *debugInfoPlugin_ {nullptr};
     std::unordered_set<ir::TSTypeAliasDeclaration *> elementStack_;
-    std::vector<Signature *> overloadSigContainer_;
     std::unordered_set<ETSChecker *> readdedChecker_;
     bool permitRelaxedAny_ {false};
     std::unordered_map<std::string, checker::ETSStringType *> stringLiteralTypes_;
