@@ -22,4 +22,5 @@ function sum(...numbers: [number, number, number]): number {
 /* @@? 17:12 Warning Warning W670214: This cast can be excessive because it always succeeds */
 /* @@? 17:25 Warning Warning W670214: This cast can be excessive because it always succeeds */
 /* @@? 17:38 Warning Warning W670214: This cast can be excessive because it always succeeds */
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, "one") */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for sum(Double, Double, "one") */
+/* @@@ label2 Error Semantic error ESE0046: Type '"one"' is not compatible with type 'Double' at index 3 */

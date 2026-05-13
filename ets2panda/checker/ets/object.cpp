@@ -2650,7 +2650,6 @@ Type *ETSChecker::TryToInstantiate(Type *const type, ArenaAllocator *const alloc
 void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const ETSObjectType *target,
                                            const ir::Identifier *ident)
 {
-    ir::AstNode *parent = nullptr;
     if (property->TsType() != nullptr && !property->TsType()->IsTypeError()) {
         if (property->TsType()->IsETSMethodType()) {
             auto funcType = property->TsType()->AsETSFunctionType();
@@ -2658,10 +2657,12 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
                            ? funcType->CallSignatures()[0]->OwnerVar()
                            : property;
             ES2PANDA_ASSERT(property != nullptr);
-        } else if (ident->Parent()->IsMemberExpression() &&
-                   ident->Parent()->AsMemberExpression()->Object()->IsSuperExpression() &&
-                   !IsVariableGetterSetterClassProperty(property)) {
+        } else if (auto *parent = ident->Parent(); parent->IsMemberExpression() &&
+                                                   parent->AsMemberExpression()->Object()->IsSuperExpression() &&
+                                                   !IsVariableGetterSetterClassProperty(property)) {
             LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {ident->Name()}, ident->Start());
+            const_cast<ir::AstNode *>(parent)->AsMemberExpression()->SetPreferredType(GlobalTypeError());
+            return;
         }
     }
 
@@ -2674,16 +2675,18 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
         return;
     }
 
+    ir::AstNode *parent = node->Parent();
     if (node->IsClassDefinition()) {
-        parent = node->Parent()->Parent();
-    } else if (node->Parent() != nullptr) {
-        parent = node->Parent();
+        parent = parent->Parent();
     }
 
     bool isExported = node->IsExported() || node->IsDefaultExported();
     if (parent != nullptr && parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed() &&
         !parent->AsClassDefinition()->IsDeclare() && !isExported) {
         LogError(diagnostic::NOT_EXPORTED, {ident->Name(), target->Name()}, ident->Start());
+        if (auto *identParent = ident->Parent(); identParent->IsMemberExpression()) {
+            const_cast<ir::AstNode *>(identParent)->AsMemberExpression()->SetPreferredType(GlobalTypeError());
+        }
     }
 }
 

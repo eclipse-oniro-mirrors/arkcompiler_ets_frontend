@@ -18,6 +18,6 @@ function testInfo() {
 }
 
 /* @@? 17:5 Error Semantic error ESE0132: The type of parameter 'DataView' cannot be inferred */
-/* @@? 17:17 Error Semantic error ESE0127: No matching indexing signature for $_get((() => undefined)) */
-/* @@? 17:20 Error Semantic error ESE0144: Function name 'main' used in the wrong context */
+/* @@? 17:17 Error Semantic error ESE0127: No matching indexing signature for $_get(main) */
 /* @@? 17:20 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
+/* @@? 17:20 Error Semantic error ESE0144: Function name 'main' used in the wrong context */

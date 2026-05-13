@@ -88,10 +88,6 @@ ast/parser/ts/InvalidStatements.ts
 #30971
 ast/compiler/ets/nagative_trailingLambda_abort.ets
 
-#31069
-ast/compiler/type_error_test.ets
-ast/parser/ets/super_field.ets
-
 #32155
 ast/compiler/ets/annotation_new.ets
 
