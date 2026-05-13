@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,7 @@
 
 class A {
     set foo(p: int) {}
-    final get foo/* @@ label */(): int {}
+    final get foo(): int {}
 }
 
-
-/* @@@ label Error Semantic error ESE0220: Getter and setter methods must have the same accessor modifiers */
+/* @@? 18:18 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */

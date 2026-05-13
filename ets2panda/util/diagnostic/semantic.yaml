@@ -41,10 +41,6 @@ semantic:
   id: 257
   message: "Abstract class has abstract method {}"
 
-- name: ACCESSORS_MOD_MISMATCH
-  id: 220
-  message: "Getter and setter methods must have the same accessor modifiers"
-
 - name: ACCESSOR_OVERRIDE_PROP
   id: 45073
   message: "'{}' is defined as a property in class '{}', but is overridden here in '{}' as an accessor."
