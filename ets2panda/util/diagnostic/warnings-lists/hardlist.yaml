@@ -74,6 +74,18 @@ hardlist:
 
 - name: "export_type_anno"
   paths:
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin011_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/esbuiltin001_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/esbuiltin002_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtinsarraytest_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/json_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/map_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/number_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/regexp_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/set_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/sparsearray_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/string_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/typeArray_standard_test_static/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/util_standard_test_static/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/bitVector_standard_test_static/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/stringDecoder_standard_test_static/.*"
