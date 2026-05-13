@@ -20,4 +20,4 @@ export type MyA = A
 export type {MyA}
 
 
-/* @@? 20:14 Warning Warning W0000: Duplicated export aliases for 'MyA'. */
+/* @@? 20:14 Warning Warning W0073: Duplicated export aliases for 'MyA'. */

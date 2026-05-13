@@ -1,4 +1,3 @@
-[re_export_4.ets:17:9] Warning W0000: Duplicated export aliases for 'foo'.
 {
   "type": "Program",
   "statements": [
@@ -359,3 +358,4 @@
   }
 }
 [re_export_4.ets:17:1] Semantic error ESE0362: Ambiguous export 'foo'
+[re_export_4.ets:17:9] Warning W0073: Duplicated export aliases for 'foo'.

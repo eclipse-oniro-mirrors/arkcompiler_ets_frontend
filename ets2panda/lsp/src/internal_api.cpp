@@ -885,6 +885,36 @@ int CreateCodeForDiagnostic(const util::DiagnosticBase *error)
     return static_cast<int>(error->Type()) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + code;
 }
 
+// Find the export statement range from source code for duplicate export diagnostics.
+// Searches backward from pos for "export" keyword and forward for '}' to determine the range.
+static bool GetExportRangeFromSource(const std::string &sourceCode, size_t pos, size_t &rangeStart, size_t &rangeEnd)
+{
+    // Search backward for "export"
+    auto keywordPos = sourceCode.rfind("export", pos);
+    if (keywordPos == std::string::npos || keywordPos > pos) {
+        return false;
+    }
+    rangeStart = keywordPos;
+
+    // Search forward for '}' or ';' from pos
+    size_t endPos = pos;
+    while (endPos < sourceCode.size() && sourceCode[endPos] != '}' && sourceCode[endPos] != ';') {
+        endPos++;
+    }
+    if (endPos >= sourceCode.size()) {
+        return false;
+    }
+    // Include the closing delimiter
+    if (sourceCode[endPos] == '}') {
+        // Find the ';' after '}'
+        size_t semiPos = endPos + 1;
+        rangeEnd = (semiPos < sourceCode.size() && sourceCode[semiPos] == ';') ? semiPos + 1 : endPos + 1;
+    } else {
+        rangeEnd = endPos + 1;
+    }
+    return true;
+}
+
 Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
@@ -895,7 +925,26 @@ Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::Diagn
     lexer::SourceLocation sourceStartLocation;
     lexer::SourceLocation sourceEndLocation;
     std::string source;
-    if (touchingToken == nullptr) {
+    // For duplicate export aliases warnings, locate the range from source code
+    constexpr int duplicateExportAliasesCode =
+        static_cast<int>(util::DiagnosticType::WARNING) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + 73;
+    auto code = CreateCodeForDiagnostic(&error);
+    if (code == duplicateExportAliasesCode) {
+        auto sourceCode = std::string(ctx->parserProgram->SourceCode());
+        size_t rangeStart = 0;
+        size_t rangeEnd = 0;
+        if (GetExportRangeFromSource(sourceCode, offset, rangeStart, rangeEnd)) {
+            auto [startLine, startCol] = index.GetLocation(rangeStart);
+            auto [endLine, endCol] = index.GetLocation(rangeEnd);
+            sourceStartLocation = lexer::SourceLocation(startLine, startCol, ctx->parserProgram);
+            sourceEndLocation = lexer::SourceLocation(endLine, endCol, ctx->parserProgram);
+            source = std::string(sourceCode.substr(rangeStart, rangeEnd - rangeStart));
+        } else {
+            sourceStartLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
+            sourceEndLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
+            source = "";
+        }
+    } else if (touchingToken == nullptr) {
         sourceStartLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
         sourceEndLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
         source = "";
@@ -908,7 +957,6 @@ Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::Diagn
     auto range = Range(Position(sourceStartLocation.line, sourceStartLocation.col),
                        Position(sourceEndLocation.line, sourceEndLocation.col));
     auto severity = GetSeverity(error.Type());
-    auto code = CreateCodeForDiagnostic(&error);
     std::string message = error.Message();
     auto codeDescription = CodeDescription("test code description");
     auto tags = std::vector<DiagnosticTag>();
@@ -1256,7 +1304,7 @@ std::vector<CodeFixActionInfo> GetCodeFixesAtPositionImpl(es2panda_Context *cont
                                                           size_t endPosition, std::vector<int> &errorCodes,
                                                           CodeFixOptions &codeFixOptions)
 {
-    TextSpan textspan = TextSpan(startPosition, endPosition);
+    TextSpan textspan = TextSpan(startPosition, endPosition - startPosition);
     std::vector<CodeFixActionInfo> actions;
     auto formatContext = GetFormatContext(codeFixOptions.options);
 

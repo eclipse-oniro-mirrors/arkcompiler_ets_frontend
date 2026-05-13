@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,14 +60,29 @@ TextRange FixUnreachableCode::HandleUnreachableAfterTerminator(ir::AstNode *stmt
         return {0, 0};
     }
 
+    // Find the terminator statement before this unreachable statement
+    int terminatorIdx = -1;
     for (int j = idx - 1; j >= 0; --j) {
         const ir::AstNode *prev = stmts[j];
         if (prev != nullptr && IsTerminatorStmt(prev)) {
-            return {stmt->Start().index, stmt->End().index};
+            terminatorIdx = j;
+            break;
+        }
+    }
+    if (terminatorIdx < 0) {
+        return {0, 0};
+    }
+
+    // Collect all unreachable statements after the terminator (batch delete)
+    size_t rangeStart = stmt->Start().index;
+    size_t rangeEnd = stmt->End().index;
+    for (size_t k = static_cast<size_t>(terminatorIdx) + 1; k < stmts.size(); ++k) {
+        if (stmts[k] != nullptr && stmts[k]->End().index > rangeEnd) {
+            rangeEnd = stmts[k]->End().index;
         }
     }
 
-    return {0, 0};
+    return {rangeStart, rangeEnd};
 }
 
 TextRange FixUnreachableCode::HandleUnreachableStatement(ir::AstNode *statement)
@@ -128,7 +143,7 @@ void FixUnreachableCode::MakeChangeForUnreachableCode(ChangeTracker &changeTrack
                                                       size_t pos)
 {
     TextRange range = {0, 0};
-    auto *token = GetTouchingToken(context, pos, false);
+    auto *token = GetTouchingTokenRightMatch(context, pos, false);
     if (token == nullptr) {
         return;
     }

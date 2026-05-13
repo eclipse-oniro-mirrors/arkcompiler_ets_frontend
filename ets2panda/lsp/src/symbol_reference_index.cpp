@@ -26,6 +26,7 @@
 #include "public/public.h"
 
 #include <algorithm>
+#include <cmath>
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
@@ -433,6 +434,203 @@ std::string GetIndexedFileSource(const std::string &fileName)
         return "";
     }
     return it->second.source;
+}
+
+double JaccardSimilarity(const std::string &a, const std::string &b)
+{
+    std::unordered_set<char> setA;
+    std::unordered_set<char> setB;
+
+    for (char ch : a) {
+        if (isalpha(ch) != 0) {
+            setA.insert(tolower(ch));
+        }
+    }
+
+    for (char ch : b) {
+        if (isalpha(ch) != 0) {
+            setB.insert(tolower(ch));
+        }
+    }
+
+    size_t intersectionSize = 0;
+    for (char ch : setA) {
+        if (setB.find(ch) != setB.end()) {
+            intersectionSize++;
+        }
+    }
+
+    size_t unionSize = setA.size() + setB.size() - intersectionSize;
+    if (unionSize == 0) {
+        return 0.0;
+    }
+
+    return static_cast<double>(intersectionSize) / unionSize;
+}
+
+int GetSubstitutionCost(char c1, char c2)
+{
+    constexpr int SUBSTITUTE_COST = 20;
+    constexpr int CASE_COST = 1;
+
+    if (c1 == c2) {
+        return 0;
+    }
+    if (tolower(static_cast<unsigned char>(c1)) == tolower(static_cast<unsigned char>(c2))) {
+        return CASE_COST;
+    }
+    return SUBSTITUTE_COST;
+}
+
+int LevenshteinDistance(const std::string &s1, const std::string &s2, int maxDistance)
+{
+    // Use scaled costs: insert/delete = COST_SCALE, substitute = 2*COST_SCALE, case-only change = 1
+    constexpr int COST_SCALE = 10;
+    constexpr int INSERT_COST = COST_SCALE;
+    constexpr int DELETE_COST = COST_SCALE;
+
+    auto len1 = static_cast<int>(s1.size());
+    auto len2 = static_cast<int>(s2.size());
+
+    if (len1 == 0) {
+        return len2 <= maxDistance ? len2 * COST_SCALE : -1;
+    }
+    if (len2 == 0) {
+        return len1 <= maxDistance ? len1 * COST_SCALE : -1;
+    }
+
+    std::vector<int> prevRow(len2 + 1);
+    std::vector<int> currRow(len2 + 1);
+
+    // Initialize first row
+    for (int j = 0; j <= len2; j++) {
+        prevRow[j] = j * INSERT_COST;
+    }
+
+    int maxDistanceScaled = maxDistance * COST_SCALE;
+
+    for (int i = 1; i <= len1; i++) {
+        currRow[0] = i * DELETE_COST;
+        int rowMin = currRow[0];
+
+        for (int j = 1; j <= len2; j++) {
+            int cost = GetSubstitutionCost(s1[i - 1], s2[j - 1]);
+
+            currRow[j] = std::min({prevRow[j] + DELETE_COST, currRow[j - 1] + INSERT_COST, prevRow[j - 1] + cost});
+            rowMin = std::min(rowMin, currRow[j]);
+        }
+
+        // Early termination: if the minimum value in current row exceeds threshold, give up
+        if (rowMin > maxDistanceScaled) {
+            return -1;
+        }
+
+        std::swap(prevRow, currRow);
+    }
+
+    int result = prevRow[len2];
+    return result <= maxDistanceScaled ? result : -1;
+}
+
+bool IsCaseOnlyDifference(const std::string &a, const std::string &b)
+{
+    if (a.length() != b.length()) {
+        return false;
+    }
+    for (size_t i = 0; i < a.length(); i++) {
+        if (tolower(static_cast<unsigned char>(a[i])) != tolower(static_cast<unsigned char>(b[i]))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::string GetSpellingSuggestion(const std::string &name, const std::vector<std::string> &candidates)
+{
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    constexpr double MAX_LENGTH_DIFF_RATIO = 0.34;
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    constexpr double BEST_DISTANCE_RATIO = 0.4;
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    constexpr int COST_SCALE = 10;
+
+    if (candidates.empty()) {
+        return "";
+    }
+
+    int maximumLengthDifference = std::max(2, static_cast<int>(name.length() * MAX_LENGTH_DIFF_RATIO));
+    int bestDistance = static_cast<int>(name.length() * BEST_DISTANCE_RATIO * COST_SCALE) + 1;
+    std::string bestCandidate;
+
+    for (const auto &candidate : candidates) {
+        if (candidate == name) {
+            continue;
+        }
+
+        // Skip if length difference is too large
+        int lengthDiff = static_cast<int>(candidate.length()) - static_cast<int>(name.length());
+        if (lengthDiff < 0) {
+            lengthDiff = -lengthDiff;
+        }
+        if (lengthDiff > maximumLengthDifference) {
+            continue;
+        }
+
+        // Skip short names (< 3) unless it's a case-only difference
+        if (candidate.length() < 3 && name.length() < 3 && !IsCaseOnlyDifference(candidate, name)) {
+            continue;
+        }
+
+        int distance = LevenshteinDistance(name, candidate, bestDistance / COST_SCALE + 1);
+        if (distance >= 0 && distance < bestDistance) {
+            bestDistance = distance;
+            bestCandidate = candidate;
+        }
+    }
+
+    return bestCandidate;
+}
+
+std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const std::string &fileName)
+{
+    std::vector<std::string> candidates;
+
+    for (const auto &[symbolId, refInfos] : g_symbolReferences) {
+        for (const auto &refInfo : refInfos) {
+            if (refInfo.fileName != fileName) {
+                continue;
+            }
+            // Extract symbol name from g_fileIndices source using the reference position
+            auto fileIt = g_fileIndices.find(refInfo.fileName);
+            if (fileIt == g_fileIndices.end()) {
+                continue;
+            }
+            const auto &source = fileIt->second.source;
+            if (refInfo.start >= source.size()) {
+                continue;
+            }
+
+            // Extract the identifier text from source at reference position
+            size_t nameStart = refInfo.start;
+            size_t nameEnd = nameStart;
+            while (nameEnd < source.size() && (isalnum(source[nameEnd]) != 0 || source[nameEnd] == '_')) {
+                nameEnd++;
+            }
+            std::string symbolName = source.substr(nameStart, nameEnd - nameStart);
+            if (symbolName.empty()) {
+                continue;
+            }
+
+            candidates.push_back(symbolName);
+        }
+    }
+
+    std::string best = GetSpellingSuggestion(query, candidates);
+    std::vector<std::string> result;
+    if (!best.empty()) {
+        result.push_back(best);
+    }
+    return result;
 }
 
 }  // namespace ark::es2panda::lsp

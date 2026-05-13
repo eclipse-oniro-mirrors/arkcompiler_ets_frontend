@@ -16,5 +16,5 @@
 export {foo} from "./export"
 export /* @@ label */{foo} from "./export_2"
 
-/* @@? 17:23 Warning Warning W0000: Duplicated export aliases for 'foo'. */
+/* @@? 17:23 Warning Warning W0073: Duplicated export aliases for 'foo'. */
 /* @@? 17:1 Error Semantic error ESE0362: Ambiguous export 'foo' */

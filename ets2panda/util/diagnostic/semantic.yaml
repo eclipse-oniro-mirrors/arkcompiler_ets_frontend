@@ -222,6 +222,7 @@ semantic:
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
   message: "Await in non-aysnc function is deprecated, please move it to async function."
+  code_fix_ids: [FixRemoveIllegalAwait]
 
 - name: BINOP_INCOMPARABLE
   id: 114
@@ -1278,7 +1279,7 @@ semantic:
 - name: PROPERTY_NONEXISTENT
   id: 87
   message: "Property '{}' does not exist on type '{}'"
-  code_fix_ids: [AddLocalVariableForClass]
+  code_fix_ids: [AddLocalVariableForClass, FixSpellingForProperty]
 
 - name: PROP_ACCESS_WITHOUT_THIS
   id: 145
@@ -1549,6 +1550,7 @@ semantic:
 - name: TYPE_NOT_FOUND
   id: 371
   message: "Cannot find type '{}'."
+  code_fix_ids: [FixSpellingForType]
 
 - name: TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE
   id: 7

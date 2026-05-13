@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <vector>
 #include "api.h"
 #include "public/es2panda_lib.h"
 
@@ -33,6 +34,10 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context);
 bool RemoveSymbolReferenceIndexForFile(const std::string &fileName);
 References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t position);
 std::string GetIndexedFileSource(const std::string &fileName);
+double JaccardSimilarity(const std::string &a, const std::string &b);
+int LevenshteinDistance(const std::string &s1, const std::string &s2, int maxDistance);
+std::string GetSpellingSuggestion(const std::string &name, const std::vector<std::string> &candidates);
+std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const std::string &fileName);
 
 }  // namespace ark::es2panda::lsp
 
