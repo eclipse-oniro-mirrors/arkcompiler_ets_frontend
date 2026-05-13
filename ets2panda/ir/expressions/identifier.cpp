@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -121,10 +121,6 @@ void Identifier::Dump(ir::SrcDumper *dumper) const
     }
 
     auto name = std::string(Name());
-    std::string propertyStr = compiler::Signatures::PROPERTY.data();
-    if (UNLIKELY(name.find(propertyStr) != std::string::npos)) {
-        name.replace(name.find(propertyStr), propertyStr.length(), "_$property$_");
-    }
     dumper->Add(name);
     if (IsOptional()) {
         dumper->Add("?");

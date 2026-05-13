@@ -3039,9 +3039,6 @@ ir::ClassProperty *ETSChecker::FindClassProperty(const ETSObjectType *const obje
 bool ETSChecker::IsInitializedProperty(const ir::ClassDefinition *classDefinition, const ir::ClassProperty *prop)
 {
     std::string targetName = prop->Key()->AsIdentifier()->Name().Mutf8();
-    if (targetName.find(compiler::Signatures::PROPERTY) == 0) {
-        targetName = targetName.substr(compiler::Signatures::PROPERTY.size());
-    }
 
     for (auto *it : classDefinition->Body()) {
         if (it->IsClassProperty() && it->AsClassProperty()->Value() != nullptr) {
