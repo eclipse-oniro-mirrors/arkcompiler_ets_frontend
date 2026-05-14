@@ -219,38 +219,8 @@
                                   {
                                     "type": "ReturnStatement",
                                     "argument": {
-                                      "type": "TSAsExpression",
-                                      "expression": {
-                                        "type": "NumberLiteral",
-                                        "value": 3,
-                                        "loc": {
-                                          "start": {
-                                            "line": 17,
-                                            "column": 49,
-                                            "program": "lambda_infer_type_param2.ets"
-                                          },
-                                          "end": {
-                                            "line": 17,
-                                            "column": 50,
-                                            "program": "lambda_infer_type_param2.ets"
-                                          }
-                                        }
-                                      },
-                                      "typeAnnotation": {
-                                        "type": "ETSPrimitiveType",
-                                        "loc": {
-                                          "start": {
-                                            "line": 17,
-                                            "column": 54,
-                                            "program": "lambda_infer_type_param2.ets"
-                                          },
-                                          "end": {
-                                            "line": 17,
-                                            "column": 59,
-                                            "program": "lambda_infer_type_param2.ets"
-                                          }
-                                        }
-                                      },
+                                      "type": "NumberLiteral",
+                                      "value": 3,
                                       "loc": {
                                         "start": {
                                           "line": 17,

@@ -388,38 +388,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 18,
-                                      "column": 30,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 18,
-                                      "column": 32,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 18,
-                                      "column": 36,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 18,
-                                      "column": 40,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 18,
@@ -2698,38 +2668,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 48,
-                                      "column": 33,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 48,
-                                      "column": 35,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 48,
-                                      "column": 39,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 48,
-                                      "column": 44,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 48,
@@ -7192,38 +7132,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 106,
-                                      "column": 27,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 106,
-                                      "column": 29,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 106,
-                                      "column": 33,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 106,
-                                      "column": 36,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 106,
@@ -9272,38 +9182,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 134,
-                                      "column": 30,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 134,
-                                      "column": 32,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 134,
-                                      "column": 36,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 134,
-                                      "column": 40,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 134,
@@ -11237,38 +11117,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 161,
-                                      "column": 33,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 161,
-                                      "column": 35,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 161,
-                                      "column": 39,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 161,
-                                      "column": 44,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 161,
@@ -12972,38 +12822,8 @@
                             },
                             "arguments": [
                               {
-                                "type": "TSAsExpression",
-                                "expression": {
-                                  "type": "NumberLiteral",
-                                  "value": 42,
-                                  "loc": {
-                                    "start": {
-                                      "line": 186,
-                                      "column": 36,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 186,
-                                      "column": 38,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
-                                "typeAnnotation": {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 186,
-                                      "column": 42,
-                                      "program": "cast_expressions.ets"
-                                    },
-                                    "end": {
-                                      "line": 186,
-                                      "column": 48,
-                                      "program": "cast_expressions.ets"
-                                    }
-                                  }
-                                },
+                                "type": "NumberLiteral",
+                                "value": 42,
                                 "loc": {
                                   "start": {
                                     "line": 186,

@@ -23,11 +23,18 @@
 #include "compiler/lowering/util.h"
 #include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
+#include "ir/ts/tsAsExpression.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
 #include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::compiler {
+
+static ir::PrimitiveType TryExtractPrimitiveType(ir::TypeNode *constraint);
+template <bool EXPLICIT = false>
+static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constraint, ir::Literal *literal);
+template <bool EXPLICIT>
+static bool CheckCastNumber(util::DiagnosticEngine *de, ir::TypeNode *constraint, lexer::Number &number);
 
 static ir::PrimitiveType GetPrimitiveType(const lexer::Number &number)
 {
@@ -346,6 +353,48 @@ private:
         auto res = TestLiteral(test) ? conseq : altern;
         auto resNode = res->Clone(context_->allocator, nullptr)->AsExpression()->AsLiteral();
         return resNode;
+    }
+
+    ir::Literal *Calculate(ir::TSAsExpression *expr)
+    {
+        ES2PANDA_ASSERT(inputs_.size() == 1U);
+        if (!inputs_[0]->IsNumberLiteral()) {
+            return nullptr;
+        }
+
+        auto number = inputs_[0]->AsNumberLiteral()->Number();
+        if (!CheckCastNumber<true>(context_->diagnosticEngine, expr->TypeAnnotation(), number)) {
+            return nullptr;
+        }
+
+        auto *literal = CreateNumberLiteral(number);
+        auto *const targetType = expr->TypeAnnotation()->TsType();
+        if (targetType != nullptr) {
+            literal->SetTsType(targetType);
+        }
+        return literal;
+    }
+
+    void SetFloatLiteralStringRepresentation(ir::NumberLiteral *numberLiteral)
+    {
+        auto &number = numberLiteral->Number();
+        if (!number.IsFloat()) {
+            return;
+        }
+
+        std::string str;
+        if (std::isnan(number.GetFloat())) {
+            str = "Float.NaN";
+        } else if (!std::isfinite(number.GetFloat())) {
+            str = std::signbit(number.GetFloat()) ? "Float.NEGATIVE_INFINITY" : "Float.POSITIVE_INFINITY";
+        } else {
+            str = numberLiteral->ToString();
+        }
+
+        if (std::isfinite(number.GetFloat())) {
+            str += "f";
+        }
+        number.SetStr(util::UString(str, context_->allocator).View());
     }
 
     // NOTE(dkofanov): Template literals will be simplified only if each subexpression is constant.
@@ -1133,11 +1182,19 @@ private:
     ir::NumberLiteral *CreateNumberLiteral(T val)
     {
         auto resNum = lexer::Number(val);
-        auto *resNode = util::NodeAllocator::Alloc<ir::NumberLiteral>(context_->allocator, resNum);
+        return CreateNumberLiteral(resNum);
+    }
+
+    ir::NumberLiteral *CreateNumberLiteral(lexer::Number number)
+    {
+        auto *resNode = util::NodeAllocator::Alloc<ir::NumberLiteral>(context_->allocator, number);
         ES2PANDA_ASSERT(resNode != nullptr);
 
-        // Some hack to set string representation of lexer::Number
-        resNode->Number().SetStr(util::UString(resNode->ToString(), context_->allocator).View());
+        if (resNode->Number().IsFloat()) {
+            SetFloatLiteralStringRepresentation(resNode);
+        } else {
+            resNode->Number().SetStr(util::UString(resNode->ToString(), context_->allocator).View());
+        }
 
         resNode->SetFolded();
         return resNode;
@@ -1165,7 +1222,7 @@ static bool TryCastInteger(lexer::Number &number)
     return false;
 }
 
-auto TryExtractPrimitiveType(ir::TypeNode *constraint)
+static ir::PrimitiveType TryExtractPrimitiveType(ir::TypeNode *constraint)
 {
     if (constraint->IsETSPrimitiveType()) {
         return constraint->AsETSPrimitiveType()->GetPrimitiveType();
@@ -1202,7 +1259,8 @@ static void LogErrorUnconverted(ir::PrimitiveType dst, ir::PrimitiveType src, ut
     }
 }
 
-static bool TryCastInteger(lexer::Number &number, ir::PrimitiveType dst)
+template <bool EXPLICIT>
+static bool TryCastNumber(lexer::Number &number, ir::PrimitiveType dst)
 {
     bool converted = false;
     switch (dst) {
@@ -1210,13 +1268,14 @@ static bool TryCastInteger(lexer::Number &number, ir::PrimitiveType dst)
             // Keep the original floating-point literal kind. An unsuffixed real literal
             // must stay 'double', while an 'f'-suffixed literal must stay 'float'.
             // The checker applies regular assignment/widening rules afterwards.
-            converted = number.IsReal() || TryCastInteger<double>(number);
+            converted = (!EXPLICIT && number.IsReal()) || TryCastInteger<double>(number);
             break;
         case ir::PrimitiveType::FLOAT:
             // Do not narrow a real literal to 'float' during constant-expression lowering:
             // `3.14` must remain `double` so the checker can report the CTE for
-            // `double -> float`, while `3.14f` already has the correct type.
-            converted = number.IsReal() || TryCastInteger<float>(number);
+            // `double -> float`, while `3.14f` already has the correct type. Explicit
+            // `as float` is different: it must perform the conversion.
+            converted = (!EXPLICIT && number.IsReal()) || TryCastInteger<float>(number);
             break;
         case ir::PrimitiveType::LONG:
             converted = TryCastInteger<int64_t>(number);
@@ -1236,6 +1295,7 @@ static bool TryCastInteger(lexer::Number &number, ir::PrimitiveType dst)
     return converted;
 }
 
+template <bool EXPLICIT>
 static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constraint, ir::Literal *literal)
 {
     if (literal->IsStringLiteral()) {
@@ -1269,8 +1329,26 @@ static bool CheckCastLiteral(util::DiagnosticEngine *de, ir::TypeNode *constrain
     }
 
     auto &number = literal->AsNumberLiteral()->Number();
-    bool converted = TryCastInteger(number, dst);
-    if (!converted) {
+    bool converted = TryCastNumber<EXPLICIT>(number, dst);
+    if (!converted && !EXPLICIT) {
+        LogErrorUnconverted(dst, GetPrimitiveType(number), de, constraint->Start());
+    }
+    return converted;
+}
+
+template <bool EXPLICIT>
+static bool CheckCastNumber(util::DiagnosticEngine *de, ir::TypeNode *constraint, lexer::Number &number)
+{
+    auto dst = TryExtractPrimitiveType(constraint);
+    if (dst == ir::PrimitiveType::VOID) {
+        return false;
+    }
+    if (dst == ir::PrimitiveType::BOOLEAN || dst == ir::PrimitiveType::CHAR) {
+        return false;
+    }
+
+    bool converted = TryCastNumber<EXPLICIT>(number, dst);
+    if (!converted && !EXPLICIT) {
         LogErrorUnconverted(dst, GetPrimitiveType(number), de, constraint->Start());
     }
     return converted;
@@ -1317,6 +1395,8 @@ ir::Literal *NodeCalculator::Calculate(DAGNode *node)
         case ir::AstNodeType::IDENTIFIER:
         case ir::AstNodeType::MEMBER_EXPRESSION:
             return SubstituteConstant();
+        case ir::AstNodeType::TS_AS_EXPRESSION:
+            return Calculate(node->Ir()->AsTSAsExpression());
         case ir::AstNodeType::CONDITIONAL_EXPRESSION:
             return SubstituteConstantConditionally();
         case ir::AstNodeType::UNARY_EXPRESSION:
@@ -1353,7 +1433,34 @@ static ir::Expression *ExtendIdentToQualifiedName(ir::Identifier *ident)
     return rvnode;
 }
 
-// CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
+static bool IsFoldableParent(ir::AstNode *parent, ir::Expression *rvnode)
+{
+    if (parent->IsUnaryExpression() || parent->IsBinaryExpression() || parent->IsConditionalExpression()) {
+        return true;
+    }
+    if (auto vardecl = Cast<ir::VariableDeclarator>(parent); (vardecl != nullptr) && vardecl->Init() == rvnode) {
+        return true;
+    }
+    if (auto propdecl = Cast<ir::ClassProperty>(parent); (propdecl != nullptr) && propdecl->Value() == rvnode) {
+        return true;
+    }
+    if (auto enummemb = Cast<ir::TSEnumMember>(parent); (enummemb != nullptr) && enummemb->Init() == rvnode) {
+        return true;
+    }
+    if (auto casestmt = Cast<ir::SwitchCaseStatement>(parent); (casestmt != nullptr) && casestmt->Test() == rvnode) {
+        return true;
+    }
+    if (auto assignexp = Cast<ir::AssignmentExpression>(parent);
+        (assignexp != nullptr) && assignexp->Right() == rvnode) {
+        return true;
+    }
+    if (auto asExpr = Cast<ir::TSAsExpression>(parent); (asExpr != nullptr) && asExpr->Expr() == rvnode) {
+        return true;
+    }
+    return false;
+}
+
+// CC-OFFNXT(huge_method[C++], G.FUD.05, huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
 static ir::Expression *AsRValue(ir::Identifier *ident)
 {
     ir::Expression *rvnode = ExtendIdentToQualifiedName(ident);
@@ -1362,27 +1469,11 @@ static ir::Expression *AsRValue(ir::Identifier *ident)
     }
     auto parent = rvnode->Parent();
     ES2PANDA_ASSERT(parent != nullptr);
-    if (parent->IsUnaryExpression() || parent->IsBinaryExpression() || parent->IsConditionalExpression()) {
+    if (IsFoldableParent(parent, rvnode)) {
         return rvnode;
     }
     auto isIn = [rvnode](auto &args) { return std::find(args.begin(), args.end(), rvnode) != args.end(); };
     // A list of contexts in which there will be an attempt to fold ident/mexp. May be revisited.
-    if (auto vardecl = Cast<ir::VariableDeclarator>(parent); (vardecl != nullptr) && vardecl->Init() == rvnode) {
-        return rvnode;
-    }
-    if (auto propdecl = Cast<ir::ClassProperty>(parent); (propdecl != nullptr) && propdecl->Value() == rvnode) {
-        return rvnode;
-    }
-    if (auto enummemb = Cast<ir::TSEnumMember>(parent); (enummemb != nullptr) && enummemb->Init() == rvnode) {
-        return rvnode;
-    }
-    if (auto casestmt = Cast<ir::SwitchCaseStatement>(parent); (casestmt != nullptr) && casestmt->Test() == rvnode) {
-        return rvnode;
-    }
-    if (auto assignexp = Cast<ir::AssignmentExpression>(parent);
-        (assignexp != nullptr) && assignexp->Right() == rvnode) {
-        return rvnode;
-    }
     if (auto callexp = Cast<ir::CallExpression>(parent); (callexp != nullptr) && isIn(callexp->Arguments())) {
         return rvnode;
     }
@@ -1584,6 +1675,8 @@ void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
         } else {
             AddDNode(tmpl, tmpl->Expressions());
         }
+    } else if (auto asExpr = Cast<ir::TSAsExpression>(node); asExpr != nullptr) {
+        AddDNode(asExpr, asExpr->Expr());
     } else if (auto unop = Cast<ir::UnaryExpression>(node); unop != nullptr) {
         AddDNode(unop, unop->Argument());
     } else if (auto binop = Cast<ir::BinaryExpression>(node); binop != nullptr) {

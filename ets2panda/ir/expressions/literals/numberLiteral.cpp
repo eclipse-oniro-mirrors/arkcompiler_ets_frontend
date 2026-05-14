@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -356,6 +356,11 @@ static void FpToString(FpType number, std::string &resStr)
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     std::array<char, BUF_SIZE + 2U> buffer;
+    if (number == static_cast<FpType>(0) && std::signbit(number)) {
+        resStr = "-0";
+        return;
+    }
+
     if (INT_MIN < number && number < static_cast<FpType>(INT_MAX)) {
         if (auto intVal = static_cast<int32_t>(number); number == static_cast<double>(intVal)) {
             IntegerToString(intVal, resStr);
