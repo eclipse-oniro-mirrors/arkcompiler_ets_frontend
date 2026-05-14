@@ -396,8 +396,11 @@ void ETSObjectType::AddSignatureFromOverload(std::vector<Signature *> &signature
         util::StringView methodName =
             method->IsIdentifier() ? method->AsIdentifier()->Name() : method->AsTSQualifiedName()->Right()->Name();
         CollectSignaturesForSyntheticType(methodSignature, methodName, UpdateMethodSearchFlags(flags));
-        if (!methodSignature.empty()) {
-            signatures.emplace_back(methodSignature.front());
+        for (auto *signature : methodSignature) {
+            if (std::find(signatures.begin(), signatures.end(), signature) != signatures.end()) {
+                continue;
+            }
+            signatures.emplace_back(signature);
         }
     }
 }

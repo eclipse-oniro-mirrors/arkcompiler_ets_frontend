@@ -449,11 +449,12 @@ Type *ETSChecker::CreateSyntheticTypeFromOverload(varbinder::Variable *const var
             return GetGlobalTypesHolder()->GlobalTypeError();
         }
         ES2PANDA_ASSERT(functionType->IsETSFunctionType());
-        auto *signature = functionType->AsETSFunctionType()->CallSignatures().front();
-        if (std::find(signatures.begin(), signatures.end(), signature) != signatures.end()) {
-            continue;
+        for (auto *signature : functionType->AsETSFunctionType()->CallSignatures()) {
+            if (std::find(signatures.begin(), signatures.end(), signature) != signatures.end()) {
+                continue;
+            }
+            signatures.emplace_back(signature);
         }
-        signatures.emplace_back(signature);
     }
 
     for (auto &s : signatures) {

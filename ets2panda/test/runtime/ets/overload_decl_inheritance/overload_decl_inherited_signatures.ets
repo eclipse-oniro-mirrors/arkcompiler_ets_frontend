@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,20 @@
  * limitations under the License.
  */
 
-function foo2(a: int): int {
-	return 2;
+class Base {
+    foo(n: int): int {
+        return n;
+    }
 }
 
-overload foo {Math.abs, foo2 };
+class Derived extends Base {
+    fooString(s: string): string {
+        return s;
+    }
 
-/* @@? 20:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(a: Int) => Int' will never be selected for a call, as the preceding entity with the signature '(x: Int) => Int' prevails. */
-/* @@? 20:15 Error Semantic error ESE503573: All overloaded functions must be declared in the same module or namespace scope. */
+    overload foo { foo, fooString }
+}
+
+let derived = new Derived();
+arktest.assertEQ(derived.foo(5), 5);
+arktest.assertEQ(derived.foo("abc"), "abc");
