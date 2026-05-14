@@ -75,10 +75,6 @@ softlist:
   paths:
   - ".*/test/xts/.*"
   - ".*/arkui/ace_engine/.*"
-  - ".*/multimodalinput/input/.*"
-  - ".*/foundation/window/window_manager/.*"
-  - ".*/base/useriam/user_auth_framework/.*"
-  - ".*/foundation/multimedia/av_session/.*"
   - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ets"
   - ".*/api/@ohos\\.arkui\\.inspector\\.static\\.d\\.ets"
   - ".*/api/@ohos\\.data\\.cloudData\\.d\\.ets"
