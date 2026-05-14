@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,4 +29,4 @@ Error().fromEntries() {}
 /* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foos() */
 /* @@? 26:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 26:1 Error Semantic error ESE0127: No matching call signature for fromEntries() */
-/* @@? 26:9 Error Semantic error ESE0207: 'fromEntries' is a static property of 'Error' */
+/* @@? 26:9 Error Semantic error ESE0207: 'fromEntries' is a static property of 'Object' */

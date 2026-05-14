@@ -62,6 +62,43 @@ std::pair<varbinder::Variable *, const ETSObjectType *> ETSChecker::FindVariable
     return {resolved, classType};
 }
 
+static const ETSObjectType *GetStaticPropertyDeclType(const varbinder::LocalVariable *property)
+{
+    if (!ETSChecker::IsVariableStatic(property)) {
+        return nullptr;
+    }
+
+    if (property->TsType() != nullptr && property->TsType()->IsETSMethodType()) {
+        auto *funcType = property->TsType()->AsETSFunctionType();
+        if (funcType->CallSignatures().empty()) {
+            return nullptr;
+        }
+
+        auto *owner = funcType->CallSignatures()[0]->Owner();
+        if (owner == nullptr || owner->GetDeclNode() == nullptr || !owner->GetDeclNode()->IsClassDefinition()) {
+            return nullptr;
+        }
+
+        return owner;
+    }
+
+    if (property->Declaration() == nullptr || property->Declaration()->Node() == nullptr) {
+        return nullptr;
+    }
+
+    auto *owner = property->Declaration()->Node()->Parent();
+    if (owner == nullptr || !owner->IsClassDefinition() || owner->AsClassDefinition()->TsType() == nullptr) {
+        return nullptr;
+    }
+
+    auto *ownerTsType = owner->AsClassDefinition()->TsType();
+    if (ownerTsType == nullptr || !ownerTsType->IsETSObjectType()) {
+        return nullptr;
+    }
+
+    return ownerTsType->AsETSObjectType();
+}
+
 varbinder::Variable *ETSChecker::FindVariableInGlobal(const ir::Identifier *const identifier,
                                                       const varbinder::ResolveBindingOptions options)
 {
@@ -186,7 +223,10 @@ void ETSChecker::NotResolvedError(ir::Identifier *const ident, const varbinder::
     }
 
     if (IsVariableStatic(classVar)) {
-        LogError(diagnostic::STATIC_PROP_INVALID_CTX, {ident->Name(), classType}, ident->Start());
+        const auto *declaringType =
+            classVar->IsLocalVariable() ? GetStaticPropertyDeclType(classVar->AsLocalVariable()) : nullptr;
+        LogError(diagnostic::STATIC_PROP_INVALID_CTX,
+                 {ident->Name(), declaringType != nullptr ? declaringType : classType}, ident->Start());
     } else {
         if (HasStatus(CheckerStatus::IN_STATIC_CONTEXT)) {
             LogUnresolvedReferenceError(ident);
