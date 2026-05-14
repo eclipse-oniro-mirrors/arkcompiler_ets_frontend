@@ -44,6 +44,9 @@ private:
     static Offset<> BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type);
     static Offset<> BuildUnionType(FlatBufferBuilder &builder, const checker::ETSUnionType *type);
     static Offset<> BuildStringLiteralType(FlatBufferBuilder &builder, const checker::ETSStringType *type);
+    static Offset<> BuildArrayType(FlatBufferBuilder &builder, const checker::ETSArrayType *type);
+    static Offset<> BuildTupleType(FlatBufferBuilder &builder, const checker::ETSTupleType *type);
+    static Offset<> BuildFunctionType(FlatBufferBuilder &builder, const checker::ETSFunctionType *type);
     static std::pair<Metadata::Type, Offset<>> BuildType(FlatBufferBuilder &builder, const checker::Type *type);
     static Offset<Vector<Offset<Metadata::TypeParamDecl>>> BuildTypeParams(
         FlatBufferBuilder &builder, const ArenaVector<checker::Type *> &astTypeParams);

@@ -3787,7 +3787,7 @@ bool TSDeclGenerator::GenerateTsDeclarationsAfterParsedPhase()
 {
     if (isSimultaneousMode_) {
         bool result = true;
-        context_->parserProgram->GetExternalDecls()->Visit([&](parser::Program *prog) {
+        context_->parserProgram->GetExternalPrograms()->Visit([&](parser::Program *prog) {
             if (!prog->IsBuiltSimultaneously()) {
                 return;
             }
@@ -3804,7 +3804,7 @@ bool TSDeclGenerator::GenerateTsDeclarationsAfterCheckPhase()
 {
     if (isSimultaneousMode_) {
         bool result = true;
-        context_->parserProgram->GetExternalDecls()->Visit([&](parser::Program *prog) {
+        context_->parserProgram->GetExternalPrograms()->Visit([&](parser::Program *prog) {
             if (!prog->IsBuiltSimultaneously()) {
                 return;
             }

@@ -539,7 +539,7 @@ pandasm::Program *Emitter::DumpDebugInfo()
             prog_->recordTable.erase(it);
         }
     }
-    prog_->metadata = std::move(context_->metadata);
+    prog_->metadata = context_->metadata;
 
     auto *prog = prog_;
     prog_ = nullptr;

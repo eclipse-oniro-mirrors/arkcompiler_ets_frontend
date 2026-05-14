@@ -78,13 +78,13 @@ private:
 };
 
 template <util::ModuleKind... KINDS>
-class ExternalDeclsImpl {
+class ExternalProgramsImpl {
 public:
     template <util::ModuleKind KIND>
     using ProgramsSubmap = ArenaVector<ProgramAdapter<KIND> *>;
     using TransitiveExternals = std::tuple<ProgramsSubmap<KINDS>...>;
 
-    explicit ExternalDeclsImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...) {}
+    explicit ExternalProgramsImpl() : transitiveExternals_(ProgramsSubmap<KINDS>()...) {}
 
     template <typename SubmapT>
     static constexpr auto GetModuleKindFromSubmapType()
@@ -121,8 +121,7 @@ public:
     // - explicitly requested metadata-based programs to include
     //     can be included either by 'WITH_METADATA_PROGRAMS' flag or by mention in 'KINDS_TO_VISIT'
     // NOTE(dkofanov): 'SHOULD_UNPACK_PACKAGE' should be removed when packages are merged.
-    template <bool SHOULD_UNPACK_PACKAGE = true, bool WITH_METADATA_PROGRAMS = false,
-              util::ModuleKind... KINDS_TO_VISIT, typename ProgramVisitor>
+    template <bool SHOULD_UNPACK_PACKAGE = true, util::ModuleKind... KINDS_TO_VISIT, typename ProgramVisitor>
     void Visit(const ProgramVisitor &cb)
     {
         static_assert(((INVOCABLE<ProgramVisitor, KINDS>) || ...), "Visitor isn't invocable for any kind of programs");
@@ -157,11 +156,7 @@ public:
                 }
             }
         };
-        if constexpr (WITH_METADATA_PROGRAMS && ((KINDS_TO_VISIT != util::ModuleKind::METADATA_DECL) || ...)) {
-            VisitSubmaps<KINDS_TO_VISIT..., util::ModuleKind::METADATA_DECL>(submapVisitor);
-        } else {
-            VisitSubmaps<KINDS_TO_VISIT...>(submapVisitor);
-        }
+        VisitSubmaps<KINDS_TO_VISIT...>(submapVisitor);
     }
 
     void Add(Program *progToInsert);
@@ -206,8 +201,8 @@ public:
 
     // NOTE(dkofanov): 'ModuleKind::PACKAGE' should be replaced from here and stored there implicitly. They should be
     // merged at 'PackageImplicitImport' phase and added as just a 'ModuleKind::MODULE' with a single AST-tree.
-    using ExternalDecls = ExternalDeclsImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
-                                            ModuleKind::ETSCACHE_DECL, ModuleKind::METADATA_DECL>;
+    using ExternalPrograms = ExternalProgramsImpl<ModuleKind::MODULE, ModuleKind::SOURCE_DECL, ModuleKind::PACKAGE,
+                                                  ModuleKind::ETSCACHE_DECL, ModuleKind::METADATA_DECL>;
 
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
@@ -315,14 +310,14 @@ public:
 
     void SetGlobalClass(ir::ClassDefinition *globalClass);
 
-    ExternalDecls *GetExternalDecls()
+    ExternalPrograms *GetExternalPrograms()
     {
-        return &externalDecls_;
+        return &externaPrograms_;
     }
 
-    const ExternalDecls *GetExternalDecls() const
+    const ExternalPrograms *GetExternalPrograms() const
     {
-        return &externalDecls_;
+        return &externaPrograms_;
     }
 
     // Function scopes to be compiled during code gen that belong to this program. Owned by the program (not by the
@@ -515,9 +510,9 @@ private:
         isASTlowered_ = false;
     }
 
-    void SetExternalDecls(const ExternalDecls *externalDecls)
+    void SetExternalPrograms(const ExternalPrograms *externalPrograms)
     {
-        externalDecls_ = *externalDecls;
+        externaPrograms_ = *externalPrograms;
     }
 
 private:
@@ -541,7 +536,7 @@ private:
 
     // NOTE(dkofanov): externalSources_ are stored only in main program. This field should be moved to
     // 'public_lib::Context'.
-    ExternalDecls externalDecls_;
+    ExternalPrograms externaPrograms_;
 
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;

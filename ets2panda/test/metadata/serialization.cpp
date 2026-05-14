@@ -157,7 +157,7 @@ TEST_F(MetadataTestSerialization, enums)
     const auto program =
         RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
 
-    const auto root = GetRoot(program->metadata.data());
+    const auto root = GetRoot(program->metadata.begin()->second.data());
     ASSERT_NE(root, nullptr);
     ASSERT_NE(root->enums(), nullptr);
 

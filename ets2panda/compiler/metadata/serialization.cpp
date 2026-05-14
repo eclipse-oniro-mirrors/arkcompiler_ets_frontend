@@ -18,14 +18,14 @@
 #include "ir/base/classDefinition.h"
 #include "ir/base/methodDefinition.h"
 #include "schemaMetadataGenerated.h"
-#include "checker/types/ts/unionType.h"
+#include "checker/types/ets/etsTupleType.h"
 
 #include <string>
 
 namespace ark::es2panda::compiler {
 
-using checker::ETSObjectFlags, checker::Type;
-using ir::MethodDefinition, ir::ClassDefinition;
+using namespace panda_file;
+using checker::ETSObjectFlags, checker::Type, ir::MethodDefinition, ir::ClassDefinition;
 
 constexpr auto NOT_BUILTIN_TYPE_KIND = static_cast<Metadata::BuiltinTypeKind>(-1);
 
@@ -39,7 +39,6 @@ const std::map<ETSObjectFlags, Metadata::BuiltinTypeKind> MetadataSerializationP
     {ETSObjectFlags::BUILTIN_LONG, Metadata::BuiltinTypeKind::BuiltinTypeKind_long_},
     {ETSObjectFlags::BUILTIN_FLOAT, Metadata::BuiltinTypeKind::BuiltinTypeKind_float_},
     {ETSObjectFlags::BUILTIN_DOUBLE, Metadata::BuiltinTypeKind::BuiltinTypeKind_double_},
-    {ETSObjectFlags::BUILTIN_ARRAY, Metadata::BuiltinTypeKind::BuiltinTypeKind_array},
 };
 
 Metadata::BuiltinTypeKind MetadataSerializationPhase::GetBuiltinTypeKind(const Type *etsType)
@@ -187,10 +186,54 @@ Offset<> MetadataSerializationPhase::BuildUnionType(FlatBufferBuilder &builder, 
 
 Offset<> MetadataSerializationPhase::BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type)
 {
-    // Non-class type references are not supported yet
-    ES2PANDA_ASSERT(type->GetDeclNode()->IsClassDefinition());
-    const auto declNode = type->GetDeclNode()->AsClassDefinition();
-    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(std::string(declNode->InternalName()))).Union();
+    const auto decl = type->GetDeclNode();
+
+    ES2PANDA_ASSERT(decl->IsClassDefinition() ||
+                    decl->IsTSInterfaceDeclaration());  // other decls are not supported yet
+
+    util::StringView declName;
+    if (decl->IsClassDefinition()) {
+        declName = decl->AsClassDefinition()->InternalName();
+    } else if (decl->IsTSInterfaceDeclaration()) {
+        declName = decl->AsTSInterfaceDeclaration()->InternalName();
+    } else {
+        return 0;
+    }
+
+    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(std::string(declName))).Union();
+}
+
+Offset<> MetadataSerializationPhase::BuildArrayType(FlatBufferBuilder &builder, const checker::ETSArrayType *type)
+{
+    const auto [componentTypeKind, componentTypeOff] = BuildType(builder, type->ElementType());
+    return Metadata::CreateArrayType(builder, componentTypeKind, componentTypeOff,
+                                     type->HasTypeFlag(checker::TypeFlag::READONLY), type->IsValueArray())
+        .Union();
+}
+
+Offset<> MetadataSerializationPhase::BuildFunctionType(FlatBufferBuilder &builder, const checker::ETSFunctionType *type)
+{
+    const auto signature = type->ArrowSignature();
+    std::vector<Offset<Metadata::FunctionTypeParam>> params;
+    for (auto const &param : signature->Params()) {
+        const auto [paramTypeKind, paramTypeOff] = BuildType(builder, param->TsType());
+        const auto paramName = builder.CreateSharedString(param->Name().Utf8());
+        params.emplace_back(Metadata::CreateFunctionTypeParam(builder, paramName, paramTypeKind, paramTypeOff));
+    }
+    const auto [returnTypeKind, returnTypeOff] = BuildType(builder, signature->ReturnType());
+    return Metadata::CreateFunctionType(builder, builder.CreateVector(params), returnTypeKind, returnTypeOff).Union();
+}
+
+Offset<> MetadataSerializationPhase::BuildTupleType(FlatBufferBuilder &builder, const checker::ETSTupleType *type)
+{
+    std::vector<uint8_t> typeKinds;
+    std::vector<Offset<>> types;
+    for (auto const &componentType : type->GetTupleTypesList()) {
+        const auto [componentTypeKind, componentTypeOff] = BuildType(builder, componentType);
+        types.emplace_back(componentTypeOff);
+        typeKinds.emplace_back(componentTypeKind);
+    }
+    return Metadata::CreateTupleType(builder, builder.CreateVector(typeKinds), builder.CreateVector(types)).Union();
 }
 
 Offset<> MetadataSerializationPhase::BuildTypeParameterType(FlatBufferBuilder &builder,
@@ -215,6 +258,18 @@ std::pair<Metadata::Type, Offset<>> MetadataSerializationPhase::BuildType(FlatBu
 
     if (type->IsETSTypeParameter()) {
         return {Metadata::Type::Type_Ref, BuildTypeParameterType(builder, type->AsETSTypeParameter())};
+    }
+
+    if (type->IsETSArrayType()) {
+        return {Metadata::Type::Type_Array, BuildArrayType(builder, type->AsETSArrayType())};
+    }
+
+    if (type->IsETSFunctionType()) {
+        return {Metadata::Type::Type_Function, BuildFunctionType(builder, type->AsETSFunctionType())};
+    }
+
+    if (type->IsETSTupleType()) {
+        return {Metadata::Type::Type_Tuple, BuildTupleType(builder, type->AsETSTupleType())};
     }
 
     const auto builtinTypeKind = GetBuiltinTypeKind(type);
@@ -309,7 +364,8 @@ void MetadataSerializationPhase::ProcessStatement(FlatBufferBuilder &builder, co
 
 bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
 {
-    if (!Context()->config->options->IsEmitMetadata()) {
+    const auto ctx = Context();
+    if (!ctx->config->options->IsEmitMetadata()) {
         return true;
     }
 
@@ -327,7 +383,12 @@ bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
         ProcessStatement(builder, *stmt, classes, annotations, enums);
     }
 
-    Context()->metadata = GetMetadataBytes(builder, classes, annotations, enums);
+    const auto pkgName = std::string(program->ModuleName());
+    const auto moduleName = std::string(program->SourceFile().GetFileName().Utf8());
+    const auto isMetadataRecorded = classes.size() != 0 || annotations.size() != 0 || enums.size() != 0;
+
+    ctx->metadata[MetadataModuleId(pkgName, moduleName)] =
+        isMetadataRecorded ? GetMetadataBytes(builder, classes, annotations, enums) : std::vector<uint8_t>();
 
     return true;
 }

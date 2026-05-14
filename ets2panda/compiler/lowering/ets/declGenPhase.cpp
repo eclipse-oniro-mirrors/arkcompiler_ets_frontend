@@ -110,19 +110,21 @@ static bool CallDeclgen(public_lib::Context *ctx, parser::Program *prog, const s
 static void HandleGenStdlib(public_lib::Context *ctx)
 {
     // Should be handled the same way as other packages.
-    for (auto *pkg : ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::PACKAGE>()) {
+    for (auto *pkg : ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::PACKAGE>()) {
         CallDeclgen(ctx, pkg);
     }
 }
 
 bool DeclGenPhase::Perform()
 {
-    if (Context()->config->options->IsGenStdlib()) {
+    const auto options = Context()->config->options;
+    // To record both decls and metadata for stdlib, both corresponding compilation options should be passed
+    if (options->IsGenStdlib() && (!options->IsEmitMetadata() || options->IsEmitDeclaration())) {
         HandleGenStdlib(Context());
         return true;
     }
 
-    if (!Context()->config->options->IsEmitDeclaration()) {
+    if (!options->IsEmitDeclaration()) {
         return true;
     }
 
@@ -133,7 +135,7 @@ bool DeclGenPhase::Perform()
     }
 
     bool success = true;
-    program->GetExternalDecls()->Visit<true, false, util::ModuleKind::MODULE>(
+    program->GetExternalPrograms()->Visit<true, util::ModuleKind::MODULE>(
         [ctx = Context(), &nameCachePath, &success](auto *extProg) {
             if (!CallDeclgen(ctx, extProg, nameCachePath)) {
                 success = false;

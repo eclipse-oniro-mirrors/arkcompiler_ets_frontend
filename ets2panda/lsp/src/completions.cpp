@@ -415,13 +415,13 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
         return false;
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    if (ctx->parserProgram == nullptr || ctx->parserProgram->GetExternalDecls() == nullptr) {
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->GetExternalPrograms() == nullptr) {
         return false;
     }
 
     g_externalApiCollects.clear();
 
-    const auto &externalSourceDecls = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
+    const auto &externalSourceDecls = ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::SOURCE_DECL>();
     for (const auto &extProg : externalSourceDecls) {
         if (extProg == nullptr) {
             continue;
@@ -433,7 +433,7 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
         CollectExportsFromProgram(extProg, path);
     }
 
-    const auto &externalModules = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::MODULE>();
+    const auto &externalModules = ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::MODULE>();
     for (const auto &extProg : externalModules) {
         if (extProg == nullptr) {
             continue;
@@ -880,7 +880,7 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
     std::vector<CompletionEntry> completions;
     std::string lowerInput = ToLowerCase(input);
 
-    program->GetExternalDecls()->Visit([&allExternalSourceExports](auto *extProg) {
+    program->GetExternalPrograms()->Visit([&allExternalSourceExports](auto *extProg) {
         auto exports = GetExportsFromProgram(extProg);
         if (!exports.empty()) {
             allExternalSourceExports.insert(allExternalSourceExports.end(), exports.begin(), exports.end());

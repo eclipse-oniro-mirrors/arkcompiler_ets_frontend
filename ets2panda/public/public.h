@@ -51,7 +51,7 @@ struct ConfigImpl {
     std::list<diagnostic::DiagnosticKind> diagnosticKindStorage;
 };
 
-using ArenaExternalSources = parser::Program::ExternalDecls;
+using ArenaExternalSources = parser::Program::ExternalPrograms;
 using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;
@@ -145,7 +145,7 @@ struct Context {
     bool isLspUsage = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
-    std::vector<uint8_t> metadata;
+    panda_file::MetadataByModules metadata;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:

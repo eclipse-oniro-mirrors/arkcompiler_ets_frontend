@@ -44,7 +44,7 @@ LocationId GetLocationId(ark::es2panda::ir::AstNode *node, ark::es2panda::parser
         absPath = std::string {program->AbsoluteName()};
     }
     auto top = node->GetTopStatement();
-    for (auto [_, p] : program->GetExternalDecls()->Direct()) {
+    for (auto [_, p] : program->GetExternalPrograms()->Direct()) {
         auto programAbsPath = std::string {p->AbsoluteName()};
         auto ast = p->Ast();
         if (ast == top) {

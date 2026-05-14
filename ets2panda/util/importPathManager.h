@@ -23,10 +23,10 @@
 
 #include "util/ustring.h"
 #include "util/enumbitops.h"
-#include "util/path.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include "parser/program/ImportCache.h"
+#include "libarkfile/metadata_accessor.h"
 
 #include <unordered_set>
 #include <functional>
@@ -196,9 +196,9 @@ private:
     template <bool SHOULD_CACHE = true>
     void SetBinFile(const panda_file::File &pf)
     {
-        auto metadataSpan = GetMetadata(pf);
-        std::vector<uint8_t> metadata;
-        metadata.insert(metadata.begin(), metadataSpan.begin(), metadataSpan.end());
+        ma_.SetFile(pf);
+        const auto metadata =
+            ma_.GetMetadataFor(panda_file::MetadataAccessor::BuildModuleId(ModuleName(), ResolvedSource()));
         SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(AbcPath(), std::move(metadata));
     }
 
@@ -218,11 +218,11 @@ private:
         return !IsAbsolute(std::string(resolvedSource_));
     }
 
-    inline static Span<const uint8_t> GetMetadata(const panda_file::File &pf);
-
 private:
     ArenaString resolvedSource_ {ERROR_LITERAL};
     ArenaString moduleName_ {};
+
+    panda_file::MetadataAccessor ma_;
 
     // NOTE(dkofanov): #32416 These fields should be refactored:
     const ArkTsConfig::ExternalModuleData *extModuleData_ {};

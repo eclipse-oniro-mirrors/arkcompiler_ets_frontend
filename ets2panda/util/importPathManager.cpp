@@ -566,7 +566,7 @@ parser::Program *ImportPathManager::SetupProgramForDebugInfoPlugin(std::string_v
     auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
                                                     emptyIdent, ir::ModuleFlag::ETSSCRIPT, importInfo.Lang(), program);
     program->SetAst(etsModule);
-    Context()->parserProgram->GetExternalDecls()->Add(program);
+    Context()->parserProgram->GetExternalPrograms()->Add(program);
     return program;
 }
 
@@ -766,11 +766,6 @@ void ImportInfo::LinkFractionInfoToPackage(const parser::PackageProgram &package
     moduleName_ = package.ModuleName();
 }
 
-inline Span<const uint8_t> ImportInfo::GetMetadata(const panda_file::File &pf)
-{
-    return pf.GetMetadata();
-}
-
 void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package, ImportInfo *importInfo)
 {
     auto *fraction = SearchResolved(*importInfo);
@@ -788,7 +783,7 @@ void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package,
         fraction = IntroduceProgram<ModuleKind::MODULE>(*importInfo);
     } else {
         // remove a package-fraction that was mistakenly added as a module without enclosing package:
-        auto &modules = GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
+        auto &modules = GetGlobalProgram()->GetExternalPrograms()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modules.begin(), modules.end(), fraction);
         modules.erase(newEndIt, modules.end());
     }
@@ -1132,7 +1127,7 @@ void ImportPathManager::ExtractEtscacheToFile(const panda_file::File &pf, const 
                     auto elemDeclaration = annotationAccessor.GetElement(0);
                     auto valueDeclaration = elemDeclaration.GetScalarValue();
                     const auto idAnnoDeclaration = valueDeclaration.Get<panda_file::File::EntityId>();
-                    ss << panda_file::StringDataToString(pf.GetStringData(idAnnoDeclaration));
+                    ss << pf.GetStringData(idAnnoDeclaration).ToString();
                     return true;
                 });
             std::string declText = ss.str();
@@ -1272,7 +1267,7 @@ public:
                effectiveIt != progsByResolvedPath_.end() && effectiveIt->second != program;
     }
 
-    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
+    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalPrograms *extPrograms)
     {
         auto *globalProgram = ipm_->GetGlobalProgram();
         if (newProg == globalProgram) {
@@ -1286,7 +1281,7 @@ public:
             if (AlreadyInExternalSources(newProg, extDecls)) {
                 return;
             }
-            extDecls->Add(newProg);
+            extPrograms->Add(newProg);
         } else {
             [[maybe_unused]] const auto &imd = newProg->GetImportInfo();
             ES2PANDA_ASSERT((imd.Kind() == ModuleKind::SOURCE_DECL) || (imd.Kind() == ModuleKind::ETSCACHE_DECL));
@@ -1335,11 +1330,11 @@ public:
         newPkg->AppendFraction(fractionBeingParsed->As<ModuleKind::MODULE>());
 
         // fixup externalSources:
-        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
+        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalPrograms()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modulePrograms.begin(), modulePrograms.end(), fractionBeingParsed);
         if (newEndIt != modulePrograms.end()) {
             modulePrograms.erase(newEndIt, modulePrograms.end());
-            ipm_->GetGlobalProgram()->GetExternalDecls()->Add(newPkg);
+            ipm_->GetGlobalProgram()->GetExternalPrograms()->Add(newPkg);
         } else {
             ES2PANDA_ASSERT(ipm_->GetGlobalProgram() == fractionBeingParsed);
         }
@@ -1411,7 +1406,7 @@ void ImportPathManager::InitParseQueueForSimult()
         util::ImportInfo importInfo {*this, sourceName};
         importInfo.SetTextFile<ModuleKind::MODULE>(std::string(sourceName), DE());
         auto *program = IntroduceProgram(importInfo);
-        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalPrograms());
         program->SetIsBuiltSimultaneously();
     }
 }
@@ -1498,7 +1493,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     if (auto resolved = SearchResolved(*importInfo); resolved != nullptr) {
         // #32418.
         if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
-            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalDecls());
+            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalPrograms());
             auto *exact = SearchResolvedExact(*importInfo);
             if (exact != nullptr && exact != resolved) {
                 resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalDecls());
@@ -1531,7 +1526,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
             auto *resolvedProgram = SearchResolved(*importInfo);
             resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalDecls());
             if (program != resolvedProgram) {
-                resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+                resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalPrograms());
             }
         }
     }
@@ -1570,7 +1565,7 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
         return;
     }
 
-    if (pf->IsMetadataUsed()) {
+    if (pf->IsMetadataEnabled()) {
         importInfo->SetBinFile(*pf);
         return;
     }

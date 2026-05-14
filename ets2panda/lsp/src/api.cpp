@@ -896,7 +896,7 @@ static parser::Program *GetProgramByFileName(public_lib::Context *ctx, std::stri
         return ctx->parserProgram;
     }
 
-    const auto &externalSources = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
+    const auto &externalSources = ctx->parserProgram->GetExternalPrograms()->Get<util::ModuleKind::SOURCE_DECL>();
     for (auto *extProgram : externalSources) {
         if (IsProgramMatchedByFileName(extProgram, fileName)) {
             return extProgram;

@@ -464,7 +464,7 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 
     // NOTE(mshimenkov): Treat every 'direct' external source as the main module and emit records for it.
     // In simultaneous mode every 'direct' external source is a separate program
-    const auto &programsHolder = ctx->parserProgram->GetExternalDecls()->Direct();
+    const auto &programsHolder = ctx->parserProgram->GetExternalPrograms()->Direct();
 
     auto emitter = this;
 

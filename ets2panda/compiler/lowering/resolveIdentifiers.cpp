@@ -35,7 +35,7 @@ void ResolveIdentifiers::Setup()
 {
     // NOTE(dkofanov): If present, the whole cache should be restored at once, at program-restoration. To be moved.
     auto *program = Context()->parserProgram;
-    program->GetExternalDecls()->Visit([program](auto *extProgram) {
+    program->GetExternalPrograms()->Visit([program](auto *extProgram) {
         if (!extProgram->IsProgramModified()) {
             InsertReExported(program, program->VarBinder()->AsETSBinder(), extProgram);
         }

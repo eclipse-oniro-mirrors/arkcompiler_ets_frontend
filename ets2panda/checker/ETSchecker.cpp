@@ -89,7 +89,7 @@ void ETSChecker::ReputCheckerData()
 {
     readdedChecker_.insert(this);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
+    Program()->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (!extProg->IsProgramModified() && !extProg->template Is<util::ModuleKind::METADATA_DECL>()) {
             ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
@@ -435,7 +435,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     auto *savedProgram = Program();
     SetProgram(program);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    program->GetExternalDecls()->Visit([this](auto *extProg) {
+    program->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (extProg->template Is<util::ModuleKind::PACKAGE>() &&
             extProg->template As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
             return;

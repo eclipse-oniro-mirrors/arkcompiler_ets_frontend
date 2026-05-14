@@ -39,6 +39,7 @@ union RefType {
 
 union Type {
     Builtin:BuiltinType,
+    Array:ArrayType,
     Ref:TypeRef,
     Function:FunctionType,
     Tuple:TupleType,
@@ -142,12 +143,16 @@ enum BuiltinTypeKind : byte {
     void = 14,
     undefined = 15,
     null = 16,
-    array = 17, // element type is the first type argument, the size (if fixed) is the second one (as a string literal type)
 }
 
 table BuiltinType {
     kind:BuiltinTypeKind;
-    type_args:[Type];
+}
+
+table ArrayType {
+    element_type:Type;
+    is_readonly: bool;
+    is_value_array: bool;
 }
 
 table TypeRef {

@@ -271,6 +271,7 @@ ir::TypeNode *MetadataDeserializationPhase::CreateType(const void *type, const M
         }
         case Metadata::Type_NONE:
         case Metadata::Type_Function:
+        case Metadata::Type_Array:
         case Metadata::Type_Tuple:
         case Metadata::Type_StringLiteral:
             ES2PANDA_ASSERT(false);  // Deserialization of types above is not supported yet

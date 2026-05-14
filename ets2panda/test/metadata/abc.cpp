@@ -57,7 +57,7 @@ TEST_F(MetadataTestAbc, metadata_disabled)
 
     abc2program::Abc2ProgramDriver driver;
     ASSERT_EQ(driver.Compile(abcPath), true) << abcPath << " is failed to load by abc2program";
-    ASSERT_EQ(GetRoot(driver.GetProgram().metadata.data()), nullptr)
+    ASSERT_EQ(driver.GetProgram().metadata.empty(), true)
         << "Metadata shouldn't be emitted because it's disabled explicitly";
 }
 
