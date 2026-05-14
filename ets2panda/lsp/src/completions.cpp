@@ -162,11 +162,6 @@ static void CollectExportFromSpecifier(const ir::ExportSpecifier *specifier, con
     }
 }
 
-static bool IsKitApiFile(const std::string &path)
-{
-    return fs::path(path).filename().string().rfind("@kit", 0) == 0;
-}
-
 static bool IsAtPrefixedFileName(const std::string &path)
 {
     auto fileName = fs::path(path).filename().string();
@@ -179,20 +174,29 @@ static void CollectFromKitImportSpecifier(const ir::AstNode *specifier, const st
         return;
     }
 
+    const ir::Identifier *localIdent = nullptr;
+    const ir::AstNode *decl = nullptr;
+
     if (specifier->IsImportSpecifier()) {
         auto *importSpecifier = specifier->AsImportSpecifier();
-        if (importSpecifier->Local() == nullptr) {
-            return;
-        }
-        auto localName = std::string(importSpecifier->Local()->Name());
-        auto *decl = compiler::DeclarationFromIdentifier(importSpecifier->Imported());
+        localIdent = importSpecifier->Local();
+        decl = compiler::DeclarationFromIdentifier(importSpecifier->Imported());
         if (decl == nullptr) {
-            decl = compiler::DeclarationFromIdentifier(importSpecifier->Local());
+            decl = compiler::DeclarationFromIdentifier(localIdent);
         }
-        if (!AddCollectApiEntryByDecl(localName, importPath, decl)) {
-            AddCollectApiEntry(localName, importPath, CompletionEntryKind::VARIABLE);
-        }
+    } else if (specifier->IsImportDefaultSpecifier()) {
+        auto *importSpecifier = specifier->AsImportDefaultSpecifier();
+        localIdent = importSpecifier->Local();
+        decl = compiler::DeclarationFromIdentifier(localIdent);
+    }
+
+    if (localIdent == nullptr) {
         return;
+    }
+
+    auto localName = std::string(localIdent->Name());
+    if (!AddCollectApiEntryByDecl(localName, importPath, decl)) {
+        AddCollectApiEntry(localName, importPath, CompletionEntryKind::FILE);
     }
 }
 
@@ -362,11 +366,6 @@ static void CollectExportsFromProgram(parser::Program *program, const std::strin
         return;
     }
 
-    if (IsKitApiFile(path)) {
-        CollectExportsFromKitImports(program);
-        return;
-    }
-
     for (auto *statement : program->Ast()->Statements()) {
         if (statement == nullptr) {
             continue;
@@ -394,6 +393,7 @@ static void CollectExportsFromProgram(parser::Program *program, const std::strin
     }
 }
 
+// Collect all the exported API in the SDK
 bool CollectApiCompletionInfo(es2panda_Context *context)
 {
     if (context == nullptr) {
@@ -406,8 +406,8 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
 
     g_externalApiCollects.clear();
 
-    const auto &externalSource = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
-    for (const auto &extProg : externalSource) {
+    const auto &externalSourceDecls = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
+    for (const auto &extProg : externalSourceDecls) {
         if (extProg == nullptr) {
             continue;
         }
@@ -416,6 +416,14 @@ bool CollectApiCompletionInfo(es2panda_Context *context)
             continue;
         }
         CollectExportsFromProgram(extProg, path);
+    }
+
+    const auto &externalModules = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::MODULE>();
+    for (const auto &extProg : externalModules) {
+        if (extProg == nullptr) {
+            continue;
+        }
+        CollectExportsFromKitImports(extProg);
     }
     return true;
 }
@@ -654,7 +662,7 @@ static std::string BuildFunctionCompletionName(const std::string &functionName, 
     return completionName;
 }
 
-CompletionEntry GetDeclarationEntry(ir::AstNode *node)
+CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool IsInETSImportStatement)
 {
     if (node == nullptr) {
         return CompletionEntry();
@@ -682,8 +690,9 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
         if (completionName.empty()) {
             completionName = name;
         }
+        auto insertText = IsInETSImportStatement ? name : name + "()";
         return CompletionEntry(completionName, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
-                               name + "()", std::nullopt, GetTypeSig(node));
+                               insertText, std::nullopt, GetTypeSig(node));
     }
     if (node->IsClassProperty()) {
         name = GetClassPropertyName(node);
@@ -712,7 +721,7 @@ static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<Comple
             GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName);
         }
         if (prop->IsExported()) {
-            auto entry = GetDeclarationEntry(prop);
+            auto entry = GetDeclarationEntry(prop, !fileName.empty());
             if (!entry.GetName().empty() &&
                 (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
@@ -732,7 +741,7 @@ std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, con
             }
         }
         if (stmt->IsExported()) {
-            auto entry = GetDeclarationEntry(stmt);
+            auto entry = GetDeclarationEntry(stmt, fileName.empty());
             if (!entry.GetName().empty() &&
                 (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
@@ -2383,6 +2392,9 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     }
     auto scopePath = BuildScopePath(compiler::NearestScope(precedingToken));
     auto prefix = GetCurrentTokenValueImpl(context, position, precedingToken);
+    if (precedingToken->IsIdentifier() && precedingToken->AsIdentifier()->IsErrorPlaceHolder() && prefix == "") {
+        return {};
+    }
     auto matchPrefix = GetCompletionMatchPrefixFromToken(precedingToken, prefix);
     bool inTypeContext = IsTypeContextNode(precedingToken);
     if (!inTypeContext && position > 0) {

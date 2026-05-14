@@ -72,7 +72,7 @@ private:
 
 TEST_F(ImportFixesTest, MergeIntoExistingNamedImportFromSameModule)
 {
-    std::vector<std::string> fileNames = {"@kit.ModuleNamed.d.ets", "@kit.ImportModuleNamed.d.ets", "MainNamed.ets"};
+    std::vector<std::string> fileNames = {"@kit.ModuleNamed.ets", "@kit.ImportModuleNamed.ets", "MainNamed.ets"};
     std::vector<std::string> fileContents = {
         R"(
 export function a(): void {}
@@ -121,8 +121,7 @@ function useIt(): void {
 
 TEST_F(ImportFixesTest, RewriteDefaultAndAddMissingAsNamedImports)
 {
-    std::vector<std::string> fileNames = {"@kit.ModuleDefault.d.ets", "@kit.ImportModuleDefault.d.ets",
-                                          "MainDefault.ets"};
+    std::vector<std::string> fileNames = {"@kit.ModuleDefault.ets", "@kit.ImportModuleDefault.ets", "MainDefault.ets"};
     std::vector<std::string> fileContents = {
         R"(
 export default class A {}

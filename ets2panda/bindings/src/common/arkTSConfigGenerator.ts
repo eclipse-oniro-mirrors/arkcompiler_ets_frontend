@@ -19,7 +19,7 @@ import * as JSON5 from 'json5';
 
 import { changeFileExtension, ensurePathExists, getFileLanguageVersion } from './utils';
 import { AliasConfig, BuildConfig, ModuleInfo } from './types';
-import { LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, SYSTEM_SDK_PATH_FROM_SDK } from './preDefine';
+import { EXTERNAL_API_PATH_FROM_SDK, LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, SYSTEM_SDK_PATH_FROM_SDK } from './preDefine';
 import { logger } from '../lsp/logger';
 
 interface DependencyItem {
@@ -150,25 +150,24 @@ export class ArkTSConfigGenerator {
   }
 
   private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {
-    let directoryNames: string[] = ['api', 'arkts', 'kits'];
-    directoryNames.forEach((dir) => {
-      let systemSdkPath = path.resolve(this.systemSdkPath, dir);
-      let externalApiPath = path.resolve(this.externalApiPath, dir);
-      if (fs.existsSync(systemSdkPath)) {
-        if (dir === 'kits') {
-          this.traverse(pathSection, systemSdkPath, undefined, '', false, '', false, ['.d.ets'], true);
-        } else {
-          this.traverse(pathSection, systemSdkPath, undefined);
-        }
-      } else {
-        logger.debug(`sdk path ${systemSdkPath} not exist.`);
+    const directoryNames: string[] = ['api', 'arkts', 'kits'];
+    const collectPath = (sdkPath: string, dir: string): void => {
+      if (!fs.existsSync(sdkPath)) {
+        logger.debug(`sdk path ${sdkPath} not exist.`);
+        return;
       }
-      fs.existsSync(systemSdkPath)
-        ? this.traverse(pathSection, systemSdkPath, undefined)
-        : logger.debug(`sdk path ${systemSdkPath} not exist.`);
-      fs.existsSync(externalApiPath)
-        ? this.traverse(pathSection, externalApiPath, undefined)
-        : logger.debug(`sdk path ${externalApiPath} not exist.`);
+      if (dir === 'kits') {
+        this.traverse(pathSection, sdkPath, undefined, '', false, '', false, ['.d.ets'], true);
+        return;
+      }
+      this.traverse(pathSection, sdkPath, undefined);
+    };
+
+    directoryNames.forEach((dir) => {
+      const systemSdkPath = path.resolve(this.systemSdkPath, dir);
+      const externalApiPath = path.resolve(this.externalApiPath, dir);
+      collectPath(systemSdkPath, dir);
+      collectPath(externalApiPath, dir);
     });
   }
 
