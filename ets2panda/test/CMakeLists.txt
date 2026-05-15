@@ -35,6 +35,35 @@ add_custom_target(es2panda_tests COMMENT "Running es2panda test suites")
 add_custom_target(es2panda_gtests COMMENT "Running es2panda gtest suites")
 set(DEFAULT_TEST_GROUP ets_tests)
 
+# NOTE: These URunner targets are for local developer workflows only.
+# Do not add them under umbrella `tests` or CI-oriented target chains.
+add_urunner_target(ur_ets_runtime panda-int ets-runtime)
+add_urunner_target(ur_ets_astchecker es2panda-verifier astchecker)
+add_urunner_target(ur_ets_func panda-int ets-func-tests)
+add_urunner_target(ur_ets_cts_70 panda-int ets-cts-7.0)
+add_urunner_target(ur_ets_cts panda-int ets-cts)
+
+set(URUNNER_BUILD_WRAPPER "${PANDA_BINARY_ROOT}/runner.sh")
+add_custom_target(self_check_frontend
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" panda-int ets-runtime
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" panda-int ets-func-tests
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" es2panda-verifier astchecker
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" es2panda-verifier parser
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" panda-int ets-cts-7.0
+    COMMAND ${CMAKE_COMMAND} -E chdir "${PANDA_BINARY_ROOT}"
+            "${URUNNER_BUILD_WRAPPER}" panda-int ets-cts
+    COMMENT "Running frontend local URunner self-check suites sequentially"
+    USES_TERMINAL
+)
+
+add_dependencies(self_check_frontend code-style-check clang-tidy-changed-check)
+add_dependencies(self_check_frontend es2panda ark verifier)
+
 # List for accumulation of all ets gtests binary paths.
 # It's used by CI to archive these binaries into a single artifact
 # and send it to second stage where unit tests will use them.
