@@ -15,6 +15,8 @@
 
 #include "assignAnalyzer.h"
 
+#include <algorithm>
+
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
 #include "ir/base/classStaticBlock.h"
@@ -482,7 +484,31 @@ void AssignAnalyzer::CheckAnonymousClassCtor(const ir::ClassDefinition *classDef
     }
 }
 
-// NOTE(pantos) modified version of ETSChecker::CheckCyclicConstructorCall
+enum class CtorCallKind : uint8_t { NONE, THIS_CALL, SUPER_CALL };
+
+static CtorCallKind GetCtorCallKind(const ir::Statement *stmt)
+{
+    if (!stmt->IsExpressionStatement()) {
+        return CtorCallKind::NONE;
+    }
+
+    auto *expr = stmt->AsExpressionStatement()->GetExpression();
+    if (!expr->IsCallExpression()) {
+        return CtorCallKind::NONE;
+    }
+
+    auto *callee = expr->AsCallExpression()->Callee();
+    if (callee->IsThisExpression()) {
+        return CtorCallKind::THIS_CALL;
+    }
+    if (callee->IsSuperExpression()) {
+        return CtorCallKind::SUPER_CALL;
+    }
+    return CtorCallKind::NONE;
+}
+
+// NOTE: ctor-init flags are normalized later in ConstructorInitLowering, but AssignAnalyzer runs during checking.
+// Derive initial-vs-secondary constructor semantics directly from the constructor body.
 static bool IsInitialConstructor(const ir::AstNode *node)
 {
     if (!node->IsMethodDefinition() || !node->AsMethodDefinition()->IsConstructor()) {
@@ -495,19 +521,15 @@ static bool IsInitialConstructor(const ir::AstNode *node)
         return false;
     }
 
-    auto stmts = methodDef->Function()->Body()->AsBlockStatement()->Statements();
-    if (stmts.empty()) {
-        return true;
-    }
-    auto firstStmt = *std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
-        return !stmt->HasAstNodeFlags(ir::AstNodeFlags::DEFAULT_PARAM);
+    const auto &stmts = methodDef->Function()->Body()->AsBlockStatement()->Statements();
+    auto firstCtorCallIt = std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
+        return GetCtorCallKind(stmt) != CtorCallKind::NONE;
     });
-    if (firstStmt == nullptr) {
+    if (firstCtorCallIt == stmts.end()) {
         return true;
     }
-    return !(firstStmt->IsExpressionStatement() &&
-             firstStmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-             firstStmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsThisExpression());
+
+    return GetCtorCallKind(*firstCtorCallIt) != CtorCallKind::THIS_CALL;
 }
 
 void AssignAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
