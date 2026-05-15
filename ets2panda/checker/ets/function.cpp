@@ -1899,8 +1899,9 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
         return OverrideErrorCode::OVERRIDDEN_WEAKER;
     }
 
-    // #26838: handle lambdas as normal generics and remove check on IsETSAnyType()
-    if (!signature->ReturnType()->IsETSAnyType() && !checker->IsReturnTypeSubstitutable(signature, other)) {
+    // Return type substitutability is checked via the type relation system.
+    // Any is handled correctly: it is only a subtype of itself.
+    if (!checker->IsReturnTypeSubstitutable(signature, other)) {
         return OverrideErrorCode::INCOMPATIBLE_RETURN;
     }
 
