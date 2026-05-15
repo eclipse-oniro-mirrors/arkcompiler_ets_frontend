@@ -135,7 +135,7 @@ class AccountingDepartment {
 }
 )";
     const std::string expected = R"(
-const newLocal = 'Department name:';
+const newLocal: String = 'Department name:';
 class AccountingDepartment {
     name: string = '';
 
@@ -188,7 +188,7 @@ class AccountingDepartment {
 }
 )";
     const std::string expected = R"(
-const newLocal = 'Department name:';
+const newLocal: String = 'Department name:';
 
 class AccountingDepartment {
     name: string = '';
@@ -246,7 +246,7 @@ class AccountingDepartment {
     name: string = '';
 
     printName(): void {
-        let newLocal = 'Department name:';
+        let newLocal: string = 'Department name:';
         console.log(newLocal + this.name);
     }
 }
@@ -302,7 +302,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable4)
  	 
  	     printName(): void {
  	         let newLocal = '';
- 	         let newLocal_1 = 'Department name:';
+ 	         let newLocal_1: string = 'Department name:';
  	         console.log(newLocal_1 + this.name);
  	     }
  	 }
@@ -354,7 +354,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable5)
     const std::string expected = R"('use static'
  	 const newLocal = '';
  	 
- 	 const newLocal_1 = 'Department name:';
+ 	 const newLocal_1: String = 'Department name:';
  	 
  	 class AccountingDepartment {
  	     name: string = '';
@@ -457,7 +457,7 @@ const x = arr.filter(x => x == 1).map(x => x + 1).flatMap(x => [x, x * 2]);
 )";
     const std::string expected = R"(
 const arr: Int[] = [1]
-let newLocal = arr.filter(x => x == 1).map(x => x + 1);
+let newLocal: Array<Int> = arr.filter(x => x == 1).map(x => x + 1);
 const x = newLocal.flatMap(x => [x, x * 2]);
 )";
     const std::string target = "arr.filter(x => x == 1).map(x => x + 1)";
@@ -512,7 +512,7 @@ class B {
   }
 
   foo() {
-    let newLocal = this.bar();
+    let newLocal: A = this.bar();
     console.log(newLocal.foo());
   }
 }
@@ -550,7 +550,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable9)
     const std::string expected = R"(
  	 class C {
  	     constructor () {
- 	         let newLocal = this.foo(1);
+ 	         let newLocal: Int = this.foo(1);
  	     }
  	     foo (a: number)
  	     {return 1;}
@@ -602,7 +602,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable10)
     const std::string expected = R"(
  	 class C {
  	     constructor() {
- 	         let newLocal = this.foo(1);
+ 	         let newLocal: Int = this.foo(1);
  	         this.foo(newLocal);
  	         }
  	         foo(a:number) {
@@ -649,7 +649,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable11)
  	 )";
     const std::string expected = R"('usestatic'
  	     interface I {a:int};
- 	     const newLocal = {a:1};
+ 	     let newLocal: I = {a:1};
  	     let i: I = newLocal;
  	 )";
     const std::string target = "{a:1}";
@@ -663,7 +663,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable11)
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
     EXPECT_FALSE(applicable.empty());
 
-    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
     const bool hasVariableEnclose = std::any_of(applicable.begin(), applicable.end(),
                                                 [&](const auto &info) { return info.action.name == actionName; });
     EXPECT_TRUE(hasVariableEnclose);
@@ -701,7 +701,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable12)
     const std::string expected = R"('use static'
  	 
  	 const newLocal='';
- 	 const newLocal_1='Departmentname:';
+ 	 const newLocal_1: String = 'Department name:';
  	 class AccountingDepartment {
  	 
  	     printName(): void {
@@ -756,7 +756,7 @@ TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable13)
  	     const newLocal='';class AccountingDepartment {
  	     printName(): void {
  	         let newLocal = '';
- 	         const newLocal_1 = 'Departmentname:';
+ 	         const newLocal_1: String = 'Department name:';
  	         console.log(newLocal_1);}
  	     printName1(): void {
  	         let newLocal = '';}})";

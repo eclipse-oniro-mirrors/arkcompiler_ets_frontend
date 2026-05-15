@@ -95,6 +95,8 @@ set(ES2PANDA_LSP_SRC
   ./src/refactors/generate_getters_and_setters.cpp
   ./src/refactors/infer_function_return_type.cpp
   ./src/refactors/extract_symbol.cpp
+  ./src/refactors/extract_symbol_impl.cpp
+  ./src/refactors/extract_symbol_impl_edits.cpp
   ./src/formatting/formatting_context.cpp
   ./src/formatting/formatting_settings.cpp
   ./src/formatting/formatting.cpp
@@ -182,4 +184,3 @@ panda_target_link_libraries(${LSP_LIB}
 
 panda_add_sanitizers(TARGET ${LSP_LIB} SANITIZERS
   ${PANDA_SANITIZERS_LIST})
-

@@ -631,11 +631,11 @@ const second: Array<number> = [];)";
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type NewType1 = number;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType_1 = number;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "NewType1");
+    EXPECT_EQ(replaceChange.newText, "NewType_1");
 
     initializer->DestroyContext(refactorContext->context);
 }

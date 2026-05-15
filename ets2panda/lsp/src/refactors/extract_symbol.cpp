@@ -89,7 +89,9 @@
  */
 
 #include <algorithm>
+#include <array>
 #include <cctype>
+#include <chrono>
 #include <cstddef>
 #include <cstring>
 #include <limits>
@@ -103,6 +105,7 @@
 #include <vector>
 #include "checker/ETSchecker.h"
 #include "refactors/extract_symbol.h"
+#include "refactors/extract_symbol_internal.h"
 #include "ir/astNode.h"
 #include "ir/base/scriptFunction.h"
 #include "ir/expressions/assignmentExpression.h"
@@ -121,6 +124,7 @@
 #include "ir/statements/variableDeclarator.h"
 #include "compiler/lowering/util.h"
 #include "lsp/include/internal_api.h"
+#include "util/helpers.h"
 #include "util/ustring.h"
 #include "lexer/token/sourceLocation.h"
 #include "public/es2panda_lib.h"
@@ -129,7 +133,6 @@
 #include "refactor_provider.h"
 #include "internal_api.h"
 #include "services/text_change/change_tracker.h"
-#include "services/import_utils.h"
 #include "refactors/refactor_types.h"
 #include "rename.h"
 #include "types.h"
@@ -137,9 +140,6 @@
 namespace ark::es2panda::lsp {
 
 constexpr size_t HELPER_RESERVE_PADDING = 64;
-constexpr std::string_view EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX = "extract_function_scope_ns_";
-constexpr std::string_view EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX = "extract_constant_scope_ns_";
-
 ExtractSymbolRefactor::ExtractSymbolRefactor()
 {
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.kind));
@@ -171,10 +171,290 @@ bool IsNodeInScope(ir::AstNode *node)
     return (node != nullptr && !node->IsVariableDeclaration() && !node->IsCallExpression() &&
             !node->IsMemberExpression() && !node->IsExpressionStatement() && !node->IsStringLiteral() &&
             !node->IsNumberLiteral() && !node->IsBooleanLiteral() && !node->IsNullLiteral() && !node->IsCharLiteral() &&
-            !node->IsBinaryExpression() && !node->IsObjectExpression());
+            !node->IsBinaryExpression() && !node->IsObjectExpression() && !node->IsUpdateExpression());
 }
 
-static TextRange GetTrimmedSelectionSpan(const RefactorContext &context)
+bool IsImportSelectionNode(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    if (node->IsImportDeclaration() || node->IsETSImportDeclaration()) {
+        return true;
+    }
+    const auto *parent = node->Parent();
+    return parent != nullptr && (parent->IsImportDeclaration() || parent->IsETSImportDeclaration());
+}
+
+bool HasImportDeclarationOverlap(const RefactorContext &context, TextRange range)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return false;
+    }
+    bool hasImportOverlap = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *child) {
+        if (child == nullptr || (!child->IsImportDeclaration() && !child->IsETSImportDeclaration())) {
+            return false;
+        }
+        if (child->Start().index < range.end && child->End().index > range.pos) {
+            hasImportOverlap = true;
+            return true;
+        }
+        return false;
+    });
+    return hasImportOverlap;
+}
+
+static bool SelectionMatchesNodeWithOptionalTrailingSemicolon(std::string_view source, const ir::AstNode *node,
+                                                              TextRange selection)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    const size_t start = node->Start().index;
+    const size_t end = node->End().index;
+    if (start != selection.pos) {
+        return false;
+    }
+    if (selection.end == end) {
+        return true;
+    }
+    if (selection.end < end || selection.end > source.size() || end > source.size()) {
+        return false;
+    }
+    for (size_t i = end; i < selection.end; ++i) {
+        const char ch = source[i];
+        if (ch == ';' || std::isspace(static_cast<unsigned char>(ch)) != 0) {
+            continue;
+        }
+        return false;
+    }
+    return true;
+}
+
+ir::AstNode *FindWholeVariableDeclarationSelectionNode(const RefactorContext &context, TextRange selection)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        ctx->sourceFile == nullptr) {
+        return nullptr;
+    }
+    ir::AstNode *matchedDecl = nullptr;
+    std::string_view source = ctx->sourceFile->source;
+    ctx->parserProgram->Ast()->FindChild([selection, &matchedDecl, source](ir::AstNode *node) {
+        if (matchedDecl != nullptr || node == nullptr || !node->IsVariableDeclaration()) {
+            return false;
+        }
+        if (!SelectionMatchesNodeWithOptionalTrailingSemicolon(source, node, selection)) {
+            return false;
+        }
+        matchedDecl = node;
+        return true;
+    });
+    return matchedDecl;
+}
+
+static std::optional<TextRange> ResolveDeclarationSelectionRhsRange(public_lib::Context *ctx, TextRange selection)
+{
+    const std::string_view selected(ctx->sourceFile->source.data() + selection.pos, selection.end - selection.pos);
+    if (!(selected.rfind("let ", 0) == 0 || selected.rfind("const ", 0) == 0)) {
+        return std::nullopt;
+    }
+    const size_t eqPos = selected.find('=');
+    if (eqPos == std::string_view::npos) {
+        return std::nullopt;
+    }
+    size_t rhsStart = eqPos + 1;
+    while (rhsStart < selected.size() && std::isspace(static_cast<unsigned char>(selected[rhsStart])) != 0) {
+        ++rhsStart;
+    }
+    size_t rhsEnd = selected.size();
+    while (rhsEnd > rhsStart && std::isspace(static_cast<unsigned char>(selected[rhsEnd - 1])) != 0) {
+        --rhsEnd;
+    }
+    while (rhsEnd > rhsStart && selected[rhsEnd - 1] == ';') {
+        --rhsEnd;
+    }
+    while (rhsEnd > rhsStart && std::isspace(static_cast<unsigned char>(selected[rhsEnd - 1])) != 0) {
+        --rhsEnd;
+    }
+    if (rhsEnd <= rhsStart) {
+        return std::nullopt;
+    }
+    return TextRange {selection.pos + rhsStart, selection.pos + rhsEnd};
+}
+
+static ir::AstNode *ResolveExpressionNodeByRange(const RefactorContext &context, TextRange rhsRange)
+{
+    auto *node = GetTouchingTokenByRange(context.context, rhsRange, false);
+    if (node != nullptr) {
+        if (auto *optimum = GetOptimumNodeByRange(node, rhsRange); optimum != nullptr) {
+            node = optimum;
+        }
+    }
+    while (node != nullptr && !node->IsExpression()) {
+        node = node->Parent();
+    }
+    return node;
+}
+
+ir::AstNode *ResolveInitializerExpressionFromDeclarationSelection(const RefactorContext &context, TextRange selection)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->sourceFile == nullptr || selection.end <= selection.pos ||
+        selection.end > ctx->sourceFile->source.size()) {
+        return nullptr;
+    }
+    if (auto rhsRange = ResolveDeclarationSelectionRhsRange(ctx, selection); rhsRange.has_value()) {
+        return ResolveExpressionNodeByRange(context, rhsRange.value());
+    }
+    return nullptr;
+}
+
+static void UpdateBestInitializerCandidate(ir::AstNode *candidate, TextRange selection, size_t &bestSpan,
+                                           ir::AstNode *&best)
+{
+    if (candidate == nullptr || candidate->Start().index > selection.pos || candidate->End().index < selection.end) {
+        return;
+    }
+    const size_t span = candidate->End().index - candidate->Start().index;
+    if (span < bestSpan) {
+        best = candidate;
+        bestSpan = span;
+    }
+}
+
+static ir::AstNode *ResolveInitializerFromTouchNode(ir::AstNode *touch, TextRange selection)
+{
+    for (auto *current = touch; current != nullptr; current = current->Parent()) {
+        if (current->IsVariableDeclarator()) {
+            auto *declarator = current->AsVariableDeclarator();
+            auto *init = declarator == nullptr ? nullptr : declarator->Init();
+            if (init != nullptr && init->Start().index <= selection.pos && init->End().index >= selection.end) {
+                return init;
+            }
+            continue;
+        }
+        if (!current->IsClassProperty()) {
+            continue;
+        }
+        auto *classProp = current->AsClassProperty();
+        auto *value = classProp == nullptr ? nullptr : classProp->Value();
+        if (value != nullptr && value->Start().index <= selection.pos && value->End().index >= selection.end) {
+            return value;
+        }
+    }
+    return nullptr;
+}
+
+static ir::AstNode *ResolveInitializerFromTouchPoints(const RefactorContext &context, TextRange selection)
+{
+    if (auto *touchByRange = GetTouchingTokenByRange(context.context, selection, false); touchByRange != nullptr) {
+        if (auto *init = ResolveInitializerFromTouchNode(touchByRange, selection); init != nullptr) {
+            return init;
+        }
+    }
+    if (auto *touchAtStart = GetTouchingToken(context.context, selection.pos, false); touchAtStart != nullptr) {
+        if (auto *init = ResolveInitializerFromTouchNode(touchAtStart, selection); init != nullptr) {
+            return init;
+        }
+    }
+    return nullptr;
+}
+
+ir::AstNode *ResolveInitializerExpressionContainingSelection(const RefactorContext &context, TextRange selection)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        selection.end <= selection.pos) {
+        return nullptr;
+    }
+
+    ir::AstNode *best = nullptr;
+    size_t bestSpan = std::numeric_limits<size_t>::max();
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (node == nullptr) {
+            return false;
+        }
+        if (node->IsVariableDeclarator()) {
+            auto *declarator = node->AsVariableDeclarator();
+            UpdateBestInitializerCandidate(declarator == nullptr ? nullptr : declarator->Init(), selection, bestSpan,
+                                           best);
+            return false;
+        }
+        if (node->IsClassProperty()) {
+            auto *classProp = node->AsClassProperty();
+            UpdateBestInitializerCandidate(classProp == nullptr ? nullptr : classProp->Value(), selection, bestSpan,
+                                           best);
+        }
+        return false;
+    });
+    if (best != nullptr) {
+        return best;
+    }
+    return ResolveInitializerFromTouchPoints(context, selection);
+}
+
+static void TrimSpanWhitespace(std::string_view source, size_t &start, size_t &end)
+{
+    while (start < end && std::isspace(static_cast<unsigned char>(source[start])) != 0) {
+        ++start;
+    }
+    while (end > start && std::isspace(static_cast<unsigned char>(source[end - 1])) != 0) {
+        --end;
+    }
+}
+
+constexpr size_t K_COMMENT_DELIMITER_LENGTH = 2;
+
+static bool TrimLeadingBlockComment(std::string_view source, size_t &start, size_t &end)
+{
+    if (start + 1 >= end || source[start] != '/' || source[start + 1] != '*') {
+        return false;
+    }
+    const size_t commentEnd = source.find("*/", start + K_COMMENT_DELIMITER_LENGTH);
+    if (commentEnd == std::string::npos || commentEnd + K_COMMENT_DELIMITER_LENGTH > end) {
+        return false;
+    }
+    start = commentEnd + K_COMMENT_DELIMITER_LENGTH;
+    TrimSpanWhitespace(source, start, end);
+    return true;
+}
+
+static bool TrimTrailingBlockComment(std::string_view source, size_t &start, size_t &end)
+{
+    if (end < K_COMMENT_DELIMITER_LENGTH || end <= start + 1 || source[end - K_COMMENT_DELIMITER_LENGTH] != '*' ||
+        source[end - 1] != '/') {
+        return false;
+    }
+    const size_t commentStart = source.rfind("/*", end - K_COMMENT_DELIMITER_LENGTH);
+    if (commentStart == std::string::npos || commentStart < start) {
+        return false;
+    }
+    end = commentStart;
+    TrimSpanWhitespace(source, start, end);
+    return true;
+}
+
+static bool TrimSlashWrappedCommentBoundary(std::string_view source, size_t &start, size_t &end)
+{
+    bool changed = false;
+    if (start < end && source[start] == '/' && start > 0 && source[start - 1] == '*') {
+        ++start;
+        changed = true;
+    }
+    if (end > start && source[end - 1] == '/' && end < source.size() && source[end] == '*') {
+        --end;
+        changed = true;
+    }
+    if (changed) {
+        TrimSpanWhitespace(source, start, end);
+    }
+    return changed;
+}
+
+TextRange GetTrimmedSelectionSpan(const RefactorContext &context)
 {
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
@@ -184,14 +464,21 @@ static TextRange GetTrimmedSelectionSpan(const RefactorContext &context)
     const auto &source = ctx->sourceFile->source;
     size_t start = std::min(context.span.pos, source.size());
     size_t end = std::min(context.span.end, source.size());
-    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (start < end && isspace(source[start])) {
-        ++start;
+    TrimSpanWhitespace(source, start, end);
+
+    // Allow selections wrapped by comment markers (e.g. /*start*/expr/*end*/)
+    // to behave the same as selecting the expression itself.
+    bool changed = true;
+    while (changed && start < end) {
+        changed = false;
+        changed = TrimLeadingBlockComment(source, start, end) || changed;
+        changed = TrimTrailingBlockComment(source, start, end) || changed;
+
+        // Support selecting "/expr/" across comment boundaries like "*/expr/*".
+        // Example: x = /*start*/1/*end*/; with selection "/1/" should normalize to "1".
+        changed = TrimSlashWrappedCommentBoundary(source, start, end) || changed;
     }
-    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (end > start && isspace(source[end - 1])) {
-        --end;
-    }
+
     if (start == end) {
         return {std::min(context.span.pos, source.size()), std::min(context.span.end, source.size())};
     }
@@ -225,61 +512,6 @@ static size_t LineToPos(public_lib::Context *context, const size_t line)
 {
     auto index = ark::es2panda::lexer::LineIndex(context->parserProgram->SourceCode());
     return index.GetOffsetOfLine(line);
-}
-
-namespace {
-
-struct VariableBindingInfo {
-    ir::VariableDeclaration *declaration {nullptr};
-    ir::VariableDeclarator *declarator {nullptr};
-    ir::Identifier *identifier {nullptr};
-    ir::Expression *initializer {nullptr};
-};
-
-struct HelperPieces {
-    bool insertHelper {false};
-    size_t insertPos {0};
-    std::string helperText;
-    TextRange replaceRange {};
-    std::string replacementText;
-};
-
-struct FunctionIOInfo {
-    std::vector<std::string> paramDecls;
-    std::vector<std::string> callArgs;
-    std::optional<std::string> returnVar;
-    bool hasReturnStatement {false};
-};
-
-struct FunctionBodyOptions {
-    std::string newLine;
-    std::string indent;
-    bool addLeadingNewLine {false};
-    bool returnEachLine {false};
-    std::optional<std::string> returnVar;
-    size_t trimIndent {0};
-    size_t indentSize {FormatCodeSettings().GetIndentSize()};
-};
-
-struct ScopeContext {
-    bool hasEncloseScope {false};
-    bool hasClassScope {false};
-    std::string classScopeName;
-    std::vector<std::string> namespaceScopeNames;
-};
-
-constexpr char LINE_FEED = '\n';
-constexpr char CARRIAGE_RETURN = '\r';
-constexpr char SPACE_CHAR = ' ';
-constexpr char TAB_CHAR = '\t';
-constexpr size_t CRLF_LENGTH = 2;
-#ifdef _WIN32
-constexpr std::string_view WINDOWS_LINE_BREAK = "\r\n";
-#endif
-
-inline bool IsIndentChar(char ch)
-{
-    return ch == SPACE_CHAR || ch == TAB_CHAR;
 }
 
 bool ResolveVariableBinding(ir::AstNode *node, VariableBindingInfo &out)
@@ -316,7 +548,7 @@ std::pair<size_t, size_t> ComputeLineIndent(util::StringView source, size_t pos)
     size_t cursor = std::min(pos, sv.size());
     while (cursor > 0) {
         char ch = sv[cursor - 1];
-        if (IsLineBreak(ch)) {
+        if (IsLineBreakChar(ch)) {
             break;
         }
         --cursor;
@@ -352,11 +584,29 @@ ir::ScriptFunction *FindScriptFunction(ir::AstNode *node)
 ir::ClassDefinition *FindEnclosingClassDefinition(ir::AstNode *node)
 {
     for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (current->IsClassDefinition()) {
+            return current->AsClassDefinition();
+        }
         if (current->IsClassDeclaration()) {
             return current->AsClassDeclaration()->Definition();
         }
     }
     return nullptr;
+}
+
+bool IsSwitchCaseTestSelection(ir::AstNode *node, TextRange selection)
+{
+    for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (!current->IsSwitchCaseStatement()) {
+            continue;
+        }
+        auto *testExpr = current->AsSwitchCaseStatement()->Test();
+        if (testExpr == nullptr) {
+            return false;
+        }
+        return testExpr->Start().index == selection.pos && testExpr->End().index == selection.end;
+    }
+    return false;
 }
 
 bool IsNamespaceScope(const ir::ClassDefinition *classDef)
@@ -397,11 +647,21 @@ std::string IdentifierNameMutf8(const ir::Identifier *ident)
 template <typename ExistsPredicate>
 std::string GenerateUniqueName(std::string_view baseName, ExistsPredicate exists)
 {
+    constexpr int suffixThreshold = 1000000;
     std::string name(baseName);
     int counter = 0;
-    while (exists(name)) {
+    while (exists(name) && counter < suffixThreshold) {
         ++counter;
         name = std::string(baseName) + "_" + std::to_string(counter);
+    }
+    if (!exists(name)) {
+        return name;
+    }
+
+    while (exists(name)) {
+        const auto now = std::chrono::system_clock::now();
+        const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+        name = std::string(baseName) + "_" + std::to_string(millis);
     }
     return name;
 }
@@ -462,10 +722,33 @@ std::string GetDeclaratorIdText(public_lib::Context *ctx, const VariableBindingI
     if (text.empty()) {
         return IdentifierNameMutf8(binding.identifier);
     }
-    while (!text.empty() && IsLineBreak(text.back())) {
+    while (!text.empty() && IsLineBreakChar(text.back())) {
         text.pop_back();
     }
     return text;
+}
+
+std::string GetDeclaratorTextWithoutInitializer(public_lib::Context *ctx, const VariableBindingInfo &binding)
+{
+    if (binding.declarator == nullptr || binding.declarator->Id() == nullptr) {
+        return "";
+    }
+    std::string declText = GetNodeText(ctx, binding.declarator);
+    if (declText.empty()) {
+        return GetDeclaratorIdText(ctx, binding);
+    }
+    const size_t eqPos = declText.find('=');
+    if (eqPos == std::string::npos) {
+        while (!declText.empty() && IsLineBreakChar(declText.back())) {
+            declText.pop_back();
+        }
+        return declText;
+    }
+    size_t end = eqPos;
+    while (end > 0 && std::isspace(static_cast<unsigned char>(declText[end - 1])) != 0) {
+        --end;
+    }
+    return declText.substr(0, end);
 }
 
 std::vector<std::string> CollectIdentifierNames(ir::Expression *expr, const std::string &skip)
@@ -524,6 +807,19 @@ bool IsMemberPropertyIdentifier(const ir::Identifier *ident)
     return !member->IsComputed() && member->Property() == ident;
 }
 
+bool IsMemberObjectIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    auto *parent = ident->Parent();
+    if (parent == nullptr || !parent->IsMemberExpression()) {
+        return false;
+    }
+    auto *member = parent->AsMemberExpression();
+    return member->Object() == ident;
+}
+
 bool IsDeclarationIdentifier(const ir::Identifier *ident)
 {
     if (ident == nullptr) {
@@ -541,6 +837,103 @@ bool IsDeclarationIdentifier(const ir::Identifier *ident)
         return func != nullptr && func->Id() == ident;
     }
     return false;
+}
+
+bool IsConstructorTypeReferenceIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    bool inTypeRef = false;
+    for (auto *parent = ident->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsETSTypeReference() || parent->IsETSTypeReferencePart()) {
+            inTypeRef = true;
+            continue;
+        }
+        if (inTypeRef && parent->IsETSNewClassInstanceExpression()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsTypeReferenceIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    for (auto *parent = ident->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsETSTypeReference() || parent->IsETSTypeReferencePart()) {
+            return true;
+        }
+        if (parent->IsIdentifier()) {
+            continue;
+        }
+        if (parent->IsETSParameterExpression() || parent->IsVariableDeclarator() || parent->IsClassProperty()) {
+            continue;
+        }
+        break;
+    }
+    return false;
+}
+
+bool IsQualifiedTypeReferencePropertyIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    auto *parent = ident->Parent();
+    if (parent == nullptr || !parent->IsMemberExpression()) {
+        return false;
+    }
+    auto *member = parent->AsMemberExpression();
+    return !member->IsComputed() && member->Property() == ident;
+}
+
+bool IsObjectPropertyKeyIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    auto *parent = ident->Parent();
+    if (parent == nullptr || !parent->IsProperty()) {
+        return false;
+    }
+    auto *property = parent->AsProperty();
+    return !property->IsComputed() && property->Key() == ident;
+}
+
+std::string BuildNamespaceQualifiedNameForDecl(const ir::AstNode *declNode, std::string_view baseName)
+{
+    if (declNode == nullptr || baseName.empty()) {
+        return "";
+    }
+    auto scopes = CollectEnclosingNamespaceScopes(const_cast<ir::AstNode *>(declNode));
+    if (scopes.empty()) {
+        return "";
+    }
+    std::string qualified;
+    for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+        const std::string nsName = IdentifierNameMutf8(*it == nullptr ? nullptr : (*it)->Ident());
+        if (nsName.empty()) {
+            continue;
+        }
+        if (!qualified.empty()) {
+            qualified.push_back('.');
+        }
+        qualified.append(nsName);
+    }
+    if (qualified.empty()) {
+        return "";
+    }
+    const std::string innermostNsName =
+        IdentifierNameMutf8(scopes.front() == nullptr ? nullptr : scopes.front()->Ident());
+    if (!innermostNsName.empty() && innermostNsName == baseName) {
+        return qualified;
+    }
+    qualified.push_back('.');
+    qualified.append(baseName);
+    return qualified;
 }
 
 bool IsLocalToEnclosingFunction(const ir::ScriptFunction *enclosingFunc, varbinder::Variable *variable)
@@ -583,9 +976,249 @@ bool IsDeclaredInGlobalScope(const varbinder::Decl *decl)
     return true;
 }
 
+static bool IsNamespaceTopLevelDeclNode(const ir::AstNode *declNode);
+static bool IsExportedBeforeNamespaceBoundary(const ir::AstNode *declNode);
+
+bool HasLocalValueDependencyInSelection(const RefactorContext &context, TextRange range)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        range.end <= range.pos) {
+        return false;
+    }
+    bool hasLocal = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (hasLocal || node == nullptr || !node->IsIdentifier() || node->Start().index < range.pos ||
+            node->End().index > range.end) {
+            return false;
+        }
+        auto *ident = node->AsIdentifier();
+        if (IsMemberPropertyIdentifier(ident) || IsDeclarationIdentifier(ident) ||
+            IsObjectPropertyKeyIdentifier(ident)) {
+            return false;
+        }
+        auto *variable = ResolveIdentifier(ident);
+        if (variable == nullptr || variable->Declaration() == nullptr) {
+            return false;
+        }
+        auto *decl = variable->Declaration();
+        auto *declNode = decl->Node();
+        if (IsNamespaceTopLevelDeclNode(declNode) && IsExportedBeforeNamespaceBoundary(declNode)) {
+            return false;
+        }
+        if (!IsDeclaredInGlobalScope(decl)) {
+            hasLocal = true;
+            return true;
+        }
+        return false;
+    });
+    return hasLocal;
+}
+
+static const ir::Expression *ResolveSelectionWriteTarget(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+    if (node->IsAssignmentExpression()) {
+        return node->AsAssignmentExpression()->Left();
+    }
+    if (node->IsUpdateExpression()) {
+        return node->AsUpdateExpression()->Argument();
+    }
+    return nullptr;
+}
+
+static bool IsExternalLocalWriteInSelection(const ir::AstNode *node, TextRange range, ir::ScriptFunction *enclosingFunc)
+{
+    const ir::Expression *target = ResolveSelectionWriteTarget(node);
+    if (target == nullptr || !target->IsIdentifier()) {
+        return false;
+    }
+
+    auto *ident = target->AsIdentifier();
+    if (IsMemberPropertyIdentifier(ident) || IsDeclarationIdentifier(ident) || IsObjectPropertyKeyIdentifier(ident)) {
+        return false;
+    }
+    auto *variable = ResolveIdentifier(ident);
+    if (variable == nullptr || variable->Declaration() == nullptr || variable->Declaration()->Node() == nullptr ||
+        !IsLocalToEnclosingFunction(enclosingFunc, variable)) {
+        return false;
+    }
+
+    auto *declNode = variable->Declaration()->Node();
+    return declNode->Start().index < range.pos || declNode->End().index > range.end;
+}
+
+bool HasExternalLocalWriteDependencyInSelection(const RefactorContext &context, TextRange range)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        range.end <= range.pos) {
+        return false;
+    }
+
+    auto *touchNode = GetTouchingToken(context.context, range.pos, false);
+    auto *enclosingFunc = FindScriptFunction(touchNode);
+    if (enclosingFunc == nullptr) {
+        return false;
+    }
+
+    bool hasExternalLocalWrite = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (hasExternalLocalWrite || node == nullptr || node->Start().index < range.pos ||
+            node->End().index > range.end) {
+            return false;
+        }
+        hasExternalLocalWrite = IsExternalLocalWriteInSelection(node, range, enclosingFunc);
+        return hasExternalLocalWrite;
+    });
+
+    return hasExternalLocalWrite;
+}
+
+static bool IsNamespaceTopLevelDeclNode(const ir::AstNode *declNode);
+static bool IsExportedBeforeNamespaceBoundary(const ir::AstNode *declNode);
+static bool IsCallCalleeIdentifier(const ir::Identifier *ident);
+
+struct IdentifierReplacement {
+    size_t start;
+    size_t end;
+    std::string text;
+};
+
+static bool IsIdentifierQualifiableTypeRef(const ir::Identifier *ident)
+{
+    return IsTypeReferenceIdentifier(ident) && !IsQualifiedTypeReferencePropertyIdentifier(ident);
+}
+
+static bool IsIdentifierQualifiableValueRef(const ir::Identifier *ident)
+{
+    return !IsTypeReferenceIdentifier(ident) && !IsMemberPropertyIdentifier(ident) && !IsDeclarationIdentifier(ident) &&
+           !IsObjectPropertyKeyIdentifier(ident);
+}
+
+static bool IsProtectedGlobalValueRef(bool isValueRef, const std::string &name,
+                                      const std::unordered_set<std::string> *protectedValueNames)
+{
+    return isValueRef && protectedValueNames != nullptr &&
+           protectedValueNames->find(name) != protectedValueNames->end();
+}
+
+static bool IsExportedNamespaceValueRef(const ir::Identifier *ident, const ir::AstNode *declNode)
+{
+    if (!IsNamespaceTopLevelDeclNode(declNode) || !IsExportedBeforeNamespaceBoundary(declNode)) {
+        return false;
+    }
+    return IsCallCalleeIdentifier(ident) || IsMemberObjectIdentifier(ident) || !IdentifierNameMutf8(ident).empty();
+}
+
+static bool ShouldQualifyGlobalExtractedValueRef(const ir::Identifier *ident, varbinder::Variable *variable,
+                                                 const varbinder::Decl *decl, const ir::AstNode *declNode)
+{
+    auto *enclosingFunc = FindScriptFunction(const_cast<ir::Identifier *>(ident));
+    if (IsLocalToEnclosingFunction(enclosingFunc, variable)) {
+        return false;
+    }
+    if (IsDeclaredInGlobalScope(decl) && !IsExportedNamespaceValueRef(ident, declNode)) {
+        return false;
+    }
+    return IsExportedNamespaceValueRef(ident, declNode);
+}
+
+static std::vector<IdentifierReplacement> CollectGlobalExtractedBodyReplacements(
+    public_lib::Context *ctx, TextRange range, bool qualifyValueRefs,
+    const std::unordered_set<std::string> *protectedValueNames)
+{
+    std::vector<IdentifierReplacement> replacements;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (node == nullptr || !node->IsIdentifier() || node->Start().index < range.pos ||
+            node->End().index > range.end) {
+            return false;
+        }
+        auto *ident = node->AsIdentifier();
+        const std::string name = IdentifierNameMutf8(ident);
+        const bool isTypeRef = IsIdentifierQualifiableTypeRef(ident);
+        const bool isValueRef = IsIdentifierQualifiableValueRef(ident);
+        if ((!isTypeRef && !isValueRef) || (isValueRef && !qualifyValueRefs) ||
+            IsProtectedGlobalValueRef(isValueRef, name, protectedValueNames)) {
+            return false;
+        }
+        auto *variable = ResolveIdentifier(ident);
+        auto *decl = variable == nullptr ? nullptr : variable->Declaration();
+        auto *declNode = decl == nullptr ? nullptr : decl->Node();
+        if (isValueRef && !ShouldQualifyGlobalExtractedValueRef(ident, variable, decl, declNode)) {
+            return false;
+        }
+        const std::string qualified = BuildNamespaceQualifiedNameForDecl(declNode, name);
+        if (qualified.empty() || qualified == name) {
+            return false;
+        }
+        replacements.push_back({node->Start().index - range.pos, node->End().index - range.pos, qualified});
+        return false;
+    });
+    return replacements;
+}
+
+std::string QualifyTypeReferencesForGlobalExtractedBody(public_lib::Context *ctx, TextRange range, std::string bodyText,
+                                                        bool qualifyValueRefs,
+                                                        const std::unordered_set<std::string> *protectedValueNames)
+{
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr || bodyText.empty() ||
+        range.end <= range.pos) {
+        return bodyText;
+    }
+    std::vector<IdentifierReplacement> replacements =
+        CollectGlobalExtractedBodyReplacements(ctx, range, qualifyValueRefs, protectedValueNames);
+    if (replacements.empty()) {
+        return bodyText;
+    }
+    std::sort(replacements.begin(), replacements.end(),
+              [](const IdentifierReplacement &lhs, const IdentifierReplacement &rhs) { return lhs.start < rhs.start; });
+
+    std::string rewritten;
+    size_t cursor = 0;
+    for (const auto &item : replacements) {
+        if (item.start < cursor || item.end > bodyText.size() || item.start >= item.end) {
+            continue;
+        }
+        rewritten.append(bodyText.substr(cursor, item.start - cursor));
+        rewritten.append(item.text);
+        cursor = item.end;
+    }
+    rewritten.append(bodyText.substr(cursor));
+    return rewritten;
+}
+
 bool IsContainedInRange(const ir::AstNode *node, TextRange span)
 {
     return node != nullptr && node->Start().index >= span.pos && node->End().index <= span.end;
+}
+
+static bool IsNamespaceTopLevelDeclNode(const ir::AstNode *declNode);
+static bool IsExportedBeforeNamespaceBoundary(const ir::AstNode *declNode);
+
+static bool IsNamespaceVisibleFromTarget(ir::AstNode *declNode, ir::AstNode *insertAnchorNode)
+{
+    if (declNode == nullptr || insertAnchorNode == nullptr) {
+        return false;
+    }
+    auto declScopes = CollectEnclosingNamespaceScopes(declNode);
+    auto targetScopes = CollectEnclosingNamespaceScopes(insertAnchorNode);
+    if (declScopes.empty() || targetScopes.empty()) {
+        return false;
+    }
+    // Symbol declared in an ancestor namespace of target is visible in target namespace.
+    if (declScopes.size() > targetScopes.size()) {
+        return false;
+    }
+    const size_t offset = targetScopes.size() - declScopes.size();
+    for (size_t i = 0; i < declScopes.size(); ++i) {
+        if (declScopes[i] != targetScopes[i + offset]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void RecordDeclaredIdentifier(const ir::AstNode *node, std::unordered_set<std::string> &declaredInside)
@@ -621,31 +1254,127 @@ void RecordAssignedIdentifier(const ir::AstNode *node, ir::ScriptFunction *enclo
     }
 }
 
+static bool IsExactAssignmentTargetIdentifier(const ir::Identifier *ident, TextRange range)
+{
+    auto *parent = ident == nullptr ? nullptr : ident->Parent();
+    if (parent == nullptr || !parent->IsAssignmentExpression()) {
+        return false;
+    }
+    auto *assignment = parent->AsAssignmentExpression();
+    return assignment != nullptr && assignment->Left() == ident && assignment->Start().index == range.pos &&
+           assignment->End().index == range.end;
+}
+
+static bool IsClassQualifiedObjectRef(const ir::Identifier *ident, const varbinder::Decl *decl)
+{
+    auto *parent = ident == nullptr ? nullptr : ident->Parent();
+    if (decl == nullptr || parent == nullptr || !parent->IsMemberExpression()) {
+        return false;
+    }
+    auto *member = parent->AsMemberExpression();
+    return !member->IsComputed() && member->Object() == ident && decl->IsClassDecl();
+}
+
+static bool CanUseQualifiedCallRef(const ir::Identifier *ident, const ir::AstNode *declNode)
+{
+    return ident != nullptr && declNode != nullptr && IsCallCalleeIdentifier(ident) &&
+           IsNamespaceTopLevelDeclNode(declNode) && IsExportedBeforeNamespaceBoundary(declNode);
+}
+
+static bool ShouldSkipUsedIdentifierNode(const ir::Identifier *ident, TextRange range)
+{
+    return IsExactAssignmentTargetIdentifier(ident, range) || IsMemberPropertyIdentifier(ident) ||
+           IsDeclarationIdentifier(ident) || IsConstructorTypeReferenceIdentifier(ident) ||
+           IsTypeReferenceIdentifier(ident) || IsObjectPropertyKeyIdentifier(ident);
+}
+
+static bool ShouldSkipUsedIdentifierDecl(const ir::Identifier *ident, const varbinder::Variable *variable, bool isLocal,
+                                         ir::AstNode *insertAnchorNode, bool preferQualifiedNamespaceRefs)
+{
+    auto *decl = variable == nullptr ? nullptr : variable->Declaration();
+    auto *declNode = decl == nullptr ? nullptr : decl->Node();
+    if (insertAnchorNode != nullptr && declNode != nullptr && !isLocal &&
+        IsNamespaceVisibleFromTarget(const_cast<ir::AstNode *>(declNode), insertAnchorNode)) {
+        return true;
+    }
+    if (IsClassQualifiedObjectRef(ident, decl) || CanUseQualifiedCallRef(ident, declNode)) {
+        return true;
+    }
+    if (decl != nullptr && decl->IsClassDecl() && IsDeclaredInGlobalScope(decl)) {
+        return true;
+    }
+    const bool isNamespaceTopLevel = declNode != nullptr && IsNamespaceTopLevelDeclNode(declNode);
+    const bool isExportedNamespaceValueRef = isNamespaceTopLevel && IsExportedBeforeNamespaceBoundary(declNode);
+    return preferQualifiedNamespaceRefs && isExportedNamespaceValueRef;
+}
+
+static bool IsNonGlobalUsedIdentifierDecl(bool includeNonGlobal, const varbinder::Decl *decl,
+                                          const ir::AstNode *declNode)
+{
+    const bool isNamespaceTopLevel = declNode != nullptr && IsNamespaceTopLevelDeclNode(declNode);
+    const bool isExportedNamespaceValueRef = isNamespaceTopLevel && IsExportedBeforeNamespaceBoundary(declNode);
+    return includeNonGlobal &&
+           (!IsDeclaredInGlobalScope(decl) || (isNamespaceTopLevel && !isExportedNamespaceValueRef));
+}
+
+struct ResolveUsedIdentifierOptions {
+    bool includeNonGlobal {false};
+    ir::ScriptFunction *enclosingFunc {nullptr};
+    const std::unordered_set<std::string> &declaredInside;
+    ir::AstNode *insertAnchorNode {nullptr};
+    TextRange range;
+    bool preferQualifiedNamespaceRefs {false};
+};
+
 std::optional<std::pair<std::string, ir::Identifier *>> ResolveUsedIdentifier(
-    ir::AstNode *node, bool includeNonGlobal, ir::ScriptFunction *enclosing,
-    const std::unordered_set<std::string> &declaredInside)
+    ir::AstNode *node, const ResolveUsedIdentifierOptions &options)
 {
     if (node == nullptr || !node->IsIdentifier()) {
         return std::nullopt;
     }
     auto *ident = node->AsIdentifier();
-    if (IsMemberPropertyIdentifier(ident) || IsDeclarationIdentifier(ident)) {
+    if (ShouldSkipUsedIdentifierNode(ident, options.range)) {
         return std::nullopt;
     }
     auto *variable = ResolveIdentifier(ident);
     if (variable == nullptr) {
         return std::nullopt;
     }
-    const bool isLocal = IsLocalToEnclosingFunction(enclosing, variable);
-    const bool isNonGlobal = includeNonGlobal && !IsDeclaredInGlobalScope(variable->Declaration());
+    const bool isLocal = IsLocalToEnclosingFunction(options.enclosingFunc, variable);
+    auto *decl = variable->Declaration();
+    auto *declNode = decl == nullptr ? nullptr : decl->Node();
+    if (ShouldSkipUsedIdentifierDecl(ident, variable, isLocal, options.insertAnchorNode,
+                                     options.preferQualifiedNamespaceRefs)) {
+        return std::nullopt;
+    }
+    const bool isNonGlobal = IsNonGlobalUsedIdentifierDecl(options.includeNonGlobal, decl, declNode);
     if (!isLocal && !isNonGlobal) {
         return std::nullopt;
     }
     std::string name = IdentifierNameMutf8(ident);
-    if (declaredInside.find(name) != declaredInside.end()) {
+    if (options.declaredInside.find(name) != options.declaredInside.end()) {
         return std::nullopt;
     }
     return std::make_pair(std::move(name), ident);
+}
+
+static void RecordParameterTextOverrides(const std::unordered_map<std::string, ir::Identifier *> &firstUse,
+                                         FunctionIOInfo &info, public_lib::Context *ctx)
+{
+    for (size_t i = 0; i < info.callArgs.size() && i < info.paramDecls.size(); ++i) {
+        auto it = firstUse.find(info.callArgs[i]);
+        if (it == firstUse.end() || it->second == nullptr) {
+            continue;
+        }
+        auto *parent = it->second->Parent();
+        if (parent == nullptr || !parent->IsETSParameterExpression()) {
+            continue;
+        }
+        const std::string paramText = GetNodeText(ctx, parent);
+        if (!paramText.empty()) {
+            info.paramDecls[i] = paramText;
+        }
+    }
 }
 
 template <class Handler>
@@ -683,50 +1412,504 @@ void FinalizeFunctionIO(FunctionIOInfo &info, const std::unordered_set<std::stri
         }
         info.callArgs.push_back(name);
     }
-    if (info.returnVar.has_value() &&
-        std::find(info.callArgs.begin(), info.callArgs.end(), info.returnVar.value()) == info.callArgs.end()) {
-        info.callArgs.push_back(info.returnVar.value());
+}
+
+static std::string BuildNamespaceQualifierFromScopes(const std::vector<ir::ClassDefinition *> &namespaceScopes)
+{
+    std::string qualifier;
+    for (auto scopeIt = namespaceScopes.rbegin(); scopeIt != namespaceScopes.rend(); ++scopeIt) {
+        const std::string nsName = IdentifierNameMutf8(*scopeIt == nullptr ? nullptr : (*scopeIt)->Ident());
+        if (nsName.empty()) {
+            continue;
+        }
+        if (!qualifier.empty()) {
+            qualifier.push_back('.');
+        }
+        qualifier.append(nsName);
+    }
+    return qualifier;
+}
+
+static std::string NormalizeTypeForExtractedParam(std::string typeText)
+{
+    auto isIdentChar = [](char ch) {
+        return std::isalnum(static_cast<unsigned char>(ch)) != 0 || ch == '_' || ch == '$';
+    };
+    auto replaceAllToken = [&typeText, &isIdentChar](std::string_view from, std::string_view to) {
+        size_t pos = 0;
+        while ((pos = typeText.find(from.data(), pos, from.size())) != std::string::npos) {
+            const bool leftOk = pos == 0 || !isIdentChar(typeText[pos - 1]);
+            const size_t end = pos + from.size();
+            const bool rightOk = end >= typeText.size() || !isIdentChar(typeText[end]);
+            if (leftOk && rightOk) {
+                typeText.replace(pos, from.size(), to.data(), to.size());
+                pos += to.size();
+            } else {
+                pos = end;
+            }
+        }
+    };
+    replaceAllToken("Number", "number");
+    replaceAllToken("Double", "number");
+    replaceAllToken("Float", "number");
+    replaceAllToken("Int", "int");
+    replaceAllToken("Long", "long");
+    replaceAllToken("Short", "short");
+    replaceAllToken("Byte", "byte");
+    return typeText;
+}
+
+static bool TryAppendOriginalParameterDecl(FunctionIOInfo &info, public_lib::Context *ctx, ir::Identifier *ident)
+{
+    auto *variable = ident == nullptr ? nullptr : ResolveIdentifier(ident);
+    auto *declNode =
+        variable != nullptr && variable->Declaration() != nullptr ? variable->Declaration()->Node() : nullptr;
+    if (ctx == nullptr || declNode == nullptr || !declNode->IsETSParameterExpression()) {
+        return false;
+    }
+    std::string text = GetNodeText(ctx, declNode);
+    if (text.empty()) {
+        return false;
+    }
+    info.paramDecls.push_back(text);
+    return true;
+}
+
+static std::string QualifyNonGlobalParamTypeIfNeeded(std::string typeText, bool includeNonGlobal, ir::Identifier *ident)
+{
+    if (!includeNonGlobal || ident == nullptr || typeText != IdentifierNameMutf8(ident)) {
+        return typeText;
+    }
+    auto namespaceScopes = CollectEnclosingNamespaceScopes(ident);
+    if (namespaceScopes.empty()) {
+        return typeText;
+    }
+    std::string qualifier = BuildNamespaceQualifierFromScopes(namespaceScopes);
+    return qualifier.empty() ? typeText : qualifier + "." + typeText;
+}
+
+static std::string ResolveParamDeclTypeText(checker::ETSChecker *checker, bool includeNonGlobal, ir::Identifier *ident)
+{
+    auto type = GetTypeOfSymbolAtLocation(checker, ident);
+    if (type == nullptr) {
+        return "";
+    }
+    std::string typeText = NormalizeTypeForExtractedParam(type->ToString());
+    return QualifyNonGlobalParamTypeIfNeeded(std::move(typeText), includeNonGlobal, ident);
+}
+
+struct ParamDeclResolveContext {
+    const std::unordered_map<std::string, ir::Identifier *> &firstUse;
+    checker::ETSChecker *checker {nullptr};
+    bool includeNonGlobal {false};
+    public_lib::Context *ctx {nullptr};
+};
+
+static void AppendParamDeclFromFirstUse(FunctionIOInfo &info, const std::string &name,
+                                        const ParamDeclResolveContext &resolveContext)
+{
+    auto it = resolveContext.firstUse.find(name);
+    if (resolveContext.checker == nullptr || it == resolveContext.firstUse.end()) {
+        info.paramDecls.push_back(name);
+        return;
+    }
+    if (TryAppendOriginalParameterDecl(info, resolveContext.ctx, it->second)) {
+        return;
+    }
+    std::string typeText =
+        ResolveParamDeclTypeText(resolveContext.checker, resolveContext.includeNonGlobal, it->second);
+    if (typeText.empty()) {
+        info.paramDecls.push_back(name);
+        return;
+    }
+    info.paramDecls.push_back(std::string(name).append(": ").append(typeText));
+}
+
+static bool TryAssignReturnTypeFromIdent(FunctionIOInfo &info, public_lib::Context *ctx, ir::Identifier *ident)
+{
+    if (ctx == nullptr || ident == nullptr || ident->TypeAnnotation() == nullptr) {
+        return false;
+    }
+    std::string text = GetNodeText(ctx, ident->TypeAnnotation());
+    if (text.empty()) {
+        text = ident->TypeAnnotation()->ToString();
+    }
+    if (text.empty()) {
+        return false;
+    }
+    info.returnVarTypeAnnotation = ": " + text;
+    return true;
+}
+
+static void AssignReturnVarTypeAnnotation(FunctionIOInfo &info,
+                                          const std::unordered_map<std::string, ir::Identifier *> &firstUse,
+                                          checker::ETSChecker *checker, public_lib::Context *ctx)
+{
+    if (!info.returnVar.has_value()) {
+        return;
+    }
+    auto retIt = firstUse.find(info.returnVar.value());
+    if (retIt == firstUse.end() || retIt->second == nullptr) {
+        return;
+    }
+    auto *retIdent = retIt->second;
+    if (TryAssignReturnTypeFromIdent(info, ctx, retIdent)) {
+        return;
+    }
+    auto *variable = ResolveIdentifier(retIdent);
+    auto *declNode =
+        variable != nullptr && variable->Declaration() != nullptr ? variable->Declaration()->Node() : nullptr;
+    if (declNode != nullptr && declNode->IsVariableDeclarator()) {
+        auto *id = declNode->AsVariableDeclarator()->Id();
+        if (id != nullptr && id->IsIdentifier() && TryAssignReturnTypeFromIdent(info, ctx, id->AsIdentifier())) {
+            return;
+        }
+    }
+    if (checker != nullptr) {
+        auto type = GetTypeOfSymbolAtLocation(checker, retIdent);
+        if (type != nullptr) {
+            std::string text = type->ToString();
+            if (!text.empty()) {
+                info.returnVarTypeAnnotation = ": " + text;
+            }
+        }
     }
 }
 
 void BuildParamDecls(FunctionIOInfo &info, const std::unordered_map<std::string, ir::Identifier *> &firstUse,
-                     checker::ETSChecker *checker)
+                     checker::ETSChecker *checker, bool includeNonGlobal, public_lib::Context *ctx)
 {
-    auto normalizeTypeForExtractedParam = [](const std::string &typeText) -> std::string {
-        if (typeText == "Number") {
-            return "number";
-        }
-        if (typeText == "Boolean") {
-            return "boolean";
-        }
-        if (typeText == "String") {
-            return "string";
-        }
-        return typeText;
-    };
-
+    ParamDeclResolveContext resolveContext {firstUse, checker, includeNonGlobal, ctx};
     for (const auto &name : info.callArgs) {
-        auto it = firstUse.find(name);
-        if (checker == nullptr || it == firstUse.end()) {
-            info.paramDecls.push_back(name);
-            continue;
+        AppendParamDeclFromFirstUse(info, name, resolveContext);
+    }
+    AssignReturnVarTypeAnnotation(info, firstUse, checker, ctx);
+}
+
+bool IsIdentifierContinuation(char ch)
+{
+    return std::isalnum(static_cast<unsigned char>(ch)) != 0 || ch == '_' || ch == '$';
+}
+
+bool HasUseStaticDirective(std::string_view source)
+{
+    size_t pos = 0;
+    while (pos < source.size() && std::isspace(static_cast<unsigned char>(source[pos])) != 0) {
+        ++pos;
+    }
+    constexpr std::string_view singleQuoteDirective = "'use static'";
+    constexpr std::string_view doubleQuoteDirective = "\"use static\"";
+    return source.substr(pos, singleQuoteDirective.size()) == singleQuoteDirective ||
+           source.substr(pos, doubleQuoteDirective.size()) == doubleQuoteDirective;
+}
+
+bool ContainsIdentifierToken(std::string_view text, std::string_view token)
+{
+    if (token.empty() || text.size() < token.size()) {
+        return false;
+    }
+    size_t pos = text.find(token);
+    while (pos != std::string::npos) {
+        const bool leftOk = pos == 0 || !IsIdentifierContinuation(text[pos - 1]);
+        const size_t end = pos + token.size();
+        const bool rightOk = end >= text.size() || !IsIdentifierContinuation(text[end]);
+        if (leftOk && rightOk) {
+            return true;
         }
-        auto type = GetTypeOfSymbolAtLocation(checker, it->second);
-        if (type == nullptr) {
-            info.paramDecls.push_back(name);
-            continue;
+        pos = text.find(token, pos + token.size());
+    }
+    return false;
+}
+
+static bool IsNamespaceTopLevelDeclNode(const ir::AstNode *declNode)
+{
+    if (declNode == nullptr) {
+        return false;
+    }
+    bool hasNamespaceModuleAncestor = false;
+    for (auto *current = const_cast<ir::AstNode *>(declNode); current != nullptr; current = current->Parent()) {
+        if (current->IsFunctionDeclaration() || current->IsFunctionExpression() ||
+            current->IsArrowFunctionExpression() || current->IsScriptFunction()) {
+            return false;
         }
-        std::string typeText = type->ToString();
-        typeText = normalizeTypeForExtractedParam(typeText);
-        if (typeText.empty()) {
-            info.paramDecls.push_back(name);
-            continue;
+        if (current->IsETSModule()) {
+            auto *module = current->AsETSModule();
+            if (module != nullptr && module->IsNamespace()) {
+                hasNamespaceModuleAncestor = true;
+            }
         }
-        info.paramDecls.push_back(std::string(name).append(": ").append(typeText));
+        if (current->IsClassDeclaration()) {
+            auto *classDef = current->AsClassDeclaration()->Definition();
+            if (classDef != nullptr && classDef->IsNamespaceTransformed()) {
+                return true;
+            }
+        }
+    }
+    return hasNamespaceModuleAncestor;
+}
+
+static bool IsExportedBeforeNamespaceBoundary(const ir::AstNode *declNode)
+{
+    for (auto *current = const_cast<ir::AstNode *>(declNode); current != nullptr; current = current->Parent()) {
+        if (util::Helpers::IsExported(current)) {
+            return true;
+        }
+        if (current->IsClassDeclaration()) {
+            auto *classDef = current->AsClassDeclaration()->Definition();
+            if (classDef != nullptr && classDef->IsNamespaceTransformed()) {
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+static bool IsUnexportedNamespaceTopLevelDeclNode(const ir::AstNode *declNode)
+{
+    return IsNamespaceTopLevelDeclNode(declNode) && !IsExportedBeforeNamespaceBoundary(declNode);
+}
+
+static bool IsCallCalleeIdentifier(const ir::Identifier *ident)
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    auto *parent = ident->Parent();
+    return parent != nullptr && parent->IsCallExpression() && parent->AsCallExpression()->Callee() == ident;
+}
+
+static bool HasUnexportedNamespaceDependencyInSelection(const RefactorContext &context, TextRange range,
+                                                        bool includeValueRefs, bool includeTypeRefs)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        range.pos >= range.end) {
+        return false;
+    }
+    bool hasDependency = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (hasDependency || node == nullptr || !node->IsIdentifier() || node->Start().index < range.pos ||
+            node->End().index > range.end) {
+            return false;
+        }
+        auto *ident = node->AsIdentifier();
+        const bool isTypeRef = IsTypeReferenceIdentifier(ident) && !IsQualifiedTypeReferencePropertyIdentifier(ident);
+        const bool isValueRef = !IsTypeReferenceIdentifier(ident) && !IsMemberPropertyIdentifier(ident) &&
+                                !IsDeclarationIdentifier(ident) && !IsObjectPropertyKeyIdentifier(ident);
+        if ((isTypeRef && !includeTypeRefs) || (isValueRef && !includeValueRefs) || (!isTypeRef && !isValueRef)) {
+            return false;
+        }
+        auto *variable = ResolveIdentifier(ident);
+        auto *declNode =
+            (variable != nullptr && variable->Declaration() != nullptr) ? variable->Declaration()->Node() : nullptr;
+        if (IsUnexportedNamespaceTopLevelDeclNode(declNode)) {
+            hasDependency = true;
+            return true;
+        }
+        return false;
+    });
+    return hasDependency;
+}
+
+static bool HasUnexportedNamespaceTopLevelDependencyInSelection(const RefactorContext &context, TextRange range)
+{
+    return HasUnexportedNamespaceDependencyInSelection(context, range, true, false);
+}
+
+bool HasUnexportedNamespaceInterfaceDependencyInSelection(const RefactorContext &context, TextRange range)
+{
+    return HasUnexportedNamespaceDependencyInSelection(context, range, false, true);
+}
+
+bool HasNamespacePrivateSymbolDependencyForGlobalExtraction(const RefactorContext &context, TextRange range)
+{
+    return HasUnexportedNamespaceTopLevelDependencyInSelection(context, range);
+}
+
+std::string TrimAsciiWhitespace(std::string_view s)
+{
+    size_t begin = 0;
+    while (begin < s.size() && std::isspace(static_cast<unsigned char>(s[begin])) != 0) {
+        ++begin;
+    }
+    size_t end = s.size();
+    while (end > begin && std::isspace(static_cast<unsigned char>(s[end - 1])) != 0) {
+        --end;
+    }
+    return std::string(s.substr(begin, end - begin));
+}
+
+static std::string NormalizeExtractedReturnTypeText(const std::string &typeText, bool normalizePrimitiveTypes)
+{
+    if (!normalizePrimitiveTypes) {
+        return typeText;
+    }
+    if (typeText == "Number" || typeText == "Double" || typeText == "Int" || typeText == "Float" ||
+        typeText == "Long" || typeText == "Short" || typeText == "Byte") {
+        return "number";
+    }
+    if (typeText == "Boolean") {
+        return "boolean";
+    }
+    if (typeText == "String") {
+        return "string";
+    }
+    return typeText;
+}
+
+static std::string BuildTypeAnnotationText(const std::string &typeText, bool normalizePrimitiveTypes)
+{
+    const std::string normalized = NormalizeExtractedReturnTypeText(typeText, normalizePrimitiveTypes);
+    return normalized.empty() ? "" : ": " + normalized;
+}
+
+static std::string ResolveTypeAnnotationFromChecker(checker::ETSChecker *checker, ir::AstNode *target,
+                                                    bool normalizePrimitiveTypes)
+{
+    if (checker == nullptr || target == nullptr) {
+        return "";
+    }
+    auto type = GetTypeOfSymbolAtLocation(checker, target);
+    return type == nullptr ? "" : BuildTypeAnnotationText(type->ToString(), normalizePrimitiveTypes);
+}
+
+static ir::TypeNode *ResolveSelectionOwnerTypeAnnotation(ir::AstNode *node, TextRange range)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+    if (node->IsVariableDeclarator()) {
+        auto *id = node->AsVariableDeclarator()->Id();
+        auto *init = node->AsVariableDeclarator()->Init();
+        if (id != nullptr && id->IsIdentifier() && init != nullptr && init->Start().index <= range.pos &&
+            init->End().index >= range.end) {
+            return id->AsIdentifier()->TypeAnnotation();
+        }
+        return nullptr;
+    }
+    if (!node->IsClassProperty()) {
+        return nullptr;
+    }
+    auto *prop = node->AsClassProperty();
+    if (prop->Value() == nullptr || prop->Value()->Start().index > range.pos ||
+        prop->Value()->End().index < range.end) {
+        return nullptr;
+    }
+    if (prop->Key() != nullptr && prop->Key()->IsIdentifier()) {
+        if (auto *typeAnno = prop->Key()->AsIdentifier()->TypeAnnotation(); typeAnno != nullptr) {
+            return typeAnno;
+        }
+    }
+    return prop->TypeAnnotation();
+}
+
+static bool HasUnexportedNamespaceTypeReference(ir::TypeNode *typeAnno)
+{
+    bool hasPrivateTypeDependency = false;
+    if (typeAnno == nullptr) {
+        return false;
+    }
+    typeAnno->FindChild([&](ir::AstNode *typeNode) {
+        if (hasPrivateTypeDependency || typeNode == nullptr || !typeNode->IsIdentifier()) {
+            return false;
+        }
+        auto *ident = typeNode->AsIdentifier();
+        if (!IsTypeReferenceIdentifier(ident) || IsQualifiedTypeReferencePropertyIdentifier(ident)) {
+            return false;
+        }
+        auto *variable = ResolveIdentifier(ident);
+        auto *declNode =
+            (variable != nullptr && variable->Declaration() != nullptr) ? variable->Declaration()->Node() : nullptr;
+        if (IsUnexportedNamespaceTopLevelDeclNode(declNode)) {
+            hasPrivateTypeDependency = true;
+            return true;
+        }
+        return false;
+    });
+    return hasPrivateTypeDependency;
+}
+
+bool HasNamespacePrivateTypeAnnotationDependencyForExpression(const RefactorContext &context, TextRange range)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr ||
+        range.pos >= range.end) {
+        return false;
+    }
+    bool hasPrivateTypeDependency = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (hasPrivateTypeDependency || node == nullptr) {
+            return false;
+        }
+        ir::TypeNode *typeAnno = ResolveSelectionOwnerTypeAnnotation(node, range);
+        if (typeAnno == nullptr) {
+            return false;
+        }
+        hasPrivateTypeDependency = HasUnexportedNamespaceTypeReference(typeAnno);
+        return hasPrivateTypeDependency;
+    });
+    return hasPrivateTypeDependency;
+}
+
+static void RecordFunctionIOAssignmentFirstUse(ir::AstNode *node,
+                                               std::unordered_map<std::string, ir::Identifier *> &firstUse)
+{
+    if (node == nullptr || !node->IsAssignmentExpression()) {
+        return;
+    }
+    auto *lhs = node->AsAssignmentExpression()->Left();
+    if (lhs == nullptr || !lhs->IsIdentifier()) {
+        return;
+    }
+    auto *ident = lhs->AsIdentifier();
+    const std::string name = IdentifierNameMutf8(ident);
+    if (!name.empty()) {
+        firstUse.emplace(name, ident);
     }
 }
 
-FunctionIOInfo AnalyzeFunctionIO(const RefactorContext &context, TextRange range, bool includeNonGlobal)
+struct FunctionIONodeUsageContext {
+    bool includeNonGlobal {false};
+    ir::ScriptFunction *enclosingFunc {nullptr};
+    std::unordered_set<std::string> &declaredInside;
+    std::unordered_set<std::string> &assignedInside;
+    std::unordered_set<std::string> &usedSet;
+    std::vector<std::string> &usedOrder;
+    std::unordered_map<std::string, ir::Identifier *> &firstUse;
+    ir::AstNode *insertAnchorNode {nullptr};
+    TextRange range;
+    bool preferQualifiedNamespaceRefs {false};
+};
+
+static void RecordFunctionIOReturnUsage(FunctionIOInfo &info, ir::AstNode *node, ir::ScriptFunction *enclosingFunc)
+{
+    if (node->IsReturnStatement() && FindScriptFunction(node) == enclosingFunc) {
+        info.hasReturnStatement = true;
+    }
+}
+
+static void RecordFunctionIOResolvedIdentifierUsage(ir::AstNode *node, FunctionIONodeUsageContext &usageContext)
+{
+    auto used = ResolveUsedIdentifier(node, {usageContext.includeNonGlobal, usageContext.enclosingFunc,
+                                             usageContext.declaredInside, usageContext.insertAnchorNode,
+                                             usageContext.range, usageContext.preferQualifiedNamespaceRefs});
+    if (used.has_value() && usageContext.usedSet.insert(used->first).second) {
+        usageContext.usedOrder.push_back(used->first);
+        usageContext.firstUse.emplace(used->first, used->second);
+    }
+}
+
+static void RecordFunctionIONodeUsage(FunctionIOInfo &info, ir::AstNode *node, FunctionIONodeUsageContext &usageContext)
+{
+    RecordFunctionIOReturnUsage(info, node, usageContext.enclosingFunc);
+    RecordDeclaredIdentifier(node, usageContext.declaredInside);
+    RecordAssignedIdentifier(node, usageContext.enclosingFunc, usageContext.assignedInside);
+    RecordFunctionIOAssignmentFirstUse(node, usageContext.firstUse);
+    RecordFunctionIOResolvedIdentifierUsage(node, usageContext);
+}
+
+FunctionIOInfo AnalyzeFunctionIO(const RefactorContext &context, TextRange range, bool includeNonGlobal,
+                                 ir::AstNode *insertAnchorNode, bool preferQualifiedNamespaceRefs)
 {
     FunctionIOInfo info;
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
@@ -734,7 +1917,6 @@ FunctionIOInfo AnalyzeFunctionIO(const RefactorContext &context, TextRange range
         return info;
     }
     auto *checker = ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
-
     auto *touchNode = GetTouchingToken(context.context, range.pos, false);
     auto *enclosingFunc = FindScriptFunction(touchNode);
 
@@ -743,22 +1925,14 @@ FunctionIOInfo AnalyzeFunctionIO(const RefactorContext &context, TextRange range
     std::unordered_set<std::string> usedSet;
     std::vector<std::string> usedOrder;
     std::unordered_map<std::string, ir::Identifier *> firstUse;
-    auto onNode = [&info, &declaredInside, &assignedInside, includeNonGlobal, enclosingFunc, &usedSet, &usedOrder,
-                   &firstUse](ir::AstNode *node) {
-        if (node->IsReturnStatement()) {
-            info.hasReturnStatement = true;
-        }
-        RecordDeclaredIdentifier(node, declaredInside);
-        RecordAssignedIdentifier(node, enclosingFunc, assignedInside);
-        auto used = ResolveUsedIdentifier(node, includeNonGlobal, enclosingFunc, declaredInside);
-        if (used.has_value() && usedSet.insert(used->first).second) {
-            usedOrder.push_back(used->first);
-            firstUse.emplace(used->first, used->second);
-        }
-    };
+    FunctionIONodeUsageContext usageContext {
+        includeNonGlobal, enclosingFunc, declaredInside,   assignedInside, usedSet,
+        usedOrder,        firstUse,      insertAnchorNode, range,          preferQualifiedNamespaceRefs};
+    auto onNode = [&info, &usageContext](ir::AstNode *node) { RecordFunctionIONodeUsage(info, node, usageContext); };
     CollectFunctionIOUsage(ctx->parserProgram->Ast(), range, onNode);
     FinalizeFunctionIO(info, declaredInside, assignedInside, usedOrder);
-    BuildParamDecls(info, firstUse, checker);
+    BuildParamDecls(info, firstUse, checker, includeNonGlobal, ctx);
+    RecordParameterTextOverrides(firstUse, info, ctx);
     return info;
 }
 
@@ -780,33 +1954,6 @@ std::string JoinWithComma(const std::vector<std::string> &items)
         joined.append(items[i]);
     }
     return joined;
-}
-
-bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::string &name)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return false;
-    }
-
-    const auto &src = ctx->sourceFile->source;
-    if (src.empty()) {
-        return false;
-    }
-
-    const std::string needle = "function " + name;
-    size_t pos = src.find(needle);
-    while (pos != std::string::npos) {
-        size_t next = pos + needle.size();
-        while (next < src.size() && isspace(src[next])) {
-            ++next;
-        }
-        if (next < src.size() && (src[next] == '(' || src[next] == '<')) {
-            return true;
-        }
-        pos = src.find(needle, pos + 1);
-    }
-
-    return false;
 }
 
 bool IsActionNameOrKind(std::string_view actionName, const RefactorActionView &action)
@@ -900,7 +2047,7 @@ std::string GetInsertionIndent(public_lib::Context *ctx, size_t insertPos);
 size_t NormalizeInsertPos(std::string_view source, size_t pos)
 {
     size_t adjusted = std::min(pos, source.size());
-    while (adjusted < source.size() && IsLineBreak(source[adjusted])) {
+    while (adjusted < source.size() && IsLineBreakChar(source[adjusted])) {
         ++adjusted;
     }
     return adjusted;
@@ -916,12 +2063,12 @@ void GetLineBounds(std::string_view source, size_t pos, size_t &lineStart, size_
 
     size_t safePos = std::min(pos, source.size() - 1);
     lineStart = safePos;
-    while (lineStart > 0 && !IsLineBreak(source[lineStart - 1])) {
+    while (lineStart > 0 && !IsLineBreakChar(source[lineStart - 1])) {
         --lineStart;
     }
 
     lineEnd = safePos;
-    while (lineEnd < source.size() && !IsLineBreak(source[lineEnd])) {
+    while (lineEnd < source.size() && !IsLineBreakChar(source[lineEnd])) {
         ++lineEnd;
     }
     if (lineEnd >= source.size()) {
@@ -937,7 +2084,7 @@ bool IsBlankLine(std::string_view source, size_t lineStart, size_t lineEnd)
     size_t end = std::min(lineEnd, source.size() - 1);
     for (size_t i = lineStart; i <= end; ++i) {
         char ch = source[i];
-        if (IsLineBreak(ch)) {
+        if (IsLineBreakChar(ch)) {
             continue;
         }
         if (ch != ' ' && ch != '\t') {
@@ -1139,21 +2286,6 @@ bool HasSelectionNewline(const RefactorContext &context, std::string_view source
     return false;
 }
 
-TextRange TrimSpanWhitespace(TextRange span, std::string_view source)
-{
-    size_t trimStart = std::min(span.pos, source.size());
-    size_t trimEnd = std::min(span.end, source.size());
-    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (trimStart < trimEnd && isspace(source[trimStart])) {
-        ++trimStart;
-    }
-    // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-    while (trimEnd > trimStart && isspace(source[trimEnd - 1])) {
-        --trimEnd;
-    }
-    return {trimStart, trimEnd};
-}
-
 ir::AstNode *GetNodeForSpan(const RefactorContext &context)
 {
     const auto normalizedSpan = GetTrimmedSelectionSpan(context);
@@ -1169,17 +2301,84 @@ ir::AstNode *GetNodeForSpan(const RefactorContext &context)
     return node;
 }
 
-ir::AstNode *ResolveNodeForSelection(const RefactorContext &context, public_lib::Context *ctx, bool selectionHasNewline)
+static ir::AstNode *ResolveOptimumNodeForSelection(ir::AstNode *node, TextRange normalizedSpan)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+    if (auto *optimum = GetOptimumNodeByRange(node, normalizedSpan); optimum != nullptr) {
+        return optimum;
+    }
+    return node;
+}
+
+static bool ShouldPreferTouchingTokenForExpression(ir::AstNode *node, TextRange normalizedSpan)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    const bool nodeStrictlyContainsSpan =
+        node->Start().index < normalizedSpan.pos || node->End().index > normalizedSpan.end;
+    const bool selectionLooksLikeExpression =
+        normalizedSpan.end > normalizedSpan.pos && (normalizedSpan.end - normalizedSpan.pos) <= 64;
+    return nodeStrictlyContainsSpan && selectionLooksLikeExpression && !node->IsExpression() &&
+           !node->IsBinaryExpression();
+}
+
+static ir::AstNode *ResolveTouchingTokenForSelection(const RefactorContext &context, TextRange normalizedSpan)
+{
+    auto *touchNode = GetTouchingToken(context.context, normalizedSpan.pos, false);
+    return ResolveOptimumNodeForSelection(touchNode, normalizedSpan);
+}
+
+static ir::AstNode *NormalizeNodeToCoverSpan(ir::AstNode *node, TextRange normalizedSpan)
+{
+    while (node != nullptr && (node->Start().index > normalizedSpan.pos || node->End().index < normalizedSpan.end)) {
+        node = node->Parent();
+    }
+    return node;
+}
+
+static ir::AstNode *TryResolveInitializerBySelection(ir::AstNode *seed, TextRange normalizedSpan)
+{
+    VariableBindingInfo binding;
+    for (auto *current = seed; current != nullptr; current = current->Parent()) {
+        if (!ResolveVariableBinding(current, binding) || binding.initializer == nullptr) {
+            continue;
+        }
+        if (normalizedSpan.pos >= binding.initializer->Start().index &&
+            normalizedSpan.end <= binding.initializer->End().index) {
+            return binding.initializer;
+        }
+    }
+    return nullptr;
+}
+
+ir::AstNode *ResolveNodeForSelection(const RefactorContext &context, public_lib::Context *ctx, bool selectionHasNewline,
+                                     TextRange normalizedSpan)
 {
     auto *node = GetNodeForSpan(context);
-    if (node != nullptr || !selectionHasNewline) {
+    if (node != nullptr) {
+        node = NormalizeNodeToCoverSpan(node, normalizedSpan);
+        if (auto *initializer = TryResolveInitializerBySelection(node, normalizedSpan); initializer != nullptr) {
+            return initializer;
+        }
+        if (ShouldPreferTouchingTokenForExpression(node, normalizedSpan)) {
+            if (auto *touchNode = ResolveTouchingTokenForSelection(context, normalizedSpan); touchNode != nullptr) {
+                return touchNode;
+            }
+        }
         return node;
     }
-    node = FindTouchingTokenByScan(context, ctx);
+    node = ResolveOptimumNodeForSelection(FindTouchingTokenByScan(context, ctx), normalizedSpan);
     if (node != nullptr) {
-        if (auto *optimum = GetOptimumNodeByRange(node, context.span); optimum != nullptr) {
-            node = optimum;
-        }
+        node = NormalizeNodeToCoverSpan(node, normalizedSpan);
+        return node;
+    }
+    if (!selectionHasNewline) {
+        // For single-line selections, token probe can still fail for exact-span cases
+        // (e.g. statement selections ending with semicolon). Fall back to touching token.
+        return ResolveTouchingTokenForSelection(context, normalizedSpan);
     }
     return node;
 }
@@ -1439,29 +2638,35 @@ bool ProgramHasFunction(public_lib::Context *ctx, const std::string &name)
     }
     bool found = false;
     ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
-        if (found || node == nullptr || !node->IsFunctionDeclaration()) {
+        if (found || node == nullptr) {
             return false;
         }
-        auto *decl = node->AsFunctionDeclaration();
-        auto *func = decl->Function();
-        if (func != nullptr && func->Id() != nullptr && IdentifierNameMutf8(func->Id()) == name) {
-            found = true;
-            return true;
+        if (node->IsFunctionDeclaration()) {
+            auto *decl = node->AsFunctionDeclaration();
+            auto *func = decl->Function();
+            if (func != nullptr && func->Id() != nullptr && IdentifierNameMutf8(func->Id()) == name) {
+                found = true;
+                return true;
+            }
+            return false;
         }
-        auto text = GetNodeText(ctx, decl);
-        std::string prefix = "function " + name;
-        auto it = std::search(text.begin(), text.end(), prefix.begin(), prefix.end());
-        if (it != text.end()) {
+        if (!node->IsScriptFunction()) {
+            return false;
+        }
+        auto *func = node->AsScriptFunction();
+        if (func == nullptr || func->Id() == nullptr) {
+            return false;
+        }
+        if (!compiler::HasGlobalClassParent(node)) {
+            return false;
+        }
+        if (IdentifierNameMutf8(func->Id()) == name) {
             found = true;
             return true;
         }
         return false;
     });
-    if (found) {
-        return true;
-    }
-
-    return SourceContainsFunctionDefinition(ctx, name);
+    return found;
 }
 
 bool ClassHasProperty(ir::ClassDefinition *classDef, const std::string &name)
@@ -1681,21 +2886,25 @@ std::string GenerateUniqueExtractedVarName(const RefactorContext &context, const
     return "";
 }
 
-size_t DetermineGlobalInsertPos(public_lib::Context *ctx)
+static size_t ScanDirectivePrologueEnd(std::string_view src)
 {
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return 0;
-    }
-    const auto &src = ctx->sourceFile->source;
     size_t offset = 0;
     size_t lastDirectiveEnd = 0;
     while (offset < src.size()) {
+        if (src[offset] == '\n' || src[offset] == '\r') {
+            ++offset;
+            continue;
+        }
         size_t lineStart = offset;
         while (lineStart < src.size() && IsIndentChar(src[lineStart])) {
             ++lineStart;
         }
         if (lineStart >= src.size()) {
             break;
+        }
+        if (src[lineStart] == '\n' || src[lineStart] == '\r') {
+            offset = lineStart + 1;
+            continue;
         }
         if (src[lineStart] != '\'' && src[lineStart] != '"') {
             break;
@@ -1706,8 +2915,7 @@ size_t DetermineGlobalInsertPos(public_lib::Context *ctx)
         size_t newline = src.find(LINE_FEED, lineStart);
 #endif
         if (newline == std::string::npos) {
-            lastDirectiveEnd = src.size();
-            break;
+            return src.size();
         }
         lastDirectiveEnd = newline + 1;
         offset = newline + 1;
@@ -1715,15 +2923,43 @@ size_t DetermineGlobalInsertPos(public_lib::Context *ctx)
     return lastDirectiveEnd;
 }
 
+static size_t ExtendInsertPosPastLeadingTypeDecls(public_lib::Context *ctx, std::string_view src, size_t basePos)
+{
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return basePos;
+    }
+    size_t insertPos = basePos;
+    for (auto *stmt : ctx->parserProgram->Ast()->Statements()) {
+        if (stmt == nullptr || stmt->Start().index < insertPos) {
+            continue;
+        }
+        if (!stmt->IsTSInterfaceDeclaration() && !stmt->IsTSTypeAliasDeclaration()) {
+            break;
+        }
+        insertPos = ExtendToLineEnd(util::StringView(src), stmt->End().index);
+    }
+    return insertPos;
+}
+
+size_t DetermineGlobalInsertPos(public_lib::Context *ctx)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return 0;
+    }
+    const auto &src = ctx->sourceFile->source;
+    const size_t directiveEnd = ScanDirectivePrologueEnd(src);
+    return ExtendInsertPosPastLeadingTypeDecls(ctx, src, directiveEnd);
+}
+
 size_t ExtendToLineEnd(util::StringView source, size_t index)
 {
     auto sv = source.Utf8();
     size_t pos = std::min(index, sv.size());
 
-    while (pos < sv.size() && !IsLineBreak(sv[pos])) {
+    while (pos < sv.size() && !IsLineBreakChar(sv[pos])) {
         ++pos;
     }
-    while (pos < sv.size() && IsLineBreak(sv[pos])) {
+    while (pos < sv.size() && IsLineBreakChar(sv[pos])) {
         ++pos;
     }
     return pos;
@@ -1731,7 +2967,7 @@ size_t ExtendToLineEnd(util::StringView source, size_t index)
 
 void TrimTrailingNewlines(std::string &text)
 {
-    while (!text.empty() && IsLineBreak(text.back())) {
+    while (!text.empty() && IsLineBreakChar(text.back())) {
         text.pop_back();
     }
 }
@@ -1750,8 +2986,11 @@ std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingI
     auto *parent = binding.declaration != nullptr ? binding.declaration->Parent() : nullptr;
     bool needsLeadingBlank = parent != nullptr && !parent->IsProgram();
     auto keyword = GetKeyword(binding.declaration->Kind());
-    auto declaratorId = GetDeclaratorIdText(ctx, binding);
-    line.reserve(indent.size() + keyword.size() + declaratorId.size() + callExpr.size());
+    std::string declaratorText = GetDeclaratorTextWithoutInitializer(ctx, binding);
+    if (declaratorText.empty()) {
+        declaratorText = GetDeclaratorIdText(ctx, binding);
+    }
+    line.reserve(indent.size() + keyword.size() + declaratorText.size() + callExpr.size());
     if (needsLeadingBlank) {
         line.append(newLine);
     }
@@ -1759,7 +2998,7 @@ std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingI
     line.append(indent);
     line.append(keyword);
     line.append(" ");
-    line.append(declaratorId);
+    line.append(declaratorText);
     line.append(" = ");
     line.append(callExpr);
     if (line.back() != ';') {
@@ -1795,7 +3034,7 @@ std::pair<std::string, std::string> BuildParamSignature(const RefactorContext &c
     auto *enclosingFunc = FindScriptFunction(binding.declaration);
     auto paramText = CollectParameterText(ctx, enclosingFunc);
     TextRange initializerRange {binding.initializer->Start().index, binding.initializer->End().index};
-    FunctionIOInfo ioInfo = AnalyzeFunctionIO(context, initializerRange, includeNonGlobal);
+    FunctionIOInfo ioInfo = AnalyzeFunctionIO(context, initializerRange, includeNonGlobal, nullptr, false);
     if (!ioInfo.callArgs.empty()) {
         std::vector<std::string> paramDecls;
         paramDecls.reserve(ioInfo.callArgs.size());
@@ -1835,6 +3074,89 @@ size_t ResolveIndentSize(const RefactorContext &context)
     return indentSize == 0 ? globalDefaultIndentSize : indentSize;
 }
 
+std::string ResolveReturnTypeAnnotationForBinding(const RefactorContext &context, const VariableBindingInfo &binding,
+                                                  bool normalizePrimitiveTypes, bool includeLiteralFallback)
+{
+    auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
+
+    if (pubCtx != nullptr && binding.identifier != nullptr && binding.identifier->TypeAnnotation() != nullptr) {
+        std::string annotated = GetNodeText(pubCtx, binding.identifier->TypeAnnotation());
+        if (annotated.empty()) {
+            annotated = binding.identifier->TypeAnnotation()->ToString();
+        }
+        if (std::string typeAnnotation = BuildTypeAnnotationText(annotated, normalizePrimitiveTypes);
+            !typeAnnotation.empty()) {
+            return typeAnnotation;
+        }
+    }
+
+    auto *checker =
+        pubCtx == nullptr || pubCtx->GetChecker() == nullptr ? nullptr : pubCtx->GetChecker()->AsETSChecker();
+    if (std::string typeAnnotation =
+            ResolveTypeAnnotationFromChecker(checker, binding.identifier, normalizePrimitiveTypes);
+        !typeAnnotation.empty()) {
+        return typeAnnotation;
+    }
+    if (std::string typeAnnotation =
+            ResolveTypeAnnotationFromChecker(checker, binding.initializer, normalizePrimitiveTypes);
+        !typeAnnotation.empty()) {
+        return typeAnnotation;
+    }
+
+    if (includeLiteralFallback && binding.initializer != nullptr) {
+        if (binding.initializer->IsNumberLiteral()) {
+            return ": int";
+        }
+        if (binding.initializer->IsStringLiteral()) {
+            return ": String";
+        }
+        if (binding.initializer->IsBooleanLiteral()) {
+            return ": boolean";
+        }
+    }
+    return "";
+}
+
+struct GlobalHelperBodyParts {
+    std::string_view newLine;
+    std::string_view helperName;
+    std::string_view returnTypeAnnotation;
+    std::string_view indentStep;
+    std::string_view varName;
+    std::string_view body;
+};
+
+static std::string BuildGlobalHelperFromSelectionBody(const GlobalHelperBodyParts &parts)
+{
+    std::string helper;
+    helper.reserve(parts.body.size() + parts.helperName.size() + parts.varName.size() + K_HELPER_RESERVE_PADDING);
+    helper.append(parts.newLine);
+    helper.append("function ")
+        .append(parts.helperName)
+        .append("()")
+        .append(parts.returnTypeAnnotation)
+        .append(" {")
+        .append(parts.newLine);
+    std::istringstream lines {std::string(parts.body)};
+    std::string line;
+    while (std::getline(lines, line)) {
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        helper.append(parts.indentStep).append(line).append(parts.newLine);
+    }
+    helper.append(parts.indentStep).append("return ").append(parts.varName).append(";").append(parts.newLine);
+    helper.append("}").append(parts.newLine);
+    return helper;
+}
+
+std::string InferHelperReturnTypeAnnotationFromBinding(const RefactorContext &context,
+                                                       const VariableBindingInfo &binding,
+                                                       [[maybe_unused]] std::string_view paramsSig)
+{
+    return ResolveReturnTypeAnnotationForBinding(context, binding, true, false);
+}
+
 bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo &binding, HelperPieces &out)
 {
     auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
@@ -1846,7 +3168,8 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
     std::string helperName =
         GenerateUniqueFuncName(context, "newFunction", std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name));
 
-    if (FindEnclosingClassDefinition(binding.declaration) == nullptr) {
+    auto *enclosingClass = FindEnclosingClassDefinition(binding.declaration);
+    if (enclosingClass != nullptr && enclosingClass->IsGlobal()) {
         return false;
     }
 
@@ -1865,10 +3188,19 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
         std::string initBody = GetNodeText(pubCtx, binding.initializer);
         TrimTrailingNewlines(initBody);
         const std::string indentStep(ResolveIndentSize(context), SPACE_CHAR);
+        const std::string returnTypeAnnotation =
+            InferHelperReturnTypeAnnotationFromBinding(context, binding, paramsSig);
         std::string helper;
         helper.reserve(paramsSig.size() + initBody.size() + HELPER_RESERVE_PADDING);
         helper.append(newLine);
-        helper.append("function ").append(helperName).append("(").append(paramsSig).append(") {").append(newLine);
+        helper.append("function ")
+            .append(helperName)
+            .append("(")
+            .append(paramsSig)
+            .append(")")
+            .append(returnTypeAnnotation)
+            .append(" {")
+            .append(newLine);
         helper.append(indentStep).append("return ").append(initBody);
         if (!initBody.empty() && helper.back() != ';') {
             helper.append(";");
@@ -1881,6 +3213,54 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
 
     out.replacementText = std::move(replacement);
     out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), binding.declaration->End().index)};
+    return true;
+}
+
+bool BuildGlobalPiecesFromDeclarationSelection(const RefactorContext &context, const VariableBindingInfo &binding,
+                                               TextRange selectionSpan, HelperPieces &out)
+{
+    auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (pubCtx == nullptr || pubCtx->sourceFile == nullptr || binding.declaration == nullptr ||
+        binding.identifier == nullptr || selectionSpan.end <= selectionSpan.pos ||
+        selectionSpan.end > pubCtx->sourceFile->source.size()) {
+        return false;
+    }
+    // Only handle module-top declaration-leading multi-statement selection.
+    if (IsNamespaceContext(binding.declaration)) {
+        return false;
+    }
+    auto *enclosingClass = FindEnclosingClassDefinition(binding.declaration);
+    if (enclosingClass != nullptr && !enclosingClass->IsGlobal()) {
+        return false;
+    }
+
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
+    std::string helperName =
+        GenerateUniqueFuncName(context, "newFunction", std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name));
+    const auto &source = pubCtx->sourceFile->source;
+    auto [lineStart, indentEnd] = ComputeLineIndent(util::StringView(source), binding.declaration->Start().index);
+    std::string indent(source.substr(lineStart, indentEnd - lineStart));
+    const std::string varName = IdentifierNameMutf8(binding.identifier);
+    if (varName.empty()) {
+        return false;
+    }
+
+    std::string replacement = BuildAssignmentLine(pubCtx, binding, indent, std::string(helperName) + "()", newLine);
+
+    out.insertHelper = false;
+    if (!ProgramHasFunction(pubCtx, std::string(helperName))) {
+        std::string body(source.substr(selectionSpan.pos, selectionSpan.end - selectionSpan.pos));
+        TrimTrailingNewlines(body);
+        const std::string indentStep(ResolveIndentSize(context), SPACE_CHAR);
+        const std::string returnTypeAnnotation = InferHelperReturnTypeAnnotationFromBinding(context, binding, "");
+        out.insertHelper = true;
+        out.insertPos = DetermineGlobalInsertPos(pubCtx);
+        out.helperText =
+            BuildGlobalHelperFromSelectionBody({newLine, helperName, returnTypeAnnotation, indentStep, varName, body});
+    }
+
+    out.replacementText = std::move(replacement);
+    out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), selectionSpan.end)};
     return true;
 }
 
@@ -1908,7 +3288,7 @@ size_t FindClassHelperInsertPos(public_lib::Context *ctx, ir::ClassDefinition *c
     }
 
     size_t lineStart = bracePos;
-    while (lineStart > 0 && !IsLineBreak(source[lineStart - 1])) {
+    while (lineStart > 0 && !IsLineBreakChar(source[lineStart - 1])) {
         --lineStart;
     }
     return lineStart;
@@ -1922,17 +3302,26 @@ std::string ResolveClassIndent(std::string_view methodIndent, size_t indentSize)
     return std::string(methodIndent.substr(0, methodIndent.size() - indentSize));
 }
 
-void AppendClassHelperSignature(std::string &helper, std::string_view classIndent, std::string_view helperName,
-                                std::string_view paramsSig, std::string_view newLine)
+struct ClassHelperSignatureParts {
+    std::string_view classIndent;
+    std::string_view helperName;
+    std::string_view paramsSig;
+    std::string_view returnTypeAnnotation;
+    std::string_view newLine;
+};
+
+void AppendClassHelperSignature(std::string &helper, const ClassHelperSignatureParts &parts)
 {
-    helper.append(newLine);
-    helper.append(classIndent)
+    helper.append(parts.newLine);
+    helper.append(parts.classIndent)
         .append("private ")
-        .append(helperName)
+        .append(parts.helperName)
         .append("(")
-        .append(paramsSig)
-        .append(") {")
-        .append(newLine);
+        .append(parts.paramsSig)
+        .append(")")
+        .append(parts.returnTypeAnnotation)
+        .append(" {")
+        .append(parts.newLine);
 }
 
 void AppendClassHelperBodyLine(std::string &helper, std::string_view classIndent, std::string_view indentStep,
@@ -1975,10 +3364,11 @@ bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo 
 
     auto [paramsSig, callArgs] = BuildParamSignature(context, pubCtx, binding, false);
     const std::string returnName = IdentifierNameMutf8(binding.identifier);
+    const std::string returnTypeAnnotation = InferHelperReturnTypeAnnotationFromBinding(context, binding, paramsSig);
 
     std::string helper;
     helper.reserve(body.size() + paramsSig.size() + HELPER_RESERVE_PADDING);
-    AppendClassHelperSignature(helper, classIndent, helperName, paramsSig, newLine);
+    AppendClassHelperSignature(helper, {classIndent, helperName, paramsSig, returnTypeAnnotation, newLine});
     AppendClassHelperBodyLine(helper, classIndent, indentStep, body, newLine);
     AppendClassHelperReturnLine(helper, classIndent, indentStep, returnName, newLine);
     helper.append(classIndent).append("}").append(newLine);
@@ -2022,6 +3412,112 @@ size_t FindRenameIndex(HelperPieces &pieces)
     return index + pieces.replaceRange.pos + shift + 1;
 }
 
+static bool TryResolveBindingFromSelectionTokens(const RefactorContext &context, TextRange trimmedSpan,
+                                                 VariableBindingInfo &binding)
+{
+    auto tryResolveFromToken = [&context, &binding](size_t pos) -> bool {
+        auto *touch = GetTouchingToken(context.context, pos, false);
+        for (auto *current = touch; current != nullptr; current = current->Parent()) {
+            if (ResolveVariableBinding(current, binding)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    const bool resolvedFromStart = tryResolveFromToken(trimmedSpan.pos);
+    if (resolvedFromStart) {
+        return true;
+    }
+    return trimmedSpan.end > trimmedSpan.pos && tryResolveFromToken(trimmedSpan.end - 1);
+}
+
+static bool SelectionMatchesNodeWithTrailingSemicolon(const public_lib::Context *pubCtx, const ir::AstNode *node,
+                                                      TextRange trimmedSpan)
+{
+    if (node == nullptr || pubCtx == nullptr || pubCtx->sourceFile == nullptr) {
+        return false;
+    }
+    const size_t start = node->Start().index;
+    const size_t end = node->End().index;
+    if (start != trimmedSpan.pos || end < trimmedSpan.end) {
+        return false;
+    }
+    if (end == trimmedSpan.end) {
+        return true;
+    }
+    const auto &source = pubCtx->sourceFile->source;
+    if (trimmedSpan.end >= source.size() || end > source.size()) {
+        return false;
+    }
+    bool hasSemicolon = false;
+    for (size_t i = trimmedSpan.end; i < end; ++i) {
+        const char ch = source[i];
+        if (ch == ';') {
+            hasSemicolon = true;
+            continue;
+        }
+        if (std::isspace(static_cast<unsigned char>(ch)) != 0) {
+            continue;
+        }
+        return false;
+    }
+    return hasSemicolon;
+}
+
+static bool TryResolveDeclarationLeadingSelectionForGlobal(public_lib::Context *pubCtx, TextRange trimmedSpan,
+                                                           VariableBindingInfo &binding)
+{
+    bool declarationLeadingSelection = binding.declaration != nullptr &&
+                                       binding.declaration->Start().index == trimmedSpan.pos &&
+                                       trimmedSpan.end > binding.declaration->End().index;
+    if (declarationLeadingSelection || pubCtx == nullptr || pubCtx->parserProgram == nullptr ||
+        pubCtx->parserProgram->Ast() == nullptr) {
+        return declarationLeadingSelection;
+    }
+    pubCtx->parserProgram->Ast()->FindChild([&declarationLeadingSelection, &binding, trimmedSpan](ir::AstNode *node) {
+        if (declarationLeadingSelection || node == nullptr || !node->IsVariableDeclaration()) {
+            return false;
+        }
+        VariableBindingInfo astBinding;
+        if (!ResolveVariableBinding(node, astBinding) || astBinding.declaration == nullptr ||
+            astBinding.initializer == nullptr || astBinding.identifier == nullptr) {
+            return false;
+        }
+        if (astBinding.declaration->Start().index != trimmedSpan.pos ||
+            trimmedSpan.end <= astBinding.declaration->End().index) {
+            return false;
+        }
+        binding = astBinding;
+        declarationLeadingSelection = true;
+        return true;
+    });
+    return declarationLeadingSelection;
+}
+
+struct HelperBuildActionInputs {
+    const RefactorContext &context;
+    const std::string &actionName;
+    const VariableBindingInfo &binding;
+    TextRange trimmedSpan {};
+    HelperPieces &pieces;
+    bool declarationLeadingSelection {false};
+};
+
+static bool BuildHelperPiecesForAction(const HelperBuildActionInputs &inputs)
+{
+    if (inputs.actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
+        if (inputs.declarationLeadingSelection) {
+            return BuildGlobalPiecesFromDeclarationSelection(inputs.context, inputs.binding, inputs.trimmedSpan,
+                                                             inputs.pieces);
+        }
+        return BuildGlobalPieces(inputs.context, inputs.binding, inputs.pieces);
+    }
+    if (inputs.actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
+        return BuildClassPieces(inputs.context, inputs.binding, inputs.pieces);
+    }
+    return false;
+}
+
 bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extractedNode, const std::string &actionName,
                               RefactorEditInfo &outEdits)
 {
@@ -2037,18 +3533,30 @@ bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extra
     const auto fileName = pubCtx->sourceFile->filePath;
     VariableBindingInfo binding;
     if (!ResolveVariableBinding(extractedNode, binding)) {
+        const TextRange trimmedSpan = GetTrimmedSelectionSpan(context);
+        if (!TryResolveBindingFromSelectionTokens(context, trimmedSpan, binding)) {
+            return false;
+        }
+    }
+    // Helper extraction is valid for variable declaration extraction or direct initializer extraction.
+    if (binding.initializer == nullptr || extractedNode == nullptr) {
+        return false;
+    }
+    const TextRange trimmedSpan = GetTrimmedSelectionSpan(context);
+    const bool initializerSelected =
+        SelectionMatchesNodeWithTrailingSemicolon(pubCtx, binding.initializer, trimmedSpan);
+    const bool declarationSelected =
+        SelectionMatchesNodeWithTrailingSemicolon(pubCtx, binding.declaration, trimmedSpan);
+    bool declarationLeadingSelection = false;
+    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
+        declarationLeadingSelection = TryResolveDeclarationLeadingSelectionForGlobal(pubCtx, trimmedSpan, binding);
+    }
+    if (!initializerSelected && !declarationSelected && !declarationLeadingSelection) {
         return false;
     }
 
     HelperPieces pieces;
-    bool success = false;
-    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
-        success = BuildGlobalPieces(context, binding, pieces);
-    } else if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
-        success = BuildClassPieces(context, binding, pieces);
-    }
-
-    if (!success) {
+    if (!BuildHelperPiecesForAction({context, actionName, binding, trimmedSpan, pieces, declarationLeadingSelection})) {
         return false;
     }
 
@@ -2072,8 +3580,6 @@ bool IsClassContext(ir::AstNode *node)
     return classDef != nullptr && classDef->Ident() != nullptr && !classDef->IsGlobal() &&
            !classDef->IsNamespaceTransformed();
 }
-
-}  // namespace
 
 static bool IsEncloseVarConstBreak(ir::AstNode *parent)
 {
@@ -2141,7 +3647,7 @@ static std::vector<ir::AstNode *> GetSiblings(ir::AstNode *parent)
     return siblings;
 }
 
-static bool IsMultiDecl(ir::AstNode *node, public_lib::Context *context)
+bool IsMultiDecl(ir::AstNode *node, public_lib::Context *context)
 {
     if (node == nullptr) {
         return false;
@@ -2298,8 +3804,6 @@ static ir::AstNode *FindClassBreakPosition(ir::AstNode *target, size_t startPos)
     return nullptr;
 }
 
-namespace {
-
 size_t SkipSpacesBackward(std::string_view source, size_t pos)
 {
     while (pos > 0 && IsIndentChar(source[pos - 1])) {
@@ -2311,7 +3815,7 @@ size_t SkipSpacesBackward(std::string_view source, size_t pos)
 std::pair<size_t, size_t> CountAndSkipLineBreaksBackward(std::string_view source, size_t pos)
 {
     size_t lineBreaks = 0;
-    while (pos > 0 && IsLineBreak(source[pos - 1])) {
+    while (pos > 0 && IsLineBreakChar(source[pos - 1])) {
         if (source[pos - 1] == LINE_FEED) {
             ++lineBreaks;
         }
@@ -2322,7 +3826,7 @@ std::pair<size_t, size_t> CountAndSkipLineBreaksBackward(std::string_view source
 
 size_t FindLineStart(std::string_view source, size_t pos)
 {
-    while (pos > 0 && !IsLineBreak(source[pos - 1])) {
+    while (pos > 0 && !IsLineBreakChar(source[pos - 1])) {
         --pos;
     }
     return pos;
@@ -2444,6 +3948,48 @@ std::optional<std::string> ExtractVariableDeclaredTypeFromInitializer(std::strin
     return ExtractTypeText(source, colonPos + 1, assignPos.value());
 }
 
+std::optional<std::string> ExtractClassPropertyDeclaredTypeFromInitializer(std::string_view source,
+                                                                           size_t initializerStart)
+{
+    if (initializerStart == 0 || initializerStart > source.size()) {
+        return std::nullopt;
+    }
+    const size_t lineStart = FindLineStart(source, initializerStart);
+    size_t cursor = lineStart;
+    while (cursor < initializerStart && IsIndentChar(source[cursor])) {
+        ++cursor;
+    }
+
+    constexpr std::array<std::string_view, 5> modifiers = {"public", "private", "protected", "readonly", "static"};
+    bool consumedModifier = true;
+    while (consumedModifier) {
+        consumedModifier = false;
+        for (auto modifier : modifiers) {
+            size_t before = cursor;
+            if (ConsumeKeyword(source, cursor, modifier)) {
+                cursor = SkipWhitespace(source, cursor, initializerStart);
+                consumedModifier = true;
+                break;
+            }
+            cursor = before;
+        }
+    }
+
+    cursor = SkipIdentifier(source, cursor, initializerStart);
+    if (cursor < initializerStart && source[cursor] == '?') {
+        ++cursor;
+    }
+    auto assignPos = FindAssignPosBeforeInitializer(source, lineStart, initializerStart);
+    if (!assignPos.has_value()) {
+        return std::nullopt;
+    }
+    const size_t colonPos = source.find(':', cursor);
+    if (colonPos == std::string::npos || colonPos >= assignPos.value()) {
+        return std::nullopt;
+    }
+    return ExtractTypeText(source, colonPos + 1, assignPos.value());
+}
+
 size_t SkipSpacesForward(std::string_view source, size_t pos, size_t limit)
 {
     while (pos < limit && IsIndentChar(source[pos])) {
@@ -2477,8 +4023,6 @@ std::optional<size_t> FindTightLineCommentStart(std::string_view source, size_t 
     }
     return std::nullopt;
 }
-
-}  // namespace
 
 size_t FindInsertionPosBeforeTightLeadingComment(std::string_view source, size_t declarationStart)
 {
@@ -2640,7 +4184,6 @@ TextRange GetVarAndFunctionPosToWriteNode(const RefactorContext &context, const 
     return {startPos, startPos};
 }
 
-namespace {
 ir::AstNode *FindTouchingTokenNearSpan(const RefactorContext &context)
 {
     auto node = GetTouchingTokenByRange(context.context, context.span, false);
@@ -2652,7 +4195,6 @@ ir::AstNode *FindTouchingTokenNearSpan(const RefactorContext &context)
     }
     return node;
 }
-
 ir::AstNode *FindExpressionOrVarAncestor(ir::AstNode *node)
 {
     while (node != nullptr && (!node->IsExpression() && !node->IsVariableDeclaration())) {
@@ -2666,14 +4208,14 @@ ir::AstNode *FindDeepestOverlappingExpression(ir::AstNode *originNode, TextRange
     if (originNode == nullptr) {
         return nullptr;
     }
-    auto overlaps = [&range](ir::AstNode *candidate) {
+    auto overlaps = [range](ir::AstNode *candidate) {
         return candidate->Start().index < range.end && candidate->End().index > range.pos;
     };
     auto *exprNode =
-        originNode->FindChild([&](ir::AstNode *child) { return child->IsExpression() && overlaps(child); });
+        originNode->FindChild([&overlaps](ir::AstNode *child) { return child->IsExpression() && overlaps(child); });
     while (exprNode != nullptr) {
         auto *nested =
-            exprNode->FindChild([&](ir::AstNode *child) { return child->IsExpression() && overlaps(child); });
+            exprNode->FindChild([&overlaps](ir::AstNode *child) { return child->IsExpression() && overlaps(child); });
         if (nested == nullptr) {
             break;
         }
@@ -2681,7 +4223,50 @@ ir::AstNode *FindDeepestOverlappingExpression(ir::AstNode *originNode, TextRange
     }
     return exprNode;
 }
-}  // namespace
+
+static ir::AstNode *FindExactExpressionByRange(public_lib::Context *ctx, TextRange rangeToExtract)
+{
+    ir::AstNode *exactExpression = nullptr;
+    ctx->parserProgram->Ast()->FindChild([rangeToExtract, &exactExpression](ir::AstNode *child) {
+        if (exactExpression != nullptr || child == nullptr || !child->IsExpression()) {
+            return false;
+        }
+        if (child->Start().index == rangeToExtract.pos && child->End().index == rangeToExtract.end) {
+            exactExpression = child;
+            return true;
+        }
+        return false;
+    });
+    return exactExpression;
+}
+
+static ir::AstNode *LiftNodeToCoverRange(ir::AstNode *candidate, TextRange rangeToExtract)
+{
+    while (candidate != nullptr &&
+           (candidate->Start().index > rangeToExtract.pos || candidate->End().index < rangeToExtract.end)) {
+        candidate = candidate->Parent();
+    }
+    return candidate;
+}
+
+static ir::AstNode *ResolveExtractedFromPrimaryNode(ir::AstNode *node, TextRange rangeToExtract)
+{
+    node = FindExpressionOrVarAncestor(node);
+    if (node == nullptr) {
+        return nullptr;
+    }
+    node = LiftNodeToCoverRange(node, rangeToExtract);
+    VariableBindingInfo binding;
+    if (ResolveVariableBinding(node, binding) && binding.initializer != nullptr &&
+        rangeToExtract.pos == binding.initializer->Start().index &&
+        rangeToExtract.end == binding.initializer->End().index) {
+        return binding.initializer;
+    }
+    if (node->Start().index <= rangeToExtract.pos && node->End().index >= rangeToExtract.end) {
+        return node;
+    }
+    return FindDeepestOverlappingExpression(node, rangeToExtract);
+}
 
 ir::AstNode *FindExtractedVals(const RefactorContext &context)
 {
@@ -2689,55 +4274,91 @@ ir::AstNode *FindExtractedVals(const RefactorContext &context)
     if (rangeToExtract.pos >= rangeToExtract.end) {
         return nullptr;
     }
-
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr) {
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
         return nullptr;
     }
-    if (ctx->parserProgram == nullptr) {
+    if (auto *exactExpression = FindExactExpressionByRange(ctx, rangeToExtract); exactExpression != nullptr) {
+        return exactExpression;
+    }
+    auto *originNode = FindTouchingTokenNearSpan(context);
+    if (originNode == nullptr) {
+        originNode = FindTouchingTokenByScan(context, ctx);
+    }
+    if (originNode == nullptr) {
         return nullptr;
     }
-    if (ctx->parserProgram->Ast() == nullptr) {
-        return nullptr;
+    if (auto *resolved = ResolveExtractedFromPrimaryNode(originNode, rangeToExtract); resolved != nullptr) {
+        return resolved;
     }
+    auto *overlap = FindDeepestOverlappingExpression(originNode, rangeToExtract);
+    return overlap == nullptr ? nullptr : LiftNodeToCoverRange(overlap, rangeToExtract);
+}
 
-    auto node = FindTouchingTokenNearSpan(context);
+static ir::AstNode *ResolveFunctionExtractionTouchNode(const RefactorContext &context, public_lib::Context *ctx,
+                                                       TextRange rangeToExtract)
+{
+    auto *node = GetTouchingToken(context.context, rangeToExtract.pos, false);
+    if (node == nullptr) {
+        node = FindTouchingTokenNearSpan(context);
+    }
     if (node == nullptr) {
         node = FindTouchingTokenByScan(context, ctx);
     }
-    if (node == nullptr) {
+    return node;
+}
+
+static ir::AstNode *LiftFunctionExtractionCandidate(ir::AstNode *node)
+{
+    while (node != nullptr && !node->IsExpression() && !node->IsFunctionExpression() &&
+           !node->IsArrowFunctionExpression() && !node->IsStatement() && !node->IsVariableDeclaration()) {
+        node = node->Parent();
+    }
+    return node;
+}
+
+static ir::AstNode *ResolveThrowSelectionArgument(ir::AstNode *node, TextRange rangeToExtract)
+{
+    if (node == nullptr || !node->IsThrowStatement()) {
         return nullptr;
     }
-    auto *originNode = node;
-    node = FindExpressionOrVarAncestor(node);
-    if (node != nullptr) {
-        return node;
+    auto *argument = const_cast<ir::Expression *>(node->AsThrowStatement()->Argument());
+    if (argument != nullptr && argument->Start().index <= rangeToExtract.pos &&
+        argument->End().index >= rangeToExtract.end) {
+        return argument;
     }
-
-    auto *exprNode = FindDeepestOverlappingExpression(originNode, rangeToExtract);
-    if (exprNode != nullptr) {
-        return exprNode;
-    }
-
     return nullptr;
 }
+
 ir::AstNode *FindExtractedFunction(const RefactorContext &context)
 {
     const auto rangeToExtract = GetTrimmedSelectionSpan(context);
     if (rangeToExtract.pos >= rangeToExtract.end) {
         return nullptr;
     }
-    const auto ast = reinterpret_cast<public_lib::Context *>(context.context)->parserProgram->Ast();
-    if (ast == nullptr) {
+    if (HasImportDeclarationOverlap(context, rangeToExtract)) {
         return nullptr;
     }
-    auto node = GetTouchingToken(context.context, rangeToExtract.pos, false);
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr || ctx->parserProgram == nullptr) {
+        return nullptr;
+    }
+    if (ctx->parserProgram->Ast() == nullptr) {
+        return nullptr;
+    }
+    auto *node = ResolveFunctionExtractionTouchNode(context, ctx, rangeToExtract);
     if (node == nullptr) {
         return nullptr;
     }
-    while (node != nullptr && (!node->IsExpression() && !node->IsFunctionExpression() &&
-                               !node->IsArrowFunctionExpression() && !node->IsStatement())) {
-        node = node->Parent();
+    if (auto *declNode = FindWholeVariableDeclarationSelectionNode(context, rangeToExtract); declNode != nullptr) {
+        return declNode;
+    }
+    if (IsImportSelectionNode(node)) {
+        return nullptr;
+    }
+    node = LiftFunctionExtractionCandidate(node);
+    if (auto *throwArgument = ResolveThrowSelectionArgument(node, rangeToExtract); throwArgument != nullptr) {
+        return throwArgument;
     }
     if (node != nullptr) {
         return node;
@@ -2878,1495 +4499,21 @@ std::string BuildFunctionBody(const std::string &body, const FunctionBodyOptions
     }
     return oss.str();
 }
-std::string GenerateExtractedFunctionCode(const std::string &bodyText, const std::string &params,
-                                          const RefactorContext &context, std::string_view actionName,
-                                          const FunctionBodyOptions &baseBodyOptions)
+
+ir::AstNode *IsReplaceRangeRequired(const RefactorContext &context, ir::AstNode *extractedText);
+
+bool IsInsideFinallyBlock(ir::AstNode *node)
 {
-    std::string baseName = (actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) ? "newMethod" : "newFunction";
-    std::string functionName = GenerateUniqueFuncName(context, baseName, std::string(actionName));
-    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-
-    std::ostringstream oss;
-    if (baseBodyOptions.addLeadingNewLine) {
-        oss << newLine;
-    }
-    FunctionBodyOptions bodyOptions = baseBodyOptions;
-    bodyOptions.newLine = newLine;
-    oss << bodyOptions.indent << "function " << functionName << "(" << params << ") {" << newLine
-        << BuildFunctionBody(bodyText, bodyOptions) << bodyOptions.indent << "}" << newLine << newLine;
-    return oss.str();
-}
-
-static bool TryResolveFunctionExtractionRange(const RefactorContext &context, public_lib::Context *ctx, size_t &start,
-                                              size_t &end)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr || ctx->sourceFile->source.empty()) {
-        return false;
-    }
-    const auto extractionPos = GetCallPositionOfExtraction(context);
-    start = extractionPos.pos;
-    end = extractionPos.end;
-    const auto &source = ctx->sourceFile->source;
-    return start < source.size() && end <= source.size() && start < end;
-}
-
-static size_t ResolveFunctionTrimIndent(std::string_view source, size_t start, bool treatAsStatements)
-{
-    if (!treatAsStatements) {
-        return 0;
-    }
-    auto [lineStart, indentEnd] = ComputeLineIndent(util::StringView(source), start);
-    return indentEnd >= lineStart ? indentEnd - lineStart : 0;
-}
-
-std::string BuildFunctionText(const FunctionExtraction &candidate, const RefactorContext &context,
-                              const std::string &actionName, const FunctionIOInfo *ioInfo,
-                              const std::vector<std::string> *capturedParams)
-{
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    size_t start = 0;
-    size_t end = 0;
-    if (!TryResolveFunctionExtractionRange(context, ctx, start, end)) {
-        return "";
-    }
-
-    const auto &src = ctx->sourceFile->source;
-    const auto ast = ctx->parserProgram->Ast();
-    const bool treatAsStatements = ioInfo != nullptr;
-    std::string params;
-    if (ioInfo != nullptr) {
-        params = JoinWithComma(ioInfo->paramDecls);
-    } else if (capturedParams != nullptr && !capturedParams->empty()) {
-        params = JoinWithComma(*capturedParams);
-    } else {
-        bool needParams = false;
-        auto functionParams = CollectFunctionParams(ast, start, end, needParams);
-        params = needParams ? GetParamsText(candidate, functionParams) : "";
-    }
-
-    std::string bodyText(src.begin() + start, src.begin() + end);
-    size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
-    insertPos = NormalizeInsertPos(src, insertPos);
-    const std::string indent = GetInsertionIndent(ctx, insertPos);
-    const bool addLeadingNewLine = !IsLineStartAtPosition(src, insertPos);
-    size_t trimIndent = ResolveFunctionTrimIndent(src, start, treatAsStatements);
-    FunctionBodyOptions bodyOptions {"",
-                                     indent,
-                                     addLeadingNewLine,
-                                     !treatAsStatements,
-                                     ioInfo == nullptr ? std::nullopt : ioInfo->returnVar,
-                                     trimIndent,
-                                     ResolveIndentSize(context)};
-    return GenerateExtractedFunctionCode(bodyText, params, context, actionName, bodyOptions);
-}
-
-std::string ReplaceWithFunctionCall(const std::string &functionText, const std::vector<std::string> &callArgs,
-                                    const std::optional<std::string> &returnVar, bool needsStatement)
-{
-    std::string functionName = "newFunction";
-    {
-        auto pos = functionText.find("function ");
-        if (pos != std::string::npos) {
-            pos += strlen("function ");
-            auto paren = functionText.find('(', pos);
-            if (paren != std::string::npos) {
-                functionName = functionText.substr(pos, paren - pos);
-            }
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        auto *parent = current->Parent();
+        if (parent == nullptr || !parent->IsTryStatement()) {
+            continue;
         }
-    }
-    std::string callArgsText = JoinWithComma(callArgs);
-    std::string callText = functionName + "(" + callArgsText + ")";
-    if (returnVar.has_value()) {
-        callText = returnVar.value() + " = " + callText;
-    }
-    if (needsStatement && !callText.empty() && callText.back() != ';') {
-        callText.push_back(';');
-    }
-    return callText;
-}
-static std::string BuildNamedScopeDescription(std::string_view symbolType, std::string_view scopeType,
-                                              const std::string &scopeName)
-{
-    std::string description = "Extract to ";
-    description.append(symbolType);
-    description.append(" in ");
-    description.append(scopeType);
-    if (scopeName.empty()) {
-        description.append(" scope");
-    } else {
-        description.append(" '");
-        description.append(scopeName);
-        description.push_back('\'');
-    }
-    return description;
-}
-
-static void AddRefactorAction(std::vector<RefactorAction> &list, const RefactorActionView &info,
-                              std::string description = "", std::string actionName = "", std::string actionKind = "")
-{
-    RefactorAction action;
-    action.name = actionName.empty() ? std::string(info.name) : std::move(actionName);
-    action.description = description.empty() ? std::string(info.description) : std::move(description);
-    action.kind = actionKind.empty() ? std::string(info.kind) : std::move(actionKind);
-    list.push_back(std::move(action));
-}
-
-static std::string BuildNamespaceScopedActionName(std::string_view prefix, size_t namespaceDepth)
-{
-    return std::string(prefix) + std::to_string(namespaceDepth);
-}
-
-static bool IsInsideExtractionRange(const ir::AstNode *node, TextRange positions)
-{
-    return node->Start().index >= positions.pos && node->End().index <= positions.end;
-}
-
-static bool HasBlockEnclosing(ir::AstNode *node)
-{
-    auto *block = node->AsArrowFunctionExpression()->Function()->Body()->AsBlockStatement();
-    return !(block == nullptr || (block->Start().index == block->End().index));
-}
-
-static bool HasEncloseScope(ir::AstNode *node)
-{
-    if (IsInGlobalClassStaticBlock(node)) {
-        return false;
-    }
-    for (; node != nullptr; node = node->Parent()) {
-        if (node->IsFunctionDeclaration() || node->IsFunctionExpression()) {
-            return true;
-        }
-        if (node->IsArrowFunctionExpression()) {
-            return HasBlockEnclosing(node);
-        }
-    }
-    return false;
-}
-
-static ScopeContext ResolveScopeContext(ir::AstNode *node)
-{
-    ScopeContext scope;
-    scope.hasEncloseScope = HasEncloseScope(node);
-    scope.hasClassScope = IsClassContext(node);
-    if (scope.hasClassScope) {
-        auto *classDef = FindEnclosingClassDefinition(node);
-        scope.classScopeName = IdentifierNameMutf8(classDef == nullptr ? nullptr : classDef->Ident());
-    }
-    for (auto *namespaceScope : CollectEnclosingNamespaceScopes(node)) {
-        scope.namespaceScopeNames.push_back(
-            IdentifierNameMutf8(namespaceScope == nullptr ? nullptr : namespaceScope->Ident()));
-    }
-    return scope;
-}
-
-static void AddExtractFunctionActions(std::vector<RefactorAction> &actions, const ScopeContext &scope)
-{
-    const bool hasNamespaceScope = !scope.namespaceScopeNames.empty();
-    if (scope.hasClassScope) {
-        AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_CLASS,
-                          BuildNamedScopeDescription("function", "class", scope.classScopeName));
-    }
-    if (hasNamespaceScope) {
-        AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_ENCLOSE,
-                          BuildNamedScopeDescription("function", "namespace", scope.namespaceScopeNames.front()));
-        for (size_t namespaceDepth = 1; namespaceDepth < scope.namespaceScopeNames.size(); ++namespaceDepth) {
-            AddRefactorAction(
-                actions, EXTRACT_FUNCTION_ACTION_ENCLOSE,
-                BuildNamedScopeDescription("function", "namespace", scope.namespaceScopeNames[namespaceDepth]),
-                BuildNamespaceScopedActionName(EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX, namespaceDepth),
-                std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.kind));
-        }
-    }
-    AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_GLOBAL);
-}
-
-static void AddExtractVariableActions(std::vector<RefactorAction> &actions, const ScopeContext &scope)
-{
-    bool hasNamespaceScope = !scope.namespaceScopeNames.empty();
-    bool isEncloseScopeAvailable = scope.hasEncloseScope || hasNamespaceScope;
-    if (isEncloseScopeAvailable) {
-        AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_ENCLOSE);
-        if (hasNamespaceScope && scope.hasClassScope) {
-            AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_ENCLOSE,
-                              BuildNamedScopeDescription("constant", "namespace", scope.namespaceScopeNames.front()));
-        } else {
-            AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_ENCLOSE);
-        }
-    } else {
-        AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_GLOBAL);
-    }
-    for (size_t namespaceDepth = 1; namespaceDepth < scope.namespaceScopeNames.size(); ++namespaceDepth) {
-        AddRefactorAction(
-            actions, EXTRACT_CONSTANT_ACTION_ENCLOSE,
-            BuildNamedScopeDescription("constant", "namespace", scope.namespaceScopeNames[namespaceDepth]),
-            BuildNamespaceScopedActionName(EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX, namespaceDepth),
-            std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.kind));
-    }
-    if (scope.hasClassScope) {
-        AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_CLASS,
-                          BuildNamedScopeDescription("constant", "class", scope.classScopeName));
-    }
-    AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_GLOBAL);
-}
-
-std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &context)
-{
-    std::vector<RefactorAction> actions;
-
-    ir::AstNode *node = nullptr;
-    bool allowVariableActions = true;
-    bool selectionHasNewline = false;
-    TextRange trimmedSpan = context.span;
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx != nullptr && ctx->sourceFile != nullptr) {
-        std::string_view source = ctx->sourceFile->source;
-        selectionHasNewline = HasSelectionNewline(context, source);
-        trimmedSpan = TrimSpanWhitespace(trimmedSpan, source);
-    }
-
-    node = ResolveNodeForSelection(context, ctx, selectionHasNewline);
-    if (node == nullptr) {
-        return actions;
-    }
-
-    const auto positions = GetCallPositionOfExtraction(context);
-    if (!IsInsideExtractionRange(node, positions)) {
-        if (!selectionHasNewline) {
-            return actions;
-        }
-        auto *statementInRange = FindStatementOverlappingSelection(ctx, positions);
-        if (statementInRange == nullptr) {
-            return actions;
-        }
-        node = statementInRange;
-        allowVariableActions = false;
-    }
-
-    if (context.span.pos != context.span.end) {
-        if (trimmedSpan.pos == trimmedSpan.end) {
-            allowVariableActions = false;
-        } else if (node->Start().index != trimmedSpan.pos || node->End().index != trimmedSpan.end) {
-            allowVariableActions = false;
-        }
-    }
-
-    const auto scope = ResolveScopeContext(node);
-
-    if (node->IsExpression() || node->IsFunctionExpression() || node->IsArrowFunctionExpression() ||
-        node->IsStatement()) {
-        AddExtractFunctionActions(actions, scope);
-    }
-
-    if (allowVariableActions && (!node->IsStatement() || node->IsVariableDeclaration() || node->IsBinaryExpression())) {
-        AddExtractVariableActions(actions, scope);
-    }
-
-    return actions;
-}
-
-ir::AstNode *FindRefactor(const RefactorContext &context, const std::string &actionName)
-{
-    if (IsConstantExtractionAction(actionName) || IsVariableExtractionAction(actionName)) {
-        return FindExtractedVals(context);
-    }
-
-    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name ||
-        IsNamespaceAction(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name, EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX)) {
-        return FindExtractedFunction(context);
-    }
-
-    return nullptr;
-}
-
-std::string GetConstantString(std::string_view &src, ir::AstNode *extractedText)
-{
-    if (extractedText == nullptr) {
-        return "";
-    }
-    if (extractedText->IsVariableDeclaration()) {
-        auto declarators = extractedText->AsVariableDeclaration()->Declarators();
-        if (declarators.empty()) {
-            return "";
-        }
-        auto init = declarators.front()->Init();
-        if (init == nullptr || !init->IsExpression()) {
-            return "";
-        }
-        return GetSourceTextOfNodeFromSourceFile(src, init);
-    }
-    if (extractedText->IsExpressionStatement()) {
-        auto expression = extractedText->AsExpressionStatement()->GetExpression();
-        if (expression == nullptr || !expression->IsExpression()) {
-            return "";
-        }
-        return GetSourceTextOfNodeFromSourceFile(src, expression);
-    }
-    if (extractedText->IsMemberExpression()) {
-        const size_t sizeOfPuncht = 2;
-        size_t endPos = extractedText->AsMemberExpression()->End().index;
-        if (extractedText->AsMemberExpression()->Object()->IsETSNewClassInstanceExpression()) {
-            endPos = extractedText->AsMemberExpression()->End().index + sizeOfPuncht;
-        }
-        return std::string(src).substr(extractedText->AsMemberExpression()->Start().index,
-                                       endPos - extractedText->AsMemberExpression()->Start().index);
-    }
-    if (extractedText != nullptr) {
-        std::string strNow = GetSourceTextOfNodeFromSourceFile(src, extractedText);
-        return strNow;
-    }
-    return "";
-}
-
-static ir::VariableDeclarator *FindEnclosingVariableDeclarator(ir::AstNode *node)
-{
-    for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
-        if (current->IsVariableDeclarator()) {
-            return current->AsVariableDeclarator();
-        }
-    }
-    return nullptr;
-}
-
-static bool HasNewlineBetween(std::string_view source, size_t start, size_t end)
-{
-    if (start >= end || start >= source.size()) {
-        return false;
-    }
-    const size_t upper = std::min(end, source.size());
-    for (size_t i = start; i < upper; ++i) {
-        if (source[i] == '\n' || source[i] == '\r') {
+        auto *tryStmt = parent->AsTryStatement();
+        if (tryStmt != nullptr && tryStmt->FinallyBlock() == current) {
             return true;
         }
     }
     return false;
 }
-
-static std::optional<std::pair<ir::VariableDeclarator *, ir::VariableDeclaration *>> ResolveInlineMultiDeclNodes(
-    public_lib::Context *ctx, ir::AstNode *extractedText)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr || extractedText == nullptr) {
-        return std::nullopt;
-    }
-    auto *declarator = FindEnclosingVariableDeclarator(extractedText);
-    if (declarator == nullptr) {
-        return std::nullopt;
-    }
-    auto *parent = declarator->Parent();
-    if (parent == nullptr || !parent->IsVariableDeclaration()) {
-        return std::nullopt;
-    }
-    return std::make_pair(declarator, parent->AsVariableDeclaration());
-}
-
-static std::optional<size_t> FindDeclaratorIndex(const ir::VariableDeclaration *declaration,
-                                                 const ir::VariableDeclarator *declarator)
-{
-    constexpr size_t K_MIN_DECLARATORS = 2;
-    const auto &declarators = declaration->Declarators();
-    if (declarators.size() < K_MIN_DECLARATORS) {
-        return std::nullopt;
-    }
-    for (size_t i = 0; i < declarators.size(); ++i) {
-        if (declarators[i] == declarator) {
-            return i == 0 ? std::nullopt : std::optional<size_t> {i};
-        }
-    }
-    return std::nullopt;
-}
-
-static bool NeedsContinuationIndentForInline(std::string_view source, const ir::VariableDeclaration *declaration,
-                                             size_t probeStart)
-{
-    if (declaration->Start().line != declaration->End().line ||
-        HasNewlineBetween(source, declaration->Start().index, declaration->End().index)) {
-        return true;
-    }
-    bool sawNewline = false;
-    for (size_t probe = probeStart; probe > 0; --probe) {
-        char ch = source[probe - 1];
-        if (ch == '\n' || ch == '\r') {
-            sawNewline = true;
-            continue;
-        }
-        if (ch == ' ' || ch == '\t') {
-            continue;
-        }
-        if (ch == ',') {
-            return sawNewline;
-        }
-        break;
-    }
-    return false;
-}
-
-static std::optional<std::pair<size_t, std::string>> TryBuildInlineMultiDeclInsertion(const RefactorContext &context,
-                                                                                      public_lib::Context *ctx,
-                                                                                      ir::AstNode *extractedText,
-                                                                                      const std::string &varName)
-{
-    auto nodes = ResolveInlineMultiDeclNodes(ctx, extractedText);
-    if (!nodes.has_value()) {
-        return std::nullopt;
-    }
-    auto *declarator = nodes->first;
-    auto *declaration = nodes->second;
-    auto declaratorIndex = FindDeclaratorIndex(declaration, declarator);
-    if (!declaratorIndex.has_value()) {
-        return std::nullopt;
-    }
-    auto &declarators = declaration->Declarators();
-    auto *prev = declarators[declaratorIndex.value() - 1];
-    if (!AreNodesCommaSeparated(ctx, prev, declarator)) {
-        return std::nullopt;
-    }
-    const auto &source = ctx->sourceFile->source;
-    std::string_view srcView(source);
-    std::string placeholder = GetConstantString(srcView, extractedText);
-    if (placeholder.empty()) {
-        return std::nullopt;
-    }
-
-    const size_t declaratorPos = declarator->Start().index;
-    std::string indent = GetIndentAtPosition(ctx, declaratorPos);
-    if (indent.empty() && NeedsContinuationIndentForInline(source, declaration, declaratorPos)) {
-        indent.assign(ResolveIndentSize(context), ' ');
-    }
-
-    return std::make_pair(declaratorPos, indent + varName + " = " + placeholder + ", ");
-}
-
-static bool GeneratedTextStartsWithVar(const std::string &generatedText, const std::string &uniqueVarName)
-{
-    if (generatedText.rfind(uniqueVarName, 0) == 0) {
-        return true;
-    }
-    if (uniqueVarName.rfind("this.", 0) == 0) {
-        const std::string suffix = uniqueVarName.substr(std::string("this.").size());
-        return generatedText.rfind(suffix, 0) == 0;
-    }
-    return false;
-}
-
-static bool HasCommaBeforeWithNewline(std::string_view source, size_t insertPos)
-{
-    size_t probe = insertPos;
-    bool sawNewline = false;
-    bool commaBefore = false;
-    while (probe > 0) {
-        char ch = source[probe - 1];
-        if (ch == '\n' || ch == '\r') {
-            sawNewline = true;
-            --probe;
-            continue;
-        }
-        if (ch == ' ' || ch == '\t') {
-            --probe;
-            continue;
-        }
-        if (ch == ',') {
-            commaBefore = sawNewline;
-        }
-        break;
-    }
-    return commaBefore;
-}
-
-static std::optional<std::pair<size_t, std::string>> TryBuildInlineInsertion(const RefactorContext &context,
-                                                                             public_lib::Context *ctx,
-                                                                             ir::AstNode *extractedText,
-                                                                             const std::string &uniqueVarName)
-{
-    auto inlineInsertionResult = TryBuildInlineMultiDeclInsertion(context, ctx, extractedText, uniqueVarName);
-    if (!inlineInsertionResult.has_value()) {
-        return std::nullopt;
-    }
-    auto [inlinePos, inlineText] = std::move(inlineInsertionResult.value());
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return std::make_pair(inlinePos, std::move(inlineText));
-    }
-    std::string_view source = ctx->sourceFile->source;
-    const size_t namePos = inlineText.find(uniqueVarName);
-    const bool hasIndent = namePos != std::string::npos && namePos > 0;
-    const size_t extractedStart = extractedText == nullptr ? inlinePos : extractedText->Start().index;
-    if (!hasIndent && HasNewlineBetween(source, inlinePos, extractedStart)) {
-        inlineText.insert(0, ResolveIndentSize(context), ' ');
-    }
-    return std::make_pair(inlinePos, std::move(inlineText));
-}
-
-static void AdjustGeneratedTextForInsert(const RefactorContext &context, public_lib::Context *ctx, size_t insertPos,
-                                         const std::string &uniqueVarName, std::string &generatedText)
-{
-    generatedText = FormatDeclarationForInsert(ctx, insertPos, generatedText);
-    if (ctx == nullptr || ctx->sourceFile == nullptr || !GeneratedTextStartsWithVar(generatedText, uniqueVarName)) {
-        return;
-    }
-    std::string indent = GetIndentAtPosition(ctx, insertPos);
-    if (!indent.empty()) {
-        return;
-    }
-    std::string_view source = ctx->sourceFile->source;
-    if (HasCommaBeforeWithNewline(source, insertPos)) {
-        generatedText.insert(0, ResolveIndentSize(context), ' ');
-    }
-}
-
-static bool ApplyInlineInsertionResult(size_t &insertPos, std::string &generatedText,
-                                       const std::optional<std::pair<size_t, std::string>> &inlineInsertionResult)
-{
-    if (!inlineInsertionResult.has_value()) {
-        return false;
-    }
-    insertPos = inlineInsertionResult->first;
-    generatedText = inlineInsertionResult->second;
-    return true;
-}
-
-static size_t ResolveInsertionPosForVariableExtraction(const RefactorContext &context, public_lib::Context *ctx,
-                                                       const std::string &actionName, size_t insertPos)
-{
-    if (!IsActionNameOrKind(actionName, EXTRACT_VARIABLE_ACTION_GLOBAL) || ctx == nullptr ||
-        ctx->sourceFile == nullptr) {
-        return insertPos;
-    }
-    const auto extractionPos = GetCallPositionOfExtraction(context);
-    if (auto keywordStart = FindVariableDeclKeywordStart(ctx->sourceFile->source, extractionPos.pos);
-        keywordStart.has_value()) {
-        return keywordStart.value();
-    }
-    return insertPos;
-}
-
-static void AppendTrailingNewLineForGlobalVariableInsert(const RefactorContext &context, const std::string &actionName,
-                                                         size_t insertPos, std::string &generatedText)
-{
-    if (!IsActionNameOrKind(actionName, EXTRACT_VARIABLE_ACTION_GLOBAL)) {
-        return;
-    }
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr || ctx->sourceFile == nullptr || generatedText.empty()) {
-        return;
-    }
-    const auto &source = ctx->sourceFile->source;
-    if (insertPos < source.size() && !IsLineBreak(source[insertPos]) && !IsLineBreak(generatedText.back())) {
-        generatedText.append(context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter());
-    }
-}
-
-static std::string BuildImplicitPrefix(const RefactorContext &context, public_lib::Context *ctx, size_t insertPos,
-                                       const std::string &generatedText, bool inlineInsertion)
-{
-    if (inlineInsertion || ctx == nullptr || ctx->sourceFile == nullptr ||
-        ctx->sourceFile->source.size() <= insertPos) {
-        return "";
-    }
-    std::string_view source = ctx->sourceFile->source;
-    size_t lineStart = 0;
-    size_t lineEnd = 0;
-    GetLineBounds(source, insertPos, lineStart, lineEnd);
-    const bool atLineEnd = insertPos == lineEnd && IsLineBreak(source[lineEnd]);
-    if (!atLineEnd) {
-        return "";
-    }
-    const bool blankLine = IsBlankLine(source, lineStart, lineEnd);
-    const bool hasLeadingBreak = !generatedText.empty() && IsLineBreak(generatedText[0]);
-    if (hasLeadingBreak) {
-        return "";
-    }
-    const size_t scopeDepth = CountIndentScopeDepth(ResolveScopeDepthProbeNode(context, insertPos));
-    size_t lineIndent = 0;
-    for (size_t i = lineStart; i <= lineEnd && i < source.size(); ++i) {
-        const char ch = source[i];
-        if (ch == ' ' || ch == '\t') {
-            ++lineIndent;
-            continue;
-        }
-        break;
-    }
-    size_t indentLen = 0;
-    const size_t scopeIndent = scopeDepth * ResolveIndentSize(context);
-    if (blankLine) {
-        indentLen = lineIndent > 0 ? lineIndent : scopeIndent;
-    } else {
-        indentLen = scopeIndent;
-    }
-    if (!blankLine) {
-        std::string prefix = "\n";
-        if (indentLen > 0) {
-            prefix.append(indentLen, ' ');
-        }
-        return prefix;
-    }
-    if (indentLen > 0) {
-        return std::string(indentLen, ' ');
-    }
-    return "";
-}
-
-static bool IsNamespaceContextAtAnchor(const RefactorContext &context, ir::AstNode *anchor)
-{
-    if (anchor == nullptr) {
-        anchor = GetTouchingToken(context.context, context.span.pos, false);
-    }
-    return IsNamespaceContext(anchor);
-}
-
-static bool IsNamespaceInsertionTarget(const RefactorContext &context, const std::string &actionName,
-                                       ir::AstNode *anchor)
-{
-    if (const auto depth = GetNamespaceActionDepth(actionName, EXTRACT_CONSTANT_ACTION_ENCLOSE.name,
-                                                   EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX);
-        depth.has_value()) {
-        if (depth.value() > 0) {
-            return true;
-        }
-        return IsNamespaceContextAtAnchor(context, anchor);
-    }
-    if (IsActionNameOrKind(actionName, EXTRACT_VARIABLE_ACTION_ENCLOSE) ||
-        IsActionNameOrKind(actionName, EXTRACT_CONSTANT_ACTION_ENCLOSE) ||
-        IsConstantExtractionInClassAction(actionName)) {
-        return IsNamespaceContextAtAnchor(context, anchor);
-    }
-    return false;
-}
-
-static bool ShouldPrependNamespaceNewline(public_lib::Context *ctx, size_t insertPos, std::string_view generatedText)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr || generatedText.empty()) {
-        return false;
-    }
-    if (generatedText.front() == LINE_FEED || generatedText.front() == CARRIAGE_RETURN) {
-        return false;
-    }
-    const auto &source = ctx->sourceFile->source;
-    return insertPos < source.size() && IsLineBreak(source[insertPos]);
-}
-
-static std::string_view TrimHorizontalWhitespace(std::string_view text)
-{
-    size_t begin = 0;
-    while (begin < text.size() && IsIndentChar(text[begin])) {
-        ++begin;
-    }
-    size_t end = text.size();
-    while (end > begin && IsIndentChar(text[end - 1])) {
-        --end;
-    }
-    return text.substr(begin, end - begin);
-}
-
-static bool PreviousLineIsTerminatedExport(std::string_view source, size_t insertPos)
-{
-    if (insertPos == 0 || insertPos > source.size()) {
-        return false;
-    }
-    size_t lineEnd = insertPos;
-    while (lineEnd > 0 && IsLineBreak(source[lineEnd - 1])) {
-        --lineEnd;
-    }
-    if (lineEnd == 0) {
-        return false;
-    }
-    size_t lineStart = lineEnd;
-    while (lineStart > 0 && !IsLineBreak(source[lineStart - 1])) {
-        --lineStart;
-    }
-    const auto prevLine = TrimHorizontalWhitespace(source.substr(lineStart, lineEnd - lineStart));
-    if (prevLine.empty() || prevLine.back() != ';') {
-        return false;
-    }
-    return prevLine.rfind("export ", 0) == 0;
-}
-
-static bool IsValueDeclarationText(std::string_view generatedText)
-{
-    const auto trimmed = TrimHorizontalWhitespace(generatedText);
-    return trimmed.rfind("let ", 0) == 0 || trimmed.rfind("const ", 0) == 0;
-}
-
-static bool ShouldPrependAdditionalNamespaceBlankLine(public_lib::Context *ctx, size_t insertPos,
-                                                      std::string_view generatedText)
-{
-    if (!ShouldPrependNamespaceNewline(ctx, insertPos, generatedText)) {
-        return false;
-    }
-    if (!IsValueDeclarationText(generatedText)) {
-        return false;
-    }
-    const auto &source = ctx->sourceFile->source;
-    return PreviousLineIsTerminatedExport(source, insertPos);
-}
-
-static size_t SkipLineBreak(std::string_view source, size_t pos);
-
-static void MaybePrependNamespaceNewlinesForValueExtraction(
-    const RefactorContext &context, size_t insertPos, std::string &generatedText,
-    const std::pair<const std::string *, ir::AstNode *> &targetInfo)
-{
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr || ctx->sourceFile == nullptr || targetInfo.first == nullptr) {
-        return;
-    }
-    const std::string &actionName = *targetInfo.first;
-    if (!IsNamespaceInsertionTarget(context, actionName, targetInfo.second) ||
-        !ShouldPrependNamespaceNewline(ctx, insertPos, generatedText)) {
-        return;
-    }
-    const bool isExtractVariableOrConstant =
-        IsVariableExtractionAction(actionName) || IsConstantExtractionAction(actionName);
-    const bool prependAdditionalBlankLine =
-        isExtractVariableOrConstant && ShouldPrependAdditionalNamespaceBlankLine(ctx, insertPos, generatedText);
-    size_t nextLinePos = SkipLineBreak(ctx->sourceFile->source, insertPos);
-    std::string indent = GetIndentAtPosition(ctx, nextLinePos);
-    if (indent.empty()) {
-        indent = GetIndentAtPosition(ctx, insertPos);
-    }
-    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-    generatedText.insert(0, indent);
-    generatedText.insert(0, newLine);
-    if (prependAdditionalBlankLine) {
-        generatedText.insert(0, newLine);
-    }
-}
-
-static size_t SkipLineBreak(std::string_view source, size_t pos)
-{
-    if (pos >= source.size() || !IsLineBreak(source[pos])) {
-        return pos;
-    }
-    if (source[pos] == CARRIAGE_RETURN && pos + 1 < source.size() && source[pos + 1] == LINE_FEED) {
-        return pos + CRLF_LENGTH;
-    }
-    return pos + 1;
-}
-
-static std::vector<const TextChange *> CollectOrderedTextChanges(const std::vector<FileTextChanges> &edits,
-                                                                 size_t insertPos, const TextChange *&insertChange,
-                                                                 size_t &insertShift)
-{
-    std::vector<const TextChange *> ordered;
-    insertChange = nullptr;
-    insertShift = 0;
-    if (edits.empty() || edits[0].textChanges.empty()) {
-        return ordered;
-    }
-    ordered.reserve(edits[0].textChanges.size());
-    for (const auto &change : edits[0].textChanges) {
-        ordered.push_back(&change);
-        if (insertChange == nullptr && change.span.length == 0 && change.span.start == insertPos) {
-            insertChange = &change;
-        }
-    }
-    std::sort(ordered.begin(), ordered.end(),
-              [](const TextChange *lhs, const TextChange *rhs) { return lhs->span.start < rhs->span.start; });
-    for (const auto *change : ordered) {
-        if (change->span.start + change->span.length <= insertPos) {
-            if (change->span.start == insertPos && change->span.length == 0) {
-                continue;
-            }
-            insertShift += change->newText.length() - change->span.length;
-        }
-    }
-    return ordered;
-}
-
-static void AdjustRenameLocFromChanges(const std::vector<const TextChange *> &ordered, bool renameLocIsFinal,
-                                       size_t &renameLoc)
-{
-    if (renameLocIsFinal || ordered.empty()) {
-        return;
-    }
-    size_t shift = 0;
-    bool resolved = false;
-    for (const auto *change : ordered) {
-        if (change->span.start > renameLoc) {
-            break;
-        }
-        if (change->span.start + change->span.length <= renameLoc) {
-            shift += change->newText.length() - change->span.length;
-            continue;
-        }
-        renameLoc = change->span.start + shift;
-        resolved = true;
-        break;
-    }
-    if (!resolved) {
-        renameLoc += shift;
-    }
-}
-
-static std::string BuildFinalText(std::string_view source, const std::vector<const TextChange *> &ordered)
-{
-    std::string finalText;
-    finalText.reserve(source.size());
-    size_t cursor = 0;
-    for (const auto *change : ordered) {
-        size_t start = std::min(change->span.start, source.size());
-        if (start < cursor) {
-            start = cursor;
-        }
-        size_t end = std::min(start + change->span.length, static_cast<size_t>(source.size()));
-        if (cursor < start) {
-            finalText.append(source.substr(cursor, start - cursor));
-        }
-        finalText.append(change->newText);
-        cursor = end;
-    }
-    if (cursor < source.size()) {
-        finalText.append(source.substr(cursor, source.size() - cursor));
-    }
-    return finalText;
-}
-
-static std::optional<size_t> FindBestRenameLoc(const std::string &finalText, const std::string &uniqueVarName,
-                                               size_t renameLoc, const std::optional<TextRange> &insertedRange)
-{
-    size_t bestPos = std::string::npos;
-    size_t bestDist = std::numeric_limits<size_t>::max();
-    size_t bestPosAny = std::string::npos;
-    size_t bestDistAny = std::numeric_limits<size_t>::max();
-    size_t pos = finalText.find(uniqueVarName);
-    while (pos != std::string::npos) {
-        size_t end = pos + uniqueVarName.size();
-        size_t dist = 0;
-        if (renameLoc < pos) {
-            dist = pos - renameLoc;
-        } else if (renameLoc > end) {
-            dist = renameLoc - end;
-        }
-        if (dist < bestDistAny) {
-            bestDistAny = dist;
-            bestPosAny = pos;
-        }
-        const bool insideInserted = insertedRange.has_value() && pos >= insertedRange->pos && pos < insertedRange->end;
-        if (!insideInserted && dist < bestDist) {
-            bestDist = dist;
-            bestPos = pos;
-        }
-        pos = finalText.find(uniqueVarName, pos + 1);
-    }
-    if (bestPos == std::string::npos) {
-        bestPos = bestPosAny;
-    }
-    if (bestPos == std::string::npos) {
-        return std::nullopt;
-    }
-    size_t renameOffset = (uniqueVarName.size() > 1) ? 1 : 0;
-    if (uniqueVarName.rfind("this.", 0) == 0) {
-        renameOffset = std::string("this.").size() + 1;
-    }
-    return bestPos + renameOffset;
-}
-
-static void ApplyImplicitPrefix(std::string &finalText, size_t adjustedInsertPos, const std::string &implicitPrefix)
-{
-    if (implicitPrefix.empty() || adjustedInsertPos > finalText.size()) {
-        return;
-    }
-    if (implicitPrefix[0] == '\n' && adjustedInsertPos < finalText.size() &&
-        IsLineBreak(finalText[adjustedInsertPos])) {
-        finalText.erase(adjustedInsertPos, 1);
-    }
-    finalText.insert(adjustedInsertPos, implicitPrefix);
-}
-
-static std::optional<TextRange> ComputeInsertedRange(size_t adjustedInsertPos, const TextChange *insertChange,
-                                                     const std::string &implicitPrefix)
-{
-    if (insertChange == nullptr) {
-        return std::nullopt;
-    }
-    size_t insertedStart = adjustedInsertPos + (!implicitPrefix.empty() ? implicitPrefix.size() : 0);
-    size_t insertedEnd = insertedStart + insertChange->newText.size();
-    return TextRange {insertedStart, insertedEnd};
-}
-
-static std::optional<size_t> RecomputeRenameLoc(const std::string &finalText, const std::string &uniqueVarName,
-                                                size_t renameLoc, const std::optional<TextRange> &insertedRange)
-{
-    if (finalText.empty()) {
-        return std::nullopt;
-    }
-    return FindBestRenameLoc(finalText, uniqueVarName, renameLoc, insertedRange);
-}
-
-static bool HasSourceNewlineInRange(public_lib::Context *ctx, TextRange range)
-{
-    return ctx != nullptr && ctx->sourceFile != nullptr && HasNewlineInRange(ctx->sourceFile->source, range);
-}
-
-static size_t NormalizeFunctionInsertPos(const RefactorContext &context, public_lib::Context *ctx,
-                                         const std::string &actionName)
-{
-    size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
-    if (ctx != nullptr && ctx->sourceFile != nullptr) {
-        insertPos = NormalizeInsertPos(ctx->sourceFile->source, insertPos);
-    }
-    return insertPos;
-}
-
-static std::vector<std::string> BuildFunctionCallArgs(const FunctionExtraction &candidate, bool treatAsStatements,
-                                                      const FunctionIOInfo &ioInfo,
-                                                      const std::vector<std::string> *capturedArgs)
-{
-    if (treatAsStatements) {
-        return ioInfo.callArgs;
-    }
-    if (capturedArgs != nullptr) {
-        return *capturedArgs;
-    }
-    std::vector<std::string> callArgs;
-    callArgs.reserve(candidate.parameters.size());
-    for (auto *param : candidate.parameters) {
-        if (param != nullptr && param->Ident() != nullptr) {
-            callArgs.emplace_back(IdentifierNameMutf8(param->Ident()));
-        }
-    }
-    return callArgs;
-}
-
-static size_t ComputeRenameLocFromEdits(const std::vector<FileTextChanges> &edits, size_t renameLoc)
-{
-    if (edits.empty() || edits[0].textChanges.empty()) {
-        return renameLoc;
-    }
-    std::vector<const TextChange *> ordered;
-    ordered.reserve(edits[0].textChanges.size());
-    for (const auto &change : edits[0].textChanges) {
-        ordered.push_back(&change);
-    }
-    std::sort(ordered.begin(), ordered.end(),
-              [](const TextChange *lhs, const TextChange *rhs) { return lhs->span.start < rhs->span.start; });
-    bool renameLocIsFinal = false;
-    AdjustRenameLocFromChanges(ordered, renameLocIsFinal, renameLoc);
-    return renameLoc;
-}
-
-static bool IsAsciiIdentifierChar(char ch)
-{
-    return std::isalnum(static_cast<unsigned char>(ch)) != 0 || ch == '_' || ch == '$';
-}
-
-static std::optional<size_t> FindCallCalleeOffset(std::string_view callText)
-{
-    const size_t parenPos = callText.find('(');
-    if (parenPos == std::string::npos || parenPos == 0) {
-        return std::nullopt;
-    }
-    size_t tokenEnd = parenPos;
-    while (tokenEnd > 0 && isspace(callText[tokenEnd - 1])) {
-        --tokenEnd;
-    }
-    if (tokenEnd == 0) {
-        return std::nullopt;
-    }
-    size_t tokenStart = tokenEnd;
-    while (tokenStart > 0 && IsAsciiIdentifierChar(callText[tokenStart - 1])) {
-        --tokenStart;
-    }
-    if (tokenStart == tokenEnd) {
-        return std::nullopt;
-    }
-    return tokenStart;
-}
-
-static size_t CountIdentifierLength(std::string_view text, size_t start)
-{
-    size_t end = start;
-    while (end < text.size() && IsAsciiIdentifierChar(text[end])) {
-        ++end;
-    }
-    return end - start;
-}
-
-static std::optional<size_t> ComputeFunctionCallRenameLocFromEdits(const std::vector<FileTextChanges> &edits,
-                                                                   TextRange extractionPos)
-{
-    if (edits.empty() || edits[0].textChanges.empty()) {
-        return std::nullopt;
-    }
-    const size_t extractionLen = extractionPos.end - extractionPos.pos;
-    const TextChange *replaceChange = nullptr;
-    for (const auto &change : edits[0].textChanges) {
-        if (change.span.start == extractionPos.pos && change.span.length == extractionLen) {
-            replaceChange = &change;
-            break;
-        }
-    }
-    if (replaceChange == nullptr) {
-        for (const auto &change : edits[0].textChanges) {
-            if (change.span.length == 0) {
-                continue;
-            }
-            if (FindCallCalleeOffset(change.newText).has_value()) {
-                replaceChange = &change;
-                break;
-            }
-        }
-    }
-    if (replaceChange == nullptr) {
-        return std::nullopt;
-    }
-    const auto calleeOffset = FindCallCalleeOffset(replaceChange->newText);
-    if (!calleeOffset.has_value()) {
-        return std::nullopt;
-    }
-    const size_t calleeLen = CountIdentifierLength(replaceChange->newText, calleeOffset.value());
-    const size_t renameOffset = calleeLen > 1 ? 1 : 0;
-
-    std::vector<const TextChange *> ordered;
-    ordered.reserve(edits[0].textChanges.size());
-    for (const auto &change : edits[0].textChanges) {
-        ordered.push_back(&change);
-    }
-    std::sort(ordered.begin(), ordered.end(),
-              [](const TextChange *lhs, const TextChange *rhs) { return lhs->span.start < rhs->span.start; });
-
-    size_t shiftBeforeReplace = 0;
-    for (const auto *change : ordered) {
-        if (change == replaceChange) {
-            break;
-        }
-        if (change->span.start + change->span.length <= replaceChange->span.start) {
-            shiftBeforeReplace += change->newText.length() - change->span.length;
-        }
-    }
-
-    return replaceChange->span.start + shiftBeforeReplace + calleeOffset.value() + renameOffset;
-}
-
-static std::optional<size_t> ComputeRenameLocForExprStmt(ir::AstNode *exprStmt, const std::string &generatedText,
-                                                         const std::string &uniqueVarName, size_t insertPos)
-{
-    if (exprStmt == nullptr) {
-        return std::nullopt;
-    }
-    std::string renameToken = uniqueVarName;
-    size_t nameOffset = generatedText.find(renameToken);
-    if (nameOffset == std::string::npos && renameToken.rfind("this.", 0) == 0) {
-        renameToken = renameToken.substr(std::string("this.").size());
-        nameOffset = generatedText.find(renameToken);
-    }
-    if (nameOffset == std::string::npos) {
-        return std::nullopt;
-    }
-    size_t renameOffset = (renameToken.size() > 1) ? 1 : 0;
-    return insertPos + nameOffset + renameOffset;
-}
-
-static std::string ResolveVariableTypeAnnotation(public_lib::Context *ctx, const RefactorContext &context,
-                                                 ir::AstNode *extractedText)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr || extractedText == nullptr) {
-        return "";
-    }
-    auto resolveVarTypeText = [ctx](ir::VariableDeclarator *declarator) -> std::string {
-        if (declarator == nullptr || declarator->Id() == nullptr || !declarator->Id()->IsIdentifier()) {
-            return "";
-        }
-        auto *ident = declarator->Id()->AsIdentifier();
-        if (auto *typeAnnotation = ident->TypeAnnotation(); typeAnnotation != nullptr) {
-            std::string typeText = GetNodeText(ctx, typeAnnotation);
-            if (typeText.empty()) {
-                typeText = typeAnnotation->ToString();
-            }
-            if (!typeText.empty()) {
-                return typeText;
-            }
-        }
-        auto *checker = ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
-        auto type = GetTypeOfSymbolAtLocation(checker, ident);
-        return type == nullptr ? "" : type->ToString();
-    };
-
-    const auto extractionPos = GetCallPositionOfExtraction(context);
-    for (ir::AstNode *current = extractedText; current != nullptr; current = current->Parent()) {
-        if (!current->IsVariableDeclarator()) {
-            continue;
-        }
-        auto *declarator = current->AsVariableDeclarator();
-        auto *init = declarator->Init();
-        if (init == nullptr || init->Start().index != extractionPos.pos || init->End().index != extractionPos.end) {
-            continue;
-        }
-        std::string typeText = resolveVarTypeText(declarator);
-        if (!typeText.empty()) {
-            return ": " + typeText;
-        }
-        break;
-    }
-    if (auto typeText = ExtractVariableDeclaredTypeFromInitializer(ctx->sourceFile->source, extractionPos.pos);
-        typeText.has_value()) {
-        return ": " + typeText.value();
-    }
-    return "";
-}
-
-static std::pair<std::string, bool> BuildClassConstantPrefix(const std::string &varName, ir::AstNode *startedNode)
-{
-    std::string prefix;
-    bool append = false;
-    if (IsNamespaceContext(startedNode)) {
-        prefix.append("const ").append(varName).append(" = ");
-    } else {
-        prefix.append("private readonly ").append(varName.substr(std::string("this.").size())).append(" = ");
-        append = true;
-    }
-    return {std::move(prefix), append};
-}
-
-static std::string BuildMultiDeclPrefix(const std::string &varName)
-{
-    return varName + " = ";
-}
-
-static std::string BuildStandardDeclPrefix(const std::string &varName, bool isConstantExtraction,
-                                           const std::string &typeAnnotation)
-{
-    std::string prefix;
-    prefix.append(isConstantExtraction ? "const " : "let ").append(varName);
-    if (!typeAnnotation.empty()) {
-        prefix.append(typeAnnotation);
-    }
-    prefix.append(" = ");
-    return prefix;
-}
-
-std::string BuildExtractionDeclaration(const RefactorContext &context, ir::AstNode *extractedText,
-                                       const std::string &actionName, const std::string &varName)
-{
-    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-    const bool isVariableExtraction = IsVariableExtractionAction(actionName);
-    const bool isConstantExtraction = IsConstantExtractionAction(actionName);
-    if (!isConstantExtraction && !isVariableExtraction) {
-        return "";
-    }
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return "";
-    }
-
-    std::string_view srcView(ctx->sourceFile->source);
-    std::string placeholder = GetConstantString(srcView, extractedText);
-    if (placeholder.empty()) {
-        return "";
-    }
-    const std::string extractedVarTypeAnnotation =
-        isVariableExtraction ? ResolveVariableTypeAnnotation(ctx, context, extractedText) : "";
-
-    auto startedNode = GetTouchingTokenByRange(context.context, context.span, false);
-    const bool isMultiDecl = IsMultiDecl(startedNode, ctx);
-    bool isAppend = false;
-    std::string declaration;
-    if (IsConstantExtractionInClassAction(actionName)) {
-        auto prefixResult = BuildClassConstantPrefix(varName, startedNode);
-        declaration = std::move(prefixResult.first);
-        isAppend = prefixResult.second;
-    } else if (isMultiDecl) {
-        declaration = BuildMultiDeclPrefix(varName);
-    } else {
-        declaration = BuildStandardDeclPrefix(varName, isConstantExtraction, extractedVarTypeAnnotation);
-    }
-    declaration.append(placeholder);
-    if (isMultiDecl && declaration.find(',') == std::string::npos) {
-        declaration.append(", ");
-    } else if (declaration.find(';') == std::string::npos) {
-        declaration.append(";");
-    }
-    if (isAppend) {
-        declaration.append(newLine);
-    }
-    return declaration;
-}
-
-void ApplyVariableFormatting(const RefactorContext &context, public_lib::Context *ctx, const std::string &actionName,
-                             std::string &declaration)
-{
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return;
-    }
-    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-    size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
-    std::string insertionIndent = GetIndentAtPosition(ctx, insertPos);
-    TextRange callRange = GetCallPositionOfExtraction(context);
-    std::string statementIndent = GetIndentAtPosition(ctx, callRange.pos);
-    const std::string &indentToUse = statementIndent.empty() ? insertionIndent : statementIndent;
-
-    declaration = newLine + indentToUse + declaration;
-    declaration.append(newLine).append(newLine);
-}
-
-std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *&extractedText,
-                                const std::string &actionName, const std::string &varName)
-{
-    if (extractedText == nullptr) {
-        return "";
-    }
-    const auto impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
-    if (impl == nullptr) {
-        return "";
-    }
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    extractedText = GetOptimumNodeByRange(extractedText, context.span);
-    if (extractedText == nullptr || IsNodeInScope(extractedText) || ctx->sourceFile == nullptr ||
-        ctx->sourceFile->source.empty()) {
-        return "";
-    }
-
-    std::string declaration = BuildExtractionDeclaration(context, extractedText, actionName, varName);
-    if (declaration.empty()) {
-        return "";
-    }
-    return declaration;
-}
-
-std::vector<ApplicableRefactorInfo> ExtractSymbolRefactor::GetAvailableActions(const RefactorContext &refContext) const
-{
-    const auto rangeToExtract = refContext.span;
-    if (rangeToExtract.pos >= rangeToExtract.end) {
-        return {};
-    }
-    const auto refactoredNodeList = FindAvailableRefactors(refContext);
-    if (refactoredNodeList.empty()) {
-        return {};
-    }
-
-    std::vector<ApplicableRefactorInfo> resList;
-
-    for (const RefactorAction &ref : refactoredNodeList) {
-        if (!refContext.kind.empty()) {
-            if (refContext.kind != ref.kind) {
-                continue;
-            }
-        }
-        ApplicableRefactorInfo res;
-        res.name = REFACTOR_NAME;
-        res.description = REFACTOR_DESCRIPTION;
-        res.action = ref;
-        resList.push_back(res);
-    }
-    return resList;
-}
-
-ir::AstNode *IsReplaceRangeRequired(const RefactorContext &context, ir::AstNode *extractedText)
-{
-    if (extractedText == nullptr) {
-        return nullptr;
-    }
-    ir::AstNode *exprStmt = nullptr;
-    for (ir::AstNode *parent = extractedText->Parent(); parent != nullptr; parent = parent->Parent()) {
-        if (parent->IsExpressionStatement() &&
-            (parent->Start().index <= context.span.pos && parent->End().index >= context.span.end)) {
-            exprStmt = parent;
-        }
-    }
-    for (ir::AstNode *parent = extractedText->Parent(); parent != nullptr; parent = parent->Parent()) {
-        if (!parent->IsCallExpression()) {
-            continue;
-        }
-        if ((parent->Start().index != context.span.pos && parent->End().index != context.span.end) ||
-            exprStmt == nullptr) {
-            return nullptr;
-        }
-    }
-    return exprStmt;
-}
-
-static std::pair<std::vector<FileTextChanges>, ir::AstNode *> BuildValueExtractionChanges(
-    const RefactorContext &context, ir::AstNode *extractedText, const std::pair<size_t, std::string> &insertionData,
-    const std::string &uniqueVarName)
-{
-    TextChangesContext textChangesContext = *context.textChangesContext;
-    const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
-    TextRange extractedRange {extractedText->Start().index, extractedText->End().index};
-    auto *exprStmt = IsReplaceRangeRequired(context, extractedText);
-    auto edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
-        tracker.InsertText(src, insertionData.first, insertionData.second);
-        if (exprStmt != nullptr) {
-            tracker.DeleteRange(src, TextRange {exprStmt->Start().index, exprStmt->End().index});
-            return;
-        }
-        tracker.ReplaceRangeWithText(src, extractedRange, uniqueVarName);
-    });
-    return {std::move(edits), exprStmt};
-}
-
-static void UpdateRenameLocFromFinalText(const std::string &finalText, const std::string &uniqueVarName,
-                                         const std::optional<TextRange> &insertedRange, size_t &renameLoc)
-{
-    if (auto updatedLoc = RecomputeRenameLoc(finalText, uniqueVarName, renameLoc, insertedRange);
-        updatedLoc.has_value()) {
-        renameLoc = updatedLoc.value();
-    }
-}
-
-RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, ir::AstNode *extractedText,
-                                               const std::string &actionName)
-{
-    std::string uniqueVarName = GenerateUniqueExtractedVarName(context, actionName);
-    std::string generatedText = GenerateInlineEdits(context, extractedText, actionName, uniqueVarName);
-    if (generatedText.empty()) {
-        return RefactorEditInfo {};
-    }
-    size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr || ctx->sourceFile == nullptr) {
-        return RefactorEditInfo {};
-    }
-    const auto src = ctx->sourceFile;
-    insertPos = ResolveInsertionPosForVariableExtraction(context, ctx, actionName, insertPos);
-    auto inlineInsertionResult = TryBuildInlineInsertion(context, ctx, extractedText, uniqueVarName);
-    const bool inlineInsertion = ApplyInlineInsertionResult(insertPos, generatedText, inlineInsertionResult);
-    if (!inlineInsertion) {
-        AdjustGeneratedTextForInsert(context, ctx, insertPos, uniqueVarName, generatedText);
-        AppendTrailingNewLineForGlobalVariableInsert(context, actionName, insertPos, generatedText);
-        MaybePrependNamespaceNewlinesForValueExtraction(context, insertPos, generatedText,
-                                                        {&actionName, extractedText});
-    }
-    std::string implicitPrefix = BuildImplicitPrefix(context, ctx, insertPos, generatedText, inlineInsertion);
-    auto [edits, exprStmt] =
-        BuildValueExtractionChanges(context, extractedText, {insertPos, generatedText}, uniqueVarName);
-    size_t renameLoc = extractedText->Start().index;
-    bool renameLocIsFinal = false;
-    if (auto renameLocForExpr = ComputeRenameLocForExprStmt(exprStmt, generatedText, uniqueVarName, insertPos);
-        renameLocForExpr.has_value()) {
-        renameLoc = renameLocForExpr.value();
-        renameLocIsFinal = true;
-    }
-    const TextChange *insertChange = nullptr;
-    size_t insertShift = 0;
-    auto orderedChanges = CollectOrderedTextChanges(edits, insertPos, insertChange, insertShift);
-    AdjustRenameLocFromChanges(orderedChanges, renameLocIsFinal, renameLoc);
-    const size_t adjustedInsertPos = insertPos + insertShift;
-    if (!implicitPrefix.empty() && adjustedInsertPos <= renameLoc) {
-        renameLoc += implicitPrefix.size();
-    }
-    if (!renameLocIsFinal && !orderedChanges.empty()) {
-        std::string finalText = BuildFinalText(src->source, orderedChanges);
-        ApplyImplicitPrefix(finalText, adjustedInsertPos, implicitPrefix);
-        auto insertedRange = adjustedInsertPos <= finalText.size()
-                                 ? ComputeInsertedRange(adjustedInsertPos, insertChange, implicitPrefix)
-                                 : std::optional<TextRange> {};
-        UpdateRenameLocFromFinalText(finalText, uniqueVarName, insertedRange, renameLoc);
-    }
-    return RefactorEditInfo(std::move(edits), std::optional<std::string>(src->filePath),
-                            std::optional<size_t>(renameLoc));
-}
-
-static bool TryGetFunctionExtractionCandidate(const RefactorContext &context, FunctionExtraction &candidate)
-{
-    auto candidates = GetPossibleFunctionExtractions(context);
-    if (candidates.empty()) {
-        return false;
-    }
-    candidate = candidates.front();
-    CollectFunctionParameters(candidate);
-    return true;
-}
-
-static std::vector<FileTextChanges> BuildFunctionExtractionTextChanges(const RefactorContext &context,
-                                                                       const std::string &functionText,
-                                                                       size_t insertPos, TextRange extractionPos,
-                                                                       const std::string &funcCallText)
-{
-    TextChangesContext textChangesContext = *context.textChangesContext;
-    const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
-    return ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
-        tracker.InsertText(src, insertPos, functionText);
-        tracker.ReplaceRangeWithText(src, extractionPos, funcCallText);
-    });
-}
-
-static size_t ComputeFunctionRenameLoc(const std::vector<FileTextChanges> &edits, TextRange extractionPos)
-{
-    size_t renameLoc = ComputeRenameLocFromEdits(edits, extractionPos.pos);
-    if (auto renameLocOnCall = ComputeFunctionCallRenameLocFromEdits(edits, extractionPos);
-        renameLocOnCall.has_value()) {
-        renameLoc = renameLocOnCall.value();
-    }
-    return renameLoc;
-}
-
-RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &context, const std::string &actionName)
-{
-    auto *extractedNode = FindExtractedFunction(context);
-    if (extractedNode == nullptr) {
-        return RefactorEditInfo();
-    }
-
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    TextRange extractionPos = GetCallPositionOfExtraction(context);
-    bool selectionHasNewline = HasSourceNewlineInRange(ctx, extractionPos);
-    RefactorEditInfo helperEdits;
-    if (!selectionHasNewline && TryBuildHelperExtraction(context, extractedNode, actionName, helperEdits)) {
-        return helperEdits;
-    }
-    FunctionExtraction candidate;
-    if (!TryGetFunctionExtractionCandidate(context, candidate)) {
-        return RefactorEditInfo();
-    }
-
-    FunctionIOInfo statementIo;
-    FunctionIOInfo expressionIo;
-    const FunctionIOInfo *ioInfoPtr = nullptr;
-    const std::vector<std::string> *capturedParams = nullptr;
-    const std::vector<std::string> *capturedArgs = nullptr;
-    const bool treatAsStatements = selectionHasNewline;
-    const bool includeNonGlobal = actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name);
-    if (treatAsStatements) {
-        statementIo = AnalyzeFunctionIO(context, extractionPos, includeNonGlobal);
-        ioInfoPtr = &statementIo;
-    } else {
-        expressionIo = AnalyzeFunctionIO(context, extractionPos, includeNonGlobal);
-        if (!expressionIo.callArgs.empty()) {
-            capturedParams = &expressionIo.paramDecls;
-            capturedArgs = &expressionIo.callArgs;
-        }
-    }
-
-    size_t insertPos = NormalizeFunctionInsertPos(context, ctx, actionName);
-
-    std::string functionText = BuildFunctionText(candidate, context, actionName, ioInfoPtr, capturedParams);
-    std::vector<std::string> callArgs = BuildFunctionCallArgs(candidate, treatAsStatements, statementIo, capturedArgs);
-    auto funcCallText = ReplaceWithFunctionCall(
-        functionText, callArgs, treatAsStatements ? statementIo.returnVar : std::nullopt, treatAsStatements);
-    std::vector<FileTextChanges> edits =
-        BuildFunctionExtractionTextChanges(context, functionText, insertPos, extractionPos, funcCallText);
-    size_t renameLoc = ComputeFunctionRenameLoc(edits, extractionPos);
-    const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
-    return RefactorEditInfo(std::move(edits), std::optional<std::string>(src->filePath),
-                            std::optional<size_t>(renameLoc));
-}
-
-std::unique_ptr<RefactorEditInfo> ExtractSymbolRefactor::GetEditsForAction(const RefactorContext &context,
-                                                                           const std::string &actionName) const
-{
-    const auto ctx = context.context;
-    const auto impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
-    if (ctx == nullptr || impl == nullptr) {
-        return nullptr;
-    }
-    const auto rangeToExtract = context.span;
-    if (rangeToExtract.pos >= rangeToExtract.end) {
-        return nullptr;
-    }
-
-    const auto extractedText = FindRefactor(context, actionName);
-    if (extractedText == nullptr) {
-        return nullptr;
-    }
-    RefactorEditInfo refactor;
-    if (IsConstantExtractionAction(actionName) || IsVariableExtractionAction(actionName)) {
-        refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
-    } else if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name ||
-               IsNamespaceAction(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
-                                 EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX)) {
-        refactor = GetRefactorEditsToExtractFunction(context, actionName);
-    }
-
-    return std::make_unique<RefactorEditInfo>(refactor);
-}
-// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
-AutoRefactorRegister<ExtractSymbolRefactor> g_extractSymbolRefactorRegister("ExtractSymbolRefactor");
-
 }  // namespace ark::es2panda::lsp
