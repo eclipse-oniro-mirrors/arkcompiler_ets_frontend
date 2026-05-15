@@ -455,6 +455,7 @@ cookBookTag[419] =
   'Object literal shall generate instance of a specific class (arkts-obj-literal-generate-class-instance)';
 cookBookTag[420] =
   'In ArkTS-Sta, \'as\' performs type checking and possible type conversion at runtime (arkts-no-ts-like-as)';
+cookBookTag[421] = 'Convert the number type to int for builtin APIs (builtin-api-num2int)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }
