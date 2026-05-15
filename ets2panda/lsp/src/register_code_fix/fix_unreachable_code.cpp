@@ -143,7 +143,7 @@ void FixUnreachableCode::MakeChangeForUnreachableCode(ChangeTracker &changeTrack
                                                       size_t pos)
 {
     TextRange range = {0, 0};
-    auto *token = GetTouchingTokenRightMatch(context, pos, false);
+    auto *token = GetTouchingTokenRightMatch(context, pos);
     if (token == nullptr) {
         return;
     }

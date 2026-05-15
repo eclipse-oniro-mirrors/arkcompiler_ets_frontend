@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,7 +61,7 @@ export interface Worker extends a.User {}
 TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -69,7 +69,7 @@ TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest2)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 230;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -77,7 +77,7 @@ TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest3)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 47;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 1;
     std::vector<NodeInfo> expectedResult = {{"User", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -91,9 +91,10 @@ TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest4)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 145;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
-    const size_t expectedSize = 1;
-    std::vector<NodeInfo> expectedResult = {{"Client", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION}};
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
+    const size_t expectedSize = 2;
+    std::vector<NodeInfo> expectedResult = {{"Client", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION},
+                                            {"Client", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -105,7 +106,7 @@ TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest5)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 188;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 1;
     std::vector<NodeInfo> expectedResult = {{"Worker", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);

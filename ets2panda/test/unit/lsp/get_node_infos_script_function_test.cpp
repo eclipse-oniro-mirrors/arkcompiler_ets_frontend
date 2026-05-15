@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,12 +34,12 @@ TEST_F(LspGetNodeInfoScriptFunctionTests, GetScriptFunctionInfo_Simple_TEST)
         initializer.CreateContext("ScriptFunctionInfo.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 20;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 
     const size_t offset = 9;
     const size_t expectedSize = 3;
-    result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
     std::vector<NodeInfo> expectedResult = {{"test", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
                                             {"test", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
@@ -64,7 +64,7 @@ function add(a: number, b: number): number { return a + b; }
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 10;
     const size_t expectedSize = 3;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
     std::vector<NodeInfo> expectedResult = {{"add", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
                                             {"add", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
@@ -91,7 +91,7 @@ async function fetchData(): Promise<string> {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 16;
     const size_t expectedSize = 3;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
     std::vector<NodeInfo> expectedResult = {{"fetchData", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
                                             {"fetchData", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},

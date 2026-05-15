@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import { BuildConfig, PathConfig } from '../common/types';
 import {
   DEFAULT_CACHE_DIR,
   EXTERNAL_API_PATH_FROM_SDK,
-  INTEROP_API_PATH_FROM_SDK,
+  INTEROP_STATIC_API_PATH_FROM_SDK,
   LANGUAGE_VERSION
 } from '../common/preDefine';
 import { getFileLanguageVersion } from '../common/utils';
@@ -202,7 +202,7 @@ export function generateBuildConfigs(
         : path.resolve(pathConfig.buildSdkPath, EXTERNAL_API_PATH_FROM_SDK),
       interopApiPath: pathConfig.interopApiPath
         ? pathConfig.interopApiPath
-        : path.resolve(pathConfig.buildSdkPath, INTEROP_API_PATH_FROM_SDK),
+        : path.resolve(pathConfig.buildSdkPath, INTEROP_STATIC_API_PATH_FROM_SDK),
       cacheDir:
         pathConfig.cacheDir !== undefined ? pathConfig.cacheDir : path.join(pathConfig.projectPath, DEFAULT_CACHE_DIR),
       declFilesPath:

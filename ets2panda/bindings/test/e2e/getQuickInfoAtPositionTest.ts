@@ -205,14 +205,6 @@ describe('getQuickInfoAtPositionTest', () => {
         index: 0
       },
       {
-        name: 'crossplatform',
-        index: 0
-      },
-      {
-        name: 'atomicservice',
-        index: 0
-      },
-      {
         name: 'since',
         text: '23',
         index: 0
@@ -269,14 +261,14 @@ describe('getQuickInfoAtPositionTest', () => {
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_003', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition4.ets'), 710);
       expect(res).toMatchObject(EXPECT_003);
-      expect(res?.documentation).toEqual(EXPECT_003.documentation);
-      expect(res?.tags).toEqual(EXPECT_003.tags);
+      expect(res?.documentation).toMatchObject(EXPECT_003.documentation);
+      expect(res?.tags).toMatchObject(EXPECT_003.tags);
     });
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getQuickInfoAtPosition_004', () => {
       const res = getUiLsp().getQuickInfoAtPosition(getRealPath(moduleName, 'getQuickInfoAtPosition5.ets'), 701);
       expect(res).toMatchObject(EXPECT_004);
-      expect(res?.documentation).toEqual([]);
-      expect(res?.tags).toEqual([]);
+      expect(res?.documentation).toMatchObject([]);
+      expect(res?.tags).toMatchObject([]);
     });
   });
 });

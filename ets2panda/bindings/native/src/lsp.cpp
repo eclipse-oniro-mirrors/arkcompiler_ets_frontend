@@ -2087,17 +2087,17 @@ KNativePointer impl_getProgramAst(KNativePointer contextPtr)
 }
 TS_INTEROP_1(getProgramAst, KNativePointer, KNativePointer)
 
-KNativePointer impl_getNodeInfosByDefinitionData(KNativePointer context, KInt position)
+KNativePointer impl_getNodeInfosByDefinitionData(KNativePointer context, KStringPtr &fileName, KInt position)
 {
     auto ctx = reinterpret_cast<es2panda_Context *>(context);
     LSPAPI const *impl = GetLspApiImpl();
     std::vector<void *> ptrs;
-    for (auto &item : impl->getNodeInfosByDefinitionData(ctx, position)) {
+    for (auto &item : impl->getNodeInfosByDefinitionData(ctx, fileName.Data(), position)) {
         ptrs.push_back(new NodeInfo(item));
     }
     return new std::vector<void *>(ptrs);
 }
-TS_INTEROP_2(getNodeInfosByDefinitionData, KNativePointer, KNativePointer, KInt)
+TS_INTEROP_3(getNodeInfosByDefinitionData, KNativePointer, KNativePointer, KStringPtr, KInt)
 
 KNativePointer impl_getNameByNodeInfo(KNativePointer nodeInfo)
 {

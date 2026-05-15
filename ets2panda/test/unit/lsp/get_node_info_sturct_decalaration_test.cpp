@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,7 +58,7 @@ struct Person {
 TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -66,7 +66,7 @@ TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest2
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 90;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -74,7 +74,7 @@ TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest3
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 20;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 3;
     std::vector<NodeInfo> expectedResult = {{"Index", ark::es2panda::ir::AstNodeType::STRUCT_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -88,7 +88,7 @@ TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest4
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 38;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 3;
     std::vector<NodeInfo> expectedResult = {{"Person", ark::es2panda::ir::AstNodeType::STRUCT_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);

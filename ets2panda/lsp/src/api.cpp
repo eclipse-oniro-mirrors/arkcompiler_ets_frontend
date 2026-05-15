@@ -860,13 +860,43 @@ es2panda_AstNode *GetProgramAst(es2panda_Context *context)
     return GetProgramAstImpl(context);
 }
 
-std::vector<NodeInfo> GetNodeInfosByDefinitionData(es2panda_Context *context, size_t position)
+static bool IsProgramMatchedByFileName(const parser::Program *program, std::string_view fileName)
+{
+    if (program == nullptr || fileName.empty()) {
+        return false;
+    }
+    return std::string_view(program->SourceFilePath().Utf8()) == fileName;
+}
+
+static parser::Program *GetProgramByFileName(public_lib::Context *ctx, std::string_view fileName)
+{
+    if (ctx->parserProgram == nullptr) {
+        return nullptr;
+    }
+
+    if (IsProgramMatchedByFileName(ctx->parserProgram, fileName)) {
+        return ctx->parserProgram;
+    }
+
+    const auto &externalSources = ctx->parserProgram->GetExternalDecls()->Get<util::ModuleKind::SOURCE_DECL>();
+    for (auto *extProgram : externalSources) {
+        if (IsProgramMatchedByFileName(extProgram, fileName)) {
+            return extProgram;
+        }
+    }
+    return nullptr;
+}
+
+static std::vector<NodeInfo> GetNodeInfosByDefinitionDataImpl(es2panda_Context *context, std::string_view fileName,
+                                                              size_t position)
 {
     if (context == nullptr) {
         return {};
     }
 
-    auto node = GetTouchingToken(context, position, false);
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto *targetProgram = GetProgramByFileName(ctx, fileName);
+    auto *node = GetTouchingTokenRightMatch(context, position, targetProgram);
     if (node == nullptr) {
         return {};
     }
@@ -881,6 +911,12 @@ std::vector<NodeInfo> GetNodeInfosByDefinitionData(es2panda_Context *context, si
         node = node->Parent();
     }
     return std::vector<NodeInfo>(result.rbegin(), result.rend());
+}
+
+std::vector<NodeInfo> GetNodeInfosByDefinitionData(es2panda_Context *context, const char *fileName, size_t position)
+{
+    std::string_view fileNameView = fileName == nullptr ? std::string_view {} : std::string_view(fileName);
+    return GetNodeInfosByDefinitionDataImpl(context, fileNameView, position);
 }
 
 es2panda_AstNode *GetClassDefinition(es2panda_AstNode *astNode, const std::string &nodeName)

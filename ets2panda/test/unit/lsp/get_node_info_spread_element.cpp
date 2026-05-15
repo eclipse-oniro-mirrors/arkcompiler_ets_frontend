@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +59,7 @@ const copy = [...original];
 TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest1)
 {
     LSPAPI const *lspApi = GetImpl();
-    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, 0);
+    auto result = lspApi->getNodeInfosByDefinitionData(nullptr, nullptr, 0);
     ASSERT_TRUE(result.empty());
 }
 
@@ -67,7 +67,7 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest2)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t errorOffset = 460;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, errorOffset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, errorOffset);
     ASSERT_TRUE(result.empty());
 }
 
@@ -75,7 +75,7 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest3)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 69;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
@@ -92,7 +92,7 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest4)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 152;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
@@ -109,7 +109,7 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest5)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 162;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
@@ -126,7 +126,7 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest6)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 223;
-    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, offset);
+    auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     const size_t expectedSize = 4;
     std::vector<NodeInfo> expectedResult = {{"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},

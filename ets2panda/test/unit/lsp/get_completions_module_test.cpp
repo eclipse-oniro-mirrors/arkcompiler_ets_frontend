@@ -167,7 +167,7 @@ let a = MyModule.
     std::string expectedName = "NestedModule";
     bool found = false;
     for (const auto &entry : entries) {
-        if (entry.GetName() == expectedName && entry.GetCompletionKind() == CompletionEntryKind::CLASS) {
+        if (entry.GetName() == expectedName && entry.GetCompletionKind() == CompletionEntryKind::MODULE) {
             found = true;
             break;
         }
