@@ -4866,6 +4866,38 @@ checker::Type *ETSAnalyzer::Check(ir::ExpressionStatement *st) const
     return st->GetExpression()->Check(checker);
 }
 
+static bool IsArrayOrStringIterableType(Type *type)
+{
+    return type != nullptr && type->IsETSArrayType();
+}
+
+static bool IsNeutralIterableType(Type *type)
+{
+    return type != nullptr && (type->IsETSResizableArrayType() || type->IsETSStringType());
+}
+
+static bool IsUnsupportedMixedIterableUnion(Type *type)
+{
+    if (type == nullptr || !type->IsETSUnionType()) {
+        return false;
+    }
+
+    bool hasArrayOrString = false;
+    bool hasOtherIterable = false;
+    for (auto *const ct : type->AsETSUnionType()->ConstituentTypes()) {
+        if (IsNeutralIterableType(ct)) {
+            continue;
+        }
+        if (IsArrayOrStringIterableType(ct)) {
+            hasArrayOrString = true;
+        } else {
+            hasOtherIterable = true;
+        }
+    }
+
+    return hasArrayOrString && hasOtherIterable;
+}
+
 static bool ValidateAndProcessIteratorType(ETSChecker *checker, Type *elemType, ir::ForOfStatement *const st)
 {
     checker::Type *iterType = GetIteratorType(checker, elemType, st->Left());
@@ -4907,6 +4939,11 @@ checker::Type *ETSAnalyzer::Check(ir::ForOfStatement *const st) const
     auto [smartCasts, clearFlag] = checker->Context().EnterLoop(*st, std::nullopt);
 
     checker::Type *const exprType = st->Right()->Check(checker);
+    if (IsUnsupportedMixedIterableUnion(exprType)) {
+        checker->LogError(diagnostic::FOROF_UNSUPPORTED_MIXED_ITERABLE_UNION, {exprType}, st->Right()->Start());
+        return checker->GlobalTypeError();
+    }
+
     checker::Type *elemType = checker->GlobalTypeError();
 
     if (exprType->IsETSStringType()) {

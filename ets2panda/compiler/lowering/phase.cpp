@@ -22,6 +22,7 @@
 #include "compiler/lowering/ets/annotationCopyLowering.h"
 #include "compiler/lowering/ets/annotationCopyPostLowering.h"
 #include "compiler/lowering/ets/ambientLowering.h"
+#include "compiler/lowering/ets/arrayForOfLowering.h"
 #include "compiler/lowering/ets/arrayLiteralLowering.h"
 #include "compiler/lowering/ets/awaitLowering.h"
 #include "compiler/lowering/ets/bigintLowering.h"
@@ -167,6 +168,7 @@ std::vector<Phase *> GetETSPhaseList()
         new BoxingForLocals,
         new RecordLowering,
         new ObjectIteratorLowering,
+        new ArrayForOfLowering,
         new ConditionalSimplifyLowering,
         new OverloadMappingLowering,
         new InterfaceMethodObjectLiteralLowering,

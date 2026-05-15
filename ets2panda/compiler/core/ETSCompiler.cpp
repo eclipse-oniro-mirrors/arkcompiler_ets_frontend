@@ -163,79 +163,6 @@ static void ConvertRestArguments(checker::ETSChecker *const checker, ir::Express
     }
 }
 
-static void HandleUnionTypeInForOf(compiler::ETSGen *etsg, checker::Type const *const exprType,
-                                   const ir::ForOfStatement *st, VReg objReg, VReg *countReg)
-{
-    std::vector<Label *> labels {};
-
-    for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
-        labels.push_back(etsg->AllocLabel());
-        etsg->LoadAccumulator(st->Right(), objReg);
-        etsg->IsInstance(st->Right(), objReg, it);
-        etsg->BranchIfTrue(st, labels.back());
-    }
-
-    labels.push_back(etsg->AllocLabel());
-    // #32345
-    bool reftypeElem = false;
-
-    for (size_t i = 0; i < exprType->AsETSUnionType()->ConstituentTypes().size(); i++) {
-        compiler::VReg unionReg = etsg->AllocReg();
-        auto currentType = exprType->AsETSUnionType()->ConstituentTypes()[i];
-        etsg->SetLabel(st->Right(), labels[i]);
-        etsg->LoadAccumulator(st, objReg);
-        etsg->CastToReftype(st->Right(), currentType, false);
-        etsg->StoreAccumulator(st, unionReg);
-        etsg->LoadAccumulator(st, unionReg);
-        if (countReg == nullptr) {
-            if (currentType->IsETSArrayType()) {
-                etsg->LoadArrayLength(st, unionReg);
-            } else if (currentType->IsETSResizableArrayType()) {
-                etsg->LoadResizableArrayLength(st);
-            } else {
-                etsg->LoadStringLength(st);
-            }
-        } else {
-            if (currentType->IsETSArrayType()) {
-                etsg->LoadAccumulator(st, *countReg);
-                etsg->LoadArrayElement(st, unionReg);
-            } else if (currentType->IsETSResizableArrayType()) {
-                reftypeElem = true;
-                etsg->LoadResizableArrayElement(st, unionReg, *countReg);
-                // #32345 retain the broken code behavior
-                etsg->SetAccumulatorType(currentType->AsETSResizableArrayType()->ElementType());
-            } else {
-                etsg->LoadStringChar(st, unionReg, *countReg, true);
-            }
-        }
-
-        if (i + 1 != exprType->AsETSUnionType()->ConstituentTypes().size()) {
-            etsg->Branch(st, labels.back());
-        }
-    }
-
-    etsg->SetLabel(st->Right(), labels.back());
-    if (reftypeElem) {
-        auto elemType = (st->Left()->IsIdentifier() ? st->Left()->AsIdentifier()
-                                                    : st->Left()->AsVariableDeclaration()->Declarators().front()->Id())
-                            ->TsType();
-        // #32345
-        etsg->GuardUncheckedType(st, etsg->Checker()->GlobalETSAnyType(), elemType);
-    }
-}
-
-static void GetSizeInForOf(compiler::ETSGen *etsg, checker::Type const *const exprType, const ir::ForOfStatement *st,
-                           VReg objReg)
-{
-    if (exprType->IsETSArrayType()) {
-        etsg->LoadArrayLength(st, objReg);
-    } else if (exprType->IsETSUnionType()) {
-        HandleUnionTypeInForOf(etsg, exprType, st, objReg, nullptr);
-    } else {
-        etsg->LoadStringLength(st);
-    }
-}
-
 void ETSCompiler::Compile(const ir::ETSNewClassInstanceExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
@@ -1206,56 +1133,9 @@ void ETSCompiler::Compile(const ir::ExpressionStatement *st) const
     st->GetExpression()->Compile(etsg);
 }
 
-void ETSCompiler::Compile(const ir::ForOfStatement *st) const
+void ETSCompiler::Compile([[maybe_unused]] const ir::ForOfStatement *st) const
 {
-    ETSGen *etsg = GetETSGen();
-    compiler::LocalRegScope declRegScope(etsg, st->Scope()->DeclScope()->InitScope());
-
-    checker::Type const *const exprType = st->Right()->TsType();
-    ES2PANDA_ASSERT(exprType->IsETSResizableArrayType() || exprType->IsETSArrayType() || exprType->IsETSStringType() ||
-                    exprType->IsETSUnionType());
-
-    st->Right()->Compile(etsg);
-    compiler::VReg objReg = etsg->AllocReg();
-    etsg->StoreAccumulator(st, objReg);
-
-    GetSizeInForOf(etsg, exprType, st, objReg);
-
-    compiler::VReg sizeReg = etsg->AllocReg();
-    etsg->StoreAccumulator(st, sizeReg);
-
-    compiler::LabelTarget labelTarget(etsg);
-    auto labelCtx = compiler::LabelContext(etsg, labelTarget);
-
-    etsg->BranchIfFalse(st, labelTarget.BreakTarget());
-
-    compiler::VReg countReg = etsg->AllocReg();
-    etsg->MoveImmediateToRegister(st, countReg, checker::TypeFlag::INT, static_cast<std::int32_t>(0));
-    etsg->LoadAccumulatorInt(st, static_cast<std::int32_t>(0));
-
-    auto *const startLabel = etsg->AllocLabel();
-    etsg->SetLabel(st, startLabel);
-
-    auto lref = compiler::ETSLReference::Create(etsg, st->Left(), false);
-
-    if (exprType->IsETSArrayType()) {
-        etsg->LoadArrayElement(st, objReg);
-    } else if (exprType->IsETSUnionType()) {
-        HandleUnionTypeInForOf(etsg, exprType, st, objReg, &countReg);
-    } else {
-        etsg->LoadStringChar(st, objReg, countReg);
-    }
-
-    lref.SetValue();
-    st->Body()->Compile(etsg);
-
-    etsg->SetLabel(st, labelTarget.ContinueTarget());
-
-    etsg->IncrementImmediateRegister(st, countReg, checker::TypeFlag::INT, static_cast<std::int32_t>(1));
-    etsg->LoadAccumulator(st, countReg);
-
-    etsg->JumpCompareRegister<compiler::Jlt>(st, sizeReg, startLabel);
-    etsg->SetLabel(st, labelTarget.BreakTarget());
+    ES2PANDA_UNREACHABLE();
 }
 
 void ETSCompiler::Compile(const ir::ForUpdateStatement *st) const

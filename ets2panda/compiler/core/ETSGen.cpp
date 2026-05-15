@@ -609,17 +609,23 @@ void ETSGen::LoadPropertyByName([[maybe_unused]] const ir::AstNode *const node,
         EmitCheckCast(node, ToAssemblerType(constituentType), true);
         ES2PANDA_ASSERT(std::holds_alternative<varbinder::LocalVariable *>(memberAccessor));
         auto *propVar = std::get<varbinder::LocalVariable *>(memberAccessor);
-        auto propType = propVar->TsType();
-        if (propType->IsETSMethodType()) {
-            ES2PANDA_ASSERT(propType->AsETSFunctionType()->HasTypeFlag(checker::TypeFlag::GETTER));
-            auto *varDeclNode = propVar->Declaration()->Node();
-            auto const *const method = varDeclNode->AsMethodDefinition();
-            auto getterSig = method->Value()->AsFunctionExpression()->Function()->Signature();
-            ES2PANDA_ASSERT(getterSig != nullptr);
-            CallVirtual(node, getterSig, objReg);
+        if (constituentType->IsETSArrayType()) {
+            ES2PANDA_ASSERT(node->AsMemberExpression()->Property()->AsIdentifier()->Name() == "length");
+            ES2PANDA_ASSERT(propVar == nullptr);
+            LoadArrayLength(node, objReg);
         } else {
-            ES2PANDA_ASSERT(propVar != nullptr);
-            LoadProperty(node, propVar->TsType(), objReg, FormClassPropReference(propVar));
+            auto propType = propVar->TsType();
+            if (propType->IsETSMethodType()) {
+                ES2PANDA_ASSERT(propType->AsETSFunctionType()->HasTypeFlag(checker::TypeFlag::GETTER));
+                auto *varDeclNode = propVar->Declaration()->Node();
+                auto const *const method = varDeclNode->AsMethodDefinition();
+                auto getterSig = method->Value()->AsFunctionExpression()->Function()->Signature();
+                ES2PANDA_ASSERT(getterSig != nullptr);
+                CallVirtual(node, getterSig, objReg);
+            } else {
+                ES2PANDA_ASSERT(propVar != nullptr);
+                LoadProperty(node, propVar->TsType(), objReg, FormClassPropReference(propVar));
+            }
         }
 
         Branch(node, endLabel);

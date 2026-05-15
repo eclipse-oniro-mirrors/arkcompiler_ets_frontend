@@ -619,7 +619,7 @@ checker::Type *GetIteratorType(ETSChecker *checker, checker::Type *elemType, ir:
                 decl->IsConstDecl() ? diagnostic::INVALID_CONST_ASSIGNMENT : diagnostic::INVALID_READONLY_ASSIGNMENT;
             checker->LogError(errorMsg, {variable->Name()}, decl->Node()->Start());
         }
-        iterType = left->AsIdentifier()->TsType();
+        iterType = left->AsIdentifier()->Variable()->TsType();  // no smart casts
     } else if (left->IsVariableDeclaration()) {
         if (auto const &declarators = left->AsVariableDeclaration()->Declarators(); !declarators.empty()) {
             iterType = getIterType(declarators.front());
