@@ -2738,10 +2738,10 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
 
     const lexer::SourcePosition &pos = expr->Start();
     auto const signaturesNumber = signatures.size();
-    bool const reportErrorsWhileChecking = signaturesNumber == 1;
 
-    for (std::size_t i = 0U; i < signaturesNumber; ++i) {
+    for (std::size_t i = 0U; i < signaturesNumber;) {
         auto *sig = signatures[i];
+        bool const reportErrorsWhileChecking = signaturesNumber == ++i;
 
         if (notVisibleSignature != nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
             continue;
@@ -2751,11 +2751,15 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
             ValidateOrderSignature(this, std::make_tuple(sig, typeArguments, validateFlags, reportErrorsWhileChecking),
                                    arguments, expr->Range(), argTypeInferenceRequired);
         if (concreteSig == nullptr) {
-            CleanArgumentsInformation(arguments);
+            if (!reportErrorsWhileChecking) {
+                CleanArgumentsInformation(arguments);
+            }
             continue;
         }
         if (notVisibleSignature == nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
-            CleanArgumentsInformation(arguments);
+            if (!reportErrorsWhileChecking) {
+                CleanArgumentsInformation(arguments);
+            }
             notVisibleSignature = concreteSig;
         } else {
             return concreteSig;

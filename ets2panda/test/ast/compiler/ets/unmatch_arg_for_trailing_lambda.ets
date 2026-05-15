@@ -19,9 +19,9 @@ foo(1, "2")
 foo(1, 1)
 foo(1, () => { return "1" })
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for foo(Int, "2") */
+/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for foo(Double, "2") */
 /* @@? 18:8 Error Semantic error ESE0046: Type '"2"' is not compatible with type '((() => undefined))|undefined' at index 2 */
-/* @@? 19:1 Error Semantic error ESE0127: No matching call signature for foo(Int, Int) */
+/* @@? 19:1 Error Semantic error ESE0127: No matching call signature for foo(Double, Int) */
 /* @@? 19:8 Error Semantic error ESE0046: Type 'Int' is not compatible with type '((() => undefined))|undefined' at index 2 */
-/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for foo(Int, (() => String)) */
+/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for foo(Double, (() => String)) */
 /* @@? 20:8 Error Semantic error ESE0046: Type '(() => String)' is not compatible with type '((() => undefined))|undefined' at index 2 */
