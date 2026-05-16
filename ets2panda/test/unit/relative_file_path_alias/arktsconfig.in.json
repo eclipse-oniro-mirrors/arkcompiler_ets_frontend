@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "std": [
+        "@ETS_STDLIB_JSON_PATH@"
+      ],
+      "@ut_alias": [
+        "./src/mod"
+      ],
+      "@ut_file": [
+        "./flat_file.ets"
+      ]
+    }
+  }
+}
