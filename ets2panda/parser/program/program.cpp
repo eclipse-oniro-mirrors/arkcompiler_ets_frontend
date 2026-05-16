@@ -67,7 +67,22 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
     if (!Is<util::ModuleKind::MODULE>()) {
         return std::string {ModuleName()};
     }
-    auto normAbsPath = sourceFile_.GetAbsolutePath().Mutf8();
+    auto relPath = util::Helpers::RelPathByStrippingPrefix(
+        sourceFile_.GetAbsolutePath().Mutf8(),
+        ark::os::GetAbsolutePath(context->config->options->ArkTSConfig().RootDir()));
+    return relPath.empty() ? std::string {sourceFile_.GetFileNameWithExtension().Mutf8()} : relPath;
+}
+
+std::optional<std::string> Program::TryRelativeFilePathViaArkTsPaths(const public_lib::Context *context) const
+{
+    if (importInfo_.Lang() != Language::Id::ETS) {
+        return std::nullopt;
+    }
+    if (!Is<util::ModuleKind::MODULE>()) {
+        return std::nullopt;
+    }
+
+    auto normAbsPath = AbsoluteName().Mutf8();
     std::replace(normAbsPath.begin(), normAbsPath.end(), '\\', '/');
     const auto &path = context->config->options->ArkTSConfig().Paths();
     for (const auto &[key, values] : path) {
@@ -87,10 +102,7 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
             }
         }
     }
-    auto relPath = util::Helpers::RelPathByStrippingPrefix(
-        sourceFile_.GetAbsolutePath().Mutf8(),
-        ark::os::GetAbsolutePath(context->config->options->ArkTSConfig().RootDir()));
-    return relPath.empty() ? std::string {sourceFile_.GetFileNameWithExtension().Mutf8()} : relPath;
+    return std::nullopt;
 }
 
 const lexer::LineIndex &Program::GetLineIndex() const
