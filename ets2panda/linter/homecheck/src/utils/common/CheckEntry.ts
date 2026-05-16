@@ -263,6 +263,7 @@ function buildScene(fileList: string[], checkEntry: CheckEntry): boolean {
         const languageTags = checkEntry.projectConfig.languageTags;
         const sdkList = FileUtils.genSdks(checkEntry.projectConfig);
         sceneConfig.buildFromProjectFiles(projectName, projectPath, fileList, sdkList, languageTags);
+        sceneConfig.getOptions().enableBuiltIn = true;
         logger.info('Build sceneConfig completed.');
         // 构建Scene信息
         checkEntry.scene = new Scene();

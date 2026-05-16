@@ -1,4 +1,4 @@
-# builtin-api-num2int
+# arkts-builtin-api-num2int
 
 ## 规则说明
 

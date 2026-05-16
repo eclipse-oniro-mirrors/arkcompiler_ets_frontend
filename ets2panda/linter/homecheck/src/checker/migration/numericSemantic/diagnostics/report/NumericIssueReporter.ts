@@ -15,6 +15,7 @@
 
 import {
     ArkField,
+    ArkReturnStmt,
     FullPosition,
     Local,
     Stmt,
@@ -128,6 +129,71 @@ export class NumericIssueReporter {
             return;
         }
         this.setIssue(defects, autofix);
+    }
+
+    public addApiFunctionReturnIssue(
+        ruleCategory: RuleCategory,
+        numberCategory: NumberCategory,
+        issueStmt: Stmt,
+        callback: Value
+    ): void {
+        const callbackWarnInfo = this.getWarnInfo(undefined, issueStmt, callback);
+        const problem = NumericSemanticIssueText.getProblem(ruleCategory, IssueReason.UsedWithOtherType);
+        if (!callbackWarnInfo || !problem) {
+            return;
+        }
+        const fixResult = this.options.getAutofixBuilder().generateApiFunctionReturnRuleFix(
+            callbackWarnInfo,
+            numberCategory,
+            issueStmt
+        );
+        if (!fixResult) {
+            return;
+        }
+        const desc = this.getApiFunctionReturnDescription(ruleCategory, numberCategory);
+        const defects = this.createDefects(fixResult.warnInfo, problem, desc, true);
+        this.setIssue(defects, fixResult.fix);
+    }
+
+    public addApiMethodReturnIssue(ruleCategory: RuleCategory, numberCategory: NumberCategory, issueStmt: ArkReturnStmt): void {
+        const warnInfo = this.getWarnInfo(undefined, issueStmt, issueStmt.getOp());
+        const problem = NumericSemanticIssueText.getProblem(ruleCategory, IssueReason.OnlyUsedAsIntLong);
+        if (!warnInfo || !problem) {
+            return;
+        }
+        const fixResult = this.options.getAutofixBuilder().generateApiMethodReturnRuleFix(warnInfo, numberCategory, issueStmt);
+        if (!fixResult) {
+            return;
+        }
+        const desc = this.getApiMethodReturnDescription(ruleCategory, numberCategory);
+        const defects = this.createDefects(fixResult.warnInfo, problem, desc, true);
+        this.setIssue(defects, fixResult.fix);
+    }
+
+    public addApiFunctionParamIssue(
+        ruleCategory: RuleCategory,
+        numberCategory: NumberCategory,
+        issueStmt: Stmt,
+        callback: Value,
+        paramIndex: number
+    ): void {
+        const callbackWarnInfo = this.getWarnInfo(undefined, issueStmt, callback);
+        const problem = NumericSemanticIssueText.getProblem(ruleCategory, IssueReason.UsedWithOtherType);
+        if (!callbackWarnInfo || !problem) {
+            return;
+        }
+        const fixResult = this.options.getAutofixBuilder().generateApiFunctionParamRuleFix(
+            callbackWarnInfo,
+            paramIndex,
+            numberCategory,
+            issueStmt
+        );
+        if (!fixResult) {
+            return;
+        }
+        const desc = this.getApiFunctionParamDescription(ruleCategory, numberCategory);
+        const defects = this.createDefects(fixResult.warnInfo, problem, desc, true);
+        this.setIssue(defects, fixResult.fix);
     }
 
     public addApiReturnOrFieldIssue(
@@ -297,6 +363,21 @@ export class NumericIssueReporter {
             return null;
         }
         return `The arg of ${apiSourceDesc} should be ${numberCategory} here (${ruleCategory})`;
+    }
+
+    private getApiFunctionReturnDescription(ruleCategory: RuleCategory, numberCategory: NumberCategory): string {
+        const apiSourceDesc = NumericSemanticIssueText.getApiSourceDesc(ruleCategory);
+        return `The callback return type of ${apiSourceDesc} arg should be ${numberCategory} here (${ruleCategory})`;
+    }
+
+    private getApiMethodReturnDescription(ruleCategory: RuleCategory, numberCategory: NumberCategory): string {
+        const apiSourceDesc = NumericSemanticIssueText.getApiSourceDesc(ruleCategory);
+        return `The return type related with the ${apiSourceDesc} should be ${numberCategory} here (${ruleCategory})`;
+    }
+
+    private getApiFunctionParamDescription(ruleCategory: RuleCategory, numberCategory: NumberCategory): string {
+        const apiSourceDesc = NumericSemanticIssueText.getApiSourceDesc(ruleCategory);
+        return `The callback parameter type of ${apiSourceDesc} arg should be ${numberCategory} here (${ruleCategory})`;
     }
 
     private getApiReturnOrFieldDescription(

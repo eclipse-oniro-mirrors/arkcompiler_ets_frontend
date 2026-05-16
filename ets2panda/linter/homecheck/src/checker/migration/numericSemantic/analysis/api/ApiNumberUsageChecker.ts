@@ -17,6 +17,7 @@ import {
     AbstractFieldRef,
     AbstractInvokeExpr,
     ArkAssignStmt,
+    ArkReturnStmt,
     Stmt,
 } from 'arkanalyzer/lib';
 import { ApiNumberChangeProvider } from '../../core/NumericSemanticTypes';
@@ -37,7 +38,24 @@ export class ApiNumberUsageChecker {
             for (const provider of providers) {
                 provider.beforeArgCheck?.(stmt, invokeExpr);
                 this.options.getUsageIssueEmitter().emitChangedArgIssues(stmt, provider.getChangedArgCategories(invokeExpr));
+                const changedFunctionParams = provider.getChangedFunctionParamCategories?.(invokeExpr);
+                if (changedFunctionParams) {
+                    this.options.getUsageIssueEmitter().emitChangedFunctionParamIssues(stmt, changedFunctionParams);
+                }
+                const changedFunctionReturns = provider.getChangedFunctionReturnCategories?.(invokeExpr);
+                if (changedFunctionReturns) {
+                    this.options.getUsageIssueEmitter().emitChangedFunctionReturnIssues(stmt, changedFunctionReturns);
+                }
             }
+        }
+        if (stmt instanceof ArkReturnStmt) {
+            for (const provider of providers) {
+                const changedReturnedValue = provider.getChangedReturnedValueCategory?.(stmt.getOp());
+                if (changedReturnedValue) {
+                    this.options.getUsageIssueEmitter().emitChangedMethodReturnIssues(stmt, changedReturnedValue);
+                }
+            }
+            return;
         }
         if (!(stmt instanceof ArkAssignStmt)) {
             return;

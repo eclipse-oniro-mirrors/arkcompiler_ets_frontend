@@ -154,7 +154,7 @@ export class BuiltinDeclarationFileResolver {
 
     private getStaBuiltinDeclarationDirsFromSdkPath(sdkPath: string): string[] {
         const sdkPathWithSlash = sdkPath.replace(/\\/g, '/');
-        const dir = path.join(this.getBuiltinSdkRoot(sdkPathWithSlash), 'ets', 'static', 'arkts', 'builtin');
+        const dir = path.join(this.getBuiltinSdkRoot(sdkPathWithSlash), 'ets', 'static', 'arkts', 'builtin', 'static');
         return this.isExistingDirectory(dir) ? [dir] : [];
     }
 

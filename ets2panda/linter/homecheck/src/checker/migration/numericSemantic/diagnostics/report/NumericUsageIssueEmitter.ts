@@ -16,12 +16,15 @@
 import {
     ArkAssignStmt,
     ArkField,
+    ArkReturnStmt,
     Local,
     Stmt,
     Value,
 } from 'arkanalyzer/lib';
 import {
     ChangedArgCategories,
+    ChangedFunctionParamCategories,
+    ChangedFunctionReturnCategories,
     ChangedResultCategory,
     IssueInfo,
     IssueReason,
@@ -59,6 +62,32 @@ export class NumericUsageIssueEmitter {
         this.emitRelatedArgIssues(changedArgs.ruleCategory, res, stmt);
     }
 
+    public emitChangedFunctionParamIssues(stmt: Stmt, changedFunctionParams: ChangedFunctionParamCategories): void {
+        const params = changedFunctionParams.params;
+        if (params === null || params.length === 0) {
+            return;
+        }
+        for (const param of params) {
+            this.options.getIssueReporter().addApiFunctionParamIssue(
+                changedFunctionParams.ruleCategory,
+                param.category,
+                stmt,
+                param.callback,
+                param.paramIndex
+            );
+        }
+    }
+
+    public emitChangedFunctionReturnIssues(stmt: Stmt, changedFunctionReturns: ChangedFunctionReturnCategories): void {
+        const callbacks = changedFunctionReturns.callbacks;
+        if (callbacks === null || callbacks.size === 0) {
+            return;
+        }
+        for (const [callback, category] of callbacks) {
+            this.options.getIssueReporter().addApiFunctionReturnIssue(changedFunctionReturns.ruleCategory, category, stmt, callback);
+        }
+    }
+
     public emitSingleApiArgIssue(ruleCategory: RuleCategory, stmt: Stmt, arg: Value, numberCategory: NumberCategory): void {
         this.emitChangedArgIssues(stmt, {
             ruleCategory,
@@ -79,6 +108,13 @@ export class NumericUsageIssueEmitter {
         const leftOp = stmt.getLeftOp();
         this.options.checkValueOnlyUsedAsIntLong(stmt, leftOp, res, changedResult.category);
         this.emitRelatedResultIssues(changedResult.ruleCategory, res, stmt);
+    }
+
+    public emitChangedMethodReturnIssues(stmt: ArkReturnStmt, changedResult: ChangedResultCategory): void {
+        if (!changedResult.category) {
+            return;
+        }
+        this.options.getIssueReporter().addApiMethodReturnIssue(changedResult.ruleCategory, changedResult.category, stmt);
     }
 
     private emitRelatedArgIssues(ruleCategory: RuleCategory, res: Map<Local, IssueInfo>, usedStmt: Stmt): void {
