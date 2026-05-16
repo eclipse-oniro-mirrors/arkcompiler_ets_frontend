@@ -89,6 +89,7 @@ warning:
   strict: true
   message: "Exported {} '{}' requires type annotation."
   softlist: ["export_type_anno"]
+  hardlist: ["export_type_anno"]
 
 - name: EXTENSION_MISMATCH
   id: 25

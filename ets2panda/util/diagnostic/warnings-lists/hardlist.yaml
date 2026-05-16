@@ -71,3 +71,22 @@ hardlist:
   paths:
   - ".*/ability/ability_runtime/frameworks/ets/ets/.+\\.ets"
   - ".*/ability/form_fwk/frameworks/ets/.+\\.ets"
+
+- name: "export_type_anno"
+  paths:
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/util_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/bitVector_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/stringDecoder_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/buffer_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/com_uri_standard_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/global_standard_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/stream_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/util_types_standard_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/base_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin003_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin005_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin006_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin007_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin008_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin009_standard_test_static/.*"
+  - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtinsupply_standard_test_static/.*"
