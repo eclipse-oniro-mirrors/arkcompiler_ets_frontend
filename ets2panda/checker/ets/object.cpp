@@ -2687,6 +2687,8 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
     }
 }
 
+static const ETSObjectType *GetStaticPropertyDeclType(const varbinder::LocalVariable *property);
+
 void ETSChecker::ValidateResolvedProperty(varbinder::LocalVariable **property, const ETSObjectType *const target,
                                           const ir::Identifier *const ident, const PropertySearchFlags flags)
 {
@@ -2725,7 +2727,10 @@ void ETSChecker::ValidateResolvedProperty(varbinder::LocalVariable **property, c
     *property = newProp;  // trying to recover as much as possible; log the error but treat the property as legal
 
     if (IsVariableStatic(newProp)) {
-        LogError(diagnostic::PROP_IS_STATIC, {ident->Name(), target->Name()}, ident->Start());
+        const auto *declaringType =
+            newProp->IsLocalVariable() ? GetStaticPropertyDeclType(newProp->AsLocalVariable()) : nullptr;
+        LogError(diagnostic::PROP_IS_STATIC, {ident->Name(), declaringType != nullptr ? declaringType : target},
+                 ident->Start());
         return;
     }
 
