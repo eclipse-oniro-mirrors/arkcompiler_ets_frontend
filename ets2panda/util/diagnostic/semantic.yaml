@@ -225,7 +225,7 @@ semantic:
 
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
-  message: "Await in non-aysnc function is deprecated, please move it to async function."
+  message: "Await in a non-async function is deprecated; please move it to an async function."
   code_fix_ids: [FixRemoveIllegalAwait]
 
 - name: BINOP_INCOMPARABLE

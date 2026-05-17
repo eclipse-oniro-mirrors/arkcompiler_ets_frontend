@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,4 +27,4 @@ let fecthResult = await checkAsyncDelay(async (): Promise< AA.B<string> > => {
 /* @@? 19:19 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
 /* @@? 19:25 Error Semantic error ESE0143: Unresolved reference checkAsyncDelay */
 /* @@? 19:25 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 19:25 Warning Warning W173979: Await in non-aysnc function is deprecated, please move it to async function. */
+/* @@? 19:25 Warning Warning W173979: Await in a non-async function is deprecated; please move it to an async function. */
