@@ -85,17 +85,18 @@ static ir::Statement *FillArrayWithSpreadElement(public_lib::Context *context, i
             index += TUPLE_SPREAD_ARG_COUNT;
         }
     } else {
-        ss << "for (let @@I1: int = 0; @@I2 < @@I3.length; @@I4++){";
+        ss << "for (let @@I1: int = 0; @@I2 < @@I3.length; @@I4 = @@I5 + 1){";
         args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
         args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
         args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
         args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
-        ss << "@@I5[@@I6] = @@I7[@@I8];";
+        args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
+        ss << "@@I6[@@I7] = @@I8[@@I9];";
         args.emplace_back(arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr));
         args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
         args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
         args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
-        ss << "@@I9 = @@I10 + 1;";
+        ss << "@@I10 = @@I11 + 1;";
         args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
         args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
         ss << "}";
@@ -336,7 +337,7 @@ static ir::Expression *CreateRestArgsArrayWithoutSpread(public_lib::Context *con
         // At the moment we can't use Array.from here because of ark fail in such tests as
         // 09.constructor_declaration/02.explicit_constructor_call/explicit_cons_call_7.ets
         ss << "let @@I4 : Array<@@T5> = @@E6;";
-        ss << "for (let i = 0; i < @@I7.length; ++i) { @@I8[i] = @@I9[i]} @@I10";
+        ss << "for (let i = 0; i < @@I7.length; i = i + 1) { @@I8[i] = @@I9[i]} @@I10";
         loweringResult = parser->CreateFormattedExpression(
             ss.str(), genSymIdent, arrayTypeNode->Clone(allocator, nullptr), arrayExpr, genSymIdent2, arrayTypeNode,
             CreateUninitializedResizableArray(

@@ -148,6 +148,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ConstructorInitLowering,
         new AwaitLoweringPhase,
         new FixedArrayLowering,
+        new OpAssignmentLowering,
         new DynamicImport,
         new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
@@ -160,7 +161,6 @@ std::vector<Phase *> GetETSPhaseList()
         new DestructuringPhase,
         new ArrayLiteralLowering,
         new BigIntLowering,
-        new OpAssignmentLowering,
         new BinaryExpressionLowering, // should be after BigIntLowering and OpAssignmentLowering
         new SetterLowering,  // must be put before ObjectIndexLowering
         new LateInitializationConvert,

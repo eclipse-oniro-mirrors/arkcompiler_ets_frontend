@@ -110,7 +110,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpress
         Context(), parser_->CreateFormattedExpression(std::to_string(extraParamsNumber)),
         checker_->CreateETSResizableArrayType(checker_->GlobalETSAnyType())));
 
-    code += "for (let i = 0; i < " + std::to_string(extraParamsNumber) + "; ++i) { @@I5[i] = @@I6[i+" +
+    code += "for (let i = 0; i < " + std::to_string(extraParamsNumber) + "; i = i + 1) { @@I5[i] = @@I6[i+" +
             std::to_string(maxTupleTypes) + "]} ";
     nodes.emplace_back(extraParams->Clone(Allocator(), nullptr));
     nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
@@ -175,7 +175,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
         bool elementIsUnboxable = arrayType->IsETSObjectType() && arrayType->AsETSObjectType()->IsBoxedPrimitive();
         ss << "let @@I1: " << (elementIsUnboxable ? "ValueArray" : "FixedArray") << "<@@T2> = @@E3;";
         ss << "let @@I4: Array<@@T5> = Array.create<@@T6>(@@I7.length, @@I8[0]);";
-        ss << "for (let i = 1; i < @@I9.length; ++i) { @@I10[i] = @@I11[i]} @@I12";
+        ss << "for (let i = 1; i < @@I9.length; i = i + 1) { @@I10[i] = @@I11[i]} @@I12";
         newStmts.emplace_back(genSymIdent);
         newStmts.emplace_back(type);
         newStmts.emplace_back(literalArray);
