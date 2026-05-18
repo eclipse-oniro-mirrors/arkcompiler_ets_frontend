@@ -20,9 +20,12 @@
 
 #include "util/diagnostic.h"
 #include <array>
-#include <tuple>
-#include <string_view>
+#include <memory>
+#include <mutex>
 #include <regex>
+#include <string_view>
+#include <tuple>
+#include <unordered_map>
 
 namespace ark::es2panda::diagnostic {
 
@@ -73,15 +76,14 @@ public:
     }
 
     template <size_t listSize>
-    bool IsInList(std::string_view path, const std::array<std::string_view, listSize>& listToCheck) const
+    bool IsInList(std::string_view path, const std::array<std::string_view, listSize> &listToCheck) const
     {
-        std::string sPath {path};
         if (path.empty()) {
             return false;
         }
+
         for (auto checkPath : listToCheck) {
-            std::regex re {std::string {checkPath}};
-            if (std::regex_match(sPath, re)) {
+            if (!checkPath.empty() && std::regex_match(path.begin(), path.end(), *GetRegex(checkPath))) {
                 return true;
             }
         }
@@ -111,6 +113,21 @@ private:
     const std::array<std::string_view, <%= MAX_SIZE %>>& hardlist_;
     const std::array<std::string_view, <%= SOFT_LIST_MAX_SIZE %>>& softlist_;
     const bool hasSoftList_;
+
+    static std::shared_ptr<const std::regex> GetRegex(std::string_view pattern)
+    {
+        static std::unordered_map<std::string_view, std::shared_ptr<const std::regex>> cache;
+        static std::mutex mutex;
+
+        std::scoped_lock lock {mutex};
+
+        auto [it, inserted] = cache.try_emplace(pattern);
+        if (inserted) {
+            it->second = std::make_shared<const std::regex>(pattern.data(), pattern.size());
+        }
+
+        return it->second;
+    }
 };
 
 constexpr static std::array<std::string_view, <%= MAX_SIZE %>> EMPTY_HARD_LIST = {};
