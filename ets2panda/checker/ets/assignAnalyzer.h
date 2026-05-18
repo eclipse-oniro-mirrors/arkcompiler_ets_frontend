@@ -411,6 +411,8 @@ private:
     void AnalyzeLabelled(const ir::LabelledStatement *labelledStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     void AnalyzeSwitch(const ir::SwitchStatement *switchStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     void AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
+    std::pair<Set, Set> AnalyzeTryCatchClauses(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl,
+                                               const Set &initsTry, int nextAdrCatch);
     void AnalyzeBreak(const ir::BreakStatement *breakStmt);
     void AnalyzeContinue(const ir::ContinueStatement *contStmt);
     void AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
@@ -479,7 +481,7 @@ private:
     int nextAdr_ {};
     int returnAdr_ {};
     bool isInitialConstructor_ {};
-    bool hasTryFinallyBlock_ {};
+    int tryFinallyDepth_ {};
     NodeIdMap nodeIdMap_;
     int numErrors_ {};
     std::unordered_set<const ir::AstNode *> foundErrors_;
