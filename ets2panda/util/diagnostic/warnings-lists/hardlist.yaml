@@ -90,3 +90,4 @@ hardlist:
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin008_standard_test_static/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin009_standard_test_static/.*"
   - ".*/test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtinsupply_standard_test_static/.*"
+  - ".*/test/xts/acts/account/.*"
