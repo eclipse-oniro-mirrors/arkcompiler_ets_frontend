@@ -277,11 +277,7 @@ void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnT
             checker_->Relation()->IsSupertypeOf(unWrapReturnType, checker_->GlobalETSUndefinedType());
     }
 
-    bool checkReturn = !isSupertypeOfUndefined && !isSupertypeOfPromiseUndefined;
-    if (isArrow && func->IsAsync()) {
-        checkReturn = false;
-    }
-
+    bool checkReturn = !isSupertypeOfUndefined && !(func->IsAsyncFunc() && isSupertypeOfPromiseUndefined);
     if (status_ == LivenessStatus::ALIVE && checkReturn) {
         if (!func->HasReturnStatement()) {
             if (isArrow) {

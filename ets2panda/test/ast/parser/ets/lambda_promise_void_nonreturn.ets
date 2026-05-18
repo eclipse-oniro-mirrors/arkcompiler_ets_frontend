@@ -13,24 +13,10 @@
  * limitations under the License.
  */
 
-function blob(): void {}
+let lam1 = () : Promise<void> => {}
+let lam2 = async () : Promise<void> => {}
+let lam3 = () : Promise<undefined> => {}
+let lam4 = async () : Promise<undefined> => {}
 
-const delay = async (value: number): Promise<void> => {}
-
-class A {
-    public async doSmth(): Promise<void> {
-        try {
-            await delay(2);
-            blob()
-        } catch (err) {
-            blob()
-            return;
-        } finally {
-            blob()
-        }
-    }
-}
-
-function main() {
-    let a = new A()
-}
+/* @@? 16:12 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
+/* @@? 18:12 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
