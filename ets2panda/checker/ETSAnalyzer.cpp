@@ -1378,7 +1378,11 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
         if (predicate(originalType)) {
             return originalType;
         }
-        originalType = originalType->AsETSTypeAliasType()->GetTargetType();
+        auto *targetType = originalType->AsETSTypeAliasType()->GetTargetType();
+        if (targetType == nullptr) {
+            return nullptr;
+        }
+        originalType = targetType;
     }
 
     if (originalType->IsETSTypeParameter()) {
@@ -1396,9 +1400,14 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
     Type *preferredType = nullptr;
     for (Type *type : originalType->AsETSUnionType()->ConstituentTypes()) {
         while (type->IsETSTypeAliasType()) {
-            type = type->AsETSTypeAliasType()->GetTargetType();
+            auto *targetType = type->AsETSTypeAliasType()->GetTargetType();
+            if (targetType == nullptr) {
+                type = nullptr;
+                break;
+            }
+            type = targetType;
         }
-        if (predicate(type)) {
+        if (type != nullptr && predicate(type)) {
             if (preferredType != nullptr) {
                 return nullptr;  // ambiguity
             }
