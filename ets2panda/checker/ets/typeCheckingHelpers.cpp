@@ -808,10 +808,12 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
     }
 
     typeAliasType = CreateETSTypeAliasType(aliasTypeNode->Id()->Name(), aliasTypeNode);
+    tse.SetElementType(typeAliasType);
     if (aliasTypeNode->TypeParams() != nullptr) {
         auto [typeParamTypes, ok] = CreateUnconstrainedTypeParameters(aliasTypeNode->TypeParams());
         ES2PANDA_ASSERT(typeAliasType != nullptr);
         typeAliasType->AsETSTypeAliasType()->SetTypeArguments(std::move(typeParamTypes));
+        tse.SetElementType(typeAliasType);
         if (ok) {
             ok = ValidateTypeParameterConstraints(aliasTypeNode->TypeParams());
         }
@@ -819,7 +821,6 @@ Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
             AssignTypeParameterConstraints(aliasTypeNode->TypeParams());
         }
     }
-    tse.SetElementType(typeAliasType);
 
     aliasTypeNode->Check(this);
     Type *targetType = aliasTypeNode->TypeAnnotation()->GetType(this);

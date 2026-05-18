@@ -1747,6 +1747,7 @@ ir::TypeNode *ETSChecker::ResolveTypeNodeForTypeArg(const ir::TSTypeAliasDeclara
     return typeAliasNode->TypeParams()->Params().at(idx)->DefaultType();
 }
 
+// CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
 Type *ETSChecker::HandleTypeAlias(ir::Expression *const name, const ir::TSTypeParameterInstantiation *const typeParams,
                                   ir::TSTypeAliasDeclaration *const typeAliasNode)
 {
@@ -1790,7 +1791,14 @@ Type *ETSChecker::HandleTypeAlias(ir::Expression *const name, const ir::TSTypePa
         auto *typeAliasType = typeAliasTypeName->Variable()->TsType();
         if (typeAliasType->IsETSTypeParameter()) {
             ir::TypeNode *typeNode = ResolveTypeNodeForTypeArg(typeAliasNode, typeParams, idx);
-            auto paramType = typeNode->GetType(this);
+            checker::TypeStackElement tse(this, typeNode, {{diagnostic::TYPE_PARAM_CIRCULAR_DEFAULT_TYPE}},
+                                          typeNode->Start());
+            Type *paramType = nullptr;
+            if (tse.HasTypeError()) {
+                paramType = GlobalTypeError();
+            } else {
+                paramType = typeNode->GetType(this);
+            }
 
             EmplaceSubstituted(&substitution, typeAliasType->AsETSTypeParameter(), paramType);
 
