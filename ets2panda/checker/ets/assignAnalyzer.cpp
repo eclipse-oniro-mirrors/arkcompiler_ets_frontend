@@ -903,13 +903,11 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNo
 }
 
 std::pair<Set, Set> AssignAnalyzer::AnalyzeTryCatchClauses(const ir::TryStatement *tryStmt,
-                                                           const ir::AstNode *currentTopLevelDecl, const Set &initsTry,
-                                                           int nextAdrCatch)
+                                                           const ir::AstNode *currentTopLevelDecl,
+                                                           const Set &initsCatchPrev, int nextAdrCatch)
 {
-    Set initsEnd = inits_;
-    Set uninitsEnd = uninits_;
-
-    Set initsCatchPrev = initsTry;  // NOLINT(performance-unnecessary-copy-initialization)
+    Set initsEnd = std::move(inits_);
+    Set uninitsEnd = std::move(uninits_);
     Set uninitsCatchPrev = uninitsTry_;
 
     for (const auto catchClause : tryStmt->CatchClauses()) {
@@ -1168,8 +1166,8 @@ void AssignAnalyzer::AnalyzeCondExpr(const ir::ConditionalExpression *condExpr, 
     } else {
         AnalyzeExpr(condExpr->Consequent(), currentTopLevelDecl);
 
-        Set initsAfterThen = inits_;
-        Set uninitsAfterThen = uninits_;
+        Set initsAfterThen = std::move(inits_);
+        Set uninitsAfterThen = std::move(uninits_);
         inits_ = std::move(initsBeforeElse);
         uninits_ = std::move(uninitsBeforeElse);
 
@@ -1382,8 +1380,12 @@ void AssignAnalyzer::NewVar(const ir::AstNode *node)
     }
 
     nodeIdMap_[node] = nextAdr_;
-    varDecls_.reserve(nextAdr_ + 1);
-    varDecls_.insert(varDecls_.begin() + nextAdr_, node);
+    if (varDecls_.size() == static_cast<size_t>(nextAdr_)) {
+        varDecls_.push_back(node);
+    } else {
+        ES2PANDA_ASSERT(varDecls_.size() > static_cast<size_t>(nextAdr_));
+        varDecls_[nextAdr_] = node;
+    }
     inits_.Excl(nextAdr_);
     uninits_.Incl(nextAdr_);
     ++nextAdr_;
