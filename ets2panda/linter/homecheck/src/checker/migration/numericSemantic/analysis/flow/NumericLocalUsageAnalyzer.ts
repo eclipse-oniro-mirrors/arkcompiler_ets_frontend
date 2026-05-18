@@ -288,6 +288,11 @@ export class NumericLocalUsageAnalyzer {
     }
 
     private checkLocalReassignmentStmt(stmt: ArkAssignStmt, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
+        const builtinReturnCategory = this.options.getBuiltinApiChangeDetector().checkNestedReturnType(stmt.getRightOp());
+        if (builtinReturnCategory === numberCategory) {
+            return this.createOnlyUsedIssueInfo(numberCategory);
+        }
+
         const issueReason = this.options.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), hasChecked, numberCategory);
         if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
             return this.createNumberUsedIssueInfo(issueReason);

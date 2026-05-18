@@ -15,7 +15,12 @@
 
 import { AbstractInvokeExpr, ArkAssignStmt, Local, MethodSignature, Type, Value } from 'arkanalyzer/lib';
 import { NumberConstant } from 'arkanalyzer/lib/core/base/Constant';
-import { BuiltinApiRule, NumberCategory } from '../../../core/NumericSemanticTypes';
+import {
+    BuiltinApiRule,
+    INTERNAL_BUILTIN_DECLARATION_PREFIX,
+    INTERNAL_SDK_PROJECT_NAME,
+    NumberCategory,
+} from '../../../core/NumericSemanticTypes';
 import { NumericLiteralUtils } from '../../../core/NumericLiteralUtils';
 
 interface BuiltinApiRuleMatcherOptions {
@@ -88,12 +93,26 @@ export class BuiltinApiRuleMatcher {
     private getCandidates(methodSignature: MethodSignature, argCount: number): BuiltinApiRule[] {
         const className = methodSignature.getDeclaringClassSignature().getClassName();
         const methodName = methodSignature.getMethodSubSignature().getMethodName();
-        const candidates = this.options.rules.filter(rule =>
+        const paramCount = methodSignature.getMethodSubSignature().getParameters().length;
+        const firstFilterCandidates = this.options.rules.filter(rule =>
             this.isClassNameMatched(rule.className, className) &&
             rule.methodName === methodName &&
             this.isRuleMatchedByArgCount(rule, argCount)
         );
-        return candidates.filter(rule => this.options.isSignatureMatched(methodSignature, rule.signature));
+
+        if (paramCount === 0 && this.isInternalBuiltinDeclarationSignature(methodSignature)) {
+            return firstFilterCandidates;
+        }
+
+        return firstFilterCandidates.filter(rule => this.options.isSignatureMatched(methodSignature, rule.signature));
+    }
+
+    private isInternalBuiltinDeclarationSignature(methodSignature: MethodSignature): boolean {
+        const fileSignature = methodSignature.getDeclaringClassSignature().getDeclaringFileSignature();
+        const projectName = fileSignature.getProjectName();
+        const normalizedProjectName = projectName.startsWith('@') ? projectName.substring(1) : projectName;
+        return normalizedProjectName === INTERNAL_SDK_PROJECT_NAME &&
+            fileSignature.getFileName().startsWith(INTERNAL_BUILTIN_DECLARATION_PREFIX);
     }
 
     private isRuleMatchedByArgCount(rule: BuiltinApiRule, argCount: number): boolean {

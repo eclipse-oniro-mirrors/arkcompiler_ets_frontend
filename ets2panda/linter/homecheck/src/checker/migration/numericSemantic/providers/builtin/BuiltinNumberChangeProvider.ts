@@ -18,11 +18,14 @@ import {
     AbstractInvokeExpr,
     ArkAssignStmt,
     Stmt,
+    Value,
 } from 'arkanalyzer/lib';
 import { BuiltinApiChangeDetector } from './runtime/BuiltinApiChangeDetector';
 import {
     ApiNumberChangeProvider,
     ChangedArgCategories,
+    ChangedFunctionParamCategories,
+    ChangedFunctionReturnCategories,
     ChangedResultCategory,
     IssueReason,
     NumberCategory,
@@ -54,10 +57,33 @@ export class BuiltinNumberChangeProvider implements ApiNumberChangeProvider {
         };
     }
 
-    public getChangedReturnCategory(_stmt: ArkAssignStmt, rightInvokeExpr: AbstractInvokeExpr | null): ChangedResultCategory {
+    public getChangedFunctionParamCategories(invokeExpr: AbstractInvokeExpr): ChangedFunctionParamCategories {
         return {
             ruleCategory: RuleCategory.BuiltinIntType,
-            category: rightInvokeExpr ? this.detector.checkReturnType(rightInvokeExpr) : null,
+            params: this.detector.getFunctionParamCategoriesFromInvokeExpr(invokeExpr),
+        };
+    }
+
+    public getChangedFunctionReturnCategories(invokeExpr: AbstractInvokeExpr): ChangedFunctionReturnCategories {
+        return {
+            ruleCategory: RuleCategory.BuiltinIntType,
+            callbacks: this.detector.getFunctionReturnCategoriesFromInvokeExpr(invokeExpr),
+        };
+    }
+
+    public getChangedReturnCategory(stmt: ArkAssignStmt, rightInvokeExpr: AbstractInvokeExpr | null): ChangedResultCategory {
+        const directCategory = rightInvokeExpr ? this.detector.checkReturnType(rightInvokeExpr) : null;
+        return {
+            ruleCategory: RuleCategory.BuiltinIntType,
+            category: directCategory ?? this.detector.checkNestedReturnType(stmt.getRightOp()),
+        };
+    }
+
+    public getChangedReturnedValueCategory(value: Value): ChangedResultCategory {
+        const directCategory = value instanceof AbstractInvokeExpr ? this.detector.checkReturnType(value) : null;
+        return {
+            ruleCategory: RuleCategory.BuiltinIntType,
+            category: directCategory ?? this.detector.checkNestedReturnType(value),
         };
     }
 

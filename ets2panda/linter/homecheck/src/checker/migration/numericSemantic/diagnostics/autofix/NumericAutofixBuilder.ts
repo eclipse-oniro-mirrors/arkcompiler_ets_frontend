@@ -47,6 +47,18 @@ interface NumericAutofixBuilderOptions {
     getSourceFile(field?: ArkField, issueStmt?: Stmt): ts.SourceFile | null;
 }
 
+export interface ApiFunctionReturnRuleFixResult {
+    warnInfo: WarnInfo;
+    fix: RuleFix;
+}
+
+export interface ApiFunctionParamRuleFixResult {
+    warnInfo: WarnInfo;
+    fix: RuleFix;
+}
+
+type ReturnTypeFixNode = ts.ArrowFunction | ts.FunctionExpression | ts.FunctionDeclaration | ts.MethodDeclaration;
+
 export class NumericAutofixBuilder {
     constructor(private options: NumericAutofixBuilderOptions) {}
 
@@ -72,6 +84,85 @@ export class NumericAutofixBuilder {
         return this.generateCastRuleFix(sourceFile, warnInfo, numberCategory, value);
     }
 
+    public generateApiFunctionReturnRuleFix(
+        callbackWarnInfo: WarnInfo,
+        numberCategory: NumberCategory,
+        issueStmt?: Stmt
+    ): ApiFunctionReturnRuleFixResult | null {
+        const sourceFile = this.options.getSourceFile(undefined, issueStmt);
+        if (!sourceFile) {
+            return null;
+        }
+        const callbackRange = this.getCallbackRange(sourceFile, callbackWarnInfo);
+        if (!callbackRange) {
+            return null;
+        }
+        const functionNode = this.findFunctionLikeNodeInRange(sourceFile, callbackRange);
+        if (!functionNode) {
+            return null;
+        }
+        if (functionNode.type) {
+            return this.generateFunctionReturnTypeReplaceFix(sourceFile, callbackWarnInfo.filePath, functionNode.type, numberCategory);
+        }
+        return this.generateFunctionReturnTypeInsertFix(sourceFile, callbackWarnInfo.filePath, functionNode, numberCategory);
+    }
+
+    public generateApiMethodReturnRuleFix(
+        returnWarnInfo: WarnInfo,
+        numberCategory: NumberCategory,
+        issueStmt?: Stmt
+    ): ApiFunctionReturnRuleFixResult | null {
+        const sourceFile = this.options.getSourceFile(undefined, issueStmt);
+        if (!sourceFile) {
+            return null;
+        }
+        const returnRange = FixUtils.getRangeWithAst(sourceFile, {
+            startLine: returnWarnInfo.line,
+            startCol: returnWarnInfo.startCol,
+            endLine: returnWarnInfo.endLine ?? returnWarnInfo.line,
+            endCol: returnWarnInfo.endCol,
+        });
+        if (!returnRange) {
+            return null;
+        }
+        const functionNode = this.findEnclosingReturnTypeFixNode(sourceFile, returnRange);
+        if (!functionNode) {
+            return null;
+        }
+        if (functionNode.type) {
+            return this.generateFunctionReturnTypeReplaceFix(sourceFile, returnWarnInfo.filePath, functionNode.type, numberCategory);
+        }
+        return this.generateFunctionReturnTypeInsertFix(sourceFile, returnWarnInfo.filePath, functionNode, numberCategory);
+    }
+
+    public generateApiFunctionParamRuleFix(
+        callbackWarnInfo: WarnInfo,
+        paramIndex: number,
+        numberCategory: NumberCategory,
+        issueStmt?: Stmt
+    ): ApiFunctionParamRuleFixResult | null {
+        const sourceFile = this.options.getSourceFile(undefined, issueStmt);
+        if (!sourceFile) {
+            return null;
+        }
+        const callbackRange = this.getCallbackRange(sourceFile, callbackWarnInfo);
+        if (!callbackRange) {
+            return null;
+        }
+        const functionNode = this.findFunctionLikeNodeInRange(sourceFile, callbackRange);
+        if (!functionNode) {
+            return null;
+        }
+        const parameter = functionNode.parameters[paramIndex];
+        if (!parameter) {
+            return null;
+        }
+        if (parameter.type) {
+            return this.generateFunctionParamTypeReplaceFix(sourceFile, callbackWarnInfo.filePath, parameter.type, numberCategory);
+        }
+        return this.generateFunctionParamTypeInsertFix(sourceFile, callbackWarnInfo.filePath, parameter, numberCategory);
+    }
+
     public generateApiReturnOrFieldRuleFix(warnInfo: WarnInfo, numberCategory: NumberCategory, issueStmt?: Stmt, field?: ArkField): RuleFix | null {
         const sourceFile = this.options.getSourceFile(field, issueStmt);
         if (!sourceFile) {
@@ -83,6 +174,161 @@ export class NumericAutofixBuilder {
 
         const isOptionalField = this.isOptionalFieldAccess(issueStmt);
         return this.generateRuleFixForLocalDefine(sourceFile, warnInfo, numberCategory, isOptionalField);
+    }
+
+    private getCallbackRange(sourceFile: ts.SourceFile, warnInfo: WarnInfo): [number, number] | null {
+        return FixUtils.getRangeWithAst(sourceFile, {
+            startLine: warnInfo.line,
+            startCol: warnInfo.startCol,
+            endLine: warnInfo.endLine ?? warnInfo.line,
+            endCol: warnInfo.endCol,
+        });
+    }
+
+    private findFunctionLikeNodeInRange(
+        sourceFile: ts.SourceFile,
+        range: [number, number]
+    ): ts.ArrowFunction | ts.FunctionExpression | null {
+        let res: ts.ArrowFunction | ts.FunctionExpression | null = null;
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (end < range[0] || start > range[1]) {
+                return;
+            }
+            if ((ts.isArrowFunction(node) || ts.isFunctionExpression(node)) && start >= range[0] && end <= range[1]) {
+                if (!res || end - start < res.getEnd() - res.getStart(sourceFile)) {
+                    res = node;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return res;
+    }
+
+    private findEnclosingReturnTypeFixNode(sourceFile: ts.SourceFile, range: [number, number]): ReturnTypeFixNode | null {
+        let res: ReturnTypeFixNode | null = null;
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (range[0] < start || range[1] > end) {
+                return;
+            }
+            if (this.isReturnTypeFixNode(node)) {
+                if (!res || end - start < res.getEnd() - res.getStart(sourceFile)) {
+                    res = node;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return res;
+    }
+
+    private isReturnTypeFixNode(node: ts.Node): node is ReturnTypeFixNode {
+        return ts.isArrowFunction(node) ||
+            ts.isFunctionExpression(node) ||
+            ts.isFunctionDeclaration(node) ||
+            ts.isMethodDeclaration(node);
+    }
+
+    private generateFunctionReturnTypeReplaceFix(
+        sourceFile: ts.SourceFile,
+        filePath: string,
+        typeNode: ts.TypeNode,
+        numberCategory: NumberCategory
+    ): ApiFunctionReturnRuleFixResult | null {
+        const range: [number, number] = [typeNode.getStart(sourceFile), typeNode.getEnd()];
+        const originalText = FixUtils.getSourceWithRange(sourceFile, range);
+        if (originalText === null || NumericTypeAnnotationText.containsTypeToken(originalText, numberCategory)) {
+            return null;
+        }
+        if (!NumericTypeAnnotationText.containsTypeToken(originalText, NumberCategory.number)) {
+            return null;
+        }
+        const fix = new RuleFix();
+        fix.range = range;
+        fix.text = NumericTypeAnnotationText.replaceTypeToken(originalText, NumberCategory.number, numberCategory);
+        return {
+            warnInfo: this.getWarnInfoFromRange(sourceFile, filePath, range),
+            fix,
+        };
+    }
+
+    private generateFunctionParamTypeReplaceFix(
+        sourceFile: ts.SourceFile,
+        filePath: string,
+        typeNode: ts.TypeNode,
+        numberCategory: NumberCategory
+    ): ApiFunctionParamRuleFixResult | null {
+        const range: [number, number] = [typeNode.getStart(sourceFile), typeNode.getEnd()];
+        const originalText = FixUtils.getSourceWithRange(sourceFile, range);
+        if (originalText === null || NumericTypeAnnotationText.containsTypeToken(originalText, numberCategory)) {
+            return null;
+        }
+        if (!NumericTypeAnnotationText.containsTypeToken(originalText, NumberCategory.number)) {
+            return null;
+        }
+        const fix = new RuleFix();
+        fix.range = range;
+        fix.text = NumericTypeAnnotationText.replaceTypeToken(originalText, NumberCategory.number, numberCategory);
+        return {
+            warnInfo: this.getWarnInfoFromRange(sourceFile, filePath, range),
+            fix,
+        };
+    }
+
+    private generateFunctionParamTypeInsertFix(
+        sourceFile: ts.SourceFile,
+        filePath: string,
+        parameter: ts.ParameterDeclaration,
+        numberCategory: NumberCategory
+    ): ApiFunctionParamRuleFixResult | null {
+        if (!ts.isIdentifier(parameter.name)) {
+            return null;
+        }
+        const insertPos = parameter.questionToken?.getEnd() ?? parameter.name.getEnd();
+        const fix = new RuleFix();
+        fix.range = [insertPos, insertPos];
+        fix.text = `: ${numberCategory}`;
+        return {
+            warnInfo: this.getWarnInfoFromRange(sourceFile, filePath, fix.range),
+            fix,
+        };
+    }
+
+    private generateFunctionReturnTypeInsertFix(
+        sourceFile: ts.SourceFile,
+        filePath: string,
+        functionNode: ReturnTypeFixNode,
+        numberCategory: NumberCategory
+    ): ApiFunctionReturnRuleFixResult | null {
+        const insertPos = ts.isArrowFunction(functionNode) ?
+            functionNode.equalsGreaterThanToken.getStart(sourceFile) :
+            functionNode.body?.getStart(sourceFile);
+        if (insertPos === undefined) {
+            return null;
+        }
+        const fix = new RuleFix();
+        fix.range = [insertPos, insertPos];
+        fix.text = `: ${numberCategory} `;
+        return {
+            warnInfo: this.getWarnInfoFromRange(sourceFile, filePath, fix.range),
+            fix,
+        };
+    }
+
+    private getWarnInfoFromRange(sourceFile: ts.SourceFile, filePath: string, range: [number, number]): WarnInfo {
+        const start = sourceFile.getLineAndCharacterOfPosition(range[0]);
+        const end = sourceFile.getLineAndCharacterOfPosition(range[1]);
+        return {
+            line: start.line + 1,
+            startCol: start.character + 1,
+            endLine: end.line + 1,
+            endCol: end.character + 1,
+            filePath,
+        };
     }
 
     public generateIntConstantIndexRuleFix(warnInfo: WarnInfo, issueStmt: Stmt, constant: NumberConstant): RuleFix | null {

@@ -33,6 +33,8 @@ export const BUILD_PROFILE_JSON5: string = 'build-profile.json5';
 export const BUILTIN_DYN_DECL_PROJECT_NAME: string = 'builtin-dyn-declaration';
 export const BUILTIN_STA_DECL_PROJECT_NAME: string = 'builtin-sta-declaration';
 export const BUILTIN_CONSTRUCT_SIGNATURE_METHOD_NAME: string = 'construct-signature';
+export const INTERNAL_SDK_PROJECT_NAME: string = 'internalSdk';
+export const INTERNAL_BUILTIN_DECLARATION_PREFIX: string = '@internal/lib.';
 export const BUILTIN_ES_VERSION_ENTRY_FILES: Map<string, string> = new Map<string, string>([
     ['ES2017', 'lib.es2017.d.ts'],
     ['ES2018', 'lib.es2018.d.ts'],
@@ -61,7 +63,7 @@ export enum NumberCategory {
 
 export enum RuleCategory {
     SDKIntType = 'sdk-api-num2int',
-    BuiltinIntType = 'builtin-api-num2int',
+    BuiltinIntType = 'arkts-builtin-api-num2int',
     NumericLiteral = 'arkts-numeric-semantic',
     ArrayIndex = 'arkts-array-index-expr-type',
 }
@@ -86,6 +88,22 @@ export interface ChangedArgCategories {
     args: Map<Value, NumberCategory> | null;
 }
 
+export interface ChangedFunctionReturnCategories {
+    ruleCategory: RuleCategory;
+    callbacks: Map<Value, NumberCategory> | null;
+}
+
+export interface ChangedFunctionParamCategory {
+    callback: Value;
+    paramIndex: number;
+    category: NumberCategory;
+}
+
+export interface ChangedFunctionParamCategories {
+    ruleCategory: RuleCategory;
+    params: ChangedFunctionParamCategory[] | null;
+}
+
 export interface ChangedResultCategory {
     ruleCategory: RuleCategory;
     category: NumberCategory | null;
@@ -94,8 +112,11 @@ export interface ChangedResultCategory {
 
 export interface ApiNumberChangeProvider {
     getChangedArgCategories(invokeExpr: AbstractInvokeExpr): ChangedArgCategories;
+    getChangedFunctionParamCategories?(invokeExpr: AbstractInvokeExpr): ChangedFunctionParamCategories;
+    getChangedFunctionReturnCategories?(invokeExpr: AbstractInvokeExpr): ChangedFunctionReturnCategories;
     beforeArgCheck?(stmt: Stmt, invokeExpr: AbstractInvokeExpr): void;
     getChangedReturnCategory(stmt: ArkAssignStmt, rightInvokeExpr: AbstractInvokeExpr | null): ChangedResultCategory;
+    getChangedReturnedValueCategory?(value: Value): ChangedResultCategory;
     getChangedFieldCategory(fieldRef: AbstractFieldRef): ChangedResultCategory;
 }
 

@@ -16,16 +16,37 @@
 import {
     AbstractFieldRef,
     AbstractInvokeExpr,
+    ArkInstanceFieldRef,
+    ArkPtrInvokeExpr,
+    ArkInstanceInvokeExpr,
+    ArkAssignStmt,
     ClassSignature,
     CONSTRUCTOR_NAME,
     FileSignature,
+    Local,
     MethodSignature,
     Type,
     Value,
 } from 'arkanalyzer/lib';
+import { ArkArrayRef } from 'arkanalyzer';
+import { NumberConstant } from 'arkanalyzer/lib/core/base/Constant';
 import { SdkUtils as ArkAnalyzerSdkUtils } from 'arkanalyzer/lib/core/common/SdkUtils';
-import { BuiltinApiRule, BuiltinFieldRule, NumberCategory } from '../../../core/NumericSemanticTypes';
+import {
+    BuiltinApiRule,
+    BuiltinFieldRule,
+    ChangedFunctionParamCategory,
+    BuiltinNumberChange,
+    BuiltinNumberChangePathStep,
+    INTERNAL_BUILTIN_DECLARATION_PREFIX,
+    INTERNAL_SDK_PROJECT_NAME,
+    NumberCategory,
+} from '../../../core/NumericSemanticTypes';
 import { BuiltinApiRuleMatcher } from './BuiltinApiRuleMatcher';
+
+interface BuiltinReturnAccess {
+    invokeExpr: AbstractInvokeExpr;
+    steps: BuiltinNumberChangePathStep[];
+}
 
 interface BuiltinApiChangeDetectorOptions {
     apiRules: BuiltinApiRule[];
@@ -101,6 +122,52 @@ export class BuiltinApiChangeDetector {
         return res.size === 0 ? null : res;
     }
 
+    public getFunctionReturnCategoriesFromInvokeExpr(invokeExpr: AbstractInvokeExpr): Map<Value, NumberCategory> | null {
+        if (invokeExpr instanceof ArkPtrInvokeExpr) {
+            return null;
+        }
+        const rule = this.getRuleMatcher().getRuleFromInvokeExpr(invokeExpr);
+        const callbackReturnCategories = this.getCallbackReturnCategories(rule);
+        if (!callbackReturnCategories) {
+            return null;
+        }
+
+        const args = invokeExpr.getArgs();
+        const res: Map<Value, NumberCategory> = new Map<Value, NumberCategory>();
+        callbackReturnCategories.forEach((category, index) => {
+            const arg = args[index];
+            if (!arg) {
+                return;
+            }
+            res.set(arg, category);
+        });
+        return res.size === 0 ? null : res;
+    }
+
+    public getFunctionParamCategoriesFromInvokeExpr(invokeExpr: AbstractInvokeExpr): ChangedFunctionParamCategory[] | null {
+        if (invokeExpr instanceof ArkPtrInvokeExpr) {
+            return null;
+        }
+        const rule = this.getRuleMatcher().getRuleFromInvokeExpr(invokeExpr);
+        const callbackParamCategories = this.getCallbackParamCategories(rule);
+        if (!callbackParamCategories) {
+            return null;
+        }
+
+        const args = invokeExpr.getArgs();
+        const res: ChangedFunctionParamCategory[] = [];
+        callbackParamCategories.forEach((paramCategories, argIndex) => {
+            const callback = args[argIndex];
+            if (!callback) {
+                return;
+            }
+            paramCategories.forEach((category, paramIndex) => {
+                res.push({ callback, paramIndex, category });
+            });
+        });
+        return res.length === 0 ? null : res;
+    }
+
     public checkReturnType(invokeExpr: AbstractInvokeExpr): NumberCategory | null {
         const matcher = this.getRuleMatcher();
         if (matcher.hasAmbiguousIntLongReturnFromInvokeExpr(invokeExpr)) {
@@ -108,6 +175,27 @@ export class BuiltinApiChangeDetector {
         }
         const rule = matcher.getRuleFromInvokeExpr(invokeExpr);
         return this.parseNumberCategory(rule?.returnType);
+    }
+
+    public checkNestedReturnType(value: Value): NumberCategory | null {
+        const accesses = this.collectReturnAccesses(value, new Set<Local>());
+        if (accesses.length === 0) {
+            return null;
+        }
+
+        const categories = new Set<NumberCategory>();
+        for (const access of accesses) {
+            const rule = this.getRuleMatcher().getRuleFromInvokeExpr(access.invokeExpr);
+            rule?.changes
+                ?.filter(change => change.path.root === 'return' && this.arePathStepsEqual(change.path.steps, access.steps))
+                .forEach(change => {
+                    const category = this.parseNumberCategory(change.category);
+                    if (category) {
+                        categories.add(category);
+                    }
+                });
+        }
+        return categories.size === 1 ? [...categories][0] : null;
     }
 
     public checkFieldType(fieldRef: AbstractFieldRef): NumberCategory | null {
@@ -170,7 +258,128 @@ export class BuiltinApiChangeDetector {
     }
 
     private isBuiltinFileSignature(fileSignature: FileSignature): boolean {
-        return fileSignature.getProjectName() === ArkAnalyzerSdkUtils.BUILT_IN_NAME;
+        const projectName = fileSignature.getProjectName();
+        if (projectName === ArkAnalyzerSdkUtils.BUILT_IN_NAME) {
+            return true;
+        }
+        const normalizedProjectName = projectName.startsWith('@') ? projectName.substring(1) : projectName;
+        return normalizedProjectName === INTERNAL_SDK_PROJECT_NAME &&
+            fileSignature.getFileName().startsWith(INTERNAL_BUILTIN_DECLARATION_PREFIX);
+    }
+
+    private collectReturnAccesses(value: Value, visitedLocals: Set<Local>): BuiltinReturnAccess[] {
+        if (value instanceof Local) {
+            return this.collectReturnAccessesFromLocal(value, visitedLocals);
+        }
+        if (value instanceof AbstractFieldRef) {
+            return this.collectReturnAccessesFromFieldRef(value, visitedLocals);
+        }
+        if (value instanceof ArkArrayRef) {
+            return this.collectReturnAccessesFromArrayRef(value, visitedLocals);
+        }
+        if (value instanceof AbstractInvokeExpr && this.getRuleMatcher().getRuleFromInvokeExpr(value)) {
+            return [{ invokeExpr: value, steps: [] }];
+        }
+        return [];
+    }
+
+    private collectReturnAccessesFromLocal(local: Local, visitedLocals: Set<Local>): BuiltinReturnAccess[] {
+        if (visitedLocals.has(local)) {
+            return [];
+        }
+        visitedLocals.add(local);
+        const declaringStmt = local.getDeclaringStmt();
+        if (!(declaringStmt instanceof ArkAssignStmt)) {
+            return [];
+        }
+        return this.collectReturnAccesses(declaringStmt.getRightOp(), visitedLocals);
+    }
+
+    private collectReturnAccessesFromFieldRef(fieldRef: AbstractFieldRef, visitedLocals: Set<Local>): BuiltinReturnAccess[] {
+        if (!(fieldRef instanceof ArkInstanceFieldRef)) {
+            return [];
+        }
+
+        const fieldName = fieldRef.getFieldName();
+        if (fieldName === 'value') {
+            const iteratorValueAccesses = this.collectIteratorValueAccesses(fieldRef.getBase(), visitedLocals);
+            if (iteratorValueAccesses.length > 0) {
+                return iteratorValueAccesses;
+            }
+        }
+
+        const tupleIndex = this.getTupleIndexFromFieldName(fieldName);
+        if (tupleIndex === null) {
+            return [];
+        }
+        return this.collectReturnAccesses(fieldRef.getBase(), visitedLocals)
+            .map(access => this.appendAccessStep(access, { kind: 'tuple', index: tupleIndex }));
+    }
+
+    private collectReturnAccessesFromArrayRef(arrayRef: ArkArrayRef, visitedLocals: Set<Local>): BuiltinReturnAccess[] {
+        const baseAccesses = this.collectReturnAccesses(arrayRef.getBase(), visitedLocals);
+        const tupleIndex = this.getTupleIndexFromArrayIndex(arrayRef.getIndex());
+        if (tupleIndex === null) {
+            return baseAccesses.map(access => this.appendAccessStep(access, { kind: 'arrayElement' }));
+        }
+
+        return [
+            ...baseAccesses.map(access => this.appendAccessStep(access, { kind: 'tuple', index: tupleIndex })),
+            ...baseAccesses.map(access => this.appendAccessStep(access, { kind: 'arrayElement' })),
+        ];
+    }
+
+    private collectIteratorValueAccesses(value: Value, visitedLocals: Set<Local>): BuiltinReturnAccess[] {
+        if (!(value instanceof Local)) {
+            return [];
+        }
+        const declaringStmt = value.getDeclaringStmt();
+        if (!(declaringStmt instanceof ArkAssignStmt)) {
+            return [];
+        }
+        const rightOp = declaringStmt.getRightOp();
+        if (!(rightOp instanceof ArkInstanceInvokeExpr) || rightOp.getMethodSignature().getMethodSubSignature().getMethodName() !== 'next') {
+            return [];
+        }
+        return this.collectReturnAccesses(rightOp.getBase(), visitedLocals)
+            .map(access => this.appendAccessStep(access, { kind: 'generic', index: 0 }));
+    }
+
+    private appendAccessStep(access: BuiltinReturnAccess, step: BuiltinNumberChangePathStep): BuiltinReturnAccess {
+        return {
+            invokeExpr: access.invokeExpr,
+            steps: [...access.steps, step],
+        };
+    }
+
+    private getTupleIndexFromFieldName(fieldName: string): number | null {
+        const index = Number(fieldName);
+        return Number.isInteger(index) && index >= 0 ? index : null;
+    }
+
+    private getTupleIndexFromArrayIndex(index: Value): number | null {
+        if (!(index instanceof NumberConstant)) {
+            return null;
+        }
+        const value = Number(index.getValue());
+        return Number.isInteger(value) && value >= 0 ? value : null;
+    }
+
+    private arePathStepsEqual(left: BuiltinNumberChangePathStep[], right: BuiltinNumberChangePathStep[]): boolean {
+        if (left.length !== right.length) {
+            return false;
+        }
+        return left.every((step, index) => this.isPathStepEqual(step, right[index]));
+    }
+
+    private isPathStepEqual(left: BuiltinNumberChangePathStep, right: BuiltinNumberChangePathStep): boolean {
+        if (left.kind !== right.kind) {
+            return false;
+        }
+        if ('index' in left || 'index' in right) {
+            return 'index' in left && 'index' in right && left.index === right.index;
+        }
+        return true;
     }
 
     private parseNumberCategory(category?: NumberCategory | string): NumberCategory | null {
@@ -206,6 +415,92 @@ export class BuiltinApiChangeDetector {
                 }
             });
         }
+        ambiguousIndexes.forEach(index => res.delete(index));
+        return res.size > 0 ? res : null;
+    }
+
+    private getCallbackParamCategories(rule: BuiltinApiRule | null): Map<number, Map<number, NumberCategory>> | null {
+        const changes = rule?.changes?.filter(change => this.isDirectCallbackParamChange(change)) ?? [];
+        if (changes.length === 0) {
+            return null;
+        }
+        return this.mergeCallbackParamCategories(changes);
+    }
+
+    private isDirectCallbackParamChange(change: BuiltinNumberChange): boolean {
+        return change.path.root === 'arg' &&
+            change.path.argIndex !== undefined &&
+            change.path.steps.length === 1 &&
+            change.path.steps[0].kind === 'functionParam' &&
+            this.parseNumberCategory(change.category) !== null;
+    }
+
+    private mergeCallbackParamCategories(changes: BuiltinNumberChange[]): Map<number, Map<number, NumberCategory>> | null {
+        const res = new Map<number, Map<number, NumberCategory>>();
+        const ambiguousKeys = new Set<string>();
+        changes.forEach(change => {
+            const argIndex = change.path.argIndex;
+            const paramStep = change.path.steps[0];
+            const category = this.parseNumberCategory(change.category);
+            if (argIndex === undefined || paramStep.kind !== 'functionParam' || !category) {
+                return;
+            }
+            const key = `${argIndex}#${paramStep.index}`;
+            const paramCategories = res.get(argIndex) ?? new Map<number, NumberCategory>();
+            const currentCategory = paramCategories.get(paramStep.index);
+            if (currentCategory && currentCategory !== category) {
+                ambiguousKeys.add(key);
+                paramCategories.delete(paramStep.index);
+                res.set(argIndex, paramCategories);
+                return;
+            }
+            if (!ambiguousKeys.has(key)) {
+                paramCategories.set(paramStep.index, category);
+                res.set(argIndex, paramCategories);
+            }
+        });
+        for (const [argIndex, paramCategories] of res.entries()) {
+            if (paramCategories.size === 0) {
+                res.delete(argIndex);
+            }
+        }
+        return res.size > 0 ? res : null;
+    }
+
+    private getCallbackReturnCategories(rule: BuiltinApiRule | null): Map<number, NumberCategory> | null {
+        const changes = rule?.changes?.filter(change => this.isDirectCallbackReturnChange(change)) ?? [];
+        if (changes.length === 0) {
+            return null;
+        }
+        return this.mergeCallbackReturnCategories(changes);
+    }
+
+    private isDirectCallbackReturnChange(change: BuiltinNumberChange): boolean {
+        return change.path.root === 'arg' &&
+            change.path.argIndex !== undefined &&
+            change.path.steps.length === 1 &&
+            change.path.steps[0].kind === 'functionReturn' &&
+            this.parseNumberCategory(change.category) !== null;
+    }
+
+    private mergeCallbackReturnCategories(changes: BuiltinNumberChange[]): Map<number, NumberCategory> | null {
+        const res = new Map<number, NumberCategory>();
+        const ambiguousIndexes = new Set<number>();
+        changes.forEach(change => {
+            const index = change.path.argIndex;
+            const category = this.parseNumberCategory(change.category);
+            if (index === undefined || !category) {
+                return;
+            }
+            const currentCategory = res.get(index);
+            if (currentCategory && currentCategory !== category) {
+                ambiguousIndexes.add(index);
+                return;
+            }
+            if (!ambiguousIndexes.has(index)) {
+                res.set(index, category);
+            }
+        });
         ambiguousIndexes.forEach(index => res.delete(index));
         return res.size > 0 ? res : null;
     }

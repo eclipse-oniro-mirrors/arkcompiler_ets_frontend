@@ -225,6 +225,10 @@ export class NumericFieldUsageAnalyzer {
                 continue;
             }
             if (leftOp.getFieldName() === field.getName()) {
+                const builtinReturnCategory = this.options.getBuiltinApiChangeDetector().checkNestedReturnType(stmt.getRightOp());
+                if (builtinReturnCategory === numberCategory) {
+                    return IssueReason.OnlyUsedAsIntLong;
+                }
                 return this.options.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), hasChecked, numberCategory);
             }
         }
@@ -294,6 +298,10 @@ export class NumericFieldUsageAnalyzer {
     ): IssueReason | null {
         if (!this.isFieldRefMatchArkField(fieldRef, field)) {
             return null;
+        }
+        const builtinReturnCategory = this.options.getBuiltinApiChangeDetector().checkNestedReturnType(stmt.getRightOp());
+        if (builtinReturnCategory === numberCategory) {
+            return IssueReason.OnlyUsedAsIntLong;
         }
         return this.options.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), hasChecked, numberCategory);
     }
