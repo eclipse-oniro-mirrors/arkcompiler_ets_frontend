@@ -2854,7 +2854,8 @@ static bool ShouldRemoveStaticSearchFlag(const ir::MemberExpression *const membe
             return false;
         }
         if (!object->IsIdentifier() || (object->AsIdentifier()->Variable() == nullptr) ||
-            object->AsIdentifier()->Variable()->HasFlag(varbinder::VariableFlags::INITIALIZED)) {
+            object->AsIdentifier()->Variable()->HasFlag(varbinder::VariableFlags::INITIALIZED) ||
+            !object->AsIdentifier()->Variable()->TsType()->IsETSObjectType()) {
             return true;
         }
     }
