@@ -2654,9 +2654,8 @@ void ETSChecker::ValidateNamespaceProperty(varbinder::Variable *property, const 
                            ? funcType->CallSignatures()[0]->OwnerVar()
                            : property;
             ES2PANDA_ASSERT(property != nullptr);
-        } else if (auto *parent = ident->Parent(); parent->IsMemberExpression() &&
-                                                   parent->AsMemberExpression()->Object()->IsSuperExpression() &&
-                                                   !IsVariableGetterSetterClassProperty(property)) {
+        } else if (auto *parent = ident->Parent();
+                   parent->IsMemberExpression() && parent->AsMemberExpression()->Object()->IsSuperExpression()) {
             LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {ident->Name()}, ident->Start());
             const_cast<ir::AstNode *>(parent)->AsMemberExpression()->SetPreferredType(GlobalTypeError());
             return;
