@@ -24,6 +24,8 @@ import {
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
+    CONTEXT_DATA_STORAGE_BUNDLE,
+    DYNAMIC_ABC_FILE,
     DECL_ETS_SUFFIX,
     MERGED_INTERMEDIATE_FILE,
     DEFAULT_WORKER_NUMS,
@@ -59,7 +61,8 @@ import {
     FileInfo
 } from '../types';
 import {
-    ArkTSConfigGenerator
+    ArkTSConfigGenerator,
+    ArkTSConfig
 } from './generate_arktsconfig';
 import {
     BS_PERF_FILE_NAME,
@@ -416,6 +419,24 @@ export abstract class BaseMode {
         return this.buildConfig.enableDeclgenEts2Ts;
     }
 
+    private get isHybridEntryOrFeature(): boolean {
+        //only check for main module
+        const isEntryOrFeature = this.mainModuleType === OHOS_MODULE_TYPE.ENTRY
+            || this.mainModuleType === OHOS_MODULE_TYPE.FEATURE ||
+            this.mainModuleType === OHOS_MODULE_TYPE.SHARED;
+        if (!isEntryOrFeature) {
+            return false;
+        }
+        // Check if main module or any of its dependencies is hybrid or dynamic
+        for (const moduleInfo of this.moduleInfos.values()) {
+            if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_HYBRID
+                || moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public get isBuildConfigModified(): boolean | undefined {
         return this.buildConfig.isBuildConfigModified;
     }
@@ -668,6 +689,42 @@ export abstract class BaseMode {
             let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(module)!;
             fs.writeFileSync(moduleInfo.arktsConfigFile, JSON.stringify(arktsConfig.object, null, 2))
         });
+
+        this.generateDependencyOhmUrlMap(arktsConfig);
+    }
+
+    private generateDependencyOhmUrlMap(arktsConfig: ArkTSConfig): void {
+        // Only when: not declgen ets2ts mode, main module is hybrid (hap or feature)
+        if (!this.enableDeclgenEts2Ts && this.isHybridEntryOrFeature) {
+            const deps = arktsConfig.dependencies;
+            const mainModuleInfo = this.moduleInfos.get(this.mainPackageName);
+            const mainModuleName = mainModuleInfo?.moduleName ?? '';
+            const lines: string[] = [
+                "'use static'",
+                "let map_ohmurl = new Map<string, string>();",
+                "let map_abc = new Map<string, string>();",
+                `map_abc.set("${CONTEXT_DATA_STORAGE_BUNDLE}${mainModuleName}/ets/${MERGED_ABC_FILE}", "${CONTEXT_DATA_STORAGE_BUNDLE}${mainModuleName}/ets/${DYNAMIC_ABC_FILE}");`
+            ];
+            const dynamicLines: string[] = [];
+            for (const [key, item] of Object.entries(deps)) {
+                if (key.startsWith('dynamic/')) {
+                    if (item.ohmUrl) {
+                        dynamicLines.push(`map_ohmurl.set("${key.slice('dynamic/'.length)}", "${item.ohmUrl}");`);
+                    }
+                    continue;
+                }
+                if (item.ohmUrl) {
+                    lines.push(`map_ohmurl.set("${key}", "${item.ohmUrl}");`);
+                }
+            }
+            dynamicLines.unshift(...lines);
+            const depMapEtsPath = path.join(this.buildConfig.cachePath, `${this.buildConfig.bundleName}_dependency_ohmurl_map.ets`);
+            ensurePathExists(depMapEtsPath);
+            fs.writeFileSync(depMapEtsPath, lines.join('\n') + '\n');
+            const dynamicDepMapEtsPath = path.join(this.buildConfig.cachePath, "_dependency_ohmurl_map.ets");
+            ensurePathExists(dynamicDepMapEtsPath);
+            fs.writeFileSync(dynamicDepMapEtsPath, dynamicLines.join('\n') + '\n');
+        }
     }
 
     private collectModuleDependencies(): void {
@@ -838,6 +895,20 @@ export abstract class BaseMode {
         this.generateArkTSConfigForModules();
         this.statsRecorder.record(formEvent(BuildSystemEvent.PROCESS_ENTRY_FILES));
         this.processEntryFiles();
+
+        this.registerDependencyOhmUrlMapEntryFiles();
+    }
+
+    private registerDependencyOhmUrlMapEntryFiles(): void {
+        // Only when: not declgen ets2ts mode, main module is hybrid (hap or feature or hsp)
+        if (!this.buildConfig.enableDeclgenEts2Ts && this.isHybridEntryOrFeature) {
+            const depMapEtsPath = path.join(this.buildConfig.cachePath, `${this.buildConfig.bundleName}_dependency_ohmurl_map.ets`);
+            this.entryFiles.add(depMapEtsPath);
+            this.fileToModule.set(depMapEtsPath, this.moduleInfos.get(this.mainPackageName)!);
+            const dynamicDepMapEtsPath = path.join(this.buildConfig.cachePath, "_dependency_ohmurl_map.ets");
+            this.entryFiles.add(dynamicDepMapEtsPath);
+            this.fileToModule.set(dynamicDepMapEtsPath, this.moduleInfos.get(this.mainPackageName)!);
+        }
     }
 
     protected backwardCompatibilityWorkaroundStub(): void {
