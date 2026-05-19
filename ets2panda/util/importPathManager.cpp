@@ -32,6 +32,7 @@
 #include "libarkbase/utils/logger.h"
 
 #include "util/es2pandaMacros.h"
+#include "util/path.h"
 #include "varbinder/ETSBinder.h"
 #include "varbinder/TSBinder.h"
 #include "varbinder/ASBinder.h"
@@ -42,7 +43,6 @@
 #include <memory>
 #include <string_view>
 #include <utility>
-#include <regex>
 
 #ifdef PANDA_TARGET_WINDOWS
 #include <io.h>
@@ -360,7 +360,6 @@ static ArenaString OhmurlToMname(ArenaString &&ohmurl)
     }
     ArenaString mnamePrototype {std::move(ohmurl)};
     std::replace(mnamePrototype.begin(), mnamePrototype.end(), '/', '.');
-    mnamePrototype = std::regex_replace(mnamePrototype, std::regex(R"(\.\.)"), ".");
     return mnamePrototype;
 }
 
@@ -1355,10 +1354,10 @@ static std::string_view RemoveExtensionIfKnown(std::string_view relPath)
 
 static ArenaString ConcatOhmurl(std::string_view p1, std::string_view p2)
 {
-    if (!p1.empty() && ((p1.back() == '/') || (p1.back() == '.'))) {
+    if (!p1.empty() && ((p1.back() == util::PATH_DELIMITER) || (p1.back() == '.'))) {
         p1 = p1.substr(0, p1.size() - 1);
     }
-    if (!p2.empty() && ((p2.front() == '/') || (p2.front() == '.'))) {
+    if (!p2.empty() && ((p2.front() == util::PATH_DELIMITER) || (p2.front() == '.'))) {
         p2 = p2.substr(1, p2.size() - 1);
     }
 
