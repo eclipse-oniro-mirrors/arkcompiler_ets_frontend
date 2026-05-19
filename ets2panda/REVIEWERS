@@ -32,9 +32,9 @@
 /merge_abc/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
 /test/ @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
 /test262/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
-/test262/*.json                 @shirunova_viktoria @huang-shengda2
-/test262/*.py			@shirunova_viktoria @huang-shengda2
-/test262/ignored*.txt		@shirunova_viktoria @kuchkovairina @huang-shengda2
+/test262/*.json                 ^shirunova_viktoria @huang-shengda2
+/test262/*.py			^shirunova_viktoria @huang-shengda2
+/test262/ignored*.txt		@kuchkovairina @huang-shengda2
 /ets2panda/checker/ ^akmaevaleksey @zelentsovdmitry @lirismankarina ^igelhaus ^Prof
 /ets2panda/checker/ETS*.* @xingshunxiang @zelentsovdmitry ^igelhaus ^Prof
 /ets2panda/checker/ETSAnalyzer.cpp @xingshunxiang ^akmaevaleksey @zhelyapovaleksey  ^igelhaus ^Prof
@@ -68,7 +68,7 @@
 /ets2panda/varbinder/recordTable.* @ozerovnikita ^zelentsovdmitry ^igelhaus ^Prof @xuxjeeee
 /ets2panda/varbinder/scope.* @ozerovnikita ^zelentsovdmitry ^igelhaus ^Prof @xuxjeeee
 /ets2panda/varbinder/varbinder.* @ozerovnikita ^zelentsovdmitry ^igelhaus ^Prof @xuxjeeee
-/test/workload/ignored*.txt     @shirunova_viktoria @kuchkovairina @huang-shengda2
+/test/workload/ignored*.txt     @kuchkovairina @huang-shengda2
 /ets2panda/checker/ets/ @xuxjeeee @lirismankarina ^igelhaus ^Prof ^fanglou
 /ets2panda/checker/ets/*converter* @pimenovdmitry ^igelhaus ^Prof @tengtengh @zhaoshuting
 /ets2panda/checker/ets/function.cpp @@zhaoshuting @gogabr ^vpukhov ^igelhaus ^Prof
