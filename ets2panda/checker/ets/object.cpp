@@ -959,6 +959,7 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
     // and it is possible that the FunctionType interface is not yet created.
     if (builtinsInitialized) {  // NOTE(vpukhov): #31391
         CheckInterfaceFunctions(interfaceType);
+        CheckInheritedExplicitOverloadRedeclarationRequirement(interfaceType);
     }
     CheckInterfaceAnnotations(interfaceDecl);
 
@@ -3344,6 +3345,7 @@ void ETSChecker::CheckValidInheritance(ETSObjectType *classType, ir::ClassDefini
 
     const auto &allProps = classType->GetAllProperties();
     auto const interfaceList = GetInterfaces(classType);
+    CheckInheritedExplicitOverloadRedeclarationRequirement(classType);
     auto const instancePropNamesTransitive = CollectInstancePropsTransitive(classType);
 
     for (auto *it : allProps) {
