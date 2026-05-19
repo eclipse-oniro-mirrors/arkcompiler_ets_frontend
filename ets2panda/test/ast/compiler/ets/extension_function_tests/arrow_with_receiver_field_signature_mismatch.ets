@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,19 +13,22 @@
  * limitations under the License.
  */
 
-class A{
-    b : String = "b"
-    foo : () => String
-};
-
-function foo(this:A)/* @@ label */{
-    return this.b;
+class A {
+    f = (x: int) =>  {
+        return x
+    }
 }
 
-let a = new A;
-a.foo = foo;
-console.log(a.foo())
+let f = (this: A) => {
+    return 42
+}
 
+function main() {
+    let a = new A()
+    arktest.assertEQ(a.f(), 42)
+    arktest.assertEQ(a.f(1), 1)
+}
 
-/* @@@ label Error Semantic error ESE0079: The extension accessor or extension function 'foo' has the same name with field of class A */
-/* @@? 26:3 Error Semantic error ESE0087: Property 'foo' does not exist on type 'A' */
+/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
+/* @@? 28:22 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 28:22 Error Semantic error ESE0128: No matching call signature */

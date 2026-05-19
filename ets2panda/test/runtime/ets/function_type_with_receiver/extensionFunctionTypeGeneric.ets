@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,22 +30,16 @@ function bar(this: B<string>, x: string): string {
 let f1: FB<string> = bar;
 let f2: FBS = bar;
 let b = new B<string>("Hello!");
-arktest.assertEQ(b.f1("world"), "Hello!world")
 arktest.assertEQ(f1(b, "world"), "Hello!world")
-arktest.assertEQ(b.f2("world"), "Hello!world")
 arktest.assertEQ(f2(b, "world"), "Hello!world")
 
 f1 = bar;
 f2 = bar;
-arktest.assertEQ(b.f1("world"), "Hello!world")
 arktest.assertEQ(f1(b, "world"), "Hello!world")
-arktest.assertEQ(b.f2("world"), "Hello!world")
 arktest.assertEQ(f2(b, "world"), "Hello!world")
 
 f1 = f2;
-arktest.assertEQ(b.f1("world"), "Hello!world")
 arktest.assertEQ(f1(b, "world"), "Hello!world")
 
 f2 = f1;
-arktest.assertEQ(b.f2("world"), "Hello!world")
 arktest.assertEQ(f2(b, "world"), "Hello!world")

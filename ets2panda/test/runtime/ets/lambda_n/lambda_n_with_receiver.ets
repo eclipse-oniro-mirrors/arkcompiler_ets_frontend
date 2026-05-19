@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,8 +41,6 @@ let lambdaNWithReceiver = (
 }
 
 arktest.assertEQ(lambdaNWithReceiver(a, "hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!")
-arktest.assertEQ(a.lambdaNWithReceiver("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!")
-arktest.assertEQ(new A().lambdaNWithReceiver("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!")
 arktest.assertEQ(lambdaNWithReceiver(new A(), "hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!")
 
 let lambdaNWithRestAndReceiver = (
@@ -74,6 +72,4 @@ let lambdaNWithRestAndReceiver = (
 }
 
 arktest.assertEQ(lambdaNWithRestAndReceiver(a, "hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!!!")
-arktest.assertEQ(a.lambdaNWithRestAndReceiver("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!!!")
-arktest.assertEQ(new A().lambdaNWithRestAndReceiver("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!!!")
 arktest.assertEQ(lambdaNWithRestAndReceiver(new A(), "hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!"), "LambdaNTest: helloworld!!!!!!!!!!!!!!!!!!")

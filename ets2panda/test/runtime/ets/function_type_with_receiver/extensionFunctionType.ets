@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,5 +26,4 @@ function foo(this: A): boolean {
 let f1: F1 = foo;
 
 let a = new A();
-arktest.assertTrue(a.f1())
 arktest.assertTrue(f1(a))

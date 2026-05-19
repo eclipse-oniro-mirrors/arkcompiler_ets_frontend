@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ class A {
 }
 
 function foo(this: A, f: (this:B) => void) {
-    this.b.f();
+    f(this.b);
 }
 
 function foo2(this: A, f: (this:B) => void) {
@@ -35,7 +35,7 @@ function foo2(this: A, f: (this:B) => void) {
 
 function goo(n:number, f: (this:B) => void) {
     let b = new B();
-    b.f();
+    f(b);
     arktest.assertEQ(b.data, n);
 }
 

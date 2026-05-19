@@ -1689,7 +1689,8 @@ bool ETSChecker::IsExtensionETSFunctionType(const checker::Type *type)
     }
 
     if (type->IsETSArrowType()) {
-        return type->AsETSFunctionType()->ArrowSignature()->IsExtensionFunction();
+        // Lambda-with-receiver stays callable via f(receiver), but never binds as receiver.member().
+        return false;
     }
 
     return type->AsETSFunctionType()->IsExtensionFunctionType();

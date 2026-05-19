@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +26,7 @@ function foo(this: A): string {
 let show2: (this: A) => string;
 show2 = show;
 arktest.assertEQ(show2(a), "Hi,Bob")
-arktest.assertEQ(a.show2(), "Hi,Bob" )
 arktest.assertEQ(show2(new A()), "Hi,Bob")
-arktest.assertEQ(new A().show2(), "Hi,Bob" )
 show2 = foo;
 arktest.assertEQ(show2(a), "Hello,Bob")
-arktest.assertEQ(a.show2(), "Hello,Bob" )
 arktest.assertEQ(show2(new A()), "Hello,Bob")
-arktest.assertEQ(new A().show2(), "Hello,Bob" )

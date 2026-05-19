@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,7 @@ class C{
 
 function process1(con: (this:C)=>void){
     let c = new C();
-    c.con();
+    con(c);
     arktest.assertEQ(c.out, 1);
     arktest.assertEQ(c.input, 2);
     arktest.assertEQ(c.data, 3);
@@ -29,7 +29,7 @@ function process1(con: (this:C)=>void){
 
 function process2(con: (this:C)=>void){
     let c = new C();
-    c.con();
+    con(c);
     arktest.assertEQ(c.out, 1);
     arktest.assertEQ(c.input, 2);
     arktest.assertEQ(c.data, 3);
