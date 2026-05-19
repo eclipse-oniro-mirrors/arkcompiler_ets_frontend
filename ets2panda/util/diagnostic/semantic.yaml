@@ -399,7 +399,7 @@ semantic:
 
 - name: CYCLIC_ALIAS_2
   id: 313
-  message: "Type alias {} circularly refences itself"
+  message: "Type alias {} circularly references itself"
 
 - name: CYCLIC_CALLEE
   id: 381
@@ -423,7 +423,7 @@ semantic:
 
 - name: CYCLIC_VAR_REF
   id: 314
-  message: "'{}' is referenced directly or indirectly in its own initializer ot type annotation."
+  message: "'{}' is referenced directly or indirectly in its own initializer or type annotation."
 
 - name: DEFAULT_EXPORT_DIRECT_IMPORTED
   id: 353
@@ -466,7 +466,7 @@ semantic:
 
 - name: DYMANIC_INIT_WITH_OBJEXPR
   id: 382
-  message: "Dymanic Type {} cannot be initialize with an object expression"
+  message: "Dymanic Type {} cannot be initialized with an object expression"
 
 - name: ENUM_AS_OBJ
   id: 154289
@@ -1176,7 +1176,7 @@ semantic:
 
 - name: OBJ_LIT_PROP_NAME_COLLISION
   id: 263
-  message: "An object literal cannot multiple properties with same name"
+  message: "An object literal cannot have multiple properties with same name"
 
 - name: OBJ_LIT_UNKNOWN_PROP
   id: 264
@@ -1237,7 +1237,7 @@ semantic:
 
 - name: OVERLOAD_SAME_NAME_METHOD
   id: 397
-  message: "Method with the same name as overload declaration '{}', overloadlist must list this medhod."
+  message: "Method with the same name as overload declaration '{}', overloadlist must list this method."
 
 - name: OVERRIDE_DOESNT_OVERRIDE
   id: 136
@@ -1393,7 +1393,7 @@ semantic:
 
 - name: RETURN_TYPE_UTILITY_INCORRECT_PARAM
   id: 36530
-  message: "Type '{}' cannot be used as type parameter for ReturnType utilty type"
+  message: "Type '{}' cannot be used as type parameter for ReturnType utility type"
 
 - name: RETURN_WITHOUT_VALUE
   id: 32
