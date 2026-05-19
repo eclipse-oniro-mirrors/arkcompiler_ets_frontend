@@ -10,3 +10,6 @@ js-joda_test
 #24147
 jBox2d_test
 zxing_test
+
+#19623
+rebound_test
