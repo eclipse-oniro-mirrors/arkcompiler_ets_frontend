@@ -315,8 +315,6 @@ public:
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     Type *GetConstantBuiltinType(Type *type);
 
-    bool TypeHasDefaultValue(Type *tp) const;
-
     // Type creation
     ByteType *CreateByteType(int8_t value);
     ETSBooleanType *CreateETSBooleanType(bool value);

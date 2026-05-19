@@ -1840,54 +1840,56 @@ static bool IsInvalidArrayMemberAssignment(const ir::AssignmentExpression *const
     return false;
 }
 
+static checker::Type *GetSmartType(ETSChecker *checker, ir::Identifier *ident, varbinder::Variable const *variable,
+                                   checker::Type *sourceType, checker::Type *targetType, std::optional<double> value)
+{
+    checker::Type *smartType = targetType;
+
+    //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
+    smartType = checker->ResolveSmartType(sourceType, targetType, value);
+
+    //  Add/Remove/Modify smart cast for identifier
+    //  (excluding the variables defined at top-level scope or captured in lambda-functions!)
+    auto const *const variableScope = variable->GetScope();
+    auto const topLevelVariable =
+        variableScope != nullptr && (variableScope->IsGlobalScope() ||
+                                     (variableScope->Parent() != nullptr && variableScope->Parent()->IsGlobalScope()));
+    if (!topLevelVariable) {
+        if (checker->Relation()->IsIdenticalTo(targetType, smartType)) {
+            checker->Context().RemoveSmartCast(variable);
+        } else {
+            ident->SetTsType(smartType);
+            checker->Context().SetSmartCast(variable, smartType);
+        }
+    }
+
+    return smartType;
+}
+
 checker::Type *ETSAnalyzer::GetSmartTypeForAssignment(ir::AssignmentExpression *const expr,
                                                       checker::Type *const leftType, checker::Type *const rightType,
                                                       ir::Expression *const relationNode) const
 {
-    auto *smartType = rightType;
     auto isLazyImportObject =
         leftType->IsETSObjectType() && leftType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::LAZY_IMPORT_OBJECT);
-    if (!leftType->IsTypeError() && !isLazyImportObject) {
-        ETSChecker *checker = GetETSChecker();
-        if (const auto ctx = checker::AssignmentContext(checker->Relation(), relationNode, rightType, leftType,
-                                                        expr->Right()->Start(),
-                                                        {{diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}}});
-            ctx.IsAssignable()) {
-            smartType = GetSmartType(expr, leftType, rightType);
-        }
+    if (leftType->IsTypeError() || isLazyImportObject) {
+        return rightType;
     }
-    return smartType;
-}
 
-checker::Type *ETSAnalyzer::GetSmartType(ir::AssignmentExpression *expr, checker::Type *leftType,
-                                         checker::Type *rightType) const
-{
     ETSChecker *checker = GetETSChecker();
-    checker::Type *smartType = leftType;
+    if (const auto ctx =
+            checker::AssignmentContext(checker->Relation(), relationNode, rightType, leftType, expr->Right()->Start(),
+                                       {{diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}}});
+        !ctx.IsAssignable()) {
+        return rightType;
+    }
 
+    auto *smartType = rightType;
     if (expr->Left()->IsIdentifier() && expr->Target() != nullptr) {
-        //  Now try to define the actual type of Identifier so that smart cast can be used in further checker
-        //  processing
         auto const value = expr->Right()->IsNumberLiteral()
                                ? std::make_optional(expr->Right()->AsNumberLiteral()->Number().GetDouble())
                                : std::nullopt;
-        smartType = checker->ResolveSmartType(rightType, leftType, value);
-        auto const *const variable = expr->Target();
-
-        //  Add/Remove/Modify smart cast for identifier
-        //  (excluding the variables defined at top-level scope or captured in lambda-functions!)
-        auto const *const variableScope = variable->GetScope();
-        auto const topLevelVariable =
-            variableScope != nullptr && (variableScope->IsGlobalScope() || (variableScope->Parent() != nullptr &&
-                                                                            variableScope->Parent()->IsGlobalScope()));
-        if (!topLevelVariable) {
-            if (checker->Relation()->IsIdenticalTo(leftType, smartType)) {
-                checker->Context().RemoveSmartCast(variable);
-            } else {
-                expr->Left()->SetTsType(smartType);
-                checker->Context().SetSmartCast(variable, smartType);
-            }
-        }
+        smartType = GetSmartType(checker, expr->Left()->AsIdentifier(), expr->Target(), rightType, leftType, value);
     }
     return smartType;
 }
@@ -2128,6 +2130,7 @@ static checker::Type *CheckETSArrayOrTupleTypeInDestructuring(ETSChecker *checke
         for (uint32_t idx = 0; idx < dstrNode->Size(); idx++) {
             auto *initElementType = isTuple ? initType->AsETSTupleType()->GetTypeAtIndex(idx) : initArrayElementType;
             auto *dstrElement = dstrNode->GetExpressionAtIndex(idx);
+            auto *targetType = dstrElement->TsType();
             ES2PANDA_ASSERT(initElementType != nullptr);
 
             if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
@@ -2140,9 +2143,12 @@ static checker::Type *CheckETSArrayOrTupleTypeInDestructuring(ETSChecker *checke
                 continue;
             }
 
-            if (!checker->Relation()->IsAssignableTo(initElementType, dstrElement->TsType())) {
-                checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, dstrElement->TsType()},
-                                  dstrElement->Start());
+            if (!checker->Relation()->IsAssignableTo(initElementType, targetType)) {
+                checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, targetType}, dstrElement->Start());
+            } else if (dstrElement->IsIdentifier() && dstrElement->Variable() != nullptr) {
+                //  Now try to define the actual type of target so that smart cast can be used in further processing
+                GetSmartType(checker, dstrElement->AsIdentifier(), dstrElement->Variable(), initElementType, targetType,
+                             std::nullopt);
             }
         }
     } else {
@@ -5417,6 +5423,40 @@ checker::Type *ETSAnalyzer::Check(ir::TryStatement *st) const
     return ReturnTypeForStatement(st);
 }
 
+// Helper function extracted from 'ETSAnalyzer::Check(ir::VariableDeclarator *st)' to reduce its size.
+checker::Type *InferSmartType(ETSChecker *checker, Type *variableType, ir::Identifier *ident, ir::Expression *init)
+{
+    TypeRelation *relation = checker->Relation();
+
+    Type *smartType = variableType;
+    Type *initType = nullptr;
+    Type *undefinedType = checker->GlobalETSUndefinedType();
+
+    std::optional<double> value = {};
+
+    if (init != nullptr) {
+        initType = init->TsType();
+        if (init->IsNumberLiteral()) {
+            value = std::make_optional(init->AsNumberLiteral()->Number().GetDouble());
+        }
+    } else if (variableType != nullptr && relation->IsSupertypeOf(variableType, undefinedType)) {
+        // For type 'undefined' and all its supertypes the default value is 'undefined'
+        initType = undefinedType;
+    }
+
+    if (initType != nullptr) {
+        smartType = checker->ResolveSmartType(initType, variableType, value);
+        //  Set smart type for identifier if it differs from annotated type
+        //  Top-level and captured variables are not processed here!
+        if (!relation->IsIdenticalTo(variableType, smartType)) {
+            ident->SetTsType(smartType);
+            checker->Context().SetSmartCast(ident->Variable(), smartType);
+        }
+    }
+
+    return smartType;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
 {
     bool initChecked = st->Init() != nullptr ? st->Init()->TsType() != nullptr : true;
@@ -5447,7 +5487,9 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
     if (ident->Variable() == nullptr) {
         ident->Check(checker);
     }
-    auto *variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), st->Init(), flags);
+
+    auto *init = st->Init();
+    auto *variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), init, flags);
     if (variableType != nullptr) {
         if (variableType->IsTypeError()) {
             return st->SetTsType(variableType);
@@ -5460,23 +5502,10 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
 
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
     //  NOTE: T_S and K_o_t_l_i_n don't act in such way, but we can try - why not? :)
-    auto *smartType = variableType;
-    if (auto *const initType = st->Init() != nullptr ? st->Init()->TsType() : nullptr; initType != nullptr) {
-        auto const value = st->Init()->IsNumberLiteral()
-                               ? std::make_optional(st->Init()->AsNumberLiteral()->Number().GetDouble())
-                               : std::nullopt;
+    auto *smartType = InferSmartType(checker, variableType, ident, init);
 
-        smartType = checker->ResolveSmartType(initType, variableType, value);
-        //  Set smart type for identifier if it differs from annotated type
-        //  Top-level and captured variables are not processed here!
-        if (!checker->Relation()->IsIdenticalTo(variableType, smartType)) {
-            ident->SetTsType(smartType);
-            checker->Context().SetSmartCast(ident->Variable(), smartType);
-        }
-    }
-
-    if (variableType != nullptr && variableType->IsETSUnionType() && st->Init() != nullptr) {
-        IsAmbiguousUnionInit(variableType->AsETSUnionType(), st->Init(), checker);
+    if (variableType != nullptr && variableType->IsETSUnionType() && init != nullptr) {
+        IsAmbiguousUnionInit(variableType->AsETSUnionType(), init, checker);
     }
 
     return st->SetTsType(smartType);

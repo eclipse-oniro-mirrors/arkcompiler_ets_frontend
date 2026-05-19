@@ -818,12 +818,6 @@ void ETSChecker::InsertExtensionGetterToMap(util::StringView name, ETSObjectType
     GetGlobalTypesHolder()->InsertExtensionGetterToMap(name, type, sig);
 }
 
-bool ETSChecker::TypeHasDefaultValue(Type *tp) const
-{
-    return tp->IsBuiltinNumeric() || tp->IsETSBooleanType() || tp->IsETSCharType() ||
-           Relation()->IsSupertypeOf(GlobalETSUndefinedType(), tp);
-}
-
 /* Invoke method name in functional interfaces */
 std::string ETSChecker::FunctionalInterfaceInvokeName(size_t arity, bool hasRest)
 {
