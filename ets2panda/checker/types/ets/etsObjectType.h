@@ -387,6 +387,11 @@ public:
                                   varbinder::LocalVariable *found) const;
     void AddSignatureFromOverload(std::vector<Signature *> &signatures, PropertySearchFlags flags,
                                   varbinder::LocalVariable *found) const;
+    void CollectSignaturesFromOverloadDeclaration(std::vector<Signature *> &signatures, PropertySearchFlags flags,
+                                                  varbinder::LocalVariable *overloadVar, bool skipSameNameItem) const;
+    void CollectInheritedOverloadSignatures(std::vector<Signature *> &signatures, const util::StringView &name,
+                                            PropertySearchFlags flags,
+                                            const std::vector<varbinder::LocalVariable *> &overloadVars) const;
     void AddSignatureFromConstructor(std::vector<Signature *> &signatures, varbinder::LocalVariable *found) const;
     bool ReplaceArgumentInSignature(std::vector<Signature *> &signatures, Signature *sigToInsert,
                                     TypeRelation *relation) const;
@@ -516,9 +521,14 @@ private:
 
     varbinder::LocalVariable *SearchBaseFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
+    void CollectInheritedOverloadDecls(std::vector<varbinder::LocalVariable *> &overloadVars, util::StringView name,
+                                       PropertySearchFlags flags) const;
     varbinder::LocalVariable *SearchInterfacesProperty(util::StringView name, PropertySearchFlags flags) const;
     varbinder::LocalVariable *SearchMethods(util::StringView name, PropertySearchFlags flags) const;
     varbinder::LocalVariable *SearchOwnMethod(util::StringView name, PropertySearchFlags flags) const;
+    void CollectPrecedingMethodsBeforeOverloadDecl(std::vector<Signature *> &signatures, util::StringView name,
+                                                   PropertySearchFlags methodFlags,
+                                                   PropertySearchFlags declFlags) const;
 
     void SetCopiedTypeProperties(TypeRelation *const relation, ETSObjectType *const copiedType,
                                  std::vector<Type *> &&newTypeArgs, ETSObjectType *base);
