@@ -89,6 +89,83 @@
                 }
               }
             },
+            "value": {
+              "type": "TSAsExpression",
+              "expression": {
+                "type": "UndefinedLiteral",
+                "value": "undefined",
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 15,
+                    "program": "tuple_types_14.ets"
+                  },
+                  "end": {
+                    "line": 17,
+                    "column": 24,
+                    "program": "tuple_types_14.ets"
+                  }
+                }
+              },
+              "typeAnnotation": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "T",
+                    "loc": {
+                      "start": {
+                        "line": 17,
+                        "column": 28,
+                        "program": "tuple_types_14.ets"
+                      },
+                      "end": {
+                        "line": 17,
+                        "column": 29,
+                        "program": "tuple_types_14.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 28,
+                      "program": "tuple_types_14.ets"
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 29,
+                      "program": "tuple_types_14.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 28,
+                    "program": "tuple_types_14.ets"
+                  },
+                  "end": {
+                    "line": 17,
+                    "column": 29,
+                    "program": "tuple_types_14.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 17,
+                  "column": 15,
+                  "program": "tuple_types_14.ets"
+                },
+                "end": {
+                  "line": 17,
+                  "column": 29,
+                  "program": "tuple_types_14.ets"
+                }
+              }
+            },
             "accessibility": "public",
             "static": false,
             "readonly": false,
@@ -150,7 +227,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 12,
+                "column": 29,
                 "program": "tuple_types_14.ets"
               }
             }

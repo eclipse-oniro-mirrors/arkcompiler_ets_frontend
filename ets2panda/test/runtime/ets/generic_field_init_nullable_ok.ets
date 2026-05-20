@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 
-abstract class C<T,R>{
-    field1?:T;
-    field2?:R;
+class A<T> {
+    value: T | null;
 }
 
-function main(){
-    let x:C<Int,string> = {field1:100,field2:"some str"}
-    arktest.assertEQ(x.field1, 100)
-    arktest.assertEQ(x.field2, "some str")
+function main(): void {
+    let a = new A<number>();
+    a.value = 42;
+    arktest.assertEQ(a.value as number, 42);
 }

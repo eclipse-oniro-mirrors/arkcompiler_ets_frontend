@@ -15,7 +15,7 @@
 
 class B<T> {
     value: T;
-    x:T;
+    x?: T;
     constructor(value: T) {
         this.value = value;
     }
@@ -27,6 +27,7 @@ type FBSI = (this: B<string|Int>, x: string|Int) => string|Int;
 function apply(bb: B<string|Int>[], ff: FBSI) {
     for (let b of bb) {
         arktest.assertEQ(ff(b, "hello"), b.value)
+        arktest.assertEQ(b.x, "hello")
     }
 }
 let bb: B<string|Int>[] = [new B<string|Int>("aa"), new B<string|Int>(1)]

@@ -2177,6 +2177,83 @@
                 }
               }
             },
+            "value": {
+              "type": "TSAsExpression",
+              "expression": {
+                "type": "UndefinedLiteral",
+                "value": "undefined",
+                "loc": {
+                  "start": {
+                    "line": 41,
+                    "column": 23,
+                    "program": "generics_instantiation_4.ets"
+                  },
+                  "end": {
+                    "line": 41,
+                    "column": 32,
+                    "program": "generics_instantiation_4.ets"
+                  }
+                }
+              },
+              "typeAnnotation": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "T",
+                    "loc": {
+                      "start": {
+                        "line": 41,
+                        "column": 36,
+                        "program": "generics_instantiation_4.ets"
+                      },
+                      "end": {
+                        "line": 41,
+                        "column": 37,
+                        "program": "generics_instantiation_4.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 41,
+                      "column": 36,
+                      "program": "generics_instantiation_4.ets"
+                    },
+                    "end": {
+                      "line": 41,
+                      "column": 37,
+                      "program": "generics_instantiation_4.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 41,
+                    "column": 36,
+                    "program": "generics_instantiation_4.ets"
+                  },
+                  "end": {
+                    "line": 41,
+                    "column": 37,
+                    "program": "generics_instantiation_4.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 41,
+                  "column": 23,
+                  "program": "generics_instantiation_4.ets"
+                },
+                "end": {
+                  "line": 41,
+                  "column": 37,
+                  "program": "generics_instantiation_4.ets"
+                }
+              }
+            },
             "accessibility": "public",
             "static": false,
             "readonly": false,
@@ -2238,7 +2315,7 @@
               },
               "end": {
                 "line": 41,
-                "column": 20,
+                "column": 37,
                 "program": "generics_instantiation_4.ets"
               }
             }
