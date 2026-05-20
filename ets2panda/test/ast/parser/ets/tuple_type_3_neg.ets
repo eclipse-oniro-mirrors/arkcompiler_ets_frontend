@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@
 let a: [number, number number] = [1, 2, 3];
 
 
-/* @@? 17:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 17:24 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 17:24 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 17:30 Error Syntax error ESY0227: Unexpected token ']'. */

@@ -146,7 +146,7 @@ void HandleGenerateDecl(public_lib::Context *context, const parser::Program *pro
     ir::SrcDumper dumper {&dg};
     program->Ast()->Dump(&dumper);
     dumper.GetDeclgen()->Run();
-    dumper.DumpExports();
+    dumper.DumpExports(program);
 
     std::string res = "'use static'\n";
     dg.DumpImports(res);
@@ -201,7 +201,7 @@ static void GenDeclsForStdlib(public_lib::Context *context)
             fraction->Ast()->Dump(&dumper);
         }
         dumper.GetDeclgen()->Run();
-        dumper.DumpExports();
+        dumper.DumpExports(extProgram);
 
         // NOTE(dkofanov): #32416 'ImportPathManager::FormEtscacheFilePath' should be used instead.
         std::string path = std::string(extProgram->ModuleName()) + std::string(util::ImportPathManager::CACHE_SUFFIX);
@@ -367,6 +367,13 @@ static bool ParseAndRunPhases(public_lib::Context *context)
     }
     ES2PANDA_ASSERT(context->parserProgram != nullptr);
 
+    if (context->config->options->GetCompilationMode() == CompilationMode::GEN_STD_LIB) {
+        std::cout << "\n========== ETSSTDLIB BUILD ==========" << std::endl;
+        std::cout << "[etsstdlib] emit-metadata=" << (context->config->options->IsEmitMetadata() ? "true" : "false")
+                  << std::endl;
+        std::cout << "=====================================\n" << std::endl;
+    }
+
     //  We have to check the return status of 'RunVerifierAndPhase` and 'RunPhases` separately because there can be
     //  some internal errors (say, in Post-Conditional check) or terminate options (say in 'CheckOptionsAfterPhase')
     //  that were not reported to the log.
@@ -426,6 +433,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
 {
     ir::DisableContextHistory();
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
+    parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
 
     auto config = public_lib::ConfigImpl {};
     context->config = &config;

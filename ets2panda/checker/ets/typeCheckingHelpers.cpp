@@ -563,6 +563,7 @@ static Type *GetTypeFromVarLikeVariableDeclaration(ETSChecker *checker, varbinde
     return var->SetTsType(declNode->Check(checker));
 }
 
+// CC-OFFNXT(huge_method,huge_cyclomatic_complexity,G.FUN.01-CPP) big switch-case, solid logic
 Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
 {
     Type *variableType = nullptr;

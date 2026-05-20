@@ -48,6 +48,7 @@
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
 #include "util/generateBin.h"
+#include "util/importPathManager.h"
 #include "util/nameMangler.h"
 #include "util/patchFix.h"
 #include "assembly-program.h"
@@ -143,6 +144,11 @@ public:
             toEmit_.insert(str);
         }
         return str;
+    }
+
+    bool Contains(std::string const &str) const
+    {
+        return reachable_.find(str) != reachable_.end();
     }
 
     bool IsNotRequired(std::string const &str, bool isExternal = true)
@@ -555,6 +561,10 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
     dependencies_->ProcessToEmitExternal();
     // compile external dependencies with dynamic retry
     detail::RunExternalEmitPasses(dependencies_, [&traverseRecords]() { traverseRecords(true); });
+
+    EnsureExternalAnnotationRecord(Signatures::ARKRUNTIME_ANNOTATION_MODULE);
+    EnsureExternalAnnotationRecord(Signatures::ARKRUNTIME_ANNOTATION_ASYNC);
+    EnsureExternalAnnotationRecord(Signatures::ARKRUNTIME_ANNOTATION_FUNCTIONAL_REFERENCE);
 }
 
 void ETSEmitter::EmitRecords()
@@ -912,8 +922,7 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     }
 
     std::vector<pandasm::AnnotationData> annotations = GenAnnotations(classDef);
-    if ((classDef->IsNamespaceTransformed() || classDef->IsGlobalInitialized()) &&
-        !Context()->config->options->IsEmitMetadata()) {
+    if ((classDef->IsNamespaceTransformed() || classDef->IsGlobalInitialized())) {
         annotations.push_back(GenAnnotationModule(classDef));
     }
 
@@ -1180,6 +1189,29 @@ void ETSEmitter::GenCustomAnnotationRecord(const ir::AnnotationDeclaration *anno
     Program()->AddToRecordTable(std::move(annoRecord));
 }
 
+void ETSEmitter::EnsureCustomAnnotationRecord(pandasm::Record &record, bool external)
+{
+    if (!record.metadata->IsAnnotation()) {
+        auto attributes = record.metadata->GetAttributes();
+        auto boolAttributes = record.metadata->GetBoolAttributes();
+
+        record.metadata = pandasm::extensions::MetadataExtension::CreateRecordMetadata(Program()->lang);
+        for (const auto &attribute : boolAttributes) {
+            record.metadata->SetAttribute(attribute);
+        }
+        for (const auto &[attribute, values] : attributes) {
+            for (const auto &value : values) {
+                record.metadata->SetAttributeValue(attribute, value);
+            }
+        }
+    }
+
+    if (external) {
+        record.metadata->SetAttribute(Signatures::EXTERNAL);
+    }
+    record.metadata->SetAccessFlags(record.metadata->GetAccessFlags() | ACC_PUBLIC | ACC_ABSTRACT | ACC_ANNOTATION);
+}
+
 pandasm::AnnotationElement ETSEmitter::ProcessArrayType(const ir::ClassProperty *prop, std::string &baseName,
                                                         const ir::Expression *init)
 {
@@ -1281,8 +1313,25 @@ std::vector<pandasm::AnnotationData> ETSEmitter::GenCustomAnnotations(
     return annotations;
 }
 
+void ETSEmitter::EnsureExternalAnnotationRecord(std::string_view annotationName)
+{
+    auto recordName = std::string(annotationName);
+    if (!dependencies_->Contains(recordName) ||
+        Program()->recordTable.find(recordName) != Program()->recordTable.end()) {
+        return;
+    }
+    auto annoRecord = pandasm::Record(recordName, Program()->lang);
+    EnsureCustomAnnotationRecord(annoRecord, true);
+    Program()->AddToRecordTable(std::move(annoRecord));
+}
+
 pandasm::AnnotationData ETSEmitter::GenAnnotationModule(const ir::ClassDefinition *classDef)
 {
+    if (Context()->config->options->IsEmitMetadata()) {
+        AddDependence(std::string(Signatures::ARKRUNTIME_ANNOTATION_MODULE));
+        pandasm::AnnotationData moduleAnno(Signatures::ARKRUNTIME_ANNOTATION_MODULE);
+        return moduleAnno;
+    }
     std::vector<pandasm::ScalarValue> exportedClasses {};
 
     for (auto cls : classDef->ExportedClasses()) {

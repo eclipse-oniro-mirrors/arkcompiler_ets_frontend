@@ -445,7 +445,7 @@ options:
 
 - name: read-metadata
   type: bool
-  default: false
+  default: true
   description: "(experimental) Use metadata (if recorded) when importing the module with abc file provided"
 
 - name: cold-reload

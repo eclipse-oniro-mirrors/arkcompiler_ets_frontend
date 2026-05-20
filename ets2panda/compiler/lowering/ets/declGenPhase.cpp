@@ -89,6 +89,7 @@ static bool CallDeclgen(public_lib::Context *ctx, parser::Program *prog, const s
         prog->Ast()->Dump(&dumper);
     }
     dumper.GetDeclgen()->Run();
+    dumper.DumpExports(prog);
 
     std::string res = "'use static'\n";
     dg.DumpImports(res);

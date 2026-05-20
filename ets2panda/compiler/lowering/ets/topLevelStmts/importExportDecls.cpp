@@ -617,7 +617,7 @@ void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program
     std::set<util::StringView> unresolvedAliases;
     std::set<util::StringView> warnedUnresolvedAliases;
     const auto &exportFacts = varbinder_->GetExportFactsStore();
-    for (const auto &alias : exportFacts.PendingLocalExportAliases(const_cast<parser::Program *>(program))) {
+    for (const auto &alias : exportFacts.PendingLocalExportAliases(program)) {
         VerifyCollectedExportAlias(program, alias, unresolvedAliases, warnedUnresolvedAliases);
     }
 }

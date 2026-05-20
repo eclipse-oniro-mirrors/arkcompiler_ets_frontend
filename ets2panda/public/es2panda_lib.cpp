@@ -468,6 +468,7 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
 static void InitializeContext(Context *res)
 {
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
+    parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 

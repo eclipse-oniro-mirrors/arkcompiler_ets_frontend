@@ -16,7 +16,6 @@
 #include "ETSparser.h"
 #include <string_view>
 #include "ETSNolintParser.h"
-#include "compiler/metadata/deserialization.h"
 #include "program/program.h"
 #include "program/ImportCache.h"
 #include "public/public.h"

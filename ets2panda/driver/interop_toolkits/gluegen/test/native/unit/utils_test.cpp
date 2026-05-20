@@ -13,8 +13,10 @@
  * limitations under the License.
  */
 
+#include <atomic>
 #include <cstdint>
 #include <fstream>
+#include <random>
 #include <regex>
 #include <gtest/gtest.h>
 
@@ -38,8 +40,7 @@ namespace {
 
 class ScopedTempDir {
 public:
-    explicit ScopedTempDir(const std::string &prefix)
-        : path_(fs::temp_directory_path() / (prefix + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(this))))
+    explicit ScopedTempDir(const std::string &prefix) : path_(fs::temp_directory_path() / (prefix + "_" + Unique()))
     {
         fs::create_directories(path_);
     }
@@ -56,6 +57,15 @@ public:
     }
 
 private:
+    static std::string Unique()
+    {
+        static std::atomic<uint64_t> counter {0};
+        std::random_device rd;
+        return std::to_string(rd()) + "_" + std::to_string(rd()) + "_" +
+               // Atomic with relaxed order reason: running counter, no ordering guarantee needed
+               std::to_string(counter.fetch_add(1, std::memory_order_relaxed));
+    }
+
     fs::path path_;
 };
 
@@ -139,22 +149,21 @@ TEST(GluegenUtilsTest, FileTimeToStringMatchesIso8601Format)
 
 TEST(GluegenUtilsTest, GetLastModifiedTimeReturnsNulloptForMissingFile)
 {
-    auto missing = fs::temp_directory_path() / "gluegen_unit_test_does_not_exist.ets";
+    ScopedTempDir dir("gluegen_unit_test_missing");
+    auto missing = dir.Path() / "does_not_exist.ets";
     EXPECT_EQ(GetLastModifiedTime(missing), std::nullopt);
 }
 
 TEST(GluegenUtilsTest, GetLastModifiedTimeReturnsValueForExistingFile)
 {
-    auto path = fs::temp_directory_path() / "gluegen_unit_test_existing_file.ets";
+    ScopedTempDir dir("gluegen_unit_test_existing");
+    auto path = dir.Path() / "existing_file.ets";
     {
         std::ofstream out(path);
         out << "class Existing {}";
     }
 
     EXPECT_NE(GetLastModifiedTime(path), std::nullopt);
-
-    std::error_code ec;
-    fs::remove(path, ec);
 }
 
 }  // namespace

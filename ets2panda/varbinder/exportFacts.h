@@ -200,7 +200,7 @@ public:
                                     LocalExportKind kind);
     void MarkPendingLocalExportAliasInvalid(parser::Program *program, util::StringView exportedName,
                                             util::StringView localName, const ir::AstNode *reportOrigin);
-    const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(parser::Program *program) const;
+    const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(const parser::Program *program) const;
     void AddNamedReExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
                           util::StringView exportedName, util::StringView importedName, const ir::AstNode *origin,
                           bool isExplicitTypeOnly);
@@ -222,7 +222,7 @@ private:
     ArenaMap<ImportTargetKey, ExportSurfaceId> importTargets_;
     ArenaMap<ImportTargetKey, ExportSurfaceId> effectiveImportTargets_;
     ArenaMap<parser::Program *, PackageSurfaceFact> packageSurfaces_;
-    ArenaMap<parser::Program *, ArenaVector<PendingLocalExportAlias>> pendingLocalExportAliases_;
+    ArenaMap<const parser::Program *, ArenaVector<PendingLocalExportAlias>> pendingLocalExportAliases_;
     ExportFactSnapshot emptySnapshot_;
     ArenaVector<PendingLocalExportAlias> emptyPendingLocalExportAliases_;
 };

@@ -1949,8 +1949,9 @@ std::vector<ir::AstNode *> TSDeclGen::FilterValidExportSpecifiers(const ArenaVec
         if (IsInternalDefaultExportSpecifier(specifier)) {
             continue;
         }
-        const auto local = specifier->AsExportSpecifier()->Local()->Name().Mutf8();
-        if (exportSet_.find(local) == exportSet_.end()) {
+        const auto local = ExportSpecifierName(specifier->AsExportSpecifier()->Local());
+        const auto exported = ExportSpecifierName(specifier->AsExportSpecifier()->Exported());
+        if (local != exported || exportSet_.find(local) == exportSet_.end()) {
             exportSpecifiers.push_back(specifier);
         }
     }

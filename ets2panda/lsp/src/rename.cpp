@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -94,6 +94,12 @@ ir::AstNode *GetDeclaration(ir::AstNode *node)
 bool IsDefinedInLibraryFile(const ir::AstNode *node, const std::string &pandaLibPath)
 {
     if (node == nullptr) {
+        return false;
+    }
+    if (node->Range().start.Program()->Is<util::ModuleKind::METADATA_DECL>()) {
+        return true;
+    }
+    if (pandaLibPath.empty()) {
         return false;
     }
     auto filePath = node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8();

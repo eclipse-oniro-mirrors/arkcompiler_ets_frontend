@@ -154,7 +154,7 @@ public:
     std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false,
                                            util::FsQueryCache *fsQueryCache = nullptr) const;
 
-    void FixupWithStdlibOption(const std::string &stdlib);
+    bool FixupWithStdlibOption(const std::string &stdlib);
     void FixupWithoutStdlibOption();
 
     void ResolveAllDependenciesInArkTsConfig();
@@ -240,9 +240,10 @@ public:
     void GenerateSourcePathMap();
 
 private:
+    bool Parse(std::unordered_set<std::string> &visitedConfigs);
     bool ParseCompilerOptions(std::string &arktsConfigDir, const JsonObject *arktsConfig);
-    std::optional<ArkTsConfig> ParseExtends(const std::string &configPath, const std::string &extends,
-                                            const std::string &configDir);
+    std::optional<ArkTsConfig> ParseExtends(const std::string &extends, const std::string &configDir,
+                                            std::unordered_set<std::string> &visitedConfigs);
     std::optional<std::string> ResolveImportPath(std::string_view path, const std::string &alias,
                                                  const std::vector<std::string> &filePaths,
                                                  util::FsQueryCache *fsQueryCache) const;

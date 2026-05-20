@@ -66,5 +66,6 @@ function labeledcontinue(): void {
 
 
 /* @@? 19:15 Error Semantic error ESE0143: Unresolved reference i */
+/* @@? 19:22 Error Semantic error ESE0143: Unresolved reference i */
 /* @@? 49:5 Warning Warning W1284101: Label 'loop2' is not used within the loop statement. */
 /* @@? 60:5 Warning Warning W1284101: Label 'loop2' is not used within the loop statement. */

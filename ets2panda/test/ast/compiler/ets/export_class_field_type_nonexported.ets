@@ -19,4 +19,4 @@ export class C {
     f: Hidden = new Hidden()
 }
 
-/* @@@ label Error Semantic error ESE1236581: Type 'Hidden' used in export declaration(s) is not exported. */
+/* @@? 16:29 Error Semantic error ESE1236581: Type 'Hidden' used in export declaration(s) is not exported. */

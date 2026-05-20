@@ -21,6 +21,7 @@
 #include "libarkfile/metadata_helper.h"
 
 #include <unordered_map>
+#include <unordered_set>
 
 namespace ark::es2panda::compiler {
 
@@ -29,6 +30,8 @@ using TypeParamsInfo = std::pair<ir::TSTypeParameterDeclaration *, varbinder::Lo
 using FbMethodParams = std::pair<const flatbuffers::Vector<flatbuffers::Offset<Metadata::ValueParamDecl>> *,
                                  const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *>;
 using MethodOptions = std::pair<ir::ScriptFunctionFlags, ir::ModifierFlags>;
+
+class MetadataClassBuilder;
 
 class MetadataDeserializationPhase : public PhaseForMetadataBasedPrograms {
 public:
@@ -40,17 +43,35 @@ public:
     bool PerformForProgram(parser::Program *program) override;
 
 private:
+    friend class MetadataClassBuilder;
     void SetupGlobalClassStaticBlock(ir::ClassStaticBlock *staticBlock) const;
     void SetupGlobalClass() const;
-    void MarkBuiltinIfNeeded(varbinder::Variable *var) const;
+    void MarkBuiltinIfNeeded(varbinder::Variable *var, bool isBuiltin) const;
 
     void AddClassMembers(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
+    void EnsureConstructorExists(ir::ClassDefinition *classDef);
+    void AddProperties(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
+    void AddNestedDeclarations(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
+    ir::Identifier *GetDeclarationIdentifier(ir::AstNode *decl);
+    void AddEnumMembers(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
+    bool DetermineIsStringEnum(const Metadata::ClassDecl *fbClassDecl) const;
+    const flatbuffers::String *GetEnumValue(const Metadata::ClassDecl *fbClassDecl, uint32_t index) const;
+    ArenaVector<ir::AstNode *> CreateEnumMemberNodes(const Metadata::ClassDecl *fbClassDecl, bool isStringEnum) const;
+    ir::TSEnumDeclaration *CreateOrigEnumDecl(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef,
+                                              ArenaVector<ir::AstNode *> &&enumMembers) const;
+    ir::ClassProperty *AddSyntheticEnumProperty(std::string_view propName, const Metadata::ClassDecl *fbClassDecl,
+                                                ir::ClassDefinition *classDef,
+                                                std::function<ir::Expression *(uint32_t)> &&makeElement) const;
+    void AddInterfaceProperties(const Metadata::InterfaceDecl *fbInterfaceDecl,
+                                ir::TSInterfaceDeclaration *interfaceDecl) const;
     void AddExtends(const Metadata::InterfaceDecl *fbInterfaceDecl, ir::TSInterfaceDeclaration *interfaceDecl) const;
     void AddMethods(const flatbuffers::Vector<flatbuffers::Offset<Metadata::FunctionDecl>> &methods,
                     ArenaVector<ir::AstNode *> &body, ir::AstNode *parent);
+    void AddOverloadGroups(const flatbuffers::Vector<flatbuffers::Offset<Metadata::FunctionDecl>> &methods,
+                           ArenaVector<ir::AstNode *> &body, ir::AstNode *parent) const;
 
     template <typename T>
-    constexpr auto GetLazyMembers();
+    constexpr auto &GetLazyMembers();
 
     template <typename T, typename K>
     void MaterializeMembers(T *node, K const *fbDecl = nullptr);
@@ -69,22 +90,35 @@ private:
     ir::TypeNode *CreateArrayType(const Metadata::ArrayType *fbArrayType) const;
     ir::TypeNode *CreateTupleType(const Metadata::TupleType *fbTupleType) const;
     ir::TypeNode *CreateFunctionType(const Metadata::FunctionType *fbFunctionType) const;
+    ir::TypeNode *CreatePartialType(const Metadata::PartialType *fbPartialType) const;
     ir::TypeNode *CreateStringLiteralType(const Metadata::StringLiteralType *fbStringLiteralType) const;
     ir::TypeNode *CreateType(const void *type, Metadata::Type kind) const;
 
-    ir::MethodDefinition *CreateMethodDecl(const Metadata::FunctionDecl *fbMethodDecl);
-    ir::ClassProperty *CreatePropertyDecl(const Metadata::PropertyDecl *fbPropDecl) const;
+    ir::MethodDefinition *RegisterMethodInScope(ir::MethodDefinition *methodDef, bool isStatic) const;
+    ir::MethodDefinition *CreateMethodDecl(const Metadata::FunctionDecl *fbMethodDecl, bool isGlobalMember);
+    ir::ClassProperty *CreatePropertyDecl(const Metadata::PropertyDecl *fbPropDecl, bool isGlobalMember) const;
+    ir::OverloadDeclaration *CreateOverloadGroupDecl(std::string_view groupName, bool isStatic,
+                                                     const std::vector<std::string_view> &overloadedNames) const;
+    ir::ClassProperty *CreateAnnotationPropertyDecl(const Metadata::PropertyDecl *fbPropDecl) const;
 
-    ir::AnnotationDeclaration *CreateAnnotationDecl(const Metadata::AnnotationDecl *fbAnnotationDecl) const;
-    ir::ETSImportDeclaration *CreateImportDecl(const Metadata::ImportDecl *fbImportDecl) const;
-    ir::TSTypeAliasDeclaration *CreateTypeDecl(const Metadata::TypeDecl *fbTypeDecl) const;
+    ir::AnnotationDeclaration *CreateAnnotationDecl(const Metadata::AnnotationDecl *fbAnnotationDecl, bool isNested);
+    ir::ETSImportDeclaration *CreateImportDecl(const Metadata::ImportDecl *fbImportDecl);
+    ir::ETSReExportDeclaration *CreateReExportDecl(const Metadata::ReExportDecl *fbReExportDecl) const;
+    ir::TSTypeAliasDeclaration *CreateTypeDecl(const Metadata::TypeDecl *fbTypeDecl);
     ir::TSInterfaceDeclaration *CreateInterfaceDecl(const Metadata::InterfaceDecl *fbInterfaceDecl);
     ir::ClassDefinition *CreateClassDecl(
         const Metadata::ClassDecl *fbClassDecl,
-        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *fbTypeParams);
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *fbTypeParams, bool isNested = false,
+        bool isPreDeclare = false, bool materializeMembers = true);
     ir::ETSModule *CreateModule() const;
 
-    ArenaVector<ir::AstNode *> CreateDecls(const Metadata::Decls *decls);
+    void PredeclareClasses(const Metadata::Decls *decls, bool isNested = false);
+    ArenaVector<ir::AstNode *> CreateDecls(const Metadata::Decls *decls, bool isNested = false,
+                                           parser::Program *moduleProg = nullptr,
+                                           varbinder::ExportFactStore *store = nullptr);
+    void AddDeclarations(const Metadata::Decls *decls, bool isNested, parser::Program *moduleProg,
+                         varbinder::ExportFactStore *store, ArenaVector<ir::AstNode *> &nodes);
+    varbinder::Variable *FindMetadataLocalVariable(parser::Program *program, util::StringView localName) const;
 
     varbinder::Scope *Scope() const
     {
@@ -95,7 +129,21 @@ private:
     template <typename F>
     void WithProgram(parser::Program *program, F &&run);
 
+    parser::Program *ResolveMetadataModuleProgram(const Metadata::Decls *root, std::string_view moduleName) const;
+    void BindMetadataImports(const ArenaVector<ir::AstNode *> &nodes, varbinder::ETSBinder *etsBinder,
+                             varbinder::ExportFactStore *moduleStore);
+    void RegisterMetadataReExportSpecifier(varbinder::ExportFactStore *store, parser::Program *moduleProg,
+                                           const ir::ETSImportDeclaration *importDecl, ir::AstNode *specifier) const;
+    void RegisterMetadataReExports(const ArenaVector<ir::AstNode *> &nodes, parser::Program *moduleProg,
+                                   varbinder::ExportFactStore *store, varbinder::ETSBinder *etsBinder);
+    void RegisterMetadataLocalExports(const ArenaVector<ir::AstNode *> &nodes, parser::Program *moduleProg,
+                                      varbinder::ExportFactStore *store) const;
+    void RegisterMetadataLocalExportSpecifier(
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::LocalExportDecl>> *fbLocalExports,
+        parser::Program *moduleProg, varbinder::ExportFactStore *store) const;
+
     void ProcessMetadata(panda_file::MetadataByModules *metadata);
+    void ProcessMetadataModule(parser::Program *moduleProg, const Metadata::Decls *root);
 
     parser::Program *curProgram = nullptr;
 
@@ -104,6 +152,7 @@ private:
     std::unordered_map<const ir::TSInterfaceDeclaration *,
                        std::pair<const Metadata::InterfaceDecl *, parser::Program *>>
         lazyInterfaceMembers_;
+    std::unordered_map<const parser::Program *, std::unordered_set<std::string>> mergedImportSpecifiers_;
 
     static const std::map<Metadata::BuiltinTypeKind, ir::PrimitiveType> BUILTIN_PRIMITIVE_TYPES;
 

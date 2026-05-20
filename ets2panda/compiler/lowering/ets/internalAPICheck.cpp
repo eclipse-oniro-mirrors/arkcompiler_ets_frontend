@@ -14,6 +14,7 @@
  */
 
 #include "internalAPICheck.h"
+#include "checker/ETSchecker.h"
 #include "checker/types/signature.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "ir/base/classDefinition.h"
@@ -42,6 +43,8 @@ struct RestrictionInfo {
 };
 
 using RestrictionCache = std::unordered_map<ir::AnnotationDeclaration const *, std::optional<RestrictionInfo>>;
+
+static RestrictionInfo const *GetRestrictionInfo(ir::AnnotationDeclaration const *annoDecl, RestrictionCache &cache);
 
 static bool NamespaceIsPrefixedWith(std::string_view internalName, std::string_view prefix)
 {
@@ -137,8 +140,33 @@ static void CollectModulesFromValue(ir::Expression const *value, std::vector<std
     }
 }
 
+static void CollectModulesFromAnnotation(ir::AnnotationUsage const *anno, std::vector<std::string> &modules)
+{
+    for (auto *propNode : anno->Properties()) {
+        auto *prop = propNode->AsClassProperty();
+        if (prop == nullptr || prop->Id() == nullptr) {
+            continue;
+        }
+
+        auto const propName = prop->Id()->Name();
+        if (!propName.Is(ACCESS_RESTRICTION_MODULES) && propName != compiler::Signatures::ANNOTATION_KEY_VALUE) {
+            continue;
+        }
+
+        CollectModulesFromValue(prop->Value(), modules);
+    }
+}
+
 static std::optional<RestrictionInfo> ParseRestrictionInfo(ir::AnnotationDeclaration const *declNode)
 {
+    if (!declNode->MetadataAccessRestrictionModules().empty()) {
+        RestrictionInfo info {declNode->GetBaseName()->Name().Mutf8(), {}};
+        for (auto module : declNode->MetadataAccessRestrictionModules()) {
+            info.modules.emplace_back(module.Mutf8());
+        }
+        return info;
+    }
+
     auto const *annotations = GetAnnotations(declNode);
     if (annotations == nullptr) {
         return std::nullopt;
@@ -151,20 +179,7 @@ static std::optional<RestrictionInfo> ParseRestrictionInfo(ir::AnnotationDeclara
         }
 
         RestrictionInfo info {declNode->GetBaseName()->Name().Mutf8(), {}};
-        for (auto *propNode : anno->Properties()) {
-            auto *prop = propNode->AsClassProperty();
-            if (prop == nullptr || prop->Id() == nullptr) {
-                continue;
-            }
-
-            auto const propName = prop->Id()->Name();
-            if (!propName.Is(ACCESS_RESTRICTION_MODULES) && propName != compiler::Signatures::ANNOTATION_KEY_VALUE) {
-                continue;
-            }
-
-            CollectModulesFromValue(prop->Value(), info.modules);
-        }
-
+        CollectModulesFromAnnotation(anno, info.modules);
         return info.modules.empty() ? std::nullopt : std::optional<RestrictionInfo> {std::move(info)};
     }
 
@@ -208,7 +223,8 @@ static bool IsAccessibleFromModule(RestrictionInfo const &info, std::string_view
                        [moduleName](std::string const &prefix) { return NamespaceIsPrefixedWith(moduleName, prefix); });
 }
 
-static RestrictionInfo const *GetAppliedRestriction(ir::AstNode const *declNode, ir::AstNode const *useSite,
+static RestrictionInfo const *GetAppliedRestriction(ir::AstNode const *declNode,
+                                                    [[maybe_unused]] ir::AstNode const *useSite,
                                                     std::string_view moduleName, RestrictionCache &cache)
 {
     auto *info = GetRestrictionInfo(declNode, cache);
@@ -224,6 +240,22 @@ static RestrictionInfo const *GetAppliedRestriction(ir::AstNode const *declNode,
     }
 
     return IsAccessibleFromModule(*info, moduleName) ? nullptr : info;
+}
+
+static std::optional<RestrictionInfo> GetMetadataRestrictionInfo(const ir::AnnotationDeclaration *declNode)
+{
+    if (declNode == nullptr || declNode->MetadataAccessRestrictionModules().empty()) {
+        return std::nullopt;
+    }
+
+    RestrictionInfo info {};
+    info.annotationName = declNode->MetadataAccessRestrictionAnnotationName().Empty()
+                              ? declNode->GetBaseName()->Name().Mutf8()
+                              : declNode->MetadataAccessRestrictionAnnotationName().Mutf8();
+    for (auto module : declNode->MetadataAccessRestrictionModules()) {
+        info.modules.emplace_back(module.Mutf8());
+    }
+    return info;
 }
 
 static lexer::SourcePosition GetReportPosition(ir::AstNode const *useSite)
@@ -325,7 +357,8 @@ static void CheckTypeReference(checker::ETSChecker *checker, std::string_view mo
     }
 
     if (node->Parent()->IsAnnotationUsage()) {
-        auto *declNode = ResolveAnnotationDeclaration(node->Parent()->AsAnnotationUsage());
+        auto *declNode = checker->MaterializeAnnotationUsage(
+            const_cast<ir::AnnotationUsage *>(node->Parent()->AsAnnotationUsage()), checker::AnnotationUseKind::META);
         auto *info = declNode != nullptr ? GetAppliedRestriction(declNode, node, moduleName, cache) : nullptr;
         if (info != nullptr) {
             LogRestrictedUse(checker, node, declNode, *info);
@@ -379,6 +412,27 @@ static void CheckResolvedSignature(checker::ETSChecker *checker, std::string_vie
     }
 }
 
+static void CheckAnnotationUsage(checker::ETSChecker *checker, std::string_view moduleName,
+                                 ir::AnnotationUsage *annotationUse, RestrictionCache &cache)
+{
+    if (annotationUse == nullptr) {
+        return;
+    }
+
+    auto *declNode = checker->MaterializeAnnotationUsage(annotationUse, checker::AnnotationUseKind::USER);
+    auto *info = declNode != nullptr ? GetAppliedRestriction(declNode, annotationUse, moduleName, cache) : nullptr;
+    if (info == nullptr && declNode != nullptr) {
+        auto fallbackInfo = GetMetadataRestrictionInfo(declNode);
+        if (fallbackInfo.has_value() && !IsAccessibleFromModule(*fallbackInfo, moduleName)) {
+            LogRestrictedUse(checker, annotationUse, declNode, *fallbackInfo);
+            return;
+        }
+    }
+    if (info != nullptr) {
+        LogRestrictedUse(checker, annotationUse, declNode, *info);
+    }
+}
+
 static void EnforceChecks(public_lib::Context *ctx, parser::Program *program)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
@@ -389,7 +443,9 @@ static void EnforceChecks(public_lib::Context *ctx, parser::Program *program)
 
     RestrictionCache cache;
     program->Ast()->IterateRecursively([checker, moduleName, &cache](ir::AstNode *node) {
-        if (node->IsIdentifier()) {
+        if (node->IsAnnotationUsage()) {
+            CheckAnnotationUsage(checker, moduleName, node->AsAnnotationUsage(), cache);
+        } else if (node->IsIdentifier()) {
             auto *ident = node->AsIdentifier();
             if (ident->Variable() != nullptr) {
                 CheckResolvedVariable(checker, moduleName, node, ident->Variable(), cache);

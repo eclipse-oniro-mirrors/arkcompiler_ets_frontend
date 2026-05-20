@@ -3060,7 +3060,13 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
     }
     for (size_t index = 0; index < commonArity; ++index) {
         auto &argument = arguments[index];
-        auto const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
+        Type *const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
+        ES2PANDA_ASSERT(paramType != nullptr);
+
+        if (argument->IsObjectExpression() && !checker->IsValidObjectLiteralTargetType(paramType)) {
+            return false;
+        }
+
         if (!SetPreferredTypeBeforeValidate(checker, argument, paramType, flags)) {
             return false;
         }

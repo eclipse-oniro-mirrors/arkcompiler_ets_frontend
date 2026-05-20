@@ -43,7 +43,7 @@ std::string IrDeclVectorToString(const ArenaVector<T *> &nodes)
 
 inline std::string GetDeclKindToLog(const Metadata::ClassDecl *fbClassDecl)
 {
-    if (fbClassDecl->is_enum()) {
+    if (fbClassDecl->enum_kind() != Metadata::EnumKind_NONE) {
         return "enum ";
     }
     if (fbClassDecl->is_namespace()) {

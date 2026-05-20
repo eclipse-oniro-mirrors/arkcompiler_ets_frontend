@@ -415,8 +415,9 @@ private:
     void LookupMemCache(ImportInfo *importInfo);
     void LookupDiskData(ImportInfo *importInfo);
     void LookupEtscacheFile(ImportInfo *importInfo) const;
-    void LookupMetadata(ImportInfo *importInfo) const;
+    bool LookupMetadata(ImportInfo *importInfo) const;
 
+    void SetEtsTextFileByExtension(ImportInfo *importInfo, const std::string &sourcePath) const;
     void LookupSourceFile(ImportInfo *importInfo);
     void RegisterSourceFile(const ImportInfo &importInfo);
 

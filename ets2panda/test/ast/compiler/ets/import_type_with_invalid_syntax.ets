@@ -21,4 +21,3 @@ let c = new C()
 
 
 /* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected 'as'. */
-/* @@@ label2 Error Semantic error ESE0349: Class 'C' is already defined. */

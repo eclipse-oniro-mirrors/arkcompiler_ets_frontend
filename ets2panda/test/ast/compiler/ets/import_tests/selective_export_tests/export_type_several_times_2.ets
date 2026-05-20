@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-function foo(): void {}
-class A {}
-let a: A = new A()
+export function foo(): void {}
+export class A {}
+export let a: A = new A()
 
 export {
   foo as f1,

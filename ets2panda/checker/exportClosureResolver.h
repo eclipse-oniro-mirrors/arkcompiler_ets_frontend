@@ -223,6 +223,7 @@ private:
     void ValidateExportSurface(const varbinder::ExportSurfaceId &surface);
     void ValidateExplicitExportConflicts(const varbinder::ExportSurfaceId &surface,
                                          std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
+    void ValidateLocalExportAliasTargets(const varbinder::ExportSurfaceId &surface);
     void ValidateExportedDeclarations(const varbinder::ExportSurfaceId &surface,
                                       std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
     void ValidateProgramExportedDeclarations(const varbinder::ExportSurfaceId &surface, parser::Program *program,

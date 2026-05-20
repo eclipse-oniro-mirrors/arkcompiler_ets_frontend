@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-function test_func(): void {}
+export function test_func(): void {}
 
-let msg: string = "hello";
+export let msg: string = "hello";
 
-class TestClass {
+export class TestClass {
     test_member: string = "test_member";
 
     test_method(): void {}
@@ -29,7 +29,7 @@ export class AliasClass {
     }
 }
 
-type aliased = AliasClass;
+export type aliased = AliasClass;
 
 export {
     test_func as func, msg,

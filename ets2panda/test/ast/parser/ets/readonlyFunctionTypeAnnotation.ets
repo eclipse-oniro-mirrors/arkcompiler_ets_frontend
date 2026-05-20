@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,8 @@ func: readonly  (Y : object | long [] )  => [  ]
 
 /* @@? 17:7 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 17:7 Error Semantic error ESE0143: Unresolved reference readonly */
-/* @@? 17:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:20 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:22 Error Syntax error ESY0227: Unexpected token 'object'. */
 /* @@? 17:22 Error Semantic error ESE0144: Type name 'object' used in the wrong context */
 /* @@? 17:31 Error Syntax error ESY0227: Unexpected token 'long'. */

@@ -15,7 +15,7 @@
 
 export @interface MyAnnotation {}
 
-export default @interface DefaultAnnotation {}
+export @interface DefaultAnnotation {}
 
 @interface InternalAnnotation {}
 

@@ -105,15 +105,8 @@ static bool IsExpressionInClassPropertyInitializer(const ir::Expression *expr)
 
 static void LogNonExportedTypeError(ETSChecker *checker, checker::Type const *type, ir::AstNode const *decl)
 {
-    if (!util::Helpers::IsExported(decl) && !util::Helpers::IsStdLib(decl->Program())) {
-        auto pos = decl->Start();
-        // Use the identifier position for a more precise error location pointing to the type name itself
-        if (decl->IsTSInterfaceDeclaration()) {
-            pos = decl->AsTSInterfaceDeclaration()->Id()->Start();
-        } else if (decl->IsClassDefinition()) {
-            pos = decl->AsClassDefinition()->Ident()->Start();
-        }
-        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()}, pos);
+    if (!util::Helpers::IsExported(decl)) {
+        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()}, decl->Start());
     }
 }
 
@@ -610,6 +603,11 @@ static bool IsInitializerBlockTransfer(std::string_view str)
 static bool IsSignatureUnreachable(ETSChecker *checker, Signature *currSig, Signature *prevSig,
                                    std::optional<lexer::SourcePosition> startPos)
 {
+    if (currSig->Function() != nullptr && prevSig->Function() != nullptr && currSig->Function()->IsDeclare() &&
+        prevSig->Function()->IsDeclare()) {
+        return false;
+    }
+
     SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK);
     if (checker->Relation()->SignatureIsCoveredBy(currSig, prevSig)) {
         auto start = startPos.has_value() ? startPos.value() : currSig->Function()->Id()->Start();
@@ -3769,7 +3767,7 @@ static bool ValidatePreferredType(ETSChecker *checker, ir::ObjectExpression *exp
         return false;
     }
 
-    if (!preferredType->IsETSObjectType()) {
+    if (!checker->IsValidObjectLiteralTargetType(preferredType)) {
         checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {preferredType}, expr->Start());
         return false;
     }
@@ -4182,8 +4180,9 @@ checker::Type *ETSAnalyzer::CheckObjectExprBaseOnUnionType(ir::ObjectExpression 
     std::vector<checker::ETSObjectType *> candidateObjectTypes;
     // Phase 1: Gather all ETSObjectTypes from the union
     for (auto *constituentType : preferredType->ConstituentTypes()) {
-        auto *candidateType =
-            GetAppropriatePreferredType(constituentType, [](Type *type) { return type->IsETSObjectType(); });
+        auto *candidateType = GetAppropriatePreferredType(constituentType, [checker](Type *type) {
+            return type->IsETSObjectType() && checker->IsValidObjectLiteralTargetType(type);
+        });
         if (candidateType != nullptr) {
             auto *objectType = candidateType->AsETSObjectType();
             if (std::find(candidateObjectTypes.begin(), candidateObjectTypes.end(), objectType) ==

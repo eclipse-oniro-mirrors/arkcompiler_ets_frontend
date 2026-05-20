@@ -92,7 +92,7 @@ void PrepareContextForDestruction(ark::es2panda::public_lib::Context *ctx)
     // arena. Mirrors compilerImpl's ResetLineIndexCaches (main program + external decls).
     if (ctx->parserProgram != nullptr) {
         ctx->parserProgram->ResetLineIndexCache();
-        ctx->parserProgram->GetExternalDecls()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
+        ctx->parserProgram->GetExternalPrograms()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
     }
     // The stdlib imports program ("<default_import>.ets") is introduced during binding and is
     // registered only in the ImportPathManager's parse queue, not in parserProgram's external
@@ -781,7 +781,7 @@ static std::vector<parser::Program *> GatherPrograms(es2panda_Context *ctx, log:
 {
     std::vector<parser::Program *> programs;
     auto *pubCtx = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
-    pubCtx->parserProgram->GetExternalDecls()->Visit([&logger, &programs](parser::Program *prog) {
+    pubCtx->parserProgram->GetExternalPrograms()->Visit([&logger, &programs](parser::Program *prog) {
         if (!prog->IsDeclForDynamicStaticInterop()) {
             GLUEGEN_LOG_DEBUG(logger) << "Collecting program for source file: " << prog->SourceFilePath().Mutf8();
             programs.push_back(prog);

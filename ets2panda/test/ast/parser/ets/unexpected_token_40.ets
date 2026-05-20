@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-let arr = new Array<Number/* @@ label */;
+let arr = new Array<Number;
 
 /* @@? 16:15 Error Semantic error ESE0170: Type 'Array<T>' is generic but type argument were not provided. */
 /* @@? 16:21 Error Semantic error ESE0144: Type name 'Number' used in the wrong context */

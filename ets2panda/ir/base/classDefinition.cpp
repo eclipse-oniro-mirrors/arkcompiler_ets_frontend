@@ -447,6 +447,10 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
 
     ES2PANDA_ASSERT(ident_ != nullptr);
 
+    if (dumper->IsDeclgen() && dumper->GetDeclgen()->ShouldSkipClassDeclaration(ident->Name())) {
+        return;
+    }
+
     if (dumper->IsDeclgen() && !IsNamespaceTransformed() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }

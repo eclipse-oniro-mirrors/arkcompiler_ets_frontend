@@ -19,5 +19,5 @@ tags: [not-a-test]
 
 export {a as type}
 
-let a: int = 0
+export let a: int = 0
 let type = 1

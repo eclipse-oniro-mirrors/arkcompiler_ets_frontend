@@ -18,4 +18,4 @@ class /* @@ label */ C {}
 export type A = C
 
 
-/* @@@ label Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */
+/* @@? 16:24 Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */

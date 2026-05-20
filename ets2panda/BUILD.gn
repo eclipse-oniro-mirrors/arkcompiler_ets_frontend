@@ -1247,6 +1247,7 @@ action("es2panda_build_flatc") {
 action("gen_es2panda_flatbuffers_schema") {
   script = "$root_out_dir/third_party/flatbuffers/flatc"
   deps = [ ":es2panda_build_flatc" ]
+  inputs = [ "$ark_es2panda_root/compiler/metadata/schema.fbs" ]
   args = [
     "--cpp",
     "-o",

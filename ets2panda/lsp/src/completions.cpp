@@ -834,9 +834,26 @@ static CompletionEntry GetExportEntry(ir::AstNode *node, bool isInImportStatemen
                            "default as " + entry.GetInsertText(), std::nullopt, entry.GetTypeSig());
 }
 
+static void MaterializeLazyMembers(ir::ClassDefinition *classDef)
+{
+    if (classDef == nullptr || classDef->Parent() == nullptr) {
+        return;
+    }
+    auto *const program = classDef->GetTopStatement() != nullptr && classDef->GetTopStatement()->IsETSModule()
+                              ? classDef->GetTopStatement()->AsETSModule()->Program()
+                              : nullptr;
+    if (program == nullptr || program->VarBinder() == nullptr) {
+        return;
+    }
+    if (auto *const lazyCtx = program->VarBinder()->GetContext(); lazyCtx != nullptr && lazyCtx->materializeMembers) {
+        lazyCtx->materializeMembers(classDef);
+    }
+}
+
 static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries,
                                const std::string &fileName = "", bool isInImportStatement = false)
 {
+    MaterializeLazyMembers(classDef);
     for (auto &prop : classDef->Body()) {
         if (prop->IsClassDeclaration() && prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
             GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName, isInImportStatement);

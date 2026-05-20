@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 namespace ark::es2panda::parser {
 
 constexpr unsigned int MAX_RECURSION_DEPTH = 5120;
+constexpr unsigned int MAX_TYPE_NESTING_DEPTH = MAX_RECURSION_DEPTH / 2;
 
 struct RecursiveContext {
     unsigned depth = 0;
@@ -26,10 +27,11 @@ struct RecursiveContext {
 
 class TrackRecursive {
 public:
-    explicit TrackRecursive(RecursiveContext &recursivecontext) : recursivecontext_(recursivecontext)
+    explicit TrackRecursive(RecursiveContext &recursivecontext, unsigned maxDepth = MAX_RECURSION_DEPTH)
+        : recursivecontext_(recursivecontext)
     {
         ++recursivecontext_.depth;
-        valid_ = recursivecontext_.depth <= MAX_RECURSION_DEPTH;
+        valid_ = recursivecontext_.depth <= maxDepth;
     };
 
     ~TrackRecursive()

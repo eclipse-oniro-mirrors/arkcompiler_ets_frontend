@@ -215,6 +215,7 @@ private:
     bool DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const;
     void DumpPrefixForDeclGen(ir::SrcDumper *dumper) const;
     bool FilterForDeclGen() const;
+    bool IsAccessorOfDumpedProperty() const;
 
     friend class SizeOfNodeTest;
     // Overloads are stored like in an 1:N fashion.

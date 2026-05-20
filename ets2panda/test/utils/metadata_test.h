@@ -79,6 +79,7 @@ protected:
             diagnosticEngine.LogDiagnostic(kind, params);
         };
 
+        ASSERT_NE(programs[abcPath], nullptr) << "Compilation produced no program for " << abcPath;
         EXPECT_EQ(util::GenerateBinaryFile(programs[abcPath].get(), abcPath, *options, report), 0)
             << "Generating program " << abcPath << " failed";
     }
@@ -89,12 +90,16 @@ protected:
         AddDependencyToConfig("lib", abcFilename);
     }
 
-    std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath)
+    std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath,
+                                                             bool readMetadata = true)
     {
         const auto fileIfStream = std::ifstream(sourceFilePath);
         EXPECT_EQ(fileIfStream.good(), true) << "Source file " << sourceFilePath << " not found.";
         std::ostringstream sourceFileStream;
         sourceFileStream << fileIfStream.rdbuf();
+        if (!readMetadata) {
+            DisableMetadataReading();
+        }
         parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
         auto program = RunCheckerWithCustomFunc(fs::path(sourceFilePath).filename().string(), sourceFileStream.str(),
                                                 []([[maybe_unused]] ir::AstNode *ast) {});

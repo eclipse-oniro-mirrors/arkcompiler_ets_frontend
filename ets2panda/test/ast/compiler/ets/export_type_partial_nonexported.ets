@@ -18,4 +18,4 @@ class /* @@ label */ B {}
 export type A = Partial<B>
 
 
-/* @@@ label Error Semantic error ESE1236581: Type 'B' used in export declaration(s) is not exported. */
+/* @@? 16:24 Error Semantic error ESE1236581: Type 'B' used in export declaration(s) is not exported. */

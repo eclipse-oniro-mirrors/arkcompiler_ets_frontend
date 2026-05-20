@@ -19,4 +19,4 @@ export function foo<T extends C>(x: T): T  {
   return x;
 }
 
-/* @@@ label Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */
+/* @@? 16:24 Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */

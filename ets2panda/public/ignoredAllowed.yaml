@@ -90,6 +90,7 @@ ignored_list:
     - name: recursive_mutex
     - name: SmartCastArray
     - name: SmartCastTypes
+    - name: MetadataAccessRestrictionModuleList
     - name: SemanticAnalyzer
     - name: optional
       namespace: std
@@ -166,6 +167,8 @@ ignored_list:
       name: SmartCastArray
   - type:
       name: SmartCastTypes
+  - type:
+      name: MetadataAccessRestrictionModuleList
   - type:
       name: ConstraintCheckRecord
   - type:

@@ -87,14 +87,14 @@ TEST_F(MetadataTestSerialization, method_return_type_primitive)
     const auto program =
         RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
 
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hehehe", "Int");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hohoho", "Long");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hahaha", "Double");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "foo", "Boolean");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "fee", "Byte");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "faa", "Short");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lol", "Char");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lel", "Float");
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hehehe", BuiltinTypeKind_int_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hohoho", BuiltinTypeKind_long_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hahaha", BuiltinTypeKind_double_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "foo", BuiltinTypeKind_boolean);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "fee", BuiltinTypeKind_byte_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "faa", BuiltinTypeKind_short_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "lol", BuiltinTypeKind_char_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "lel", BuiltinTypeKind_float_);
 }
 
 TEST_F(MetadataTestSerialization, method_return_type_string_literal)

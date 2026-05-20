@@ -4,4 +4,5 @@ export declare class C {
 
 }
 
+export { C as C };
 export { foo as bar };

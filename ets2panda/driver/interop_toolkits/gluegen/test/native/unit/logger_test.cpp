@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <fstream>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -451,7 +452,8 @@ TEST(GluegenLoggerTest, DropPolicyCountsDroppedRecords)
 
 TEST(GluegenLoggerTest, FileSinkWritesToDisk)
 {
-    const std::string path = std::string(testing::TempDir()) + "/gluegen_logger_test.log";
+    std::random_device rd;
+    const std::string path = std::string(testing::TempDir()) + "/gluegen_logger_test_" + std::to_string(rd()) + ".log";
     std::remove(path.c_str());
     {
         auto fileSink = std::make_shared<ark::es2panda::gluegen::log::FileSink>(path, true);

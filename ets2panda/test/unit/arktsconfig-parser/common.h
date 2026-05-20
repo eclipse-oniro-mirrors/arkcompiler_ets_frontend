@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,27 +18,20 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+
 namespace common {
 
 struct Params {
     std::string config;
-    std::optional<std::string> path;
+    std::string fileName;
     bool expected;
 
     friend void PrintTo(const Params &params, std::ostream *os)
     {
-        *os << "\nConfig: " << params.config << "\nPath: " << (params.path == std::nullopt ? "null" : *params.path)
-            << "\nExpected: " << params.expected;
+        *os << "\nConfig: " << params.config << "\nFile name: " << params.fileName << "\nExpected: " << params.expected;
     }
 };
-
-// NOTE(morlovsky): this is hacky and unreliable imho
-inline std::string CurrentSourceFileDir()
-{
-    std::string file {__FILE__};
-    std::string directory {file.substr(0, file.rfind('/'))};
-    return directory;
-}
 
 }  // namespace common
 

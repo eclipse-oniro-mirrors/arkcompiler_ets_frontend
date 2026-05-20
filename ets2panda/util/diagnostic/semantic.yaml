@@ -1668,6 +1668,11 @@ semantic:
   id: 20
   message: "Class literal is not yet supported."
 
+
+- name: USED_ENTITY_IS_NOT_EXPORTED
+  id: 386984
+  message: "Entity '{}' used in export declaration(s) is not exported."
+
 - name: USE_BEFORE_INIT
   id: 375
   message: "{} '{}' is used before being assigned."

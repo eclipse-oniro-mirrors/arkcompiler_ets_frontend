@@ -21,6 +21,10 @@
 #include "parser/JsdocHelper.h"
 #include <memory>
 
+namespace ark::es2panda::parser {
+class Program;
+}  // namespace ark::es2panda::parser
+
 namespace ark::es2panda::ir {
 
 // Forward declarations
@@ -51,6 +55,8 @@ public:
     void Dump(SrcDumper *dumper, const checker::Type *type);
 
     void CollectImport(const ir::ImportDeclaration *import);
+
+    bool ShouldSkipClassDeclaration(util::StringView className) const;
 
     class Lock {
     private:
@@ -226,12 +232,14 @@ public:
 
     void DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode);
 
-    void DumpExports();
+    void DumpExports(const parser::Program *program);
 
     void SetDefaultExport() noexcept;
     [[nodiscard]] bool HasDefaultExport() const noexcept;
 
 private:
+    void DumpExplicitExportDirectives(const parser::Program *program);
+
     std::stringstream ss_;
     std::string indent_;
 

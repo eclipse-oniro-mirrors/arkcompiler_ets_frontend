@@ -407,6 +407,13 @@ public:
         return static_cast<ProgramAdapter<KIND> *>(this);
     }
 
+    template <util::ModuleKind KIND>
+    const ProgramAdapter<KIND> *As() const
+    {
+        ES2PANDA_ASSERT(Is<KIND>());
+        return static_cast<const ProgramAdapter<KIND> *>(this);
+    }
+
     bool IsDeclForDynamicStaticInterop() const
     {
         return moduleInfo_.isDeclForDynamicStaticInterop;
@@ -583,6 +590,11 @@ public:
     }
 
     auto &GetUnmergedPackagePrograms()
+    {
+        return fractions_;
+    }
+
+    const auto &GetUnmergedPackagePrograms() const
     {
         return fractions_;
     }

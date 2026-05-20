@@ -13,8 +13,10 @@
  * limitations under the License.
  */
 
-interface I {}
+export interface I {}
 
 export type {I}
 export type MyI = I /* @@? 19:1 Warning Warning W0073: Duplicated export aliases for 'MyI'. */
 export type {MyI}
+
+/* @@? 16:1 Warning Warning W0073: Duplicated export aliases for 'I'. */

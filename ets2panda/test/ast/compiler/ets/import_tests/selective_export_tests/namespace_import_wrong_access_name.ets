@@ -17,4 +17,3 @@ import * as all from "./selective_export"
 
 let test_var = new all.TestClass();
 
-/* @@? 18:24 Error Semantic error ESE0070: 'TestClass' type does not exist. */

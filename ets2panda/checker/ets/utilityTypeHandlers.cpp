@@ -31,6 +31,15 @@
 
 namespace ark::es2panda::checker {
 
+static Type *CreatePartialTypeImpl(ETSChecker *checker, Type *typeToBePartial)
+{
+    if (typeToBePartial->IsETSObjectType()) {
+        return checker->CreatePartialObjectType(typeToBePartial->AsETSObjectType());
+    }
+
+    return checker->CreatePartialNonObjectType(typeToBePartial);
+}
+
 std::optional<ir::TypeNode *> ETSChecker::GetUtilityTypeTypeParamNode(
     const ir::TSTypeParameterInstantiation *const typeParams, const std::string_view &utilityTypeName)
 {
@@ -342,55 +351,69 @@ Type *ETSChecker::CreatePartialType(Type *const typeToBePartial)
     if (typeToBePartial->IsTypeError() || typeToBePartial->IsETSNeverType() || typeToBePartial->IsETSAnyType()) {
         return typeToBePartial;
     }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    return CreatePartialTypeImpl(this, typeToBePartial);
+}
 
+Type *ETSChecker::CreatePartialObjectType(ETSObjectType *const objectType)
+{
     auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::PARTIAL)>();
+    ETSObjectType *baseType = objectType->GetOriginalBaseType();
+
     Type *partialType = nullptr;
-
-    if (typeToBePartial->IsETSObjectType()) {
-        ETSObjectType *objectType = typeToBePartial->AsETSObjectType();
-        ETSObjectType *baseType = objectType->GetOriginalBaseType();
-
-        if (auto found = typeCache.find(baseType); found != typeCache.end()) {
-            partialType = found->second;
-        } else {
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            partialType = CreatePartialTypeClass(baseType, typeToBePartial->Variable()->Declaration()->Node());
-            if (!partialType->IsTypeError()) {
-                typeCache.emplace(baseType, partialType);
-            }
-        }
-
-        if (partialType->IsETSObjectType() && !partialType->AsETSObjectType()->TypeArguments().empty()) {
-            auto const &parameters = partialType->AsETSObjectType()->TypeArguments();
-            auto const &arguments = objectType->TypeArguments();
-
-            auto const paramNumber = parameters.size();
-            ES2PANDA_ASSERT(paramNumber == arguments.size());
-
-            Substitution substitution {};
-            for (std::size_t i = 0U; i < paramNumber; ++i) {
-                EmplaceSubstituted(&substitution, parameters[i]->AsETSTypeParameter(), arguments[i]);
-            }
-
-            if (!substitution.empty()) {
-                partialType = partialType->Substitute(Relation(), &substitution);
-            }
-        }
+    if (auto found = typeCache.find(baseType); found != typeCache.end()) {
+        partialType = found->second;
     } else {
-        if (auto found = typeCache.find(typeToBePartial); found != typeCache.end()) {
-            return found->second;
+        if (auto *lazyCtx = VarBinder()->GetContext(); lazyCtx != nullptr && lazyCtx->materializeMembers) {
+            auto *declNode = objectType->GetDeclNode();
+            if (declNode != nullptr && (declNode->IsClassDefinition() || declNode->IsTSInterfaceDeclaration())) {
+                lazyCtx->materializeMembers(declNode);
+            }
         }
-
-        if (typeToBePartial->IsETSTypeParameter()) {
-            partialType = CreatePartialTypeParameter(typeToBePartial->AsETSTypeParameter());
-        } else if (typeToBePartial->IsETSUnionType()) {
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            partialType = HandleUnionForPartialType(typeToBePartial->AsETSUnionType());
-        }
-
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        partialType = CreatePartialTypeClass(baseType, objectType->Variable()->Declaration()->Node());
         if (!partialType->IsTypeError()) {
-            typeCache.emplace(typeToBePartial, partialType);
+            typeCache.emplace(baseType, partialType);
         }
+    }
+
+    if (partialType->IsETSObjectType() && !partialType->AsETSObjectType()->TypeArguments().empty()) {
+        auto const &parameters = partialType->AsETSObjectType()->TypeArguments();
+        auto const &arguments = objectType->TypeArguments();
+
+        auto const paramNumber = parameters.size();
+        ES2PANDA_ASSERT(paramNumber == arguments.size());
+
+        Substitution substitution {};
+        for (std::size_t i = 0U; i < paramNumber; ++i) {
+            EmplaceSubstituted(&substitution, parameters[i]->AsETSTypeParameter(), arguments[i]);
+        }
+
+        if (!substitution.empty()) {
+            partialType = partialType->Substitute(Relation(), &substitution);
+        }
+    }
+    return partialType;
+}
+
+Type *ETSChecker::CreatePartialNonObjectType(Type *const typeToBePartial)
+{
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::PARTIAL)>();
+
+    if (auto found = typeCache.find(typeToBePartial); found != typeCache.end()) {
+        return found->second;
+    }
+
+    Type *partialType = nullptr;
+    if (typeToBePartial->IsETSTypeParameter()) {
+        partialType = CreatePartialTypeParameter(typeToBePartial->AsETSTypeParameter());
+    } else if (typeToBePartial->IsETSUnionType()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        partialType = HandleUnionForPartialType(typeToBePartial->AsETSUnionType());
+    }
+
+    if (partialType != nullptr && !partialType->IsTypeError()) {
+        typeCache.emplace(typeToBePartial, partialType);
     }
     return partialType;
 }

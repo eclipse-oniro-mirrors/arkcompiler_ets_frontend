@@ -26,6 +26,7 @@
 #include "checker/ets/typeRelationContext.h"
 #include "checker/ets/typeConverter.h"
 #include "checker/types/type.h"
+#include "checker/types/ets/etsTypeAliasType.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
@@ -878,36 +879,67 @@ checker::Type *ETSChecker::FixOptionalVariableType(varbinder::Variable *const bi
     return bindingVar->TsType();
 }
 
-checker::Type *PreferredObjectTypeFromAnnotation(checker::Type *annotationType)
+bool ETSChecker::IsValidObjectLiteralTargetType(const checker::Type *type) const
 {
+    ES2PANDA_ASSERT(type != nullptr);
+
+    if (type->IsETSTypeAliasType()) {
+        auto *const targetType = type->AsETSTypeAliasType()->GetTargetType();
+        ES2PANDA_ASSERT(targetType != nullptr);
+        return IsValidObjectLiteralTargetType(targetType);
+    }
+    if (type->IsETSUnionType()) {
+        for (const auto *const constituentType : type->AsETSUnionType()->ConstituentTypes()) {
+            ES2PANDA_ASSERT(constituentType != nullptr);
+            if (IsValidObjectLiteralTargetType(constituentType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    if (!type->IsETSObjectType() || type->IsETSEnumType()) {
+        return false;
+    }
+
+    auto *const objectType = type->AsETSObjectType();
+    if (!objectType->HasObjectFlag(ETSObjectFlags::CLASS) && !objectType->IsInterface()) {
+        return false;
+    }
+
+    auto *const declNode = objectType->GetDeclNode();
+    ES2PANDA_ASSERT(declNode != nullptr);
+
+    return declNode->IsClassDefinition() || declNode->IsTSInterfaceDeclaration();
+}
+
+checker::Type *ETSChecker::PreferredObjectLiteralTargetType(checker::Type *const annotationType) const
+{
+    ES2PANDA_ASSERT(annotationType != nullptr);
+
     if (!annotationType->IsETSUnionType()) {
-        return annotationType;
+        return IsValidObjectLiteralTargetType(annotationType) ? annotationType : nullptr;
     }
 
     checker::Type *resolvedType = nullptr;
-    int objectTypeCount = 0;
-    for (auto constituentType : annotationType->AsETSUnionType()->ConstituentTypes()) {
-        if (constituentType->IsETSObjectType()) {
-            objectTypeCount++;
-            if (resolvedType == nullptr) {
-                resolvedType = constituentType;
-            }
+    for (auto *const constituentType : annotationType->AsETSUnionType()->ConstituentTypes()) {
+        ES2PANDA_ASSERT(constituentType != nullptr);
+        if (!IsValidObjectLiteralTargetType(constituentType)) {
+            continue;
         }
+
+        // If there are multiple valid object-literal targets, return the union type itself
+        // so that object literal union resolution can handle it.
+        if (resolvedType != nullptr) {
+            return annotationType;
+        }
+
+        resolvedType = constituentType;
     }
 
-    // If there's exactly one object type, return it
-    if (objectTypeCount == 1) {
-        return resolvedType;
-    }
-
-    // If there are multiple object types, return the union type itself
-    // so that our union resolution logic can handle it
-    if (objectTypeCount > 1) {
-        return annotationType;
-    }
-
-    // If there are no object types, return nullptr
-    return nullptr;
+    // If there's exactly one valid object-literal target, return it.
+    // If there are no valid object-literal targets, return nullptr.
+    return resolvedType;
 }
 
 void SetPreferredTypeForContextualExpression(ETSChecker *checker, ir::TypeNode *typeAnnotation, ir::Expression *init,
@@ -972,7 +1004,7 @@ bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNod
     }
 
     if (init->IsObjectExpression() && annotationType != nullptr) {
-        init->SetPreferredType(PreferredObjectTypeFromAnnotation(annotationType));
+        init->SetPreferredType(PreferredObjectLiteralTargetType(annotationType));
     }
 
     if (init->IsETSNewArrayInstanceExpression() && annotationType != nullptr) {
