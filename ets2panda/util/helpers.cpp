@@ -943,7 +943,7 @@ bool Helpers::IsExported(ir::AstNode const *node) noexcept
 
     bool exported;
     do {
-        exported = node->IsExported() || node->IsDefaultExported();
+        exported = node->IsExported() || node->IsDefaultExported() || node->HasExportAlias();
         node = node->Parent();
     } while (!exported && node != nullptr);
 

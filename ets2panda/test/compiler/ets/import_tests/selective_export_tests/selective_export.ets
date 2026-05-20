@@ -19,8 +19,8 @@ function aliased_func(): void {}
 let msg: String = "hello";
 let aliasedMsg: String = "goodbye";
 
-class TestClass {
-    test_member = "test_member";
+export class TestClass {
+    test_member: string = "test_member";
 
     test_method(): void {}
 }
