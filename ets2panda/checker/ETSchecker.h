@@ -157,7 +157,6 @@ public:
     ETSObjectType *GlobalBuiltinErrorType() const;
     ETSObjectType *GlobalStringBuilderBuiltinType() const;
     ETSObjectType *GlobalBuiltinPromiseType() const;
-    ETSObjectType *GlobalBuiltinPromiseLikeType() const;
     ETSObjectType *GlobalBuiltinFunctionType() const;
     ETSObjectType *GlobalBuiltinBoxType(Type *contents);
 
@@ -348,8 +347,6 @@ public:
     }
 
     Type *CreateUnionFromKeyofType(ETSObjectType *const type);
-    ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromPromiseType(ETSObjectType *promiseType);
-    ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromBaseType(Type *baseType);
     ETSTupleType *CreateETSTupleType(const ArenaVector<Type *> &typeList);
     ETSTypeAliasType *CreateETSTypeAliasType(util::StringView name, const ir::AstNode *declNode,
                                              bool isRecursive = false);
@@ -470,6 +467,7 @@ public:
     Type *ComposeReturnType(ir::TypeNode *typeAnnotation, bool isAsync);
     SignatureInfo *ComposeSignatureInfo(ir::TSTypeParameterDeclaration *typeParams,
                                         ArenaVector<ir::Expression *> const &params);
+    Type *ResolvePreferredReturnTypeForAsyncFunction(ir::ScriptFunction *expr);
     void BuildFunctionSignature(ir::ScriptFunction *func, bool isConstructSig = false);
     ETSFunctionType *BuildMethodType(ir::ScriptFunction *func);
     Type *BuildMethodSignature(ir::MethodDefinition *method);
@@ -733,6 +731,7 @@ public:
     Type *HandleAwaitedUtilityType(Type *typeToBeAwaited);
     Type *UnwrapPromiseType(checker::Type *type);
     bool IsPromiseType(Type *type);
+    Type *PromiseTypeArg(checker::ETSObjectType *type);
     // Required
     Type *HandleRequiredType(Type *typeToBeRequired);
     void MakePropertiesNonNullish(ETSObjectType *classType);

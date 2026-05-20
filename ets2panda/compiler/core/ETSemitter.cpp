@@ -282,11 +282,6 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
             auto annotations = emitter->GenCustomAnnotations(scriptFunc->Annotations(), func.name);
             func.metadata->SetAnnotations(std::move(annotations));
         }
-        /*
-         * NOTE(knazarov): Here we annotate the Async functions themselves.
-         * Since this annotation is directly related with stackfull implementation,
-         * use of IsAsyncFunc here is justified.
-         */
         if (scriptFunc->IsAsyncFunc()) {
             // callee does not tolerate constness
             func.metadata->AddAnnotations({

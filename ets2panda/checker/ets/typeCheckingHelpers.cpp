@@ -547,6 +547,7 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
             variableType = classDef->TsType();
             break;
         }
+
         case varbinder::DeclType::CONST:
             [[fallthrough]];
         case varbinder::DeclType::READONLY:

@@ -15,7 +15,6 @@
 
 #include "checker/ETSchecker.h"
 
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/ets/etsEnumType.h"
 #include "checker/types/ets/etsResizableArrayType.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -617,18 +616,6 @@ Type *ETSChecker::CreateUnionFromKeyofType(ETSObjectType *const type)
     }
 
     return stringLiterals.empty() ? GlobalETSNeverType() : CreateETSUnionType(std::move(stringLiterals));
-}
-
-ETSAsyncFuncReturnType *ETSChecker::CreateETSAsyncFuncReturnTypeFromPromiseType(ETSObjectType *promiseType)
-{
-    return ProgramAllocator()->New<ETSAsyncFuncReturnType>(ProgramAllocator(), Relation(), promiseType);
-}
-
-ETSAsyncFuncReturnType *ETSChecker::CreateETSAsyncFuncReturnTypeFromBaseType(Type *baseType)
-{
-    ES2PANDA_ASSERT(!baseType->IsETSPrimitiveType());
-    auto const promiseType = CreatePromiseOf(baseType);
-    return ProgramAllocator()->New<ETSAsyncFuncReturnType>(ProgramAllocator(), Relation(), promiseType);
 }
 
 }  // namespace ark::es2panda::checker

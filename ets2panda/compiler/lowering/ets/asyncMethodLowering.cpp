@@ -16,7 +16,6 @@
 #include "asyncMethodLowering.h"
 
 #include "checker/ETSchecker.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
@@ -65,7 +64,7 @@ static ir::ETSTypeReference *CreateAsyncImplMethodReturnTypeAnnotation(checker::
         }
         return checker->GlobalBuiltinPromiseType()->AsETSObjectType();
     }(asyncFuncRetTypeAnn);
-    auto *retType = checker->CreateETSAsyncFuncReturnTypeFromPromiseType(promiseType);
+    auto *retType = checker->CreateETSUnionType({promiseType, promiseType->AsETSObjectType()->TypeArguments()[0]});
     returnTypeAnn->SetTsType(retType);
     return returnTypeAnn;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve(undefined);
-
-p.then(obj => {
-    const result = typeof obj.prop;
-});
-
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => PromiseLike<T>|T)) */
-/* @@? 19:27 Error Semantic error ESE0010: Value is possibly nullish. */
+async function f () {
+    const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const arr = values.map(async (val) => val)
+    for (const elem of arr) {
+      arktest.assertTrue(elem instanceof Promise)
+    }
+}

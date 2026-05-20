@@ -19,7 +19,6 @@
 #include <limits>
 
 #include "checker/ETSchecker.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
@@ -243,9 +242,6 @@ static ir::Expression *CreateBlockExpression(ir::ObjectExpression *expr, checker
 static ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
-    if (expr->PreferredType()->IsETSAsyncFuncReturnType()) {
-        expr->SetPreferredType(expr->PreferredType()->AsETSAsyncFuncReturnType()->GetPromiseTypeArg());
-    }
 
     if (!expr->TsType()->IsETSObjectType()) {
         // Unexpected preferred type

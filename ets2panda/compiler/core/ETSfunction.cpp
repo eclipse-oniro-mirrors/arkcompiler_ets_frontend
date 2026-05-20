@@ -96,12 +96,7 @@ void ETSFunction::ExtendWithDefaultReturn(ETSGen *etsg, const ir::AstNode *node,
         return;
     }
 
-    if (scriptFunc->ReturnTypeAnnotation() != nullptr && scriptFunc->ReturnTypeAnnotation()->TsType() != nullptr &&
-        scriptFunc->ReturnTypeAnnotation()->TsType()->IsETSAsyncFuncReturnType()) {
-        etsg->LoadDefaultValue(node, scriptFunc->ReturnTypeAnnotation()->TsType());
-    } else {
-        etsg->LoadDefaultValue(node, scriptFunc->Signature()->ReturnType());
-    }
+    etsg->LoadDefaultValue(node, scriptFunc->Signature()->ReturnType());
     etsg->ReturnAcc(node);
 }
 

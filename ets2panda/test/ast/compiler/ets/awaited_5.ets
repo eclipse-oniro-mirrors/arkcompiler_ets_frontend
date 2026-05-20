@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,16 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve(undefined);
+type T1 = Awaited<Promise<string>>
+type T2 = Awaited<PromiseLike<string>>
 
-p.then(obj => {
-    const result = typeof obj.prop;
-});
+async function main() {
+    let v1: T1 = "1"
+    let v2: T2 = Promise.resolve("1")
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => PromiseLike<T>|T)) */
-/* @@? 19:27 Error Semantic error ESE0010: Value is possibly nullish. */
+    arktest.assertTrue(v1 instanceof string)
+    arktest.assertTrue(v2 instanceof PromiseLike)
+}
+
+/* @@? 23:24 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+/* @@? 24:24 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */

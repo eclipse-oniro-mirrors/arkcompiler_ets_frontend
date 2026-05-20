@@ -16,7 +16,6 @@
 #include "asyncMethodLoweringStackless.h"
 
 #include "checker/ETSchecker.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 
@@ -75,40 +74,13 @@ static void AddPrologueToMethodBody(public_lib::Context *ctx, ir::BlockStatement
     block->SetStatements(std::move(newStatements));
 }
 
-static checker::Type *PromiseTypeArg(public_lib::Context *ctx, checker::Type *t)
-{
-    ES2PANDA_ASSERT(ctx);
-    ES2PANDA_ASSERT(t);
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    ES2PANDA_ASSERT(checker->IsPromiseType(t) || t->IsETSAsyncFuncReturnType());
-    if (checker->IsPromiseType(t)) {
-        return checker->UnwrapPromiseType(t);
-    }
-    ES2PANDA_ASSERT(t->IsETSAsyncFuncReturnType());
-    return t->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
-}
-
-static checker::Type *PromiseType(public_lib::Context *ctx, checker::Type *t)
-{
-    ES2PANDA_ASSERT(ctx);
-    ES2PANDA_ASSERT(t);
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    ES2PANDA_ASSERT(checker->IsPromiseType(t) || t->IsETSAsyncFuncReturnType());
-    if (checker->IsPromiseType(t)) {
-        return t;
-    }
-    ES2PANDA_ASSERT(t->IsETSAsyncFuncReturnType());
-    return t->AsETSAsyncFuncReturnType()->PromiseType();
-}
-
 static ir::Expression *CreateAsyncContextResolveValue(public_lib::Context *ctx, ir::ReturnStatement *stmt)
 {
     ES2PANDA_ASSERT(ctx);
     ES2PANDA_ASSERT(stmt);
 
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    const auto parser = ctx->parser->AsETSParser();
     const auto alloc = ctx->Allocator();
+    const auto parser = ctx->parser->AsETSParser();
 
     auto arg = stmt->Argument();
     if (!arg) {
@@ -133,16 +105,19 @@ static ir::Expression *CreateAsyncContextResolveValue(public_lib::Context *ctx, 
             alloc, ArenaVector<ir::Statement *>({argStmt, undefinedLitStmt}));
     }
 
-    /**
-     * NOTE(knazarov): need to preserve the type deduction context,
-     * since we are moving them out of the initial deduction context.
-     */
-    const auto retType = stmt->ReturnType();
-    ES2PANDA_ASSERT(retType);
-    const auto forcedType = checker->IsPromiseType(argType) ? PromiseType(ctx, argType) : PromiseTypeArg(ctx, retType);
-    ES2PANDA_ASSERT(forcedType);
+    const auto resolveValIdent = Gensym(alloc);
+    ES2PANDA_ASSERT(resolveValIdent);
+    const auto resolveValDecl = parser->CreateFormattedStatement(
+        "let @@I1 : @@T2 = @@E3", resolveValIdent->Clone(alloc, nullptr), argType, argClone);
+    ES2PANDA_ASSERT(resolveValDecl);
+    const auto resolveValIdentStmt =
+        util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(alloc, resolveValIdent);
+    ES2PANDA_ASSERT(resolveValIdentStmt);
+    const auto resolveVal = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(
+        alloc, ArenaVector<ir::Statement *>({resolveValDecl, resolveValIdentStmt}));
+    ES2PANDA_ASSERT(resolveVal);
 
-    return parser->CreateFormattedExpression("@@E1 as @@T2", argClone, forcedType);
+    return resolveVal;
 }
 
 static ir::ReturnStatement *CreateReturnFromAsync(public_lib::Context *ctx, ir::Expression *val,
@@ -190,6 +165,8 @@ static ir::ReturnStatement *HandleReturnStatement(public_lib::Context *ctx, [[ma
 
     returnStmt->SetParent(stmt->Parent());
 
+    CheckNode(ctx, returnStmt);
+
     return returnStmt;
 }
 
@@ -235,6 +212,7 @@ static ArenaVector<ir::CatchClause *> CreateCatchClauses(public_lib::Context *ct
     ES2PANDA_ASSERT(errIdent);
     const auto promiseT = func->Signature()->ReturnType();
     ES2PANDA_ASSERT(promiseT);
+    ES2PANDA_ASSERT(ctx->GetChecker()->AsETSChecker()->IsPromiseType(promiseT));
     const auto returnStmt = CreateReturnFromAsync(ctx, errIdent, promiseT, false);
     ES2PANDA_ASSERT(returnStmt);
     const auto catchBody = util::NodeAllocator::ForceSetParent<ir::BlockStatement>(

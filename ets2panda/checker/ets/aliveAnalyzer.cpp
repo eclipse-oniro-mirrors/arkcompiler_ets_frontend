@@ -16,7 +16,6 @@
 #include "aliveAnalyzer.h"
 #include <cstddef>
 
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
 #include "ir/base/methodDefinition.h"

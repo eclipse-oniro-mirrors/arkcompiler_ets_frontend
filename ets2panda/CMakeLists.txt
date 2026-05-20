@@ -668,7 +668,6 @@ set(ES2PANDA_LIB_SRC
   checker/types/ets/shortType.cpp
   checker/types/ets/etsAnyType.cpp
   checker/types/ets/etsArrayType.cpp
-  checker/types/ets/etsAsyncFuncReturnType.cpp
   checker/types/ets/etsBooleanType.cpp
   checker/types/ets/etsEnumType.cpp
   checker/types/ets/etsExtensionFuncHelperType.cpp

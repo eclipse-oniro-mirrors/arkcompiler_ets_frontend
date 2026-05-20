@@ -18,4 +18,4 @@ async function foo(): Promise<Object> {
     return /* @@ label1 */null;
 }
 
-/* @@@ label1 Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object> | Object' */
+/* @@@ label1 Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object>' */

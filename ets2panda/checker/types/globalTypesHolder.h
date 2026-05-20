@@ -97,7 +97,6 @@ enum class GlobalTypeId : std::size_t {
     ETS_TYPE_BUILTIN,
     ETS_TYPES_BUILTIN,
     ETS_PROMISE_BUILTIN,
-    ETS_PROMISELIKE_BUILTIN,
     ETS_FUNCTION_BUILTIN,
     ETS_REGEXP_BUILTIN,
     ETS_ARRAY_BUILTIN,
@@ -303,7 +302,6 @@ public:
     Type *GlobalTypeBuiltinType();
     Type *GlobalTypesBuiltinType();
     Type *GlobalPromiseBuiltinType();
-    Type *GlobalPromiseLikeBuiltinType();
     Type *GlobalFunctionBuiltinType();
     Type *GlobalBoxBuiltinType();
     Type *GlobalBooleanBoxBuiltinType();

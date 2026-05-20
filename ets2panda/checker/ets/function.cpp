@@ -1794,7 +1794,8 @@ void ETSChecker::BuildFunctionSignature(ir::ScriptFunction *func, bool isConstru
         }
     }
     auto *signatureInfo = ComposeSignatureInfo(func->TypeParams(), func->Params());
-    auto *returnType = func->GetPreferredReturnType() != nullptr
+
+    Type *returnType = func->GetPreferredReturnType() != nullptr
                            ? func->GetPreferredReturnType()
                            : ComposeReturnType(func->ReturnTypeAnnotation(), func->IsAsyncFunc());
 

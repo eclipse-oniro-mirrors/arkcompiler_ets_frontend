@@ -28,7 +28,6 @@ class Variable;
 namespace ark::es2panda::checker {
 class ObjectDescriptor;
 class GlobalTypesHolder;
-class ETSAsyncFuncReturnType;
 class ETSChecker;
 class ETSTypeParameter;
 class ETSEnumType;
@@ -110,7 +109,6 @@ public:
     bool IsETSRelaxedAnyType() const;
     bool IsETSPrimitiveType() const;
     bool IsETSReferenceType() const;
-    bool IsETSAsyncFuncReturnType() const;
     bool IsETSUnboxableObject() const;
 
     bool PossiblyETSNull() const;
@@ -154,18 +152,6 @@ public:
     }
 
     [[nodiscard]] bool IsBuiltinNumeric() const noexcept;
-
-    ETSAsyncFuncReturnType *AsETSAsyncFuncReturnType()
-    {
-        ES2PANDA_ASSERT(IsETSAsyncFuncReturnType());
-        return reinterpret_cast<ETSAsyncFuncReturnType *>(this);
-    }
-
-    const ETSAsyncFuncReturnType *AsETSAsyncFuncReturnType() const
-    {
-        ES2PANDA_ASSERT(IsETSAsyncFuncReturnType());
-        return reinterpret_cast<const ETSAsyncFuncReturnType *>(this);
-    }
 
     bool IsConstantType() const
     {

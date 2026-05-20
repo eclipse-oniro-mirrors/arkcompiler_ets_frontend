@@ -19,5 +19,5 @@ p.then(obj => {
     const result = typeof obj.prop;
 });
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: "hello") => T|PromiseLike<T>)) */
+/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: "hello") => PromiseLike<T>|T)) */
 /* @@? 19:31 Error Semantic error ESE0087: Property 'prop' does not exist on type 'String' */

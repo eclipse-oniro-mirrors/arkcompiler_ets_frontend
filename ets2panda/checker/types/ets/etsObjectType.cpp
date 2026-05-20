@@ -1035,7 +1035,7 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
 
 void ETSObjectType::IsSubtypeOf(TypeRelation *relation, Type *target)
 {
-    if (target->IsETSObjectType() && !target->IsETSAsyncFuncReturnType()) {
+    if (target->IsETSObjectType()) {
         EnsureTransitiveSupertypesInitialized();
         auto &transitives = *transitiveSupertypes_;
 
@@ -1429,9 +1429,6 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
 
 void ETSObjectType::CheckAndInstantiateProperties() const
 {
-    if (IsETSAsyncFuncReturnType()) {
-        return;
-    }
     auto *checker = relation_->GetChecker()->AsETSChecker();
     auto *declNode = GetDeclNode();
     if (HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE) && declNode == nullptr) {

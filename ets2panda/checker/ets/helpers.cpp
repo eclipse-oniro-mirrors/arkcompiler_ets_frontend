@@ -27,7 +27,6 @@
 #include "checker/types/type.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
 #include "ir/astNode.h"
@@ -575,6 +574,8 @@ void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, chec
     signature->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
 
     auto *funcReturnType = signature->ReturnType();
+    ES2PANDA_ASSERT(!Relation()->IsIdenticalTo(funcReturnType, argumentType));
+
     if (funcReturnType->IsETSEnumType() && argumentType->IsETSEnumType()) {
         // function return type is of enum type:
         Relation()->SetFlags(checker::TypeRelationFlag::DIRECT_RETURN |
@@ -586,27 +587,29 @@ void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, chec
         } else if (!Relation()->IsAssignableTo(argumentType, funcReturnType)) {
             LogError(diagnostic::RETURN_DIFFERENT_PRIM, {funcReturnType, argumentType}, st->Argument()->Start());
         }
-    } else if (funcReturnType->IsETSReferenceType() || argumentType->IsETSReferenceType()) {
-        // function return type should be of reference (object) type
-        Relation()->SetFlags(checker::TypeRelationFlag::NONE);
-
-        if (IsPromiseType(funcReturnType)) {
-            ES2PANDA_ASSERT(containingFunc->IsAsyncFunc());
-            if (!IsPromiseType(argumentType)) {
-                argumentType = CreateETSAsyncFuncReturnTypeFromBaseType(argumentType)->PromiseType();
-            }
-        }
-
-        funcReturnType = CreateETSUnionType({funcReturnType, argumentType});
-        if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal() && !IsPromiseType(funcReturnType)) {
-            funcReturnType = CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType)->PromiseType();
-        }
-
-        signature->SetReturnType(funcReturnType);
-    } else {
-        // Should never in this branch.
-        ES2PANDA_UNREACHABLE();
+        return;
     }
+    ES2PANDA_ASSERT(funcReturnType->IsETSReferenceType() || argumentType->IsETSReferenceType());
+
+    // function return type should be of reference (object) type
+    Relation()->SetFlags(checker::TypeRelationFlag::NONE);
+
+    /*
+     * 15.7.2: If there are k return statements (where k is 2 or more) with expressions of types T1, ..., Tk, then R is
+     * the union type of these types (T1 | ... | Tk), and its normalized version is the return type;
+     * 15.7.2: If a function, a method, or a lambda is async, a return type is inferred by applying the above rules, and
+     * if the return type T is not Promise, then the return type is assumed to be Promise<T>;
+     */
+    // NOTE(knazarov): Already implemented as `... and the return type is assumed to be Promise<Awaited<T>>` here, need
+    // to consult with the spec before merge;
+    if (containingFunc->IsAsyncFunc()) {
+        funcReturnType =
+            CreatePromiseOf(CreateETSUnionType({UnwrapPromiseType(funcReturnType), UnwrapPromiseType(argumentType)}));
+    } else {
+        funcReturnType = CreateETSUnionType({funcReturnType, argumentType});
+    }
+
+    signature->SetReturnType(funcReturnType);
 }
 
 static Type *GetElementTypeFromNumericLiterals(ETSChecker *checker, ArenaVector<ir::Expression *> &elements)
@@ -2608,6 +2611,14 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunction
             inferredReturnType = maybeSubstitutedFunctionSig->ReturnType();
         }
         lambda->SetPreferredReturnType(inferredReturnType);
+        /*
+         * NOTE(knazarov): Should be intersection of type Promise<T> with the preferred type of the func;
+         * However, current implementation lacks the support for intersection of two types;
+         * Rewrite when intersection types are supported;
+         */
+        if (lambda->IsAsyncFunc()) {
+            lambda->SetPreferredReturnType(ResolvePreferredReturnTypeForAsyncFunction(lambda));
+        }
     }
 
     if (calleeType->Params().empty()) {
@@ -2659,6 +2670,14 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, Signature *sign
 
     if (lambda->ReturnTypeAnnotation() == nullptr) {
         lambda->SetPreferredReturnType(signature->ReturnType());
+        /*
+         * NOTE(knazarov): Should be intersection of type Promise<T> with the preferred type of the func;
+         * However, current implementation lacks the support for intersection of two types;
+         * Rewrite when intersection types are supported;
+         */
+        if (lambda->IsAsyncFunc()) {
+            lambda->SetPreferredReturnType(ResolvePreferredReturnTypeForAsyncFunction(lambda));
+        }
     }
 }
 

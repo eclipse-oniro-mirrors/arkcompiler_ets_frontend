@@ -142,25 +142,30 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 bool ETSChecker::IsPromiseType(Type *type)
 {
-    if (type->IsETSUnionType()) {
-        for (Type *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
-            if (!IsPromiseType(constituentType)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    return type->IsETSObjectType() &&
-           (type->AsETSObjectType()->GetOriginalBaseType() == GlobalBuiltinPromiseType() ||
-            type->AsETSObjectType()->GetOriginalBaseType() == GlobalBuiltinPromiseLikeType());
+    ES2PANDA_ASSERT(type);
+
+    return Relation()->IsSupertypeOf(CreatePromiseOf(GlobalETSAnyType()), type) &&
+           !Relation()->IsIdenticalTo(GlobalETSNeverType(), type);
+}
+
+/**
+ * NOTE(knazarov): Needed to cover cases when spec requires type to be Promise<T> or T,
+ * Since UnwrapPromiseType implements Awaited semantics, which unwrap recursively;
+ */
+Type *ETSChecker::PromiseTypeArg(checker::ETSObjectType *type)
+{
+    ES2PANDA_ASSERT(type);
+    ES2PANDA_ASSERT(type->IsETSObjectType());
+    ES2PANDA_ASSERT(IsPromiseType(type));
+    ES2PANDA_ASSERT(type->AsETSObjectType()->TypeArguments().size() == 1);
+
+    return type->AsETSObjectType()->TypeArguments()[0];
 }
 
 Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
 {
     Type *promiseType = GlobalBuiltinPromiseType();
-    Type *promiseLikeType = GlobalBuiltinPromiseLikeType();
-    while (type->IsETSObjectType() && (type->AsETSObjectType()->GetOriginalBaseType() == promiseType ||
-                                       type->AsETSObjectType()->GetOriginalBaseType() == promiseLikeType)) {
+    while (type->IsETSObjectType() && (type->AsETSObjectType()->GetOriginalBaseType() == promiseType)) {
         type = type->AsETSObjectType()->TypeArguments().at(0);
     }
 
@@ -168,10 +173,8 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
         return type;
     }
     const auto &ctypes = type->AsETSUnionType()->ConstituentTypes();
-    auto it = std::find_if(ctypes.begin(), ctypes.end(), [promiseType, promiseLikeType](checker::Type *t) {
-        return t == promiseType || t == promiseLikeType ||
-               (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType ||
-                                         t->AsETSObjectType()->GetBaseType() == promiseLikeType));
+    auto it = std::find_if(ctypes.begin(), ctypes.end(), [promiseType](checker::Type *t) {
+        return t == promiseType || (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType));
     });
     if (it == ctypes.end()) {
         return type;
@@ -181,10 +184,8 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
         size_t index = it - ctypes.begin();
         newCTypes[index] = UnwrapPromiseType(ctypes[index]);
         ++it;
-        it = std::find_if(it, ctypes.end(), [promiseType, promiseLikeType](checker::Type *t) {
-            return t == promiseType || t == promiseLikeType ||
-                   (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType ||
-                                             t->AsETSObjectType()->GetBaseType() == promiseLikeType));
+        it = std::find_if(it, ctypes.end(), [promiseType](checker::Type *t) {
+            return t == promiseType || (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType));
         });
     } while (it != ctypes.end());
     return CreateETSUnionType(std::move(newCTypes));

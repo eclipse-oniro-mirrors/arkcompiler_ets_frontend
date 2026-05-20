@@ -277,7 +277,6 @@ set (HEADERS_TO_BE_PARSED
     ${ES2PANDA_ROOT}/checker/types/ets/etsWildcardType.h
     ${ES2PANDA_ROOT}/checker/types/ts/booleanType.h
     ${ES2PANDA_ROOT}/ir/expressions/typeofExpression.h
-    ${ES2PANDA_ROOT}/checker/types/ets/etsAsyncFuncReturnType.h
     ${ES2PANDA_ROOT}/ir/statements/loopStatement.h
     ${ES2PANDA_ROOT}/ir/statements/annotationDeclaration.h
     ${ES2PANDA_ROOT}/ir/statements/annotationUsage.h
@@ -410,7 +409,6 @@ set (ES2PANDA_API_GENERATED
     ${LIBGEN_DIR}/gen/headers/ir/expressions/superExpression.yaml
     ${LIBGEN_DIR}/gen/headers/ir/statements/assertStatement.yaml
     ${LIBGEN_DIR}/gen/headers/ir/ts/tsStringKeyword.yaml
-    ${LIBGEN_DIR}/gen/headers/checker/types/ets/etsAsyncFuncReturnType.yaml
     ${LIBGEN_DIR}/gen/headers/ir/expressions/assignmentExpression.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ts/voidType.yaml
     ${LIBGEN_DIR}/gen/headers/checker/types/ets/doubleType.yaml
