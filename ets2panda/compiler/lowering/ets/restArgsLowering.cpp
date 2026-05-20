@@ -424,6 +424,17 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
         return blockExpression;
     }
 
+    //  NOTE (DZ): will be redundant after smart-types processing refactoring.
+    //  Add cast to actual smart type to preserve it if required:
+    std::size_t const argsNumber = copiedArguments.size();
+    for (std::size_t i = 0U; i < argsNumber; ++i) {
+        ir::Expression *&arg = copiedArguments[i];
+        if (arg->IsIdentifier() && arg->TsType() != arg->Variable()->TsType()) {
+            auto *const typeNode = context->AllocNode<ir::OpaqueTypeNode>(arg->TsType(), allocator);
+            arg = context->AllocNode<ir::TSAsExpression>(arg, typeNode, false);
+        }
+    }
+
     return CreateRestArgsArrayWithoutSpread(context, copiedArguments, restParamType);
 }
 
