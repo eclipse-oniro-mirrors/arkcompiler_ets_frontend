@@ -47,7 +47,7 @@ std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *
             signature << ", ";
         }
 
-        signature << GetAdjustedParameterName(derivedFunction, derivedParameters[i]->Name().Utf8());
+        signature << derivedParameters[i]->Name().Utf8();
 
         // Add base parameter type
         typeNodes.emplace_back(AllocOpaqueTypeNode(baseParameters[i]->TsType()));
@@ -92,16 +92,6 @@ std::string GenericBridgesPhase::BuildMethodBody(ir::ClassDefinition const *clas
     return body.str();
 }
 
-std::string GenericBridgesPhase::GetAdjustedParameterName(ir::ScriptFunction const *derivedFunction,
-                                                          std::string_view parameterName) const noexcept
-{
-    // For setters, remove property prefix if present
-    if (derivedFunction->IsSetter() && parameterName.rfind(compiler::Signatures::PROPERTY, 0) == 0) {
-        return std::string(parameterName.substr(compiler::Signatures::PROPERTY.size()));
-    }
-    return std::string(parameterName);
-}
-
 std::string GenericBridgesPhase::BuildSetterAssignment(ir::ScriptFunction const *derivedFunction,
                                                        std::vector<ir::AstNode *> &typeNodes) const noexcept
 {
@@ -114,9 +104,7 @@ std::string GenericBridgesPhase::BuildSetterAssignment(ir::ScriptFunction const 
         }
 
         assignment << " = ";
-        auto const &parameterName = derivedParameters[i]->Name().Utf8();
-        auto const adjustedParameterName = GetAdjustedParameterName(derivedFunction, parameterName);
-        assignment << adjustedParameterName;
+        assignment << derivedParameters[i]->Name().Utf8();
 
         // Add derived parameter type for casting
         typeNodes.emplace_back(AllocOpaqueTypeNode(derivedParameters[i]->TsType()));
@@ -138,9 +126,7 @@ std::string GenericBridgesPhase::BuildMethodCall(ir::ScriptFunction const *deriv
             call << ", ";
         }
 
-        auto const &parameterName = derivedParameters[i]->Name().Utf8();
-        auto const adjustedParameterName = GetAdjustedParameterName(derivedFunction, parameterName);
-        call << adjustedParameterName;
+        call << derivedParameters[i]->Name().Utf8();
 
         // Add derived parameter type for casting
         typeNodes.emplace_back(AllocOpaqueTypeNode(derivedParameters[i]->TsType()));

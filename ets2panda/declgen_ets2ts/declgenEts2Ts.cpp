@@ -792,14 +792,13 @@ void TSDeclGen::ProcessFuncRestParameter(varbinder::LocalVariable *param)
 
 void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
 {
-    if (std::string(param->Name()).find("%%property-") != std::string::npos) {
+    const auto *paramType = param->TsType();
+    const auto *paramDeclNode = param->Declaration()->Node();
+    if (param->Declaration()->Node()->IsProperty()) {
         return;
     }
 
     ProcessParameterName(param);
-
-    const auto *paramType = param->TsType();
-    const auto *paramDeclNode = param->Declaration()->Node();
 
     if (!paramDeclNode->IsETSParameterExpression()) {
         if (param->HasFlag(varbinder::VariableFlags::OPTIONAL)) {

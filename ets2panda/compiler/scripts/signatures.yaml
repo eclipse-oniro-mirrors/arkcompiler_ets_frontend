@@ -179,8 +179,6 @@ defines:
     ref: ARRAY
   - name: 'gradual'
     ref: GRADUAL_TYPE_NAME
-  - name: '%%property-'
-    ref: PROPERTY
   - name: 'Any'
     ref: ANY_TYPE_NAME
   - name: 'never'

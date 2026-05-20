@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -71,13 +71,6 @@ void CollectClassProperties(const ir::AstNode *classNode, std::vector<FieldsInfo
         std::optional<std::vector<std::string>> modifiersOpt(modifiers);
 
         std::string name = GetIdentifierName(property);
-
-        constexpr auto K_PROPERTY_PREFIX = "%%property-";
-        constexpr std::size_t K_PROPERTY_PREFIX_LENGTH = std::char_traits<char>::length(K_PROPERTY_PREFIX);
-        if (name.size() >= K_PROPERTY_PREFIX_LENGTH &&
-            name.compare(0, K_PROPERTY_PREFIX_LENGTH, K_PROPERTY_PREFIX) == 0) {
-            name.erase(0, K_PROPERTY_PREFIX_LENGTH);
-        }
 
         FieldListProperty propertyInfo("classField", std::move(modifiersOpt), name, property->Start().index,
                                        property->End().index);
