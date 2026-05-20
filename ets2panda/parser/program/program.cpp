@@ -67,6 +67,26 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
     if (!Is<util::ModuleKind::MODULE>()) {
         return std::string {ModuleName()};
     }
+    auto normAbsPath = sourceFile_.GetAbsolutePath().Mutf8();
+    std::replace(normAbsPath.begin(), normAbsPath.end(), '\\', '/');
+    const auto &path = context->config->options->ArkTSConfig().Paths();
+    for (const auto &[key, values] : path) {
+        for (const auto &value : values) {
+            auto normValue = value;
+            std::replace(normValue.begin(), normValue.end(), '\\', '/');
+            if (normAbsPath == normValue) {
+                auto dotPos = normAbsPath.rfind('.');
+                auto ext = (dotPos != std::string::npos) ? normAbsPath.substr(dotPos) : std::string();
+                return key + ext;
+            }
+            if (normValue.back() != '/') {
+                normValue += '/';
+            }
+            if (util::Helpers::StartsWith(normAbsPath, normValue)) {
+                return key + "/" + normAbsPath.substr(normValue.size());
+            }
+        }
+    }
     auto relPath = util::Helpers::RelPathByStrippingPrefix(
         sourceFile_.GetAbsolutePath().Mutf8(),
         ark::os::GetAbsolutePath(context->config->options->ArkTSConfig().RootDir()));
