@@ -736,12 +736,31 @@ static void CheckOverloadSameNameMethod(ETSChecker *const checker, ir::OverloadD
                            : overloadDecl->Parent()->Parent()->AsTSInterfaceDeclaration()->Check(checker);
     ES2PANDA_ASSERT(objectType->IsETSObjectType());
 
+    if (!overloadDecl->IsClassMethodOverloadDeclaration() && !overloadDecl->IsFunctionOverloadDeclaration() &&
+        !overloadDecl->IsInterfaceMethodOverloadDeclaration()) {
+        return;
+    }
+
     PropertySearchFlags searchFlags = PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION |
-                                      (overloadDecl->IsStatic() ? PropertySearchFlags::SEARCH_STATIC_METHOD
-                                                                : PropertySearchFlags::SEARCH_INSTANCE_METHOD);
+                                      (overloadDecl->IsStatic() || overloadDecl->IsFunctionOverloadDeclaration()
+                                           ? PropertySearchFlags::SEARCH_STATIC_METHOD
+                                           : PropertySearchFlags::SEARCH_INSTANCE_METHOD);
+    if (!overloadDecl->IsStatic() && overloadDecl->IsClassMethodOverloadDeclaration()) {
+        searchFlags |= PropertySearchFlags::SEARCH_IN_INTERFACES | PropertySearchFlags::SEARCH_IN_BASE;
+    }
     auto *sameNameMethod = objectType->AsETSObjectType()->GetProperty(overloadDecl->Id()->Name(), searchFlags);
     if (sameNameMethod == nullptr) {
         return;
+    }
+
+    auto *methodOwner = static_cast<checker::ETSObjectType *>(nullptr);
+    if (sameNameMethod->TsType() != nullptr && sameNameMethod->TsType()->IsETSFunctionType() &&
+        !sameNameMethod->TsType()->AsETSFunctionType()->CallSignatures().empty()) {
+        methodOwner = sameNameMethod->TsType()->AsETSFunctionType()->CallSignatures().front()->Owner();
+        if (sameNameMethod->HasFlag(varbinder::VariableFlags::PRIVATE) &&
+            methodOwner != objectType->AsETSObjectType()) {
+            return;
+        }
     }
 
     auto serachName = overloadDecl->Id()->Name().Mutf8();
