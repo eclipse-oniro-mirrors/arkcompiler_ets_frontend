@@ -1263,4 +1263,58 @@ class Box<T extends My> {}
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition27)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition27.ets"};
+    const std::string text = R"delimiter(
+@ohos.
+class A {}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    auto markerPos = text.find("@ohos.");
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("@ohos.").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    ASSERT_TRUE(res.GetEntries().empty());
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition28)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition29.ets", "getCompletionsAtPosition30.ets"};
+    std::vector<std::string> texts = {R"(
+export function foo(): void {}
+)",
+                                      R"(
+import { fo } from './getCompletionsAtPosition29'
+exp
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    auto markerPos = texts[1].find("fo");
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("fo").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "foo(): void", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "foo")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 }  // namespace
