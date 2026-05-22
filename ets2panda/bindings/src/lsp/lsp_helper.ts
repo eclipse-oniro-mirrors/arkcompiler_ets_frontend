@@ -429,51 +429,60 @@ export class Lsp {
     }
   }
 
+  private generateDeclFileByContext(ctx: KNativePointer, filePath: string): void {
+    const moduleInfo = this.moduleInfos[filePath];
+    const modulePath: string = path.relative(moduleInfo.moduleRootPath, filePath);
+    const declEtsOutputPath: string = changeDeclgenFileExtension(
+      path.join(moduleInfo.declgenV1OutPath!, modulePath),
+      DECL_ETS_SUFFIX
+    );
+    const etsOutputPath: string = changeDeclgenFileExtension(
+      path.join(moduleInfo.declgenBridgeCodePath!, modulePath),
+      TS_SUFFIX
+    );
+    this.declFileMap[declEtsOutputPath] = filePath;
+    ensurePathExists(declEtsOutputPath);
+    ensurePathExists(etsOutputPath);
+    const declgen = global.es2pandaPublic._CreateTsDeclgen(ctx, 1,
+      passStringArray([filePath]),
+      passStringArray([declEtsOutputPath]),
+      passStringArray([etsOutputPath]), 1, 0, '', 1
+    );
+    try {
+      global.es2pandaPublic._GenerateTsDeclarationsAfterParsed(declgen);
+      this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
+      PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+      global.es2pandaPublic._GenerateTsDeclarationsAfterCheck(declgen);
+      global.es2pandaPublic._WriteTsDeclarations(declgen);
+    }
+    finally {
+      global.es2pandaPublic._DestroyTsDeclgen(declgen);
+    }
+  }
+
   private generateDeclFile(filePath: string): void {
     const fileSource = this.getFileSource(filePath);
     if (getFileLanguageVersion(fileSource) === LANGUAGE_VERSION.ARKTS_1_2) {
-      const [cfg, ctx] = this.createContext(filePath, false) ?? [];
-      if (!cfg || !ctx) {
-        return;
-      }
-      try {
-        let moduleInfo = this.moduleInfos[filePath];
-        let modulePath: string = path.relative(moduleInfo.moduleRootPath, filePath);
-        let declEtsOutputPath: string = changeDeclgenFileExtension(
-          path.join(moduleInfo.declgenV1OutPath!, modulePath),
-          DECL_ETS_SUFFIX
-        );
-        let etsOutputPath: string = changeDeclgenFileExtension(
-          path.join(moduleInfo.declgenBridgeCodePath!, modulePath),
-          TS_SUFFIX
-        );
-        this.declFileMap[declEtsOutputPath] = filePath;
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(etsOutputPath);
-        const declgen = global.es2pandaPublic._CreateTsDeclgen(ctx, 1,
-        passStringArray([filePath]),
-        passStringArray([declEtsOutputPath]),
-        passStringArray([etsOutputPath]), 1, 0, '', 1
-        );
+      const fileCache = this.filesMap.get(filePath);
+      if (fileCache) {
+        this.generateDeclFileByContext(fileCache.fileContext, filePath);
+      } else {
+        const [cfg, ctx] = this.createContext(filePath, false) ?? [];
+        if (!cfg || !ctx) {
+          return;
+        }
         try {
-          global.es2pandaPublic._GenerateTsDeclarationsAfterParsed(declgen);
-          this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
-          PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-          global.es2pandaPublic._GenerateTsDeclarationsAfterCheck(declgen);
-          global.es2pandaPublic._WriteTsDeclarations(declgen);
+          this.generateDeclFileByContext(ctx, filePath);
+        } finally {
+          this.destroyContext(cfg, ctx);
         }
-        finally {
-          global.es2pandaPublic._DestroyTsDeclgen(declgen);
-        }
-      } finally {
-        this.destroyContext(cfg, ctx);
       }
     }
   }
 
-  private initDeclFile(): void {
+  private initDeclFile(ctx: KNativePointer): void {
     for (const filePath of Object.keys(this.moduleInfos)) {
-      this.generateDeclFile(filePath);
+      this.generateDeclFileByContext(ctx, filePath);
     }
   }
 
@@ -807,56 +816,39 @@ export class Lsp {
 
   getFileReferences(filename: String): LspReferenceData[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFileReferences', this.perfMetricLogFilePath) : undefined;
-    let isPackageModule: boolean;
     let searchFileCache = this.filesMap.get(filename.valueOf());
+    let ptr: KPointer;
+    const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
+    filename = isWindows ? filename.replace(/\//g, '\\') : filename;
+    const resolvedFileName = path.resolve(filename.valueOf());
     if (searchFileCache) {
       try {
-        isPackageModule = global.es2panda._isPackageModule(searchFileCache.fileContext);
+        ptr = global.es2panda._getFileReferences(resolvedFileName, searchFileCache.fileContext, false);
       } catch (error) {
         logger.error('failed to getFileReferences by fileCache', error);
         return;
       }
     } else {
-      const [cfg, searchCtx] = this.createContextForCrossModule(filename) ?? [];
-      if (!cfg || !searchCtx) { return; }
+      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
-        isPackageModule = global.es2panda._isPackageModule(searchCtx);
+        global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+        ptr = global.es2panda._getFileReferences(resolvedFileName, ctx, false);
       } catch (error) {
         logger.error('failed to getFileReferences', error);
         return;
       } finally {
-        this.destroyContext(cfg, searchCtx);
+        this.destroyContext(cfg, ctx);
       }
     }
+
     let result: LspReferenceData[] = [];
-    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
-    for (let i = 0; i < compileFiles.length; i++) {
-      let ptr: KPointer;
-      let fileCache = this.filesMap.get(compileFiles[i].valueOf());
-      if (fileCache) {
-        try {
-          ptr = global.es2panda._getFileReferences(path.resolve(filename.valueOf()), fileCache.fileContext, isPackageModule);
-        } catch (error) {
-          logger.error('failed to getFileReferences by fileCache', error);
-          return;
-        }
-      } else {
-        const [cfg, ctx] = this.createContextForCrossModule(compileFiles[i]) ?? [];
-        if (!cfg || !ctx) { return; }
-        try {
-          ptr = global.es2panda._getFileReferences(path.resolve(filename.valueOf()), ctx, isPackageModule);
-        } catch (error) {
-          logger.error('failed to getFileReferences', error);
-          return;
-        } finally {
-          this.destroyContext(cfg, ctx);
-        }
-      }
-      let refs = new LspReferences(ptr);
-      for (let j = 0; j < refs.referenceInfos.length; j++) {
-        if (refs.referenceInfos[j].fileName !== '') {
-          result.push(refs.referenceInfos[j]);
-        }
+    let refs = new LspReferences(ptr);
+    for (let i = 0; i < refs.referenceInfos.length; i++) {
+      if (refs.referenceInfos[i].fileName !== '') {
+        result.push(refs.referenceInfos[i]);
       }
     }
     perfScope?.end();
@@ -1282,20 +1274,23 @@ export class Lsp {
 
   findSafeDeleteLocation(filename: String, offset: number): LspSafeDeleteLocationInfo[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('findSafeDeleteLocation', this.perfMetricLogFilePath) : undefined;
-    let declInfo: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
+    let ptr: KPointer;
+    const fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
       try {
-        declInfo = global.es2panda._getDeclInfo(fileCache.fileContext, offset);
+        ptr = global.es2panda._findSafeDeleteLocation(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to findSafeDeleteLocation by fileCache', error);
         return;
       }
     } else {
       const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
-        declInfo = global.es2panda._getDeclInfo(ctx, offset);
+        global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
+        ptr = global.es2panda._findSafeDeleteLocation(ctx, offset);
       } catch (error) {
         logger.error('failed to findSafeDeleteLocation', error);
         return;
@@ -1303,34 +1298,8 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-
-    let result: LspSafeDeleteLocationInfo[] = [];
-    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
-    for (let i = 0; i < compileFiles.length; i++) {
-      let ptr: KPointer;
-      let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
-      if (searchFileCache) {
-        try {
-          ptr = global.es2panda._findSafeDeleteLocation(searchFileCache.fileContext, declInfo);
-        } catch (error) {
-          logger.error('failed to findSafeDeleteLocation by fileCache', error);
-          return;
-        }
-      } else {
-        const [searchCfg, searchCtx] = this.createContext(compileFiles[i]) ?? [];
-        if (!searchCfg || !searchCtx) { return; }
-        try {
-          ptr = global.es2panda._findSafeDeleteLocation(searchCtx, declInfo);
-        } catch (error) {
-          logger.error('failed to findSafeDeleteLocation', error);
-          return;
-        } finally {
-          this.destroyContext(searchCfg, searchCtx);
-        }
-      }
-      let refs = new LspSafeDeleteLocation(ptr);
-      result.push(...refs.safeDeleteLocationInfos);
-    }
+    let refs = new LspSafeDeleteLocation(ptr);
+    let result: LspSafeDeleteLocationInfo[] = refs.safeDeleteLocationInfos;
     const locInfo = Array.from(new Set(result));
     perfScope?.end();
     return locInfo;
@@ -1575,6 +1544,7 @@ export class Lsp {
         return;
       }
       try {
+        global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
         ptr = global.es2panda._getDocumentHighlights(ctx, offset);
       } catch (error) {
         logger.error('failed to getDocumentHighlights', error);

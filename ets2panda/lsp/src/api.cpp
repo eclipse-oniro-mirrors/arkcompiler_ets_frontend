@@ -138,11 +138,40 @@ CompletionEntryKind GetAliasScriptElementKind(es2panda_Context *context, size_t 
     return result;
 }
 
+// Maybe the "isPackageModule" parameter should be removed, because the frontend will remove ModuleKind::MODULE.
 References GetFileReferences(char const *fileName, es2panda_Context *context, bool isPackageModule)
 {
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    References result {};
+    if (context == nullptr || fileName == nullptr) {
+        return result;
+    }
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
     SetPhaseManager(ctx->phaseManager);
-    return GetFileReferencesImpl(context, fileName, isPackageModule);
+    result = GetFileReferencesFromIndex(context, std::string(fileName), isPackageModule);
+
+    for (auto &ref : result.referenceInfos) {
+        auto fileSource = GetIndexedFileSource(ref.fileName);
+        if (fileSource.empty()) {
+            continue;
+        }
+        size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, ref.start);
+        size_t lengthChar =
+            ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, ref.start + ref.length) - startCharOffset;
+        ref.start = startCharOffset;
+        ref.length = lengthChar;
+    }
+
+    auto compare = [](const ReferenceInfo &lhs, const ReferenceInfo &rhs) {
+        if (lhs.fileName != rhs.fileName) {
+            return lhs.fileName < rhs.fileName;
+        }
+        if (lhs.start != rhs.start) {
+            return lhs.start < rhs.start;
+        }
+        return lhs.length < rhs.length;
+    };
+    RemoveDuplicates(result.referenceInfos, compare);
+    return result;
 }
 
 DeclInfo GetDeclInfo(es2panda_Context *context, size_t position)
@@ -481,15 +510,9 @@ DocumentHighlightsReferences GetDocumentHighlights(es2panda_Context *context, si
     return result;
 }
 
-std::vector<SafeDeleteLocation> FindSafeDeleteLocation(es2panda_Context *ctx,
-                                                       const std::tuple<std::string, std::string> *declInfo)
+std::vector<SafeDeleteLocation> FindSafeDeleteLocation(es2panda_Context *ctx, size_t position)
 {
-    std::vector<SafeDeleteLocation> result;
-    if (declInfo == nullptr) {
-        return result;
-    }
-    result = FindSafeDeleteLocationImpl(ctx, *declInfo);
-    return result;
+    return FindSafeDeleteLocationImpl(ctx, position);
 }
 
 std::vector<ark::es2panda::lsp::ReferencedNode> FindReferencesWrapper(

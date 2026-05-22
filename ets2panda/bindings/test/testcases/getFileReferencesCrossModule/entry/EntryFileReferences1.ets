@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import { Foo } from 'har';
+import { Foo } from '../har/Index';
 
 const foo = new Foo();

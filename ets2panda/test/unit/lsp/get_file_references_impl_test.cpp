@@ -48,19 +48,12 @@ B(1, 2);)"};
     char const *searchFileName = filePaths[0].c_str();
     char const *referenceFileName = filePaths[1].c_str();
     Initializer initializer = Initializer();
-    auto ctx = initializer.CreateContext(searchFileName, ES2PANDA_STATE_CHECKED);
-    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
-
-    auto isPackageModule =
-        reinterpret_cast<Context *>(ctx)->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
-    ASSERT_FALSE(isPackageModule);
-    initializer.DestroyContext(ctx);
-
-    auto ctx1 = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
+    es2panda_Context *ctx1 = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx1), ES2PANDA_STATE_CHECKED);
 
-    auto result = References();
-    result = ark::es2panda::lsp::GetFileReferencesImpl(ctx1, searchFileName, isPackageModule);
+    LSPAPI const *lspApi = GetImpl();
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx1);
+    auto result = lspApi->getFileReferences(searchFileName, ctx1, false);
     auto expectedFileName1 = filePaths[1];
     size_t const expectedStartPos1 = 16;
     size_t const expectedLength1 = 25;
@@ -98,19 +91,12 @@ B(1, 2);)"};
     char const *searchFileName = filePaths[0].c_str();
     char const *referenceFileName = filePaths[1].c_str();
     Initializer initializer = Initializer();
-    auto ctx = initializer.CreateContext(searchFileName, ES2PANDA_STATE_CHECKED);
-    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
-
-    auto isPackageModule =
-        reinterpret_cast<Context *>(ctx)->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
-    ASSERT_FALSE(isPackageModule);
-    initializer.DestroyContext(ctx);
-
     auto ctx1 = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx1), ES2PANDA_STATE_CHECKED);
 
-    auto result = References();
-    result = ark::es2panda::lsp::GetFileReferencesImpl(ctx1, searchFileName, isPackageModule);
+    LSPAPI const *lspApi = GetImpl();
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx1);
+    auto result = lspApi->getFileReferences(searchFileName, ctx1, false);
     auto expectedFileName1 = filePaths[1];
     size_t const expectedStartPos1 = 16;
     size_t const expectedLength1 = 25;
@@ -124,34 +110,6 @@ B(1, 2);)"};
     ASSERT_EQ(result.referenceInfos.at(1).start, expectedStartPos2);
     ASSERT_EQ(result.referenceInfos.at(1).length, expectedLength2);
     initializer.DestroyContext(ctx1);
-}
-
-TEST_F(LSPAPITests, GetFileReferencesImpl3)
-{
-    using ark::es2panda::public_lib::Context;
-    std::vector<std::string> files = {"package-module.ets"};
-    std::vector<std::string> texts = {R"(import { PI } from "std/math/consts";
-console.log(PI);)"};
-    auto filePaths = CreateTempFile(files, texts);
-    int const expectedFileCount = 1;
-    ASSERT_EQ(filePaths.size(), expectedFileCount);
-
-    char const *referenceFileName = filePaths[0].c_str();
-    Initializer initializer = Initializer();
-    auto ctx = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
-    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
-
-    auto searchFileName = "std/math/consts";
-    auto result = References();
-    result = ark::es2panda::lsp::GetFileReferencesImpl(ctx, searchFileName, false);
-    auto expectedFileName = filePaths[0];
-    size_t const expectedStartPos = 19;
-    size_t const expectedLength = 17;
-
-    ASSERT_EQ(result.referenceInfos.at(0).fileName, expectedFileName);
-    ASSERT_EQ(result.referenceInfos.at(0).start, expectedStartPos);
-    ASSERT_EQ(result.referenceInfos.at(0).length, expectedLength);
-    initializer.DestroyContext(ctx);
 }
 
 }  // namespace

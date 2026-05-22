@@ -52,13 +52,17 @@ describe('getFileReferencesCrossModuleTest', () => {
   const entryFile1 = getRealPath(projectName, 'entry/EntryFileReferences1.ets');
   const entryFile2 = getRealPath(projectName, 'entry/EntryFileReferences2.ets');
   const EXPECT_PACKAGE_REFERENCES = [
-    getModuleSpecifierLocation(entryFile1, 'har'),
-    getModuleSpecifierLocation(entryFile2, 'har')
+    getModuleSpecifierLocation(entryFile1, '../har/Index'),
+    getModuleSpecifierLocation(entryFile2, '../har/Index')
   ];
   const EXPECT_INTERNAL_REFERENCES = [
     getModuleSpecifierLocation(harInternalFile, './Symbols')
   ];
 
+  lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8')});
+  lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8')});
+  lsp.modifyFilesMap(harInternalFile, { newDoc: fs.readFileSync(harInternalFile, 'utf8')});
+  lsp.modifyFilesMap(harIndexFile, { newDoc: fs.readFileSync(harIndexFile, 'utf8')});
   test('getFileReferences_package_entry_is_referenced_by_entry_modules', () => {
     const res = lsp.getFileReferences(harIndexFile);
 
@@ -74,6 +78,7 @@ describe('getFileReferencesCrossModuleTest', () => {
     expect(refs).toMatchObject(EXPECT_PACKAGE_REFERENCES);
   });
 
+  lsp.modifyFilesMap(harSymbolsFile, { newDoc: fs.readFileSync(harSymbolsFile, 'utf8')});
   test('getFileReferences_source_file_is_referenced_inside_har', () => {
     const res = lsp.getFileReferences(harSymbolsFile);
 

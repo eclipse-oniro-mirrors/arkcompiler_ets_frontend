@@ -29,24 +29,6 @@ public:
 
     NO_COPY_SEMANTIC(LSPGetFileReferencesTests);
     NO_MOVE_SEMANTIC(LSPGetFileReferencesTests);
-
-    References MockGetFileReferences(char const *fileName, const std::vector<std::string> &filePaths)
-    {
-        Initializer initializer = Initializer();
-        auto context = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED);
-        bool isPackageModule = reinterpret_cast<ark::es2panda::public_lib::Context *>(context)
-                                   ->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
-        initializer.DestroyContext(context);
-        References result {};
-        for (auto const &file : filePaths) {
-            auto referenceContext = initializer.CreateContext(file.c_str(), ES2PANDA_STATE_CHECKED);
-            auto refInfo = ark::es2panda::lsp::GetFileReferencesImpl(referenceContext, fileName, isPackageModule);
-            result.referenceInfos.insert(result.referenceInfos.end(), refInfo.referenceInfos.begin(),
-                                         refInfo.referenceInfos.end());
-            initializer.DestroyContext(referenceContext);
-        }
-        return result;
-    }
 };
 
 TEST_F(LSPGetFileReferencesTests, GetFileReferences1)
@@ -67,7 +49,15 @@ B(1, 2);)"};
     int const expectedFileCount = 2;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
-    References result = MockGetFileReferences(filePaths[0].c_str(), filePaths);
+    char const *searchFileName = filePaths[0].c_str();
+    char const *referenceFileName = filePaths[1].c_str();
+    Initializer initializer = Initializer();
+    auto ctx1 = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx1), ES2PANDA_STATE_CHECKED);
+
+    LSPAPI const *lspApi = GetImpl();
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx1);
+    auto result = lspApi->getFileReferences(searchFileName, ctx1, false);
     // NOLINTBEGIN(readability-magic-numbers)
     std::vector<ReferenceInfo> expectedResult {{filePaths[1], 16, 11}, {filePaths[1], 45, 15}};
     // NOLINTEND(readability-magic-numbers)
@@ -97,7 +87,15 @@ B(1, 2);)"};
     int const expectedFileCount = 2;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
-    References result = MockGetFileReferences(filePaths[0].c_str(), filePaths);
+    char const *searchFileName = filePaths[0].c_str();
+    char const *referenceFileName = filePaths[1].c_str();
+    Initializer initializer = Initializer();
+    auto ctx1 = initializer.CreateContext(referenceFileName, ES2PANDA_STATE_CHECKED);
+    ASSERT_EQ(ContextState(ctx1), ES2PANDA_STATE_CHECKED);
+
+    LSPAPI const *lspApi = GetImpl();
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx1);
+    auto result = lspApi->getFileReferences(searchFileName, ctx1, false);
     // NOLINTBEGIN(readability-magic-numbers)
     std::vector<ReferenceInfo> expectedResult {{filePaths[1], 16, 11}, {filePaths[1], 45, 14}};
     // NOLINTEND(readability-magic-numbers)
