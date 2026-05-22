@@ -49,6 +49,7 @@ struct FileIndexData {
 std::unordered_map<std::string, FileIndexData> g_fileIndices {};
 std::unordered_map<SymbolId, std::vector<ReferenceInfo>> g_symbolReferences {};
 std::unordered_map<SymbolId, ReferenceInfo> g_symbolDefinitions {};
+std::unordered_set<SymbolId> g_symbolDefIsDefaultExport {};
 
 std::string GetNodeFileName(const ir::AstNode *node, const public_lib::Context *ctx)
 {
@@ -206,6 +207,7 @@ void RemoveFileContributions(const std::string &fileName)
         if (refs.empty()) {
             g_symbolReferences.erase(refsIt);
             g_symbolDefinitions.erase(symbolId);
+            g_symbolDefIsDefaultExport.erase(symbolId);
         }
     }
 
@@ -273,6 +275,9 @@ void ProcessNodeForSymbolIndex(const public_lib::Context *ctx, ir::AstNode *node
     if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
         g_symbolDefinitions[symbolId] =
             ReferenceInfo(GetNodeFileName(owner, ctx), owner->Start().index, owner->End().index - owner->Start().index);
+        if (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported()) {
+            g_symbolDefIsDefaultExport.insert(symbolId);
+        }
     }
 }
 
@@ -314,6 +319,7 @@ void InitSymbolReferenceIndex()
     g_fileIndices.clear();
     g_symbolReferences.clear();
     g_symbolDefinitions.clear();
+    g_symbolDefIsDefaultExport.clear();
 }
 
 void ClearSymbolReferenceIndex()
@@ -631,6 +637,48 @@ std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const 
         result.push_back(best);
     }
     return result;
+}
+
+std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string &name, const std::string &excludeFile)
+{
+    std::vector<SymbolDefSearchResult> results;
+    std::unordered_set<std::string> seen;
+
+    for (const auto &[symbolId, defRef] : g_symbolDefinitions) {
+        if (defRef.fileName == excludeFile) {
+            continue;
+        }
+
+        auto fileIt = g_fileIndices.find(defRef.fileName);
+        if (fileIt == g_fileIndices.end()) {
+            continue;
+        }
+        const auto &source = fileIt->second.source;
+        if (defRef.start >= source.size()) {
+            continue;
+        }
+
+        size_t nameStart = defRef.start;
+        size_t nameEnd = nameStart;
+        while (nameEnd < source.size() && (isalnum(source[nameEnd]) != 0 || source[nameEnd] == '_')) {
+            nameEnd++;
+        }
+        std::string symbolName = source.substr(nameStart, nameEnd - nameStart);
+        if (symbolName != name) {
+            continue;
+        }
+
+        std::string dedupKey = defRef.fileName + ":" + symbolName;
+        if (!seen.insert(dedupKey).second) {
+            continue;
+        }
+
+        bool isDefault = g_symbolDefIsDefaultExport.count(symbolId) > 0;
+
+        results.push_back(SymbolDefSearchResult {defRef.fileName, symbolName, isDefault});
+    }
+
+    return results;
 }
 
 }  // namespace ark::es2panda::lsp

@@ -246,6 +246,18 @@ ets2panda_add_gtest(lsp_api_import_fixes_test CPP_SOURCES
     code_fix/import_fixes.cpp
 )
 
+ets2panda_add_gtest(lsp_api_remove_catch_type_annotation_test CPP_SOURCES
+    code_fix/remove_catch_type_annotation_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_forbidden_any_type_test CPP_SOURCES
+    code_fix/fix_forbidden_any_type_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_import_source_test CPP_SOURCES
+    code_fix/fix_import_source_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_get_class_hierarchy_info CPP_SOURCES
     class_hierarchy_info_test.cpp
 )

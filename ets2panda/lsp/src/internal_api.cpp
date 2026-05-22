@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <cstddef>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -33,6 +35,7 @@
 #include "generated/code_fix_register.h"
 #include "quick_info.h"
 #include "util/eheap.h"
+#include "util/helpers.h"
 
 #if __has_include(<filesystem>)
 #include <filesystem>
@@ -45,6 +48,69 @@ namespace fs = std::experimental::filesystem;
 #endif
 
 namespace ark::es2panda::lsp {
+
+namespace {
+
+std::string StripExtension(const std::string &path)
+{
+    std::string result = path;
+    if (util::Helpers::EndsWith(result, ".d.ets")) {
+        result.resize(result.size() - std::string(".d.ets").size());
+    } else if (util::Helpers::EndsWith(result, ".ets")) {
+        result.resize(result.size() - std::string(".ets").size());
+    } else if (util::Helpers::EndsWith(result, ".ts")) {
+        result.resize(result.size() - std::string(".ts").size());
+    }
+    return result;
+}
+
+}  // namespace
+
+std::string ComputeRelativeImportPath(const std::string &fromFile, const std::string &toFile)
+{
+    auto fromDirGen = fs::path(fromFile).parent_path().generic_string();
+    auto toParentGen = fs::path(toFile).parent_path().generic_string();
+    auto fileName = fs::path(toFile).filename().generic_string();
+
+    // Split both directory paths by '/'
+    std::vector<std::string> fromSegs;
+    std::vector<std::string> toSegs;
+    std::istringstream fromStream(fromDirGen);
+    std::istringstream toStream(toParentGen);
+    std::string seg;
+    while (std::getline(fromStream, seg, '/')) {
+        if (!seg.empty()) {
+            fromSegs.push_back(seg);
+        }
+    }
+    while (std::getline(toStream, seg, '/')) {
+        if (!seg.empty()) {
+            toSegs.push_back(seg);
+        }
+    }
+
+    // Find first diverging segment
+    auto mismatched = std::mismatch(fromSegs.begin(), fromSegs.end(), toSegs.begin(), toSegs.end());
+
+    std::string relative;
+    // Add "../" for each extra segment in fromDir (going up)
+    for (auto it = mismatched.first; it != fromSegs.end(); ++it) {
+        relative += "../";
+    }
+    // Append remaining segments from toParent (going down)
+    for (auto it = mismatched.second; it != toSegs.end(); ++it) {
+        relative += *it + "/";
+    }
+    // Append filename
+    relative += fileName;
+
+    // Ensure "./" or "../" prefix
+    if (!relative.empty() && relative[0] != '.') {
+        relative = "./" + relative;
+    }
+
+    return StripExtension(relative);
+}
 
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 Initializer::Initializer(bool isLogAwaible)

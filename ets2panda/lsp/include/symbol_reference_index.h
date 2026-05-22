@@ -39,6 +39,14 @@ int LevenshteinDistance(const std::string &s1, const std::string &s2, int maxDis
 std::string GetSpellingSuggestion(const std::string &name, const std::vector<std::string> &candidates);
 std::vector<std::string> FindSimilarSymbolNames(const std::string &query, const std::string &fileName);
 
+struct SymbolDefSearchResult {
+    std::string fileName;
+    std::string symbolName;
+    bool isDefaultExport = false;
+};
+
+std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string &name, const std::string &excludeFile);
+
 }  // namespace ark::es2panda::lsp
 
 #endif

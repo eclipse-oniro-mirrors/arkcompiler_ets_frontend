@@ -108,6 +108,7 @@ set(ES2PANDA_LSP_SRC
   ./src/brace_matching.cpp
   ./src/services/services.cpp
   ./src/services/utilities.cpp
+  ./src/services/import_utils.cpp
   ./src/line_column_offset.cpp
   ./src/services/text_change/change_tracker.cpp
   ./src/code_fix_provider.cpp
@@ -151,6 +152,9 @@ set(ES2PANDA_LSP_SRC
   ./src/register_code_fix/fix_unreachable_code.cpp
   ./src/register_code_fix/fix_remove_illegal_await.cpp
   ./src/register_code_fix/fix_remove_duplicate_export_import.cpp
+  ./src/register_code_fix/remove_catch_type_annotation.cpp
+  ./src/register_code_fix/fix_forbidden_any_type.cpp
+  ./src/register_code_fix/fix_import_source.cpp
   ./src/get_name_or_dotted_name_span.cpp
   ./src/get_node.cpp
   ./src/node_matchers.cpp
