@@ -222,17 +222,10 @@ ohos_source_set("assembly_proto_static") {
 
 ohos_static_library("panda_assembly_proto_static") {
   deps = [ ":assembly_proto_static" ]
-  if (!ark_standalone_build) {
-    public_external_deps = [
-      "protobuf:protobuf_lite_static",
-      "protobuf:protobuf_static",
-    ]
-  } else {
-    external_deps = [
-      "protobuf:protobuf_lite_static",
-      "protobuf:protobuf_static",
-    ]
-  }
+  external_deps = [
+    "protobuf:protobuf_lite_static",
+    "protobuf:protobuf_static",
+  ]
   part_name = "ets_frontend"
   subsystem_name = "arkcompiler"
 }
@@ -290,13 +283,15 @@ ohos_executable("merge_abc") {
   }
   if (!is_arkui_x) {
     external_deps += [ "runtime_core:libarkziparchive_frontend_static" ]
-  } else {
-    deps += [ "$ark_root/libziparchive:libarkziparchive_frontend_static" ]
-  }
-  if (ark_standalone_build) {
     external_deps += [
       "protobuf:protobuf_lite_static",
       "protobuf:protobuf_static",
+    ]
+  } else {
+    deps += [ "$ark_root/libziparchive:libarkziparchive_frontend_static" ]
+    deps += [
+      "$ark_third_party_root/protobuf:protobuf_lite_static",
+      "$ark_third_party_root/protobuf:protobuf_static",
     ]
   }
   ldflags = []
