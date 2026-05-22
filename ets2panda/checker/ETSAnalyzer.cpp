@@ -404,7 +404,7 @@ static void CheckFieldOverride(ir::ClassProperty *st, ETSChecker *checker)
 
 static void TypeAnnoCheckForExportedMethod(checker::ETSChecker *checker, ir::MethodDefinition *methodDef)
 {
-    if (!methodDef->IsConstructor() && !methodDef->IsSetter() &&
+    if (!methodDef->IsConstructor() && !methodDef->Function()->IsSetter() &&
         methodDef->Function()->ReturnTypeAnnotation() == nullptr) {
         checker->LogError(diagnostic::EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO, {"function", methodDef->Id()->Name()},
                           methodDef->Start());
