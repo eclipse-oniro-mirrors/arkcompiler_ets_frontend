@@ -16,5 +16,5 @@
 enum Color { Red, Green }
 let c = new Color(0, 0)
 
-/* @@? 17:9 Error Semantic error ESE0124: Expected 3 arguments, got 2. */
 /* @@? 17:9 Error Semantic error ESE0127: No matching construct signature for new_instance.Color(Int, Int) */
+/* @@? 17:9 Error Semantic error ESE0139: Signature constructor(ordinal: Int, value: Int): undefined is not visible here. */

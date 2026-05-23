@@ -182,12 +182,16 @@ int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
     auto const list = value->AsArrayExpression()->Elements();
     for (size_t index = 0; index < list.size(); index++) {
         auto *item = list.at(index);
-        if (!item->IsMemberExpression() || item->AsMemberExpression()->Property() == nullptr ||
-            !item->AsMemberExpression()->Property()->IsIdentifier()) {
+        std::string enumMemberName;
+        if (item->IsStringLiteral()) {
+            enumMemberName = std::string(item->AsStringLiteral()->Str().Utf8());
+        } else if (item->IsMemberExpression() && item->AsMemberExpression()->Property() != nullptr &&
+                   item->AsMemberExpression()->Property()->IsIdentifier()) {
+            enumMemberName = std::string(item->AsMemberExpression()->Property()->AsIdentifier()->Name());
+        } else {
             continue;
         }
-        const auto nameD = std::string(item->AsMemberExpression()->Property()->AsIdentifier()->Name());
-        if (strstr(assignName.c_str(), nameD.c_str()) != nullptr) {
+        if (strstr(assignName.c_str(), enumMemberName.c_str()) != nullptr) {
             return index;
         }
     }
@@ -196,19 +200,18 @@ int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
 void SaveNumEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList *result, int &enumValueIndex)
 {
     const int exitNum = -1;
-    const auto itemsArray = "#ItemsArray";
-    if (mem->AsClassProperty()->Key()->AsIdentifier()->Name() != itemsArray) {
-        return;
-    }
     auto *value = mem->AsClassProperty()->Value();
-    if (!value->IsArrayExpression() || !value->AsArrayExpression()->TsType()->IsETSArrayType()) {
+    if (!value->IsArrayExpression()) {
         return;
     }
-    auto const enumType = value->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
-    if (enumType->IsETSNumericEnumType() == false) {
+    const auto &elements = value->AsArrayExpression()->Elements();
+    if (enumValueIndex < 0 || static_cast<size_t>(enumValueIndex) >= elements.size()) {
         return;
     }
-    auto valueLiteral = enumType->AsETSEnumType()->GetValueLiteralFromOrdinal(enumValueIndex);
+    auto *valueLiteral = elements.at(static_cast<size_t>(enumValueIndex));
+    if (!valueLiteral->IsNumberLiteral()) {
+        return;
+    }
     SaveToList(valueLiteral, member, result);
     enumValueIndex = exitNum;
 }
@@ -217,14 +220,17 @@ void SaveStringEnums(ir::AstNode *mem, const ir::AstNode *member, InlayHintList 
 {
     const int exitNum = -1;
     auto *value = mem->AsClassProperty()->Value();
-    if (!value->IsArrayExpression() || !value->AsArrayExpression()->TsType()->IsETSArrayType()) {
+    if (!value->IsArrayExpression()) {
         return;
     }
-    auto const enumType = value->AsArrayExpression()->TsType()->AsETSArrayType()->ElementType();
-    if (enumType->IsETSStringEnumType() == false) {
+    const auto &elements = value->AsArrayExpression()->Elements();
+    if (enumValueIndex < 0 || static_cast<size_t>(enumValueIndex) >= elements.size()) {
         return;
     }
-    auto valueLiteral = enumType->AsETSEnumType()->GetValueLiteralFromOrdinal(enumValueIndex);
+    auto *valueLiteral = elements.at(static_cast<size_t>(enumValueIndex));
+    if (!valueLiteral->IsStringLiteral()) {
+        return;
+    }
     SaveToList(valueLiteral, member, result);
     enumValueIndex = exitNum;
 }
@@ -240,17 +246,19 @@ void GetEnumIndexForSave(const ir::AstNode *enumMember, const ir::AstNode *membe
 
     enumMember->AsClassDefinition()->FindChild([member, assignName, &enumValueIndex, &result](ir::AstNode *mem) {
         const int exitNum = -1;
-        const auto itemsArray = "#ItemsArray";
+        const auto namesArray = "#NamesArray";
+        const auto valuesArray = "#ValuesArray";
+        const auto stringValuesArray = "#StringValuesArray";
         if (!mem->IsClassProperty() || !mem->AsClassProperty()->Key()->IsIdentifier()) {
             return false;
         }
         const auto keyName = mem->AsClassProperty()->Key()->AsIdentifier()->Name();
-        if (keyName == itemsArray) {
+        if (keyName == namesArray) {
             enumValueIndex = GetIndexForEnum(mem, assignName);
-            if (enumValueIndex != exitNum) {
-                SaveNumEnums(mem, member, result, enumValueIndex);
-                SaveStringEnums(mem, member, result, enumValueIndex);
-            }
+        } else if (enumValueIndex != exitNum && keyName == valuesArray) {
+            SaveNumEnums(mem, member, result, enumValueIndex);
+        } else if (enumValueIndex != exitNum && keyName == stringValuesArray) {
+            SaveStringEnums(mem, member, result, enumValueIndex);
         }
         return false;
     });

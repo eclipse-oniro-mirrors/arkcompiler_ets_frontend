@@ -456,83 +456,6 @@
                         "program": "switch_enum_string_case.ets"
                       }
                     }
-                  },
-                  {
-                    "type": "ETSParameterExpression",
-                    "name": {
-                      "type": "Identifier",
-                      "name": "name",
-                      "typeAnnotation": {
-                        "type": "ETSTypeReference",
-                        "part": {
-                          "type": "ETSTypeReferencePart",
-                          "name": {
-                            "type": "Identifier",
-                            "name": "String",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 1,
-                              "program": "switch_enum_string_case.ets"
-                            },
-                            "end": {
-                              "line": 20,
-                              "column": 1,
-                              "program": "switch_enum_string_case.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 20,
-                            "column": 1,
-                            "program": "switch_enum_string_case.ets"
-                          },
-                          "end": {
-                            "line": 20,
-                            "column": 1,
-                            "program": "switch_enum_string_case.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 20,
-                          "column": 1,
-                          "program": "switch_enum_string_case.ets"
-                        },
-                        "end": {
-                          "line": 20,
-                          "column": 1,
-                          "program": "switch_enum_string_case.ets"
-                        }
-                      }
-                    },
-                    "loc": {
-                      "start": {
-                        "line": 20,
-                        "column": 1,
-                        "program": "switch_enum_string_case.ets"
-                      },
-                      "end": {
-                        "line": 20,
-                        "column": 1,
-                        "program": "switch_enum_string_case.ets"
-                      }
-                    }
                   }
                 ],
                 "body": {
@@ -561,22 +484,6 @@
                           {
                             "type": "Identifier",
                             "name": "value",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "Identifier",
-                            "name": "name",
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -865,22 +772,6 @@
                       "program": "switch_enum_string_case.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "e1",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -1048,22 +939,6 @@
                 {
                   "type": "StringLiteral",
                   "value": "B",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "e2",
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1255,22 +1130,6 @@
                       "program": "switch_enum_string_case.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "e3",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "switch_enum_string_case.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -1348,6 +1207,336 @@
               "end": {
                 "line": 20,
                 "column": 40,
+                "program": "switch_enum_string_case.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#NamesArray",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "e1",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "e2",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "e3",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#StringValuesArray",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "A",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "B",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "C",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
                 "program": "switch_enum_string_case.ets"
               }
             }
@@ -1620,6 +1809,285 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
+              "name": "getName",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "getName",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Enum",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 10,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#NamesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
               "name": "getValueOf",
               "loc": {
                 "start": {
@@ -1838,7 +2306,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#NamesArray",
                                     "loc": {
                                       "start": {
                                         "line": 20,
@@ -2058,94 +2526,28 @@
                             }
                           },
                           "right": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Enum",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 6,
-                                        "program": "switch_enum_string_case.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 10,
-                                        "program": "switch_enum_string_case.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "switch_enum_string_case.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "switch_enum_string_case.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Enum",
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "switch_enum_string_case.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 10,
                                     "program": "switch_enum_string_case.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "getName",
+                                "name": "#NamesArray",
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2174,7 +2576,23 @@
                                 }
                               }
                             },
-                            "arguments": [],
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "switch_enum_string_case.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "switch_enum_string_case.ets"
+                                }
+                              }
+                            },
+                            "computed": true,
                             "optional": false,
                             "loc": {
                               "start": {
@@ -2728,7 +3146,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#StringValuesArray",
                                     "loc": {
                                       "start": {
                                         "line": 20,
@@ -2932,94 +3350,44 @@
                           "type": "BinaryExpression",
                           "operator": "==",
                           "left": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "Identifier",
+                            "name": "value",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "right": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Enum",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 6,
-                                        "program": "switch_enum_string_case.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 10,
-                                        "program": "switch_enum_string_case.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "switch_enum_string_case.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "switch_enum_string_case.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "switch_enum_string_case.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Enum",
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "switch_enum_string_case.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 10,
                                     "program": "switch_enum_string_case.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "valueOf",
+                                "name": "#StringValuesArray",
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -3048,24 +3416,24 @@
                                 }
                               }
                             },
-                            "arguments": [],
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "switch_enum_string_case.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "switch_enum_string_case.ets"
+                                }
                               }
-                            }
-                          },
-                          "right": {
-                            "type": "Identifier",
-                            "name": "value",
+                            },
+                            "computed": true,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3316,6 +3684,564 @@
                             }
                           }
                         ],
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "valueOf",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "valueOf",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Enum",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 10,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#StringValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "switch_enum_string_case.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "switch_enum_string_case.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "switch_enum_string_case.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "switch_enum_string_case.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "toString",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "switch_enum_string_case.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "switch_enum_string_case.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "switch_enum_string_case.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Enum",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 10,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#StringValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "switch_enum_string_case.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "switch_enum_string_case.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 20,

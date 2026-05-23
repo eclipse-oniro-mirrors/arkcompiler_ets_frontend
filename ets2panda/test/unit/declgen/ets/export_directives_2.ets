@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ export {A1} from './expected/export_directives_1.txt';
 
 export {A2 as default};
 
-export function foo(x: A2) { return x.foo77(); }
+export function foo(x: A2): A1 { return x.foo77(); }
 
 let x = new A2().foo77();
 

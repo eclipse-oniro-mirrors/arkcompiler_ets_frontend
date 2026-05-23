@@ -394,83 +394,6 @@
                         "program": "enum_as_class_member_getValue_call.ets"
                       }
                     }
-                  },
-                  {
-                    "type": "ETSParameterExpression",
-                    "name": {
-                      "type": "Identifier",
-                      "name": "name",
-                      "typeAnnotation": {
-                        "type": "ETSTypeReference",
-                        "part": {
-                          "type": "ETSTypeReferencePart",
-                          "name": {
-                            "type": "Identifier",
-                            "name": "String",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 1,
-                              "program": "enum_as_class_member_getValue_call.ets"
-                            },
-                            "end": {
-                              "line": 20,
-                              "column": 1,
-                              "program": "enum_as_class_member_getValue_call.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 20,
-                            "column": 1,
-                            "program": "enum_as_class_member_getValue_call.ets"
-                          },
-                          "end": {
-                            "line": 20,
-                            "column": 1,
-                            "program": "enum_as_class_member_getValue_call.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 20,
-                          "column": 1,
-                          "program": "enum_as_class_member_getValue_call.ets"
-                        },
-                        "end": {
-                          "line": 20,
-                          "column": 1,
-                          "program": "enum_as_class_member_getValue_call.ets"
-                        }
-                      }
-                    },
-                    "loc": {
-                      "start": {
-                        "line": 20,
-                        "column": 1,
-                        "program": "enum_as_class_member_getValue_call.ets"
-                      },
-                      "end": {
-                        "line": 20,
-                        "column": 1,
-                        "program": "enum_as_class_member_getValue_call.ets"
-                      }
-                    }
                   }
                 ],
                 "body": {
@@ -499,22 +422,6 @@
                           {
                             "type": "Identifier",
                             "name": "value",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "Identifier",
-                            "name": "name",
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -803,22 +710,6 @@
                       "program": "enum_as_class_member_getValue_call.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Red",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -986,22 +877,6 @@
                 {
                   "type": "NumberLiteral",
                   "value": 1,
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Green",
                   "loc": {
                     "start": {
                       "line": 20,
@@ -1193,22 +1068,6 @@
                       "program": "enum_as_class_member_getValue_call.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Blue",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -1286,6 +1145,470 @@
               "end": {
                 "line": 23,
                 "column": 13,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#NamesArray",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "Red",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "Green",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "Blue",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#ValuesArray",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "NumberLiteral",
+                  "value": 0,
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "NumberLiteral",
+                  "value": 1,
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "NumberLiteral",
+                  "value": 2,
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSPrimitiveType",
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#StringValuesArray",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "0",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "1",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "2",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
                 "program": "enum_as_class_member_getValue_call.ets"
               }
             }
@@ -1558,6 +1881,285 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
+              "name": "getName",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "getName",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Color",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#NamesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
               "name": "getValueOf",
               "loc": {
                 "start": {
@@ -1776,7 +2378,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#NamesArray",
                                     "loc": {
                                       "start": {
                                         "line": 20,
@@ -1996,94 +2598,28 @@
                             }
                           },
                           "right": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Color",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 6,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 11,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Color",
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 11,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "getName",
+                                "name": "#NamesArray",
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2112,7 +2648,23 @@
                                 }
                               }
                             },
-                            "arguments": [],
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                }
+                              }
+                            },
+                            "computed": true,
                             "optional": false,
                             "loc": {
                               "start": {
@@ -2635,7 +3187,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#ValuesArray",
                                     "loc": {
                                       "start": {
                                         "line": 20,
@@ -2839,94 +3391,44 @@
                           "type": "BinaryExpression",
                           "operator": "==",
                           "left": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "Identifier",
+                            "name": "value",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "right": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Color",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 6,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 11,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 20,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 20,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Color",
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 1,
+                                    "column": 11,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "valueOf",
+                                "name": "#ValuesArray",
                                 "loc": {
                                   "start": {
                                     "line": 20,
@@ -2955,24 +3457,24 @@
                                 }
                               }
                             },
-                            "arguments": [],
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                }
                               }
-                            }
-                          },
-                          "right": {
-                            "type": "Identifier",
-                            "name": "value",
+                            },
+                            "computed": true,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -3223,6 +3725,533 @@
                             }
                           }
                         ],
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "valueOf",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "valueOf",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Color",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 20,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "toString",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Color",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#StringValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 20,
@@ -4506,83 +5535,6 @@
                         "program": "enum_as_class_member_getValue_call.ets"
                       }
                     }
-                  },
-                  {
-                    "type": "ETSParameterExpression",
-                    "name": {
-                      "type": "Identifier",
-                      "name": "name",
-                      "typeAnnotation": {
-                        "type": "ETSTypeReference",
-                        "part": {
-                          "type": "ETSTypeReferencePart",
-                          "name": {
-                            "type": "Identifier",
-                            "name": "String",
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 26,
-                              "column": 1,
-                              "program": "enum_as_class_member_getValue_call.ets"
-                            },
-                            "end": {
-                              "line": 26,
-                              "column": 1,
-                              "program": "enum_as_class_member_getValue_call.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 26,
-                            "column": 1,
-                            "program": "enum_as_class_member_getValue_call.ets"
-                          },
-                          "end": {
-                            "line": 26,
-                            "column": 1,
-                            "program": "enum_as_class_member_getValue_call.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 26,
-                          "column": 1,
-                          "program": "enum_as_class_member_getValue_call.ets"
-                        },
-                        "end": {
-                          "line": 26,
-                          "column": 1,
-                          "program": "enum_as_class_member_getValue_call.ets"
-                        }
-                      }
-                    },
-                    "loc": {
-                      "start": {
-                        "line": 26,
-                        "column": 1,
-                        "program": "enum_as_class_member_getValue_call.ets"
-                      },
-                      "end": {
-                        "line": 26,
-                        "column": 1,
-                        "program": "enum_as_class_member_getValue_call.ets"
-                      }
-                    }
                   }
                 ],
                 "body": {
@@ -4611,22 +5563,6 @@
                           {
                             "type": "Identifier",
                             "name": "value",
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "Identifier",
-                            "name": "name",
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -4915,22 +5851,6 @@
                       "program": "enum_as_class_member_getValue_call.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Circle",
-                  "loc": {
-                    "start": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -5098,22 +6018,6 @@
                 {
                   "type": "StringLiteral",
                   "value": "SQUARE",
-                  "loc": {
-                    "start": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Square",
                   "loc": {
                     "start": {
                       "line": 26,
@@ -5305,22 +6209,6 @@
                       "program": "enum_as_class_member_getValue_call.ets"
                     }
                   }
-                },
-                {
-                  "type": "StringLiteral",
-                  "value": "Triangle",
-                  "loc": {
-                    "start": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    },
-                    "end": {
-                      "line": 26,
-                      "column": 1,
-                      "program": "enum_as_class_member_getValue_call.ets"
-                    }
-                  }
                 }
               ],
               "loc": {
@@ -5398,6 +6286,336 @@
               "end": {
                 "line": 29,
                 "column": 26,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#NamesArray",
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "Circle",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "Square",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "Triangle",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "ClassProperty",
+            "key": {
+              "type": "Identifier",
+              "name": "#StringValuesArray",
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "value": {
+              "type": "ArrayExpression",
+              "elements": [
+                {
+                  "type": "StringLiteral",
+                  "value": "CIRCLE",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "SQUARE",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                {
+                  "type": "StringLiteral",
+                  "value": "TRIANGLE",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                }
+              ],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "accessibility": "private",
+            "static": true,
+            "readonly": true,
+            "declare": false,
+            "optional": false,
+            "computed": false,
+            "typeAnnotation": {
+              "type": "TSArrayType",
+              "elementType": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "String",
+                    "loc": {
+                      "start": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "annotations": [],
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "definite": false,
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 26,
+                "column": 1,
                 "program": "enum_as_class_member_getValue_call.ets"
               }
             }
@@ -5670,6 +6888,285 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
+              "name": "getName",
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "getName",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Shape",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#NamesArray",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
               "name": "getValueOf",
               "loc": {
                 "start": {
@@ -5888,7 +7385,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#NamesArray",
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -6108,94 +7605,28 @@
                             }
                           },
                           "right": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Shape",
-                                    "loc": {
-                                      "start": {
-                                        "line": 26,
-                                        "column": 6,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 26,
-                                        "column": 11,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 26,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 26,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Shape",
                                 "loc": {
                                   "start": {
                                     "line": 26,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 1,
+                                    "column": 11,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "getName",
+                                "name": "#NamesArray",
                                 "loc": {
                                   "start": {
                                     "line": 26,
@@ -6224,7 +7655,23 @@
                                 }
                               }
                             },
-                            "arguments": [],
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                }
+                              }
+                            },
+                            "computed": true,
                             "optional": false,
                             "loc": {
                               "start": {
@@ -6778,7 +8225,7 @@
                                   },
                                   "property": {
                                     "type": "Identifier",
-                                    "name": "#ItemsArray",
+                                    "name": "#StringValuesArray",
                                     "loc": {
                                       "start": {
                                         "line": 26,
@@ -6982,94 +8429,44 @@
                           "type": "BinaryExpression",
                           "operator": "==",
                           "left": {
-                            "type": "CallExpression",
-                            "callee": {
+                            "type": "Identifier",
+                            "name": "value",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "right": {
+                            "type": "MemberExpression",
+                            "object": {
                               "type": "MemberExpression",
                               "object": {
-                                "type": "MemberExpression",
-                                "object": {
-                                  "type": "MemberExpression",
-                                  "object": {
-                                    "type": "Identifier",
-                                    "name": "Shape",
-                                    "loc": {
-                                      "start": {
-                                        "line": 26,
-                                        "column": 6,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 26,
-                                        "column": 11,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "property": {
-                                    "type": "Identifier",
-                                    "name": "#ItemsArray",
-                                    "loc": {
-                                      "start": {
-                                        "line": 26,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      },
-                                      "end": {
-                                        "line": 26,
-                                        "column": 1,
-                                        "program": "enum_as_class_member_getValue_call.ets"
-                                      }
-                                    }
-                                  },
-                                  "computed": false,
-                                  "optional": false,
-                                  "loc": {
-                                    "start": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "property": {
-                                  "type": "Identifier",
-                                  "name": "i",
-                                  "loc": {
-                                    "start": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    },
-                                    "end": {
-                                      "line": 26,
-                                      "column": 1,
-                                      "program": "enum_as_class_member_getValue_call.ets"
-                                    }
-                                  }
-                                },
-                                "computed": true,
-                                "optional": false,
+                                "type": "Identifier",
+                                "name": "Shape",
                                 "loc": {
                                   "start": {
                                     "line": 26,
-                                    "column": 1,
+                                    "column": 6,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   },
                                   "end": {
                                     "line": 26,
-                                    "column": 1,
+                                    "column": 11,
                                     "program": "enum_as_class_member_getValue_call.ets"
                                   }
                                 }
                               },
                               "property": {
                                 "type": "Identifier",
-                                "name": "valueOf",
+                                "name": "#StringValuesArray",
                                 "loc": {
                                   "start": {
                                     "line": 26,
@@ -7098,24 +8495,24 @@
                                 }
                               }
                             },
-                            "arguments": [],
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 1,
-                                "program": "enum_as_class_member_getValue_call.ets"
+                            "property": {
+                              "type": "Identifier",
+                              "name": "i",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 1,
+                                  "program": "enum_as_class_member_getValue_call.ets"
+                                }
                               }
-                            }
-                          },
-                          "right": {
-                            "type": "Identifier",
-                            "name": "value",
+                            },
+                            "computed": true,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 26,
@@ -7366,6 +8763,564 @@
                             }
                           }
                         ],
+                        "loc": {
+                          "start": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "valueOf",
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "valueOf",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Shape",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#StringValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
+                        "loc": {
+                          "start": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          },
+                          "end": {
+                            "line": 26,
+                            "column": 1,
+                            "program": "enum_as_class_member_getValue_call.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  },
+                  "end": {
+                    "line": 26,
+                    "column": 1,
+                    "program": "enum_as_class_member_getValue_call.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              },
+              "end": {
+                "line": 26,
+                "column": 1,
+                "program": "enum_as_class_member_getValue_call.ets"
+              }
+            }
+          },
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "toString",
+              "loc": {
+                "start": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                },
+                "end": {
+                  "line": 26,
+                  "column": 1,
+                  "program": "enum_as_class_member_getValue_call.ets"
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "toString",
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "returnType": {
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "String",
+                      "loc": {
+                        "start": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        },
+                        "end": {
+                          "line": 26,
+                          "column": 1,
+                          "program": "enum_as_class_member_getValue_call.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      },
+                      "end": {
+                        "line": 26,
+                        "column": 1,
+                        "program": "enum_as_class_member_getValue_call.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    },
+                    "end": {
+                      "line": 26,
+                      "column": 1,
+                      "program": "enum_as_class_member_getValue_call.ets"
+                    }
+                  }
+                },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "MemberExpression",
+                        "object": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "Shape",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 6,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 11,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#StringValuesArray",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "property": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "#ordinal",
+                            "loc": {
+                              "start": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 1,
+                                "program": "enum_as_class_member_getValue_call.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            },
+                            "end": {
+                              "line": 26,
+                              "column": 1,
+                              "program": "enum_as_class_member_getValue_call.ets"
+                            }
+                          }
+                        },
+                        "computed": true,
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 26,
