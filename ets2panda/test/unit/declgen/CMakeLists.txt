@@ -32,6 +32,7 @@ set(ETS2TS_ISOLATED_TESTS
     "./ets2ts_isolated/test_ets2ts_isolated_function_with_optional_parameter.ets"
     "./ets2ts_isolated/test_ets2ts_infer_function_return_type_with_import_symbol.ets"
     "./ets2ts_isolated/test_ets2ts_isolated_annotation.ets"
+    "./ets2ts_isolated/test_ets2ts_interop_tags.ets"
 )
 
 set(DECLGEN_PLUGIN_TESTS

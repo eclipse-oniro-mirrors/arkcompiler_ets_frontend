@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_DECLGEN_ETS2TS_H
 #define ES2PANDA_DECLGEN_ETS2TS_H
 
+#include <unordered_map>
+
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/phase.h"
 #include "libarkbase/os/file.h"
@@ -169,8 +171,15 @@ private:
     void GenTypeAliasDeclaration(const ir::TSTypeAliasDeclaration *typeAlias);
     void GenEnumDeclaration(const ir::ClassProperty *enumMember);
     void GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interfaceDecl);
+    void GenInteropAnyInterface(const ir::TSInterfaceDeclaration *interfaceDecl, const std::string &interfaceName);
+    void EmitInterfaceHeader(const ir::TSInterfaceDeclaration *interfaceDecl, const std::string &interfaceName);
+    void EmitInterfaceExtends(const ir::TSInterfaceDeclaration *interfaceDecl);
     bool GenInterfaceProp(const ir::MethodDefinition *methodDef);
     void GenClassDeclaration(const ir::ClassDeclaration *classDecl);
+    void EmitInteropAnyClass(const ir::ClassDefinition *classDef, const std::string &className);
+    void EmitNonGlobalClassDeclaration(const ir::ClassDefinition *classDef, const std::string &className);
+    void CloseNestedClassBlock(const ir::ClassDefinition *classDef);
+    void EmitDefaultExportedClass(const ir::ClassDefinition *classDef, const std::string &className);
     void GenMethodDeclaration(const ir::MethodDefinition *methodDef);
     bool GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef, const ir::Identifier *methodIdent,
                                     const std::string &methodName);
@@ -212,7 +221,7 @@ private:
     void ProcessParameterName(varbinder::LocalVariable *param);
     void ProcessFuncParameter(varbinder::LocalVariable *param);
     void ProcessFuncRestParameter(varbinder::LocalVariable *param);
-    void ProcessFuncParameters(const checker::Signature *sig);
+    void ProcessFuncParameters(const checker::Signature *sig, bool applyOverrides = false);
     void GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef);
     void ProcessClassPropertyType(const ir::ClassProperty *classProp);
     std::vector<ir::AstNode *> FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers);
@@ -402,6 +411,10 @@ private:
     DeclgenOptions declgenOptions_ {};
     std::string globalDesc_;
     ArenaMap<util::StringView, util::StringView> paramDefaultMap_;
+
+    // Per-method interop tag overrides; set and restored by GenMethodDeclaration.
+    std::string interopRetOverride_;
+    std::unordered_map<std::size_t, std::string> interopParamOverrides_;
 };
 
 class TSDeclgenContent {
