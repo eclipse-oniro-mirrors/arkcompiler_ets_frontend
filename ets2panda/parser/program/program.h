@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_PARSER_INCLUDE_PROGRAM_H
 #define ES2PANDA_PARSER_INCLUDE_PROGRAM_H
 
+#include <optional>
+
 #include "util/es2pandaMacros.h"
 #include "util/ustring.h"
 #include "util/path.h"
@@ -286,6 +288,8 @@ public:
     }
 
     std::string RelativeFilePath(const public_lib::Context *context) const;
+
+    std::optional<std::string> TryRelativeFilePathViaArkTsPaths(const public_lib::Context *context) const;
 
     ir::BlockStatement *Ast()
     {
