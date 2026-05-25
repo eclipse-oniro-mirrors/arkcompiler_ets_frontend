@@ -53,6 +53,8 @@ export function getMockedBuildConfig(): BuildConfig {
         sourceRoots: ["./"],
         byteCodeHar: false,
         entryFile: "index.ets",
+        bundleType: "app",
+        bundleName: "com.example.test",
 
         // PathConfig
         loaderOutPath: "./dist",
@@ -80,7 +82,8 @@ export function getMockedBuildConfig(): BuildConfig {
         dependencyModuleList: [],
         aliasConfig: {},
         dependentModuleList: [],
-        hasMainModule: false
+        hasMainModule: false,
+        moduleFiles: []
     };
 }
 
@@ -112,6 +115,7 @@ export const moduleInfoWithNullSourceRoots: ModuleInfo = {
     dependencies: [],
     staticDependencyModules: new Map(),
     dynamicDependencyModules: new Map(),
+    staticFiles: [],
 };
 
 export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
@@ -129,6 +133,7 @@ export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
     dependencies: [],
     staticDependencyModules: new Map(),
     dynamicDependencyModules: new Map(),
+    staticFiles: [],
 };
 
 export const moduleInfo: ModuleInfo = {
@@ -148,7 +153,8 @@ export const moduleInfo: ModuleInfo = {
     language: "1.2",
     declFilesPath: '/path/to/moduleA/declFiles',
     byteCodeHar: true,
-    abcPath: '/path/to/moduleA/abc/file.abc'
+    abcPath: '/path/to/moduleA/abc/file.abc',
+    staticFiles: [],
 };
 
 export const mockModuleInfos: Map<string, ModuleInfo> = new Map([

@@ -45,7 +45,16 @@ export enum WorkerMessageType {
     ABC_COMPILED = 'ABC_COMPILED',
     ERROR_OCCURED = 'ERROR_OCCURED',
     ASSIGN_TASK = 'ASSIGN_TASK',
-    TASK_FINISHED = 'TASK_FINISHED'
+    TASK_FINISHED = 'TASK_FINISHED',
+    LOG = 'LOG'
+}
+
+export enum LogLevel {
+    INFO = 'INFO',
+    WARN = 'WARN',
+    DEBUG = 'DEBUG',
+    ERROR = 'ERROR',
+    ERROR_AND_EXIT = 'ERROR_AND_EXIT',
 }
 
 // ProjectConfig begins
