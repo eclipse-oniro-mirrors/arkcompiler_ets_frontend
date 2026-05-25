@@ -156,7 +156,7 @@ public:
     void BuildClassProperty(const ir::ClassProperty *prop) override;
     void LookupIdentReference(ir::Identifier *ident) override;
     [[nodiscard]] bool BuildInternalName(ir::ScriptFunction *scriptFunc) override;
-    void AddCompilableFunction(ir::ScriptFunction *func) override;
+    void AddCompilableFunction(ir::ScriptFunction *func, parser::Program *program) override;
 
     static bool IsSpecialName(const util::StringView &name);
     [[nodiscard]] bool LookupInDebugInfoPlugin(ir::Identifier *ident);

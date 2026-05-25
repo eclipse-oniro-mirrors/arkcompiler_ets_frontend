@@ -120,9 +120,6 @@ int GenerateBinaryFiles([[maybe_unused]] std::unordered_map<std::string, std::un
 {
 #if not defined PANDA_TARGET_MOBILE
     for (auto &[abcFile, prog] : progs) {
-        auto progParentDir = ark::os::GetParentDir(abcFile);
-        fs::create_directories(progParentDir);
-
         if (GenerateBinaryFile(prog.get(), abcFile, options, reporter)) {
             return 1;
         }
@@ -136,6 +133,9 @@ int GenerateBinaryFile(ark::pandasm::Program *prog, const std::string &output, c
                        const ReporterFun &reporter)
 {
     ES2PANDA_PERF_SCOPE("@GenerateBinaryFile");
+
+    auto progParentDir = ark::os::GetParentDir(output);
+    fs::create_directories(progParentDir);
 
 #ifdef PANDA_WITH_BYTECODE_OPTIMIZER
     {

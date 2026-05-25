@@ -852,15 +852,18 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 
     emitter->LiteralBufferIndex() += ctx->contextLiterals.size();
 
-    /* Main thread can also be used instead of idling */
-    ctx->queue->Schedule(ctx);
-    emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
-    ctx->queue->Consume();
-    ctx->queue->Wait([emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
-
     if (ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
-        ctx->output = emitter->AsETSEmitter()->EmitRecordsSimultIncMode();
+        ES2PANDA_ASSERT(ctx->output.empty());
+        emitter->AsETSEmitter()->EmitBinariesInSimultIncMode(ctx);
     } else {
+        auto functions = ctx->parserProgram->VarBinder()->GetAllCompilableFunctionScopes();
+        /* Main thread can also be used instead of idling */
+        ctx->queue->Schedule(ctx, Span<varbinder::FunctionScope *const>(functions.data(), functions.size()));
+        emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
+        ctx->queue->Consume();
+        ctx->queue->Wait(
+            [emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
+
         emitter->EmitRecords();
         std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
         auto &imd = ctx->parserProgram->GetImportInfo();
@@ -884,10 +887,15 @@ __attribute__((unused)) Context *GenerateBin(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_ASM_GENERATED);
 
-    auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
-        ctx->diagnosticEngine->LogDiagnostic(kind, params);
-    };
-    util::GenerateBinaryFiles(ctx->output, *ctx->config->options, reporter);
+    if (ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+        // Binary file was generated at the ES2PANDA_STATE_ASM_GENERATED stage.
+        ES2PANDA_ASSERT(ctx->output.empty());
+    } else {
+        auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
+            ctx->diagnosticEngine->LogDiagnostic(kind, params);
+        };
+        util::GenerateBinaryFiles(ctx->output, *ctx->config->options, reporter);
+    }
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_BIN_GENERATED : ES2PANDA_STATE_ERROR;
     return ctx;
 }

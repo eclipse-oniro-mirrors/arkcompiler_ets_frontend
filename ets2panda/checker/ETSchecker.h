@@ -759,7 +759,7 @@ public:
     Type *HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDecl, ETSObjectType *typeToBePartial);
 
     ir::MethodDefinition *CreateNullishAccessor(ir::MethodDefinition *const accessor,
-                                                ir::TSInterfaceDeclaration *interface);
+                                                ir::TSInterfaceDeclaration *interface, parser::Program *program);
     void CreatePartialClassDeclaration(ir::ClassDefinition *newClassDefinition, ir::ClassDefinition *classDef);
     ir::ETSTypeReference *BuildSuperPartialTypeReference(Type *superPartialType,
                                                          ir::TSTypeParameterInstantiation *superPartialRefTypeParams);
@@ -768,9 +768,10 @@ public:
     ir::AstNode *CreateGetterOrSetterBodyForOptional(bool isSetter, bool isOptional);
     Type *CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *const interfaceDecl,
                                          ETSObjectType *const typeToBePartial,
-                                         ir::TSInterfaceDeclaration *partialInterface);
+                                         ir::TSInterfaceDeclaration *partialInterface, parser::Program *partialProgram);
     void CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *const interfaceDecl,
-                                           ir::TSInterfaceDeclaration *partialInterface);
+                                           ir::TSInterfaceDeclaration *partialInterface,
+                                           parser::Program *partialProgram);
     ir::ClassDefinition *CreateClassPrototype(util::StringView name, parser::Program *classDeclProgram);
     varbinder::Variable *SearchNamesInMultiplePrograms(const std::set<const parser::Program *> &programs,
                                                        const std::set<util::StringView> &classNamesToFind);

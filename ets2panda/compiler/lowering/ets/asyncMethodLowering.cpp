@@ -126,18 +126,18 @@ static ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker,
 }
 
 static void BuildProxyMethod(varbinder::ETSBinder *binder, const ir::ScriptFunction *func,
-                             const util::StringView &containingClassName, bool isExternal)
+                             const util::StringView &containingClassName, bool isExternal, parser::Program *program)
 {
     ES2PANDA_ASSERT(!containingClassName.Empty() && func != nullptr);
     func->Scope()->BindName(containingClassName);
 
     if (!func->IsAsyncFunc() && !isExternal) {
-        binder->FunctionScopes().push_back(func->Scope());
+        binder->AddCompilableFunctionScope(func->Scope(), program);
     }
 }
 
 static ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
-                                              ir::ClassDefinition *classDef)
+                                              ir::ClassDefinition *classDef, parser::Program *program)
 {
     ir::ScriptFunction *asyncFunc = asyncMethod->Function();
     ES2PANDA_ASSERT(asyncFunc != nullptr);
@@ -165,17 +165,17 @@ static ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::
     implMethod->Id()->SetVariable(implMethod->Function()->Id()->Variable());
 
     BuildProxyMethod(checker->VarBinder()->AsETSBinder(), implMethod->Function(), classDef->InternalName(),
-                     asyncFunc->IsExternal());
+                     asyncFunc->IsExternal(), program);
     implMethod->SetParent(asyncMethod->Parent());
 
     return implMethod;
 }
 
-static void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
+static void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *node, parser::Program *program)
 {
     ES2PANDA_ASSERT(checker->FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION));
     auto *classDef = checker->FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION)->AsClassDefinition();
-    ir::MethodDefinition *implMethod = CreateAsyncProxy(checker, node, classDef);
+    ir::MethodDefinition *implMethod = CreateAsyncProxy(checker, node, classDef, program);
 
     implMethod->Check(checker);
     node->SetAsyncPairMethod(implMethod);
@@ -198,27 +198,27 @@ static void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefin
     }
 }
 
-static void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
+static void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node, parser::Program *program)
 {
     ES2PANDA_ASSERT(!node->TsType()->IsTypeError());
 
     if (node->Function() != nullptr && (node->Function()->IsAsyncFunc() && !node->Function()->IsProxy()) &&
         !node->Function()->IsExternal()) {
-        ComposeAsyncImplMethod(checker, node);
+        ComposeAsyncImplMethod(checker, node, program);
     }
 
     for (auto overload : node->Overloads()) {
-        HandleMethod(checker, overload);
+        HandleMethod(checker, overload, program);
     }
 }
 
-static void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefinition *classDef)
+static void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefinition *classDef, parser::Program *program)
 {
     checker::SavedCheckerContext savedContext(checker, checker->Context().Status(),
                                               classDef->TsType()->AsETSObjectType());
     for (auto *it : classDef->Body()) {
         if (it->IsMethodDefinition()) {
-            HandleMethod(checker, it->AsMethodDefinition());
+            HandleMethod(checker, it->AsMethodDefinition(), program);
         }
     }
 }
@@ -231,9 +231,9 @@ bool AsyncMethodLowering::PerformForProgram(parser::Program *program)
 
     checker::ETSChecker *const checker = Context()->GetChecker()->AsETSChecker();
 
-    ir::NodeTransformer handleClassAsyncMethod = [checker](ir::AstNode *const ast) {
+    ir::NodeTransformer handleClassAsyncMethod = [checker, program](ir::AstNode *const ast) {
         if (ast->IsClassDefinition()) {
-            UpdateClassDefintion(checker, ast->AsClassDefinition());
+            UpdateClassDefintion(checker, ast->AsClassDefinition(), program);
         }
         return ast;
     };

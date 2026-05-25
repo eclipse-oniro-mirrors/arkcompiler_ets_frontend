@@ -47,12 +47,12 @@ CompileQueue::~CompileQueue()
     }
 }
 
-void CompileQueue::Schedule(public_lib::Context *context)
+void CompileQueue::Schedule(public_lib::Context *context, Span<varbinder::FunctionScope *const> functions)
 {
     ES2PANDA_ASSERT(jobsCount_ == 0);
+    ES2PANDA_ASSERT(jobs_ == nullptr);
     std::unique_lock<std::mutex> lock(m_);
-    // NOTE(vpukhov): #28197: do not use the functions list and traverse the program as the ETSEmitter does
-    auto &functions = context->parserProgram->VarBinder()->FunctionScopes();
+
     jobs_ = new CompileJob[functions.size()]();
 
     for (auto *function : functions) {

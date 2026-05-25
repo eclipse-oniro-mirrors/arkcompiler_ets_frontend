@@ -269,6 +269,8 @@ static bool IsGeneratedForUtilityType(ir::AstNode const *ast)
 static void ClearHelper(parser::Program *prog)
 {
     prog->RemoveAstChecked();
+    // Drop compilable function scopes before re-binding repopulates them, otherwise rebind would duplicate entries.
+    prog->ClearCompilableFunctionScopes();
     ResetGlobalClass(prog);
     // #24256 Should be removed when code refactoring on checker is done and no ast node allocated in checker.
     auto &stmts = prog->Ast()->StatementsForUpdates();
@@ -573,10 +575,11 @@ static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *var
     newChecker->Initialize(newVarbinder);
     ctx->PushChecker(newChecker);
 
+    // Unchanged programs keep their compilable function scopes, so just re-register them with the new binder.
     for (auto *savedVarBinder : savedVarBinders) {
-        for (auto func : savedVarBinder->FunctionScopes()) {
-            if (func->Node()->Program() != nullptr && !func->Node()->Program()->IsProgramModified()) {
-                newVarbinder->FunctionScopes().push_back(func);
+        for (auto *unmodifiedProgram : savedVarBinder->CompilablePrograms()) {
+            if (!unmodifiedProgram->IsProgramModified()) {
+                newVarbinder->RegisterCompilableProgram(unmodifiedProgram);
             }
         }
     }

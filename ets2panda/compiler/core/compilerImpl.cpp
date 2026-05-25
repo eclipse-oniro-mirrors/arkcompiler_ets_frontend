@@ -48,7 +48,7 @@
 
 namespace ark::es2panda::compiler {
 
-void CompilerImpl::HandleContextLiterals(public_lib::Context *context)
+static void HandleContextLiterals(public_lib::Context *context)
 {
     auto *emitter = context->emitter;
 
@@ -62,9 +62,8 @@ void CompilerImpl::HandleContextLiterals(public_lib::Context *context)
 
 void CompilerImpl::CompileFunctions(public_lib::Context *context)
 {
-    HandleContextLiterals(context);
-
-    queue_.Schedule(context);
+    auto functions = context->parserProgram->VarBinder()->GetAllCompilableFunctionScopes();
+    queue_.Schedule(context, Span<varbinder::FunctionScope *const>(functions.data(), functions.size()));
 
     auto *emitter = context->emitter;
     if (emitter->IsETSEmitter()) {
@@ -319,13 +318,17 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> EmitPr
                                                                                       public_lib::Context *context)
 {
     ES2PANDA_PERF_SCOPE("@EmitProgram");
-    compilerImpl->CompileFunctions(context);
+    HandleContextLiterals(context);
 
     if (context->emitter->IsETSEmitter() &&
         (context->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL)) {
-        return context->emitter->AsETSEmitter()->EmitRecordsSimultIncMode();
+        // EmitBinariesInSimultIncMode() schedules compilation per file and writes binaries directly by itself,
+        // hence no CompileFunctions() and no pandasm::Program map here.
+        context->emitter->AsETSEmitter()->EmitBinariesInSimultIncMode(context);
+        return {};
     }
 
+    compilerImpl->CompileFunctions(context);
     context->emitter->EmitRecords();
     std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
     auto &imd = context->parserProgram->GetImportInfo();

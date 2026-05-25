@@ -20,7 +20,7 @@
 namespace ark::es2panda::varbinder {
 
 VarBinder::VarBinder(public_lib::Context *context)
-    : context_(context), allocator_(context->Allocator()), functionScopes_(allocator_->Adapter())
+    : context_(context), allocator_(context->Allocator()), compilablePrograms_(allocator_->Adapter())
 {
 }
 
@@ -108,7 +108,7 @@ void VarBinder::IdentifierAnalysis()
     ES2PANDA_ASSERT(scope_ == topScope_);
     ES2PANDA_ASSERT(varScope_ == topScope_);
 
-    functionScopes_.push_back(topScope_);
+    AddCompilableFunctionScope(topScope_, program_);
     topScope_->BindName(MAIN);
     topScope_->BindInternalName(BuildFunctionName(MAIN, 0));
 
@@ -256,7 +256,7 @@ bool VarBinder::BuildInternalName(ir::ScriptFunction *scriptFunc)
 
     auto name = util::Helpers::FunctionName(Allocator(), scriptFunc);
 
-    uint32_t idx = functionScopes_.size();
+    uint32_t idx = compilableCount_;
     funcScope->BindName(name);
     funcScope->BindInternalName(BuildFunctionName(name, idx));
 
@@ -459,7 +459,7 @@ void VarBinder::BuildTypeAliasDeclaration(ir::TSTypeAliasDeclaration *const type
     ResolveReferences(typeAliasDecl);
 }
 
-void VarBinder::AddCompilableFunction(ir::ScriptFunction *func)
+void VarBinder::AddCompilableFunction(ir::ScriptFunction *func, parser::Program *program)
 {
     if (func->IsArrow()) {
         VariableScope *outerVarScope = scope_->EnclosingVariableScope();
@@ -467,12 +467,25 @@ void VarBinder::AddCompilableFunction(ir::ScriptFunction *func)
         outerVarScope->AddFlag(ScopeFlags::INNER_ARROW);
     }
 
-    AddCompilableFunctionScope(func->Scope());
+    AddCompilableFunctionScope(func->Scope(), program);
 }
 
-void VarBinder::AddCompilableFunctionScope(varbinder::FunctionScope *funcScope)
+void VarBinder::AddCompilableFunctionScope(varbinder::FunctionScope *funcScope, parser::Program *program)
 {
-    functionScopes_.push_back(funcScope);
+    ES2PANDA_ASSERT(program != nullptr);
+    program->AddCompilableFunctionScope(funcScope);
+    compilablePrograms_.insert(program);
+    ++compilableCount_;
+}
+
+std::vector<FunctionScope *> VarBinder::GetAllCompilableFunctionScopes() const
+{
+    std::vector<FunctionScope *> functions;
+    for (auto *program : compilablePrograms_) {
+        const auto &scopes = program->CompilableFunctionScopes();
+        functions.insert(functions.end(), scopes.begin(), scopes.end());
+    }
+    return functions;
 }
 
 void VarBinder::VisitScriptFunction(ir::ScriptFunction *func)
@@ -514,7 +527,7 @@ void VarBinder::VisitScriptFunction(ir::ScriptFunction *func)
     }
 
     if (!func->IsDeclare()) {
-        AddCompilableFunction(func);
+        AddCompilableFunction(func, Program());
     }
 
     auto scopeCtx = LexicalScope<FunctionScope>::Enter(this, funcScope);
@@ -648,8 +661,10 @@ void VarBinder::LookUpMandatoryReferences(const FunctionScope *funcScope, bool n
 void VarBinder::AddMandatoryParams()
 {
     ES2PANDA_ASSERT(scope_ == topScope_);
-    ES2PANDA_ASSERT(!functionScopes_.empty());
-    auto iter = functionScopes_.begin();
+    // JS/TS path: a single program per binder, so its scopes are the whole compilable set.
+    const auto &functionScopes = program_->CompilableFunctionScopes();
+    ES2PANDA_ASSERT(!functionScopes.empty());
+    auto iter = functionScopes.begin();
     [[maybe_unused]] auto *funcScope = *iter++;
 
     ES2PANDA_ASSERT(funcScope->IsGlobalScope() || funcScope->IsModuleScope());
@@ -663,14 +678,14 @@ void VarBinder::AddMandatoryParams()
     }
 
     if (options->IsFunctionEval()) {
-        ES2PANDA_ASSERT(iter != functionScopes_.end());
+        ES2PANDA_ASSERT(iter != functionScopes.end());
         funcScope = *iter++;
         auto scopeCtx = LexicalScope<FunctionScope>::Enter(this, funcScope);
         AddMandatoryParams(ARROW_MANDATORY_PARAMS);
         LookUpMandatoryReferences(funcScope, false);
     }
 
-    for (; iter != functionScopes_.end(); iter++) {
+    for (; iter != functionScopes.end(); iter++) {
         funcScope = *iter;
         const auto *scriptFunc = funcScope->Node()->AsScriptFunction();
 

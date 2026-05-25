@@ -1522,7 +1522,7 @@ bool ETSBinder::BuildInternalNameWithCustomRecordTable(ir::ScriptFunction *const
     return scriptFunc->Body() != nullptr && !isExternal;
 }
 
-void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
+void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func, parser::Program *program)
 {
     /*
      * NOTE(knazarov) Here it is important to leave IsAsyncFunc, since
@@ -1541,7 +1541,7 @@ void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
         return;
     }
 
-    AddCompilableFunctionScope(func->Scope());
+    AddCompilableFunctionScope(func->Scope(), program);
 }
 
 void ETSBinder::BuildFunctionName(const ir::ScriptFunction *func) const

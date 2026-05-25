@@ -72,8 +72,6 @@ public:
     }
 
 private:
-    static void HandleContextLiterals(public_lib::Context *context);
-
     CompileQueue queue_;
     std::vector<util::Plugin> const *plugins_;
 };

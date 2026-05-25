@@ -325,6 +325,23 @@ public:
         return &externalDecls_;
     }
 
+    // Function scopes to be compiled during code gen that belong to this program. Owned by the program (not by the
+    // transient VarBinder), so they survive binder re-creation on recheck.
+    [[nodiscard]] const ArenaVector<varbinder::FunctionScope *> &CompilableFunctionScopes() const noexcept
+    {
+        return compilableFunctionScopes_;
+    }
+
+    void AddCompilableFunctionScope(varbinder::FunctionScope *scope)
+    {
+        compilableFunctionScopes_.push_back(scope);
+    }
+
+    void ClearCompilableFunctionScopes() noexcept
+    {
+        compilableFunctionScopes_.clear();
+    }
+
     // NOTE(dkofanov): this should be called exactly once. It is needed as soon as there is a special "main"-program and
     // others are "external-sources".
     void PromoteToMainProgram(public_lib::Context *ctx);
@@ -529,6 +546,7 @@ private:
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;
     ArenaVector<checker::Checker *> checkers_;
+    ArenaVector<varbinder::FunctionScope *> compilableFunctionScopes_;
 #ifndef NDEBUG
     uint32_t poisonValue_ {POISON_VALUE};
 #endif
