@@ -25,4 +25,4 @@ async function main() {
 }
 
 /* @@? 23:24 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
-/* @@? 24:24 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
+/* @@? 24:24 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

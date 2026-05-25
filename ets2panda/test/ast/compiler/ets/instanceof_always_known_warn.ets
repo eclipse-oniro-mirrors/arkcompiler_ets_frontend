@@ -30,4 +30,4 @@ arktest.assertTrue(b instanceof Box)
 /* @@? 20:12 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 23:12 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 26:14 Error Semantic error ESE0349: Class 'Box' is already defined. */
-/* @@? 28:20 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
+/* @@? 28:20 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

@@ -326,6 +326,16 @@ private:
         for (auto *const constituentType : normalizedSpreadType_->AsETSUnionType()->ConstituentTypes()) {
             AddUnionConstituentToBuckets(fixedArrayTypes, valueArrayTypes, needsIteratorFallback, constituentType);
         }
+
+        for (auto *&arrayType : fixedArrayTypes) {
+            // FixedArray<T> type is not preserved up to undefined - we have to use 'instanceof FixedArray<T|undefined>`
+            // instead
+            auto *elementType = arrayType->AsETSArrayType()->ElementType();
+            if (!elementType->PossiblyETSUndefined()) {
+                elementType = checker_->CreateETSUnionType({elementType, checker_->GlobalETSUndefinedType()});
+                arrayType = checker_->CreateETSArrayType(elementType);
+            }
+        }
     }
 
     bool AppendFixedArrayUnionBranch(const std::vector<checker::Type *> &fixedArrayTypes, bool needsIteratorFallback,

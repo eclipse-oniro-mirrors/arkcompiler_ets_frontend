@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,29 @@
  * limitations under the License.
  */
 
-type Func1 = () => void
-type Func2 = (num: number, str: string) => number
+type Func1 = () => string
+type Func2 = (num: Any, str: Any) => never
 
-let func1: Func1 = ():void => {
-    console.log("func1")
+
+let func1: Func1 = (): string => {
+    return "func1";
 }
 
-function foo(num: number, str: string): number {
-    console.log(str)
-    return num
+function foo(num: Any, str: Any): never {
+    throw new Error();
 }
 
 let func2: Func2 = foo
 
 function test(fn: Func1 | Func2 | number | string) {
-    if (fn instanceof Func1) {
-        fn()
-    } else if (fn instanceof Func2) {
-        arktest.assertEQ(fn(2,"func2"), 2)
+    if (fn instanceof Func2) {
+        arktest.expectThrow(() => { fn(2,"func2"); }, (e) => e instanceof Error);
     } else if (fn instanceof Number) {
         arktest.assertEQ(fn, 3)
     } else if (fn instanceof String) {
         arktest.assertEQ(fn, "4")
+    } else {
+        arktest.assertEQ(fn, "func1")
     }
 }
 

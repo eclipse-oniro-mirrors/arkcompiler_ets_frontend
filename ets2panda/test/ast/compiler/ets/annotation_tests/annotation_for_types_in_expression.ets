@@ -26,5 +26,5 @@ new C1<Int>() instanceof @Anno @Anno() C1
 
 /* @@? 20:28 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
 /* @@? 23:17 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
-/* @@? 24:1 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
+/* @@? 24:1 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 24:40 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

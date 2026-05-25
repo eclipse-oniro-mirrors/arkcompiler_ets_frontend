@@ -106,18 +106,29 @@ static bool IsArrayOrStringUnion(checker::Type *type)
 
 static ir::Statement *CreateLoopVariableAssignment(
     ArenaAllocator *allocator, parser::ETSParser *parser,
-    std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents)
+    std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, bool const needNonNullish = false)
 {
     auto [iterableIdent, indexIdent, loopVariableIdent] = idents;
-    return parser->CreateFormattedStatement("@@I1 = @@I2[@@I3];", loopVariableIdent->Clone(allocator, nullptr),
+
+    std::string str = "@@I1 = @@I2[@@I3]";
+    // we need to remove possible nullish in case of 'instanceof FixedArray<T|undefined>` smart typing
+    if (needNonNullish) {
+        str += '!';
+    }
+    str += ';';
+
+    return parser->CreateFormattedStatement(str, loopVariableIdent->Clone(allocator, nullptr),
                                             iterableIdent->Clone(allocator, nullptr),
                                             indexIdent->Clone(allocator, nullptr));
 }
 
 static ir::Statement *CreateSimpleLoopVariableLoad(
-    ArenaAllocator *allocator, parser::ETSParser *parser, ir::ForOfStatement *forOfStatement,
+    public_lib::Context *context, ir::ForOfStatement *forOfStatement,
     std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, checker::Type *loopVariableType)
 {
+    auto *const parser = context->parser->AsETSParser();
+    auto *const allocator = context->Allocator();
+
     auto [iterableIdent, indexIdent, loopVariableIdent] = idents;
     if (!forOfStatement->Left()->IsVariableDeclaration()) {
         return CreateLoopVariableAssignment(allocator, parser, idents);
@@ -129,13 +140,29 @@ static ir::Statement *CreateSimpleLoopVariableLoad(
 }
 
 static ir::IfStatement *CreateLoopVariableTypeGuard(
-    ArenaAllocator *allocator, parser::ETSParser *parser,
-    std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, checker::Type *constituentType)
+    public_lib::Context *context, std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents,
+    checker::Type *constituentType)
 {
+    auto *const parser = context->parser->AsETSParser();
+    auto *const allocator = context->Allocator();
+    auto *const checker = context->GetChecker()->AsETSChecker();
+
     auto [iterableIdent, indexIdent, loopVariableIdent] = idents;
+
+    // FixedArray<T> type is not preserved up to undefined - we have to use 'instanceof FixedArray<T|undefined>` instead
+    bool needNonNullish = false;
+    if (constituentType->IsETSArrayType() && !constituentType->AsETSArrayType()->IsValueArray()) {
+        auto *elementType = constituentType->AsETSArrayType()->ElementType();
+        if (!elementType->PossiblyETSUndefined()) {
+            needNonNullish = true;
+            elementType = checker->CreateETSUnionType({elementType, checker->GlobalETSUndefinedType()});
+            constituentType = checker->CreateETSArrayType(elementType);
+        }
+    }
+
     auto *test = parser->CreateFormattedExpression("@@I1 instanceof @@T2", iterableIdent->Clone(allocator, nullptr),
                                                    constituentType);
-    auto *consequent = CreateLoopVariableAssignment(allocator, parser, idents);
+    auto *consequent = CreateLoopVariableAssignment(allocator, parser, idents, needNonNullish);
     auto *ifStatement = allocator->New<ir::IfStatement>(test, consequent, nullptr);
     test->SetParent(ifStatement);
     consequent->SetParent(ifStatement);
@@ -143,9 +170,12 @@ static ir::IfStatement *CreateLoopVariableTypeGuard(
 }
 
 static ir::Statement *CreateUnionLoopVariableLoad(
-    ArenaAllocator *allocator, parser::ETSParser *parser, ir::ForOfStatement *forOfStatement,
+    public_lib::Context *context, ir::ForOfStatement *forOfStatement,
     std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, checker::Type *loopVariableType)
 {
+    auto *const parser = context->parser->AsETSParser();
+    auto *const allocator = context->Allocator();
+
     auto [iterableIdent, indexIdent, loopVariableIdent] = idents;
     ArenaVector<ir::Statement *> statements(allocator->Adapter());
     if (forOfStatement->Left()->IsVariableDeclaration()) {
@@ -160,7 +190,7 @@ static ir::Statement *CreateUnionLoopVariableLoad(
     ir::IfStatement *ifRoot = nullptr;
     ir::IfStatement *ifCurrent = nullptr;
     for (std::size_t i = 0; i + 1U < constituentTypes.size(); ++i) {
-        auto *ifStatement = CreateLoopVariableTypeGuard(allocator, parser, idents, constituentTypes[i]);
+        auto *ifStatement = CreateLoopVariableTypeGuard(context, idents, constituentTypes[i]);
         if (ifRoot == nullptr) {
             ifRoot = ifStatement;
         } else {
@@ -185,16 +215,16 @@ static ir::Statement *CreateUnionLoopVariableLoad(
 }
 
 static ir::Statement *GenerateLoopVariableLoad(
-    ArenaAllocator *allocator, parser::ETSParser *parser, ir::ForOfStatement *forOfStatement,
+    public_lib::Context *context, ir::ForOfStatement *forOfStatement,
     std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, checker::Type *loopVariableType)
 {
     auto *exprType = forOfStatement->Right()->TsType();
     ES2PANDA_ASSERT(exprType != nullptr);
     if (!exprType->IsETSUnionType()) {
-        return CreateSimpleLoopVariableLoad(allocator, parser, forOfStatement, idents, loopVariableType);
+        return CreateSimpleLoopVariableLoad(context, forOfStatement, idents, loopVariableType);
     }
 
-    return CreateUnionLoopVariableLoad(allocator, parser, forOfStatement, idents, loopVariableType);
+    return CreateUnionLoopVariableLoad(context, forOfStatement, idents, loopVariableType);
 }
 
 static ir::Statement *GenerateLoweredStatement(public_lib::Context *context, ir::ForOfStatement *forOfStatement)
@@ -217,8 +247,8 @@ static ir::Statement *GenerateLoweredStatement(public_lib::Context *context, ir:
         loopVariableType = loopLeft->AsIdentifier()->Variable()->TsType();
     }
     ES2PANDA_ASSERT(loopVariableType != nullptr);
-    auto *load = GenerateLoopVariableLoad(allocator, parser, forOfStatement,
-                                          {iterableIdent, indexIdent, loopVariableIdent}, loopVariableType);
+    auto *load = GenerateLoopVariableLoad(context, forOfStatement, {iterableIdent, indexIdent, loopVariableIdent},
+                                          loopVariableType);
 
     auto *lowered = parser->CreateFormattedStatement(
         "let @@I1 = @@E2; let @@I3: int = @@I4.length; for (let @@I5: int = 0; @@I6 < @@I7; @@I8 = @@I9 + 1) { }",

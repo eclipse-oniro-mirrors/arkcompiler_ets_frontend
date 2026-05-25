@@ -18,5 +18,5 @@
 
 let a = 1 instanceof MyAnno
 
-/* @@? 19:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+
 /* @@? 19:22 Error Semantic error ESE0159: Annotations cannot be used as a type. */

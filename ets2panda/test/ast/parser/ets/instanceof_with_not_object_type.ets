@@ -25,5 +25,4 @@ function main()
 }
 
 
-/* @@? 24:5 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@@ label Error Semantic error ESE0371: Cannot find type 'a'. */

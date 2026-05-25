@@ -20,5 +20,5 @@ vl = () => 'Call Me'
 
 let ok = vl instanceof Function && vl() == 'Call Me'
 
-/* @@? 21:10 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+
 /* @@? 21:36 Error Semantic error ESE0289: This expression is not callable. */

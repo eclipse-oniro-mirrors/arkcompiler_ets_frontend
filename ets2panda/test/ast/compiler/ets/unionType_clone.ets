@@ -24,7 +24,6 @@ function castValueKoBoolean(value ?: boolect) {
 
 
 /* @@? 16:38 Error Semantic error ESE0371: Cannot find type 'boolect'. */
-/* @@? 17:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 17:26 Error Semantic error ESE0371: Cannot find type 'Sean'. */
 /* @@? 21:3 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 21:5 Error Syntax error ESY0227: Unexpected token 'xml'. */
@@ -37,4 +36,4 @@ function castValueKoBoolean(value ?: boolect) {
 /* @@? 21:46 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 22:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 23:18 Error Syntax error ESY0265: Newline is not allowed in strings */
-/* @@? 40:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 39:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

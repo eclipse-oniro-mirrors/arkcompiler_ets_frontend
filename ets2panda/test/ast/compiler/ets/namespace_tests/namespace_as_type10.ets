@@ -18,5 +18,5 @@ namespace MySpace {
 
 let a = 1 instanceof MySpace
 
-/* @@? 19:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+
 /* @@? 19:22 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

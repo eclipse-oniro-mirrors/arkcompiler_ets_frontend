@@ -968,6 +968,7 @@ bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNod
         }
 
         init->AsArrayExpression()->SetPreferredType(annotationType);
+        return true;
     }
 
     if (init->IsObjectExpression() && annotationType != nullptr) {
@@ -1483,7 +1484,7 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *te
         return actualType->AsETSUnionType()->GetComplimentaryType(this, testedType);
     }
 
-    if (actualType->IsETSFunctionType()) {
+    if (actualType->IsETSFunctionType() || actualType->IsETSTupleType()) {
         return {actualType, actualType};
     }
 
@@ -1763,10 +1764,9 @@ void ETSChecker::ApplySmartCast(varbinder::Variable const *const variable, check
     ES2PANDA_ASSERT(variable != nullptr);
     if (smartType != nullptr) {
         auto *variableType = variable->TsType();
+        SavedTypeRelationFlagsContext const savedFlags(Relation(), TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
 
-        if (Relation()->IsIdenticalTo(variableType, smartType)) {
-            Context().RemoveSmartCast(variable);
-        } else {
+        if (!Relation()->IsIdenticalTo(variableType, smartType)) {
             Context().SetSmartCast(variable, smartType);
         }
     }
