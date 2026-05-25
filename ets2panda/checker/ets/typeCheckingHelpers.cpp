@@ -91,7 +91,7 @@ Type *ETSChecker::GetNonNullishType(Type *type)
         return type;
     }
     if (type->IsETSAnyType()) {
-        return type;
+        return ProgramAllocator()->New<ETSNonNullishType>(type);
     }
     if (type->IsETSTypeParameter()) {
         return ProgramAllocator()->New<ETSNonNullishType>(type->AsETSTypeParameter());
@@ -248,8 +248,7 @@ static bool MatchConstituentOrConstraint(const Type *type, Pred const &pred, Trv
         return traverse(type->AsETSTypeParameter()->GetConstraintType());
     }
     if (type->IsETSNonNullishType()) {
-        auto tparam = type->AsETSNonNullishType()->GetUnderlying();
-        return traverse(tparam->GetConstraintType());
+        return traverse(type->AsETSNonNullishType()->GetConstraintOrUnderlying());
     }
     if (type->IsETSPartialTypeParameter()) {
         auto tparam = type->AsETSPartialTypeParameter()->GetUnderlying();

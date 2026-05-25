@@ -279,6 +279,7 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
     }
     if (substitution.size() != sigParams.size() &&
         (signature->Function()->ReturnTypeAnnotation() == nullptr ||
+         sigRenamed->Function()->ReturnTypeAnnotation()->TsType() == nullptr || sigRenamed->ReturnType() == nullptr ||
          !checker->EnhanceSubstitutionForType(sigInfo->typeParams,
                                               sigRenamed->Function()->ReturnTypeAnnotation()->TsType(),
                                               sigRenamed->ReturnType(), &substitution))) {

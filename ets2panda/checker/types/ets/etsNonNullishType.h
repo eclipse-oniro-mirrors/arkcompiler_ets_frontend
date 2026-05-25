@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,12 +23,14 @@ namespace ark::es2panda::checker {
 
 class ETSNonNullishType : public Type {
 public:
-    explicit ETSNonNullishType(ETSTypeParameter *tparam) : Type(TypeFlag::ETS_NONNULLISH), tparam_(tparam) {}
+    explicit ETSNonNullishType(Type *underlying) : Type(TypeFlag::ETS_NONNULLISH), underlying_(underlying) {}
 
-    ETSTypeParameter *GetUnderlying() const
+    Type *GetUnderlying() const
     {
-        return tparam_;
+        return underlying_;
     }
+
+    Type *GetConstraintOrUnderlying() const;
 
     void Identical(TypeRelation *relation, Type *other) override;
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
@@ -48,7 +50,7 @@ public:
     Type *Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) override;
 
 private:
-    ETSTypeParameter *const tparam_;
+    Type *const underlying_;
 };
 
 }  // namespace ark::es2panda::checker
