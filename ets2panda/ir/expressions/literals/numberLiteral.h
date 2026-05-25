@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +46,16 @@ public:
         return number_;
     }
 
+    [[nodiscard]] bool IsNarrowingBlocked() const noexcept
+    {
+        return narrowingBlocked_;
+    }
+
+    void SetNarrowingBlocked(bool narrowingBlocked = true) noexcept
+    {
+        narrowingBlocked_ = narrowingBlocked;
+    }
+
     [[nodiscard]] NumberLiteral *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -65,6 +75,7 @@ public:
 
 private:
     lexer::Number number_;
+    bool narrowingBlocked_ = false;
 };
 }  // namespace ark::es2panda::ir
 

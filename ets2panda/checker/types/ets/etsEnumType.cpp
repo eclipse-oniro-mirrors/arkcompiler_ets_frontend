@@ -147,8 +147,11 @@ bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
             }
         }
     } else if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC)) {
-        result = true;
-        SetGenerateValueOfFlag(relation);
+        auto *checker = relation->GetChecker()->AsETSChecker();
+        if (relation->IsLegalBoxedPrimitiveConversion(checker->MaybeBoxType(target), this)) {
+            result = true;
+            SetGenerateValueOfFlag(relation);
+        }
     } else if (target->IsETSUnionType()) {
         auto &unionConstituentTypes = target->AsETSUnionType()->ConstituentTypes();
         for (auto *constituentType : unionConstituentTypes) {

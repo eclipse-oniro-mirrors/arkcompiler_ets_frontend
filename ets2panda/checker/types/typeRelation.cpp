@@ -17,6 +17,7 @@
 
 #include "checker/checker.h"
 #include "checker/ETSchecker.h"
+#include "checker/types/ets/etsEnumType.h"
 #include "checker/types/ts/indexInfo.h"
 #include "checker/types/signature.h"
 
@@ -256,6 +257,23 @@ bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
     return result_ == RelationResult::TRUE;
 }
 
+static Type *GetNumericEnumBaseType(ETSChecker *checker, ETSEnumType *enumType)
+{
+    ES2PANDA_ASSERT(checker != nullptr);
+    ES2PANDA_ASSERT(enumType != nullptr);
+
+    if (auto *enumAnnotatedType = enumType->EnumAnnotedType(); enumAnnotatedType != nullptr) {
+        return enumAnnotatedType;
+    }
+
+    auto *enumSuperType = checker->GetSuperType(enumType);
+    if (enumSuperType == nullptr || enumSuperType->TypeArguments().empty()) {
+        return nullptr;
+    }
+
+    return enumSuperType->TypeArguments()[0];
+}
+
 bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
 {
     ETSChecker *checker = this->GetChecker()->AsETSChecker();
@@ -291,7 +309,11 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
     Type *sourceUnboxedType = checker->MaybeUnboxType(source);
 
     if (source->IsETSNumericEnumType()) {
-        targetUnboxedType = checker->GlobalIntType();
+        auto *enumBaseType = GetNumericEnumBaseType(checker, source->AsETSEnumType());
+        if (enumBaseType == nullptr) {
+            return false;
+        }
+        sourceUnboxedType = checker->MaybeUnboxType(enumBaseType);
     }
 
     if (targetUnboxedType == nullptr || sourceUnboxedType == nullptr) {
