@@ -32,7 +32,6 @@
 #include "compiler/lowering/ets/constantExpressionLowering.h"
 #include "compiler/lowering/ets/constructorInitLowering.h"
 #include "compiler/lowering/ets/conditionalSimplifyLowering.h"
-#include "compiler/lowering/ets/declareOverloadLowering.h"
 #include "compiler/lowering/ets/cfgBuilderPhase.h"
 #include "compiler/lowering/ets/declGenPhase.h"
 #include "compiler/lowering/ets/defaultParametersLowering.h"
@@ -154,7 +153,6 @@ std::vector<Phase *> GetETSPhaseList()
         new AnnotationCopyPostLowering,
         new AsyncMethodLowering,
         new AsyncMethodLoweringStackless,
-        new DeclareOverloadLowering,
         new EnumPostCheckLoweringPhase,
         new SpreadConstructionPhase,
         new RestArgsLowering,

@@ -25,5 +25,4 @@ foo(1,2)
 foo(1.1)
 
 
-/* @@? 17:1 Warning Warning W0022: Function foo with this assembly signature already declared. */
-/* @@? 23:5 Error Semantic error ESE0375: Variable 'b' is used before being assigned. */
+/* @@? 18:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */

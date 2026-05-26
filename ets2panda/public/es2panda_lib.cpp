@@ -183,29 +183,6 @@ __attribute__((unused)) es2panda_DynamicImportData DynamicImportDataToE2p(
     return es2pandaDynamicImportData;
 }
 
-__attribute__((unused)) es2panda_OverloadInfo *OverloadInfoToE2pPtr(ArenaAllocator *allocator,
-                                                                    const ir::OverloadInfo *overloadInfo)
-{
-    auto es2pandaOverloadInfo = allocator->New<es2panda_OverloadInfo>();
-    es2pandaOverloadInfo->minArg = overloadInfo->minArg;
-    es2pandaOverloadInfo->maxArg = overloadInfo->maxArg;
-    es2pandaOverloadInfo->needHelperOverload = overloadInfo->needHelperOverload;
-    es2pandaOverloadInfo->isDeclare = overloadInfo->isDeclare;
-    es2pandaOverloadInfo->hasRestVar = overloadInfo->hasRestVar;
-    return es2pandaOverloadInfo;
-}
-
-__attribute__((unused)) es2panda_OverloadInfo OverloadInfoToE2p(const ir::OverloadInfo overloadInfo)
-{
-    es2panda_OverloadInfo es2pandaOverloadInfo;
-    es2pandaOverloadInfo.minArg = overloadInfo.minArg;
-    es2pandaOverloadInfo.maxArg = overloadInfo.maxArg;
-    es2pandaOverloadInfo.needHelperOverload = overloadInfo.needHelperOverload;
-    es2pandaOverloadInfo.isDeclare = overloadInfo.isDeclare;
-    es2pandaOverloadInfo.hasRestVar = overloadInfo.hasRestVar;
-    return es2pandaOverloadInfo;
-}
-
 __attribute__((unused)) char const *ArenaStrdup(ArenaAllocator *allocator, char const *src)
 {
     size_t len = strlen(src);

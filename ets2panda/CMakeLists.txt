@@ -349,7 +349,6 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/constantExpressionLowering.cpp
   compiler/lowering/ets/conditionalSimplifyLowering.cpp
   compiler/lowering/ets/classFromExpressionLowering.cpp
-  compiler/lowering/ets/declareOverloadLowering.cpp
   compiler/lowering/ets/declGenPhase.cpp
   compiler/lowering/ets/defaultParametersLowering.cpp
   compiler/lowering/ets/exportAnonymousConst.cpp

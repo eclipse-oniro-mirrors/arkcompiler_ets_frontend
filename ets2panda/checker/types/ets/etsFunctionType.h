@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -141,30 +141,9 @@ public:
     void Cast(TypeRelation *relation, Type *target) override;
     void CastTarget(TypeRelation *relation, Type *source) override;
 
-    void SetHelperSignature(Signature *signature) noexcept
-    {
-        helperSignature_ = signature;
-    }
-
-    const Signature *GetHelperSignature() const
-    {
-        return helperSignature_;
-    }
-
-    Signature *GetHelperSignature()
-    {
-        return helperSignature_;
-    }
-
-    bool HasHelperSignature()
-    {
-        return helperSignature_ != nullptr;
-    }
-
 private:
     ArenaVector<Signature *> callSignatures_;
     util::StringView const nameOrAsmName_;
-    EPtr<Signature> helperSignature_ {};
     bool hasExtensionSignatures_ {};
     bool hasExtensionAccessorSignatures_ {};
 };

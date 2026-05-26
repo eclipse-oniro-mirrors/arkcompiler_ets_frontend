@@ -20,4 +20,4 @@ export declare function foo(a:A<string>):number
 export declare function foo(a:int, b:int):void
 export declare function foo(a:double):void
 export declare function foo(...args:FixedArray<string>):void
-/* @@? 18:1 Warning Warning W0022: Function foo with this assembly signature already declared. */
+/* @@? 19:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */

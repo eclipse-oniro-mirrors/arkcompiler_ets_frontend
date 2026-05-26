@@ -34,4 +34,4 @@ class B {
         })
     }
 }
-/* @@? 23:5 Warning Warning W0022: Function on with this assembly signature already declared. */
+/* @@? 24:5 Error Semantic error ESE0131: Function on with this assembly signature already declared. */
