@@ -518,7 +518,7 @@ bool PatchFix::CompareClassHash(std::vector<std::pair<std::string, std::string>>
     return true;
 }
 
-void PatchFix::CheckAndRestoreSpecialFunctionName(uint32_t globalIndexForSpecialFunc, std::string &funcInternalName,
+void PatchFix::CheckAndRestoreSpecialFunctionName(uint32_t globalIndexForSpecialFunc, std::string &funcName,
     std::string recordName)
 {
     auto it = originRecordHashFunctionNames_->find(recordName);
@@ -526,20 +526,20 @@ void PatchFix::CheckAndRestoreSpecialFunctionName(uint32_t globalIndexForSpecial
         if (it->second.size() == 0 || globalIndexForSpecialFunc > it->second.size()) {
             // anonymous, special or duplicate function added
             errMsg_ << "[Patch] Found new anonymous, special(containing '.' or '\\') or duplicate name function "
-                    + funcInternalName + " not supported!" << std::endl;
+                    + funcName + " not supported!" << std::endl;
             patchError_ = true;
             return;
         }
         std::string originalName = it->second.at(std::to_string(globalIndexForSpecialFunc));
         // special name function in the same position must have the same real function name as original
         if (originalName.substr(originalName.find_last_of("#")) !=
-            funcInternalName.substr(funcInternalName.find_last_of("#"))) {
+            funcName.substr(funcName.find_last_of("#"))) {
             errMsg_ << "[Patch] Found new anonymous, special(containing '.' or '\\') or duplicate name function "
-                    + funcInternalName + " not supported!" << std::endl;
+                    + funcName + " not supported!" << std::endl;
             patchError_ = true;
             return;
         }
-        funcInternalName = originalName;
+        funcName = originalName;
     }
 }
 
