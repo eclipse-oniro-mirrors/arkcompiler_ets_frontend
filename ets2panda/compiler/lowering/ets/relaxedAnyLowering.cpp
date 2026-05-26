@@ -120,9 +120,9 @@ static ir::AstNode *TransformStorePattern(public_lib::Context *ctx, ir::Assignme
 
     if (!me->IsComputed()) {
         auto prop = IdentifierToLiteral(ctx, me->Property()->AsIdentifier());
-        return CreateIntrin(ctx, "anystbyname", node->TsType(), me->Object(), prop, node->Right());
+        return CreateIntrin(ctx, "anystbyname", nullptr, me->Object(), prop, node->Right());
     }
-    return CreateIntrin(ctx, me->Property()->TsType()->IsBuiltinNumeric() ? "anystbyidx" : "anystbyval", node->TsType(),
+    return CreateIntrin(ctx, me->Property()->TsType()->IsBuiltinNumeric() ? "anystbyidx" : "anystbyval", nullptr,
                         me->Object(), me->Property(), node->Right());
 }
 

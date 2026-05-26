@@ -38,6 +38,10 @@ ets2panda_add_gtest(node_history_test
     CPP_SOURCES node_history.cpp
 )
 
+ets2panda_add_gtest(relaxed_any_lowering_test
+    CPP_SOURCES relaxed_any_lowering.cpp
+)
+
 # ets2panda_add_gtest(convert_primitive_cast_method_call
 #     CPP_SOURCES convert_primitive_cast_method_call.cpp
 # )
