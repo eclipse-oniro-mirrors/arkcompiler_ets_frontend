@@ -27,6 +27,8 @@ function foo(p1: number, ...p2: number[]): void {}
 function main() {
     let arr = [1, 2, 3]
     foo(...arr)
+    foo(...[1, 2, 3])
 }
 
 /* @@? 29:9 Error Semantic error ESE0121: Spread argument cannot be passed for ordinary parameter. */
+/* @@? 30:9 Error Semantic error ESE0121: Spread argument cannot be passed for ordinary parameter. */
