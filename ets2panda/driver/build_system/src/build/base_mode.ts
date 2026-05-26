@@ -83,6 +83,7 @@ import { genObfuscationConfig } from '../obfuscation/obfuscation_config';
 import { DepAnalyzer } from '../dep_analyzer/dep_analyzer';
 import { IncreDepAnalyzer } from '../dep_analyzer/incre_dep_analyzer';
 import { FullDepAnalyzer } from '../dep_analyzer/full_dep_analyzer';
+import { MockConfigGenerator } from './generate_mockconfig';
 
 enum BuildSystemEvent {
     COLLECT_MODULES = 'Collect module infos',
@@ -114,6 +115,8 @@ export abstract class BaseMode {
     protected readonly statsRecorder: StatisticsRecorder;
     protected readonly arktsConfigGenerator: ArkTSConfigGenerator;
     public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
+    public isMockEnabled: boolean = false;
+    private mockConfigGenerator?: MockConfigGenerator;
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -694,6 +697,17 @@ export abstract class BaseMode {
         }
     }
 
+    private processMockConfig(): void {
+        if (this.buildConfig.isOhosTest || this.buildConfig.isLocalTest) {
+            if (this.buildConfig.mockParams?.mockConfigPath &&
+                fs.existsSync(this.buildConfig.mockParams.mockConfigPath)) {
+                this.isMockEnabled = true;
+                this.mockConfigGenerator = new MockConfigGenerator(this.buildConfig);
+                this.mockConfigGenerator.collectMockConfigInfo();
+            }
+        }
+    }
+
     protected generateArkTSConfigForModules(): void {
         const dependenciesSets = new Map<string, Set<string>>;
 
@@ -711,6 +725,12 @@ export abstract class BaseMode {
         let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(this.mainPackageName)!;
         arktsConfig.mergeArktsConfigByDependencies(dependenciesSets.get(this.mainPackageName)!, dependenciesSets!, this.arktsConfigGenerator);
 
+        // only add mock field in mainModule's arktsConfig
+        if (this.isMockEnabled) {
+            const mockConfigInfo = this.mockConfigGenerator!.getMockConfigInfo();
+            arktsConfig.addMockConfig(mockConfigInfo);
+        }
+        
         dependenciesSets.forEach((_: Set<string>, module: string) => {
             let moduleInfo = this.moduleInfos.get(module)!;
             let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(module)!;
@@ -923,6 +943,7 @@ export abstract class BaseMode {
         this.extractDeclarationsFromAbcFile();
         this.logger.printDebug(`ModuleInfos: ${JSON.stringify([...this.moduleInfos], null, 1)}`)
         this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_CONFIGS));
+        this.processMockConfig();
         this.generateArkTSConfigForModules();
         this.statsRecorder.record(formEvent(BuildSystemEvent.PROCESS_ENTRY_FILES));
         this.processEntryFiles();

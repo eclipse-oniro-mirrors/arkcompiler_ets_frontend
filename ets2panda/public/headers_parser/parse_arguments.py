@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 #
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -185,6 +185,9 @@ def parse_arguments(data: str, start: int = 0, mode: str = "args") -> Tuple[int,
     start_of_args = 0
     end_of_args = len(data)
 
+    if len(data) == 0:
+        return end_of_args, res
+        
     if data[start] == "(":
         start_of_args, end_of_args = find_scope_borders(data, start, "(")
         start_of_args += 1

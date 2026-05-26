@@ -65,6 +65,7 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     initAliasConfig(buildConfig);
     initInteropSDKInfo(buildConfig);
     initObfuscationConfig(buildConfig);
+    initMockConfig(buildConfig);
     return buildConfig;
 }
 
@@ -238,6 +239,22 @@ function initInteropSDKInfo(buildConfig: BuildConfig): void {
         if (fs.existsSync(component)) {
             buildConfig.interopSDKPaths.add(component);
         }
+    }
+}
+
+function initMockConfig(buildConfig: BuildConfig): void {
+    // The mock configuration needs to locate the files based on the project root directory.
+    if (!buildConfig.moduleRootPath) {
+        return;
+    }
+    // "Mock" is only effective in LocalTest and OhosTest. 
+    if (!(buildConfig.isLocalTest ?? false) && !(buildConfig.isOhosTest ?? false)) {
+        return;
+    }
+    if (buildConfig.buildLoaderJson && fs.existsSync(buildConfig.buildLoaderJson)) {
+        const buildJsonInfo = JSON.parse(fs.readFileSync(buildConfig.buildLoaderJson).toString());
+        buildConfig.harNameOhmMap = buildJsonInfo.harNameOhmMap;
+        buildConfig.hspNameOhmMap = buildJsonInfo.hspNameOhmMap;
     }
 }
 

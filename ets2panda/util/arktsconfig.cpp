@@ -261,6 +261,40 @@ bool ArkTsConfig::ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap
     return true;
 }
 
+bool ArkTsConfig::ParseMockList(const JsonObject::JsonObjPointer *options,
+                                std::map<std::string, std::string, std::less<>> &mockMap, const std::string &baseUrl)
+{
+    auto mocks = options->get()->GetValue<JsonObject::JsonObjPointer>("mock");
+    if (mocks == nullptr) {
+        return true;
+    }
+
+    for (size_t keyIdx = 0; keyIdx < mocks->get()->GetSize(); ++keyIdx) {
+        auto &key = mocks->get()->GetKeyByIndex(keyIdx);
+        auto source = mocks->get()->GetValue<JsonObject::JsonObjPointer>(key);
+        if (!Check(source != nullptr, diagnostic::INVALID_VALUE, {"mock", key})) {
+            return false;
+        }
+
+        auto value = source->get()->GetValue<JsonObject::StringT>("source");
+        if (!Check(value != nullptr, diagnostic::INVALID_VALUE, {"mock", key})) {
+            return false;
+        }
+
+        auto mockPath = MakeAbsolute(*value, baseUrl);
+        auto iter = mockMap.find(key);
+        if (iter == mockMap.end()) {
+            mockMap.emplace(key, mockPath);
+        } else {
+            mockSources_.erase(iter->second);
+            iter->second = mockPath;
+        }
+        mockSources_.insert(mockPath);
+    }
+
+    return true;
+}
+
 static constexpr auto LANGUAGE = "language";  // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto PATH = "path";          // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto OHM_URL = "ohmUrl";     // CC-OFF(G.NAM.03-CPP) project code style
@@ -484,6 +518,10 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     }
     // Parse "dependencies"
     if (!ParseDependencies(compilerOptions, dependencies_)) {
+        return false;
+    }
+    // Parse "mock"
+    if (!ParseMockList(compilerOptions, mocks_, baseUrl_)) {
         return false;
     }
     return true;

@@ -261,6 +261,22 @@ void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedP
     }
 }
 
+std::optional<std::string> ImportPathManager::ResolveMockPath(
+    std::string_view curFile, std::string_view importFile, const std::map<std::string, std::string, std::less<>> &mocks,
+    const std::set<std::string, std::less<>> &mockSources) const
+{
+    // check the current file is in mock files.
+    if (mockSources.find(curFile) != mockSources.end()) {
+        return std::nullopt;
+    }
+    // check import file is in mock files.
+    auto it = mocks.find(importFile);
+    if (it != mocks.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
+
 ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string_view importPath) const
 {
     if (importPath.empty()) {
@@ -268,8 +284,19 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
         return {};
     }
     ResolvedPathRes result {};
+    auto curModulePath = isDynamic_ ? importer->GetImportInfo().ResolvedSource() : importer->AbsoluteName().Utf8();
+
+    const auto &mocks = ArkTSConfig().MockMap();
+    const auto &mockSources = ArkTSConfig().MockSources();
+
+    if (!mocks.empty()) {
+        auto rawMockPath = ResolveMockPath(curModulePath, importPath, mocks, mockSources);
+        if (rawMockPath.has_value()) {
+            return {*this, std::string(*rawMockPath), ToLanguage(importer->Extension()).GetId(), false};
+        }
+    }
+
     if (IsRelativePath(importPath)) {
-        auto curModulePath = isDynamic_ ? importer->GetImportInfo().ResolvedSource() : importer->AbsoluteName().Utf8();
         size_t pos = curModulePath.find_last_of("/\\");
         auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : curModulePath;
         std::string resolvedPathPrototype {currentDir};
@@ -293,6 +320,13 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
 
     if (result.hasError) {
         return {};
+    }
+
+    if (!mocks.empty()) {
+        auto resolvedMockPath = ResolveMockPath(curModulePath, result.resolvedPath, mocks, mockSources);
+        if (resolvedMockPath.has_value()) {
+            return {*this, std::string(*resolvedMockPath), ToLanguage(importer->Extension()).GetId(), false};
+        }
     }
 
     return {*this, std::string(result.resolvedPath), ToLanguage(importer->Extension()).GetId(),
