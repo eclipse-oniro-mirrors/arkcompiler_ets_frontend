@@ -23,7 +23,7 @@ namespace ark::es2panda::compiler {
 class InterfaceObjectLiteralLowering : public PhaseForProgramsToBeEmitted {
 public:
     std::string_view Name() const override;
-    bool PerformForProgram(parser::Program *prg) override;
+    bool PerformForProgram(parser::Program *prog) override;
 
 protected:
     virtual bool ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const;

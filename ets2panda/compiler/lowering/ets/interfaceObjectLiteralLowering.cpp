@@ -467,6 +467,36 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
 using InterfaceMethod = std::tuple<util::StringView, checker::Signature *, bool>;
 using InterfaceMethods = std::vector<InterfaceMethod>;
 
+static bool AreSignaturesMatching(checker::ETSChecker *checker, checker::TypeRelation *relation,
+                                  checker::Signature *existingSig, checker::Signature *newSig)
+{
+    // Direct comparison first
+    if (relation->SignatureIsSupertypeOf(existingSig, newSig)) {
+        return true;
+    }
+
+    // For generic methods, type parameters from different interfaces are distinct objects.
+    // Use CheckTypeParameterConstraints + AdjustForTypeParameters to handle this,
+    // following the same pattern as CheckOverride and IsMethodPropertyAssignable.
+    auto &existingTypeParams = existingSig->TypeParams();
+    auto &newTypeParams = newSig->TypeParams();
+    if (existingTypeParams.empty() || newTypeParams.empty()) {
+        return false;
+    }
+
+    if (!relation->CheckTypeParameterConstraints(existingTypeParams, newTypeParams)) {
+        return false;
+    }
+
+    auto *substSig = checker->AdjustForTypeParameters(existingSig, newSig);
+    if (substSig == nullptr) {
+        return false;
+    }
+
+    checker::SavedTypeRelationFlagsContext savedFlagsCtx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+    return relation->SignatureIsSupertypeOf(substSig, existingSig);
+}
+
 static void MethodsHaveBody(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
                             InterfaceMethods &methods)
 {
@@ -474,15 +504,22 @@ static void MethodsHaveBody(checker::TypeRelation *relation, ir::TSInterfaceDecl
 
     //  Collect all the methods declared in interface and check if it has default implementation somewhere
     auto const addMethod = [&methods, relation](ir::MethodDefinition const *const methodDef) -> void {
+        auto *checker = relation->GetChecker()->AsETSChecker();
         auto const *const function = methodDef->Function();
         auto const &name = function->Id()->Name();
         auto *const signature = const_cast<checker::Signature *>(function->Signature());
         auto const hasBody = function->HasBody() || (methodDef->Modifiers() & ir::ModifierFlags::DEFAULT) != 0;
 
-        auto const it = std::find_if(
-            methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
-                return std::get<0U>(item) == name && relation->SignatureIsSupertypeOf(std::get<1U>(item), signature);
-            });
+        auto const hasMatchingMethod = [&name, signature, relation, checker](InterfaceMethod const &item) -> bool {
+            auto const sameName = std::get<0U>(item) == name;
+            if (!sameName) {
+                return false;
+            }
+            auto *const existingSignature = std::get<1U>(item);
+            return AreSignaturesMatching(checker, relation, existingSignature, signature);
+        };
+
+        auto const it = std::find_if(methods.begin(), methods.end(), hasMatchingMethod);
         if (it == methods.end()) {
             methods.emplace_back(name, signature, hasBody);
         } else if (hasBody) {
@@ -739,17 +776,42 @@ static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSigna
     return ArenaVector<ark::es2panda::checker::Signature *>();
 }
 
+static bool HasMatchingObjectLiteralProperty(checker::TypeRelation *relation, ir::ObjectExpression *objectExpr,
+                                             util::StringView name, checker::Signature *signature)
+{
+    for (auto *propExpr : objectExpr->Properties()) {
+        if (!propExpr->IsProperty()) {
+            continue;
+        }
+
+        auto *key = propExpr->AsProperty()->Key();
+        if (!key->IsIdentifier() || key->AsIdentifier()->Name() != name.Utf8()) {
+            continue;
+        }
+
+        checker::SavedTypeRelationFlagsContext ctx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+        auto *valType = propExpr->AsProperty()->Value()->TsType();
+        if (valType->IsETSArrowType() &&
+            relation->SignatureIsSupertypeOf(signature, valType->AsETSFunctionType()->ArrowSignature())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
                            ir::ObjectExpression *objectExpr, InterfaceMethods &methods)
 {
     auto checkOverriding = [&methods, objectExpr, relation](ir::MethodDefinition const *methodDef,
                                                             checker::Signature *sig) {
+        auto *checker = relation->GetChecker()->AsETSChecker();
         auto *func = methodDef->Function();
         auto &name = func->Id()->Name();
         auto *signature = const_cast<checker::Signature *>(func->Signature());
-        bool hasBody = func->HasBody() || (methodDef->Modifiers() & ir::ModifierFlags::DEFAULT);
-        auto it = std::find_if(methods.begin(), methods.end(), [&name, signature, relation](auto &item) {
-            return std::get<0>(item) == name && relation->SignatureIsSupertypeOf(std::get<1>(item), signature);
+        bool hasBody = func->HasBody() || ((methodDef->Modifiers() & ir::ModifierFlags::DEFAULT) != 0U);
+        auto it = std::find_if(methods.begin(), methods.end(), [&name, signature, relation, checker](auto &item) {
+            return std::get<0>(item) == name && AreSignaturesMatching(checker, relation, std::get<1>(item), signature);
         });
         if (it == methods.end()) {
             methods.emplace_back(name, signature, hasBody);
@@ -762,22 +824,8 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
             return;
         }
 
-        for (auto *propExpr : objectExpr->Properties()) {
-            if (!propExpr->IsProperty()) {
-                continue;
-            }
-
-            auto *key = propExpr->AsProperty()->Key();
-            if (!key->IsIdentifier() || key->AsIdentifier()->Name() != name.Utf8()) {
-                continue;
-            }
-
-            checker::SavedTypeRelationFlagsContext ctx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
-            auto *valType = propExpr->AsProperty()->Value()->TsType();
-            if (valType->IsETSArrowType() &&
-                relation->SignatureIsSupertypeOf(sig, valType->AsETSFunctionType()->ArrowSignature())) {
-                std::get<2>(*it) = true;
-            }
+        if (HasMatchingObjectLiteralProperty(relation, objectExpr, name, sig)) {
+            std::get<2>(*it) = true;
         }
     };
 
@@ -790,7 +838,6 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
         auto *methodDef = node->AsMethodDefinition();
         auto *objType = objectExpr->TsType()->AsETSObjectType();
         auto signatures = GetInterfaceGenericSignature(objType, methodDef->Key()->AsIdentifier()->Name());
-
         for (auto *sig : signatures) {
             if (!methodDef->Function()->IsGetterOrSetter()) {
                 checkOverriding(methodDef, sig);
