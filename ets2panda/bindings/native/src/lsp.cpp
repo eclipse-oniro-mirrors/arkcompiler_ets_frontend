@@ -999,6 +999,9 @@ TS_INTEROP_1(getQuickInfoKindModifier, KNativePointer, KNativePointer)
 KNativePointer impl_getQuickInfoFileName(KNativePointer ref)
 {
     auto *refPtr = reinterpret_cast<QuickInfo *>(ref);
+    if (refPtr == nullptr) {
+        return nullptr;
+    }
     return new std::string(refPtr->GetFileName());
 }
 TS_INTEROP_1(getQuickInfoFileName, KNativePointer, KNativePointer)
@@ -1124,6 +1127,9 @@ KNativePointer impl_pushBackToNativeContextVector(KNativePointer context, KNativ
         return newVector;
     }
     auto contextVector = reinterpret_cast<std::vector<es2panda_Context *> *>(contextList);
+    if (contextVector == nullptr) {
+        return nullptr;
+    }
     contextVector->push_back(contextPtr);
     return contextVector;
 }
@@ -1216,6 +1222,9 @@ TS_INTEROP_7(getEditsForRefactor,
 KNativePointer impl_getApplicableRefactorInfoList(KNativePointer infosPtr)
 {
     auto *infos = reinterpret_cast<std::vector<ark::es2panda::lsp::ApplicableRefactorInfo> *>(infosPtr);
+    if (infos == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &info : *infos) {
         ptrs.push_back(new ark::es2panda::lsp::ApplicableRefactorInfo(info));
@@ -1227,6 +1236,9 @@ TS_INTEROP_1(getApplicableRefactorInfoList, KNativePointer, KNativePointer)
 KNativePointer impl_getRefactorActionName(KNativePointer refactorActionPtr)
 {
     auto *refactorAction = reinterpret_cast<ark::es2panda::lsp::RefactorAction *>(refactorActionPtr);
+    if (refactorAction == nullptr) {
+        return nullptr;
+    }
     return new std::string(refactorAction->name);
 }
 TS_INTEROP_1(getRefactorActionName, KNativePointer, KNativePointer)
@@ -1234,6 +1246,9 @@ TS_INTEROP_1(getRefactorActionName, KNativePointer, KNativePointer)
 KNativePointer impl_getRefactorActionDescription(KNativePointer refactorActionPtr)
 {
     auto *refactorAction = reinterpret_cast<ark::es2panda::lsp::RefactorAction *>(refactorActionPtr);
+    if (refactorAction == nullptr) {
+        return nullptr;
+    }
     return new std::string(refactorAction->description);
 }
 TS_INTEROP_1(getRefactorActionDescription, KNativePointer, KNativePointer)
@@ -1241,6 +1256,9 @@ TS_INTEROP_1(getRefactorActionDescription, KNativePointer, KNativePointer)
 KNativePointer impl_getRefactorActionKind(KNativePointer refactorActionPtr)
 {
     auto *refactorAction = reinterpret_cast<ark::es2panda::lsp::RefactorAction *>(refactorActionPtr);
+    if (refactorAction == nullptr) {
+        return nullptr;
+    }
     return new std::string(refactorAction->kind);
 }
 TS_INTEROP_1(getRefactorActionKind, KNativePointer, KNativePointer)
@@ -1248,6 +1266,9 @@ TS_INTEROP_1(getRefactorActionKind, KNativePointer, KNativePointer)
 KNativePointer impl_getApplicableRefactorName(KNativePointer applRefsPtr)
 {
     auto *applRefsInfo = reinterpret_cast<ark::es2panda::lsp::ApplicableRefactorInfo *>(applRefsPtr);
+    if (applRefsInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(applRefsInfo->name);
 }
 TS_INTEROP_1(getApplicableRefactorName, KNativePointer, KNativePointer)
@@ -1255,6 +1276,9 @@ TS_INTEROP_1(getApplicableRefactorName, KNativePointer, KNativePointer)
 KNativePointer impl_getApplicableRefactorDescription(KNativePointer applRefsPtr)
 {
     auto *applRefsInfo = reinterpret_cast<ark::es2panda::lsp::ApplicableRefactorInfo *>(applRefsPtr);
+    if (applRefsInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(applRefsInfo->description);
 }
 TS_INTEROP_1(getApplicableRefactorDescription, KNativePointer, KNativePointer)
@@ -1262,6 +1286,9 @@ TS_INTEROP_1(getApplicableRefactorDescription, KNativePointer, KNativePointer)
 KNativePointer impl_getApplicableRefactorAction(KNativePointer applRefsPtr)
 {
     auto *applRefsInfo = reinterpret_cast<ark::es2panda::lsp::ApplicableRefactorInfo *>(applRefsPtr);
+    if (applRefsInfo == nullptr) {
+        return nullptr;
+    }
     return new ark::es2panda::lsp::RefactorAction(applRefsInfo->action);
 }
 TS_INTEROP_1(getApplicableRefactorAction, KNativePointer, KNativePointer)
@@ -1269,6 +1296,9 @@ TS_INTEROP_1(getApplicableRefactorAction, KNativePointer, KNativePointer)
 KNativePointer impl_getClassHierarchyList(KNativePointer infosPtr)
 {
     auto *infos = reinterpret_cast<std::vector<ark::es2panda::lsp::ClassHierarchyItemInfo *> *>(infosPtr);
+    if (infos == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> infoPtrList;
     for (auto &info : *infos) {
         infoPtrList.push_back(info);
@@ -1294,6 +1324,9 @@ TS_INTEROP_1(getKindFromClassHierarchyItemInfo, KInt, KNativePointer)
 KNativePointer impl_getDescriptionFromClassHierarchyItemInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::ClassHierarchyItemInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     auto description = info->description;
     return new std::string(description);
 }
@@ -1302,6 +1335,9 @@ TS_INTEROP_1(getDescriptionFromClassHierarchyItemInfo, KNativePointer, KNativePo
 KNativePointer impl_getOverriddenFromClassHierarchyItemInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::ClassHierarchyItemInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     auto &overridden = info->overridden;
     std::vector<void *> overriddenPtrList;
     overriddenPtrList.reserve(overridden.size());
@@ -1315,6 +1351,9 @@ TS_INTEROP_1(getOverriddenFromClassHierarchyItemInfo, KNativePointer, KNativePoi
 KNativePointer impl_getOverridingFromClassHierarchyItemInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::ClassHierarchyItemInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     auto &overriding = info->overriding;
     std::vector<void *> overridingPtrList;
     overridingPtrList.reserve(overriding.size());
@@ -1328,6 +1367,9 @@ TS_INTEROP_1(getOverridingFromClassHierarchyItemInfo, KNativePointer, KNativePoi
 KNativePointer impl_getImplementedFromClassHierarchyItemInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::ClassHierarchyItemInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     auto implemented = info->implemented;
     std::vector<void *> implementedPtrList;
     implementedPtrList.reserve(implemented.size());
@@ -1341,6 +1383,9 @@ TS_INTEROP_1(getImplementedFromClassHierarchyItemInfo, KNativePointer, KNativePo
 KNativePointer impl_getImplementingFromClassHierarchyItemInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::ClassHierarchyItemInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     auto implementing = info->implementing;
     std::vector<void *> implementingPtrList;
     implementingPtrList.reserve(implementing.size());
@@ -1354,6 +1399,9 @@ TS_INTEROP_1(getImplementingFromClassHierarchyItemInfo, KNativePointer, KNativeP
 KNativePointer impl_getFileNameFromClassRelationDetails(KNativePointer detailsPtr)
 {
     auto *details = reinterpret_cast<ark::es2panda::lsp::ClassRelationDetails *>(detailsPtr);
+    if (details == nullptr) {
+        return nullptr;
+    }
     return new std::string(details->fileName);
 }
 TS_INTEROP_1(getFileNameFromClassRelationDetails, KNativePointer, KNativePointer)
@@ -1375,6 +1423,9 @@ TS_INTEROP_1(getKindFromClassRelationDetails, KInt, KNativePointer)
 KNativePointer impl_getSymbolDisplayPart(KNativePointer quickInfoPtr)
 {
     auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    if (quickInfo == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : quickInfo->GetDisplayParts()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1386,6 +1437,9 @@ TS_INTEROP_1(getSymbolDisplayPart, KNativePointer, KNativePointer)
 KNativePointer impl_getQuickInfoDocument(KNativePointer quickInfoPtr)
 {
     auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    if (quickInfo == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : quickInfo->GetDocument()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1397,6 +1451,9 @@ TS_INTEROP_1(getQuickInfoDocument, KNativePointer, KNativePointer)
 KNativePointer impl_getQuickInfoTags(KNativePointer quickInfoPtr)
 {
     auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    if (quickInfo == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : quickInfo->GetTags()) {
         ptrs.push_back(new DocTagInfo(el));
@@ -1408,6 +1465,9 @@ TS_INTEROP_1(getQuickInfoTags, KNativePointer, KNativePointer)
 KNativePointer impl_getDocTagName(KNativePointer docTagInfoPtr)
 {
     auto *docTagInfo = reinterpret_cast<DocTagInfo *>(docTagInfoPtr);
+    if (docTagInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(docTagInfo->GetName());
 }
 TS_INTEROP_1(getDocTagName, KNativePointer, KNativePointer)
@@ -1415,6 +1475,9 @@ TS_INTEROP_1(getDocTagName, KNativePointer, KNativePointer)
 KNativePointer impl_getDocTagText(KNativePointer docTagInfoPtr)
 {
     auto *docTagInfo = reinterpret_cast<DocTagInfo *>(docTagInfoPtr);
+    if (docTagInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(docTagInfo->GetText());
 }
 TS_INTEROP_1(getDocTagText, KNativePointer, KNativePointer)
@@ -1443,6 +1506,9 @@ TS_INTEROP_1(getTextSpanLength, KInt, KNativePointer)
 KNativePointer impl_getTextSpan(KNativePointer quickInfoPtr)
 {
     auto *quickInfo = reinterpret_cast<QuickInfo *>(quickInfoPtr);
+    if (quickInfo == nullptr) {
+        return nullptr;
+    }
     return new TextSpan(quickInfo->GetTextSpan());
 }
 TS_INTEROP_1(getTextSpan, KNativePointer, KNativePointer)
@@ -1456,6 +1522,9 @@ TS_INTEROP_2(createTextSpan, KNativePointer, KInt, KInt)
 KNativePointer impl_getHighlightTextSpan(KNativePointer highlightPtr)
 {
     auto *highlight = reinterpret_cast<HighlightSpan *>(highlightPtr);
+    if (highlight == nullptr) {
+        return nullptr;
+    }
     return new TextSpan(highlight->textSpan_);
 }
 TS_INTEROP_1(getHighlightTextSpan, KNativePointer, KNativePointer)
@@ -1463,6 +1532,9 @@ TS_INTEROP_1(getHighlightTextSpan, KNativePointer, KNativePointer)
 KNativePointer impl_getHighlightContextSpan(KNativePointer highlightPtr)
 {
     auto *highlight = reinterpret_cast<HighlightSpan *>(highlightPtr);
+    if (highlight == nullptr) {
+        return nullptr;
+    }
     return new TextSpan(highlight->contextSpan_);
 }
 TS_INTEROP_1(getHighlightContextSpan, KNativePointer, KNativePointer)
@@ -1470,6 +1542,9 @@ TS_INTEROP_1(getHighlightContextSpan, KNativePointer, KNativePointer)
 KNativePointer impl_getHighlightFileName(KNativePointer highlightPtr)
 {
     auto *highlight = reinterpret_cast<HighlightSpan *>(highlightPtr);
+    if (highlight == nullptr) {
+        return nullptr;
+    }
     return new std::string(highlight->fileName_);
 }
 TS_INTEROP_1(getHighlightFileName, KNativePointer, KNativePointer)
@@ -1491,6 +1566,9 @@ TS_INTEROP_1(getHighlightKind, KInt, KNativePointer)
 KNativePointer impl_getHighlightSpanFromHighlights(KNativePointer documentHighlightsPtr)
 {
     auto *documentHighlights = reinterpret_cast<DocumentHighlights *>(documentHighlightsPtr);
+    if (documentHighlights == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : documentHighlights->highlightSpans_) {
         ptrs.push_back(new HighlightSpan(el));
@@ -1503,6 +1581,9 @@ KNativePointer impl_getDocumentHighlightsFromRef(KNativePointer documentHighligh
 {
     auto *documentHighlightsReferences =
         reinterpret_cast<DocumentHighlightsReferences *>(documentHighlightsReferencesPtr);
+    if (documentHighlightsReferences == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : documentHighlightsReferences->documentHighlights_) {
         ptrs.push_back(new DocumentHighlights(el));
@@ -1514,6 +1595,9 @@ TS_INTEROP_1(getDocumentHighlightsFromRef, KNativePointer, KNativePointer)
 KNativePointer impl_getFileNameFromEntryData(KNativePointer entryDataPtr)
 {
     auto *entryData = reinterpret_cast<ark::es2panda::lsp::CompletionEntryData *>(entryDataPtr);
+    if (entryData == nullptr) {
+        return nullptr;
+    }
     return new std::string(entryData->GetFileName());
 }
 TS_INTEROP_1(getFileNameFromEntryData, KNativePointer, KNativePointer)
@@ -1521,6 +1605,9 @@ TS_INTEROP_1(getFileNameFromEntryData, KNativePointer, KNativePointer)
 KNativePointer impl_getNamedExportFromEntryData(KNativePointer entryDataPtr)
 {
     auto *entryData = reinterpret_cast<ark::es2panda::lsp::CompletionEntryData *>(entryDataPtr);
+    if (entryData == nullptr) {
+        return nullptr;
+    }
     return new std::string(entryData->GetNamedExport());
 }
 TS_INTEROP_1(getNamedExportFromEntryData, KNativePointer, KNativePointer)
@@ -1528,6 +1615,9 @@ TS_INTEROP_1(getNamedExportFromEntryData, KNativePointer, KNativePointer)
 KNativePointer impl_getImportDeclarationFromEntryData(KNativePointer entryDataPtr)
 {
     auto *entryData = reinterpret_cast<ark::es2panda::lsp::CompletionEntryData *>(entryDataPtr);
+    if (entryData == nullptr) {
+        return nullptr;
+    }
     return new std::string(entryData->GetImportDeclaration());
 }
 TS_INTEROP_1(getImportDeclarationFromEntryData, KNativePointer, KNativePointer)
@@ -1542,6 +1632,9 @@ TS_INTEROP_1(getStatusFromEntryData, KInt, KNativePointer)
 KNativePointer impl_getNameFromEntry(KNativePointer entryPtr)
 {
     auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
+    if (entry == nullptr) {
+        return nullptr;
+    }
     return new std::string(entry->GetName());
 }
 TS_INTEROP_1(getNameFromEntry, KNativePointer, KNativePointer)
@@ -1549,6 +1642,9 @@ TS_INTEROP_1(getNameFromEntry, KNativePointer, KNativePointer)
 KNativePointer impl_getSortTextFromEntry(KNativePointer entryPtr)
 {
     auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
+    if (entry == nullptr) {
+        return nullptr;
+    }
     return new std::string(entry->GetSortText());
 }
 TS_INTEROP_1(getSortTextFromEntry, KNativePointer, KNativePointer)
@@ -1556,6 +1652,9 @@ TS_INTEROP_1(getSortTextFromEntry, KNativePointer, KNativePointer)
 KNativePointer impl_getInsertTextFromEntry(KNativePointer entryPtr)
 {
     auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
+    if (entry == nullptr) {
+        return nullptr;
+    }
     return new std::string(entry->GetInsertText());
 }
 TS_INTEROP_1(getInsertTextFromEntry, KNativePointer, KNativePointer)
@@ -1577,6 +1676,9 @@ TS_INTEROP_1(getHasActionFromEntry, KBoolean, KNativePointer)
 KNativePointer impl_getDataFromEntry(KNativePointer entryPtr)
 {
     auto *entry = reinterpret_cast<ark::es2panda::lsp::CompletionEntry *>(entryPtr);
+    if (entry == nullptr) {
+        return nullptr;
+    }
     auto data = entry->GetCompletionEntryData();
 
     if (data.has_value()) {
@@ -1589,6 +1691,9 @@ TS_INTEROP_1(getDataFromEntry, KNativePointer, KNativePointer)
 KNativePointer impl_getEntriesFromCompletionInfo(KNativePointer completionInfoPtr)
 {
     auto *completionInfo = reinterpret_cast<ark::es2panda::lsp::CompletionInfo *>(completionInfoPtr);
+    if (completionInfo == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : completionInfo->GetEntries()) {
         ptrs.push_back(new ark::es2panda::lsp::CompletionEntry(el));
@@ -1600,6 +1705,9 @@ TS_INTEROP_1(getEntriesFromCompletionInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getUriFromLocation(KNativePointer locPtr)
 {
     auto *loc = reinterpret_cast<ReferenceLocation *>(locPtr);
+    if (loc == nullptr) {
+        return nullptr;
+    }
     return new std::string(loc->uri);
 }
 TS_INTEROP_1(getUriFromLocation, KNativePointer, KNativePointer)
@@ -1640,6 +1748,9 @@ KInt impl_getAccessKindFromLocation(KNativePointer locPtr)
 KNativePointer impl_getRenameFileName(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<ark::es2panda::lsp::RefactorEditInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->GetRenameFileName().value_or(""));
 }
 TS_INTEROP_1(getRenameFileName, KNativePointer, KNativePointer)
@@ -1656,6 +1767,9 @@ TS_INTEROP_1(getAccessKindFromLocation, KInt, KNativePointer)
 KNativePointer impl_getLocationFromList(KNativePointer listPtr)
 {
     auto *list = reinterpret_cast<ReferenceLocationList *>(listPtr);
+    if (list == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : list->referenceLocation) {
         ptrs.push_back(new ReferenceLocation(el));
@@ -1707,6 +1821,9 @@ TS_INTEROP_3(getTypeHierarchies, KNativePointer, KNativePointer, KNativePointer,
 KNativePointer impl_getFileNameFromTypeHierarchiesInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchiesInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->fileName);
 }
 TS_INTEROP_1(getFileNameFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
@@ -1714,6 +1831,9 @@ TS_INTEROP_1(getFileNameFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getNameFromTypeHierarchiesInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchiesInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->name);
 }
 TS_INTEROP_1(getNameFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
@@ -1735,6 +1855,9 @@ TS_INTEROP_1(getPositionFromTypeHierarchiesInfo, KInt, KNativePointer)
 KNativePointer impl_getSuperFromTypeHierarchiesInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchiesInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new TypeHierarchies(info->superHierarchies);
 }
 TS_INTEROP_1(getSuperFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
@@ -1742,6 +1865,9 @@ TS_INTEROP_1(getSuperFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getSubFromTypeHierarchiesInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchiesInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new TypeHierarchies(info->subHierarchies);
 }
 TS_INTEROP_1(getSubFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
@@ -1749,6 +1875,9 @@ TS_INTEROP_1(getSubFromTypeHierarchiesInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getFileNameFromTypeHierarchies(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchies *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->fileName);
 }
 TS_INTEROP_1(getFileNameFromTypeHierarchies, KNativePointer, KNativePointer)
@@ -1756,6 +1885,9 @@ TS_INTEROP_1(getFileNameFromTypeHierarchies, KNativePointer, KNativePointer)
 KNativePointer impl_getNameFromTypeHierarchies(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchies *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->name);
 }
 TS_INTEROP_1(getNameFromTypeHierarchies, KNativePointer, KNativePointer)
@@ -1770,6 +1902,9 @@ TS_INTEROP_1(getPosFromTypeHierarchies, KInt, KNativePointer)
 KNativePointer impl_getSubOrSuper(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<TypeHierarchies *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : info->subOrSuper) {
         ptrs.push_back(new TypeHierarchies(el));
@@ -1806,6 +1941,9 @@ TS_INTEROP_5(getCodeFixesAtPosition, KNativePointer, KNativePointer, KInt, KInt,
 KNativePointer impl_getCodeFixActionInfos(KNativePointer codeFixActionInfosPtr)
 {
     auto *codeFixActionInfos = reinterpret_cast<std::vector<CodeFixActionInfo> *>(codeFixActionInfosPtr);
+    if (codeFixActionInfos == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : *codeFixActionInfos) {
         ptrs.push_back(new CodeFixActionInfo(el));
@@ -1817,6 +1955,9 @@ TS_INTEROP_1(getCodeFixActionInfos, KNativePointer, KNativePointer)
 KNativePointer impl_getFileTextChangesFromCodeActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : info->changes_) {
         ptrs.push_back(new FileTextChanges(el));
@@ -1828,6 +1969,9 @@ TS_INTEROP_1(getFileTextChangesFromCodeActionInfo, KNativePointer, KNativePointe
 KNativePointer impl_getDescriptionFromCodeActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->description_);
 }
 TS_INTEROP_1(getDescriptionFromCodeActionInfo, KNativePointer, KNativePointer)
@@ -1835,6 +1979,9 @@ TS_INTEROP_1(getDescriptionFromCodeActionInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getFixNameFromCodeFixActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeFixActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->fixName_);
 }
 TS_INTEROP_1(getFixNameFromCodeFixActionInfo, KNativePointer, KNativePointer)
@@ -1842,6 +1989,9 @@ TS_INTEROP_1(getFixNameFromCodeFixActionInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getFixIdFromCodeFixActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeFixActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->fixId_);
 }
 TS_INTEROP_1(getFixIdFromCodeFixActionInfo, KNativePointer, KNativePointer)
@@ -1849,6 +1999,9 @@ TS_INTEROP_1(getFixIdFromCodeFixActionInfo, KNativePointer, KNativePointer)
 KNativePointer impl_getFixAllDescriptionFromCodeFixActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeFixActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->fixAllDescription_);
 }
 TS_INTEROP_1(getFixAllDescriptionFromCodeFixActionInfo, KNativePointer, KNativePointer)
@@ -1856,6 +2009,9 @@ TS_INTEROP_1(getFixAllDescriptionFromCodeFixActionInfo, KNativePointer, KNativeP
 KNativePointer impl_getFixAdditionalMessageFromCodeFixActionInfo(KNativePointer infoPtr)
 {
     auto *info = reinterpret_cast<CodeFixActionInfo *>(infoPtr);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->additionalMessage_);
 }
 TS_INTEROP_1(getFixAdditionalMessageFromCodeFixActionInfo, KNativePointer, KNativePointer)
@@ -1872,6 +2028,9 @@ TS_INTEROP_3(getSpanOfEnclosingComment, KNativePointer, KNativePointer, KInt, KB
 KNativePointer impl_getInlayHintText(KNativePointer hintPtr)
 {
     auto *hint = reinterpret_cast<InlayHint *>(hintPtr);
+    if (hint == nullptr) {
+        return nullptr;
+    }
     return new std::string(hint->text);
 }
 TS_INTEROP_1(getInlayHintText, KNativePointer, KNativePointer)
@@ -1907,6 +2066,9 @@ TS_INTEROP_1(getInlayHintWhitespaceAfter, KBoolean, KNativePointer)
 KNativePointer impl_getInlayHints(KNativePointer inlayHintListPtr)
 {
     auto *inlayHintList = reinterpret_cast<InlayHintList *>(inlayHintListPtr);
+    if (inlayHintList == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : inlayHintList->hints) {
         ptrs.push_back(new InlayHint(el));
@@ -1927,6 +2089,9 @@ TS_INTEROP_2(getInlayHintList, KNativePointer, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpParameterName(KNativePointer parameterPtr)
 {
     auto *parameterRef = reinterpret_cast<SignatureHelpParameter *>(parameterPtr);
+    if (parameterRef == nullptr) {
+        return nullptr;
+    }
     return new std::string(parameterRef->GetName());
 }
 TS_INTEROP_1(getSignatureHelpParameterName, KNativePointer, KNativePointer)
@@ -1934,6 +2099,9 @@ TS_INTEROP_1(getSignatureHelpParameterName, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpParameterDocumentation(KNativePointer parameterPtr)
 {
     auto *parameterRef = reinterpret_cast<SignatureHelpParameter *>(parameterPtr);
+    if (parameterRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : parameterRef->GetDocumentation()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1945,6 +2113,9 @@ TS_INTEROP_1(getSignatureHelpParameterDocumentation, KNativePointer, KNativePoin
 KNativePointer impl_getSignatureHelpParameterDisplayParts(KNativePointer parameterPtr)
 {
     auto *parameterRef = reinterpret_cast<SignatureHelpParameter *>(parameterPtr);
+    if (parameterRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : parameterRef->GetDisplayParts()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1956,6 +2127,9 @@ TS_INTEROP_1(getSignatureHelpParameterDisplayParts, KNativePointer, KNativePoint
 KNativePointer impl_getSignatureHelpItemPrefix(KNativePointer itemPtr)
 {
     auto *itemRef = reinterpret_cast<SignatureHelpItem *>(itemPtr);
+    if (itemRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemRef->GetPrefixDisplayParts()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1967,6 +2141,9 @@ TS_INTEROP_1(getSignatureHelpItemPrefix, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpItemSuffix(KNativePointer itemPtr)
 {
     auto *itemRef = reinterpret_cast<SignatureHelpItem *>(itemPtr);
+    if (itemRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemRef->GetSuffixDisplayParts()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1978,6 +2155,9 @@ TS_INTEROP_1(getSignatureHelpItemSuffix, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpItemSeparator(KNativePointer itemPtr)
 {
     auto *itemRef = reinterpret_cast<SignatureHelpItem *>(itemPtr);
+    if (itemRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemRef->GetSeparatorDisplayParts()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -1989,6 +2169,9 @@ TS_INTEROP_1(getSignatureHelpItemSeparator, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpItemParameter(KNativePointer itemPtr)
 {
     auto *itemRef = reinterpret_cast<SignatureHelpItem *>(itemPtr);
+    if (itemRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemRef->GetParameters()) {
         ptrs.push_back(new SignatureHelpParameter(el));
@@ -2000,6 +2183,9 @@ TS_INTEROP_1(getSignatureHelpItemParameter, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpItemDocumentation(KNativePointer itemPtr)
 {
     auto *itemRef = reinterpret_cast<SignatureHelpItem *>(itemPtr);
+    if (itemRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemRef->GetDocumentation()) {
         ptrs.push_back(new SymbolDisplayPart(el));
@@ -2011,6 +2197,9 @@ TS_INTEROP_1(getSignatureHelpItemDocumentation, KNativePointer, KNativePointer)
 KNativePointer impl_getSignatureHelpItem(KNativePointer itemsPtr)
 {
     auto *itemsRef = reinterpret_cast<SignatureHelpItems *>(itemsPtr);
+    if (itemsRef == nullptr) {
+        return nullptr;
+    }
     std::vector<void *> ptrs;
     for (auto &el : itemsRef->GetItems()) {
         ptrs.push_back(new SignatureHelpItem(el));
@@ -2022,6 +2211,9 @@ TS_INTEROP_1(getSignatureHelpItem, KNativePointer, KNativePointer)
 KNativePointer impl_getApplicableSpan(KNativePointer itemsPtr)
 {
     auto *itemsRef = reinterpret_cast<SignatureHelpItems *>(itemsPtr);
+    if (itemsRef == nullptr) {
+        return nullptr;
+    }
     return new TextSpan(itemsRef->GetApplicableSpan());
 }
 TS_INTEROP_1(getApplicableSpan, KNativePointer, KNativePointer)
@@ -2102,6 +2294,9 @@ TS_INTEROP_3(getNodeInfosByDefinitionData, KNativePointer, KNativePointer, KStri
 KNativePointer impl_getNameByNodeInfo(KNativePointer nodeInfo)
 {
     auto *info = reinterpret_cast<NodeInfo *>(nodeInfo);
+    if (info == nullptr) {
+        return nullptr;
+    }
     return new std::string(info->name);
 }
 TS_INTEROP_1(getNameByNodeInfo, KNativePointer, KNativePointer)
@@ -2178,6 +2373,9 @@ TS_INTEROP_2(getTokenTypes, KNativePointer, KNativePointer, KInt)
 KNativePointer impl_GetNameFromTypeInfo(KNativePointer typePtr)
 {
     auto *typeInfo = reinterpret_cast<TokenTypeInfo *>(typePtr);
+    if (typeInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(typeInfo->name);
 }
 TS_INTEROP_1(GetNameFromTypeInfo, KNativePointer, KNativePointer)
@@ -2185,6 +2383,9 @@ TS_INTEROP_1(GetNameFromTypeInfo, KNativePointer, KNativePointer)
 KNativePointer impl_GetTypeFromTypeInfo(KNativePointer typePtr)
 {
     auto *typeInfo = reinterpret_cast<TokenTypeInfo *>(typePtr);
+    if (typeInfo == nullptr) {
+        return nullptr;
+    }
     return new std::string(typeInfo->type);
 }
 TS_INTEROP_1(GetTypeFromTypeInfo, KNativePointer, KNativePointer)
@@ -2198,6 +2399,9 @@ TS_INTEROP_0(createFormatCodeSettings, KNativePointer)
 KInt impl_setFormatCodeSettingsInsertSpaceAfterCommaDelimiter(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterCommaDelimiter(value != 0);
     return 0;
 }
@@ -2206,6 +2410,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterCommaDelimiter, KInt, KNativeP
 KInt impl_setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterSemicolonInForStatements(value != 0);
     return 0;
 }
@@ -2214,6 +2421,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements, KInt
 KInt impl_setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceBeforeAndAfterBinaryOperators(value != 0);
     return 0;
 }
@@ -2222,6 +2432,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators, KInt
 KInt impl_setFormatCodeSettingsInsertSpaceAfterConstructor(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterConstructor(value != 0);
     return 0;
 }
@@ -2231,6 +2444,9 @@ KInt impl_setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements(K
                                                                                KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterKeywordsInControlFlowStatements(value != 0);
     return 0;
 }
@@ -2240,6 +2456,9 @@ KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyPa
                                                                                           KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis(value != 0);
     return 0;
 }
@@ -2250,6 +2469,9 @@ KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBr
                                                                                        KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets(value != 0);
     return 0;
 }
@@ -2260,6 +2482,9 @@ KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBr
                                                                                      KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(value != 0);
     return 0;
 }
@@ -2269,6 +2494,9 @@ KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBrace
                                                                                   KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(value != 0);
     return 0;
 }
@@ -2277,6 +2505,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBr
 KInt impl_setFormatCodeSettingsInsertSpaceAfterTypeAssertion(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceAfterTypeAssertion(value != 0);
     return 0;
 }
@@ -2285,6 +2516,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterTypeAssertion, KInt, KNativePo
 KInt impl_setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceBeforeFunctionParenthesis(value != 0);
     return 0;
 }
@@ -2293,6 +2527,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis, KInt, KN
 KInt impl_setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetPlaceOpenBraceOnNewLineForFunctions(value != 0);
     return 0;
 }
@@ -2301,6 +2538,9 @@ TS_INTEROP_2(setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions, KInt, KNa
 KInt impl_setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetPlaceOpenBraceOnNewLineForControlBlocks(value != 0);
     return 0;
 }
@@ -2309,6 +2549,9 @@ TS_INTEROP_2(setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks, KInt,
 KInt impl_setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetInsertSpaceBeforeTypeAnnotation(value != 0);
     return 0;
 }
@@ -2317,6 +2560,9 @@ TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation, KInt, KNative
 KInt impl_setFormatCodeSettingsIndentSize(KNativePointer settingsPtr, KInt value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetIndentSize(value);
     return 0;
 }
@@ -2325,6 +2571,9 @@ TS_INTEROP_2(setFormatCodeSettingsIndentSize, KInt, KNativePointer, KInt)
 KInt impl_setFormatCodeSettingsTabSize(KNativePointer settingsPtr, KInt value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetTabSize(value);
     return 0;
 }
@@ -2333,6 +2582,9 @@ TS_INTEROP_2(setFormatCodeSettingsTabSize, KInt, KNativePointer, KInt)
 KInt impl_setFormatCodeSettingsConvertTabsToSpaces(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetConvertTabsToSpaces(value != 0);
     return 0;
 }
@@ -2341,6 +2593,9 @@ TS_INTEROP_2(setFormatCodeSettingsConvertTabsToSpaces, KInt, KNativePointer, KBo
 KInt impl_setFormatCodeSettingsBaseIndentSize(KNativePointer settingsPtr, KInt value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetBaseIndentSize(value);
     return 0;
 }
@@ -2357,6 +2612,9 @@ TS_INTEROP_2(setFormatCodeSettingsNewLineCharacter, KInt, KNativePointer, KStrin
 KInt impl_setFormatCodeSettingsIndentStyle(KNativePointer settingsPtr, KInt value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetIndentStyle(static_cast<ark::es2panda::lsp::IndentStyle>(value));
     return 0;
 }
@@ -2365,6 +2623,9 @@ TS_INTEROP_2(setFormatCodeSettingsIndentStyle, KInt, KNativePointer, KInt)
 KInt impl_setFormatCodeSettingsTrimTrailingWhitespace(KNativePointer settingsPtr, KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetTrimTrailingWhitespace(value != 0);
     return 0;
 }
@@ -2374,6 +2635,9 @@ KInt impl_setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine(
                                                                                 KBoolean value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetIndentMultiLineObjectLiteralBeginningOnBlankLine(value != 0);
     return 0;
 }
@@ -2382,6 +2646,9 @@ TS_INTEROP_2(setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLi
 KInt impl_setFormatCodeSettingsSemicolons(KNativePointer settingsPtr, KInt value)
 {
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    if (settings == nullptr) {
+        return -1;
+    }
     settings->SetSemicolons(static_cast<ark::es2panda::lsp::SemicolonPreference>(value));
     return 0;
 }
@@ -2430,6 +2697,9 @@ TS_INTEROP_5(getFormattingEditsAfterKeystroke, KNativePointer, KNativePointer, K
 KNativePointer impl_getFormattingTextChangeAt(KNativePointer textChangesVecPtr, KInt index)
 {
     auto *vec = reinterpret_cast<std::vector<TextChange> *>(textChangesVecPtr);
+    if (vec == nullptr) {
+        return nullptr;
+    }
     if (index < 0 || static_cast<size_t>(index) >= vec->size()) {
         return nullptr;
     }
