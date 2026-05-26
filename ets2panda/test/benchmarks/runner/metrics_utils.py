@@ -55,7 +55,7 @@ def format_diff(diff: float, base: float, formatter_func: Callable[[float], str]
 
 
 def find_ets_files(folder_path: Path) -> List[Path]:
-    return list(folder_path.glob("*.ets"))
+    return list(folder_path.rglob("*.ets"))
 
 
 def get_max_path(file_path: Path) -> Path:

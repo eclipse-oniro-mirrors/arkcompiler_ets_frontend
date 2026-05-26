@@ -291,6 +291,8 @@ public:
 
     std::optional<std::string> TryRelativeFilePathViaArkTsPaths(const public_lib::Context *context) const;
 
+    std::string_view GetCachedRelativeFilePath(const public_lib::Context *context) const;
+
     ir::BlockStatement *Ast()
     {
         return ast_;
@@ -497,6 +499,7 @@ private:
     util::Path sourceFile_;
     std::string_view sourceCode_ {};
     mutable std::unique_ptr<lexer::LineIndex> lineIndex_ {};
+    mutable ArenaString *cachedRelativePath_ {nullptr};
 
     bool isASTlowered_ {};
     bool isModified_ {true};
