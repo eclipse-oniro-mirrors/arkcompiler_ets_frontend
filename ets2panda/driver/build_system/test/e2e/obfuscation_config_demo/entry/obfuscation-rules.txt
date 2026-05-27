@@ -1,0 +1,20 @@
+-enable-bytecode-obfuscation
+
+-enable-bytecode-obfuscation-debugging
+
+#-disable-obfuscation
+
+#-remove-log
+
+-print-configuration ./Release/obf_printconfiguration.txt
+-print-seeds ./Release/obf_printseeds.txt
+
+-print-namecache ./hap-nameCache1.json
+-apply-namecache ./hap-nameCache2.json
+-keep class test.* {*;}
+-keep-class-members class testFunction
+
+-keep-file-name test index
+
+-keep-class-with-members class entry.index.etsharFunction
+-keep-class-members class testFunction.* {*;}

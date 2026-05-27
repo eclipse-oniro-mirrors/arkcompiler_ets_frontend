@@ -1,0 +1,6 @@
+#-disable-obfuscation
+
+-keep class *.test2.* {
+    *;
+}
+

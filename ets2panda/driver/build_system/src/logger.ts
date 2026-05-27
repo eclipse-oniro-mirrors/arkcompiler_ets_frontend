@@ -17,6 +17,7 @@ import { ErrorCode } from './util/error'
 import { WorkerMessageType, LogLevel, BuildConfig } from './types'
 
 export enum SubsystemCode {
+    ARK_GUARD = '113',
     BUILDSYSTEM = '114',
     ES2PANDA = '115',
     SDK = '117'
@@ -41,6 +42,7 @@ export class Logger implements ILogger {
     private constructor(loggerGetter: LoggerGetter, enableDebugOutput?: boolean) {
         this.enableDebugOutput = enableDebugOutput ?? false;
         this.loggerMap = {};
+        this.loggerMap[SubsystemCode.ARK_GUARD] = loggerGetter(SubsystemCode.ARK_GUARD);
         this.loggerMap[SubsystemCode.BUILDSYSTEM] = loggerGetter(SubsystemCode.BUILDSYSTEM);
         this.loggerMap[SubsystemCode.ES2PANDA] = loggerGetter(SubsystemCode.ES2PANDA);
         this.loggerMap[SubsystemCode.SDK] = loggerGetter(SubsystemCode.SDK);

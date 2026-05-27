@@ -8,7 +8,7 @@
     "buildMode": "Release",
     "projectRootPath": "${absolute_path_to_build_system}/test/demo_mix_compile2",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_mix_compile2/entry",
-    "cachePath": "${absolute_path_to_build_system}/test/demo_mix_compile2/dist/cache",
+    "cachePath": "${absolute_path_to_build_system}/test/demo_mix_compile2/dist/cache",	 
     "loaderOutPath": "${absolute_path_to_build_system}/test/demo_mix_compile2/dist/cache/out",
     "bundleName": "com.example.myapplication",
     "useNormalizedOHMUrl": true,

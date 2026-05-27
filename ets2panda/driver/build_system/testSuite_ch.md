@@ -374,6 +374,201 @@ chmod +x test/e2e/run_all.sh
 
 ---
 
+#### Obfuscation E2E测试
+
+package.json中已经定义的Obfuscation相关测试项
+
+```typescript
+"scripts": {
+    "obfuscation_config_demo_hap:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/entry/build_config.json",
+    "obfuscation_config_demo_har:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/har/build_config.json",
+    "obfuscation_config_demo_har2:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/har2/build_config.json",
+    "obfuscation_config_demo_hsp:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/hsp/build_config.json",
+    "obfuscation_config_demo_hsp_har:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/hsp_har/build_config.json",
+}
+```
+
+**单个测试运行**
+
+修改 build_system_Etest 脚本的 TEST 参数为测试项目脚本:
+
+```json
+"scripts": {
+ "build_system_Etest": "TEST=obfuscation_config_demo_har:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
+}
+```
+
+在TEST=后添加脚本的完整名字。
+
+命令行运行:
+
+```bash
+npm run build_system_Etest
+```
+
+会执行测试。
+
+**多组Obfuscation测试执行**
+
+确保脚本有执行权限
+
+```bash
+chmod +x test/e2e/run_obfuscation.sh
+```
+
+运行脚本：
+
+```bash
+./test/e2e/run_obfuscation.sh
+```
+
+会运行scripts数组中的所有测试脚本，并输出测试结果。
+
+---
+
+### E2E_Obfuscation测试说明
+
+1. 先进行[环境配置](#E2E测试前置步骤)
+
+  - 将所有端到端测试代码中的 `${absolute_path_to_build_system}` 替换为实际的目录。
+
+  ```bash
+  find test/e2e_obfuscation -name 'build_config*.json' -exec sed -i 's|${absolute_path_to_build_system}|'"$(pwd)"'|g' {} +
+  find test/e2e_obfuscation -name 'build_config.json' -exec sed -i 's|"buildSdkPath": "."|"buildSdkPath": "'"$(pwd)/test/mock_sdk/"'"|g' {} +
+  ```
+
+2. 添加ark工具
+  - 在<path_to_build_system>/test/mock_sdk/build-tools/ets2panda/bin目录下添加ark
+
+  独立仓根路径下进行：
+  - 编译ark
+  ```bash
+  ./ark.py x64.release arkcompiler/runtime_core/static_core/panda:arkts_bin --gn-args="abckit_enable=true"
+  ```
+
+  - 拷贝ark到指定路径
+  其中ark文件的编译输出路径如下：
+  ark：out/x64.release/arkcompiler/runtime_core/ark
+  把生成的ark放到<path_to_build_system>/test/mock_sdk/build-tools/ets2panda/bin路径下。
+
+  - 确保有执行权限：
+  ```bash
+  chmod +x arkcompiler/ets_frontend/ets2panda/driver/build_system/test/mock_sdk/build-tools/ets2panda/bin/ark
+  ```
+
+  - 设置ark执行所需的库路径
+  下面的/path/code路径替换实际代码根目录:
+  ```bash
+  export PROJECTROOT=/path/code
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PROJECTROOT/out/x64.release/arkcompiler/runtime_core/:$PROJECTROOT/out/x64.release/thirdparty/icu
+  ```
+
+3. 在test/e2e_obfuscation目录下新增用例说明
+  - 首先建工程目录，例如：demo_entry1_2_obfuscationTest。
+  - 在工程目录下分别添加build_config.json用于编译构建和obfuscation-rules.txt用于混淆设置。
+  - 如果工程目录中的Index.ets需要main函数输出日志进行比较，那边在工程目录下需要添加logOut.expected.txt文件用于比较输出的日志。
+  - 在<path_to_build_system>/package.json文件的scripts内添加如下示例内容用于执行：
+    "demo_entry1_2_obfuscationTest:gen_obf": "node ./dist/entry.js test/e2e_obfuscation/demo_entry1_2_obfuscationTest/build_config.json",
+
+
+4. 添加运行多个用例的脚本
+  - 在`<path_to_build_system>/test/e2e_obfuscation`下添加`run_all.sh`脚本
+  该脚本可以通过增删scripts来控制运行指定的测试，也可以把is_run_all_test设为true，则运行全部混淆测试文件。
+
+  - 确保脚本有执行权限：
+  ```bash
+  cd <path_to_build_system>
+  chmod +x test/e2e_obfuscation/run_all.sh
+  ```
+
+  - 运行脚本：
+  ```bash
+  ./test/e2e_obfuscation/run_all.sh
+  ```
+
+  - 运行下面脚本需安装jq：
+  ```bash
+  sudo apt install jq
+  ```
+
+  - 脚本内容如下：
+  ```bash
+  # 用于设置执行全部用例还是指定用例：true时运行全部用例
+  is_run_all_test=false
+
+  scripts=(
+  "demo_entry1_2_obfuscationTest_1:gen_obf"
+  )
+
+  if [ $is_run_all_test = false ]; then
+    target_array=("${scripts[@]}")
+  else
+    # 读取JSON文件并匹配键
+    json_file="$(pwd)/package.json"
+    match_key="gen_obf"
+    declare -a matched_keys
+
+    # 使用jq提取所有键
+    keys=$(jq -r '.scripts | keys_unsorted[]' "$json_file")
+
+    # 遍历键并匹配
+    for key in $keys; do
+      if [[ $key == *"$match_key"* ]]; then
+        matched_keys+=("$key")
+      fi
+    done
+
+    # 输出匹配结果
+    echo "匹配到的键:"
+    for key in "${matched_keys[@]}"; do
+      echo "$key"
+    done
+    target_array=("${matched_keys[@]}")
+  fi
+
+  passed=()
+  failed=()
+
+  # 清理 dist/out 目录
+  if [ -d "dist/out" ]; then
+    rm -rf dist/out
+    echo "已清理 $(pwd)/dist/out 目录"
+  else
+    echo "$(pwd)/dist/out 目录不存在"
+  fi
+
+  for script in "${target_array[@]}"; do
+    echo "Running e2e_obfuscation test: $script"
+    TEST=$script npx jest --testMatch='**/test/e2e_obfuscation/obfuscation.test.ts' --testPathIgnorePatterns='test/ut/'
+    #npm run "$script"
+  if [ $? -eq 0 ]; then
+    passed+=("$script")
+  else
+    failed+=("$script")
+  fi
+  done
+
+  echo
+  echo "================== e2e_obfuscation Test Summary =================="
+  total=$(( ${#target_array[@]} ))
+  echo "Total: $total"
+  echo "Passed: ${#passed[@]}"
+  echo "Failed: ${#failed[@]}"
+  if [ ${#passed[@]} -gt 0 ]; then
+    echo "Passed tests:"
+  for s in "${passed[@]}"; do
+    echo "  $s"
+  done
+  fi
+  if [ ${#failed[@]} -gt 0 ]; then
+    echo "Failed tests:"
+  for s in "${failed[@]}"; do
+    echo "  $s"
+  done
+  fi
+  echo "======================================================"
+  ```
+
 ## 如何编写测试
 
 测试套基于Jest完成，利用Jest提供的断言和匹配器机制完成测试。

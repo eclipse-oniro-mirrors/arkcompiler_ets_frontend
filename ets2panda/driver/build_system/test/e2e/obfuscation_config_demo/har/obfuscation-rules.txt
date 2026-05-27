@@ -1,0 +1,18 @@
+-enable-bytecode-obfuscation
+-remove-log
+#-useuniqueclassmembernames
+
+-keep class StringUtils{*;}
+
+-keep-file-name har/utils
+
+-keep class IndexPage {*;}
+-keep class StringUtils{*;}
+
+-keep-class-with-members class harFunction
+-keep-class-members class Tag 
+
+-keep-class-with-members class getData
+-keep index.ets
+
+-print-seeds ./Release/har_seeds.txt

@@ -1,0 +1,2 @@
+exportFunc: 3
+ n1: hello1

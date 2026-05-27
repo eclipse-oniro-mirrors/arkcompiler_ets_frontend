@@ -384,6 +384,202 @@ Since the output may be quite complex, it is recommended to redirect the output 
 
 ---
 
+#### Obfuscation E2E Test
+
+Obfuscation related test items already defined in package.json
+
+```typescript
+"scripts": {
+    "obfuscation_config_demo_hap:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/entry/build_config.json",
+    "obfuscation_config_demo_har:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/har/build_config.json",
+    "obfuscation_config_demo_har2:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/har2/build_config.json",
+    "obfuscation_config_demo_hsp:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/hsp/build_config.json",
+    "obfuscation_config_demo_hsp_har:gen_abc": "node ./dist/entry.js test/e2e/obfuscation_config_demo/hsp_har/build_config.json",
+}
+```
+
+**Single test**
+
+Modify the `build_system_Etest` script's TEST parameter to the test project script:
+
+```json
+"scripts": {
+ "build_system_Etest": "TEST=obfuscation_config_demo_har:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
+}
+```
+
+Specify the full script name after TEST=.
+
+Run from the command line:
+
+```bash
+npm run build_system_Etest
+```
+
+This will execute the test.
+
+**Multiple Obfuscation Tests**
+
+Make the script executable:
+
+```bash
+chmod +x test/e2e/run_obfuscation.sh
+```
+
+Run the script from the command line:
+
+```bash
+./test/e2e/run_obfuscation.sh
+```
+
+It will run all the test scripts in the scripts array and output the test results.
+
+---
+
+### E2E_Obfuscation Test Instructions
+
+1. First, perform [environment configuration](#Before_E2E)
+
+  - Integrate all end-to-end testing code `${absolute_path_to_build_system}` replace with the actual directory.
+
+  ```bash
+  find test/e2e_obfuscation -name 'build_config*.json' -exec sed -i 's|${absolute_path_to_build_system}|'"$(pwd)"'|g' {} +
+  find test/e2e_obfuscation -name 'build_config.json' -exec sed -i 's|"buildSdkPath": "."|"buildSdkPath": "'"$(pwd)/test/mock_sdk/"'"|g' {} +
+  ```
+
+2. Add ark tool
+
+  In the standalone code repository root path：
+  - Compile ark
+  ```bash
+  ./ark.py x64.release arkcompiler/runtime_core/static_core/panda:arkts_bin --gn-args="abckit_enable=true"
+  ```
+
+  - Copy ark to the specified path
+  The compilation output path of the ark file is as follows：
+  ark：out/x64.release/arkcompiler/runtime_core/ark
+  Place the generated ark in the path:<path_to_build_system>/test/mock_sdk/build-tools/ets2panda/bin/.
+
+  - Ensure execution authority：
+  ```bash
+  chmod +x arkcompiler/ets_frontend/ets2panda/driver/build_system/test/mock_sdk/build-tools/ets2panda/bin/ark
+  ```
+
+  - Set the library path required for ark execution
+  Replace the actual code root directory with the/path/code path below:
+  ```bash
+  export PROJECTROOT=/path/code
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PROJECTROOT/out/x64.release/arkcompiler/runtime_core/:$PROJECTROOT/out/x64.release/thirdparty/icu
+  ```
+
+3. Add a new use case description in the test/e2e_obfuscation directory
+  - Firstly, create a project directory, such as：demo_entry1_2_obfuscationTest.
+  - Add build_config.json in the project directory for compiling builds and obfusion-rules.txt for obfuscation settings.
+  - If the Index.ets in the project directory requires the main function to output logs for comparison,
+    then the logOut.expected.txt file needs to be added in the project directory to compare the output logs.
+  - Add the following example content to the scripts in the <path_to_build_system>/package.json file for execution:
+    "demo_entry1_2_obfuscationTest:gen_obf": "node ./dist/entry.js test/e2e_obfuscation/demo_entry1_2_obfuscationTest/build_config.json",
+
+
+4. Add scripts to run multiple use cases
+  - Add the 'run_all.sh' script under '<path_to_build_system>/test/e2e_obfuscation'
+  This script can control the running of specified tests by adding or deleting scripts,
+  or set is_run_all_test to true to run all obfuscated test files.
+
+  - Ensure that the script has execution permission：
+  ```bash
+  cd <path_to_build_system>
+  chmod +x test/e2e_obfuscation/run_all.sh
+  ```
+
+  - Run the script：
+  ```bash
+  ./test/e2e_obfuscation/run_all.sh
+  ```
+
+  - Running the following script requires installing jq：
+  ```bash
+  sudo apt install jq
+  ```
+
+  - The script content is as follows：
+  ```bash
+  # Used to set whether to execute all cases or specify cases: run all cases when true
+  is_run_all_test=false
+
+  scripts=(
+  "demo_entry1_2_obfuscationTest_1:gen_obf"
+  )
+
+  if [ $is_run_all_test = false ]; then
+    target_array=("${scripts[@]}")
+  else
+    # Read JSON file and match keys
+    json_file="$(pwd)/package.json"
+    match_key="gen_obf"
+    declare -a matched_keys
+
+    # Extract all keys using jq
+    keys=$(jq -r '.scripts | keys_unsorted[]' "$json_file")
+
+    # Traverse keys and match
+    for key in $keys; do
+      if [[ $key == *"$match_key"* ]]; then
+        matched_keys+=("$key")
+      fi
+    done
+
+    # Output matching results
+    echo "Matched keys:"
+    for key in "${matched_keys[@]}"; do
+      echo "$key"
+    done
+    target_array=("${matched_keys[@]}")
+  fi
+
+  passed=()
+  failed=()
+
+  # Clean up the dist/out directory
+  if [ -d "dist/out" ]; then
+    rm -rf dist/out
+    echo "Cleaned $(pwd)/dist/out directory"
+  else
+    echo "The $(pwd)/dist/out directory does not exist"
+  fi
+
+  for script in "${target_array[@]}"; do
+    echo "Running e2e_obfuscation test: $script"
+    TEST=$script npx jest --testMatch='**/test/e2e_obfuscation/obfuscation.test.ts' --testPathIgnorePatterns='test/ut/'
+    #npm run "$script"
+  if [ $? -eq 0 ]; then
+    passed+=("$script")
+  else
+    failed+=("$script")
+  fi
+  done
+
+  echo
+  echo "================== e2e_obfuscation Test Summary =================="
+  total=$(( ${#target_array[@]} ))
+  echo "Total: $total"
+  echo "Passed: ${#passed[@]}"
+  echo "Failed: ${#failed[@]}"
+  if [ ${#passed[@]} -gt 0 ]; then
+    echo "Passed tests:"
+  for s in "${passed[@]}"; do
+    echo "  $s"
+  done
+  fi
+  if [ ${#failed[@]} -gt 0 ]; then
+    echo "Failed tests:"
+  for s in "${failed[@]}"; do
+    echo "  $s"
+  done
+  fi
+  echo "======================================================"
+  ```
+
 ## How to Write Tests
 
 The test suite is based on Jest, using Jest's assertions and matcher mechanisms.

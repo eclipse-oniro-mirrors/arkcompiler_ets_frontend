@@ -1,0 +1,4 @@
+-enable-bytecode-obfuscation
+-print-seeds
+
+-keep package entry.Index { func1():void; }

@@ -77,6 +77,7 @@ import {
     TaskManager,
 } from '../util/TaskManager';
 import { Graph, GraphNode } from '../util/graph';
+import { genObfuscationConfig } from '../obfuscation/obfuscation_config';
 
 enum BuildSystemEvent {
     COLLECT_MODULES = 'Collect module infos',
@@ -90,6 +91,7 @@ enum BuildSystemEvent {
     RUN_LINKER = 'Run linker',
     DECLGEN_V1_SEQUENTIAL = 'Generate v1 declaration files (sequential)',
     DECLGEN_V1_PARALLEL = 'Generate v1 declaration files (parallel)',
+    GEN_OBFUSCATION_CONFIG = 'Generate obfuscation config',
 }
 
 function formEvent(event: BuildSystemEvent): string {
@@ -884,6 +886,10 @@ export abstract class BaseMode {
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
 
+    protected processBuildConfigForObfuscation(): void {
+        genObfuscationConfig(this.buildConfig, this.entryFiles);
+    }
+
     protected processBuildConfig(): void {
         this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
@@ -897,6 +903,8 @@ export abstract class BaseMode {
         this.processEntryFiles();
 
         this.registerDependencyOhmUrlMapEntryFiles();
+        this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_OBFUSCATION_CONFIG));
+        this.processBuildConfigForObfuscation();
     }
 
     private registerDependencyOhmUrlMapEntryFiles(): void {

@@ -1,0 +1,10 @@
+-enable-bytecode-obfuscation
+
+-remove-log
+
+-print-namecache ./hsp-nameCache.json
+
+-keep
+test2.ets
+
+-disable-obfuscation

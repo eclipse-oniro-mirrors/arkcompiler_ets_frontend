@@ -1,0 +1,7 @@
+-enable-bytecode-obfuscation
+-print-seeds
+
+-apply-namecache ./modules_name_cache_modified.json
+
+-keep-file-name entry.Index
+-keep package entry.Index { *; }

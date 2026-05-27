@@ -1,0 +1,2 @@
+-enable-bytecode-obfuscation
+-print-seeds

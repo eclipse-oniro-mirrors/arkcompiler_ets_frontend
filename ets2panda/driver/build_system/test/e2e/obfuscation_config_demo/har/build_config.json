@@ -1,0 +1,78 @@
+{
+    "compileFiles": [],
+
+    "packageName": "har",
+    "moduleType": "har",
+
+    "buildType": "build",
+    "buildMode": "Release",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/",
+    "sourceRoots": ["./"],
+
+    "loaderOutPath": "./dist/out/",
+    "cachePath": "./dist/cache",
+
+    "enableDeclgenEts2Ts": true,
+    "declgenV1OutPath": "./dist/declgen/decl_ets1",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
+    "dependencyModuleList": [
+        {
+            "packageName": "hsp",
+            "moduleName": "hsp",
+            "moduleType": "shared",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp/",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "index.ets",
+            "language": "1.2",
+            "dependencies": [
+                "har"
+            ]
+        }
+    ],
+    "buildLoaderJson": "",
+    "aceModuleJsonPath": "",
+    "aceModuleBuild": "",
+    "compileHar": true,
+    "compileShared": false,
+    "obfuscationOptions": {
+        "selfConfig": {
+            "ruleOptions": {
+                "enable": true,
+                "rules": [
+                    "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/obfuscation-rules.txt"
+                ]
+            },
+            "consumerRules": ["${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/consumer-rules.txt"],
+            "consumerFiles": [],
+            "libDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har"
+        },
+        "sdkApis": [],
+        "obfuscationCacheDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/Release/",
+        "exportRulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/Release/har_obfuscation.txt",
+        "dependencies": {
+            "libraries": [],
+            "hspLibraries": [
+                {
+                    "ruleOptions": {
+                        "enable": true,
+                        "rules": [
+                            "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp/obfuscation-rules.txt"
+                        ]
+                    },
+                    "libDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp",
+                    "consumerRules": [
+                        "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp/consumer-rules.txt"
+                    ]
+                }
+            ],
+            "hars": [],
+            "hsps": []
+        }
+    }
+}

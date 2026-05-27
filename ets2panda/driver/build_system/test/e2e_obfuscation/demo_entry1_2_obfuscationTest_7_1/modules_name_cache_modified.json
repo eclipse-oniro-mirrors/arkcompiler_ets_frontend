@@ -1,0 +1,45 @@
+{
+    "entry.Index": {
+        "#obfName": "a",
+        "Class6": {
+            "#obfName": "i",
+            "field6": "b"
+        },
+        "Class4": {
+            "#obfName": "h",
+            "method4:entry.Index.Class4;void;": "e"
+        },
+        "Class5": {
+            "#obfName": "f321",
+            "method5:void;": "b321"
+        },
+        "Interface2": {
+            "#obfName": "e",
+            "iMethod1:entry.Index.Interface2;void;": "d"
+        },
+        "Class3": {
+            "#obfName": "d",
+            "field3": "c"
+        },
+        "Class1": {
+            "#obfName": "g",
+            "name": "e",
+            "age": "d"
+        },
+        "Class2": {
+            "#obfName": "c",
+            "field2": "f"
+        },
+        "Interface1": {
+            "#obfName": "b112",
+            "%%property-field1": "a112",
+            "%%get-field1:entry.Index.Interface1;i32;": "a112",
+            "%%set-field1:entry.Index.Interface1;i32;void;": "a112"
+        },
+        "Interface3": {
+            "#obfName": "a123",
+            "iMethod2:entry.Index.Interface3;void;": "c123"
+        }
+    },
+    "ArkGuardStaticVersion": "1.0.0.300"
+}

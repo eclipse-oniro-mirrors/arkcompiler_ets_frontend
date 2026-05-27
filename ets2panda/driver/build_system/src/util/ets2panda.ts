@@ -89,6 +89,8 @@ export class Ets2panda {
     private readonly projectRootPath: string;
     private readonly debugBuild: boolean = false;
     private readonly dumpPerf: boolean = false;
+    /** Directory where per-module decl obfuscation name-cache JSON files are written (see --generate-decl:nameCachePath). */
+    private readonly declFileNameCachePath?: string;
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -106,6 +108,7 @@ export class Ets2panda {
         this.projectRootPath = buildConfig.projectRootPath;
         this.debugBuild = (buildConfig.buildMode === BUILD_MODE.DEBUG);
         this.dumpPerf = buildConfig.dumpPerf ?? false;
+        this.declFileNameCachePath = buildConfig.declFileNameCacheConfig?.nameCachePath;
     }
 
     public static getInstance(buildConfig?: BuildConfig): Ets2panda {
@@ -180,6 +183,9 @@ export class Ets2panda {
 
         if ((job.jobType & CompileJobType.DECL) !== 0) {
             ets2pandaCmd.push('--emit-declaration');
+            if (this.declFileNameCachePath) {
+                ets2pandaCmd.push(`--generate-decl:nameCachePath=${this.declFileNameCachePath}`);
+            }
         }
 
         if (job.contentType === JobContentType.FILE) {
@@ -226,6 +232,10 @@ export class Ets2panda {
 
         if (job.contentType === JobContentType.FILE) {
             ets2pandaCmd.push((job.content as FileInfo).input)
+        }
+
+        if (this.declFileNameCachePath) {
+            ets2pandaCmd.push(`--generate-decl:nameCachePath=${this.declFileNameCachePath}`);
         }
 
         return ets2pandaCmd
