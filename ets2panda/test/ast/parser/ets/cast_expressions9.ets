@@ -20,4 +20,4 @@ function main(): void {
 }
 
 /* @@@ label1 Warning Warning W670214: This cast can be excessive because it always succeeds */
-/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'CastClassError' exception at runtime */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' can throw 'ClassCastError' exception at runtime */

@@ -109,7 +109,7 @@ warning:
 
 - name: GENERIC_TYPE_CAST
   id: 369037
-  message: "Cast expression `as {}` is type unsafe. 'CastClassError' exception can be thrown at runtime"
+  message: "Cast expression `as {}` is type unsafe. 'ClassCastError' exception can be thrown at runtime"
 
 - name: GEN_STDLIB_DECLS
   id: 2002
@@ -149,7 +149,7 @@ warning:
 
 - name: INVALID_CAST
   id: 326
-  message: "Attempting to cast type '{}' to '{}' can throw 'CastClassError' exception at runtime"
+  message: "Attempting to cast type '{}' to '{}' can throw 'ClassCastError' exception at runtime"
 
 - name: MAYBE_FALLTHROUGH
   id: 20
@@ -175,7 +175,7 @@ warning:
 
 - name: NULLISH_CAST_TO_NONNULLISH
   id: 304
-  message: "Possible cast of 'null' or 'undefined' to non-nullish type can throw 'CastClassError' exception at runtime"
+  message: "Possible cast of 'null' or 'undefined' to non-nullish type can throw 'ClassCastError' exception at runtime"
 
 - name: NULLISH_COALESCING_ALWAYS_LEFT
   id: 971874

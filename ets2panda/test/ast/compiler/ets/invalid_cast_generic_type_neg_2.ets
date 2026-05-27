@@ -17,4 +17,4 @@ function foo<X extends short, Y extends short>(/* @@ label1 */v: X = /* @@ label
 
 
 /* @@@ label1 Error Semantic error ESE0318: Type 'X|Y' cannot be assigned to type 'X' */
-/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Int' to 'X|Y' can throw 'CastClassError' exception at runtime */
+/* @@@ label2 Warning Warning W0326: Attempting to cast type 'Int' to 'X|Y' can throw 'ClassCastError' exception at runtime */

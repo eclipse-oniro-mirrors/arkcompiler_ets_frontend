@@ -4023,4 +4023,4 @@
     }
   }
 }
-[promiseCasting.ets:51:24] Warning W369037: Cast expression `as Promise<((p1: Int) => Int)>` is type unsafe. 'CastClassError' exception can be thrown at runtime
+[promiseCasting.ets:51:24] Warning W369037: Cast expression `as Promise<((p1: Int) => Int)>` is type unsafe. 'ClassCastError' exception can be thrown at runtime
