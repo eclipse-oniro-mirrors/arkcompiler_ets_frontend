@@ -223,6 +223,12 @@ void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedP
     if (packagePathPair != ArkTSConfig().SourcePathMap().cend()) {
         result->resolvedPath = packagePathPair->second;
         result->resolvedIsExternalModule = true;
+        return;
+    }
+    auto paths = ArkTSConfig().Paths().find(result->resolvedPath);
+    if (paths != ArkTSConfig().Paths().cend()) {
+        result->resolvedPath = *paths->second.begin();
+        result->resolvedIsExternalModule = false;
     }
 }
 
@@ -359,7 +365,14 @@ static ArenaString OhmurlToMname(ArenaString &&ohmurl)
         ohmurl.erase(0, 1);
     }
     ArenaString mnamePrototype {std::move(ohmurl)};
-    std::replace(mnamePrototype.begin(), mnamePrototype.end(), '/', '.');
+    size_t start = 0;
+    if (!mnamePrototype.empty() && mnamePrototype[0] == '@') {
+        size_t slashPos = mnamePrototype.find('/');
+        if (slashPos != ArenaString::npos) {
+            start = slashPos + 1;
+        }
+    }
+    std::replace(mnamePrototype.begin() + start, mnamePrototype.end(), '/', '.');
     return mnamePrototype;
 }
 
@@ -1391,7 +1404,8 @@ static ArenaString CheckAndRebaseOhmurl(const ImportPathManager &ipm, std::strin
 static ArenaString CreatePackageModuleName(const ImportPathManager &ipm, std::string_view resolvedSource,
                                            std::string_view unitPath, std::string_view unitName)
 {
-    if (!ipm.ArkTSConfig().Package().empty() && Helpers::StartsWith(resolvedSource, ipm.ArkTSConfig().BaseUrl())) {
+    if (!ipm.ArkTSConfig().Package().empty() &&
+        Helpers::StartsWith(resolvedSource, ipm.ArkTSConfig().BaseUrl() + util::PATH_DELIMITER)) {
         ArenaString mnamePrototype {};
 
         mnamePrototype =
