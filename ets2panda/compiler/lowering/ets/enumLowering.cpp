@@ -1078,7 +1078,12 @@ void EnumLoweringPhase::SetDefaultPositionInUnfilledClassNodes(const ir::ClassDe
     // Range of "default" value is one point, because that code is not exist in initial source code
     // but createad by enum at this point
     const auto &defautlRange = lexer::SourceRange(enumDecl->Range().start, enumDecl->Range().start);
-    enumClassDecl->IterateRecursively([&defautlRange](ir::AstNode *ast) -> void {
+    enumClassDecl->IterateRecursively([&defautlRange, enumDecl](ir::AstNode *ast) -> void {
+        // Keep enum class definition range aligned with original enum declaration.
+        if (ast->IsClassDefinition()) {
+            ast->SetRange(enumDecl->Range());
+            return;
+        }
         // If SourcePostion is not set before, we set "default" which point to start of enum
         if (ast->Range().start.Program() == nullptr) {
             ast->SetRange(defautlRange);

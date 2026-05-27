@@ -2190,4 +2190,54 @@ foo
     initializer.DestroyContext(context);
 }
 
+TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition4)
+{
+    std::vector<std::string> files = {"getApiCompletionsAtPosition4.ets"};
+    const std::string text = R"delimiter(
+enum MyEnum {
+}
+My
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 19;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "MyEnum", ark::es2panda::lsp::CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "MyEnum")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition5)
+{
+    std::vector<std::string> files = {"getApiCompletionsAtPosition5.ets"};
+    const std::string text = R"delimiter(
+class AAAA {
+}
+let a: aAa
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 25;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "AAAA", ark::es2panda::lsp::CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "AAAA")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 }  // namespace
