@@ -17,14 +17,15 @@ import {
     WorkerMessageType,
     ProcessCompileTask,
 } from '../types';
-import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
+import { LogDataFactory, LogData, Logger, getInterProcessLogger, patchBuildConfigLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
 
 
-const logger = Logger.getInstance(getConsoleLogger)
+const logger = Logger.getInstance(getInterProcessLogger);
 
 function compile(id: string, task: ProcessCompileTask): void {
+    patchBuildConfigLogger(task.buildConfig, getInterProcessLogger);
 
     const ets2panda = Ets2panda.getInstance(task.buildConfig);
 

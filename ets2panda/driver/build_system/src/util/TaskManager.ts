@@ -19,7 +19,7 @@ import * as os from 'os';
 import { DEFAULT_WORKER_NUMS } from '../pre_define';
 import { Logger, LogDataFactory, LogData } from '../logger';
 import { Worker as Thread } from 'worker_threads';
-import { WorkerMessageType, JobInfo } from '../types';
+import { WorkerMessageType, JobInfo, LogLevel } from '../types';
 import { ErrorCode } from './error'
 import { Graph, GraphNode } from './graph';
 
@@ -43,13 +43,43 @@ type OnWorkerExitCallback<PayloadT> = (
     signal: NodeJS.Signals | null
 ) => LogData;
 
-interface WorkerMessage {
-    type: WorkerMessageType,
-    data: {
-        taskId: string;
-        error?: LogData;
-    },
+interface WorkerDeclGeneratedMessage {
+    type: WorkerMessageType.DECL_GENERATED;
+    data: { taskId: string };
 }
+
+interface WorkerAbcCompiledMessage {
+    type: WorkerMessageType.ABC_COMPILED;
+    data: { taskId: string };
+}
+
+interface WorkerErrorMessage {
+    type: WorkerMessageType.ERROR_OCCURED;
+    data: { taskId: string; error: LogData };
+}
+
+interface WorkerTaskFinishedMessage {
+    type: WorkerMessageType.TASK_FINISHED;
+}
+
+interface WorkerTextLogMessage {
+    type: WorkerMessageType.LOG;
+    data: { level: LogLevel.INFO | LogLevel.WARN | LogLevel.DEBUG; message: string };
+}
+
+interface WorkerErrorLogMessage {
+    type: WorkerMessageType.LOG;
+    data: { level: LogLevel.ERROR | LogLevel.ERROR_AND_EXIT; error: LogData };
+}
+
+type WorkerLogMessage = WorkerTextLogMessage | WorkerErrorLogMessage;
+
+type WorkerMessage =
+    | WorkerDeclGeneratedMessage
+    | WorkerAbcCompiledMessage
+    | WorkerErrorMessage
+    | WorkerTaskFinishedMessage
+    | WorkerLogMessage;
 
 interface DriverWorker {
     on(msg: string, listener: (...args: any) => void): DriverWorker;
@@ -236,8 +266,11 @@ export class TaskManager<PayloadT extends JobInfo> {
     private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage): void {
         this.logger.printDebug(`WorkerMessage: ${JSON.stringify(message, null, 1)}`)
         switch (message.type) {
+            case WorkerMessageType.LOG:
+                this.handleWorkerLog(message);
+                break;
             case WorkerMessageType.ERROR_OCCURED:
-                this.logErrorMessage(message);
+                this.logErrorMessage(message.data.error);
                 this.onTaskFailed(message.data.taskId);
                 break;
             case WorkerMessageType.DECL_GENERATED:
@@ -254,7 +287,29 @@ export class TaskManager<PayloadT extends JobInfo> {
         }
     }
 
-    private onTaskFinished(workerInfo: WorkerInfo) {
+    private handleWorkerLog(message: WorkerLogMessage): void {
+        switch (message.data.level) {
+            case LogLevel.INFO:
+                this.logger.printInfo(message.data.message);
+                break;
+            case LogLevel.WARN:
+                this.logger.printWarn(message.data.message);
+                break;
+            case LogLevel.DEBUG:
+                this.logger.printDebug(message.data.message);
+                break;
+            case LogLevel.ERROR:
+                this.logErrorMessage(message.data.error);
+                break;
+            case LogLevel.ERROR_AND_EXIT:
+                this.logErrorMessage(message.data.error, true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private onTaskFinished(workerInfo: WorkerInfo): void {
         workerInfo.currentTaskId = undefined;
         this.idleWorkers.push(workerInfo);
         this.tryDispatch();
@@ -422,23 +477,14 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.idleWorkers.push(workerInfo);
     }
 
-    private logErrorMessage(message: WorkerMessage): void {
-        const err: LogData | undefined = message.data.error;
-        if (!err) {
-            return;
-        }
+    // Reconstruct LogData from a plain object to restore class methods lost during IPC serialization.
+    private reconstructLogData(error: LogData): LogData {
+        return new LogData(error.code, error.description, error.cause, error.position, error.solutions, error.moreInfo);
+    }
 
-        // Just to make LogData methods available
-        const logData = new LogData(
-            err.code,
-            err.description,
-            err.cause,
-            err.position,
-            err.solutions,
-            err.moreInfo
-        );
-
-        this.logger.printError(logData);
+    private logErrorMessage(error: LogData, exitAfter: boolean = false): void {
+        const logData = this.reconstructLogData(error);
+        exitAfter ? this.logger.printErrorAndExit(logData) : this.logger.printError(logData);
     }
 
     public shutdownWorkers(): void {

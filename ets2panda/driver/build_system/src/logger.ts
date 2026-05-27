@@ -14,10 +14,12 @@
  */
 
 import { ErrorCode } from './util/error'
+import { WorkerMessageType, LogLevel, BuildConfig } from './types'
 
 export enum SubsystemCode {
     BUILDSYSTEM = '114',
     ES2PANDA = '115',
+    SDK = '117'
 }
 
 export interface ILogger {
@@ -41,6 +43,7 @@ export class Logger implements ILogger {
         this.loggerMap = {};
         this.loggerMap[SubsystemCode.BUILDSYSTEM] = loggerGetter(SubsystemCode.BUILDSYSTEM);
         this.loggerMap[SubsystemCode.ES2PANDA] = loggerGetter(SubsystemCode.ES2PANDA);
+        this.loggerMap[SubsystemCode.SDK] = loggerGetter(SubsystemCode.SDK);
     }
 
     public static getInstance(loggerGetter?: LoggerGetter, enableDebugOutput?: boolean): Logger {
@@ -216,4 +219,46 @@ class ConsoleLogger implements ILogger {
 
 export function getConsoleLogger(subsystemCode: string): ConsoleLogger {
     return ConsoleLogger.createLogger(subsystemCode);
+}
+
+export class InterProcessLogger implements ILogger {
+    private static instances: { [key: string]: InterProcessLogger } = {};
+
+    private constructor() { }
+
+    public printInfo(message: string): void {
+        process.send!({ type: WorkerMessageType.LOG, data: { level: LogLevel.INFO, message } });
+    }
+
+    public printWarn(message: string): void {
+        process.send!({ type: WorkerMessageType.LOG, data: { level: LogLevel.WARN, message } });
+    }
+
+    public printDebug(message: string): void {
+        process.send!({ type: WorkerMessageType.LOG, data: { level: LogLevel.DEBUG, message } });
+    }
+
+    public printError(error: LogData): void {
+        process.send!({ type: WorkerMessageType.LOG, data: { level: LogLevel.ERROR, error } });
+    }
+
+    public printErrorAndExit(error: LogData): void {
+        process.send!({ type: WorkerMessageType.LOG, data: { level: LogLevel.ERROR_AND_EXIT, error } });
+        process.exit(1);
+    }
+
+    public static createLogger(subsystemCode: string): InterProcessLogger {
+        if (!InterProcessLogger.instances[subsystemCode]) {
+            InterProcessLogger.instances[subsystemCode] = new InterProcessLogger();
+        }
+        return InterProcessLogger.instances[subsystemCode];
+    }
+}
+
+export function getInterProcessLogger(subsystemCode: string): InterProcessLogger {
+    return InterProcessLogger.createLogger(subsystemCode);
+}
+
+export function patchBuildConfigLogger(buildConfig: BuildConfig, loggerGetter: LoggerGetter): void {
+    buildConfig.getHvigorConsoleLogger = loggerGetter;
 }

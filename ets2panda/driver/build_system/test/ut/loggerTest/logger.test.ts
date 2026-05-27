@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,10 +19,14 @@ import {
     LogDataFactory,
     LogData,
     SubsystemCode,
-    getConsoleLogger
+    getConsoleLogger,
+    InterProcessLogger,
+    getInterProcessLogger,
+    patchBuildConfigLogger,
 } from '../../../src/logger';
 import { ErrorCode } from '../../../src/util/error';
-import { getMockLoggerGetter } from '../mock/data'
+import { WorkerMessageType, LogLevel } from '../../../src/types';
+import { getMockLoggerGetter, getMockedBuildConfig } from '../mock/data'
 
 // This test suite is for the Logger class, which handles logging for different subsystems in the build system.
 describe('test Logger class', () => {
@@ -38,7 +42,7 @@ describe('test Logger class', () => {
 
     test('singleton', () => {
         Logger.destroyInstance();
-        expect(() => Logger.getInstance()).toThrow('loggerGetter is required for the first instantiation.');
+        expect(() => Logger.getInstance()).toThrow('loggerGetter is required for the first Logger instantiation.');
         const logger1 = Logger.getInstance(getMockLoggerGetter());
         const logger2 = Logger.getInstance();
         expect(logger1).toBe(logger2);
@@ -55,13 +59,13 @@ describe('test Logger class', () => {
     test('printInfo', () => {
         const spy: jest.Mock = jest.fn();
         Logger.destroyInstance();
-        const logger = Logger.getInstance(getMockLoggerGetter(spy));
+        const logger = Logger.getInstance(getMockLoggerGetter(spy), true);
         logger.printInfo('info');
         logger.printWarn('warn');
         logger.printDebug('debug');
-        expect(spy).toHaveBeenCalledWith('info');
-        expect(spy).toHaveBeenCalledWith('warn');
-        expect(spy).toHaveBeenCalledWith('debug');
+        expect(spy).toHaveBeenCalledWith(expect.stringContaining('info'));
+        expect(spy).toHaveBeenCalledWith(expect.stringContaining('warn'));
+        expect(spy).toHaveBeenCalledWith(expect.stringContaining('debug'));
     });
 
     test('printError && printErrorAndExit', () => {
@@ -130,7 +134,8 @@ describe('test LogDataFactory and LogData', () => {
         logData = LogDataFactory.newInstance('00100001' as ErrorCode, 'desc', 'cause', 'pos', ['sol1'], { foo: 'bar' });
         let str = logData.toString();
         expect(str).toContain('ERROR Code: 00100001 desc');
-        expect(str).toContain('Error Message: cause pos');
+        expect(str).toContain('Error Message: cause');
+        expect(str).toContain('Position: pos');
         expect(str).toContain('> sol1');
         expect(str).toContain('More Info:');
         expect(str).toContain('FOO: bar');
@@ -161,10 +166,100 @@ describe('test console logger', () => {
         logger.printError(errorData)
         logger.printErrorAndExit(errorData)
 
-        expect(spy).toHaveBeenCalledWith('info');
-        expect(spy).toHaveBeenCalledWith('warn');
-        expect(spy).toHaveBeenCalledWith('debug');
-        expect(spy).toHaveBeenNthCalledWith(4, errorDataStr);
-        expect(spy).toHaveBeenNthCalledWith(5, errorDataStr);
+        expect(spy).toHaveBeenCalledWith('[INFO]', 'info');
+        expect(spy).toHaveBeenCalledWith('[WARN]', 'warn');
+        expect(spy).toHaveBeenCalledWith('[DEBUG]', 'debug');
+        expect(spy).toHaveBeenNthCalledWith(4, '[ERROR]', errorDataStr);
+        expect(spy).toHaveBeenNthCalledWith(5, '[ERROR]', errorDataStr);
+    });
+});
+
+describe('test InterProcessLogger', () => {
+    beforeEach(() => {
+        (process as any).send = jest.fn();
+        // Reset singleton instances between tests
+        (InterProcessLogger as any).instances = {};
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+        (InterProcessLogger as any).instances = {};
+    });
+
+    test('getInterProcessLogger returns InterProcessLogger instance', () => {
+        const logger = getInterProcessLogger('114');
+        expect(logger).toBeInstanceOf(InterProcessLogger);
+    });
+
+    test('singleton - same subsystem code returns same instance', () => {
+        const a = getInterProcessLogger('114');
+        const b = getInterProcessLogger('114');
+        expect(a).toBe(b);
+    });
+
+    test('printInfo sends LOG message with INFO level', () => {
+        const logger = getInterProcessLogger('114');
+        logger.printInfo('hello info');
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.LOG,
+            data: { level: LogLevel.INFO, message: 'hello info' },
+        });
+    });
+
+    test('printWarn sends LOG message with WARN level', () => {
+        const logger = getInterProcessLogger('114');
+        logger.printWarn('hello warn');
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.LOG,
+            data: { level: LogLevel.WARN, message: 'hello warn' },
+        });
+    });
+
+    test('printDebug sends LOG message with DEBUG level', () => {
+        const logger = getInterProcessLogger('114');
+        logger.printDebug('hello debug');
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.LOG,
+            data: { level: LogLevel.DEBUG, message: 'hello debug' },
+        });
+    });
+
+    test('printError sends LOG message with ERROR level', () => {
+        const logger = getInterProcessLogger('114');
+        const error = LogDataFactory.newInstance('11400001' as ErrorCode, 'desc', 'cause');
+        logger.printError(error);
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.LOG,
+            data: { level: LogLevel.ERROR, error },
+        });
+    });
+
+    test('printErrorAndExit sends LOG message with ERROR_AND_EXIT level and exits', () => {
+        const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('exit'); });
+        const logger = getInterProcessLogger('114');
+        const error = LogDataFactory.newInstance('11400001' as ErrorCode, 'fatal', 'cause');
+        expect(() => logger.printErrorAndExit(error)).toThrow('exit');
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.LOG,
+            data: { level: LogLevel.ERROR_AND_EXIT, error },
+        });
+        expect(exitSpy).toHaveBeenCalledWith(1);
+    });
+});
+
+describe('test patchBuildConfigLogger', () => {
+    test('sets getHvigorConsoleLogger to the provided getter', () => {
+        const buildConfig = getMockedBuildConfig();
+        expect(buildConfig.getHvigorConsoleLogger).toBeUndefined();
+        patchBuildConfigLogger(buildConfig, getInterProcessLogger);
+        expect(buildConfig.getHvigorConsoleLogger).toBe(getInterProcessLogger);
+    });
+
+    test('patched getter returns an InterProcessLogger', () => {
+        const buildConfig = getMockedBuildConfig();
+        (InterProcessLogger as any).instances = {};
+        patchBuildConfigLogger(buildConfig, getInterProcessLogger);
+        const logger = buildConfig.getHvigorConsoleLogger!('114');
+        expect(logger).toBeInstanceOf(InterProcessLogger);
     });
 });

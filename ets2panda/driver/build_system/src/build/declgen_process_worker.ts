@@ -18,13 +18,14 @@ import {
     WorkerMessageType,
     ProcessDeclgenV1Task,
 } from '../types';
-import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
+import { LogDataFactory, LogData, Logger, getInterProcessLogger, patchBuildConfigLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
 
-const logger = Logger.getInstance(getConsoleLogger)
+const logger = Logger.getInstance(getInterProcessLogger);
 
 function declgen(id: string, task: ProcessDeclgenV1Task): void {
+    patchBuildConfigLogger(task.buildConfig, getInterProcessLogger);
     const ets2panda = Ets2panda.getInstance(task.buildConfig);
 
     try {
@@ -68,7 +69,7 @@ process.on('message', (message: {
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:
-                    declgen(data.taskId, data.payload);
+                declgen(data.taskId, data.payload);
                 break;
             default:
                 break;
