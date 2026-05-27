@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cctype>
 #include <memory>
+#include <set>
 #include <utility>
 #include "lsp/include/refactors/extract_symbol.h"
 #include "lsp/include/refactors/refactor_types.h"
@@ -66,6 +67,35 @@ std::string ApplyEdits(const std::string &original, const std::vector<::TextChan
         result.append(original, cursor, original.size() - cursor);
     }
     return result;
+}
+
+size_t ByteOffsetToCodePointOffsetLocal(std::string_view text, size_t byteOffset)
+{
+    constexpr size_t kAsciiStep = 1;
+    constexpr size_t kTwoByteStep = 2;
+    constexpr size_t kThreeByteStep = 3;
+    constexpr size_t kFourByteStep = 4;
+    const size_t clamped = std::min(byteOffset, text.size());
+    size_t cp = 0;
+    for (size_t i = 0; i < clamped;) {
+        const unsigned char c = static_cast<unsigned char>(text[i]);
+        size_t step = kAsciiStep;
+        if ((c & 0x80U) == 0U) {
+            step = kAsciiStep;
+        } else if ((c & 0xE0U) == 0xC0U) {
+            step = kTwoByteStep;
+        } else if ((c & 0xF0U) == 0xE0U) {
+            step = kThreeByteStep;
+        } else if ((c & 0xF8U) == 0xF0U) {
+            step = kFourByteStep;
+        }
+        if (i + step > clamped) {
+            break;
+        }
+        i += step;
+        ++cp;
+    }
+    return cp;
 }
 
 enum class StripScanState { CODE, SINGLE_QUOTE, DOUBLE_QUOTE, TEMPLATE, LINE_COMMENT, BLOCK_COMMENT };
@@ -204,6 +234,20 @@ void ExpectVariableRenameLocOnUsage(const std::string &source, const FileTextCha
     EXPECT_LT(renameLoc, second + token.size()) << actual;
 }
 
+void ExpectRenameLocOnExtractedCallNameInOriginal(const TextChange *replaceChange,
+                                                  const ark::es2panda::lsp::RefactorEditInfo &edits)
+{
+    ASSERT_NE(replaceChange, nullptr);
+    ASSERT_TRUE(edits.GetRenameLocation().has_value());
+    size_t calleePos = replaceChange->newText.find("newFunction(");
+    if (calleePos == std::string::npos) {
+        calleePos = replaceChange->newText.find("newMethod(");
+    }
+    ASSERT_NE(calleePos, std::string::npos) << replaceChange->newText;
+    const size_t expectedLoc = replaceChange->span.start + calleePos + 1;
+    EXPECT_EQ(edits.GetRenameLocation().value(), expectedLoc);
+}
+
 class LspExtrSymblGetEditsTests : public LSPAPITests {
 public:
     ark::es2panda::lsp::RefactorContext *CreateExtractContext(Initializer *initializer, const std::string &code,
@@ -330,7 +374,7 @@ namespace A {
 
 constexpr std::string_view K_NESTED_NAMESPACE_EXTRACT_EXPR_TO_OUTER_EXPECTED = R"(
 namespace A {
-  function newFunction(y: Int) {
+  function newFunction(y: int): Int {
     return y + 1;
   }
 
@@ -558,7 +602,7 @@ const a = 1;
 )";
     const std::string expected = R"(
 const b = 1;
-const newLocal = 1;
+const newLocal: Int = 1;
 const a = newLocal;
 )";
     const size_t spanStart = 24;
@@ -589,7 +633,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractVariableTrig1)
 const a = 1;
 )";
     const std::string expected = R"(
-const newLocal = 1;
+const newLocal: Int = 1;
 const a = newLocal;
 )";
     const size_t spanStart = 12;
@@ -640,12 +684,12 @@ const a = 1 + 1;
     EXPECT_FALSE(fileEdit.textChanges.empty());
 
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     int insertPos = 0;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
-    const std::string expected = R"(const newLocal = 1 + 1;
+    const std::string expected = R"(const newLocal: Int = 1 + 1;
 // testAnnotation
 const a = newLocal;
 )";
@@ -900,7 +944,7 @@ const y = /*start*/x + 1/*end*/;
     const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
     const std::string expected = R"(
 const x = 1;
-const newLocal = x + 1;
+const newLocal: Int = x + 1;
 /* aboutX */
 const y = newLocal;
 )";
@@ -921,7 +965,7 @@ namespace X {
 namespace X {
   export const j = 10;
 
-  const newLocal = j * j;
+  const newLocal: Int = j * j;
   export const y = newLocal;
 }
 )";
@@ -1013,7 +1057,7 @@ namespace N {
 )";
     const std::string expected = R"(
 namespace N {
-  const newLocal = 1 + 1;
+  const newLocal: Int = 1 + 1;
   class C {
     a = newLocal;
   }
@@ -1114,7 +1158,7 @@ namespace A {
     const std::string expected = R"(
 namespace A {
   export namespace B {
-    let newLocal = 1 + 2;
+    let newLocal: Int = 1 + 2;
     export const x = newLocal;
   }
 }
@@ -1156,7 +1200,7 @@ namespace A {
   export namespace B {
     export const newLocal = 100;
 
-    let newLocal_1 = 1 + 2;
+    let newLocal_1: Int = 1 + 2;
     export const x = newLocal_1;
   }
 }
@@ -1190,7 +1234,7 @@ namespace A {
     const std::string expected = R"(
 namespace A {
   export namespace B {
-    const newLocal = 1 + 2;
+    const newLocal: Int = 1 + 2;
     export const x = newLocal;
   }
 }
@@ -1226,7 +1270,7 @@ namespace A {
 )";
     const std::string expected = R"(
 namespace A {
-  const newLocal = 1 + 2;
+  const newLocal: Int = 1 + 2;
   export namespace B {
     export const x = newLocal;
   }
@@ -1264,7 +1308,7 @@ namespace A {
     const std::string expected = R"(
 namespace A {
   const b = 2;
-  const newLocal = 1 + 2;
+  const newLocal: Int = 1 + 2;
   export namespace B {
     export const x = newLocal;
   }
@@ -1306,20 +1350,9 @@ namespace A {
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
 
-    const std::string actionName = "extract_function_scope_ns_1";
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const auto &fileEdit = edits->GetFileTextChanges().at(0);
-    ASSERT_FALSE(fileEdit.textChanges.empty());
-    const TextChange *insertChange = nullptr;
-    const TextChange *replaceChange = nullptr;
-    FindFunctionInsertAndReplaceTextChange(fileEdit, insertChange, replaceChange);
-    ExpectRenameLocOnExtractedCallName(fileEdit, replaceChange, *edits);
-
     const std::string expected = R"(
 namespace A {
-  function newFunction() {
+  function newFunction(): Int {
     return 1 + 2;
   }
 
@@ -1328,8 +1361,17 @@ namespace A {
   }
 }
 )";
+    const std::string actionName = "extract_function_scope_ns_1";
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const bool hasOuterNamespaceScope = std::any_of(applicable.begin(), applicable.end(),
+                                                    [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasOuterNamespaceScope);
+    ExpectExtractionApplies(code, refactorContext, refactorName, actionName, expected);
+
     initializer->DestroyContext(refactorContext->context);
 }
+
 TEST_F(LspExtrSymblGetEditsTests, ExtractVariableNoReference)
 {
     const std::string code = R"(
@@ -1399,7 +1441,7 @@ const b = a * a;
     ASSERT_FALSE(fileEdit.textChanges.empty());
     const std::string expected = R"(
 let a = 1;
-let newLocal = a * a;
+let newLocal: Int = a * a;
 const b = newLocal;
 )";
     const std::string actual = ApplyEdits(code, fileEdit.textChanges);
@@ -1473,7 +1515,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantWrongRange3)
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     ASSERT_FALSE(fileEdit.textChanges.empty());
-    const std::string expected = R"(const newLocal = 1 * 3;
+    const std::string expected = R"(const newLocal: Int = 1 * 3;
     const a = 1 + newLocal;
 )";
     const std::string token = "newLocal";
@@ -1531,7 +1573,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantWrongRange1)
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     ASSERT_FALSE(fileEdit.textChanges.empty());
-    const std::string expected = R"(const newLocal = 1 + 2;
+    const std::string expected = R"(const newLocal: Int = 1 + 2;
     const fun = () => newLocal;
 )";
     const std::string token = "newLocal";
@@ -1569,14 +1611,14 @@ const a: int = 1 + 1;
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
     const std::string expected = R"(
 'use static'
-const newLocal = 1 + 1;
+const newLocal: Int = 1 + 1;
 const a: int = newLocal;
 )";
     const std::string token = "newLocal";
@@ -1667,14 +1709,14 @@ class test {
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
     const std::string expected = R"(
 'use static'
-const newLocal = 1 + 1;
+const newLocal: Int = 1 + 1;
 class test {
   a = newLocal;
 }
@@ -1717,14 +1759,14 @@ class test {
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
     const std::string expected = R"(
 'use static'
-const newLocal = 1 + 1;
+const newLocal: Int = 1 + 1;
 class test {
   a: string = "dfs";
   f = () => { return newLocal; };
@@ -1819,7 +1861,7 @@ const f = () => {
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     const int insertPos = 32;
     EXPECT_EQ(startPos1, insertPos);
@@ -1828,7 +1870,7 @@ const f = () => {
 'use static'
 
 const f = () => {
-  const newLocal = 1 + 1;
+  const newLocal: Int = 1 + 1;
   return newLocal;
 };
 )";
@@ -1870,11 +1912,11 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaPublicAPI1)
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = 1 + 1;";
+    std::string_view expect = "const newLocal: Int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     EXPECT_EQ(startPos1, 0);
     EXPECT_EQ(newText, expect);
-    const std::string expected = R"(const newLocal = 1 + 1;
+    const std::string expected = R"(const newLocal: Int = 1 + 1;
     const kkmm = newLocal;
 
     const kks = kkmm + 1;
@@ -1919,7 +1961,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaPublicAPI)
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = \"x + y = \";";
+    std::string_view expect = "const newLocal: String = \"x + y = \";";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     // NOLINTNEXTLINE(readability-identifier-naming)
     const size_t expectedInsertPos = code.find("\n  console.log");
@@ -1929,7 +1971,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaPublicAPI)
     const std::string expected = R"(function main() {
   let x = 10;
   let y = 20;
-  const newLocal = "x + y = ";
+  const newLocal: String = "x + y = ";
   console.log(newLocal + (x + y));
 }))";
     const std::string token = "newLocal";
@@ -1970,7 +2012,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaGlobalPublicAPI)
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal = \"x + y = \";";
+    std::string_view expect = "const newLocal: String = \"x + y = \";";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
 
     // NOLINTNEXTLINE(readability-identifier-naming)
@@ -1998,7 +2040,7 @@ class AccountingDepartment {
   name: string = '';
 
   printName(): void {
-    let newLocal = 'Department name:';
+    let newLocal: string = 'Department name:';
     console.log(newLocal + this.name);
   }
 }
@@ -2043,15 +2085,17 @@ let i: I = { a: 1 }
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
     ASSERT_TRUE(HasExecutableRefactorAction(applicable));
-    ASSERT_TRUE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name))
+    ASSERT_TRUE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name))
         << FormatApplicableActions(applicable);
-    EXPECT_FALSE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name))
+    ASSERT_TRUE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name))
         << FormatApplicableActions(applicable);
-    EXPECT_FALSE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name))
+    EXPECT_FALSE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name))
+        << FormatApplicableActions(applicable);
+    EXPECT_FALSE(HasApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name))
         << FormatApplicableActions(applicable);
 
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
-    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name);
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
     auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
@@ -2217,7 +2261,7 @@ const kks = kkmm + 1;
 
     const std::string expected = R"(
 const kkmm = 1 + 1;
-function newFunction() {
+function newFunction(): Int {
   return kkmm + 1;
 }
 
@@ -2271,7 +2315,7 @@ class MyClass {
 )";
     const std::string expected = R"('use static'
 
-function newFunction_1(a: number, b: number) {
+function newFunction_1(a: number, b: number): number {
     return a + b;
 }
 
@@ -2369,6 +2413,20 @@ class MyClass {
   }
 }
 )";
+    const std::string expected = R"('use static'
+
+function newFunction(a: number, b: number): number {
+    return a + b;
+}
+
+class MyClass {
+
+  MyMethod(a: number, b: number) {
+    let sum = newFunction(a, b);
+    return sum;
+  }
+}
+)";
 
     const auto [spanStart, spanEnd] = FindRangeByTokens(code, "let sum = a + b;", "let sum = a + b;");
 
@@ -2379,20 +2437,10 @@ class MyClass {
     const std::string globalScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_TRUE(HasExecutableRefactorAction(applicable));
-    ASSERT_TRUE(HasApplicableAction(applicable, globalScopeAction));
-
-    auto edits = GetEditsViaLspApi(refactorContext, refactorName, globalScopeAction);
-    ASSERT_NE(edits, nullptr);
-    const auto &fileEdit = edits->GetFileTextChanges().front();
-    const TextChange *insertChange = nullptr;
-    const TextChange *replaceChange = nullptr;
-    FindFunctionInsertAndReplaceTextChange(fileEdit, insertChange, replaceChange);
-    ASSERT_NE(insertChange, nullptr);
-    ASSERT_NE(replaceChange, nullptr);
-    EXPECT_NE(insertChange->newText.find("function newFunction("), std::string::npos);
-    EXPECT_NE(replaceChange->newText.find("newFunction("), std::string::npos);
-    ExpectRenameLocOnExtractedCallName(fileEdit, replaceChange, *edits);
+    const bool hasGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                       [&](const auto &info) { return info.action.name == globalScopeAction; });
+    EXPECT_TRUE(hasGlobal);
+    ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -2433,7 +2481,7 @@ class MyClass {
         }
     }
     ASSERT_NE(replaceChange, nullptr);
-    ExpectRenameLocOnExtractedCallName(fileEdit, replaceChange, *edits);
+    ExpectRenameLocOnExtractedCallNameInOriginal(replaceChange, *edits);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -2441,6 +2489,27 @@ class MyClass {
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodGlobalForRename)
 {
     const std::string code = std::string(K_EXTRACT_METHOD_GLOBAL_FOR_RENAME_CODE);
+    const std::string expected = R"('use static'
+
+function newFunction_1(a: number, b: number): number {
+  return a + b;
+}
+
+function newFunction(a: number, b: number) {
+    let c = a + b;
+    return c;
+}
+
+class MyClass {
+
+    MyMethod(a: number, b: number) {
+
+        let c = newFunction_1(a, b);
+        let d = c * c;
+        return d;
+    }
+}
+)";
     // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr std::string_view target = "let c = a + b;";
     const size_t spanStart = code.find(target, code.find("MyMethod"));
@@ -2454,14 +2523,10 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodGlobalForRename)
     const std::string globalScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_TRUE(HasExecutableRefactorAction(applicable));
-    ASSERT_TRUE(HasApplicableAction(applicable, globalScopeAction));
-
-    auto edits = GetEditsViaLspApi(refactorContext, refactorName, globalScopeAction);
-    ASSERT_NE(edits, nullptr);
-    const auto &fileEdit = edits->GetFileTextChanges().front();
-    const std::string token = "newFunction_1";
-    ExpectVariableRenameLocOnUsage(code, fileEdit, *edits, token);
+    const bool hasGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                       [&](const auto &info) { return info.action.name == globalScopeAction; });
+    EXPECT_TRUE(hasGlobal);
+    ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
     initializer->DestroyContext(refactorContext->context);
 }
 
@@ -2547,7 +2612,7 @@ class MyClass {
         return d;
     }
 
-    private newMethod(a: number, b: number) {
+    private newMethod(a: number, b: number): number {
         let c = a + b;
         return c;
     }
@@ -2604,7 +2669,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatements)
     FindFunctionInsertAndReplaceTextChange(fileEdit, insertChange, replaceChange);
     ASSERT_NE(insertChange, nullptr);
     ASSERT_NE(replaceChange, nullptr);
-    ExpectRenameLocOnExtractedCallName(fileEdit, replaceChange, *edits);
+    ExpectRenameLocOnExtractedCallNameInOriginal(replaceChange, *edits);
     const size_t namespaceBPosInCode = code.find("namespace B {");
     ASSERT_NE(namespaceBPosInCode, std::string::npos);
     const size_t namespaceBCloseLineStart = code.find("\n  }\n", namespaceBPosInCode);
@@ -2748,6 +2813,20 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsWit
 TEST_F(LspExtrSymblGetEditsTests, ExtractMethodExportedNestedNamespaceExpressionGlobalParams)
 {
     const std::string code = std::string(K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE);
+    const std::string expected = R"(
+function newFunction(y: int): number {
+  return y + 1;
+}
+
+namespace B {
+  export namespace A {
+    function a() {
+      let y = 3;
+      let z = newFunction(y);
+    }
+  }
+}
+)";
     const size_t spanStart = code.find("y + 1");
     ASSERT_NE(spanStart, std::string::npos);
     const size_t spanEnd = spanStart + std::string("y + 1").size();
@@ -2757,17 +2836,11 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodExportedNestedNamespaceExpression
 
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
     const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
-    auto edits = GetEditsViaLspApi(refactorContext, refactorName, actionName);
-    ASSERT_NE(edits, nullptr);
-    const auto &fileEdit = edits->GetFileTextChanges().at(0);
-    const TextChange *insertChange = nullptr;
-    const TextChange *replaceChange = nullptr;
-    FindFunctionInsertAndReplaceTextChange(fileEdit, insertChange, replaceChange);
-    ASSERT_NE(insertChange, nullptr);
-    ASSERT_NE(replaceChange, nullptr);
-    EXPECT_NE(insertChange->newText.find("function newFunction(y: Int)"), std::string::npos) << insertChange->newText;
-    EXPECT_NE(replaceChange->newText.find("newFunction(y)"), std::string::npos) << replaceChange->newText;
-    ExpectRenameLocOnExtractedCallName(fileEdit, replaceChange, *edits);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const bool hasGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                       [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasGlobal);
+    ExpectExtractionApplies(code, refactorContext, refactorName, actionName, expected);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -2809,7 +2882,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceOuterScopeParams)
     const std::string actual = ApplyEdits(code, fileEdit.textChanges);
     EXPECT_NE(actual.find("tmp = newFunction(tmp);"), std::string::npos);
     EXPECT_EQ(actual.find("tmp = newFunction(x, tmp, foo);"), std::string::npos);
-    EXPECT_NE(actual.find("function newFunction(tmp: Int)"), std::string::npos) << actual;
+    EXPECT_NE(actual.find("function newFunction(tmp: int)"), std::string::npos) << actual;
     const size_t namespaceBPos = actual.find("namespace B");
     ASSERT_NE(namespaceBPos, std::string::npos);
     const size_t extractedFuncPos = actual.find("function newFunction", namespaceBPos);
@@ -2894,7 +2967,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodNestedNamespaceMultiStatementsLin
     const std::string actual = ApplyEdits(code, fileEdit.textChanges);
     EXPECT_NE(actual.find("tmp = newFunction(tmp);"), std::string::npos) << actual;
     EXPECT_EQ(actual.find("tmp = newFunction(x, tmp, foo);"), std::string::npos);
-    EXPECT_NE(actual.find("function newFunction(tmp: Int)"), std::string::npos) << actual;
+    EXPECT_NE(actual.find("function newFunction(tmp: int)"), std::string::npos) << actual;
     const size_t namespaceBPos = actual.find("namespace B");
     ASSERT_NE(namespaceBPos, std::string::npos);
     const size_t extractedFuncPos = actual.find("function newFunction", namespaceBPos);
@@ -2925,17 +2998,34 @@ class AccountingDepartment {
     }
 }
 )";
+    const std::string expected = R"('use static'
 
-    const size_t spanStart = 151;
-    const size_t spanEnd = 157;
+class AccountingDepartment {
+    //中文测试
+    name: string = '中文测试';
+    //中文测试
+    printName(): void {
+        //中文测试
+        let newLocal: string = '中文测试';
+        console.log(newLocal + this.name);
+    }
+}
+)";
+
+    const std::string targetLine = "console.log('中文测试' + this.name);";
+    const size_t lineStart = code.find(targetLine);
+    ASSERT_NE(lineStart, std::string::npos);
+    const std::string target = "'中文测试'";
+    const size_t relPos = targetLine.find(target);
+    ASSERT_NE(relPos, std::string::npos);
+    const size_t spanStart = lineStart + relPos;
+    const size_t spanEnd = spanStart + target.size();
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
     refactorContext->kind = "refactor.extract.variable";
 
-    LSPAPI const *lspApi = GetImpl();
-    auto applicable =
-        lspApi->getApplicableRefactors(refactorContext->context, refactorContext->kind.c_str(), spanStart, spanEnd);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
 
     EXPECT_FALSE(applicable.empty());
 
@@ -2945,17 +3035,12 @@ class AccountingDepartment {
     EXPECT_TRUE(hasVariableEnclose);
 
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
-    auto edits = lspApi->getEditsForRefactor(*refactorContext, refactorName, actionName);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     ASSERT_FALSE(fileEdit.textChanges.empty());
-    ASSERT_EQ(fileEdit.textChanges.size(), 2U);
-    EXPECT_EQ(fileEdit.textChanges[0].span.start, 139U);
-    EXPECT_EQ(fileEdit.textChanges[0].span.length, 0U);
-    EXPECT_EQ(fileEdit.textChanges[0].newText, "let newLocal = '中文测试';");
-    EXPECT_EQ(fileEdit.textChanges[1].span.start, 183U);
-    EXPECT_EQ(fileEdit.textChanges[1].span.length, 14U);
-    EXPECT_EQ(fileEdit.textChanges[1].newText, "newLocal");
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripFormattingWhitespace(actual), StripFormattingWhitespace(expected));
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -2981,18 +3066,65 @@ class MyClass {
         //中文测试
 
         let c = this.newMethod(a);
-        return c;
-    }
+        c = a + "中文测试";
 
-    private newMethod(a: string) {
-        let c = a + "中文测试";
+        private newMethod(a: string): string {
+            let c = a + "中文测试";
+            return c;
+        }
         return c;
     }
 }
 )";
 
-    const size_t spanStart = 101;
-    const size_t spanEnd = 120;
+    const std::string target = R"(let c = a + "中文测试";)";
+    const size_t spanStartByte = code.find(target);
+    EXPECT_NE(spanStartByte, std::string::npos);
+    const size_t spanEndByte = spanStartByte + target.size();
+    const size_t spanStart = ByteOffsetToCodePointOffsetLocal(code, spanStartByte);
+    const size_t spanEnd = ByteOffsetToCodePointOffsetLocal(code, spanEndByte);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    refactorContext->kind = "refactor.extract.function";
+
+    LSPAPI const *lspApi = GetImpl();
+    auto applicable =
+        lspApi->getApplicableRefactors(refactorContext->context, refactorContext->kind.c_str(), spanStart, spanEnd);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string classScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_CLASS.name);
+
+    const bool hasClass = std::any_of(applicable.begin(), applicable.end(),
+                                      [&](const auto &info) { return info.action.name == classScopeAction; });
+    EXPECT_TRUE(hasClass);
+
+    ExpectExtractionApplies(code, refactorContext, refactorName, classScopeAction, expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbolTest)
+{
+    const std::string code = R"(
+class A {
+    x = /*start*/1/*end*/;
+}
+)";
+    const std::string expected = R"(
+class A {
+    private newMethod(): Int {
+        return 1;
+    }
+    x = /*start*/this.newMethod()/*end*/;
+}
+)";
+    const std::string target = R"(/*start*/1/*end*/)";
+    const size_t spanStartByte = code.find(target);
+    EXPECT_NE(spanStartByte, std::string::npos);
+    const size_t spanEndByte = spanStartByte + target.size();
+    const size_t spanStart = ByteOffsetToCodePointOffsetLocal(code, spanStartByte);
+    const size_t spanEnd = ByteOffsetToCodePointOffsetLocal(code, spanEndByte);
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);

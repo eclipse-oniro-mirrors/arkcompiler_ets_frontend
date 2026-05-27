@@ -753,7 +753,28 @@ std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
     newContext.span.pos = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, context.span.pos);
     newContext.span.end = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, context.span.end);
 
-    return ark::es2panda::lsp::GetEditsForRefactorsImpl(newContext, refactorName, actionName);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(newContext, refactorName, actionName);
+    if (edits == nullptr) {
+        return edits;
+    }
+
+    auto fileTextChanges = edits->GetFileTextChanges();
+    for (auto &fileChange : fileTextChanges) {
+        for (auto &textChange : fileChange.textChanges) {
+            size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, textChange.span.start);
+            size_t endCharOffset =
+                ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, textChange.span.start + textChange.span.length);
+            textChange.span.start = startCharOffset;
+            textChange.span.length = endCharOffset - startCharOffset;
+        }
+    }
+    edits->SetFileTextChanges(fileTextChanges);
+    if (edits->GetRenameLocation().has_value()) {
+        const size_t renameByteOffset = edits->GetRenameLocation().value();
+        edits->SetRenameLocation(ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, renameByteOffset));
+    }
+
+    return edits;
 }
 
 std::vector<ark::es2panda::lsp::TodoComment> GetTodoComments(

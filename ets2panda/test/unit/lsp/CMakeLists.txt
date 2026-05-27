@@ -122,6 +122,10 @@ ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol CPP_SOURCES
     refactor_extract_symbol_test.cpp 
 )
 
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_2 CPP_SOURCES
+    refactor_extract_symbol_test_2.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_variable CPP_SOURCES 
     refactor_extract_symbol_test_variable.cpp 
 )
@@ -129,6 +133,11 @@ ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_variable CPP_SOURCES
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_function CPP_SOURCES
     refactor_extract_symbol_test_function.cpp
 )
+
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_constant CPP_SOURCES
+    refactor_extract_symbol_test_constant.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_refactors_convert_chain CPP_SOURCES
     refactors_convert_chain_test.cpp
 )
@@ -155,6 +164,10 @@ ets2panda_add_gtest(lsp_api_test_refactors_convert_params_to_object CPP_SOURCES
 
 ets2panda_add_gtest(lsp_api_test_refactors_extract_type CPP_SOURCES
     refactors_extract_type_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_refactors_extract_interface CPP_SOURCES
+    refactors_extract_interface_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_refactors_convert_template CPP_SOURCES
