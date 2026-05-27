@@ -45,7 +45,6 @@ softlist:
   paths:
   - ".*/test/xts/acts/.*"
   - ".*/base/global/i18n/.*"
-  - ".*/base/security/certificate_manager/.*"
   - ".*/distributeddatamgr/udmf/.*"
   - ".*/developtools/ace_ets2bundle/.*"
   - ".*/test/testfwk/arkxtest/.*"
