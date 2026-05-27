@@ -24,5 +24,5 @@ function foo2(a:string){}
 overload /* @@ label2 */foo{foo2}
 
 
-/* @@? 19:5 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
-/* @@? 24:1 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this medhod. */
+/* @@? 19:5 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this method. */
+/* @@? 24:1 Error Semantic error ESE0397: Method with the same name as overload declaration 'foo', overloadlist must list this method. */

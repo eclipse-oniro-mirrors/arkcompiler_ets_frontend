@@ -20,4 +20,4 @@ function main() {
     }
 }
 
-/* @@@ label Error Semantic error ESE0263: An object literal cannot multiple properties with same name */
+/* @@@ label Error Semantic error ESE0263: An object literal cannot have multiple properties with same name */

@@ -43,7 +43,7 @@ fatal:
 
 - name: GENERATE_DYNAMIC_DECLARATIONS
   id: 24
-  message: "Genate dynamic declarations, outputDeclEts and outputEts must be set together."
+  message: "--output-dets and --output-ets options must be set together."
 
 - name: IMPORT_CANT_FIND_PREFIX
   id: 16
@@ -99,7 +99,7 @@ fatal:
 
 - name: SIMULTANEOUSLY_MARK_FAILED
   id: 26
-  message: "simultaneously compile is not work because of input file paths error."
+  message: "Simultaneous compilation does not work because of an input file path error."
 
 - name: SOURCE_OUTSIDE_ETS_PATH
   id: 20
