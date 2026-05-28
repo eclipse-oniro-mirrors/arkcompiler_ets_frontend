@@ -44,7 +44,6 @@ softlist:
 - name: "allow_implicit_export"
   paths:
   - ".*/test/xts/acts/.*"
-  - ".*/base/global/i18n/.*"
   - ".*/distributeddatamgr/udmf/.*"
   - ".*/developtools/ace_ets2bundle/.*"
   - ".*/foundation/arkui/ace_engine/frameworks/.*"
