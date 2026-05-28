@@ -751,39 +751,61 @@ bool ETSChecker::CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
     return true;
 }
 
+bool ETSChecker::CheckTypeNodeRecursion(const ir::TypeNode *typeNode,
+                                        std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
+{
+    if (typeNode->IsETSTypeReference()) {
+        return CheckTypeReferencePartRecursion(const_cast<ir::TypeNode *>(typeNode)->AsETSTypeReference()->Part(),
+                                               typeAliases);
+    }
+
+    bool result = true;
+
+    if (typeNode->IsETSUnionType()) {
+        for (auto &type : const_cast<ir::TypeNode *>(typeNode)->AsETSUnionType()->Types()) {
+            result &= CheckTypeNodeRecursion(type, typeAliases);
+        }
+    }
+
+    if (result && typeNode->IsETSTuple()) {
+        for (auto &type : const_cast<ir::TypeNode *>(typeNode)->AsETSTuple()->GetTupleTypeAnnotationsList()) {
+            result &= CheckTypeNodeRecursion(type, typeAliases);
+        }
+    }
+
+    if (!result || !typeNode->IsETSFunctionType()) {
+        return result;
+    }
+    auto *funcType = const_cast<ir::TypeNode *>(typeNode)->AsETSFunctionType();
+    auto *returnType = funcType->ReturnType();
+    if (returnType != nullptr) {
+        result &= CheckTypeNodeRecursion(returnType, typeAliases);
+    }
+    if (result) {
+        for (auto *param : funcType->Params()) {
+            if (!param->IsETSParameterExpression()) {
+                continue;
+            }
+            auto *typeAnno = param->AsETSParameterExpression()->TypeAnnotation();
+            if (typeAnno == nullptr) {
+                continue;
+            }
+            result &= CheckTypeNodeRecursion(typeAnno, typeAliases);
+        }
+    }
+    return result;
+}
+
 bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
                                              std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
 {
-    bool isAllowedRerursiveType = true;
-
     RecursionPreserver<const ir::TSTypeAliasDeclaration> recursionPreserver(typeAliases, typeAliasNode);
 
     if (*recursionPreserver) {
         return false;
     }
 
-    if (typeAliasNode->TypeAnnotation()->IsETSFunctionType() &&
-        typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->IsETSTypeReference()) {
-        isAllowedRerursiveType &= CheckTypeReferencePartRecursion(
-            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part(),
-            typeAliases);
-    }
-
-    if (typeAliasNode->TypeAnnotation()->IsETSTypeReference()) {
-        isAllowedRerursiveType &=
-            CheckTypeReferencePartRecursion(typeAliasNode->TypeAnnotation()->AsETSTypeReference()->Part(), typeAliases);
-    }
-
-    if (isAllowedRerursiveType && typeAliasNode->TypeAnnotation()->IsETSUnionType()) {
-        for (auto &type : typeAliasNode->TypeAnnotation()->AsETSUnionType()->Types()) {
-            if (type->IsETSTypeReference()) {
-                isAllowedRerursiveType &=
-                    CheckTypeReferencePartRecursion(type->AsETSTypeReference()->Part(), typeAliases);
-            }
-        }
-    }
-
-    return isAllowedRerursiveType;
+    return CheckTypeNodeRecursion(typeAliasNode->TypeAnnotation(), typeAliases);
 }
 
 Type *ETSChecker::GetTypeFromTypeAliasReference(varbinder::Variable *var)
