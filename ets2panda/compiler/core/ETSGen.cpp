@@ -497,7 +497,7 @@ void ETSGen::StorePropertyByNameAny(const ir::AstNode *const node, const VReg ob
 {
     ES2PANDA_ASSERT(node->IsMemberExpression() &&
                     Checker()->GetApparentType(node->AsMemberExpression()->Object()->TsType())->IsETSAnyType());
-    Ra().Emit<AnyStbyname>(node, objReg, fullName, 0);
+    Ra().Emit<AnyStbyname>(node, objReg, fullName, GetNextAnyIcSlot());
     SetAccumulatorType(node->AsMemberExpression()->TsType());
 }
 
@@ -505,7 +505,7 @@ void ETSGen::LoadPropertyByNameAny(const ir::AstNode *const node, const VReg obj
 {
     ES2PANDA_ASSERT(node->IsMemberExpression() &&
                     Checker()->GetApparentType(node->AsMemberExpression()->Object()->TsType())->IsETSAnyType());
-    Ra().Emit<AnyLdbyname>(node, objReg, fullName, 0);
+    Ra().Emit<AnyLdbyname>(node, objReg, fullName, GetNextAnyIcSlot());
     SetAccumulatorType(node->AsMemberExpression()->TsType());
 }
 
@@ -567,7 +567,7 @@ void ETSGen::StoreByIndexAny(const ir::MemberExpression *node, VReg objectReg, V
     RegScope rs(this);
 
     // Store property by index
-    Ra().Emit<AnyStbyidx>(node, objectReg, index, 0);
+    Ra().Emit<AnyStbyidx>(node, objectReg, index, GetNextAnyIcSlot());
     SetAccumulatorType(Checker()->GlobalVoidType());
 }
 
@@ -579,7 +579,7 @@ void ETSGen::LoadByIndexAny(const ir::MemberExpression *node, VReg objectReg)
     StoreAccumulator(node, indexReg);
 
     // Get property by index
-    Ra().Emit<AnyLdbyidx>(node, objectReg, 0);
+    Ra().Emit<AnyLdbyidx>(node, objectReg, GetNextAnyIcSlot());
     SetAccumulatorType(node->TsType());
 }
 
@@ -588,7 +588,7 @@ void ETSGen::StoreByValueAny(const ir::MemberExpression *node, VReg objectReg, V
     RegScope rs(this);
 
     // Store property by value
-    Ra().Emit<AnyStbyval>(node, objectReg, value, 0);
+    Ra().Emit<AnyStbyval>(node, objectReg, value, GetNextAnyIcSlot());
     SetAccumulatorType(Checker()->GlobalVoidType());
 }
 
@@ -600,7 +600,7 @@ void ETSGen::LoadByValueAny(const ir::MemberExpression *node, VReg objectReg)
     StoreAccumulator(node, valueReg);
 
     // Get property by value
-    Ra().Emit<AnyLdbyval>(node, objectReg, valueReg, 0);
+    Ra().Emit<AnyLdbyval>(node, objectReg, valueReg, GetNextAnyIcSlot());
     SetAccumulatorType(node->TsType());
 }
 
