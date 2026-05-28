@@ -90,6 +90,16 @@ std::string ToLowerCase(const std::string &str)
     return lowerStr;
 }
 
+static bool ContainsIgnoreCase(const std::string &text, const std::string &pattern)
+{
+    return ToLowerCase(text).find(ToLowerCase(pattern)) != std::string::npos;
+}
+
+static bool StartsWithIgnoreCase(const std::string &text, const std::string &prefix)
+{
+    return ToLowerCase(text).rfind(ToLowerCase(prefix), 0) == 0;
+}
+
 static void AddCollectApiEntry(const std::string &name, const std::string &path, CompletionEntryKind kind,
                                const std::string &insertText = "", const bool isDefault = false)
 {
@@ -1355,7 +1365,7 @@ static void AddClassCompletion(ir::Statement *stmt, const std::string &triggerWo
                                std::vector<CompletionEntry> &completions)
 {
     std::string name = stmt->AsClassDeclaration()->Definition()->Ident()->Name().Mutf8();
-    if (name.find(triggerWord) == 0) {
+    if (StartsWithIgnoreCase(name, triggerWord)) {
         completions.emplace_back(name, CompletionEntryKind::CLASS,
                                  std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name);
     }
@@ -1365,7 +1375,7 @@ static void AddInterfaceCompletion(ir::Statement *stmt, const std::string &trigg
                                    std::vector<CompletionEntry> &completions)
 {
     std::string name = stmt->AsTSInterfaceDeclaration()->Id()->Name().Mutf8();
-    if (name.find(triggerWord) == 0) {
+    if (StartsWithIgnoreCase(name, triggerWord)) {
         completions.emplace_back(name, CompletionEntryKind::INTERFACE,
                                  std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name);
     }
@@ -1378,7 +1388,7 @@ static void AddModuleCompletion(ir::Statement *stmt, const std::string &triggerW
         return;
     }
     std::string name = stmt->AsTSModuleDeclaration()->Name()->AsIdentifier()->Name().Mutf8();
-    if (name.find(triggerWord) == 0) {
+    if (StartsWithIgnoreCase(name, triggerWord)) {
         completions.emplace_back(name, CompletionEntryKind::MODULE,
                                  std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), name);
     }
@@ -1392,7 +1402,7 @@ static void AddVariableCompletion(ir::Statement *stmt, const std::string &trigge
             continue;
         }
         std::string name = declarator->Id()->AsIdentifier()->Name().Mutf8();
-        if (name.find(triggerWord) != 0) {
+        if (!StartsWithIgnoreCase(name, triggerWord)) {
             continue;
         }
         auto kind = stmt->AsVariableDeclaration()->Kind() == ir::VariableDeclaration::VariableDeclarationKind::CONST
@@ -1414,7 +1424,7 @@ static void AddFunctionCompletion(ir::Statement *stmt, const std::string &trigge
         return;
     }
     std::string functionName = func->Id()->Name().Mutf8();
-    if (functionName.find(triggerWord) == 0) {
+    if (StartsWithIgnoreCase(functionName, triggerWord)) {
         std::string completionName = BuildFunctionCompletionName(functionName, func);
         completions.emplace_back(completionName, CompletionEntryKind::FUNCTION,
                                  std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), functionName + "()");
@@ -2045,7 +2055,7 @@ std::vector<CompletionEntry> GetImportStatementPathCompletions(std::vector<Compl
     }
     for (const auto &entry : fs::directory_iterator(searchDir)) {
         std::string name = entry.path().stem().string();
-        bool isPrefix = prefix.empty() || (name.rfind(prefix, 0) == 0);
+        bool isPrefix = prefix.empty() || StartsWithIgnoreCase(name, prefix);
         if (IsDirectory(entry) && isPrefix) {
             completions.emplace_back(name, CompletionEntryKind::FOLDER, std::string(sort_text::GLOBALS_OR_KEYWORDS),
                                      name);
@@ -2373,7 +2383,7 @@ static void AppendTypeContextInterfaceCompletions(const DeclSet &decls, const st
         if (name.size() < SUFFIX.size() || name.compare(name.size() - SUFFIX.size(), SUFFIX.size(), SUFFIX) != 0) {
             continue;
         }
-        if (name.find(matchPrefix) == std::string::npos || existingNames.find(name) != existingNames.end()) {
+        if (!ContainsIgnoreCase(name, matchPrefix) || existingNames.find(name) != existingNames.end()) {
             continue;
         }
         completions->emplace_back(name, CompletionEntryKind::KEYWORD, std::string(sort_text::SUGGESTED_CLASS_MEMBERS),
@@ -2409,7 +2419,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
             continue;
         }
         auto entry = InitEntry(decl);
-        if (entry.GetName().find(matchPrefix) == std::string::npos) {
+        if (!ContainsIgnoreCase(entry.GetName(), matchPrefix)) {
             continue;
         }
         entry = ProcessAutoImportForEntry(entry);

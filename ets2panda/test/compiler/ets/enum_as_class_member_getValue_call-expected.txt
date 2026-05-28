@@ -4032,8 +4032,8 @@
             "program": "enum_as_class_member_getValue_call.ets"
           },
           "end": {
-            "line": 20,
-            "column": 1,
+            "line": 24,
+            "column": 2,
             "program": "enum_as_class_member_getValue_call.ets"
           }
         }
@@ -8175,8 +8175,8 @@
             "program": "enum_as_class_member_getValue_call.ets"
           },
           "end": {
-            "line": 26,
-            "column": 1,
+            "line": 30,
+            "column": 2,
             "program": "enum_as_class_member_getValue_call.ets"
           }
         }
