@@ -53,5 +53,5 @@ Promise.allSettled(thenable).then<void, void>((values: PromiseSettledResult<stri
     console.log('Test failed. The promise should not be rejected.');
 }).catch((e: Error): void => {
     console.log('Test failed: ' + e);
-});/* @@? 41:22 Warning Warning W369037: Cast expression `as PromiseFulfilledResult<String>` is type unsafe. 'CastClassError' exception can be thrown at runtime */
-/* @@? 46:10 Warning Warning W369037: Cast expression `as PromiseFulfilledResult<String>` is type unsafe. 'CastClassError' exception can be thrown at runtime */
+});/* @@? 41:22 Warning Warning W369037: Cast expression `as PromiseFulfilledResult<String>` is type unsafe. 'ClassCastError' exception can be thrown at runtime */
+/* @@? 46:10 Warning Warning W369037: Cast expression `as PromiseFulfilledResult<String>` is type unsafe. 'ClassCastError' exception can be thrown at runtime */

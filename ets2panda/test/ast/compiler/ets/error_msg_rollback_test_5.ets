@@ -22,4 +22,4 @@ console.log(combinedArr.length);
 combinedArr[3]
 
 
-/* @@@ label Warning Warning W0326: Attempting to cast type 'Array<Int>' to 'Array<Double>' can throw 'CastClassError' exception at runtime */
+/* @@@ label Warning Warning W0326: Attempting to cast type 'Array<Int>' to 'Array<Double>' can throw 'ClassCastError' exception at runtime */

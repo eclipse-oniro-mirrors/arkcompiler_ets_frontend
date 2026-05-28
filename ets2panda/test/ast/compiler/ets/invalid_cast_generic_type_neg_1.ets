@@ -18,4 +18,4 @@ function foo<T, U>() {
 }
 
 
-/* @@@ label Warning Warning W0326: Attempting to cast type 'Int' to 'T|U' can throw 'CastClassError' exception at runtime */
+/* @@@ label Warning Warning W0326: Attempting to cast type 'Int' to 'T|U' can throw 'ClassCastError' exception at runtime */
