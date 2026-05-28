@@ -58,9 +58,9 @@ static constexpr auto EXTENSION = panda_file::SourceLang::PANDA_ASSEMBLY;
 #endif
 
 // Normalize path separators: convert backslashes to forward slashes
-std::string ETSEmitter::NormalizePathSeparators(const std::string &path)
+std::string ETSEmitter::NormalizePathSeparators(std::string_view path)
 {
-    std::string normalized = path;
+    std::string normalized(path);
     std::replace(normalized.begin(), normalized.end(), '\\', '/');
     return normalized;
 }
@@ -358,13 +358,7 @@ void ETSFunctionEmitter::GenVariableSignature(pandasm::debuginfo::LocalVariable 
 void ETSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
 {
     auto *program = GetProgram(const_cast<ir::AstNode *>(Cg()->RootNode()));
-    std::string relativePath;
-    if (auto viaPaths = program->TryRelativeFilePathViaArkTsPaths(Cg()->Context())) {
-        relativePath = std::move(*viaPaths);
-    } else {
-        relativePath = std::string {program->RelativeFilePath(Cg()->Context())};
-    }
-    func->sourceFile = ETSEmitter::NormalizePathSeparators(std::move(relativePath));
+    func->sourceFile = ETSEmitter::NormalizePathSeparators(program->GetCachedRelativeFilePath(Cg()->Context()));
 
     if (!Cg()->IsDebug()) {
         return;

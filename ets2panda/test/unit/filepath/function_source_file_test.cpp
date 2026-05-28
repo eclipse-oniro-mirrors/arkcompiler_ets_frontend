@@ -200,4 +200,66 @@ TEST_F(SourceFilePathSeparatorTest, SourceFileFallbackToFilenameOutsideRootDir)
     }
 }
 
+// Validates that the cached relative file path (GetCachedRelativeFilePath) produces a
+// consistent sourceFile across all functions in a single Program.  A file with many
+// functions exercises the per-function GenSourceFileDebugInfo call path — before the
+// cache was added TryRelativeFilePathViaArkTsPaths scanned the entire ArkTSConfig
+// Paths() table once per function.
+TEST_F(SourceFilePathSeparatorTest, ManyFunctionsProduceConsistentSourceFile)
+{
+    std::string src = R"(
+        function alpha(): int { return 1 }
+        function beta(): double { return 3.14 }
+        function gamma(): void {}
+
+        class Calculator {
+            x: int = 0
+            add(): int { return this.x + 1 }
+            sub(): int { return this.x - 1 }
+        }
+
+        class Multiplier {
+            factor: int = 2
+            apply(v: int): int { return v * this.factor }
+        }
+    )";
+
+    std::string realPath = CreateFileInCwd("src/module/MultiFunc.ets", src);
+    const char *args[] = {ES2PANDA_BIN_PATH};
+    auto program = GetProgram(ark::Span<const char *const>(args, 1), realPath.c_str(), src);
+    ASSERT_NE(program, nullptr);
+
+    constexpr size_t kMinUserFuncCount = 4;
+    std::string firstSourceFile;
+    size_t userFuncCount = 0;
+
+    auto checkTable = [this, &firstSourceFile, &userFuncCount](const auto &table) {
+        for (const auto &[funcName, func] : table) {
+            if (!IsUserDefined(funcName)) {
+                continue;
+            }
+            if (firstSourceFile.empty()) {
+                firstSourceFile = func.sourceFile;
+            }
+            EXPECT_EQ(func.sourceFile, firstSourceFile)
+                << "Function '" << funcName << "' sourceFile differs — cache inconsistency";
+            EXPECT_TRUE(HasOnlyForwardSlashes(func.sourceFile));
+            userFuncCount++;
+        }
+    };
+
+    checkTable(program->functionStaticTable);
+    checkTable(program->functionInstanceTable);
+
+    EXPECT_GE(userFuncCount, kMinUserFuncCount)
+        << "Expected at least " << kMinUserFuncCount << " user-defined functions to exercise the cache";
+    EXPECT_TRUE(firstSourceFile.find('/') != std::string::npos)
+        << "sourceFile should be a relative path: '" << firstSourceFile << "'";
+    EXPECT_NE(firstSourceFile.front(), '/') << "sourceFile should not be absolute: '" << firstSourceFile << "'";
+
+    std::filesystem::path cleanupPath(std::filesystem::current_path());
+    cleanupPath.append("sourcefile_test_cwd");
+    std::filesystem::remove_all(cleanupPath);
+}
+
 }  // namespace test::unit

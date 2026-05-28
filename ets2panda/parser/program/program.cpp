@@ -105,6 +105,22 @@ std::optional<std::string> Program::TryRelativeFilePathViaArkTsPaths(const publi
     return std::nullopt;
 }
 
+std::string_view Program::GetCachedRelativeFilePath(const public_lib::Context *context) const
+{
+    if (cachedRelativePath_ != nullptr) {
+        return *cachedRelativePath_;
+    }
+    std::string result;
+    if (auto viaPaths = TryRelativeFilePathViaArkTsPaths(context)) {
+        result = std::move(*viaPaths);
+    } else {
+        result = RelativeFilePath(context);
+    }
+    auto *arenaStr = allocator_->New<ArenaString>(result.data(), result.size(), allocator_->Adapter());
+    cachedRelativePath_ = arenaStr;
+    return *arenaStr;
+}
+
 const lexer::LineIndex &Program::GetLineIndex() const
 {
     if (lineIndex_ == nullptr) {

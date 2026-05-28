@@ -1,0 +1,17 @@
+================ es2panda perf metrics (Averaged over 10 runs) ================
+
+:@phases                                        :  time=142.22ms      maxrss=30.00MB
+:@phases/Unbox                                  :  time=93.00ms       maxrss=0.52MB
+:@phases/TopLevelStatements                     :  time=13.24ms       maxrss=12.00MB
+:@phases/CheckerPhase                           :  time=10.23ms       maxrss=2.00MB
+:@GenerateBinaryFile                            :  time=9.14ms        maxrss=0.00MB
+:@phases/ScopesInitPhase                        :  time=7.98ms        maxrss=7.00MB
+:@GenerateBinaryFile/OptimizeBytecode           :  time=7.75ms        maxrss=0.00MB
+:@phases/ResolveIdentifiers                     :  time=7.16ms        maxrss=2.00MB
+:@EmitProgram                                   :  time=2.75ms        maxrss=0.90MB
+:@phases/InterfacePropertyDeclarationsPhase     :  time=1.81ms        maxrss=0.58MB
+:@phases/ResizableArrayConvert                  :  time=1.62ms        maxrss=0.00MB
+:@phases/EnumLoweringPhase                      :  time=1.52ms        maxrss=0.31MB
+:@phases/InstantiateMethods                     :  time=0.66ms        maxrss=0.00MB
+:@phases/ConstantExpressionLowering             :  time=0.28ms        maxrss=0.26MB
+:@phases/OpAssignmentLowering                   :  time=0.27ms        maxrss=0.00MB
