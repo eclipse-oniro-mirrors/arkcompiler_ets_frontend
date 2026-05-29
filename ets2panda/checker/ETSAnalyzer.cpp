@@ -98,7 +98,22 @@ static bool IsExpressionInClassPropertyInitializer(const ir::Expression *expr)
     return false;
 }
 
-//  Helper: checks that type was declared exported
+static void LogNonExportedTypeError(ETSChecker *checker, checker::Type const *type, ir::AstNode const *decl)
+{
+    if (!util::Helpers::IsExported(decl) && !util::Helpers::IsStdLib(decl->Program())) {
+        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()}, decl->Start());
+    }
+}
+
+static void CheckPartialTypeExport(ETSChecker *checker, checker::ETSObjectType const *partialType)
+{
+    auto *baseType = partialType->GetBaseType();
+    if (baseType == nullptr || baseType->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
+        return;
+    }
+    LogNonExportedTypeError(checker, static_cast<Type const *>(baseType), baseType->GetDeclNode());
+}
+
 static void CheckExport(ETSChecker *checker, checker::Type const *type)
 {
     if (type == nullptr || type->IsTypeError()) {
@@ -106,28 +121,27 @@ static void CheckExport(ETSChecker *checker, checker::Type const *type)
     }
 
     auto const checkExported = [checker](Type const *testType) {
-        ir::AstNode const *decl = nullptr;
         if (testType->IsETSObjectType()) {
-            if (!testType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
-                decl = testType->AsETSObjectType()->GetDeclNode();
-            } else {
+            if (testType->AsETSObjectType()->IsPartial()) {
+                CheckPartialTypeExport(checker, testType->AsETSObjectType());
                 return;
             }
-        } else if (testType->IsETSTypeAliasType()) {
-            decl = testType->AsETSTypeAliasType()->GetDeclNode();
-        } else {
+            if (testType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
+                return;
+            }
+            LogNonExportedTypeError(checker, testType, testType->AsETSObjectType()->GetDeclNode());
             return;
         }
-
-        // class AtomicInt {} need to write "export" qualifier (source
-        // ./runtime_core/static_core/plugins/ets/stdlib/std/containers/ConcurrencyHelpers.ets) class AtomicInt {} need
-        // to write "export" qualifier (source
-        // ./runtime_core/static_core/plugins/ets/stdlib/std/concurrency/ConcurrencyHelpers.ets) class AtomicInt {} has
-        // the same code in both sources after that need to remove util::Helpers::IsStdLib() condition
-        if (!util::Helpers::IsExported(decl) && !util::Helpers::IsStdLib(decl->Program())) {
-            checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {testType->ToString()}, decl->Start());
+        if (testType->IsETSTypeAliasType()) {
+            LogNonExportedTypeError(checker, testType, testType->AsETSTypeAliasType()->GetDeclNode());
         }
     };
+
+    // class AtomicInt {} need to write "export" qualifier (source
+    // ./runtime_core/static_core/plugins/ets/stdlib/std/containers/ConcurrencyHelpers.ets) class AtomicInt {} need
+    // to write "export" qualifier (source
+    // ./runtime_core/static_core/plugins/ets/stdlib/std/concurrency/ConcurrencyHelpers.ets) class AtomicInt {} has
+    // the same code in both sources after that need to remove util::Helpers::IsStdLib() condition
 
     type->IterateRecursively(checkExported);
 }
