@@ -23,6 +23,7 @@ import {
     GenericType,
     LexicalEnvType,
     NullType,
+    StringType,
     Type,
     UnclearReferenceType,
     UndefinedType,
@@ -448,6 +449,21 @@ export class IRInference {
             return IRInference.inferInvokeExprWithFunction(methodName, expr, baseType, scene);
         } else if (baseType instanceof ArrayType) {
             return IRInference.inferInvokeExprWithArray(methodName, expr, baseType, scene);
+        } else if (baseType instanceof StringType) {
+            return IRInference.inferInvokeExprWithPrimitiveBuiltin(methodName, expr, 'String', scene);
+        }
+        return null;
+    }
+
+    private static inferInvokeExprWithPrimitiveBuiltin(
+        methodName: string,
+        expr: AbstractInvokeExpr,
+        className: string,
+        scene: Scene
+    ): AbstractInvokeExpr | null {
+        const globalClass = scene.getSdkGlobal(className);
+        if (globalClass instanceof ArkClass) {
+            return this.inferInvokeExpr(expr, new ClassType(globalClass.getSignature()), methodName, scene);
         }
         return null;
     }

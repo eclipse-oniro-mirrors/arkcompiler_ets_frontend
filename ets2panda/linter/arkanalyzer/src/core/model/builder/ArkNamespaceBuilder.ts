@@ -22,7 +22,7 @@ import { ArkNamespace } from '../ArkNamespace';
 import { buildDecorators, buildModifiers } from './builderUtils';
 import Logger, { LOG_MODULE_TYPE } from '../../../utils/logger';
 import { buildExportAssignment, buildExportDeclaration, buildExportInfo, buildExportVariableStatement, isExported } from './ArkExportBuilder';
-import { ArkClass } from '../ArkClass';
+import { ArkClass, ClassCategory } from '../ArkClass';
 import { ArkMethod } from '../ArkMethod';
 import { NamespaceSignature } from '../ArkSignature';
 import { IRUtils } from '../../common/IRUtils';
@@ -97,7 +97,7 @@ function buildNamespaceMembers(node: ts.ModuleBlock, namespace: ArkNamespace, so
             buildArkNamespace(child, namespace, childNs, sourceFile);
             nestedNamespaces.push(childNs);
         } else if (ts.isClassDeclaration(child) || ts.isInterfaceDeclaration(child) || ts.isEnumDeclaration(child) || ts.isStructDeclaration(child)) {
-            let cls: ArkClass = new ArkClass();
+            let cls: ArkClass = getMergeableInterfaceClass(child, namespace) ?? new ArkClass();
 
             buildNormalArkClassFromArkNamespace(child, namespace, cls, sourceFile);
             namespace.addArkClass(cls);
@@ -144,6 +144,17 @@ function buildNamespaceMembers(node: ts.ModuleBlock, namespace: ArkNamespace, so
             namespace.addExportInfo(buildExportInfo(nestedNameSpace, namespace.getDeclaringArkFile(), linCol));
         }
     });
+}
+
+function getMergeableInterfaceClass(node: ts.Node, namespace: ArkNamespace): ArkClass | null {
+    if (!ts.isInterfaceDeclaration(node) || !node.name) {
+        return null;
+    }
+    const existingClass = namespace.getClassWithName(node.name.text);
+    if (!existingClass || existingClass.getCategory() !== ClassCategory.INTERFACE) {
+        return null;
+    }
+    return existingClass;
 }
 
 function genDefaultArkClass(ns: ArkNamespace, node: ts.ModuleDeclaration, sourceFile: ts.SourceFile): void {

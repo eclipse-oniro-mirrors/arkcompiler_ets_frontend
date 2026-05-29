@@ -143,7 +143,21 @@ export class BuiltinTypeChangePathCollector {
         if (!(dynType instanceof NumberType)) {
             return null;
         }
-        return this.options.getIntLongCategoryFromType(staType);
+        return this.options.getIntLongCategoryFromType(staType) ?? this.getSingleIntLongCategoryFromUnionType(staType);
+    }
+
+    private getSingleIntLongCategoryFromUnionType(type: Type): NumberCategory.int | NumberCategory.long | null {
+        if (!(type instanceof UnionType)) {
+            return null;
+        }
+        const categories = new Set<NumberCategory.int | NumberCategory.long>();
+        for (const unionType of type.getTypes()) {
+            const category = this.options.getIntLongCategoryFromType(unionType);
+            if (category) {
+                categories.add(category);
+            }
+        }
+        return categories.size === 1 ? [...categories][0] : null;
     }
 
     private getGenericTypes(type: Type): Type[] {

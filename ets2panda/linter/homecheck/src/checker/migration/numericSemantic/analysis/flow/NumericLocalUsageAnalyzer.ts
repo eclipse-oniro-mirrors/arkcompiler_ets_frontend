@@ -309,13 +309,16 @@ export class NumericLocalUsageAnalyzer {
             return this.createNumberUsedIssueInfo(IssueReason.UsedWithOtherType);
         }
         if (rightOp instanceof AbstractInvokeExpr) {
-            return this.checkLocalUsedAsApiArg(rightOp, local, hasChecked) ?? this.createOnlyUsedIssueInfo(numberCategory);
+            return this.checkLocalUsedAsApiArg(rightOp, local, hasChecked) ??
+                this.checkLocalUsedAsUnchangedInvokeArg(rightOp, local, numberCategory);
         }
         return this.createOnlyUsedIssueInfo(numberCategory);
     }
 
     private checkRelatedInvokeStmtForLocal(stmt: ArkInvokeStmt, local: Local, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
-        return this.checkLocalUsedAsApiArg(stmt.getInvokeExpr(), local, hasChecked) ?? this.createOnlyUsedIssueInfo(numberCategory);
+        const invokeExpr = stmt.getInvokeExpr();
+        return this.checkLocalUsedAsApiArg(invokeExpr, local, hasChecked) ??
+            this.checkLocalUsedAsUnchangedInvokeArg(invokeExpr, local, numberCategory);
     }
 
     private checkRelatedReturnStmtForLocal(stmt: ArkReturnStmt, numberCategory: NumberCategory): IssueInfo {
@@ -331,6 +334,13 @@ export class NumericLocalUsageAnalyzer {
 
     private checkLocalUsedAsApiArg(expr: AbstractInvokeExpr, local: Local, hasChecked: Map<Local, IssueInfo>): IssueInfo | null {
         return this.checkLocalUsedAsBuiltinArg(expr, local, hasChecked) ?? this.checkLocalUsedAsSDKArg(expr, local, hasChecked);
+    }
+
+    private checkLocalUsedAsUnchangedInvokeArg(expr: AbstractInvokeExpr, local: Local, numberCategory: NumberCategory): IssueInfo {
+        if (expr.getArgs().includes(local)) {
+            return this.createNumberUsedIssueInfo(IssueReason.UsedWithOtherType);
+        }
+        return this.createOnlyUsedIssueInfo(numberCategory);
     }
 
     private createOnlyUsedIssueInfo(numberCategory: NumberCategory): IssueInfo {

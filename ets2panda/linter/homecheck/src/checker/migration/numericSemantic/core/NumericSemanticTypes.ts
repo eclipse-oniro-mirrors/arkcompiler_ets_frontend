@@ -47,12 +47,14 @@ export interface SignatureMatchOptions {
     allowTrailingOptionalParams?: boolean;
     allowLooseSourceTypes?: boolean;
     allowArrayLikeTypes?: boolean;
+    allowWellKnownSymbolRegExpProtocolTypes?: boolean;
 }
 
 export const BUILTIN_DECLARATION_SIGNATURE_MATCH_OPTIONS: SignatureMatchOptions = {
     allowTrailingOptionalParams: true,
     allowLooseSourceTypes: true,
     allowArrayLikeTypes: true,
+    allowWellKnownSymbolRegExpProtocolTypes: true,
 };
 
 export enum NumberCategory {
