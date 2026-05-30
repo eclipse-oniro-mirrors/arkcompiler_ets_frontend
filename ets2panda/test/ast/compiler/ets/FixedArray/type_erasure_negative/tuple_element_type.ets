@@ -13,21 +13,18 @@
  * limitations under the License.
  */
 
-type X<T> = FixedArray<Y<T> | T>
-type Y<T> = Array<X<T> | T | string>
-
-function f(): X<number> {
-    return [1.0] as X<number>
-}
-
-function g(): Array<Y<number> | string> {
-    return [] as Array<Y<number> | string>
-}
+/*---
+desc: FixedArray element type must be preserved by type erasure; tuple types
+  are not preserved because they instantiate an internal generic tuple type.
+expected_out: Expected_CTE
+name: fixed_array_type_erasure_tuple_element_type
+tags:
+- compile-only
+- negative
+---*/
 
 function main() {
-    let a = f()
-    let b = g()
-    let ok = a.length == 1 && b.length == 0
-    arktest.assertTrue(ok)
+   let arr: FixedArray<[int, string]> = [[1, "a"]]
 }
 
+/* @@? 27:41 Error Semantic error ESE461884: Type '[Int, String]' is not preserved by type erasure and cannot be used as type argument for FixedArray instantiations. */

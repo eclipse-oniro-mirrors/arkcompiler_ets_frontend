@@ -1567,6 +1567,10 @@ semantic:
   message: "Cannot find type '{}'."
   code_fix_ids: [FixSpellingForType]
 
+- name: TYPE_NOT_PRESERVED_BY_ERASURE_FOR_FIXED_ARRAY
+  id: 461884
+  message: "Type '{}' is not preserved by type erasure and cannot be used as type argument for FixedArray instantiations."
+
 - name: TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE
   id: 7
   message: "Cannot use array creation expression with type parameter."

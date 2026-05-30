@@ -985,6 +985,75 @@ static bool HasBareTypeParameter(checker::Type const *elementType)
     return elementType->TypeExpressionContains([](checker::Type const *tp) { return tp->IsETSTypeParameter(); });
 }
 
+static bool IsTypeNotPreservedByErasure(checker::Type const *elementType, bool isFirstCall = true);
+
+// Generic helper: returns true if any child type satisfies the erasure check.
+template <typename Container>
+static bool AnyChildNotPreserved(const Container &children, bool isFirstCall)
+{
+    for (auto *child : children) {
+        if (IsTypeNotPreservedByErasure(child, isFirstCall)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Top-level union: reject only when type params are mixed with concrete types.
+static bool CheckTopLevelUnion(checker::Type const *elementType)
+{
+    bool hasTypeParam = false;
+    bool hasConcrete = false;
+    for (auto *ct : elementType->AsETSUnionType()->ConstituentTypes()) {
+        if (ct->IsETSUndefinedType() || ct->IsETSVoidType()) {
+            continue;
+        }
+        if (ct->IsETSTypeParameter()) {
+            hasTypeParam = true;
+        } else {
+            hasConcrete = true;
+            if (IsTypeNotPreservedByErasure(ct)) {
+                hasTypeParam = true;
+            }
+        }
+    }
+    return hasTypeParam && hasConcrete;
+}
+
+// Returns true if the element type is not preserved by type erasure.
+// `isFirstCall` is true when checking the FixedArray element type itself;
+// it is false when recursing into an erased position inside an erasing structure
+// (where a concrete leaf type means the parent structure is not preserved).
+static bool IsTypeNotPreservedByErasure(checker::Type const *elementType, bool isFirstCall)
+{
+    // Bare type parameters (T, U) are preserved by FixedArray — the Effective
+    // Type of T is its constraint, but FixedArray stores that effective type
+    // directly.  Unlike generic type instantiations (G<T>) where the erasure
+    // loses the type argument structure, a bare T has no structure to lose.
+    if (elementType->IsETSTypeParameter()) {
+        return false;
+    }
+    if (elementType->IsETSArrayType() || elementType->IsETSReadonlyArrayType()) {
+        return false;
+    }
+    if (elementType->IsETSFunctionType()) {
+        return true;
+    }
+    if (elementType->IsETSUnionType()) {
+        return isFirstCall ? CheckTopLevelUnion(elementType)
+                           : AnyChildNotPreserved(elementType->AsETSUnionType()->ConstituentTypes(), false);
+    }
+    if (elementType->IsETSTupleType()) {
+        return AnyChildNotPreserved(elementType->AsETSTupleType()->GetTupleTypesList(), false);
+    }
+    if (elementType->IsETSObjectType() && !elementType->AsETSObjectType()->TypeArguments().empty()) {
+        return AnyChildNotPreserved(elementType->AsETSObjectType()->TypeArguments(), false);
+    }
+    // Leaf type: preserved on the first call; concrete at an erased position.
+    return !isFirstCall;
+}
+
+// Validates the element type for FixedArray / ValueArray construction.
 template <typename T, typename = typename std::enable_if_t<std::is_base_of_v<ir::Expression, T>>>
 static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, checker::Type *elementType)
 {
@@ -993,6 +1062,11 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
     ES2PANDA_ASSERT(elementType != nullptr);
     ES2PANDA_ASSERT(!elementType->IsETSPrimitiveType());
 
+    if (IsTypeNotPreservedByErasure(elementType)) {
+        checker->LogError(diagnostic::TYPE_NOT_PRESERVED_BY_ERASURE_FOR_FIXED_ARRAY, {elementType},
+                          newArrayInstanceExpr->Start());
+        return false;
+    }
     if (elementType->IsETSObjectType()) {
         auto *calleeObj = elementType->AsETSObjectType();
         const auto flags = checker::ETSObjectFlags::ABSTRACT | checker::ETSObjectFlags::INTERFACE;
@@ -1663,6 +1737,21 @@ static Type *ResolvePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayE
         auto *elementType = preferredType->AsETSArrayType()->ElementType();
         if (HasBareTypeParameter(elementType) && !IsInitForSyntheticVariable(expr)) {
             return checker->TypeError(expr, diagnostic::TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE, expr->Start());
+        }
+        // Skip if the array literal is inside a call argument chain, where the
+        // preferred type is cascaded from the parameter type rather than being
+        // an explicit user annotation.  Stop at function boundaries.
+        bool isInsideCallArg = false;
+        for (auto *p = expr->Parent(); p != nullptr && !p->IsScriptFunction() && !p->IsArrowFunctionExpression();
+             p = p->Parent()) {
+            if (p->IsCallExpression()) {
+                isInsideCallArg = true;
+                break;
+            }
+        }
+        if (IsTypeNotPreservedByErasure(elementType) && !IsInitForSyntheticVariable(expr) && !isInsideCallArg) {
+            return checker->TypeError(expr, diagnostic::TYPE_NOT_PRESERVED_BY_ERASURE_FOR_FIXED_ARRAY,
+                                      {elementType->ToString()}, expr->Start());
         }
     }
 
