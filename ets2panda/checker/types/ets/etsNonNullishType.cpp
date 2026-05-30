@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,14 @@ void ETSNonNullishType::ToString(std::stringstream &ss, bool precise) const
     ss << ">";
 }
 
+Type *ETSNonNullishType::GetConstraintOrUnderlying() const
+{
+    if (underlying_->IsETSTypeParameter()) {
+        return underlying_->AsETSTypeParameter()->GetConstraintType();
+    }
+    return underlying_;
+}
+
 void ETSNonNullishType::Identical(TypeRelation *relation, Type *other)
 {
     if (other->IsETSNonNullishType()) {
@@ -40,6 +48,14 @@ bool ETSNonNullishType::AssignmentSource([[maybe_unused]] TypeRelation *relation
 
 void ETSNonNullishType::AssignmentTarget([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source)
 {
+    if (!GetUnderlying()->IsETSTypeParameter()) {
+        if (source->PossiblyETSNullish()) {
+            relation->Result(false);
+            return;
+        }
+        GetUnderlying()->AssignmentTarget(relation, source);
+        return;
+    }
     relation->IsSupertypeOf(this, source);
 }
 
@@ -73,7 +89,11 @@ void ETSNonNullishType::CastTarget(TypeRelation *relation, Type *source)
 
 void ETSNonNullishType::IsSupertypeOf([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *source)
 {
-    relation->Result(false);
+    if (GetUnderlying()->IsETSTypeParameter() || source->PossiblyETSNullish()) {
+        relation->Result(false);
+        return;
+    }
+    GetUnderlying()->IsSupertypeOf(relation, source);
 }
 
 void ETSNonNullishType::IsSubtypeOf([[maybe_unused]] TypeRelation *relation, [[maybe_unused]] Type *target)
@@ -119,7 +139,7 @@ void ETSNonNullishType::CheckVarianceRecursively(TypeRelation *relation, Varianc
 
 void ETSNonNullishType::Iterate(const TypeTraverser &func) const
 {
-    func(tparam_);
+    func(underlying_);
 }
 
 }  // namespace ark::es2panda::checker

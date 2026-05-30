@@ -1416,8 +1416,7 @@ void ETSGen::CastToReftype(const ir::AstNode *const node, const checker::Type *c
         return;
     }
 
-    ES2PANDA_ASSERT(!targetType->IsETSTypeParameter() && !targetType->IsETSNonNullishType() &&
-                    !targetType->IsETSPartialTypeParameter());
+    ES2PANDA_ASSERT(!targetType->IsETSTypeParameter() && !targetType->IsETSPartialTypeParameter());
     CheckedReferenceNarrowing(node, targetType);
     SetAccumulatorType(targetType);
 }

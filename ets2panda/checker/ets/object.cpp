@@ -22,6 +22,7 @@
 #include "checker/types/ets/etsFunctionType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsTupleType.h"
+#include "checker/types/ets/etsNonNullishType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/signature.h"
@@ -3595,10 +3596,35 @@ static Type *GetApparentTypeUtilityTypes(checker::ETSChecker *checker, Type *typ
             checker->GetApparentType(type->AsETSPartialTypeParameter()->GetUnderlying()->GetConstraintType()));
     }
     if (type->IsETSNonNullishType()) {
+        auto *underlying = type->AsETSNonNullishType()->GetConstraintOrUnderlying();
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return checker->GetApparentType(type->AsETSNonNullishType()->GetUnderlying()->GetConstraintType());
+        return checker->GetApparentType(underlying);
     }
     return type;
+}
+
+static Type *ResolveApparentNonNullishForCache(ETSChecker *checker, ETSNonNullishType *nonNullishType)
+{
+    auto *underlying = nonNullishType->GetConstraintOrUnderlying();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    return checker->GetNonNullishType(checker->GetApparentType(underlying));
+}
+
+static Type *ResolveApparentUnionForCache(ETSChecker *checker, ETSUnionType *unionType)
+{
+    bool differ = false;
+    std::vector<Type *> newConstituent;
+    for (auto const &ct : unionType->ConstituentTypes()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        newConstituent.push_back(checker->GetApparentType(ct));
+        differ |= (newConstituent.back() != ct);
+    }
+
+    if (!differ) {
+        return unionType->NormalizedType();
+    }
+    auto *un = checker->CreateETSUnionType(std::move(newConstituent));
+    return un->IsETSUnionType() ? un->AsETSUnionType()->NormalizedType() : un;
 }
 
 // This function computes effective runtime view of type
@@ -3638,12 +3664,9 @@ Type *ETSChecker::GetApparentType(Type *type)
         }
         return type;
     }
-
     if (type->IsETSNonNullishType()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return cached(
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            GetNonNullishType(GetApparentType(type->AsETSNonNullishType()->GetUnderlying()->GetConstraintType())));
+        return cached(ResolveApparentNonNullishForCache(this, type->AsETSNonNullishType()));
     }
 
     if (type->IsETSArrayType()) {
@@ -3654,19 +3677,8 @@ Type *ETSChecker::GetApparentType(Type *type)
         return GlobalBuiltinETSStringType();
     }
     if (type->IsETSUnionType()) {
-        bool differ = false;
-        std::vector<checker::Type *> newConstituent;
-        for (auto const &ct : type->AsETSUnionType()->ConstituentTypes()) {
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            newConstituent.push_back(GetApparentType(ct));
-            differ |= (newConstituent.back() != ct);
-        }
-
-        if (!differ) {
-            return cached(type->AsETSUnionType()->NormalizedType());
-        }
-        auto *un = CreateETSUnionType(std::move(newConstituent));
-        return cached(un->IsETSUnionType() ? un->AsETSUnionType()->NormalizedType() : un);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return cached(ResolveApparentUnionForCache(this, type->AsETSUnionType()));
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return cached(GetApparentTypeUtilityTypes(this, type));
