@@ -81,6 +81,11 @@ struct PairHash {
     }
 };
 
+struct SignatureMatchResult {
+    Signature *matchedSignature {};
+    Signature *notVisibleSignature {};
+};
+
 template <typename T>
 std::vector<T> ArenaVectorToStdVector(ArenaVector<T> const &av)
 {
@@ -480,10 +485,13 @@ public:
     void LogSignatureMismatch(ArenaVector<Signature *> const &signatures,
                               const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
                               std::string_view signatureKind);
-    Signature *FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr);
     Signature *MatchOrderSignatures(ArenaVector<Signature *> &signatures,
                                     const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
                                     TypeRelationFlag validateFlags, std::string_view signatureKind = "call");
+    SignatureMatchResult MatchOrderSignaturesWithResult(ArenaVector<Signature *> &signatures,
+                                                        const ArenaVector<ir::Expression *> &arguments,
+                                                        const ir::Expression *expr,
+                                                        TypeRelationFlag validateFlags = TypeRelationFlag::NONE);
 
     Signature *ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr);
     Signature *ComposeSignature(ir::ScriptFunction *func, SignatureInfo *signatureInfo, Type *returnType,

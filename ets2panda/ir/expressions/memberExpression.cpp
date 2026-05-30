@@ -16,12 +16,15 @@
 #include "memberExpression.h"
 
 #include "checker/TSchecker.h"
+#include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ets/castingContext.h"
 #include "checker/types/ets/etsTupleType.h"
+#include "checker/types/typeFlag.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
 #include "util/diagnostic.h"
 #include "util/es2pandaMacros.h"
+#include "varbinder/variable.h"
 
 namespace ark::es2panda::ir {
 MemberExpression::MemberExpression([[maybe_unused]] Tag const tag, MemberExpression const &other,
@@ -218,22 +221,43 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
     }
 }
 
-void MemberExpression::AddUnionSignature(checker::ETSChecker *checker, checker::Type *memberType,
-                                         checker::Type *const type, checker::Type **commonPropType)
+void MemberExpression::CollectUnionSignatures(checker::ETSChecker *checker, checker::Type *memberType,
+                                              checker::Type *const type, checker::Type **commonPropType,
+                                              varbinder::LocalVariable *prop)
 {
-    const auto parentCallExpression = Parent()->AsCallExpression();
-    const auto memberFunctionType = memberType->AsETSFunctionType();
-    const auto memberTypeSignature =
-        checker->FirstMatchSignatures(memberFunctionType->CallSignatures(), parentCallExpression);
-    if (memberTypeSignature != nullptr) {
-        this->AddComponentTypeMemberAccessor(type, memberTypeSignature);
-    } else {
+    if (memberType == nullptr) {
         checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
         *commonPropType = checker->GlobalTypeError();
+        return;
+    }
+
+    if (!memberType->IsETSMethodType()) {
+        this->AddComponentTypeMemberAccessor(type, prop);
+        return;
+    }
+
+    const auto memberFunctionType = memberType->AsETSFunctionType();
+    if (Parent()->IsCallExpression() && memberType != nullptr && memberType->IsETSMethodType()) {
+        const auto parentCallExpression = Parent()->AsCallExpression();
+        const auto memberTypeSignature =
+            checker::FirstMatchSignatures(checker, memberFunctionType->CallSignatures(), parentCallExpression);
+        if (memberTypeSignature != nullptr) {
+            this->AddComponentTypeMemberAccessor(type, memberTypeSignature);
+        } else {
+            checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
+            *commonPropType = checker->GlobalTypeError();
+        }
+        return;
+    }
+
+    if (memberType->IsETSMethodType() && (memberFunctionType->HasTypeFlag(checker::TypeFlag::GETTER) ||
+                                          memberFunctionType->HasTypeFlag(checker::TypeFlag::SETTER))) {
+        ES2PANDA_ASSERT(memberFunctionType->CallSignatures().size() == 1);
+        this->AddComponentTypeMemberAccessor(type, prop);
     }
 }
 
-static bool haveDifferentSignatures(checker::ETSChecker *checker,
+static bool HaveDifferentSignatures(checker::ETSChecker *checker,
                                     const MemberExpression::ComponentTypeMemberAccessors &typeSignatures)
 {
     if (typeSignatures.size() < 2U || !std::holds_alternative<checker::Signature *>(typeSignatures[0].second)) {
@@ -321,20 +345,22 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         ES2PANDA_ASSERT(apparent != nullptr);
         if (apparent->IsETSObjectType()) {
             SetObjectType(apparent->AsETSObjectType());
-            auto *memberType = ResolveObjectMember(checker).first;
+            auto resolvedMember = ResolveObjectMember(checker);
+            auto *memberType = resolvedMember.first;
             if (memberType != nullptr && memberType->IsTypeError()) {
                 return checker->GlobalTypeError();
             }
             addPropType(memberType);
-            if (Parent()->IsCallExpression() && memberType != nullptr && memberType->IsETSMethodType()) {
-                AddUnionSignature(checker, memberType, type, &commonPropType);
-            }
+            CollectUnionSignatures(checker, memberType, type, &commonPropType, resolvedMember.second);
+        } else if (apparent->IsETSArrayType() && Property()->AsIdentifier()->Name() == "length") {
+            addPropType(checker->GlobalIntBuiltinType());
+            this->AddComponentTypeMemberAccessor(type, static_cast<varbinder::LocalVariable *>(nullptr));
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
             commonPropType = checker->GlobalTypeError();
         }
     }
-    if (haveDifferentSignatures(checker, this->GetComponentTypeMemberAccessors())) {
+    if (HaveDifferentSignatures(checker, this->GetComponentTypeMemberAccessors())) {
         checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
         commonPropType = checker->GlobalTypeError();
     }
