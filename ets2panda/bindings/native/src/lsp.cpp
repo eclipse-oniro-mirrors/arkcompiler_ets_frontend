@@ -667,15 +667,14 @@ KNativePointer impl_getCompletionEntryDetailsEntryName(KNativePointer ref)
 }
 TS_INTEROP_1(getCompletionEntryDetailsEntryName, KNativePointer, KNativePointer)
 
-KNativePointer impl_findSafeDeleteLocation(KNativePointer context, KNativePointer declInfo)
+KNativePointer impl_findSafeDeleteLocation(KNativePointer context, KInt position)
 {
     LSPAPI const *ctx = GetLspApiImpl();
     auto *result = new std::vector<SafeDeleteLocation>(
-        ctx->FindSafeDeleteLocation(reinterpret_cast<es2panda_Context *>(context),
-                                    reinterpret_cast<std::tuple<std::string, std::string> *>(declInfo)));
+        ctx->FindSafeDeleteLocation(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position)));
     return result;
 }
-TS_INTEROP_2(findSafeDeleteLocation, KNativePointer, KNativePointer, KNativePointer)
+TS_INTEROP_2(findSafeDeleteLocation, KNativePointer, KNativePointer, KInt)
 
 KNativePointer impl_getSafeDeleteLocations(KNativePointer safeDeleteLocationsPtr)
 {

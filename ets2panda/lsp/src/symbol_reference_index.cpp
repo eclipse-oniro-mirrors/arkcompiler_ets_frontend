@@ -166,12 +166,22 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
     }
     if (key.empty()) {
         const auto declFileName = GetNodeFileName(declNode, ctx);
-        key = declFileName + ":" + std::to_string(declNode->Start().index) + ":" +
-              std::to_string(declNode->End().index) + ":" + std::string(identifier->Name()) + ":" +
-              std::to_string(static_cast<int>(declNode->Type()));
+        auto start = declNode->Start().index;
+        auto end = declNode->End().index;
+        // For "ETSGLOBAL" and the "main" function within it, there is no need to add them to the symbol table.
+        if (start == 0 && end == 0) {
+            return 0;
+        }
+        key = declFileName + ":" + std::to_string(start) + ":" + std::to_string(end) + ":" +
+              std::string(identifier->Name()) + ":" + std::to_string(static_cast<int>(declNode->Type()));
     }
 
     return static_cast<SymbolId>(std::hash<std::string> {}(key));
+}
+
+SymbolId BuildFileReferenceSymbolId(const std::string &targetPath)
+{
+    return static_cast<SymbolId>(std::hash<std::string> {}("file_ref:" + targetPath));
 }
 
 bool IsDefinitionNode(const ir::AstNode *node, const ir::AstNode *owner)
@@ -234,50 +244,182 @@ void DeduplicateAndSortReferences(std::vector<ReferenceInfo> &refs)
                refs.end());
 }
 
+SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::Identifier *identifier, ir::AstNode *owner,
+                         bool isTypeReferenceNode)
+{
+    if (identifier == nullptr) {
+        return 0;
+    }
+    if (owner == nullptr) {
+        if (!isTypeReferenceNode) {
+            return 0;
+        }
+        const auto identifierName = std::string(identifier->Name());
+        if (identifierName != "Any" && identifierName != "Object") {
+            return 0;
+        }
+        return static_cast<SymbolId>(std::hash<std::string> {}("intrinsic_typeref:" + identifierName));
+    }
+    return BuildSymbolId(owner, identifier, ctx);
+}
+
+std::optional<std::pair<ReferenceInfo, size_t>> BuildReferenceInfo(const public_lib::Context *ctx,
+                                                                   const ir::AstNode *targetNode,
+                                                                   const ir::Identifier *identifier)
+{
+    if (targetNode == nullptr || identifier == nullptr) {
+        return std::nullopt;
+    }
+
+    const size_t start = targetNode->Start().index;
+    const std::string identifierName = std::string(identifier->Name());
+    const size_t refLength = identifierName.length();
+    if (refLength == 0) {
+        return std::nullopt;
+    }
+    const size_t end = start + refLength;
+
+    std::string sourceStorage {};
+    std::string_view source {};
+    if (auto *program = targetNode->Range().start.Program(); program != nullptr) {
+        sourceStorage = std::string(program->SourceCode());
+        source = sourceStorage;
+    }
+    if (!source.empty() && (end > source.length() || source.substr(start, refLength) != identifierName)) {
+        return std::nullopt;
+    }
+
+    const std::string refFileName = GetNodeFileName(targetNode, ctx);
+    return std::make_pair(ReferenceInfo(refFileName, start, refLength), end);
+}
+
+bool RegisterReference(SymbolId symbolId, const ReferenceInfo &ref, size_t end,
+                       std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+{
+    const std::string dedupKey = std::to_string(symbolId) + ":" + ref.fileName + ":" + std::to_string(ref.start) + ":" +
+                                 std::to_string(ref.length);
+    if (!localDedup.insert(dedupKey).second) {
+        return false;
+    }
+
+    fileIndex.symbolOccurrences.push_back(SymbolOccurrence {ref.start, end, symbolId});
+    fileIndex.references.emplace_back(symbolId, ref);
+    g_symbolReferences[symbolId].push_back(ref);
+    return true;
+}
+
+void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *targetNode,
+                          std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+{
+    if (targetNode == nullptr) {
+        return;
+    }
+
+    const ir::Identifier *identifier = nullptr;
+    ir::AstNode *owner = nullptr;
+    if (targetNode->IsETSTypeReference()) {
+        auto *typeReference = targetNode->AsETSTypeReference();
+        identifier = typeReference->BaseName();
+        if (identifier != nullptr) {
+            owner = ark::es2panda::lsp::GetOwner(const_cast<ir::Identifier *>(identifier));
+        }
+    } else if (targetNode->IsIdentifier()) {
+        identifier = targetNode->AsIdentifier();
+        owner = ark::es2panda::lsp::GetOwner(const_cast<ir::AstNode *>(targetNode));
+    }
+
+    const SymbolId symbolId = ResolveSymbolId(ctx, identifier, owner, targetNode->IsETSTypeReference());
+    if (symbolId == 0) {
+        return;
+    }
+    auto refInfo = BuildReferenceInfo(ctx, targetNode, identifier);
+    if (!refInfo.has_value()) {
+        return;
+    }
+    auto &[ref, end] = refInfo.value();
+    if (!RegisterReference(symbolId, ref, end, localDedup, fileIndex)) {
+        return;
+    }
+    if (owner == nullptr) {
+        return;
+    }
+    const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
+    if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
+        g_symbolDefinitions[symbolId] = ReferenceInfo(ref.fileName, ref.start, ref.length);
+        if (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported()) {
+            g_symbolDefIsDefaultExport.insert(symbolId);
+        }
+    }
+}
+
 void ProcessNodeForSymbolIndex(const public_lib::Context *ctx, ir::AstNode *node,
                                std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
 {
     auto *targetNode = node->OriginalNode() != nullptr ? node->OriginalNode() : node;
-    if (targetNode == nullptr || !targetNode->IsIdentifier()) {
+    if (targetNode == nullptr) {
         return;
     }
 
-    auto *identifier = targetNode->AsIdentifier();
-    auto *owner = ark::es2panda::lsp::GetOwner(targetNode);
-    if (identifier == nullptr || owner == nullptr) {
+    if (targetNode->IsETSTypeReference()) {
+        AddReferenceFromNode(ctx, targetNode, localDedup, fileIndex);
         return;
     }
 
-    const SymbolId symbolId = BuildSymbolId(owner, identifier, ctx);
-    if (symbolId == 0) {
+    if (!targetNode->IsIdentifier()) {
+        return;
+    }
+    AddReferenceFromNode(ctx, targetNode, localDedup, fileIndex);
+}
+
+void AddFileReferenceFromImportDecl(const public_lib::Context *ctx, const ir::ETSImportDeclaration *importDecl,
+                                    std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+{
+    if (importDecl == nullptr || importDecl->Source() == nullptr || !importDecl->Source()->IsStringLiteral()) {
         return;
     }
 
-    const size_t start = targetNode->Start().index;
-    const size_t end = targetNode->End().index;
+    std::string sourcePath = std::string(importDecl->ResolvedSource());
+    if (sourcePath.empty() && importDecl->ImportInfo().HasSpecifiedDeclPath()) {
+        sourcePath = std::string(importDecl->DeclPath());
+    }
+    if (sourcePath.empty() && importDecl->Source() != nullptr) {
+        sourcePath = std::string(importDecl->Source()->Str());
+    }
+    if (sourcePath.empty()) {
+        return;
+    }
+
+    const auto *sourceLiteral = importDecl->Source();
+    const size_t start = sourceLiteral->Start().index;
+    const size_t end = sourceLiteral->End().index;
     if (end <= start) {
         return;
     }
 
-    const std::string refFileName = GetNodeFileName(targetNode, ctx);
-    const ReferenceInfo ref(refFileName, start, end - start);
-    const std::string dedupKey = std::to_string(symbolId) + ":" + ref.fileName + ":" + std::to_string(ref.start) + ":" +
-                                 std::to_string(ref.length);
+    const std::string refFileName = GetNodeFileName(importDecl, ctx);
+    ReferenceInfo refInfo(refFileName, start, end - start);
+    const auto symbolId = BuildFileReferenceSymbolId(sourcePath);
+    const std::string dedupKey = "file-ref:" + std::to_string(symbolId) + ":" + refFileName + ":" +
+                                 std::to_string(refInfo.start) + ":" + std::to_string(refInfo.length);
     if (!localDedup.insert(dedupKey).second) {
         return;
     }
 
-    fileIndex.symbolOccurrences.push_back(SymbolOccurrence {start, end, symbolId});
-    fileIndex.references.emplace_back(symbolId, ref);
-    g_symbolReferences[symbolId].push_back(ref);
+    fileIndex.references.emplace_back(symbolId, refInfo);
+    g_symbolReferences[symbolId].push_back(refInfo);
+}
 
-    const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
-    if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
-        g_symbolDefinitions[symbolId] =
-            ReferenceInfo(GetNodeFileName(owner, ctx), owner->Start().index, owner->End().index - owner->Start().index);
-        if (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported()) {
-            g_symbolDefIsDefaultExport.insert(symbolId);
+void BuildImportFileReferencesForProgram(const public_lib::Context *ctx, parser::Program *program,
+                                         std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
+{
+    if (program == nullptr || program->Ast() == nullptr || !program->Ast()->IsETSModule()) {
+        return;
+    }
+    for (auto *statement : program->Ast()->AsETSModule()->Statements()) {
+        if (statement == nullptr || !statement->IsETSImportDeclaration()) {
+            continue;
         }
+        AddFileReferenceFromImportDecl(ctx, statement->AsETSImportDeclaration(), localDedup, fileIndex);
     }
 }
 
@@ -290,6 +432,7 @@ bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser:
     fileIndex.source = std::string(program->SourceCode());
 
     std::unordered_set<std::string> localDedup {};
+    BuildImportFileReferencesForProgram(ctx, program, localDedup, fileIndex);
     auto *astRoot = reinterpret_cast<ir::AstNode *>(program->Ast());
     astRoot->IterateRecursively([ctx, &localDedup, &fileIndex](ir::AstNode *node) {
         ProcessNodeForSymbolIndex(ctx, node, localDedup, fileIndex);
@@ -428,6 +571,35 @@ References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t po
                    refs.end());
     }
 
+    DeduplicateAndSortReferences(refs);
+    result.referenceInfos = std::move(refs);
+    return result;
+}
+
+References GetFileReferencesFromIndex(es2panda_Context *context, const std::string &searchFileName,
+                                      bool isPackageModule)
+{
+    References result {};
+    if (context == nullptr || searchFileName.empty()) {
+        return result;
+    }
+
+    std::string searchTarget = searchFileName;
+    if (isPackageModule) {
+        const auto pos = searchFileName.find_last_of("/\\");
+        if (pos == std::string::npos) {
+            return result;
+        }
+        searchTarget = searchFileName.substr(0, pos);
+    }
+
+    const auto symbolId = BuildFileReferenceSymbolId(searchTarget);
+    auto refsIt = g_symbolReferences.find(symbolId);
+    if (refsIt == g_symbolReferences.end()) {
+        return result;
+    }
+
+    auto refs = refsIt->second;
     DeduplicateAndSortReferences(refs);
     result.referenceInfos = std::move(refs);
     return result;

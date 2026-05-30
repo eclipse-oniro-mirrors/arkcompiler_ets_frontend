@@ -352,7 +352,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _findSafeDeleteLocation(context: KNativePointer, declInfo: KNativePointer): KPtr {
+  _findSafeDeleteLocation(context: KNativePointer, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 

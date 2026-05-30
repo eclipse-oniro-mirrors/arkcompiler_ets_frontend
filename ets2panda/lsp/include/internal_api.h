@@ -130,8 +130,6 @@ ir::AstNode *GetTouchingTokenRightMatch(es2panda_Context *context, size_t pos, p
 ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange &span, bool flagFindFirstMatch);
 ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &span);
 ir::AstNode *GetTouchingTokenForIdentifier(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
-References GetFileReferencesImpl(es2panda_Context *referenceFileContext, char const *searchFileName,
-                                 bool isPackageModule);
 ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode);
 ir::AstNode *GetIdentifierFromSuper(ir::AstNode *super);
 ir::AstNode *GetOriginalNode(ir::AstNode *astNode);

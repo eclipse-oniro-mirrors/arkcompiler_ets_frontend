@@ -33,6 +33,8 @@ bool BuildSymbolReferenceIndexForContext(es2panda_Context *context);
 bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context);
 bool RemoveSymbolReferenceIndexForFile(const std::string &fileName);
 References GetReferencesAtPositionFromIndex(es2panda_Context *context, size_t position);
+References GetFileReferencesFromIndex(es2panda_Context *context, const std::string &searchFileName,
+                                      bool isPackageModule);
 std::string GetIndexedFileSource(const std::string &fileName);
 double JaccardSimilarity(const std::string &a, const std::string &b);
 int LevenshteinDistance(const std::string &s1, const std::string &s2, int maxDistance);

@@ -347,7 +347,7 @@ describe('getDocumentHighlightsTest', () => {
               start: 0,
               length: 0
             },
-            kind: 3
+            kind: 2
           },
           {
             fileName: getRealPath(moduleName, 'getDocumentHighlights8.ets'),

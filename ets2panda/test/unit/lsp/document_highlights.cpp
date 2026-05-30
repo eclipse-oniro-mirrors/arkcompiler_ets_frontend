@@ -20,12 +20,32 @@ using ark::es2panda::lsp::Initializer;
 
 struct TypeCase {
     size_t pos;
-    int firstHighlightStart;
-    int secondHighlightStart;
-    int expectedLength;
+    size_t firstHighlightStart;
+    size_t secondHighlightStart;
+    size_t expectedLength;
 };
 
 class LspDocumentHighlights : public LSPAPITests {};
+
+struct HighlightExpectation {
+    size_t start;
+    size_t length;
+    HighlightSpanKind kind;
+};
+
+static void AssertHighlights(const DocumentHighlightsReferences &result, const std::string &fileName,
+                             const std::vector<HighlightExpectation> &expected)
+{
+    ASSERT_EQ(result.documentHighlights_.size(), 1U);
+    ASSERT_EQ(result.documentHighlights_[0].fileName_, fileName);
+    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expected.size());
+    for (size_t i = 0; i < expected.size(); i++) {
+        const auto &actual = result.documentHighlights_[0].highlightSpans_[i];
+        ASSERT_EQ(actual.textSpan_.start, expected[i].start);
+        ASSERT_EQ(actual.textSpan_.length, expected[i].length);
+        ASSERT_EQ(actual.kind_, expected[i].kind);
+    }
+}
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights1)
 {
@@ -43,25 +63,13 @@ let ccc = bbb + aaa + 234;
     auto const pos = 6;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{5, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {26, 3, HighlightSpanKind::REFERENCE},
+                      {53, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 5;
-    auto const secondHighlightStart = 26;
-    auto const thirdHighlightStart = 53;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights2)
@@ -77,43 +85,19 @@ function f1(aaa: number) {
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
     LSPAPI const *lspApi = GetImpl();
-    auto const firstPos = 109;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    auto firstResult = lspApi->getDocumentHighlights(ctx, firstPos);
-    auto const firstExpectedHighlightCount = 3;
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
-    ASSERT_EQ(firstResult.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstFirstHighlightStart = 20;
-    auto const firstSecondHighlightStart = 47;
-    auto const firstThirdHighlightStart = 108;
-    auto const firstExpectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstFirstHighlightStart);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, firstSecondHighlightStart);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start,
-              firstThirdHighlightStart);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, firstExpectedLength);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, firstExpectedLength);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, firstExpectedLength);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
-    auto const secondPos = 77;
-    auto secondResult = lspApi->getDocumentHighlights(ctx, secondPos);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
+    auto firstResult = lspApi->getDocumentHighlights(ctx, 109);
+    AssertHighlights(firstResult, filePaths[0],
+                     {{20, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {47, 3, HighlightSpanKind::REFERENCE},
+                      {108, 3, HighlightSpanKind::REFERENCE}});
+
+    auto secondResult = lspApi->getDocumentHighlights(ctx, 77);
+    AssertHighlights(secondResult, filePaths[0],
+                     {{76, 3, HighlightSpanKind::WRITTEN_REFERENCE}, {102, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const secondExpectedHighlightCount = 2;
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_.size(), secondExpectedHighlightCount);
-    ASSERT_EQ(secondResult.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const secondFirstHighlightStart = 76;
-    auto const secondSecondHighlightStart = 102;
-    auto const secondExpectedLength = 3;
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, secondFirstHighlightStart);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondSecondHighlightStart);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, secondExpectedLength);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, secondExpectedLength);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights3)
@@ -140,25 +124,13 @@ function f2() {
     auto const pos = 8;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{7, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {52, 3, HighlightSpanKind::REFERENCE},
+                      {110, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 7;
-    auto const secondHighlightStart = 52;
-    auto const thirdHighlightStart = 110;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights4)
@@ -185,30 +157,14 @@ function f2() {
     auto const pos = 18;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{17, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {64, 3, HighlightSpanKind::REFERENCE},
+                      {133, 3, HighlightSpanKind::REFERENCE},
+                      {144, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 4;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 17;
-    auto const secondHighlightStart = 64;
-    auto const thirdHighlightStart = 133;
-    auto const fourthHighlightStart = 144;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    auto const thirdIndex = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[thirdIndex].textSpan_.start, fourthHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[thirdIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[thirdIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights5)
@@ -235,25 +191,13 @@ class Bar {
     auto const pos = 11;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{10, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {88, 3, HighlightSpanKind::REFERENCE},
+                      {132, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 10;
-    auto const secondHighlightStart = 88;
-    auto const thirdHighlightStart = 132;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights6)
@@ -277,20 +221,11 @@ class ListNode<T> {
     auto const pos = 49;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{7, 8, HighlightSpanKind::WRITTEN_REFERENCE}, {45, 8, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 7;
-    auto const secondHighlightStart = 45;
-    auto const expectedLength = 8;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights7)
@@ -315,25 +250,13 @@ function fib(n: number) {
     auto const pos = 125;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{10, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {124, 3, HighlightSpanKind::REFERENCE},
+                      {137, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 10;
-    auto const secondHighlightStart = 124;
-    auto const thirdHighlightStart = 137;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights8)
@@ -355,25 +278,13 @@ let ccc = bbb + aaa + "234";
     auto const pos = 13;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{12, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {42, 3, HighlightSpanKind::REFERENCE},
+                      {79, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 12;
-    auto const secondHighlightStart = 42;
-    auto const thirdHighlightStart = 79;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights9)
@@ -400,25 +311,13 @@ function fib(n: string) {
     auto const pos = 156;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{17, 3, HighlightSpanKind::WRITTEN_REFERENCE},
+                      {155, 3, HighlightSpanKind::REFERENCE},
+                      {169, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 3;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 17;
-    auto const secondHighlightStart = 155;
-    auto const thirdHighlightStart = 169;
-    auto const expectedLength = 3;
-    auto const secondIndex = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, thirdHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlights10)
@@ -440,34 +339,15 @@ bbb = aaa.a;
     auto const firstPos = 26;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto firstResult = lspApi->getDocumentHighlights(ctx, firstPos);
-    auto const firstExpectedHighlightCount = 2;
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
-    ASSERT_EQ(firstResult.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstFirstHighlightStart = 25;
-    auto const firstSecondHighlightStart = 65;
-    auto const firstExpectedLength = 3;
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstFirstHighlightStart);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, firstSecondHighlightStart);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, firstExpectedLength);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, firstExpectedLength);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+    AssertHighlights(firstResult, filePaths[0],
+                     {{25, 3, HighlightSpanKind::WRITTEN_REFERENCE}, {65, 3, HighlightSpanKind::REFERENCE}});
     auto const secondPos = 66;
     auto secondResult = lspApi->getDocumentHighlights(ctx, secondPos);
+    AssertHighlights(secondResult, filePaths[0],
+                     {{25, 3, HighlightSpanKind::WRITTEN_REFERENCE}, {65, 3, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const secondExpectedHighlightCount = 2;
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_.size(), secondExpectedHighlightCount);
-    ASSERT_EQ(secondResult.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const secondFirstHighlightStart = 25;
-    auto const secondSecondHighlightStart = 65;
-    auto const secondExpectedLength = 3;
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, secondFirstHighlightStart);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondSecondHighlightStart);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, secondExpectedLength);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, secondExpectedLength);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }
 
 TEST_F(LspDocumentHighlights, getDocumentHighlightsBuiltInTypes)
@@ -496,17 +376,14 @@ let s: Any = true; let t: Object = 2;
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto const firstExpectedHighlightCount = 2;
     for (auto const &testCase : cases) {
         auto result = lspApi->getDocumentHighlights(ctx, testCase.pos);
         ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
-        ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, testCase.firstHighlightStart);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, testCase.secondHighlightStart);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, testCase.expectedLength);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, testCase.expectedLength);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+        AssertHighlights(result, filePaths[0],
+                         {{testCase.firstHighlightStart, testCase.expectedLength, HighlightSpanKind::REFERENCE},
+                          {testCase.secondHighlightStart, testCase.expectedLength, HighlightSpanKind::REFERENCE}});
     }
     initializer.DestroyContext(ctx);
 }
@@ -534,17 +411,14 @@ let o: Char = c'b'; let p: Boolean = false;
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto const firstExpectedHighlightCount = 2;
     for (auto const &testCase : cases) {
         auto result = lspApi->getDocumentHighlights(ctx, testCase.pos);
         ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
-        ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, testCase.firstHighlightStart);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.start, testCase.secondHighlightStart);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, testCase.expectedLength);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].textSpan_.length, testCase.expectedLength);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::REFERENCE);
-        ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+        AssertHighlights(result, filePaths[0],
+                         {{testCase.firstHighlightStart, testCase.expectedLength, HighlightSpanKind::REFERENCE},
+                          {testCase.secondHighlightStart, testCase.expectedLength, HighlightSpanKind::REFERENCE}});
     }
     initializer.DestroyContext(ctx);
 }
@@ -566,19 +440,9 @@ let a: AAAA;
     auto const pos = 24;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContext(ctx);
     auto result = lspApi->getDocumentHighlights(ctx, pos);
+    AssertHighlights(result, filePaths[0],
+                     {{6, 4, HighlightSpanKind::WRITTEN_REFERENCE}, {22, 4, HighlightSpanKind::REFERENCE}});
     initializer.DestroyContext(ctx);
-    auto const expectedHighlightCount = 2;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_.size(), expectedHighlightCount);
-    ASSERT_EQ(result.documentHighlights_[0].fileName_, filePaths[0]);
-    auto const firstHighlightStart = 6;
-    auto const secondHighlightStart = 22;
-    auto const expectedLength = 4;
-    auto const secondIndex = 1;
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.start, secondHighlightStart);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].textSpan_.length, expectedLength);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
-    ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
 }

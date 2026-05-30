@@ -378,8 +378,7 @@ typedef struct LSPAPI {
     std::vector<ark::es2panda::lsp::RenameLocation> (*findRenameLocationsWithCancellationToken)(
         ark::es2panda::lsp::CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
         es2panda_Context *context, size_t position);
-    std::vector<SafeDeleteLocation> (*FindSafeDeleteLocation)(es2panda_Context *ctx,
-                                                              const std::tuple<std::string, std::string> *declInfo);
+    std::vector<SafeDeleteLocation> (*FindSafeDeleteLocation)(es2panda_Context *ctx, size_t position);
     std::vector<ark::es2panda::lsp::ReferencedNode> (*findReferences)(
         ark::es2panda::lsp::CancellationToken *tkn, const std::vector<ark::es2panda::SourceFile> &srcFiles,
         const ark::es2panda::SourceFile &srcFile, size_t position);

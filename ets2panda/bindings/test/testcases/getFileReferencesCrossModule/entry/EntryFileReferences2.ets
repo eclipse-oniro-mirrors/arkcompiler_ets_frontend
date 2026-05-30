@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import { answer } from 'har';
+import { answer } from '../har/Index';
 
 const value = answer;

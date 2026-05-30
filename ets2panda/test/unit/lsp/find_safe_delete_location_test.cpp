@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-#include "lsp/include/find_safe_delete_location.h"
 #include "lsp_api_test.h"
-#include "lsp/include/references.h"
 #include <gtest/gtest.h>
 
 namespace {
@@ -36,12 +34,9 @@ TEST_F(FindSafeDeleteLocationTests, FindSafeDeleteLocationBasic)
 
     constexpr size_t TOKEN_POSITION = 9;
     constexpr size_t RESULT_SIZE = 3;
-    auto astNode = ark::es2panda::lsp::GetTouchingToken(ctx, TOKEN_POSITION, false);
-
-    auto declInfo = ark::es2panda::lsp::GetDeclInfoImpl(astNode);
-
     LSPAPI const *lspApi = GetImpl();
-    auto locations = lspApi->FindSafeDeleteLocation(ctx, &declInfo);
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx);
+    auto locations = lspApi->FindSafeDeleteLocation(ctx, TOKEN_POSITION);
 
     ASSERT_EQ(locations.size(), RESULT_SIZE);
 
@@ -60,34 +55,26 @@ TEST_F(FindSafeDeleteLocationTests, FindSafeDeleteLocationNoResult)
 
     constexpr size_t TOKEN_POSITION = 4;
     constexpr size_t RESULT_SIZE = 1;
-    auto astNode = ark::es2panda::lsp::GetTouchingToken(ctx, TOKEN_POSITION, false);
-
-    auto declInfo = ark::es2panda::lsp::GetDeclInfoImpl(astNode);
-
     LSPAPI const *lspApi = GetImpl();
-    auto locations = lspApi->FindSafeDeleteLocation(ctx, &declInfo);
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx);
+    auto locations = lspApi->FindSafeDeleteLocation(ctx, TOKEN_POSITION);
 
     ASSERT_EQ(locations.size(), RESULT_SIZE);
 
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FindSafeDeleteLocationTests, FindSafeDeleteLocationDeclInfoEmpty)
+TEST_F(FindSafeDeleteLocationTests, FindSafeDeleteLocationNoSymbol)
 {
     std::vector<std::string> files = {"safe_delete_test_empty.ets"};
     std::vector<std::string> texts = {R"(let x: number = 1;)"};
-
     auto filePaths = CreateTempFile(files, texts);
-
     Initializer initializer;
     es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-
-    std::tuple<std::string, std::string> declInfo = {"", ""};
-
+    size_t pos = 0;
     LSPAPI const *lspApi = GetImpl();
-    auto locations = lspApi->FindSafeDeleteLocation(ctx, &declInfo);
-
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx);
+    auto locations = lspApi->FindSafeDeleteLocation(ctx, pos);
     ASSERT_TRUE(locations.empty());
-
     initializer.DestroyContext(ctx);
 }
