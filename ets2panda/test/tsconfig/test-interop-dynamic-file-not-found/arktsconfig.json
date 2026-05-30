@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "dependencies": {
+            "mymodule": {
+                "language": "js",
+                "path": "./nonexistent.ets",
+                "ohmUrl": "mymodule"
+            }
+        }
+    }
+}

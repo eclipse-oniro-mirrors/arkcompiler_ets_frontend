@@ -217,12 +217,41 @@ void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPa
     }
 }
 
-void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes *result) const
+bool ImportPathManager::CheckDependencyFileExists(const std::string &depPath, std::string_view messageParam) const
+{
+    // A dynamic dependency without a path is valid for ESValue/declless interop scenarios
+    // (the declaration file is not needed); skip the existence check in that case.
+    if (depPath.empty()) {
+        return true;
+    }
+#if defined(PANDA_TARGET_WINDOWS)
+    bool fileExistsExt = ark::os::file::File::IsRegularFileCaseSensitive(depPath);
+#else
+    bool fileExistsExt = ark::os::file::File::IsRegularFile(depPath);
+#endif
+    if (!fileExistsExt) {
+        DE()->LogDiagnostic(diagnostic::INTEROP_DYNAMIC_FILE_NOT_FOUND, util::DiagnosticMessageParams {messageParam},
+                            srcPos_);
+        return false;
+    }
+    return true;
+}
+
+void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes *result,
+                                                    std::string_view importPath) const
 {
     auto packagePathPair = ArkTSConfig().SourcePathMap().find(result->resolvedPath);
     if (packagePathPair != ArkTSConfig().SourcePathMap().cend()) {
         result->resolvedPath = packagePathPair->second;
         result->resolvedIsExternalModule = true;
+        const auto &dependencies = ArkTSConfig().Dependencies();
+        if (auto depIt = dependencies.find(result->resolvedPath); depIt != dependencies.cend()) {
+            if (!CheckDependencyFileExists(depIt->second.Path(), importPath)) {
+                result->resolvedPath.clear();
+                result->resolvedIsExternalModule = false;
+                result->hasError = true;
+            }
+        }
         return;
     }
     auto paths = ArkTSConfig().Paths().find(result->resolvedPath);
@@ -247,13 +276,23 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
         resolvedPathPrototype += pathDelimiter_;
         resolvedPathPrototype += importPath;
         result = AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
+        if (result.hasError) {
+            return {};
+        }
         if (result.resolvedIsExternalModule) {
             TryMatchStaticResolvedPath(&result);
         } else {
-            TryMatchDynamicResolvedPath(&result);
+            TryMatchDynamicResolvedPath(&result, importPath);
+        }
+        if (result.hasError) {
+            return {};
         }
     } else {
         result = ResolveAbsolutePath(importPath);
+    }
+
+    if (result.hasError) {
+        return {};
     }
 
     return {*this, std::string(result.resolvedPath), ToLanguage(importer->Extension()).GetId(),
@@ -1292,7 +1331,13 @@ ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string
     auto delim = pathDelimiter_[0];
     std::replace_if(
         resolvedPathPrototype.begin(), resolvedPathPrototype.end(), [delim](auto c) { return c == delim; }, '/');
-    if (ArkTSConfig().FindInDependencies(resolvedPathPrototype) != std::nullopt) {
+    if (auto resolvedDependency = ArkTSConfig().FindInDependencies(resolvedPathPrototype);
+        resolvedDependency != std::nullopt) {
+        // Since declgen is decoupled from the compile process, a dynamic ArkTS declaration file may be declared
+        // in arktsconfig but missing on disk. Report an error when such a declaration is referenced but absent.
+        if (!CheckDependencyFileExists(resolvedDependency->second.Path(), resolvedPathPrototype)) {
+            return {"", false, true};
+        }
         return {resolvedPathPrototype, true};
     }
     if (ArkTSConfig().Paths().find(resolvedPathPrototype) != ArkTSConfig().Paths().cend()) {
@@ -1331,7 +1376,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         [delim](char c) { return ((delim != c) && ((c == '\\') || (c == '/'))); }, delim);
 
     resolvedPathPrototype = ark::os::NormalizePath(resolvedPathPrototype);
-    if (auto resPathInfo = TryResolvePath(resolvedPathPrototype); !resPathInfo.resolvedPath.empty()) {
+    if (auto resPathInfo = TryResolvePath(resolvedPathPrototype);
+        !resPathInfo.resolvedPath.empty() || resPathInfo.hasError) {
         return resPathInfo;
     }
 

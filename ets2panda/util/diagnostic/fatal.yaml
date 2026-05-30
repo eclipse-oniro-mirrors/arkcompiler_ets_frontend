@@ -49,6 +49,10 @@ fatal:
   id: 16
   message: "Can't find prefix for '{}' in {}"
 
+- name: INTEROP_DYNAMIC_FILE_NOT_FOUND
+  id: 28
+  message: "Cannot resolve '{}'. Please run declgen to generate the declaration files, or use ESValue for interop scenarios."
+
 - name: INVALID_ARKTSCONFIG
   id: 13
   message: "Invalid ArkTsConfig: {}"

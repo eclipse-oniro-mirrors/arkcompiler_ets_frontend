@@ -358,9 +358,12 @@ private:
         // On successfull resolving, 2 variants are possible:
         // `resolvedPath` is a module-path - if dynamic path was resolved;
         // `resolvedPath` is a realpath - if static path was resolved.
+        // `hasError` is set when an unresolvable error (e.g. missing declaration file) was
+        // already diagnosed; callers should short-circuit and return empty ImportInfo.
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         std::string resolvedPath;
         bool resolvedIsExternalModule {false};
+        bool hasError {false};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
     ImportInfo ResolvePath(parser::Program *importer, std::string_view importPath) const;
@@ -370,7 +373,8 @@ private:
     std::string TryMatchDependencies(std::string_view fixedPath) const;
     ResolvedPathRes TryResolvePath(std::string resolvedPathPrototype) const;
     void TryMatchStaticResolvedPath(ResolvedPathRes *result) const;
-    void TryMatchDynamicResolvedPath(ResolvedPathRes *result) const;
+    void TryMatchDynamicResolvedPath(ResolvedPathRes *result, std::string_view importPath) const;
+    bool CheckDependencyFileExists(const std::string &depPath, std::string_view messageParam) const;
     bool DeclarationIsInCache(ImportInfo &importInfo);
 
     template <ModuleKind KIND, typename VarBinderT = void>
