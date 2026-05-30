@@ -1550,7 +1550,8 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::ve
     auto superClassType = classType->SuperType();
     while (!functionOverridden && superClassType != nullptr) {
         for (auto *field : superClassType->Fields()) {
-            if (field->Declaration()->Node()->AsClassProperty()->IsStatic() || field->Name() != (*it)->Name()) {
+            if (field->Declaration()->Node()->AsClassProperty()->IsStatic() || field->Name() != (*it)->Name() ||
+                field->HasFlag(varbinder::VariableFlags::PRIVATE)) {
                 continue;
             }
 
