@@ -357,3 +357,38 @@ export function validatePathLength(filePath: string, description: string): void 
     }
 }
 
+export function sortAndDeduplicateStringArr(arr: string[]): string[] {
+    if (arr.length === 0) {
+        return arr;
+    }
+    arr.sort((a, b) => a.localeCompare(b));
+    const tmpArr: string[] = [arr[0]];
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] !== arr[i - 1]) {
+            tmpArr.push(arr[i]);
+        }
+    }
+    return tmpArr;
+}
+
+export function resolvePath(basePath: string, relativePath: string): string {
+    if (relativePath.startsWith('/')) {
+        return relativePath;
+    }
+    const baseDir = path.dirname(basePath);
+    return path.resolve(baseDir, relativePath);
+}
+
+export function getAbsPathBaseConfigPath(configPath: string, relativePath: string): string {
+    const absPath: string = path.join(path.dirname(configPath), relativePath);
+    return toUnixPath(absPath);
+}
+
+export function containWildcards(item: string): boolean {
+    return /[\*\?]/.test(item);
+}
+
+export function getProfilePath(srcPath: string): string {
+    return `${srcPath.replace(/\$profile\:/, '')}.json`;
+}
+

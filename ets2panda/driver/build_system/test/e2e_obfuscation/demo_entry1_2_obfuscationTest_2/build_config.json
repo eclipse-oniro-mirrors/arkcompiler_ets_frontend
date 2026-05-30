@@ -1,0 +1,34 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2/entry/Index.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "hap",
+    "buildType": "build",
+    "buildMode": "Release",
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2/entry/",
+    "sourceRoots": [
+        "./"
+    ],
+    "loaderOutPath": "./dist/out/demo_entry1_2_obfuscationTest_2",
+    "cachePath": "./dist/cache",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": ".",
+    "dependentModuleList": [],
+    "hasMainModule": true,
+    "obfuscationOptions":{
+        "selfConfig": {
+            "ruleOptions": {
+                "enable": true,
+                "rules": ["${absolute_path_to_build_system}/test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2/obfuscation-rules.txt"]
+            }
+        },
+        "sdkApis": [],
+        "obfuscationCacheDir": "${absolute_path_to_build_system}/dist/out/demo_entry1_2_obfuscationTest_2/obfuscation",
+        "exportRulePath": "${absolute_path_to_build_system}/dist/out/demo_entry1_2_obfuscationTest_2/obfuscation/obfuscation.txt"
+    }
+}

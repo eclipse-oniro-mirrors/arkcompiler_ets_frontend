@@ -1,0 +1,5 @@
+-enable-bytecode-obfuscation
+
+-keep-class-with-members class getData;
+
+-keep class *.utils {*;}

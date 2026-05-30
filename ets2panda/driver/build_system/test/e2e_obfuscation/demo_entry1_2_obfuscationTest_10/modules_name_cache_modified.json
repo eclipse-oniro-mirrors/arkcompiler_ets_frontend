@@ -1,0 +1,54 @@
+{
+    "Index$": {
+        "#obfName": "a"
+    },
+    "entry.Index": {
+        "#obfName": "entry.Index",
+        "useExportFunc:void;": "a",
+        "func1:void;": "func2",
+        "ClassA": {
+            "#obfName": "i1",
+            "clsA1": "f"
+        },
+        "ClassE": {
+            "#obfName": "f2",
+            "name": "d",
+            "age": "e"
+        },
+        "ClassF1": {
+            "#obfName": "e",
+            "staticMethod:std.core.String;": "b"
+        },
+        "ClassE1": {
+            "#obfName": "d",
+            "name": "d"
+        },
+        "ClassC": {
+            "#obfName": "h2",
+            "clsC1": "c"
+        },
+        "ClassF": {
+            "#obfName": "g",
+            "cMethod:entry.Index.ClassF;void;": "e"
+        },
+        "Interface3": {
+            "#obfName": "c",
+            "iMethod2:entry.Index.Interface3;void;": "d"
+        },
+        "Interface2": {
+            "#obfName": "j",
+            "iMethod1:entry.Index.Interface2;void;": "c"
+        },
+        "ClassB": {
+            "#obfName": "b",
+            "clsB1": "b"
+        },
+        "Interface1": {
+            "#obfName": "a",
+            "%%property-param1": "a",
+            "%%get-param1:entry.Index.Interface1;i32;": "a",
+            "%%set-param1:entry.Index.Interface1;i32;void;": "a"
+        }
+    },
+    "ArkGuardStaticVersion": "1.0.0.300"
+}

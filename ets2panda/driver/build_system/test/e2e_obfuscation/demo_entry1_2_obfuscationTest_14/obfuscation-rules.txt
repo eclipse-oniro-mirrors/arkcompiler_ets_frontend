@@ -1,0 +1,4 @@
+-enable-bytecode-obfuscation
+-print-seeds
+
+-keep-file-name entry.Index

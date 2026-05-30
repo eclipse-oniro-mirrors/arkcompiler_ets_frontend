@@ -1,0 +1,7 @@
+-disable-obfuscation
+
+-remove-log
+-keep class A {*;}
+-keep-file-name ./obfuscation_config_demo/hsp/*
+*index
+-keep-class-members class * {*;}

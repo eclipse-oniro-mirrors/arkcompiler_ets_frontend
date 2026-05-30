@@ -1,0 +1,11 @@
+-enable-bytecode-obfuscation
+
+-apply-namecache ./hsp-nameCache.json
+
+-print-seeds ./hsp-seeds.json
+
+-keep index.ets
+
+-keep
+class A NonPageUtils
+#-disable-obfuscation

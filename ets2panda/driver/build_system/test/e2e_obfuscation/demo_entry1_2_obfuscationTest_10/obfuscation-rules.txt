@@ -1,0 +1,6 @@
+-enable-bytecode-obfuscation
+-print-seeds
+
+-apply-namecache ./modules_name_cache_modified.json
+
+-keep package entry.Index { func1():void; }

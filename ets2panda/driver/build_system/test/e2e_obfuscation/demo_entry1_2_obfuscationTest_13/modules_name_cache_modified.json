@@ -1,0 +1,36 @@
+{
+    "Index$": {
+        "#obfName": "b"
+    },
+    "entry.Index": {
+        "#obfName": "entry.Index",
+        "func1:void;": "func1",
+        "useExportFunc:void;": "useExportFunc",
+        "ClassE": {
+            "#obfName": "e",
+            "name": "d"
+        },
+        "ClassC": {
+            "#obfName": "c",
+            "clsC1": "a"
+        },
+        "Interface1": {
+            "#obfName": "a",
+            "%%property-param1": "c",
+            "%%get-param1:entry.Index.Interface1;i32;": "a",
+            "%%set-param1:entry.Index.Interface1;i32;void;": "a"
+        },
+        "ClassB": {
+            "#obfName": "b",
+            "clsB1": "b"
+        },
+        "Interface2": {
+            "#obfName": "d"
+        }
+    },
+    "entry.Test": {
+        "#obfName": "a",
+        "exportFunc:f64;f64;f64;": "a"
+    },
+    "ArkGuardStaticVersion": "1.0.0.300"
+}

@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+import type { BytecodeObfuscationConfig } from './obfuscation/obfuscation_bytecode_config';
+import type { MergedConfig } from './obfuscation/obfuscation_merged_config';
+
 export enum RECORD_TYPE {
     DEFAULT_TYPE = 'OFF',
     ON_TYPE = 'ON',
@@ -75,6 +78,8 @@ export interface BuildBaseConfig {
     recordType?: 'OFF' | 'ON';
     dumpDependencyGraph?: boolean;
     dumpPerf?: boolean;
+    /** AOP transform library path (bytecode pipeline). */
+    transformLib?: string;
 }
 
 export interface ArkTSGlobal {
@@ -182,6 +187,12 @@ export interface PathConfig {
     interopSDKPaths: Set<string>;
     interopApiPaths: string[];
     projectRootPath: string;
+    arkGuardPath?: string;
+    toolChainsPath?: string;
+    disAsmStaticPath?: string;
+    aceModuleJsonPath?: string;
+    aceProfilePath?: string;
+    aceModuleRoot?: string;
 }
 
 /**
@@ -246,7 +257,90 @@ export interface ModuleFile {
     staticFiles: string[];
 }
 
-export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig {
+export interface ObfuscationSystemConfig {
+    obfuscationOptions?: ObfuscationOptions;
+    mergedObConfig?: MergedConfig;
+    bytecodeObfuscationConfig?: BytecodeObfuscationConfig;
+}
+
+export interface RuleOptions {
+    enable?: boolean;
+    files?: string | string[];
+    rules?: string[];
+}
+
+export interface Obfuscation {
+    ruleOptions?: RuleOptions;
+    consumerFiles?: string | string[];
+    consumerRules?: string[];
+    libDir: string;
+}
+
+export interface ObfuscationConfig {
+    selfConfig?: Obfuscation;
+    dependencies: ObfuscationDependencies;
+}
+
+export interface ObfuscationDependencies {
+    libraries: Obfuscation[];
+    hspLibraries: Obfuscation[];
+    hars: string[];
+    hsps: string[];
+}
+
+export interface ModuleJsonConfig {
+    module?: {
+        name?: string;
+        appStartup?: string;
+        pages?: string;
+        srcEntrance?: string;
+        srcEntry?: string;
+        abilities?: AbilityConfig[];
+        extensionAbilities?: AbilityConfig[];
+        packageName?: string;
+    };
+}
+
+export interface AbilityConfig {
+    srcEntry?: string;
+    srcEntrance?: string;
+    metadata?: Array<{
+        name?: string;
+        value?: string;
+        resource?: string;
+    }>;
+}
+
+export interface StartupTask {
+    srcEntry?: string;
+}
+
+export interface CardFormConfig {
+    type?: string;
+    uiSyntax?: string;
+    src: string;
+}
+
+export interface StartupConfig {
+    configEntry?: string;
+    startupTasks?: StartupTask[];
+}
+
+export interface EntryConfig {
+    src?: string[];
+}
+
+export interface ObfuscationOptions extends ObfuscationConfig {
+    sdkApis: string[];
+    obfuscationCacheDir: string;
+    exportRulePath: string;
+}
+
+export interface DeclFileNameCacheConfig {
+    nameCachePath: string;
+}
+
+export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig, ObfuscationSystemConfig {
     plugins: PluginsConfig;
     paths: PathsConfig; // paths config passed from template to generate arktsconfig.json "paths" configs.
     compileFiles: string[];
@@ -256,6 +350,7 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
     // TO BE REMOVED!!
     dependentModuleList: DependencyModuleConfig[];
     moduleFiles: ModuleFile[];
+    declFileNameCacheConfig?: DeclFileNameCacheConfig;
 }
 // ProjectConfig ends
 

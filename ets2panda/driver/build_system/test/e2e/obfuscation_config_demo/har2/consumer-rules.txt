@@ -1,0 +1,6 @@
+-keep class IndexPage {*;}
+
+-disable-obfuscation
+
+-keep-class-with-members class getVersion
+-keep ./utils.ets

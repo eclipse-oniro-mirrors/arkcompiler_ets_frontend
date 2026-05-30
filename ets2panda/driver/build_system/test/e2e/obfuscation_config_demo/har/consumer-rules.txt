@@ -1,0 +1,11 @@
+-keep class *Utils {*;}
+-keep class StringUtils{*;}
+
+-keep harFunction,Tag
+-keep-class-with-members class getData
+-keep-class-members class Tag
+-keep ./utils.ets
+#-disable-obfuscation
+-keep-file-name
+*
+har/utils

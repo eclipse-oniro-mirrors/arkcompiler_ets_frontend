@@ -1,0 +1,4 @@
+exportFunc: 3
+ n1: hello1
+ ClassE1: hello
+this is a static method

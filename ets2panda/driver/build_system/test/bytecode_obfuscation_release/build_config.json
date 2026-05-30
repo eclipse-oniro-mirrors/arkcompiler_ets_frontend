@@ -1,0 +1,42 @@
+{
+    "buildType": "build",
+    "buildMode": "Release",
+    "packageName": "entry",
+    "moduleType": "hap",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/bytecode_obfuscation_release/entry/",
+    "sourceRoots": ["./"],
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/bytecode_obfuscation_release/entry/Index.ets"
+    ],
+    "projectRootPath": "${absolute_path_to_build_system}/test/bytecode_obfuscation_release",
+    "loaderOutPath": "./build",
+    "es2pandaMode": "sequential",
+    "cachePath": "./build/cache",
+    "buildSdkPath": ".",
+    "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "enableDeclgenEts2Ts": false,
+    "hasMainModule": true,
+    "dependentModuleList": [],
+    "obfuscationOptions": {
+        "selfConfig": {
+            "ruleOptions": {
+                "enable": true,
+                "rules": [
+                    "${absolute_path_to_build_system}/test/bytecode_obfuscation_release/entry/obfuscation-rules.txt"
+                ]
+            },
+            "consumerRules": [],
+            "consumerFiles": [],
+            "libDir": ""
+        },
+        "sdkApis": [],
+        "obfuscationCacheDir": "${absolute_path_to_build_system}/test/bytecode_obfuscation_release/entry/Release/",
+        "exportRulePath": "${absolute_path_to_build_system}/test/bytecode_obfuscation_release/entry/Release/entry_obfuscation.txt",
+        "dependencies": {
+            "libraries": [],
+            "hspLibraries": [],
+            "hars": [],
+            "hsps": []
+        }
+    }
+}

@@ -1,0 +1,110 @@
+{
+    "compileFiles": [],
+    "packageName": "entry",
+    "moduleType": "entry",
+    "buildType": "build",
+    "buildMode": "Release",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/",
+    "sourceRoots": [
+        "./"
+    ],
+    "es2pandaMode": "sequential",
+    "loaderOutPath": "./dist/out/entry",
+    "cachePath": "./dist/cache",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets1",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependencyModuleList": [
+        {
+            "packageName": "entry",
+            "moduleName": "entry",
+            "moduleType": "feature",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "index.ets",
+            "language": "1.2",
+            "dependencies": ["har", "hsp"]
+        },
+        {
+            "packageName": "har",
+            "moduleName": "har",
+            "moduleType": "har",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "index.ets",
+            "language": "1.2"
+        },
+        {
+            "packageName": "hsp",
+            "moduleName": "hsp",
+            "moduleType": "shared",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "index.ets",
+            "language": "1.2"
+        }
+    ],
+    "buildLoaderJson": "",
+    "aceModuleJsonPath": "",
+    "aceModuleBuild": "",
+    "compileHar": true,
+    "compileShared": true,
+    "obfuscationOptions": {
+        "selfConfig": {
+            "ruleOptions": {
+                "enable": true,
+                "rules": [
+                    "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/obfuscation-rules.txt"
+                ]
+            },
+            "consumerRules": [],
+            "consumerFiles": [],
+            "libDir": ""
+        },
+        "sdkApis": [
+            "${absolute_path_to_build_system}/test/mock_sdk/api"
+        ],
+        "obfuscationCacheDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/Release/",
+        "exportRulePath": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/entry/Release/entry_obfuscation.txt",
+        "dependencies": {
+            "libraries": [
+                {
+                    "ruleOptions": {
+                        "enable": true,
+                        "rules": [
+                            "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/obfuscation-rules.txt"
+                        ]
+                    },
+                    "libDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har",
+                    "consumerRules": [
+                        "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/har/consumer-rules.txt"
+                    ]
+                }
+            ],
+            "hspLibraries": [
+                {
+                    "ruleOptions": {
+                        "enable": true,
+                        "rules": [
+                            "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp/obfuscation-rules.txt"
+                        ]
+                    },
+                    "libDir": "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp",
+                    "consumerRules": [
+                        "${absolute_path_to_build_system}/test/e2e/obfuscation_config_demo/hsp/consumer-rules.txt"
+                    ]
+                }
+            ],
+            "hars": [],
+            "hsps": []
+        }
+    }
+}

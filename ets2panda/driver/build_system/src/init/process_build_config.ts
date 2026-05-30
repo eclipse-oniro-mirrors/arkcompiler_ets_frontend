@@ -39,6 +39,7 @@ import {
     BuildConfig,
     AliasConfig
 } from '../types';
+import { initObfuscationConfig } from '../obfuscation/obfuscation_config';
 
 export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     let buildConfig: BuildConfig = {
@@ -63,6 +64,7 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     initBuildEnv(buildConfig);
     initAliasConfig(buildConfig);
     initInteropSDKInfo(buildConfig);
+    initObfuscationConfig(buildConfig);
     return buildConfig;
 }
 
