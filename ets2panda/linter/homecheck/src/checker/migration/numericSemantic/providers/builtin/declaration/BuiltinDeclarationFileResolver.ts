@@ -40,24 +40,35 @@ export class BuiltinDeclarationFileResolver {
         return [...new Set(files)];
     }
 
-    public getDynBuiltinDeclarationFiles(): string[] {
-        return this.getSdkPathDynBuiltinDeclarationFiles();
+    public getDynBuiltinDeclarationFiles(staticBuiltinDeclarationFiles: string[] = []): string[] {
+        return this.getSdkPathDynBuiltinDeclarationFiles(this.collectStaticBuiltinTypeNames(staticBuiltinDeclarationFiles));
     }
 
-    public getDynBuiltinDeclarationFilesFromSdkPath(sdkPath: string, targetESVersion?: string): string[] {
+    public getDynBuiltinDeclarationFilesFromSdkPath(
+        sdkPath: string,
+        targetESVersion?: string,
+        staticBuiltinTypeNames: Set<string> = new Set<string>()
+    ): string[] {
         const resolvedTargetESVersion = this.getTargetESVersion(targetESVersion);
         const libDirs = this.getDynBuiltinDeclarationLibDirsFromSdkPath(sdkPath);
         const files: string[] = [];
         for (const libDir of libDirs) {
-            files.push(...this.getDynBuiltinDeclarationFilesFromLibDir(libDir, resolvedTargetESVersion));
+            files.push(...this.getDynBuiltinDeclarationFilesFromLibDir(libDir, resolvedTargetESVersion, staticBuiltinTypeNames));
         }
-        return [...new Set(files)];
+        if (files.length > 0) {
+            return [...new Set(files)];
+        }
+        return this.getInternalDynBuiltinDeclarationFiles(resolvedTargetESVersion, staticBuiltinTypeNames);
     }
 
-    private getSdkPathDynBuiltinDeclarationFiles(): string[] {
+    private getSdkPathDynBuiltinDeclarationFiles(staticBuiltinTypeNames: Set<string>): string[] {
         const files: string[] = [];
         for (const sdkPath of this.getProjectSdkPaths()) {
-            files.push(...this.getDynBuiltinDeclarationFilesFromSdkPath(sdkPath, this.ruleOptions?.targetESVersion));
+            files.push(...this.getDynBuiltinDeclarationFilesFromSdkPath(
+                sdkPath,
+                this.ruleOptions?.targetESVersion,
+                staticBuiltinTypeNames
+            ));
         }
         return [...new Set(files)];
     }
@@ -95,7 +106,11 @@ export class BuiltinDeclarationFileResolver {
         return DEFAULT_BUILTIN_TARGET_ES_VERSION;
     }
 
-    private getDynBuiltinDeclarationFilesFromLibDir(libDir: string, targetESVersion: string): string[] {
+    private getDynBuiltinDeclarationFilesFromLibDir(
+        libDir: string,
+        targetESVersion: string,
+        staticBuiltinTypeNames: Set<string>
+    ): string[] {
         const entryFile = BUILTIN_ES_VERSION_ENTRY_FILES.get(targetESVersion) ?? BUILTIN_ES_VERSION_ENTRY_FILES.get(DEFAULT_BUILTIN_TARGET_ES_VERSION);
         if (!entryFile) {
             return [];
@@ -107,7 +122,25 @@ export class BuiltinDeclarationFileResolver {
 
         const files = new Set<string>();
         this.collectDynBuiltinLibReferences(entryPath, files);
+        this.collectDynBuiltinLibFilesForStaticTypes(libDir, staticBuiltinTypeNames, files);
         return [...files].filter(filePath => this.isDynBuiltinDeclarationFile(filePath));
+    }
+
+    private getInternalDynBuiltinDeclarationFiles(targetESVersion: string, staticBuiltinTypeNames: Set<string>): string[] {
+        const files: string[] = [];
+        for (const libDir of this.getInternalDynBuiltinDeclarationLibDirs()) {
+            files.push(...this.getDynBuiltinDeclarationFilesFromLibDir(libDir, targetESVersion, staticBuiltinTypeNames));
+        }
+        return [...new Set(files)];
+    }
+
+    private getInternalDynBuiltinDeclarationLibDirs(): string[] {
+        const dirs = [
+            path.resolve(__dirname, '../../../../../../../resources/internalSdk/@internal'),
+            path.resolve(process.cwd(), 'node_modules/homecheck/resources/internalSdk/@internal'),
+            path.resolve(process.cwd(), 'homecheck/resources/internalSdk/@internal'),
+        ];
+        return [...new Set(dirs)].filter(dir => this.isExistingDirectory(dir));
     }
 
     private collectDynBuiltinLibReferences(filePath: string, files: Set<string>): void {
@@ -120,6 +153,60 @@ export class BuiltinDeclarationFileResolver {
             this.collectDynBuiltinLibReferences(path.join(path.dirname(filePath), `lib.${ref.fileName}.d.ts`), files);
         });
         files.add(filePath);
+    }
+
+    private collectDynBuiltinLibFilesForStaticTypes(libDir: string, staticBuiltinTypeNames: Set<string>, files: Set<string>): void {
+        if (staticBuiltinTypeNames.size === 0) {
+            return;
+        }
+
+        for (const fileName of this.readDirectoryFiles(libDir)) {
+            const filePath = path.join(libDir, fileName);
+            if (files.has(filePath) || !this.isDynBuiltinDeclarationFile(filePath)) {
+                continue;
+            }
+            if (this.containsBuiltinTypeDeclaration(filePath, staticBuiltinTypeNames)) {
+                this.collectDynBuiltinLibReferences(filePath, files);
+            }
+        }
+    }
+
+    private collectStaticBuiltinTypeNames(filePaths: string[]): Set<string> {
+        const names = new Set<string>();
+        filePaths.forEach(filePath => {
+            const text = this.readFileText(filePath);
+            if (!text) {
+                return;
+            }
+            this.collectDeclaredTypeNames(text, names);
+        });
+        return names;
+    }
+
+    private containsBuiltinTypeDeclaration(filePath: string, staticBuiltinTypeNames: Set<string>): boolean {
+        const names = new Set<string>();
+        const text = this.readFileText(filePath);
+        if (!text) {
+            return false;
+        }
+        this.collectDeclaredTypeNames(text, names);
+        return [...names].some(name => staticBuiltinTypeNames.has(name));
+    }
+
+    private collectDeclaredTypeNames(text: string, names: Set<string>): void {
+        const declarationPattern = /\b(?:export\s+)?(?:declare\s+)?(?:abstract\s+)?(?:class|interface)\s+([A-Za-z_$][\w$]*)/gu;
+        let declarationMatch = declarationPattern.exec(text);
+        while (declarationMatch !== null) {
+            names.add(declarationMatch[1]);
+            declarationMatch = declarationPattern.exec(text);
+        }
+
+        const variablePattern = /\b(?:export\s+)?declare\s+var\s+([A-Za-z_$][\w$]*)/gu;
+        let variableMatch = variablePattern.exec(text);
+        while (variableMatch !== null) {
+            names.add(variableMatch[1]);
+            variableMatch = variablePattern.exec(text);
+        }
     }
 
     private getDynBuiltinDeclarationLibDirsFromSdkPath(sdkPath: string): string[] {
@@ -185,6 +272,24 @@ export class BuiltinDeclarationFileResolver {
         } catch (e) {
             logger.debug(`Failed to read builtin declaration dir ${dir}: ${e}`);
             return [];
+        }
+    }
+
+    private readDirectoryFiles(dir: string): string[] {
+        try {
+            return fs.readdirSync(dir);
+        } catch (e) {
+            logger.debug(`Failed to read directory ${dir}: ${e}`);
+            return [];
+        }
+    }
+
+    private readFileText(filePath: string): string | null {
+        try {
+            return fs.readFileSync(filePath, 'utf8');
+        } catch (e) {
+            logger.debug(`Failed to read file ${filePath}: ${e}`);
+            return null;
         }
     }
 

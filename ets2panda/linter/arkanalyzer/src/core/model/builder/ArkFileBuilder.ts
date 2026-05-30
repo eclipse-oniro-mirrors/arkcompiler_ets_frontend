@@ -31,7 +31,7 @@ import {
     isExported,
 } from './ArkExportBuilder';
 import { buildArkNamespace, mergeNameSpaces } from './ArkNamespaceBuilder';
-import { ArkClass } from '../ArkClass';
+import { ArkClass, ClassCategory } from '../ArkClass';
 import { ArkMethod } from '../ArkMethod';
 import { LineColPosition } from '../../base/Position';
 import { ETS_COMPILER_OPTIONS } from '../../common/EtsConst';
@@ -89,60 +89,7 @@ function buildArkFile(arkFile: ArkFile, astRoot: ts.SourceFile): void {
     const statements = astRoot.statements;
     const namespaces: ArkNamespace[] = [];
     statements.forEach(child => {
-        if (ts.isModuleDeclaration(child)) {
-            let ns: ArkNamespace = new ArkNamespace();
-            ns.setDeclaringArkFile(arkFile);
-
-            buildArkNamespace(child, arkFile, ns, astRoot);
-            namespaces.push(ns);
-            if (ns.isExported()) {
-                arkFile.addExportInfo(buildExportInfo(ns, arkFile, LineColPosition.buildFromNode(child, astRoot)));
-            }
-        } else if (ts.isClassDeclaration(child) || ts.isInterfaceDeclaration(child) || ts.isEnumDeclaration(child) || ts.isStructDeclaration(child)) {
-            let cls: ArkClass = new ArkClass();
-
-            buildNormalArkClassFromArkFile(child, arkFile, cls, astRoot);
-            arkFile.addArkClass(cls);
-
-            if (cls.isExported()) {
-                arkFile.addExportInfo(buildExportInfo(cls, arkFile, LineColPosition.buildFromNode(child, astRoot)));
-            }
-        }
-        // TODO: Check
-        else if (ts.isMethodDeclaration(child)) {
-            logger.trace('This is a MethodDeclaration in ArkFile.');
-            let mthd: ArkMethod = new ArkMethod();
-
-            buildArkMethodFromArkClass(child, arkFile.getDefaultClass(), mthd, astRoot);
-
-            if (mthd.isExported()) {
-                arkFile.addExportInfo(buildExportInfo(mthd, arkFile, LineColPosition.buildFromNode(child, astRoot)));
-            }
-        } else if (ts.isFunctionDeclaration(child)) {
-            let mthd: ArkMethod = new ArkMethod();
-
-            buildArkMethodFromArkClass(child, arkFile.getDefaultClass(), mthd, astRoot);
-
-            if (mthd.isExported()) {
-                arkFile.addExportInfo(buildExportInfo(mthd, arkFile, LineColPosition.buildFromNode(child, astRoot)));
-            }
-        } else if (ts.isImportEqualsDeclaration(child) || ts.isImportDeclaration(child)) {
-            let importInfos = buildImportInfo(child, astRoot, arkFile);
-            importInfos?.forEach(element => {
-                element.setDeclaringArkFile(arkFile);
-                arkFile.addImportInfo(element);
-            });
-        } else if (ts.isExportDeclaration(child)) {
-            buildExportDeclaration(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
-        } else if (ts.isExportAssignment(child)) {
-            buildExportAssignment(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
-        } else if (ts.isVariableStatement(child) && isExported(child.modifiers)) {
-            buildExportVariableStatement(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
-        } else if (ts.isTypeAliasDeclaration(child) && isExported(child.modifiers)) {
-            buildExportTypeAliasDeclaration(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
-        } else if (ts.isExpressionStatement(child) && ts.isStringLiteral(child.expression)) {
-            child.expression.text.trim() === ARKTS_STATIC_MARK && arkFile.setLanguage(Language.ARKTS1_2);
-        } else {
+        if (!buildArkFileStatement(arkFile, astRoot, child, namespaces)) {
             logger.trace('Child joined default method of arkFile: ', ts.SyntaxKind[child.kind]);
         }
     });
@@ -155,6 +102,127 @@ function buildArkFile(arkFile: ArkFile, astRoot: ts.SourceFile): void {
             arkFile.addExportInfo(buildExportInfo(mergedNameSpace, arkFile, linCol));
         }
     });
+}
+
+function buildArkFileStatement(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement, namespaces: ArkNamespace[]): boolean {
+    return handleNamespaceDeclaration(arkFile, astRoot, child, namespaces) ||
+        handleClassDeclaration(arkFile, astRoot, child) ||
+        handleMethodDeclaration(arkFile, astRoot, child) ||
+        handleFunctionDeclaration(arkFile, astRoot, child) ||
+        handleImportDeclaration(arkFile, astRoot, child) ||
+        handleExportDeclaration(arkFile, astRoot, child) ||
+        handleLanguageDirective(arkFile, child);
+}
+
+function handleNamespaceDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement, namespaces: ArkNamespace[]): boolean {
+    if (!ts.isModuleDeclaration(child)) {
+        return false;
+    }
+
+    const ns: ArkNamespace = new ArkNamespace();
+    ns.setDeclaringArkFile(arkFile);
+    buildArkNamespace(child, arkFile, ns, astRoot);
+    namespaces.push(ns);
+    if (ns.isExported()) {
+        arkFile.addExportInfo(buildExportInfo(ns, arkFile, LineColPosition.buildFromNode(child, astRoot)));
+    }
+    return true;
+}
+
+function handleClassDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement): boolean {
+    if (!ts.isClassDeclaration(child) && !ts.isInterfaceDeclaration(child) && !ts.isEnumDeclaration(child) && !ts.isStructDeclaration(child)) {
+        return false;
+    }
+
+    const cls: ArkClass = getMergeableInterfaceClass(child, arkFile) ?? new ArkClass();
+    buildNormalArkClassFromArkFile(child, arkFile, cls, astRoot);
+    arkFile.addArkClass(cls);
+    if (cls.isExported()) {
+        arkFile.addExportInfo(buildExportInfo(cls, arkFile, LineColPosition.buildFromNode(child, astRoot)));
+    }
+    return true;
+}
+
+function handleMethodDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement): boolean {
+    if (!ts.isMethodDeclaration(child)) {
+        return false;
+    }
+
+    logger.trace('This is a MethodDeclaration in ArkFile.');
+    buildDefaultClassMethod(arkFile, astRoot, child);
+    return true;
+}
+
+function handleFunctionDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement): boolean {
+    if (!ts.isFunctionDeclaration(child)) {
+        return false;
+    }
+
+    buildDefaultClassMethod(arkFile, astRoot, child);
+    return true;
+}
+
+function buildDefaultClassMethod(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.FunctionDeclaration | ts.MethodDeclaration): void {
+    const mthd: ArkMethod = new ArkMethod();
+    buildArkMethodFromArkClass(child, arkFile.getDefaultClass(), mthd, astRoot);
+    if (mthd.isExported()) {
+        arkFile.addExportInfo(buildExportInfo(mthd, arkFile, LineColPosition.buildFromNode(child, astRoot)));
+    }
+}
+
+function handleImportDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement): boolean {
+    if (!ts.isImportEqualsDeclaration(child) && !ts.isImportDeclaration(child)) {
+        return false;
+    }
+
+    const importInfos = buildImportInfo(child, astRoot, arkFile);
+    importInfos?.forEach(element => {
+        element.setDeclaringArkFile(arkFile);
+        arkFile.addImportInfo(element);
+    });
+    return true;
+}
+
+function handleExportDeclaration(arkFile: ArkFile, astRoot: ts.SourceFile, child: ts.Statement): boolean {
+    if (ts.isExportDeclaration(child)) {
+        buildExportDeclaration(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
+        return true;
+    }
+    if (ts.isExportAssignment(child)) {
+        buildExportAssignment(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
+        return true;
+    }
+    if (ts.isVariableStatement(child) && isExported(child.modifiers)) {
+        buildExportVariableStatement(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
+        return true;
+    }
+    if (ts.isTypeAliasDeclaration(child) && isExported(child.modifiers)) {
+        buildExportTypeAliasDeclaration(child, astRoot, arkFile).forEach(item => arkFile.addExportInfo(item));
+        return true;
+    }
+    return false;
+}
+
+function handleLanguageDirective(arkFile: ArkFile, child: ts.Statement): boolean {
+    if (!ts.isExpressionStatement(child) || !ts.isStringLiteral(child.expression)) {
+        return false;
+    }
+
+    if (child.expression.text.trim() === ARKTS_STATIC_MARK) {
+        arkFile.setLanguage(Language.ARKTS1_2);
+    }
+    return true;
+}
+
+function getMergeableInterfaceClass(node: ts.Node, arkFile: ArkFile): ArkClass | null {
+    if (!ts.isInterfaceDeclaration(node) || !node.name) {
+        return null;
+    }
+    const existingClass = arkFile.getClassWithName(node.name.text);
+    if (!existingClass || existingClass.getCategory() !== ClassCategory.INTERFACE) {
+        return null;
+    }
+    return existingClass;
 }
 
 function genDefaultArkClass(arkFile: ArkFile, astRoot: ts.SourceFile): void {

@@ -28,10 +28,16 @@ import {
 } from './NumericSemanticTypes';
 import { NumericSignatureMatcher } from './NumericSignatureMatcher';
 
+const INT_LIKE_TYPE_NAMES: Set<string> = new Set<string>([
+    NumberCategory.int,
+    'byte',
+    'short',
+]);
+
 export class NumericTypeClassifier {
     public isIntType(checkType: Type): boolean {
         if (checkType instanceof AliasType || checkType instanceof UnclearReferenceType) {
-            if (checkType.getName() === NumberCategory.int) {
+            if (INT_LIKE_TYPE_NAMES.has(checkType.getName())) {
                 return true;
             }
         }

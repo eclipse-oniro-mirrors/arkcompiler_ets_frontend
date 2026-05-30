@@ -76,6 +76,57 @@ function restorePackageJson(dirPath, backupFile) {
    fs.renameSync(backupPath, currentPkg)
 }
 
+const DEFAULT_TARGET_ES_VERSION = 'ES2017'
+
+function normalizeTargetESVersion(targetESVersion) {
+    const normalizedTarget = String(targetESVersion || DEFAULT_TARGET_ES_VERSION).trim().toLowerCase()
+    if (/^\d+$/.test(normalizedTarget)) {
+        return `es${normalizedTarget}`
+    }
+    return normalizedTarget
+}
+
+function collectTypescriptLibFilesForTarget(sourceDir, targetESVersion) {
+    const normalizedTarget = normalizeTargetESVersion(targetESVersion)
+    const entryFileName = `lib.${normalizedTarget}.d.ts`
+    const visited = new Set()
+    const files = []
+
+    const visit = (fileName) => {
+        if (visited.has(fileName)) {
+            return
+        }
+        const filePath = path.join(sourceDir, fileName)
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`TypeScript lib file not found: ${filePath}`)
+        }
+        visited.add(fileName)
+
+        const fileText = fs.readFileSync(filePath, 'utf8')
+        const referencePattern = /\/\/\/\s*<reference\s+lib=["']([^"']+)["']\s*\/>/g
+        let match = referencePattern.exec(fileText)
+        while (match !== null) {
+            visit(`lib.${match[1]}.d.ts`)
+            match = referencePattern.exec(fileText)
+        }
+
+        files.push(fileName)
+    }
+
+    visit(entryFileName)
+    return files
+}
+
+function copyTypescriptLibFilesForTarget(sourceDir, targetDir, targetESVersion) {
+    const fileNames = collectTypescriptLibFilesForTarget(sourceDir, targetESVersion)
+    shell.mkdir('-p', targetDir)
+    fileNames.forEach((fileName) => {
+        const sourceFile = path.join(sourceDir, fileName)
+        shell.cp('-f', sourceFile, targetDir)
+    })
+    console.log(`Copied TypeScript ${targetESVersion} lib files to ${targetDir}: ${fileNames.join(', ')}`)
+}
+
 function getTypescript(detectedOS) {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
@@ -85,6 +136,7 @@ function getTypescript(detectedOS) {
     const typescript_dir = third_party + '/third_party_typescript'
     const arkanalyzer = __dirname + '/../arkanalyzer'
     const homecheck = __dirname + '/../homecheck'
+    const targetESVersion = process.env.TYPESCRIPT_TARGET_ES_VERSION ?? process.env.TARGET_ES_VERSION ?? DEFAULT_TARGET_ES_VERSION
 
     if (!fs.existsSync(third_party)) {
         fs.mkdirSync(third_party);
@@ -141,12 +193,9 @@ function getTypescript(detectedOS) {
     shell.cd(arkanalyzer)
     const arkanalyzerBackFile = backupPackageJson(arkanalyzer)
     shell.exec(`npm install ${typescript_dir}/${npm_typescript_package}`)
-    const arkanalyzer_source_file1 = arkanalyzer + '/node_modules/ohos-typescript/lib/lib.es5.d.ts'
-    const arkanalyzer_source_file2 = arkanalyzer + '/node_modules/ohos-typescript/lib/lib.es2015.collection.d.ts'
+    const arkanalyzer_source_dir = arkanalyzer + '/node_modules/ohos-typescript/lib'
     const arkanalyzer_target_dir = arkanalyzer + '/builtIn/typescript/api/@internal'
-    shell.mkdir('-p', arkanalyzer_target_dir)
-    shell.cp('-f', arkanalyzer_source_file1, arkanalyzer_target_dir)
-    shell.cp('-f', arkanalyzer_source_file2, arkanalyzer_target_dir)
+    copyTypescriptLibFilesForTarget(arkanalyzer_source_dir, arkanalyzer_target_dir, targetESVersion)
     shell.exec('npm run compile')
     const npm_arkanalyzer_package = shell.exec('npm pack').stdout.trim()
     restorePackageJson(arkanalyzer, arkanalyzerBackFile)
@@ -157,10 +206,9 @@ function getTypescript(detectedOS) {
 
     shell.exec(`npm install ${arkanalyzer}/${npm_arkanalyzer_package}`)
     shell.exec(`npm install --no-save ${typescript_dir}/${npm_typescript_package}`)
-    const homecheck_source_file = homecheck + '/node_modules/ohos-typescript/lib/lib.es5.d.ts'
+    const homecheck_source_dir = homecheck + '/node_modules/ohos-typescript/lib'
     const homecheck_target_dir = homecheck + '/resources/internalSdk/@internal'
-    shell.mkdir('-p', homecheck_target_dir)
-    shell.cp('-f', homecheck_source_file, homecheck_target_dir)
+    copyTypescriptLibFilesForTarget(homecheck_source_dir, homecheck_target_dir, targetESVersion)
     shell.exec('npm run compile')
     const npm_homecheck_package = shell.exec('npm pack').stdout.trim()
     restorePackageJson(homecheck, homecheckBackFile)
@@ -188,4 +236,3 @@ if (!detectedOS) {
     exit(1)
 }
 getTypescript(detectedOS)
-

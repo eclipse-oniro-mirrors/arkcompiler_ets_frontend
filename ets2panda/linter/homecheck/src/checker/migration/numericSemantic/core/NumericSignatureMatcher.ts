@@ -16,22 +16,34 @@
 import {
     AnyType,
     ArrayType,
+    BigIntType,
+    BooleanType,
     ClassSignature,
     classSignatureCompare,
     ClassType,
     FunctionType,
+    GenericType,
     MethodSignature,
+    NumberType,
+    StringType,
     Type,
+    UnclearReferenceType,
     UnknownType,
+    UnionType,
+    VoidType,
 } from 'arkanalyzer/lib';
-import { NumberType, UnclearReferenceType } from 'arkanalyzer';
+import type { MethodParameter } from 'arkanalyzer/lib/core/model/builder/ArkMethodBuilder';
 import { SdkUtils } from '../../../../utils/common/SDKUtils';
 import {
     BUILTIN_DYN_DECL_PROJECT_NAME,
     BUILTIN_STA_DECL_PROJECT_NAME,
+    INTERNAL_SDK_PROJECT_NAME,
     NumberCategory,
     SignatureMatchOptions,
 } from './NumericSemanticTypes';
+
+const WELL_KNOWN_SYMBOL_DECLARATION_FILE: string = 'lib.es2015.symbol.wellknown.d.ts';
+const REGEXP_TYPE_NAME: string = 'RegExp';
 
 interface NumericSignatureMatcherOptions {
     isIntType(type: Type): boolean;
@@ -109,7 +121,22 @@ export class NumericSignatureMatcher {
         if (param1 instanceof FunctionType && param2 instanceof FunctionType) {
             return this.compareFunctionTypes(param1, param2, options);
         }
+        if (this.compareUnionTypes(param1, param2, options)) {
+            return true;
+        }
         if (options.allowArrayLikeTypes && this.compareArrayLikeTypes(param1, param2, options)) {
+            return true;
+        }
+        if (this.compareWellKnownSymbolRegExpProtocolTypes(param1, param2, options)) {
+            return true;
+        }
+        if (param1 instanceof GenericType && param2 instanceof GenericType) {
+            return this.compareGenericTypes(param1, param2, options);
+        }
+        if (this.compareGenericReferenceTypes(param1, param2)) {
+            return true;
+        }
+        if (this.compareNamedTypes(param1, param2)) {
             return true;
         }
         if (param1 instanceof ClassType && param2 instanceof ClassType) {
@@ -129,7 +156,37 @@ export class NumericSignatureMatcher {
     private compareFunctionTypes(param1: FunctionType, param2: FunctionType, options: SignatureMatchOptions = {}): boolean {
         const sig1 = param1.getMethodSignature();
         const sig2 = param2.getMethodSignature();
-        return this.isEts1NumberEts2IntLongSignatureMatched(sig1, sig2, options) && this.isFunctionReturnTypeMatched(sig1.getType(), sig2.getType(), options);
+        return this.isFunctionParameterTypesMatched(sig1, sig2, options) && this.isFunctionReturnTypeMatched(sig1.getType(), sig2.getType(), options);
+    }
+
+    private isFunctionParameterTypesMatched(ets1Sig: MethodSignature, ets2Sig: MethodSignature, options: SignatureMatchOptions): boolean {
+        const ets1Params = this.getComparableFunctionParameters(ets1Sig);
+        const ets2Params = this.getComparableFunctionParameters(ets2Sig);
+        const countMatched = options.allowTrailingOptionalParams ?
+            this.isSignatureParameterCountMatched(ets1Params, ets2Params) :
+            ets2Params.length === ets1Params.length;
+        if (!countMatched) {
+            return false;
+        }
+        const comparableLength = Math.min(ets1Params.length, ets2Params.length);
+        for (let i = 0; i < comparableLength; i++) {
+            if (!this.isEts1NumberEts2IntLongParamMatched(ets1Params[i].getType(), ets2Params[i].getType(), options)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private getComparableFunctionParameters(signature: MethodSignature): MethodParameter[] {
+        const params = signature.getMethodSubSignature().getParameters();
+        if (params.length > 0 && this.isThisVoidParameter(params[0])) {
+            return params.slice(1);
+        }
+        return params;
+    }
+
+    private isThisVoidParameter(param: MethodParameter): boolean {
+        return param.getName() === 'this' && param.getType() instanceof VoidType;
     }
 
     private isFunctionReturnTypeMatched(ets1Type: Type, ets2Type: Type, options: SignatureMatchOptions = {}): boolean {
@@ -143,26 +200,39 @@ export class NumericSignatureMatcher {
         }
         if (type instanceof UnclearReferenceType) {
             const name = type.getName();
-            return name === 'any' || name === 'unknown' || name === 'AnyKeyword' || name === 'UnknownKeyword';
+            return name === 'any' ||
+                name === 'unknown' ||
+                name === 'AnyKeyword' ||
+                name === 'UnknownKeyword';
         }
         return false;
     }
 
     private compareArrayLikeTypes(param1: Type, param2: Type, options: SignatureMatchOptions): boolean {
-        const elementType1 = this.getArrayLikeElementType(param1);
-        const elementType2 = this.getArrayLikeElementType(param2);
-        if (!elementType1 || !elementType2) {
+        const arrayLikeType1 = this.getArrayLikeTypeInfo(param1);
+        const arrayLikeType2 = this.getArrayLikeTypeInfo(param2);
+        if (!arrayLikeType1 || !arrayLikeType2) {
             return false;
         }
-        return this.isEts1NumberEts2IntLongParamMatched(elementType1, elementType2, options);
+        if (!arrayLikeType1.elementType || !arrayLikeType2.elementType) {
+            return true;
+        }
+        if (this.isRawArrayElementWildcard(arrayLikeType1.elementType) || this.isRawArrayElementWildcard(arrayLikeType2.elementType)) {
+            return true;
+        }
+        return this.isEts1NumberEts2IntLongParamMatched(arrayLikeType1.elementType, arrayLikeType2.elementType, options);
     }
 
-    private getArrayLikeElementType(type: Type): Type | null {
+    private isRawArrayElementWildcard(type: Type): boolean {
+        return type instanceof AnyType;
+    }
+
+    private getArrayLikeTypeInfo(type: Type): { elementType: Type | null } | null {
         if (type instanceof ArrayType) {
-            return type.getBaseType();
+            return { elementType: type.getBaseType() };
         }
         if (type instanceof ClassType && this.isArrayLikeClassName(type.getClassSignature().getClassName())) {
-            return type.getRealGenericTypes()?.[0] ?? null;
+            return { elementType: type.getRealGenericTypes()?.[0] ?? null };
         }
         return null;
     }
@@ -197,6 +267,123 @@ export class NumericSignatureMatcher {
         return this.compareTypes(ets1Type, ets2Type, options) || this.getEts1NumberEts2IntLongChangedCategory(ets1Type, ets2Type) !== null;
     }
 
+    private compareUnionTypes(param1: Type, param2: Type, options: SignatureMatchOptions): boolean {
+        if (param1 instanceof UnionType && param2 instanceof UnionType) {
+            return this.compareUnionTypeMembers(param1, param2, options);
+        }
+
+        if (param1 instanceof UnionType) {
+            return param1.getTypes().some(type => this.compareTypes(type, param2, options));
+        }
+
+        if (param2 instanceof UnionType) {
+            return param2.getTypes().some(type => this.compareTypes(param1, type, options));
+        }
+
+        return false;
+    }
+
+    private compareUnionTypeMembers(param1: UnionType, param2: UnionType, options: SignatureMatchOptions): boolean {
+        const remainingTypes = [...param2.getTypes()];
+        for (const type1 of param1.getTypes()) {
+            const matchedIndex = remainingTypes.findIndex(type2 => this.compareTypes(type1, type2, options));
+            if (matchedIndex < 0) {
+                return false;
+            }
+            remainingTypes.splice(matchedIndex, 1);
+        }
+        return remainingTypes.length === 0;
+    }
+
+    private compareNamedTypes(param1: Type, param2: Type): boolean {
+        const typeName1 = this.getComparableTypeName(param1);
+        const typeName2 = this.getComparableTypeName(param2);
+        return typeName1 !== null && typeName2 !== null && typeName1 === typeName2;
+    }
+
+    private compareGenericTypes(param1: GenericType, param2: GenericType, options: SignatureMatchOptions): boolean {
+        const defaultType1 = param1.getDefaultType();
+        const defaultType2 = param2.getDefaultType();
+        if (defaultType1 && defaultType2) {
+            return this.isEts1NumberEts2IntLongParamMatched(defaultType1, defaultType2, options);
+        }
+        return true;
+    }
+
+    private compareGenericReferenceTypes(param1: Type, param2: Type): boolean {
+        return (param1 instanceof GenericType && this.isGenericTypeParameterReference(param2)) ||
+            (param2 instanceof GenericType && this.isGenericTypeParameterReference(param1));
+    }
+
+    private isGenericTypeParameterReference(type: Type): boolean {
+        return type instanceof UnclearReferenceType &&
+            type.getGenericTypes().length === 0 &&
+            /^[A-Z]$/u.test(type.getName());
+    }
+
+    private compareWellKnownSymbolRegExpProtocolTypes(param1: Type, param2: Type, options: SignatureMatchOptions): boolean {
+        if (!options.allowWellKnownSymbolRegExpProtocolTypes) {
+            return false;
+        }
+        return (this.isWellKnownSymbolProtocolObjectType(param1) && this.isRegExpType(param2)) ||
+            (this.isWellKnownSymbolProtocolObjectType(param2) && this.isRegExpType(param1));
+    }
+
+    private isWellKnownSymbolProtocolObjectType(type: Type): boolean {
+        if (!(type instanceof ClassType)) {
+            return false;
+        }
+        const signature = type.getClassSignature();
+        const fileSignature = signature.getDeclaringFileSignature();
+        const projectName = this.normalizeProjectName(fileSignature.getProjectName());
+        return projectName === INTERNAL_SDK_PROJECT_NAME &&
+            !this.isRegExpType(type) &&
+            fileSignature.getFileName().endsWith(WELL_KNOWN_SYMBOL_DECLARATION_FILE);
+    }
+
+    private isRegExpType(type: Type): boolean {
+        const typeName = this.getComparableTypeName(type);
+        if (!typeName) {
+            return false;
+        }
+        const lastSegment = typeName.split('.').pop();
+        return lastSegment === REGEXP_TYPE_NAME;
+    }
+
+    private normalizeProjectName(projectName: string): string {
+        return projectName.startsWith('@') ? projectName.substring(1) : projectName;
+    }
+
+    private getComparableTypeName(type: Type): string | null {
+        if (type instanceof StringType) {
+            return 'String';
+        }
+        if (type instanceof BooleanType) {
+            return 'Boolean';
+        }
+        if (type instanceof BigIntType) {
+            return 'BigInt';
+        }
+        if (type instanceof ClassType) {
+            return this.getClassTypeName(type);
+        }
+        if (type instanceof UnclearReferenceType) {
+            return type.getName();
+        }
+        return null;
+    }
+
+    private getClassTypeName(type: ClassType): string {
+        const signature = type.getClassSignature();
+        const names: string[] = [signature.getClassName()];
+        let namespace = signature.getDeclaringNamespaceSignature();
+        while (namespace) {
+            names.unshift(namespace.getNamespaceName());
+            namespace = namespace.getDeclaringNamespaceSignature();
+        }
+        return names.join('.');
+    }
+
     private getEts1NumberEts2IntLongChangedParamCategories(ets1Sig: MethodSignature, ets2Sig: MethodSignature): NumberCategory[] {
         const ets1Params = ets1Sig.getMethodSubSignature().getParameters();
         const ets2Params = ets2Sig.getMethodSubSignature().getParameters();
@@ -215,6 +402,20 @@ export class NumericSignatureMatcher {
         if (!(ets1Type instanceof NumberType)) {
             return null;
         }
-        return this.getIntLongCategoryFromType(ets2Type);
+        return this.getIntLongCategoryFromType(ets2Type) ?? this.getSingleIntLongCategoryFromUnionType(ets2Type);
+    }
+
+    private getSingleIntLongCategoryFromUnionType(type: Type): NumberCategory.int | NumberCategory.long | null {
+        if (!(type instanceof UnionType)) {
+            return null;
+        }
+        const categories = new Set<NumberCategory.int | NumberCategory.long>();
+        for (const unionType of type.getTypes()) {
+            const category = this.getIntLongCategoryFromType(unionType);
+            if (category) {
+                categories.add(category);
+            }
+        }
+        return categories.size === 1 ? [...categories][0] : null;
     }
 }

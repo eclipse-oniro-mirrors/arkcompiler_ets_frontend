@@ -32,21 +32,9 @@ export class ApiNumberUsageChecker {
     constructor(private options: ApiNumberUsageCheckerOptions) {}
 
     public checkInStmt(stmt: Stmt): void {
-        const invokeExpr = stmt.getInvokeExpr();
         const providers = this.options.getProviders();
-        if (invokeExpr) {
-            for (const provider of providers) {
-                provider.beforeArgCheck?.(stmt, invokeExpr);
-                this.options.getUsageIssueEmitter().emitChangedArgIssues(stmt, provider.getChangedArgCategories(invokeExpr));
-                const changedFunctionParams = provider.getChangedFunctionParamCategories?.(invokeExpr);
-                if (changedFunctionParams) {
-                    this.options.getUsageIssueEmitter().emitChangedFunctionParamIssues(stmt, changedFunctionParams);
-                }
-                const changedFunctionReturns = provider.getChangedFunctionReturnCategories?.(invokeExpr);
-                if (changedFunctionReturns) {
-                    this.options.getUsageIssueEmitter().emitChangedFunctionReturnIssues(stmt, changedFunctionReturns);
-                }
-            }
+        for (const invokeExpr of this.collectInvokeExprs(stmt)) {
+            this.checkInvokeExprArgs(stmt, invokeExpr, providers);
         }
         if (stmt instanceof ArkReturnStmt) {
             for (const provider of providers) {
@@ -69,6 +57,50 @@ export class ApiNumberUsageChecker {
         if (rightOp instanceof AbstractFieldRef) {
             for (const provider of providers) {
                 this.options.getUsageIssueEmitter().emitChangedResultIssues(stmt, provider.getChangedFieldCategory(rightOp));
+            }
+        }
+    }
+
+    private collectInvokeExprs(stmt: Stmt): AbstractInvokeExpr[] {
+        const invokeExprs: AbstractInvokeExpr[] = [];
+        const invokeExpr = stmt.getInvokeExpr();
+        if (invokeExpr) {
+            invokeExprs.push(invokeExpr);
+        }
+        const directInvokeExpr = this.getDirectInvokeExpr(stmt);
+        if (directInvokeExpr && !invokeExprs.includes(directInvokeExpr)) {
+            invokeExprs.push(directInvokeExpr);
+        }
+        return invokeExprs;
+    }
+
+    private getDirectInvokeExpr(stmt: Stmt): AbstractInvokeExpr | null {
+        if (stmt instanceof ArkAssignStmt) {
+            const rightOp = stmt.getRightOp();
+            if (rightOp instanceof AbstractInvokeExpr) {
+                return rightOp;
+            }
+        }
+        if (stmt instanceof ArkReturnStmt) {
+            const returnOp = stmt.getOp();
+            if (returnOp instanceof AbstractInvokeExpr) {
+                return returnOp;
+            }
+        }
+        return null;
+    }
+
+    private checkInvokeExprArgs(stmt: Stmt, invokeExpr: AbstractInvokeExpr, providers: ApiNumberChangeProvider[]): void {
+        for (const provider of providers) {
+            provider.beforeArgCheck?.(stmt, invokeExpr);
+            this.options.getUsageIssueEmitter().emitChangedArgIssues(stmt, provider.getChangedArgCategories(invokeExpr));
+            const changedFunctionParams = provider.getChangedFunctionParamCategories?.(invokeExpr);
+            if (changedFunctionParams) {
+                this.options.getUsageIssueEmitter().emitChangedFunctionParamIssues(stmt, changedFunctionParams);
+            }
+            const changedFunctionReturns = provider.getChangedFunctionReturnCategories?.(invokeExpr);
+            if (changedFunctionReturns) {
+                this.options.getUsageIssueEmitter().emitChangedFunctionReturnIssues(stmt, changedFunctionReturns);
             }
         }
     }

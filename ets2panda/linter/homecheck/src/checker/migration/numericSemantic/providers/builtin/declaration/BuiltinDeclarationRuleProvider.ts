@@ -44,8 +44,8 @@ export class BuiltinDeclarationRuleProvider {
     }
 
     public getDeclarationRules(): BuiltinDeclarationRules {
-        const dynFiles = this.getDynBuiltinDeclarationFiles();
         const staFiles = this.getStaBuiltinDeclarationFiles();
+        const dynFiles = this.getDynBuiltinDeclarationFiles(staFiles);
         const builder = new BuiltinDeclarationRuleBuilder({
             normalizeClassName: className => BuiltinApiChangeDetector.normalizeClassName(className),
             isSignatureMatched: (dynSignature, staSignature) => this.options.isSignatureMatched(dynSignature, staSignature),
@@ -55,8 +55,9 @@ export class BuiltinDeclarationRuleProvider {
         return signatureRules ?? { apiRules: [], fieldRules: [] };
     }
 
-    public getDynBuiltinDeclarationFiles(): string[] {
-        return new BuiltinDeclarationFileResolver(this.options.scene, this.options.ruleOptions).getDynBuiltinDeclarationFiles();
+    public getDynBuiltinDeclarationFiles(staticBuiltinDeclarationFiles: string[] = []): string[] {
+        return new BuiltinDeclarationFileResolver(this.options.scene, this.options.ruleOptions)
+            .getDynBuiltinDeclarationFiles(staticBuiltinDeclarationFiles);
     }
 
     public getDynBuiltinDeclarationFilesFromSdkPath(sdkPath: string, targetESVersion?: string): string[] {

@@ -1776,6 +1776,8 @@ export class ArkValueTransformer {
                 return UndefinedType.getInstance();
             case ts.SyntaxKind.AnyKeyword:
                 return AnyType.getInstance();
+            case ts.SyntaxKind.TypePredicate:
+                return BooleanType.getInstance();
             case ts.SyntaxKind.VoidKeyword:
                 return VoidType.getInstance();
             case ts.SyntaxKind.NeverKeyword:

@@ -103,8 +103,13 @@ export class BuiltinApiChangeDetector {
     public getIntLongArgsFromInvokeExpr(invokeExpr: AbstractInvokeExpr): Map<Value, NumberCategory> | null {
         const matcher = this.getRuleMatcher();
         const rule = matcher.getRuleFromInvokeExpr(invokeExpr);
-        if (!rule?.args) {
+        if (!rule) {
             return null;
+        }
+        if (!rule.args) {
+            const nestedRes = new Map<Value, NumberCategory>();
+            this.addArrayElementChangedArgs(rule, invokeExpr.getArgs(), new Set<Value>(), nestedRes);
+            return nestedRes.size === 0 ? null : nestedRes;
         }
         const args = invokeExpr.getArgs();
         const ambiguousArgs = matcher.getAmbiguousIntLongArgsFromInvokeExpr(invokeExpr);
@@ -119,6 +124,7 @@ export class BuiltinApiChangeDetector {
             }
             res.set(arg, category);
         });
+        this.addArrayElementChangedArgs(rule, args, ambiguousArgs, res);
         return res.size === 0 ? null : res;
     }
 
@@ -417,6 +423,53 @@ export class BuiltinApiChangeDetector {
         }
         ambiguousIndexes.forEach(index => res.delete(index));
         return res.size > 0 ? res : null;
+    }
+
+    private addArrayElementChangedArgs(
+        rule: BuiltinApiRule,
+        args: Value[],
+        ambiguousArgs: Set<Value>,
+        res: Map<Value, NumberCategory>
+    ): void {
+        rule.changes
+            ?.filter(change => this.isDirectArrayElementArgChange(change))
+            .forEach(change => {
+                const argIndex = change.path.argIndex;
+                const category = this.parseNumberCategory(change.category);
+                if (argIndex === undefined || !category) {
+                    return;
+                }
+                const endIndex = rule.hasRest ? args.length : argIndex + 1;
+                for (let index = argIndex; index < endIndex; index++) {
+                    this.addChangedArgCategory(args[index], category, ambiguousArgs, res);
+                }
+            });
+    }
+
+    private isDirectArrayElementArgChange(change: BuiltinNumberChange): boolean {
+        return change.path.root === 'arg' &&
+            change.path.argIndex !== undefined &&
+            change.path.steps.length === 1 &&
+            change.path.steps[0].kind === 'arrayElement' &&
+            this.parseNumberCategory(change.category) !== null;
+    }
+
+    private addChangedArgCategory(
+        arg: Value | undefined,
+        category: NumberCategory,
+        ambiguousArgs: Set<Value>,
+        res: Map<Value, NumberCategory>
+    ): void {
+        if (!arg || ambiguousArgs.has(arg) || this.isNumberCategoryType(arg.getType(), category)) {
+            return;
+        }
+        const currentCategory = res.get(arg);
+        if (currentCategory && currentCategory !== category) {
+            res.delete(arg);
+            ambiguousArgs.add(arg);
+            return;
+        }
+        res.set(arg, category);
     }
 
     private getCallbackParamCategories(rule: BuiltinApiRule | null): Map<number, Map<number, NumberCategory>> | null {
