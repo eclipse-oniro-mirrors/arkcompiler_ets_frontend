@@ -2923,8 +2923,19 @@ static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallE
     checker::ScopeContext scopeCtx(checker, signature->Function()->Body()->Scope());
     checker->CollectReturnStatements(signature->Function());
 
-    return signature->ReturnType();
-    // NOTE(vpukhov): #14902 substituted signature is not updated
+    auto *const baseSig = signature->Function() != nullptr ? signature->Function()->Signature() : nullptr;
+    if (baseSig == nullptr || signature == baseSig) {
+        return signature->ReturnType();
+    }
+
+    // Generic calls may hold a substituted signature copy. Re-resolve after lazy
+    // return type inference so the call sees the updated instantiated return type.
+    auto *updatedSignature = ResolveSignature(checker, expr, calleeType);
+    if (updatedSignature == nullptr) {
+        return checker->GlobalTypeError();
+    }
+    expr->SetSignature(updatedSignature);
+    return updatedSignature->ReturnType();
 }
 
 static void CheckOverloadCall(ETSChecker *checker, ir::CallExpression *expr)
