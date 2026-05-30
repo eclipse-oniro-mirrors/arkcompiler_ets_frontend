@@ -113,6 +113,7 @@ NumberLiteral *NumberLiteral::Clone(ArenaAllocator *const allocator, AstNode *co
     }
     clone->SetRange(Range());
     clone->SetFolded(IsFolded());
+    clone->SetNarrowingBlocked(IsNarrowingBlocked());
     return clone;
 }
 

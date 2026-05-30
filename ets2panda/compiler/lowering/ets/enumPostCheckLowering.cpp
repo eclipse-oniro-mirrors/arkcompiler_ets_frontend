@@ -339,6 +339,9 @@ static auto *InlineValueOf(ir::MemberExpression *enumMemberRef, ArenaAllocator *
     auto literal = origLiteral->Clone(allocator, enumMemberRef->Parent())->AsExpression();
     literal->SetTsType(origLiteral->TsType());
     literal->SetRange(enumMemberRef->Range());
+    if (literal->IsNumberLiteral()) {
+        literal->AsNumberLiteral()->SetNarrowingBlocked();
+    }
     return literal;
 }
 
