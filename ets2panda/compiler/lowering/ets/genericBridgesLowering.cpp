@@ -379,14 +379,8 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
         //  Collect type parameters defaults/constraints in the base class
         //  and type argument substitutions in the derived class
         checker->EmplaceSubstituted(&substitutions.derivedSubstitutions, typeParameter, typeArgument);
-        if (auto *const defaultType = typeParameter->GetDefaultType(); defaultType != nullptr) {
-            checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter, defaultType);
-        } else {
-            checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter,
-                                        typeParameter->GetConstraintType());
-        }
+        checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter, typeParameter->GetConstraintType());
     }
-
     return substitutions;
 }
 
@@ -395,7 +389,7 @@ static std::unordered_set<checker::ETSObjectType *> CollectInterfacesTransitive(
     std::unordered_set<checker::ETSObjectType *> collected;
 
     auto traverse = [&collected](auto &&self, checker::ETSObjectType *t) {
-        if (t->TypeArguments().empty() || !collected.insert(t).second) {
+        if (!collected.insert(t).second) {
             return;
         }
         for (auto itf : t->Interfaces()) {
@@ -463,11 +457,9 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
     const auto *superType = classDefinition->Super()->TsType()->AsETSObjectType();
     while (superType != nullptr) {
         auto const &typeParameters = superType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
-        if (typeParameters.empty()) {
-            return classDefinition;
+        if (!typeParameters.empty()) {
+            ProcessClassWithGenericSupertype(classDefinition, superType, typeParameters);
         }
-
-        ProcessClassWithGenericSupertype(classDefinition, superType, typeParameters);
 
         superType = superType->SuperType();
     }
