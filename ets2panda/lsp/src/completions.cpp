@@ -16,6 +16,7 @@
 #include "completions.h"
 #include "internal_api.h"
 #include "quick_info.h"
+#include "symbol_reference_index.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/ets/etsUnionType.h"
@@ -605,13 +606,22 @@ static std::string GetFunctionReturnTypeForCompletion(const ir::ScriptFunction *
     if (func == nullptr) {
         return "void";
     }
-    if (func->ReturnTypeAnnotation() != nullptr && func->ReturnTypeAnnotation()->TsType() != nullptr) {
-        auto ret = NormalizeTypeTextForCompletion(func->ReturnTypeAnnotation()->TsType()->ToString());
-        return ret.empty() ? "void" : ret;
+    auto *retAnno = func->ReturnTypeAnnotation();
+    if (retAnno != nullptr && retAnno->TsType() != nullptr) {
+        auto ret = NormalizeTypeTextForCompletion(retAnno->TsType()->ToString());
+        if (!ret.empty()) {
+            return ret;
+        }
     }
     auto *signature = func->Signature();
     if (signature != nullptr && signature->ReturnType() != nullptr) {
         auto ret = NormalizeTypeTextForCompletion(signature->ReturnType()->ToString());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
+    if (retAnno != nullptr) {
+        auto ret = NormalizeTypeTextForCompletion(retAnno->DumpEtsSrc());
         if (!ret.empty()) {
             return ret;
         }
@@ -672,7 +682,38 @@ static std::string BuildFunctionCompletionName(const std::string &functionName, 
     return completionName;
 }
 
-CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool IsInETSImportStatement)
+CompletionEntry BuildCallableDeclarationEntry(ir::AstNode *node, const std::string &name,
+                                              const ir::ScriptFunction *func, bool isInETSImportStatement)
+{
+    auto completionName = BuildFunctionCompletionName(name, func);
+    if (completionName.empty()) {
+        completionName = name;
+    }
+    auto insertText = isInETSImportStatement ? name : name + "()";
+    return CompletionEntry(completionName, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                           insertText, std::nullopt, GetTypeSig(node));
+}
+
+CompletionEntry GetInterfaceDeclarationEntry(ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    if (interfaceDecl->Id() == nullptr) {
+        return CompletionEntry();
+    }
+    auto name = std::string(interfaceDecl->Id()->Name());
+    return CompletionEntry(name, CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+}
+
+CompletionEntry GetStructDeclarationEntry(ir::ETSStructDeclaration *structDecl)
+{
+    auto *definition = structDecl->Definition();
+    if (definition == nullptr || definition->Ident() == nullptr) {
+        return CompletionEntry();
+    }
+    auto name = std::string(definition->Ident()->Name());
+    return CompletionEntry(name, CompletionEntryKind::STRUCT, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+}
+
+CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool isInETSImportStatement)
 {
     if (node == nullptr) {
         return CompletionEntry();
@@ -684,11 +725,15 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool IsInETSImportStateme
         return CompletionEntry(name, CompletionEntryKind::CLASS, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsTSInterfaceDeclaration()) {
-        if (node->AsTSInterfaceDeclaration()->Id() == nullptr) {
+        return GetInterfaceDeclarationEntry(node->AsTSInterfaceDeclaration());
+    }
+    if (node->IsFunctionDeclaration()) {
+        auto *func = node->AsFunctionDeclaration()->Function();
+        if (func == nullptr || func->Id() == nullptr) {
             return CompletionEntry();
         }
-        name = std::string(node->AsTSInterfaceDeclaration()->Id()->Name());
-        return CompletionEntry(name, CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+        name = std::string(func->Id()->Name());
+        return BuildCallableDeclarationEntry(node, name, func, isInETSImportStatement);
     }
     if (node->IsMethodDefinition()) {
         auto *key = node->AsMethodDefinition()->Key();
@@ -696,13 +741,8 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool IsInETSImportStateme
             return CompletionEntry();
         }
         name = std::string(key->AsIdentifier()->Name());
-        auto completionName = BuildFunctionCompletionName(name, node->AsMethodDefinition()->Function());
-        if (completionName.empty()) {
-            completionName = name;
-        }
-        auto insertText = IsInETSImportStatement ? name : name + "()";
-        return CompletionEntry(completionName, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
-                               insertText, std::nullopt, GetTypeSig(node));
+        return BuildCallableDeclarationEntry(node, name, node->AsMethodDefinition()->Function(),
+                                             isInETSImportStatement);
     }
     if (node->IsClassProperty()) {
         name = GetClassPropertyName(node);
@@ -711,27 +751,20 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool IsInETSImportStateme
                                std::string(sort_text::GLOBALS_OR_KEYWORDS), name, std::nullopt, GetTypeSig(node));
     }
     if (node->IsETSStructDeclaration()) {
-        if (node->AsETSStructDeclaration()->Definition() == nullptr) {
-            return CompletionEntry();
-        }
-        if (node->AsETSStructDeclaration()->Definition()->Ident() == nullptr) {
-            return CompletionEntry();
-        }
-        name = std::string(node->AsETSStructDeclaration()->Definition()->Ident()->Name());
-        return CompletionEntry(name, CompletionEntryKind::STRUCT, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+        return GetStructDeclarationEntry(node->AsETSStructDeclaration());
     }
     return CompletionEntry();
 }
 
 static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries,
-                               const std::string &fileName = "")
+                               const std::string &fileName = "", bool isInImportStatement = false)
 {
     for (auto &prop : classDef->Body()) {
         if (prop->IsClassDeclaration() && prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
-            GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName);
+            GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName, isInImportStatement);
         }
         if (prop->IsExported()) {
-            auto entry = GetDeclarationEntry(prop, !fileName.empty());
+            auto entry = GetDeclarationEntry(prop, isInImportStatement);
             if (!entry.GetName().empty() &&
                 (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
@@ -740,18 +773,19 @@ static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<Comple
     }
 }
 
-std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, const std::string &fileName = "")
+std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, const std::string &fileName = "",
+                                                   bool isInImportStatement = false)
 {
     std::vector<CompletionEntry> exportEntries;
     for (auto &stmt : program->Ast()->Statements()) {
         if (stmt->IsClassDeclaration()) {
             auto classDef = stmt->AsClassDeclaration()->Definition();
             if (classDef->IsGlobal() || classDef->IsNamespaceTransformed()) {
-                GetExportFromClass(classDef, exportEntries, fileName);
+                GetExportFromClass(classDef, exportEntries, fileName, isInImportStatement);
             }
         }
         if (stmt->IsExported()) {
-            auto entry = GetDeclarationEntry(stmt, fileName.empty());
+            auto entry = GetDeclarationEntry(stmt, isInImportStatement);
             if (!entry.GetName().empty() &&
                 (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
@@ -1900,6 +1934,23 @@ std::string GetDeclName(const ir::AstNode *decl)
     }
 }
 
+struct DeclNameHash {
+    size_t operator()(const ir::AstNode *node) const
+    {
+        static std::hash<std::string> strHasher;
+        return strHasher(GetDeclName(node));
+    }
+};
+
+struct DeclNameEqual {
+    bool operator()(const ir::AstNode *lhs, const ir::AstNode *rhs) const
+    {
+        return GetDeclName(lhs) == GetDeclName(rhs);
+    }
+};
+
+using DeclSet = std::unordered_set<ir::AstNode *, DeclNameHash, DeclNameEqual>;
+
 bool IsGlobalVar(const ir::AstNode *node)
 {
     return node->IsClassProperty() && node->Parent()->IsClassDefinition() &&
@@ -2038,7 +2089,7 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
     if (node != nullptr && node->IsIdentifier() && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
         specStr = node->AsIdentifier()->Name().Utf8();
     }
-    auto ans = GetExportsFromProgram(program, specStr);
+    auto ans = GetExportsFromProgram(program, specStr, true);
     for (auto &entry : ans) {
         if (hasImported.count(entry.GetName()) == 0U) {
             completions.emplace_back(std::move(entry));
@@ -2216,16 +2267,9 @@ void GetIdentifiersInScope(const varbinder::Scope *scope, std::vector<ir::AstNod
     FindAllChild(scope->Node(), checkFunc, results);
 }
 
-auto GetDeclByScopePath(std::vector<varbinder::Scope *> &scopePath)
+DeclSet GetDeclByScopePath(std::vector<varbinder::Scope *> &scopePath)
 {
-    auto hashFunc = [](const ir::AstNode *node) {
-        static std::hash<std::string> strHasher;
-        return strHasher(GetDeclName(node));
-    };
-    auto equalFunc = [](const ir::AstNode *lhs, const ir::AstNode *rhs) {
-        return GetDeclName(lhs) == GetDeclName(rhs);
-    };
-    auto decls = std::unordered_set<ir::AstNode *, decltype(hashFunc), decltype(equalFunc)>(0, hashFunc, equalFunc);
+    DeclSet decls;
     for (auto scope : scopePath) {
         auto nodes = std::vector<ir::AstNode *>();
         GetIdentifiersInScope(scope, nodes);
@@ -2273,6 +2317,54 @@ static std::vector<CompletionEntry> GetCollectedApiCompletions(const std::string
         }
     }
 
+    return completions;
+}
+
+static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::string &prefix, const char *fileName,
+                                                                   const std::unordered_set<std::string> &existingNames)
+{
+    auto inferCompletionKindFromDeclType = [](ir::AstNodeType declType) -> CompletionEntryKind {
+        switch (declType) {
+            case ir::AstNodeType::FUNCTION_DECLARATION:
+                return CompletionEntryKind::METHOD;
+            case ir::AstNodeType::CLASS_DECLARATION:
+                return CompletionEntryKind::CLASS;
+            case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+                return CompletionEntryKind::INTERFACE;
+            case ir::AstNodeType::TS_ENUM_DECLARATION:
+                return CompletionEntryKind::ENUM;
+            case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+                return CompletionEntryKind::ALIAS_TYPE;
+            case ir::AstNodeType::TS_MODULE_DECLARATION:
+                return CompletionEntryKind::MODULE;
+            case ir::AstNodeType::VARIABLE_DECLARATION:
+                return CompletionEntryKind::VARIABLE;
+            default:
+                return CompletionEntryKind::VARIABLE;
+        }
+    };
+
+    std::vector<CompletionEntry> completions;
+    auto defs = FindExportSymbolDefinitionsByPrefix(prefix, fileName);
+    for (const auto &def : defs) {
+        auto modulePath = ComputeRelativeImportPath(fileName, def.fileName);
+        if (modulePath.empty()) {
+            continue;
+        }
+        auto kind = inferCompletionKindFromDeclType(def.declType);
+        auto displayName = def.symbolName;
+        if (kind == CompletionEntryKind::METHOD) {
+            auto returnType = def.returnType.empty() ? std::string("void") : def.returnType;
+            displayName = def.symbolName + "(): " + returnType;
+        }
+        if (existingNames.find(def.symbolName) != existingNames.end() ||
+            existingNames.find(displayName) != existingNames.end() ||
+            existingNames.find(def.symbolName + "()") != existingNames.end()) {
+            continue;
+        }
+        completions.emplace_back(displayName, kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), def.symbolName,
+                                 CompletionEntryData(fileName, def.symbolName, def.fileName, def.symbolName), "", true);
+    }
     return completions;
 }
 
@@ -2364,7 +2456,6 @@ static std::string GetCompletionMatchPrefixFromToken(ir::AstNode *precedingToken
     return normalizedFallback;
 }
 
-template <class DeclSet>
 static void AppendTypeContextInterfaceCompletions(const DeclSet &decls, const std::string &matchPrefix,
                                                   std::vector<CompletionEntry> *completions)
 {
@@ -2392,6 +2483,48 @@ static void AppendTypeContextInterfaceCompletions(const DeclSet &decls, const st
     }
 }
 
+static void AppendScopeDeclCompletions(const DeclSet &decls, const std::string &matchPrefix, bool inTypeContext,
+                                       std::vector<CompletionEntry> *completions)
+{
+    ES2PANDA_ASSERT(completions != nullptr);
+    for (auto decl : decls) {
+        if (!inTypeContext && decl != nullptr && decl->IsTSInterfaceDeclaration()) {
+            continue;
+        }
+        auto entry = InitEntry(decl);
+        if (!ContainsIgnoreCase(entry.GetName(), matchPrefix)) {
+            continue;
+        }
+        entry = ProcessAutoImportForEntry(entry);
+        completions->push_back(entry);
+    }
+}
+
+static std::unordered_set<std::string> GetExistingCompletionNames(const std::vector<CompletionEntry> &completions)
+{
+    std::unordered_set<std::string> existingCompletionNames;
+    existingCompletionNames.reserve(completions.size());
+    for (const auto &entry : completions) {
+        existingCompletionNames.insert(entry.GetName());
+    }
+    return existingCompletionNames;
+}
+
+static void AppendAutoImportCompletions(const std::string &prefix, const char *fileName,
+                                        std::vector<CompletionEntry> *completions)
+{
+    ES2PANDA_ASSERT(completions != nullptr);
+    auto existingCompletionNames = GetExistingCompletionNames(*completions);
+    auto collectedApiCompletions = GetCollectedApiCompletions(prefix, fileName, existingCompletionNames);
+    completions->insert(completions->end(), collectedApiCompletions.begin(), collectedApiCompletions.end());
+    for (const auto &entry : collectedApiCompletions) {
+        existingCompletionNames.insert(entry.GetName());
+    }
+
+    auto indexedApiCompletions = GetSymbolIndexedApiCompletions(prefix, fileName, existingCompletionNames);
+    completions->insert(completions->end(), indexedApiCompletions.begin(), indexedApiCompletions.end());
+}
+
 // Support: global variables, local variables, functions, keywords
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
@@ -2414,18 +2547,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     auto decls = GetDeclByScopePath(scopePath);
     std::vector<CompletionEntry> completions;
 
-    for (auto decl : decls) {
-        if (!inTypeContext && decl != nullptr && decl->IsTSInterfaceDeclaration()) {
-            continue;
-        }
-        auto entry = InitEntry(decl);
-        if (!ContainsIgnoreCase(entry.GetName(), matchPrefix)) {
-            continue;
-        }
-        entry = ProcessAutoImportForEntry(entry);
-        completions.push_back(entry);
-    }
-
+    AppendScopeDeclCompletions(decls, matchPrefix, inTypeContext, &completions);
     if (inTypeContext) {
         AppendTypeContextInterfaceCompletions(decls, matchPrefix, &completions);
     }
@@ -2435,15 +2557,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
     auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
     completions.insert(completions.end(), systemInterfaceCompletions.begin(), systemInterfaceCompletions.end());
 
-    std::unordered_set<std::string> existingCompletionNames;
-    existingCompletionNames.reserve(completions.size());
-    for (const auto &entry : completions) {
-        existingCompletionNames.insert(entry.GetName());
-    }
-
-    auto collectedApiCompletions =
-        GetCollectedApiCompletions(prefix, ctx->sourceFileName.c_str(), existingCompletionNames);
-    completions.insert(completions.end(), collectedApiCompletions.begin(), collectedApiCompletions.end());
+    AppendAutoImportCompletions(prefix, ctx->sourceFileName.c_str(), &completions);
     return SortCompletionEntries(completions, prefix);
 }
 

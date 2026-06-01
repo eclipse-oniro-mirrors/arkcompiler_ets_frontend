@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "ir/astNodeMapping.h"
 #include "api.h"
 #include "public/es2panda_lib.h"
 
@@ -45,9 +46,13 @@ struct SymbolDefSearchResult {
     std::string fileName;
     std::string symbolName;
     bool isDefaultExport = false;
+    ir::AstNodeType declType = static_cast<ir::AstNodeType>(0);
+    std::string returnType = "";
 };
 
 std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string &name, const std::string &excludeFile);
+std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std::string &prefix,
+                                                                       const std::string &excludeFile);
 
 }  // namespace ark::es2panda::lsp
 
