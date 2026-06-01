@@ -44,7 +44,6 @@ softlist:
 - name: "allow_implicit_export"
   paths:
   - ".*/test/xts/acts/.*"
-  - ".*/distributeddatamgr/udmf/.*"
   - ".*/developtools/ace_ets2bundle/.*"
   - ".*/foundation/arkui/ace_engine/frameworks/.*"
   - ".*/foundation/arkui/ace_engine/advanced_ui_component_static/.*"
@@ -52,6 +51,7 @@ softlist:
   - ".*/@ohos\\.rpc\\.d\\.ets"
   - ".*/@ohos\\.app\\.ability\\.insightIntent\\.d\\.ets"
   - ".*/@ohos\\.uri\\.d\\.ets"
+  - ".*/@ohos\\.data\\.unifiedDataChannel\\.ets.*"
 
 - name: "override_field_allowed"
   paths:
