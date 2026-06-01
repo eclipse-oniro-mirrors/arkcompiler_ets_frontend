@@ -44,7 +44,6 @@ softlist:
 - name: "allow_implicit_export"
   paths:
   - ".*/test/xts/acts/.*"
-  - ".*/developtools/ace_ets2bundle/.*"
   - ".*/foundation/arkui/ace_engine/frameworks/.*"
   - ".*/foundation/arkui/ace_engine/advanced_ui_component_static/.*"
   - ".*/@ohos\\.util\\.stream\\.d\\.ets"
