@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,11 +15,14 @@
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import time
+
+DEFAULT_TYPESCRIPT_TARGET_ES_VERSION = 'ES2017'
 
 
 def copy_files(source_path, dest_path, is_file=False):
@@ -173,21 +176,73 @@ def clean_env(source_path):
     return True
 
 
+def normalize_target_es_version(target_es_version):
+    normalized_target = str(
+        target_es_version or DEFAULT_TYPESCRIPT_TARGET_ES_VERSION
+    ).strip().lower()
+    if normalized_target.isdigit():
+        return 'es{}'.format(normalized_target)
+    return normalized_target
+
+
+def get_target_es_version():
+    return (
+        os.environ.get('TYPESCRIPT_TARGET_ES_VERSION') or
+        os.environ.get('TARGET_ES_VERSION') or
+        DEFAULT_TYPESCRIPT_TARGET_ES_VERSION
+    )
+
+
+def collect_typescript_lib_files_for_target(source_dir, target_es_version):
+    normalized_target = normalize_target_es_version(target_es_version)
+    entry_file_name = 'lib.{}.d.ts'.format(normalized_target)
+    visited_files = set()
+    file_names = []
+    reference_pattern = re.compile(
+        r'///\s*<reference\s+lib=["\']([^"\']+)["\']\s*/>'
+    )
+
+    def visit(file_name):
+        if file_name in visited_files:
+            return
+        file_path = os.path.join(source_dir, file_name)
+        if not os.path.exists(file_path):
+            raise Exception('TypeScript lib file not found: {}'.format(file_path))
+        visited_files.add(file_name)
+
+        with open(file_path, 'r', encoding='utf-8') as lib_file:
+            file_text = lib_file.read()
+        for match in reference_pattern.finditer(file_text):
+            visit('lib.{}.d.ts'.format(match.group(1)))
+
+        file_names.append(file_name)
+
+    visit(entry_file_name)
+    return file_names
+
+
+def copy_typescript_lib_files_for_target(source_dir, target_dir, target_es_version):
+    file_names = collect_typescript_lib_files_for_target(source_dir, target_es_version)
+    for file_name in file_names:
+        copy_files(
+            os.path.join(source_dir, file_name),
+            os.path.join(target_dir, file_name),
+            True
+        )
+
+
 def aa_copy_lib_files(options):
     aa_path = os.path.join(options.source_path, 'arkanalyzer')
-    source_file_1 = os.path.join(aa_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es5.d.ts')
-    dest_path_1 = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal', 'lib.es5.d.ts')
-    copy_files(source_file_1, dest_path_1, True)
-    source_file_2 = os.path.join(aa_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es2015.collection.d.ts')
-    dest_path_2 = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal', 'lib.es2015.collection.d.ts')
-    copy_files(source_file_2, dest_path_2, True)
+    source_dir = os.path.join(aa_path, 'node_modules', 'ohos-typescript', 'lib')
+    target_dir = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal')
+    copy_typescript_lib_files_for_target(source_dir, target_dir, get_target_es_version())
 
 
 def hc_copy_lib_files(options):
     hc_path = os.path.join(options.source_path, 'homecheck')
-    source_file = os.path.join(hc_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es5.d.ts')
-    dest_path = os.path.join(hc_path, 'resources', 'internalSdk', '@internal', 'lib.es5.d.ts')
-    copy_files(source_file, dest_path, True)
+    source_dir = os.path.join(hc_path, 'node_modules', 'ohos-typescript', 'lib')
+    target_dir = os.path.join(hc_path, 'resources', 'internalSdk', '@internal')
+    copy_typescript_lib_files_for_target(source_dir, target_dir, get_target_es_version())
 
 
 def pack_arkanalyzer(options, new_npm):
