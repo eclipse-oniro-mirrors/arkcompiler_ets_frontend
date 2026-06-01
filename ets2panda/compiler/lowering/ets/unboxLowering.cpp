@@ -716,7 +716,8 @@ static ir::Expression *InsertConversionBetweenPrimitivesIfNeeded(UnboxContext *u
         res = PerformLiteralConversion(uctx, expr->AsNumberLiteral()->Number(), expectedType);
         res->SetRange(range);
     } else if (expr->IsCharLiteral() && expectedType->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC)) {
-        res = PerformLiteralConversion(uctx, lexer::Number {expr->AsCharLiteral()->Char()}, expectedType);
+        res = PerformLiteralConversion(uctx, lexer::Number {static_cast<int32_t>(expr->AsCharLiteral()->Char())},
+                                       expectedType);
         res->SetRange(range);
     } else {
         res = CreateToIntrinsicCallExpression(uctx, expectedType, oldType, expr);
