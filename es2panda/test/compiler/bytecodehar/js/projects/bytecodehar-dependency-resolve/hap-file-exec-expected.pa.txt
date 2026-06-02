@@ -47,9 +47,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bundlehar/bundlehar-file&1.0.0_1332
+slot &bundlehar/bundlehar-file&1.0.0_1322
 ------------------------------------
-slot &bundlehar/bundlehar-file&1.0.0_1336
+slot &bundlehar/bundlehar-file&1.0.0_1326
 {
   index: 0
     tag: 2
@@ -149,9 +149,9 @@ slotNum = 0x9
 
 ======> literal array buffer <======
 ------------------------------------
-slot &dedup_commonjs/dedup_commonjs&1.0.0_1386
+slot &dedup_commonjs/dedup_commonjs&1.0.0_1376
 ------------------------------------
-slot &dedup_commonjs/dedup_commonjs&1.0.0_1390
+slot &dedup_commonjs/dedup_commonjs&1.0.0_1380
 {
   index: 0
     tag: 2
@@ -225,9 +225,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1292
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1282
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1296
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1286
 {
   index: 0
     tag: 2
@@ -315,9 +315,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1346
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1336
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file2&2.0.0_1350
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1340
 {
   index: 0
     tag: 2
@@ -415,9 +415,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1081
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1071
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1085
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1075
 {
   index: 0
     tag: 2
@@ -483,9 +483,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1121
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1111
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1125
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1115
 {
   index: 0
     tag: 2
@@ -1078,9 +1078,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bundlehar/bundlehar-file&1.0.0_1332
+slot &bundlehar/bundlehar-file&1.0.0_1322
 ------------------------------------
-slot &bundlehar/bundlehar-file&1.0.0_1336
+slot &bundlehar/bundlehar-file&1.0.0_1326
 {
   index: 0
     tag: 2
@@ -1172,9 +1172,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1292
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1282
 ------------------------------------
-slot &bytecodehar1/bytecodehar1-file1&2.0.0_1296
+slot &bytecodehar1/bytecodehar1-file1&2.0.0_1286
 {
   index: 0
     tag: 2
@@ -1260,9 +1260,9 @@ slotNum = 0x1
 
 ======> literal array buffer <======
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1081
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1071
 ------------------------------------
-slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1085
+slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1075
 {
   index: 0
     tag: 2
