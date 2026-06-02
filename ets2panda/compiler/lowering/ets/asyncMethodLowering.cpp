@@ -76,6 +76,8 @@ static ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker,
     ir::ModifierFlags modifiers = asyncMethod->Modifiers();
     // clear ASYNC flag for implementation
     modifiers &= ~ir::ModifierFlags::ASYNC;
+    // impl method is synthetic with a mangled name, override was already verified on the original method
+    modifiers &= ~ir::ModifierFlags::OVERRIDE;
     ir::ScriptFunction *asyncFunc = asyncMethod->Function();
     ES2PANDA_ASSERT(asyncFunc != nullptr);
     ir::ScriptFunctionFlags flags = ir::ScriptFunctionFlags::METHOD;
