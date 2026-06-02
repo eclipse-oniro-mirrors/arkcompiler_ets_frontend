@@ -1614,6 +1614,20 @@ static bool AllowConstSubstitution(const varbinder::Variable *var)
     return true;
 }
 
+static bool IsInitializedBeforeUse(const ir::AstNode *declContainer, const ir::Expression *useSite)
+{
+    ES2PANDA_ASSERT(declContainer != nullptr);
+    ES2PANDA_ASSERT(useSite != nullptr);
+
+    const auto declEnd = declContainer->End();
+    const auto useStart = useSite->Start();
+    if (declEnd.Program() == nullptr || useStart.Program() == nullptr || declEnd.Program() != useStart.Program()) {
+        return false;
+    }
+
+    return declEnd.index <= useStart.index;
+}
+
 // Access flags should be checked as use-site may be folded.
 static bool CheckPrivateAccess(ir::ClassProperty *propDecl, ir::Expression *rval)
 {
@@ -1627,6 +1641,27 @@ static bool CheckPrivateAccess(ir::ClassProperty *propDecl, ir::Expression *rval
         pred = pred->Parent();
     }
     return false;
+}
+
+static ir::Expression *GetConstSubstitutionInitializer(varbinder::Decl *decl, const varbinder::Variable *var,
+                                                       ir::Expression *useSite)
+{
+    if ((!decl->IsConstDecl() && !decl->IsReadonlyDecl()) || !AllowConstSubstitution(var)) {
+        return nullptr;
+    }
+
+    auto *declNode = decl->Node();
+    if (auto *vardecl = Cast<ir::VariableDeclarator>(declNode->Parent());
+        vardecl != nullptr && IsInitializedBeforeUse(vardecl, useSite)) {
+        return vardecl->Init();
+    }
+
+    auto *prop = Cast<ir::ClassProperty>(declNode);
+    if (prop != nullptr && !prop->IsPrivateElement() && CheckPrivateAccess(prop, useSite)) {
+        return prop->Value();
+    }
+
+    return nullptr;
 }
 
 // CC-OFFNXT(huge_cyclomatic_complexity, huge_cca_cyclomatic_complexity[C++]) solid logic
@@ -1653,16 +1688,7 @@ void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
         if (auto *enumMember = Cast<ir::TSEnumMember>(declNode); enumMember != nullptr) {
             init = enumMember->Init();
         } else {
-            if ((!decl->IsConstDecl() && !decl->IsReadonlyDecl()) || !AllowConstSubstitution(var)) {
-                return;
-            }
-
-            if (auto *vardecl = Cast<ir::VariableDeclarator>(declNode->Parent()); vardecl != nullptr) {
-                init = vardecl->Init();
-            } else if (auto *prop = Cast<ir::ClassProperty>(declNode);
-                       prop != nullptr && !prop->IsPrivateElement() && CheckPrivateAccess(prop, identOrMExp)) {
-                init = prop->Value();
-            }
+            init = GetConstSubstitutionInitializer(decl, var, identOrMExp);
         }
 
         if (init != nullptr) {
