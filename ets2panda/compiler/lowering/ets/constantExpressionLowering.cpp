@@ -1364,6 +1364,9 @@ static ir::TypeNode *GetTypeAnnotation(ir::AstNode *initParent)
         (vardecl != nullptr) && vardecl->Id()->IsIdentifier()) {
         return vardecl->Id()->AsIdentifier()->TypeAnnotation();
     }
+    if (auto member = Cast<ir::TSEnumMember>(initParent); member != nullptr) {
+        return member->Parent()->AsTSEnumDeclaration()->TypeAnnotation();
+    }
     return nullptr;
 }
 
