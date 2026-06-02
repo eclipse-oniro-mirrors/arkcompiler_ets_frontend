@@ -24,10 +24,10 @@ import {
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
     FILE_HASH_CACHE,
-    ETSCACHE_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
     ENABLE_CLUSTERS,
     ENABLE_DECL_FILE_CACHE,
+    DECL_ETS_SUFFIX,
     ABC_SUFFIX
 } from './pre_define';
 
@@ -113,6 +113,7 @@ export class DependencyAnalyzer {
     private readonly clusteredBuild: boolean = false;
     private readonly mainModuleType: OHOS_MODULE_TYPE;
     private readonly generator: ArkTSConfigGenerator;
+    private readonly declgenV2OutDir: string;
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
@@ -139,6 +140,7 @@ export class DependencyAnalyzer {
         this.clusteredBuild = clusteredBuild;
         this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
         this.mainModuleType = buildConfig.moduleType;
+        this.declgenV2OutDir = buildConfig.declgenV2OutPath;
     }
 
     private loadHashCache(): Record<string, string> {
@@ -370,8 +372,6 @@ export class DependencyAnalyzer {
         });
 
         this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
-        this.filterGraph(dependencyGraph, fileToModule);
-        this.verifyAndDumpGraph(dependencyGraph, 'graph.filtered.dot');
 
         const nodeMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
             let files: FileInfo[] = []
@@ -413,6 +413,9 @@ export class DependencyAnalyzer {
         Graph.collapseCycles(dependencyGraph, cycleMerger);
         this.verifyAndDumpGraph(dependencyGraph, 'graph.collapsed.dot');
 
+        this.filterGraph(dependencyGraph, fileToModule);
+        this.verifyAndDumpGraph(dependencyGraph, 'graph.filtered.clusters.dot');
+
         if (this.clusteredBuild) {
             let mainModule = Array.from(moduleInfos.values()).find((module) => module.isMainModule)!
             this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
@@ -438,49 +441,60 @@ export class DependencyAnalyzer {
         return dependencyGraph;
     }
 
+    private checkClusterFilesChanged(files: FileInfo[], fileToModule: Map<string, ModuleInfo>): CompileJobType {
+        let jobType = CompileJobType.NONE;
+        for (const fi of files) {
+            const hashChanged: boolean = updateFileHash(fi.input, this.filesHashCache);
+            if (hashChanged || shouldBeUpdated(fi.input, fi.output)) {
+                jobType |= CompileJobType.ABC;
+            }
+            if (ENABLE_DECL_FILE_CACHE && isHarOrHsp(this.mainModuleType)) {
+                const module = fileToModule.get(fi.input);
+                const relative: string = changeFileExtension(
+                    path.relative(module?.moduleRootPath!, fi.input),
+                    DECL_ETS_SUFFIX
+                );
+                const declEtsOutputPath: string = path.resolve(this.declgenV2OutDir, relative);
+                if (hashChanged || shouldBeUpdated(fi.input, declEtsOutputPath)) {
+                    jobType |= CompileJobType.DECL;
+                }
+            }
+        }
+        return jobType;
+    }
+
+    private updateNodeHashes(node: GraphNode<CompileJobInfo>): void {
+        const files = node.data.contentType === JobContentType.FILE
+            ? [node.data.content as FileInfo]
+            : node.data.content as FileInfo[];
+        for (const fi of files) {
+            updateFileHash(fi.input, this.filesHashCache);
+        }
+    }
+
     private filterGraph(graph: Graph<CompileJobInfo>, fileToModule: Map<string, ModuleInfo>): void {
         for (const nodeId of Graph.topologicalSort(graph)) {
             const node = graph.getNodeById(nodeId);
-            if (node.data.contentType !== JobContentType.FILE) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
-                        'Corrupted graph: graph should contain only \'File\' nodes before filtering.'
-                    )
-                )
-            }
             if (node.predecessors.size !== 0) {
                 // Still has dependencies, so do not remove the node
                 // Just update file hashes
-                updateFileHash((node.data.content as FileInfo).input, this.filesHashCache);
+                this.updateNodeHashes(node);
                 continue;
             }
 
-            const fi = node.data.content as FileInfo;
-            const input = fi.input;
-            const outputAbc = fi.output;
-            const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
-            const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
-            const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
-            let genDecl: boolean = false;
-            if(isHarOrHsp(this.mainModuleType)) {
-                genDecl = ENABLE_DECL_FILE_CACHE && (hashChanged || shouldBeUpdated(input, outputDecl));
-            }
+            const files = node.data.contentType === JobContentType.FILE
+                ? [node.data.content as FileInfo]
+                : node.data.content as FileInfo[];
+            const jobType = this.checkClusterFilesChanged(files, fileToModule);
 
-            if (!compileAbc && !genDecl) {
-                this.logger.printDebug(`Skipping file ${input} compilation`);
+            if (jobType === CompileJobType.NONE) {
+                this.logger.printDebug(
+                    `Skipping ${node.data.contentType === JobContentType.FILE ? 'file' : 'cluster'} compilation: [${files.map(f => f.input).join(', ')}]`
+                );
                 graph.removeNode(node);
                 continue;
             }
-
-            node.data.jobType &= CompileJobType.NONE;
-            if (genDecl) {
-                node.data.jobType |= CompileJobType.DECL;
-            }
-
-            if (compileAbc) {
-                node.data.jobType |= CompileJobType.ABC;
-            }
+            node.data.jobType = jobType;
         }
     }
 }

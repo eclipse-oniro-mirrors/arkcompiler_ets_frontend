@@ -306,7 +306,10 @@ export class Ets2panda {
 
             if (job.jobType & CompileJobType.DECL) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
-                for (const fi of (job.content as FileInfo[])) {
+                const contents = job.contentType === JobContentType.CLUSTER
+                    ? job.content as FileInfo[]
+                    : [job.content as FileInfo];
+                for (const fi of contents) {
                     // emit declarations based on relative location of the file in a project,
                     // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(

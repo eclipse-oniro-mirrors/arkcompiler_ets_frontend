@@ -80,6 +80,6 @@ export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
 export const CLUSTER_FILES_TRESHOLD: number = 460;
 // Declaration cache is not fixed right now
-export const ENABLE_DECL_FILE_CACHE: boolean = false;
+export const ENABLE_DECL_FILE_CACHE: boolean = true;
 // Synchronize execution on declaration generation.
 export const ENABLE_DECLARATION_BARRIER: boolean = false;
