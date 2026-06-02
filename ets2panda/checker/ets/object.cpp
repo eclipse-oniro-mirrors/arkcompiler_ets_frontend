@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <functional>
 #include <iterator>
 #include <string_view>
 #include "checker/ETSchecker.h"
@@ -39,6 +40,7 @@
 #include "ir/ets/etsUnionType.h"
 #include "ir/expression.h"
 #include "ir/expressions/assignmentExpression.h"
+#include "ir/expressions/arrowFunctionExpression.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/expressions/functionExpression.h"
 #include "ir/expressions/identifier.h"
@@ -70,6 +72,36 @@ using TypeParameterSet = std::unordered_set<varbinder::Variable *>;
 using TypeParameterNodeMap = std::unordered_map<varbinder::Variable *, ir::TSTypeParameter *>;
 using TypeParameterDependencyGraph = std::unordered_map<varbinder::Variable *, TypeParameterSet>;
 using TypeParameterVisitStateMap = std::unordered_map<varbinder::Variable *, TypeParameterVisitState>;
+
+static const ir::AstNode *FindThisOrSuperInExplicitConstructorArg(const ir::AstNode *node)
+{
+    const ir::AstNode *found = nullptr;
+    std::function<void(const ir::AstNode *, bool)> visit = [&found, &visit](const ir::AstNode *current,
+                                                                            bool enterScriptFunction) {
+        if (current == nullptr || found != nullptr) {
+            return;
+        }
+
+        if (current->IsThisExpression() || current->IsSuperExpression()) {
+            found = current;
+            return;
+        }
+
+        if (current->IsClassDefinition() || (current->IsScriptFunction() && !enterScriptFunction)) {
+            return;
+        }
+
+        if (current->IsArrowFunctionExpression()) {
+            visit(current->AsArrowFunctionExpression()->Function(), true);
+            return;
+        }
+
+        current->Iterate([&visit](ir::AstNode *child) { visit(child, false); });
+    };
+
+    visit(node, false);
+    return found;
+}
 
 static varbinder::Variable *GetDirectConstraintDependency(const ir::TypeNode *constraint,
                                                           const TypeParameterSet &localTypeParams)
@@ -2101,7 +2133,15 @@ ArenaVector<const ir::Expression *> ETSChecker::CheckMemberOrCallOrObjectExpress
     ArenaVector<const ir::Expression *> expressions =
         ArenaVector<const ir::Expression *>(ProgramAllocator()->Adapter());
 
-    if (arg->IsMemberExpression()) {
+    if (arg->IsThisExpression() || arg->IsSuperExpression()) {
+        const auto what = (arg->IsSuperExpression() ? "super" : "this");
+        LogError(diagnostic::THIS_OR_SUPER_IN_CTOR, {what}, arg->Start());
+    } else if (arg->IsArrowFunctionExpression()) {
+        if (auto *const found = FindThisOrSuperInExplicitConstructorArg(arg); found != nullptr) {
+            const auto what = (found->IsSuperExpression() ? "super" : "this");
+            LogError(diagnostic::THIS_OR_SUPER_IN_CTOR, {what}, found->Start());
+        }
+    } else if (arg->IsMemberExpression()) {
         if ((arg->AsMemberExpression()->Object()->IsSuperExpression() ||
              arg->AsMemberExpression()->Object()->IsThisExpression())) {
             const auto what = (arg->AsMemberExpression()->Object()->IsSuperExpression() ? "super" : "this");
