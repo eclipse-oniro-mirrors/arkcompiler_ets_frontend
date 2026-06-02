@@ -15,15 +15,12 @@
 
 namespace Metadata;
 
-table Root {
+table Decls {
+    imports:[ImportDecl];
     classes:[ClassDecl];
     interfaces:[InterfaceDecl];
-    enums:[EnumDecl];
     annotations:[AnnotationDecl];
     types:[TypeDecl];
-    functions:[FunctionDecl];
-    properties:[PropertyDecl];
-    variables:[VarDecl];
 }
 
 // Common entities
@@ -31,7 +28,6 @@ table Root {
 union RefType {
     class:ClassDecl,
     interface:InterfaceDecl,
-    enum_:EnumDecl,
     annotation:AnnotationDecl,
     type:TypeDecl,
     typeParam:TypeParamDecl
@@ -49,11 +45,18 @@ union Type {
 
 // Class-like declarations
 
+table ImportDecl {
+    from:string (required);
+    decl_names:[string];
+}
+
 table ClassDecl {
     name:string (required);
+    is_namespace:bool;
+    is_enum:bool;
     methods:[FunctionDecl];
-    fields:[VarDecl];
     properties:[PropertyDecl];
+    decls:Decls;
     type_params:[TypeParamDecl];
     extended_class:Type;
     implemented_interfaces:[Type];
@@ -62,14 +65,8 @@ table ClassDecl {
 table InterfaceDecl {
     name:string (required);
     methods:[FunctionDecl];
-    properties:[PropertyDecl];
     type_params:[TypeParamDecl];
     implemented_interfaces:[Type];
-}
-
-table EnumDecl {
-    name:string (required);
-    entries:[string];
 }
 
 table AnnotationDecl {
@@ -77,6 +74,7 @@ table AnnotationDecl {
 }
 
 table TypeDecl {
+    name:string (required);
     type:Type (required);
 }
 
@@ -91,15 +89,10 @@ table FunctionDecl {
     overloads:[FunctionDecl];
 }
 
-table VarDecl {
+table PropertyDecl {
     name:string (required);
     return_type:Type (required);
     is_static:bool;
-}
-
-table PropertyDecl {
-    getter:FunctionDecl;
-    setter:FunctionDecl;
 }
 
 // Parameter declarations
@@ -108,6 +101,7 @@ table ValueParamDecl {
     name:string (required);
     type:Type (required);
     is_readonly:bool;
+    is_optional:bool;
 }
 
 enum TypeParamVariance : byte {
@@ -157,6 +151,7 @@ table ArrayType {
 
 table TypeRef {
     fqname:string (required);
+    type_args:[Type];
 }
 
 table FunctionTypeParam {
@@ -182,4 +177,4 @@ table StringLiteralType {
 }
 
 
-root_type Root;
+root_type Decls;

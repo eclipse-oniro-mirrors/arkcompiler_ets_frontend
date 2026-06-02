@@ -52,7 +52,7 @@ namespace ark::es2panda::parser {
 
 using SourceDeclType = std::string &&;
 using SourceDeclCacheType = std::string_view;
-using MetadataType = panda_file::EncodedMetadata;
+using MetadataType = panda_file::MetadataByModules;
 using MetadataCacheType = MetadataType *;
 using AnyCacheType = std::variant<SourceDeclCacheType, MetadataCacheType>;
 

@@ -19,10 +19,24 @@
 #include "compiler/lowering/phase.h"
 #include "schemaMetadataGenerated.h"
 #include "ir/statements/annotationDeclaration.h"
+#include "libarkfile/metadata_helper.h"
 
 namespace ark::es2panda::compiler {
 
 using flatbuffers::Offset, flatbuffers::Vector, flatbuffers::FlatBufferBuilder;
+
+struct MetadataDecls {
+    std::vector<Offset<Metadata::ImportDecl>> imports;
+    std::vector<Offset<Metadata::InterfaceDecl>> interfaces;
+    std::vector<Offset<Metadata::ClassDecl>> classes;
+    std::vector<Offset<Metadata::AnnotationDecl>> annotations;
+    std::vector<Offset<Metadata::TypeDecl>> types;
+
+    [[nodiscard]] bool IsFilled() const
+    {
+        return !classes.empty() || !annotations.empty() || !interfaces.empty() || !types.empty();
+    }
+};
 
 class MetadataSerializationPhase : public PhaseForProgramsWithBodies {
 public:
@@ -34,41 +48,48 @@ public:
     bool PerformForProgram(parser::Program *program) override;
 
 private:
-    static Offset<Metadata::ClassDecl> BuildClassDecl(FlatBufferBuilder &builder, const ir::ClassDefinition *astDecl);
-    static Offset<Vector<Offset<Metadata::FunctionDecl>>> BuildClassMethods(FlatBufferBuilder &builder,
-                                                                            const ir::ClassDefinition *astDecl);
-    static Offset<Vector<Offset<Metadata::VarDecl>>> BuildClassProperties(FlatBufferBuilder &builder,
-                                                                          const ir::ClassDefinition *astDecl);
-    static Offset<Metadata::FunctionDecl> BuildFunctionDecl(FlatBufferBuilder &builder, const ir::ScriptFunction *func);
+    Offset<Metadata::TypeDecl> BuildTypeDecl(FlatBufferBuilder &builder, const ir::TSTypeAliasDeclaration *astDecl);
+    Offset<Metadata::ClassDecl> BuildClassDecl(FlatBufferBuilder &builder, const ir::ClassDefinition *astDecl);
+    Offset<Metadata::InterfaceDecl> BuildInterfaceDecl(FlatBufferBuilder &builder,
+                                                       const ir::TSInterfaceDeclaration *interfaceDecl);
+    Offset<Vector<Offset<Metadata::FunctionDecl>>> BuildMethodDecls(FlatBufferBuilder &builder,
+                                                                    const ArenaVector<ir::AstNode *> &body,
+                                                                    bool isFromNamespaceOrTopLevel = false);
+    Offset<Vector<Offset<Metadata::PropertyDecl>>> BuildPropertyDecls(FlatBufferBuilder &builder,
+                                                                      const ArenaVector<ir::AstNode *> &body,
+                                                                      bool isFromNamespaceOrTopLevel = false);
+    Offset<Metadata::FunctionDecl> BuildFunctionDecl(FlatBufferBuilder &builder, const ir::ScriptFunction *func);
     static Offset<> BuildTypeParameterType(FlatBufferBuilder &builder, const checker::ETSTypeParameter *type);
-    static Offset<> BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type);
-    static Offset<> BuildUnionType(FlatBufferBuilder &builder, const checker::ETSUnionType *type);
+    Offset<> BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type);
+    Offset<> BuildUnionType(FlatBufferBuilder &builder, const checker::ETSUnionType *type);
     static Offset<> BuildStringLiteralType(FlatBufferBuilder &builder, const checker::ETSStringType *type);
-    static Offset<> BuildArrayType(FlatBufferBuilder &builder, const checker::ETSArrayType *type);
-    static Offset<> BuildTupleType(FlatBufferBuilder &builder, const checker::ETSTupleType *type);
-    static Offset<> BuildFunctionType(FlatBufferBuilder &builder, const checker::ETSFunctionType *type);
-    static std::pair<Metadata::Type, Offset<>> BuildType(FlatBufferBuilder &builder, const checker::Type *type);
+    Offset<> BuildArrayType(FlatBufferBuilder &builder, const checker::ETSArrayType *type);
+    Offset<> BuildTupleType(FlatBufferBuilder &builder, const checker::ETSTupleType *type);
+    Offset<> BuildFunctionType(FlatBufferBuilder &builder, const checker::ETSFunctionType *type);
+    std::pair<Metadata::Type, Offset<>> BuildType(FlatBufferBuilder &builder, const checker::Type *type);
+    static Offset<> BuildTypeAliasType(FlatBufferBuilder &builder, const checker::ETSTypeAliasType *type);
     static Offset<Vector<Offset<Metadata::TypeParamDecl>>> BuildTypeParams(
-        FlatBufferBuilder &builder, const ArenaVector<checker::Type *> &astTypeParams);
-    static Offset<Metadata::VarDecl> BuildVarDecl(FlatBufferBuilder &builder, const ir::ClassProperty *var);
-    static Offset<Metadata::TypeParamDecl> BuildTypeParamDecl(FlatBufferBuilder &builder,
-                                                              const checker::Type *typeParam);
-    static Offset<Vector<Offset<Metadata::ValueParamDecl>>> BuildValueParams(
+        FlatBufferBuilder &builder, const ir::TSTypeParameterDeclaration *astTypeParams);
+    Offset<Metadata::PropertyDecl> BuildPropertyDecl(FlatBufferBuilder &builder, const ir::ClassProperty *var);
+    Offset<Metadata::ImportDecl> BuildImportDecl(FlatBufferBuilder &builder,
+                                                 const ir::ImportDeclaration *importDecl) const;
+    template <typename T>
+    Offset<Metadata::Decls> BuildDecls(FlatBufferBuilder &builder, const ArenaVector<T> &astDecls);
+    std::pair<std::vector<Offset<>>, std::vector<uint8_t>> BuildExtends(
+        FlatBufferBuilder &builder, const ArenaVector<ir::TSInterfaceHeritage *> &extends);
+    Offset<Vector<Offset<Metadata::ValueParamDecl>>> BuildValueParams(
         FlatBufferBuilder &builder, const ArenaVector<varbinder::LocalVariable *> &astValueParams);
     static Metadata::BuiltinTypeKind GetBuiltinTypeKind(const checker::Type *etsType);
     static Offset<Metadata::AnnotationDecl> BuildAnnotationDecl(FlatBufferBuilder &builder,
                                                                 const ir::AnnotationDeclaration *astDecl);
-    static std::vector<uint8_t> GetMetadataBytes(FlatBufferBuilder &builder,
-                                                 const std::vector<Offset<Metadata::ClassDecl>> &classes,
-                                                 const std::vector<Offset<Metadata::AnnotationDecl>> &annotations,
-                                                 const std::vector<Offset<Metadata::EnumDecl>> &enums);
-    static Offset<Metadata::EnumDecl> BuildEnumDecl(FlatBufferBuilder &builder, const ir::ClassDefinition *astDecl);
-    static void ProcessStatement(FlatBufferBuilder &builder, const ir::Statement &stmt,
-                                 std::vector<Offset<Metadata::ClassDecl>> &classes,
-                                 std::vector<Offset<Metadata::AnnotationDecl>> &annotations,
-                                 std::vector<Offset<Metadata::EnumDecl>> &enums);
+    static std::vector<uint8_t> GetMetadataBytes(FlatBufferBuilder &builder, const Offset<Metadata::Decls> &fbDecls);
+    void ProcessStatement(FlatBufferBuilder &builder, const ir::AstNode &node, MetadataDecls &decls);
     // NOLINTNEXTLINE(fuchsia-statically-constructed-objects)
     static const std::map<checker::ETSObjectFlags, Metadata::BuiltinTypeKind> BUILTIN_PRIMITIVE_TYPES;
+
+#if defined(METADATA_VERBOSE) && METADATA_VERBOSE
+    uint8_t curLogLevel_ = 0;
+#endif
 };
 
 }  // namespace ark::es2panda::compiler

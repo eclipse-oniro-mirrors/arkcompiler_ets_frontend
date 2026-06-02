@@ -912,7 +912,8 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     }
 
     std::vector<pandasm::AnnotationData> annotations = GenAnnotations(classDef);
-    if (classDef->IsNamespaceTransformed() || classDef->IsGlobalInitialized()) {
+    if ((classDef->IsNamespaceTransformed() || classDef->IsGlobalInitialized()) &&
+        !Context()->config->options->IsEmitMetadata()) {
         annotations.push_back(GenAnnotationModule(classDef));
     }
 

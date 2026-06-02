@@ -18,6 +18,7 @@
 
 #include "compiler/lowering/phase.h"
 #include "schemaMetadataGenerated.h"
+#include "libarkfile/metadata_helper.h"
 
 namespace ark::es2panda::compiler {
 
@@ -38,22 +39,59 @@ public:
 
 private:
     void SetupGlobalClassStaticBlock(ir::ClassStaticBlock *staticBlock) const;
-    void SetupGlobalClass(parser::Program *program) const;
-    ir::ETSModule *CreateModule(parser::Program *program) const;
+    void SetupGlobalClass() const;
+    void MarkBuiltinIfNeeded(varbinder::Variable *var) const;
+
+    void AddClassMembers(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
+    void AddExtends(const Metadata::InterfaceDecl *fbInterfaceDecl, ir::TSInterfaceDeclaration *interfaceDecl) const;
+    void AddMethods(const flatbuffers::Vector<flatbuffers::Offset<Metadata::FunctionDecl>> &methods,
+                    ArenaVector<ir::AstNode *> &body, ir::AstNode *parent);
+
     ValueParamsInfo CreateValueParams(
-        const flatbuffers::Vector<flatbuffers::Offset<Metadata::ValueParamDecl>> *fbValueParams,
-        varbinder::Scope *parentScope) const;
-    TypeParamsInfo CreateTypeParams(
-        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *fbTypeParams,
-        varbinder::Scope *parentScope) const;
-    ir::MethodDefinition *CreateMethod(const ir::ClassDefinition *classDef, util::StringView methodName,
-                                       ir::TypeNode &returnType, FbMethodParams fbParams, MethodOptions options) const;
-    ir::ClassDefinition *CreateClass(parser::Program *program, util::StringView className) const;
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::ValueParamDecl>> *fbValueParams) const;
+    ir::TSTypeParameterDeclaration *CreateTypeParams(
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *fbTypeParams) const;
+
     ir::TypeNode *CreateBuiltinType(Metadata::BuiltinTypeKind kind) const;
+    ir::TypeNode *CreateRefType(const Metadata::TypeRef *fbRefType) const;
+    ir::TypeNode *CreateUnionType(const Metadata::UnionType *fbUnionType) const;
+    ir::TypeNode *CreateArrayType(const Metadata::ArrayType *fbArrayType) const;
+    ir::TypeNode *CreateTupleType(const Metadata::TupleType *fbTupleType) const;
+    ir::TypeNode *CreateFunctionType(const Metadata::FunctionType *fbFunctionType) const;
+    ir::TypeNode *CreateStringLiteralType(const Metadata::StringLiteralType *fbStringLiteralType) const;
     ir::TypeNode *CreateType(const void *type, Metadata::Type kind) const;
-    ir::ClassProperty *CreateField(const ir::ClassDefinition *classDef, util::StringView fieldName,
-                                   ir::TypeNode &returnType, ir::ModifierFlags modifiers) const;
+
+    ir::MethodDefinition *CreateMethodDecl(const Metadata::FunctionDecl *fbMethodDecl);
+    ir::ClassProperty *CreatePropertyDecl(const Metadata::PropertyDecl *fbPropDecl) const;
+
+    ir::AnnotationDeclaration *CreateAnnotationDecl(const Metadata::AnnotationDecl *fbAnnotationDecl) const;
+    ir::ETSImportDeclaration *CreateImportDecl(const Metadata::ImportDecl *fbImportDecl) const;
+    ir::TSTypeAliasDeclaration *CreateTypeDecl(const Metadata::TypeDecl *fbTypeDecl) const;
+    ir::TSInterfaceDeclaration *CreateInterfaceDecl(const Metadata::InterfaceDecl *fbInterfaceDecl);
+    ir::ClassDefinition *CreateClassDecl(
+        const Metadata::ClassDecl *fbClassDecl,
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeParamDecl>> *fbTypeParams);
+    ir::ETSModule *CreateModule() const;
+
+    ArenaVector<ir::AstNode *> CreateDecls(const Metadata::Decls *decls);
+
+    varbinder::Scope *Scope() const
+    {
+        return Context()->GetChecker()->VarBinder()->GetScope();
+    }
+    template <typename T>
+    T WithScope(varbinder::Scope *scope, const std::function<T()> &run);
+    inline void WithProgram(parser::Program *program, const std::function<void()> &run);
+
+    void ProcessMetadata(panda_file::MetadataByModules *metadata);
+
+    parser::Program *curProgram = nullptr;
+
     static const std::map<Metadata::BuiltinTypeKind, ir::PrimitiveType> BUILTIN_PRIMITIVE_TYPES;
+
+#if defined(METADATA_VERBOSE) && METADATA_VERBOSE
+    uint8_t curLogLevel_ = 0;
+#endif
 };
 }  // namespace ark::es2panda::compiler
 

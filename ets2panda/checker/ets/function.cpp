@@ -2424,7 +2424,7 @@ std::string ETSChecker::GetAsyncImplName(ir::MethodDefinition *asyncMethod)
 ir::MethodDefinition *ETSChecker::CreateMethod(const util::StringView &name, ir::ModifierFlags modifiers,
                                                ir::ScriptFunctionFlags flags, ArenaVector<ir::Expression *> &&params,
                                                varbinder::FunctionParamScope *paramScope, ir::TypeNode *returnType,
-                                               ir::AstNode *body)
+                                               ir::AstNode *body, ir::MethodDefinitionKind kind)
 {
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *nameId = ProgramAllocNode<ir::Identifier>(name, ProgramAllocator());
@@ -2450,9 +2450,9 @@ ir::MethodDefinition *ETSChecker::CreateMethod(const util::StringView &name, ir:
     paramScope->BindFunctionScope(scope);
 
     if (!func->IsStatic()) {
-        auto classDef = VarBinder()->GetScope()->AsClassScope()->Node()->AsClassDefinition();
+        const auto parentDecl = VarBinder()->GetScope()->AsClassScope()->Node()->AsTyped();
         VarBinder()->AsETSBinder()->AddFunctionThisParam(func);
-        func->Scope()->Find(varbinder::VarBinder::MANDATORY_PARAM_THIS).variable->SetTsType(classDef->TsType());
+        func->Scope()->Find(varbinder::VarBinder::MANDATORY_PARAM_THIS).variable->SetTsType(parentDecl->TsType());
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -2461,8 +2461,7 @@ ir::MethodDefinition *ETSChecker::CreateMethod(const util::StringView &name, ir:
     auto *nameClone = nameId->Clone(ProgramAllocator(), nullptr);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *method = util::NodeAllocator::ForceSetParent<ir::MethodDefinition>(
-        ProgramAllocator(), ir::MethodDefinitionKind::METHOD, nameClone, funcExpr, modifiers, ProgramAllocator(),
-        false);
+        ProgramAllocator(), kind, nameClone, funcExpr, modifiers, ProgramAllocator(), false);
 
     return method;
 }

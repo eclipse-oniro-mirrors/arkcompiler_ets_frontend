@@ -539,7 +539,8 @@ public:
     ir::MethodDefinition *CreateMethod(const util::StringView &name, ir::ModifierFlags modifiers,
                                        ir::ScriptFunctionFlags flags, ArenaVector<ir::Expression *> &&params,
                                        varbinder::FunctionParamScope *paramScope, ir::TypeNode *returnType,
-                                       ir::AstNode *body);
+                                       ir::AstNode *body,
+                                       ir::MethodDefinitionKind kind = ir::MethodDefinitionKind::METHOD);
     varbinder::FunctionParamScope *CopyParams(
         const ArenaVector<ir::Expression *> &params, ArenaVector<ir::Expression *> &outParams,
         ArenaUnorderedMap<varbinder::Variable *, varbinder::Variable *> *paramVarMap);

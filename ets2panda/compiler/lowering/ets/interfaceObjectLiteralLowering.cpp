@@ -1095,7 +1095,7 @@ bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
                 requiredTypes.insert(objExpr->TsType()->AsETSObjectType()->GetDeclNode());
             });
         });
-        ctx->parserProgram->GetExternalDecls()->Visit([ctx, varbinder, &requiredTypes](auto *extProg) {
+        ctx->parserProgram->GetExternalPrograms()->Visit([ctx, varbinder, &requiredTypes](auto *extProg) {
             if (extProg->IsASTLowered()) {
                 return;
             }

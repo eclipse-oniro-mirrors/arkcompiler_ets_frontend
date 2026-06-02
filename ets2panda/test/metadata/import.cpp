@@ -21,6 +21,7 @@
 #include "test/utils/metadata_test.h"
 #include "flatbuffers/flatbuffers.h"
 #include "schemaMetadataGenerated.h"
+#include "util/perfMetrics.h"
 #include "utils/assertions.h"
 
 namespace ark::es2panda::compiler::test {
@@ -62,6 +63,13 @@ TEST_F(MetadataTestImport, complex_calls)
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
     CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
     Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+}
+
+TEST_F(MetadataTestImport, from_stdlib)
+{
+    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
+    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+    util::DumpPerfMetrics();
 }
 
 }  // namespace ark::es2panda::compiler::test

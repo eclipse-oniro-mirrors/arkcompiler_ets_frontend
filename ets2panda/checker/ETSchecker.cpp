@@ -443,6 +443,9 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
         if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
             return;
         }
+        if (extProg->template Is<util::ModuleKind::METADATA_DECL>()) {
+            extProg->SetProgramModified(false);
+        }
         extProg->PushChecker(this);
         auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
         varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);

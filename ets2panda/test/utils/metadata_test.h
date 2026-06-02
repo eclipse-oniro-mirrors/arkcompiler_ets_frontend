@@ -68,6 +68,7 @@ protected:
         if constexpr (METADATA_READING_ENABLED) {
             args.emplace_back("--read-metadata");
         }
+        args.emplace_back("--dump-perf-metrics");
         EXPECT_EQ(options->Parse(Span(&(*args.cbegin()), args.size())), true)
             << "Compilation options are failed to parse";
 

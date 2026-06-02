@@ -761,7 +761,7 @@ void ETSBinder::ResolveInterfaceDeclaration(ir::TSInterfaceDeclaration *decl)
 
 void ETSBinder::BuildInterfaceDeclaration(ir::TSInterfaceDeclaration *decl)
 {
-    if (decl->TypeParams() != nullptr) {
+    if (decl->TypeParams() != nullptr && !decl->TypeParams()->Params().empty()) {
         auto typeParamScopeCtx = LexicalScope<LocalScope>::Enter(this, decl->TypeParams()->Scope());
         ResolveReferences(decl->TypeParams());
         ResolveInterfaceDeclaration(decl);

@@ -1322,11 +1322,11 @@ public:
 
         const_cast<ImportInfo *>(&fractionBeingParsed->GetImportInfo())->moduleName_ = packageName;
         fractionBeingParsed->SetPackageInfo(packageName, util::ModuleKind::PACKAGE);
-        ImportInfo pkgMetadata {};
-        pkgMetadata.resolvedSource_ = packageName;
-        pkgMetadata.moduleName_ = packageName;
-        pkgMetadata.SetData<ModuleKind::PACKAGE, false>(std::string(packageName), "");
-        auto newPkg = ipm_->NewEmptyPackage(pkgMetadata);
+        ImportInfo pkgImportInfo {};
+        pkgImportInfo.resolvedSource_ = packageName;
+        pkgImportInfo.moduleName_ = packageName;
+        pkgImportInfo.SetData<ModuleKind::PACKAGE, false>(std::string(packageName), "");
+        auto newPkg = ipm_->NewEmptyPackage(pkgImportInfo);
         newPkg->AppendFraction(fractionBeingParsed->As<ModuleKind::MODULE>());
 
         // fixup externalSources:
@@ -1553,6 +1553,11 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
 
     auto abcPath = importInfo->AbcPath();
     if (processedAbcFiles_.count(abcPath) != 0) {
+        const auto pf = panda_file::OpenPandaFile(abcPath);
+        if (pf->IsMetadataEnabled()) {
+            importInfo->SetBinFile(*pf);
+            return;
+        }
         LookupEtscacheFile(importInfo);
         return;
     }

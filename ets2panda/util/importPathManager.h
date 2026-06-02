@@ -197,9 +197,10 @@ private:
     void SetBinFile(const panda_file::File &pf)
     {
         ma_.SetFile(pf);
-        const auto metadata =
-            ma_.GetMetadataFor(panda_file::MetadataAccessor::BuildModuleId(ModuleName(), ResolvedSource()));
-        SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(AbcPath(), std::move(metadata));
+        const auto moduleId =
+            panda_file::MetadataAccessor::BuildModuleId(ModuleName(), extModuleData_->SourceFilePath());
+        SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(moduleId.ToString(),
+                                                         std::move(ma_.GetMetadataForPackage(moduleId)));
     }
 
     template <ModuleKind KIND, bool SHOULD_CACHE = true>

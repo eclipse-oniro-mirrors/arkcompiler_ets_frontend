@@ -19,13 +19,19 @@
 #include "ir/base/methodDefinition.h"
 #include "schemaMetadataGenerated.h"
 #include "checker/types/ets/etsTupleType.h"
+#include "checker/types/ets/etsAwaitedType.h"
+#include "libarkfile/metadata_helper.h"
+#include "utils.h"
 
 #include <string>
 
 namespace ark::es2panda::compiler {
 
 using namespace panda_file;
+using namespace panda_file::helpers;
 using checker::ETSObjectFlags, checker::Type, ir::MethodDefinition, ir::ClassDefinition;
+
+#define CUR_METADATA_LOGGER_COMPONENT METADATA_SERIALIZATION
 
 constexpr auto NOT_BUILTIN_TYPE_KIND = static_cast<Metadata::BuiltinTypeKind>(-1);
 
@@ -77,38 +83,124 @@ Metadata::BuiltinTypeKind MetadataSerializationPhase::GetBuiltinTypeKind(const T
 Offset<Vector<Offset<Metadata::ValueParamDecl>>> MetadataSerializationPhase::BuildValueParams(
     FlatBufferBuilder &builder, const ArenaVector<varbinder::LocalVariable *> &astValueParams)
 {
-    std::vector<Offset<Metadata::ValueParamDecl>> valueParams;
+    std::vector<Offset<Metadata::ValueParamDecl>> fbValueParams;
     for (const auto &param : astValueParams) {
         const auto paramName = builder.CreateSharedString(std::string(param->Name()));
-        const auto [preturnTypeKind, preturnTypeOff] = BuildType(builder, param->TsType());
-        valueParams.emplace_back(Metadata::CreateValueParamDecl(builder, paramName, preturnTypeKind, preturnTypeOff));
+        const auto [typeKind, typeOff] = BuildType(builder, param->TsType());
+        fbValueParams.emplace_back(Metadata::CreateValueParamDecl(builder, paramName, typeKind, typeOff,
+                                                                  param->HasFlag(varbinder::VariableFlags::READONLY),
+                                                                  param->HasFlag(varbinder::VariableFlags::OPTIONAL)));
     }
-    return builder.CreateVector<Offset<Metadata::ValueParamDecl>>(valueParams);
+
+    return builder.CreateVector<Offset<Metadata::ValueParamDecl>>(fbValueParams);
 }
 
 Offset<Vector<Offset<Metadata::TypeParamDecl>>> MetadataSerializationPhase::BuildTypeParams(
-    FlatBufferBuilder &builder, const ArenaVector<Type *> &astTypeParams)
+    FlatBufferBuilder &builder, const ir::TSTypeParameterDeclaration *astTypeParams)
 {
-    std::vector<Offset<Metadata::TypeParamDecl>> typeParams;
-    for (const auto &type : astTypeParams) {
-        typeParams.emplace_back(BuildTypeParamDecl(builder, type));
+    if (!astTypeParams || astTypeParams->Params().empty()) {
+        return 0;
     }
-    return builder.CreateVector<Offset<Metadata::TypeParamDecl>>(typeParams);
+
+    std::vector<Offset<Metadata::TypeParamDecl>> fbTypeParams;
+    for (const auto &typeParam : astTypeParams->Params()) {
+        Metadata::TypeParamVariance variance = Metadata::TypeParamVariance::TypeParamVariance_INV;
+        if (typeParam->Modifiers() & ir::ModifierFlags::IN) {
+            variance = Metadata::TypeParamVariance::TypeParamVariance_IN;
+        } else if (typeParam->Modifiers() & ir::ModifierFlags::IN) {
+            variance = Metadata::TypeParamVariance::TypeParamVariance_OUT;
+        }
+        fbTypeParams.emplace_back(Metadata::CreateTypeParamDecl(
+            builder, builder.CreateSharedString(typeParam->Name()->Name().Utf8()), variance));
+    }
+
+    return builder.CreateVector<Offset<Metadata::TypeParamDecl>>(fbTypeParams);
 }
 
-Offset<Metadata::TypeParamDecl> MetadataSerializationPhase::BuildTypeParamDecl(FlatBufferBuilder &builder,
-                                                                               const Type *typeParam)
+Offset<Metadata::TypeDecl> MetadataSerializationPhase::BuildTypeDecl(FlatBufferBuilder &builder,
+                                                                     const ir::TSTypeAliasDeclaration *astDecl)
 {
-    return Metadata::CreateTypeParamDecl(builder, builder.CreateSharedString(typeParam->ToString()));
+    const auto typeName = builder.CreateSharedString(astDecl->Id()->Name().Utf8());
+    const auto &[buildType, buildTypeKind] = BuildType(builder, astDecl->TypeAnnotation()->TsType());
+
+    LOG_METADATA("type " << astDecl->Id()->Name().Utf8() << " = " << astDecl->TypeAnnotation()->TsType()->ToString());
+
+    return Metadata::CreateTypeDecl(builder, typeName, buildType, buildTypeKind);
+}
+
+template <typename T>
+Offset<Metadata::Decls> MetadataSerializationPhase::BuildDecls(FlatBufferBuilder &builder,
+                                                               const ArenaVector<T> &astDecls)
+{
+    MetadataDecls decls;
+    for (const auto stmt : astDecls) {
+        ProcessStatement(builder, *stmt, decls);
+    }
+    if (!decls.IsFilled()) {
+        return 0;
+    }
+    return Metadata::CreateDecls(
+        builder, decls.imports.empty() ? 0 : builder.CreateVector<Offset<Metadata::ImportDecl>>(decls.imports),
+        decls.classes.empty() ? 0 : builder.CreateVector<Offset<Metadata::ClassDecl>>(decls.classes),
+        decls.interfaces.empty() ? 0 : builder.CreateVector<Offset<Metadata::InterfaceDecl>>(decls.interfaces),
+        decls.annotations.empty() ? 0 : builder.CreateVector<Offset<Metadata::AnnotationDecl>>(decls.annotations),
+        decls.types.empty() ? 0 : builder.CreateVector<Offset<Metadata::TypeDecl>>(decls.types));
 }
 
 Offset<Metadata::ClassDecl> MetadataSerializationPhase::BuildClassDecl(FlatBufferBuilder &builder,
                                                                        const ClassDefinition *astDecl)
 {
     const auto className = builder.CreateSharedString(astDecl->Ident()->ToString());
-    const auto methods = BuildClassMethods(builder, astDecl);
-    const auto fields = BuildClassProperties(builder, astDecl);
-    return Metadata::CreateClassDecl(builder, className, methods, fields);
+    const auto typeParams = BuildTypeParams(builder, astDecl->TypeParams());
+
+    LOG_METADATA(GetDeclKindToLog(astDecl)
+                 << astDecl->Ident()->Name()
+                 << (astDecl->TypeParams() ? "<" + IrDeclToString(astDecl->TypeParams()) + ">" : ""));
+
+    LOG_METADATA_NESTING_INC();
+    const auto isFromNamespaceOrTopLevel = astDecl->IsNamespaceTransformed() || astDecl->IsGlobal();
+    const auto methods = BuildMethodDecls(builder, astDecl->Body(), isFromNamespaceOrTopLevel);
+    const auto properties = BuildPropertyDecls(builder, astDecl->Body(), isFromNamespaceOrTopLevel);
+    const auto decls = BuildDecls(builder, astDecl->Body());
+    LOG_METADATA_NESTING_DEC();
+
+    return Metadata::CreateClassDecl(builder, className, astDecl->IsNamespaceTransformed(),
+                                     astDecl->IsEnumTransformed(), methods, properties, decls, typeParams);
+}
+
+std::pair<std::vector<Offset<>>, std::vector<uint8_t>> MetadataSerializationPhase::BuildExtends(
+    FlatBufferBuilder &builder, const ArenaVector<ir::TSInterfaceHeritage *> &extends)
+{
+    std::vector<Offset<>> extendTypes;
+    std::vector<uint8_t> extendTypeKinds;
+    for (const auto &ext : extends) {
+        const auto [componentTypeKind, componentTypeOff] = BuildType(builder, ext->Expr()->TsType());
+        extendTypes.emplace_back(componentTypeOff);
+        extendTypeKinds.emplace_back(componentTypeKind);
+    }
+    return {extendTypes, extendTypeKinds};
+}
+
+Offset<Metadata::InterfaceDecl> MetadataSerializationPhase::BuildInterfaceDecl(
+    FlatBufferBuilder &builder, const ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    const auto interfaceName = builder.CreateSharedString(interfaceDecl->Id()->ToString());
+    const auto typeParams = BuildTypeParams(builder, interfaceDecl->TypeParams());
+    const auto [extendTypes, extendTypeKinds] = BuildExtends(builder, interfaceDecl->Extends());
+
+    LOG_METADATA(
+        "interface " << interfaceDecl->Id()->Name()
+                     << (interfaceDecl->TypeParams() ? "<" + IrDeclToString(interfaceDecl->TypeParams()) + ">" : "")
+                     << (!interfaceDecl->Extends().empty() ? ": " + IrDeclVectorToString(interfaceDecl->Extends())
+                                                           : ""));
+
+    LOG_METADATA_NESTING_INC();
+    const auto methods = BuildMethodDecls(builder, interfaceDecl->Body()->Body());
+    LOG_METADATA_NESTING_DEC();
+
+    return Metadata::CreateInterfaceDecl(builder, interfaceName, methods, typeParams,
+                                         builder.CreateVector<uint8_t>(extendTypeKinds),
+                                         builder.CreateVector<Offset<>>(extendTypes));
 }
 
 Offset<Metadata::AnnotationDecl> MetadataSerializationPhase::BuildAnnotationDecl(
@@ -118,46 +210,33 @@ Offset<Metadata::AnnotationDecl> MetadataSerializationPhase::BuildAnnotationDecl
     return Metadata::CreateAnnotationDecl(builder, annotationName);
 }
 
-Offset<Metadata::EnumDecl> MetadataSerializationPhase::BuildEnumDecl(FlatBufferBuilder &builder,
-                                                                     const ClassDefinition *astDecl)
+Offset<Vector<Offset<Metadata::PropertyDecl>>> MetadataSerializationPhase::BuildPropertyDecls(
+    FlatBufferBuilder &builder, const ArenaVector<ir::AstNode *> &body, const bool isFromNamespaceOrTopLevel)
 {
-    const auto enumName = builder.CreateSharedString(astDecl->Ident()->ToString());
+    std::vector<Offset<Metadata::PropertyDecl>> properties;
 
-    std::vector<Offset<flatbuffers::String>> entries;
-    for (const auto member : astDecl->Body()) {
-        if (!member->IsClassProperty()) {
+    for (const auto &elem : body) {
+        if (isFromNamespaceOrTopLevel && !elem->IsExported() && !elem->IsDefaultExported()) {
             continue;
         }
-        if (auto propName = member->AsClassProperty()->Key()->AsIdentifier()->ToString();
-            !propName.empty() && propName[0] != '#') {
-            entries.emplace_back(builder.CreateSharedString(propName));
+        if (elem->IsClassProperty() && !elem->IsProtected() && !elem->IsPrivate()) {
+            properties.emplace_back(BuildPropertyDecl(builder, elem->AsClassProperty()));
         }
     }
 
-    return Metadata::CreateEnumDecl(builder, enumName, builder.CreateVector<Offset<flatbuffers::String>>(entries));
+    return builder.CreateVector<Offset<Metadata::PropertyDecl>>(properties);
 }
 
-Offset<Vector<Offset<Metadata::VarDecl>>> MetadataSerializationPhase::BuildClassProperties(
-    FlatBufferBuilder &builder, const ClassDefinition *astDecl)
-{
-    std::vector<Offset<Metadata::VarDecl>> fields;
-
-    for (const auto elem : astDecl->Body()) {
-        if (elem->IsClassProperty()) {
-            fields.emplace_back(BuildVarDecl(builder, elem->AsClassProperty()));
-        }
-    }
-
-    return builder.CreateVector<Offset<Metadata::VarDecl>>(fields);
-}
-
-Offset<Vector<Offset<Metadata::FunctionDecl>>> MetadataSerializationPhase::BuildClassMethods(
-    FlatBufferBuilder &builder, const ClassDefinition *astDecl)
+Offset<Vector<Offset<Metadata::FunctionDecl>>> MetadataSerializationPhase::BuildMethodDecls(
+    FlatBufferBuilder &builder, const ArenaVector<ir::AstNode *> &body, const bool isFromNamespaceOrTopLevel)
 {
     std::vector<Offset<Metadata::FunctionDecl>> methods;
 
-    for (const auto elem : astDecl->Body()) {
-        if (elem->IsMethodDefinition()) {
+    for (const auto &elem : body) {
+        if (isFromNamespaceOrTopLevel && !elem->IsExported() && !elem->IsDefaultExported()) {
+            continue;
+        }
+        if (elem->IsMethodDefinition() && !elem->IsProtected() && !elem->IsPrivate()) {
             methods.emplace_back(BuildFunctionDecl(builder, elem->AsMethodDefinition()->Function()));
         }
     }
@@ -191,16 +270,26 @@ Offset<> MetadataSerializationPhase::BuildRefType(FlatBufferBuilder &builder, co
     ES2PANDA_ASSERT(decl->IsClassDefinition() ||
                     decl->IsTSInterfaceDeclaration());  // other decls are not supported yet
 
-    util::StringView declName;
+    std::string declName;
     if (decl->IsClassDefinition()) {
-        declName = decl->AsClassDefinition()->InternalName();
+        declName = decl->AsClassDefinition()->InternalName().Utf8();
     } else if (decl->IsTSInterfaceDeclaration()) {
-        declName = decl->AsTSInterfaceDeclaration()->InternalName();
+        declName = decl->AsTSInterfaceDeclaration()->InternalName().Utf8();
     } else {
         return 0;
     }
 
-    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(std::string(declName))).Union();
+    std::vector<uint8_t> typeArgKinds;
+    std::vector<Offset<>> typeArgs;
+    for (auto const &typeArg : type->TypeArguments()) {
+        const auto [componentTypeKind, componentTypeOff] = BuildType(builder, typeArg);
+        typeArgs.emplace_back(componentTypeOff);
+        typeArgKinds.emplace_back(componentTypeKind);
+    }
+
+    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(declName), builder.CreateVector(typeArgKinds),
+                                   builder.CreateVector(typeArgs))
+        .Union();
 }
 
 Offset<> MetadataSerializationPhase::BuildArrayType(FlatBufferBuilder &builder, const checker::ETSArrayType *type)
@@ -242,22 +331,29 @@ Offset<> MetadataSerializationPhase::BuildTypeParameterType(FlatBufferBuilder &b
     return Metadata::CreateTypeRef(builder, builder.CreateSharedString(std::string(type->Name()))).Union();
 }
 
+Offset<> MetadataSerializationPhase::BuildTypeAliasType(FlatBufferBuilder &builder,
+                                                        const checker::ETSTypeAliasType *type)
+{
+    const auto typeName = type->GetDeclNode()->AsTSTypeAliasDeclaration()->Id()->Name().Utf8();
+    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(typeName)).Union();
+}
+
 std::pair<Metadata::Type, Offset<>> MetadataSerializationPhase::BuildType(FlatBufferBuilder &builder, const Type *type)
 {
-    if (type->IsETSObjectType() && type->AsETSObjectType()->IsETSStringLiteralType()) {
-        return {Metadata::Type::Type_StringLiteral, BuildStringLiteralType(builder, type->AsETSStringType())};
-    }
-
-    if (type->IsETSUnionType()) {
-        return {Metadata::Type::Type_Union, BuildUnionType(builder, type->AsETSUnionType())};
-    }
-
     if (type->IsETSObjectType()) {
-        return {Metadata::Type::Type_Ref, BuildRefType(builder, type->AsETSObjectType())};
+        const auto etsObjType = type->AsETSObjectType();
+        if (etsObjType->IsETSStringLiteralType()) {
+            return {Metadata::Type::Type_StringLiteral, BuildStringLiteralType(builder, type->AsETSStringType())};
+        }
+        return {Metadata::Type::Type_Ref, BuildRefType(builder, etsObjType)};
     }
 
     if (type->IsETSTypeParameter()) {
         return {Metadata::Type::Type_Ref, BuildTypeParameterType(builder, type->AsETSTypeParameter())};
+    }
+
+    if (type->IsETSUnionType()) {
+        return {Metadata::Type::Type_Union, BuildUnionType(builder, type->AsETSUnionType())};
     }
 
     if (type->IsETSArrayType()) {
@@ -272,94 +368,107 @@ std::pair<Metadata::Type, Offset<>> MetadataSerializationPhase::BuildType(FlatBu
         return {Metadata::Type::Type_Tuple, BuildTupleType(builder, type->AsETSTupleType())};
     }
 
+    if (type->IsETSTypeAliasType()) {
+        return {Metadata::Type::Type_Ref, BuildTypeAliasType(builder, type->AsETSTypeAliasType())};
+    }
+
+    if (type->IsETSAwaitedType()) {
+        return {Metadata::Type::Type_Ref, BuildTypeParameterType(builder, type->AsETSAwaitedType()->GetUnderlying())};
+    }
+
     const auto builtinTypeKind = GetBuiltinTypeKind(type);
+
     ES2PANDA_ASSERT(builtinTypeKind != NOT_BUILTIN_TYPE_KIND);
+
     return {Metadata::Type::Type_Builtin, Metadata::CreateBuiltinType(builder, builtinTypeKind).Union()};
 }
 
 Offset<Metadata::FunctionDecl> MetadataSerializationPhase::BuildFunctionDecl(FlatBufferBuilder &builder,
                                                                              const ir::ScriptFunction *func)
 {
-    ES2PANDA_ASSERT(func->Signature() && func->Signature()->ReturnType());
     const auto methodName = builder.CreateSharedString(func->Id()->ToString());
     const auto valueParams = BuildValueParams(builder, func->Signature()->Params());
-    const auto typeParams = BuildTypeParams(builder, func->Signature()->TypeParams());
+    const auto typeParams = BuildTypeParams(builder, func->TypeParams());
     const auto isVoidReturnType =
-        func->ReturnTypeAnnotation() && func->ReturnTypeAnnotation()->IsETSPrimitiveType() &&
-        func->ReturnTypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::VOID;
+        (func->ReturnTypeAnnotation() && func->ReturnTypeAnnotation()->IsETSPrimitiveType() &&
+         func->ReturnTypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::VOID) ||
+        func->IsConstructor();
 
-    // A temporary fix for the void return type because at the current stage, undefined type set instead, as a return
-    // type
+    // Temporary fix for the void return type because at the current stage, undefined type set instead as a return type
     const auto [returnTypeKind, returnTypeOff] =
         isVoidReturnType ? std::make_pair(Metadata::Type::Type_Builtin,
                                           Metadata::CreateBuiltinType(builder, Metadata::BuiltinTypeKind_void_).Union())
                          : BuildType(builder, func->Signature()->ReturnType());
 
+    LOG_METADATA(func->Id()->ToString() << func->Signature()->ToString());
+
     return Metadata::CreateFunctionDecl(builder, methodName, returnTypeKind, returnTypeOff, func->IsStatic(),
                                         valueParams, typeParams);
 }
 
-Offset<Metadata::VarDecl> MetadataSerializationPhase::BuildVarDecl(FlatBufferBuilder &builder,
-                                                                   const ir::ClassProperty *var)
+Offset<Metadata::PropertyDecl> MetadataSerializationPhase::BuildPropertyDecl(FlatBufferBuilder &builder,
+                                                                             const ir::ClassProperty *var)
 {
     const auto returnType = var->TsType();
     const auto varName = builder.CreateSharedString(var->Id()->ToString());
     const auto [returnTypeKind, returnTypeOff] = BuildType(builder, returnType);
-    return Metadata::CreateVarDecl(builder, varName, returnTypeKind, returnTypeOff, var->IsStatic());
+
+    LOG_METADATA(var->Id()->ToString() << ": " << returnType->ToString());
+
+    return Metadata::CreatePropertyDecl(builder, varName, returnTypeKind, returnTypeOff, var->IsStatic());
 }
 
-std::vector<uint8_t> MetadataSerializationPhase::GetMetadataBytes(
-    FlatBufferBuilder &builder, const std::vector<Offset<Metadata::ClassDecl>> &classes,
-    const std::vector<Offset<Metadata::AnnotationDecl>> &annotations,
-    const std::vector<Offset<Metadata::EnumDecl>> &enums)
+Offset<Metadata::ImportDecl> MetadataSerializationPhase::BuildImportDecl(FlatBufferBuilder &builder,
+                                                                         const ir::ImportDeclaration *importDecl) const
 {
-    const auto root = Metadata::CreateRoot(builder, builder.CreateVector<Offset<Metadata::ClassDecl>>(classes),
-                                           0,  // interfaces
-                                           builder.CreateVector<Offset<Metadata::EnumDecl>>(enums),
-                                           builder.CreateVector<Offset<Metadata::AnnotationDecl>>(annotations),
-                                           0,  // types
-                                           0,  // functions
-                                           0,  // properties
-                                           0   // variables
-    );
-    builder.Finish(root);
+    const auto from = importDecl->Source()->Str().Utf8();
+
+    std::vector<Offset<flatbuffers::String>> specifiers;
+    for (const auto &specifier : importDecl->Specifiers()) {
+        if (!specifier->IsImportSpecifier()) {
+            continue;
+        }
+        specifiers.emplace_back(builder.CreateSharedString(specifier->AsImportSpecifier()->Imported()->Name().Utf8()));
+    }
+
+    LOG_METADATA(IrDeclToString(importDecl));
+
+    return Metadata::CreateImportDecl(builder, builder.CreateSharedString(from), builder.CreateVector(specifiers));
+}
+
+void MetadataSerializationPhase::ProcessStatement(FlatBufferBuilder &builder, const ir::AstNode &node,
+                                                  MetadataDecls &decls)
+{
+    if (node.IsETSImportDeclaration()) {
+        decls.imports.emplace_back(BuildImportDecl(builder, node.AsETSImportDeclaration()));
+    }
+
+    const auto isExported = node.IsExported() || node.IsDefaultExported() ||
+                            (node.IsClassDeclaration() && node.AsClassDeclaration()->Definition()->IsGlobal());
+    if (!isExported) {
+        return;
+    }
+
+    if (node.IsClassDeclaration()) {
+        decls.classes.emplace_back(BuildClassDecl(builder, node.AsClassDeclaration()->Definition()));
+    } else if (node.IsTSInterfaceDeclaration()) {
+        decls.interfaces.emplace_back(BuildInterfaceDecl(builder, node.AsTSInterfaceDeclaration()));
+    } else if (node.IsTSTypeAliasDeclaration()) {
+        decls.types.emplace_back(BuildTypeDecl(builder, node.AsTSTypeAliasDeclaration()));
+    } else if (node.IsAnnotationDeclaration()) {
+        decls.annotations.emplace_back(BuildAnnotationDecl(builder, node.AsAnnotationDeclaration()));
+    }
+}
+
+std::vector<uint8_t> MetadataSerializationPhase::GetMetadataBytes(FlatBufferBuilder &builder,
+                                                                  const Offset<Metadata::Decls> &fbDecls)
+{
+    if (fbDecls.IsNull()) {
+        return {};
+    }
+    builder.Finish(fbDecls);
     const auto buf = builder.GetBufferSpan();
     return {buf.begin(), buf.end()};
-}
-
-void MetadataSerializationPhase::ProcessStatement(FlatBufferBuilder &builder, const ir::Statement &stmt,
-                                                  std::vector<Offset<Metadata::ClassDecl>> &classes,
-                                                  std::vector<Offset<Metadata::AnnotationDecl>> &annotations,
-                                                  std::vector<Offset<Metadata::EnumDecl>> &enums)
-{
-    if (stmt.IsClassDeclaration() && stmt.AsClassDeclaration()->Definition()->IsGlobal()) {
-        classes.emplace_back(BuildClassDecl(builder, stmt.AsClassDeclaration()->Definition()));
-        return;
-    }
-    if (!stmt.IsExported() && !stmt.IsDefaultExported()) {
-        return;
-    }
-
-    if (stmt.IsTSEnumDeclaration()) {
-        const auto enumDecl = stmt.AsTSEnumDeclaration();
-        const auto enumName = builder.CreateSharedString(enumDecl->Key()->ToString());
-
-        std::vector<Offset<flatbuffers::String>> entries;
-        for (const auto member : enumDecl->Members()) {
-            if (member->IsTSEnumMember()) {
-                entries.emplace_back(builder.CreateSharedString(member->AsTSEnumMember()->Key()->ToString()));
-            }
-        }
-
-        const auto entriesVector = builder.CreateVector<Offset<flatbuffers::String>>(entries);
-        enums.emplace_back(Metadata::CreateEnumDecl(builder, enumName, entriesVector));
-    } else if (stmt.IsClassDeclaration() && stmt.AsClassDeclaration()->Definition()->IsEnumTransformed()) {
-        enums.emplace_back(BuildEnumDecl(builder, stmt.AsClassDeclaration()->Definition()));
-    } else if (stmt.IsAnnotationDeclaration()) {
-        annotations.emplace_back(BuildAnnotationDecl(builder, stmt.AsAnnotationDeclaration()));
-    } else if (stmt.IsClassDeclaration()) {
-        classes.emplace_back(BuildClassDecl(builder, stmt.AsClassDeclaration()->Definition()));
-    }
 }
 
 bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
@@ -369,26 +478,22 @@ bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
         return true;
     }
 
-    // Metadata is only supported on API 26+
-    if (!api_version::METADATA.AllowedInVersion(Context()->parserProgram->TargetApiVersion())) {
-        return true;
-    }
-
-    FlatBufferBuilder builder;
-    std::vector<Offset<Metadata::ClassDecl>> classes;
-    std::vector<Offset<Metadata::AnnotationDecl>> annotations;
-    std::vector<Offset<Metadata::EnumDecl>> enums;
-
-    for (auto &stmt : program->Ast()->Statements()) {
-        ProcessStatement(builder, *stmt, classes, annotations, enums);
-    }
+    LOG_METADATA_ENABLE();
 
     const auto pkgName = std::string(program->ModuleName());
     const auto moduleName = std::string(program->SourceFile().GetFileName().Utf8());
-    const auto isMetadataRecorded = classes.size() != 0 || annotations.size() != 0 || enums.size() != 0;
 
-    ctx->metadata[MetadataModuleId(pkgName, moduleName)] =
-        isMetadataRecorded ? GetMetadataBytes(builder, classes, annotations, enums) : std::vector<uint8_t>();
+    LOG_METADATA("serializing metadata of program " << pkgName << ":" << moduleName);
+
+    FlatBufferBuilder builder;
+
+    LOG_METADATA_NESTING_INC();
+    const auto decls = BuildDecls(builder, program->Ast()->Statements());
+    LOG_METADATA_NESTING_DEC();
+
+    ctx->metadata[MetadataModuleId(pkgName, moduleName)] = GetMetadataBytes(builder, decls);
+
+    LOG_METADATA_DISABLE();
 
     return true;
 }
