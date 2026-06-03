@@ -11,6 +11,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ets2panda_add_gtest(es2panda_ets_reg_alloc_test
+    CPP_SOURCES ets_reg_acc_alloc_test.cpp    
+)
+
 ets2panda_add_gtest(es2panda_ets_emitter_test
     CPP_SOURCES ets_emitter_test.cpp    
 )
