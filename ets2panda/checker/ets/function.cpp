@@ -2956,6 +2956,23 @@ static Signature *ResolveTrailingLambda(ETSChecker *checker, ArenaVector<Signatu
     return sig;
 }
 
+static bool SkipIfMismatchOnTrailingLambdaType(Signature *sig)
+{
+    if (sig->Params().empty()) {
+        return false;
+    }
+    auto *lambdaType = sig->Params().back()->TsType();
+    if (lambdaType == nullptr || !lambdaType->IsETSArrowType()) {
+        return false;
+    }
+    auto *arrowSig = lambdaType->AsETSFunctionType()->ArrowSignature();
+    auto requiredCallerParams = arrowSig->MinArgCount();
+    if (arrowSig->IsExtensionFunction() && requiredCallerParams > 0) {
+        requiredCallerParams--;
+    }
+    return requiredCallerParams > 0;
+}
+
 static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallExpression *callExpr,
                                                  ArenaVector<Signature *> const &signatures,
                                                  ArenaVector<ir::Expression *> &arguments)
@@ -2965,6 +2982,9 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
     ArenaVector<Signature *> sigContainLambdaWithReceiverAsParam(checker->ProgramAllocator()->Adapter());
     for (auto sig : signatures) {
         if (!sig->HasFunction()) {
+            continue;
+        }
+        if (SkipIfMismatchOnTrailingLambdaType(sig)) {
             continue;
         }
         if (!IsLastParameterLambdaWithReceiver(sig)) {
