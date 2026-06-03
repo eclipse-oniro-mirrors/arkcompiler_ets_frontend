@@ -744,6 +744,10 @@ semantic:
   id: 101
   message: "Initializer must be able to complete normally."
 
+- name: INIT_MODULE_REFERENCES
+  id: 467
+  message: "ArkTS code that is compiled statically cannot invoke the initModule() function to initialize the ArkTS dynamic code module '{}'."
+
 - name: INNER_CLASS_MUTABLE_STATIC_PROP
   id: 196
   message: "Inner class cannot have non-readonly static properties"

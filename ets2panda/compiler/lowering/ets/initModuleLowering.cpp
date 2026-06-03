@@ -58,6 +58,17 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
         return node;
     }
 
+    if (!program->IsDeclForDynamicStaticInterop() && (dependentProg->IsDeclForDynamicStaticInterop() ||
+                                                      dependentProg->Ast()->AsETSModule()->Language().IsDynamic())) {
+        ctx->diagnosticEngine->LogDiagnostic(diagnostic::INIT_MODULE_REFERENCES,
+                                             util::DiagnosticMessageParams {dependentProg->ModuleName()},
+                                             callExpr->Start());
+        auto node = util::NodeAllocator::Alloc<ir::Identifier>(allocator, allocator);
+        node->SetRange(callExpr->Range());
+        node->SetParent(callExpr->Parent());
+        return node;
+    }
+
     ArenaVector<ir::Expression *> params(allocator->Adapter());
     auto moduleStr = util::UString {
         std::string(dependentProg->ModuleInfo().modulePrefix).append(compiler::Signatures::ETS_GLOBAL), allocator};
