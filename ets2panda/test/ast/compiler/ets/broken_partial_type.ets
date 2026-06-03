@@ -46,4 +46,3 @@ function createEntityA(): EntityUnion {
 /* @@? 30:3 Error Semantic error ESE0070: 'B' type does not exist. */
 /* @@? 30:3 Error Semantic error ESE0136: Method kind(): (() => *ERROR_TYPE*) in EntityB not overriding any method */
 /* @@? 30:3 Error Semantic error ESE985118: Class member kind with type (() => *ERROR_TYPE*) in EntityB cannot implement kind with type (() => Kind) property from interface Entity because the implementing return type is not compatible with the interface return type. */
-

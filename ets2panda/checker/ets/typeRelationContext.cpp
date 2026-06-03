@@ -14,7 +14,7 @@
  */
 
 #include "typeRelationContext.h"
-#include "checker/types/type.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::checker {
 
@@ -44,7 +44,7 @@ bool InstantiationContext::ValidateTypeArguments(ETSObjectType *type, ir::TSType
 // CC-OFFNXT(huge_depth[C++]) solid logic
 void InstantiationContext::InstantiateType(ETSObjectType *type, ir::TSTypeParameterInstantiation *typeArgs)
 {
-    ArenaVector<Type *> typeArgTypes(checker_->Allocator()->Adapter());
+    std::vector<Type *> typeArgTypes {};
     typeArgTypes.reserve(type->TypeArguments().size());
 
     if (typeArgs != nullptr) {
@@ -56,7 +56,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ir::TSTypeParame
                 return;
             }
             ES2PANDA_ASSERT(!paramType->IsETSPrimitiveType());
-            typeArgTypes.push_back(paramType);
+            typeArgTypes.emplace_back(paramType);
         }
     }
 
@@ -77,7 +77,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ir::TSTypeParame
     }
 
     auto pos = (typeArgs == nullptr) ? type->Variable()->Declaration()->Node()->Range().start : typeArgs->Range().start;
-    InstantiateType(type, std::move(typeArgTypes), pos);
+    InstantiateType(type, typeArgTypes, pos);
     ES2PANDA_ASSERT(result_->IsETSObjectType());
     result_->AsETSObjectType()->AddObjectFlag(ETSObjectFlags::NO_OPTS);
 }
@@ -104,6 +104,87 @@ static void CheckInstantiationConstraints(ETSChecker *checker, ArenaVector<Type 
     }
 }
 
+static inline std::string ToStdString(std::string_view view)
+{
+    return std::string(view.data(), view.size());
+}
+
+static std::optional<std::string> ModuleName(const ETSObjectType *type)
+{
+    auto *declNode = type == nullptr ? nullptr : type->GetDeclNode();
+    if (declNode == nullptr) {
+        return std::nullopt;
+    }
+
+    auto *program = declNode->Program() != nullptr ? declNode->Program() : declNode->Start().Program();
+    if (program == nullptr || program->ModuleName().empty()) {
+        return std::nullopt;
+    }
+
+    return ToStdString(program->ModuleName());
+}
+
+static std::optional<SameNamedTypeOriginInfo> SameNamedObjectOrigins(Type *source, Type *target)
+{
+    if (source == nullptr || target == nullptr || !source->IsETSObjectType() || !target->IsETSObjectType()) {
+        return std::nullopt;
+    }
+
+    auto *sourceObj = source->AsETSObjectType();
+    auto *targetObj = target->AsETSObjectType();
+    if (sourceObj->GetDeclNode() == targetObj->GetDeclNode() || sourceObj->Name() != targetObj->Name()) {
+        return std::nullopt;
+    }
+
+    auto sourceModule = ModuleName(sourceObj);
+    auto targetModule = ModuleName(targetObj);
+    if (!sourceModule.has_value() || !targetModule.has_value() || *sourceModule == *targetModule) {
+        return std::nullopt;
+    }
+
+    return SameNamedTypeOriginInfo {ToStdString(sourceObj->Name().Utf8()), *sourceModule, *targetModule};
+}
+
+static std::optional<SameNamedTypeOriginInfo> FindSameNamedTypeOrigins(Type *source, Type *target)
+{
+    if (auto info = SameNamedObjectOrigins(source, target); info.has_value()) {
+        return info;
+    }
+    if (source == nullptr || target == nullptr || !source->IsETSFunctionType() || !target->IsETSFunctionType()) {
+        return std::nullopt;
+    }
+
+    const auto &sourceSignatures = source->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+    const auto &targetSignatures = target->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+    if (sourceSignatures.empty() || targetSignatures.empty()) {
+        return std::nullopt;
+    }
+
+    auto *sourceSignature = sourceSignatures.front();
+    auto *targetSignature = targetSignatures.front();
+    const auto &sourceParams = sourceSignature->Params();
+    const auto &targetParams = targetSignature->Params();
+    for (size_t ix = 0; ix < std::min(sourceParams.size(), targetParams.size()); ix++) {
+        if (auto info = SameNamedObjectOrigins(sourceParams[ix]->TsType(), targetParams[ix]->TsType());
+            info.has_value()) {
+            return info;
+        }
+    }
+
+    return SameNamedObjectOrigins(sourceSignature->ReturnType(), targetSignature->ReturnType());
+}
+
+void ReportSameNamedTypeOrigins(TypeRelation *relation, Type *source, Type *target, const lexer::SourcePosition &pos)
+{
+    auto info = FindSameNamedTypeOrigins(source, target);
+    if (!info.has_value()) {
+        return;
+    }
+
+    relation->RaiseError(diagnostic::SAME_NAMED_TYPES_FROM_DIFFERENT_SOURCES,
+                         {info->name, info->sourceModule, info->targetModule}, pos);
+}
+
 void ConstraintCheckScope::TryCheckConstraints()
 {
     if (Unlock()) {
@@ -115,13 +196,13 @@ void ConstraintCheckScope::TryCheckConstraints()
     }
 }
 
-void InstantiationContext::InstantiateType(ETSObjectType *type, ArenaVector<Type *> &&typeArgTypes,
+void InstantiationContext::InstantiateType(ETSObjectType *type, std::vector<Type *> &typeArgTypes,
                                            const lexer::SourcePosition &pos)
 {
     auto const &typeParams = type->TypeArguments();
 
     while (typeArgTypes.size() < typeParams.size()) {
-        typeArgTypes.push_back(typeParams.at(typeArgTypes.size()));
+        typeArgTypes.emplace_back(typeParams.at(typeArgTypes.size()));
     }
 
     auto substitution = Substitution {};

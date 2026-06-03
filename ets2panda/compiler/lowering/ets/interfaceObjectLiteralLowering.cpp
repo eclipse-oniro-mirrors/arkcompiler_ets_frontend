@@ -994,8 +994,9 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
     }
 
     if (!targetType->TypeArguments().empty()) {
-        ArenaVector<checker::Type *> typeArgTypes(targetType->TypeArguments());
-        checker::InstantiationContext instantiationCtx(checker, resultType->AsETSObjectType(), std::move(typeArgTypes),
+        std::vector<checker::Type *> typeArgTypes(targetType->TypeArguments().begin(),
+                                                  targetType->TypeArguments().end());
+        checker::InstantiationContext instantiationCtx(checker, resultType->AsETSObjectType(), typeArgTypes,
                                                        objExpr->Start());
         resultType = instantiationCtx.Result();
     }

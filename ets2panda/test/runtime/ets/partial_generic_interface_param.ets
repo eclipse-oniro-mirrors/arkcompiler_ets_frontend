@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,8 @@
 
 interface I<T> { }
 
+interface J<T> { f: T }
+
 class B <T>{ }
 
 class A <T> extends B <T> implements I <T> { }
@@ -26,7 +28,13 @@ function bar(b: Partial<A<String>>): number{
     return foo(b, b)
 }
 
+function baz(j: Partial<J<String>>): String | undefined {
+    let s: String | undefined = j.f
+    return s
+}
+
 function main() {
     let input: Partial<A<String>> = {}
     arktest.assertEQ(bar(input), 1.0)
+    arktest.assertEQ(baz({f: "test"} as Partial<J<String>>), "test")
 }

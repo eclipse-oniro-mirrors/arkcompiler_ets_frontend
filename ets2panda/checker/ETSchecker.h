@@ -758,25 +758,13 @@ public:
     Type *CreatePartialType(Type *typeToBePartial);
     Type *HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDecl, ETSObjectType *typeToBePartial);
 
-    ir::ClassProperty *CreateNullishProperty(ir::ClassProperty *prop, ir::ClassDefinition *newClassDefinition);
-    ir::ClassProperty *CreateNullishProperty(ir::ClassProperty *const prop,
-                                             ir::TSInterfaceDeclaration *const newTSInterfaceDefinition);
     ir::MethodDefinition *CreateNullishAccessor(ir::MethodDefinition *const accessor,
                                                 ir::TSInterfaceDeclaration *interface);
-    ir::ClassProperty *CreateNullishPropertyFromAccessor(ir::MethodDefinition *const accessor,
-                                                         ir::ClassDefinition *newClassDefinition);
     void CreatePartialClassDeclaration(ir::ClassDefinition *newClassDefinition, ir::ClassDefinition *classDef);
     ir::ETSTypeReference *BuildSuperPartialTypeReference(Type *superPartialType,
                                                          ir::TSTypeParameterInstantiation *superPartialRefTypeParams);
     ir::TSInterfaceDeclaration *CreateInterfaceProto(util::StringView name, parser::Program *const interfaceDeclProgram,
                                                      const ir::TSInterfaceDeclaration *interfaceDecl);
-    ir::TSTypeParameterInstantiation *CreateNewSuperPartialRefTypeParamsDecl(
-        ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution, const Type *const superPartialType,
-        ir::Expression *superRef);
-    ir::TSTypeParameterDeclaration *ProcessTypeParamAndGenSubstitution(
-        ir::TSTypeParameterDeclaration const *const thisTypeParams,
-        ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution,
-        ir::TSTypeParameterDeclaration *newTypeParams);
     ir::AstNode *CreateGetterOrSetterBodyForOptional(bool isSetter, bool isOptional);
     Type *CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *const interfaceDecl,
                                          ETSObjectType *const typeToBePartial,
@@ -1013,6 +1001,19 @@ private:
                                     ETSObjectType *typeToBePartial, varbinder::RecordTable *recordTableToUse);
     void CreateConstructorForPartialType(ir::ClassDefinition *partialClassDef, checker::ETSObjectType *partialType,
                                          varbinder::RecordTable *recordTable);
+    ir::ClassProperty *CreateNullishProperty(ir::Identifier *const id, ir::ModifierFlags const flags,
+                                             Type *const tsType, ir::ClassDefinition *const newClassDefinition);
+    ir::ClassProperty *CreateNullishPropertyFromAccessor(ir::MethodDefinition *const accessor,
+                                                         ir::ClassDefinition *newClassDefinition);
+    void ProcessClassProperties(ir::AstNode *node, ir::ClassDefinition *const oldClassDef,
+                                ir::ClassDefinition *const newClassDef);
+    ir::TSTypeParameterInstantiation *CreateNewSuperPartialRefTypeParamsDecl(
+        std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> const &substitution,
+        const Type *const superPartialType, ir::Expression *superRef);
+    ir::TSTypeParameterDeclaration *ProcessTypeParamAndGenSubstitution(
+        ir::TSTypeParameterDeclaration const *const thisTypeParams,
+        std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> &substitution,
+        ir::TSTypeParameterDeclaration *newTypeParams);
 
     // Check type alias for recursive cases
     bool IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,

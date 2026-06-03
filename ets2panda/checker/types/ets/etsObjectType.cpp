@@ -737,12 +737,35 @@ std::vector<const varbinder::LocalVariable *> ETSObjectType::ForeignProperties()
     return foreignProps;
 }
 
-void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
+static void PrintTypeArguments(ArenaVector<checker::Type *> const &arguments, std::stringstream &ss, bool const precise)
+{
+    ss << compiler::Signatures::GENERIC_BEGIN;
+    for (auto it = arguments.cbegin(); it != arguments.cend(); ++it) {
+        (*it)->ToString(ss, precise);
+
+        if (std::next(it) != arguments.cend()) {
+            ss << lexer::TokenToString(lexer::TokenType::PUNCTUATOR_COMMA);
+        }
+    }
+    ss << compiler::Signatures::GENERIC_END;
+}
+
+void ETSObjectType::ToString(std::stringstream &ss, bool const precise) const
 {
     if (IsPartial()) {
-        ss << "Partial" << compiler::Signatures::GENERIC_BEGIN;
-        ss << util::NameMangler::GetInstance()->GetOriginalClassNameFromPartial(name_.Mutf8());
+        ss << compiler::Signatures::PARTIAL_TYPE_NAME << compiler::Signatures::GENERIC_BEGIN;
+
+        auto *baseType = GetOriginalBaseType();
+        auto const &name = precise ? baseType->internalName_ : baseType->name_;
+
+        ss << (!name.StartsWith(PARTIAL_CLASS_PREFIX) ? name : name.Utf8().substr(::strlen(PARTIAL_CLASS_PREFIX)));
+
+        if (!typeArguments_.empty()) {
+            PrintTypeArguments(typeArguments_, ss, precise);
+        }
+
         ss << compiler::Signatures::GENERIC_END;
+
         return;
     }
 
@@ -756,15 +779,7 @@ void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
     ss << (precise ? internalName_ : name_);
 
     if (!typeArguments_.empty()) {
-        ss << compiler::Signatures::GENERIC_BEGIN;
-        for (auto arg = typeArguments_.cbegin(); arg != typeArguments_.cend(); ++arg) {
-            (*arg)->ToString(ss, precise);
-
-            if (next(arg) != typeArguments_.cend()) {
-                ss << lexer::TokenToString(lexer::TokenType::PUNCTUATOR_COMMA);
-            }
-        }
-        ss << compiler::Signatures::GENERIC_END;
+        PrintTypeArguments(typeArguments_, ss, precise);
     }
 
     if (HasObjectFlag(ETSObjectFlags::REQUIRED)) {
@@ -775,34 +790,6 @@ void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
     }
 }
 
-void ETSObjectType::SubstitutePartialTypes(TypeRelation *relation, Type *other)
-{
-    ES2PANDA_ASSERT(IsPartial());
-
-    if ((baseType_->IsGeneric() || baseType_->IsETSTypeParameter()) && effectiveSubstitution_ != nullptr) {
-        auto subst = ETSChecker::ArenaSubstitutionToSubstitution(effectiveSubstitution_);
-        if (auto *newBaseType = baseType_->Substitute(relation, &subst);
-            newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, this) &&
-            !relation->IsIdenticalTo(newBaseType, baseType_)) {
-            baseType_ = newBaseType->AsETSObjectType();
-        }
-    }
-
-    if (other->IsETSObjectType() && other->AsETSObjectType()->IsPartial()) {
-        auto *otherPartial = other->AsETSObjectType();
-        if (otherPartial->baseType_ != nullptr &&
-            (otherPartial->baseType_->IsGeneric() || otherPartial->baseType_->IsETSTypeParameter()) &&
-            otherPartial->effectiveSubstitution_ != nullptr) {
-            auto subst = ETSChecker::ArenaSubstitutionToSubstitution(otherPartial->effectiveSubstitution_);
-            if (auto *newBaseType = otherPartial->baseType_->Substitute(relation, &subst);
-                newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, otherPartial->baseType_)) {
-                otherPartial->baseType_ = newBaseType->AsETSObjectType();
-            }
-        }
-    }
-    relation->Result(false);  // this function spoils the relation
-}
-
 void ETSObjectType::IdenticalUptoTypeArguments(TypeRelation *relation, Type *other)
 {
     relation->Result(false);
@@ -810,11 +797,7 @@ void ETSObjectType::IdenticalUptoTypeArguments(TypeRelation *relation, Type *oth
         return;
     }
 
-    if (IsPartial()) {
-        SubstitutePartialTypes(relation, other);
-    }
-
-    // NOTE: (DZ) only both Partial types can be compatible.
+    // Only both Partial types can be compatible.
     if (static_cast<bool>(static_cast<std::byte>(IsPartial()) ^
                           static_cast<std::byte>(other->AsETSObjectType()->IsPartial()))) {
         return;
@@ -1144,9 +1127,6 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
         if (relation->IsTrue() && HasTypeFlag(TypeFlag::GENERIC) && !relation->IgnoreTypeParameters()) {
             IsGenericSupertypeOf(relation, sourceObj);
         }
-        if (relation->IsTrue()) {
-            return;
-        }
     }
 }
 
@@ -1429,7 +1409,7 @@ void ETSObjectType::SetCopiedTypeProperties(TypeRelation *const relation, ETSObj
     copiedType->SetVariable(variable_);
 
     // #25295 Need to do some refactor on baseType for partial
-    if (IsPartial() && HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+    if (IsPartial()) {
         copiedType->SetBaseType(this);
     } else {
         copiedType->SetBaseType(base);
