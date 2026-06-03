@@ -381,11 +381,8 @@ void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, 
             elem->SetPreferredType(targetType);
         }
         checker::Type *elemType = elem->Check(checker);
-        if (elem->IsSpreadElement() && elemType->IsETSTupleType()) {
-            auto *tupleType = elemType->AsETSTupleType();
-            elemType = util::Helpers::CreateUnionOfTupleConstituentTypes(checker, tupleType);
-        } else if (elem->IsSpreadElement()) {
-            elemType = checker->GetElementTypeOfArray(elemType);
+        if (elem->IsSpreadElement()) {
+            elemType = checker->GetElementTypeOfSpreadType(elemType);
         }
         checker::AssignmentContext assignCtx(checker->Relation(), elem, elemType, targetType, elem->Start(),
                                              std::nullopt, flags);

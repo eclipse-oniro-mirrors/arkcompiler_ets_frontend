@@ -102,10 +102,15 @@ static Type *GetArgumentType(ETSChecker *checker, ir::Expression *arg)
     if (arg->IsSpreadElement()) {
         auto spreadArg = arg->AsSpreadElement()->Argument();
         auto type = spreadArg->Check(checker);
-        while (util::Helpers::IsArrayType(spreadArg->TsType())) {
+        if (type->IsETSTupleType()) {
+            return type;
+        }
+
+        if (util::Helpers::IsArrayType(type)) {
             return checker->GetElementTypeOfArray(type);
         }
-        return type;
+
+        return checker->GetElementTypeOfSpreadType(type);
     }
 
     return arg->Check(checker);
@@ -1044,6 +1049,13 @@ static bool SetPreferredTypeForArrayArgument(ETSChecker *checker, ir::ArrayExpre
 
 static void PrepareComparisonTypes(ETSChecker *checker, Type **argumentType, Type **targetType)
 {
+    if (!util::Helpers::IsArrayType(*argumentType) && !(*argumentType)->IsETSTupleType()) {
+        *argumentType = checker->GetElementTypeOfSpreadType(*argumentType);
+        if (util::Helpers::IsArrayType(*targetType)) {
+            *targetType = checker->GetElementTypeOfArray(*targetType);
+        }
+    }
+
     while (util::Helpers::IsArrayType(*targetType) &&
            (util::Helpers::IsArrayType(*argumentType) || (*argumentType)->IsETSTupleType())) {
         if ((*argumentType)->IsETSTupleType()) {

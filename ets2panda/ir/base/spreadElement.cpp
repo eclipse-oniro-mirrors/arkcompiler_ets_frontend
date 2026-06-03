@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,9 @@ SpreadElement::SpreadElement([[maybe_unused]] Tag const tag, SpreadElement const
     : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator)
 {
     optional_ = other.optional_;
+    resolvedSpreadKind_ = other.resolvedSpreadKind_;
+    resolvedSpreadSourceType_ = other.resolvedSpreadSourceType_;
+    resolvedSpreadElementType_ = other.resolvedSpreadElementType_;
 
     argument_ = other.argument_->Clone(allocator, this)->AsExpression();
 }

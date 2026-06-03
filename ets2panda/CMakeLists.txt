@@ -356,6 +356,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/lambdaLowering.cpp
   compiler/lowering/ets/fixedarrayLowering.cpp
   compiler/lowering/ets/dynamicImport.cpp
+  compiler/lowering/ets/iterableSpreadLowering.cpp
   compiler/lowering/ets/restTupleLowering.cpp
   compiler/lowering/ets/spreadLowering.cpp
   compiler/lowering/ets/objectIndexAccess.cpp

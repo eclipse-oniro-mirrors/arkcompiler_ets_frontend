@@ -654,6 +654,21 @@ ETSObjectType *ETSChecker::GlobalBuiltinFunctionType() const
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType);
 }
 
+ETSObjectType *ETSChecker::GlobalBuiltinIterableType() const
+{
+    return AsETSObjectType(&GlobalTypesHolder::GlobalIterableBuiltinType);
+}
+
+ETSObjectType *ETSChecker::GlobalBuiltinIteratorType() const
+{
+    return AsETSObjectType(&GlobalTypesHolder::GlobalIteratorBuiltinType);
+}
+
+ETSObjectType *ETSChecker::GlobalBuiltinIteratorResultType() const
+{
+    return AsETSObjectType(&GlobalTypesHolder::GlobalIteratorResultBuiltinType);
+}
+
 ETSObjectType *ETSChecker::GlobalBuiltinFunctionType(size_t nargs, bool hasRest) const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType, nargs, hasRest);

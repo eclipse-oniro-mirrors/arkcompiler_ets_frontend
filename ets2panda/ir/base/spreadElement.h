@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,12 +19,18 @@
 #include "ir/expression.h"
 #include "ir/validationInfo.h"
 
+namespace ark::es2panda::checker {
+class Type;
+}  // namespace ark::es2panda::checker
+
 namespace ark::es2panda::ir {
 class SpreadElement : public AnnotatedExpression {
 private:
     struct Tag {};
 
 public:
+    enum class ResolvedSpreadKind { INVALID, INDEXABLE, TUPLE, ITERABLE };
+
     SpreadElement() = delete;
     ~SpreadElement() override = default;
 
@@ -60,6 +66,28 @@ public:
         optional_ = optional;
     }
 
+    void SetResolvedSpread(ResolvedSpreadKind kind, checker::Type *sourceType, checker::Type *elementType) noexcept
+    {
+        resolvedSpreadKind_ = kind;
+        resolvedSpreadSourceType_ = sourceType;
+        resolvedSpreadElementType_ = elementType;
+    }
+
+    [[nodiscard]] ResolvedSpreadKind GetResolvedSpreadKind() const noexcept
+    {
+        return resolvedSpreadKind_;
+    }
+
+    [[nodiscard]] checker::Type *GetResolvedSpreadElementType() const noexcept
+    {
+        return resolvedSpreadElementType_;
+    }
+
+    [[nodiscard]] checker::Type *GetResolvedSpreadSourceType() const noexcept
+    {
+        return resolvedSpreadSourceType_;
+    }
+
     [[nodiscard]] SpreadElement *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     [[nodiscard]] bool ConvertibleToRest(bool isDeclaration, bool allowPattern = true);
@@ -83,6 +111,9 @@ public:
 private:
     Expression *argument_ = nullptr;
     bool optional_ {false};
+    ResolvedSpreadKind resolvedSpreadKind_ {ResolvedSpreadKind::INVALID};
+    checker::Type *resolvedSpreadSourceType_ {nullptr};
+    checker::Type *resolvedSpreadElementType_ {nullptr};
 };
 }  // namespace ark::es2panda::ir
 

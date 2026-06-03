@@ -1420,7 +1420,7 @@ semantic:
 
 - name: SPREAD_OF_INVALID_TYPE
   id: 49
-  message: "Spread expression can be applied only to array or tuple type, but '{}' is provided"
+  message: "The spread expression of type '{}' must be of iterable or tuple type."
 
 - name: SPREAD_ONTO_SINGLE_PARAM
   id: 121
