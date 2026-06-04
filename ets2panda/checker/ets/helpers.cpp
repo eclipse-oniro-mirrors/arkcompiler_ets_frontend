@@ -107,6 +107,14 @@ varbinder::Variable *ETSChecker::FindVariableInGlobal(const ir::Identifier *cons
     return Scope() != nullptr ? Scope()->FindInGlobal(identifier->Name(), options).variable : nullptr;
 }
 
+bool IsClassStaticAccessTarget(const varbinder::Variable *targetRef)
+{
+    return targetRef != nullptr && (targetRef->HasFlag(varbinder::VariableFlags::CLASS) ||
+                                    (targetRef->HasFlag(varbinder::VariableFlags::TYPE_ALIAS) &&
+                                     targetRef->TsType() != nullptr && targetRef->TsType()->Variable() != nullptr &&
+                                     targetRef->TsType()->Variable()->HasFlag(varbinder::VariableFlags::CLASS)));
+}
+
 bool ETSChecker::IsVariableStatic(const varbinder::Variable *var)
 {
     CHECK_NOT_NULL(var);
