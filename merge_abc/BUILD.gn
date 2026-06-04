@@ -103,10 +103,7 @@ protoc_binary_out_path =
 
 if (!ark_standalone_build && defined(ohos_indep_compiler_enable) &&
     !ohos_indep_compiler_enable) {
-  if (is_host_product) {
-    # host_product uses the host toolchain as its default output directory.
-    host_out_path = ""
-  } else if (default_toolchain == current_toolchain) {
+  if (default_toolchain == current_toolchain) {
     #if target build
     host_out_path = "/" + get_label_info(host_toolchain, "name")
   } else {
