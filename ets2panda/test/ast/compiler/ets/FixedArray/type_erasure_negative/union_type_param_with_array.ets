@@ -13,21 +13,19 @@
  * limitations under the License.
  */
 
-type X<T> = FixedArray<Y<T> | T>
-type Y<T> = Array<X<T> | T | string>
+/*---
+desc: FixedArray element type must be preserved by type erasure; a union
+  containing both a type parameter and a resizable array is not preserved
+  because both constituents are affected by erasure.
+expected_out: Expected_CTE
+name: fixed_array_type_erasure_union_type_param_with_array
+tags:
+- compile-only
+- negative
+---*/
 
-function f(): X<number> {
-    return [1.0] as X<number>
+function foo<T>(v: T): FixedArray<T | Array<int>> {
+    return [v]
 }
 
-function g(): Array<Y<number> | string> {
-    return [] as Array<Y<number> | string>
-}
-
-function main() {
-    let a = f()
-    let b = g()
-    let ok = a.length == 1 && b.length == 0
-    arktest.assertTrue(ok)
-}
-
+/* @@? 28:12 Error Semantic error ESE461884: Type 'T|Array<Int>' is not preserved by type erasure and cannot be used as type argument for FixedArray instantiations. */
