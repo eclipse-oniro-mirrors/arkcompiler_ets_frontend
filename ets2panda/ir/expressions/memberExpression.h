@@ -20,7 +20,6 @@
 #include "checker/types/ets/etsObjectType.h"
 #include "ir/expression.h"
 #include "checker/resolveResult.h"
-#include "varbinder/variable.h"
 
 namespace ark::es2panda::compiler {
 class JSCompiler;

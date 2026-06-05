@@ -16,7 +16,6 @@
 #include "lreference.h"
 
 #include "varbinder/declaration.h"
-#include "varbinder/variable.h"
 #include "varbinder/variableFlags.h"
 #include "compiler/base/destructuring.h"
 #include "compiler/core/function.h"
@@ -360,11 +359,6 @@ void ETSLReference::SetValue() const
         return;
     }
 
-    if (objectType->IsETSUnionType()) {
-        etsg_->StorePropertyByName(Node(), baseReg_, memberExpr->GetComponentTypeMemberAccessors());
-        return;
-    }
-
     ES2PANDA_ASSERT(memberExpr->PropVar() != nullptr);
     if (memberExpr->PropVar()->TsType()->HasTypeFlag(checker::TypeFlag::GETTER_SETTER)) {
         SetValueGetterSetter(memberExpr);
@@ -375,6 +369,12 @@ void ETSLReference::SetValue() const
 
     if (memberExpr->PropVar()->HasFlag(varbinder::VariableFlags::STATIC)) {
         etsg_->StoreStaticProperty(Node(), memberExprTsType, fullName);
+        return;
+    }
+
+    if (objectType->IsETSUnionType()) {
+        etsg_->StorePropertyByName(Node(), baseReg_,
+                                   checker::ETSChecker::FormNamedAccessMetadata(memberExpr->PropVar()));
         return;
     }
 

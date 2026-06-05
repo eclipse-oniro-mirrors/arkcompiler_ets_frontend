@@ -26,7 +26,6 @@
 #include "util/es2pandaMacros.h"
 #include "generated/signatures.h"
 #include "util/helpers.h"
-#include "varbinder/variable.h"
 
 namespace ark::es2panda::compiler {
 
@@ -1294,7 +1293,6 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         }
         return firstVarType;
     }
-
     // CC-OFFNXT(C_RULE_ID_FUNCTION_NESTING_LEVEL, huge_method[C++], huge_cca_cyclomatic_complexity[C++]) solid logic
     // CC-OFFNXT(huge_cyclomatic_complexity, huge_depth[C++], huge_depth, huge_method, G.FUN.01-CPP, G.FUN.05) solid
     void VisitMemberExpression(ir::MemberExpression *mexpr) override

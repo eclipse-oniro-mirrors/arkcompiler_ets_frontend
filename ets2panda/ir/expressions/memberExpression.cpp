@@ -18,12 +18,10 @@
 #include "checker/TSchecker.h"
 #include "checker/ets/castingContext.h"
 #include "checker/types/ets/etsTupleType.h"
-#include "checker/types/typeFlag.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
 #include "util/diagnostic.h"
 #include "util/es2pandaMacros.h"
-#include "varbinder/variable.h"
 
 namespace ark::es2panda::ir {
 MemberExpression::MemberExpression([[maybe_unused]] Tag const tag, MemberExpression const &other,
@@ -235,7 +233,7 @@ void MemberExpression::CollectUnionSignatures(checker::ETSChecker *checker, chec
     }
 
     const auto memberFunctionType = memberType->AsETSFunctionType();
-    if (Parent()->IsCallExpression() && memberType != nullptr && memberType->IsETSMethodType()) {
+    if (Parent()->IsCallExpression() && memberType->IsETSMethodType()) {
         const auto parentCallExpression = Parent()->AsCallExpression();
         const auto memberTypeSignature =
             checker->FirstMatchSignatures(memberFunctionType->CallSignatures(), parentCallExpression);
@@ -248,8 +246,8 @@ void MemberExpression::CollectUnionSignatures(checker::ETSChecker *checker, chec
         return;
     }
 
-    if (memberType->IsETSMethodType() && (memberFunctionType->HasTypeFlag(checker::TypeFlag::GETTER) ||
-                                          memberFunctionType->HasTypeFlag(checker::TypeFlag::SETTER))) {
+    if (memberFunctionType->HasTypeFlag(checker::TypeFlag::GETTER) ||
+        memberFunctionType->HasTypeFlag(checker::TypeFlag::SETTER)) {
         ES2PANDA_ASSERT(memberFunctionType->CallSignatures().size() == 1);
         this->AddComponentTypeMemberAccessor(type, prop);
     }
@@ -263,7 +261,6 @@ static bool haveDifferentSignatures(checker::ETSChecker *checker,
     }
 
     const auto first = std::get<checker::Signature *>(typeSignatures[0].second);
-    [[maybe_unused]] const auto second = std::get<checker::Signature *>(typeSignatures[1].second);
     for (size_t i = 1; i < typeSignatures.size(); ++i) {
         const auto current = std::get<checker::Signature *>(typeSignatures[i].second);
         if (!checker->Relation()->SignatureIsIdenticalTo(first, current)) {
@@ -340,9 +337,10 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         componentTypeMemberAccessors_->clear();
     }
     for (auto *const type : unionType->ConstituentTypes()) {
-        ES2PANDA_ASSERT(type != nullptr);
-        if (type->IsETSObjectType()) {
-            SetObjectType(type->AsETSObjectType());
+        auto *const apparent = checker->GetApparentType(type);
+        ES2PANDA_ASSERT(apparent != nullptr);
+        if (apparent->IsETSObjectType()) {
+            SetObjectType(apparent->AsETSObjectType());
             auto resolvedMember = ResolveObjectMember(checker);
             auto *memberType = resolvedMember.first;
             if (memberType != nullptr && memberType->IsTypeError()) {

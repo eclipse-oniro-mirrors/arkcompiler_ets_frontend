@@ -77,6 +77,7 @@
 #include "compiler/lowering/ets/stringConstructorLowering.h"
 #include "compiler/lowering/ets/topLevelStmts/topLevelStmts.h"
 #include "compiler/lowering/ets/unboxLowering.h"
+#include "compiler/lowering/ets/unionLowering.h"
 #include "compiler/lowering/ets/typeFromLowering.h"
 #include "compiler/lowering/ets/classFromExpressionLowering.h"
 #include "compiler/lowering/ets/internalAPICheck.h"
@@ -171,6 +172,7 @@ std::vector<Phase *> GetETSPhaseList()
         new OverloadMappingLowering,
         new InterfaceMethodObjectLiteralLowering,
         new LambdaConversionPhase,
+        new UnionLowering,
         new ExpandBracketsPhase,
         new PartialExportClassGen,
         new StringConstructorLowering,

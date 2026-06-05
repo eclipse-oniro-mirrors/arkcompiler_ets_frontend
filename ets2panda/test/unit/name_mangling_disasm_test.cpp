@@ -285,3 +285,68 @@ TEST_F(NameManglingAsmTest, lambdaNameGen)
     std::string_view expectedGeneratedName = "dummy.%%lambda-lambda_invoke-0";
     CheckUsingRecordTable(input, expectedGeneratedName);
 }
+
+TEST_F(NameManglingAsmTest, unionPropMethodNameGen)
+{
+    std::string_view input = R"(
+        class TestClassA {
+          propMethod(): void {
+            console.log("hello world");
+          }
+        }
+
+        class TestClassB {
+          propMethod(): void {
+            console.log("hello world");
+          }
+        }
+
+        function foo(a0: TestClassA | TestClassB) {
+          a0.propMethod();
+        }
+
+        let myVar = new TestClassA()
+
+        foo(myVar)
+    )";
+
+    std::string_view expectedRecordName = "dummy.%%union_prop-TestClassA|TestClassB";
+    CheckUsingRecordTable(input, expectedRecordName);
+
+    std::string_view expectedMethodName = "dummy.%%union_prop-TestClassA|TestClassB.propMethod:void;";
+    CheckUsingFunctionInstanceTable(input, expectedMethodName);
+}
+
+TEST_F(NameManglingAsmTest, unionPropMemberNameGen)
+{
+    std::string_view input = R"(
+        class TestClass {
+          testMethod(): void {
+            console.log("hello world")
+          }
+        }
+
+        class TestClassA {
+          prop = new TestClass()
+        }
+
+        class TestClassB {
+          prop = new TestClass()
+        }
+
+        function foo(a0: TestClassA | TestClassB) {
+          let tmpVar = a0.prop
+          tmpVar.testMethod()
+        }
+
+        let myVar = new TestClassA()
+
+        foo(myVar)
+    )";
+
+    std::string_view expectedRecordName = "dummy.%%union_prop-TestClassA|TestClassB";
+    CheckUsingRecordTable(input, expectedRecordName);
+
+    std::string_view expectedPropName = "dummy.%%union_prop-TestClassA|TestClassB.prop";
+    CheckPropertyUsingRecordTable(input, expectedRecordName, expectedPropName);
+}

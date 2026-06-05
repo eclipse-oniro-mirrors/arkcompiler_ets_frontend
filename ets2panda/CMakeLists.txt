@@ -376,6 +376,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/binaryExpressionLowering.cpp
   compiler/lowering/ets/constructorInitLowering.cpp
   compiler/lowering/ets/expandBrackets.cpp
+  compiler/lowering/ets/unionLowering.cpp
   compiler/lowering/ets/optionalArgumentsLowering.cpp
   compiler/lowering/ets/optionalLowering.cpp
   compiler/lowering/ets/overloadMappingLowering.cpp
