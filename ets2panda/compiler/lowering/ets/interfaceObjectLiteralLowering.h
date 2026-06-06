@@ -22,19 +22,16 @@ namespace ark::es2panda::compiler {
 
 class InterfaceObjectLiteralLowering : public PhaseForProgramsToBeEmitted {
 public:
+    explicit InterfaceObjectLiteralLowering(bool methodOnly = false) : methodOnly_(methodOnly) {}
     std::string_view Name() const override;
     bool PerformForProgram(parser::Program *prog) override;
 
 protected:
-    virtual bool ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const;
-};
+    bool ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const;
+    bool ShouldLowerObjectLiteral() const;
 
-class InterfaceMethodObjectLiteralLowering : public InterfaceObjectLiteralLowering {
-public:
-    std::string_view Name() const override;
-
-protected:
-    bool ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const override;
+private:
+    bool methodOnly_;
 };
 
 }  // namespace ark::es2panda::compiler

@@ -169,7 +169,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ArrayForOfLowering,
         new ConditionalSimplifyLowering,
         new OverloadMappingLowering,
-        new InterfaceMethodObjectLiteralLowering,
+        new InterfaceObjectLiteralLowering(true),
         new LambdaConversionPhase,
         new ExpandBracketsPhase,
         new PartialExportClassGen,
