@@ -550,10 +550,10 @@ public:
     void ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation);
 
     template <typename T>
-    void CheckAnnotations(ir::AnnotationAllowed<T> *node)
+    void CheckAnnotations(ir::AnnotationAllowed<T> *node, bool isAnnoDecl = false)
     {
         if (node->HasAnnotations()) {
-            CheckAnnotations(node->Annotations());
+            CheckAnnotations(node->Annotations(), isAnnoDecl);
         }
     }
 
@@ -909,7 +909,7 @@ private:
                    checker::Type *annotationType, varbinder::Variable *const bindingVar);
     void CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> const &cases);
 
-    void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations);
+    void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations, bool isAnnoDecl);
     void ReputCheckerDataProgram(ETSChecker *eChecker);
 
     template <typename EnumType>

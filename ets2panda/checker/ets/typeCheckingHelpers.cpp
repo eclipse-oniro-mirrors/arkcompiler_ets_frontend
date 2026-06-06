@@ -1112,15 +1112,21 @@ void ETSChecker::ValidateThisUsage(const ir::TypeNode *returnTypeAnnotation)
     }
 }
 
-void ETSChecker::CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations)
+void ETSChecker::CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations, bool isAnnoDecl)
 {
     ES2PANDA_ASSERT(!annotations.empty());
 
     std::unordered_set<util::StringView> seenAnnotations;
     for (const auto &anno : annotations) {
-        anno->Check(this);
-        CheckAnnotationRetention(anno);
-        CheckAnnotationTarget(anno);
+        if (isAnnoDecl) {
+            CheckStandardAnnotation(anno);
+            // Order matters
+            anno->Check(this);
+        } else {
+            anno->Check(this);
+            CheckAnnotationRetention(anno);
+            CheckAnnotationTarget(anno);
+        }
 
         auto annoName = anno->GetBaseName()->Name();
         if (seenAnnotations.find(annoName) != seenAnnotations.end()) {

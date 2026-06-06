@@ -5008,13 +5008,7 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationDeclaration *st) const
     }
     ETSChecker *checker = GetETSChecker();
     st->Expr()->Check(checker);
-
-    if (st->HasAnnotations()) {
-        for (auto *anno : st->Annotations()) {
-            checker->CheckStandardAnnotation(anno);
-            anno->Check(checker);
-        }
-    }
+    checker->CheckAnnotations(st, true);
 
     ScopeContext scopeCtx(checker, st->Scope());
     for (auto *it : st->Properties()) {
