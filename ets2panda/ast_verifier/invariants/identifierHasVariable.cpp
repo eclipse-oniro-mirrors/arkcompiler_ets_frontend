@@ -18,13 +18,12 @@
 #include "ir/expressions/memberExpression.h"
 #include "ir/ts/tsEnumDeclaration.h"
 #include "checker/types/ets/etsAnyType.h"
-#include "checker/types/ets/etsTypeParameter.h"
 
 namespace ark::es2panda::compiler::ast_verifier {
 
 class IdentifierHasVariable::ExceptionsMatcher {
 public:
-    explicit ExceptionsMatcher(const ir::Identifier *ast) : ast_(ast) {}
+    ExceptionsMatcher(const IdentifierHasVariable *inv, const ir::Identifier *ast) : inv_(inv), ast_(ast) {}
     bool Match()
     {
         auto res = IsLengthProp() || IsAnyProp() || IsEmptyName() || IsInObjectExpr() || IsInPackageDecl() ||
@@ -91,15 +90,13 @@ private:
 
     bool IsUnionMemberAccess()
     {
-        if (ast_->Parent() == nullptr || !ast_->Parent()->IsMemberExpression()) {
-            return false;
-        }
-        auto objType = ast_->Parent()->AsMemberExpression()->Object()->TsType();
-        return objType->IsETSUnionType() ||
-               (objType->IsETSTypeParameter() && objType->AsETSTypeParameter()->GetConstraintType()->IsETSUnionType());
+        return ast_->Parent() != nullptr && ast_->Parent()->IsMemberExpression() &&
+               ast_->Parent()->AsMemberExpression()->Object()->TsType()->IsETSUnionType() &&
+               !inv_->UnionLoweringOccurred();
     }
 
 private:
+    const IdentifierHasVariable *inv_ {};
     const ir::Identifier *ast_ {};
 };
 
@@ -119,7 +116,7 @@ CheckResult IdentifierHasVariable::operator()(const ir::AstNode *ast)
     }
 
     const auto *id = ast->AsIdentifier();
-    if (ExceptionsMatcher {id}.Match()) {
+    if (ExceptionsMatcher {this, id}.Match()) {
         return {CheckDecision::CORRECT, CheckAction::CONTINUE};
     }
 

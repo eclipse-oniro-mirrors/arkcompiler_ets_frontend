@@ -15,18 +15,15 @@
 
 #include <cmath>
 #include <utility>
-#include <variant>
 #include "ETSGen-inl.h"
 
 #include "assembler/mangling.h"
-#include "checker/types/typeFlag.h"
 #include "compiler/core/ETSemitter.h"
 #include "compiler/core/codeGen.h"
 #include "compiler/core/emitter.h"
 #include "compiler/core/regScope.h"
 #include "generated/isa.h"
 #include "generated/signatures.h"
-#include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
 #include "ir/base/classDefinition.h"
 #include "ir/expression.h"
@@ -533,107 +530,39 @@ void ETSGen::LoadProperty(const ir::AstNode *const node, const checker::Type *pr
 }
 
 void ETSGen::StorePropertyByName([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] VReg objReg,
-                                 [[maybe_unused]] const ComponentTypeMemberAccessors &signatures)
+                                 [[maybe_unused]] checker::ETSChecker::NamedAccessMeta const &fieldMeta)
 {
 #ifdef PANDA_WITH_ETS
-    RegScope rs(this);
+    auto [metaObj, propType, propName] = fieldMeta;
+    const auto fullName = FormClassOwnPropReference(metaObj, propName);
 
-    const auto endLabel = AllocLabel();
-    Label *nextIsInstanceLabel = nullptr;
-
-    VReg valueReg = AllocReg();
-    StoreAccumulator(node, valueReg);
-
-    for (size_t i = 0; i < signatures.size(); ++i) {
-        const auto [constituentType, memberAccessor] = signatures[i];
-        ES2PANDA_ASSERT(constituentType != nullptr);
-
-        nextIsInstanceLabel = AllocLabel();
-        ES2PANDA_ASSERT(nextIsInstanceLabel != nullptr);
-
-        LoadAccumulator(node, objReg);
-        EmitIsInstance(node, ToAssemblerType(constituentType));
-        BranchIfFalse(node, nextIsInstanceLabel);
-
-        LoadAccumulator(node, objReg);
-        EmitCheckCast(node, ToAssemblerType(constituentType), true);
-        ES2PANDA_ASSERT(std::holds_alternative<varbinder::LocalVariable *>(memberAccessor));
-        auto *propVar = std::get<varbinder::LocalVariable *>(memberAccessor);
-        auto propType = propVar->TsType();
-        if (propType->IsETSMethodType()) {
-            auto memberFuncType = propType->AsETSFunctionType();
-            ES2PANDA_ASSERT(memberFuncType->HasTypeFlag(checker::TypeFlag::SETTER));
-            auto setterSig = memberFuncType->FindSetter();
-            ES2PANDA_ASSERT(setterSig != nullptr);
-
-            SetAccumulatorType(setterSig->Params()[0]->TsType());
-            CallVirtual(node, setterSig, objReg, {valueReg});
-        } else {
-            LoadAccumulator(node, valueReg);
-            ES2PANDA_ASSERT(propVar != nullptr);
-
-            StoreProperty(node, propVar->TsType(), objReg, FormClassPropReference(propVar));
-        }
-
-        Branch(node, endLabel);
-        SetLabel(node, nextIsInstanceLabel);
+    if (propType->IsETSReferenceType()) {
+        Ra().Emit<EtsStobjNameObj>(node, objReg, fullName);
+    } else if (IsWidePrimitiveType(propType)) {
+        Ra().Emit<EtsStobjNameWide>(node, objReg, fullName);
+    } else {
+        Ra().Emit<EtsStobjName>(node, objReg, fullName);
     }
-
-    EmitClassCastException(node, "None of the constituent types of the union type matched the received object.");
-    SetLabel(node, endLabel);
 #else
     ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
 }
 
-void ETSGen::LoadPropertyByName([[maybe_unused]] const ir::AstNode *const node,
-                                [[maybe_unused]] const ComponentTypeMemberAccessors &signatures,
-                                [[maybe_unused]] VReg objReg)
+void ETSGen::LoadPropertyByName([[maybe_unused]] const ir::AstNode *const node, [[maybe_unused]] VReg objReg,
+                                [[maybe_unused]] checker::ETSChecker::NamedAccessMeta const &fieldMeta)
 {
 #ifdef PANDA_WITH_ETS
-    const auto endLabel = AllocLabel();
-    Label *nextIsInstanceLabel = nullptr;
-    for (size_t i = 0; i < signatures.size(); ++i) {
-        const auto [constituentType, memberAccessor] = signatures[i];
-        ES2PANDA_ASSERT(constituentType != nullptr);
+    auto [metaObj, propType, propName] = fieldMeta;
+    const auto fullName = FormClassOwnPropReference(metaObj, propName);
 
-        nextIsInstanceLabel = AllocLabel();
-        ES2PANDA_ASSERT(nextIsInstanceLabel != nullptr);
-
-        LoadAccumulator(node, objReg);
-        EmitIsInstance(node, ToAssemblerType(constituentType));
-        BranchIfFalse(node, nextIsInstanceLabel);
-
-        LoadAccumulator(node, objReg);
-        EmitCheckCast(node, ToAssemblerType(constituentType), true);
-        ES2PANDA_ASSERT(std::holds_alternative<varbinder::LocalVariable *>(memberAccessor));
-        auto *propVar = std::get<varbinder::LocalVariable *>(memberAccessor);
-        if (constituentType->IsETSArrayType()) {
-            ES2PANDA_ASSERT(node->AsMemberExpression()->Property()->AsIdentifier()->Name() == "length");
-            ES2PANDA_ASSERT(propVar == nullptr);
-            LoadArrayLength(node, objReg);
-        } else {
-            auto propType = propVar->TsType();
-            if (propType->IsETSMethodType()) {
-                ES2PANDA_ASSERT(propType->AsETSFunctionType()->HasTypeFlag(checker::TypeFlag::GETTER));
-                auto *varDeclNode = propVar->Declaration()->Node();
-                auto const *const method = varDeclNode->AsMethodDefinition();
-                auto getterSig = method->Value()->AsFunctionExpression()->Function()->Signature();
-                ES2PANDA_ASSERT(getterSig != nullptr);
-                CallVirtual(node, getterSig, objReg);
-            } else {
-                ES2PANDA_ASSERT(propVar != nullptr);
-                LoadProperty(node, propVar->TsType(), objReg, FormClassPropReference(propVar));
-            }
-        }
-
-        Branch(node, endLabel);
-        SetLabel(node, nextIsInstanceLabel);
+    if (propType->IsETSReferenceType()) {
+        Ra().Emit<EtsLdobjNameObj>(node, objReg, fullName);
+    } else if (IsWidePrimitiveType(propType)) {
+        Ra().Emit<EtsLdobjNameWide>(node, objReg, fullName);
+    } else {
+        Ra().Emit<EtsLdobjName>(node, objReg, fullName);
     }
-
-    EmitClassCastException(node, "None of the constituent types of the union type matched the received object.");
-    SetLabel(node, endLabel);
-
+    SetAccumulatorType(propType);
 #else
     ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
@@ -1933,6 +1862,7 @@ void ETSGen::EmitClassCastException(const ir::AstNode *node, ark::es2panda::util
     StoreAccumulator(node, exception);
 
     EmitThrow(node, exception);
+    SetAccumulatorType(nullptr);
 }
 
 template <typename IntCompare, typename CondCompare, typename DynCompare, bool IS_STRICT>
