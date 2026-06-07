@@ -23,7 +23,7 @@ a++; // Error: arkts-no-ts-like-smart-type
 class AW {
   private static instance:AW = new AW();
   static get():AW {
-    return AW.instance; // Error: arkts-no-ts-like-smart-type
+    return AW.instance;
   }
 }
 
@@ -97,7 +97,7 @@ class AA3 {
 function foo2(str:string){}
 function foo22(str:number|string){}
 function foo(spec :string|number){
-    foo2(spec) // Error: arkts-no-ts-like-smart-type
+    foo2(spec)
 }
 function foo3(spec :string|number){
     if (typeof spec == "string") {
@@ -167,7 +167,7 @@ if (b.a.f() !== null) { // Error: arkts-no-ts-like-smart-type
 const val = b.a.f(); // Error: arkts-no-ts-like-smart-type
 
 function check(obj?: A) {
-  if (obj.f() !== null) { // Error: arkts-no-ts-like-smart-type
+  if (obj.f() !== null) {
     console.log('warn');
   }
 }
@@ -205,20 +205,20 @@ class AG {
 }
 
 function check2(obj?: AG) {
-    obj.f(); // Error: arkts-no-ts-like-smart-type
+    obj.f();
 
     if (obj == null) return;
     obj.f(); // valid(guarded)
 }
 
 function check35(obj?: AG) {
-    if (obj.h == 3) { // Error: arkts-no-ts-like-smart-type
+    if (obj.h == 3) {
       console.log('3');
     }
 }
 
 function check43(obj?: AG) {
-    const val = obj.h; // Error: arkts-no-ts-like-smart-type
+    const val = obj.h;
     return val;
 }
 
@@ -282,6 +282,8 @@ function foo3(bObj: B3 | undefined, ccc: number | undefined) {
         const b1 = bObj.b; // Ok
         let b2: A3 = b1; //  Error: arkts-no-ts-like-smart-type
         b2 = b1; //  Error: arkts-no-ts-like-smart-type
+        let b3: A3 | undefined = b1; //  Error: arkts-no-ts-like-smart-type
+        b3 = b1; //  Error: arkts-no-ts-like-smart-type
         const b: A3 = bObj.b; // Error: arkts-no-ts-like-smart-type
 
         bObj.test2(bObj.b); // Error: arkts-no-ts-like-smart-type
@@ -299,22 +301,22 @@ function foo3(bObj: B3 | undefined, ccc: number | undefined) {
 
 function foo4(ccc: number | undefined) {
     if (B3.bbb) { // Ok
-        return B3.bbb; // Error: arkts-no-ts-like-smart-type
+        return B3.bbb;
     }
     if (!B3.bbb) { // Ok
-        return B3.bbb; // Error: arkts-no-ts-like-smart-type
+        return B3.bbb;
     }
     if (B3.bbb != undefined) { // Ok
-        return B3.bbb; // Error: arkts-no-ts-like-smart-type
+        return B3.bbb;
     }
     if (B3.bbb instanceof number) { // Ok
-        return B3.bbb; // Error: arkts-no-ts-like-smart-type
+        return B3.bbb;
     }
     if (typeof B3.bbb === 'number') { // Ok
-        return B3.bbb; // Error: arkts-no-ts-like-smart-type
+        return B3.bbb;
     }
     if (typeof ccc === 'number') { // Ok
-        return ccc; // Error: arkts-no-ts-like-smart-type
+        return ccc;
     }
 }
 
@@ -334,7 +336,7 @@ class A4 {
         if (this.aClass?.a) { // Ok
             this.test1(this.aClass?.a); // Ok
             this.test2(this.aClass?.a); // Ok
-            this.test3(this.aClass?.a); // Ok
+            this.test3(this.aClass?.a);
         }
         return this.instance; // Error: arkts-no-ts-like-smart-type
     }
@@ -368,7 +370,7 @@ class ef {
 
 function roo(aObj: ef | null) {
     if (typeof aObj === 'ef') {
-        aObj.a = 2.0; // Error: arkts-no-ts-like-smart-type
+        aObj.a = 2.0;
     }
 }
 
@@ -379,4 +381,229 @@ class Ay {
         this.connectOptions = new Promise(() => { });
         return this.connectOptions; // Error: arkts-no-ts-like-smart-type
     }
+}
+
+class SmartTypeAliasBase {
+    num: Number | undefined = 0;
+}
+
+class SmartTypeAliasSon extends SmartTypeAliasBase {}
+
+type SmartTypeAliasBaseAlias = SmartTypeAliasBase;
+type SmartTypeAliasMaybeBase = SmartTypeAliasBase | undefined;
+type SmartTypeAliasBaseOrSon = SmartTypeAliasBase | SmartTypeAliasSon;
+
+function smartTypeAliasFromParameter(aliasParam: SmartTypeAliasMaybeBase): Number {
+    if (aliasParam instanceof SmartTypeAliasBase) {
+        return aliasParam.num as Number; // Ok
+    }
+    return 0;
+}
+
+function smartTypeAliasFromLocal(): Number {
+    let aliasLocal: SmartTypeAliasBaseAlias | undefined = new SmartTypeAliasBase();
+    if (aliasLocal.num instanceof Number) {
+        return aliasLocal.num; // Error: arkts-no-ts-like-smart-type
+    }
+    return 0;
+}
+
+function smartTypeAliasFromNonNullableUnion(): Number {
+    let aliasLocal: SmartTypeAliasBaseOrSon = new SmartTypeAliasSon();
+    if (aliasLocal.num instanceof Number) {
+        return aliasLocal.num; // Error: arkts-no-ts-like-smart-type
+    }
+    return 0;
+}
+
+function smartTypeAliasFromNestedParameter(aliasParam: SmartTypeAliasMaybeBase): Number {
+    if (aliasParam instanceof SmartTypeAliasBase) {
+        if (aliasParam.num !== undefined) {
+            return aliasParam.num as Number; // Ok
+        }
+    }
+    return 0;
+}
+
+function smartTypeAliasFromNestedLocal(): Number {
+    let aliasLocal: SmartTypeAliasBaseAlias | undefined = new SmartTypeAliasBase();
+    if (aliasLocal.num instanceof Number) {
+        if (aliasLocal.num !== undefined) {
+            return aliasLocal.num; // Error: arkts-no-ts-like-smart-type
+        }
+    }
+    return 0;
+}
+
+class SmartTypePr9977Main {
+    num: Number | undefined = 0;
+    public pubNum: Number | undefined = undefined;
+    static staNum: Number | undefined = undefined;
+    nested?: SmartTypePr9977Nested;
+
+    test(): Number {
+        if (this.num) {
+            return this.num; // Error: arkts-no-ts-like-smart-type
+        }
+        if (SmartTypePr9977Main.staNum) {
+            return SmartTypePr9977Main.staNum; // Error: arkts-no-ts-like-smart-type
+        }
+        return 0;
+    }
+}
+
+class SmartTypePr9977Nested {
+    num: Number | undefined = 0;
+    public deepNested?: SmartTypePr9977Deep;
+    static deepNestedStatic?: SmartTypePr9977Deep;
+}
+
+class SmartTypePr9977Deep {
+    num: Number | undefined = 0;
+}
+
+function smartTypePr9977ReturnFromMain(a: SmartTypePr9977Main | undefined): Number {
+    if (a instanceof SmartTypePr9977Main) {
+        if (a.num instanceof Number) {
+            return a.num; // Error: arkts-no-ts-like-smart-type
+        } else if (a.pubNum instanceof Number) {
+            return a.pubNum; // Error: arkts-no-ts-like-smart-type
+        } else if (SmartTypePr9977Main.staNum instanceof Number) {
+            return SmartTypePr9977Main.staNum; // Error: arkts-no-ts-like-smart-type
+        }
+    }
+    return 0;
+}
+
+function smartTypePr9977StaticPropertyAs(a: SmartTypePr9977Main | undefined): Number {
+    if (a instanceof SmartTypePr9977Main) {
+        if (SmartTypePr9977Main.staNum instanceof Number) {
+            return SmartTypePr9977Main.staNum as Number; // Ok
+        }
+    }
+    return 0;
+}
+
+function smartTypePr9977AssignmentFromInstanceProperty(a: SmartTypePr9977Main): void {
+    if (a.num instanceof Number) {
+        const narrowedNumber: Number = a.num; // Error: arkts-no-ts-like-smart-type
+        const explicitUnion: Number | undefined = a.num; // Ok
+    }
+}
+
+function smartTypePr9977OptionalParamNestedProperty(a?: SmartTypePr9977Main): Number {
+    if (a !== undefined) {
+        if (a.nested instanceof SmartTypePr9977Nested) {
+            const nestedNumber: Number = a.nested.num as Number; // Error: arkts-no-ts-like-smart-type
+            const optionalNumber = a.nested?.num; // Ok
+            console.log(`${a.nested?.num}`); // Ok
+            console.log(`${a.nested.num}`); // Error: arkts-no-ts-like-smart-type
+            return a.nested.num as Number; // Error: arkts-no-ts-like-smart-type
+        }
+    }
+    return 1;
+}
+
+function smartTypePr9977MixedAsAndInstanceof(nestedObj?: SmartTypePr9977Nested): Number {
+    let maybeMain1: SmartTypePr9977Main | undefined = new SmartTypePr9977Main();
+    if (maybeMain1.num instanceof Number) {
+        return maybeMain1.num as Number; // Ok
+    }
+
+    if (nestedObj instanceof SmartTypePr9977Nested) {
+        if (nestedObj.num instanceof Number) {
+            return nestedObj.num as Number; // Ok
+        }
+        if (nestedObj.deepNested instanceof SmartTypePr9977Deep) {
+            return nestedObj.deepNested.num as Number; // Error: arkts-no-ts-like-smart-type
+        }
+        if (SmartTypePr9977Nested.deepNestedStatic instanceof SmartTypePr9977Deep) {
+            return SmartTypePr9977Nested.deepNestedStatic.num as Number; // Error: arkts-no-ts-like-smart-type
+        }
+    }
+    return 1;
+}
+
+function smartTypePr9977UnionBranchReturn(): Number {
+    let maybeMain1: SmartTypePr9977Main | undefined = new SmartTypePr9977Main();
+    if (maybeMain1.num instanceof Number) {
+        return maybeMain1.num; // Error: arkts-no-ts-like-smart-type
+    }
+
+    let maybeMain2: SmartTypePr9977Main | undefined = new SmartTypePr9977Main();
+    if (maybeMain2.num instanceof Number) {
+        return maybeMain2.num as Number; // Ok
+    }
+    return 0;
+}
+
+class SmartTypeSampleUnionA {
+    value: number = 1.0;
+}
+
+class SmartTypeSampleUnionB {
+    value: number = 2.0;
+}
+
+class SmartTypeSampleUnionC {
+    value: number = 3.0;
+    extra: string = 'c';
+}
+
+class SmartTypeSampleMultiUnionHolder {
+    node: SmartTypeSampleUnionA | SmartTypeSampleUnionB | SmartTypeSampleUnionC = new SmartTypeSampleUnionC();
+
+    getNode(): SmartTypeSampleUnionC {
+        if (this.node instanceof SmartTypeSampleUnionA) {
+            return new SmartTypeSampleUnionC();
+        } else if (this.node instanceof SmartTypeSampleUnionB) {
+            return new SmartTypeSampleUnionC();
+        }
+        return this.node; // Error: arkts-no-ts-like-smart-type
+    }
+}
+
+class SmartTypeSampleLeaf {
+    num: Number | undefined = 0;
+}
+
+class SmartTypeSampleSubLeaf extends SmartTypeSampleLeaf {}
+
+class SmartTypeSampleContainer {
+    child: SmartTypeSampleLeaf | undefined = new SmartTypeSampleLeaf();
+    public childOrSub: SmartTypeSampleLeaf | SmartTypeSampleSubLeaf = new SmartTypeSampleLeaf();
+}
+
+class SmartTypeSampleRoot {
+    container: SmartTypeSampleContainer | undefined = new SmartTypeSampleContainer();
+}
+
+type SmartTypeSampleRootAlias = SmartTypeSampleRoot;
+
+function smartTypeSampleNestedMember(root: SmartTypeSampleRoot | undefined): Number {
+    if (root instanceof SmartTypeSampleRoot) {
+        if (root.container instanceof SmartTypeSampleContainer) {
+            if (root.container.child instanceof SmartTypeSampleLeaf) { // Error: arkts-no-ts-like-smart-type
+                return root.container.child.num; // Error: arkts-no-ts-like-smart-type
+            }
+        }
+    }
+    return 0;
+}
+
+function smartTypeSampleNestedAlias(): Number {
+    let localRoot: SmartTypeSampleRootAlias | undefined = new SmartTypeSampleRoot();
+    if (localRoot.container instanceof SmartTypeSampleContainer) {
+        if (localRoot.container.child instanceof SmartTypeSampleLeaf) { // Error: arkts-no-ts-like-smart-type
+            return localRoot.container.child.num; // Error: arkts-no-ts-like-smart-type
+        }
+    }
+    return 0;
+}
+
+function smartTypeSampleNullableOwnerAs(holder: SmartTypeSampleContainer): Number {
+    if (holder.child instanceof SmartTypeSampleLeaf) {
+        return holder.child.num as Number; // Error: arkts-no-ts-like-smart-type
+    }
+    return 0;
 }

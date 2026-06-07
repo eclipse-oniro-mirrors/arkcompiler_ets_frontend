@@ -247,3 +247,10 @@ function test13(aa: Array<number>): newType4 {
 function test14(bb: number[]): newType4 {
 	return bb; // ok
 }
+
+type newType1 = [(number|string)];
+function arrayTypeImmutableFoo19(par1:number):newType1{
+  console.log("ArkTs foo6")
+  let result : [(string|number)] = [1];
+  return result; // ok
+}

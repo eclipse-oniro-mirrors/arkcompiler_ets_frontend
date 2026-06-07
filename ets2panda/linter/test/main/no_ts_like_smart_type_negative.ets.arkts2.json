@@ -307,7 +307,7 @@
         {
             "line": 275,
             "column": 1,
-            "endLine": 298,
+            "endLine": 300,
             "endColumn": 2,
             "problem": "TsOverload",
             "suggest": "",
@@ -376,9 +376,19 @@
         },
         {
             "line": 285,
-            "column": 23,
+            "column": 34,
             "endLine": 285,
-            "endColumn": 29,
+            "endColumn": 36,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 286,
+            "column": 14,
+            "endLine": 286,
+            "endColumn": 16,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
@@ -386,8 +396,18 @@
         },
         {
             "line": 287,
-            "column": 20,
+            "column": 23,
             "endLine": 287,
+            "endColumn": 29,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 289,
+            "column": 20,
+            "endLine": 289,
             "endColumn": 26,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -395,9 +415,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 288,
+            "line": 290,
             "column": 23,
-            "endLine": 288,
+            "endLine": 290,
             "endColumn": 29,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -405,9 +425,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 295,
+            "line": 297,
             "column": 31,
-            "endLine": 295,
+            "endLine": 297,
             "endColumn": 37,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -415,9 +435,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 331,
+            "line": 333,
             "column": 20,
-            "endLine": 331,
+            "endLine": 333,
             "endColumn": 28,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -425,9 +445,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 339,
+            "line": 341,
             "column": 16,
-            "endLine": 339,
+            "endLine": 341,
             "endColumn": 29,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -435,9 +455,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 361,
+            "line": 363,
             "column": 18,
-            "endLine": 361,
+            "endLine": 363,
             "endColumn": 32,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
@@ -445,9 +465,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 379,
+            "line": 381,
             "column": 31,
-            "endLine": 379,
+            "endLine": 381,
             "endColumn": 53,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
@@ -455,10 +475,240 @@
             "severity": "ERROR"
         },
         {
-            "line": 380,
+            "line": 382,
             "column": 16,
-            "endLine": 380,
+            "endLine": 382,
             "endColumn": 35,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 406,
+            "column": 16,
+            "endLine": 406,
+            "endColumn": 30,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 414,
+            "column": 16,
+            "endLine": 414,
+            "endColumn": 30,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 432,
+            "column": 20,
+            "endLine": 432,
+            "endColumn": 34,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 446,
+            "column": 20,
+            "endLine": 446,
+            "endColumn": 28,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 449,
+            "column": 20,
+            "endLine": 449,
+            "endColumn": 46,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 468,
+            "column": 20,
+            "endLine": 468,
+            "endColumn": 25,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 470,
+            "column": 20,
+            "endLine": 470,
+            "endColumn": 28,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 472,
+            "column": 20,
+            "endLine": 472,
+            "endColumn": 46,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 489,
+            "column": 40,
+            "endLine": 489,
+            "endColumn": 45,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 497,
+            "column": 42,
+            "endLine": 497,
+            "endColumn": 64,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 500,
+            "column": 28,
+            "endLine": 500,
+            "endColumn": 40,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 501,
+            "column": 20,
+            "endLine": 501,
+            "endColumn": 42,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 518,
+            "column": 20,
+            "endLine": 518,
+            "endColumn": 54,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 521,
+            "column": 20,
+            "endLine": 521,
+            "endColumn": 72,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 530,
+            "column": 16,
+            "endLine": 530,
+            "endColumn": 30,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 562,
+            "column": 16,
+            "endLine": 562,
+            "endColumn": 25,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 586,
+            "column": 17,
+            "endLine": 586,
+            "endColumn": 37,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 587,
+            "column": 24,
+            "endLine": 587,
+            "endColumn": 48,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 587,
+            "column": 24,
+            "endLine": 587,
+            "endColumn": 44,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 597,
+            "column": 13,
+            "endLine": 597,
+            "endColumn": 38,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 598,
+            "column": 20,
+            "endLine": 598,
+            "endColumn": 49,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 598,
+            "column": 20,
+            "endLine": 598,
+            "endColumn": 45,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 606,
+            "column": 16,
+            "endLine": 606,
+            "endColumn": 42,
             "problem": "NoTsLikeSmartType",
             "suggest": "",
             "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
@@ -535,13 +785,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 300,
+            "line": 302,
             "column": 10,
-            "endLine": 300,
+            "endLine": 302,
             "endColumn": 14,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",
             "rule": "Not all code paths return a value.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 587,
+            "column": 17,
+            "endLine": 587,
+            "endColumn": 49,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "rule": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 598,
+            "column": 13,
+            "endLine": 598,
+            "endColumn": 50,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "rule": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
             "severity": "ERROR"
         }
     ]

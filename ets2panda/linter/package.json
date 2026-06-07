@@ -34,6 +34,7 @@
     "test_taskpool": "npm run testrunner -- -d test/taskpool",
     "test_sdkcommonapi": "npm run testrunner -- -d test/sdkcommonapi",
     "test_concurrent": "npm run testrunner -- -d test/concurrent",
+    "test_homecheck": "npm --prefix homecheck run compile && npm run compile && npm run testrunner -- -d test/homecheck",
     "test_rules": "npm run testrunner -- -d test/rules",
     "test_regression": "npm run testrunner -- -d test/regression",
     "test_extended_features": "npm run testrunner -- -d test/extended_features",

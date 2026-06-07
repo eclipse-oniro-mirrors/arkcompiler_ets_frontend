@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import { DEFAULT_MODE_PROPERTIES, TestMode, testModePropsMap } from './TestMode'
 import type { TestArguments } from './TestArgs';
 import { readTestArgsFile } from './TestArgs';
 import { MigrateTest } from './MigrateTest';
+import { HomeCheckTest } from './HomeCheckTest';
 
 interface CreateTestOptions {
   runTestFileOpts: RunTestFileOptions;
@@ -53,7 +54,18 @@ function createTestsFromTestArgs(runTestFileOpts: RunTestFileOptions, testArgs: 
 
   addDefaultModeIfNeeded(testArgs);
 
-  if (testArgs.mode) {
+  if (testArgs.homecheck && testArgs.mode) {
+    for (const mode of Object.keys(testArgs.mode)) {
+      const testModeProps = testModePropsMap.get(mode);
+      if (!testModeProps) {
+        throw new Error(`Failed to create test. Unknown mode: '${mode}'`);
+      }
+      const testModeArgs: string | undefined = testArgs.mode[mode];
+      tests.push(new HomeCheckTest(runTestFileOpts, testArgs.homecheck, testModeProps, testCommonOpts, testModeArgs));
+    }
+  } else if (testArgs.homecheck) {
+    tests.push(new HomeCheckTest(runTestFileOpts, testArgs.homecheck, DEFAULT_MODE_PROPERTIES));
+  } else if (testArgs.mode) {
     for (const mode of Object.keys(testArgs.mode)) {
       const testModeProps = testModePropsMap.get(mode);
       if (!testModeProps) {

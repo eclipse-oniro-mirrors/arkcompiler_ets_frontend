@@ -1,0 +1,1088 @@
+{
+    "copyright": [
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 43,
+            "column": 25,
+            "endLine": 43,
+            "endColumn": 25,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 41 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 45,
+            "column": 26,
+            "endLine": 45,
+            "endColumn": 26,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 41 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 46,
+            "column": 20,
+            "endLine": 46,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 41 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 56,
+            "column": 22,
+            "endLine": 56,
+            "endColumn": 22,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 55 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 59,
+            "column": 14,
+            "endLine": 59,
+            "endColumn": 14,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 68,
+            "column": 10,
+            "endLine": 68,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 67 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 74,
+            "column": 10,
+            "endLine": 74,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 73 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 78,
+            "column": 8,
+            "endLine": 78,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 79,
+            "column": 5,
+            "endLine": 79,
+            "endColumn": 5,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 80,
+            "column": 4,
+            "endLine": 80,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 109,
+            "column": 31,
+            "endLine": 109,
+            "endColumn": 31,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 107 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 110,
+            "column": 40,
+            "endLine": 110,
+            "endColumn": 40,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 107 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 115,
+            "column": 32,
+            "endLine": 115,
+            "endColumn": 32,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 119 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 128,
+            "column": 10,
+            "endLine": 128,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 124 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 132,
+            "column": 18,
+            "endLine": 132,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 137,
+            "column": 15,
+            "endLine": 137,
+            "endColumn": 15,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 142,
+            "column": 14,
+            "endLine": 142,
+            "endColumn": 14,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 147,
+            "column": 21,
+            "endLine": 147,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 152,
+            "column": 10,
+            "endLine": 152,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 151 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 158,
+            "column": 10,
+            "endLine": 158,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 157 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 171,
+            "column": 28,
+            "endLine": 171,
+            "endColumn": 28,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 167 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 174,
+            "column": 34,
+            "endLine": 174,
+            "endColumn": 34,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 167 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 178,
+            "column": 34,
+            "endLine": 178,
+            "endColumn": 34,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 168 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 183,
+            "column": 29,
+            "endLine": 183,
+            "endColumn": 29,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 182 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 189,
+            "column": 30,
+            "endLine": 189,
+            "endColumn": 30,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 193,
+            "column": 37,
+            "endLine": 193,
+            "endColumn": 37,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in file fixtures/BaseClass.ts: 48 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 196,
+            "column": 4,
+            "endLine": 196,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 197,
+            "column": 4,
+            "endLine": 197,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 198,
+            "column": 6,
+            "endLine": 198,
+            "endColumn": 6,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 199,
+            "column": 6,
+            "endLine": 199,
+            "endColumn": 6,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 200,
+            "column": 4,
+            "endLine": 200,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 201,
+            "column": 4,
+            "endLine": 201,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 202,
+            "column": 4,
+            "endLine": 202,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 203,
+            "column": 4,
+            "endLine": 203,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 204,
+            "column": 4,
+            "endLine": 204,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 205,
+            "column": 4,
+            "endLine": 205,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 206,
+            "column": 12,
+            "endLine": 206,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 207,
+            "column": 12,
+            "endLine": 207,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 208,
+            "column": 12,
+            "endLine": 208,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 209,
+            "column": 12,
+            "endLine": 209,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 210,
+            "column": 12,
+            "endLine": 210,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 211,
+            "column": 5,
+            "endLine": 211,
+            "endColumn": 5,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 212,
+            "column": 5,
+            "endLine": 212,
+            "endColumn": 5,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 213,
+            "column": 4,
+            "endLine": 213,
+            "endColumn": 4,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 225,
+            "column": 13,
+            "endLine": 225,
+            "endColumn": 13,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 231,
+            "column": 18,
+            "endLine": 231,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 235,
+            "column": 18,
+            "endLine": 235,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 236,
+            "column": 10,
+            "endLine": 236,
+            "endColumn": 10,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 245,
+            "column": 12,
+            "endLine": 245,
+            "endColumn": 12,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 249,
+            "column": 27,
+            "endLine": 249,
+            "endColumn": 27,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 250,
+            "column": 32,
+            "endLine": 250,
+            "endColumn": 32,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 254,
+            "column": 8,
+            "endLine": 254,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 256,
+            "column": 8,
+            "endLine": 256,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 257,
+            "column": 16,
+            "endLine": 257,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 258,
+            "column": 8,
+            "endLine": 258,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 259,
+            "column": 8,
+            "endLine": 259,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 260,
+            "column": 8,
+            "endLine": 260,
+            "endColumn": 8,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not use cast expression in numeric operation (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 279,
+            "column": 33,
+            "endLine": 279,
+            "endColumn": 33,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 285,
+            "column": 33,
+            "endLine": 285,
+            "endColumn": 33,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 291,
+            "column": 33,
+            "endLine": 291,
+            "endColumn": 33,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line -1 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 299,
+            "column": 20,
+            "endLine": 299,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 296 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 309,
+            "column": 20,
+            "endLine": 309,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 304 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 317,
+            "column": 20,
+            "endLine": 317,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 314 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 327,
+            "column": 20,
+            "endLine": 327,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 322 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 335,
+            "column": 20,
+            "endLine": 335,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 332 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 345,
+            "column": 20,
+            "endLine": 345,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 340 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 353,
+            "column": 20,
+            "endLine": 353,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 350 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 361,
+            "column": 20,
+            "endLine": 361,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 358 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 385,
+            "column": 16,
+            "endLine": 385,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 370 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 390,
+            "column": 16,
+            "endLine": 390,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 370 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 395,
+            "column": 16,
+            "endLine": 395,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not check when function call chain depth exceeds 2, please check it manually (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 399,
+            "column": 16,
+            "endLine": 399,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 423 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 407,
+            "column": 16,
+            "endLine": 407,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 423 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 419,
+            "column": 16,
+            "endLine": 419,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "Can not check when function call chain depth exceeds 2, please check it manually (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 435,
+            "column": 16,
+            "endLine": 435,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 431 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 447,
+            "column": 16,
+            "endLine": 447,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 443 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 455,
+            "column": 17,
+            "endLine": 455,
+            "endColumn": 17,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 453 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 460,
+            "column": 16,
+            "endLine": 460,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 458 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 469,
+            "column": 13,
+            "endLine": 469,
+            "endColumn": 13,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 467 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 473,
+            "column": 14,
+            "endLine": 473,
+            "endColumn": 14,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 471 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 476,
+            "column": 11,
+            "endLine": 476,
+            "endColumn": 11,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 478 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 484,
+            "column": 15,
+            "endLine": 484,
+            "endColumn": 15,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 482 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 488,
+            "column": 16,
+            "endLine": 488,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 486 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 495,
+            "column": 15,
+            "endLine": 495,
+            "endColumn": 15,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 491 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 500,
+            "column": 22,
+            "endLine": 500,
+            "endColumn": 22,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 498 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 506,
+            "column": 11,
+            "endLine": 506,
+            "endColumn": 11,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 502 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 515,
+            "column": 18,
+            "endLine": 515,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 513 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 519,
+            "column": 23,
+            "endLine": 519,
+            "endColumn": 23,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 517 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 522,
+            "column": 11,
+            "endLine": 522,
+            "endColumn": 11,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 524 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 531,
+            "column": 24,
+            "endLine": 531,
+            "endColumn": 24,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 528 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 539,
+            "column": 15,
+            "endLine": 539,
+            "endColumn": 15,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 534 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 551,
+            "column": 16,
+            "endLine": 551,
+            "endColumn": 16,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 549 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 573,
+            "column": 21,
+            "endLine": 573,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 574,
+            "column": 21,
+            "endLine": 574,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 575,
+            "column": 21,
+            "endLine": 575,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 576,
+            "column": 17,
+            "endLine": 576,
+            "endColumn": 17,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 577,
+            "column": 18,
+            "endLine": 577,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 578,
+            "column": 18,
+            "endLine": 578,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 579,
+            "column": 18,
+            "endLine": 579,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 572 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 582,
+            "column": 20,
+            "endLine": 582,
+            "endColumn": 20,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 583,
+            "column": 21,
+            "endLine": 583,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 584,
+            "column": 21,
+            "endLine": 584,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 585,
+            "column": 21,
+            "endLine": 585,
+            "endColumn": 21,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 586,
+            "column": 17,
+            "endLine": 586,
+            "endColumn": 17,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 587,
+            "column": 18,
+            "endLine": 587,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 588,
+            "column": 18,
+            "endLine": 588,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 589,
+            "column": 18,
+            "endLine": 589,
+            "endColumn": 18,
+            "problem": "As",
+            "suggest": "",
+            "rule": "The value in type assertion is assigned by value with interface annotation in Line 581 (arkts-no-ts-like-as)",
+            "severity": "WARNING"
+        }
+    ]
+}

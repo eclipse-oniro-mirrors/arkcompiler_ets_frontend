@@ -98,7 +98,9 @@ const RULES_BY_PRIORITY: readonly string[] = [
 
 // Build map from rule name to priority for O(1) lookup
 const RULE_PRIORITY_MAP: Readonly<Record<string, number>> = Object.fromEntries(
-  RULES_BY_PRIORITY.map((rule, index) => { return [rule, RULES_BY_PRIORITY.length - index]; })
+  RULES_BY_PRIORITY.map((rule, index) => {
+    return [rule, RULES_BY_PRIORITY.length - index];
+  })
 );
 
 export function getRulePriority(rule: string): number {

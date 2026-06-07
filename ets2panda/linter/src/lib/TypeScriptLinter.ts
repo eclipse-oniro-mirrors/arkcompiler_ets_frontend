@@ -8282,15 +8282,17 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkPropertyAccessReturn(expr: ts.PropertyAccessExpression, lhsType: ts.Type): void {
-    const isStaticProperty = ts.isIdentifier(expr.expression) && (/^[A-Z]/).test(expr.expression.text);
-    const isInstanceProperty = expr.expression.kind === ts.SyntaxKind.ThisKeyword;
-
-    if (!isStaticProperty && !isInstanceProperty) {
-      return;
-    }
-
     const propName = expr.name;
     const symbol = this.tsTypeChecker.getSymbolAtLocation(propName);
+    const declaration = this.getPropertyDeclaration(expr);
+    const isStaticProperty =
+      TypeScriptLinter.isCurrentClassStaticPropertyAccess(expr) ||
+      !!declaration && TsUtils.hasModifier(declaration.modifiers, ts.SyntaxKind.StaticKeyword);
+    const isInstanceProperty = expr.expression.kind === ts.SyntaxKind.ThisKeyword;
+
+    if (!isStaticProperty && !isInstanceProperty && !this.isClassUnionNarrowedPropertyAccess(expr)) {
+      return;
+    }
 
     if (!symbol) {
       return;
@@ -8306,10 +8308,99 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
     }
 
-    const declaration = symbol.valueDeclaration;
-    if (declaration && ts.isPropertyDeclaration(declaration) && declaration.questionToken) {
+    if (declaration?.questionToken) {
       this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
     }
+  }
+
+  private static isCurrentClassStaticPropertyAccess(expr: ts.PropertyAccessExpression): boolean {
+    if (!ts.isIdentifier(expr.expression)) {
+      return false;
+    }
+
+    const classDecl = ts.findAncestor(expr, ts.isClassDeclaration);
+    return classDecl?.name?.text === expr.expression.text;
+  }
+
+  private isClassUnionNarrowedPropertyAccess(expr: ts.PropertyAccessExpression): boolean {
+    if (!ts.isIdentifier(expr.expression) || !TypeScriptLinter.isNarrowedByInstanceofCondition(expr)) {
+      return false;
+    }
+
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(expr.expression);
+    const declaration = symbol ? TsUtils.getDeclaration(symbol) : undefined;
+    if (!declaration || !this.hasUnionClassTypeAnnotation(declaration)) {
+      return false;
+    }
+
+    const typeNode = declaration.type;
+    return !!typeNode && this.hasClassTypeInTypeAnnotation(typeNode);
+  }
+
+  private hasUnionClassTypeAnnotation(
+    declaration: ts.Declaration
+  ): declaration is ts.VariableDeclaration | ts.ParameterDeclaration {
+    return (
+      (ts.isVariableDeclaration(declaration) || ts.isParameter(declaration)) &&
+      !!declaration.type &&
+      this.isUnionTypeAnnotation(declaration.type)
+    );
+  }
+
+  private hasClassTypeInTypeAnnotation(typeNode: ts.TypeNode): boolean {
+    const type = this.tsTypeChecker.getTypeFromTypeNode(typeNode);
+    const types = type.isUnion() ? type.types : [type];
+    return types.some((type) => {
+      return TypeScriptLinter.isClassLikeType(type);
+    });
+  }
+
+  private static isClassLikeType(type: ts.Type): boolean {
+    const declaration = type.getSymbol()?.declarations?.[0];
+    return !!declaration && ts.isClassDeclaration(declaration);
+  }
+
+  private static isNarrowedByInstanceofCondition(expr: ts.PropertyAccessExpression): boolean {
+    let current: ts.Node = expr;
+    let ifStmt = ts.findAncestor(current, ts.isIfStatement);
+    while (ifStmt) {
+      if (
+        TypeScriptLinter.isNodeInsideIfBlock(expr, ifStmt) &&
+        TypeScriptLinter.hasMatchingInstanceofCondition(ifStmt.expression, expr)
+      ) {
+        return true;
+      }
+      current = ifStmt.parent;
+      ifStmt = ts.findAncestor(current, ts.isIfStatement);
+    }
+    return false;
+  }
+
+  private static hasMatchingInstanceofCondition(condition: ts.Expression, expr: ts.PropertyAccessExpression): boolean {
+    let matched = false;
+    const visit = (node: ts.Node): void => {
+      if (matched) {
+        return;
+      }
+      if (
+        ts.isBinaryExpression(node) &&
+        node.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword &&
+        TypeScriptLinter.matchesPropertyAccessOrBaseObject(node.left, expr)
+      ) {
+        matched = true;
+        return;
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(condition);
+    return matched;
+  }
+
+  private static matchesPropertyAccessOrBaseObject(node: ts.Node, expr: ts.PropertyAccessExpression): boolean {
+    return (
+      TypeScriptLinter.matchesTarget(node, expr) ||
+      ts.isIdentifier(expr.expression) && TypeScriptLinter.matchesTarget(node, expr.expression)
+    );
   }
 
   private checkIdentifierReturn(expr: ts.Identifier): void {
@@ -8328,7 +8419,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const typeNode = declaration.type;
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) {
+    if (!typeNode || !this.isUnionTypeAnnotation(typeNode)) {
       return;
     }
 
@@ -9355,6 +9446,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return TypeScriptLinter.postfixArrayTypeString(typeString);
     }
 
+    if (typeString.startsWith('[') && typeString.endsWith(']')) {
+      return TypeScriptLinter.normalizeTupleTypeString(typeString);
+    }
+
     if (typeString.includes('|')) {
       return TypeScriptLinter.normalizeUnionMembers(typeString);
     }
@@ -9385,6 +9480,73 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const normalizedBaseType = TypeScriptLinter.normalizeUnionMembers(baseType);
     return `${normalizedBaseType}[]`;
+  }
+
+  private static normalizeTupleTypeString(typeString: string): string {
+    const tupleBody = typeString.slice(1, -1);
+    const normalizedElements = TypeScriptLinter.splitTupleElements(tupleBody).map((element) => {
+      return TypeScriptLinter.normalizeTupleElementType(element);
+    });
+    return `[${normalizedElements.join(',')}]`;
+  }
+
+  private static normalizeTupleElementType(typeString: string): string {
+    return TypeScriptLinter.normalizeArrayTypeString(TypeScriptLinter.unwrapParenthesizedType(typeString.trim()));
+  }
+
+  private static unwrapParenthesizedType(typeString: string): string {
+    if (!typeString.startsWith('(') || !typeString.endsWith(')')) {
+      return typeString;
+    }
+
+    let depth = 0;
+    for (let i = 0; i < typeString.length; i++) {
+      const char = typeString[i];
+      if (char === '(') {
+        depth++;
+      } else if (char === ')') {
+        depth--;
+        if (depth === 0 && i < typeString.length - 1) {
+          return typeString;
+        }
+      }
+    }
+    return typeString.slice(1, -1);
+  }
+
+  private static splitTupleElements(typeStr: string): string[] {
+    const members: string[] = [];
+    let current = '';
+    let parenDepth = 0;
+    let squareDepth = 0;
+    let angleDepth = 0;
+
+    for (let i = 0; i < typeStr.length; i++) {
+      const char = typeStr[i];
+      if (char === '(') {
+        parenDepth++;
+      } else if (char === ')') {
+        parenDepth--;
+      } else if (char === '[') {
+        squareDepth++;
+      } else if (char === ']') {
+        squareDepth--;
+      } else if (char === '<') {
+        angleDepth++;
+      } else if (char === '>') {
+        angleDepth--;
+      } else if (char === ',' && parenDepth === 0 && squareDepth === 0 && angleDepth === 0) {
+        members.push(current);
+        current = '';
+        continue;
+      }
+      current += char;
+    }
+    if (current) {
+      members.push(current);
+    }
+
+    return members;
   }
 
   private static normalizeUnionMembers(typeStr: string): string {
@@ -13642,7 +13804,131 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const originTypeStr = this.tsTypeChecker.typeToStringForLinter(originType);
     if (originTypeStr === 'never' && this.tsTypeChecker.typeToStringForLinter(asType) !== originTypeStr) {
       this.incrementCounters(tsAsExpr, FaultID.NoTsLikeSmartType);
+      return;
     }
+
+    if (this.shouldReportSmartTypeAsExpression(tsAsExpr)) {
+      this.incrementCounters(tsAsExpr, FaultID.NoTsLikeSmartType);
+    }
+  }
+
+  private shouldReportSmartTypeAsExpression(tsAsExpr: ts.AsExpression): boolean {
+    if (!ts.isPropertyAccessExpression(tsAsExpr.expression)) {
+      return false;
+    }
+
+    return this.shouldReportSmartTypeOnAsPropertyAccess(tsAsExpr.expression);
+  }
+
+  private shouldReportSmartTypeOnAsPropertyAccess(expr: ts.PropertyAccessExpression): boolean {
+    if (ts.isIdentifier(expr.expression) && this.isIdentifierDeclaredAsNullable(expr.expression)) {
+      const ownerUsageType = this.tsTypeChecker.getTypeAtLocation(expr.expression);
+      if (!TsUtils.isNullableUnionType(ownerUsageType)) {
+        return false;
+      }
+
+      if (TypeScriptLinter.isIdentifierNarrowedByNullishGuard(expr.expression)) {
+        return false;
+      }
+
+      if (TypeScriptLinter.isIdentifierNarrowedByImmediateInstanceofGuard(expr.expression)) {
+        return false;
+      }
+      return true;
+    }
+
+    if (this.hasNullableIntermediatePropertyAccess(expr)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private isIdentifierDeclaredAsNullable(identifier: ts.Identifier): boolean {
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(identifier);
+    const declaration = symbol ? TsUtils.getDeclaration(symbol) : undefined;
+    if (!declaration) {
+      return false;
+    }
+
+    if (ts.isParameter(declaration) && declaration.questionToken) {
+      return true;
+    }
+
+    const typeNode =
+      ts.isParameter(declaration) || ts.isVariableDeclaration(declaration) ? declaration.type : undefined;
+    if (!typeNode || !this.isUnionTypeAnnotation(typeNode)) {
+      return false;
+    }
+    return this.isNullableUnionTypeAnnotation(typeNode);
+  }
+
+  private static isIdentifierNarrowedByNullishGuard(identifier: ts.Identifier): boolean {
+    let current: ts.Node = identifier;
+    while (true) {
+      const ifStmt = ts.findAncestor(current, ts.isIfStatement);
+      if (!ifStmt) {
+        return false;
+      }
+
+      const narrowed = this.checkConditionForNarrowing(ifStmt.expression, identifier);
+      if (narrowed.isNarrowed && !narrowed.isTypeof) {
+        return true;
+      }
+      current = ifStmt.parent;
+    }
+  }
+
+  private static isIdentifierNarrowedByImmediateInstanceofGuard(identifier: ts.Identifier): boolean {
+    let current: ts.Node | undefined = identifier.parent;
+    while (current !== undefined) {
+      if (ts.isIfStatement(current)) {
+        const inThen = TypeScriptLinter.nodeContainsSubtree(current.thenStatement, identifier);
+        const inElse =
+          current.elseStatement !== undefined &&
+          TypeScriptLinter.nodeContainsSubtree(current.elseStatement, identifier);
+        if (inThen || inElse) {
+          return TypeScriptLinter.conditionHasDirectInstanceofOfIdentifier(current.expression, identifier);
+        }
+      }
+      current = current.parent;
+    }
+    return false;
+  }
+
+  private static nodeContainsSubtree(root: ts.Node, target: ts.Node): boolean {
+    let found = false;
+    const visit = (node: ts.Node): void => {
+      if (found) {
+        return;
+      }
+      if (node === target) {
+        found = true;
+        return;
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(root);
+    return found;
+  }
+
+  private static conditionHasDirectInstanceofOfIdentifier(expr: ts.Expression, identifier: ts.Identifier): boolean {
+    if (
+      ts.isBinaryExpression(expr) &&
+      expr.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword &&
+      ts.isIdentifier(expr.left) &&
+      expr.left.text === identifier.text
+    ) {
+      return true;
+    }
+
+    if (ts.isBinaryExpression(expr) && expr.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
+      return (
+        TypeScriptLinter.conditionHasDirectInstanceofOfIdentifier(expr.left, identifier) ||
+        TypeScriptLinter.conditionHasDirectInstanceofOfIdentifier(expr.right, identifier)
+      );
+    }
+    return false;
   }
 
   private isDeclaredOutsideForLoop(identifier: ts.Identifier): boolean {
@@ -13741,6 +14027,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    if (this.isSafeInstanceofGuardOperand(expr)) {
+      return;
+    }
+
     if (ts.isVariableDeclaration(parent)) {
       this.checkPropertyAccessUsageForVariable(expr, parent);
       return;
@@ -13776,7 +14066,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    if (parent.type && !ts.isUnionTypeNode(parent.type)) {
+    if (parent.type && !this.isUnionTypeAnnotation(parent.type)) {
       this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
     }
   }
@@ -13797,7 +14087,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const leftDecl = leftSymbol ? TsUtils.getDeclaration(leftSymbol) : undefined;
 
     if (leftDecl && ts.isVariableDeclaration(leftDecl) && leftDecl.type) {
-      if (!ts.isUnionTypeNode(leftDecl.type)) {
+      if (!this.isUnionTypeAnnotation(leftDecl.type)) {
         this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
       }
     }
@@ -13818,11 +14108,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const paramDecl = signature?.getParameters()?.[argIndex]?.valueDeclaration;
 
     if (paramDecl && ts.isParameter(paramDecl) && paramDecl.type) {
+      const paramType = this.tsTypeChecker.getTypeFromTypeNode(paramDecl.type);
       if (isFromOptionalChain) {
+        const sourceType = this.tsTypeChecker.getTypeAtLocation(expr);
+        if (!this.isTypeAssignable(sourceType, paramType)) {
+          this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
+        }
         return;
       }
 
-      const paramType = this.tsTypeChecker.getTypeFromTypeNode(paramDecl.type);
       const isValidType = TsUtils.isNullableUnionType(paramType);
 
       if (!isValidType) {
@@ -13876,11 +14170,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return false;
     }
     const typeNode = declaration.type;
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) {
+    if (!typeNode || !this.isUnionTypeAnnotation(typeNode)) {
       return false;
     }
-    const type = this.tsTypeChecker.getTypeFromTypeNode(typeNode);
-    return TsUtils.isNullableUnionType(type);
+    return this.isNullableUnionTypeAnnotation(typeNode);
   }
 
   private hasArgumentWithPropertyAccessUnion(callExpr: ts.CallExpression): boolean {
@@ -13907,31 +14200,104 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     hasUnionOrOptional: boolean;
     declaration?: ts.PropertyDeclaration;
   } {
-    while (ts.isPropertyAccessExpression(node) || ts.isPropertyAccessChain(node)) {
-      if (ts.isPropertyAccessChain(node)) {
-        return { hasUnionOrOptional: true, declaration: undefined };
+    let currentNode: ts.Node = node;
+    while (ts.isPropertyAccessExpression(currentNode) || ts.isPropertyAccessChain(currentNode)) {
+      const currentAnalysis = this.analyzeSinglePropertyAccessNode(currentNode);
+      if (currentAnalysis.result) {
+        return currentAnalysis.result;
       }
-
-      const declaration = this.getPropertyDeclaration(node);
-      if (!declaration) {
-        node = node.expression;
-        continue;
-      }
-
-      if (this.isOptionalOrNullableProperty(declaration)) {
-        return { hasUnionOrOptional: true, declaration };
-      }
-
-      node = node.expression;
+      currentNode = currentAnalysis.nextNode;
     }
     return { hasUnionOrOptional: false };
+  }
+
+  private analyzeSinglePropertyAccessNode(node: ts.PropertyAccessExpression | ts.PropertyAccessChain): {
+    result?: { hasUnionOrOptional: boolean; declaration?: ts.PropertyDeclaration };
+    nextNode: ts.Node;
+  } {
+    if (ts.isPropertyAccessChain(node)) {
+      return {
+        result: { hasUnionOrOptional: true, declaration: undefined },
+        nextNode: node.expression
+      };
+    }
+
+    const declaration = this.getPropertyDeclaration(node);
+    if (declaration && this.isOptionalOrNullableProperty(declaration)) {
+      return {
+        result: { hasUnionOrOptional: true, declaration },
+        nextNode: node.expression
+      };
+    }
+
+    if (!declaration) {
+      const fallbackDecl = this.findNullablePropertyDeclarationFromDeclaredUnionOwner(node);
+      if (fallbackDecl) {
+        return {
+          result: { hasUnionOrOptional: true, declaration: fallbackDecl },
+          nextNode: node.expression
+        };
+      }
+    }
+
+    return { nextNode: node.expression };
+  }
+
+  private findNullablePropertyDeclarationFromDeclaredUnionOwner(
+    node: ts.PropertyAccessExpression | ts.PropertyAccessChain
+  ): ts.PropertyDeclaration | undefined {
+    if (!ts.isIdentifier(node.expression)) {
+      return undefined;
+    }
+
+    const ownerSymbol = this.tsTypeChecker.getSymbolAtLocation(node.expression);
+    const ownerDecl = ownerSymbol ? TsUtils.getDeclaration(ownerSymbol) : undefined;
+    if (!ownerDecl || !(ts.isParameter(ownerDecl) || ts.isVariableDeclaration(ownerDecl)) || !ownerDecl.type) {
+      return undefined;
+    }
+
+    if (!this.isUnionTypeAnnotation(ownerDecl.type)) {
+      return undefined;
+    }
+
+    const ownerType = this.tsTypeChecker.getTypeFromTypeNode(ownerDecl.type);
+    const ownerTypes = ownerType.isUnion() ? ownerType.types : [ownerType];
+    for (const memberType of ownerTypes) {
+      if (TsUtils.isNullishType(memberType)) {
+        continue;
+      }
+      const memberProperty = this.tsUtils.findProperty(memberType, node.name.text);
+      const memberDecl = memberProperty?.valueDeclaration;
+      if (memberDecl && ts.isPropertyDeclaration(memberDecl) && this.isOptionalOrNullableProperty(memberDecl)) {
+        return memberDecl;
+      }
+    }
+
+    return undefined;
   }
 
   private getPropertyDeclaration(node: ts.PropertyAccessExpression): ts.PropertyDeclaration | undefined {
     const nameNode = node.name;
     const symbol = this.tsTypeChecker.getSymbolAtLocation(nameNode);
     const decl = symbol?.valueDeclaration;
-    return decl && ts.isPropertyDeclaration(decl) ? decl : undefined;
+    if (decl && ts.isPropertyDeclaration(decl)) {
+      return decl;
+    }
+
+    const ownerType = this.tsTypeChecker.getTypeAtLocation(node.expression);
+    const ownerTypes = ownerType.isUnion() ? ownerType.types : [ownerType];
+    const propName = nameNode.text;
+    for (const memberType of ownerTypes) {
+      if (TsUtils.isNullishType(memberType)) {
+        continue;
+      }
+      const memberProperty = this.tsUtils.findProperty(memberType, propName);
+      const memberDecl = memberProperty?.valueDeclaration;
+      if (memberDecl && ts.isPropertyDeclaration(memberDecl)) {
+        return memberDecl;
+      }
+    }
+    return undefined;
   }
 
   private isOptionalOrNullableProperty(decl: ts.PropertyDeclaration): boolean {
@@ -13940,10 +14306,65 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     if (decl.type && ts.isUnionTypeNode(decl.type)) {
-      const type = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
-      return TsUtils.isNullableUnionType(type);
+      const hasNullishTypeNode = decl.type.types.some((typeNode) => {
+        return typeNode.kind === ts.SyntaxKind.UndefinedKeyword || typeNode.kind === ts.SyntaxKind.NullKeyword;
+      });
+      if (hasNullishTypeNode) {
+        return true;
+      }
+    }
+
+    if (decl.type) {
+      return this.isNullableUnionTypeAnnotation(decl.type);
     }
     return false;
+  }
+
+  private isSafeInstanceofGuardOperand(expr: ts.PropertyAccessExpression): boolean {
+    const parent = expr.parent;
+    return (
+      ts.isBinaryExpression(parent) &&
+      parent.left === expr &&
+      parent.operatorToken.kind === ts.SyntaxKind.InstanceOfKeyword &&
+      !this.hasNullableIntermediatePropertyAccess(expr)
+    );
+  }
+
+  private hasNullableIntermediatePropertyAccess(expr: ts.PropertyAccessExpression): boolean {
+    return this.hasIntermediatePropertyAccess(expr, false);
+  }
+
+  private hasIntermediatePropertyAccess(expr: ts.PropertyAccessExpression, includeNonNullableUnion: boolean): boolean {
+    let current: ts.Node = expr.expression;
+    while (ts.isPropertyAccessExpression(current) || ts.isPropertyAccessChain(current)) {
+      if (ts.isPropertyAccessChain(current)) {
+        return true;
+      }
+
+      const declaration = this.getPropertyDeclaration(current);
+      if (declaration && this.isUnsafeIntermediateProperty(declaration, includeNonNullableUnion)) {
+        return true;
+      }
+
+      current = current.expression;
+    }
+    return false;
+  }
+
+  private isUnsafeIntermediateProperty(decl: ts.PropertyDeclaration, includeNonNullableUnion: boolean): boolean {
+    if (this.isOptionalOrNullableProperty(decl)) {
+      return true;
+    }
+
+    return includeNonNullableUnion && !!decl.type && this.isUnionTypeAnnotation(decl.type);
+  }
+
+  private isUnionTypeAnnotation(typeNode: ts.TypeNode): boolean {
+    return ts.isUnionTypeNode(typeNode) || this.tsTypeChecker.getTypeFromTypeNode(typeNode).isUnion();
+  }
+
+  private isNullableUnionTypeAnnotation(typeNode: ts.TypeNode): boolean {
+    return TsUtils.isNullableUnionType(this.tsTypeChecker.getTypeFromTypeNode(typeNode));
   }
 
   private static isNarrowedByTypeOf(expr: ts.Node): { isNarrowed: boolean; isTypeof: boolean } {
@@ -14045,7 +14466,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    this.checkUsageContextRequiresExplicitType(identifier);
+    this.checkUsageContextRequiresExplicitType(identifier, varDecl.initializer);
   }
 
   private isInitializerFromNullableOrUnionSource(expr: ts.Expression): boolean {
@@ -14077,7 +14498,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         continue;
       }
 
-      if (propDecl.type && ts.isUnionTypeNode(propDecl.type) || propDecl.questionToken) {
+      if (propDecl.type && this.isUnionTypeAnnotation(propDecl.type) || propDecl.questionToken) {
         return true;
       }
 
@@ -14096,17 +14517,17 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return undefined;
   }
 
-  private checkUsageContextRequiresExplicitType(identifier: ts.Identifier): void {
+  private checkUsageContextRequiresExplicitType(identifier: ts.Identifier, sourceExpr?: ts.Expression): void {
     const parent = identifier.parent;
     switch (parent.kind) {
       case ts.SyntaxKind.VariableDeclaration:
-        this.checkUsageContextRequiresExplicitTypeForVariable(identifier, parent as ts.VariableDeclaration);
+        this.checkUsageContextRequiresExplicitTypeForVariable(identifier, parent as ts.VariableDeclaration, sourceExpr);
         break;
       case ts.SyntaxKind.BinaryExpression:
-        this.checkUsageContextRequiresExplicitTypeForBinaryExpr(identifier, parent as ts.BinaryExpression);
+        this.checkUsageContextRequiresExplicitTypeForBinaryExpr(identifier, parent as ts.BinaryExpression, sourceExpr);
         break;
       case ts.SyntaxKind.CallExpression:
-        this.checkUsageContextRequiresExplicitTypeForCallExpr(identifier, parent as ts.CallExpression);
+        this.checkUsageContextRequiresExplicitTypeForCallExpr(identifier, parent as ts.CallExpression, sourceExpr);
         break;
       default:
     }
@@ -14114,20 +14535,33 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private checkUsageContextRequiresExplicitTypeForVariable(
     identifier: ts.Identifier,
-    parent: ts.VariableDeclaration
+    parent: ts.VariableDeclaration,
+    sourceExpr?: ts.Expression
   ): void {
     if (parent.initializer !== identifier) {
       return;
     }
 
-    if (parent.type && !ts.isUnionTypeNode(parent.type)) {
+    if (!parent.type) {
+      return;
+    }
+
+    const targetType = this.tsTypeChecker.getTypeFromTypeNode(parent.type);
+    const sourceType = sourceExpr ? this.getSmartTypeSourceType(sourceExpr) : undefined;
+    if (sourceType && !this.isTypeAssignable(sourceType, targetType)) {
+      this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
+      return;
+    }
+
+    if (!this.isUnionTypeAnnotation(parent.type)) {
       this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
     }
   }
 
   private checkUsageContextRequiresExplicitTypeForBinaryExpr(
     identifier: ts.Identifier,
-    parent: ts.BinaryExpression
+    parent: ts.BinaryExpression,
+    sourceExpr?: ts.Expression
   ): void {
     if (parent.operatorToken.kind !== ts.SyntaxKind.EqualsToken || parent.right !== identifier) {
       return;
@@ -14137,25 +14571,54 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const leftSymbol = this.tsTypeChecker.getSymbolAtLocation(parent.left);
       const leftDecl = leftSymbol ? TsUtils.getDeclaration(leftSymbol) : undefined;
       if (leftDecl && ts.isVariableDeclaration(leftDecl) && leftDecl.type) {
-        if (!ts.isUnionTypeNode(leftDecl.type)) {
+        const targetType = this.tsTypeChecker.getTypeFromTypeNode(leftDecl.type);
+        const sourceType = sourceExpr ? this.getSmartTypeSourceType(sourceExpr) : undefined;
+        if (sourceType && !this.isTypeAssignable(sourceType, targetType)) {
+          this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
+          return;
+        }
+
+        if (!this.isUnionTypeAnnotation(leftDecl.type)) {
           this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
         }
       }
     }
   }
 
-  private checkUsageContextRequiresExplicitTypeForCallExpr(identifier: ts.Identifier, parent: ts.CallExpression): void {
+  private checkUsageContextRequiresExplicitTypeForCallExpr(
+    identifier: ts.Identifier,
+    parent: ts.CallExpression,
+    sourceExpr?: ts.Expression
+  ): void {
     const argIndex = parent.arguments.indexOf(identifier);
     if (argIndex >= 0) {
       const signature = this.tsTypeChecker.getResolvedSignature(parent);
       const param = signature?.getParameters()?.[argIndex];
       const paramDecl = param?.valueDeclaration;
       if (paramDecl && ts.isParameter(paramDecl) && paramDecl.type) {
-        if (!ts.isUnionTypeNode(paramDecl.type)) {
+        const targetType = this.tsTypeChecker.getTypeFromTypeNode(paramDecl.type);
+        const sourceType = sourceExpr ? this.getSmartTypeSourceType(sourceExpr) : undefined;
+        if (sourceType && !this.isTypeAssignable(sourceType, targetType)) {
+          this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
+          return;
+        }
+
+        if (!this.isUnionTypeAnnotation(paramDecl.type)) {
           this.incrementCounters(identifier, FaultID.NoTsLikeSmartType);
         }
       }
     }
+  }
+
+  private getSmartTypeSourceType(expr: ts.Expression): ts.Type | undefined {
+    if (ts.isPropertyAccessExpression(expr) || ts.isPropertyAccessChain(expr)) {
+      const declaration = this.getPropertyDeclaration(expr);
+      if (declaration?.type) {
+        return this.tsTypeChecker.getTypeFromTypeNode(declaration.type);
+      }
+    }
+
+    return this.tsTypeChecker.getTypeAtLocation(expr);
   }
 
   private handleUnsafeUnaryExpression(expr: ts.PostfixUnaryExpression | ts.PrefixUnaryExpression): void {
@@ -14214,9 +14677,28 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return;
       }
 
-      const methodReturnType = this.tsTypeChecker.getTypeAtLocation(member);
+      const methodReturnType = this.getSmartTypeMethodReturnType(member);
       this.checkMethodAndReturnStatements(member.body, className, methodReturnType);
     });
+  }
+
+  private getSmartTypeMethodReturnType(method: ts.MethodDeclaration): ts.Type {
+    const methodType = this.tsTypeChecker.getTypeAtLocation(method);
+    if (!TsUtils.hasModifier(method.modifiers, ts.SyntaxKind.AsyncKeyword)) {
+      return methodType;
+    }
+
+    const returnType = TsUtils.getFunctionReturnType(methodType);
+    const promiseTypeArg = returnType ? TypeScriptLinter.getPromiseTypeArgument(returnType) : undefined;
+    return promiseTypeArg ?? methodType;
+  }
+
+  private static getPromiseTypeArgument(type: ts.Type): ts.Type | undefined {
+    if (!TsUtils.isTypeReference(type) || !TsUtils.isStdPromiseType(type) && !TsUtils.isStdPromiseLikeType(type)) {
+      return undefined;
+    }
+
+    return type.typeArguments?.[0];
   }
 
   private checkMethodAndReturnStatements(
@@ -14302,7 +14784,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     return (
-      ts.isUnionTypeNode(decl.type) ||
+      this.isUnionTypeAnnotation(decl.type) ||
       this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion() ||
       decl.questionToken !== undefined
     );
