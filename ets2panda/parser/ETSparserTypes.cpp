@@ -195,7 +195,7 @@ ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options
     }
 
     if (isUnionMember && isBareFunctionType && returnTypeAnnotation->IsETSUnionType()) {
-        const auto endLoc = Lexer()->GetToken().Start();
+        const auto endLoc = returnTypeAnnotation->End();
         const auto ambiguousType = GetProgram()->SourceCode().substr(startLoc.index, endLoc.index - startLoc.index);
         LogError(diagnostic::AMBIGUOUS_FUNC_TYPE_INUNION, {ambiguousType}, startLoc);
     }

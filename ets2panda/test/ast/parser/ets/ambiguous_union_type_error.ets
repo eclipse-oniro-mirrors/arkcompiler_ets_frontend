@@ -26,5 +26,5 @@ function main(): void {
 }
 
 /* @@@ label1 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
-/* @@@ label2 Error Syntax error ESY113981: Using '() => string | number ' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
+/* @@@ label2 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
 /* @@@ label3 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
