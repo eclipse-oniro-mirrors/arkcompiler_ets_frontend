@@ -1,29 +1,36 @@
-import { Logger } from './logger';
-import { PRE_DEFINE_READY } from './pre_define';
-import { BUILD_CONFIG_NATIVE_HANDLE } from './types';
+import { Logger, LogDataFactory } from './logger';
+import { BuildConfig } from './types';
 import { initBuildConfig } from './init/process_build_config';
-import { BaseMode } from './build/base_mode';
 import { BuildMode } from './build/build_mode';
-import { generateArkTSConfig } from './build/generate_arktsconfig';
-import { DriverError } from './util/error';
-import { Ets2panda } from './util/ets2panda';
-import { Graph } from './util/graph';
-import { normalizePath } from './util/utils';
-import { ObfuscationConfig } from './obfuscation/obfuscation_config';
-import { PluginsDriver } from './plugins/plugins_driver';
-import { nullptr } from '@arkts-bindings';
+import { DriverError, ErrorCode } from './util/error';
 
-export function build(): boolean {
-  Logger.getInstance();
-  initBuildConfig();
-  new BaseMode().run();
-  new BuildMode().run();
-  generateArkTSConfig();
-  new DriverError();
-  new Ets2panda();
-  new Graph();
-  normalizePath('');
-  new ObfuscationConfig();
-  new PluginsDriver();
-  return PRE_DEFINE_READY && BUILD_CONFIG_NATIVE_HANDLE == nullptr;
+function validateBuildConfigPath(buildConfigPath: string): void {
+  if (buildConfigPath.length === 0) {
+    throw new DriverError(LogDataFactory.newDetailedInstance(
+      ErrorCode.BUILDSYSTEM_ENTRY_DISPATCH_FAIL,
+      'Build config path is required.',
+      'Expected exactly one build_config.json path argument.',
+      '',
+      ['Run the ArkTS driver with the demo build_config.json path.'],
+      ''
+    ));
+  }
+}
+
+export function build(buildConfigPath: string): boolean {
+  try {
+    validateBuildConfigPath(buildConfigPath);
+    let buildConfig: BuildConfig = initBuildConfig(buildConfigPath);
+    let buildMode: BuildMode = new BuildMode(buildConfig);
+    buildMode.run();
+    return true;
+  } catch (error) {
+    if (error instanceof DriverError) {
+      Logger.getInstance().printError(error.logData);
+      return false;
+    }
+    Logger.getInstance().printWarn('Error occurred');
+    Logger.getInstance().printWarn('Error is not DriverError');
+    throw error;
+  }
 }
