@@ -14,6 +14,7 @@
  */
 
 #include "declgenEts2Ts.h"
+#include <cstdint>
 
 #include "checker/ETSchecker.h"
 #include "isolatedDeclgenChecker.h"
@@ -101,6 +102,277 @@ constexpr std::string_view TS_DECL_SUFFIX = ".d.ts";
 }
 
 }  // namespace
+
+// Jsdoc parser
+namespace jsdoc {
+
+inline constexpr const char *NONINTEROP_COMMAND = "noninterop";
+inline constexpr const char *INTEROP_COMMAND = "interop";
+inline constexpr const char *INTEROP_SUBCOMMAND_ANY = "any";
+inline constexpr const char *INTEROP_SUBCOMMAND_RET = "ret";
+inline constexpr const char *INTEROP_SUBCOMMAND_PARAM = "param";
+inline constexpr const char *INTEROP_SUBCOMMAND_BREAK_EXTENDS = "break-extends";
+inline constexpr const char *INTEROP_SUBCOMMAND_BREAK_IMPLEMENTS = "break-implements";
+
+struct JsdocTag {
+    std::string tag;      // tag name without leading '@'; empty for the description block
+    std::string comment;  // tag body / description text; lines joined with '\n'
+};
+
+bool IsJsdocSpace(char ch)
+{
+    return std::isspace(static_cast<unsigned char>(ch)) != 0;
+}
+
+std::string_view TrimLeft(std::string_view s)
+{
+    while (!s.empty() && IsJsdocSpace(s.front())) {
+        s.remove_prefix(1);
+    }
+    return s;
+}
+
+std::string_view TrimRight(std::string_view s)
+{
+    while (!s.empty() && IsJsdocSpace(s.back())) {
+        s.remove_suffix(1);
+    }
+    return s;
+}
+
+// Strip per-line decoration: leading whitespace and an optional `* ` continuation marker.
+std::string_view StripLinePrefix(std::string_view line)
+{
+    line = TrimLeft(line);
+    if (!line.empty() && line.front() == '*') {
+        line.remove_prefix(1);
+        if (!line.empty() && line.front() == ' ') {
+            line.remove_prefix(1);
+        }
+    }
+    return TrimRight(line);
+}
+
+// Pull the next physical line (LF-terminated, CR tolerated) out of `source`,
+// advancing `cursor` past the consumed newline.
+std::string_view NextLine(std::string_view source, std::size_t &cursor)
+{
+    auto eol = source.find('\n', cursor);
+    std::size_t end = (eol == std::string_view::npos) ? source.size() : eol;
+    auto line = source.substr(cursor, end - cursor);
+    if (!line.empty() && line.back() == '\r') {
+        line.remove_suffix(1);
+    }
+    cursor = (eol == std::string_view::npos) ? source.size() : eol + 1;
+    return line;
+}
+
+// Locate each `/** ... */` block inside the raw jsdoc text. The frontend usually
+// returns a single block, but be defensive against concatenated runs.
+std::vector<std::string_view> ExtractBlocks(std::string_view source)
+{
+    constexpr std::string_view OPEN = "/**";
+    constexpr std::string_view CLOSE = "*/";
+    std::vector<std::string_view> blocks;
+    std::size_t pos = 0;
+    while (pos < source.size()) {
+        auto open = source.find(OPEN, pos);
+        if (open == std::string_view::npos) {
+            break;
+        }
+        auto close = source.find(CLOSE, open + OPEN.size());
+        if (close == std::string_view::npos) {
+            break;
+        }
+        // Keep content only, without delimiters.
+        blocks.emplace_back(source.substr(open + OPEN.size(), close - (open + OPEN.size())));
+        pos = close + CLOSE.size();
+    }
+    if (blocks.empty()) {
+        blocks.emplace_back(source);
+    }
+    return blocks;
+}
+
+// Split "@name remainder" into (name, remainder). `name` is the longest run of
+// non-whitespace characters following '@'.
+void SplitTagHeader(std::string_view line, std::string &name, std::string_view &rest)
+{
+    line.remove_prefix(1);  // drop '@'
+    auto ws = line.find_first_of(" \t");
+    if (ws == std::string_view::npos) {
+        name.assign(line.data(), line.size());
+        rest = {};
+        return;
+    }
+    name.assign(line.data(), ws);
+    rest = TrimLeft(line.substr(ws + 1));
+}
+
+void AppendCommentLine(std::string &comment, std::string_view line)
+{
+    if (!comment.empty()) {
+        comment.push_back('\n');
+    }
+    comment.append(line.data(), line.size());
+}
+
+std::vector<JsdocTag> ParseJsdoc(std::string_view raw)
+{
+    std::vector<JsdocTag> result;
+    if (raw.empty()) {
+        return result;
+    }
+
+    JsdocTag current {};  // description bucket: tag == ""
+    bool hasCurrent = false;
+
+    auto flush = [&hasCurrent, &current, &result]() {
+        if (!hasCurrent) {
+            return;
+        }
+        auto trimmed = TrimRight(std::string_view(current.comment));
+        current.comment.assign(trimmed.data(), trimmed.size());
+        if (!current.tag.empty() || !current.comment.empty()) {
+            result.push_back(std::move(current));
+        }
+        current = JsdocTag {};
+        hasCurrent = false;
+    };
+
+    for (auto block : ExtractBlocks(raw)) {
+        std::size_t cursor = 0;
+        while (cursor <= block.size()) {
+            if (cursor == block.size()) {
+                // Consume a virtual final empty line so trailing content is flushed naturally.
+                break;
+            }
+            auto line = StripLinePrefix(NextLine(block, cursor));
+            if (!line.empty() && line.front() == '@') {
+                flush();
+                std::string_view rest;
+                SplitTagHeader(line, current.tag, rest);
+                current.comment.assign(rest.data(), rest.size());
+                hasCurrent = true;
+            } else {
+                hasCurrent = true;
+                AppendCommentLine(current.comment, line);
+            }
+        }
+        flush();
+    }
+    return result;
+}
+
+struct InteropTags {
+    bool noninterop = false;
+    bool any = false;
+    bool breakExtends = false;
+    bool breakImplements = false;
+    std::string retOverride;
+    std::unordered_map<std::size_t, std::string> paramOverrides;
+};
+
+std::vector<std::string_view> SplitTokens(std::string_view text)
+{
+    std::vector<std::string_view> out;
+    std::size_t i = 0;
+    while (i < text.size()) {
+        while (i < text.size() && IsJsdocSpace(text[i])) {
+            ++i;
+        }
+        std::size_t start = i;
+        while (i < text.size() && !IsJsdocSpace(text[i])) {
+            ++i;
+        }
+        if (start != i) {
+            out.emplace_back(text.substr(start, i - start));
+        }
+    }
+    return out;
+}
+
+std::string JoinFrom(const std::vector<std::string_view> &tokens, std::size_t start)
+{
+    std::string joined;
+    for (std::size_t i = start; i < tokens.size(); ++i) {
+        if (i > start) {
+            joined.push_back(' ');
+        }
+        joined.append(tokens[i].data(), tokens[i].size());
+    }
+    return joined;
+}
+
+bool TryParseIndex(std::string_view s, std::size_t &out)
+{
+    if (s.empty()) {
+        return false;
+    }
+    std::size_t v = 0;
+    constexpr uint32_t decimalBase = 10;
+    for (char c : s) {
+        if (c < '0' || c > '9') {
+            return false;
+        }
+        v = v * decimalBase + static_cast<std::size_t>(c - '0');
+    }
+    out = v;
+    return true;
+}
+
+InteropTags CollectInteropTags(std::string_view raw)
+{
+    // Token layout for `@interop` directives:
+    //   ret   <type-tokens...>       -> [sub, type...]
+    //   param <index> <type-tokens...>-> [sub, index, type...]
+    constexpr std::size_t retMinTokens = 2;    // sub + at least one type token
+    constexpr std::size_t paramMinTokens = 3;  // sub + index + at least one type token
+    constexpr std::size_t retTypeStart = 1;    // type tokens start after sub
+    constexpr std::size_t paramIndexPos = 1;   // index token position
+    constexpr std::size_t paramTypeStart = 2;  // type tokens start after index
+    InteropTags tags;
+    for (const auto &entry : ParseJsdoc(raw)) {
+        if (entry.tag == NONINTEROP_COMMAND) {
+            tags.noninterop = true;
+            continue;
+        }
+        if (entry.tag != INTEROP_COMMAND) {
+            continue;
+        }
+        const auto tokens = SplitTokens(entry.comment);
+        if (tokens.empty()) {
+            continue;
+        }
+        const auto sub = tokens[0];
+        if (sub == INTEROP_SUBCOMMAND_ANY) {
+            tags.any = true;
+        } else if (sub == INTEROP_SUBCOMMAND_BREAK_EXTENDS) {
+            tags.breakExtends = true;
+        } else if (sub == INTEROP_SUBCOMMAND_BREAK_IMPLEMENTS) {
+            tags.breakImplements = true;
+        } else if (sub == INTEROP_SUBCOMMAND_RET && tokens.size() >= retMinTokens) {
+            tags.retOverride = JoinFrom(tokens, retTypeStart);
+        } else if (sub == INTEROP_SUBCOMMAND_PARAM && tokens.size() >= paramMinTokens) {
+            std::size_t idx = 0;
+            if (TryParseIndex(tokens[paramIndexPos], idx)) {
+                tags.paramOverrides[idx] = JoinFrom(tokens, paramTypeStart);
+            }
+        }
+    }
+    return tags;
+}
+
+InteropTags CollectInteropTagsFromNode(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return {};
+    }
+    auto raw = compiler::JsdocStringFromDeclaration(node);
+    return CollectInteropTags(raw.Utf8());
+}
+
+}  // namespace jsdoc
 
 static void DebugPrint([[maybe_unused]] const std::string &msg)
 {
@@ -403,8 +675,7 @@ void TSDeclGen::GenDeclarations()
     for (auto *globalStatement : program_->Ast()->Statements()) {
         ResetState();
         ResetClassNode();
-        const auto jsdoc = compiler::JsdocStringFromDeclaration(globalStatement);
-        if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
+        if (jsdoc::CollectInteropTagsFromNode(globalStatement).noninterop) {
             continue;
         }
         if (globalStatement->IsClassDeclaration()) {
@@ -838,9 +1109,37 @@ void TSDeclGen::GenOptionalFlag(const checker::Signature *sig, const ir::MethodD
     }
 }
 
-void TSDeclGen::ProcessFuncParameters(const checker::Signature *sig)
+void TSDeclGen::ProcessFuncParameters(const checker::Signature *sig, bool applyOverrides)
 {
-    GenSeparated(sig->Params(), [this](varbinder::LocalVariable *param) { ProcessFuncParameter(param); });
+    if (!applyOverrides || interopParamOverrides_.empty()) {
+        GenSeparated(sig->Params(), [this](varbinder::LocalVariable *param) { ProcessFuncParameter(param); });
+        return;
+    }
+    bool first = true;
+    std::size_t userIdx = 0;
+    for (auto *param : sig->Params()) {
+        if (!first) {
+            OutDts(", ");
+        }
+        first = false;
+        const bool isThis = param->Name().Is("=t");
+        if (isThis) {
+            ProcessFuncParameter(param);
+            continue;
+        }
+        const auto it = interopParamOverrides_.find(userIdx);
+        ++userIdx;
+        if (it == interopParamOverrides_.end()) {
+            ProcessFuncParameter(param);
+            continue;
+        }
+        ProcessParameterName(param);
+        if (param->HasFlag(varbinder::VariableFlags::OPTIONAL)) {
+            OutDts("?");
+        }
+        OutDts(": ");
+        OutDts(it->second);
+    }
 }
 
 void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType, const ir::MethodDefinition *methodDef)
@@ -864,7 +1163,7 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     }
     OutDts("(");
 
-    ProcessFuncParameters(sig);
+    ProcessFuncParameters(sig, methodDef != nullptr);
 
     const auto *sigInfo = sig->GetSignatureInfo();
     if (sigInfo->restVar != nullptr) {
@@ -877,6 +1176,10 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     OutDts(")");
     if (!isSetter && !isConstructor) {
         OutDts(methodDef != nullptr ? ": " : " => ");
+        if (methodDef != nullptr && !interopRetOverride_.empty()) {
+            OutDts(interopRetOverride_);
+            return;
+        }
         if (!sig->HasFunction()) {
             if (sig->ReturnType()->HasTypeFlag(checker::TypeFlag::ETS_UNDEFINED) &&
                 IsTypeScriptDeclarationOutput(declgenOptions_)) {
@@ -1965,18 +2268,29 @@ void TSDeclGen::GenEnumDeclaration(const ir::ClassProperty *enumMember)
     OutEndlDts();
 }
 
-void TSDeclGen::GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interfaceDecl)
+void TSDeclGen::GenInteropAnyInterface(const ir::TSInterfaceDeclaration *interfaceDecl,
+                                       const std::string &interfaceName)
 {
-    const auto interfaceName = interfaceDecl->Id()->Name().Mutf8();
-    DebugPrint("GenInterfaceDeclaration: " + interfaceName);
-    if (interfaceName.find("%%partial-") != std::string::npos) {
-        return;
+    const bool isDefault = interfaceDecl->IsDefaultExported();
+    const bool isExported = interfaceDecl->IsExported() || declgenOptions_.exportAll;
+    if (isDefault) {
+        OutDts("type ", interfaceName, " = ESObject;");
+        OutEndlDts();
+        OutDts("export default ", interfaceName, ";");
+        OutEndlDts();
+        exportSet_.insert(interfaceName);
+    } else if (isExported) {
+        exportSet_.insert(interfaceName);
+        OutDts("export type ", interfaceName, " = ESObject;");
+        OutEndlDts();
+    } else {
+        OutDts("type ", interfaceName, " = ESObject;");
+        OutEndlDts();
     }
-    if (!ShouldEmitDeclaration(interfaceDecl)) {
-        return;
-    }
-    GenAnnotations(interfaceDecl);
-    state_.inInterface = true;
+}
+
+void TSDeclGen::EmitInterfaceHeader(const ir::TSInterfaceDeclaration *interfaceDecl, const std::string &interfaceName)
+{
     if (interfaceDecl->IsDefaultExported()) {
         if (state_.isInterfaceInNamespace) {
             OutDts("interface ", interfaceName);
@@ -1994,17 +2308,43 @@ void TSDeclGen::GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interf
     } else {
         OutDts(state_.isInterfaceInNamespace ? "interface " : "declare interface ", interfaceName);
     }
+}
 
-    GenTypeParameters(interfaceDecl->TypeParams());
-    if (!interfaceDecl->Extends().empty()) {
-        OutDts(" extends ");
-        GenSeparated(interfaceDecl->Extends(), [this](ir::TSInterfaceHeritage *param) {
-            if (param->Expr()->IsETSTypeReference()) {
-                ProcessETSTypeReferenceType(param->Expr()->AsETSTypeReference());
-            }
-        });
+void TSDeclGen::EmitInterfaceExtends(const ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    if (interfaceDecl->Extends().empty()) {
+        return;
     }
+    OutDts(" extends ");
+    GenSeparated(interfaceDecl->Extends(), [this](ir::TSInterfaceHeritage *param) {
+        if (param->Expr()->IsETSTypeReference()) {
+            ProcessETSTypeReferenceType(param->Expr()->AsETSTypeReference());
+        }
+    });
+}
 
+void TSDeclGen::GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    const auto interfaceName = interfaceDecl->Id()->Name().Mutf8();
+    DebugPrint("GenInterfaceDeclaration: " + interfaceName);
+    if (interfaceName.find("%%partial-") != std::string::npos) {
+        return;
+    }
+    if (!ShouldEmitDeclaration(interfaceDecl)) {
+        return;
+    }
+    const auto interfaceTags = jsdoc::CollectInteropTagsFromNode(interfaceDecl);
+    if (interfaceTags.any) {
+        GenInteropAnyInterface(interfaceDecl, interfaceName);
+        return;
+    }
+    GenAnnotations(interfaceDecl);
+    state_.inInterface = true;
+    EmitInterfaceHeader(interfaceDecl, interfaceName);
+    GenTypeParameters(interfaceDecl->TypeParams());
+    if (!interfaceTags.breakExtends) {
+        EmitInterfaceExtends(interfaceDecl);
+    }
     OutDts(" {");
     OutEndlDts();
     ProcessInterfaceBody(interfaceDecl->Body());
@@ -2221,13 +2561,16 @@ void TSDeclGen::HandleClassDeclarationTypeInfo(const ir::ClassDefinition *classD
     EmitClassDeclaration(classDef, className);
     GenTypeParameters(classDef->TypeParams());
 
+    const auto classTags = jsdoc::CollectInteropTagsFromNode(classDef->Parent());
     const auto *super = classDef->Super();
-    if (super != nullptr && !classDef->IsEnumTransformed()) {
+    if (!classTags.breakExtends && super != nullptr && !classDef->IsEnumTransformed()) {
         OutDts(" extends ");
         HandleClassInherit(super);
     }
 
-    if (!classDef->Implements().empty()) {
+    if (classTags.breakImplements) {
+        // skip implements per @interop break-implements
+    } else if (!classDef->Implements().empty()) {
         OutDts(" implements ");
         GenSeparated(classDef->Implements(), [this](ir::TSClassImplements *impl) { HandleClassInherit(impl->Expr()); });
     } else if (classDef->TsType() != nullptr && classDef->TsType()->IsETSObjectType() &&
@@ -2274,8 +2617,7 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
     std::unordered_set<std::string> processedStaticMethods;
     std::unordered_set<std::string> processedInstanceMethods;
     for (const auto *prop : classDef->Body()) {
-        const auto jsdoc = compiler::JsdocStringFromDeclaration(prop);
-        if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
+        if (jsdoc::CollectInteropTagsFromNode(prop).noninterop) {
             continue;
         }
         if (classDef->IsEnumTransformed()) {
@@ -2326,6 +2668,65 @@ void TSDeclGen::CloseClassBlock(const bool isDts)
     }
 }
 
+void TSDeclGen::EmitInteropAnyClass(const ir::ClassDefinition *classDef, const std::string &className)
+{
+    const bool isDefault = classDef->IsDefaultExported();
+    const bool isExported = classDef->IsExported() || declgenOptions_.exportAll;
+    if (isDefault) {
+        OutDts("type ", className, " = ESObject;");
+        OutEndlDts();
+        OutDts("export default ", className, ";");
+        OutEndlDts();
+        exportSet_.insert(className);
+    } else if (isExported) {
+        exportSet_.insert(className);
+        OutDts("export type ", className, " = ESObject;");
+        OutEndlDts();
+    } else {
+        OutDts("type ", className, " = ESObject;");
+        OutEndlDts();
+    }
+}
+
+void TSDeclGen::EmitNonGlobalClassDeclaration(const ir::ClassDefinition *classDef, const std::string &className)
+{
+    HandleClassDeclarationTypeInfo(classDef, className);
+    if (!classDef->IsNamespaceTransformed()) {
+        EmitClassGlueCode(classDef, className);
+    }
+    ProcessClassBody(classDef);
+    std::size_t originalIndentLevel = classNode_.indentLevel;
+    classNode_.indentLevel > 0 ? classNode_.indentLevel-- : classNode_.indentLevel = 0;
+    CloseClassBlock(true);
+    classNode_.indentLevel = originalIndentLevel;
+}
+
+void TSDeclGen::CloseNestedClassBlock(const ir::ClassDefinition *classDef)
+{
+    classNode_.indentLevel > 1 ? classNode_.indentLevel-- : classNode_.indentLevel = 1;
+    if (!ShouldEmitDeclaration(classDef)) {
+        return;
+    }
+    ES2PANDA_ASSERT(classNode_.indentLevel != static_cast<decltype(classNode_.indentLevel)>(-1));
+    if (!state_.isClassInNamespace) {
+        CloseClassBlock(false);
+    }
+    if (state_.inEnum) {
+        state_.inEnum = false;
+    }
+}
+
+void TSDeclGen::EmitDefaultExportedClass(const ir::ClassDefinition *classDef, const std::string &className)
+{
+    exportSet_.insert(className);
+    OutDts("export default ", className, ";");
+    OutEndlDts();
+    if (classDef->IsNamespaceTransformed()) {
+        OutTs("export default ", className, ";");
+        OutEndlTs();
+    }
+}
+
 void TSDeclGen::GenClassDeclaration(const ir::ClassDeclaration *classDecl)
 {
     const auto *classDef = classDecl->Definition();
@@ -2335,42 +2736,22 @@ void TSDeclGen::GenClassDeclaration(const ir::ClassDeclaration *classDecl)
     if (ShouldSkipClassDeclaration(className)) {
         return;
     }
+    if (!state_.inGlobalClass && ShouldEmitDeclaration(classDef) && jsdoc::CollectInteropTagsFromNode(classDecl).any) {
+        EmitInteropAnyClass(classDef, className);
+        return;
+    }
     if (state_.inGlobalClass) {
         classNode_.indentLevel = 1;
         ProcessClassBody(classDef);
     }
     if (!state_.inGlobalClass && ShouldEmitDeclaration(classDef)) {
-        HandleClassDeclarationTypeInfo(classDef, className);
-        if (!classDef->IsNamespaceTransformed()) {
-            EmitClassGlueCode(classDef, className);
-        }
-        ProcessClassBody(classDef);
-        std::size_t originalIndentLevel = classNode_.indentLevel;
-        classNode_.indentLevel > 0 ? classNode_.indentLevel-- : classNode_.indentLevel = 0;
-        CloseClassBlock(true);
-        classNode_.indentLevel = originalIndentLevel;
+        EmitNonGlobalClassDeclaration(classDef, className);
     }
     if (classNode_.hasNestedClass || state_.inNamespace || state_.inEnum) {
-        classNode_.indentLevel > 1 ? classNode_.indentLevel-- : classNode_.indentLevel = 1;
-        if (!ShouldEmitDeclaration(classDef)) {
-            return;
-        }
-        ES2PANDA_ASSERT(classNode_.indentLevel != static_cast<decltype(classNode_.indentLevel)>(-1));
-        if (!state_.isClassInNamespace) {
-            CloseClassBlock(false);
-        }
-        if (state_.inEnum) {
-            state_.inEnum = false;
-        }
+        CloseNestedClassBlock(classDef);
     }
     if (classDef->IsDefaultExported()) {
-        exportSet_.insert(className);
-        OutDts("export default ", className, ";");
-        OutEndlDts();
-        if (classDef->IsNamespaceTransformed()) {
-            OutTs("export default ", className, ";");
-            OutEndlTs();
-        }
+        EmitDefaultExportedClass(classDef, className);
     }
 }
 
@@ -2433,7 +2814,19 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     if (methodName == "$_iterator") {
         methodName = "[Symbol.iterator]";
     }
+
+    auto savedRet = std::move(interopRetOverride_);
+    auto savedParams = std::move(interopParamOverrides_);
+    auto methodTags = jsdoc::CollectInteropTagsFromNode(methodDef);
+    interopRetOverride_ = std::move(methodTags.retOverride);
+    interopParamOverrides_ = std::move(methodTags.paramOverrides);
+    auto restore = [this, &savedRet, &savedParams]() {
+        interopRetOverride_ = std::move(savedRet);
+        interopParamOverrides_ = std::move(savedParams);
+    };
+
     if (GenMethodDeclarationPrefix(methodDef, methodIdent, methodName)) {
+        restore();
         return;
     }
     GenMethodSignature(methodDef, methodIdent, methodName);
@@ -2446,6 +2839,7 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
         OutDts("export default ", methodName, ";");
         OutEndlDts();
     }
+    restore();
 }
 
 bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef, const ir::Identifier *methodIdent,

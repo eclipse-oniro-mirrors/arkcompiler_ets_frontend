@@ -1,0 +1,51 @@
+import st from "@ohos.lang.interop";
+export declare function retFunc(x: number): string;
+export declare function paramFunc(x: string): void;
+export declare function paramFunc2(x: string, y: Base): undefined;
+export declare class Base {
+    constructor();
+}
+export declare interface IBase {
+}
+export declare class ClassWithNoninteropMembers {
+    public keptMethod(): string;
+    public get keptProp(): number;
+    public set keptProp(value: number);
+    constructor();
+}
+export declare interface IWithNoninteropMembers {
+    keptMethod(): string;
+    removedMethod(): void;
+    keptProp: number;
+    removedProp: string;
+}
+export declare class ClassWithAccessors {
+    public get keptProp(): string;
+}
+export declare enum PartialEnum {
+    KeptA = 0,
+    KeptC = 2,
+}
+export declare interface IWithSignatures {
+    keptProp: string;
+}
+export type AnyClass = ESObject;
+export type AnyInterface = ESObject;
+export type AnyEnum = ESObject;
+export declare class BreakExtendsClass {
+    constructor();
+}
+export declare interface BreakExtendsInterface {
+}
+export declare class BreakImplementsClass {
+    constructor();
+}
+export declare class Methods {
+    public getValue(): number;
+    public process(a: number, b: string): void;
+    public constructor(x: string);
+}
+export declare interface IMethodSigs {
+    getValue(): number;
+    process(a: number, b: string): void;
+}
