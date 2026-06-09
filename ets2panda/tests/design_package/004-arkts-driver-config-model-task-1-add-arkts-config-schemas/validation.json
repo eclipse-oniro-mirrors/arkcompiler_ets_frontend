@@ -1,0 +1,42 @@
+{
+  "schema_version": "triborg.validation-manifest.v1",
+  "scenario_root_id": "004-arkts_driver_config_model-task-1-add-arkts-config-schemas",
+  "covered_outcome_ids": [
+    "outcome-2"
+  ],
+  "covered_decommission_ids": [],
+  "product_surfaces": [
+    "driver/build_system/ets_src/types.ets",
+    "driver/build_system/ets_src/pre_define.ets",
+    "driver/build_system/arktsconfig.json"
+  ],
+  "validation_surfaces": [
+    "tests/design_package/004-arkts-driver-config-model-task-1-add-arkts-config-schemas/scenarios.md",
+    "tests/design_package/004-arkts-driver-config-model-task-1-add-arkts-config-schemas/run.sh",
+    "tests/design_package/004-arkts-driver-config-model-task-1-add-arkts-config-schemas/validation.json"
+  ],
+  "evidence_type": "runtime/compiler test",
+  "freshness": "current build",
+  "mocks_used": false,
+  "production_files_modified": [],
+  "offline": true,
+  "deterministic": true,
+  "network_disabled": true,
+  "live_validation_enabled": false,
+  "device_validation_enabled": false,
+  "runtime_timeout_seconds": 45,
+  "environment_blocker_exit_code": 0,
+  "environment_blocker_status": "blocked_without_product_failure",
+  "required_scenario_ids": [
+    "004-arkts_driver_config_model-task-1-add-arkts-config-schemas-scenario-1",
+    "004-arkts_driver_config_model-task-1-add-arkts-config-schemas-scenario-2",
+    "004-arkts_driver_config_model-task-1-add-arkts-config-schemas-scenario-3",
+    "004-arkts_driver_config_model-task-1-add-arkts-config-schemas-scenario-4"
+  ],
+  "artifact_policy": {
+    "persistent_repo_artifacts": [],
+    "transient_artifact_root": "${TMPDIR:-/tmp/opencode}/004-arkts_driver_config_model-task-1-add-arkts-config-schemas-$$",
+    "cleanup_on_pass": true,
+    "preserve_on_failure_or_blocker": true
+  }
+}
