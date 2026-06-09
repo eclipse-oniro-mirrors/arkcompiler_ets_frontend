@@ -1,0 +1,41 @@
+{
+  "schema_version": "triborg.validation-manifest.v1",
+  "scenario_root_id": "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface",
+  "covered_outcome_ids": [
+    "outcome-3"
+  ],
+  "covered_decommission_ids": [],
+  "product_surfaces": [
+    "driver/build_system/ets_src/logger.ets",
+    "driver/build_system/arktsconfig.json"
+  ],
+  "validation_surfaces": [
+    "tests/design_package/002-arkts-driver-source-tree-task-2-add-logger-runtime-surface/scenarios.md",
+    "tests/design_package/002-arkts-driver-source-tree-task-2-add-logger-runtime-surface/run.sh",
+    "tests/design_package/002-arkts-driver-source-tree-task-2-add-logger-runtime-surface/validation.json"
+  ],
+  "evidence_type": "runtime/compiler test with same-toolchain console baseline",
+  "freshness": "current build",
+  "mocks_used": false,
+  "production_files_modified": [],
+  "offline": true,
+  "deterministic": true,
+  "network_disabled": true,
+  "live_validation_enabled": false,
+  "device_validation_enabled": false,
+  "runtime_timeout_seconds": 30,
+  "environment_blocker_exit_code": 0,
+  "environment_blocker_status": "blocked_without_product_failure",
+  "required_scenario_ids": [
+    "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface-scenario-1",
+    "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface-scenario-2",
+    "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface-scenario-3",
+    "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface-scenario-4"
+  ],
+  "artifact_policy": {
+    "persistent_repo_artifacts": [],
+    "transient_artifact_root": "${TMPDIR:-/tmp/opencode}/002-arkts_driver_source_tree-task-2-add-logger-runtime-surface-$$",
+    "cleanup_on_pass": true,
+    "preserve_on_failure_or_blocker": true
+  }
+}
