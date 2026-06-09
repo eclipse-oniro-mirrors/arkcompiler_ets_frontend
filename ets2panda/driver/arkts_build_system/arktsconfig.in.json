@@ -1,0 +1,16 @@
+{
+  "include": [
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/*"
+  ],
+  "compilerOptions": {
+    "package": "@arkts-build-system",
+    "baseUrl": "${CMAKE_CURRENT_SOURCE_DIR}/src",
+    "rootDir": "${CMAKE_CURRENT_SOURCE_DIR}/src",
+    "paths": {
+      "@arkts-bindings": ["../../../arkts_bindings/src"]
+    }
+  },
+  "references": [
+    { "path": "../../../arkts_bindings/src" }
+  ]
+}

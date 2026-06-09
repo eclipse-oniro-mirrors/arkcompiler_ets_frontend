@@ -1,0 +1,62 @@
+# Design Package Component: arkts_driver_interop_runtime
+
+This file is copied from the approved Triborg design package during implementator preflight.
+
+# Component Design: ArkTS Driver Interop Runtime
+
+## Summary
+The ArkTS Driver Interop Runtime owns the binding-backed runtime boundary for the ArkTS build-system port. It adds ArkTS-safe file, environment, native-library, binary-stat, and compiler lifecycle helpers, then replaces ArkTS-driver subprocess compilation with direct `arkts_bindings` es2panda calls.
+
+## Top-Level Alignment
+This component implements the approved architecture boundary between the ArkTS driver and `arkts_bindings`. It supports config resolution, native compiler setup, in-process config handoff, state progression, diagnostics, cleanup, binary-safe output validation, and local dependency handling without importing Node.js APIs or changing the preserved TypeScript driver.
+
+## Tasks
+
+### Task 1: Add interop helper boundary
+Outcome IDs: outcome-6
+Outcome Role: supporting_evidence
+Decommission IDs: none
+Change Type: add
+Description: Add the binding-backed helper boundary used by ArkTS utility and config-initialization code for filesystem, environment, SDK, and native-library checks. This component owns runtime-backed existence, read, environment, native-library, and binary-size facts only. Pure path normalization, joining, extension changes, and absolute path derivation remain in the config-model and utility string helpers.
+Existing Behavior / Reuse: The repository already provides `arkts_bindings` concepts such as `InteropNativeModule._ReadFile`, `InteropNativeModule._FileExists`, `getEnvironmentVar`, and `getNativeLibraryPath`, but no component-local ArkTS build-system interop wrapper currently exists. The existing TypeScript driver uses Node.js filesystem/path/environment behavior and remains untouched as the reference path.
+Detailed Design: Add an ArkTS helper surface with functions such as `readTextFile(path)`, `fileExists(path)`, `ensureFileExists(path, reason)`, `ensurePathExists(path, reason)`, `fileSize(path)`, `ensureNonEmptyBinaryFile(path, reason)`, `substituteEnvVarsInJSON(text)`, and `resolveNativeCompilerLibraryPath()`. The handoff contract is: config-model or utility string code computes a normalized absolute candidate path, passes that exact string into this helper, and receives either validated file content, existence, binary size, native-library path, or a `DriverError`; this component does not canonicalize module graph identity or reinterpret build-config path semantics. `readTextFile` calls `_ReadFile` only for textual inputs such as JSON, `fileExists` and `ensure*` call `_FileExists`, environment substitution calls `getEnvironmentVar`, and native library resolution calls `getNativeLibraryPath()`. `fileSize` uses a binding-backed stat/size helper if present; if not present, this task explicitly adds or reuses a binary-safe native stat bridge before `ensureNonEmptyBinaryFile` is exposed, so `.abc` validation never depends on text decoding. Required-path failures use stable reasons including `missing-build-config`, `missing-module-path`, `missing-sdk-stub-path`, `missing-native-library`, `missing-output-abc`, and `empty-output-abc`; optional config values remain explicitly absent or empty according to the config schema.
+Acceptance Criteria: Trigger: a compiled ArkTS config-resolution test loads the demo build config through the helper-backed `initBuildConfig` route. Target product surface: interop helper calls consumed by config initialization and utility code. Expected outcome: normalized absolute module paths and SDK stub paths supplied by the config-model are confirmed to exist, environment placeholders are substituted, native library resolution succeeds or fails deterministically, binary size checks distinguish missing from empty files, and missing path fixtures raise the expected `DriverError` reason. Evidence: runtime/compiler test ABC asserts resolved paths against the TypeScript reference output, asserts missing SDK/module/native-library fixtures fail through the helper boundary, and asserts `ensureNonEmptyBinaryFile` reports `missing-output-abc` for absent files and `empty-output-abc` for zero-byte binary files.
+Workload: 0.8 MM
+
+### Task 2: Change Ets2panda native adapter
+Outcome IDs: outcome-7, outcome-8
+Outcome Role: supporting_evidence
+Decommission IDs: decommission-1, decommission-5
+Change Type: change
+Description: Change the ArkTS-driver compiler backend entity to call `arkts_bindings` es2panda lifecycle APIs directly instead of forming subprocess commands. The adapter owns compiler memory scope, config handles, context handles, state progression, diagnostics, output artifact validation, and mandatory cleanup. It also keeps dependency handling local to resolved config and graph inputs, so the ArkTS path does not invoke the legacy external dependency analyzer.
+Existing Behavior / Reuse: The existing TypeScript `Ets2panda` class forms CLI arguments and drives compiler execution through the legacy subprocess path; that source remains intact and is not imported by the ArkTS driver. Existing binding methods `_CreateConfig`, `_CreateContextFromFile`, `_CreateContextGenerateAbcForExternalSourceFiles`, `_ProceedToState`, `_ContextState`, `_ContextErrorMessage`, `_GetAllErrorMessages`, `_DestroyContext`, `_DestroyConfig`, `_MemInitialize`, and `_MemFinalize` are reused as the native backend. No component-local ArkTS adapter currently exists.
+Detailed Design: Add an ArkTS `Ets2panda` adapter with `NativeCompilerConfigHandle`, `NativeCompilerContextHandle`, `NativeCompilerConfigRequest`, and `CompileUnitRequest` models. The native config input contract is direct and in-process: `NativeCompilerConfigRequest { argv: string[], configText: string }`, where `ArkTSConfigGenerator` supplies serialized config text and the adapter maps it to `_CreateConfig(argc, argv)` through a binding-supported argv encoding such as an in-memory config-text option or binding-side config payload registration; `argc` is always `argv.length`, and no command string, shell command, subprocess route, or component-owned config-file fallback is constructed. If the current `_CreateConfig(argc, argv)` binding cannot accept `configText` by any in-process argv encoding, this is treated as an `arkts_bindings` API gap that must be closed before this adapter can satisfy Task 7, not as an instruction for the orchestrator or config-model to write serialized config artifacts. `compileFile(request)` creates a context with `_CreateContextFromFile`, progresses through parse, bind, check, and codegen using `Es2pandaContextState`, checks `_ContextState` after each requested transition, and throws a compiler `DriverError` carrying source file, requested state, observed state, `_ContextErrorMessage`, and `_GetAllErrorMessages` when progression fails. `compileExternalSourceSet(request)` uses `_CreateContextGenerateAbcForExternalSourceFiles` only for required module-level ABC generation and applies the same state, diagnostic, and cleanup rules. Output validation runs after successful codegen by calling the helper boundary `fileExists(outputPath)` and failing with `missing-output-abc` when false, then calling `fileSize(outputPath)` or `ensureNonEmptyBinaryFile(outputPath, "empty-output-abc")` and failing when the binary byte size is zero; `.abc` validation never uses `readTextFile`. Memory lifecycle invariant: `_MemInitialize` is called once at the start of each adapter-owned compile session before `_CreateConfig`; if initialization fails, the adapter raises a native binding `DriverError` and creates no config/context handles. `_MemFinalize` is paired with every successful `_MemInitialize` in the outermost `finally` after all non-null contexts and configs have been destroyed, including compiler-error paths; context destruction occurs before config destruction, each handle is destroyed exactly once, cleanup failures are reported as native binding errors while preserving the original compiler failure as the primary cause when one exists. Decommission invariant: the ArkTS adapter contains no `child_process.spawn`, no es2panda shell command construction, and no dependency-analyzer process route; dependency inputs come only from resolved config and graph data, while legacy TypeScript files remain reference/fallback.
+Acceptance Criteria: Trigger: a compiled ArkTS test instantiates the ported `Ets2panda` adapter and compiles the demo `harB` source. Target product surface: native compiler lifecycle route in the ArkTS adapter. Expected outcome: the adapter initializes native memory, receives generated ArkTS config as `NativeCompilerConfigRequest { argv, configText }`, maps it to `_CreateConfig(argc, argv)` through the direct in-process binding contract, creates config/context handles, progresses to codegen, destroys all native handles, finalizes native memory, and produces a non-empty `.abc`; invalid source reports requested state, observed state, and native error text. Evidence: runtime/compiler test ABC asserts output existence and non-zero byte size through binding-backed file existence plus binary stat/size behavior, asserts `_MemFinalize` is reached on success and compiler-error paths through observable cleanup-safe repeated compile runs, and the sequential demo driver consumes the adapter without any dependency-analyzer subprocess to produce downstream non-empty artifacts.
+Workload: 1.5 MM
+
+## Cross-Cutting Constraints
+- No Node.js APIs in ArkTS interop code — this component is the replacement boundary for filesystem, environment, native-library, and process-adjacent behavior in the ArkTS path
+- Native resources must be cleanup-safe — compiler memory, config handles, and context handles are owned by this component and must be finalized or destroyed after each compile scope
+- Binary product artifacts need binary-safe validation — `.abc` files are bytecode outputs and must be checked through binding-backed size/stat behavior, not text reads
+- Legacy TypeScript driver remains reference-only — decommission applies only to the ArkTS path, not to deletion of TypeScript sources
+
+## Data And Control Flow
+- Normalized path candidates flow from config-model and utility string helpers into interop helpers — this component validates existence, reads textual content, resolves native-library facts, or returns typed failure without taking over path-normalization ownership
+- Generated ArkTS config flows from `ArkTSConfigGenerator` to `Ets2panda` as `NativeCompilerConfigRequest { argv, configText }` — this component maps it to `_CreateConfig(argc, argv)` in-process and treats missing config-text support as a binding API gap
+- Compile requests flow from the sequential orchestrator into the native adapter — this component owns memory initialization/finalization, config/context handles, state progression, diagnostics, cleanup, and non-empty binary output validation
+- Dependency inputs flow from resolved config and graph data into compile requests — this component does not call `dependency_analyzer` or any subprocess path in the ArkTS runtime
+
+## Component Interactions
+- `arkts-driver-config-model` -> `arkts-driver-interop-runtime` — supplies normalized absolute candidate paths and generated config data; receives validated file/native-library facts, binary-size facts, or typed `DriverError` failures
+- `arkts-driver-sequential-orchestrator` -> `arkts-driver-interop-runtime` — submits resolved source/module compile requests and receives success or typed compiler/output failure
+- `arkts-driver-interop-runtime` -> `arkts_bindings` — calls `InteropNativeModule`, `NativeLibrary`, `Utils`, and `Es2pandaNativeModule` as the only native/runtime access path
+- `arkts-driver-interop-runtime` -> `legacy-typescript-driver` — no runtime import; TypeScript remains an operator-selected reference/fallback for parity comparison
+
+## Rationale
+Component Impact marks this component as detailed and assigns concrete deltas for helper boundaries, native es2panda lifecycle replacement, and exclusion of dependency-analyzer subprocess use. The approved architecture makes this component the sole ArkTS-to-native boundary, so the component-local work is implementable without expanding orchestration, config-model, or test-harness ownership.
+
+## Skip Rationale
+Not skipped.
+
+## Runner Evidence
+- Final message: `logs/agents/component-design-v6-arkts_driver_interop_runtime/attempt-1/final_message.txt`

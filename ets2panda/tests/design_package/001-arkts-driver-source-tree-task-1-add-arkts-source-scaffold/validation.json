@@ -1,0 +1,31 @@
+{
+  "schema_version": "triborg.validation-scenario.v1",
+  "scenario_id": "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold",
+  "covered_outcome_ids": [
+    "outcome-1"
+  ],
+  "covered_decommission_ids": [
+    "decommission-6"
+  ],
+  "product_surfaces": [
+    "driver/build_system/ets_src/",
+    "driver/build_system/arktsconfig.json",
+    "driver/build_system/dist/build_system.abc",
+    "arkts_bindings/src/index.ets"
+  ],
+  "evidence_type": "CLI command",
+  "freshness": "current source",
+  "mocks_used": false,
+  "production_files_modified": [],
+  "live_validation_enabled": false,
+  "device_validation_enabled": false,
+  "offline": true,
+  "entrypoint": "tests/design_package/001-arkts-driver-source-tree-task-1-add-arkts-source-scaffold/run.sh",
+  "required_scenario_ids": [
+    "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold-scenario-1",
+    "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold-scenario-2",
+    "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold-scenario-3",
+    "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold-scenario-4"
+  ],
+  "command": "es2panda --ets-module --arktsconfig driver/build_system/arktsconfig.json --output driver/build_system/dist/build_system.abc driver/build_system/ets_src/entry.ets"
+}

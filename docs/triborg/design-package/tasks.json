@@ -1,0 +1,460 @@
+{
+  "created_at": "2026-06-09T15:49:35+00:00",
+  "revision": 6,
+  "run_id": "triborg-design-agent-front-20260609T132207Z-front_compiler_design",
+  "task_count": 13,
+  "tasks": [
+    {
+      "base_task_id": "arkts_driver_source_tree-task-1-add-arkts-source-scaffold",
+      "change_type": "add",
+      "component_id": "arkts_driver_source_tree",
+      "component_name": "ArkTS Driver Source Tree",
+      "component_order": 0,
+      "decommission_ids": [
+        "decommission-6"
+      ],
+      "delta_ids": [
+        "arkts_driver_source_tree-delta-1"
+      ],
+      "dependency_task_ids": [],
+      "dependency_titles": [],
+      "outcome_ids": [
+        "outcome-1"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 1"
+      ],
+      "sequence": 1,
+      "source": "components/arkts_driver_source_tree.md#task-1-add-arkts-source-scaffold",
+      "source_anchor": "task-1-add-arkts-source-scaffold",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_source_tree.md",
+      "source_order": 0,
+      "supporting_only": true,
+      "task_id": "001-arkts_driver_source_tree-task-1-add-arkts-source-scaffold",
+      "task_number": 1,
+      "title": "Add ArkTS source scaffold"
+    },
+    {
+      "base_task_id": "arkts_driver_source_tree-task-2-add-logger-runtime-surface",
+      "change_type": "add",
+      "component_id": "arkts_driver_source_tree",
+      "component_name": "ArkTS Driver Source Tree",
+      "component_order": 0,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_source_tree-delta-2"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_source_tree-task-1-add-arkts-source-scaffold"
+      ],
+      "dependency_titles": [
+        "Add ArkTS source scaffold"
+      ],
+      "outcome_ids": [
+        "outcome-3"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 3"
+      ],
+      "sequence": 2,
+      "source": "components/arkts_driver_source_tree.md#task-2-add-logger-runtime-surface",
+      "source_anchor": "task-2-add-logger-runtime-surface",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_source_tree.md",
+      "source_order": 1,
+      "supporting_only": true,
+      "task_id": "002-arkts_driver_source_tree-task-2-add-logger-runtime-surface",
+      "task_number": 2,
+      "title": "Add Logger runtime surface"
+    },
+    {
+      "base_task_id": "arkts_driver_source_tree-task-3-add-entry-dispatch-source",
+      "change_type": "add",
+      "component_id": "arkts_driver_source_tree",
+      "component_name": "ArkTS Driver Source Tree",
+      "component_order": 0,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_source_tree-delta-3"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_source_tree-task-1-add-arkts-source-scaffold",
+        "arkts_driver_source_tree-task-2-add-logger-runtime-surface"
+      ],
+      "dependency_titles": [
+        "Add ArkTS source scaffold",
+        "Add Logger runtime surface"
+      ],
+      "outcome_ids": [
+        "outcome-9"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 9"
+      ],
+      "sequence": 3,
+      "source": "components/arkts_driver_source_tree.md#task-3-add-entry-dispatch-source",
+      "source_anchor": "task-3-add-entry-dispatch-source",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_source_tree.md",
+      "source_order": 2,
+      "supporting_only": true,
+      "task_id": "003-arkts_driver_source_tree-task-3-add-entry-dispatch-source",
+      "task_number": 3,
+      "title": "Add entry dispatch source"
+    },
+    {
+      "base_task_id": "arkts_driver_config_model-task-1-add-arkts-config-schemas",
+      "change_type": "add",
+      "component_id": "arkts_driver_config_model",
+      "component_name": "ArkTS Driver Config Model",
+      "component_order": 1,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_config_model-delta-1"
+      ],
+      "dependency_task_ids": [],
+      "dependency_titles": [],
+      "outcome_ids": [
+        "outcome-2"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 2"
+      ],
+      "sequence": 4,
+      "source": "components/arkts_driver_config_model.md#task-1-add-arkts-config-schemas",
+      "source_anchor": "task-1-add-arkts-config-schemas",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_config_model.md",
+      "source_order": 3,
+      "supporting_only": true,
+      "task_id": "004-arkts_driver_config_model-task-1-add-arkts-config-schemas",
+      "task_number": 1,
+      "title": "Add ArkTS config schemas"
+    },
+    {
+      "base_task_id": "arkts_driver_config_model-task-2-add-graph-and-model-utilities",
+      "change_type": "add",
+      "component_id": "arkts_driver_config_model",
+      "component_name": "ArkTS Driver Config Model",
+      "component_order": 1,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_config_model-delta-2"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_config_model-task-1-add-arkts-config-schemas"
+      ],
+      "dependency_titles": [
+        "Add ArkTS config schemas"
+      ],
+      "outcome_ids": [
+        "outcome-4"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 4"
+      ],
+      "sequence": 5,
+      "source": "components/arkts_driver_config_model.md#task-2-add-graph-and-model-utilities",
+      "source_anchor": "task-2-add-graph-and-model-utilities",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_config_model.md",
+      "source_order": 4,
+      "supporting_only": true,
+      "task_id": "005-arkts_driver_config_model-task-2-add-graph-and-model-utilities",
+      "task_number": 2,
+      "title": "Add graph and model utilities"
+    },
+    {
+      "base_task_id": "arkts_driver_config_model-task-3-add-arktsconfiggenerator-model",
+      "change_type": "add",
+      "component_id": "arkts_driver_config_model",
+      "component_name": "ArkTS Driver Config Model",
+      "component_order": 1,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_config_model-delta-3"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_config_model-task-1-add-arkts-config-schemas",
+        "arkts_driver_config_model-task-2-add-graph-and-model-utilities"
+      ],
+      "dependency_titles": [
+        "Add ArkTS config schemas",
+        "Add graph and model utilities"
+      ],
+      "outcome_ids": [
+        "outcome-5"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 5"
+      ],
+      "sequence": 6,
+      "source": "components/arkts_driver_config_model.md#task-3-add-arktsconfiggenerator-model",
+      "source_anchor": "task-3-add-arktsconfiggenerator-model",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_config_model.md",
+      "source_order": 5,
+      "supporting_only": true,
+      "task_id": "006-arkts_driver_config_model-task-3-add-arktsconfiggenerator-model",
+      "task_number": 3,
+      "title": "Add ArkTSConfigGenerator model"
+    },
+    {
+      "base_task_id": "arkts_driver_config_model-task-4-add-build-config-resolution-model",
+      "change_type": "add",
+      "component_id": "arkts_driver_config_model",
+      "component_name": "ArkTS Driver Config Model",
+      "component_order": 1,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_config_model-delta-4"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_config_model-task-1-add-arkts-config-schemas",
+        "arkts_driver_config_model-task-2-add-graph-and-model-utilities"
+      ],
+      "dependency_titles": [
+        "Add ArkTS config schemas",
+        "Add graph and model utilities"
+      ],
+      "outcome_ids": [
+        "outcome-6"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 6"
+      ],
+      "sequence": 7,
+      "source": "components/arkts_driver_config_model.md#task-4-add-build-config-resolution-model",
+      "source_anchor": "task-4-add-build-config-resolution-model",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_config_model.md",
+      "source_order": 6,
+      "supporting_only": true,
+      "task_id": "007-arkts_driver_config_model-task-4-add-build-config-resolution-model",
+      "task_number": 4,
+      "title": "Add build config resolution model"
+    },
+    {
+      "base_task_id": "arkts_driver_interop_runtime-task-1-add-interop-helper-boundary",
+      "change_type": "add",
+      "component_id": "arkts_driver_interop_runtime",
+      "component_name": "ArkTS Driver Interop Runtime",
+      "component_order": 2,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_interop_runtime-delta-1"
+      ],
+      "dependency_task_ids": [],
+      "dependency_titles": [],
+      "outcome_ids": [
+        "outcome-6"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 4",
+        "Task 6"
+      ],
+      "sequence": 8,
+      "source": "components/arkts_driver_interop_runtime.md#task-1-add-interop-helper-boundary",
+      "source_anchor": "task-1-add-interop-helper-boundary",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_interop_runtime.md",
+      "source_order": 7,
+      "supporting_only": true,
+      "task_id": "008-arkts_driver_interop_runtime-task-1-add-interop-helper-boundary",
+      "task_number": 1,
+      "title": "Add interop helper boundary"
+    },
+    {
+      "base_task_id": "arkts_driver_interop_runtime-task-2-change-ets2panda-native-adapter",
+      "change_type": "change",
+      "component_id": "arkts_driver_interop_runtime",
+      "component_name": "ArkTS Driver Interop Runtime",
+      "component_order": 2,
+      "decommission_ids": [
+        "decommission-1",
+        "decommission-5"
+      ],
+      "delta_ids": [
+        "arkts_driver_interop_runtime-delta-2",
+        "arkts_driver_interop_runtime-delta-3"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_interop_runtime-task-1-add-interop-helper-boundary"
+      ],
+      "dependency_titles": [
+        "Add interop helper boundary"
+      ],
+      "outcome_ids": [
+        "outcome-7",
+        "outcome-8"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 7"
+      ],
+      "sequence": 9,
+      "source": "components/arkts_driver_interop_runtime.md#task-2-change-ets2panda-native-adapter",
+      "source_anchor": "task-2-change-ets2panda-native-adapter",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_interop_runtime.md",
+      "source_order": 8,
+      "supporting_only": true,
+      "task_id": "009-arkts_driver_interop_runtime-task-2-change-ets2panda-native-adapter",
+      "task_number": 2,
+      "title": "Change Ets2panda native adapter"
+    },
+    {
+      "base_task_id": "arkts_driver_sequential_orchestrator-task-1-change-basemode-sequential-build",
+      "change_type": "change",
+      "component_id": "arkts_driver_sequential_orchestrator",
+      "component_name": "ArkTS Driver Sequential Orchestrator",
+      "component_order": 3,
+      "decommission_ids": [
+        "decommission-2",
+        "decommission-3",
+        "decommission-4"
+      ],
+      "delta_ids": [
+        "arkts_driver_sequential_orchestrator-delta-1"
+      ],
+      "dependency_task_ids": [],
+      "dependency_titles": [],
+      "outcome_ids": [
+        "outcome-8"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 8"
+      ],
+      "sequence": 10,
+      "source": "components/arkts_driver_sequential_orchestrator.md#task-1-change-basemode-sequential-build",
+      "source_anchor": "task-1-change-basemode-sequential-build",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_sequential_orchestrator.md",
+      "source_order": 9,
+      "supporting_only": true,
+      "task_id": "010-arkts_driver_sequential_orchestrator-task-1-change-basemode-sequential-build",
+      "task_number": 1,
+      "title": "Change BaseMode sequential build"
+    },
+    {
+      "base_task_id": "arkts_driver_sequential_orchestrator-task-2-add-buildmode-sequential-dispatch",
+      "change_type": "add",
+      "component_id": "arkts_driver_sequential_orchestrator",
+      "component_name": "ArkTS Driver Sequential Orchestrator",
+      "component_order": 3,
+      "decommission_ids": [],
+      "delta_ids": [
+        "arkts_driver_sequential_orchestrator-delta-2"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_sequential_orchestrator-task-1-change-basemode-sequential-build"
+      ],
+      "dependency_titles": [
+        "Change BaseMode sequential build"
+      ],
+      "outcome_ids": [
+        "outcome-9"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 9"
+      ],
+      "sequence": 11,
+      "source": "components/arkts_driver_sequential_orchestrator.md#task-2-add-buildmode-sequential-dispatch",
+      "source_anchor": "task-2-add-buildmode-sequential-dispatch",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_sequential_orchestrator.md",
+      "source_order": 10,
+      "supporting_only": true,
+      "task_id": "011-arkts_driver_sequential_orchestrator-task-2-add-buildmode-sequential-dispatch",
+      "task_number": 2,
+      "title": "Add BuildMode sequential dispatch"
+    },
+    {
+      "base_task_id": "arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers",
+      "change_type": "validate",
+      "component_id": "arkts_driver_test_harness",
+      "component_name": "ArkTS Driver Test Harness",
+      "component_order": 4,
+      "decommission_ids": [
+        "decommission-1",
+        "decommission-5"
+      ],
+      "delta_ids": [
+        "arkts_driver_test_harness-delta-1"
+      ],
+      "dependency_task_ids": [],
+      "dependency_titles": [],
+      "outcome_ids": [
+        "outcome-2",
+        "outcome-3",
+        "outcome-4",
+        "outcome-5",
+        "outcome-6",
+        "outcome-7",
+        "outcome-11"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 2",
+        "Task 3",
+        "Task 4",
+        "Task 5",
+        "Task 6",
+        "Task 7",
+        "Task 11"
+      ],
+      "sequence": 12,
+      "source": "components/arkts_driver_test_harness.md#task-1-add-ets_ut-unit-drivers",
+      "source_anchor": "task-1-add-ets_ut-unit-drivers",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_test_harness.md",
+      "source_order": 11,
+      "supporting_only": true,
+      "task_id": "012-arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers",
+      "task_number": 1,
+      "title": "Add ets_ut unit drivers"
+    },
+    {
+      "base_task_id": "arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner",
+      "change_type": "validate",
+      "component_id": "arkts_driver_test_harness",
+      "component_name": "ArkTS Driver Test Harness",
+      "component_order": 4,
+      "decommission_ids": [
+        "decommission-2",
+        "decommission-3",
+        "decommission-4"
+      ],
+      "delta_ids": [
+        "arkts_driver_test_harness-delta-2"
+      ],
+      "dependency_task_ids": [
+        "arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers"
+      ],
+      "dependency_titles": [
+        "Add ets_ut unit drivers"
+      ],
+      "outcome_ids": [
+        "outcome-8",
+        "outcome-9",
+        "outcome-10",
+        "outcome-11"
+      ],
+      "outcome_role": "supporting_evidence",
+      "request_tasks": [
+        "Task 8",
+        "Task 9",
+        "Task 10",
+        "Task 11"
+      ],
+      "sequence": 13,
+      "source": "components/arkts_driver_test_harness.md#task-2-add-demo_hap-smoke-runner",
+      "source_anchor": "task-2-add-demo_hap-smoke-runner",
+      "source_artifact_path": "component_design/revisions/component-design-v6/components/arkts_driver_test_harness.md",
+      "source_order": 12,
+      "supporting_only": true,
+      "task_id": "013-arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner",
+      "task_number": 2,
+      "title": "Add demo_hap smoke runner"
+    }
+  ]
+}

@@ -825,6 +825,7 @@ endif()
 
 if(PANDA_TARGET_LINUX AND PANDA_WITH_ETS)
   add_subdirectory(arkts_bindings)
+  add_subdirectory(driver/arkts_build_system)
 endif()
 
 if(PANDA_WITH_TESTS)

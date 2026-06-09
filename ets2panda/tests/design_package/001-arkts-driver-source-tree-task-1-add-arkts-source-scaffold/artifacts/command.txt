@@ -1,0 +1,1 @@
+/home/huawei/w/PANDA/src/ets_frontend/ets2panda/../../../out/debug/bin/es2panda --ets-module --arktsconfig driver/build_system/arktsconfig.json --output driver/build_system/dist/build_system.abc driver/build_system/ets_src/entry.ets

@@ -1,0 +1,39 @@
+{
+  "include": [
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/*.ets",
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/init/*.ets",
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/build/*.ets",
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/util/*.ets",
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/obfuscation/*.ets",
+    "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src/plugins/*.ets"
+  ],
+  "compilerOptions": {
+    "package": "@arkts-build-system",
+    "baseUrl": "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src",
+    "rootDir": "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/ets_src",
+    "cacheDir": "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system/dist/etscache",
+    "paths": {
+      "@arkts-bindings": ["/home/huawei/w/PANDA/src/ets_frontend/ets2panda/arkts_bindings/src"]
+    },
+    "dependencies": {
+      "std/core": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/core" },
+      "std/math": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/math" },
+      "std/math/consts": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/math/consts" },
+      "std/containers": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/containers" },
+      "std/interop/js": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/interop/js" },
+      "std/time": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/time" },
+      "std/debug": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/debug" },
+      "std/debug/concurrency": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/debug/concurrency" },
+      "std/dfx": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/dfx" },
+      "std/testing": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/testing" },
+      "std/concurrency": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/concurrency" },
+      "std/annotations": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/annotations" },
+      "std/interop": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "std/interop" },
+      "escompat": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "escompat" },
+      "arkruntime": { "language": "ets", "path": "/home/huawei/w/PANDA/out/debug/plugins/ets/etsstdlib.abc", "ohmUrl": "arkruntime" }
+    }
+  },
+  "references": [
+    { "path": "/home/huawei/w/PANDA/src/ets_frontend/ets2panda/arkts_bindings/src" }
+  ]
+}
