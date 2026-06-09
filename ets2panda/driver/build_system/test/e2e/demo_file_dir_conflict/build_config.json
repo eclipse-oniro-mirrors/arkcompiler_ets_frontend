@@ -1,0 +1,24 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_file_dir_conflict/entry/index.ets",
+        "${absolute_path_to_build_system}/test/e2e/demo_file_dir_conflict/entry/test.ets",
+        "${absolute_path_to_build_system}/test/e2e/demo_file_dir_conflict/entry/test/foo.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "feature",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_file_dir_conflict/entry",
+    "sourceRoots": [
+        "./"
+    ],
+    "loaderOutPath": "./dist",
+    "cachePath": "./dist/cache",
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependencyModuleList": [],
+    "hasMainModule": true,
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e/demo_file_dir_conflict"
+}
