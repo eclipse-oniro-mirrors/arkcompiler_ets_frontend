@@ -52,3 +52,16 @@ EtsBoolean impl_FileExists(EtsStringPtr &path)
     return std::filesystem::exists(path.Data());
 }
 ETS_INTEROP_1(FileExists, EtsBoolean, EtsStringPtr)
+
+// CC-OFFNXT(G.NAM.03-CPP) project code style
+EtsLong impl_FileSize(EtsStringPtr &path)
+{
+    std::error_code error;
+    auto size = std::filesystem::file_size(path.Data(), error);
+    if (error) {
+        ThrowEtsError(std::string("Failed to get file size: ").append(path.Data()).append(" ").append(error.message()));
+        return 0;
+    }
+    return static_cast<EtsLong>(size);
+}
+ETS_INTEROP_1(FileSize, EtsLong, EtsStringPtr)

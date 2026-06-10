@@ -44,6 +44,10 @@ export class ErrorCode {
   public static readonly BUILDSYSTEM_INVALID_CONFIG: string = '11410041';
   public static readonly BUILDSYSTEM_MISSING_MODULE_PATH: string = '11410042';
   public static readonly BUILDSYSTEM_UNSUPPORTED_FEATURE: string = '11410043';
+  public static readonly BUILDSYSTEM_MISSING_BUILD_CONFIG: string = '11410044';
+  public static readonly BUILDSYSTEM_MISSING_NATIVE_LIBRARY: string = '11410045';
+  public static readonly BUILDSYSTEM_MISSING_OUTPUT_ABC: string = '11410046';
+  public static readonly BUILDSYSTEM_EMPTY_OUTPUT_ABC: string = '11410047';
   public static readonly INVALID_PARAMS: string = '11311001';
   public static readonly CONFIGURATION_FILE_FORMAT_ERROR: string = '11311002';
   public static readonly UNKNOWN_KEEP_OPTION: string = '11311003';

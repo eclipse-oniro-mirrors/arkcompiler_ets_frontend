@@ -1,7 +1,8 @@
 import { initBuildConfig } from '../../ets_src/init/process_build_config';
 import { BuildConfig, DependencyModuleConfig, ES2PANDA_MODE } from '../../ets_src/types';
 import { DriverError, ErrorCode } from '../../ets_src/util/error';
-import { isAbsolutePath, resolvePath } from '../../ets_src/util/utils';
+import { ensureNonEmptyBinaryFile } from '../../ets_src/util/interop_helper';
+import { isAbsolutePath } from '../../ets_src/util/utils';
 
 function assertTrue(value: boolean, message: string): void {
   if (!value) {
@@ -45,8 +46,7 @@ function assertDemoConfig(buildConfig: BuildConfig, root: string): void {
   assertTrue((buildConfig.nativeLibraryPath as string).length > 0, 'nativeLibraryPath must be recorded');
 }
 
-function testUnsupportedMode(): void {
-  let root: string = '/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system';
+function testUnsupportedMode(root: string): void {
   let configPath: string = root + '/test/ets_ut/unsupported_mode_build_config.json';
   let buildConfig: BuildConfig = initBuildConfig(configPath);
   if (buildConfig.es2pandaMode === ES2PANDA_MODE.RUN) {
@@ -54,17 +54,55 @@ function testUnsupportedMode(): void {
   }
 }
 
+function expectDriverError(action: () => void, code: string, cause: string): void {
+  try {
+    action();
+  } catch (error) {
+    let driverError: DriverError = error as DriverError;
+    assertEquals(driverError.logData.code, code);
+    assertEquals(driverError.logData.cause, cause);
+    return;
+  }
+  throw new Error('Expected DriverError ' + code);
+}
+
+function testMissingBuildConfig(root: string): void {
+  expectDriverError((): void => {
+    initBuildConfig(root + '/test/ets_ut/missing_build_config.json');
+  }, ErrorCode.BUILDSYSTEM_MISSING_BUILD_CONFIG, 'missing-build-config');
+}
+
+function testMissingModulePath(root: string): void {
+  expectDriverError((): void => {
+    initBuildConfig(root + '/test/ets_ut/missing_module_build_config.json');
+  }, ErrorCode.BUILDSYSTEM_MISSING_MODULE_PATH, 'missing-module-path');
+}
+
+function testMissingSdkStubPath(root: string): void {
+  expectDriverError((): void => {
+    initBuildConfig(root + '/test/ets_ut/missing_sdk_build_config.json');
+  }, ErrorCode.BUILDSYSTEM_SDK_NOT_EXIST_FAIL, 'missing-sdk-stub-path');
+}
+
+function testBinarySizeReasons(root: string): void {
+  expectDriverError((): void => {
+    ensureNonEmptyBinaryFile(root + '/test/ets_ut/missing_output.abc', 'missing-output-abc');
+  }, ErrorCode.BUILDSYSTEM_MISSING_OUTPUT_ABC, 'missing-output-abc');
+  expectDriverError((): void => {
+    ensureNonEmptyBinaryFile(root + '/test/ets_ut/empty_output.abc', 'empty-output-abc');
+  }, ErrorCode.BUILDSYSTEM_EMPTY_OUTPUT_ABC, 'empty-output-abc');
+}
+
 function main(): void {
   let root: string = '/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system';
   let buildConfig: BuildConfig = initBuildConfig(root + '/test/demo_hap/build_config.json');
   assertDemoConfig(buildConfig, root);
-  try {
-    testUnsupportedMode();
-  } catch (error) {
-    let driverError: DriverError = error as DriverError;
-    assertEquals(driverError.logData.code, ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE);
-    console.log('config-resolution-ok');
-    return;
-  }
-  throw new Error('Expected unsupported mode DriverError');
+  expectDriverError((): void => {
+    testUnsupportedMode(root);
+  }, ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Only sequential mode is supported.');
+  testMissingBuildConfig(root);
+  testMissingModulePath(root);
+  testMissingSdkStubPath(root);
+  testBinarySizeReasons(root);
+  console.log('config-resolution-ok');
 }

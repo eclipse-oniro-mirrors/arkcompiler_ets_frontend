@@ -1,0 +1,12 @@
+{
+  "compileFiles": [],
+  "packageName": "entry",
+  "moduleType": "shared",
+  "buildType": "build",
+  "buildMode": "Debug",
+  "moduleRootPath": "${absolute_path_to_build_system}/test/demo_hap/entry/",
+  "sourceRoots": ["./"],
+  "es2pandaMode": "sequential",
+  "buildSdkPath": "${absolute_path_to_build_system}/test/ets_ut/missing_sdk/",
+  "dependencyModuleList": []
+}

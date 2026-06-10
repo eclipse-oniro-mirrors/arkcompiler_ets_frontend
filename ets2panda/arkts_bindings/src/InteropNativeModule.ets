@@ -19,6 +19,7 @@ import { getNativeLibraryPath } from './NativeLibrary';
 export class InteropNativeModule {
   native _ReadFile(path: string): string;
   native _FileExists(path: string): boolean;
+  native _FileSize(path: string): long;
 }
 
 export function initInterop(): InteropNativeModule {

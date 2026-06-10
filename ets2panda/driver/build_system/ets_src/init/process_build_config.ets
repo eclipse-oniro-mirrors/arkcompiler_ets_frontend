@@ -1,11 +1,9 @@
-import { global } from '@arkts-bindings';
-import { getNativeLibraryPath } from '@arkts-bindings/NativeLibrary';
-import { getEnvironmentVar } from '@arkts-bindings/Utils';
 import { LogDataFactory } from '../logger';
 import { API, ARKTS, COMPONENT, KITS, LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, PANDA_STDLIB_PATH_FROM_SDK } from '../pre_define';
 import { AliasConfig, BUILD_MODE, BuildConfig, BUILD_TYPE, DependencyModuleConfig, ES2PANDA_MODE, OHOS_MODULE_TYPE, RECORD_TYPE } from '../types';
 import { DriverError, ErrorCode } from '../util/error';
-import { dirname, isAbsolutePath, resolvePath, substituteEnvVarsInJSON } from '../util/utils';
+import { ensureFileExists, ensurePathExists, fileExists, readTextFile, resolveNativeCompilerLibraryPath, substituteEnvVarsInJSON } from '../util/interop_helper';
+import { dirname, isAbsolutePath, resolvePath } from '../util/utils';
 
 type RawObject = Record<string, Object>;
 
@@ -128,9 +126,7 @@ function parseDependencyModule(raw: RawObject, basePath: string): DependencyModu
     throw driverError(ErrorCode.BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_CORRECT_FAIL, 'Dependent module info is not correct.', 'packageName and modulePath are required.');
   }
   let modulePath: string = absoluteFrom(basePath, modulePathRaw);
-  if (!global.interop._FileExists(modulePath)) {
-    throw driverError(ErrorCode.BUILDSYSTEM_MISSING_MODULE_PATH, 'Dependent module path does not exist.', packageName, modulePath);
-  }
+  ensurePathExists(modulePath, 'missing-module-path');
   let result: DependencyModuleConfig = {
     packageName: packageName,
     moduleName: getString(raw, 'moduleName', packageName),
@@ -231,7 +227,7 @@ function parseBuildConfig(raw: RawObject, configPath: string): BuildConfig {
     compileFiles: normalizeStringArrayPaths(configDir, getStringArray(raw, 'compileFiles')),
     dependencyModuleList: parseDependencyModules(raw, configDir),
   };
-  buildConfig.nativeLibraryPath = getNativeLibraryPath();
+  buildConfig.nativeLibraryPath = resolveNativeCompilerLibraryPath();
   return buildConfig;
 }
 
@@ -243,9 +239,7 @@ function checkRequiredSdkStubs(buildConfig: BuildConfig): void {
     resolvePath(buildSdkPath, KITS),
   ];
   for (let i: int = 0; i < requiredPaths.length; i++) {
-    if (!global.interop._FileExists(requiredPaths[i])) {
-      throw driverError(ErrorCode.BUILDSYSTEM_SDK_NOT_EXIST_FAIL, 'SDK stub path does not exist.', 'Required SDK stub directory is missing.', requiredPaths[i]);
-    }
+    ensurePathExists(requiredPaths[i], 'missing-sdk-stub-path');
   }
 }
 
@@ -254,10 +248,8 @@ function initAliasConfig(buildConfig: BuildConfig): void {
   let sdkAliasMap: Map<string, string> = buildConfig.sdkAliasMap ?? new Map<string, string>();
   sdkAliasMap.forEach((filePath: string, packageName: string) => {
     let resolvedFilePath: string = resolvePath(filePath);
-    if (!global.interop._FileExists(resolvedFilePath)) {
-      throw driverError(ErrorCode.BUILDSYSTEM_INIT_ALIAS_CONFIG_FAILED, 'Init Alias Config Failed', 'Alias config file does not exist.', resolvedFilePath);
-    }
-    let content: string = global.interop._ReadFile(resolvedFilePath);
+    ensureFileExists(resolvedFilePath, 'missing-alias-config');
+    let content: string = readTextFile(resolvedFilePath);
     let rawAlias: RawObject = JSON.parse(content) as RawObject;
     let pkgAliases: Map<string, AliasConfig> = new Map<string, AliasConfig>();
     let keys: string[] = Object.keys(rawAlias);
@@ -288,16 +280,16 @@ function initInteropSDKInfo(buildConfig: BuildConfig): void {
     let apiPath: string = resolvePath(basePath, API);
     let kitsPath: string = resolvePath(basePath, KITS);
     let componentPath: string = resolvePath(basePath, COMPONENT);
-    if (global.interop._FileExists(arktsPath)) {
+    if (fileExists(arktsPath)) {
       interopSDKPaths.add(arktsPath);
     }
-    if (global.interop._FileExists(apiPath)) {
+    if (fileExists(apiPath)) {
       interopSDKPaths.add(apiPath);
     }
-    if (global.interop._FileExists(kitsPath)) {
+    if (fileExists(kitsPath)) {
       interopSDKPaths.add(kitsPath);
     }
-    if (global.interop._FileExists(componentPath)) {
+    if (fileExists(componentPath)) {
       interopSDKPaths.add(componentPath);
     }
   }
@@ -306,9 +298,10 @@ function initInteropSDKInfo(buildConfig: BuildConfig): void {
 
 export function initBuildConfig(buildConfigPath: string): BuildConfig {
   let resolvedConfigPath: string = resolvePath(buildConfigPath);
-  let rawText: string = global.interop._ReadFile(resolvedConfigPath);
-  let rawJson: Object = JSON.parse(rawText) as Object;
-  let substituted: Object = substituteEnvVarsInJSON(rawJson, getEnvironmentVar);
+  ensureFileExists(resolvedConfigPath, 'missing-build-config');
+  let rawText: string = readTextFile(resolvedConfigPath);
+  let substitutedText: string = substituteEnvVarsInJSON(rawText);
+  let substituted: Object = JSON.parse(substitutedText) as Object;
   let buildConfig: BuildConfig = parseBuildConfig(substituted as RawObject, resolvedConfigPath);
   rejectUnsupported(buildConfig);
   checkRequiredSdkStubs(buildConfig);
