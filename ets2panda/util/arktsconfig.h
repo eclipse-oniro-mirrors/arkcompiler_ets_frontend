@@ -239,7 +239,7 @@ private:
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
     template <class Collection, class Function>
     bool ParseCollection(const JsonObject *config, Collection &out, const std::string &target, Function &&constructor);
-    std::optional<std::string> ReadConfig(const std::string &path);
+    std::optional<std::string> ReadConfig(const std::string &path) const;
     std::vector<std::string> ParseStringArray(const std::unique_ptr<ark::JsonObject> *alias, std::string_view key);
 
 private:

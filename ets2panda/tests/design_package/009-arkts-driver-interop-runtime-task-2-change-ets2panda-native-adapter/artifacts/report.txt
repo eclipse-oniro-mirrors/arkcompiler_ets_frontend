@@ -1,0 +1,50 @@
+offline deterministic validation: network disabled; no device or live provider checks
+target=/home/huawei/w/PANDA/src/ets_frontend/ets2panda
+PASS: found driver/build_system/ets_src/util/ets2panda.ets
+PASS: found driver/build_system/ets_src/util/interop_helper.ets
+PASS: found driver/build_system/ets_src/build/base_mode.ets
+PASS: found driver/build_system/ets_src/entry.ets
+PASS: found driver/build_system/test/ets_ut/ets2panda_native_adapter_contract_test.ets
+PASS: found driver/build_system/test/demo_hap/harB/index.ets
+PASS: adapter contains NativeCompilerConfigRequest
+PASS: adapter contains argv: string[]
+PASS: adapter contains configText: string
+PASS: adapter contains compileFile(request: CompileUnitRequest)
+PASS: adapter contains compileExternalSourceSet(request: CompileUnitRequest)
+PASS: adapter contains _MemInitialize
+PASS: adapter contains _CreateConfig(argv.length, argv)
+PASS: adapter contains _CreateContextFromFile
+PASS: adapter contains _CreateContextGenerateAbcForExternalSourceFiles
+PASS: adapter contains _ProceedToState
+PASS: adapter contains _ContextState
+PASS: adapter contains _ContextErrorMessage
+PASS: adapter contains _GetAllErrorMessages
+PASS: adapter contains _DestroyContext
+PASS: adapter contains _DestroyConfig
+PASS: adapter contains _MemFinalize
+PASS: adapter contains ensureNonEmptyBinaryFile(request.outputPath
+PASS: adapter contains ES2PANDA_STATE_PARSED
+PASS: adapter contains ES2PANDA_STATE_BOUND
+PASS: adapter contains ES2PANDA_STATE_CHECKED
+PASS: adapter contains ES2PANDA_STATE_ASM_GENERATED
+PASS: adapter contains ES2PANDA_STATE_BIN_GENERATED
+PASS: adapter contains requestedState=
+PASS: adapter contains observedState=
+PASS: adapter contains contextErrorMessage=
+PASS: adapter contains allErrorMessages=
+PASS: interop helper contains fileExists(path: string)
+PASS: interop helper contains fileSize(path: string)
+PASS: interop helper contains ensureNonEmptyBinaryFile
+PASS: no forbidden token 'child_process' in ets_src
+PASS: no forbidden token 'spawn(' in ets_src
+PASS: no forbidden token 'exec(' in ets_src
+PASS: no forbidden token 'dependency_analyzer' in ets_src
+PASS: no forbidden token '/bin/sh' in ets_src
+PASS: no forbidden token 'bash -c' in ets_src
+PASS: adapter test attempts harB compileFile with outputPath
+PASS: BaseMode consumes native Ets2panda adapter
+PASS: BaseMode.run has executable body
+PASS: found es2panda at /home/huawei/w/PANDA/src/ets_frontend/ets2panda/../../../out/debug/bin/es2panda
+PASS: canonical ArkTS build-system entrypoint compiles to non-empty ABC
+PASS: adapter contract test compiles to non-empty ABC
+summary: failures=0 blockers=0

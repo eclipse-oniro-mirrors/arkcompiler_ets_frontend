@@ -370,6 +370,10 @@ bool Options::DetermineExtension()
         }
 #endif
         case ScriptExtension::ETS: {
+            static constexpr std::string_view IN_MEMORY_CONFIG_PREFIX = "arktsconfig-json:";
+            if (GetArktsconfig().rfind(IN_MEMORY_CONFIG_PREFIX, 0) == 0) {
+                return true;
+            }
             std::ifstream inputStream(GetArktsconfig());
             if (inputStream.fail()) {
                 diagnosticEngine_.LogDiagnostic(diagnostic::OPEN_FAILED_ARKTSCONF,

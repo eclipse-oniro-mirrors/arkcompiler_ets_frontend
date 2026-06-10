@@ -384,8 +384,13 @@ bool ArkTsConfig::ParseCollection(const JsonObject *config, Collection &out, con
     return true;
 }
 
-std::optional<std::string> ArkTsConfig::ReadConfig(const std::string &path)
+std::optional<std::string> ArkTsConfig::ReadConfig(const std::string &path) const
 {
+    static constexpr std::string_view IN_MEMORY_CONFIG_PREFIX = "arktsconfig-json:";
+    if (path.rfind(IN_MEMORY_CONFIG_PREFIX, 0) == 0) {
+        return path.substr(IN_MEMORY_CONFIG_PREFIX.size());
+    }
+
     std::ifstream inputStream(path);
     if (!Check(!inputStream.fail(), diagnostic::FAILED_TO_OPEN_FILE, {path})) {
         return {};

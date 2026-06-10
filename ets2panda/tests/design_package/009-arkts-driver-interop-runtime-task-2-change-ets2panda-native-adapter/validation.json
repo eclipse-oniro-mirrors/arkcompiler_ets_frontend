@@ -1,0 +1,29 @@
+{
+  "covered_outcome_ids": [
+    "outcome-7",
+    "outcome-8"
+  ],
+  "covered_decommission_ids": [
+    "decommission-1",
+    "decommission-5"
+  ],
+  "product_surfaces": [
+    "driver/build_system/ets_src/util/ets2panda.ets",
+    "driver/build_system/ets_src/util/interop_helper.ets",
+    "driver/build_system/ets_src/build/base_mode.ets",
+    "driver/build_system/ets_src/entry.ets",
+    "driver/build_system/arktsconfig.json",
+    "driver/build_system/test/ets_ut/ets2panda_native_adapter_contract_test.ets",
+    "driver/build_system/test/demo_hap/harB/index.ets"
+  ],
+  "evidence_type": "offline runtime/compiler test plus deterministic product-path inspection",
+  "freshness": "current source/current build when local PANDA es2panda, ark, ark_disasm, verifier, and etsstdlib are available",
+  "mocks_used": [
+    "No product mocks are used. External network, live providers, and device validation are disabled. Missing or broken local PANDA runtime/toolchain is reported as an environment blocker after compile/import/source checks."
+  ],
+  "production_files_modified": [],
+  "offline": true,
+  "network_disabled": true,
+  "device_validation_enabled": false,
+  "live_validation_enabled": false
+}
