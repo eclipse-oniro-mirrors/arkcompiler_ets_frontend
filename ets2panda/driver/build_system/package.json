@@ -72,6 +72,7 @@
     "mixed_hap:gen_abc": "node ./dist/entry.js test/demo_mix_hap/build_config.json",
     "mixed_hap:run": "npm run mixed_hap:gen_decl && npm run mixed_hap:gen_abc",
     "demo_hap:gen_abc": "node ./dist/entry.js test/demo_hap/build_config.json",
+    "demo_hap_smoke_runner": "bash test/ets_ut/demo_hap_smoke_runner.sh",
     "actual_test:gen_abc_single": "node ./dist/entry.js test/single_file/build_config.json",
     "actual_test:gen_abc_two": "node ./dist/entry.js test/two_files/build_config.json",
     "actual_test:gen_abc_multi": "node ./dist/entry.js test/multi_file/build_config.json",

@@ -1,0 +1,49 @@
+{
+  "covered_outcome_ids": [
+    "outcome-8",
+    "outcome-9",
+    "outcome-10",
+    "outcome-11"
+  ],
+  "covered_decommission_ids": [
+    "decommission-2",
+    "decommission-3",
+    "decommission-4"
+  ],
+  "scenario_ids": [
+    "013-arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner-scenario-1",
+    "013-arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner-scenario-2",
+    "013-arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner-scenario-3",
+    "013-arkts_driver_test_harness-task-2-add-demo_hap-smoke-runner-scenario-4",
+    "demo_hap_smoke_runner_success",
+    "demo_hap_smoke_runner_fresh_abc_artifacts",
+    "demo_hap_smoke_runner_import_inspection",
+    "demo_hap_smoke_runner_missing_dump_tool_deterministic_failure",
+    "demo_hap_smoke_runner_no_decommissioned_workers"
+  ],
+  "expected_command": "bash tests/design_package/013-arkts-driver-test-harness-task-2-add-demo-hap-smoke-runner/run.sh",
+  "required_artifacts": [
+    "tests/design_package/013-arkts-driver-test-harness-task-2-add-demo-hap-smoke-runner/scenarios.md",
+    "tests/design_package/013-arkts-driver-test-harness-task-2-add-demo-hap-smoke-runner/run.sh",
+    "tests/design_package/013-arkts-driver-test-harness-task-2-add-demo-hap-smoke-runner/validation.json",
+    "driver/build_system/test/ets_ut/demo_hap_smoke_runner.sh",
+    "driver/build_system/test/demo_hap/dist/harB.abc",
+    "driver/build_system/test/demo_hap/dist/harA.abc",
+    "driver/build_system/test/demo_hap/dist/entry.abc"
+  ],
+  "product_surfaces": [
+    "driver/build_system/test/ets_ut/demo_hap_smoke_runner.sh",
+    "driver/build_system/ets_src/entry.ets",
+    "driver/build_system/ets_src/build/build_mode.ets",
+    "driver/build_system/ets_src/build/base_mode.ets",
+    "driver/build_system/ets_src/util/ets2panda.ets",
+    "driver/build_system/test/demo_hap/build_config.json",
+    "driver/build_system/test/demo_hap/dist/harB.abc",
+    "driver/build_system/test/demo_hap/dist/harA.abc",
+    "driver/build_system/test/demo_hap/dist/entry.abc"
+  ],
+  "evidence_type": "CLI command and runtime/compiler smoke test",
+  "freshness": "current build",
+  "mocks_used": [],
+  "production_files_modified": []
+}
