@@ -1,0 +1,50 @@
+{
+  "schema_version": "triborg.validation-materialization.v1",
+  "scenario_set_id": "010-arkts-driver-sequential-orchestrator-task-1-change-basemode-sequential-build",
+  "covered_outcome_ids": [
+    "outcome-8"
+  ],
+  "covered_decommission_ids": [
+    "decommission-2",
+    "decommission-3",
+    "decommission-4"
+  ],
+  "product_surfaces": [
+    "driver/build_system/ets_src/build/base_mode.ets",
+    "driver/build_system/ets_src/build/build_mode.ets",
+    "driver/build_system/ets_src/entry.ets",
+    "driver/build_system/ets_src/util/ets2panda.ets",
+    "driver/build_system/ets_src/util/graph.ets",
+    "driver/build_system/test/demo_hap/build_config.json",
+    "driver/build_system/test/ets_ut/base_mode_sequential_test.ets",
+    "driver/build_system/test/ets_ut/graph_utils_test.ets",
+    "driver/build_system/test/ets_ut/ets2panda_native_adapter_contract_test.ets"
+  ],
+  "evidence_type": "offline runtime/compiler test plus deterministic product-path inspection and bytecode disassembly",
+  "freshness": "current source/current build when local PANDA es2panda, ark_disasm, and optional ark runtime are available",
+  "mocks_used": [
+    "No product mocks are used. External network, live providers, and device validation are disabled. Missing or broken local PANDA runtime/toolchain is reported as an environment blocker after compile/import/source checks."
+  ],
+  "production_files_modified": [],
+  "validation_files": [
+    "tests/design_package/010-arkts-driver-sequential-orchestrator-task-1-change-basemode-sequential-build/scenarios.md",
+    "tests/design_package/010-arkts-driver-sequential-orchestrator-task-1-change-basemode-sequential-build/run.sh",
+    "tests/design_package/010-arkts-driver-sequential-orchestrator-task-1-change-basemode-sequential-build/validation.json"
+  ],
+  "offline": true,
+  "network_disabled": true,
+  "live_validation_enabled": false,
+  "device_validation_enabled": false,
+  "runtime_gate": {
+    "baseline": "run.sh compiles and runs a minimal same-toolchain console ABC before classifying any runtime/stdout behavior as product behavior",
+    "blocked_behavior": "if the console baseline aborts, segfaults, or otherwise cannot produce stdout, run.sh records RUNTIME_BLOCKED and continues compile/import/API/decommission validation",
+    "optional_smoke": "set ARK_VALIDATE_RUNTIME=1 only when the local ark runtime baseline is healthy to run the demo_hap driver smoke and stat dist/harB.abc, dist/harA.abc, and dist/entry.abc"
+  },
+  "expected_failures_reported": [
+    "If es2panda cannot compile the canonical product entrypoint or required ETS UT drivers, validation fails non-zero.",
+    "If BaseMode no longer validates graph before ArkTSConfigGenerator creation, validation fails non-zero.",
+    "If ArkTS driver sources reference compile_process_worker.ts, compile_thread_worker.ts, or TaskManager.ts, validation fails non-zero.",
+    "If runtime baseline succeeds but BaseMode runtime contract test fails, validation fails non-zero.",
+    "If ARK_VALIDATE_RUNTIME=1 and demo_hap output ABC artifacts are absent or empty, validation fails non-zero."
+  ]
+}
