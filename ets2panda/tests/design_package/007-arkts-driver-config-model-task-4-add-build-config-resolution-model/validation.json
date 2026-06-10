@@ -1,0 +1,22 @@
+{
+  "covered_outcome_ids": [
+    "outcome-6"
+  ],
+  "covered_decommission_ids": [],
+  "product_surfaces": [
+    "driver/build_system/ets_src/init/process_build_config.ets:initBuildConfig",
+    "driver/build_system/ets_src/types.ets",
+    "driver/build_system/ets_src/util/utils.ets",
+    "driver/build_system/ets_src/util/error.ets",
+    "driver/build_system/ets_src/entry.ets",
+    "driver/build_system/test/demo_hap/build_config.json",
+    "driver/build_system/test/ets_ut/process_build_config_test.ets",
+    "driver/build_system/test/ets_ut/unsupported_mode_build_config.json"
+  ],
+  "evidence_type": "runtime/compiler test",
+  "freshness": "current build",
+  "mocks_used": [
+    "No synthetic product mock replaces initBuildConfig. Validation uses the production ArkTS interop boundary and local file/path runtime helpers only; live network, external providers, and devices are disabled."
+  ],
+  "production_files_modified": []
+}

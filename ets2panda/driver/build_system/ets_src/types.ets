@@ -122,6 +122,7 @@ export interface PathConfig {
   externalApiPaths?: string[];
   abcLinkerPath?: string;
   dependencyAnalyzerPath?: string;
+  nativeLibraryPath?: string;
   sdkAliasConfigPaths?: string[];
   sdkAliasMap?: Map<string, string>;
   interopSDKPaths?: Set<string>;
