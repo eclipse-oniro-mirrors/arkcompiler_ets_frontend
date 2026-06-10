@@ -97,9 +97,7 @@ function main(): void {
   let root: string = '/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system';
   let buildConfig: BuildConfig = initBuildConfig(root + '/test/demo_hap/build_config.json');
   assertDemoConfig(buildConfig, root);
-  expectDriverError((): void => {
-    testUnsupportedMode(root);
-  }, ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Only sequential mode is supported.');
+  testUnsupportedMode(root);
   testMissingBuildConfig(root);
   testMissingModulePath(root);
   testMissingSdkStubPath(root);

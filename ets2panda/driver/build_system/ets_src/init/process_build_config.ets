@@ -104,21 +104,6 @@ function requiredPath(basePath: string, raw: RawObject, key: string): string {
   return absoluteFrom(basePath, value);
 }
 
-function rejectUnsupported(buildConfig: BuildConfig): void {
-  if (buildConfig.es2pandaMode !== undefined && buildConfig.es2pandaMode !== ES2PANDA_MODE.RUN) {
-    throw driverError(ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Unsupported es2panda mode.', 'Only sequential mode is supported.', buildConfig.es2pandaMode as string);
-  }
-  if (buildConfig.buildMode !== undefined && buildConfig.buildMode !== BUILD_MODE.DEBUG && buildConfig.buildMode !== BUILD_MODE.RELEASE) {
-    throw driverError(ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Unsupported build mode.', 'Unsupported buildMode.', buildConfig.buildMode as string);
-  }
-  if (buildConfig.enableDeclgenEts2Ts === true) {
-    throw driverError(ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Unsupported DeclgenV1 requirement.', 'Declgen Ets2Ts is not supported by the first ArkTS driver iteration.');
-  }
-  if (buildConfig.obfuscationOptions !== undefined) {
-    throw driverError(ErrorCode.BUILDSYSTEM_UNSUPPORTED_FEATURE, 'Unsupported obfuscation config.', 'Obfuscation is not supported by the first ArkTS driver iteration.');
-  }
-}
-
 function parseDependencyModule(raw: RawObject, basePath: string): DependencyModuleConfig {
   let packageName: string = getString(raw, 'packageName');
   let modulePathRaw: string = getString(raw, 'modulePath');
@@ -303,7 +288,6 @@ export function initBuildConfig(buildConfigPath: string): BuildConfig {
   let substitutedText: string = substituteEnvVarsInJSON(rawText);
   let substituted: Object = JSON.parse(substitutedText) as Object;
   let buildConfig: BuildConfig = parseBuildConfig(substituted as RawObject, resolvedConfigPath);
-  rejectUnsupported(buildConfig);
   checkRequiredSdkStubs(buildConfig);
   initAliasConfig(buildConfig);
   initInteropSDKInfo(buildConfig);

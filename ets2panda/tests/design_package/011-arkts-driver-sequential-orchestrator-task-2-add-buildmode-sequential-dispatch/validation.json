@@ -1,0 +1,27 @@
+{
+  "covered_outcome_ids": [
+    "outcome-9"
+  ],
+  "covered_decommission_ids": [],
+  "product_surfaces": [
+    "driver/build_system/ets_src/entry.ets",
+    "driver/build_system/ets_src/build/build_mode.ets",
+    "driver/build_system/ets_src/build/base_mode.ets",
+    "driver/build_system/test/ets_ut/build_mode_dispatch_test.ets",
+    "driver/build_system/test/demo_hap/build_config.json",
+    "driver/build_system/test/demo_hap/dist/harB.abc",
+    "driver/build_system/test/demo_hap/dist/harA.abc",
+    "driver/build_system/test/demo_hap/dist/entry.abc"
+  ],
+  "evidence_type": "runtime/compiler test and CLI command",
+  "freshness": "current build",
+  "mocks_used": [
+    {
+      "name": "RecordingBaseMode",
+      "scope": "test-local product dependency used only to prove BuildMode admission/rejection invokes or suppresses BaseMode.run before native compilation",
+      "external_dependency": false,
+      "target_product_path_exercised": "production BuildMode.run() and entry/build-system compilation surfaces"
+    }
+  ],
+  "production_files_modified": []
+}

@@ -226,6 +226,12 @@ export interface DeclFileNameCacheConfig {
 }
 
 export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig, ObfuscationSystemConfig {
+  externalProjectConfig?: string;
+  externalProjectPath?: string;
+  processWorker?: boolean;
+  threadWorker?: boolean;
+  useProcessWorker?: boolean;
+  useThreadWorker?: boolean;
   plugins?: Map<string, string>;
   paths?: Map<string, string[]>;
   compileFiles?: string[];
