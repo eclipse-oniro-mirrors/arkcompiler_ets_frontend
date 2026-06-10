@@ -1,0 +1,63 @@
+{
+  "covered_outcome_ids": [
+    "outcome-2",
+    "outcome-3",
+    "outcome-4",
+    "outcome-5",
+    "outcome-6",
+    "outcome-7",
+    "outcome-11"
+  ],
+  "covered_decommission_ids": [
+    "decommission-1",
+    "decommission-5"
+  ],
+  "scenario_ids": [
+    "012-arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers-scenario-1",
+    "012-arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers-scenario-2",
+    "012-arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers-scenario-3",
+    "012-arkts_driver_test_harness-task-1-add-ets_ut-unit-drivers-scenario-4",
+    "ets_ut_unit_drivers_compile_and_run",
+    "ets_ut_golden_config_snapshots",
+    "ets_ut_native_single_file_fresh_abc",
+    "ets_ut_rejects_stale_or_preexisting_abc",
+    "ets_ut_no_legacy_subprocess_or_dependency_analyzer_runtime"
+  ],
+  "expected_command": "bash tests/design_package/012-arkts-driver-test-harness-task-1-add-ets-ut-unit-drivers/run.sh",
+  "required_artifacts": [
+    "tests/design_package/012-arkts-driver-test-harness-task-1-add-ets-ut-unit-drivers/scenarios.md",
+    "tests/design_package/012-arkts-driver-test-harness-task-1-add-ets-ut-unit-drivers/run.sh",
+    "tests/design_package/012-arkts-driver-test-harness-task-1-add-ets-ut-unit-drivers/validation.json",
+    "driver/build_system/test/ets_ut/types_config_test.ets",
+    "driver/build_system/test/ets_ut/logger_test.ets",
+    "driver/build_system/test/ets_ut/graph_test.ets",
+    "driver/build_system/test/ets_ut/generate_arktsconfig_test.ets",
+    "driver/build_system/test/ets_ut/process_build_config_test.ets",
+    "driver/build_system/test/ets_ut/native_single_file_compile_test.ets",
+    "driver/build_system/test/ets_ut/golden/demo_hap_arktsconfig.json",
+    "driver/build_system/test/ets_ut/golden/demo_hap_resolved_build_config.json",
+    "driver/build_system/test/ets_ut/native_single_file_out/harB/index.abc"
+  ],
+  "product_surfaces": [
+    "driver/build_system/ets_src/types.ets",
+    "driver/build_system/ets_src/logger.ets",
+    "driver/build_system/ets_src/util/graph.ets",
+    "driver/build_system/ets_src/build/generate_arktsconfig.ets",
+    "driver/build_system/ets_src/init/process_build_config.ets",
+    "driver/build_system/ets_src/util/ets2panda.ets",
+    "driver/build_system/test/ets_ut/types_config_test.ets",
+    "driver/build_system/test/ets_ut/logger_test.ets",
+    "driver/build_system/test/ets_ut/graph_test.ets",
+    "driver/build_system/test/ets_ut/generate_arktsconfig_test.ets",
+    "driver/build_system/test/ets_ut/process_build_config_test.ets",
+    "driver/build_system/test/ets_ut/native_single_file_compile_test.ets",
+    "driver/build_system/test/ets_ut/golden/demo_hap_arktsconfig.json",
+    "driver/build_system/test/ets_ut/golden/demo_hap_resolved_build_config.json",
+    "driver/build_system/test/demo_hap/harB/index.ets",
+    "driver/build_system/test/ets_ut/native_single_file_out/harB/index.abc"
+  ],
+  "evidence_type": "runtime/compiler test and CLI command",
+  "freshness": "current build",
+  "mocks_used": [],
+  "production_files_modified": []
+}

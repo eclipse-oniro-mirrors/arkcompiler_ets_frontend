@@ -1,0 +1,13 @@
+{
+  "buildSdkPath": "${BUILD_SYSTEM_ROOT}/test/mock_sdk",
+  "dependencyModuleList": [
+    {
+      "packageName": "harA",
+      "modulePath": "${BUILD_SYSTEM_ROOT}/test/demo_hap/harA"
+    },
+    {
+      "packageName": "harB",
+      "modulePath": "${BUILD_SYSTEM_ROOT}/test/demo_hap/harB"
+    }
+  ]
+}

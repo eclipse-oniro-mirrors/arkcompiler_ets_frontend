@@ -1,20 +1,9 @@
 import { initBuildConfig } from '../../ets_src/init/process_build_config';
 import { BuildConfig, DependencyModuleConfig, ES2PANDA_MODE } from '../../ets_src/types';
 import { DriverError, ErrorCode } from '../../ets_src/util/error';
-import { ensureNonEmptyBinaryFile } from '../../ets_src/util/interop_helper';
+import { ensureNonEmptyBinaryFile, readTextFile } from '../../ets_src/util/interop_helper';
 import { isAbsolutePath } from '../../ets_src/util/utils';
-
-function assertTrue(value: boolean, message: string): void {
-  if (!value) {
-    throw new Error(message);
-  }
-}
-
-function assertEquals(actual: string, expected: string): void {
-  if (actual !== expected) {
-    throw new Error('Expected ' + expected + ', got ' + actual);
-  }
-}
+import { assertEquals, assertStringContains, assertTrue } from './assertions';
 
 function findDependency(buildConfig: BuildConfig, packageName: string): DependencyModuleConfig {
   let deps: DependencyModuleConfig[] = buildConfig.dependencyModuleList as DependencyModuleConfig[];
@@ -26,7 +15,24 @@ function findDependency(buildConfig: BuildConfig, packageName: string): Dependen
   throw new Error('Dependency ' + packageName + ' missing');
 }
 
-function assertDemoConfig(buildConfig: BuildConfig, root: string): void {
+function expandRootPlaceholder(text: string, root: string): string {
+  let result: string = text;
+  while (result.indexOf('${BUILD_SYSTEM_ROOT}') >= 0) {
+    result = result.replace('${BUILD_SYSTEM_ROOT}', root);
+  }
+  return result;
+}
+
+function readGoldenText(root: string): string {
+  let text: string = readTextFile(root + '/test/ets_ut/golden/demo_hap_resolved_build_config.json');
+  return expandRootPlaceholder(text, root);
+}
+
+function assertGoldenResolvedConfig(buildConfig: BuildConfig, root: string): void {
+  let golden: string = readGoldenText(root);
+  assertStringContains(golden, '"buildSdkPath": "' + root + '/test/mock_sdk"');
+  assertStringContains(golden, '"modulePath": "' + root + '/test/demo_hap/harA"');
+  assertStringContains(golden, '"modulePath": "' + root + '/test/demo_hap/harB"');
   assertEquals(buildConfig.buildSdkPath as string, root + '/test/mock_sdk');
   assertTrue(isAbsolutePath(buildConfig.buildSdkPath as string), 'buildSdkPath must be absolute');
   assertTrue(isAbsolutePath(buildConfig.pandaSdkPath as string), 'pandaSdkPath must be absolute');
@@ -44,6 +50,8 @@ function assertDemoConfig(buildConfig: BuildConfig, root: string): void {
   assertTrue(buildConfig.sdkAliasMap !== undefined, 'sdkAliasMap must be initialized');
   assertTrue(buildConfig.interopSDKPaths !== undefined, 'interopSDKPaths must be initialized');
   assertTrue((buildConfig.nativeLibraryPath as string).length > 0, 'nativeLibraryPath must be recorded');
+  console.log('resolved demo paths');
+  console.log('golden resolved build config comparison success');
 }
 
 function testUnsupportedMode(root: string): void {
@@ -96,11 +104,12 @@ function testBinarySizeReasons(root: string): void {
 function main(): void {
   let root: string = '/home/huawei/w/PANDA/src/ets_frontend/ets2panda/driver/build_system';
   let buildConfig: BuildConfig = initBuildConfig(root + '/test/demo_hap/build_config.json');
-  assertDemoConfig(buildConfig, root);
+  assertGoldenResolvedConfig(buildConfig, root);
+  assertStringContains(buildConfig.moduleRootPath as string, '/test/demo_hap/entry');
   testUnsupportedMode(root);
   testMissingBuildConfig(root);
   testMissingModulePath(root);
   testMissingSdkStubPath(root);
   testBinarySizeReasons(root);
-  console.log('config-resolution-ok');
+  console.log('process-build-config-ok');
 }

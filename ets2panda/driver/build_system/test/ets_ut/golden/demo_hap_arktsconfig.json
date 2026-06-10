@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "package": "entry",
+    "baseUrl": "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry",
+    "rootDir": "${BUILD_SYSTEM_ROOT}/test/demo_hap",
+    "paths": {
+      "${BUILD_SYSTEM_ROOT}/test/mock_sdk/api": [
+        "${BUILD_SYSTEM_ROOT}/test/mock_sdk/api"
+      ],
+      "${BUILD_SYSTEM_ROOT}/test/mock_sdk/arkts": [
+        "${BUILD_SYSTEM_ROOT}/test/mock_sdk/arkts"
+      ],
+      "${BUILD_SYSTEM_ROOT}/test/mock_sdk/kits": [
+        "${BUILD_SYSTEM_ROOT}/test/mock_sdk/kits"
+      ],
+      "entry/a": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/a.ets"
+      ],
+      "entry/b": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/b.ets"
+      ],
+      "entry/c": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/c.ets"
+      ],
+      "entry/d": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/d.ets"
+      ],
+      "entry": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/src/main1/ets",
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry"
+      ],
+      "entry/Index": [
+        "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/a.ets"
+      ]
+    }
+  },
+  "files": [
+    "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/a.ets",
+    "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/b.ets",
+    "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/c.ets",
+    "${BUILD_SYSTEM_ROOT}/test/demo_hap/entry/d.ets"
+  ]
+}
