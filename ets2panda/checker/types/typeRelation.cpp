@@ -32,6 +32,56 @@ ArenaAllocator *TypeRelation::Allocator()
     return checker_->ProgramAllocator();
 }
 
+RelationHolder &TypeRelation::IdenticalResults() noexcept
+{
+    return isolateCaches_ ? identicalResults_ : checker_->IdenticalResults();
+}
+
+RelationHolder &TypeRelation::AssignableResults() noexcept
+{
+    return isolateCaches_ ? assignableResults_ : checker_->AssignableResults();
+}
+
+RelationHolder &TypeRelation::ComparableResults() noexcept
+{
+    return isolateCaches_ ? comparableResults_ : checker_->ComparableResults();
+}
+
+RelationHolder &TypeRelation::UncheckedCastableResults() noexcept
+{
+    return isolateCaches_ ? uncheckedCastableResults_ : checker_->UncheckedCastableResult();
+}
+
+RelationHolder &TypeRelation::SupertypeResults() noexcept
+{
+    return isolateCaches_ ? supertypeResults_ : checker_->SupertypeResults();
+}
+
+const RelationHolder &TypeRelation::IdenticalResults() const noexcept
+{
+    return isolateCaches_ ? identicalResults_ : checker_->IdenticalResults();
+}
+
+const RelationHolder &TypeRelation::AssignableResults() const noexcept
+{
+    return isolateCaches_ ? assignableResults_ : checker_->AssignableResults();
+}
+
+const RelationHolder &TypeRelation::ComparableResults() const noexcept
+{
+    return isolateCaches_ ? comparableResults_ : checker_->ComparableResults();
+}
+
+const RelationHolder &TypeRelation::UncheckedCastableResults() const noexcept
+{
+    return isolateCaches_ ? uncheckedCastableResults_ : checker_->UncheckedCastableResult();
+}
+
+const RelationHolder &TypeRelation::SupertypeResults() const noexcept
+{
+    return isolateCaches_ ? supertypeResults_ : checker_->SupertypeResults();
+}
+
 bool TypeRelation::IsIdenticalRelationInProgress(RelationHolder::RelationKey key) const
 {
     return std::find(identicalRelationStack_.begin(), identicalRelationStack_.end(), key) !=
@@ -98,7 +148,7 @@ bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
         return Result(true);
     }
 
-    result_ = CacheLookup(source, target, checker_->IdenticalResults(), RelationType::IDENTICAL);
+    result_ = CacheLookup(source, target, IdenticalResults(), RelationType::IDENTICAL);
     if (result_ == RelationResult::CACHE_MISS) {
         identicalRelationStack_.push_back(key);
         checker_->ResolveStructuredTypeMembers(source);
@@ -109,7 +159,7 @@ bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
             source->Identical(this, target);
         }
         if (IsTrue() || (!IsUnresolvedRecursiveAlias(source) && !IsUnresolvedRecursiveAlias(target))) {
-            checker_->IdenticalResults().Insert(key, {result_, RelationType::IDENTICAL});
+            IdenticalResults().Insert(key, {result_, RelationType::IDENTICAL});
         }
         identicalRelationStack_.pop_back();
     }
@@ -175,7 +225,7 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
 
     ES2PANDA_ASSERT(source);
     ES2PANDA_ASSERT(target);
-    result_ = CacheLookup(source, target, checker_->AssignableResults(), RelationType::ASSIGNABLE);
+    result_ = CacheLookup(source, target, AssignableResults(), RelationType::ASSIGNABLE);
     // NOTE(gogabr): Enum types may lead to GENERATE_VALUE_OF flag marking, so need to disregard cache
     if (result_ == RelationResult::CACHE_MISS || source->IsETSEnumType()) {
         // NOTE: we support assigning T to Readonly<T>, but do not support assigning Readonly<T> to T
@@ -188,7 +238,7 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
 
         auto key = RelationHolder::MakeKey(source->Id(), target->Id());
         if (result_ != RelationResult::FALSE && IsIdenticalTo(source, target)) {
-            checker_->AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
+            AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
             return true;
         }
 
@@ -203,7 +253,7 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
         }
 
         if (flags_ == TypeRelationFlag::NONE) {
-            checker_->AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
+            AssignableResults().Insert(key, {result_, RelationType::ASSIGNABLE});
         }
     }
 
@@ -212,7 +262,7 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
 
 bool TypeRelation::IsComparableTo(Type *source, Type *target)
 {
-    result_ = CacheLookup(source, target, checker_->ComparableResults(), RelationType::COMPARABLE);
+    result_ = CacheLookup(source, target, ComparableResults(), RelationType::COMPARABLE);
     ES2PANDA_ASSERT(source != nullptr);
     ES2PANDA_ASSERT(target != nullptr);
     if (result_ == RelationResult::CACHE_MISS) {
@@ -224,7 +274,7 @@ bool TypeRelation::IsComparableTo(Type *source, Type *target)
         target->Compare(this, source);
         ES2PANDA_ASSERT(source != nullptr);
         auto key = RelationHolder::MakeKey(source->Id(), target->Id());
-        checker_->ComparableResults().Insert(key, {result_, RelationType::COMPARABLE});
+        ComparableResults().Insert(key, {result_, RelationType::COMPARABLE});
     }
 
     return result_ == RelationResult::TRUE;
@@ -232,7 +282,7 @@ bool TypeRelation::IsComparableTo(Type *source, Type *target)
 
 bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
 {
-    result_ = CacheLookup(source, target, checker_->UncheckedCastableResult(), RelationType::UNCHECKED_CASTABLE);
+    result_ = CacheLookup(source, target, UncheckedCastableResults(), RelationType::UNCHECKED_CASTABLE);
     if (result_ == RelationResult::CACHE_MISS) {
         result_ = RelationResult::FALSE;
         flags_ |= TypeRelationFlag::UNCHECKED_CAST;
@@ -248,7 +298,7 @@ bool TypeRelation::IsCastableTo(Type *const source, Type *const target)
 
         if (UncheckedCast() && !node_->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
             auto key = RelationHolder::MakeKey(source->Id(), target->Id());
-            checker_->UncheckedCastableResult().Insert(key, {result_, RelationType::UNCHECKED_CASTABLE});
+            UncheckedCastableResults().Insert(key, {result_, RelationType::UNCHECKED_CASTABLE});
         }
 
         return true;
@@ -352,7 +402,7 @@ bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
         return Result(false);
     }
 
-    result_ = CacheLookup(super, sub, checker_->SupertypeResults(), RelationType::SUPERTYPE);
+    result_ = CacheLookup(super, sub, SupertypeResults(), RelationType::SUPERTYPE);
     if (result_ == RelationResult::CACHE_MISS) {
         if (!IsIdenticalTo(super, sub)) {
             result_ = RelationResult::FALSE;
@@ -362,7 +412,7 @@ bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
         }
 
         auto key = RelationHolder::MakeKey(super->Id(), sub->Id());
-        checker_->SupertypeResults().Insert(key, {result_, RelationType::SUPERTYPE});
+        SupertypeResults().Insert(key, {result_, RelationType::SUPERTYPE});
     }
 
     return result_ == RelationResult::TRUE;

@@ -96,6 +96,12 @@ softlist:
   - ".*/api/@ohos\\.multimedia\\.audio\\.d\\.ets"
   - ".*/api/@ohos\\.ability\\.screenLockFileManager\\.d\\.ets"
 
+- name: "allow_conflicting_interface_override_of_same_super_method"
+  paths:
+  - ".*/@ohos\\.i18n\\.ets"
+  - ".*/commonlibrary/ets_utils/utils_static/arkts_static/util_standard_test_static/entry/src/main/src/test/util/UtilInterface2\\.test\\.ets"
+  - ".*/commonlibrary/ets_utils/utils_static/spec_static/spec_three_standard_test_static/entry/src/main/src/test/semanticrules/overriding/overridingconflict/OverridingConflictTest\\.test\\.ets"
+
 - name: "allow_const_enum"
   paths:
   - ".*/api/@ohos\\.arkui\\.UIContext\\.d\\.ets"

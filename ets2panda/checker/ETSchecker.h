@@ -262,6 +262,7 @@ public:
     void AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classType, ETSObjectType *interfaceType,
                                                   ir::MethodDefinition *ifaceMethod);
     void ValidateOverriding(ETSObjectType *classType, const lexer::SourcePosition &pos);
+    void CheckMultipleOverrideOfSameSuperMethod(ETSObjectType *classType);
     void CheckInterfaceFunctions(ETSObjectType *classType);
     void CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                  std::vector<Signature *> *implementedSignatures,
@@ -486,6 +487,7 @@ public:
                                           bool returnTypeCheck) noexcept;
     static bool HasParameterlessConstructor(checker::Type *type);
     Signature *AdjustForTypeParameters(Signature *source, Signature *target);
+    Signature *AdjustForTypeParameters(Signature *source, Signature *target, TypeRelation *relation);
     void CheckOverride(Signature *signature);
     [[nodiscard]] bool IsReturnTypeSubstitutable(Signature *s1, Signature *s2);
     void ValidateSignatureAccessibility(ETSObjectType *callee, Signature *signature, const lexer::SourcePosition &pos,
