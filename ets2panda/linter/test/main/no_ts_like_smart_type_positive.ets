@@ -423,7 +423,7 @@ function foo5(bObj: B3 | undefined, ccc: number | undefined) {
         let a3: number | undefined  = a1; // Ok
         a3 =  bObj.b?.a; // Ok
         const b1 = bObj.b; // Ok
-        let b3: A3 | undefined = b1; //  ok
+        let b3: A3 | null = b1; //  ok
         b3 = b1; //  ok
         const a: A3 | null = bObj.b; // Ok
         const c: A3 = bObj.b as A3; // Ok
@@ -470,4 +470,100 @@ if (b.a?.f() !== null) {
 
 if ((b.a?.f() ?? 0) > 0) {
   console.log('ok');
+}
+
+type SmartTypePromiseAlias<T> = Promise<T>;
+
+class SmartTypeAsyncAliasHolder {
+    private value: string = 'ok';
+
+    public async getValue(): SmartTypePromiseAlias<string> {
+        return this.value; // No need to report the error "arkts-no-ts-like-smart-type"
+    }
+}
+
+class SmartTypePositiveAliasBase {
+    num: Number | undefined = 0;
+}
+
+class SmartTypePositiveAliasSon extends SmartTypePositiveAliasBase {}
+
+type SmartTypePositiveMaybeNumber = Number | undefined;
+
+function smartTypeUnionAliasTarget(aliasParam: SmartTypePositiveAliasBase | SmartTypePositiveAliasSon): void {
+    if (aliasParam instanceof SmartTypePositiveAliasSon) {
+        let safe: SmartTypePositiveMaybeNumber = aliasParam.num;
+    }
+}
+
+class SmartTypePr9977PositiveMain {
+    num: Number | undefined = 0;
+}
+
+class SmartTypePr9977PositiveAlternate {}
+
+function smartTypePr9977DirectObjectGuard(): Number {
+    let maybeMain: SmartTypePr9977PositiveMain | undefined = new SmartTypePr9977PositiveMain();
+    if (maybeMain instanceof SmartTypePr9977PositiveMain) {
+        return maybeMain.num as Number;
+    }
+    return 0;
+}
+
+function smartTypePr9977NullishThenPropertyGuard(): Number {
+    let maybeMain: SmartTypePr9977PositiveMain | undefined = new SmartTypePr9977PositiveMain();
+    if (maybeMain !== undefined) {
+        if (maybeMain.num instanceof Number) {
+            return maybeMain.num as Number;
+        }
+    }
+    return 0;
+}
+
+function smartTypePr9977NonNullableOwner(): Number {
+    let mainObj: SmartTypePr9977PositiveMain = new SmartTypePr9977PositiveMain();
+    if (mainObj.num instanceof Number) {
+        return mainObj.num as Number;
+    }
+    return 0;
+}
+
+function smartTypePr9977UnionObjectDirectGuard(): Number {
+    let unionObj: SmartTypePr9977PositiveMain | SmartTypePr9977PositiveAlternate =
+        new SmartTypePr9977PositiveMain();
+    if (unionObj instanceof SmartTypePr9977PositiveMain) {
+        return unionObj.num as Number;
+    }
+    return 0;
+}
+
+class SmartTypePositiveUnionOwnerBase {
+    num: Number | undefined = 0;
+}
+
+class SmartTypePositiveUnionOwnerSon extends SmartTypePositiveUnionOwnerBase {}
+
+class SmartTypePositiveUnionOwnerHolder {
+    public instanceOwner: SmartTypePositiveUnionOwnerBase | SmartTypePositiveUnionOwnerSon =
+        new SmartTypePositiveUnionOwnerBase();
+    static staticOwner: SmartTypePositiveUnionOwnerBase | SmartTypePositiveUnionOwnerSon =
+        new SmartTypePositiveUnionOwnerBase();
+
+    getInstanceOwner(): Number {
+        if (this.instanceOwner instanceof SmartTypePositiveUnionOwnerSon) {
+            return this.instanceOwner.num as Number;
+        }
+        return 0;
+    }
+
+    getStaticOwner(): Number {
+        if (SmartTypePositiveUnionOwnerHolder.staticOwner instanceof SmartTypePositiveUnionOwnerSon) {
+            return SmartTypePositiveUnionOwnerHolder.staticOwner.num as Number;
+        }
+        return 0;
+    }
+
+    getUnguardedOwner(): Number {
+        return this.instanceOwner.num as Number;
+    }
 }

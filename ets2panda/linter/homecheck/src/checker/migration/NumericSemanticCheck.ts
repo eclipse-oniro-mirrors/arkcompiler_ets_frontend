@@ -163,6 +163,15 @@ export class NumericSemanticCheck implements BaseChecker {
             } catch (e) {
                 logger.error(`Error checking init method with numeric literal, method: ${target.getSignature().toString()}, error: ${e}`);
             }
+            for (const stmt of stmts) {
+                try {
+                    this.getSourceUsageChecker().checkGeneratedStmtContainsNumericLiteral(stmt);
+                } catch (e) {
+                    logger.error(
+                        `Error checking generated stmt with numeric literal, stmt: ${stmt.toString()}, method: ${target.getSignature().toString()}, error: ${e}`
+                    );
+                }
+            }
         } else {
             for (const stmt of stmts) {
                 try {

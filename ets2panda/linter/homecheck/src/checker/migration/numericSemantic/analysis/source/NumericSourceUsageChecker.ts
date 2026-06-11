@@ -22,7 +22,6 @@ import {
     ArkConditionExpr,
     ArkIfStmt,
     ArkInstanceFieldRef,
-    ArkInvokeStmt,
     ArkMethod,
     ArkNormalBinopExpr,
     ArkTypeOfExpr,
@@ -134,8 +133,14 @@ export class NumericSourceUsageChecker {
         if (!this.isStmtContainsIntLiteral(stmt)) {
             return;
         }
+        const invokeExpr = this.getInvokeExprFromStmt(stmt);
+        if (invokeExpr) {
+            this.checkInvokeExprArgsWithDivision(stmt, invokeExpr, res);
+            this.emitNumericLiteralIssues(res);
+            return;
+        }
         // 这些类型的语句中的整型字面量无需进一步进行分析，直接返回
-        if (stmt instanceof ArkInvokeStmt || stmt instanceof ArkReturnStmt || stmt instanceof ArkIfStmt) {
+        if (stmt instanceof ArkReturnStmt || stmt instanceof ArkIfStmt) {
             return;
         }
         // 除赋值语句外的其余语句类型理论上不应该出现，如果出现日志报错，需要分析日志进行场景补充
@@ -145,6 +150,31 @@ export class NumericSourceUsageChecker {
         }
 
         this.checkAssignStmtWithNumericLiteral(stmt, res);
+    }
+
+    public checkGeneratedStmtContainsNumericLiteral(stmt: Stmt): void {
+        const res = new Map<Local, IssueInfo>();
+        this.options.resetCallDepth();
+
+        if (stmt instanceof ArkAssignStmt) {
+            const leftOp = stmt.getLeftOp();
+            const rightOp = stmt.getRightOp();
+            if (leftOp instanceof Local && rightOp instanceof ArkNormalBinopExpr && rightOp.getOperator() === NormalBinaryOperator.Division) {
+                this.checkDivisionStmtWithNumericLiteral(stmt, leftOp, rightOp, res);
+                return;
+            }
+        }
+
+        if (!this.isStmtContainsIntLiteral(stmt)) {
+            return;
+        }
+        const invokeExpr = this.getInvokeExprFromStmt(stmt);
+        if (!invokeExpr) {
+            return;
+        }
+
+        this.checkInvokeExprArgsWithDivision(stmt, invokeExpr, res);
+        this.emitNumericLiteralIssues(res);
     }
 
     public checkArrayIndexInStmt(stmt: Stmt): void {
@@ -195,14 +225,17 @@ export class NumericSourceUsageChecker {
             return;
         }
         if (!Utils.isNearlyNumberType(leftOp.getType())) {
+            if (this.isLocalUsedAsInvokeArg(leftOp)) {
+                this.options.isAbstractExprOnlyUsedAsIntLong(stmt, rightOp, res, NumberCategory.number);
+                this.emitNumericLiteralIssues(res);
+            }
             // 对左值进行检查决定是否对其添加类型注解int或number，如果不是number相关类型则无需继续进行检查
             return;
         }
         this.options.checkValueOnlyUsedAsIntLong(stmt, stmt.getLeftOp(), res, NumberCategory.number);
         // 因为如果let a10 = a1/2; a10 = a2/3;第1句能判断a10为number，则不会继续后面的检查，所以需要额外对除法表达式的op1和op2进行number类型注解的补充
         this.options.isAbstractExprOnlyUsedAsIntLong(stmt, rightOp, res, NumberCategory.number);
-        this.options.getSourceIssueEmitter().emitNumericLiteralLocalIssues(res);
-        this.options.getSourceIssueEmitter().emitNumericLiteralFieldIssues();
+        this.emitNumericLiteralIssues(res);
     }
 
     private checkAssignStmtWithNumericLiteral(stmt: ArkAssignStmt, res: Map<Local, IssueInfo>): void {
@@ -246,6 +279,76 @@ export class NumericSourceUsageChecker {
             logger.error(`Need to handle new rightOp type, stmt: ${stmt.toString()}, method: ${stmt.getCfg().getDeclaringMethod().getSignature().toString()}`);
             return;
         }
+        this.options.getSourceIssueEmitter().emitNumericLiteralLocalIssues(res);
+        this.options.getSourceIssueEmitter().emitNumericLiteralFieldIssues();
+    }
+
+    private checkInvokeExprArgsWithDivision(stmt: Stmt, invokeExpr: AbstractInvokeExpr, res: Map<Local, IssueInfo>): void {
+        for (const arg of invokeExpr.getArgs()) {
+            const divisionExpr = this.getDivisionExprFromValue(arg, stmt);
+            if (!divisionExpr) {
+                continue;
+            }
+            this.options.isAbstractExprOnlyUsedAsIntLong(divisionExpr.stmt, divisionExpr.expr, res, NumberCategory.number);
+        }
+    }
+
+    private isLocalUsedAsInvokeArg(local: Local): boolean {
+        for (const usedStmt of local.getUsedStmts()) {
+            const invokeExpr = this.getInvokeExprFromStmt(usedStmt);
+            if (invokeExpr?.getArgs().some(arg => arg === local || this.isValueRelatedToLocal(arg, local))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private getDivisionExprFromValue(value: Value, stmt: Stmt): { stmt: Stmt; expr: ArkNormalBinopExpr } | null {
+        if (value instanceof ArkNormalBinopExpr && value.getOperator() === NormalBinaryOperator.Division) {
+            return { stmt, expr: value };
+        }
+        if (!(value instanceof Local) || !value.getName().startsWith(TEMP_LOCAL_PREFIX)) {
+            return null;
+        }
+        const declaringStmt = value.getDeclaringStmt();
+        if (!(declaringStmt instanceof ArkAssignStmt)) {
+            return null;
+        }
+        const rightOp = declaringStmt.getRightOp();
+        if (rightOp instanceof ArkNormalBinopExpr && rightOp.getOperator() === NormalBinaryOperator.Division) {
+            return { stmt: declaringStmt, expr: rightOp };
+        }
+        return null;
+    }
+
+    private isValueRelatedToLocal(value: Value, local: Local): boolean {
+        if (value === local) {
+            return true;
+        }
+        return value.getUses().includes(local);
+    }
+
+    private getInvokeExprFromStmt(stmt: Stmt): AbstractInvokeExpr | null {
+        const invokeExpr = stmt.getInvokeExpr();
+        if (invokeExpr) {
+            return invokeExpr;
+        }
+        if (stmt instanceof ArkAssignStmt) {
+            const rightOp = stmt.getRightOp();
+            if (rightOp instanceof AbstractInvokeExpr) {
+                return rightOp;
+            }
+        }
+        if (stmt instanceof ArkReturnStmt) {
+            const returnOp = stmt.getOp();
+            if (returnOp instanceof AbstractInvokeExpr) {
+                return returnOp;
+            }
+        }
+        return null;
+    }
+
+    private emitNumericLiteralIssues(res: Map<Local, IssueInfo>): void {
         this.options.getSourceIssueEmitter().emitNumericLiteralLocalIssues(res);
         this.options.getSourceIssueEmitter().emitNumericLiteralFieldIssues();
     }

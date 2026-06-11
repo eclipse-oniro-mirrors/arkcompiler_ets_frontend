@@ -85,13 +85,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 300,
+            "line": 302,
             "column": 10,
-            "endLine": 300,
+            "endLine": 302,
             "endColumn": 14,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",
             "rule": "Not all code paths return a value.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 587,
+            "column": 17,
+            "endLine": 587,
+            "endColumn": 49,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "rule": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 598,
+            "column": 13,
+            "endLine": 598,
+            "endColumn": 50,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
+            "rule": "Type 'Number | undefined' is not assignable to type 'Number'.\n  Type 'undefined' is not assignable to type 'Number'.",
             "severity": "ERROR"
         }
     ]

@@ -16,10 +16,12 @@
 import path from 'path';
 import {
     AbstractFieldRef,
+    ArkArrayRef,
     ArkAssignStmt,
     ArkCastExpr,
     ArkField,
     ArkIfStmt,
+    ArkInstanceInvokeExpr,
     ArkInstanceFieldRef,
     ArkStaticFieldRef,
     ArkInstanceOfExpr,
@@ -46,6 +48,7 @@ import {
     Scene,
     Stmt,
     Type,
+    TypeInference,
     UnaryOperator,
     UnionType,
     UnknownType,
@@ -77,7 +80,25 @@ enum TypeAssuranceCondition {
 
 export class NoTSLikeAsCheck implements BaseChecker {
     readonly metaData: BaseMetaData = gMetaData;
-    readonly checkedBinaryOperator: string[] = ['+', '-', '*', '/', '%', '**'];
+    readonly checkedBinaryOperator: string[] = [
+        NormalBinaryOperator.Addition,
+        NormalBinaryOperator.Subtraction,
+        NormalBinaryOperator.Multiplication,
+        NormalBinaryOperator.Division,
+        NormalBinaryOperator.Remainder,
+        NormalBinaryOperator.Exponentiation,
+        NormalBinaryOperator.NullishCoalescing,
+        NormalBinaryOperator.LeftShift,
+        NormalBinaryOperator.RightShift,
+        NormalBinaryOperator.UnsignedRightShift,
+        NormalBinaryOperator.BitwiseAnd,
+        NormalBinaryOperator.BitwiseOr,
+        NormalBinaryOperator.BitwiseXor,
+    ];
+    readonly checkedUnaryOperator: string[] = [
+        UnaryOperator.LogicalNot,
+        UnaryOperator.BitwiseNot,
+    ];
     public rule: Rule;
     public defects: Defects[] = [];
     public issues: IssueReport[] = [];
@@ -153,8 +174,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
             if (castExpr === null) {
                 continue;
             }
-            const castType = castExpr.getType();
-            const opType = castExpr.getOp().getType();
+            const castType = this.unwrapAliasType(castExpr.getType());
+            const opType = this.unwrapAliasType(castExpr.getOp().getType());
 
             // 判断是否为cast表达式的算数运算，属于告警场景之一
             if (this.isCastExprWithNumericOperation(stmt)) {
@@ -163,7 +184,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
             }
 
             // 判断cast类型断言的类型是否是class，非class的场景不在本规则检查范围内
-            if (!(castExpr.getType() instanceof ClassType)) {
+            if (!(castType instanceof ClassType)) {
                 continue;
             }
             if (this.hasCheckedWithInstanceof(stmt.getCfg(), stmt)) {
@@ -193,8 +214,10 @@ export class NoTSLikeAsCheck implements BaseChecker {
     }
 
     private checkTypesMatch(opType: Type, castType: Type): boolean {
+        opType = this.unwrapAliasType(opType);
+        castType = this.unwrapAliasType(castType);
         if (opType instanceof UnionType) {
-            return opType.getTypes().some(type => type.toString() === castType.toString())
+            return opType.getTypes().some(type => this.unwrapAliasType(type).toString() === castType.toString())
         }
 
         if (opType instanceof ClassType) {
@@ -209,23 +232,72 @@ export class NoTSLikeAsCheck implements BaseChecker {
         if (this.isCastExprWithIncrementDecrement(stmt)) {
             return true;
         }
+        const castExpr = this.getCastExpr(stmt);
+        if (castExpr === null || !(this.unwrapAliasType(castExpr.getType()) instanceof NumberType)) {
+            return false;
+        }
         if (!(stmt instanceof ArkAssignStmt)) {
             return false;
         }
+        if (this.isCastExprUsedDirectlyInNumericOperation(stmt, castExpr)) {
+            return true;
+        }
+        return this.isCastLocalUsedByNumericOperation(stmt, castExpr);
+    }
+
+    private isCastExprUsedDirectlyInNumericOperation(stmt: ArkAssignStmt, castExpr: ArkCastExpr): boolean {
         const leftOp = stmt.getLeftOp();
-        if (!(leftOp instanceof ArkCastExpr)) {
-            return false;
-        }
         const rightOp = stmt.getRightOp();
-        if (!(rightOp instanceof ArkNormalBinopExpr)) {
+        if (rightOp instanceof ArkNormalBinopExpr) {
+            return this.isNumericBinopWithValue(rightOp, castExpr);
+        }
+        if (rightOp instanceof ArkUnopExpr) {
+            return this.isNumericUnopWithValue(rightOp, castExpr);
+        }
+        return leftOp instanceof ArkCastExpr && leftOp === castExpr;
+    }
+
+    private isCastLocalUsedByNumericOperation(stmt: ArkAssignStmt, castExpr: ArkCastExpr): boolean {
+        if (!(stmt.getRightOp() instanceof ArkCastExpr) || stmt.getRightOp() !== castExpr) {
             return false;
         }
-        const op1 = rightOp.getOp1();
-        if (leftOp !== op1) {
+        const castLocal = stmt.getLeftOp();
+        if (!(castLocal instanceof Local)) {
             return false;
         }
-        const operator = rightOp.getOperator();
-        return this.checkedBinaryOperator.includes(operator);
+        return castLocal.getUsedStmts().some(usedStmt => {
+            if (!(usedStmt instanceof ArkAssignStmt) || !this.isSameSourceLine(stmt, usedStmt)) {
+                return false;
+            }
+            const rightOp = usedStmt.getRightOp();
+            if (rightOp instanceof ArkNormalBinopExpr) {
+                return this.isNumericBinopWithValue(rightOp, castLocal);
+            }
+            if (rightOp instanceof ArkUnopExpr) {
+                return this.isNumericUnopWithValue(rightOp, castLocal);
+            }
+            return false;
+        });
+    }
+
+    private isNumericBinopWithValue(expr: ArkNormalBinopExpr, value: Value): boolean {
+        if (!this.checkedBinaryOperator.includes(expr.getOperator())) {
+            return false;
+        }
+        return expr.getOp1() === value || expr.getOp2() === value;
+    }
+
+    private isNumericUnopWithValue(expr: ArkUnopExpr, value: Value): boolean {
+        if (!this.checkedUnaryOperator.includes(expr.getOperator())) {
+            return false;
+        }
+        return expr.getOp() === value;
+    }
+
+    private isSameSourceLine(left: Stmt, right: Stmt): boolean {
+        const leftPos = left.getOriginPositionInfo();
+        const rightPos = right.getOriginPositionInfo();
+        return leftPos.getLineNo() > 0 && leftPos.getLineNo() === rightPos.getLineNo();
     }
 
     private isCastExprWithIncrementDecrement(stmt: Stmt): boolean {
@@ -410,8 +482,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
 
     private isTypeAssuranceMatchCast(instanceOfExpr: ArkInstanceOfExpr, castExpr: ArkCastExpr): boolean {
         const castOp = castExpr.getOp();
-        const castType = castExpr.getType();
-        const instanceofType = instanceOfExpr.getCheckType();
+        const castType = this.unwrapAliasType(castExpr.getType());
+        const instanceofType = this.unwrapAliasType(instanceOfExpr.getCheckType());
         if (castType.getTypeString() !== instanceofType.getTypeString()) {
             return false;
         }
@@ -462,108 +534,193 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 continue;
             }
             visited.add(currentStmt);
-            if (!this.isOriginTypeSameWithCastType(currentStmt, castType)) {
+            if (this.hasConcreteClassOriginForCast(currentStmt, castType)) {
                 return currentStmt;
             }
 
-            const fieldDeclareStmt = this.isCastOpFieldWithInterfaceType(currentStmt, castType);
-            if (fieldDeclareStmt) {
-                return fieldDeclareStmt;
+            const directOriginStmt = this.getDirectOriginForCast(currentStmt, castType);
+            if (directOriginStmt) {
+                return directOriginStmt;
             }
-            const gv = this.checkIfCastOpIsGlobalVar(currentStmt);
-            if (!gv) {
-                // Not a global variable, continue to next iteration
-            } else {
-                const globalDefs = globalVarMap.get(gv.getName());
-                if (globalDefs !== undefined) {
-                    globalDefs.forEach(d => worklist.push(this.dvfg.getOrNewDVFGNode(d)));
-                    continue;
-                }
-                
-                // Check if it's an imported value
-                const importValue = this.checkIfCastOpIsFromImport(currentStmt);
-                if (!importValue || !importValue.getDeclaringStmt()) {
-                    continue;
-                }
-                
-                const originStmt = importValue.getDeclaringStmt()!;
-                const originMethod = originStmt.getCfg().getDeclaringMethod();
-                if (!originMethod) {
-                    continue;
-                }
-                
-                if (!this.visited.has(originMethod)) {
-                    this.dvfgBuilder.buildForSingleMethod(originMethod);
-                    this.visited.add(originMethod);
-                }
-                
-                const res = this.checkFromStmt(originStmt, globalVarMap, checkAll, visited, depth + 1, castType);
-                if (res !== null) {
-                    return res;
-                }
+
+            const globalOrigin = this.checkGlobalOriginFromStmt(
+                currentStmt,
+                globalVarMap,
+                checkAll,
+                visited,
+                depth,
+                castType,
+                worklist
+            );
+            if (globalOrigin.result !== null) {
+                return globalOrigin.result;
+            }
+            if (globalOrigin.handled) {
                 continue;
             }
 
-            const callsite = this.cg.getCallSiteByStmt(currentStmt);
-            for (const cs of callsite) {
-                const declaringMtd = this.cg.getArkMethodByFuncID(cs.calleeFuncID);
-                if (!declaringMtd || !declaringMtd.getCfg()) {
-                    continue;
-                }
-                if (!this.visited.has(declaringMtd)) {
-                    this.dvfgBuilder.buildForSingleMethod(declaringMtd);
-                    this.visited.add(declaringMtd);
-                }
-                const returnStmts = declaringMtd.getReturnStmt();
-                for (const stmt of returnStmts) {
-                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
-                    if (res !== null) {
-                        return res;
-                    }
-                }
+            const returnOriginStmt = this.checkReturnOriginFromStmt(
+                currentStmt,
+                globalVarMap,
+                checkAll,
+                visited,
+                depth,
+                castType
+            );
+            if (returnOriginStmt !== null) {
+                return returnOriginStmt;
             }
-            const paramRef = this.isFromParameter(currentStmt);
-            if (paramRef) {
-                const paramIdx = paramRef.getIndex();
-                const callsites = this.cg.getInvokeStmtByMethod(currentStmt.getCfg().getDeclaringMethod().getSignature());
-                this.processCallsites(callsites);
-                const argDefs = this.collectArgDefs(paramIdx, callsites);
-                for (const stmt of argDefs) {
-                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
-                    if (res !== null) {
-                        return res;
-                    }
-                }
+
+            const parameterOriginStmt = this.checkParameterOriginFromStmt(
+                currentStmt,
+                globalVarMap,
+                checkAll,
+                visited,
+                depth,
+                castType
+            );
+            if (parameterOriginStmt !== null) {
+                return parameterOriginStmt;
             }
             current.getIncomingEdge().forEach(e => worklist.push(e.getSrcNode() as DVFGNode));
         }
         return null;
     }
 
+    private getDirectOriginForCast(stmt: Stmt, castType: Type): Stmt | undefined {
+        const fieldDeclareStmt = this.isCastOpFieldWithInterfaceType(stmt, castType);
+        if (fieldDeclareStmt) {
+            return fieldDeclareStmt;
+        }
+        return this.getContainerOriginForCast(stmt, castType);
+    }
+
+    private checkGlobalOriginFromStmt(
+        stmt: Stmt,
+        globalVarMap: Map<string, Stmt[]>,
+        checkAll: { value: boolean },
+        visited: Set<Stmt>,
+        depth: number,
+        castType: Type,
+        worklist: DVFGNode[]
+    ): { handled: boolean; result: Stmt | null } {
+        const globalVar = this.checkIfCastOpIsGlobalVar(stmt);
+        if (!globalVar) {
+            return { handled: false, result: null };
+        }
+
+        const globalDefs = globalVarMap.get(globalVar.getName());
+        if (globalDefs !== undefined) {
+            globalDefs.forEach(d => worklist.push(this.dvfg.getOrNewDVFGNode(d)));
+            return { handled: true, result: null };
+        }
+
+        const importValue = this.checkIfCastOpIsFromImport(stmt);
+        if (!importValue || !importValue.getDeclaringStmt()) {
+            return { handled: true, result: null };
+        }
+
+        const originStmt = importValue.getDeclaringStmt()!;
+        const originMethod = originStmt.getCfg().getDeclaringMethod();
+        if (!originMethod) {
+            return { handled: true, result: null };
+        }
+
+        this.ensureDvfgBuiltForMethod(originMethod);
+        return {
+            handled: true,
+            result: this.checkFromStmt(originStmt, globalVarMap, checkAll, visited, depth + 1, castType),
+        };
+    }
+
+    private checkReturnOriginFromStmt(
+        stmt: Stmt,
+        globalVarMap: Map<string, Stmt[]>,
+        checkAll: { value: boolean },
+        visited: Set<Stmt>,
+        depth: number,
+        castType: Type
+    ): Stmt | null {
+        const callsite = this.cg.getCallSiteByStmt(stmt);
+        for (const cs of callsite) {
+            const declaringMtd = this.cg.getArkMethodByFuncID(cs.calleeFuncID);
+            if (!declaringMtd) {
+                continue;
+            }
+            if (!declaringMtd.getCfg()) {
+                continue;
+            }
+            this.ensureDvfgBuiltForMethod(declaringMtd);
+
+            for (const stmt of declaringMtd.getReturnStmt()) {
+                const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
+                if (res !== null) {
+                    return res;
+                }
+            }
+        }
+        return null;
+    }
+
+    private checkParameterOriginFromStmt(
+        stmt: Stmt,
+        globalVarMap: Map<string, Stmt[]>,
+        checkAll: { value: boolean },
+        visited: Set<Stmt>,
+        depth: number,
+        castType: Type
+    ): Stmt | null {
+        const paramRef = this.isFromParameter(stmt);
+        if (!paramRef) {
+            return null;
+        }
+
+        const paramIdx = paramRef.getIndex();
+        const callsites = this.cg.getInvokeStmtByMethod(stmt.getCfg().getDeclaringMethod().getSignature());
+        this.processCallsites(callsites);
+        const argDefs = this.collectArgDefs(paramIdx, callsites);
+        if (argDefs.length === 0 && this.isOpTypeSuperTypeOfCastType(paramRef.getType(), castType)) {
+            return stmt;
+        }
+
+        for (const stmt of argDefs) {
+            const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
+            if (res !== null) {
+                return res;
+            }
+        }
+        return null;
+    }
+
     private isCastOpFieldWithInterfaceType(stmt: Stmt, castType: Type): Stmt | undefined {
-        const obj = this.getCastOp(stmt);
-        if (obj === null || !(obj instanceof Local)) {
+        const fieldRef = this.getFieldRefFromCastOp(stmt);
+        if (!fieldRef) {
             return undefined;
         }
-        const declaringStmt = obj.getDeclaringStmt();
-        if (declaringStmt === null || !(declaringStmt instanceof ArkAssignStmt)) {
-            return undefined;
-        }
-        const rightOp = declaringStmt.getRightOp();
-        if (!(rightOp instanceof AbstractFieldRef)) {
-            return undefined;
-        }
-        const fieldDeclaring = rightOp.getFieldSignature().getDeclaringSignature();
+        const fieldDeclaring = fieldRef.getFieldSignature().getDeclaringSignature();
         if (fieldDeclaring instanceof ClassSignature) {
-            const field = this.scene.getClass(fieldDeclaring)?.getField(rightOp.getFieldSignature());
+            const field = this.scene.getClass(fieldDeclaring)?.getField(fieldRef.getFieldSignature());
             if (!field) {
                 return undefined;
             }
             // find the origin define stmt of the field
             const originStmt = this.traceFieldInitializerToOrigin(field, new Set<ArkField>());
-            if (originStmt && !this.isOriginTypeSameWithCastType(originStmt, castType)) {
+            if (originStmt && this.hasConcreteClassOriginForCast(originStmt, castType)) {
                 return originStmt;
             }
+        }
+        return undefined;
+    }
+
+    private getFieldRefFromCastOp(stmt: Stmt): AbstractFieldRef | undefined {
+        const obj = this.getCastOp(stmt);
+        if (obj instanceof AbstractFieldRef) {
+            return obj;
+        }
+
+        const rightOp = this.getLocalDeclaringRightOp(obj);
+        if (rightOp instanceof AbstractFieldRef) {
+            return rightOp;
         }
         return undefined;
     }
@@ -587,20 +744,10 @@ export class NoTSLikeAsCheck implements BaseChecker {
             return fieldInitializer[fieldInitializer.length - 1];
         }
 
-        const rightOp = firstStmt.getRightOp();
+        const rightOp = this.getFieldInitializerRightOp(firstStmt);
 
         // if rightOp is an ArkInstanceFieldRef or ArkStaticFieldRef, continue to trace the origin define stmt
-        if (!rightOp || !(rightOp instanceof ArkInstanceFieldRef || rightOp instanceof ArkStaticFieldRef)) {
-            return fieldInitializer[fieldInitializer.length - 1];
-        }
-
-        const fieldSig = rightOp.getFieldSignature();
-        const declaringSig = fieldSig.getDeclaringSignature();
-        if (!(declaringSig instanceof ClassSignature)) {
-            return fieldInitializer[fieldInitializer.length - 1];
-        }
-
-        const targetField = this.scene.getClass(declaringSig)?.getField(fieldSig);
+        const targetField = this.resolveFieldFromInitializerOp(field, rightOp);
         if (!targetField) {
             return fieldInitializer[fieldInitializer.length - 1];
         }
@@ -612,6 +759,46 @@ export class NoTSLikeAsCheck implements BaseChecker {
 
         // if cannot trace anymore, return the last stmt
         return fieldInitializer[fieldInitializer.length - 1];
+    }
+
+    private getFieldInitializerRightOp(firstStmt: ArkAssignStmt): Value {
+        const rightOp = firstStmt.getRightOp();
+        return this.getLocalDeclaringRightOp(rightOp) ?? rightOp;
+    }
+
+    private getLocalDeclaringRightOp(op: Value | null): Value | undefined {
+        if (!(op instanceof Local)) {
+            return undefined;
+        }
+
+        const declaringStmt = op.getDeclaringStmt();
+        if (declaringStmt instanceof ArkAssignStmt) {
+            return declaringStmt.getRightOp();
+        }
+        return undefined;
+    }
+
+    private resolveFieldFromInitializerOp(currentField: ArkField, op: Value): ArkField | undefined {
+        const declaringRightOp = this.getLocalDeclaringRightOp(op);
+        if (declaringRightOp) {
+            return this.resolveFieldFromInitializerOp(currentField, declaringRightOp);
+        }
+
+        if (op instanceof Local) {
+            return currentField.getDeclaringArkClass().getFields().find(field => field.getName() === op.getName());
+        }
+
+        if (!(op instanceof ArkInstanceFieldRef || op instanceof ArkStaticFieldRef)) {
+            return undefined;
+        }
+
+        const fieldSig = op.getFieldSignature();
+        const declaringSig = fieldSig.getDeclaringSignature();
+        if (!(declaringSig instanceof ClassSignature)) {
+            return undefined;
+        }
+
+        return this.scene.getClass(declaringSig)?.getField(fieldSig) ?? undefined;
     }
 
     private checkIfCastOpIsGlobalVar(stmt: Stmt): Local | undefined {
@@ -647,27 +834,47 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return undefined;
     }
 
+    private ensureDvfgBuiltForMethod(method: ArkMethod): void {
+        if (!this.visited.has(method)) {
+            this.dvfgBuilder.buildForSingleMethod(method);
+            this.visited.add(method);
+        }
+    }
+
     private processCallsites(callsites: Stmt[]): void {
         callsites.forEach(cs => {
             const declaringMtd = cs.getCfg().getDeclaringMethod();
-            if (!this.visited.has(declaringMtd)) {
-                this.dvfgBuilder.buildForSingleMethod(declaringMtd);
-                this.visited.add(declaringMtd);
-            }
+            this.ensureDvfgBuiltForMethod(declaringMtd);
         });
     }
 
-    private isOriginTypeSameWithCastType(stmt: Stmt, castType: Type): boolean {
+    private hasConcreteClassOriginForCast(stmt: Stmt, castType: Type): boolean {
         if (!(stmt instanceof ArkAssignStmt) && !(stmt instanceof ArkReturnStmt)) {
-            return true;
+            return false;
         }
     
         const newExprType = this.extractNewExprClassType(stmt);
         if (!newExprType) {
+            return false;
+        }
+
+        const originType = this.getOriginTypeFromNewExpr(stmt, newExprType);
+        const normalizedCastType = this.unwrapAliasType(castType);
+        if (!(originType instanceof ClassType) || !(normalizedCastType instanceof ClassType)) {
+            return false;
+        }
+        return !this.isRuntimeSafeConcreteCast(originType, normalizedCastType);
+    }
+
+    private isRuntimeSafeConcreteCast(originType: ClassType, castType: ClassType): boolean {
+        if (classSignatureCompare(originType.getClassSignature(), castType.getClassSignature())) {
             return true;
         }
-    
-        return this.compareOriginTypeWithCastType(stmt, newExprType, castType);
+        const originClass = this.scene.getClass(originType.getClassSignature());
+        if (originClass === null) {
+            return false;
+        }
+        return this.isClassDerivedFrom(originClass, castType.getClassSignature());
     }
     
     private extractNewExprClassType(stmt: Stmt): ClassType | null {
@@ -695,7 +902,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return declaringRightOp.getClassType();
     }
 
-    private compareOriginTypeWithCastType(stmt: Stmt, newExprClassType: ClassType, castType: Type): boolean {
+    private getOriginTypeFromNewExpr(stmt: Stmt, newExprClassType: ClassType): Type {
         let originType: Type;
         if (stmt instanceof ArkAssignStmt) {
             const classSig = newExprClassType.getClassSignature();
@@ -705,13 +912,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
         } else {
             originType = newExprClassType;
         }
-    
-        if (!(originType instanceof ClassType) || !(castType instanceof ClassType)) {
-            return true;
-        }
-    
-        return classSignatureCompare(originType.getClassSignature(), castType.getClassSignature()) ||
-            this.isOpTypeSuperTypeOfCastType(castType, originType);
+
+        return this.unwrapAliasType(originType);
     }
 
     private isFromParameter(stmt: Stmt): ArkParameterRef | undefined {
@@ -734,6 +936,105 @@ export class NoTSLikeAsCheck implements BaseChecker {
             return null;
         }
         return rightOp.getOp();
+    }
+
+    private getContainerOriginForCast(stmt: Stmt, castType: Type): Stmt | undefined {
+        const castOp = this.getCastOp(stmt);
+        if (!(castOp instanceof Local)) {
+            return undefined;
+        }
+        const declaringStmt = castOp.getDeclaringStmt();
+        if (!(declaringStmt instanceof ArkAssignStmt)) {
+            return undefined;
+        }
+        const invokeExpr = declaringStmt.getRightOp();
+        if (!(invokeExpr instanceof ArkInstanceInvokeExpr)) {
+            return undefined;
+        }
+        const methodName = invokeExpr.getMethodSignature().getMethodSubSignature().getMethodName();
+        if (methodName === 'pop') {
+            return this.getArrayElementOriginForCast(stmt, declaringStmt, invokeExpr.getBase(), castType);
+        }
+        if (methodName === 'get') {
+            return this.getMapElementOriginForCast(stmt, declaringStmt, invokeExpr.getBase(), castType);
+        }
+        return undefined;
+    }
+
+    private getArrayElementOriginForCast(stmt: Stmt, callStmt: ArkAssignStmt, arrayLocal: Local, castType: Type): Stmt | undefined {
+        const arrayRoot = this.resolveLocalAlias(arrayLocal);
+        for (const candidate of this.getPreviousStmts(stmt, callStmt)) {
+            if (!(candidate instanceof ArkAssignStmt)) {
+                continue;
+            }
+            const leftOp = candidate.getLeftOp();
+            if (!(leftOp instanceof ArkArrayRef)) {
+                continue;
+            }
+            if (this.resolveLocalAlias(leftOp.getBase()) !== arrayRoot) {
+                continue;
+            }
+            if (this.hasConcreteClassOriginForCast(candidate, castType)) {
+                return candidate;
+            }
+        }
+        return undefined;
+    }
+
+    private getMapElementOriginForCast(stmt: Stmt, callStmt: ArkAssignStmt, mapLocal: Local, castType: Type): Stmt | undefined {
+        const mapRoot = this.resolveLocalAlias(mapLocal);
+        for (const candidate of this.getPreviousStmts(stmt, callStmt)) {
+            const invokeExpr = candidate.getInvokeExpr();
+            if (!(invokeExpr instanceof ArkInstanceInvokeExpr)) {
+                continue;
+            }
+            if (invokeExpr.getMethodSignature().getMethodSubSignature().getMethodName() !== 'set') {
+                continue;
+            }
+            if (this.resolveLocalAlias(invokeExpr.getBase()) !== mapRoot) {
+                continue;
+            }
+            const valueOriginStmt = this.getOriginStmtForValue(invokeExpr.getArg(1));
+            if (valueOriginStmt && this.hasConcreteClassOriginForCast(valueOriginStmt, castType)) {
+                return valueOriginStmt;
+            }
+        }
+        return undefined;
+    }
+
+    private getPreviousStmts(stmt: Stmt, stopStmt: Stmt): Stmt[] {
+        const stmts = stmt.getCfg().getStmts();
+        const stopIndex = stmts.indexOf(stopStmt);
+        if (stopIndex <= 0) {
+            return [];
+        }
+        return stmts.slice(0, stopIndex);
+    }
+
+    private resolveLocalAlias(local: Local): Local {
+        let current = local;
+        const visited = new Set<Local>();
+        while (!visited.has(current)) {
+            visited.add(current);
+            const declaringStmt = current.getDeclaringStmt();
+            if (!(declaringStmt instanceof ArkAssignStmt)) {
+                break;
+            }
+            const rightOp = declaringStmt.getRightOp();
+            if (!(rightOp instanceof Local)) {
+                break;
+            }
+            current = rightOp;
+        }
+        return current;
+    }
+
+    private getOriginStmtForValue(value: Value): Stmt | undefined {
+        if (!(value instanceof Local)) {
+            return undefined;
+        }
+        const declaringStmt = value.getDeclaringStmt();
+        return declaringStmt ?? undefined;
     }
 
     private getCastExpr(stmt: Stmt): ArkCastExpr | null {
@@ -772,14 +1073,14 @@ export class NoTSLikeAsCheck implements BaseChecker {
         });
     }
 
-    private addIssueReport(stmt: Stmt, operand: ArkCastExpr, relatedStmt?: Stmt, incrementCase: boolean = false): void {
+    private addIssueReport(stmt: Stmt, operand: ArkCastExpr, relatedStmt?: Stmt, numericOperationCase: boolean = false): void {
         const severity = this.rule.alert ?? this.metaData.severity;
         const warnInfo = getLineAndColumn(stmt, operand);
         const problem = 'As';
         const descPrefix = 'The value in type assertion is assigned by value with interface annotation';
         let desc = `(${this.rule.ruleId.replace('@migration/', '')})`;
-        if (incrementCase) {
-            desc = 'Can not use neither increment nor decrement with cast expression ' + desc;
+        if (numericOperationCase) {
+            desc = 'Can not use cast expression in numeric operation ' + desc;
         } else if (relatedStmt === undefined) {
             desc = `Can not check when function call chain depth exceeds ${CALL_DEPTH_LIMIT}, please check it manually ` + desc;
         } else {
@@ -810,6 +1111,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
     }
 
     private isOpTypeSuperTypeOfCastType(opType: Type, castType: Type): boolean {
+        opType = this.unwrapAliasType(opType);
+        castType = this.unwrapAliasType(castType);
         if (opType instanceof UnknownType) {
             return true;
         }
@@ -838,6 +1141,10 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return this.isClassDerivedFrom(castClass, opType.getClassSignature());
     }
 
+    private unwrapAliasType(type: Type): Type {
+        return TypeInference.replaceAliasType(type);
+    }
+
     private isClassDerivedFrom(arkClass: ArkClass, targetClassSignature: ClassSignature, visited: Set<ArkClass> = new Set()): boolean {
         if (visited.has(arkClass)) {
             return false;
@@ -853,7 +1160,9 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 return true;
             }
             // recursively check the parent class of the parent class
-            return this.isClassDerivedFrom(superClass, targetClassSignature, visited);
+            if (this.isClassDerivedFrom(superClass, targetClassSignature, visited)) {
+                return true;
+            }
         }
         return false;
     }

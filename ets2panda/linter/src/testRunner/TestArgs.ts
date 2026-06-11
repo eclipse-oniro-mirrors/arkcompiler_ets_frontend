@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,6 +67,47 @@ export interface TestArguments {
      */
     migrate?: string;
   };
+
+  /**
+   * Runs the test source with HomeCheck instead of TypeScriptLinter.
+   * The result is compared with the usual [test_file].json baseline.
+   */
+  homecheck?: HomeCheckArguments;
+}
+
+export interface HomeCheckArguments {
+
+  /**
+   * HomeCheck rule ids to enable, for example '@migration/arkts-no-ts-like-as'.
+   */
+  rules?: string[];
+
+  /**
+   * HomeCheck rule sets to enable. Defaults to no rule set when rules are specified.
+   */
+  ruleSet?: string[];
+
+  /**
+   * HomeCheck rule options keyed by rule id.
+   */
+  ruleOptions?: Record<string, object[]>;
+
+  /**
+   * Project root for HomeCheck scene building, relative to the test directory.
+   * Defaults to the test directory.
+   */
+  projectPath?: string;
+
+  /**
+   * SDK roots for HomeCheck scene building, relative to the test directory.
+   */
+  ohosSdkPath?: string;
+  hmsSdkPath?: string;
+
+  /**
+   * Language tags keyed by file or folder path relative to projectPath.
+   */
+  languageTags?: Record<string, number>;
 }
 
 const testArgsSchema: yup.ObjectSchema<TestArguments> = yup.object({
@@ -76,6 +117,17 @@ const testArgsSchema: yup.ObjectSchema<TestArguments> = yup.object({
       default: yup.string(),
       autofix: yup.string(),
       arkts2: yup.string()
+    }).
+    optional(),
+  homecheck: yup.
+    object({
+      rules: yup.array(yup.string().required()),
+      ruleSet: yup.array(yup.string().required()),
+      ruleOptions: yup.object(),
+      projectPath: yup.string(),
+      ohosSdkPath: yup.string(),
+      hmsSdkPath: yup.string(),
+      languageTags: yup.object()
     }).
     optional()
 });
