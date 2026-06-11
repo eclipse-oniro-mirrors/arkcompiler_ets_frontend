@@ -151,7 +151,7 @@ class MyComponent {
     const size_t length = 5;
     const size_t expectedTextChangeStart = 20;
     const size_t expectedTextChangeLength = 0;
-    const std::string expectedNewText = "  title: String;";
+    const std::string expectedNewText = "\n  title: String;";
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
@@ -192,7 +192,7 @@ class MyComponent {
     const size_t length = 5;
     const size_t expectedTextChangeStart = 20;
     const size_t expectedTextChangeLength = 0;
-    const std::string expectedNewText = "  title: String;";
+    const std::string expectedNewText = "\n  title: String;";
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
@@ -269,7 +269,7 @@ class MyComponent {
     const size_t length = 5;
     const size_t expectedTextChangeStart = 27;
     const size_t expectedTextChangeLength = 0;
-    const std::string expectedNewText = "  title: String;";
+    const std::string expectedNewText = "\n  title: String;";
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
@@ -282,6 +282,71 @@ class MyComponent {
     ExpectedCodeFixInfo expected = {expectedTextChangeStart, expectedTextChangeLength, filePaths[0],
                                     expectedNewText,         EXPECTED_CLASS_FIX_NAME,  EXPECTED_CLASS_FIX_DESCRIPTION};
     ValidateCodeFixActionInfo(fixResult[0], expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(AddLocalVariableTests, TestAddClassFieldForNonThisPropertyAssignment)
+{
+    std::vector<std::string> fileNames = {"TestAddClassFieldForNonThisPropertyAssignment.ets"};
+    std::vector<std::string> fileContents = {R"(
+class MyClass {
+    myField: number = 0;
+}
+let obj = new MyClass();
+obj.xyzabc = 1;
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const size_t start = LineColToPos(context, 6, 5);
+    const size_t length = 6;
+    const size_t expectedTextChangeStart = LineColToPos(context, 2, 16);
+    const size_t expectedTextChangeLength = 0;
+    const std::string expectedNewText = "\n  xyzabc: number;";
+    const int expectedFixResultSize = 1;
+
+    std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
+    CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, emptyOptions);
+
+    ExpectedCodeFixInfo expected = {expectedTextChangeStart, expectedTextChangeLength, filePaths[0],
+                                    expectedNewText,         EXPECTED_CLASS_FIX_NAME,  EXPECTED_CLASS_FIX_DESCRIPTION};
+    FindAndValidateFix(fixResult, EXPECTED_CLASS_FIX_NAME, expected, expectedFixResultSize);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(AddLocalVariableTests, TestNoClassFieldForNonThisPropertyWithoutAssignmentType)
+{
+    std::vector<std::string> fileNames = {"TestNoClassFieldForNonThisPropertyWithoutAssignmentType.ets"};
+    std::vector<std::string> fileContents = {R"(
+class MyClass {
+    myField: number = 0;
+}
+let obj = new MyClass();
+let value = obj.xyzabc;
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const size_t start = LineColToPos(context, 6, 17);
+    const size_t length = 6;
+
+    std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
+    CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, emptyOptions);
+
+    for (const auto &result : fixResult) {
+        ASSERT_NE(result.fixName_, EXPECTED_CLASS_FIX_NAME);
+        ASSERT_NE(result.description_, EXPECTED_CLASS_FIX_DESCRIPTION);
+    }
 
     initializer.DestroyContext(context);
 }

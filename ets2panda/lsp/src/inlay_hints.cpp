@@ -176,13 +176,14 @@ bool ShouldShowParameterNameHints(const UserPreferences &preferences)
 int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName)
 {
     auto *value = mem->AsClassProperty()->Value();
-    if (!value->IsArrayExpression()) {
+    if (value == nullptr || !value->IsArrayExpression()) {
         return -1;
     }
     auto const list = value->AsArrayExpression()->Elements();
     for (size_t index = 0; index < list.size(); index++) {
         auto *item = list.at(index);
-        if (!item->IsMemberExpression() || !item->AsMemberExpression()->Property()->IsIdentifier()) {
+        if (!item->IsMemberExpression() || item->AsMemberExpression()->Property() == nullptr ||
+            !item->AsMemberExpression()->Property()->IsIdentifier()) {
             continue;
         }
         const auto nameD = std::string(item->AsMemberExpression()->Property()->AsIdentifier()->Name());

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,17 +39,22 @@ private:
     std::string DetermineVariableType(ir::AstNode *unresolvedNode);
     std::string GetTypeFromDirectAssignment(ir::AstNode *unresolvedNode, ir::AstNode *parent);
     std::string GetTypeFromMemberAssignment(ir::AstNode *unresolvedNode, ir::AstNode *parent);
+    std::string GetTypeFromMemberAssignmentForClassField(ir::AstNode *unresolvedNode);
     std::string InferTypeFromExpression(ir::AstNode *expression);
     std::string InferTypeFromLiteral(ir::AstNode *expression);
     std::string InferTypeFromComplexExpression(ir::AstNode *expression);
     std::string InferTypeFromBinaryExpression(ir::AstNode *expression);
     std::string InferTypeFromOtherExpressions(ir::AstNode *expression);
+    std::string NormalizeClassFieldType(const std::string &variableType);
     std::string GenerateVariableDeclaration(const std::string &variableName, const std::string &variableType);
     ir::AstNode *FindInsertionPoint(ir::AstNode *unresolvedNode, bool isThisProperty);
+    ir::AstNode *FindNonThisPropertyClassInsertionPoint(es2panda_Context *context, ir::AstNode *unresolvedNode);
     ir::AstNode *FindClassInsertionPoint(ir::AstNode *current);
     ir::AstNode *FindFunctionInsertionPoint(ir::AstNode *current);
     ir::AstNode *GetFunctionBody(ir::AstNode *node);
     bool IsThisPropertyAccess(es2panda_Context *context, size_t pos);
+    bool IsNonThisPropertyAccess(es2panda_Context *context, size_t pos);
+    bool IsNonThisPropertyClassFieldFix(es2panda_Context *context, size_t pos);
 };
 
 }  // namespace ark::es2panda::lsp

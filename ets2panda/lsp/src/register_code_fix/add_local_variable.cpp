@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@
 #include "ir/astNode.h"
 #include "ir/base/classDefinition.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/memberExpression.h"
 #include "ir/statements/functionDeclaration.h"
 #include "ir/base/methodDefinition.h"
 
@@ -32,6 +33,7 @@ using codefixes::ADD_LOCAL_VARIABLE_FOR_CLASS;
 namespace {
 constexpr const char *OBJECT_TYPE = "Object";
 constexpr const char *DOUBLE_TYPE = "Double";
+constexpr const char *NUMBER_TYPE = "number";
 constexpr const char *STRING_TYPE = "String";
 constexpr const char *BOOLEAN_TYPE = "Boolean";
 constexpr const char *BIGINT_TYPE = "BigInt";
@@ -41,6 +43,7 @@ constexpr const char *LET_KEYWORD = "let ";
 constexpr const char *TYPE_SEPARATOR = ": ";
 constexpr const char *STATEMENT_TERMINATOR = ";";
 constexpr const char *INDENT = "  ";
+constexpr const char *LINE_SEPARATOR = "\n";
 constexpr const char *CLASS_FIELD_DESCRIPTION = "Add class field declaration";
 constexpr const char *CLASS_FIELD_FIX_ALL_DESCRIPTION = "Add all missing class fields";
 constexpr const char *LOCAL_VARIABLE_DESCRIPTION = "Add local variable declaration";
@@ -76,6 +79,9 @@ std::string AddLocalVariable::GetTypeFromMemberAssignment(ir::AstNode *unresolve
     if (memberExpr->Property() != unresolvedNode) {
         return "";
     }
+    if (memberExpr->Object() == nullptr || !memberExpr->Object()->IsThisExpression()) {
+        return "";
+    }
 
     auto *memberParent = memberExpr->Parent();
     if (memberParent == nullptr || !memberParent->IsAssignmentExpression()) {
@@ -93,6 +99,32 @@ std::string AddLocalVariable::GetTypeFromMemberAssignment(ir::AstNode *unresolve
     }
 
     return InferTypeFromExpression(rightSide);
+}
+
+std::string AddLocalVariable::GetTypeFromMemberAssignmentForClassField(ir::AstNode *unresolvedNode)
+{
+    if (unresolvedNode == nullptr || unresolvedNode->Parent() == nullptr ||
+        !unresolvedNode->Parent()->IsMemberExpression()) {
+        return "";
+    }
+
+    auto *memberExpr = unresolvedNode->Parent()->AsMemberExpression();
+    if (memberExpr->Property() != unresolvedNode) {
+        return "";
+    }
+
+    auto *memberParent = memberExpr->Parent();
+    if (memberParent == nullptr || !memberParent->IsAssignmentExpression()) {
+        return "";
+    }
+
+    auto *assignment = memberParent->AsAssignmentExpression();
+    if (assignment->Left() != memberExpr || assignment->Right() == nullptr) {
+        return "";
+    }
+
+    std::string variableType = InferTypeFromExpression(assignment->Right());
+    return variableType == OBJECT_TYPE ? "" : variableType;
 }
 
 std::string AddLocalVariable::DetermineVariableType(ir::AstNode *unresolvedNode)
@@ -236,6 +268,11 @@ std::string AddLocalVariable::GenerateVariableDeclaration(const std::string &var
     return std::string(LET_KEYWORD) + variableName + TYPE_SEPARATOR + variableType + STATEMENT_TERMINATOR;
 }
 
+std::string AddLocalVariable::NormalizeClassFieldType(const std::string &variableType)
+{
+    return variableType == DOUBLE_TYPE ? NUMBER_TYPE : variableType;
+}
+
 bool AddLocalVariable::IsThisPropertyAccess(es2panda_Context *context, size_t pos)
 {
     auto *token = GetTouchingToken(context, pos, false);
@@ -258,6 +295,33 @@ bool AddLocalVariable::IsThisPropertyAccess(es2panda_Context *context, size_t po
     return false;
 }
 
+bool AddLocalVariable::IsNonThisPropertyAccess(es2panda_Context *context, size_t pos)
+{
+    auto *token = GetTouchingToken(context, pos, false);
+    if (token == nullptr || !token->IsIdentifier()) {
+        return false;
+    }
+
+    auto *parent = token->Parent();
+    if (parent == nullptr || !parent->IsMemberExpression()) {
+        return false;
+    }
+
+    auto *memberExpr = parent->AsMemberExpression();
+    if (memberExpr->Property() != token) {
+        return false;
+    }
+
+    return memberExpr->Object() != nullptr && !memberExpr->Object()->IsThisExpression();
+}
+
+bool AddLocalVariable::IsNonThisPropertyClassFieldFix(es2panda_Context *context, size_t pos)
+{
+    auto *token = GetTouchingToken(context, pos, false);
+    return IsNonThisPropertyAccess(context, pos) && FindNonThisPropertyClassInsertionPoint(context, token) != nullptr &&
+           !GetTypeFromMemberAssignmentForClassField(token).empty();
+}
+
 ir::AstNode *AddLocalVariable::FindClassInsertionPoint(ir::AstNode *current)
 {
     while (current != nullptr) {
@@ -267,6 +331,36 @@ ir::AstNode *AddLocalVariable::FindClassInsertionPoint(ir::AstNode *current)
         current = current->Parent();
     }
     return nullptr;
+}
+
+ir::AstNode *AddLocalVariable::FindNonThisPropertyClassInsertionPoint(es2panda_Context *context,
+                                                                      ir::AstNode *unresolvedNode)
+{
+    if (context == nullptr || unresolvedNode == nullptr || unresolvedNode->Parent() == nullptr ||
+        !unresolvedNode->Parent()->IsMemberExpression()) {
+        return nullptr;
+    }
+
+    auto *memberExpr = unresolvedNode->Parent()->AsMemberExpression();
+    auto *object = memberExpr->Object();
+    if (object == nullptr || object->TsType() == nullptr || !object->TsType()->IsETSObjectType()) {
+        return nullptr;
+    }
+
+    auto *declNode = object->TsType()->AsETSObjectType()->GetDeclNode();
+    if (declNode == nullptr || !declNode->IsClassDefinition()) {
+        return nullptr;
+    }
+
+    auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    auto *ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    bool isCurrentFileNode = false;
+    ast->FindChild([declNode, &isCurrentFileNode](ir::AstNode *childNode) {
+        isCurrentFileNode = childNode == declNode;
+        return isCurrentFileNode;
+    });
+
+    return isCurrentFileNode ? declNode : nullptr;
 }
 
 ir::AstNode *AddLocalVariable::FindFunctionInsertionPoint(ir::AstNode *current)
@@ -323,17 +417,25 @@ void AddLocalVariable::MakeChangeForAddLocalVariable(ChangeTracker &changeTracke
         return;
     }
 
+    const bool isNonThisProperty = IsNonThisPropertyAccess(context, pos);
+    const bool isNonThisClassField = IsNonThisPropertyClassFieldFix(context, pos);
+    if (isNonThisProperty && !isNonThisClassField) {
+        return;
+    }
+
     auto *identifier = token->AsIdentifier();
     std::string variableName = std::string(identifier->Name());
 
     bool isThisProperty = IsThisPropertyAccess(context, pos);
 
-    auto *insertionPoint = FindInsertionPoint(token, isThisProperty);
+    auto *insertionPoint = isNonThisClassField ? FindNonThisPropertyClassInsertionPoint(context, token)
+                                               : FindInsertionPoint(token, isThisProperty);
     if (insertionPoint == nullptr) {
         return;
     }
 
-    std::string variableType = DetermineVariableType(token);
+    std::string variableType =
+        isNonThisClassField ? GetTypeFromMemberAssignmentForClassField(token) : DetermineVariableType(token);
     std::string declaration;
     size_t insertPos = insertionPoint->Start().index;
 
@@ -345,8 +447,9 @@ void AddLocalVariable::MakeChangeForAddLocalVariable(ChangeTracker &changeTracke
         insertPos = bracePos + 1;
     }
 
-    if (isThisProperty) {
-        declaration = std::string(INDENT) + variableName + TYPE_SEPARATOR + variableType + STATEMENT_TERMINATOR;
+    if (isThisProperty || isNonThisClassField) {
+        declaration = std::string(LINE_SEPARATOR) + std::string(INDENT) + variableName + TYPE_SEPARATOR +
+                      NormalizeClassFieldType(variableType) + STATEMENT_TERMINATOR;
     } else {
         declaration = std::string(INDENT) + GenerateVariableDeclaration(variableName, variableType);
     }
@@ -387,7 +490,8 @@ std::vector<CodeFixAction> AddLocalVariable::GetCodeActions(const CodeFixContext
         CodeFixAction codeAction;
 
         bool isThisProperty = IsThisPropertyAccess(context.context, context.span.start);
-        if (isThisProperty) {
+        bool isNonThisClassField = IsNonThisPropertyClassFieldFix(context.context, context.span.start);
+        if (isThisProperty || isNonThisClassField) {
             codeAction.fixName = ADD_LOCAL_VARIABLE_FOR_CLASS.GetFixId().data();
             codeAction.fixId = ADD_LOCAL_VARIABLE_FOR_CLASS.GetFixId().data();
             codeAction.description = CLASS_FIELD_DESCRIPTION;

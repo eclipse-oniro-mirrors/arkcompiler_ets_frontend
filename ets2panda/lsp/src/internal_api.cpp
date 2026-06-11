@@ -929,33 +929,148 @@ int CreateCodeForDiagnostic(const util::DiagnosticBase *error)
     return static_cast<int>(error->Type()) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + code;
 }
 
+constexpr size_t DOUBLE_CHAR_TOKEN_LENGTH = 2;
+
+struct ExportRangeScanState {
+    size_t endPos;
+    size_t braceDepth = 0;
+    bool inSingleQuote = false;
+    bool inDoubleQuote = false;
+    bool inTemplateString = false;
+    bool inLineComment = false;
+    bool inBlockComment = false;
+    bool isEscaped = false;
+    bool shouldStop = false;
+};
+
+static char CharAtOrNull(const std::string &sourceCode, size_t pos)
+{
+    return pos < sourceCode.size() ? sourceCode[pos] : '\0';
+}
+
+static void SkipCurrentChar(ExportRangeScanState &state)
+{
+    state.endPos++;
+}
+
+static void SkipDoubleCharToken(ExportRangeScanState &state)
+{
+    state.endPos += DOUBLE_CHAR_TOKEN_LENGTH;
+}
+
+static bool HandleExportRangeCommentState(const std::string &sourceCode, ExportRangeScanState &state)
+{
+    auto current = CharAtOrNull(sourceCode, state.endPos);
+    auto next = CharAtOrNull(sourceCode, state.endPos + 1);
+    if (state.inLineComment) {
+        state.inLineComment = current != '\n' && current != '\r';
+        SkipCurrentChar(state);
+        return true;
+    }
+    if (!state.inBlockComment) {
+        return false;
+    }
+    if (current == '*' && next == '/') {
+        state.inBlockComment = false;
+        SkipDoubleCharToken(state);
+        return true;
+    }
+    SkipCurrentChar(state);
+    return true;
+}
+
+static bool HandleExportRangeStringState(const std::string &sourceCode, ExportRangeScanState &state)
+{
+    if (!state.inSingleQuote && !state.inDoubleQuote && !state.inTemplateString) {
+        return false;
+    }
+    auto current = CharAtOrNull(sourceCode, state.endPos);
+    if (state.isEscaped) {
+        state.isEscaped = false;
+    } else if (current == '\\') {
+        state.isEscaped = true;
+    } else if ((state.inSingleQuote && current == '\'') || (state.inDoubleQuote && current == '"') ||
+               (state.inTemplateString && current == '`')) {
+        state.inSingleQuote = false;
+        state.inDoubleQuote = false;
+        state.inTemplateString = false;
+    }
+    SkipCurrentChar(state);
+    return true;
+}
+
+static void HandleExportRangeToken(const std::string &sourceCode, ExportRangeScanState &state)
+{
+    auto current = CharAtOrNull(sourceCode, state.endPos);
+    auto next = CharAtOrNull(sourceCode, state.endPos + 1);
+    if (current == '/' && (next == '/' || next == '*')) {
+        if (state.braceDepth == 0) {
+            state.shouldStop = true;
+            return;
+        }
+        state.inLineComment = next == '/';
+        state.inBlockComment = next == '*';
+        SkipDoubleCharToken(state);
+        return;
+    }
+    if (current == '\'') {
+        state.inSingleQuote = true;
+    } else if (current == '"') {
+        state.inDoubleQuote = true;
+    } else if (current == '`') {
+        state.inTemplateString = true;
+    } else if (current == '{') {
+        state.braceDepth++;
+    } else if (current == '}' && state.braceDepth > 0) {
+        state.braceDepth--;
+    } else if (state.braceDepth == 0 && (current == ';' || current == '\n' || current == '\r')) {
+        state.shouldStop = true;
+    }
+    if (!state.shouldStop) {
+        SkipCurrentChar(state);
+    }
+}
+
+static size_t FindExportRangeEnd(const std::string &sourceCode, size_t keywordPos)
+{
+    ExportRangeScanState state {keywordPos};
+    while (state.endPos < sourceCode.size() && !state.shouldStop) {
+        if (HandleExportRangeCommentState(sourceCode, state) || HandleExportRangeStringState(sourceCode, state)) {
+            continue;
+        }
+        HandleExportRangeToken(sourceCode, state);
+    }
+    return state.endPos;
+}
+
+static size_t TrimTrailingHorizontalSpaces(const std::string &sourceCode, size_t rangeStart, size_t rangeEnd)
+{
+    while (rangeEnd > rangeStart && (sourceCode[rangeEnd - 1] == ' ' || sourceCode[rangeEnd - 1] == '\t')) {
+        rangeEnd--;
+    }
+    return rangeEnd;
+}
+
+static size_t IncludeSemicolonIfPresent(const std::string &sourceCode, size_t endPos)
+{
+    while (endPos < sourceCode.size() && (sourceCode[endPos] == ' ' || sourceCode[endPos] == '\t')) {
+        endPos++;
+    }
+    return endPos < sourceCode.size() && sourceCode[endPos] == ';' ? endPos + 1 : endPos;
+}
+
 // Find the export statement range from source code for duplicate export diagnostics.
-// Searches backward from pos for "export" keyword and forward for '}' to determine the range.
+// Searches backward from pos for "export" keyword and forward to the statement boundary.
 static bool GetExportRangeFromSource(const std::string &sourceCode, size_t pos, size_t &rangeStart, size_t &rangeEnd)
 {
-    // Search backward for "export"
     auto keywordPos = sourceCode.rfind("export", pos);
     if (keywordPos == std::string::npos || keywordPos > pos) {
         return false;
     }
     rangeStart = keywordPos;
-
-    // Search forward for '}' or ';' from pos
-    size_t endPos = pos;
-    while (endPos < sourceCode.size() && sourceCode[endPos] != '}' && sourceCode[endPos] != ';') {
-        endPos++;
-    }
-    if (endPos >= sourceCode.size()) {
-        return false;
-    }
-    // Include the closing delimiter
-    if (sourceCode[endPos] == '}') {
-        // Find the ';' after '}'
-        size_t semiPos = endPos + 1;
-        rangeEnd = (semiPos < sourceCode.size() && sourceCode[semiPos] == ';') ? semiPos + 1 : endPos + 1;
-    } else {
-        rangeEnd = endPos + 1;
-    }
+    auto endPos = FindExportRangeEnd(sourceCode, keywordPos);
+    auto semicolonEnd = IncludeSemicolonIfPresent(sourceCode, endPos);
+    rangeEnd = semicolonEnd != endPos ? semicolonEnd : TrimTrailingHorizontalSpaces(sourceCode, rangeStart, endPos);
     return true;
 }
 

@@ -262,4 +262,42 @@ function foo(): void {
     initializer.DestroyContext(context);
 }
 
+// Test: no similar property found on assignment target should not suggest spelling fix
+TEST_F(FixSpellingForPropertyTests, TestFixSpellingForPropertyAssignmentNoMatch)
+{
+    std::vector<std::string> fileNames = {"TestFixSpellingForPropertyAssignmentNoMatch.ets"};
+    std::vector<std::string> fileContents = {R"(
+class MyClass {
+    myField: number = 0;
+}
+let obj = new MyClass();
+obj.xyzabc = 1;
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const size_t start = LineColToPos(context, 6, 5);
+    const size_t length = 6;
+
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    // Verify target error code: PROPERTY_NONEXISTENT(2087)
+    ASSERT_EQ(errorCodes.size(), 1U);
+    ASSERT_EQ(errorCodes[0], PROPERTY_NONEXISTENT_CODE);
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+
+    auto fixResult =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
+
+    // Other code fixes can share PROPERTY_NONEXISTENT, but spelling should not suggest unrelated "myField".
+    for (const auto &result : fixResult) {
+        ASSERT_TRUE(result.description_.find("Did you mean") == std::string::npos);
+        ASSERT_TRUE(result.description_.find("myField") == std::string::npos);
+    }
+
+    initializer.DestroyContext(context);
+}
+
 }  // namespace
