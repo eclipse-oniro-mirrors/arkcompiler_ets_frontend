@@ -5084,7 +5084,8 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
     annoDecl->Check(checker);
 
     auto *parentNode = st->Parent();
-    if (parentNode != nullptr && (parentNode->IsExported() || parentNode->IsDefaultExported())) {
+    if (parentNode != nullptr && util::Helpers::IsExported(parentNode) &&
+        !(parentNode->IsClassProperty() && parentNode->AsClassProperty()->IsPrivate())) {
         if (!util::Helpers::IsExported(annoDecl)) {
             checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {baseName->Name()}, st->Start());
         }
