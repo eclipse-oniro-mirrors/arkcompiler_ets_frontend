@@ -59,6 +59,12 @@
                 },                
                 {
                     "name": "//arkcompiler/ets_frontend/ets2panda/driver/dependency_analyzer:ohos_ets_dependency_analyzer"
+                },
+                {
+                    "name": "//arkcompiler/ets_frontend/es2panda:build_es2abc_for_hap"
+                },
+                {
+                    "name": "//arkcompiler/ets_frontend/es2panda:es2abc_js_file"
                 }
             ],
             "test": [
