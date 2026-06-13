@@ -331,6 +331,59 @@ void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop)
     }
 }
 
+static void HandleDeclarationNode(UnboxContext *uctx, ir::AstNode *ast);
+
+static ir::ClassDefinition *GetDirectOwnerClassDefinition(ir::ClassProperty *prop)
+{
+    auto *parent = prop->Parent();
+    return parent != nullptr && parent->IsClassDefinition() ? parent->AsClassDefinition() : nullptr;
+}
+
+static bool IsPartialClassDefinition(const ir::ClassDefinition *classDefinition)
+{
+    if (classDefinition == nullptr || classDefinition->TsType() == nullptr ||
+        !classDefinition->TsType()->IsETSObjectType()) {
+        return false;
+    }
+    return classDefinition->TsType()->AsETSObjectType()->IsPartial();
+}
+
+static void HandleBaseClassProperty(UnboxContext *uctx, ir::ClassProperty *prop)
+{
+    if (!prop->Key()->IsIdentifier()) {
+        return;
+    }
+
+    auto *classDefinition = GetDirectOwnerClassDefinition(prop);
+    if (classDefinition == nullptr || IsPartialClassDefinition(classDefinition) ||
+        classDefinition->TsType() == nullptr || !classDefinition->TsType()->IsETSObjectType()) {
+        return;
+    }
+
+    auto *superType = classDefinition->TsType()->AsETSObjectType()->SuperType();
+    if (superType == nullptr) {
+        return;
+    }
+
+    auto searchFlag = prop->IsStatic() ? checker::PropertySearchFlags::SEARCH_STATIC_FIELD |
+                                             checker::PropertySearchFlags::SEARCH_STATIC_DECL |
+                                             checker::PropertySearchFlags::SEARCH_IN_BASE
+                                       : checker::PropertySearchFlags::SEARCH_INSTANCE_FIELD |
+                                             checker::PropertySearchFlags::SEARCH_INSTANCE_DECL |
+                                             checker::PropertySearchFlags::SEARCH_IN_BASE;
+    auto *basePropVar = superType->GetProperty(prop->Key()->AsIdentifier()->Name(), searchFlag);
+    if (basePropVar == nullptr || basePropVar->Declaration() == nullptr ||
+        basePropVar->Declaration()->Node() == nullptr || !basePropVar->Declaration()->Node()->IsClassProperty()) {
+        return;
+    }
+
+    auto *baseProp = basePropVar->Declaration()->Node()->AsClassProperty();
+    auto *baseClassDefinition = GetDirectOwnerClassDefinition(baseProp);
+    if (baseClassDefinition != nullptr && !IsPartialClassDefinition(baseClassDefinition)) {
+        HandleDeclarationNode(uctx, baseProp);
+    }
+}
+
 static void HandleVariableDeclarator(UnboxContext *uctx, ir::VariableDeclarator *vdecl)
 {
     if (IsUnboxingApplicable(vdecl->Id()->Variable()->TsType())) {
@@ -352,6 +405,7 @@ static void HandleDeclarationNode(UnboxContext *uctx, ir::AstNode *ast)  ///
         HandleScriptFunctionHeader(uctx, ast->AsMethodDefinition()->Function());
     } else if (ast->IsClassProperty()) {
         HandleClassProperty(uctx, ast->AsClassProperty());
+        HandleBaseClassProperty(uctx, ast->AsClassProperty());
     } else if (ast->IsVariableDeclarator()) {
         HandleVariableDeclarator(uctx, ast->AsVariableDeclarator());
     }
