@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -839,7 +839,9 @@ protected:
 class GlobalScope : public FunctionScope {
 public:
     explicit GlobalScope(ArenaAllocator *allocator)
-        : FunctionScope(allocator, nullptr), foreignBindings_(allocator->Adapter())
+        : FunctionScope(allocator, nullptr),
+          foreignBindings_(allocator->Adapter()),
+          mergedSharedForeign_(allocator->Adapter())
     {
         auto *paramScope = allocator->New<FunctionParamScope>(allocator, this);
         paramScope_ = paramScope;
@@ -867,11 +869,28 @@ public:
     InsertResult InsertDynamicBinding(const util::StringView &name, Variable *var);
     bool CorrectForeignBinding(const util::StringView &name, Variable *builtinVar, Variable *redefinedVar) override;
 
+    // Foreign-binding sharing: merge a stdlib program's shared export map into a single flat map.
+    void AddSharedForeign(const VariableMap *exportMap)
+    {
+        for (const auto &[name, var] : *exportMap) {
+            mergedSharedForeign_.try_emplace(name, var);
+        }
+    }
+
+    [[nodiscard]] const VariableMap &SharedForeign() const noexcept
+    {
+        return mergedSharedForeign_;
+    }
+
+    Variable *FindLocal(const util::StringView &name, ResolveBindingOptions options) const override;
+
 private:
     enum class InsertBindingFlags : uint8_t { NONE = 0, FOREIGN = 1U << 0U, DYNAMIC = 1U << 1U, ASSIGN = 1U << 2U };
     InsertResult InsertImpl(const util::StringView &name, Variable *var, InsertBindingFlags flags);
+    Variable *FindInSharedForeign(const util::StringView &name) const;
 
     ArenaUnorderedMap<util::StringView, bool> foreignBindings_;
+    VariableMap mergedSharedForeign_;
 };
 
 class ModuleScope : public GlobalScope {

@@ -75,7 +75,8 @@ public:
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
           reExportImports_(Allocator()->Adapter()),
-          exportFactStore_(Allocator()->New<ExportFactStore>(Allocator()))
+          exportFactStore_(Allocator()->New<ExportFactStore>(Allocator())),
+          foreignExportCache_(Allocator()->Adapter())
     {
         InitImplicitThisParam();
     }
@@ -324,6 +325,9 @@ private:
     void InsertForeignBinding(const util::StringView &name, Variable *var);
     void InsertOrAssignForeignBinding(const util::StringView &name, Variable *var);
     void ImportAllForeignBindings(const parser::Program *importedProgram);
+    void HandleExportedGlobalBinding(util::StringView bindingName, Variable *var, bool delegateMode, bool isStdLib);
+    // Build-once / reuse the pre-filtered export map of a stdlib program (foreign-binding sharing).
+    const Scope::VariableMap *GetOrBuildForeignExportMap(const parser::Program *importedProgram);
     void ThrowRedeclarationError(const lexer::SourcePosition &pos, const Variable *const var,
                                  const Variable *const variable, util::StringView localName);
 
@@ -337,6 +341,8 @@ private:
     ir::Identifier *thisParam_ {};  // 2
     ir::AstNode *defaultExport_ {};
     ExportFactStore *exportFactStore_;
+    // Shared per-stdlib-program export maps (foreign-binding sharing).
+    ArenaMap<const parser::Program *, Scope::VariableMap *> foreignExportCache_;
 
     friend class RecordTableContext;
 };

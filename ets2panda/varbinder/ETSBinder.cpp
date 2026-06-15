@@ -1018,8 +1018,50 @@ void AddOverloadFlag(ArenaAllocator *allocator, bool isStdLib, varbinder::Variab
     }
 }
 
+// Build once (and cache by program) the stdlib program's exported bindings — the set ImportAllForeignBindings
+// would flatten — so all consumers share it by reference instead of each duplicating the entries.
+const Scope::VariableMap *ETSBinder::GetOrBuildForeignExportMap(const parser::Program *const importedProgram)
+{
+    if (const auto it = foreignExportCache_.find(importedProgram); it != foreignExportCache_.end()) {
+        return it->second;
+    }
+
+    auto *exportMap = Allocator()->New<Scope::VariableMap>(Allocator()->Adapter());
+    const auto *const importGlobalScope = importedProgram->GlobalScope();
+
+    for (const auto [bindingName, var] : importGlobalScope->Bindings()) {
+        if (!var->Declaration()->Node()->IsValidInCurrentPhase() || util::Helpers::IsGlobalVar(var)) {
+            continue;
+        }
+        if (!importGlobalScope->IsForeignBinding(bindingName) && !var->Declaration()->Node()->IsDefaultExported() &&
+            var->AsLocalVariable()->Declaration()->Node()->IsExported()) {
+            exportMap->insert_or_assign(bindingName, var);
+        }
+    }
+    for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticMethodScope()->Bindings()) {
+        if (!var->Declaration()->Node()->IsDefaultExported()) {
+            exportMap->insert_or_assign(bindingName, var);
+        }
+    }
+    for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticFieldScope()->Bindings()) {
+        if (!var->Declaration()->Node()->IsDefaultExported()) {
+            exportMap->insert_or_assign(bindingName, var);
+        }
+    }
+
+    foreignExportCache_.insert_or_assign(importedProgram, exportMap);
+    return exportMap;
+}
+
 void ETSBinder::ImportAllForeignBindings(const parser::Program *const importedProgram)
 {
+    // For stdlib: register a shared export map and skip the bulk InsertForeignBinding (lookups use the
+    // delegate; local bindings still win). The loop still runs so conflict handling is preserved.
+    const bool delegateMode = importedProgram->IsStdLib();
+    if (delegateMode) {
+        TopScope()->AddSharedForeign(GetOrBuildForeignExportMap(importedProgram));
+    }
+
     const auto *const importGlobalScope = importedProgram->GlobalScope();
 
     bool const isStdLib = util::Helpers::IsStdLib(Program());
@@ -1033,40 +1075,18 @@ void ETSBinder::ImportAllForeignBindings(const parser::Program *const importedPr
         }
         if (!importGlobalScope->IsForeignBinding(bindingName) && !var->Declaration()->Node()->IsDefaultExported() &&
             (var->AsLocalVariable()->Declaration()->Node()->IsExported())) {
-            auto variable = Program()->GlobalClassScope()->FindLocal(bindingName, ResolveBindingOptions::ALL);
-            if (variable == nullptr || var == variable) {
-                InsertForeignBinding(bindingName, var);
-                continue;
-            }
-
-            if (variable->Declaration()->IsFunctionDecl() && var->Declaration()->IsFunctionDecl()) {
-                AddOverloadFlag(Allocator(), isStdLib, var, variable);
-                continue;
-            }
-
-            // It will be a redeclaration error, but the imported element has not been placed among the bindings yet
-            if (TopScope()->FindLocal(bindingName, ResolveBindingOptions::ALL) == nullptr) {
-                InsertForeignBinding(bindingName, var);
-            }
-
-            // redeclaration for builtin type,
-            // need to erase the redeclaration one and make sure the builtin types initialized successfully.
-            if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
-                TopScope()->CorrectForeignBinding(bindingName, var, variable);
-            }
-
-            ThrowRedeclarationError(variable->Declaration()->Node()->Start(), var, variable, bindingName);
+            HandleExportedGlobalBinding(bindingName, var, delegateMode, isStdLib);
         }
     }
 
     for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticMethodScope()->Bindings()) {
-        if (!var->Declaration()->Node()->IsDefaultExported()) {
+        if (!delegateMode && !var->Declaration()->Node()->IsDefaultExported()) {
             InsertForeignBinding(bindingName, var);
         }
     }
 
     for (const auto [bindingName, var] : importedProgram->GlobalClassScope()->StaticFieldScope()->Bindings()) {
-        if (!var->Declaration()->Node()->IsDefaultExported()) {
+        if (!delegateMode && !var->Declaration()->Node()->IsDefaultExported()) {
             InsertForeignBinding(bindingName, var);
         }
     }
@@ -1082,6 +1102,36 @@ struct ImportBindingKey {
 
 static bool IsSameImportBinding(const ImportBindingInfo *bindingInfo, const ImportBindingKey &key);
 static Variable *DropShadowableForeignBinding(GlobalScope *scope, util::StringView localName, Variable *previous);
+
+void ETSBinder::HandleExportedGlobalBinding(util::StringView bindingName, Variable *var, bool delegateMode,
+                                            bool isStdLib)
+{
+    auto variable = Program()->GlobalClassScope()->FindLocal(bindingName, ResolveBindingOptions::ALL);
+    if (variable == nullptr || var == variable) {
+        if (!delegateMode) {  // delegate provides this binding via the shared map
+            InsertForeignBinding(bindingName, var);
+        }
+        return;
+    }
+
+    if (variable->Declaration()->IsFunctionDecl() && var->Declaration()->IsFunctionDecl()) {
+        AddOverloadFlag(Allocator(), isStdLib, var, variable);
+        return;
+    }
+
+    // It will be a redeclaration error, but the imported element has not been placed among the bindings yet
+    if (TopScope()->FindLocal(bindingName, ResolveBindingOptions::ALL) == nullptr) {
+        InsertForeignBinding(bindingName, var);
+    }
+
+    // redeclaration for builtin type,
+    // need to erase the redeclaration one and make sure the builtin types initialized successfully.
+    if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
+        TopScope()->CorrectForeignBinding(bindingName, var, variable);
+    }
+
+    ThrowRedeclarationError(variable->Declaration()->Node()->Start(), var, variable, bindingName);
+}
 
 void ETSBinder::AddImportNamespaceSpecifiersToTopBindings(parser::Program *const importedProgram,
                                                           ir::ImportNamespaceSpecifier *const namespaceSpecifier,
