@@ -14,24 +14,24 @@
 *  @zhuoli72
 .* @zhuoli72 @Prof @igelhaus
 
-/figures ^igelhaus ^Prof @Nojpg @jokerxd-liu @huyunhui1
-/testTs ^igelhaus ^Prof @Nojpg @jokerxd-liu @huyunhui1
-/test_ecma_bcopt ^Prof @Nojpg @jokerxd-liu @huyunhui1
+/figures ^igelhaus ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
+/testTs ^igelhaus ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
+/test_ecma_bcopt ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /arkguard/ @xiao-peiyang
-/es2panda/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
+/es2panda/  @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /ets2panda/ @tengtengh @xingshunxiang ^igelhaus ^Prof ^vigavi
 /ets2panda/aot @dkofanov  ^igelhaus ^Prof
 /ets2panda/arkts_bindings @mbolshov @lirismankarina @okolnovevgeny ^igelhaus ^Prof
 /ets2panda/ast_verifier ^mbolshov @dkofanov ^igelhaus ^Prof
-/ets2panda/bindings ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu @oh-rgx1 ^H_awson
+/ets2panda/bindings ^igelhaus ^Prof ^Nojpg @Ascnbio @jokerxd-liu @H_awson @zmw1 ^blue_gym ^m0_59467138 @huyunhui1
 /ets2panda/lexer ^akmaevaleksey ^csabaosztrogonac ^igelhaus ^zelentsovdmitry ^Prof @xingshunxiang @wang-zhengjij
-/ets2panda/lsp ^igelhaus ^Prof @Nojpg @jokerxd-liu @oh-rgx1 ^H_awson
+/ets2panda/lsp ^igelhaus ^Prof ^Nojpg @jokerxd-liu @H_awson @zmw1 ^blue_gym ^m0_59467138 @huyunhui1
 /ets2panda/public ^mbolshov ^zhelyapovaleksey ^igelhaus ^Prof @xingshunxiang @anjiaqi257 @yuan_chao_hua
 /ets2panda/test ^akmaevaleksey ^igelhaus ^Prof
-/legacy_bin/ @ctw-ian @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
-/merge_abc/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
-/test/ @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
-/test262/  @jokerxd-liu @huyunhui1 ^zmw1 ^ElevenDuan
+/legacy_bin/ @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
+/merge_abc/  @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
+/test/ @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
+/test262/  @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /test262/*.json                 ^shirunova_viktoria @huang-shengda2
 /test262/*.py			^shirunova_viktoria @huang-shengda2
 /test262/ignored*.txt		@kuchkovairina @huang-shengda2
@@ -94,7 +94,7 @@
 /ets2panda/test/test-lists/declgenets2ts ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof
 /ets2panda/test/unit/arktsconfig-parser @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
-/ets2panda/test/unit/lsp @Nojpg @jokerxd-liu ^igelhaus ^Prof @oh-rgx1 ^H_awson
+/ets2panda/test/unit/lsp ^Nojpg @jokerxd-liu ^igelhaus ^Prof @H_awson @zmw1 ^blue_gym ^m0_59467138 @huyunhui1
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/util/diagnostic/*yaml @ozerovnikita @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof @fanglou
