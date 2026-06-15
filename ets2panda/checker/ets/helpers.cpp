@@ -1948,25 +1948,6 @@ void ETSChecker::SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjT
                                               ir::ETSImportDeclaration *importDecl)
 {
     parser::Program *program = VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
-    // Check imported properties before assigning them to module object
-    ES2PANDA_ASSERT(program != nullptr);
-    if (!program->IsASTChecked()) {
-        // NOTE: helps to avoid endless loop in case of recursive imports that uses all bindings
-        varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), program);
-        // If external program import current program, the checker status should not contain external
-        checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
-        if (!VarBinder()->AsETSBinder()->GetGlobalRecordTable()->IsExternal()) {
-            // NOTE(dkofanov): Looks like dead code.
-            RemoveStatus(CheckerStatus::IN_EXTERNAL);
-        }
-        auto savedProgram = Program();
-        auto topScopeCtx = varbinder::TopScopeContext(VarBinder(), program->GlobalScope());
-        VarBinder()->AsETSBinder()->SetProgram(program);
-        program->SetASTChecked();
-        program->Ast()->Check(this);
-        VarBinder()->AsETSBinder()->SetProgram(savedProgram);
-    }
-
     BindingsModuleObjectAddProperty<checker::PropertyType::STATIC_FIELD>(
         moduleObjType, importDecl, program->GlobalClassScope()->StaticFieldScope()->Bindings(), importPath);
 
