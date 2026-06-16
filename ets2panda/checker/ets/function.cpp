@@ -2256,10 +2256,6 @@ bool ETSChecker::IsReturnTypeSubstitutable(Signature *const s1, Signature *const
     // A method declaration d1 with return type R1 is return-type-substitutable for another method d2 with return
     // type R2 if any of the following is true:
 
-    if (r1->IsETSNeverType()) {
-        return true;
-    }
-
     // - If R1 is a primitive type then R2 is identical to R1.
     if (r1->IsETSPrimitiveType() || r2->IsETSPrimitiveType()) {
         return Relation()->IsIdenticalTo(r2, r1);
