@@ -82,6 +82,86 @@
       }
     },
     {
+      "type": "ImportDeclaration",
+      "source": {
+        "type": "StringLiteral",
+        "value": "std/core",
+        "loc": {
+          "start": {
+            "line": 17,
+            "column": 19,
+            "program": "launch.ets"
+          },
+          "end": {
+            "line": 17,
+            "column": 29,
+            "program": "launch.ets"
+          }
+        }
+      },
+      "specifiers": [
+        {
+          "type": "ImportSpecifier",
+          "local": {
+            "type": "Identifier",
+            "name": "Job",
+            "loc": {
+              "start": {
+                "line": 17,
+                "column": 9,
+                "program": "launch.ets"
+              },
+              "end": {
+                "line": 17,
+                "column": 12,
+                "program": "launch.ets"
+              }
+            }
+          },
+          "imported": {
+            "type": "Identifier",
+            "name": "Job",
+            "loc": {
+              "start": {
+                "line": 17,
+                "column": 9,
+                "program": "launch.ets"
+              },
+              "end": {
+                "line": 17,
+                "column": 12,
+                "program": "launch.ets"
+              }
+            }
+          },
+          "loc": {
+            "start": {
+              "line": 17,
+              "column": 9,
+              "program": "launch.ets"
+            },
+            "end": {
+              "line": 17,
+              "column": 12,
+              "program": "launch.ets"
+            }
+          }
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 1,
+          "program": "launch.ets"
+        },
+        "end": {
+          "line": 17,
+          "column": 29,
+          "program": "launch.ets"
+        }
+      }
+    },
+    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
@@ -89,12 +169,12 @@
           "name": "Example",
           "loc": {
             "start": {
-              "line": 18,
+              "line": 19,
               "column": 7,
               "program": "launch.ets"
             },
             "end": {
-              "line": 18,
+              "line": 19,
               "column": 14,
               "program": "launch.ets"
             }
@@ -110,12 +190,12 @@
               "name": "foobar",
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 20,
                   "column": 19,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 19,
+                  "line": 20,
                   "column": 25,
                   "program": "launch.ets"
                 }
@@ -135,12 +215,12 @@
                   "name": "foobar",
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 20,
                       "column": 19,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 20,
                       "column": 25,
                       "program": "launch.ets"
                     }
@@ -159,12 +239,12 @@
                       "name": "Object",
                       "loc": {
                         "start": {
-                          "line": 19,
+                          "line": 20,
                           "column": 29,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 19,
+                          "line": 20,
                           "column": 35,
                           "program": "launch.ets"
                         }
@@ -172,12 +252,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 19,
+                        "line": 20,
                         "column": 29,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 19,
+                        "line": 20,
                         "column": 35,
                         "program": "launch.ets"
                       }
@@ -185,12 +265,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 20,
                       "column": 29,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 20,
                       "column": 35,
                       "program": "launch.ets"
                     }
@@ -212,12 +292,12 @@
                               "name": "Object",
                               "loc": {
                                 "start": {
-                                  "line": 20,
+                                  "line": 21,
                                   "column": 20,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 20,
+                                  "line": 21,
                                   "column": 26,
                                   "program": "launch.ets"
                                 }
@@ -225,12 +305,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 20,
+                                "line": 21,
                                 "column": 20,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 20,
+                                "line": 21,
                                 "column": 26,
                                 "program": "launch.ets"
                               }
@@ -238,12 +318,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 20,
+                              "line": 21,
                               "column": 20,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 20,
+                              "line": 21,
                               "column": 26,
                               "program": "launch.ets"
                             }
@@ -252,12 +332,12 @@
                         "arguments": [],
                         "loc": {
                           "start": {
-                            "line": 20,
+                            "line": 21,
                             "column": 16,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 20,
+                            "line": 21,
                             "column": 29,
                             "program": "launch.ets"
                           }
@@ -265,12 +345,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 20,
+                          "line": 21,
                           "column": 9,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 20,
+                          "line": 21,
                           "column": 29,
                           "program": "launch.ets"
                         }
@@ -279,12 +359,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 20,
                       "column": 36,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 21,
+                      "line": 22,
                       "column": 6,
                       "program": "launch.ets"
                     }
@@ -292,12 +372,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 20,
                     "column": 25,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 21,
+                    "line": 22,
                     "column": 6,
                     "program": "launch.ets"
                   }
@@ -305,12 +385,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 20,
                   "column": 25,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 21,
+                  "line": 22,
                   "column": 6,
                   "program": "launch.ets"
                 }
@@ -319,12 +399,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 19,
+                "line": 20,
                 "column": 19,
                 "program": "launch.ets"
               },
               "end": {
-                "line": 21,
+                "line": 22,
                 "column": 6,
                 "program": "launch.ets"
               }
@@ -337,12 +417,12 @@
               "name": "baz",
               "loc": {
                 "start": {
-                  "line": 23,
+                  "line": 24,
                   "column": 19,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 23,
+                  "line": 24,
                   "column": 22,
                   "program": "launch.ets"
                 }
@@ -362,12 +442,12 @@
                   "name": "baz",
                   "loc": {
                     "start": {
-                      "line": 23,
+                      "line": 24,
                       "column": 19,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 23,
+                      "line": 24,
                       "column": 22,
                       "program": "launch.ets"
                     }
@@ -386,12 +466,12 @@
                       "name": "Object",
                       "loc": {
                         "start": {
-                          "line": 23,
+                          "line": 24,
                           "column": 26,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 23,
+                          "line": 24,
                           "column": 32,
                           "program": "launch.ets"
                         }
@@ -399,12 +479,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 23,
+                        "line": 24,
                         "column": 26,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 23,
+                        "line": 24,
                         "column": 32,
                         "program": "launch.ets"
                       }
@@ -412,12 +492,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 23,
+                      "line": 24,
                       "column": 26,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 23,
+                      "line": 24,
                       "column": 32,
                       "program": "launch.ets"
                     }
@@ -439,12 +519,12 @@
                               "name": "Object",
                               "loc": {
                                 "start": {
-                                  "line": 24,
+                                  "line": 25,
                                   "column": 20,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 24,
+                                  "line": 25,
                                   "column": 26,
                                   "program": "launch.ets"
                                 }
@@ -452,12 +532,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 24,
+                                "line": 25,
                                 "column": 20,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 24,
+                                "line": 25,
                                 "column": 26,
                                 "program": "launch.ets"
                               }
@@ -465,12 +545,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 24,
+                              "line": 25,
                               "column": 20,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 24,
+                              "line": 25,
                               "column": 26,
                               "program": "launch.ets"
                             }
@@ -479,12 +559,12 @@
                         "arguments": [],
                         "loc": {
                           "start": {
-                            "line": 24,
+                            "line": 25,
                             "column": 16,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 24,
+                            "line": 25,
                             "column": 29,
                             "program": "launch.ets"
                           }
@@ -492,12 +572,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 24,
+                          "line": 25,
                           "column": 9,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 24,
+                          "line": 25,
                           "column": 29,
                           "program": "launch.ets"
                         }
@@ -506,12 +586,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 23,
+                      "line": 24,
                       "column": 33,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 26,
                       "column": 6,
                       "program": "launch.ets"
                     }
@@ -519,12 +599,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 23,
+                    "line": 24,
                     "column": 22,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 25,
+                    "line": 26,
                     "column": 6,
                     "program": "launch.ets"
                   }
@@ -532,12 +612,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 23,
+                  "line": 24,
                   "column": 22,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 25,
+                  "line": 26,
                   "column": 6,
                   "program": "launch.ets"
                 }
@@ -546,12 +626,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 23,
+                "line": 24,
                 "column": 19,
                 "program": "launch.ets"
               },
               "end": {
-                "line": 25,
+                "line": 26,
                 "column": 6,
                 "program": "launch.ets"
               }
@@ -564,12 +644,12 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 18,
+                  "line": 19,
                   "column": 16,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 18,
+                  "line": 19,
                   "column": 16,
                   "program": "launch.ets"
                 }
@@ -588,12 +668,12 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 18,
+                      "line": 19,
                       "column": 16,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 18,
+                      "line": 19,
                       "column": 16,
                       "program": "launch.ets"
                     }
@@ -608,12 +688,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 18,
+                      "line": 19,
                       "column": 16,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 18,
+                      "line": 19,
                       "column": 16,
                       "program": "launch.ets"
                     }
@@ -621,12 +701,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 18,
+                    "line": 19,
                     "column": 16,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 18,
+                    "line": 19,
                     "column": 16,
                     "program": "launch.ets"
                   }
@@ -634,12 +714,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 18,
+                  "line": 19,
                   "column": 16,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 18,
+                  "line": 19,
                   "column": 16,
                   "program": "launch.ets"
                 }
@@ -662,12 +742,12 @@
         ],
         "loc": {
           "start": {
-            "line": 18,
+            "line": 19,
             "column": 15,
             "program": "launch.ets"
           },
           "end": {
-            "line": 26,
+            "line": 27,
             "column": 2,
             "program": "launch.ets"
           }
@@ -675,12 +755,12 @@
       },
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 1,
           "program": "launch.ets"
         },
         "end": {
-          "line": 26,
+          "line": 27,
           "column": 2,
           "program": "launch.ets"
         }
@@ -715,12 +795,12 @@
               "name": "bar",
               "loc": {
                 "start": {
-                  "line": 28,
+                  "line": 29,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 28,
+                  "line": 29,
                   "column": 13,
                   "program": "launch.ets"
                 }
@@ -740,12 +820,12 @@
                   "name": "bar",
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 29,
                       "column": 10,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 28,
+                      "line": 29,
                       "column": 13,
                       "program": "launch.ets"
                     }
@@ -764,12 +844,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 28,
+                            "line": 29,
                             "column": 17,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 28,
+                            "line": 29,
                             "column": 20,
                             "program": "launch.ets"
                           }
@@ -777,12 +857,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 29,
                           "column": 14,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 28,
+                          "line": 29,
                           "column": 20,
                           "program": "launch.ets"
                         }
@@ -790,12 +870,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 28,
+                        "line": 29,
                         "column": 14,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 28,
+                        "line": 29,
                         "column": 20,
                         "program": "launch.ets"
                       }
@@ -810,12 +890,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 28,
+                            "line": 29,
                             "column": 25,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 28,
+                            "line": 29,
                             "column": 30,
                             "program": "launch.ets"
                           }
@@ -823,12 +903,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 29,
                           "column": 22,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 28,
+                          "line": 29,
                           "column": 30,
                           "program": "launch.ets"
                         }
@@ -836,12 +916,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 28,
+                        "line": 29,
                         "column": 22,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 28,
+                        "line": 29,
                         "column": 30,
                         "program": "launch.ets"
                       }
@@ -857,12 +937,12 @@
                       "name": "Object",
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 29,
                           "column": 33,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 28,
+                          "line": 29,
                           "column": 39,
                           "program": "launch.ets"
                         }
@@ -870,12 +950,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 28,
+                        "line": 29,
                         "column": 33,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 28,
+                        "line": 29,
                         "column": 39,
                         "program": "launch.ets"
                       }
@@ -883,12 +963,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 29,
                       "column": 33,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 28,
+                      "line": 29,
                       "column": 39,
                       "program": "launch.ets"
                     }
@@ -910,12 +990,12 @@
                               "name": "Object",
                               "loc": {
                                 "start": {
-                                  "line": 29,
+                                  "line": 30,
                                   "column": 14,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 29,
+                                  "line": 30,
                                   "column": 20,
                                   "program": "launch.ets"
                                 }
@@ -923,12 +1003,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 14,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 20,
                                 "program": "launch.ets"
                               }
@@ -936,12 +1016,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 30,
                               "column": 14,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 30,
                               "column": 20,
                               "program": "launch.ets"
                             }
@@ -950,12 +1030,12 @@
                         "arguments": [],
                         "loc": {
                           "start": {
-                            "line": 29,
+                            "line": 30,
                             "column": 10,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 29,
+                            "line": 30,
                             "column": 23,
                             "program": "launch.ets"
                           }
@@ -963,12 +1043,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 30,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 29,
+                          "line": 30,
                           "column": 23,
                           "program": "launch.ets"
                         }
@@ -977,12 +1057,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 29,
                       "column": 40,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 30,
+                      "line": 31,
                       "column": 2,
                       "program": "launch.ets"
                     }
@@ -990,12 +1070,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 28,
+                    "line": 29,
                     "column": 10,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 30,
+                    "line": 31,
                     "column": 2,
                     "program": "launch.ets"
                   }
@@ -1003,12 +1083,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 28,
+                  "line": 29,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 30,
+                  "line": 31,
                   "column": 2,
                   "program": "launch.ets"
                 }
@@ -1017,12 +1097,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 28,
+                "line": 29,
                 "column": 1,
                 "program": "launch.ets"
               },
               "end": {
-                "line": 30,
+                "line": 31,
                 "column": 2,
                 "program": "launch.ets"
               }
@@ -1035,12 +1115,12 @@
               "name": "foo",
               "loc": {
                 "start": {
-                  "line": 32,
+                  "line": 33,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 32,
+                  "line": 33,
                   "column": 13,
                   "program": "launch.ets"
                 }
@@ -1060,12 +1140,12 @@
                   "name": "foo",
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 33,
                       "column": 10,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 32,
+                      "line": 33,
                       "column": 13,
                       "program": "launch.ets"
                     }
@@ -1084,12 +1164,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 32,
+                            "line": 33,
                             "column": 17,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 32,
+                            "line": 33,
                             "column": 20,
                             "program": "launch.ets"
                           }
@@ -1097,12 +1177,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 33,
                           "column": 14,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 33,
                           "column": 20,
                           "program": "launch.ets"
                         }
@@ -1110,12 +1190,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 32,
+                        "line": 33,
                         "column": 14,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 32,
+                        "line": 33,
                         "column": 20,
                         "program": "launch.ets"
                       }
@@ -1131,12 +1211,12 @@
                       "name": "Object",
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 33,
                           "column": 23,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 33,
                           "column": 29,
                           "program": "launch.ets"
                         }
@@ -1144,12 +1224,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 32,
+                        "line": 33,
                         "column": 23,
                         "program": "launch.ets"
                       },
                       "end": {
-                        "line": 32,
+                        "line": 33,
                         "column": 29,
                         "program": "launch.ets"
                       }
@@ -1157,12 +1237,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 33,
                       "column": 23,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 32,
+                      "line": 33,
                       "column": 29,
                       "program": "launch.ets"
                     }
@@ -1180,12 +1260,12 @@
                           "name": "launch",
                           "loc": {
                             "start": {
-                              "line": 33,
+                              "line": 34,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 33,
+                              "line": 34,
                               "column": 9,
                               "program": "launch.ets"
                             }
@@ -1205,12 +1285,12 @@
                                   "name": "Object",
                                   "loc": {
                                     "start": {
-                                      "line": 33,
+                                      "line": 34,
                                       "column": 10,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 33,
+                                      "line": 34,
                                       "column": 16,
                                       "program": "launch.ets"
                                     }
@@ -1218,12 +1298,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 33,
+                                    "line": 34,
                                     "column": 10,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 33,
+                                    "line": 34,
                                     "column": 16,
                                     "program": "launch.ets"
                                   }
@@ -1231,12 +1311,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 33,
+                                  "line": 34,
                                   "column": 10,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 33,
+                                  "line": 34,
                                   "column": 16,
                                   "program": "launch.ets"
                                 }
@@ -1245,12 +1325,12 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 33,
+                              "line": 34,
                               "column": 9,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 33,
+                              "line": 34,
                               "column": 17,
                               "program": "launch.ets"
                             }
@@ -1258,12 +1338,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 33,
+                            "line": 34,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 35,
+                            "line": 36,
                             "column": 4,
                             "program": "launch.ets"
                           }
@@ -1271,12 +1351,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 33,
+                          "line": 34,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 35,
+                          "line": 36,
                           "column": 5,
                           "program": "launch.ets"
                         }
@@ -1295,12 +1375,12 @@
                               "name": "Object",
                               "loc": {
                                 "start": {
-                                  "line": 36,
+                                  "line": 37,
                                   "column": 14,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 36,
+                                  "line": 37,
                                   "column": 20,
                                   "program": "launch.ets"
                                 }
@@ -1308,12 +1388,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 14,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 20,
                                 "program": "launch.ets"
                               }
@@ -1321,12 +1401,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 36,
+                              "line": 37,
                               "column": 14,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 36,
+                              "line": 37,
                               "column": 20,
                               "program": "launch.ets"
                             }
@@ -1335,12 +1415,12 @@
                         "arguments": [],
                         "loc": {
                           "start": {
-                            "line": 36,
+                            "line": 37,
                             "column": 10,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 36,
+                            "line": 37,
                             "column": 23,
                             "program": "launch.ets"
                           }
@@ -1348,12 +1428,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 36,
+                          "line": 37,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 36,
+                          "line": 37,
                           "column": 23,
                           "program": "launch.ets"
                         }
@@ -1362,12 +1442,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 33,
                       "column": 30,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 37,
+                      "line": 38,
                       "column": 2,
                       "program": "launch.ets"
                     }
@@ -1375,12 +1455,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 32,
+                    "line": 33,
                     "column": 10,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 37,
+                    "line": 38,
                     "column": 2,
                     "program": "launch.ets"
                   }
@@ -1388,12 +1468,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 32,
+                  "line": 33,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 37,
+                  "line": 38,
                   "column": 2,
                   "program": "launch.ets"
                 }
@@ -1402,12 +1482,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 32,
+                "line": 33,
                 "column": 1,
                 "program": "launch.ets"
               },
               "end": {
-                "line": 37,
+                "line": 38,
                 "column": 2,
                 "program": "launch.ets"
               }
@@ -1420,12 +1500,12 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 39,
+                  "line": 40,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 39,
+                  "line": 40,
                   "column": 14,
                   "program": "launch.ets"
                 }
@@ -1445,12 +1525,12 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 40,
                       "column": 10,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 39,
+                      "line": 40,
                       "column": 14,
                       "program": "launch.ets"
                     }
@@ -1464,12 +1544,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 40,
                       "column": 18,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 39,
+                      "line": 40,
                       "column": 22,
                       "program": "launch.ets"
                     }
@@ -1492,16 +1572,16 @@
                                 "type": "ETSTypeReferencePart",
                                 "name": {
                                   "type": "Identifier",
-                                  "name": "Promise",
+                                  "name": "Job",
                                   "loc": {
                                     "start": {
-                                      "line": 40,
+                                      "line": 41,
                                       "column": 10,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 40,
-                                      "column": 17,
+                                      "line": 41,
+                                      "column": 13,
                                       "program": "launch.ets"
                                     }
                                   }
@@ -1518,39 +1598,39 @@
                                           "name": "Object",
                                           "loc": {
                                             "start": {
-                                              "line": 40,
-                                              "column": 18,
+                                              "line": 41,
+                                              "column": 14,
                                               "program": "launch.ets"
                                             },
                                             "end": {
-                                              "line": 40,
-                                              "column": 24,
+                                              "line": 41,
+                                              "column": 20,
                                               "program": "launch.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 40,
-                                            "column": 18,
+                                            "line": 41,
+                                            "column": 14,
                                             "program": "launch.ets"
                                           },
                                           "end": {
-                                            "line": 40,
-                                            "column": 24,
+                                            "line": 41,
+                                            "column": 20,
                                             "program": "launch.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 40,
-                                          "column": 18,
+                                          "line": 41,
+                                          "column": 14,
                                           "program": "launch.ets"
                                         },
                                         "end": {
-                                          "line": 40,
-                                          "column": 24,
+                                          "line": 41,
+                                          "column": 20,
                                           "program": "launch.ets"
                                         }
                                       }
@@ -1558,51 +1638,51 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 40,
-                                      "column": 17,
+                                      "line": 41,
+                                      "column": 13,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 40,
-                                      "column": 25,
+                                      "line": 41,
+                                      "column": 21,
                                       "program": "launch.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 40,
+                                    "line": 41,
                                     "column": 10,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 40,
-                                    "column": 25,
+                                    "line": 41,
+                                    "column": 21,
                                     "program": "launch.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 41,
                                   "column": 10,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 40,
-                                  "column": 25,
+                                  "line": 41,
+                                  "column": 21,
                                   "program": "launch.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 41,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 40,
+                                "line": 41,
                                 "column": 8,
                                 "program": "launch.ets"
                               }
@@ -1611,12 +1691,12 @@
                           "init": null,
                           "loc": {
                             "start": {
-                              "line": 40,
+                              "line": 41,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 40,
+                              "line": 41,
                               "column": 8,
                               "program": "launch.ets"
                             }
@@ -1626,13 +1706,13 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 40,
+                          "line": 41,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 40,
-                          "column": 26,
+                          "line": 41,
+                          "column": 22,
                           "program": "launch.ets"
                         }
                       }
@@ -1647,12 +1727,12 @@
                           "name": "p",
                           "loc": {
                             "start": {
-                              "line": 41,
+                              "line": 42,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 41,
+                              "line": 42,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -1665,12 +1745,12 @@
                             "name": "launch",
                             "loc": {
                               "start": {
-                                "line": 41,
+                                "line": 42,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 41,
+                                "line": 42,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -1690,12 +1770,12 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 41,
+                                        "line": 42,
                                         "column": 14,
                                         "program": "launch.ets"
                                       },
                                       "end": {
-                                        "line": 41,
+                                        "line": 42,
                                         "column": 20,
                                         "program": "launch.ets"
                                       }
@@ -1703,12 +1783,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 41,
+                                      "line": 42,
                                       "column": 14,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 41,
+                                      "line": 42,
                                       "column": 20,
                                       "program": "launch.ets"
                                     }
@@ -1716,12 +1796,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 41,
+                                    "line": 42,
                                     "column": 14,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 41,
+                                    "line": 42,
                                     "column": 20,
                                     "program": "launch.ets"
                                   }
@@ -1730,12 +1810,12 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 41,
+                                "line": 42,
                                 "column": 13,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 41,
+                                "line": 42,
                                 "column": 21,
                                 "program": "launch.ets"
                               }
@@ -1743,12 +1823,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 41,
+                              "line": 42,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 43,
+                              "line": 44,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -1756,12 +1836,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 41,
+                            "line": 42,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 43,
+                            "line": 44,
                             "column": 4,
                             "program": "launch.ets"
                           }
@@ -1769,12 +1849,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 41,
+                          "line": 42,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 43,
+                          "line": 44,
                           "column": 5,
                           "program": "launch.ets"
                         }
@@ -1790,12 +1870,12 @@
                           "name": "p",
                           "loc": {
                             "start": {
-                              "line": 44,
+                              "line": 45,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 44,
+                              "line": 45,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -1808,12 +1888,12 @@
                             "name": "launch",
                             "loc": {
                               "start": {
-                                "line": 44,
+                                "line": 45,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 44,
+                                "line": 45,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -1827,12 +1907,12 @@
                                 "name": "Example",
                                 "loc": {
                                   "start": {
-                                    "line": 44,
+                                    "line": 45,
                                     "column": 14,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 44,
+                                    "line": 45,
                                     "column": 21,
                                     "program": "launch.ets"
                                   }
@@ -1843,12 +1923,12 @@
                                 "name": "foobar",
                                 "loc": {
                                   "start": {
-                                    "line": 44,
+                                    "line": 45,
                                     "column": 22,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 44,
+                                    "line": 45,
                                     "column": 28,
                                     "program": "launch.ets"
                                   }
@@ -1858,12 +1938,12 @@
                               "optional": false,
                               "loc": {
                                 "start": {
-                                  "line": 44,
+                                  "line": 45,
                                   "column": 14,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 44,
+                                  "line": 45,
                                   "column": 28,
                                   "program": "launch.ets"
                                 }
@@ -1873,12 +1953,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 44,
+                              "line": 45,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 44,
+                              "line": 45,
                               "column": 29,
                               "program": "launch.ets"
                             }
@@ -1886,12 +1966,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 44,
+                            "line": 45,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 44,
+                            "line": 45,
                             "column": 29,
                             "program": "launch.ets"
                           }
@@ -1899,12 +1979,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 44,
+                          "line": 45,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 44,
+                          "line": 45,
                           "column": 30,
                           "program": "launch.ets"
                         }
@@ -1920,12 +2000,12 @@
                           "name": "p",
                           "loc": {
                             "start": {
-                              "line": 45,
+                              "line": 46,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 45,
+                              "line": 46,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -1938,12 +2018,12 @@
                             "name": "launch",
                             "loc": {
                               "start": {
-                                "line": 45,
+                                "line": 46,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 45,
+                                "line": 46,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -1957,12 +2037,12 @@
                                 "name": "Example",
                                 "loc": {
                                   "start": {
-                                    "line": 45,
+                                    "line": 46,
                                     "column": 14,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 45,
+                                    "line": 46,
                                     "column": 21,
                                     "program": "launch.ets"
                                   }
@@ -1973,12 +2053,12 @@
                                 "name": "baz",
                                 "loc": {
                                   "start": {
-                                    "line": 45,
+                                    "line": 46,
                                     "column": 22,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 45,
+                                    "line": 46,
                                     "column": 25,
                                     "program": "launch.ets"
                                   }
@@ -1988,12 +2068,12 @@
                               "optional": false,
                               "loc": {
                                 "start": {
-                                  "line": 45,
+                                  "line": 46,
                                   "column": 14,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 45,
+                                  "line": 46,
                                   "column": 25,
                                   "program": "launch.ets"
                                 }
@@ -2003,12 +2083,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 45,
+                              "line": 46,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 45,
+                              "line": 46,
                               "column": 26,
                               "program": "launch.ets"
                             }
@@ -2016,12 +2096,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 45,
+                            "line": 46,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 45,
+                            "line": 46,
                             "column": 26,
                             "program": "launch.ets"
                           }
@@ -2029,12 +2109,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 45,
+                          "line": 46,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 45,
+                          "line": 46,
                           "column": 27,
                           "program": "launch.ets"
                         }
@@ -2050,12 +2130,12 @@
                           "name": "p",
                           "loc": {
                             "start": {
-                              "line": 46,
+                              "line": 47,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 46,
+                              "line": 47,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -2068,12 +2148,12 @@
                             "name": "launch",
                             "loc": {
                               "start": {
-                                "line": 46,
+                                "line": 47,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 46,
+                                "line": 47,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -2087,12 +2167,12 @@
                                 "name": "Example",
                                 "loc": {
                                   "start": {
-                                    "line": 46,
+                                    "line": 47,
                                     "column": 14,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 46,
+                                    "line": 47,
                                     "column": 21,
                                     "program": "launch.ets"
                                   }
@@ -2103,12 +2183,12 @@
                                 "name": "baz",
                                 "loc": {
                                   "start": {
-                                    "line": 46,
+                                    "line": 47,
                                     "column": 22,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 46,
+                                    "line": 47,
                                     "column": 25,
                                     "program": "launch.ets"
                                   }
@@ -2118,12 +2198,12 @@
                               "optional": false,
                               "loc": {
                                 "start": {
-                                  "line": 46,
+                                  "line": 47,
                                   "column": 14,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 46,
+                                  "line": 47,
                                   "column": 25,
                                   "program": "launch.ets"
                                 }
@@ -2133,12 +2213,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 46,
+                              "line": 47,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 46,
+                              "line": 47,
                               "column": 26,
                               "program": "launch.ets"
                             }
@@ -2146,12 +2226,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 46,
+                            "line": 47,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 46,
+                            "line": 47,
                             "column": 26,
                             "program": "launch.ets"
                           }
@@ -2159,12 +2239,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 46,
+                          "line": 47,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 46,
+                          "line": 47,
                           "column": 27,
                           "program": "launch.ets"
                         }
@@ -2190,12 +2270,12 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 47,
+                                          "line": 48,
                                           "column": 20,
                                           "program": "launch.ets"
                                         },
                                         "end": {
-                                          "line": 47,
+                                          "line": 48,
                                           "column": 23,
                                           "program": "launch.ets"
                                         }
@@ -2203,12 +2283,12 @@
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 47,
+                                        "line": 48,
                                         "column": 17,
                                         "program": "launch.ets"
                                       },
                                       "end": {
-                                        "line": 47,
+                                        "line": 48,
                                         "column": 23,
                                         "program": "launch.ets"
                                       }
@@ -2216,12 +2296,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 47,
+                                      "line": 48,
                                       "column": 17,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 47,
+                                      "line": 48,
                                       "column": 23,
                                       "program": "launch.ets"
                                     }
@@ -2237,12 +2317,12 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 47,
+                                        "line": 48,
                                         "column": 28,
                                         "program": "launch.ets"
                                       },
                                       "end": {
-                                        "line": 47,
+                                        "line": 48,
                                         "column": 34,
                                         "program": "launch.ets"
                                       }
@@ -2250,12 +2330,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 47,
+                                      "line": 48,
                                       "column": 28,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 47,
+                                      "line": 48,
                                       "column": 34,
                                       "program": "launch.ets"
                                     }
@@ -2263,12 +2343,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 47,
+                                    "line": 48,
                                     "column": 28,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 47,
+                                    "line": 48,
                                     "column": 34,
                                     "program": "launch.ets"
                                   }
@@ -2276,12 +2356,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 47,
+                                  "line": 48,
                                   "column": 16,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 47,
+                                  "line": 48,
                                   "column": 34,
                                   "program": "launch.ets"
                                 }
@@ -2289,12 +2369,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 47,
+                                "line": 48,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 47,
+                                "line": 48,
                                 "column": 14,
                                 "program": "launch.ets"
                               }
@@ -2305,12 +2385,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 47,
+                                "line": 48,
                                 "column": 37,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 47,
+                                "line": 48,
                                 "column": 40,
                                 "program": "launch.ets"
                               }
@@ -2318,12 +2398,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 47,
+                              "line": 48,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 47,
+                              "line": 48,
                               "column": 40,
                               "program": "launch.ets"
                             }
@@ -2333,12 +2413,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 47,
+                          "line": 48,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 47,
+                          "line": 48,
                           "column": 41,
                           "program": "launch.ets"
                         }
@@ -2354,12 +2434,12 @@
                           "name": "p",
                           "loc": {
                             "start": {
-                              "line": 48,
+                              "line": 49,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 48,
+                              "line": 49,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -2372,12 +2452,12 @@
                             "name": "launch",
                             "loc": {
                               "start": {
-                                "line": 48,
+                                "line": 49,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 48,
+                                "line": 49,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -2397,12 +2477,12 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 48,
+                                        "line": 49,
                                         "column": 14,
                                         "program": "launch.ets"
                                       },
                                       "end": {
-                                        "line": 48,
+                                        "line": 49,
                                         "column": 20,
                                         "program": "launch.ets"
                                       }
@@ -2410,12 +2490,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 48,
+                                      "line": 49,
                                       "column": 14,
                                       "program": "launch.ets"
                                     },
                                     "end": {
-                                      "line": 48,
+                                      "line": 49,
                                       "column": 20,
                                       "program": "launch.ets"
                                     }
@@ -2423,12 +2503,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 48,
+                                    "line": 49,
                                     "column": 14,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 48,
+                                    "line": 49,
                                     "column": 20,
                                     "program": "launch.ets"
                                   }
@@ -2437,12 +2517,12 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 48,
+                                "line": 49,
                                 "column": 13,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 48,
+                                "line": 49,
                                 "column": 21,
                                 "program": "launch.ets"
                               }
@@ -2450,12 +2530,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 48,
+                              "line": 49,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 50,
+                              "line": 51,
                               "column": 4,
                               "program": "launch.ets"
                             }
@@ -2463,12 +2543,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 48,
+                            "line": 49,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 50,
+                            "line": 51,
                             "column": 4,
                             "program": "launch.ets"
                           }
@@ -2476,12 +2556,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 48,
+                          "line": 49,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 50,
+                          "line": 51,
                           "column": 5,
                           "program": "launch.ets"
                         }
@@ -2502,12 +2582,12 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 21,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 25,
                                     "program": "launch.ets"
                                   }
@@ -2515,12 +2595,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 51,
+                                  "line": 52,
                                   "column": 15,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 51,
+                                  "line": 52,
                                   "column": 25,
                                   "program": "launch.ets"
                                 }
@@ -2528,12 +2608,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 51,
+                                "line": 52,
                                 "column": 7,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 51,
+                                "line": 52,
                                 "column": 13,
                                 "program": "launch.ets"
                               }
@@ -2552,12 +2632,12 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 32,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 36,
                                     "program": "launch.ets"
                                   }
@@ -2571,12 +2651,12 @@
                                     "argument": null,
                                     "loc": {
                                       "start": {
-                                        "line": 51,
+                                        "line": 52,
                                         "column": 42,
                                         "program": "launch.ets"
                                       },
                                       "end": {
-                                        "line": 51,
+                                        "line": 52,
                                         "column": 49,
                                         "program": "launch.ets"
                                       }
@@ -2585,12 +2665,12 @@
                                 ],
                                 "loc": {
                                   "start": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 40,
                                     "program": "launch.ets"
                                   },
                                   "end": {
-                                    "line": 51,
+                                    "line": 52,
                                     "column": 51,
                                     "program": "launch.ets"
                                   }
@@ -2598,12 +2678,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 51,
+                                  "line": 52,
                                   "column": 28,
                                   "program": "launch.ets"
                                 },
                                 "end": {
-                                  "line": 51,
+                                  "line": 52,
                                   "column": 51,
                                   "program": "launch.ets"
                                 }
@@ -2611,12 +2691,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 51,
+                                "line": 52,
                                 "column": 28,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 51,
+                                "line": 52,
                                 "column": 51,
                                 "program": "launch.ets"
                               }
@@ -2624,12 +2704,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 51,
+                              "line": 52,
                               "column": 7,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 51,
+                              "line": 52,
                               "column": 51,
                               "program": "launch.ets"
                             }
@@ -2639,12 +2719,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 51,
+                          "line": 52,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 51,
+                          "line": 52,
                           "column": 51,
                           "program": "launch.ets"
                         }
@@ -2659,12 +2739,12 @@
                           "name": "launch",
                           "loc": {
                             "start": {
-                              "line": 52,
+                              "line": 53,
                               "column": 3,
                               "program": "launch.ets"
                             },
                             "end": {
-                              "line": 52,
+                              "line": 53,
                               "column": 9,
                               "program": "launch.ets"
                             }
@@ -2676,12 +2756,12 @@
                             "name": "lambda",
                             "loc": {
                               "start": {
-                                "line": 52,
+                                "line": 53,
                                 "column": 10,
                                 "program": "launch.ets"
                               },
                               "end": {
-                                "line": 52,
+                                "line": 53,
                                 "column": 16,
                                 "program": "launch.ets"
                               }
@@ -2691,12 +2771,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 52,
+                            "line": 53,
                             "column": 3,
                             "program": "launch.ets"
                           },
                           "end": {
-                            "line": 52,
+                            "line": 53,
                             "column": 17,
                             "program": "launch.ets"
                           }
@@ -2704,12 +2784,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 52,
+                          "line": 53,
                           "column": 3,
                           "program": "launch.ets"
                         },
                         "end": {
-                          "line": 52,
+                          "line": 53,
                           "column": 18,
                           "program": "launch.ets"
                         }
@@ -2718,12 +2798,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 39,
+                      "line": 40,
                       "column": 23,
                       "program": "launch.ets"
                     },
                     "end": {
-                      "line": 53,
+                      "line": 54,
                       "column": 2,
                       "program": "launch.ets"
                     }
@@ -2731,12 +2811,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 39,
+                    "line": 40,
                     "column": 10,
                     "program": "launch.ets"
                   },
                   "end": {
-                    "line": 53,
+                    "line": 54,
                     "column": 2,
                     "program": "launch.ets"
                   }
@@ -2744,12 +2824,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 39,
+                  "line": 40,
                   "column": 10,
                   "program": "launch.ets"
                 },
                 "end": {
-                  "line": 53,
+                  "line": 54,
                   "column": 2,
                   "program": "launch.ets"
                 }
@@ -2758,12 +2838,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 39,
+                "line": 40,
                 "column": 1,
                 "program": "launch.ets"
               },
               "end": {
-                "line": 53,
+                "line": 54,
                 "column": 2,
                 "program": "launch.ets"
               }
@@ -2804,7 +2884,7 @@
       "program": "launch.ets"
     },
     "end": {
-      "line": 54,
+      "line": 55,
       "column": 1,
       "program": "launch.ets"
     }

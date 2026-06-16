@@ -14,6 +14,7 @@
  */
 
 import {launch} from "std/concurrency"
+import {Job} from "std/core"
 
 class Example {
     public static foobar(): Object {
@@ -37,7 +38,7 @@ function foo(x: int): Object {
 }
 
 function main(): void {
-  let p: Promise<Object>;
+  let p: Job<Object>;
   p = launch<Object>() {
     return foo(11)
   };
