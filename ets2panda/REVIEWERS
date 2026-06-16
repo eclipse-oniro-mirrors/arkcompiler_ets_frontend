@@ -40,8 +40,8 @@
 /ets2panda/checker/ETSAnalyzer.cpp ^akmaevaleksey @zhelyapovaleksey  ^igelhaus ^Prof
 /ets2panda/checker/ETSAnalyzerHelpers.* ^lirismankarina ^igelhaus ^Prof
 /ets2panda/compiler/  ^gogabr ^igelhaus ^Prof ^zelentsovdmitry @dddzzzhhh @zhaoshuting
-/ets2panda/declgen_ets2ts/ ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
-/ets2panda/driver/ @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11
+/ets2panda/declgen_ets2ts/ ^Nojpg ^v-cherkashin ^trubachevilya ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @CptH @Wchlove_
+/ets2panda/driver/ ^trubachevilya ^Nojpg ^v-cherkashin ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @Ascnbio @Wchlove_
 /ets2panda/ir/ @ziziziiziziz @zhelyapovaleksey ^igelhaus ^Prof
 /ets2panda/linter/ @oatuwwutao @fouckttt @cy917474985 @rosinskiyigor @okolnovevgeny ^utkugursel
 /ets2panda/parser/ ^shimenkovmikhail ^igelhaus ^Prof ^zelentsovdmitry @xingshunxiang @anjiaqi257
@@ -55,11 +55,11 @@
 /ets2panda/test/test-lists @igelhaus ^Prof @kuchkovairina
 /ets2panda/test/utils @mbolshov ^igelhaus ^Prof
 /ets2panda/util/ ^shimenkovmikhail ^dkofanov ^igelhaus ^Prof @wang-zhengjij @dddzzzhhh
-/ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11 ^wang-zhengjij ^dddzzzhhh
+/ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin ^trubachevilya ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @Ascnbio @Wchlove_ ^Wangyuzhong11 ^wang-zhengjij ^dddzzzhhh
 /ets2panda/util/diagnostic* ^shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* ^chernykhsergey ^shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/eheap.* ^vpukhov ^dkofanov ^Prof ^igelhaus
-/ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin ^shimenkovmikhail @trubachevilya ^igelhaus ^Prof ^luobohua @luchenxu @Wangyuzhong11 @dkofanov ^wang-zhengjij ^dddzzzhhh
+/ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin ^shimenkovmikhail ^trubachevilya ^igelhaus ^Prof @luchenxu @Ascnbio @Wchlove_ ^Wangyuzhong11 ^dkofanov ^wang-zhengjij ^dddzzzhhh
 /ets2panda/util/internalAPIWhitelist.* ^vpukhov ^Prof ^igelhaus ^Nojpg
 /ets2panda/util/plugin.* ^zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/varbinder/ ^lirismankarina ^akmaevaleksey  ^zelentsovdmitry ^igelhaus ^Prof @dddzzzhhh @zhaoshuting
