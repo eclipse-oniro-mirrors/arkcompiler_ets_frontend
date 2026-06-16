@@ -337,12 +337,16 @@ export class DependencyAnalyzer {
             });
             if (dependencyMap.dependencies[file]) {
                 for (const dependency of dependencyMap.dependencies[file]) {
-                    node.predecessors.add(computeHash(dependency));
+                    if (dependency !== file) {
+                        node.predecessors.add(computeHash(dependency));
+                    }
                 }
             }
             if (dependencyMap.dependants[file]) {
                 for (const dependant of dependencyMap.dependants[file]) {
-                    node.descendants.add(computeHash(dependant));
+                    if (dependant !== file) {
+                        node.descendants.add(computeHash(dependant));
+                    }
                 }
             }
             dependencyGraphNodes.push(node);
