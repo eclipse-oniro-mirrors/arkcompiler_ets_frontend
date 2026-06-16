@@ -103,7 +103,6 @@ export interface ArkTSGlobal {
 export interface ArkTS {
     Config: {
         create: Function;
-        createContextSimultaneousMode: Function;
     };
     Context: {
         createFromString: Function;
@@ -129,20 +128,18 @@ export interface ArkTS {
     createGlobalContext: Function;
     AstNode: AstNode;
     ETSImportDeclaration: ETSImportDeclaration;
-    isEtsScript: Function;
+    isETSModule: Function;
     isImportSpecifier: Function;
     isETSImportDeclaration: Function;
     factory: {
-        createEtsScript: Function;
+        createETSModule: Function;
         createImportDeclaration: Function;
         createImportSpecifier: Function;
-        createLiteral: Function;
         createIdentifier: Function;
-        updateEtsScript: Function;
+        updateETSModule: Function;
         createStringLiteral: Function;
     };
     Es2pandaImportKinds: typeof Es2pandaImportKinds;
-    Es2pandaImportFlags: typeof Es2pandaImportFlags;
     ExtractDeclarationsFromAbcFile: Function;
 }
 
@@ -421,11 +418,7 @@ export interface ETSImportDeclaration extends AstNode {
 }
 
 export enum Es2pandaImportKinds {
-    IMPORT_KINDS_VALUE = 0,
-}
-
-export enum Es2pandaImportFlags {
-    IMPORT_FLAGS_NONE,
+    IMPORT_KINDS_ALL = 0,
 }
 
 export enum ES2PANDA_MODE {

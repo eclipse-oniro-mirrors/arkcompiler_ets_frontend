@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,30 +32,26 @@ import { KitImportTransformer } from '../../src/plugins/KitImportTransformer';
 import { DYNAMIC_PREFIX } from '../../src/pre_define';
 
 export const arktsMock: Partial<ArkTS> = {
-    isEtsScript: jest.fn((node) => true),
+    isETSModule: jest.fn((node) => true),
     isETSImportDeclaration: jest.fn((node) => true),
     isImportSpecifier: jest.fn(() => true),
     factory: {
         createImportSpecifier: jest.fn((id) => ({ imported: id })),
         createIdentifier: jest.fn((name) => ({ name })),
-        createLiteral: jest.fn((str) => ({ str })),
         createImportDeclaration: jest.fn((source, specifiers) => ({
             kind: 'ImportDeclaration',
             source,
             specifiers,
         })),
-        updateEtsScript: jest.fn((oldNode, newStatements) => ({
+        updateETSModule: jest.fn((oldNode, newStatements) => ({
             ...oldNode,
             statements: newStatements,
         })),
-        createEtsScript: jest.fn(() => ({ kind: 'EtsScript', statements: [] })),
+        createETSModule: jest.fn(() => ({ kind: 'ETSModule', statements: [] })),
         createStringLiteral: jest.fn((s) => ({ str: s })),
     },
     Es2pandaImportKinds: {
-        IMPORT_KINDS_VALUE: 0,
-    },
-    Es2pandaImportFlags: {
-        IMPORT_FLAGS_NONE: 0,
+        IMPORT_KINDS_ALL: 0,
     }
 };
 

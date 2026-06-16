@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,7 @@ export class KitImportTransformer {
     }
 
     public transform(astNode: ArkTS['AstNode']): ArkTS['AstNode'] {
-        if (!this.arkts.isEtsScript(astNode)) {
+        if (!this.arkts.isETSModule(astNode)) {
             return astNode;
         }
 
@@ -64,7 +64,7 @@ export class KitImportTransformer {
 
         const finalStatements = [...this.extraImports, ...newStatements];
 
-        return this.arkts.factory.updateEtsScript(astNode, finalStatements);
+        return this.arkts.factory.updateETSModule(astNode, finalStatements);
     }
 
     private splitKitImport(importNode: ArkTS['ETSImportDeclaration']): void {
@@ -152,9 +152,7 @@ export class KitImportTransformer {
             const importDecl = this.arkts.factory.createImportDeclaration(
                 this.arkts.factory.createStringLiteral(source),
                 specifiers,
-                this.arkts.Es2pandaImportKinds.IMPORT_KINDS_VALUE,
-                this.program,
-                this.arkts.Es2pandaImportFlags.IMPORT_FLAGS_NONE
+                this.arkts.Es2pandaImportKinds.IMPORT_KINDS_ALL
             );
             this.extraImports.push(importDecl);
         }

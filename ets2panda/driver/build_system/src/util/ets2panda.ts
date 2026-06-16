@@ -367,7 +367,9 @@ export class Ets2panda {
         } finally {
             statsRecorder.record(formEvent(Ets2pandaEvent.DESTROY_INSTANCE));
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            if (arktsGlobal.compilerContext) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
             arkts.destroyConfig(arktsGlobal.config);
             statsRecorder.record(RecordEvent.END);
             statsRecorder.writeSumSingle();
@@ -456,8 +458,12 @@ export class Ets2panda {
             }
         } finally {
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);
-            arkts.destroyTsDeclgen(declgen);
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            if (declgen) {
+                arkts.destroyTsDeclgen(declgen);
+            }
+            if (arktsGlobal.compilerContext) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
             arkts.destroyConfig(arktsGlobal.config);
         }
     }
