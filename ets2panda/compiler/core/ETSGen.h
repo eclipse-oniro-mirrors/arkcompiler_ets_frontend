@@ -195,7 +195,6 @@ public:
 
     void EmitNullishException(const ir::AstNode *node);
     void EmitClassCastException(const ir::AstNode *node, ark::es2panda::util::StringView err);
-    void EmitNeverError(const ir::AstNode *node);
     void ThrowException(const ir::Expression *expr);
     bool ExtendWithFinalizer(ir::AstNode const *node, const ir::AstNode *originalNode, Label *prevFinnaly = nullptr);
 

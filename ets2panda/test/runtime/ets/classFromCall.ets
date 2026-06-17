@@ -33,26 +33,8 @@ class C {
 class G<T> {}
 
 class A {
-  public x: never
-
-  public static y: never = A.staticNeverFunc()
-
-  public constructor() {
-    this.x = this.neverFunc()
-  }
-
-  public neverFunc(): never {
-    throw new Error("")
-  }
-
-  public static staticNeverFunc(): never {
-    throw new Error("")
-  }
-
-  public neverParam(x: never): void {
-  }
-
-  public static staticNeverParam(x: never): void {
+  neverFunc(): never {
+    throw Error("")
   }
 }
 
@@ -70,21 +52,11 @@ function InstanceTesting<T>(){
   arktest.assertEQ(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
   arktest.assertEQ(Class.from<G<number>>(), Class.from<G<string>>())
   arktest.assertEQ(Class.from<Array<G<string>>>(), Class.from<Array<int>>())
-
-  arktest.assertEQ(Class.from<undefined>(), Class.from<void>())
-  arktest.assertEQ(Class.from<undefined>(), Class.from<never>())
-  arktest.assertEQ(Class.from<void>(), Class.from<never>())
-
-  arktest.assertNE(Class.from<never>(), Class.PRIMITIVE_NEVER)
-
+  
+  arktest.assertEQ(Class.from<undefined>(), Class.from<Any>())
+  arktest.assertEQ(Class.from<void>(), Class.from<Any>())
   arktest.assertEQ(Class.from<T>(), Class.from<Any>())
-
-  arktest.assertEQ(Class.PRIMITIVE_NEVER, Class.from<A>().getInstanceMethod("neverFunc")!.getReturnType())
-  arktest.assertEQ(Class.PRIMITIVE_NEVER, Class.from<A>().getStaticMethod("staticNeverFunc")!.getReturnType())
-  arktest.assertEQ(Class.from<never>(), Class.from<A>().getInstanceMethod("neverParam")!.getParameterType(0))
-  arktest.assertEQ(Class.from<never>(), Class.from<A>().getStaticMethod("staticNeverParam")!.getParameterType(0))
-  arktest.assertEQ(Class.from<never>(), Class.from<A>().getInstanceField("x")!.getType())
-  arktest.assertEQ(Class.from<never>(), Class.from<A>().getStaticField("y")!.getType())
+  arktest.assertEQ(Class.from<never>(), Class.from<A>().getInstanceMethod("neverFunc")!.getReturnType())
 }
 
 function ArrayInstanceTesting(){

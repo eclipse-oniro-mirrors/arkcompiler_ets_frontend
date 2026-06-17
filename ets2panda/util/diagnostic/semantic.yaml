@@ -303,6 +303,10 @@ semantic:
   id: 336
   message: "this cast should never fail"
 
+- name: CAST_TO_NEVER
+  id: 305
+  message: "Cast to 'never' is prohibited"
+
 - name: CATCH_DEFAULT_NOT_LAST
   id: 34
   message: "Default catch clause should be the last in the try statement"

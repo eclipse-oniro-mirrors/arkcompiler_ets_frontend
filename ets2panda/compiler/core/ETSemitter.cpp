@@ -262,9 +262,6 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
 
     if (scriptFunc->IsConstructor() || scriptFunc->IsStaticBlock()) {
         func.returnType = pandasm::Type(Signatures::PRIMITIVE_VOID, 0);
-    } else if (scriptFunc->Signature()->ReturnType()->IsETSNeverType()) {
-        // Only return-type `never` materializes as primitive `novalue`.
-        func.returnType = pandasm::Type(Signatures::NOVALUE_ASSEMBLY_TYPE, 0);
     } else {
         func.returnType = PandasmTypeWithRank(emitter, scriptFunc->Signature()->ReturnType());
     }

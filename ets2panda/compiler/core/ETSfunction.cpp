@@ -91,11 +91,6 @@ void ETSFunction::ExtendWithDefaultReturn(ETSGen *etsg, const ir::AstNode *node,
         return;
     }
 
-    if (etsg->Checker()->GetApparentType(etsg->ReturnType())->IsETSNeverType()) {
-        etsg->EmitNeverError(node);
-        return;
-    }
-
     etsg->LoadDefaultValue(node, scriptFunc->Signature()->ReturnType());
     etsg->ReturnAcc(node);
 }
@@ -157,12 +152,6 @@ void ETSFunction::CompileFunction(ETSGen *etsg)
     }
     if (decl->Signature()->Owner()->GetDeclNode()->IsDeclare()) {
         return;  // AST inconsistency!
-    }
-    for (auto *param : decl->Signature()->Params()) {
-        if (etsg->Checker()->GetApparentType(param->TsType())->IsETSNeverType()) {
-            etsg->EmitNeverError(decl);
-            return;
-        }
     }
     if (auto *const body = decl->Body(); body != nullptr && body->IsBlockStatement()) {
         CompileSourceBlock(etsg, body->AsBlockStatement());

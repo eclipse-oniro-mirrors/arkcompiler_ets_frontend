@@ -155,8 +155,6 @@ defines:
     ref: ANY_ASSEMBLY_TYPE
   - name: 'N'
     ref: NEVER_ASSEMBLY_TYPE
-  - name: 'novalue'
-    ref: NOVALUE_ASSEMBLY_TYPE
   - name: 'std.core.Null'
     ref: NULL_ASSEMBLY_TYPE
   - name: 'std.interop.js.JSValue'
@@ -779,12 +777,6 @@ signatures:
     params: [ANY_ASSEMBLY_TYPE]
     return_type: BUILTIN_STRING
     ref: BUILTIN_RUNTIME_TO_STRING_STUB
-
-  - callee: BUILTIN_RUNTIME
-    method_name: createNeverError
-    params: []
-    return_type: BUILTIN_ERROR
-    ref: BUILTIN_RUNTIME_CREATE_NEVER_ERROR
 
   - callee: BUILTIN_OBJECT
     method_name: toString
