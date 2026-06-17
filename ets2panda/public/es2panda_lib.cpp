@@ -1592,7 +1592,8 @@ static bool HandleMultiFileModeTemplate(
         }
 
         // 'ImportPathManager::FormEtscacheFilePath' should be used instead:
-        std::string inputRelativeDir = ark::os::RemoveExtension(prog->AbsoluteName().Mutf8());
+        std::string inputRelativeDir = prog->ModuleName().data();
+        std::replace(inputRelativeDir.begin(), inputRelativeDir.end(), '.', '/');
         if (compare(inputRelativeDir, pair.second)) {
             compiler::HandleGenerateDecl(ctxImpl, prog, outputPath);
             return !ctxImpl->diagnosticEngine->IsAnyError();

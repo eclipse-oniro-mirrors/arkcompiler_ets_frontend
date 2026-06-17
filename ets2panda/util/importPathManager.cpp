@@ -1339,15 +1339,15 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         return {GetRealPath(resolvedPathPrototype)};
     }
 
-    if (ark::os::file::File::IsDirectory(resolvedPathPrototype)) {
-        return {GetRealPath(DirOrDirWithIndexFile(resolvedPathPrototype))};
-    }
-
     for (const auto &extension : supportedExtensions) {
         auto pathWithExtension = resolvedPathPrototype + std::string(extension);
         if (ark::os::file::File::IsRegularFile(pathWithExtension)) {
             return {GetRealPath(pathWithExtension)};
         }
+    }
+
+    if (ark::os::file::File::IsDirectory(resolvedPathPrototype)) {
+        return {GetRealPath(DirOrDirWithIndexFile(resolvedPathPrototype))};
     }
 
     DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {resolvedPathPrototype}, srcPos_);

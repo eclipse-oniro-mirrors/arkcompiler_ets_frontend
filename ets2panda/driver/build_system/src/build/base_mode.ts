@@ -424,8 +424,7 @@ export abstract class BaseMode {
     private get isHybridEntryOrFeature(): boolean {
         //only check for main module
         const isEntryOrFeature = this.mainModuleType === OHOS_MODULE_TYPE.ENTRY
-            || this.mainModuleType === OHOS_MODULE_TYPE.FEATURE ||
-            this.mainModuleType === OHOS_MODULE_TYPE.SHARED;
+            || this.mainModuleType === OHOS_MODULE_TYPE.FEATURE;
         if (!isEntryOrFeature) {
             return false;
         }
