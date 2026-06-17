@@ -34,6 +34,16 @@
 
 namespace ark::es2panda::parser {
 
+namespace {
+
+bool ShouldUseEtsRelativePath(const util::ImportInfo &importInfo)
+{
+    return importInfo.Lang() == Language::Id::ETS ||
+           util::Helpers::EndsWith(importInfo.ResolvedSource(), util::ImportPathManager::ETS_SUFFIX);
+}
+
+}  // namespace
+
 Program::Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
     : importInfo_(importInfo),
       allocator_(allocator),
@@ -61,7 +71,7 @@ Program::Program(const util::ImportInfo &importInfo, ArenaAllocator *allocator, 
 
 std::string Program::RelativeFilePath(const public_lib::Context *context) const
 {
-    if (importInfo_.Lang() != Language::Id::ETS) {
+    if (!ShouldUseEtsRelativePath(importInfo_)) {
         return std::string {importInfo_.TextSource()};
     }
     if (!Is<util::ModuleKind::MODULE>()) {
@@ -75,7 +85,7 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
 
 std::optional<std::string> Program::TryRelativeFilePathViaArkTsPaths(const public_lib::Context *context) const
 {
-    if (importInfo_.Lang() != Language::Id::ETS) {
+    if (!ShouldUseEtsRelativePath(importInfo_)) {
         return std::nullopt;
     }
     if (!Is<util::ModuleKind::MODULE>()) {

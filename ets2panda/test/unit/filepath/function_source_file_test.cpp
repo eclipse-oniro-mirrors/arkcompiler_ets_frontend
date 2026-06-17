@@ -200,6 +200,42 @@ TEST_F(SourceFilePathSeparatorTest, SourceFileFallbackToFilenameOutsideRootDir)
     }
 }
 
+TEST_F(SourceFilePathSeparatorTest, DeclarationEtsFileUsesRelativePathUnderRootDir)
+{
+    std::string src = R"(
+        declare class DeclaredApi {
+            value: int
+        }
+    )";
+    std::string realPath = CreateFileInCwd("src/module/Test.d.ets", src);
+
+    const char *args[] = {ES2PANDA_BIN_PATH};
+    auto program = GetProgram(ark::Span<const char *const>(args, 1), realPath.c_str(), src);
+    ASSERT_NE(program, nullptr);
+
+    bool checkedUserRecord = false;
+    for (const auto &[recordName, record] : program->recordTable) {
+        if (!IsUserDefined(recordName)) {
+            continue;
+        }
+        checkedUserRecord = true;
+        EXPECT_NE(record.sourceFile, "Test.d.ets")
+            << "Record '" << recordName << "' sourceFile should be relative path, not just filename";
+        EXPECT_TRUE(record.sourceFile.find('/') != std::string::npos)
+            << "Record '" << recordName << "' sourceFile should contain path separators: '" << record.sourceFile << "'";
+        EXPECT_NE(record.sourceFile.front(), '/')
+            << "Record '" << recordName << "' sourceFile should not be absolute: '" << record.sourceFile << "'";
+        EXPECT_TRUE(HasOnlyForwardSlashes(record.sourceFile))
+            << "Record '" << recordName << "' sourceFile contains backslashes: '" << record.sourceFile << "'";
+    }
+
+    EXPECT_TRUE(checkedUserRecord) << "Expected at least one user-defined record in .d.ets output";
+
+    std::filesystem::path cleanupPath(std::filesystem::current_path());
+    cleanupPath.append("sourcefile_test_cwd");
+    std::filesystem::remove_all(cleanupPath);
+}
+
 // Validates that the cached relative file path (GetCachedRelativeFilePath) produces a
 // consistent sourceFile across all functions in a single Program.  A file with many
 // functions exercises the per-function GenSourceFileDebugInfo call path — before the
