@@ -1351,6 +1351,9 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
     {
         auto *exprType = asExpr->Expr()->TsType();
         auto *targetType = asExpr->TypeAnnotation()->TsType();
+        const auto isBuiltinStringTarget = [this](checker::Type *type) {
+            return uctx_->checker->Relation()->IsIdenticalTo(type, uctx_->checker->GlobalBuiltinETSStringType());
+        };
         if (targetType->IsETSPrimitiveType() || TypeIsBoxedPrimitive(targetType)) {
             if (exprType->IsETSPrimitiveType() || TypeIsBoxedPrimitive(exprType)) {
                 auto *primTargetType = MaybeRecursivelyUnboxType(uctx_, targetType);
@@ -1359,9 +1362,14 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
                     primTargetType->IsETSPrimitiveType() && primExprType->IsETSPrimitiveType() &&
                     !primTargetType->IsETSVoidType() && !primExprType->IsETSVoidType() &&
                     (primTargetType->IsETSBooleanType() != primExprType->IsETSBooleanType());
-                if (isBooleanPrimitiveCast) {
+                const bool isNumericCharPrimitiveCast = (primTargetType->HasTypeFlag(checker::TypeFlag::CHAR) &&
+                                                         primExprType->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC)) ||
+                                                        (primExprType->HasTypeFlag(checker::TypeFlag::CHAR) &&
+                                                         primTargetType->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC));
+                if (isBooleanPrimitiveCast || isNumericCharPrimitiveCast) {
                     // Keep boolean/non-boolean primitive casts as reference casts so forbidden conversions
                     // such as byte as Boolean fail with ClassCastError instead of becoming primitive conversions.
+                    // Do the same for numeric <-> char casts so these casts keep boxed cast semantics.
                     auto *boxedExprType = uctx_->checker->MaybeBoxType(exprType);
                     auto *boxedTargetType = uctx_->checker->MaybeBoxType(targetType);
                     asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), boxedExprType));
@@ -1378,7 +1386,15 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
                 asExpr->SetTsType(boxedTargetType);
             }
         } else if (exprType->IsETSPrimitiveType()) {
-            asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), targetType));
+            auto *primExprType = MaybeRecursivelyUnboxType(uctx_, exprType);
+            const bool isCharToStringCast =
+                primExprType->HasTypeFlag(checker::TypeFlag::CHAR) && isBuiltinStringTarget(targetType);
+            if (isCharToStringCast) {
+                auto *boxedExprType = uctx_->checker->MaybeBoxType(exprType);
+                asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), boxedExprType));
+            } else {
+                asExpr->SetExpr(AdjustType(uctx_, asExpr->Expr(), targetType));
+            }
         }
         asExpr->SetTsType(asExpr->TypeAnnotation()->TsType());
     }

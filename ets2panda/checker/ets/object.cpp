@@ -3659,6 +3659,39 @@ void ETSChecker::CheckAnnotationReference(const ir::MemberExpression *memberExpr
     }
 }
 
+static bool IsSuperInaccessibleField(const varbinder::Variable *prop)
+{
+    if (prop == nullptr || prop->Declaration() == nullptr || prop->Declaration()->Node() == nullptr) {
+        return false;
+    }
+
+    auto *node = prop->Declaration()->Node();
+    if (node->IsClassProperty()) {
+        auto modifiers = node->AsClassProperty()->Modifiers();
+        if ((modifiers & ir::ModifierFlags::GETTER_SETTER) == 0U) {
+            return true;
+        }
+    }
+
+    if (prop->TsType() == nullptr || !prop->TsType()->HasTypeFlag(TypeFlag::GETTER_SETTER)) {
+        return false;
+    }
+
+    auto *propType = prop->TsType()->AsETSFunctionType();
+    for (auto *sig : {propType->FindGetter(), propType->FindSetter()}) {
+        if (sig == nullptr || !sig->HasFunction()) {
+            continue;
+        }
+
+        auto *originalNode = sig->Function()->OriginalNode();
+        if (originalNode != nullptr && originalNode->IsClassProperty()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 std::vector<ResolveResult *> ETSChecker::HandlePropertyResolution(varbinder::LocalVariable *const prop,
                                                                   ir::MemberExpression *const memberExpr,
                                                                   varbinder::Variable *const globalFunctionVar,
@@ -3770,6 +3803,12 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
     }
 
     const bool preferClassPropertyAccessor = prop != nullptr && IsVariableGetterSetterClassProperty(prop);
+    const bool isSuperInaccessibleField =
+        prop != nullptr && memberExpr->Object()->IsSuperExpression() && IsSuperInaccessibleField(prop);
+    if (isSuperInaccessibleField) {
+        LogError(diagnostic::SUPER_NOT_ACCESSIBLE, {memberExpr->Property()->AsIdentifier()->Name()},
+                 memberExpr->Property()->Start());
+    }
     // Note: validate originalAccessor and extensionAccessor.
     if ((IsVariableGetterSetter(prop) || IsVariableExtensionAccessor(globalFunctionVar)) &&
         ((searchFlag & PropertySearchFlags::IS_GETTER) != 0 || (searchFlag & PropertySearchFlags::IS_SETTER) != 0) &&
@@ -3799,6 +3838,11 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
     if (prop != nullptr) {
         resolveRes.emplace_back(ProgramAllocator()->New<ResolveResult>(prop, ResolvedKind::PROPERTY));
     }
+
+    if (isSuperInaccessibleField) {
+        const_cast<ir::MemberExpression *>(memberExpr)->SetTsType(GlobalTypeError());
+    }
+
     return resolveRes;
 }
 
