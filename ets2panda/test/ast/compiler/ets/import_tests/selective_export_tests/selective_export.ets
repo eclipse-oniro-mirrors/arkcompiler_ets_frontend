@@ -18,7 +18,7 @@ function test_func(): void {}
 let msg: string = "hello";
 
 class TestClass {
-    test_member = "test_member";
+    test_member: string = "test_member";
 
     test_method(): void {}
 }

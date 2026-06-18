@@ -262,28 +262,58 @@
                 }
               }
             },
-            "value": {
-              "type": "StringLiteral",
-              "value": "hello",
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 11,
-                  "program": "selective_export_with_alias.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 18,
-                  "program": "selective_export_with_alias.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSTypeReference",
+              "part": {
+                "type": "ETSTypeReferencePart",
+                "name": {
+                  "type": "Identifier",
+                  "name": "string",
+                  "loc": {
+                    "start": {
+                      "line": 18,
+                      "column": 10,
+                      "program": "selective_export_with_alias.ets"
+                    },
+                    "end": {
+                      "line": 18,
+                      "column": 16,
+                      "program": "selective_export_with_alias.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 18,
+                    "column": 10,
+                    "program": "selective_export_with_alias.ets"
+                  },
+                  "end": {
+                    "line": 18,
+                    "column": 16,
+                    "program": "selective_export_with_alias.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 18,
+                  "column": 10,
+                  "program": "selective_export_with_alias.ets"
+                },
+                "end": {
+                  "line": 18,
+                  "column": 16,
+                  "program": "selective_export_with_alias.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -293,7 +323,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 18,
+                "column": 19,
                 "program": "selective_export_with_alias.ets"
               }
             }
