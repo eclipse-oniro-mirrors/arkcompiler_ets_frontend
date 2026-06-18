@@ -21,10 +21,6 @@
     "benchmark": "cd ./test && npm install && cd ../ && node --expose-gc ./node_modules/mocha/bin/mocha --require ts-node/register --timeout=5000 ./test/benchmark/**/*.ts",
     "test:combinations": "python3 ./scripts/combination_test.py"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://codehub-dg-y.huawei.com/Jotun/secDroid/SecHarmony.git"
-  },
   "keywords": [
     "obfuscator",
     "javascript",
