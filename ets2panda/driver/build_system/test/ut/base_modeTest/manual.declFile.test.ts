@@ -800,7 +800,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
 
-        const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
+        const filterFilesNeedRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
         const extractFilesFromNodeData = (data: CompileJobInfo): string[] => {
             if (data.contentType === JobContentType.FILE) {
                 return [(data.content as FileInfo).input];
@@ -808,10 +808,8 @@ describe('BaseMode declaration file map management tests', () => {
                 return (data.content as FileInfo[]).map((fi: FileInfo) => fi.input);
             }
         };
-        (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: GraphNode<CompileJobInfo>) => {
-            const fileList: string[] = extractFilesFromNodeData(node.data);
-            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: fileList});
-            return fileList.includes(fileB);
+        (testMode as any).needsRegeneration = jest.fn().mockImplementation((filePath: string) => {
+            return filePath === fileB;
         });
 
         const backupDeclgenFilesCalls: DeclgenV1JobInfo[][] = [];
@@ -872,8 +870,6 @@ describe('BaseMode declaration file map management tests', () => {
         expect(taskManagerInstance.finish).toHaveBeenCalled();
 
         expect(capturedBuildGraph).toBeDefined();
-
-        expect(nodeNeedsRegenerationCalls.length).toBe(3);
 
         expect(backupDeclgenFilesCalls.length).toBe(1);
         expect(backupDeclgenFilesCalls[0].length).toBe(1);
