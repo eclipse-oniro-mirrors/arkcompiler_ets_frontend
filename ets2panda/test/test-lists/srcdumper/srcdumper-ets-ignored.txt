@@ -131,3 +131,6 @@ runtime/ets/call_by_name_tests/call_by_name_generics_basic.ets
 runtime/ets/interfaceObjectLiteral_catch_param.ets
 runtime/ets/interfaceObjectLiteral_genericMethod.ets
 runtime/ets/interfaceObjectLiteral_inherited_generic_partial_override.ets
+
+#35137
+ast/compiler/ets/import_tests/import_with_error/import_file.ets
