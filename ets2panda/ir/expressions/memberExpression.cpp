@@ -218,38 +218,18 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
     }
 }
 
-void MemberExpression::CollectUnionSignatures(checker::ETSChecker *checker, checker::Type *memberType,
-                                              checker::Type *const type, checker::Type **commonPropType,
-                                              varbinder::LocalVariable *prop)
+void MemberExpression::AddUnionSignature(checker::ETSChecker *checker, checker::Type *memberType,
+                                         checker::Type *const type, checker::Type **commonPropType)
 {
-    if (memberType == nullptr) {
+    const auto parentCallExpression = Parent()->AsCallExpression();
+    const auto memberFunctionType = memberType->AsETSFunctionType();
+    const auto memberTypeSignature =
+        checker->FirstMatchSignatures(memberFunctionType->CallSignatures(), parentCallExpression);
+    if (memberTypeSignature != nullptr) {
+        this->AddComponentTypeMemberAccessor(type, memberTypeSignature);
+    } else {
         checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
         *commonPropType = checker->GlobalTypeError();
-        return;
-    }
-    if (!memberType->IsETSMethodType()) {
-        this->AddComponentTypeMemberAccessor(type, prop);
-        return;
-    }
-
-    const auto memberFunctionType = memberType->AsETSFunctionType();
-    if (Parent()->IsCallExpression() && memberType->IsETSMethodType()) {
-        const auto parentCallExpression = Parent()->AsCallExpression();
-        const auto memberTypeSignature =
-            checker->FirstMatchSignatures(memberFunctionType->CallSignatures(), parentCallExpression);
-        if (memberTypeSignature != nullptr) {
-            this->AddComponentTypeMemberAccessor(type, memberTypeSignature);
-        } else {
-            checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
-            *commonPropType = checker->GlobalTypeError();
-        }
-        return;
-    }
-
-    if (memberFunctionType->HasTypeFlag(checker::TypeFlag::GETTER) ||
-        memberFunctionType->HasTypeFlag(checker::TypeFlag::SETTER)) {
-        ES2PANDA_ASSERT(memberFunctionType->CallSignatures().size() == 1);
-        this->AddComponentTypeMemberAccessor(type, prop);
     }
 }
 
@@ -341,16 +321,14 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
         ES2PANDA_ASSERT(apparent != nullptr);
         if (apparent->IsETSObjectType()) {
             SetObjectType(apparent->AsETSObjectType());
-            auto resolvedMember = ResolveObjectMember(checker);
-            auto *memberType = resolvedMember.first;
+            auto *memberType = ResolveObjectMember(checker).first;
             if (memberType != nullptr && memberType->IsTypeError()) {
                 return checker->GlobalTypeError();
             }
             addPropType(memberType);
-            CollectUnionSignatures(checker, memberType, type, &commonPropType, resolvedMember.second);
-        } else if (type->IsETSArrayType() && Property()->AsIdentifier()->Name() == "length") {
-            addPropType(checker->GlobalIntBuiltinType());
-            this->AddComponentTypeMemberAccessor(type, static_cast<varbinder::LocalVariable *>(nullptr));
+            if (Parent()->IsCallExpression() && memberType != nullptr && memberType->IsETSMethodType()) {
+                AddUnionSignature(checker, memberType, type, &commonPropType);
+            }
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
             commonPropType = checker->GlobalTypeError();
