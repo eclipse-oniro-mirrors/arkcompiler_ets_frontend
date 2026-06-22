@@ -1,0 +1,210 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#*#bar(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	callruntime.ldsendablevar 0x0, 0x1
+	sta v0
+	throw.undefinedifholewithname A
+	lda v0
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#*#dec(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	return
+label_2: 
+}
+
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~A=#A(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x1
+	stobjbyname 0x0, a, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .#~A>#foo(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	callruntime.ldsendableclass 0x0
+	sta v0
+	mov v1, v0
+	newobjrange 0x0, 0x1, v1
+	return
+label_2: 
+}
+
+slotNum = 0x6
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_4: 
+label_0: 
+	callruntime.newsendableenv 0x2
+	ldundefined
+	callruntime.stsendablevar 0x0, 0x0
+	definefunc 0x0, .#*#bar, 0x0
+	definefunc 0x1, .#*#dec, 0x1
+	sta v0
+	ldhole
+	sta v1
+	callruntime.definesendableclass 0x2, .#~A=#A, _3, 0x0, v1
+	sta v1
+	callruntime.stsendablevar 0x0, 0x0
+	lda v1
+	callruntime.stsendablevar 0x0, 0x1
+	callruntime.ldsendablevar 0x0, 0x1
+	sta v1
+	throw.undefinedifholewithname A
+	lda v0
+	callarg1 0x3, v1
+	sta v0
+	callruntime.istrue 0x5
+	jnez label_3
+label_2: 
+	callruntime.ldsendablevar 0x0, 0x1
+	sta v0
+	throw.undefinedifholewithname A
+label_3: 
+	lda v0
+	callruntime.stsendablevar 0x0, 0x0
+	callruntime.ldsendablevar 0x0, 0x1
+	throw.undefinedifholewithname A
+	lda v0
+	callruntime.stsendablevar 0x0, 0x1
+	returnundefined
+label_5: 
+}
+
+
+======> literal array buffer <======
+------------------------------------
+slot _0
+------------------------------------
+slot _1
+{
+  index: 0
+    tag: 2
+    val: 0
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+{
+  index: 2
+    tag: 2
+    val: 0
+},
+{
+  index: 3
+    tag: 2
+    val: 0
+},
+{
+  index: 4
+    tag: 2
+    val: 0
+},
+{
+  index: 5
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot _2
+{
+  index: 0
+    tag: 0
+    val: 5
+},
+{
+  index: 1
+    tag: 5
+    val: a
+},
+{
+  index: 2
+    tag: 0
+    val: 2
+},
+{
+  index: 3
+    tag: 2
+    val: 1
+},
+{
+  index: 4
+    tag: 0
+    val: 2
+},
+{
+  index: 5
+    tag: 2
+    val: 1
+},
+------------------------------------
+slot _3
+{
+  index: 0
+    tag: 0
+    val: 5
+},
+{
+  index: 1
+    tag: 5
+    val: foo
+},
+{
+  index: 2
+    tag: 0
+    val: 6
+},
+{
+  index: 3
+    tag: 6
+    val: .#~A>#foo
+},
+{
+  index: 4
+    tag: 0
+    val: 9
+},
+{
+  index: 5
+    tag: 9
+    val: 0
+},
+{
+  index: 6
+    tag: 0
+    val: 2
+},
+{
+  index: 7
+    tag: 2
+    val: 1
+},
+{
+  index: 8
+    tag: 0
+    val: 24
+},
+{
+  index: 9
+    tag: 24
+    val: _2
+},

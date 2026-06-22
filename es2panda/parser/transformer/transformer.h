@@ -152,7 +152,8 @@ private:
                                                                    ir::AstNode *node,
                                                                    bool isExport,
                                                                    ir::Expression *init = nullptr,
-                                                                   bool needBinding = true);
+                                                                   bool needBinding = true,
+                                                                   ir::AstNode *bindNode = nullptr);
     ir::CallExpression *CreateCallExpressionForTsModule(ir::TSModuleDeclaration *node,
                                                         util::StringView name,
                                                         bool isExport = false);
