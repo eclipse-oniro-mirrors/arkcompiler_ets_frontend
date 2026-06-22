@@ -14,8 +14,11 @@
  */
 
 #include "generated/code_fix_register.h"
+#include "generated/diagnostic.h"
 #include "lsp_api_test.h"
 #include "util/diagnostic.h"
+
+#include <algorithm>
 
 #include <gtest/gtest.h>
 
@@ -64,6 +67,46 @@ public:
         ASSERT_EQ(info.changes_[0].textChanges[0].span.start, expectedTextChangeStart);
         ASSERT_EQ(info.changes_[0].textChanges[0].span.length, expectedTextChangeLength);
         ASSERT_EQ(info.changes_[0].textChanges[0].newText, "");
+    }
+
+    static bool HasWarningDiagnostic(es2panda_Context *context, size_t diagnosticId, const std::string &expectedMessage)
+    {
+        auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+        auto *diagnosticEngine = ctx->diagnosticEngine;
+        if (diagnosticEngine == nullptr && ctx->config != nullptr) {
+            diagnosticEngine = ctx->config->diagnosticEngine;
+        }
+
+        if (diagnosticEngine == nullptr) {
+            return false;
+        }
+
+        const auto &warnings = diagnosticEngine->GetDiagnosticStorage(DiagnosticType::WARNING);
+        return std::any_of(warnings.begin(), warnings.end(), [&](const auto &diagnostic) {
+            return diagnostic->GetId() == diagnosticId && diagnostic->Message() == expectedMessage;
+        });
+    }
+
+    static Diagnostic GetWarningDiagnostic(es2panda_Context *context, const std::string &expectedMessage)
+    {
+        auto diagnostics = GetImpl()->getSyntacticDiagnostics(context);
+        for (const auto &diagnostic : diagnostics.diagnostic) {
+            if (diagnostic.message_ == expectedMessage) {
+                return diagnostic;
+            }
+        }
+        return Diagnostic(Range(), {}, {}, DiagnosticSeverity::Warning, 0, "");
+    }
+
+    static Diagnostic GetWarningDiagnosticByCode(es2panda_Context *context, int expectedCode)
+    {
+        auto diagnostics = GetImpl()->getSyntacticDiagnostics(context);
+        for (const auto &diagnostic : diagnostics.diagnostic) {
+            if (std::holds_alternative<int>(diagnostic.code_) && std::get<int>(diagnostic.code_) == expectedCode) {
+                return diagnostic;
+            }
+        }
+        return Diagnostic(Range(), {}, {}, DiagnosticSeverity::Warning, 0, "");
     }
 
 private:
@@ -167,6 +210,39 @@ import { A } from './module1';
     initializer.DestroyContext(context);
 }
 
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateImportErrorCodeAndCodeFixResult)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateImportErrorCodeAndCodeFixResult.ets"};
+    std::vector<std::string> fileContents = {R"(
+import { A, A } from './module1';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ASSERT_TRUE(
+        HasWarningDiagnostic(context, ark::es2panda::diagnostic::DUPLICATE_IMPORT.Id(), "'A' has already imported"));
+
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    ASSERT_EQ(errorCodes.size(), 2U);
+    ASSERT_EQ(errorCodes[0], DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(errorCodes[1], DUPLICATE_IMPORT_CODE);
+
+    const size_t start = LineColToPos(context, 2, 13);
+    const size_t length = 1;
+    std::vector<int> duplicateImportErrorCodes = {DUPLICATE_IMPORT_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length,
+                                                                    duplicateImportErrorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, length, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
 // Test: duplicate export with same name should suggest removal
 TEST_F(FixRemoveDuplicateExportImportTests, TestFixRemoveDuplicateExportName)
 {
@@ -244,6 +320,243 @@ export { y as a };
         ASSERT_EQ(result.changes_[0].textChanges[0].newText, "");
         ASSERT_GT(result.changes_[0].textChanges[0].span.length, 0U);
     }
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateExportFromRemovesWholeStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateExportFromRemovesWholeStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+export { Foo } from './filename';
+export { Foo } from './filename';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = "export { Foo } from './filename';";
+    auto diagnostic = GetWarningDiagnostic(context, "Duplicated export aliases for 'Foo'.");
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportLine = 3;
+    constexpr size_t duplicateExportStartCol = 1;
+    const size_t duplicateExportEndCol = duplicateExportStartCol + expectedDuplicateExport.size();
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateMultilineExportRemovesWholeStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateMultilineExportRemovesWholeStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+let a = 1;
+export { a };
+export {
+    a
+};
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = R"(export {
+    a
+};)";
+    auto diagnostic = GetWarningDiagnosticByCode(context, DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportStartLine = 4;
+    constexpr size_t duplicateExportStartCol = 1;
+    constexpr size_t duplicateExportEndLine = 6;
+    constexpr size_t duplicateExportEndCol = 3;
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportStartLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportEndLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateMultilineExportWithoutSemicolonRemovesWholeStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateMultilineExportWithoutSemicolonRemovesWholeStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+let a = 1;
+export { a };
+export {
+    a
+}
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = R"(export {
+    a
+})";
+    auto diagnostic = GetWarningDiagnosticByCode(context, DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportStartLine = 4;
+    constexpr size_t duplicateExportStartCol = 1;
+    constexpr size_t duplicateExportEndLine = 6;
+    constexpr size_t duplicateExportEndCol = 2;
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportStartLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportEndLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateMultilineExportFromRemovesWholeStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateMultilineExportFromRemovesWholeStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+export {
+    Foo
+} from './filename';
+export {
+    Foo
+} from './filename';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = R"(export {
+    Foo
+} from './filename';)";
+    auto diagnostic = GetWarningDiagnosticByCode(context, DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportStartLine = 5;
+    constexpr size_t duplicateExportStartCol = 1;
+    constexpr size_t duplicateExportEndLine = 7;
+    constexpr size_t duplicateExportEndCol = 21;
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportStartLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportEndLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateExportWithTrailingLineCommentRemovesOnlyStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateExportWithTrailingLineCommentRemovesOnlyStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+let a = 1;
+export { a };
+export { a } // keep comment with ; and }
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = "export { a }";
+    auto diagnostic = GetWarningDiagnosticByCode(context, DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportLine = 4;
+    constexpr size_t duplicateExportStartCol = 1;
+    const size_t duplicateExportEndCol = duplicateExportStartCol + expectedDuplicateExport.size();
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixRemoveDuplicateExportImportTests, TestDuplicateExportWithTrailingBlockCommentRemovesOnlyStatement)
+{
+    std::vector<std::string> fileNames = {"TestDuplicateExportWithTrailingBlockCommentRemovesOnlyStatement.ets"};
+    std::vector<std::string> fileContents = {R"(
+let a = 1;
+export { a };
+export { a } /* keep comment with ; and } */
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string expectedDuplicateExport = "export { a }";
+    auto diagnostic = GetWarningDiagnosticByCode(context, DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(std::get<int>(diagnostic.code_), DUPLICATE_EXPORT_ALIASES_CODE);
+    ASSERT_EQ(diagnostic.source_, expectedDuplicateExport);
+
+    const size_t start = LineColToPos(context, diagnostic.range_.start.line_, diagnostic.range_.start.character_);
+    const size_t end = LineColToPos(context, diagnostic.range_.end.line_, diagnostic.range_.end.character_);
+    constexpr size_t duplicateExportLine = 4;
+    constexpr size_t duplicateExportStartCol = 1;
+    const size_t duplicateExportEndCol = duplicateExportStartCol + expectedDuplicateExport.size();
+    ASSERT_EQ(start, LineColToPos(context, duplicateExportLine, duplicateExportStartCol));
+    ASSERT_EQ(end, LineColToPos(context, duplicateExportLine, duplicateExportEndCol));
+
+    std::vector<int> errorCodes = {DUPLICATE_EXPORT_ALIASES_CODE};
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
+
+    ASSERT_EQ(fixResult.size(), 1U);
+    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }

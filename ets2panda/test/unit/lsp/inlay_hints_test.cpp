@@ -144,6 +144,105 @@ let classText = text.className;
     ASSERT_EQ(result.hints[i3].text, enumclass);
 }
 
+TEST_F(LSPInlayHintsTests, GetIndexForEnumReturnsMinusOneForClassPropertyWithoutValue)
+{
+    const std::vector<std::string> files = {"enum_index_no_value.ets"};
+    const std::vector<std::string> fileContent = {R"(
+class TestClass {
+    field: number;
+}
+)"};
+    const auto filePath = CreateTempFile(files, fileContent);
+
+    Initializer initializer;
+    const auto ctx = initializer.CreateContext(filePath[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    ASSERT_NE(astContext, nullptr);
+    const auto *parent = reinterpret_cast<ark::es2panda::ir::AstNode *>(astContext->parserProgram->Ast());
+    ASSERT_NE(parent, nullptr);
+
+    ark::es2panda::ir::AstNode *classProperty = nullptr;
+    parent->FindChild([&classProperty](ark::es2panda::ir::AstNode *childNode) {
+        if (childNode->IsClassProperty() && childNode->AsClassProperty()->Key()->IsIdentifier() &&
+            childNode->AsClassProperty()->Key()->AsIdentifier()->Name() == "field") {
+            classProperty = childNode;
+        }
+        return classProperty != nullptr;
+    });
+
+    ASSERT_NE(classProperty, nullptr);
+    ASSERT_EQ(ark::es2panda::lsp::GetIndexForEnum(classProperty, "field"), -1);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPInlayHintsTests, GetIndexForEnumReturnsMinusOneForNonArrayClassPropertyValue)
+{
+    const std::vector<std::string> files = {"enum_index_non_array_value.ets"};
+    const std::vector<std::string> fileContent = {R"(
+class TestClass {
+    field: number = 1;
+}
+)"};
+    const auto filePath = CreateTempFile(files, fileContent);
+
+    Initializer initializer;
+    const auto ctx = initializer.CreateContext(filePath[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    ASSERT_NE(astContext, nullptr);
+    const auto *parent = reinterpret_cast<ark::es2panda::ir::AstNode *>(astContext->parserProgram->Ast());
+    ASSERT_NE(parent, nullptr);
+
+    ark::es2panda::ir::AstNode *classProperty = nullptr;
+    parent->FindChild([&classProperty](ark::es2panda::ir::AstNode *childNode) {
+        if (childNode->IsClassProperty() && childNode->AsClassProperty()->Key()->IsIdentifier() &&
+            childNode->AsClassProperty()->Key()->AsIdentifier()->Name() == "field") {
+            classProperty = childNode;
+        }
+        return classProperty != nullptr;
+    });
+
+    ASSERT_NE(classProperty, nullptr);
+    ASSERT_EQ(ark::es2panda::lsp::GetIndexForEnum(classProperty, "field"), -1);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPInlayHintsTests, GetIndexForEnumSkipsNonMemberExpressionArrayElement)
+{
+    const std::vector<std::string> files = {"enum_index_non_member_expression_array_element.ets"};
+    const std::vector<std::string> fileContent = {R"(
+class TestClass {
+    field = [1];
+}
+)"};
+    const auto filePath = CreateTempFile(files, fileContent);
+
+    Initializer initializer;
+    const auto ctx = initializer.CreateContext(filePath[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    ASSERT_NE(astContext, nullptr);
+    const auto *parent = reinterpret_cast<ark::es2panda::ir::AstNode *>(astContext->parserProgram->Ast());
+    ASSERT_NE(parent, nullptr);
+
+    ark::es2panda::ir::AstNode *classProperty = nullptr;
+    parent->FindChild([&classProperty](ark::es2panda::ir::AstNode *childNode) {
+        if (childNode->IsClassProperty() && childNode->AsClassProperty()->Key()->IsIdentifier() &&
+            childNode->AsClassProperty()->Key()->AsIdentifier()->Name() == "field") {
+            classProperty = childNode;
+        }
+        return classProperty != nullptr;
+    });
+
+    ASSERT_NE(classProperty, nullptr);
+    const auto *value = classProperty->AsClassProperty()->Value();
+    ASSERT_NE(value, nullptr);
+    ASSERT_TRUE(value->IsArrayExpression());
+    const auto &elements = value->AsArrayExpression()->Elements();
+    ASSERT_EQ(elements.size(), 1);
+    ASSERT_FALSE(elements[0]->IsMemberExpression());
+    ASSERT_EQ(ark::es2panda::lsp::GetIndexForEnum(classProperty, "field"), -1);
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPInlayHintsTests, VisitFunctionLikeForParameterTypeTest)
 {
     const std::vector<std::string> files = {"function_test.ets"};

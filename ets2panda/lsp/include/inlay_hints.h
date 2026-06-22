@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +41,7 @@ bool IsExpressionWithTypeArguments(const ir::AstNode *node);
 void GetVariableDeclarationTypeForHints(const ir::AstNode *decl, InlayHintList *result);
 void GetCallExpTypeForHints(const ir::AstNode *expr, const ir::AstNode *parent, InlayHintList *result);
 bool ShouldShowParameterNameHints(const UserPreferences &preferences);
+int GetIndexForEnum(const ir::AstNode *mem, const std::string &assignName);
 void SaveToList(const ir::Expression *mem, const ir::AstNode *asignNode, InlayHintList *list);
 void GetEnumTypeForHints(const ir::AstNode *member, const ir::AstNode *parent, InlayHintList *result);
 void GetFunctionReturnTypeForHints(const ir::AstNode *decl, InlayHintList *result);
