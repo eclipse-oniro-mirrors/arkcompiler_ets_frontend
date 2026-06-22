@@ -97,6 +97,11 @@ template("es2panda_frontend_unittest") {
       "googletest:gtest_main",
     ]
 
+    external_deps += [
+      "protobuf:protobuf_lite_static",
+      "protobuf:protobuf_static",
+    ]
+
     external_deps += [ sdk_libc_secshared_dep ]
 
     external_deps += [
