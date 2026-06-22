@@ -397,7 +397,7 @@ private:
                                             bool isStatic) override;
     ir::Expression *ParseEnumExpression();
     bool ParseNumberEnumHelper();
-    lexer::SourcePosition ParseEnumMember(ArenaVector<ir::AstNode *> &members);
+    lexer::SourcePosition ParseEnumMember(ArenaVector<ir::AstNode *> &members, ir::TypeNode *typeAnnotation);
     ir::Statement *ParseInterfaceDeclaration(bool isStatic) override;
     ir::TypeNode *ParseThisType(TypeAnnotationParsingOptions *options);
     ir::Statement *ParseFunctionStatement(StatementParsingFlags flags) override;
