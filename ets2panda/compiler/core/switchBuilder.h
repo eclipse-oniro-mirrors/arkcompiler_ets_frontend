@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,7 +79,7 @@ public:
             cg_->Condition(caseTarget, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, tag, caseLabels_[index]);
         } else {
             const compiler::TargetTypeContext ttctx(cg_, cg_->GetVRegType(tag));
-            cg_->Condition(caseTarget, lexer::TokenType::PUNCTUATOR_NOT_EQUAL, tag, caseLabels_[index]);
+            cg_->Condition(caseTarget, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, tag, caseLabels_[index]);
         }
     }
 
