@@ -30,6 +30,7 @@ class Signature;
 class IndexInfo;
 class Type;
 class Checker;
+class ETSChecker;
 
 using ENUMBITOPS_OPERATORS;
 
@@ -116,14 +117,24 @@ private:
 
 class TypeRelation {
 public:
-    explicit TypeRelation(Checker *checker)
+    explicit TypeRelation(Checker *checker) : TypeRelation(checker, false) {}
+
+private:
+    explicit TypeRelation(Checker *checker, bool isolateCaches)
         : checker_(checker),
           result_(RelationResult::FALSE),
           instantiationRecursionMap_(Allocator()->Adapter()),
-          identicalRelationStack_(Allocator()->Adapter())
+          identicalRelationStack_(Allocator()->Adapter()),
+          identicalResults_(Allocator()),
+          assignableResults_(Allocator()),
+          comparableResults_(Allocator()),
+          uncheckedCastableResults_(Allocator()),
+          supertypeResults_(Allocator()),
+          isolateCaches_(isolateCaches)
     {
     }
 
+public:
     bool IsTrue() const
     {
         return result_ == RelationResult::TRUE;
@@ -303,11 +314,22 @@ public:
     ArenaAllocator *Allocator();
 
     friend class SavedTypeRelationFlagsContext;
+    friend class ETSChecker;
 
 private:
     RelationResult CacheLookup(const Type *source, const Type *target, const RelationHolder &holder,
                                RelationType type) const;
     bool IsIdenticalRelationInProgress(RelationHolder::RelationKey key) const;
+    RelationHolder &IdenticalResults() noexcept;
+    RelationHolder &AssignableResults() noexcept;
+    RelationHolder &ComparableResults() noexcept;
+    RelationHolder &UncheckedCastableResults() noexcept;
+    RelationHolder &SupertypeResults() noexcept;
+    const RelationHolder &IdenticalResults() const noexcept;
+    const RelationHolder &AssignableResults() const noexcept;
+    const RelationHolder &ComparableResults() const noexcept;
+    const RelationHolder &UncheckedCastableResults() const noexcept;
+    const RelationHolder &SupertypeResults() const noexcept;
 
     std::mutex mtx_;
     Checker *checker_;
@@ -316,6 +338,12 @@ private:
     ir::Expression *node_ {};
     ArenaMap<checker::Type *, int8_t> instantiationRecursionMap_;
     ArenaVector<RelationHolder::RelationKey> identicalRelationStack_;
+    RelationHolder identicalResults_;
+    RelationHolder assignableResults_;
+    RelationHolder comparableResults_;
+    RelationHolder uncheckedCastableResults_;
+    RelationHolder supertypeResults_;
+    bool isolateCaches_ {};
 };
 class SavedTypeRelationFlagsContext {
 public:

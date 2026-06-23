@@ -39,6 +39,13 @@ warning:
   id: 98268
   message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
 
+- name: CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD
+  id: 602430
+  message: "Method {}{} from class or interface {}, inherited into class or interface {}, conflicts with the previous declaration
+    of method {}{} from class or interface {} because both declarations override method {}{} from class or interface {}"
+  strict: true
+  softlist: ["allow_conflicting_interface_override_of_same_super_method"]
+
 - name: DEPRECATED_PUBLIC_API
   id: 32597
   message: "Call to public API '{}' is deprecated."

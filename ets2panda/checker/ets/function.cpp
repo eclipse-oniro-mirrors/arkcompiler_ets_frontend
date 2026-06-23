@@ -1885,6 +1885,11 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
 
 Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *target)
 {
+    return AdjustForTypeParameters(source, target, Relation());
+}
+
+Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *target, TypeRelation *relation)
+{
     auto &sourceTypeParams = source->GetSignatureInfo()->typeParams;
     auto &targetTypeParams = target->GetSignatureInfo()->typeParams;
     if (sourceTypeParams.size() != targetTypeParams.size()) {
@@ -1900,7 +1905,7 @@ Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *tar
         }
         EmplaceSubstituted(&substitution, targetTypeParams[ix]->AsETSTypeParameter(), sourceTypeParams[ix]);
     }
-    return target->Substitute(Relation(), &substitution);
+    return target->Substitute(relation, &substitution);
 }
 
 static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signature *overriddenSignature,

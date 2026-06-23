@@ -1820,6 +1820,392 @@ void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::Sourc
     ValidateAbstractMethodsToBeImplemented(abstractsToBeImplemented, classType, implementedSignatures);
     ValidateOptionalPropOverriding(optionalProps, classType);
     MaybeReportErrorsForOverridingValidation(abstractsToBeImplemented, classType, pos, throwError);
+    CheckMultipleOverrideOfSameSuperMethod(classType);
+}
+
+static bool IsOverridableInMultipleOverrideCheck(Signature *const signature)
+{
+    return signature->HasSignatureFlag(SignatureFlags::PUBLIC) ||
+           signature->HasSignatureFlag(SignatureFlags::PROTECTED);
+}
+
+static bool HasBasicOverrideProperties(Signature *const base, Signature *const derived)
+{
+    if (derived->Function()->IsConstructor()) {
+        return false;
+    }
+
+    if (base == derived) {
+        return true;
+    }
+
+    if (derived->HasSignatureFlag(SignatureFlags::STATIC)) {
+        return false;
+    }
+
+    if (derived->HasSignatureFlag(SignatureFlags::PRIVATE)) {
+        return false;
+    }
+
+    if (derived->HasSignatureFlag(SignatureFlags::STATIC) != base->HasSignatureFlag(SignatureFlags::STATIC)) {
+        return false;
+    }
+
+    if (!IsOverridableInMultipleOverrideCheck(base)) {
+        return false;
+    }
+
+    return true;
+}
+
+static bool IsMethodOverridesOtherInMultipleOverrideCheck(TypeRelation *relation, Signature *base, Signature *derived)
+{
+    if (!HasBasicOverrideProperties(base, derived)) {
+        return false;
+    }
+
+    SavedTypeRelationFlagsContext savedFlagsCtx(relation, TypeRelationFlag::NO_RETURN_TYPE_CHECK |
+                                                              TypeRelationFlag::OVERRIDING_CONTEXT |
+                                                              TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+    return relation->SignatureIsSupertypeOf(base, derived);
+}
+
+static bool InheritsFrom(ETSObjectType *const object, ETSObjectType *const target)
+{
+    if (object == nullptr) {
+        return false;
+    }
+
+    if (object->GetOriginalBaseType() == target) {
+        return true;
+    }
+
+    if (InheritsFrom(object->SuperType(), target)) {
+        return true;
+    }
+
+    for (auto *const iface : object->Interfaces()) {
+        if (InheritsFrom(iface, target)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool HasValidOverrideOwnerDirection(ETSObjectType *const classType, Signature *const derived,
+                                           Signature *const base, bool const allowInterfaceAsClassMember)
+{
+    auto *const baseOwner = base->Owner()->GetOriginalBaseType();
+    auto *const derivedOwner = derived->Owner()->GetOriginalBaseType();
+    auto *const currentClass = classType->GetOriginalBaseType();
+
+    if (derived->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE) &&
+        !base->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return allowInterfaceAsClassMember && InheritsFrom(currentClass, baseOwner);
+    }
+
+    return InheritsFrom(derivedOwner, baseOwner);
+}
+
+static bool HasSameNameAndStaticFlag(Signature *const first, Signature *const second)
+{
+    return first->Function()->Id()->Name() == second->Function()->Id()->Name() &&
+           first->HasSignatureFlag(SignatureFlags::STATIC) == second->HasSignatureFlag(SignatureFlags::STATIC);
+}
+
+static bool DoesSignatureOverrideBase(ETSChecker *const checker, TypeRelation *const relation,
+                                      ETSObjectType *const classType, Signature *const derived, Signature *const base,
+                                      bool const allowInterfaceAsClassMember = true)
+{
+    if (derived->Function() == base->Function()) {
+        return false;
+    }
+
+    if (derived->Owner()->GetOriginalBaseType() == base->Owner()->GetOriginalBaseType()) {
+        return false;
+    }
+
+    if (!HasValidOverrideOwnerDirection(classType, derived, base, allowInterfaceAsClassMember)) {
+        return false;
+    }
+
+    if (!relation->CheckTypeParameterConstraints(derived->TypeParams(), base->TypeParams())) {
+        return false;
+    }
+
+    auto *const adjustedBase = checker->AdjustForTypeParameters(derived, base, relation);
+    if (adjustedBase == nullptr) {
+        return false;
+    }
+
+    return IsMethodOverridesOtherInMultipleOverrideCheck(relation, adjustedBase, derived);
+}
+
+static bool HasSignature(std::vector<Signature *> const &signatures, Signature *const signature)
+{
+    return std::find(signatures.begin(), signatures.end(), signature) != signatures.end();
+}
+
+static bool HasCloserOverride(ETSChecker *const checker, TypeRelation *const relation, ETSObjectType *const classType,
+                              std::vector<Signature *> const &candidates, Signature *const signature)
+{
+    for (auto *const candidate : candidates) {
+        if (candidate->Owner() == signature->Owner()) {
+            continue;
+        }
+        if (DoesSignatureOverrideBase(checker, relation, classType, candidate, signature)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void AddEffectiveSignature(ETSChecker *const checker, TypeRelation *const relation,
+                                  ETSObjectType *const classType, Signature *const signature,
+                                  std::vector<Signature *> &candidates)
+{
+    if (HasSignature(candidates, signature) || HasCloserOverride(checker, relation, classType, candidates, signature)) {
+        return;
+    }
+
+    candidates.emplace_back(signature);
+}
+
+static void CollectSignaturesFromType(ETSChecker *const checker, TypeRelation *const relation,
+                                      ETSObjectType *const classType, ETSObjectType *const type,
+                                      std::vector<Signature *> &signatures, bool effectiveOnly)
+{
+    if (type == nullptr) {
+        return;
+    }
+
+    for (auto *const prop : type->Methods()) {
+        if (prop->HasFlag(varbinder::VariableFlags::OVERLOAD) || prop->TsType() == nullptr ||
+            !prop->TsType()->IsETSFunctionType() || prop->TsType()->IsTypeError()) {
+            continue;
+        }
+
+        for (auto *const signature : prop->TsType()->AsETSFunctionType()->CallSignatures()) {
+            if (effectiveOnly) {
+                AddEffectiveSignature(checker, relation, classType, signature, signatures);
+            } else if (!HasSignature(signatures, signature)) {
+                signatures.emplace_back(signature);
+            }
+        }
+    }
+}
+
+static void CollectSignaturesFromInterface(ETSChecker *const checker, TypeRelation *const relation,
+                                           ETSObjectType *const iface, ETSObjectType *const classType,
+                                           std::vector<Signature *> &signatures, bool effectiveOnly)
+{
+    if (iface == nullptr) {
+        return;
+    }
+
+    CollectSignaturesFromType(checker, relation, classType, iface, signatures, effectiveOnly);
+    for (auto *const superIface : iface->Interfaces()) {
+        CollectSignaturesFromInterface(checker, relation, superIface, classType, signatures, effectiveOnly);
+    }
+}
+
+static void CollectEffectiveClassSignatures(ETSChecker *const checker, TypeRelation *const relation,
+                                            ETSObjectType *const classType, std::vector<Signature *> &candidates)
+{
+    for (auto *iter = classType; iter != nullptr; iter = iter->SuperType()) {
+        CollectSignaturesFromType(checker, relation, classType, iter, candidates, true);
+    }
+
+    for (auto *iter = classType; iter != nullptr; iter = iter->SuperType()) {
+        for (auto *const iface : iter->Interfaces()) {
+            CollectSignaturesFromInterface(checker, relation, iface, classType, candidates, true);
+        }
+    }
+}
+
+static void CollectPotentialBaseSignatures(ETSChecker *const checker, TypeRelation *const relation,
+                                           ETSObjectType *const classType, std::vector<Signature *> &bases)
+{
+    for (auto *iter = classType->SuperType(); iter != nullptr; iter = iter->SuperType()) {
+        CollectSignaturesFromType(checker, relation, classType, iter, bases, false);
+    }
+
+    for (auto *const iface : classType->Interfaces()) {
+        CollectSignaturesFromInterface(checker, relation, iface, classType, bases, false);
+    }
+}
+
+static Signature *FindCommonOverriddenBase(ETSChecker *const checker, TypeRelation *const relation,
+                                           ETSObjectType *const classType, Signature *const first,
+                                           Signature *const second, std::vector<Signature *> const &bases)
+{
+    for (auto *const base : bases) {
+        if (base->Function() == first->Function() || base->Function() == second->Function()) {
+            continue;
+        }
+        if (!HasSameNameAndStaticFlag(first, base) || !HasSameNameAndStaticFlag(second, base)) {
+            continue;
+        }
+        if (DoesSignatureOverrideBase(checker, relation, classType, first, base) &&
+            DoesSignatureOverrideBase(checker, relation, classType, second, base)) {
+            return base;
+        }
+    }
+    return nullptr;
+}
+
+static bool IsClassImplementationOfInterfaceSignature(ETSChecker *const checker, TypeRelation *const relation,
+                                                      ETSObjectType *const classType, Signature *const classMember,
+                                                      Signature *const interfaceMember)
+{
+    if (!classMember->Owner()->HasObjectFlag(ETSObjectFlags::CLASS) ||
+        !interfaceMember->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return false;
+    }
+
+    if (!InheritsFrom(classType->GetOriginalBaseType(), classMember->Owner()->GetOriginalBaseType()) ||
+        !InheritsFrom(classType->GetOriginalBaseType(), interfaceMember->Owner()->GetOriginalBaseType())) {
+        return false;
+    }
+
+    if (!relation->CheckTypeParameterConstraints(classMember->TypeParams(), interfaceMember->TypeParams())) {
+        return false;
+    }
+
+    auto *const adjustedInterfaceMember = checker->AdjustForTypeParameters(classMember, interfaceMember, relation);
+    return adjustedInterfaceMember != nullptr &&
+           IsMethodOverridesOtherInMultipleOverrideCheck(relation, adjustedInterfaceMember, classMember);
+}
+
+static bool IsClassInterfaceImplementationPair(ETSChecker *const checker, TypeRelation *const relation,
+                                               ETSObjectType *const classType, Signature *const first,
+                                               Signature *const second)
+{
+    return IsClassImplementationOfInterfaceSignature(checker, relation, classType, first, second) ||
+           IsClassImplementationOfInterfaceSignature(checker, relation, classType, second, first);
+}
+
+static bool ShouldReportMultipleOverrideConflict(ETSObjectType *const classType, Signature *const first,
+                                                 Signature *const second, Signature *const base)
+{
+    bool const firstFromInterface = first->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE);
+    bool const secondFromInterface = second->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE);
+
+    if (!base->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        return !firstFromInterface || !secondFromInterface;
+    }
+
+    return first->Owner() == classType && second->Owner() == classType;
+}
+
+static bool IsEarlierSignature(Signature *const first, Signature *const second)
+{
+    auto const firstPos = first->Function()->Start();
+    auto const secondPos = second->Function()->Start();
+    auto const sameProgram = firstPos.Program() == secondPos.Program();
+    auto const hasPositionInfo = firstPos.line != 0 && secondPos.line != 0;
+    if (sameProgram && hasPositionInfo) {
+        return (firstPos.line < secondPos.line) ||
+               (firstPos.line == secondPos.line && firstPos.index <= secondPos.index);
+    }
+    return first < second;
+}
+
+static lexer::SourcePosition GetMultipleOverrideConflictPosition(ETSObjectType *const classType,
+                                                                 Signature *const current)
+{
+    if (current->Owner() != classType) {
+        return classType->GetDeclNode()->Start();
+    }
+    auto const pos = current->Function()->Start();
+    return pos.line == 0 && pos.index == 0 ? classType->GetDeclNode()->Start() : pos;
+}
+
+static bool PreferFirstSignatureAsCurrent(ETSObjectType *const classType, Signature *const first,
+                                          Signature *const second)
+{
+    if (first->Owner() == classType && second->Owner() != classType) {
+        return true;
+    }
+    if (second->Owner() == classType && first->Owner() != classType) {
+        return false;
+    }
+
+    bool const firstFromInterface = first->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE);
+    bool const secondFromInterface = second->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE);
+    if (firstFromInterface != secondFromInterface) {
+        return !firstFromInterface;
+    }
+
+    return !IsEarlierSignature(first, second);
+}
+
+static void ReportMultipleOverrideConflict(ETSChecker *const checker, ETSObjectType *const classType, Signature *first,
+                                           Signature *second, Signature *const base)
+{
+    auto *const current = PreferFirstSignatureAsCurrent(classType, first, second) ? first : second;
+    auto *const previous = current == first ? second : first;
+
+    checker->LogError(diagnostic::CONFLICTING_INTERFACE_OVERRIDE_OF_SAME_SUPER_METHOD,
+                      {current->Function()->Id()->Name(), current, current->Owner(), classType,
+                       previous->Function()->Id()->Name(), previous, previous->Owner(), base->Function()->Id()->Name(),
+                       base, base->Owner()},
+                      GetMultipleOverrideConflictPosition(classType, current));
+}
+
+static bool TryReportMultipleOverrideConflict(ETSChecker *const checker, TypeRelation *const relation,
+                                              ETSObjectType *const classType, Signature *const first,
+                                              Signature *const second, std::vector<Signature *> const &bases)
+{
+    if (!HasSameNameAndStaticFlag(first, second)) {
+        return false;
+    }
+
+    if (DoesSignatureOverrideBase(checker, relation, classType, first, second, false) ||
+        DoesSignatureOverrideBase(checker, relation, classType, second, first, false)) {
+        return false;
+    }
+
+    if (IsClassInterfaceImplementationPair(checker, relation, classType, first, second)) {
+        return false;
+    }
+
+    auto *const base = FindCommonOverriddenBase(checker, relation, classType, first, second, bases);
+    if (base == nullptr) {
+        return false;
+    }
+
+    if (!ShouldReportMultipleOverrideConflict(classType, first, second, base)) {
+        return false;
+    }
+
+    ReportMultipleOverrideConflict(checker, classType, first, second, base);
+    return true;
+}
+
+void ETSChecker::CheckMultipleOverrideOfSameSuperMethod(ETSObjectType *classType)
+{
+    if (!classType->HasObjectFlag(ETSObjectFlags::CLASS) ||
+        (classType->SuperType() == nullptr && classType->Interfaces().empty())) {
+        return;
+    }
+
+    TypeRelation localRelation(this, true);
+    std::vector<Signature *> candidates;
+    CollectEffectiveClassSignatures(this, &localRelation, classType, candidates);
+
+    std::vector<Signature *> bases;
+    CollectPotentialBaseSignatures(this, &localRelation, classType, bases);
+
+    for (size_t idx = 0; idx < candidates.size(); ++idx) {
+        for (size_t next = idx + 1; next < candidates.size(); ++next) {
+            if (TryReportMultipleOverrideConflict(this, &localRelation, classType, candidates[idx], candidates[next],
+                                                  bases)) {
+                return;
+            }
+        }
+    }
 }
 
 void ETSChecker::AddOptionalProps(std::vector<ETSFunctionType *> *optionalProps, varbinder::LocalVariable *function)

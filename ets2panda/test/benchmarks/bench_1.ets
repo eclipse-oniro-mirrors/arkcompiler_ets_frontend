@@ -149,12 +149,8 @@ class C3<T3 extends Numeric|string, Z3, T1 = string> implements B3<T3> {
 }
 
 class D3<W3> extends C3<string, W3> {
-  f13(v: string): string {
-    return "D3.f13";
-  }
-
   f13(v: Numeric|string|C3<Int, W3>): string {
-    return this.f13(v as string);
+    return "D3.f13";
   }
 
   f13(v: Int): Int {
