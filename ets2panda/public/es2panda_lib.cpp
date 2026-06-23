@@ -1611,7 +1611,11 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
         };
 
         auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool {
-            return util::StringView(path1).EndsWith(path2);
+            std::string normalizedPath1 = path1;
+            std::string normalizedPath2 = path2;
+            std::replace(normalizedPath1.begin(), normalizedPath1.end(), '\\', '/');
+            std::replace(normalizedPath2.begin(), normalizedPath2.end(), '\\', '/');
+            return util::StringView(normalizedPath1).EndsWith(normalizedPath2);
         };
 
         return HandleMultiFileModeTemplate(ctxImpl, outputPath, findPathFunc, compareFunc);
@@ -1641,7 +1645,11 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
         };
 
         auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool {
-            return util::StringView(path1).EndsWith(path2);
+            std::string normalizedPath1 = path1;
+            std::string normalizedPath2 = path2;
+            std::replace(normalizedPath1.begin(), normalizedPath1.end(), '\\', '/');
+            std::replace(normalizedPath2.begin(), normalizedPath2.end(), '\\', '/');
+            return util::StringView(normalizedPath1).EndsWith(normalizedPath2);
         };
         return HandleMultiFileModeTemplate(ctxImpl, outputPath, findPathFunc, compareFunc);
     }

@@ -30,6 +30,7 @@
     "actual_test:entry1_1_external_har1_2:gen_decl": "node ./dist/entry.js test/e2e/entry1_1_external_har1_2/build_config_decl.json",
     "actual_test:entry1_1_external_hsp1_2:gen_abc": "node ./dist/entry.js test/e2e/entry1_1_external_hsp1_2/build_config_decl.json && node ./dist/entry.js test/e2e/entry1_1_external_hsp1_2/build_config.json",
     "demo_entry1_2:gen_abc": "node ./dist/entry.js test/e2e/demo_entry1_2/build_config.json",
+    "demo_entry1_2_2:gen_abc": "node ./dist/entry.js test/e2e/demo_entry1_2_2/build_config.json",
     "demo_entry1_2_obfuscationTest_1:gen_obf": "node ./dist/entry.js test/e2e_obfuscation/demo_entry1_2_obfuscationTest_1/build_config.json",
     "demo_entry1_2_obfuscationTest_2:gen_obf": "node ./dist/entry.js test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2/build_config.json",
     "demo_entry1_2_obfuscationTest_2_1:gen_obf": "node ./dist/entry.js test/e2e_obfuscation/demo_entry1_2_obfuscationTest_2_1/build_config.json",
