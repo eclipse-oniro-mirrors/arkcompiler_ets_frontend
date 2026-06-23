@@ -17,7 +17,7 @@
 /figures ^igelhaus ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /testTs ^igelhaus ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /test_ecma_bcopt ^Prof ^Nojpg @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
-/arkguard/ @xiao-peiyang
+/arkguard/ @oatuwwutao @Graceunderpressure
 /es2panda/  @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /ets2panda/ @tengtengh @xingshunxiang ^igelhaus ^Prof ^vigavi
 /ets2panda/aot @dkofanov  ^igelhaus ^Prof
@@ -43,7 +43,7 @@
 /ets2panda/declgen_ets2ts/ ^Nojpg ^v-cherkashin ^trubachevilya ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @CptH @Wchlove_
 /ets2panda/driver/ ^trubachevilya ^Nojpg ^v-cherkashin ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @Ascnbio @Wchlove_
 /ets2panda/ir/ @ziziziiziziz @zhelyapovaleksey ^igelhaus ^Prof
-/ets2panda/linter/ @oatuwwutao @fouckttt @cy917474985 @rosinskiyigor @okolnovevgeny ^utkugursel
+/ets2panda/linter/ @oatuwwutao @fouckttt @cy917474985 ^rosinskiyigor ^okolnovevgeny ^utkugursel
 /ets2panda/parser/ ^shimenkovmikhail ^igelhaus ^Prof ^zelentsovdmitry @xingshunxiang @anjiaqi257
 /ets2panda/scripts/*-build.sh @titova_tatiana ^igelhaus @Prof
 /ets2panda/scripts/arkui* @titova_tatiana ^igelhaus @Prof
@@ -126,3 +126,4 @@
 /ets2panda/compiler/lowering/ets/unionLowering.cpp  ^akmaevaleksey ^vpukhov ^igelhaus ^Prof @fanglou
 /ets2panda/util/diagnostic/warnings-lists/*yaml ^ozerovnikita ^igelhaus ^Prof @fanglou
 /ets2panda/compiler/lowering/ets/topLevelStmts/.* ^lirismankarina ^akmaevaleksey ^vpukhov ^igelhaus ^Prof @tengtengh
+/ets2panda/driver/build_system/src/obfuscation/ @oatuwwutao @Graceunderpressure @xhq1999
