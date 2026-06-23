@@ -93,11 +93,13 @@ function testRestParamCallback(): int {
     return argumentCount
 }
 
-async function main(): Promise<void> {
-    const promiseResult = await parseXmlAsync()
-    arktest.assertEQ(promiseResult, 1)
+function main(): void {
+    waitForCompletion(async () => {
+        const promiseResult = await parseXmlAsync()
+        arktest.assertEQ(promiseResult, 1)
 
-    arktest.assertEQ(testNoArgCallback(), 2)
-    arktest.assertEQ(testOptionalParamCallback(), 1)
-    arktest.assertEQ(testRestParamCallback(), 3)
+        arktest.assertEQ(testNoArgCallback(), 2)
+        arktest.assertEQ(testOptionalParamCallback(), 1)
+        arktest.assertEQ(testRestParamCallback(), 3)
+    })
 }

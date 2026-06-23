@@ -55,9 +55,11 @@ async function testAwaitNonPromiseDirect(): Promise<void> {
     arktest.assertEQ(str, "hello");
 }
 
-async function main(): Promise<void> {
-    await testAwaitUnionType();
-    await testAwaitUnionWithUndefined();
-    await testAwaitConditionalPromise();
-    await testAwaitNonPromiseDirect();
+function main(): void {
+    waitForCompletion(async () => {
+        await testAwaitUnionType();
+        await testAwaitUnionWithUndefined();
+        await testAwaitConditionalPromise();
+        await testAwaitNonPromiseDirect();
+    });
 }

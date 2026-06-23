@@ -19,7 +19,7 @@ async function asyncFunc(): Promise<boolean> {
     return true;
 }
 
-async function callAsyncLambda(): Promise<void> {
+function callAsyncLambda(): void {
     let is_call_async_lambda: boolean = false;
 
     let async_lambda: asyncLambda = async (): Promise<void> => {
@@ -28,10 +28,10 @@ async function callAsyncLambda(): Promise<void> {
     }
 
     arktest.assertEQ(is_call_async_lambda, false)
-    await async_lambda();
+    waitForCompletion(async ()=>{await async_lambda();})
     arktest.assertEQ(is_call_async_lambda, true)
 }
 
-async function main(): Promise<void> {
-    await callAsyncLambda();
+function main(): void {
+    callAsyncLambda();
 }
