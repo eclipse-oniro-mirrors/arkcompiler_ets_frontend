@@ -405,8 +405,6 @@ ohos_static_library("es2panda_lib") {
   if (!is_arkui_x) {
     external_deps += [
       "json:nlohmann_json_static",
-      "protobuf:protobuf_lite_static",
-      "protobuf:protobuf_static",
       "runtime_core:abc2program_frontend_static",
       "runtime_core:libarkassembler_frontend_static",
       "runtime_core:libarkbase_frontend_static",
@@ -428,8 +426,6 @@ ohos_static_library("es2panda_lib") {
       "$ark_root/libpandafile:libarkfile_frontend_static",
       "$ark_root/libziparchive:libarkziparchive_frontend_static",
       "$ark_third_party_root/json:nlohmann_json_static",
-      "$ark_third_party_root/protobuf:protobuf_lite_static",
-      "$ark_third_party_root/protobuf:protobuf_static",
     ]
     if (enable_bytecode_optimizer) {
       deps += [
@@ -437,6 +433,12 @@ ohos_static_library("es2panda_lib") {
         "$ark_root/compiler:libarkcompiler_frontend_static",
       ]
     }
+  }
+  if (ark_standalone_build) {
+    external_deps += [
+      "protobuf:protobuf_lite_static",
+      "protobuf:protobuf_static",
+    ]
   }
   cflags = [
     "-Wno-c++20-designator",
@@ -522,12 +524,7 @@ ohos_executable("es2panda") {
     defines = [ "OHOS_PLATFORM" ]
   }
 
-  if (is_arkui_x) {
-    deps += [
-      "$ark_third_party_root/protobuf:protobuf_lite_static",
-      "$ark_third_party_root/protobuf:protobuf_static",
-    ]
-  } else {
+  if (ark_standalone_build) {
     external_deps += [
       "protobuf:protobuf_lite_static",
       "protobuf:protobuf_static",
