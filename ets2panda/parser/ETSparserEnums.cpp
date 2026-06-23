@@ -164,7 +164,7 @@ ir::TSEnumDeclaration *ETSParser::ParseEnumMembers(ir::Identifier *const key, co
 
     ArenaVector<ir::AstNode *> members(Allocator()->Adapter());
 
-    lexer::SourcePosition enumEnd = ParseEnumMember(members);
+    lexer::SourcePosition enumEnd = ParseEnumMember(members, typeAnnotation);
 
     ir::TSEnumDeclaration *enumDeclaration;
 
@@ -222,13 +222,23 @@ bool ETSParser::ParseNumberEnumHelper()
     return minusSign;
 }
 
-lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &members)
+// Use int64_t for :long enums to prevent signed overflow during constant folding of auto-increment.
+static lexer::Number GetEnumDefaultNumber(ir::TypeNode *typeAnnotation, int32_t value)
+{
+    if (typeAnnotation != nullptr && typeAnnotation->IsETSPrimitiveType() &&
+        typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::LONG) {
+        return lexer::Number(static_cast<int64_t>(value));
+    }
+    return lexer::Number(value);
+}
+
+lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &members, ir::TypeNode *typeAnnotation)
 {
     // Default enum number value
-    ir::Expression *currentNumberExpr = AllocNode<ir::NumberLiteral>(lexer::Number(0));
+    ir::Expression *currentNumberExpr = AllocNode<ir::NumberLiteral>(GetEnumDefaultNumber(typeAnnotation, 0));
 
     // Lambda to parse enum member (maybe with initializer)
-    auto const parseMember = [this, &members, &currentNumberExpr](bool &) {
+    auto const parseMember = [this, &members, &currentNumberExpr, typeAnnotation](bool &) {
         auto *const ident = ExpectIdentifier(false, true);
 
         ir::Expression *ordinal;
@@ -258,7 +268,7 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
         members.emplace_back(member);
 
         // Increment the value by one
-        auto incrementNode = AllocNode<ir::NumberLiteral>(lexer::Number(1));
+        auto incrementNode = AllocNode<ir::NumberLiteral>(GetEnumDefaultNumber(typeAnnotation, 1));
         ir::Expression *dummyNode = currentNumberExpr->Clone(Allocator(), nullptr)->AsExpression();
         currentNumberExpr =
             AllocNode<ir::BinaryExpression>(dummyNode, incrementNode, lexer::TokenType::PUNCTUATOR_PLUS);
