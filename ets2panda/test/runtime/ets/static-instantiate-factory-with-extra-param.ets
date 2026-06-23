@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,15 +13,17 @@
  * limitations under the License.
  */
 
-class A {
-    static $_instantiate(): void {
-
+class C {
+    static $_instantiate(factory: () => C): C {
+        return factory()
+    }
+    static $_instantiate(factory: () => C, s: string): string {
+        return "hello " + s
     }
 }
 
 function main() {
-    A()
+    let x = C()
+    let s: string = C("world")
+    arktest.assertEQ(s, "hello world")
 }
-
-/* @@? 23:5 Error Semantic error ESE37484: Invalid type call expression as there is no static method $_instantiate with the first parameter of the function type defined in class A */
-/* @@? 23:5 Error Semantic error ESE0002: Type 'A' has no call signatures. */

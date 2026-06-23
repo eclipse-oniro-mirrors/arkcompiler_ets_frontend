@@ -3488,6 +3488,75 @@ void ETSChecker::CreateTransformedCallee(ir::Identifier *ident, ir::Identifier *
     callExpr->SetCallee(transformedCallee);
 }
 
+static bool IsSignatureFactoryParamValid(ETSChecker *checker, Signature *sig)
+{
+    if (sig->ArgCount() == 0) {
+        return false;
+    }
+    auto *firstParamType = sig->Params()[0]->TsType();
+    if (firstParamType == nullptr) {
+        return false;
+    }
+    Signature *factorySig = nullptr;
+    if (firstParamType->IsETSFunctionType()) {
+        factorySig = firstParamType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()[0];
+    } else if (firstParamType->IsETSObjectType() &&
+               firstParamType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::FUNCTIONAL)) {
+        auto *invokeType =
+            firstParamType->AsETSObjectType()->GetFunctionalInterfaceInvokeType()->MethodToArrow(checker);
+        factorySig = invokeType->ArrowSignature();
+    } else {
+        return false;
+    }
+    return factorySig->MinArgCount() == 0 && factorySig->ArgCount() == 0;
+}
+
+static bool HasValidInstantiateFactoryParam(ETSChecker *checker, varbinder::LocalVariable *instantiateMethod)
+{
+    auto *methodType = instantiateMethod->TsType();
+    if (methodType == nullptr || !methodType->IsETSFunctionType()) {
+        return false;
+    }
+    auto &callSigs = methodType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+    for (auto *sig : callSigs) {
+        if (IsSignatureFactoryParamValid(checker, sig)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// CC-OFFNXT(G.FUN.01-CPP) the function only searches methods and validates factory params, no new AST nodes are created
+static std::pair<std::string_view, varbinder::LocalVariable *> ResolveStaticInvokeMethod(ETSChecker *checker,
+                                                                                         ir::Identifier *const ident,
+                                                                                         const Type *resolvedType)
+{
+    auto className = ident->Name();
+    PropertySearchFlags searchFlag = PropertySearchFlags::SEARCH_IN_INTERFACES | PropertySearchFlags::SEARCH_IN_BASE |
+                                     PropertySearchFlags::SEARCH_STATIC_METHOD;
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *instantiateMethod =
+        resolvedType->AsETSObjectType()->GetProperty(compiler::Signatures::STATIC_INSTANTIATE_METHOD, searchFlag);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *invokeMethod =
+        resolvedType->AsETSObjectType()->GetProperty(compiler::Signatures::STATIC_INVOKE_METHOD, searchFlag);
+    if (instantiateMethod != nullptr) {
+        if (!HasValidInstantiateFactoryParam(checker, instantiateMethod)) {
+            checker->LogError(diagnostic::INVALID_INSTANTIATE_FACTORY_PARAM, {className}, ident->Start());
+            return {compiler::Signatures::STATIC_INSTANTIATE_METHOD, nullptr};
+        }
+        return {compiler::Signatures::STATIC_INSTANTIATE_METHOD, instantiateMethod};
+    }
+    if (invokeMethod != nullptr) {
+        return {compiler::Signatures::STATIC_INVOKE_METHOD, invokeMethod};
+    }
+    checker->LogError(diagnostic::NO_STATIC_INVOKE,
+                      {compiler::Signatures::STATIC_INVOKE_METHOD, compiler::Signatures::STATIC_INSTANTIATE_METHOD,
+                       className, className},
+                      ident->Start());
+    return {std::string_view(), nullptr};
+}
+
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 bool ETSChecker::TryTransformingToStaticInvoke(ir::Identifier *const ident, const Type *resolvedType)
 {
@@ -3504,42 +3573,23 @@ bool ETSChecker::TryTransformingToStaticInvoke(ir::Identifier *const ident, cons
         return false;
     }
 
-    auto className = ident->Name();
-    std::string_view propertyName;
-
-    PropertySearchFlags searchFlag = PropertySearchFlags::SEARCH_IN_INTERFACES | PropertySearchFlags::SEARCH_IN_BASE |
-                                     PropertySearchFlags::SEARCH_STATIC_METHOD;
-    auto *resolvedObject = resolvedType->AsETSObjectType();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *instantiateMethod = resolvedObject->GetProperty(compiler::Signatures::STATIC_INSTANTIATE_METHOD, searchFlag);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *invokeMethod = resolvedObject->GetProperty(compiler::Signatures::STATIC_INVOKE_METHOD, searchFlag);
-    if (instantiateMethod != nullptr) {
-        propertyName = compiler::Signatures::STATIC_INSTANTIATE_METHOD;
-    } else if (invokeMethod != nullptr) {
-        propertyName = compiler::Signatures::STATIC_INVOKE_METHOD;
-    } else {
-        LogError(diagnostic::NO_STATIC_INVOKE,
-                 {compiler::Signatures::STATIC_INVOKE_METHOD, compiler::Signatures::STATIC_INSTANTIATE_METHOD,
-                  className, className},
-                 ident->Start());
+    auto [propertyName, methodVar] = ResolveStaticInvokeMethod(this, ident, resolvedType);
+    if (methodVar == nullptr) {
         return true;
     }
+
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *classId = ProgramAllocNode<ir::Identifier>(className, ProgramAllocator());
+    auto *classId = ProgramAllocNode<ir::Identifier>(ident->Name(), ProgramAllocator());
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *methodId = ProgramAllocNode<ir::Identifier>(propertyName, ProgramAllocator());
-    if (propertyName == compiler::Signatures::STATIC_INSTANTIATE_METHOD) {
-        methodId->SetVariable(instantiateMethod);
-    } else if (propertyName == compiler::Signatures::STATIC_INVOKE_METHOD) {
-        methodId->SetVariable(invokeMethod);
-    }
+    methodId->SetVariable(methodVar);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CreateTransformedCallee(ident, classId, methodId, callExpr);
-    if (instantiateMethod != nullptr) {
+    if (propertyName == compiler::Signatures::STATIC_INSTANTIATE_METHOD) {
         auto lexScope {varbinder::LexicalScope<varbinder::Scope>::Enter(VarBinder(), compiler::NearestScope(callExpr))};
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *argExpr = GenerateImplicitInstantiateArg(std::string(className));
+        auto *argExpr = GenerateImplicitInstantiateArg(std::string(ident->Name()));
 
         argExpr->SetParent(callExpr);
         argExpr->SetRange(ident->Range());

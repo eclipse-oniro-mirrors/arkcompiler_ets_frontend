@@ -841,6 +841,10 @@ semantic:
   id: 38251
   message: "Type '{}' cannot be used on the right hand side of an 'instanceof' expression"
 
+- name: INVALID_INSTANTIATE_FACTORY_PARAM
+  id: 37484
+  message: "Invalid type call expression as there is no static method $_instantiate with the first parameter of the function type defined in class {}"
+
 - name: INVALID_INTRINSIC
   id: 61055
   message: "Invalid internal intrinsic expression"
