@@ -1335,13 +1335,23 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         return resPathInfo;
     }
 
-    if (ark::os::file::File::IsRegularFile(resolvedPathPrototype)) {
+#if defined(PANDA_TARGET_WINDOWS)
+    bool fileExists = ark::os::file::File::IsRegularFileCaseSensitive(resolvedPathPrototype);
+#else
+    bool fileExists = ark::os::file::File::IsRegularFile(resolvedPathPrototype);
+#endif
+    if (fileExists) {
         return {GetRealPath(resolvedPathPrototype)};
     }
 
     for (const auto &extension : supportedExtensions) {
         auto pathWithExtension = resolvedPathPrototype + std::string(extension);
-        if (ark::os::file::File::IsRegularFile(pathWithExtension)) {
+#if defined(PANDA_TARGET_WINDOWS)
+        bool fileExistsExt = ark::os::file::File::IsRegularFileCaseSensitive(pathWithExtension);
+#else
+        bool fileExistsExt = ark::os::file::File::IsRegularFile(pathWithExtension);
+#endif
+        if (fileExistsExt) {
             return {GetRealPath(pathWithExtension)};
         }
     }

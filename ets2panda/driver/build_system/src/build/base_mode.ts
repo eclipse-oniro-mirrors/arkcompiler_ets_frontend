@@ -357,6 +357,20 @@ export abstract class BaseMode {
         return false;
     }
 
+    private filterFilesNeedRegeneration(jobInfo: CompileJobInfo): FileInfo[] {
+        const contentFiles: FileInfo[] = jobInfo.contentType === JobContentType.FILE
+            ? [jobInfo.content as FileInfo]
+            : jobInfo.content as FileInfo[];
+
+        const filesNeedRegen: FileInfo[] = [];
+        for (const file of contentFiles) {
+            if (this.needsRegeneration(file.input)) {
+                filesNeedRegen.push(file);
+            }
+        }
+        return filesNeedRegen;
+    }
+
     public get abcLinkerPath(): string | undefined {
         return this.buildConfig.abcLinkerPath
     }
@@ -1173,22 +1187,25 @@ export abstract class BaseMode {
         const declgenJobs: DeclgenV1JobInfo[] = [];
         const needRegenNodeIds = new Set<string>();
         for (const node of buildGraph.nodes) {
-            const needsRegen = this.nodeNeedsRegeneration(node);
-            const contentFiles: FileInfo[] = node.data.contentType === JobContentType.FILE
-                ? [node.data.content as FileInfo]
-                : node.data.content as FileInfo[];
+            const filesNeedRegen = this.filterFilesNeedRegeneration(node.data);
 
-            // Only include mappings for files in this job's fileList to reduce memory usage
-            const jobFileToModuleMap = this.buildJobFileToModuleMap(contentFiles);
+            if (filesNeedRegen.length === 0) {
+                continue;
+            }
+            needRegenNodeIds.add(node.id);
+            const jobFileToModuleMap = this.buildJobFileToModuleMap(filesNeedRegen);
             const declgenJob: DeclgenV1JobInfo = {
                 ...node.data,
+                // Override content and contentType to only include files that need regeneration
+                content: filesNeedRegen.length ===1
+                    ?filesNeedRegen[0]
+                    :filesNeedRegen,
+                contentType: filesNeedRegen.length === 1
+                    ? JobContentType.FILE
+                    : JobContentType.CLUSTER,
                 fileToModuleMap: jobFileToModuleMap
             };
-            if (needsRegen) {
-                declgenJobs.push(declgenJob);
-                needRegenNodeIds.add(node.id);
-            }
-
+            declgenJobs.push(declgenJob);
             newNodes.push({
                 id: node.id,
                 data: { ...declgenJob, buildConfig: this.buildConfig },

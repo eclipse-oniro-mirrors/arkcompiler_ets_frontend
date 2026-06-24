@@ -896,14 +896,19 @@ describe('BaseMode', () => {
             backupDeclgenFiles: jest.fn(),
             updateDeclFileMapForJobs: jest.fn(),
             declFileMap: new Map(),
-            nodeNeedsRegeneration: jest.fn(),
+            filterFilesNeedRegeneration: jest.fn(),
             buildJobFileToModuleMap: jest.fn()
         };
         ctx.needsRegeneration.mockReturnValue(true);
+        ctx.filterFilesNeedRegeneration.mockImplementation((jobInfo: any) => {
+            const contentFiles = jobInfo.contentType === JobContentType.FILE
+                ? [jobInfo.content]
+                : jobInfo.content;
+            return contentFiles.filter(() => true);
+        });
         ctx.backupDeclgenFiles.mockResolvedValue(undefined);
         ctx.updateDeclFileMapForJobs.mockResolvedValue(undefined);
         ctx.saveDeclFileMap.mockResolvedValue(undefined);
-        ctx.nodeNeedsRegeneration.mockReturnValue(true);
         ctx.buildJobFileToModuleMap.mockReturnValue({ '/mock/module/a.ets': mockModuleInfo });
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
