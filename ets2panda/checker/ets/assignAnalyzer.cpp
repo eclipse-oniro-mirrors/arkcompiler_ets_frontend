@@ -1696,15 +1696,15 @@ bool AssignAnalyzer::ShouldSkipRegularInitCheck(const ir::AstNode *node, const i
         return true;
     }
 
+    if (OwnerDef(declNode) != classDef_) {
+        return true;
+    }
+
     if (VariableHasDefaultValue(declNode) && CanUseDefaultValueAtCurrentPoint(declNode, node, currentTopLevelDecl)) {
         return true;
     }
 
     if (ReportTopLevelDeclInitViolationIfNeeded(node, declNode, currentTopLevelDecl, adr)) {
-        return true;
-    }
-
-    if (OwnerDef(declNode) != classDef_) {
         return true;
     }
 
