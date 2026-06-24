@@ -2,8 +2,6 @@
 lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 #FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
 StringFasta.ets
-conditionalExpressionGenericLUB.ets
-funcRefWithRestArguments.ets
 struct-identifier.ets
 struct-init2.ets
 type_param_in_union.ets
@@ -13,7 +11,6 @@ type_param_in_union.ets
 mypackage/implicit_package_import_2.ets
 #FailKind.TSC_FAIL - 21 tests:
 ClassNewInstance.ets
-classFromCall.ets
 Enum7.ets
 GenericBridges_01.ets
 GenericBridges_02.ets
@@ -27,7 +24,6 @@ lambda_with_receiver/lambda_with_receiver_return_this3.ets
 lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ets
 static-invoke.ets
 top_level_03.ets
-as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
 fuzz/too_many_async.ets
 typeAlias_2.ets
@@ -95,14 +91,10 @@ interfaceObjectLiteral_inherited_generic_overload.ets
 interfaceObjectLiteral_inherited_generic_partial_override.ets
 
 # TSC Fail
-fields_with_late_initialization/class_late_initlization_with_export.ets
 re_export/export/reexport_elements1.ets
 re_export/export/reexport_elements2.ets
-re_export/import.ets
-re_export/import_star.ets
-re_export_class/import_class_1.ets
-re_export_class/import_class_2.ets
 interface_with_optional_property_cycle_import/class_file.ets
+namespace_tests/namespace_import_type_test/namespace_import.ets
 overload_methods_with_primitive_types/override_accessors.ets
 
 #33327 TSC Fail
