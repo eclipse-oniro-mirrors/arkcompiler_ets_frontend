@@ -25,6 +25,7 @@
 #include "lsp/include/internal_api.h"
 #include "lsp/include/register_code_fix/import_fixes.h"
 #include "lsp/include/services/import_utils.h"
+#include "lsp/include/symbol_reference_index.h"
 #include "public/es2panda_lib.h"
 
 namespace ark::es2panda::lsp {
@@ -35,7 +36,7 @@ namespace {
 constexpr int G_IMPORT_FIXES_CODE = 1005;
 constexpr const char *G_IMPORT_FIXES_ID = "ImportFixes";
 
-std::string GetUnresolvedIdentifierName(es2panda_Context *context, size_t position)
+std::string GetUnresolvedIdentifierNameAtPosition(es2panda_Context *context, size_t position)
 {
     auto *token = GetTouchingTokenRightMatch(context, position);
     if (token == nullptr || !token->IsIdentifier()) {
@@ -43,6 +44,21 @@ std::string GetUnresolvedIdentifierName(es2panda_Context *context, size_t positi
     }
 
     return std::string(token->AsIdentifier()->Name());
+}
+
+std::string GetUnresolvedIdentifierName(es2panda_Context *context, TextSpan span)
+{
+    auto name = GetUnresolvedIdentifierNameAtPosition(context, span.start);
+    if (!name.empty() || span.length == 0) {
+        return name;
+    }
+
+    name = GetUnresolvedIdentifierNameAtPosition(context, span.start + span.length);
+    if (!name.empty()) {
+        return name;
+    }
+
+    return GetUnresolvedIdentifierNameAtPosition(context, span.start + span.length - 1);
 }
 
 bool IsUseStaticDirectiveAtFileTop(std::string_view source, size_t firstNonWhitespace)
@@ -192,13 +208,8 @@ std::vector<CodeFixAction> ImportFixes::GetCodeActions(const CodeFixContext &con
         return {};
     }
 
-    auto unresolvedName = GetUnresolvedIdentifierName(context.context, context.span.start);
+    auto unresolvedName = GetUnresolvedIdentifierName(context.context, context.span);
     if (unresolvedName.empty()) {
-        return {};
-    }
-
-    auto collectedInfos = GetExternalApiCollectInfos(unresolvedName);
-    if (collectedInfos.empty()) {
         return {};
     }
 
@@ -216,7 +227,28 @@ std::vector<CodeFixAction> ImportFixes::GetCodeActions(const CodeFixContext &con
 
     ImportCodeActionBuildContext buildContext {
         unresolvedName, ctx, {context.host, context.formatContext, context.preferences}, insertPos, sourceCode};
-    return BuildImportCodeActionsForCollectedInfos(collectedInfos, buildContext);
+    auto actions = BuildImportCodeActionsForCollectedInfos(GetExternalApiCollectInfos(unresolvedName), buildContext);
+    if (!actions.empty()) {
+        return actions;
+    }
+
+    for (const auto &def : FindExportSymbolDefinitionsByPrefix(unresolvedName, ctx->sourceFileName)) {
+        if (def.symbolName != unresolvedName) {
+            continue;
+        }
+
+        auto moduleName = ComputeRelativeImportPath(ctx->sourceFileName, def.fileName);
+        if (moduleName.empty()) {
+            continue;
+        }
+
+        CodeFixAction codeAction;
+        ExternalApiCollectInfo info {def.fileName, CompletionEntryKind::VARIABLE, unresolvedName, def.isDefaultExport};
+        if (TryBuildImportCodeActionForCollectInfo(info, moduleName, buildContext, &codeAction)) {
+            actions.push_back(std::move(codeAction));
+        }
+    }
+    return actions;
 }
 
 CombinedCodeActions ImportFixes::GetAllCodeActions(const CodeFixAllContext &codeFixAll)

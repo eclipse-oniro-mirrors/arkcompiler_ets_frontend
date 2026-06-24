@@ -741,8 +741,8 @@ deep
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
-        "deepcopy(src: (T | null | undefined), depth: int): void", ark::es2panda::lsp::CompletionEntryKind::METHOD,
-        std::string(GLOBALS_OR_KEYWORDS), "deepcopy()")};
+        "deepcopy(src: (T | null | undefined), depth: int): (T | null | undefined)",
+        ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "deepcopy()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
 }

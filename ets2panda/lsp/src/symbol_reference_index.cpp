@@ -27,12 +27,20 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cctype>
 #include <functional>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 
 namespace ark::es2panda::lsp {
 namespace {
+
+enum ExportFlag : uint8_t {
+    EXPORT_NONE = 0U,
+    EXPORT_NAMED = 1U << 0U,
+    EXPORT_DEFAULT = 1U << 1U,
+};
 
 struct SymbolOccurrence {
     size_t start = 0;
@@ -46,10 +54,157 @@ struct FileIndexData {
     std::vector<std::pair<SymbolId, ReferenceInfo>> references;
 };
 
+struct ExportSymbolInfo {
+    uint8_t flags = EXPORT_NONE;
+    std::string symbolName;
+    std::string fileName;
+    ir::AstNodeType declType = static_cast<ir::AstNodeType>(0);
+    std::string returnType;
+};
+
 std::unordered_map<std::string, FileIndexData> g_fileIndices {};
 std::unordered_map<SymbolId, std::vector<ReferenceInfo>> g_symbolReferences {};
 std::unordered_map<SymbolId, ReferenceInfo> g_symbolDefinitions {};
-std::unordered_set<SymbolId> g_symbolDefIsDefaultExport {};
+std::unordered_map<SymbolId, ExportSymbolInfo> g_symbolExportInfos {};
+
+bool HasExportFlag(SymbolId symbolId, ExportFlag flag)
+{
+    auto it = g_symbolExportInfos.find(symbolId);
+    return it != g_symbolExportInfos.end() && (it->second.flags & static_cast<uint8_t>(flag)) != 0U;
+}
+
+std::string NormalizePathForExportFilter(std::string fileName)
+{
+    std::replace(fileName.begin(), fileName.end(), '\\', '/');
+    std::transform(fileName.begin(), fileName.end(), fileName.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+    return fileName;
+}
+
+bool ShouldCollectExportInfo(const std::string &fileName)
+{
+    static constexpr std::string_view OH_SDK_ETS_DIR = "/sdk/default/openharmony/ets/";
+    return NormalizePathForExportFilter(fileName).find(OH_SDK_ETS_DIR) == std::string::npos;
+}
+
+ir::AstNodeType GetDeclTypeForCompletion(const ir::AstNode *owner)
+{
+    if (owner == nullptr) {
+        return static_cast<ir::AstNodeType>(0);
+    }
+
+    const ir::AstNode *node = owner;
+    while (node != nullptr) {
+        auto type = node->Type();
+        switch (type) {
+            case ir::AstNodeType::SCRIPT_FUNCTION:
+            case ir::AstNodeType::METHOD_DEFINITION:
+                return ir::AstNodeType::FUNCTION_DECLARATION;
+            default:
+                break;
+        }
+        switch (type) {
+            case ir::AstNodeType::FUNCTION_DECLARATION:
+            case ir::AstNodeType::CLASS_DECLARATION:
+            case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+            case ir::AstNodeType::TS_ENUM_DECLARATION:
+            case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+            case ir::AstNodeType::TS_MODULE_DECLARATION:
+            case ir::AstNodeType::VARIABLE_DECLARATION:
+                return type;
+            default:
+                break;
+        }
+        node = node->Parent();
+    }
+    return owner->Type();
+}
+
+ir::AstNodeType ResolveDeclTypeForCompletion(const ir::Identifier *identifier, const ir::AstNode *owner)
+{
+    if (identifier != nullptr) {
+        auto *decl = compiler::DeclarationFromIdentifier(identifier);
+        if (decl != nullptr) {
+            return GetDeclTypeForCompletion(decl);
+        }
+    }
+    return GetDeclTypeForCompletion(owner);
+}
+
+std::string NormalizeTypeText(std::string typeText)
+{
+    std::string normalized;
+    normalized.reserve(typeText.size());
+    bool pendingSpace = false;
+    for (unsigned char c : typeText) {
+        if (std::isspace(c) != 0) {
+            pendingSpace = !normalized.empty();
+            continue;
+        }
+        if (pendingSpace) {
+            normalized.push_back(' ');
+            pendingSpace = false;
+        }
+        normalized.push_back(static_cast<char>(c));
+    }
+    return normalized;
+}
+
+std::string GetFunctionReturnTypeForIndex(const ir::ScriptFunction *func)
+{
+    if (func == nullptr) {
+        return "void";
+    }
+    auto *retAnno = func->ReturnTypeAnnotation();
+    if (retAnno != nullptr && retAnno->TsType() != nullptr) {
+        auto ret = NormalizeTypeText(retAnno->TsType()->ToString());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
+    auto *signature = func->Signature();
+    if (signature != nullptr && signature->ReturnType() != nullptr) {
+        auto ret = NormalizeTypeText(signature->ReturnType()->ToString());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
+    if (retAnno != nullptr) {
+        auto ret = NormalizeTypeText(retAnno->DumpEtsSrc());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
+    return "void";
+}
+
+const ir::ScriptFunction *FindScriptFunctionOwner(const ir::AstNode *owner)
+{
+    for (auto *node = owner; node != nullptr; node = node->Parent()) {
+        if (node->IsScriptFunction()) {
+            return node->AsScriptFunction();
+        }
+        if (node->IsFunctionDeclaration()) {
+            return node->AsFunctionDeclaration()->Function();
+        }
+        if (node->IsMethodDefinition()) {
+            return node->AsMethodDefinition()->Function();
+        }
+    }
+    return nullptr;
+}
+
+std::string BuildDisplayNameForExport(ir::AstNodeType declType, const ir::AstNode *owner)
+{
+    if (declType != ir::AstNodeType::FUNCTION_DECLARATION) {
+        return "";
+    }
+    auto *func = FindScriptFunctionOwner(owner);
+    if (func == nullptr) {
+        return "";
+    }
+    return GetFunctionReturnTypeForIndex(func);
+}
 
 std::string GetNodeFileName(const ir::AstNode *node, const public_lib::Context *ctx)
 {
@@ -199,6 +354,20 @@ void RemoveFileContributions(const std::string &fileName)
         return;
     }
 
+    std::unordered_set<SymbolId> visitedSymbols;
+    for (const auto &entry : it->second.references) {
+        const auto symbolId = entry.first;
+        if (!visitedSymbols.insert(symbolId).second) {
+            continue;
+        }
+
+        auto defIt = g_symbolDefinitions.find(symbolId);
+        if (defIt != g_symbolDefinitions.end() && defIt->second.fileName == fileName) {
+            g_symbolDefinitions.erase(defIt);
+            g_symbolExportInfos.erase(symbolId);
+        }
+    }
+
     for (const auto &entry : it->second.references) {
         const auto symbolId = entry.first;
         const auto refInfo = entry.second;
@@ -216,8 +385,6 @@ void RemoveFileContributions(const std::string &fileName)
                    refs.end());
         if (refs.empty()) {
             g_symbolReferences.erase(refsIt);
-            g_symbolDefinitions.erase(symbolId);
-            g_symbolDefIsDefaultExport.erase(symbolId);
         }
     }
 
@@ -242,6 +409,20 @@ void DeduplicateAndSortReferences(std::vector<ReferenceInfo> &refs)
                                       lhs.length == rhs.length;
                            }),  // CC-OFF(G.FMT.02-CPP) project code style
                refs.end());
+}
+
+bool IsExportedDefinition(const ir::Identifier *identifier, const ir::AstNode *owner)
+{
+    if (identifier == nullptr || owner == nullptr) {
+        return false;
+    }
+    if (identifier->IsExported() || identifier->IsDefaultExported() || identifier->HasExportAlias() ||
+        owner->IsExported() || owner->IsDefaultExported()) {
+        return true;
+    }
+    auto *parent = owner->Parent();
+    return parent != nullptr &&
+           (parent->IsExported() || parent->IsExportNamedDeclaration() || parent->IsExportDefaultDeclaration());
 }
 
 SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::Identifier *identifier, ir::AstNode *owner,
@@ -308,6 +489,49 @@ bool RegisterReference(SymbolId symbolId, const ReferenceInfo &ref, size_t end,
     return true;
 }
 
+void GetReferenceIdentifierAndOwner(const ir::AstNode *targetNode, const ir::Identifier **identifier,
+                                    ir::AstNode **owner)
+{
+    if (targetNode->IsETSTypeReference()) {
+        auto *typeReference = targetNode->AsETSTypeReference();
+        *identifier = typeReference->BaseName();
+        if (*identifier != nullptr) {
+            *owner = ark::es2panda::lsp::GetOwner(const_cast<ir::Identifier *>(*identifier));
+        }
+    } else if (targetNode->IsIdentifier()) {
+        *identifier = targetNode->AsIdentifier();
+        *owner = ark::es2panda::lsp::GetOwner(const_cast<ir::AstNode *>(targetNode));
+    }
+}
+
+void AddDefinitionAndExportInfo(SymbolId symbolId, const ReferenceInfo &ref, const ir::Identifier *identifier,
+                                const ir::AstNode *owner)
+{
+    g_symbolDefinitions[symbolId] = ReferenceInfo(ref.fileName, ref.start, ref.length);
+    g_symbolExportInfos.erase(symbolId);
+    if (!ShouldCollectExportInfo(ref.fileName)) {
+        return;
+    }
+    uint8_t exportFlags = EXPORT_NONE;
+    const bool isExported = IsExportedDefinition(identifier, owner);
+    if (isExported) {
+        exportFlags |= static_cast<uint8_t>(EXPORT_NAMED);
+    }
+    if (identifier->IsDefaultExported() || (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported())) {
+        exportFlags |= static_cast<uint8_t>(EXPORT_DEFAULT);
+    }
+    if (exportFlags == EXPORT_NONE) {
+        return;
+    }
+
+    auto &exportInfo = g_symbolExportInfos[symbolId];
+    exportInfo.flags |= exportFlags;
+    exportInfo.symbolName = std::string(identifier->Name());
+    exportInfo.fileName = ref.fileName;
+    exportInfo.declType = ResolveDeclTypeForCompletion(identifier, owner);
+    exportInfo.returnType = BuildDisplayNameForExport(exportInfo.declType, owner);
+}
+
 void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *targetNode,
                           std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
 {
@@ -317,16 +541,7 @@ void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *tar
 
     const ir::Identifier *identifier = nullptr;
     ir::AstNode *owner = nullptr;
-    if (targetNode->IsETSTypeReference()) {
-        auto *typeReference = targetNode->AsETSTypeReference();
-        identifier = typeReference->BaseName();
-        if (identifier != nullptr) {
-            owner = ark::es2panda::lsp::GetOwner(const_cast<ir::Identifier *>(identifier));
-        }
-    } else if (targetNode->IsIdentifier()) {
-        identifier = targetNode->AsIdentifier();
-        owner = ark::es2panda::lsp::GetOwner(const_cast<ir::AstNode *>(targetNode));
-    }
+    GetReferenceIdentifierAndOwner(targetNode, &identifier, &owner);
 
     const SymbolId symbolId = ResolveSymbolId(ctx, identifier, owner, targetNode->IsETSTypeReference());
     if (symbolId == 0) {
@@ -345,10 +560,7 @@ void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *tar
     }
     const bool ownerIsImportAlias = owner->IsIdentifier() && IsImportOwnerIdentifier(owner->AsIdentifier());
     if (IsDefinitionNode(targetNode, owner) && !ownerIsImportAlias) {
-        g_symbolDefinitions[symbolId] = ReferenceInfo(ref.fileName, ref.start, ref.length);
-        if (owner->Parent() != nullptr && owner->Parent()->IsDefaultExported()) {
-            g_symbolDefIsDefaultExport.insert(symbolId);
-        }
+        AddDefinitionAndExportInfo(symbolId, ref, identifier, owner);
     }
 }
 
@@ -462,7 +674,7 @@ void InitSymbolReferenceIndex()
     g_fileIndices.clear();
     g_symbolReferences.clear();
     g_symbolDefinitions.clear();
-    g_symbolDefIsDefaultExport.clear();
+    g_symbolExportInfos.clear();
 }
 
 void ClearSymbolReferenceIndex()
@@ -845,11 +1057,57 @@ std::vector<SymbolDefSearchResult> FindSymbolDefinitionsByName(const std::string
             continue;
         }
 
-        bool isDefault = g_symbolDefIsDefaultExport.count(symbolId) > 0;
+        bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
 
         results.push_back(SymbolDefSearchResult {defRef.fileName, symbolName, isDefault});
     }
 
+    return results;
+}
+
+std::vector<SymbolDefSearchResult> FindExportSymbolDefinitionsByPrefix(const std::string &prefix,
+                                                                       const std::string &excludeFile)
+{
+    std::vector<SymbolDefSearchResult> results;
+    std::unordered_set<std::string> seen;
+    auto lowerPrefix = prefix;
+    std::transform(lowerPrefix.begin(), lowerPrefix.end(), lowerPrefix.begin(),
+                   [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+
+    for (const auto &[symbolId, info] : g_symbolExportInfos) {
+        if ((info.flags & (EXPORT_NAMED | EXPORT_DEFAULT)) == 0U) {
+            continue;
+        }
+        auto defIt = g_symbolDefinitions.find(symbolId);
+        if (defIt == g_symbolDefinitions.end()) {
+            continue;
+        }
+        const auto &defRef = defIt->second;
+        if (defRef.fileName == excludeFile) {
+            continue;
+        }
+
+        std::string symbolName = info.symbolName;
+        if (symbolName.empty()) {
+            continue;
+        }
+
+        auto lowerName = symbolName;
+        std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
+                       [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+        if (!lowerPrefix.empty() && lowerName.find(lowerPrefix) == std::string::npos) {
+            continue;
+        }
+
+        const auto dedupKey = defRef.fileName + ":" + symbolName;
+        if (!seen.insert(dedupKey).second) {
+            continue;
+        }
+
+        bool isDefault = HasExportFlag(symbolId, EXPORT_DEFAULT);
+        results.push_back(
+            SymbolDefSearchResult {defRef.fileName, symbolName, isDefault, info.declType, info.returnType});
+    }
     return results;
 }
 
