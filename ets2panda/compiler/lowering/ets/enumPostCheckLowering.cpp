@@ -43,6 +43,16 @@ static ir::ClassDeclaration *FindEnclosingClass(ir::AstNode *ast)
     ES2PANDA_UNREACHABLE();
 }
 
+static bool IsInsideAnnotationContext(ir::AstNode *ast)
+{
+    for (ir::AstNode *curr = ast->Parent(); curr != nullptr; curr = curr->Parent()) {
+        if (curr->IsAnnotationDeclaration() || curr->IsAnnotationUsage()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static std::string TypeToString(checker::Type *type)
 {
     std::stringstream ss;
@@ -363,7 +373,8 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
     }
     auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
 
-    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) && enumNode->EnumAnnotedType() == nullptr) {
+    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) &&
+        (enumNode->EnumAnnotedType() == nullptr || IsInsideAnnotationContext(node))) {
         return InlineValueOf(node->AsMemberExpression(), Context()->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(Context(), node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
