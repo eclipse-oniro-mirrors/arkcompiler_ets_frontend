@@ -2697,7 +2697,7 @@ checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
     const auto ancestor = util::Helpers::FindAncestorGivenByType(expr, ir::AstNodeType::SCRIPT_FUNCTION);
     const auto isAncestorAsync = (ancestor != nullptr) && (ancestor->AsScriptFunction()->IsDeclaredAsync());
     if (!isAncestorAsync) {
-        checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Argument()->Start());
+        checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Start());
     }
 
     expr->SetTsType(checker->HandleAwaitedUtilityType(expr->argument_->Check(checker)));
