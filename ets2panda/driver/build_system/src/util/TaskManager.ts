@@ -55,7 +55,7 @@ interface WorkerAbcCompiledMessage {
 
 interface WorkerErrorMessage {
     type: WorkerMessageType.ERROR_OCCURED;
-    data: { taskId: string; error: LogData };
+    data: { taskId: string; error: LogData | LogData[] };
 }
 
 interface WorkerTaskFinishedMessage {
@@ -270,7 +270,7 @@ export class TaskManager<PayloadT extends JobInfo> {
                 this.handleWorkerLog(message);
                 break;
             case WorkerMessageType.ERROR_OCCURED:
-                this.logErrorMessage(message.data.error);
+                this.logErrorMessages(message.data.error);
                 this.onTaskFailed(message.data.taskId);
                 break;
             case WorkerMessageType.DECL_GENERATED:
@@ -485,6 +485,13 @@ export class TaskManager<PayloadT extends JobInfo> {
     private logErrorMessage(error: LogData, exitAfter: boolean = false): void {
         const logData = this.reconstructLogData(error);
         exitAfter ? this.logger.printErrorAndExit(logData) : this.logger.printError(logData);
+    }
+
+    private logErrorMessages(error: LogData | LogData[]): void {
+        const errors = Array.isArray(error) ? error : [error];
+        errors.forEach((err: LogData) => {
+            this.logErrorMessage(err);
+        });
     }
 
     public shutdownWorkers(): void {

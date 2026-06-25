@@ -44,7 +44,7 @@ import {
     LogDataFactory,
 } from '../logger';
 import { DependencyAnalyzer } from '../dependency_analyzer';
-import { ErrorCode, DriverError } from '../util/error';
+import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BuildConfig,
     DependencyModuleConfig,
@@ -498,6 +498,11 @@ export abstract class BaseMode {
             if (error instanceof DriverError) {
                 // Report the error
                 this.logger.printError(error.logData);
+                errOccurred = true;
+            } else if (error instanceof DriverErrorList) {
+                error.errors.forEach((err: DriverError) => {
+                    this.logger.printError(err.logData);
+                });
                 errOccurred = true;
             } else {
                 // Propagate the error further

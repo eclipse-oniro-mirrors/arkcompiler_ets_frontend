@@ -54,7 +54,7 @@ import {
     PluginHook
 } from '../plugins/plugins_driver';
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
-import { ErrorCode, DriverError } from '../util/error';
+import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BS_PERF_FILE_NAME,
     RecordEvent,
@@ -74,6 +74,65 @@ enum Ets2pandaEvent {
 
 function formEvent(event: Ets2pandaEvent): string {
     return '[Ets2panda] ' + event;
+}
+
+interface BuildSystemDiagnostic {
+    code: ErrorCode;
+    description: string;
+    message: string;
+}
+
+function normalizeDiagnosticMessage(message: string): string {
+    return message.replace(/^Error Message:\s*/i, '');
+}
+
+// Split compiler diagnostics forwarded through an Error message. The native call
+// may prefix the payload with stage context, then emits diagnostics as pairs of
+// non-empty lines: the first line contains error code and description, and the
+// second line contains the message.
+//
+// Example:
+// Failed to proceed to ES2PANDA_STATE_CHECKED
+//
+// 1 Error 11503319 Semantic error
+// Error Message: Type 'Int' is not compatible with type 'String' at property 'age'
+// code: 11503319, description: Semantic error, message: Type 'Int' is not compatible with type 'String' at property 'age' 
+export function splitBuildSystemDiagnostics(message: string): BuildSystemDiagnostic[] {
+    const lines = message
+        .split(/\r?\n/)
+        .map((line: string) => line.trim())
+        .filter((line: string) => line.length > 0);
+
+    const fallbackDiagnostic = [{
+        code: ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
+        description: 'Compile abc files failed.',
+        message
+    }];
+    const diagnosticHeaderPattern = /\b(\d{8})\b\s*(.*)$/;
+    const firstDiagnosticIndex = lines.findIndex((line: string) => diagnosticHeaderPattern.test(line));
+    if (firstDiagnosticIndex < 0) {
+        return fallbackDiagnostic;
+    }
+
+    const diagnosticLines = lines.slice(firstDiagnosticIndex);
+    if (diagnosticLines.length % 2 !== 0) {
+        return fallbackDiagnostic;
+    }
+
+    const diagnostics: BuildSystemDiagnostic[] = [];
+    for (let index = 0; index < diagnosticLines.length; index += 2) {
+        const match = diagnosticLines[index].match(diagnosticHeaderPattern);
+        if (!match) {
+            return fallbackDiagnostic;
+        }
+        diagnostics.push({
+            code: match[1] as ErrorCode,
+            description: match[2],
+            message: normalizeDiagnosticMessage(diagnosticLines[index + 1])
+        });
+    }
+
+    return diagnostics;
 }
 
 export class Ets2panda {
@@ -356,14 +415,17 @@ export class Ets2panda {
                 throw error;
             }
             if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                        'Compile abc files failed.',
-                        error.message
-                    )
-                );
+                const diagnostics = splitBuildSystemDiagnostics(error.message);
+                const errors = diagnostics.map((diagnostic: BuildSystemDiagnostic) => {
+                    return new DriverError(LogDataFactory.newInstance(
+                        diagnostic.code,
+                        diagnostic.description,
+                        diagnostic.message
+                    ));
+                });
+                throw new DriverErrorList(errors);
             }
+            throw error;
         } finally {
             statsRecorder.record(formEvent(Ets2pandaEvent.DESTROY_INSTANCE));
             this.pluginDriver.runPluginHook(PluginHook.CLEAN);

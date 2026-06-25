@@ -81,3 +81,12 @@ export class DriverError extends Error {
         return this.logData.toString()
     }
 }
+
+export class DriverErrorList extends Error {
+    errors: DriverError[]
+
+    constructor(errors: DriverError[]) {
+        super()
+        this.errors = errors
+    }
+}

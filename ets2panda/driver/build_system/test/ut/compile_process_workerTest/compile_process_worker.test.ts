@@ -173,6 +173,47 @@ describe('compile_process_worker', () => {
         });
     });
 
+    test('compile_process_worker reports DriverErrorList as LogData array', () => {
+        const task = { ...baseTask };
+        const message = {
+            type: WorkerMessageType.ASSIGN_TASK,
+            data: { taskId: mockTaskId, payload: task },
+        };
+
+        loadWorkerModule();
+        const ets2panda = getMockEts2panda();
+        const realErrorModule = jest.requireActual('../../../src/util/error');
+        const { DriverError, DriverErrorList } = realErrorModule;
+        const errors = [
+            new DriverError({
+                code: '11503319' as ErrorCode,
+                description: 'Type compatibility check failed.',
+                cause: 'Type mismatch.',
+                position: '',
+                solutions: []
+            }),
+            new DriverError({
+                code: '11503318' as ErrorCode,
+                description: 'Assignment type check failed.',
+                cause: 'Assignment mismatch.',
+                position: '',
+                solutions: []
+            })
+        ];
+        ets2panda.compile.mockImplementationOnce(() => {
+            throw new DriverErrorList(errors);
+        });
+        (process as any).emit('message', message);
+
+        expect((process as any).send).toHaveBeenCalledWith({
+            type: WorkerMessageType.ERROR_OCCURED,
+            data: {
+                taskId: mockTaskId,
+                error: [errors[0].logData, errors[1].logData]
+            },
+        });
+    });
+
     test('compile_process_worker unknown type test', () => {
         const message = {
             type: 'UNKNOWN_TYPE' as WorkerMessageType,

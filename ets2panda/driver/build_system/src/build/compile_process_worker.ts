@@ -18,7 +18,7 @@ import {
     ProcessCompileTask,
 } from '../types';
 import { LogDataFactory, LogData, Logger, getInterProcessLogger, patchBuildConfigLogger } from '../logger';
-import { ErrorCode, DriverError } from '../util/error';
+import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
 
 
@@ -63,6 +63,14 @@ function compile(id: string, task: ProcessCompileTask): void {
                 data: {
                     taskId: id,
                     error: error.logData
+                }
+            });
+        } else if (error instanceof DriverErrorList) {
+            process.send!({
+                type: WorkerMessageType.ERROR_OCCURED,
+                data: {
+                    taskId: id,
+                    error: error.errors.map((err: DriverError) => err.logData)
                 }
             });
         }
