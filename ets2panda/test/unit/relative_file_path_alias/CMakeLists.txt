@@ -14,7 +14,9 @@
 set(RFPA_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/relative_file_path_alias_data")
 file(MAKE_DIRECTORY "${RFPA_DATA_DIR}/src/mod")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entry.ets" "${RFPA_DATA_DIR}/src/mod/entry.ets" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/decl_entry.d.ets" "${RFPA_DATA_DIR}/src/mod/decl_entry.d.ets" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/flat_file.ets" "${RFPA_DATA_DIR}/flat_file.ets" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/flat_decl_file.d.ets" "${RFPA_DATA_DIR}/flat_decl_file.d.ets" COPYONLY)
 
 get_filename_component(ETS_STDLIB_JSON_PATH "${PANDA_ROOT}/plugins/ets/stdlib/std" ABSOLUTE)
 # JSON / compiler accept forward slashes on all host platforms

@@ -44,6 +44,11 @@ bool IsUserDefined(std::string_view name)
            name.find("arkruntime") == std::string_view::npos;
 }
 
+bool EndsWith(std::string_view value, std::string_view suffix)
+{
+    return value.size() >= suffix.size() && value.substr(value.size() - suffix.size()) == suffix;
+}
+
 std::unique_ptr<ark::pandasm::Program> CompileEtsModuleFile(const std::string &absoluteInputPath,
                                                             const std::string &arktsconfigPath, std::string_view src)
 {
@@ -104,6 +109,30 @@ TEST_F(RelativeFilePathAliasTest, ExactPathMapsToKeyWithPreservedExtension)
         }
         EXPECT_EQ(fn.sourceFile, "@ut_file.ets") << "function=" << name << " sourceFile=" << fn.sourceFile;
     }
+}
+
+TEST_F(RelativeFilePathAliasTest, DeclarationSourceFileKeepsFileName)
+{
+    const std::filesystem::path base = RFPA_DATA_DIR;
+    const std::string declPath = (base / "src" / "mod" / "decl_entry.d.ets").string();
+    const std::string cfgPath = (base / "arktsconfig.json").string();
+
+    const std::string src = ReadEntireFile(declPath);
+    ASSERT_FALSE(src.empty()) << "Missing test data at " << declPath;
+
+    auto program = CompileEtsModuleFile(declPath, cfgPath, src);
+    ASSERT_NE(program, nullptr);
+
+    bool found = false;
+    for (const auto &[name, record] : program->recordTable) {
+        if (!IsUserDefined(name)) {
+            continue;
+        }
+        found = true;
+        EXPECT_TRUE(EndsWith(record.sourceFile, "decl_entry.d.ets"))
+            << "record=" << name << " sourceFile=" << record.sourceFile;
+    }
+    EXPECT_TRUE(found) << "Expected at least one user-defined record";
 }
 
 }  // namespace ark::es2panda::compiler::test

@@ -39,7 +39,7 @@ namespace {
 bool ShouldUseEtsRelativePath(const util::ImportInfo &importInfo)
 {
     return importInfo.Lang() == Language::Id::ETS ||
-           util::Helpers::EndsWith(importInfo.ResolvedSource(), util::ImportPathManager::ETS_SUFFIX);
+           util::Helpers::EndsWith(importInfo.TextSource(), util::ImportPathManager::ETS_SUFFIX);
 }
 
 }  // namespace
@@ -74,7 +74,7 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
     if (!ShouldUseEtsRelativePath(importInfo_)) {
         return std::string {importInfo_.TextSource()};
     }
-    if (!Is<util::ModuleKind::MODULE>()) {
+    if (!Is<util::ModuleKind::MODULE>() && !Is<util::ModuleKind::SOURCE_DECL>()) {
         return std::string {ModuleName()};
     }
     auto relPath = util::Helpers::RelPathByStrippingPrefix(
@@ -88,7 +88,7 @@ std::optional<std::string> Program::TryRelativeFilePathViaArkTsPaths(const publi
     if (!ShouldUseEtsRelativePath(importInfo_)) {
         return std::nullopt;
     }
-    if (!Is<util::ModuleKind::MODULE>()) {
+    if (!Is<util::ModuleKind::MODULE>() && !Is<util::ModuleKind::SOURCE_DECL>()) {
         return std::nullopt;
     }
 
