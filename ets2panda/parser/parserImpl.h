@@ -114,7 +114,7 @@ public:
 
     util::DiagnosticEngine &DiagnosticEngine() const;
 
-    void SetParserStatus(ParserStatus status)
+    void AddParserStatus(ParserStatus status)
     {
         GetContext().Status() |= status;
     }

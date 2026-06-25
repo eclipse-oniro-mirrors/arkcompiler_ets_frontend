@@ -516,3 +516,29 @@ export interface DeclFileInfo {
     sourceFilePath: string;
     sourceFileLastModified: number | null;
 }
+
+export interface FileItemStatus {
+    isSet: boolean;
+    value: boolean;
+}
+
+export function getDefaultFileItemStatus(): FileItemStatus {
+    return {
+        isSet: false,
+        value: false
+    };
+}
+
+export interface FileChangeStatus {
+    hashChanged: FileItemStatus;
+    abcOutdated: FileItemStatus;
+    declOutdated: FileItemStatus;
+}
+
+export function getDefaultFileChangeStatus(): FileChangeStatus {
+    return {
+        hashChanged: getDefaultFileItemStatus(),
+        abcOutdated: getDefaultFileItemStatus(),
+        declOutdated: getDefaultFileItemStatus()
+    };
+}

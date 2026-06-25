@@ -103,7 +103,7 @@ File hash caching (hash_cache.json) enables incremental compilation. Unchanged f
 
 ### Graph Clustering
 
-Optional clustering merges files into batches when file count exceeds CLUSTER_FILES_TRESHOLD (460) for improved parallelism.
+Optional clustering merges files into batches when file count exceeds CLUSTER_FILES_THRESHOLD (460) for improved parallelism.
 
 ### Worker Communication
 

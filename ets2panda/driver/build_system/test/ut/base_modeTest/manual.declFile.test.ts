@@ -123,22 +123,22 @@ jest.mock('../../../src/util/TaskManager', () => {
     };
 });
 
-jest.mock('../../../src/dependency_analyzer', () => {
-    const createMockDependencyAnalyzerInstance = () => ({
+jest.mock('../../../src/dep_analyzer/incre_dep_analyzer', () => {
+    const createMockIncreDepAnalyzerInstance = () => ({
         getGraph: jest.fn()
     });
 
     let mockInstance: any;
 
-    const MockDependencyAnalyzer = jest.fn().mockImplementation(() => {
-        mockInstance = createMockDependencyAnalyzerInstance();
+    const MockIncreDepAnalyzer = jest.fn().mockImplementation(() => {
+        mockInstance = createMockIncreDepAnalyzerInstance();
         return mockInstance;
     });
 
-    (MockDependencyAnalyzer as any).getLastInstance = () => mockInstance;
+    (MockIncreDepAnalyzer as any).getLastInstance = () => mockInstance;
 
     return {
-        DependencyAnalyzer: MockDependencyAnalyzer
+        IncreDepAnalyzer: MockIncreDepAnalyzer
     };
 });
 
@@ -723,7 +723,7 @@ describe('BaseMode declaration file map management tests', () => {
         (testMode as any).moduleInfos = new Map([[moduleName, mockModuleInfo]]);
 
         const {TaskManager} = require('../../../src/util/TaskManager');
-        const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
+        const {IncreDepAnalyzer} = require('../../../src/dep_analyzer/incre_dep_analyzer');
 
         (TaskManager as jest.Mock).mockClear();
 
@@ -754,7 +754,7 @@ describe('BaseMode declaration file map management tests', () => {
             return taskManagerInstance;
         });
 
-        const mockDepAnalyzerInstance = {
+        const mockIncreDepAnalyzerInstance = {
             getGraph: jest.fn().mockReturnValue({
                 nodes: new Set<mockGraphNodeType>([
                     {
@@ -798,7 +798,7 @@ describe('BaseMode declaration file map management tests', () => {
             } as Partial<mockGraphType>)
         };
 
-        (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
+        (IncreDepAnalyzer as jest.Mock).mockImplementation(() => mockIncreDepAnalyzerInstance);
 
         const filterFilesNeedRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
         const extractFilesFromNodeData = (data: CompileJobInfo): string[] => {
@@ -920,7 +920,7 @@ describe('BaseMode declaration file map management tests', () => {
         (testMode as any).moduleInfos = new Map([[moduleName, mockModuleInfo]]);
 
         const {TaskManager} = require('../../../src/util/TaskManager');
-        const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
+        const {IncreDepAnalyzer} = require('../../../src/dep_analyzer/incre_dep_analyzer');
 
         (TaskManager as jest.Mock).mockClear();
 
@@ -937,7 +937,7 @@ describe('BaseMode declaration file map management tests', () => {
             return taskManagerInstance;
         });
 
-        const mockDepAnalyzerInstance = {
+        const mockIncreDepAnalyzerInstance = {
             getGraph: jest.fn().mockReturnValue({
                 nodes: [{
                     id: 'cluster_ABC',
@@ -960,7 +960,7 @@ describe('BaseMode declaration file map management tests', () => {
             })
         };
 
-        (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
+        (IncreDepAnalyzer as jest.Mock).mockImplementation(() => mockIncreDepAnalyzerInstance);
 
         const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
         const extractFilesFromNode = (data: any) => {

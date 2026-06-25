@@ -93,9 +93,11 @@ jest.mock('../../../src/util/utils', () => {
 jest.mock('../../../src/util/statsRecorder', () => ({
     StatisticsRecorder: jest.fn(() => ({
         record: jest.fn(),
-        writeSumSingle: jest.fn()
+        writeSumSingle: jest.fn(),
+        cluster: jest.fn()
     })),
     RecordEvent: { END: 'END' },
+    BS_PERF_DIR: 'perf',
     BS_PERF_FILE_NAME: 'bs_record_perf.csv'
 }));
 

@@ -140,6 +140,11 @@ void ETSParser::ParseGlobalImpl()
 
     ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().front().program == GetProgram());
 
+    // for incremental dep analyzer , we only need find the first level childs to update the full dep map
+    if (GetContext().IsIncrementalDependencyAnalyzerMode()) {
+        return;
+    }
+
     DoSomethingSpecificToMainProgram(this);
 
     ParseSources();

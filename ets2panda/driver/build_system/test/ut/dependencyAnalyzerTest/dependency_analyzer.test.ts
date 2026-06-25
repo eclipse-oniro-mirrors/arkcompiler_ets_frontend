@@ -15,7 +15,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { DependencyAnalyzer } from '../../../src/dependency_analyzer';
+import { DepAnalyzer } from '../../../src/dep_analyzer/dep_analyzer';
+import { FullDepAnalyzer } from '../../../src/dep_analyzer/full_dep_analyzer';
 import { Logger } from '../../../src/logger';
 import { Graph } from '../../../src/util/graph';
 import {
@@ -27,6 +28,7 @@ jest.mock('fs');
 jest.mock('../../../src/logger');
 jest.mock('../../../src/util/statsRecorder', () => ({
     StatisticsRecorder: jest.fn().mockImplementation(() => ({ record: jest.fn() })),
+    BS_PERF_DIR: 'perf',
     BS_PERF_FILE_NAME: 'bs_record_perf.csv',
     RecordEvent: {}
 }));
@@ -126,10 +128,10 @@ function createFileToModule(files: string[], moduleRoot = '/src') {
 function createAnalyzer(overrides: Partial<BuildConfig> = {}) {
     const config = createMockBuildConfig(overrides);
     const Gen = (require('../../../src/build/generate_arktsconfig') as any).ArkTSConfigGenerator;
-    return new DependencyAnalyzer(config, new Gen(config), false);
+    return new FullDepAnalyzer(config, new Gen(config), false);
 }
 
-let analyzer: DependencyAnalyzer;
+let analyzer: DepAnalyzer;
 
 beforeEach(() => {
     jest.clearAllMocks();

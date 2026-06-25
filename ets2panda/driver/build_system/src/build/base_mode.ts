@@ -30,7 +30,9 @@ import {
     MERGED_INTERMEDIATE_FILE,
     DEFAULT_WORKER_NUMS,
     DECL_FILE_MAP_NAME,
-    ETSCACHE_SUFFIX
+    ETSCACHE_SUFFIX,
+    DEP_ANALYZER_DIR,
+    DEP_ANALYZER_OUTPUT_FILE
 } from '../pre_define';
 import {
     ensurePathExists,
@@ -43,7 +45,6 @@ import {
     Logger,
     LogDataFactory,
 } from '../logger';
-import { DependencyAnalyzer } from '../dependency_analyzer';
 import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BuildConfig,
@@ -65,6 +66,7 @@ import {
     ArkTSConfig
 } from './generate_arktsconfig';
 import {
+    BS_PERF_DIR,
     BS_PERF_FILE_NAME,
     StatisticsRecorder,
 } from '../util/statsRecorder';
@@ -78,6 +80,9 @@ import {
 } from '../util/TaskManager';
 import { Graph, GraphNode } from '../util/graph';
 import { genObfuscationConfig } from '../obfuscation/obfuscation_config';
+import { DepAnalyzer } from '../dep_analyzer/dep_analyzer';
+import { IncreDepAnalyzer } from '../dep_analyzer/incre_dep_analyzer';
+import { FullDepAnalyzer } from '../dep_analyzer/full_dep_analyzer';
 
 enum BuildSystemEvent {
     COLLECT_MODULES = 'Collect module infos',
@@ -95,7 +100,7 @@ enum BuildSystemEvent {
 }
 
 function formEvent(event: BuildSystemEvent): string {
-    return '[Build system] ' + event;
+    return event;
 }
 
 export abstract class BaseMode {
@@ -120,9 +125,8 @@ export abstract class BaseMode {
         this.abcFiles = new Set<string>();
         this.arktsConfigGenerator = new ArkTSConfigGenerator(buildConfig);
 
-        this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_FILE_NAME), this.recordType,
-                                                    `Build system with mode: ` +
-                                                    `${this.es2pandaMode ?? ES2PANDA_MODE.RUN_PARALLEL}`);
+        this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_DIR, BS_PERF_FILE_NAME),
+                                                    `Build System`);
 
         this.processBuildConfig();
         this.statsRecorder.record(formEvent(BuildSystemEvent.BACKWARD_COMPAT));
@@ -480,12 +484,15 @@ export abstract class BaseMode {
         return this.buildConfig.declgenBridgeCodePath;
     }
 
-    public get recordType(): 'OFF' | 'ON' | undefined {
-        return this.buildConfig.recordType
-    }
-
     public get enableDebugOutput(): boolean | undefined {
         return this.buildConfig.enableDebugOutput;
+    }
+
+    private getDepAnalyzer(): DepAnalyzer {
+        const outputFile: string = path.join(this.buildConfig.cachePath, DEP_ANALYZER_DIR, DEP_ANALYZER_OUTPUT_FILE);
+        const incre: boolean = fs.existsSync(outputFile);
+        return incre ? new IncreDepAnalyzer(this.buildConfig, this.arktsConfigGenerator) :
+                       new FullDepAnalyzer(this.buildConfig, this.arktsConfigGenerator);
     }
 
     private compile(id: string, job: CompileJobInfo, incremental: boolean = true): boolean {
@@ -517,8 +524,8 @@ export abstract class BaseMode {
     }
 
     public async run(): Promise<void> {
-        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER), true);
+        const depAnalyzer = this.getDepAnalyzer();
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
@@ -573,7 +580,7 @@ export abstract class BaseMode {
             );
         }
 
-        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER), true);
         this.mergeAbcFiles(allOutputs);
     }
 
@@ -996,7 +1003,7 @@ export abstract class BaseMode {
             return;
         }
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
+        const depAnalyzer = this.getDepAnalyzer();
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
@@ -1089,7 +1096,7 @@ export abstract class BaseMode {
 
     public async generateDeclarationV1(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
+        const depAnalyzer = this.getDepAnalyzer();
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
@@ -1169,7 +1176,7 @@ export abstract class BaseMode {
     public async generateDeclarationV1Parallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         this.loadDeclFileMap();
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
+        const depAnalyzer = this.getDepAnalyzer();
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')

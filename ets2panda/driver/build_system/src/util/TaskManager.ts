@@ -16,7 +16,7 @@
 import { ChildProcess, fork } from 'child_process'
 import * as os from 'os';
 
-import { DEFAULT_WORKER_NUMS } from '../pre_define';
+import { DEFAULT_WORKER_NUMS, ENABLE_DISPATCH_ROOT_CLUSTER_FIRST } from '../pre_define';
 import { Logger, LogDataFactory, LogData } from '../logger';
 import { Worker as Thread } from 'worker_threads';
 import { WorkerMessageType, JobInfo, LogLevel } from '../types';
@@ -383,7 +383,8 @@ export class TaskManager<PayloadT extends JobInfo> {
 
     public initTaskQueue(): void {
         this.buildGraph.nodes.forEach((node: GraphNode<PayloadT>) => {
-            if (node.predecessors.size === 0) {
+            const length: number = ENABLE_DISPATCH_ROOT_CLUSTER_FIRST ? node.descendants.size : node.predecessors.size;
+            if (length === 0) {
                 this.taskQueue.push({
                     id: node.id,
                     payload: node.data
@@ -427,6 +428,34 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.logger.printDebug(`[Declgen milestone] Task [${taskId}] declgen completed, unlocked dependents`);
     }
 
+    private queuePredecessorTasks(taskId: string): void {
+ 	    const node = this.buildGraph.getNodeById(taskId);
+ 	    node.predecessors.forEach(prede => {
+ 	        const predeNode = this.buildGraph.getNodeById(prede);
+ 	        predeNode.descendants.delete(taskId);
+ 	        if (predeNode.descendants.size === 0) {
+ 	            this.taskQueue.push({
+ 	                id: predeNode.id,
+ 	                payload: predeNode.data
+ 	            });
+ 	            this.logger.printDebug(`[Declgen milestone] Added job ${prede} to the queue`);
+ 	        } else {
+ 	            this.logger.printDebug(
+ 	                `[Declgen milestone] Job ${prede} still has descendants ${predeNode.descendants}`
+ 	            );
+ 	        }
+ 	    });
+ 	    this.logger.printDebug(`[Declgen milestone] Task [${taskId}] declgen completed, unlocked predecessors`);
+ 	}
+
+    private queueTasks(taskId: string): void {
+        if (ENABLE_DISPATCH_ROOT_CLUSTER_FIRST) {
+            this.queuePredecessorTasks(taskId);
+        } else {
+            this.queueDependentTasks(taskId);
+        }
+    }
+
     private settleTask(completedTaskId: string, failed: boolean = false): void {
         const task = this.runningTasks.get(completedTaskId);
         if (!task) {
@@ -441,7 +470,7 @@ export class TaskManager<PayloadT extends JobInfo> {
 
         this.logger.printDebug(`Removed task [${completedTaskId}] from running tasks`)
 
-        this.queueDependentTasks(completedTaskId);
+        this.queueTasks(completedTaskId);
 
         this.logger.printDebug(`Task [${completedTaskId}] is completed with status: ${!failed ? 'success' : 'failed'}`)
         task.success = !failed;

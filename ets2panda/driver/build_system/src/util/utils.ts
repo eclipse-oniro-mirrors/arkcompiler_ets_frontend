@@ -392,3 +392,33 @@ export function getProfilePath(srcPath: string): string {
     return `${srcPath.replace(/\$profile\:/, '')}.json`;
 }
 
+export function formatTimestamp(timestamp: number): string {
+  const pad = (num: number, length: number = 2): string => {
+    return num.toString().padStart(length, '0');
+  };
+
+  const date = new Date(timestamp);
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+  const milliseconds = pad(date.getMilliseconds(), 3);
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+
+export function getPid(): number {
+  return process.pid;
+}
+
+let batchId: number = 0;
+
+export function nextBatch(): void {
+  batchId++;
+}
+
+export function getBatchId(): number {
+  return batchId;
+}

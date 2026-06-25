@@ -74,6 +74,7 @@ enum class ParserStatus : uint64_t {
 
     STATIC_BLOCK = 1ULL << 39ULL,
     IN_PACKAGE = 1ULL << 40ULL,
+    INCREMENTAL_DEPENDENCY_ANALYZER_MODE = 1ULL << 41ULL,
 };
 
 }  // namespace ark::es2panda::parser
@@ -146,6 +147,11 @@ public:
     [[nodiscard]] bool IsDependencyAnalyzerMode() const noexcept
     {
         return (status_ & ParserStatus::DEPENDENCY_ANALYZER_MODE) != 0;
+    }
+
+    [[nodiscard]] bool IsIncrementalDependencyAnalyzerMode() const noexcept
+    {
+        return (status_ & ParserStatus::INCREMENTAL_DEPENDENCY_ANALYZER_MODE) != 0;
     }
 
     [[nodiscard]] bool AllowReceiver() const noexcept
