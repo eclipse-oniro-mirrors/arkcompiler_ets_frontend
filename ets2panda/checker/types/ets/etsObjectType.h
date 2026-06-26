@@ -22,6 +22,7 @@
 #include "checker/types/signature.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsTypeParameterDeclaration.h"
+#include "varbinder/exportFacts.h"
 #include "varbinder/scope.h"
 #include "ir/base/classDefinition.h"
 
@@ -424,6 +425,9 @@ public:
     util::StringView GetReExportAliasValue(util::StringView const &key) const;
     bool IsReExportHaveAliasValue(util::StringView const &key) const;
     const ArenaVector<ETSObjectType *> &ReExports() const;
+    void SetExportSurface(varbinder::ExportSurfaceId surface);
+    const varbinder::ExportSurfaceId &ExportSurface() const;
+    bool HasExportSurface() const;
     bool IsSameBasedGeneric(TypeRelation *relation, Type const *other) const;
 
     void Iterate(const TypeTraverser &func) const override;
@@ -553,6 +557,7 @@ private:
     EPtr<ETSObjectType> superType_ {};
     EPtr<ETSObjectType> enclosingType_ {};
     EPtr<ETSObjectType> baseType_ {};
+    varbinder::ExportSurfaceId exportSurface_ {};
 
     // optimized subtyping
     mutable EPtr<ArenaSet<ETSObjectType *>> transitiveSupertypes_;

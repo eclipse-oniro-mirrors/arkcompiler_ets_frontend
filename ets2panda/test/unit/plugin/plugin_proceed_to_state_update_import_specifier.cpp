@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
     UpdateImportSpecifier(context);
 
     const char *src = impl->AstNodeDumpEtsSrcConst(context, program);
-    const char *expected = "import { E as E } from \"std/math/consts\"";
+    const char *expected = "import { E } from \"std/math/consts\"";
     if (strstr(src, expected) == nullptr) {
         return 1;
     }

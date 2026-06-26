@@ -309,7 +309,7 @@ static bool CheckFieldInitializationInBody(ir::AstNode *body, ir::ClassProperty 
 
         if (left->IsMemberExpression()) {
             auto *member = left->AsMemberExpression();
-            if (member->Object() && member->Object()->IsThisExpression() && member->Property() &&
+            if (member->Object() != nullptr && member->Object()->IsThisExpression() && member->Property() != nullptr &&
                 member->Property()->IsIdentifier() && member->Property()->AsIdentifier()->Name() == st->Id()->Name()) {
                 isInitialized = true;
             }
@@ -507,6 +507,11 @@ checker::Type *ETSAnalyzer::Check(ir::ClassStaticBlock *st) const
     }
 
     auto *func = st->Function();
+    if (func == nullptr || func->Scope() == nullptr) {
+        st->SetTsType(checker->GlobalTypeError());
+        return st->TsType();
+    }
+
     checker->BuildFunctionSignature(func);
 
     if (func->Signature() == nullptr) {
@@ -582,11 +587,11 @@ static bool IsInitializerBlockTransfer(std::string_view str)
 
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 static bool IsSignatureUnreachable(ETSChecker *checker, Signature *currSig, Signature *prevSig,
-                                   std::optional<lexer::SourcePosition> start_pos)
+                                   std::optional<lexer::SourcePosition> startPos)
 {
     SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK);
     if (checker->Relation()->SignatureIsCoveredBy(currSig, prevSig)) {
-        auto start = start_pos.has_value() ? start_pos.value() : currSig->Function()->Id()->Start();
+        auto start = startPos.has_value() ? startPos.value() : currSig->Function()->Id()->Start();
         checker->LogError(diagnostic::OVERLOAD_UNREACHABLE_WARNING, {currSig->ToString(), prevSig->ToString()}, start);
         return true;
     }
@@ -595,7 +600,7 @@ static bool IsSignatureUnreachable(ETSChecker *checker, Signature *currSig, Sign
 
 static Type *CheckUnreachableSignatureInFunctionType(
     ETSChecker *checker, Type *type,
-    std::optional<lexer::SourcePosition> start_pos = std::optional<lexer::SourcePosition>())
+    std::optional<lexer::SourcePosition> startPos = std::optional<lexer::SourcePosition>())
 {
     if (type == nullptr || !type->IsETSFunctionType()) {
         return type;
@@ -607,7 +612,7 @@ static Type *CheckUnreachableSignatureInFunctionType(
             auto *currSig = signatures[j];
             auto *prevSig = signatures[i];
 
-            if (IsSignatureUnreachable(checker, currSig, prevSig, start_pos)) {
+            if (IsSignatureUnreachable(checker, currSig, prevSig, startPos)) {
                 break;
             }
         }
@@ -1134,6 +1139,7 @@ static checker::Type *CheckInstantiatedNewType(ETSChecker *checker, ir::ETSNewCl
         return checker->GlobalTypeError();
     }
 
+    checker->ETSObjectTypeDeclNode(checker, calleeObj);
     return calleeType;
 }
 
@@ -1292,12 +1298,14 @@ checker::Type *ETSAnalyzer::Check(ir::ETSTypeReference *node) const
 {
     ETSChecker *checker = GetETSChecker();
     checker->CheckAnnotations(node);
+    checker->MaterializeImportTypeReferences(node);
     return node->GetType(checker);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ETSTypeReferencePart *node) const
 {
     ETSChecker *checker = GetETSChecker();
+    checker->MaterializeImportTypeReferences(node);
     return node->GetType(checker);
 }
 
@@ -1955,7 +1963,7 @@ Type *ETSChecker::ResolvePreferredReturnTypeForAsyncFunction(ir::ScriptFunction 
         std::vector<Type *> possibleReturnTypes = {};
         for (const auto &ct : preferredType->AsETSUnionType()->ConstituentTypes()) {
             auto candidate = ExtractAsyncFunctionPreferredReturnType(this, ct);
-            if (candidate) {
+            if (candidate != nullptr) {
                 possibleReturnTypes.push_back(candidate);
             }
         }
@@ -3115,6 +3123,12 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
 
     CheckCallee(checker, expr);
 
+    if (expr->TypeParams() != nullptr) {
+        for (auto *typeArg : expr->TypeParams()->Params()) {
+            checker->MaterializeImportTypeReferences(typeArg);
+        }
+    }
+
     checker::TypeStackElement tse(checker, expr, {{diagnostic::CYCLIC_CALLEE, {}}}, expr->Start());
     ERROR_SANITY_CHECK(checker, !tse.HasTypeError(), return expr->SetTsType(checker->GlobalTypeError()));
 
@@ -3394,8 +3408,9 @@ static Type *TransformMethodTypeToArrow(ETSChecker *checker, ir::Expression *use
 
     auto it = signatures.begin();
     while (it != signatures.end()) {
-        if ((*it)->HasSignatureFlag(SignatureFlags::ABSTRACT) &&
-            !(*it)->Owner()->GetDeclNode()->IsTSInterfaceDeclaration()) {
+        auto *owner = (*it)->Owner();
+        if ((*it)->HasSignatureFlag(SignatureFlags::ABSTRACT) && owner != nullptr &&
+            !owner->GetDeclNode()->IsTSInterfaceDeclaration()) {
             it = signatures.erase(it);
         } else {
             ++it;
@@ -3416,6 +3431,12 @@ static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression
 {
     ES2PANDA_ASSERT(use->IsIdentifier() || use->IsMemberExpression());
 
+    if (use->IsIdentifier() && use->Parent() != nullptr &&
+        (use->Parent()->IsImportSpecifier() || use->Parent()->IsImportDefaultSpecifier() ||
+         use->Parent()->IsImportNamespaceSpecifier())) {
+        return type;
+    }
+
     if (auto *errType = CheckExplicitTypeArgumentsRequired(checker, use, type); errType != nullptr) {
         return errType;
     }
@@ -3427,10 +3448,25 @@ static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression
     return TransformMethodTypeToArrow(checker, use, type);
 }
 
+static checker::Type *ValidatePrecheckedNamespaceIdentifier(ETSChecker *checker, ir::Identifier *expr)
+{
+    if (expr->TsType()->IsTypeError() || expr->Variable() == nullptr ||
+        !expr->Variable()->HasFlag(varbinder::VariableFlags::NAMESPACE) ||
+        (!checker->IsCallArgument(expr) && !checker->IsNamespaceObjectValueUse(expr, expr->TsType()))) {
+        return expr->TsType();
+    }
+
+    checker->LogError(diagnostic::NAMESPACE_AS_OBJ, {expr->Name()}, expr->Start());
+    return expr->SetTsType(checker->GlobalTypeError());
+}
+
 checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
 {
     if (expr->TsType() != nullptr) {
-        return expr->TsType();
+        if (auto *type = GetETSChecker()->MaterializePrecheckedImportIdentifier(expr); type != nullptr) {
+            return type;
+        }
+        return ValidatePrecheckedNamespaceIdentifier(GetETSChecker(), expr);
     }
 
     ETSChecker *checker = GetETSChecker();
@@ -3569,6 +3605,11 @@ checker::Type *ETSAnalyzer::Check(ir::MemberExpression *expr) const
             expr->object_->SetTsType(baseType);
             expr->property_->AsIdentifier()->SetName(reExportType.second);
         }
+    }
+
+    if (baseType->IsETSObjectType() && baseType->AsETSObjectType()->HasExportSurface()) {
+        checker->MaterializeNamespaceMember(baseType->AsETSObjectType(), expr->Property()->AsIdentifier()->Name(),
+                                            expr->Property()->Start());
     }
 
     if (!checker->CheckNonNullish(expr->Object())) {
@@ -4035,8 +4076,14 @@ checker::Type *ETSAnalyzer::CheckObjectExprBaseOnUnionType(ir::ObjectExpression 
     std::vector<checker::ETSObjectType *> candidateObjectTypes;
     // Phase 1: Gather all ETSObjectTypes from the union
     for (auto *constituentType : preferredType->ConstituentTypes()) {
-        if (constituentType->IsETSObjectType()) {
-            candidateObjectTypes.push_back(constituentType->AsETSObjectType());
+        auto *candidateType =
+            GetAppropriatePreferredType(constituentType, [](Type *type) { return type->IsETSObjectType(); });
+        if (candidateType != nullptr) {
+            auto *objectType = candidateType->AsETSObjectType();
+            if (std::find(candidateObjectTypes.begin(), candidateObjectTypes.end(), objectType) ==
+                candidateObjectTypes.end()) {
+                candidateObjectTypes.push_back(objectType);
+            }
         }
     }
 
@@ -4830,12 +4877,22 @@ static void ValidateImportTypeUsage(ETSChecker *checker, ir::ImportDeclaration *
     }
 }
 
+static bool IsImportBindingVariable(varbinder::Variable *var)
+{
+    return var != nullptr && var->IsLocalVariable() && var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ImportDeclaration *st) const
 {
     ETSChecker *checker = GetETSChecker();
     checker::Type *type = nullptr;
+    if (st->Parent() != nullptr && st->Parent()->IsETSReExportDeclaration()) {
+        return type;
+    }
+
     for (auto *spec : st->Specifiers()) {
         ValidateImportTypeUsage(checker, st, spec);
+        checker->ResolveAndMaterializeImportSpecifier(st, spec);
         if (spec->IsImportNamespaceSpecifier()) {
             type = spec->AsImportNamespaceSpecifier()->Check(checker);
         }
@@ -4875,7 +4932,7 @@ checker::Type *ETSAnalyzer::Check(ir::ImportNamespaceSpecifier *st) const
         return type;
     }
 
-    return checker->GetImportSpecifierObjectType(importDecl, st->Local()->AsIdentifier());
+    return checker->GetImportNamespaceObjectType(importDecl, st->Local()->AsIdentifier());
 }
 
 // compile methods for STATEMENTS in alphabetical order
@@ -5001,12 +5058,91 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDeclaration *st) const
     return ReturnTypeForStatement(st);
 }
 
+static ir::AnnotationDeclaration *AsDeclareAnnotation(varbinder::Variable *var)
+{
+    if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr ||
+        !var->Declaration()->Node()->IsAnnotationDeclaration()) {
+        return nullptr;
+    }
+
+    auto *decl = var->Declaration()->Node()->AsAnnotationDeclaration();
+    return decl->IsDeclare() ? decl : nullptr;
+}
+
+static varbinder::Variable *FindImportBindingInModule(const ir::ETSModule *module, util::StringView name)
+{
+    if (module == nullptr) {
+        return nullptr;
+    }
+
+    for (auto *stmt : module->Statements()) {
+        if (!stmt->IsETSImportDeclaration()) {
+            continue;
+        }
+        for (auto *spec : stmt->AsETSImportDeclaration()->Specifiers()) {
+            if (!spec->IsImportSpecifier()) {
+                continue;
+            }
+            auto *local = spec->AsImportSpecifier()->Local();
+            if (local->Name() == name) {
+                return local->Variable();
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+static varbinder::Variable *FindAmbientAnnotationImportVariable(ETSChecker *checker, ir::AnnotationDeclaration *st,
+                                                                util::StringView name)
+{
+    auto *topScope = checker->VarBinder() != nullptr ? checker->VarBinder()->TopScope() : nullptr;
+    auto *importVar = topScope != nullptr ? topScope->FindLocal(name, varbinder::ResolveBindingOptions::ALL) : nullptr;
+    if (IsImportBindingVariable(importVar)) {
+        return importVar;
+    }
+
+    auto *module =
+        st->Program() != nullptr && st->Program()->Ast() != nullptr ? st->Program()->Ast()->AsETSModule() : nullptr;
+    return FindImportBindingInModule(module, name);
+}
+
+static ir::AnnotationDeclaration *FindAmbientAnnotationDeclaration(ETSChecker *checker, ir::AnnotationDeclaration *st)
+{
+    auto *baseName = st->GetBaseName();
+    if (baseName->IsErrorPlaceHolder()) {
+        return nullptr;
+    }
+
+    if (auto *decl = AsDeclareAnnotation(checker->ResolveEffectiveVariable(baseName->Variable()));
+        decl != nullptr && decl != st) {
+        return decl;
+    }
+
+    auto *importVar = FindAmbientAnnotationImportVariable(checker, st, baseName->Name());
+    if (auto *decl = AsDeclareAnnotation(importVar); decl != nullptr && decl != st) {
+        return decl;
+    }
+    if (!IsImportBindingVariable(importVar)) {
+        return nullptr;
+    }
+    return AsDeclareAnnotation(checker->ResolveEffectiveVariable(importVar));
+}
+
 checker::Type *ETSAnalyzer::Check(ir::AnnotationDeclaration *st) const
 {
-    if (st->Expr()->TsType() != nullptr) {
+    ETSChecker *checker = GetETSChecker();
+    auto *baseName = st->GetBaseName();
+    auto *baseVar = baseName->IsErrorPlaceHolder() ? nullptr : baseName->Variable();
+    const bool hasImportBase =
+        baseVar != nullptr && baseVar->IsLocalVariable() && baseVar->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
+    if (st->Expr()->TsType() != nullptr && !hasImportBase) {
+        if (auto *annoDecl = FindAmbientAnnotationDeclaration(checker, st); annoDecl != nullptr) {
+            checker->CheckAmbientAnnotation(st, annoDecl);
+        }
         return ReturnTypeForStatement(st);
     }
-    ETSChecker *checker = GetETSChecker();
+
     st->Expr()->Check(checker);
     checker->CheckAnnotations(st, true);
 
@@ -5030,12 +5166,8 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationDeclaration *st) const
         }
     }
 
-    auto baseName = st->GetBaseName();
-    if (!baseName->IsErrorPlaceHolder() && baseName->Variable()->Declaration()->Node()->IsAnnotationDeclaration()) {
-        auto *annoDecl = baseName->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
-        if (annoDecl != st && annoDecl->IsDeclare()) {
-            checker->CheckAmbientAnnotation(st, annoDecl);
-        }
+    if (auto *annoDecl = FindAmbientAnnotationDeclaration(checker, st); annoDecl != nullptr) {
+        checker->CheckAmbientAnnotation(st, annoDecl);
     }
 
     return ReturnTypeForStatement(st);
@@ -5054,13 +5186,15 @@ static void ProcessRequiredFields(ArenaUnorderedMap<util::StringView, ir::ClassP
 
 checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
 {
+    ETSChecker *checker = GetETSChecker();
     if (st->Expr()->TsType() != nullptr) {
+        checker->MaterializeAnnotationUsageBaseName(st);
         return ReturnTypeForStatement(st);
     }
-    ETSChecker *checker = GetETSChecker();
     st->Expr()->Check(checker);
 
     auto *baseName = st->GetBaseName();
+    checker->MaterializeAnnotationUsageBaseName(st);
     if (baseName->Variable() == nullptr || !baseName->Variable()->Declaration()->Node()->IsAnnotationDeclaration()) {
         if (!baseName->IsErrorPlaceHolder()) {
             checker->LogError(diagnostic::NOT_AN_ANNOTATION, {baseName->Name()}, baseName->Start());
@@ -5080,7 +5214,7 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
     auto *parentNode = st->Parent();
     if (parentNode != nullptr && util::Helpers::IsExported(parentNode) &&
         !(parentNode->IsClassProperty() && parentNode->AsClassProperty()->IsPrivate())) {
-        if (!util::Helpers::IsExported(annoDecl)) {
+        if (!util::Helpers::IsExported(annoDecl) && !annoDecl->IsSourceRetention()) {
             checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {baseName->Name()}, st->Start());
         }
     }
@@ -5586,7 +5720,7 @@ checker::Type *ETSAnalyzer::Check(ir::ReturnStatement *st) const
     }
 
     const auto functionRetType = GetFunctionReturnType(st, containingFunc);
-    if (!st->ReturnType() || !checker->Relation()->IsSupertypeOf(functionRetType, st->ReturnType())) {
+    if (st->ReturnType() == nullptr || !checker->Relation()->IsSupertypeOf(functionRetType, st->ReturnType())) {
         st->SetReturnType(checker, functionRetType);
     }
 
@@ -5917,9 +6051,10 @@ static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Ty
             checker->LogError(diagnostic::INVALID_CAST, {sourceType, targetType}, expr->Expr()->Start());
             expr->SetTsType(targetType);
             return false;
-        } else if (targetType->IsETSUnionType() && targetType->AsETSUnionType()->AllOfConstituentTypes(
-                                                       // CC-OFFNXT(G.FMT.06-CPP) project code style
-                                                       [](Type *type) { return type->IsETSTypeParameter(); })) {
+        }
+        if (targetType->IsETSUnionType() && targetType->AsETSUnionType()->AllOfConstituentTypes(
+                                                // CC-OFFNXT(G.FMT.06-CPP) project code style
+                                                [](Type *type) { return type->IsETSTypeParameter(); })) {
             checker->LogError(diagnostic::INVALID_CAST, {sourceType, targetType}, expr->Expr()->Start());
             expr->SetTsType(targetType);
             return false;
@@ -5938,8 +6073,8 @@ static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Ty
 }
 
 //  Extracted from 'ETSAnalyzer::Check(ir::TSAsExpression *expr)' function to reduce its size
-static checker::CastingContext const CheckTSAsExpressionCastable(ir::Expression *castExpr, checker::Type *sourceType,
-                                                                 checker::Type *targetType, ETSChecker *checker)
+static checker::CastingContext CheckTSAsExpressionCastable(ir::Expression *castExpr, checker::Type *sourceType,
+                                                           checker::Type *targetType, ETSChecker *checker)
 {
     diagnostic::DiagnosticKind const *message = &diagnostic::INVALID_CAST;
     util::DiagnosticMessageParams parameters = {sourceType, targetType};
@@ -5985,7 +6120,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
     }
 
     checker->CheckAnnotations(expr->TypeAnnotation());
-    auto *const targetType = expr->TypeAnnotation()->AsTypeNode()->GetType(checker);
+    auto *const targetType = checker->GetTypeFromTypeAnnotation(expr->TypeAnnotation()->AsTypeNode());
     FORWARD_TYPE_ERROR(checker, targetType, expr);
 
     auto *castExpr = expr->Expr();
@@ -6110,71 +6245,6 @@ checker::Type *ETSAnalyzer::Check(ir::TSThisType *node) const
     return node->GetType(checker);
 }
 
-static varbinder::Variable *FindInReExports(ETSObjectType *baseType, util::StringView &searchName)
-{
-    for (auto *reExport : baseType->ReExports()) {
-        PropertySearchFlags flags = PropertySearchFlags::SEARCH_STATIC_FIELD | PropertySearchFlags::SEARCH_STATIC_DECL;
-        if (auto *var = reExport->GetProperty(searchName, flags); var != nullptr) {
-            return var;
-        }
-        auto *result = FindInReExports(reExport, searchName);
-        if (result != nullptr) {
-            return result;
-        }
-    }
-    return nullptr;
-}
-
-static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util::StringView &searchName,
-                                                       ETSObjectType *baseType)
-{
-    /* This function try to find name1.name2, name1.A in file file1.ets,
-     * ./file1.ets:
-     * import * as name1 from "./file2"
-     *
-     * ./file2.ets:
-     * import * as name2 from "./file3"
-     * import {A} from "./file3"
-     * export {name2}
-     * export {A}
-     *
-     * ./file3.ets
-     * export class A{}
-     *
-     * 1. Find in file2->program->ast->scope first
-     * 2. Find in varbinder->selectiveExportAliasMultimap second
-     * if both found, return variable
-     */
-    auto declNode = baseType->GetDeclNode();
-    if (!declNode->IsIdentifier()) {
-        return nullptr;
-    }
-    if (declNode->Parent() == nullptr || declNode->Parent()->Parent() == nullptr) {
-        return nullptr;
-    }
-    auto importDeclNode = declNode->Parent()->Parent();
-    if (!importDeclNode->IsETSImportDeclaration()) {
-        return nullptr;
-    }
-
-    auto importDecl = importDeclNode->AsETSImportDeclaration();
-
-    parser::Program *program = checker->VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
-    auto &bindings = program->Ast()->Scope()->Bindings();
-
-    if (auto result = bindings.find(searchName); result != bindings.end()) {
-        auto &sMap = checker->VarBinder()
-                         ->AsETSBinder()
-                         ->GetSelectiveExportAliasMultimap()
-                         .find(importDecl->ImportInfo().ResolvedSource())
-                         ->second;
-        if (auto it = sMap.find(searchName); it != sMap.end()) {
-            return result->second;
-        }
-    }
-    return FindInReExports(baseType, searchName);
-}
-
 checker::Type *ETSAnalyzer::Check(ir::TSQualifiedName *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -6189,12 +6259,14 @@ checker::Type *ETSAnalyzer::Check(ir::TSQualifiedName *expr) const
         if (searchName.Empty()) {
             searchName = expr->Right()->Name();
         }
+
+        if (baseType->AsETSObjectType()->HasExportSurface()) {
+            checker->MaterializeNamespaceMember(baseType->AsETSObjectType(), searchName, expr->Right()->Start());
+        }
+
         varbinder::Variable *prop =
             baseType->AsETSObjectType()->GetProperty(searchName, PropertySearchFlags::SEARCH_DECL);
 
-        if (prop == nullptr) {
-            prop = FindNameForImportNamespace(GetETSChecker(), searchName, baseType->AsETSObjectType());
-        }
         // NOTE(dslynko): in debugger evaluation mode must lazily generate module's properties here.
         if (prop == nullptr) {
             checker->LogError(diagnostic::NONEXISTENT_TYPE, {expr->Right()->Name()}, expr->Right()->Start());

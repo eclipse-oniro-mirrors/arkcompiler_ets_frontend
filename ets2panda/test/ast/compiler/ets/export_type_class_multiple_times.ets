@@ -16,8 +16,5 @@
 class A {}
 
 export type {A}
-export type MyA = A
+export type MyA = A /* @@? 19:1 Warning Warning W0073: Duplicated export aliases for 'MyA'. */
 export type {MyA}
-
-
-/* @@? 20:14 Warning Warning W0073: Duplicated export aliases for 'MyA'. */

@@ -485,6 +485,7 @@ SavedCheckerContext ETSChecker::CreateSavedCheckerContext(varbinder::Variable *c
             Type *containingClass {};
             if (classDef->TsType() == nullptr) {
                 containingClass = BuildBasicClassProperties(classDef);
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 ResolveDeclaredMembersOfObject(containingClass);
             } else {
                 containingClass = classDef->TsType()->AsETSObjectType();
@@ -562,6 +563,13 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
         case varbinder::DeclType::FUNC:
             [[fallthrough]];
         case varbinder::DeclType::IMPORT:
+            if (var->IsLocalVariable() && var->AsLocalVariable()->IsNonNamespaceImportBinding()) {
+                auto *declNode = var->Declaration() == nullptr ? nullptr : var->Declaration()->Node();
+                auto *useSite = declNode != nullptr && declNode->IsIdentifier() ? declNode->AsIdentifier() : nullptr;
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+                variableType = ResolveImportBindingType(var->AsLocalVariable(), useSite);
+                break;
+            }
             variableType = var->Declaration()->Node()->Check(this);
             break;
 
@@ -570,6 +578,7 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
             break;
 
         case varbinder::DeclType::INTERFACE:
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             variableType = BuildBasicInterfaceProperties(var->Declaration()->Node()->AsTSInterfaceDeclaration());
             break;
 
@@ -600,9 +609,11 @@ Type *ETSChecker::GetTypeOfVariable(varbinder::Variable *const var)
         return var->TsType();
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     checker::SavedCheckerContext savedContext = CreateSavedCheckerContext(var);
     checker::ScopeContext scopeCtx(this, var->GetScope());
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return GetTypeFromVariableDeclaration(var);
 }
 
@@ -657,6 +668,7 @@ Type *ETSChecker::GuaranteedTypeForUncheckedPropertyAccess(varbinder::Variable *
         }
         case ir::AstNodeType::METHOD_DEFINITION:
         case ir::AstNodeType::CLASS_DEFINITION:
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             return GetTypeOfVariable(prop);
         default:
             return nullptr;
@@ -700,6 +712,7 @@ Type *ETSChecker::GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *member
         if (!type->IsETSObjectType()) {
             return nullptr;
         }
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         auto *fieldVar = type->AsETSObjectType()->GetProperty(propertyName, searchFlags);
         if (fieldVar == nullptr) {
             return nullptr;
@@ -862,6 +875,7 @@ Type *ETSChecker::GetTypeFromInterfaceReference(varbinder::Variable *var)
     status &= this->Context().Status();
     this->Context().Status() &= ~CheckerStatus::IN_STATIC_CONTEXT;
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *interfaceType = BuildBasicInterfaceProperties(var->Declaration()->Node()->AsTSInterfaceDeclaration());
     var->SetTsType(interfaceType);
 
@@ -1900,7 +1914,9 @@ void ETSChecker::CheckInheritedExplicitOverloadRedeclarationRequirement(ETSObjec
     std::unordered_map<util::StringView, std::vector<ETSObjectType *>> inheritedOverloads;
 
     objectType->EnsureTransitiveSupertypesInitialized();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     for (auto *superType : objectType->TransitiveSupertypes()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         for (auto const [propName, prop] : superType->InstanceDecls()) {
             if (isOverloadDecl(prop)) {
                 inheritedOverloads[propName].push_back(superType);
@@ -1908,7 +1924,9 @@ void ETSChecker::CheckInheritedExplicitOverloadRedeclarationRequirement(ETSObjec
         }
     }
 
-    auto const loc = objectType->GetDeclNode() ? objectType->GetDeclNode()->Start() : lexer::SourcePosition {};
+    auto const *declNode = objectType->GetDeclNode();
+    auto const loc = declNode != nullptr ? declNode->Start() : lexer::SourcePosition {};
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto const &localDecls = objectType->InstanceDecls();
 
     for (auto const &entry : inheritedOverloads) {
@@ -1998,12 +2016,14 @@ void ETSChecker::CheckClassMethodOverloadDeclaration(ETSChecker *checker, ir::Ov
 
         Type *classType = node->Parent()->AsClassDefinition()->TsType();
         ES2PANDA_ASSERT(classType->IsETSObjectType());
+        auto *classObjectType = classType->AsETSObjectType();
 
-        auto *variable =
-            checker->ResolveOverloadReference(ident->AsIdentifier(), classType->AsETSObjectType(), searchFlags);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto *variable = checker->ResolveOverloadReference(ident->AsIdentifier(), classObjectType, searchFlags);
 
         if (variable == nullptr &&
-            checker->ResolveOverloadReference(ident->AsIdentifier(), classType->AsETSObjectType(),
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            checker->ResolveOverloadReference(ident->AsIdentifier(), classObjectType,
                                               searchFlags | PropertySearchFlags::SEARCH_METHOD) != nullptr) {
             checker->LogError(diagnostic::OVERLOAD_SAME_ACCESS_MODIFIERS_STATIC_ASYNC, {}, ident->Start());
             continue;
@@ -2022,6 +2042,7 @@ void ETSChecker::CheckClassMethodOverloadDeclaration(ETSChecker *checker, ir::Ov
         }
         currOverloadedNames.insert(overloadedName->AsIdentifier()->Name());
     }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckOverloadDeclInheritance(checker, node, currOverloadedNames);
 }
 
@@ -2042,11 +2063,13 @@ void ETSChecker::CheckInterfaceMethodOverloadDeclaration(ETSChecker *checker, ir
 
         Type *interfaceType = node->Parent()->Parent()->AsTSInterfaceDeclaration()->TsType();
         ES2PANDA_ASSERT(interfaceType->IsETSObjectType());
-        auto *variable =
-            checker->ResolveOverloadReference(ident->AsIdentifier(), interfaceType->AsETSObjectType(), searchFlags);
+        auto *interfaceObjectType = interfaceType->AsETSObjectType();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto *variable = checker->ResolveOverloadReference(ident->AsIdentifier(), interfaceObjectType, searchFlags);
 
         if (variable == nullptr &&
-            checker->ResolveOverloadReference(ident->AsIdentifier(), interfaceType->AsETSObjectType(),
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            checker->ResolveOverloadReference(ident->AsIdentifier(), interfaceObjectType,
                                               searchFlags | PropertySearchFlags::SEARCH_METHOD) != nullptr) {
             checker->LogError(diagnostic::OVERLOAD_SAME_ACCESS_MODIFIERS_STATIC_ASYNC, {}, ident->Start());
             continue;

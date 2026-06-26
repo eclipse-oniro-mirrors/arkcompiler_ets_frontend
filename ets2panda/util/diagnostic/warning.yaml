@@ -13,12 +13,6 @@
 
 warning:
 
-- name: ALREADY_EXPORTED
-  id: 685267
-  message: "Entity named '{}' is already exported"
-  strict: true
-  softlist: ["allow_reexport"]
-
 - name: ANNOTATION_UNUSED_GENERIC_ALIAS_WARN
   id: 9
   message: "Type alias generic parameter '{}' is not used in type annotation"
@@ -29,7 +23,8 @@ warning:
 
 - name: AWAIT_ASYNC_USAGE
   id: 67
-  message: "Avoid using the awaitSync method unless it is absolutely necessary: please refer to its description in standard library documentation to make sure that you fully understand the implications and consequences."
+  message: "Avoid using the awaitSync method unless it is absolutely necessary: please refer to its description in standard
+    library documentation to make sure that you fully understand the implications and consequences."
 
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
@@ -286,5 +281,6 @@ graveyard:
 - 49710
 - 59220
 - 122948
+- 685267
 - 696291
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

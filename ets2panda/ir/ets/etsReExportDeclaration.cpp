@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "ir/ets/etsReExportDeclaration.h"
 #include "ir/astDump.h"
+#include "ir/module/importDefaultSpecifier.h"
 #include "checker/checker.h"
 
 namespace ark::es2panda::ir {
@@ -66,16 +67,25 @@ void ETSReExportDeclaration::Dump([[maybe_unused]] ir::SrcDumper *dumper) const
     auto importDeclaration = GetETSImportDeclarations();
     const auto &specifiers = importDeclaration->Specifiers();
     dumper->Add("export ");
-    if (specifiers.size() == 1 &&
-        (specifiers[0]->IsImportNamespaceSpecifier() || specifiers[0]->IsImportDefaultSpecifier())) {
+    if (specifiers.size() == 1 && specifiers[0]->IsImportNamespaceSpecifier()) {
         specifiers[0]->Dump(dumper);
     } else {
         dumper->Add("{ ");
-        for (auto specifier : specifiers) {
-            specifier->Dump(dumper);
-            if (specifier != specifiers.back()) {
+        bool hasPrevious = false;
+        for (auto *specifier : specifiers) {
+            if (specifier->IsImportNamespaceSpecifier()) {
+                continue;
+            }
+            if (hasPrevious) {
                 dumper->Add(", ");
             }
+            if (specifier->IsImportDefaultSpecifier()) {
+                dumper->Add("default as ");
+                specifier->AsImportDefaultSpecifier()->Local()->Dump(dumper);
+            } else {
+                specifier->Dump(dumper);
+            }
+            hasPrevious = true;
         }
         dumper->Add(" }");
     }

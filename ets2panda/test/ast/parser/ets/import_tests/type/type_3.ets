@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,4 +20,4 @@ export {foo}
 export type {TestClass as foo}
 
 
-/* @@? 20:14 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo'. */
+/* @@? 20:27 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo'. */

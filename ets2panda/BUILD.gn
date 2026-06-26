@@ -96,6 +96,8 @@ libes2panda_sources = [
   "checker/ets/etsWarningAnalyzer.cpp",
   "checker/ets/function.cpp",
   "checker/ets/helpers.cpp",
+  "checker/ets/importBindingResolver.cpp",
+  "checker/ets/namespaceImportObject.cpp",
   "checker/ets/object.cpp",
   "checker/ets/typeCheckingHelpers.cpp",
   "checker/ets/typeConverter.cpp",
@@ -105,6 +107,7 @@ libes2panda_sources = [
   "checker/ets/utilityTypeHandlers.cpp",
   "checker/ets/validateHelpers.cpp",
   "checker/ets/wideningConverter.cpp",
+  "checker/exportClosureResolver.cpp",
   "checker/ts/binaryLikeExpression.cpp",
   "checker/ts/destructuringContext.cpp",
   "checker/ts/function.cpp",
@@ -530,8 +533,6 @@ libes2panda_sources = [
   "util/es2pandaMacros.cpp",
   "util/helpers.cpp",
   "util/importPathManager.cpp",
-
-
   "util/nameMangler.cpp",
   "util/path.cpp",
   "util/perfMetrics.cpp",
@@ -543,6 +544,7 @@ libes2panda_sources = [
   "varbinder/TSBinder.cpp",
   "varbinder/TypedBinder.cpp",
   "varbinder/declaration.cpp",
+  "varbinder/exportFacts.cpp",
   "varbinder/recordTable.cpp",
   "varbinder/scope.cpp",
   "varbinder/varbinder.cpp",

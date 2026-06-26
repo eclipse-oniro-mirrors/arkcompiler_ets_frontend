@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -167,6 +167,7 @@ enum class VariableFlags : uint64_t {
     INIT_IN_STATIC_BLOCK = 1ULL << 36ULL,
     DYNAMIC = 1ULL << 37ULL,
     OVERLOAD = 1ULL << 38ULL,
+    IMPORT_BINDING = 1ULL << 39ULL,
 
     HOIST_VAR = HOIST | VAR,
     CLASS_OR_INTERFACE = CLASS | INTERFACE,

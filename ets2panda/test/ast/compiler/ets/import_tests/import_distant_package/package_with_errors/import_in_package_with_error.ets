@@ -19,8 +19,10 @@ import { notInit, importantInfo } from "./inner_package_with_errors"
 
 function bar(x: notInit) { (=_=) }
 
-/* @@? import_in_package_with_error.ets:20:17 Error Semantic error ESE0371: Cannot find type 'notInit'. */
+/* @@? import_in_package_with_error.ets:16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
 /* @@? import_in_package_with_error.ets:20:29 Error Syntax error ESY0227: Unexpected token '='. */
 /* @@? import_in_package_with_error.ets:20:30 Error Syntax error ESY0228: Unexpected token, expected ')'. */
 /* @@? import_in_package_with_error.ets:20:32 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? distant_package.ets:16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
+/* @@? distant_package.ets:22:14 Error Semantic error ESE71336: Exported variable 'notInit' requires type annotation. */
 /* @@? distant_package.ets:22:22 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

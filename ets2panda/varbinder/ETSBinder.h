@@ -17,6 +17,7 @@
 #define ES2PANDA_VARBINDER_ETSBINDER_H
 
 #include "varbinder/TypedBinder.h"
+#include "varbinder/exportFacts.h"
 #include "varbinder/recordTable.h"
 #include "ir/ets/etsImportDeclaration.h"
 #include "ir/ets/etsReExportDeclaration.h"
@@ -44,9 +45,6 @@ class ETSNewClassInstanceExpression;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::varbinder {
-using AliasesByExportedNames = ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
-using ModulesToExportedNamesWithAliases = ArenaMap<util::StringView, AliasesByExportedNames>;
-
 struct DynamicImportData {
     const ir::ETSImportDeclaration *import;
     const ir::AstNode *specifier;
@@ -54,6 +52,16 @@ struct DynamicImportData {
 };
 
 using DynamicImportVariables = ArenaUnorderedMap<const Variable *, DynamicImportData>;
+
+struct SelectiveExportAlias {
+    parser::Program *program;
+    util::StringView exportedName;
+    const ir::Identifier *localIdent;
+    const ir::AstNode *decl;
+    const ir::AstNode *exportDecl;
+    const ir::AstNode *reportOrigin;
+    bool isTypeOnly;
+};
 
 class ETSBinder : public TypedBinder {
 public:
@@ -65,8 +73,7 @@ public:
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
           reExportImports_(Allocator()->Adapter()),
-          reexportedNames_(Allocator()->Adapter()),
-          selectiveExportAliasMultimap_(Allocator()->New<ModulesToExportedNamesWithAliases>())
+          exportFactStore_(Allocator()->New<ExportFactStore>(Allocator()))
     {
         InitImplicitThisParam();
     }
@@ -158,38 +165,25 @@ public:
     void BuildAnnotationDeclaration(ir::AnnotationDeclaration *annoDecl);
     void BuildAnnotationUsage(ir::AnnotationUsage *annoUsage);
     void BuildImportDeclaration(ir::ETSImportDeclaration *decl);
-    void ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl);
     void ValidateReexports();
-    Variable *ValidateImportSpecifier(const ir::ImportSpecifier *const specifier,
-                                      const ir::ETSImportDeclaration *const import);
     void BuildETSNewClassInstanceExpression(ir::ETSNewClassInstanceExpression *classInstance);
-    [[nodiscard]] bool DetectNameConflict(const util::StringView localName, Variable *const var,
-                                          Variable *const otherVar, ir::Identifier const *local);
     parser::Program *GetExternalProgram(const ir::ETSImportDeclaration *import);
+    parser::Program *RegisterImportTarget(const ir::ETSImportDeclaration *import);
 
-    std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInReExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
-    std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInNamedExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
-    std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
     void AddImportNamespaceSpecifiersToTopBindings(parser::Program *const importedProgram,
                                                    ir::ImportNamespaceSpecifier *namespaceSpecifier,
                                                    const ir::ETSImportDeclaration *import);
+    LocalVariable *CreateNamedImportBinding(util::StringView importedName, ir::Identifier *local,
+                                            const ir::ETSImportDeclaration *import,
+                                            ImportBindingKind kind = ImportBindingKind::NAMED);
     util::StringView GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
                                              const ir::ETSImportDeclaration *const import);
-    bool AddImportSpecifiersToTopBindings(parser::Program *importedProgram, ir::ImportSpecifier *importSpecifier,
-                                          const ir::ETSImportDeclaration *import);
-    void AddImportDefaultSpecifiersToTopBindings(parser::Program *const importedProgram,
-                                                 ir::ImportDefaultSpecifier *importDefaultSpecifier,
+    void AddImportSpecifiersToTopBindings(ir::ImportSpecifier *importSpecifier, const ir::ETSImportDeclaration *import);
+    void AddImportDefaultSpecifiersToTopBindings(ir::ImportDefaultSpecifier *importDefaultSpecifier,
                                                  const ir::ETSImportDeclaration *import);
-    void ValidateImportVariable(const ir::AstNode *node, const ir::AstNode *declNode, const util::StringView &imported,
-                                const ir::ETSImportDeclaration *import);
-    Variable *FindImportSpecifiersVariable(const util::StringView &imported, parser::Program *importedProgram);
-    Variable *FindStaticBinding(parser::Program *const importedProgram, const ir::ETSImportDeclaration *import);
-    Variable *AddImportSpecifierFromReExport(ir::AstNode *importSpecifier, const ir::ETSImportDeclaration *const import,
-                                             const util::StringView &imported);
     void AddSpecifiersToTopBindings(ir::AstNode *const specifier, const ir::ETSImportDeclaration *const import);
+    void BindReExportSpecifierIdentifiers(ir::AstNode *specifier, const ir::ETSImportDeclaration *import);
+    void BuildReExportDeclaration(ir::ETSReExportDeclaration *reExportDecl);
 
     void ResolveInterfaceDeclaration(ir::TSInterfaceDeclaration *decl);
     void ResolveMethodDefinition(ir::MethodDefinition *methodDef);
@@ -253,23 +247,29 @@ public:
 
     void ResolveReferencesForScopeWithContext(ir::AstNode *node, Scope *scope);
 
-    [[nodiscard]] bool AddSelectiveExportAlias(parser::ETSParser *parser, util::StringView const &path,
-                                               util::StringView const &key, ir::Identifier const *valueIdent,
-                                               ir::AstNode const *decl) noexcept;
+    [[nodiscard]] bool AddSelectiveExportAlias(const SelectiveExportAlias &alias) noexcept;
 
-    [[nodiscard]] const ModulesToExportedNamesWithAliases &GetSelectiveExportAliasMultimap() const noexcept
+    [[nodiscard]] const ExportFactStore::ExportFactSnapshot &GetExportFacts(parser::Program *program) const
     {
-        return *selectiveExportAliasMultimap_;
+        return exportFactStore_->GetExportFacts(program);
     }
 
-    [[nodiscard]] ModulesToExportedNamesWithAliases &GetSelectiveExportAliasMultimap() noexcept
+    [[nodiscard]] ExportFactStore &GetExportFactsStore()
     {
-        return *selectiveExportAliasMultimap_;
+        return *exportFactStore_;
     }
 
-    util::StringView FindNameInAliasMap(const util::StringView &pathAsKey, const util::StringView &aliasName);
-    std::pair<util::StringView, const ir::AstNode *> FindNameAndNodeInAliasMap(const util::StringView &pathAsKey,
-                                                                               const util::StringView &aliasName);
+    [[nodiscard]] const ExportFactStore &GetExportFactsStore() const
+    {
+        return *exportFactStore_;
+    }
+
+    [[nodiscard]] const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(parser::Program *program) const
+    {
+        return exportFactStore_->PendingLocalExportAliases(program);
+    }
+
+    void CollectExportFactsForCurrentProgram();
 
     void CleanUp() override
     {
@@ -277,9 +277,10 @@ public:
         externalRecordTable_.clear();
         InitImplicitThisParam();
         dynamicImports_.clear();
-        reexportedNames_.clear();
         reExportImports_.clear();
         defaultExport_ = nullptr;
+        exportFactStore_->ClearImportTargets(Program());
+        exportFactStore_->ResetProgram(Program());
         globalRecordTable_->CleanUp();
     }
 
@@ -289,7 +290,7 @@ public:
 
         targetImpl->defaultImports_ = defaultImports_;
         InitImplicitThisParam();
-        targetImpl->selectiveExportAliasMultimap_ = selectiveExportAliasMultimap_;
+        targetImpl->exportFactStore_ = exportFactStore_;
 
         VarBinder::CopyTo(target);
     }
@@ -303,7 +304,6 @@ private:
     void ImportAllForeignBindings(const parser::Program *importedProgram);
     void ThrowRedeclarationError(const lexer::SourcePosition &pos, const Variable *const var,
                                  const Variable *const variable, util::StringView localName);
-    void ThrowReexportError(const parser::Program *importedProgram, const ir::ETSImportDeclaration *const import);
 
     // NOTE(dkofanov): #32418.
     RecordTable *globalRecordTable_;
@@ -312,10 +312,9 @@ private:
     ArenaVector<ir::ETSImportDeclaration *> defaultImports_;  // 1
     ArenaVector<ir::ETSImportDeclaration *> dynamicImports_;
     ArenaMap<const parser::Program *, ArenaVector<ir::ETSReExportDeclaration *>> reExportImports_;
-    ArenaSet<util::StringView> reexportedNames_;
     ir::Identifier *thisParam_ {};  // 2
     ir::AstNode *defaultExport_ {};
-    ModulesToExportedNamesWithAliases *selectiveExportAliasMultimap_;  // 3
+    ExportFactStore *exportFactStore_;
 
     friend class RecordTableContext;
 };

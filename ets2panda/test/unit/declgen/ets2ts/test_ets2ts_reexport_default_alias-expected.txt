@@ -1,0 +1,3 @@
+import st from "@ohos.lang.interop";
+export { default as DataDriver } from "../ets/expected/export_directives_1.txt";
+export { default } from "../ets/expected/export_directives_1.txt";

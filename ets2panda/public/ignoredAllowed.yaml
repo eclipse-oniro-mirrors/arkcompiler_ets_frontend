@@ -71,8 +71,6 @@ ignored_list:
     - name: UnaryPredicate
       namespace: checker
     - name: VarBinder
-    - name: ModulesToExportedNamesWithAliases
-      namespace: varbinder
     - name: T
     - name: K
     - name: ModuleEntry
@@ -147,9 +145,6 @@ ignored_list:
       namespace: checker
   - type:
       name: ScopedDebugInfoPlugin
-  - type:
-      name: ModulesToExportedNamesWithAliases
-      namespace: varbinder
   - type:
       name: ModuleEntry
       namespace: varbinder

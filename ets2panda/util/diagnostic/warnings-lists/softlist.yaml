@@ -53,18 +53,13 @@ softlist:
   paths:
   - ".*/ohos-sdk/.+/ets/static/api/.*"
 
-- name: "allow_reexport"
-  paths:
-  - ".*/@ohos\\.arkui\\.component\\.d\\.ets"
-  - ".*/koala_projects/arkoala-arkts/arkui-preprocessed/arkui/framework/index\\.ets"
-  - ".*/koala_projects/arkoala-arkts/arkui-preprocessed/arkui/index\\.ets"
-
 - name: "export_type_anno"
   paths:
   - ".*/test/xts/.*"
   - ".*/arkui/ace_engine/.*"
   - ".*/api/@ohos\\.app\\.ability\\.AbilityConstant\\.d\\.ets"
   - ".*/api/@ohos\\.arkui\\.inspector\\.static\\.d\\.ets"
+  - ".*/api/@ohos\\.arkui\\.inspector\\.d\\.ets"
   - ".*/api/@ohos\\.data\\.cloudData\\.d\\.ets"
   - ".*/api/@ohos\\.file\\.fs\\.d\\.ets"
   - ".*/api/@ohos\\.hichecker\\.d\\.ets"

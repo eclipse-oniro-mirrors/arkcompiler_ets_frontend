@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,8 @@
  */
 
 
-import type {StandardExportedClass as IT1, ClassForExport as IT2} from /* @@ label */"./type_binding_neg_to_export.ets"
+import type {StandardExportedClass as IT1, ClassForExport as IT2} from "./type_binding_neg_to_export.ets"
 
 function main () {
-    let c2 = new IT2 // compile-time error: cannot create objects of type IT2
+    let c2 = new IT2
 }

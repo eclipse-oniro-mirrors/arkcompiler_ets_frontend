@@ -15,10 +15,14 @@
 
 #include "importDeclaration.h"
 
+#include <algorithm>
+
 #include "checker/TSchecker.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
+#include "ir/module/importDefaultSpecifier.h"
+#include "ir/module/importNamespaceSpecifier.h"
 #include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
@@ -64,6 +68,60 @@ void ImportDeclaration::Dump(ir::AstDumper *dumper) const
     dumper->Add({{"type", "ImportDeclaration"}, {"source", Source()}, {"specifiers", Specifiers()}});
 }
 
+bool DumpDefaultImportSpecifier(ir::SrcDumper *dumper, const ArenaVector<AstNode *> &specifiers)
+{
+    for (auto *specifier : specifiers) {
+        if (specifier->IsImportDefaultSpecifier()) {
+            specifier->Dump(dumper);
+            return true;
+        }
+    }
+    return false;
+}
+
+void DumpNamespaceImportSpecifiers(ir::SrcDumper *dumper, const ArenaVector<AstNode *> &specifiers, bool *hasPrevious)
+{
+    for (auto *specifier : specifiers) {
+        if (!specifier->IsImportNamespaceSpecifier()) {
+            continue;
+        }
+        if (*hasPrevious) {
+            dumper->Add(", ");
+        }
+        specifier->Dump(dumper);
+        *hasPrevious = true;
+    }
+}
+
+bool HasNamedImportSpecifier(const ArenaVector<AstNode *> &specifiers)
+{
+    return std::any_of(specifiers.begin(), specifiers.end(),
+                       [](const auto *specifier) { return specifier->IsImportSpecifier(); });
+}
+
+void DumpNamedImportSpecifiers(ir::SrcDumper *dumper, const ArenaVector<AstNode *> &specifiers, bool hasPrevious)
+{
+    if (!HasNamedImportSpecifier(specifiers)) {
+        return;
+    }
+    if (hasPrevious) {
+        dumper->Add(", ");
+    }
+    dumper->Add("{ ");
+    bool hasNamedPrevious = false;
+    for (auto *specifier : specifiers) {
+        if (!specifier->IsImportSpecifier()) {
+            continue;
+        }
+        if (hasNamedPrevious) {
+            dumper->Add(", ");
+        }
+        specifier->Dump(dumper);
+        hasNamedPrevious = true;
+    }
+    dumper->Add(" }");
+}
+
 void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     if (dumper->IsDeclgen()) {
@@ -73,19 +131,10 @@ void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
     dumper->DumpJsdocBeforeTargetNode(this);
     dumper->Add("import ");
     auto const &specifiers = Specifiers();
-    if (specifiers.size() == 1 &&
-        (specifiers[0]->IsImportNamespaceSpecifier() || specifiers[0]->IsImportDefaultSpecifier())) {
-        specifiers[0]->Dump(dumper);
-    } else {
-        dumper->Add("{ ");
-        for (auto specifier : specifiers) {
-            specifier->Dump(dumper);
-            if (specifier != specifiers.back()) {
-                dumper->Add(", ");
-            }
-        }
-        dumper->Add(" }");
-    }
+
+    bool hasPrevious = DumpDefaultImportSpecifier(dumper, specifiers);
+    DumpNamespaceImportSpecifiers(dumper, specifiers, &hasPrevious);
+    DumpNamedImportSpecifiers(dumper, specifiers, hasPrevious);
 
     dumper->Add(" from ");
 

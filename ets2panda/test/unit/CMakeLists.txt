@@ -94,5 +94,8 @@ endif()
 
 add_subdirectory(ets_specific_optimizer)
 ets2panda_add_gtest(es2panda_checker_tests
-    CPP_SOURCES checker_test.cpp
+    CPP_SOURCES
+        checker_test.cpp
+        export_resolution/export_closure_test.cpp
+        export_resolution/export_facts_test.cpp
 )

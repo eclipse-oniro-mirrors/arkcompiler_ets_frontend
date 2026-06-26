@@ -601,12 +601,31 @@ static std::string GetDeclTypeForCompletion(const ir::AstNode *decl)
     return "";
 }
 
+static bool IsExportedGlobalFunction(const ir::ScriptFunction *func)
+{
+    for (auto *parent = func == nullptr ? nullptr : func->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsMethodDefinition()) {
+            return parent->IsExported() && compiler::HasGlobalClassParent(parent);
+        }
+        if (parent->IsFunctionDeclaration() || parent->IsClassDefinition()) {
+            return false;
+        }
+    }
+    return false;
+}
+
 static std::string GetFunctionReturnTypeForCompletion(const ir::ScriptFunction *func)
 {
     if (func == nullptr) {
         return "void";
     }
     auto *retAnno = func->ReturnTypeAnnotation();
+    if (retAnno != nullptr && IsExportedGlobalFunction(func)) {
+        auto ret = NormalizeTypeTextForCompletion(retAnno->DumpEtsSrc());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
     if (retAnno != nullptr && retAnno->TsType() != nullptr) {
         auto ret = NormalizeTypeTextForCompletion(retAnno->TsType()->ToString());
         if (!ret.empty()) {

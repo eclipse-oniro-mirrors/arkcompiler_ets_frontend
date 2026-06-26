@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/* @@ label */import default_imported from "import_tests/modules/missing_default_export";
+import default_imported from "import_tests/modules/missing_default_export";
 
 
-/* @@@ label Error Semantic error ESE0358: Cannot find default imported element in the target */
+/* @@? 16:8 Error Semantic error ESE0358: Cannot find default imported element in the target */

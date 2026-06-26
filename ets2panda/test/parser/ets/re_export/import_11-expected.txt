@@ -256,9 +256,10 @@
       "program": "import_11.ets"
     },
     "end": {
-      "line": 21,
+      "line": 23,
       "column": 1,
       "program": "import_11.ets"
     }
   }
 }
+[re_export_5.ets:17:8] Semantic error ESE130586: The entity named 'foo' is already exported.

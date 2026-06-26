@@ -16,4 +16,4 @@
 /* @@ label */import {DefaultExportedFunc} from "import_tests/modules/default_export";
 
 
-/* @@@ label Error Semantic error ESE0353: Use the default import syntax to import a default exported element */
+/* @@? 16:23 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */

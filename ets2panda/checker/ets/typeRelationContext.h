@@ -16,14 +16,110 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_ETS_TYPE_RELATION_CONTEXT_H
 #define ES2PANDA_COMPILER_CHECKER_ETS_TYPE_RELATION_CONTEXT_H
 
+#include <algorithm>
+#include <optional>
+#include <string>
+#include <string_view>
+
 #include "checker/ETSchecker.h"
 #include "checker/types/type.h"
+#include "checker/types/ets/etsFunctionType.h"
+#include "checker/types/ets/etsObjectType.h"
 #include "checker/types/typeRelation.h"
-#include "checker/types/ets/etsTupleType.h"
+#include "ir/astNode.h"
 #include "ir/expression.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::checker {
 class ETSChecker;
+
+static std::string ToStdString(std::string_view view)
+{
+    return std::string(view.data(), view.size());
+}
+
+struct SameNamedTypeOriginInfo {
+    std::string name;
+    std::string sourceModule;
+    std::string targetModule;
+};
+
+static std::optional<std::string> ModuleName(const ETSObjectType *type)
+{
+    auto *declNode = type == nullptr ? nullptr : type->GetDeclNode();
+    if (declNode == nullptr) {
+        return std::nullopt;
+    }
+
+    auto *program = declNode->Program() != nullptr ? declNode->Program() : declNode->Start().Program();
+    if (program == nullptr || program->ModuleName().empty()) {
+        return std::nullopt;
+    }
+
+    return ToStdString(program->ModuleName());
+}
+
+static std::optional<SameNamedTypeOriginInfo> SameNamedObjectOrigins(Type *source, Type *target)
+{
+    if (source == nullptr || target == nullptr || !source->IsETSObjectType() || !target->IsETSObjectType()) {
+        return std::nullopt;
+    }
+
+    auto *sourceObj = source->AsETSObjectType();
+    auto *targetObj = target->AsETSObjectType();
+    if (sourceObj->GetDeclNode() == targetObj->GetDeclNode() || sourceObj->Name() != targetObj->Name()) {
+        return std::nullopt;
+    }
+
+    auto sourceModule = ModuleName(sourceObj);
+    auto targetModule = ModuleName(targetObj);
+    if (!sourceModule.has_value() || !targetModule.has_value() || *sourceModule == *targetModule) {
+        return std::nullopt;
+    }
+
+    return SameNamedTypeOriginInfo {ToStdString(sourceObj->Name().Utf8()), *sourceModule, *targetModule};
+}
+
+static std::optional<SameNamedTypeOriginInfo> FindSameNamedTypeOrigins(Type *source, Type *target)
+{
+    if (auto info = SameNamedObjectOrigins(source, target); info.has_value()) {
+        return info;
+    }
+    if (source == nullptr || target == nullptr || !source->IsETSFunctionType() || !target->IsETSFunctionType()) {
+        return std::nullopt;
+    }
+
+    const auto &sourceSignatures = source->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+    const auto &targetSignatures = target->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+    if (sourceSignatures.empty() || targetSignatures.empty()) {
+        return std::nullopt;
+    }
+
+    auto *sourceSignature = sourceSignatures.front();
+    auto *targetSignature = targetSignatures.front();
+    const auto &sourceParams = sourceSignature->Params();
+    const auto &targetParams = targetSignature->Params();
+    for (size_t ix = 0; ix < std::min(sourceParams.size(), targetParams.size()); ix++) {
+        if (auto info = SameNamedObjectOrigins(sourceParams[ix]->TsType(), targetParams[ix]->TsType());
+            info.has_value()) {
+            return info;
+        }
+    }
+
+    return SameNamedObjectOrigins(sourceSignature->ReturnType(), targetSignature->ReturnType());
+}
+
+static void ReportSameNamedTypeOrigins(TypeRelation *relation, Type *source, Type *target,
+                                       const lexer::SourcePosition &pos)
+{
+    auto info = FindSameNamedTypeOrigins(source, target);
+    if (!info.has_value()) {
+        return;
+    }
+
+    relation->RaiseError(diagnostic::SAME_NAMED_TYPES_FROM_DIFFERENT_SOURCES,
+                         {info->name, info->sourceModule, info->targetModule}, pos);
+}
 
 class AssignmentContext {
 public:
@@ -63,6 +159,7 @@ public:
 
         if (!relation->IsTrue() && diag.has_value()) {
             relation->RaiseError(diag->kind, diag->params, pos);
+            ReportSameNamedTypeOrigins(relation, source, target, pos);
         }
 
         relation->SetNode(nullptr);
@@ -111,6 +208,7 @@ public:
             invocable_ = false;
             if (diag.has_value()) {
                 relation->RaiseError(diag->kind, diag->params, pos);
+                ReportSameNamedTypeOrigins(relation, source, target, pos);
             }
             hasError_ = true;
             return;

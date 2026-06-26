@@ -46,6 +46,8 @@ set(ETS2TS_TESTS
     "./ets2ts/test_ets2ts_array_type_dependency.ets"
     "./ets2ts/test_ets2ts_sttypes_to_estypes.ets"
     "./ets2ts/test_ets2ts_class_implements_interface_field.ets"
+    "./ets2ts/test_ets2ts_reexport_default_alias.ets"
+    "./ets2ts/test_ets2ts_export_named_default_expr.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
@@ -163,6 +165,7 @@ set(ETS_TESTS
     overload_2
     overload
     protected_field
+    selective_export_directives
     test
 )
 

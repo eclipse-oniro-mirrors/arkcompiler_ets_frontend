@@ -937,9 +937,12 @@ public:
     {
         ArenaString key {program->GetImportInfo().Key()};
         ES2PANDA_ASSERT(progsByResolvedPath_.find(key) == progsByResolvedPath_.end());
+        ES2PANDA_ASSERT(exactProgsByResolvedPath_.find(key) == exactProgsByResolvedPath_.end());
+        exactProgsByResolvedPath_[key] = program;
         progsByResolvedPath_[key] = program;
         if (program->Is<ModuleKind::PACKAGE>()) {
             progsByResolvedPath_[ArenaString {program->ModuleName()}] = program;
+            exactProgsByResolvedPath_[ArenaString {program->ModuleName()}] = program;
         }
 
         // Handle clashing. Impl-progs are disallowed to clash, while decl-prog are allowed. The restriction is that
@@ -971,14 +974,11 @@ public:
         }
         modulePrograms.implProg = program;
         if (ipm_->GetGlobalProgram() != nullptr) {
-            // replace registered at this point decl-progs with the impl-prog:
-            auto &extProgramsDecls = ipm_->GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::SOURCE_DECL>();
-            auto extProgramsDeclsNewEnd = extProgramsDecls.end();
+            // Replace effective source lookup, but keep exact declaration programs in ExternalDecls so their export
+            // surfaces are still prepared for checking. The emitter skips replaced exact declarations.
             for (auto *declProg : modulePrograms.declProgs) {
                 progsByResolvedPath_.at(ArenaString {declProg->GetImportInfo().Key()}) = program;
-                extProgramsDeclsNewEnd = std::remove(extProgramsDecls.begin(), extProgramsDeclsNewEnd, declProg);
             }
-            extProgramsDecls.erase(extProgramsDeclsNewEnd, extProgramsDecls.end());
         }
     }
 
@@ -989,6 +989,28 @@ public:
             return it->second;
         }
         return nullptr;
+    }
+
+    parser::Program *SearchResolvedExact(const ImportInfo &importInfo) const
+    {
+        if (auto it = exactProgsByResolvedPath_.find(importInfo.Key()); it != exactProgsByResolvedPath_.end()) {
+            ES2PANDA_ASSERT(it->second != nullptr);
+            return it->second;
+        }
+        return nullptr;
+    }
+
+    bool IsReplacedExactSource(const parser::Program *program) const
+    {
+        if (program == nullptr || !program->IsDeclarationModule()) {
+            return false;
+        }
+
+        const auto &importInfo = program->GetImportInfo();
+        auto exactIt = exactProgsByResolvedPath_.find(importInfo.Key());
+        auto effectiveIt = progsByResolvedPath_.find(importInfo.Key());
+        return exactIt != exactProgsByResolvedPath_.end() && exactIt->second == program &&
+               effectiveIt != progsByResolvedPath_.end() && effectiveIt->second != program;
     }
 
     void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
@@ -1039,6 +1061,24 @@ public:
         }
     }
 
+    void MaybeAddExactToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
+    {
+        auto *globalProgram = ipm_->GetGlobalProgram();
+        if (newProg == nullptr || newProg == globalProgram) {
+            return;
+        }
+        if (!IsReplacedExactSource(newProg)) {
+            MaybeAddToExternalSources(newProg, extDecls);
+            return;
+        }
+
+        const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
+        if (std::find(programs.begin(), programs.end(), newProg) != programs.end()) {
+            return;
+        }
+        extDecls->Add(newProg);
+    }
+
     parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, const ArenaString &packageName)
     {
         if (progsByResolvedPath_.count(packageName) != 0) {
@@ -1079,14 +1119,16 @@ public:
         return newPkg;
     }
 
-    void RemoveProgramFromResolvedSources(ArenaString filename)
+    void RemoveProgramFromResolvedSources(const ArenaString &filename)
     {
         progsByResolvedPath_.erase(filename);
+        exactProgsByResolvedPath_.erase(filename);
         modules_.erase(filename);
     }
 
 private:
     ImportPathManager *ipm_ {};
+    ArenaMap<ArenaString, parser::Program *, CompareByLength> exactProgsByResolvedPath_;
     ArenaMap<ArenaString, parser::Program *, CompareByLength> progsByResolvedPath_;
     struct Module {
         parser::Program *implProg {};
@@ -1145,7 +1187,17 @@ parser::Program *ImportPathManager::SearchResolved(const ImportInfo &importInfo)
     return resolvedSources_.SearchResolved(importInfo);
 }
 
-void ImportPathManager::RemoveProgramFromResolvedSources(ArenaString filename)
+parser::Program *ImportPathManager::SearchResolvedExact(const ImportInfo &importInfo) const
+{
+    return resolvedSources_.SearchResolvedExact(importInfo);
+}
+
+bool ImportPathManager::IsReplacedExactSource(const parser::Program *program) const
+{
+    return resolvedSources_.IsReplacedExactSource(program);
+}
+
+void ImportPathManager::RemoveProgramFromResolvedSources(const ArenaString &filename)
 {
     resolvedSources_.RemoveProgramFromResolvedSources(filename);
 }
@@ -1187,6 +1239,10 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
         // #32418.
         if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
             resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalDecls());
+            auto *exact = SearchResolvedExact(*importInfo);
+            if (exact != nullptr && exact != resolved) {
+                resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalDecls());
+            }
         }
         return resolved;
     }
@@ -1212,7 +1268,11 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     }
     if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
         if (program != nullptr) {
-            resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+            auto *resolvedProgram = SearchResolved(*importInfo);
+            resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalDecls());
+            if (program != resolvedProgram) {
+                resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+            }
         }
     }
     return program;

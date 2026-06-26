@@ -1074,11 +1074,25 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
         auto specs = ParseExportNamedSpecifiers(exportKind);
 
         if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
-            if (!specs.resultExportDefault.empty()) {
-                LogError(diagnostic::EXPECTED_PARAM_GOT_PARAM, {"identifier", "default"},
-                         specs.resultExportDefault[0]->Start());
+            for (auto *spec : specs.resultExportDefault) {
+                LogError(diagnostic::EXPECTED_PARAM_GOT_PARAM, {"identifier", "default"}, spec->Start());
             }
             specifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.result);
+            for (auto *spec : specs.resultExportDefault) {
+                auto *imported = AllocNode<ir::Identifier>(spec->Exported()->Name(), Allocator());
+                ES2PANDA_ASSERT(imported != nullptr);
+                imported->SetRange(spec->Exported()->Range());
+
+                auto *local =
+                    AllocNode<ir::Identifier>(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY, Allocator());
+                ES2PANDA_ASSERT(local != nullptr);
+                local->SetRange(spec->Range());
+
+                auto *importSpecifier = AllocNode<ir::ImportSpecifier>(imported, local);
+                ES2PANDA_ASSERT(importSpecifier != nullptr);
+                importSpecifier->SetRange(spec->Range());
+                specifiers.emplace_back(importSpecifier);
+            }
         } else {
             return CreateExportNamedDeclaration(specs, modifiers, startLoc);
         }
@@ -1850,7 +1864,7 @@ ir::VariableDeclarator *ETSParser::ParseVariableDeclarator(ir::Expression *init,
     } else if (!InAmbientContext() && init->AsIdentifier()->TypeAnnotation() == nullptr &&
                (flags & VariableParsingFlags::FOR_OF) == 0U) {
         LogError(diagnostic::MISSING_INIT_OR_TYPE);
-    } else if (!IsExternal() && (flags & VariableParsingFlags::CONST) && !InAmbientContext() &&
+    } else if (!IsExternal() && (flags & VariableParsingFlags::CONST) != 0U && !InAmbientContext() &&
                (flags & (VariableParsingFlags::FOR_OF | VariableParsingFlags::IN_FOR)) == 0U) {
         LogError(diagnostic::CONST_WITHOUT_INIT, {}, startLoc);
     }

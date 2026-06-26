@@ -27,6 +27,17 @@
 
 namespace ark::es2panda::compiler::ast_verifier {
 
+static bool IsModuleNamespaceObject(const checker::ETSObjectType *type)
+{
+    if (type == nullptr) {
+        return false;
+    }
+
+    const auto *declNode = type->GetDeclNode();
+    return type->HasExportSurface() ||
+           (declNode != nullptr && declNode->Parent() != nullptr && declNode->Parent()->IsImportNamespaceSpecifier());
+}
+
 bool IsImportLike(const ir::AstNode *ast)
 {
     return (ast->IsETSImportDeclaration() || ast->IsETSReExportDeclaration() || ast->IsImportExpression() ||
@@ -250,7 +261,7 @@ bool ValidateVariableAccess(const varbinder::LocalVariable *propVar, const ir::M
     if (objTypeDeclNode == nullptr) {
         return false;
     }
-    if (objTypeDeclNode->Parent() != nullptr && objTypeDeclNode->Parent()->IsImportNamespaceSpecifier()) {
+    if (IsModuleNamespaceObject(objType)) {
         return true;
     }
     const auto *propVarDeclNodeParent = propVarDeclNode->Parent();
@@ -297,7 +308,7 @@ bool ValidateMethodAccess(const ir::MemberExpression *memberExpression, const ir
     if (memberObjTypeDeclNode == nullptr) {
         return false;
     }
-    if (memberObjTypeDeclNode->Parent() != nullptr && memberObjTypeDeclNode->Parent()->IsImportNamespaceSpecifier()) {
+    if (IsModuleNamespaceObject(memberObjType)) {
         return true;
     }
     auto *signature = ast->Signature();

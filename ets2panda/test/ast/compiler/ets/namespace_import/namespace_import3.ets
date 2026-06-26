@@ -19,6 +19,7 @@ import * as production from './namespace_export2.ets'
 arktest.assertEQ( /* @@ label1 */production, null, 'default specified via identifier');
 arktest.assertEQ( /* @@ label2 */named, null, 'default specified via identifier');
 
+/* @@? 17:13 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */
 /* @@? 19:1 Error Semantic error ESE0127: No matching call signature for assertEQ(production, null, "default specified via identifier") */
 /* @@? 19:34 Error Semantic error ESE43831: Namespace 'production' cannot be used as object */
 /* @@? 20:1 Error Semantic error ESE0127: No matching call signature for assertEQ(named, null, "default specified via identifier") */

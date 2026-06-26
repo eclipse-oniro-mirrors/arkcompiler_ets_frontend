@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include "checker/TSchecker.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
+#include "generated/signatures.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
 
@@ -52,8 +53,13 @@ void ImportSpecifier::Dump(ir::AstDumper *dumper) const
 
 void ImportSpecifier::Dump(ir::SrcDumper *dumper) const
 {
-    imported_->Dump(dumper);
-    if (local_ != nullptr) {
+    if (imported_->Name().Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY)) {
+        dumper->Add("default");
+    } else {
+        imported_->Dump(dumper);
+    }
+
+    if (local_ != nullptr && local_->Name() != imported_->Name()) {
         dumper->Add(" as ");
         local_->Dump(dumper);
     }

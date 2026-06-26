@@ -706,6 +706,7 @@ Type *ETSChecker::CreateUnionFromKeyofType(ETSObjectType *const type)
         auto *currentType = superTypes.front();
         superTypes.pop_front();
 
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         ProcessTypeMembers(this, currentType, stringLiterals);
         enqueueSupers(currentType);
     }

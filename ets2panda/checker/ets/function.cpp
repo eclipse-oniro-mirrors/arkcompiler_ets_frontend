@@ -231,7 +231,8 @@ static bool CheckTypeParamsConstraint(ETSChecker *checker, const Substitution *s
         auto *constraintType = it->second;
         auto *typeParameter = it->first->AsETSTypeParameter();
 
-        while (typeParameter->GetConstraintType() && typeParameter->GetConstraintType()->IsETSTypeParameter()) {
+        while (typeParameter->GetConstraintType() != nullptr &&
+               typeParameter->GetConstraintType()->IsETSTypeParameter()) {
             typeParameter = typeParameter->GetConstraintType()->AsETSTypeParameter();
         }
 
@@ -817,6 +818,7 @@ static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Ty
 bool ETSChecker::EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParams, Type *paramType, Type *argumentType,
                                             Substitution *substitution)
 {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return checker::EnhanceSubstitutionForType(this, typeParams, paramType, argumentType, substitution);
 }
 
@@ -1404,6 +1406,7 @@ static void EnsureValidCurlyBrace(ETSChecker *checker, ir::CallExpression *callE
 Signature *ETSChecker::ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr)
 {
     const ArenaVector<ir::Expression *> &arguments = expr->GetArguments();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *var = type->GetProperty(compiler::Signatures::CONSTRUCTOR_NAME, PropertySearchFlags::SEARCH_STATIC_METHOD);
     Signature *sig = nullptr;
     if (var != nullptr && var->TsType()->IsETSFunctionType()) {
@@ -1453,11 +1456,13 @@ checker::Type *ETSChecker::BuildMethodSignature(ir::MethodDefinition *method)
     }
     auto *methodId = method->Id();
     method->Function()->Id()->SetVariable(methodId->Variable());
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     BuildFunctionSignature(method->Function(), method->IsConstructor());
     if (method->Function()->Signature() == nullptr) {
         return methodId->Variable()->SetTsType(GlobalTypeError());
     }
     auto *funcType = BuildMethodType(method->Function());
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (!CollectOverload(this, method, funcType)) {
         return GlobalTypeError();
     }
@@ -1566,7 +1571,8 @@ Signature *ETSChecker::ComposeSignature(ir::ScriptFunction *func, SignatureInfo 
 Type *ETSChecker::ComposeReturnType(ir::TypeNode *typeAnnotation, bool isAsync)
 {
     if (typeAnnotation != nullptr) {
-        return typeAnnotation->GetType(this);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        return GetTypeFromTypeAnnotation(typeAnnotation);
     }
     return isAsync ? CreatePromiseOf(GlobalETSUndefinedType()) : GlobalETSUndefinedType();
 }
@@ -1587,7 +1593,7 @@ static bool AppendSignatureInfoParam(ETSChecker *checker, SignatureInfo *sigInfo
 {
     auto variable = SetupSignatureParameter(param, [checker, param]() {
         if (param->TypeAnnotation() != nullptr) {
-            auto type = param->TypeAnnotation()->GetType(checker);
+            auto type = checker->GetTypeFromTypeAnnotation(param->TypeAnnotation());
             return param->IsOptional() ? checker->CreateETSUnionType({type, checker->GlobalETSUndefinedType()}) : type;
         }
         if (param->Ident()->TsType() != nullptr) {
@@ -1661,7 +1667,7 @@ static Type *ResolveRestParameterType(ETSChecker *checker, ir::ETSParameterExpre
 {
     Type *paramType = nullptr;
     if (param->TypeAnnotation() != nullptr) {
-        paramType = param->RestParameter()->TypeAnnotation()->GetType(checker);
+        paramType = checker->GetTypeFromTypeAnnotation(param->RestParameter()->TypeAnnotation());
     } else if (param->Ident()->TsType() != nullptr) {
         paramType = param->Ident()->TsType();
     }
@@ -1714,10 +1720,12 @@ SignatureInfo *ETSChecker::ComposeSignatureInfo(ir::TSTypeParameterDeclaration *
     auto *const signatureInfo = CreateSignatureInfo();
     InitializeSignatureTypeParameters(this, signatureInfo, typeParams);
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (!AppendSignatureInfoParams(this, signatureInfo, params)) {
         return nullptr;
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (!FinalizeRestParameter(this, signatureInfo, params)) {
         return nullptr;
     }
@@ -1767,10 +1775,12 @@ void ETSChecker::BuildFunctionSignature(ir::ScriptFunction *func, bool isConstru
             func->Scope()->ParamScope()->Params().front()->SetTsType(Context().ContainingClass());
         }
     }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *signatureInfo = ComposeSignatureInfo(func->TypeParams(), func->Params());
 
     Type *returnType = func->GetPreferredReturnType() != nullptr
                            ? func->GetPreferredReturnType()
+                           // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                            : ComposeReturnType(func->ReturnTypeAnnotation(), func->IsAsyncFunc());
 
     auto *signature = ComposeSignature(func, signatureInfo, returnType, nameVar);
@@ -2144,19 +2154,23 @@ void ETSChecker::CheckOverride(Signature *signature)
         return;
     }
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (CheckMultipleInterfaceOverrides(this, signature)) {
         return;
     }
 
     for (auto *const interface : owner->Interfaces()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         isOverriding |= CheckInterfaceOverride(this, interface, signature);
     }
 
     ETSObjectType *iter = owner->SuperType();
     while (iter != nullptr) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         isOverriding |= checker::CheckOverride(this, signature, iter);
 
         for (auto *const interface : iter->Interfaces()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             isOverriding |= CheckInterfaceOverride(this, interface, signature);
         }
 
@@ -2548,6 +2562,7 @@ static void EnsureValidCurlyBrace(ETSChecker *checker, ir::CallExpression *callE
 
 ETSObjectType *ETSChecker::GetCachedFunctionalInterface(ir::ETSFunctionType *type)
 {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto hash = GetHashFromFunctionType(type);
     auto it = functionalInterfaceCache_.find(hash);
     if (it == functionalInterfaceCache_.cend()) {

@@ -36,6 +36,7 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
         if ((Relation()->IsIdenticalTo(Context().ContainingClass(), propDeclaringObjType) ||
              Relation()->IsIdenticalTo(Context().ContainingClass()->GetOriginalBaseType(),
                                        propDeclaringObjType->GetOriginalBaseType())) &&
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             (propDeclaringObjType->IsPropertyInherited(var) || obj->IsPropertyInherited(var))) {
             return;
         }
@@ -44,6 +45,7 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
                                                                checker::TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
         if (var->HasFlag(varbinder::VariableFlags::PROTECTED) &&
             Relation()->IsSupertypeOf(propDeclaringObjType, Context().ContainingClass()) &&
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             obj->IsPropertyInherited(var)) {
             return;
         }

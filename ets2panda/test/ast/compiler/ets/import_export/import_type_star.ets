@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,10 @@ import type * as TEST from './export'
 let bad1 : TEST.CallBack = () => {
     return "A";
 }
-let bad2 : TEST.A = new TEST.A()
+let bad2 : TEST.A = new TEST.A();
+let bad3 = new TEST.CallBack();
 
 /* @@? 19:12 Error Semantic error ESE0091: Type '"A"' is not compatible with the enclosing method's return type 'Int' */
 /* @@? 21:21 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 21:21 Error Semantic error ESE0127: No matching construct signature for export.A() */
+/* @@? 22:12 Error Semantic error ESE0292: This expression is not constructible. */
