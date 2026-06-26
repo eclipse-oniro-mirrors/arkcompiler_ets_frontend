@@ -187,6 +187,12 @@ private:
                                                std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
     ResolvedExportResult ResolveProgramSurface(const varbinder::ExportSurfaceId &surface, util::StringView exportedName,
                                                std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
+    ResolvedExportResult ResolveExplicitExports(const varbinder::ExportSurfaceId &surface,
+                                                util::StringView exportedName,
+                                                std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
+    ResolvedExportResult ResolveImplicitExports(const varbinder::ExportSurfaceId &surface,
+                                                util::StringView exportedName,
+                                                std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
     ResolvedExportResult ResolveLocalExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName);
     ResolvedExportResult ResolveNamedReExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName,
                                               std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);

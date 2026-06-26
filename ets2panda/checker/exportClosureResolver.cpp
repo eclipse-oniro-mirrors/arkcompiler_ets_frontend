@@ -882,36 +882,59 @@ ResolvedExportResult ExportClosureResolver::ResolvePackageSurface(const varbinde
 {
     auto resolved = MakeResult(ExportResolutionStatus::NOT_FOUND);
 
-    auto resolveFraction = [this, exportedName, visiting, &resolved](parser::Program *fraction) {
-        const auto *entry = ResolveSurfaceName(GetSurface(fraction), exportedName, visiting);
-        const auto candidate = ResultOrNotFound(entry);
+    auto resolveExplicitFraction = [this, exportedName, visiting, &resolved](parser::Program *fraction) {
+        const auto candidate = ResolveExplicitExports(GetSurface(fraction), exportedName, visiting);
         if (MergeResolvedResults(&resolved, candidate) == MergeOutcome::NEW_AMBIGUOUS) {
             ReportAmbiguousExport(exportedName, candidate.reportOrigin);
         }
     };
-    if (ForEachPackageFraction(surface, resolveFraction)) {
+    if (!ForEachPackageFraction(surface, resolveExplicitFraction)) {
+        return ResolveProgramSurface(surface, exportedName, visiting);
+    }
+
+    if (resolved.status != ExportResolutionStatus::NOT_FOUND) {
         return resolved;
     }
-    return ResolveProgramSurface(surface, exportedName, visiting);
+
+    auto resolveImplicitFraction = [this, exportedName, visiting, &resolved](parser::Program *fraction) {
+        const auto candidate = ResolveImplicitExports(GetSurface(fraction), exportedName, visiting);
+        if (MergeResolvedResults(&resolved, candidate) == MergeOutcome::NEW_AMBIGUOUS) {
+            ReportAmbiguousExport(exportedName, candidate.reportOrigin);
+        }
+    };
+    (void)ForEachPackageFraction(surface, resolveImplicitFraction);
+    return resolved;
 }
 
 ResolvedExportResult ExportClosureResolver::ResolveProgramSurface(const varbinder::ExportSurfaceId &surface,
                                                                   util::StringView exportedName, VisitingSet *visiting)
 {
-    // Phase 1: explicit exports (local + named re-export).
+    auto resolved = ResolveExplicitExports(surface, exportedName, visiting);
+    // Explicit exports take precedence over star/namespace propagation.
+    if (resolved.status != ExportResolutionStatus::NOT_FOUND) {
+        return resolved;
+    }
+
+    return ResolveImplicitExports(surface, exportedName, visiting);
+}
+
+ResolvedExportResult ExportClosureResolver::ResolveExplicitExports(const varbinder::ExportSurfaceId &surface,
+                                                                   util::StringView exportedName, VisitingSet *visiting)
+{
     auto resolved = ResolveLocalExport(surface, exportedName);
     auto next = ResolveNamedReExport(surface, exportedName, visiting);
     if (MergeResolvedResults(&resolved, next) == MergeOutcome::NEW_AMBIGUOUS) {
         ReportAmbiguousExport(exportedName, next.reportOrigin);
     }
 
-    // Explicit exports take precedence over star/namespace propagation.
-    if (resolved.status != ExportResolutionStatus::NOT_FOUND) {
-        return resolved;
-    }
+    return resolved;
+}
 
-    // Phase 2: implicit propagation — only consulted when no explicit export matched.
-    next = ResolveNamespaceExport(surface, exportedName);
+ResolvedExportResult ExportClosureResolver::ResolveImplicitExports(const varbinder::ExportSurfaceId &surface,
+                                                                   util::StringView exportedName, VisitingSet *visiting)
+{
+    auto resolved = MakeResult(ExportResolutionStatus::NOT_FOUND);
+    auto next = ResolveNamespaceExport(surface, exportedName);
     if (MergeResolvedResults(&resolved, next) == MergeOutcome::NEW_AMBIGUOUS) {
         ReportAmbiguousExport(exportedName, next.reportOrigin);
     }
