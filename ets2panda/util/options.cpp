@@ -169,7 +169,11 @@ bool Options::ParseInputOutput()
     }
 
     if (compilationMode_ == CompilationMode::SINGLE_FILE || GetExtension() != ScriptExtension::ETS) {
+#if defined(PANDA_TARGET_WINDOWS)
+        std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(SourceFileName())};
+#else
         std::ifstream inputStream(SourceFileName());
+#endif
         if (inputStream.fail()) {
             diagnosticEngine_.LogDiagnostic(diagnostic::OPEN_FAILED,
                                             util::DiagnosticMessageParams {util::StringView(SourceFileName())});
@@ -370,7 +374,11 @@ bool Options::DetermineExtension()
         }
 #endif
         case ScriptExtension::ETS: {
+#if defined(PANDA_TARGET_WINDOWS)
+            std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(GetArktsconfig())};
+#else
             std::ifstream inputStream(GetArktsconfig());
+#endif
             if (inputStream.fail()) {
                 diagnosticEngine_.LogDiagnostic(diagnostic::OPEN_FAILED_ARKTSCONF,
                                                 util::DiagnosticMessageParams {GetArktsconfig()});

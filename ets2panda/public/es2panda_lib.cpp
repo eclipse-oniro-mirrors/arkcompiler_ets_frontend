@@ -511,7 +511,11 @@ __attribute__((unused)) static es2panda_Context *CreateContext(es2panda_Config *
 __attribute__((unused)) static std::stringstream ReadFile(char const *sourceFileName, Context *&res)
 {
     std::ifstream inputStream;
+#if defined(PANDA_TARGET_WINDOWS)
+    inputStream.open(ark::os::file::File::GetExtendedFilePath(sourceFileName));
+#else
     inputStream.open(sourceFileName);
+#endif
     if (inputStream.fail()) {
         res = new Context;
         res->errorMessage = "Failed to open file: ";

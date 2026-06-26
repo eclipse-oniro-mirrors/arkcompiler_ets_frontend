@@ -40,7 +40,6 @@ import {
     createFileIfNotExists,
     ensurePathExists,
     nextBatch,
-    validatePathLength,
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
@@ -351,12 +350,10 @@ export class Ets2panda {
             if (job.contentType === JobContentType.CLUSTER) {
                 (job.content as FileInfo[]).forEach((fi: FileInfo) => {
                     fi.output = arkts.formOutputPathForFile(fi.input);
-                    validatePathLength(fi.output, 'Output file path');
                 })
             } else {
                 const fi: FileInfo = job.content as FileInfo;
                 fi.output = arkts.formOutputPathForFile(fi.input);
-                validatePathLength(fi.output, 'Output file path');
             }
 
             this.transformImportStatementsWithAliasConfig()
@@ -385,7 +382,6 @@ export class Ets2panda {
                     )
                     ensurePathExists(declEtsOutputPath);
                     // .etscache files are generated separately from .abc file right now
-                    validatePathLength(declEtsOutputPath, 'Declaration output path');
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${fi.input}`)
                 }
@@ -468,8 +464,6 @@ export class Ets2panda {
             );
             outputDeclEtsPaths.push(declEtsOutputPath);
             outputEtsPaths.push(glueCodeOutputPath);
-            validatePathLength(declEtsOutputPath, 'Declaration file path');
-            validatePathLength(glueCodeOutputPath, 'Bridge code file path');
         }
 
         const firstFileModule = jobInfo.fileToModuleMap[inputFiles[0]];
@@ -477,7 +471,6 @@ export class Ets2panda {
             firstFileModule.declgenV1OutPath!,
             STATIC_RECORD_FILE
         )
-        validatePathLength(staticRecordPath, 'Static record file path');
         const declEtsOutputDir = path.dirname(outputDeclEtsPaths[0]);
         const staticRecordRelativePath = changeFileExtension(
             path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),

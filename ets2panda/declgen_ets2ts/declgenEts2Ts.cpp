@@ -3338,7 +3338,11 @@ void TSDeclgenContent::PushRecordImports(const std::string &recordImportStr)
 
 bool TSDeclgenContent::WriteToFile(const std::string &path)
 {
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ofstream outStream {ark::os::file::File::GetExtendedFilePath(path)};
+#else
     std::ofstream outStream(path);
+#endif
     if (outStream.fail()) {
         return false;
     }

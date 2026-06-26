@@ -384,11 +384,11 @@ export class IncreDepAnalyzer extends DepAnalyzer {
         }
 
         const increInputFile: string = path.join(this.outputDir, INCRE_DEP_ANALYZER_INPUT_FILE);
-        const content = fs.readFileSync(path.resolve(increInputFile), 'utf-8');
+        const content: string = fs.readFileSync(path.resolve(increInputFile), 'utf-8');
         const increFiles: string[] = content
             .split(os.EOL)
-            .map(line => line.trim())
-            .filter(line => line.length > 0);
+            .map((line: string) => line.trim())
+            .filter((line: string) => line.length > 0);
 
         // Traverse from modified entry files to collect all affected compile files
         const increGraph: IncreGraph = new IncreGraph(depMap);

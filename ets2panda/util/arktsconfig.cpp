@@ -418,7 +418,11 @@ bool ArkTsConfig::ParseCollection(const JsonObject *config, Collection &out, con
 
 std::optional<std::string> ArkTsConfig::ReadConfig(const std::string &path)
 {
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(path)};
+#else
     std::ifstream inputStream(path);
+#endif
     if (!Check(!inputStream.fail(), diagnostic::FAILED_TO_OPEN_FILE, {path})) {
         return {};
     }
