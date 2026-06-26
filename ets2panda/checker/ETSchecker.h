@@ -787,6 +787,8 @@ public:
     void MakePropertiesNonNullish(ETSObjectType *classType);
     template <PropertyType PROP_TYPE>
     void MakePropertyNonNullish(ETSObjectType *classType, varbinder::LocalVariable *prop);
+    template <PropertyType PROP_TYPE>
+    void MakePropertyReadonly(ETSObjectType *const classType, varbinder::LocalVariable *const prop);
     void ValidateObjectLiteralForRequiredType(const ETSObjectType *requiredType,
                                               const ir::ObjectExpression *initObjExpr);
     // ReturnType
@@ -989,10 +991,6 @@ private:
                                     ETSObjectType *typeToBePartial, varbinder::RecordTable *recordTableToUse);
     void CreateConstructorForPartialType(ir::ClassDefinition *partialClassDef, checker::ETSObjectType *partialType,
                                          varbinder::RecordTable *recordTable);
-
-    // Readonly
-    template <PropertyType PROP_TYPE>
-    void MakePropertyReadonly(ETSObjectType *const classType, varbinder::LocalVariable *const prop);
 
     // Check type alias for recursive cases
     bool IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,

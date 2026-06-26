@@ -129,7 +129,7 @@ bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
             target->AsETSObjectType()->Name() == compiler::Signatures::NUMERIC) {
             result = true;
         } else if (EnumAnnotedType() != nullptr || target->IsBuiltinNumeric()) {
-            auto *checker = relation->GetChecker()->AsETSChecker();
+            auto *checker = GetETSChecker();
             Type *elementType = nullptr;
             if (EnumAnnotedType() != nullptr) {
                 elementType = EnumAnnotedType()->AsETSObjectType();

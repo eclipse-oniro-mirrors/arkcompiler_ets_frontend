@@ -151,14 +151,8 @@ defines:
     ref: UNDEFINED
   - name: 'null'
     ref: NULL_LITERAL
-  - name: 'Y'
-    ref: ANY_ASSEMBLY_TYPE
-  - name: 'N'
-    ref: NEVER_ASSEMBLY_TYPE
   - name: 'std.core.Null'
     ref: NULL_ASSEMBLY_TYPE
-  - name: 'std.interop.js.JSValue'
-    ref: JSVALUE_ASSEMBLY_TYPE
   - name: 'Readonly'
     ref: READONLY_TYPE_NAME
   - name: 'Partial'
@@ -357,16 +351,10 @@ typedescriptors:
     ref: TYPE_DESCRIPTOR_ULONG
 
   - name: 'A'
-    ref: TYPE_DESCRIPTOR_TAGGED_VALUE
+    ref: TYPE_DESCRIPTOR_ANY
 
   - name: 'V'
     ref: TYPE_DESCRIPTOR_VOID
-
-  - name: 'Y'
-    ref: TYPE_DESCRIPTOR_ANY
-
-  - name: 'N'
-    ref: TYPE_DESCRIPTOR_NEVER
 
 builtins:
   - name: Object
@@ -768,15 +756,9 @@ signatures:
 
   - callee: BUILTIN_STRING
     method_name: $CTOR
-    params: [ANY_ASSEMBLY_TYPE]
+    params: [BUILTIN_OBJECT]
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_STRING_FROM_NULLISH_CTOR
-
-  - callee: BUILTIN_RUNTIME
-    method_name: toStringStub
-    params: [ANY_ASSEMBLY_TYPE]
-    return_type: BUILTIN_STRING
-    ref: BUILTIN_RUNTIME_TO_STRING_STUB
 
   - callee: BUILTIN_OBJECT
     method_name: toString
@@ -786,13 +768,13 @@ signatures:
 
   - callee: BUILTIN_OBJECT
     method_name: equals
-    params: [ANY_ASSEMBLY_TYPE]
+    params: [BUILTIN_OBJECT]
     return_type: PRIMITIVE_BOOLEAN
     ref: BUILTIN_OBJECT_EQUALS
 
   - callee: BUILTIN_STRING
     method_name: equals
-    params: [ANY_ASSEMBLY_TYPE]
+    params: [BUILTIN_OBJECT]
     return_type: PRIMITIVE_BOOLEAN
     ref: BUILTIN_STRING_EQUALS
 
@@ -817,7 +799,7 @@ signatures:
   - callee: BUILTIN_ARRAY
     method_name: $GET_INDEX_METHOD
     params: [PRIMITIVE_INT]
-    return_type: ANY_ASSEMBLY_TYPE
+    return_type: BUILTIN_OBJECT
     ref: BUILTIN_ARRAY_GET_ELEMENT
 
   - callee: BUILTIN_ASSERTION_ERROR
@@ -825,6 +807,18 @@ signatures:
     params: [BUILTIN_STRING, BUILTIN_ERROR_OPTIONS]
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_ASSERTION_ERROR_CTOR
+
+  - callee: BUILTIN_RUNTIME
+    method_name: failedTypeCastInclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
+    return_type: BUILTIN_CLASS_CAST_ERROR
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_INCL_UNDEFINED_STUB
+
+  - callee: BUILTIN_RUNTIME
+    method_name: failedTypeCastExclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
+    return_type: BUILTIN_CLASS_CAST_ERROR
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCL_UNDEFINED_STUB
 
   - callee: BUILTIN_ERROR
     method_name: $CTOR
@@ -1348,8 +1342,8 @@ signatures:
 
   - callee: BUILTIN_JSRUNTIME
     method_name: getValueObject
-    params: [ANY_ASSEMBLY_TYPE, BUILTIN_CLASS]
-    return_type: ANY_ASSEMBLY_TYPE
+    params: [BUILTIN_JSVALUE, BUILTIN_CLASS]
+    return_type: BUILTIN_OBJECT
     ref: BUILTIN_JSRUNTIME_GET_VALUE_OBJECT
 
   # BUILTIN_JSRUNTIME_GET_PROPERTY_<TYPE>
@@ -1477,7 +1471,7 @@ signatures:
   - callee: BUILTIN_PROMISE
     method_name: awaitResolution
     params: []
-    return_type: ANY_ASSEMBLY_TYPE
+    return_type: BUILTIN_OBJECT
     ref: BUILTIN_PROMISE_AWAIT_RESOLUTION
 
   # BUILTIN_JSRUNTIME_GET_ELEMENT_<TYPE>
@@ -1638,6 +1632,12 @@ signatures:
     return_type: PRIMITIVE_BOOLEAN
     ref: BUILTIN_JSRUNTIME_INSTANCE_OF_STATIC
 
+  - callee: BUILTIN_JSVALUE
+    method_name: toString
+    params: []
+    return_type: PRIMITIVE_STRING
+    ref: BUILTIN_JSVALUE_TO_STRING
+
   - callee: BUILTIN_BOX
     method_name: $CTOR
     params: []
@@ -1647,13 +1647,13 @@ signatures:
   - callee: BUILTIN_BOX
     method_name: get
     params: []
-    return_type: ANY_ASSEMBLY_TYPE
+    return_type: BUILTIN_OBJECT
     ref: BUILTIN_BOX_GET
 
   - callee: BUILTIN_BOX
     method_name: set
-    params: [ANY_ASSEMBLY_TYPE]
-    return_type: ANY_ASSEMBLY_TYPE
+    params: [BUILTIN_OBJECT]
+    return_type: BUILTIN_OBJECT
     ref: BUILTIN_BOX_SET
 
   - callee: BUILTIN_BOOLEAN_BOX

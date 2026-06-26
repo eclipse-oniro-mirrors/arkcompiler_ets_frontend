@@ -1450,10 +1450,6 @@ void ETSChecker::MakePropertiesNonNullish(ETSObjectType *const classType)
         auto *const superRequired = classType->SuperType()->Clone(this)->AsETSObjectType();
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         MakePropertiesNonNullish(superRequired);
-        if (classType->SuperType() == GlobalETSObjectType()) {
-            superRequired->SetSuperType(GlobalETSObjectType());
-        }
-
         classType->SetSuperType(superRequired);
     }
 }

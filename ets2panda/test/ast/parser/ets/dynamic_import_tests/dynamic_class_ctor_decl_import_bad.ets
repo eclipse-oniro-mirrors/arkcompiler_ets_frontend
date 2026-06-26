@@ -23,4 +23,4 @@ function main(): void {
     let x = new A("abc", 10)
 }
 
-/* @@? 23:13 Error Semantic error ESE0127: No matching construct signature for Y("abc", Int) */
+/* @@? 23:13 Error Semantic error ESE0127: No matching construct signature for std.core.Object("abc", Int) */
