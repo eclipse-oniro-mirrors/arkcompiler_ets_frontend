@@ -68,7 +68,7 @@ void ETSNeverType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise
 
 void ETSNeverType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::NEVER_ASSEMBLY_TYPE;
+    ss << compiler::Signatures::BUILTIN_OBJECT;
 }
 
 TypeFacts ETSNeverType::GetTypeFacts() const
@@ -78,7 +78,7 @@ TypeFacts ETSNeverType::GetTypeFacts() const
 
 void ETSNeverType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::TYPE_DESCRIPTOR_NEVER);
+    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::BUILTIN_OBJECT);
 }
 
 Type *ETSNeverType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,

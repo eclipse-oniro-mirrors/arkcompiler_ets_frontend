@@ -298,45 +298,6 @@ TEST_F(ScopeLineInfoTest, LoweringGeneratedCode_LineNumberValidityAndInvalidMark
     EXPECT_TRUE(sawLam) << "No instruction in ETSGLOBAL.foo:void; mapped to the user lambda line.";
 }
 
-TEST_F(ScopeLineInfoTest, LambdaInvokeGuardUsesIllegalLineNumberInFunction)
-{
-    std::string_view text = R"(function func():void{
-    let test:()=>void=()=>{
-        console.log("111");
-        return;
-    }
-    test();
-    console.log("2222222");
-}
-)";
-
-    std::array args = {
-        ES2PANDA_BIN_PATH,
-        "--debug-info=true",
-        "--opt-level=0",
-        "--ets-unnamed",
-    };
-
-    auto program = GetCurrentProgramWithArgs({args.data(), args.size()}, text);
-    ASSERT_NE(program, nullptr);
-
-    const auto lines = SplitLines(text);
-    const auto *func = FindFunctionByName(*program, "ETSGLOBAL.func:void;");
-    ASSERT_NE(func, nullptr);
-
-    const uint32_t callLine = FindLineNo(lines, "test();");
-    const uint32_t nextUserLine = FindLineNo(lines, R"(console.log("2222222");)");
-    ASSERT_GT(callLine, 0U);
-    ASSERT_GT(nextUserLine, 0U);
-
-    const auto checkResult = CheckLambdaInvokeGuardLineInfo(*func, callLine, nextUserLine);
-    // clang-format off
-    EXPECT_TRUE(checkResult.sawLambdaInvoke) <<
-        "Failed to find the lambda invoke followed by its compiler-generated store and checkcast.";
-    // clang-format on
-    EXPECT_TRUE(checkResult.sawNextUserLine) << "Failed to find the next user-authored line after the lambda invoke.";
-}
-
 TEST_F(ScopeLineInfoCapiTest, NoDebugLineFlagMakesLambdaFunctionInvalid)
 {
     GTEST_SKIP() << "Temporarily skipped to avoid sanitizer-only leak noise from the CAPI compile path.";

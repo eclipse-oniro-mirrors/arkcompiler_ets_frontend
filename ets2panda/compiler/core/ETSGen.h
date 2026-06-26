@@ -101,6 +101,7 @@ public:
 
     void BranchIfIsInstanceUnion(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void IsInstance(const ir::AstNode *node, VReg srcReg, checker::Type const *target);
+    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target);
 
     void EmitNullcheck([[maybe_unused]] const ir::AstNode *node)
     {
@@ -493,7 +494,7 @@ public:
     {
         if (isNonnull) {
             Sa().Emit<CheckcastNonnull>(node, AssemblerReference(target));
-        } else if (target != Signatures::ANY_ASSEMBLY_TYPE) {
+        } else if (target != Signatures::BUILTIN_OBJECT) {
             Sa().Emit<Checkcast>(node, AssemblerReference(target));
         }
     }
@@ -534,6 +535,8 @@ private:
     template <bool IS_SRTICT = false>
     void HandlePossiblyNullishEquality(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse, Label *ifTrue);
 
+    bool IsNullUnsafeObjectType(checker::Type const *type) const;
+
     void EmitIsNull([[maybe_unused]] const ir::AstNode *node)
     {
 #ifdef PANDA_WITH_ETS
@@ -545,7 +548,7 @@ private:
 
     void EmitIsInstance(const ir::AstNode *node, util::StringView target)
     {
-        if (target != Signatures::ANY_ASSEMBLY_TYPE) {
+        if (target != Signatures::BUILTIN_OBJECT) {
             Sa().Emit<Isinstance>(node, AssemblerReference(target));
         } else {
             LoadAccumulatorBoolean(node, true);
