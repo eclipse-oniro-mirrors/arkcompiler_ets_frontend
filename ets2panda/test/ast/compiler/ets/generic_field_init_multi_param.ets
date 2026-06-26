@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,10 @@
  * limitations under the License.
  */
 
-abstract class C<T,R>{
-    field1?:T;
-    field2?:R;
+class A<T, U extends T> {
+    /* @@ label1 */a: T;
+    /* @@ label2 */b: U;
 }
 
-function main(){
-    let x:C<Int,string> = {field1:100,field2:"some str"}
-    arktest.assertEQ(x.field1, 100)
-    arktest.assertEQ(x.field2, "some str")
-}
+/* @@@ label1 Error Semantic error ESE0280: Property 'a' might not have been initialized. */
+/* @@@ label2 Error Semantic error ESE0280: Property 'b' might not have been initialized. */

@@ -89,6 +89,83 @@
                 }
               }
             },
+            "value": {
+              "type": "TSAsExpression",
+              "expression": {
+                "type": "UndefinedLiteral",
+                "value": "undefined",
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 23,
+                    "program": "generics_primitive_type_param_1.ets"
+                  },
+                  "end": {
+                    "line": 17,
+                    "column": 32,
+                    "program": "generics_primitive_type_param_1.ets"
+                  }
+                }
+              },
+              "typeAnnotation": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "T",
+                    "loc": {
+                      "start": {
+                        "line": 17,
+                        "column": 36,
+                        "program": "generics_primitive_type_param_1.ets"
+                      },
+                      "end": {
+                        "line": 17,
+                        "column": 37,
+                        "program": "generics_primitive_type_param_1.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 36,
+                      "program": "generics_primitive_type_param_1.ets"
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 37,
+                      "program": "generics_primitive_type_param_1.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 36,
+                    "program": "generics_primitive_type_param_1.ets"
+                  },
+                  "end": {
+                    "line": 17,
+                    "column": 37,
+                    "program": "generics_primitive_type_param_1.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 17,
+                  "column": 23,
+                  "program": "generics_primitive_type_param_1.ets"
+                },
+                "end": {
+                  "line": 17,
+                  "column": 37,
+                  "program": "generics_primitive_type_param_1.ets"
+                }
+              }
+            },
             "accessibility": "public",
             "static": false,
             "readonly": false,
@@ -150,7 +227,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 20,
+                "column": 37,
                 "program": "generics_primitive_type_param_1.ets"
               }
             }

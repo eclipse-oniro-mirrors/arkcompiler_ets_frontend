@@ -70,8 +70,7 @@ namespace ark::es2panda::checker {
 
 static constexpr NodeId INVALID_ID = -1;
 static constexpr bool CHECK_ALL_PROPERTIES = true;
-// NOTE(pantos) generic field initialization issue, skip them for now
-static constexpr bool CHECK_GENERIC_NON_READONLY_PROPERTIES = false;
+
 static constexpr bool WARN_NO_INIT_ONCE_PER_VARIABLE = false;
 static constexpr int LOOP_PHASES = 2;
 
@@ -1467,7 +1466,7 @@ const ir::AstNode *AssignAnalyzer::GetDeclaringNode(const ir::AstNode *node)
     return ret;
 }
 
-static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
+static bool IsDefaultValueType(const Type *type)
 {
     if (type == nullptr) {
         return false;
@@ -1485,9 +1484,6 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
         if (!type->HasTypeFlag(checker::TypeFlag::GENERIC)) {
             return true;
         }
-        if (!CHECK_GENERIC_NON_READONLY_PROPERTIES && isNonReadonlyField) {
-            return true;
-        }
     }
 
     return false;
@@ -1498,11 +1494,9 @@ bool AssignAnalyzer::VariableHasDefaultValue(const ir::AstNode *node)
     ES2PANDA_ASSERT(node != nullptr);
 
     const checker::Type *type = nullptr;
-    bool isNonReadonlyField = false;
 
     if (node->IsClassProperty()) {
         type = node->AsClassProperty()->TsType();
-        isNonReadonlyField = !node->IsReadonly();  // NOTE(pantos) readonly is true, const is not set?
     } else if (node->IsVariableDeclarator()) {
         varbinder::Variable *variable = GetBoundVariable(node);
         ES2PANDA_ASSERT(variable != nullptr);
@@ -1510,7 +1504,7 @@ bool AssignAnalyzer::VariableHasDefaultValue(const ir::AstNode *node)
     } else {
         ES2PANDA_UNREACHABLE();
     }
-    return IsDefaultValueType(type, isNonReadonlyField);
+    return IsDefaultValueType(type);
 }
 
 void AssignAnalyzer::LetInit(const ir::AstNode *node)

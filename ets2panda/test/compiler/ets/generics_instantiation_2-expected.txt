@@ -413,6 +413,83 @@
                 }
               }
             },
+            "value": {
+              "type": "TSAsExpression",
+              "expression": {
+                "type": "UndefinedLiteral",
+                "value": "undefined",
+                "loc": {
+                  "start": {
+                    "line": 21,
+                    "column": 23,
+                    "program": "generics_instantiation_2.ets"
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 32,
+                    "program": "generics_instantiation_2.ets"
+                  }
+                }
+              },
+              "typeAnnotation": {
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "T",
+                    "loc": {
+                      "start": {
+                        "line": 21,
+                        "column": 36,
+                        "program": "generics_instantiation_2.ets"
+                      },
+                      "end": {
+                        "line": 21,
+                        "column": 37,
+                        "program": "generics_instantiation_2.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 21,
+                      "column": 36,
+                      "program": "generics_instantiation_2.ets"
+                    },
+                    "end": {
+                      "line": 21,
+                      "column": 37,
+                      "program": "generics_instantiation_2.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 21,
+                    "column": 36,
+                    "program": "generics_instantiation_2.ets"
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 37,
+                    "program": "generics_instantiation_2.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 21,
+                  "column": 23,
+                  "program": "generics_instantiation_2.ets"
+                },
+                "end": {
+                  "line": 21,
+                  "column": 37,
+                  "program": "generics_instantiation_2.ets"
+                }
+              }
+            },
             "accessibility": "public",
             "static": false,
             "readonly": false,
@@ -474,7 +551,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 20,
+                "column": 37,
                 "program": "generics_instantiation_2.ets"
               }
             }

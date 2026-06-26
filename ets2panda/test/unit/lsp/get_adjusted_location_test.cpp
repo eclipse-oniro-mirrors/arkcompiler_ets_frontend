@@ -418,7 +418,7 @@ TEST_F(LspGetAdjustedLocation, FindTypeParameterTest)
 {
     const char *source = R"(
 class Container<T> {
-    value: T;
+    value: T = undefined as T;
 }
 )";
     ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
