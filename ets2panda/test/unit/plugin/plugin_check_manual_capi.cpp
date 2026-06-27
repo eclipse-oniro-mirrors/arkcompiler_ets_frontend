@@ -50,6 +50,7 @@
  *   void(*DestroyConfig)(es2panda_Config *config);
  *   es2panda_Program *(*ContextProgram)(es2panda_Context *context);
  *   es2panda_Context *(*ProceedToState)(es2panda_Context *context, es2panda_ContextState state);
+ *   bool (*ProgramLocalNameIsExported)(es2panda_Context *context, const es2panda_Program *program, const char *name);
  *   es2panda_ExternalSource **(*ProgramExternalSources)(es2panda_Program *program, size_t *len_p)
  *   char const *(*ExternalSourceName)(es2panda_ExternalSource *e_source)
  *   es2panda_Program **(*ExternalSourcePrograms)(es2panda_ExternalSource *e_source, size_t *len_p)
@@ -61,6 +62,7 @@ constexpr int SOURCE_POSITION_FAIL_CODE = 0x10;
 constexpr int NUMBER_LITERAL_FAIL_CODE = 0x11;
 constexpr int ENUM_STRING_CONVERSION_FAIL_CODE = 0x12;
 constexpr int EXTERNAL_SOURCE_FAIL_CODE = 0x13;
+constexpr int PROGRAM_LOCAL_NAME_EXPORT_FAIL_CODE = 0x14;
 
 es2panda_Impl *g_impl = nullptr;
 }  // namespace
@@ -165,6 +167,25 @@ bool CheckEnumStringConversion(es2panda_Context *ctx)
     return true;
 }
 
+bool CheckExpectedLocalExportNames(es2panda_Context *ctx, es2panda_Program *program)
+{
+    if (program == nullptr) {
+        return false;
+    }
+    return g_impl->ProgramLocalNameIsExported(ctx, program, "Direct") &&
+           g_impl->ProgramLocalNameIsExported(ctx, program, "Selective") &&
+           g_impl->ProgramLocalNameIsExported(ctx, program, "Renamed") &&
+           !g_impl->ProgramLocalNameIsExported(ctx, program, "PublicName") &&
+           !g_impl->ProgramLocalNameIsExported(ctx, program, "Missing");
+}
+
+bool CheckProgramLocalNameIsExported(es2panda_Context *ctx)
+{
+    g_impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED);
+    auto *program = g_impl->ContextProgram(ctx);
+    return CheckExpectedLocalExportNames(ctx, program);
+}
+
 bool CheckExternalSource(es2panda_Context *ctx)
 {
     g_impl->ProceedToState(ctx, ES2PANDA_STATE_BOUND);
@@ -200,7 +221,15 @@ int main(int argc, char **argv)
         return NULLPTR_IMPL_ERROR_CODE;
     }
     auto config = g_impl->CreateConfig(argc - 1, argv + 1);
-    auto src = std::string("function foo(builder: () => void) {}\nfoo(() => {})");
+    auto src = std::string(R"(
+export class Direct {}
+class Selective {}
+export { Selective }
+class Renamed {}
+export { Renamed as PublicName }
+function foo(builder: () => void) {}
+foo(() => {})
+)");
     auto context = g_impl->CreateContextFromString(config, src.c_str(), argv[argc - 1]);
     if (context == nullptr) {
         std::cerr << "FAILED TO CREATE CONTEXT" << std::endl;
@@ -217,6 +246,10 @@ int main(int argc, char **argv)
 
     if (!CheckEnumStringConversion(context)) {
         return ENUM_STRING_CONVERSION_FAIL_CODE;
+    }
+
+    if (!CheckProgramLocalNameIsExported(context)) {
+        return PROGRAM_LOCAL_NAME_EXPORT_FAIL_CODE;
     }
 
     if (!CheckExternalSource(context)) {

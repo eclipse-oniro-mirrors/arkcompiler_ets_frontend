@@ -158,6 +158,17 @@ export class Program extends ArktsObject {
     constructor(peer: KPtr) {
         super(peer);
     }
+
+    /**
+     * Returns whether a top-level local declaration name is exported by this program.
+     *
+     * This API is intended for transformed top-level declarations only. Callers should assert that the queried node
+     * is a top-level declaration in this program before using it. For renamed exports, query the local declaration name,
+     * not the public exported name.
+     */
+    isLocalNameExported(name: string): boolean {
+        return global.es2panda._ProgramLocalNameIsExported(global.context, this.peer, name) !== 0;
+    }
 }
 // ProjectConfig begins
 export interface PluginsConfig {

@@ -53,6 +53,14 @@ KNativePointer impl_ProgramExternalSources(KNativePointer contextPtr, [[maybe_un
 }
 TS_INTEROP_3(ProgramExternalSources, KNativePointer, KNativePointer, KNativePointer, KNativePointer)
 
+KBoolean impl_ProgramLocalNameIsExported(KNativePointer contextPtr, KNativePointer programPtr, KStringPtr &name)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    auto program = reinterpret_cast<es2panda_Program *>(programPtr);
+    return GetPublicImpl()->ProgramLocalNameIsExported(context, program, name.Data()) ? 1 : 0;
+}
+TS_INTEROP_3(ProgramLocalNameIsExported, KBoolean, KNativePointer, KNativePointer, KStringPtr)
+
 KNativePointer impl_CreateCacheContextFromFile(KNativePointer configPtr, KStringPtr &sourceFileName,
                                                KNativePointer globalContext, KBoolean isExternal)
 {
