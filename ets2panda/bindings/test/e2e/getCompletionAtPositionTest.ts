@@ -115,7 +115,7 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_004 = [
     {
-      name: 'myProp: Double',
+      name: 'myProp: number',
       sortText: '14',
       insertText: 'myProp',
       kind: 10,
@@ -177,14 +177,14 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_011 = [
     {
-      name: 'myProp: Double',
+      name: 'myProp: number',
       sortText: '14',
       insertText: 'myProp',
       kind: 10,
       data: null
     },
     {
-      name: 'prop: Double',
+      name: 'prop: number',
       sortText: '14',
       insertText: 'prop',
       kind: 10,
@@ -211,7 +211,7 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_014 = [
     {
-      name: 'isEmpty(): Boolean',
+      name: 'isEmpty(): boolean',
       sortText: '17',
       insertText: 'isEmpty()',
       kind: 2,
@@ -280,21 +280,21 @@ describe('getCompletionAtPositionTest', () => {
   ];
   const EXPECT_017 = [
     {
-      name: 'name: String',
+      name: 'name: string',
       sortText: '14',
       insertText: 'name',
       kind: 10,
       data: null
     },
     {
-      name: 'age: Double',
+      name: 'age: number',
       sortText: '14',
       insertText: 'age',
       kind: 10,
       data: null
     },
     {
-      name: 'introduce(name: String, age: Double): undefined',
+      name: 'introduce(name: string, age: number): void',
       sortText: '17',
       insertText: 'introduce()',
       kind: 2,

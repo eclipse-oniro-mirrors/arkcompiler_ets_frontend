@@ -43,7 +43,7 @@ let a = MyModule.
     auto entries = res.GetEntries();
 
     std::string insertName = "myVar";
-    std::string name = "myVar: Double";
+    std::string name = "myVar: number";
     bool found = false;
     for (const auto &entry : entries) {
         if (entry.GetCompletionKind() == CompletionEntryKind::PROPERTY && entry.GetInsertText() == insertName &&
@@ -77,7 +77,7 @@ let a = MyModule.
     bool found = false;
     for (const auto &entry : entries) {
         if (entry.GetCompletionKind() == CompletionEntryKind::METHOD && entry.GetInsertText() == "myFunc()" &&
-            entry.GetName() == "myFunc(): undefined") {
+            entry.GetName() == "myFunc(): void") {
             found = true;
             break;
         }

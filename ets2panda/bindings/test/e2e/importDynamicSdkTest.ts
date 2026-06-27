@@ -32,7 +32,7 @@ describe('importDynamicSdkTest', () => {
   ];
   const COMPLETIONS_002 = [
     {
-      name: 'setBatteryConfig(sceneName: String, sceneValue: String): Double',
+      name: 'setBatteryConfig(sceneName: string, sceneValue: string): number',
       sortText: '17',
       insertText: 'setBatteryConfig()',
       kind: 2,
@@ -40,7 +40,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'getBatteryConfig(sceneName: String): String',
+      name: 'getBatteryConfig(sceneName: string): string',
       sortText: '17',
       insertText: 'getBatteryConfig()',
       kind: 2,
@@ -48,7 +48,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'isBatteryConfigSupported(sceneName: String): Boolean',
+      name: 'isBatteryConfigSupported(sceneName: string): boolean',
       sortText: '17',
       insertText: 'isBatteryConfigSupported()',
       kind: 2,
@@ -56,7 +56,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'batterySOC(): Double',
+      name: 'batterySOC(): number',
       sortText: '17',
       insertText: 'batterySOC()',
       kind: 2,
@@ -88,7 +88,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'voltage(): Double',
+      name: 'voltage(): number',
       sortText: '17',
       insertText: 'voltage()',
       kind: 2,
@@ -96,7 +96,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'technology(): String',
+      name: 'technology(): string',
       sortText: '17',
       insertText: 'technology()',
       kind: 2,
@@ -104,7 +104,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'batteryTemperature(): Double',
+      name: 'batteryTemperature(): number',
       sortText: '17',
       insertText: 'batteryTemperature()',
       kind: 2,
@@ -112,7 +112,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'isBatteryPresent(): Boolean',
+      name: 'isBatteryPresent(): boolean',
       sortText: '17',
       insertText: 'isBatteryPresent()',
       kind: 2,
@@ -128,7 +128,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'estimatedRemainingChargeTime(): Double',
+      name: 'estimatedRemainingChargeTime(): number',
       sortText: '17',
       insertText: 'estimatedRemainingChargeTime()',
       kind: 2,
@@ -136,7 +136,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'totalEnergy(): Double',
+      name: 'totalEnergy(): number',
       sortText: '17',
       insertText: 'totalEnergy()',
       kind: 2,
@@ -144,7 +144,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'nowCurrent(): Double',
+      name: 'nowCurrent(): number',
       sortText: '17',
       insertText: 'nowCurrent()',
       kind: 2,
@@ -152,15 +152,7 @@ describe('importDynamicSdkTest', () => {
       hasAction: false
     },
     {
-      name: 'nowCurrent(): Double',
-      sortText: '17',
-      insertText: 'nowCurrent()',
-      kind: 2,
-      data: null,
-      hasAction: false
-    },
-    {
-      name: 'remainingEnergy(): Double',
+      name: 'remainingEnergy(): number',
       sortText: '17',
       insertText: 'remainingEnergy()',
       kind: 2,
