@@ -733,6 +733,30 @@ TEST_F(ExportResolutionTest, PackageImportResolvesRequestedFractionExport)
     EXPECT_FALSE(Checker()->IsAnyError()) << (Checker()->IsAnyError() ? GetAnyError().Message() : std::string {});
 }
 
+TEST_F(ExportResolutionTest, PackageExplicitReExportOverridesStarExportFromOtherFraction)
+{
+    WriteFile("pkg/explicit.ets", R"ETS(
+        export { A } from "../selected.ets";
+    )ETS");
+    WriteFile("pkg/star.ets", R"ETS(
+        export * from "../generated.ets";
+    )ETS");
+    WriteFile("selected.ets", R"ETS(
+        export class A {}
+    )ETS");
+    WriteFile("generated.ets", R"ETS(
+        export class A {}
+    )ETS");
+
+    InitializeFromFile("main.ets", R"ETS(
+        import { A } from "./pkg";
+
+        let value: A|null = null;
+    )ETS");
+
+    EXPECT_FALSE(Checker()->IsAnyError()) << (Checker()->IsAnyError() ? GetAnyError().Message() : std::string {});
+}
+
 TEST_F(ExportResolutionTest, ImportedSyntaxErrorStillAllowsRequestedNameError)
 {
     WriteFile("ex.ets", R"ETS(
