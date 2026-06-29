@@ -64,6 +64,7 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
 
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
+bool IsClassStaticAccessTarget(const varbinder::Variable *targetRef);
 bool IsBigIntZeroLiteral(const ir::Expression *expr);
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
 std::optional<bool> TryResolveConditionalTestValue(const ir::Expression *test);

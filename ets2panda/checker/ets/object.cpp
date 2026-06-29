@@ -16,6 +16,7 @@
 #include <functional>
 #include <iterator>
 #include <string_view>
+#include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/checkerContext.h"
 #include "checker/ets/typeRelationContext.h"
@@ -3674,14 +3675,6 @@ std::vector<ResolveResult *> ETSChecker::HandlePropertyResolution(varbinder::Loc
         resolveRes.emplace_back(ProgramAllocator()->New<ResolveResult>(prop, ResolvedKind::PROPERTY));
     }
     return resolveRes;
-}
-
-static bool IsClassStaticAccessTarget(const varbinder::Variable *targetRef)
-{
-    return targetRef != nullptr && (targetRef->HasFlag(varbinder::VariableFlags::CLASS) ||
-                                    (targetRef->HasFlag(varbinder::VariableFlags::TYPE_ALIAS) &&
-                                     targetRef->TsType() != nullptr && targetRef->TsType()->Variable() != nullptr &&
-                                     targetRef->TsType()->Variable()->HasFlag(varbinder::VariableFlags::CLASS)));
 }
 
 static bool IsStaticInvokeOrInstantiate(const ir::Identifier *ident)
