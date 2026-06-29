@@ -21,6 +21,7 @@ add_subdirectory(test-name-conflict)
 add_subdirectory(test-unsupported-file-name)
 add_subdirectory(test-empty-import-path)
 add_subdirectory(test-import-path)
+add_subdirectory(test-interop-dynamic-file-not-found)
 # 25872
 # add_subdirectory(test-build)
 # add_subdirectory(test-decl)

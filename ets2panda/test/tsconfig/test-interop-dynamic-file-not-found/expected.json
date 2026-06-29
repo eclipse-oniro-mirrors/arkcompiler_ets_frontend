@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "[main.ets:16:21] Fatal error F0028: Cannot resolve 'mymodule'. Please run declgen to generate the declaration files, or use ESValue for interop scenarios.\n",
+    "stderr": ""
+}

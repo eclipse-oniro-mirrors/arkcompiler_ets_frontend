@@ -317,12 +317,10 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
 
     auto pathValue = data->get()->GetValue<JsonObject::StringT>(PATH);
     std::string normalizedPath {};
-    // NOTE(itrubachev): path in dependencies must be mandatory. Need to fix interop tests
+    // In ESValue scenario, we do not need decl file.
+    // In import scenario, we will check and diagnose it when we import it.
     if (pathValue != nullptr) {
         normalizedPath = MakeAbsolutePath(*pathValue, baseUrl_);
-        if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {normalizedPath, key, baseUrl_})) {
-            return false;
-        }
     } else {
         // NOTE(itrubachev): path in dependencies must be mandatory. Now it can be not specified only for interop
         if (!Check(lang && lang->IsDynamic(), diagnostic::INVALID_PATH, {key})) {
