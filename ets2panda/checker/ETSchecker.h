@@ -227,6 +227,7 @@ public:
     Type *GuaranteedTypeForUncheckedCast(Type *base, Type *substituted);
     Type *GuaranteedTypeForUncheckedCallReturn(Signature *sig);
     Type *GuaranteedTypeForUncheckedPropertyAccess(varbinder::Variable *prop);
+    Type *GuaranteedTypeForUncheckedOverridePropAccess(ir::ClassProperty *classProp, varbinder::Variable *prop);
     Type *GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *memberExpression, ETSUnionType *etsUnionType);
     void ReputCheckerData();
 
