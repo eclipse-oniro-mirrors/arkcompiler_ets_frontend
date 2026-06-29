@@ -454,8 +454,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
         checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
         AddStatus(checker::CheckerStatus::IN_EXTERNAL);
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsBuiltSimultaneously() ||
-                                  extProg->template Is<util::ModuleKind::METADATA_DECL>());
+        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsBuiltSimultaneously());
         VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
         VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
         extProg->SetProgramModified(false);

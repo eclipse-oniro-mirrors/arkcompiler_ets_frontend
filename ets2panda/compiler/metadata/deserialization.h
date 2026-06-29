@@ -20,6 +20,8 @@
 #include "schemaMetadataGenerated.h"
 #include "libarkfile/metadata_helper.h"
 
+#include <unordered_map>
+
 namespace ark::es2panda::compiler {
 
 using ValueParamsInfo = std::pair<ArenaVector<ir::Expression *>, varbinder::FunctionParamScope *>;
@@ -46,6 +48,15 @@ private:
     void AddExtends(const Metadata::InterfaceDecl *fbInterfaceDecl, ir::TSInterfaceDeclaration *interfaceDecl) const;
     void AddMethods(const flatbuffers::Vector<flatbuffers::Offset<Metadata::FunctionDecl>> &methods,
                     ArenaVector<ir::AstNode *> &body, ir::AstNode *parent);
+
+    template <typename T>
+    constexpr auto GetLazyMembers();
+
+    template <typename T, typename K>
+    void MaterializeMembers(T *node, K const *fbDecl = nullptr);
+
+    template <typename T>
+    void RunBinderForMembers(T *node) const;
 
     ValueParamsInfo CreateValueParams(
         const flatbuffers::Vector<flatbuffers::Offset<Metadata::ValueParamDecl>> *fbValueParams) const;
@@ -79,13 +90,20 @@ private:
     {
         return Context()->GetChecker()->VarBinder()->GetScope();
     }
-    template <typename T>
-    T WithScope(varbinder::Scope *scope, const std::function<T()> &run);
-    inline void WithProgram(parser::Program *program, const std::function<void()> &run);
+    template <typename T, typename F>
+    T WithScope(varbinder::Scope *scope, F &&run);
+    template <typename F>
+    void WithProgram(parser::Program *program, F &&run);
 
     void ProcessMetadata(panda_file::MetadataByModules *metadata);
 
     parser::Program *curProgram = nullptr;
+
+    std::unordered_map<const ir::ClassDefinition *, std::pair<const Metadata::ClassDecl *, parser::Program *>>
+        lazyClassMembers_;
+    std::unordered_map<const ir::TSInterfaceDeclaration *,
+                       std::pair<const Metadata::InterfaceDecl *, parser::Program *>>
+        lazyInterfaceMembers_;
 
     static const std::map<Metadata::BuiltinTypeKind, ir::PrimitiveType> BUILTIN_PRIMITIVE_TYPES;
 

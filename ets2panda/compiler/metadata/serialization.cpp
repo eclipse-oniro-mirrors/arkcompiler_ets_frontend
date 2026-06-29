@@ -263,21 +263,39 @@ Offset<> MetadataSerializationPhase::BuildUnionType(FlatBufferBuilder &builder, 
     return Metadata::CreateUnionType(builder, builder.CreateVector(typeKinds), builder.CreateVector(types)).Union();
 }
 
+Offset<flatbuffers::String> MetadataSerializationPhase::BuildRefTypeName(FlatBufferBuilder &builder,
+                                                                         const ir::AstNode &node)
+{
+    auto curScope = node.Scope();
+    std::string name;
+    while (curScope) {
+        const auto curNode = curScope->Node();
+        if (!curNode) {
+            curScope = curScope->Parent();
+            continue;
+        }
+
+        ir::Identifier *id = nullptr;
+        if (curNode->IsClassDefinition() && !curNode->AsClassDefinition()->IsGlobal()) {
+            id = curNode->AsClassDefinition()->Ident();
+        } else if (curNode->IsTSInterfaceDeclaration()) {
+            id = curNode->AsTSInterfaceDeclaration()->Id();
+        } else {
+            break;
+        }
+        name = std::string(id->Name().Utf8()) + (name.empty() ? "" : "." + name);
+        curScope = curScope->Parent();
+    }
+
+    return builder.CreateSharedString(name);
+}
+
 Offset<> MetadataSerializationPhase::BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type)
 {
     const auto decl = type->GetDeclNode();
 
     ES2PANDA_ASSERT(decl->IsClassDefinition() ||
                     decl->IsTSInterfaceDeclaration());  // other decls are not supported yet
-
-    std::string declName;
-    if (decl->IsClassDefinition()) {
-        declName = decl->AsClassDefinition()->InternalName().Utf8();
-    } else if (decl->IsTSInterfaceDeclaration()) {
-        declName = decl->AsTSInterfaceDeclaration()->InternalName().Utf8();
-    } else {
-        return 0;
-    }
 
     std::vector<uint8_t> typeArgKinds;
     std::vector<Offset<>> typeArgs;
@@ -287,7 +305,7 @@ Offset<> MetadataSerializationPhase::BuildRefType(FlatBufferBuilder &builder, co
         typeArgKinds.emplace_back(componentTypeKind);
     }
 
-    return Metadata::CreateTypeRef(builder, builder.CreateSharedString(declName), builder.CreateVector(typeArgKinds),
+    return Metadata::CreateTypeRef(builder, BuildRefTypeName(builder, *decl), builder.CreateVector(typeArgKinds),
                                    builder.CreateVector(typeArgs))
         .Union();
 }
@@ -463,9 +481,6 @@ void MetadataSerializationPhase::ProcessStatement(FlatBufferBuilder &builder, co
 std::vector<uint8_t> MetadataSerializationPhase::GetMetadataBytes(FlatBufferBuilder &builder,
                                                                   const Offset<Metadata::Decls> &fbDecls)
 {
-    if (fbDecls.IsNull()) {
-        return {};
-    }
     builder.Finish(fbDecls);
     const auto buf = builder.GetBufferSpan();
     return {buf.begin(), buf.end()};
@@ -491,7 +506,12 @@ bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
     const auto decls = BuildDecls(builder, program->Ast()->Statements());
     LOG_METADATA_NESTING_DEC();
 
-    ctx->metadata[MetadataModuleId(pkgName, moduleName)] = GetMetadataBytes(builder, decls);
+    if (decls.IsNull()) {  // No exported decls, skip recording for such module
+        LOG_METADATA_DISABLE();
+        return true;
+    }
+
+    ctx->metadata[pkgName][moduleName] = GetMetadataBytes(builder, decls);
 
     LOG_METADATA_DISABLE();
 

@@ -16,8 +16,10 @@
 #include "deserialization.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/methodDefinition.h"
+#include "ir/ts/tsQualifiedName.h"
 #include "schemaMetadataGenerated.h"
 #include "compiler/lowering/ets/topLevelStmts/globalClassHandler.h"
+#include "varbinder/ETSBinder.h"
 #include "flatbuffers/flatbuffers.h"
 #include "evaluate/helpers.h"
 #include "libarkbase/utils/logger.h"
@@ -75,7 +77,7 @@ void MetadataDeserializationPhase::SetupGlobalClass() const
         }
     }
 
-    const auto binderDecl = allocator->New<varbinder::ClassDecl>(curProgram->GlobalClass()->Ident()->Name());
+    const auto binderDecl = EAllocator::New<varbinder::ClassDecl>(curProgram->GlobalClass()->Ident()->Name());
     binderDecl->BindNode(curProgram->GlobalClass());
     curProgram->GlobalClass()->Ident()->SetVariable(
         curProgram->GlobalScope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS));
@@ -130,7 +132,83 @@ void MetadataDeserializationPhase::AddClassMembers(const Metadata::ClassDecl *fb
         const auto decls = CreateDecls(fbClassDecl->decls());
         classBody.reserve(classBody.size() + decls.size());
         classBody.insert(classBody.end(), decls.begin(), decls.end());
+
+        auto *const staticDeclScope = classDef->Scope()->AsClassScope()->StaticDeclScope();
+        for (auto *const decl : decls) {
+            if (!decl->IsClassDefinition() && !decl->IsTSInterfaceDeclaration()) {
+                continue;
+            }
+            const auto id =
+                decl->IsClassDefinition() ? decl->AsClassDefinition()->Ident() : decl->AsTSInterfaceDeclaration()->Id();
+            if (id->Variable() != nullptr) {
+                staticDeclScope->InsertBinding(id->Name(), id->Variable());
+            }
+        }
     }
+}
+
+template <typename T>
+void MetadataDeserializationPhase::RunBinderForMembers(T *node) const
+{
+    static_assert(std::is_same_v<T, ir::TSInterfaceDeclaration> || std::is_same_v<T, ir::ClassDefinition>,
+                  "T must be TSInterfaceDeclaration or ClassDefinition");
+
+    const auto etsBinder = Context()->GetChecker()->VarBinder()->AsETSBinder();
+    varbinder::GlobalScopeContext gsc(etsBinder, curProgram, curProgram->GlobalScope());
+    varbinder::RecordTableContext rtc(etsBinder, curProgram);
+    varbinder::BoundContext boundCtx(etsBinder->GetRecordTable(), node, true);
+    if constexpr (std::is_same_v<T, ir::TSInterfaceDeclaration>) {
+        etsBinder->BuildInterfaceDeclaration(node);
+    } else {
+        etsBinder->BuildClassDefinition(node);
+    }
+}
+
+template <typename T>
+constexpr auto MetadataDeserializationPhase::GetLazyMembers()
+{
+    if constexpr (std::is_same_v<T, ir::TSInterfaceDeclaration>) {
+        return lazyInterfaceMembers_;
+    } else {
+        return lazyClassMembers_;
+    }
+}
+
+template <typename T, typename K>
+void MetadataDeserializationPhase::MaterializeMembers(T *node, K const *fbDecl)
+{
+    static_assert(std::is_same_v<T, ir::TSInterfaceDeclaration> || std::is_same_v<T, ir::ClassDefinition>,
+                  "T must be TSInterfaceDeclaration or ClassDefinition");
+
+    const auto isLazy = fbDecl == nullptr;
+    parser::Program *ownerProgram = curProgram;
+
+    if (!fbDecl) {
+        auto lazyMembers = GetLazyMembers<T>();
+        const auto member = lazyMembers.find(node);
+        if (member == lazyMembers.end()) {
+            return;  // already materialized
+        }
+
+        fbDecl = member->second.first;
+        ownerProgram = member->second.second;
+        lazyMembers.erase(member);
+    }
+
+    WithProgram(ownerProgram, [this, &fbDecl, &node, &isLazy] {
+        WithScope<void>(node->Scope(), [this, &fbDecl, &node]() -> void {
+            LOG_METADATA_NESTING_INC();
+            if constexpr (std::is_same_v<T, ir::TSInterfaceDeclaration>) {
+                AddMethods(*fbDecl->methods(), node->Body()->Body(), node);
+            } else {
+                AddClassMembers(fbDecl, node);
+            }
+            LOG_METADATA_NESTING_DEC();
+        });
+        if (isLazy) {
+            RunBinderForMembers(node);
+        }
+    });
 }
 
 ValueParamsInfo MetadataDeserializationPhase::CreateValueParams(
@@ -138,7 +216,7 @@ ValueParamsInfo MetadataDeserializationPhase::CreateValueParams(
 {
     const auto ctx = Context();
     const auto allocator = ctx->Allocator();
-    const auto paramScope = allocator->New<varbinder::FunctionParamScope>(allocator, Scope());
+    const auto paramScope = EAllocator::New<varbinder::FunctionParamScope>(allocator, Scope());
 
     if (fbValueParams->size() == 0) {
         return {{}, paramScope};
@@ -149,7 +227,7 @@ ValueParamsInfo MetadataDeserializationPhase::CreateValueParams(
         auto id = ctx->AllocNode<ir::Identifier>(fbValueParam->name()->string_view(), allocator);
         auto valueParam = ctx->AllocNode<ir::ETSParameterExpression>(id, false, allocator);
         valueParam->SetTypeAnnotation(CreateType(fbValueParam->type(), fbValueParam->type_type()));
-        id->SetVariable(paramScope->CreateVar<varbinder::ParameterDecl, varbinder::LocalVariable>(
+        id->SetVariable(varbinder::FunctionParamScope::CreateVar<varbinder::ParameterDecl, varbinder::LocalVariable>(
             allocator, id->Name(), varbinder::VariableFlags::NONE, valueParam));
         if (fbValueParam->is_optional()) {
             valueParam->SetOptional(true);
@@ -184,7 +262,7 @@ ir::TSTypeParameterDeclaration *MetadataDeserializationPhase::CreateTypeParams(
         } else if (fbTypeParam->variance() == Metadata::TypeParamVariance::TypeParamVariance_OUT) {
             typeParam->AddModifier(ir::ModifierFlags::OUT);
         }
-        const auto binderTypeParamDecl = allocator->New<varbinder::TypeParameterDecl>(id->Name());
+        const auto binderTypeParamDecl = EAllocator::New<varbinder::TypeParameterDecl>(id->Name());
         binderTypeParamDecl->BindNode(typeParam);
         typeParams.emplace_back(typeParam);
         id->SetVariable(typeParamScope->AddDecl(allocator, binderTypeParamDecl, ScriptExtension::ETS));
@@ -239,12 +317,23 @@ ir::TypeNode *MetadataDeserializationPhase::CreateRefType(const Metadata::TypeRe
 {
     const auto ctx = Context();
     const auto allocator = ctx->Allocator();
-    const auto fqName = fbRefType->fqname()->string_view();
-    // Currently resolution for restored AST by metadata is performed, so no need to use fqnames
-    const auto name = fqName.substr(fqName.find_last_of('.') + 1);
-    const auto typeRef = ctx->AllocNode<ir::ETSTypeReference>(
-        ctx->AllocNode<ir::ETSTypeReferencePart>(ctx->AllocNode<ir::Identifier>(name, allocator), allocator),
-        allocator);
+    const auto fqname = fbRefType->fqname()->string_view();
+
+    ir::Expression *name = nullptr;
+    for (size_t start = 0; start <= fqname.size();) {
+        const auto dot = fqname.find('.', start);
+        const auto seg = fqname.substr(start, dot == std::string_view::npos ? std::string_view::npos : dot - start);
+        const auto segId = ctx->AllocNode<ir::Identifier>(util::UString(seg, allocator).View(), allocator);
+        name = (name == nullptr) ? static_cast<ir::Expression *>(segId)
+                                 : ctx->AllocNode<ir::TSQualifiedName>(name, segId, allocator);
+        if (dot == std::string_view::npos) {
+            break;
+        }
+        start = dot + 1;
+    }
+
+    const auto typeRef =
+        ctx->AllocNode<ir::ETSTypeReference>(ctx->AllocNode<ir::ETSTypeReferencePart>(name, allocator), allocator);
 
     if (fbRefType->type_args() && fbRefType->type_args()->size() > 0) {
         const auto fbTypeArgs = fbRefType->type_args();
@@ -307,8 +396,9 @@ ir::TypeNode *MetadataDeserializationPhase::CreateFunctionType(const Metadata::F
         const auto paramId = ctx->AllocNode<ir::Identifier>(
             fbParam->name()->string_view(), CreateType(fbParam->type(), fbParam->type_type()), allocator);
         const auto param = ctx->AllocNode<ir::ETSParameterExpression>(paramId, false, allocator);
-        paramId->SetVariable(paramScope->CreateVar<varbinder::ParameterDecl, varbinder::LocalVariable>(
-            allocator, paramId->Name(), varbinder::VariableFlags::NONE, param));
+        paramId->SetVariable(
+            varbinder::FunctionParamScope::CreateVar<varbinder::ParameterDecl, varbinder::LocalVariable>(
+                allocator, paramId->Name(), varbinder::VariableFlags::NONE, param));
         params.emplace_back(param);
     }
 
@@ -387,7 +477,7 @@ ir::MethodDefinition *MetadataDeserializationPhase::CreateMethodDecl(const Metad
         methodDef->Function()->SetTypeParams(typeParams);
     }
 
-    const auto binderDecl = ctx->Allocator()->New<varbinder::MethodDecl>(methodDef->Id()->Name());
+    const auto binderDecl = EAllocator::New<varbinder::MethodDecl>(methodDef->Id()->Name());
     binderDecl->BindNode(methodDef);
     const auto scopeToAdd = isConstructor || fbMethodDecl->is_static() ? Scope()->AsClassScope()->StaticMethodScope()
                                                                        : Scope()->AsClassScope()->InstanceMethodScope();
@@ -519,11 +609,7 @@ ir::TSInterfaceDeclaration *MetadataDeserializationPhase::CreateInterfaceDecl(
                                                ? ": " + IrDeclVectorToString(interfaceDecl->Extends())
                                                : ""));
 
-            WithScope<void>(interfaceDecl->Scope(), [this, &fbInterfaceDecl, &interfaceDecl]() -> void {
-                LOG_METADATA_NESTING_INC();
-                AddMethods(*fbInterfaceDecl->methods(), interfaceDecl->Body()->Body(), interfaceDecl);
-                LOG_METADATA_NESTING_DEC();
-            });
+            lazyInterfaceMembers_[interfaceDecl] = {fbInterfaceDecl, curProgram};
 
             return interfaceDecl;
         });
@@ -555,11 +641,12 @@ ir::ClassDefinition *MetadataDeserializationPhase::CreateClassDecl(
                          << fbClassDecl->name()->string_view()
                          << (typeParams ? "<" + IrDeclToString(classDef->TypeParams()) + ">" : ""));
 
-            WithScope<void>(classDef->Scope(), [this, &fbClassDecl, &classDef]() -> void {
-                LOG_METADATA_NESTING_INC();
-                AddClassMembers(fbClassDecl, classDef);
-                LOG_METADATA_NESTING_DEC();
-            });
+            if (isGlobalClass) {
+                // Top-level members are materialized eagerly as their bindins are created eagerly as well
+                MaterializeMembers(classDef, fbClassDecl);
+            } else {
+                lazyClassMembers_[classDef] = {fbClassDecl, curProgram};
+            }
             return classDef;
         });
 }
@@ -614,8 +701,8 @@ ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDecls(const Metad
     return nodes;
 }
 
-template <typename T>
-T MetadataDeserializationPhase::WithScope(varbinder::Scope *scope, const std::function<T()> &run)
+template <typename T, typename F>
+T MetadataDeserializationPhase::WithScope(varbinder::Scope *scope, F &&run)
 {
     auto scopeCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(Context()->GetChecker()->VarBinder(), scope);
     if constexpr (std::is_same_v<T, void>) {
@@ -626,27 +713,29 @@ T MetadataDeserializationPhase::WithScope(varbinder::Scope *scope, const std::fu
     }
 }
 
-inline void MetadataDeserializationPhase::WithProgram(parser::Program *program, const std::function<void()> &run)
+template <typename F>
+void MetadataDeserializationPhase::WithProgram(parser::Program *program, F &&run)
 {
     LOG_METADATA_ENABLE();
+    const auto prevProgram = curProgram;
     curProgram = program;
     run();
-    curProgram = nullptr;
+    curProgram = prevProgram;
     LOG_METADATA_DISABLE();
 }
 
 void MetadataDeserializationPhase::ProcessMetadata(MetadataByModules *metadata)
 {
-    for (const auto &[moduleId, metadata_] : *metadata) {
-        if (metadata_.empty()) {
-            LOG_METADATA("skipped module \"" << moduleId.ToString() << "\" (no metadata)");
+    for (const auto &[moduleName, moduleMetadata] : *metadata) {
+        if (moduleMetadata.empty()) {
+            LOG_METADATA("skipped module \"" << moduleName << "\" (no metadata)");
             continue;
         }
 
-        LOG_METADATA("processing module \"" << moduleId.GetModuleName() << "\" (" << std::to_string(metadata_.size())
+        LOG_METADATA("processing module \"" << moduleName << "\" (" << std::to_string(moduleMetadata.size())
                                             << " bytes)");
 
-        const auto root = Metadata::GetDecls(metadata_.data());
+        const auto root = Metadata::GetDecls(moduleMetadata.data());
         WithScope<void>(curProgram->Ast()->Scope(), [this, &root] { CreateDecls(root); });
     }
 
@@ -658,6 +747,14 @@ bool MetadataDeserializationPhase::PerformForProgram(parser::Program *program)
     if (!Context()->config->options->IsReadMetadata()) {
         return false;  // make phase failed due to the corresponding compilation option disabled
     }
+
+    Context()->materializeMembers = [this](ir::AstNode *node) {
+        if (node->IsClassDefinition()) {
+            MaterializeMembers<ir::ClassDefinition, Metadata::ClassDecl>(node->AsClassDefinition());
+        } else if (node->IsTSInterfaceDeclaration()) {
+            MaterializeMembers<ir::TSInterfaceDeclaration, Metadata::InterfaceDecl>(node->AsTSInterfaceDeclaration());
+        }
+    };
 
     WithProgram(program, [this] {
         const auto ctx = Context();

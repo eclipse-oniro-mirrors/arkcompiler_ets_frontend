@@ -60,6 +60,7 @@ private:
                                                                       bool isFromNamespaceOrTopLevel = false);
     Offset<Metadata::FunctionDecl> BuildFunctionDecl(FlatBufferBuilder &builder, const ir::ScriptFunction *func);
     static Offset<> BuildTypeParameterType(FlatBufferBuilder &builder, const checker::ETSTypeParameter *type);
+    static Offset<flatbuffers::String> BuildRefTypeName(FlatBufferBuilder &builder, const ir::AstNode &node);
     Offset<> BuildRefType(FlatBufferBuilder &builder, const checker::ETSObjectType *type);
     Offset<> BuildUnionType(FlatBufferBuilder &builder, const checker::ETSUnionType *type);
     static Offset<> BuildStringLiteralType(FlatBufferBuilder &builder, const checker::ETSStringType *type);

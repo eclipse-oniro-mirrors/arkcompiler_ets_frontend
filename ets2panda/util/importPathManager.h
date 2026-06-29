@@ -193,16 +193,6 @@ private:
         SetData<KIND, SHOULD_CACHE>(file, std::move(text));
     }
 
-    template <bool SHOULD_CACHE = true>
-    void SetBinFile(const panda_file::File &pf)
-    {
-        ma_.SetFile(pf);
-        const auto moduleId =
-            panda_file::MetadataAccessor::BuildModuleId(ModuleName(), extModuleData_->SourceFilePath());
-        SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(moduleId.ToString(),
-                                                         std::move(ma_.GetMetadataForPackage(moduleId)));
-    }
-
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
     void SetData(std::string textSource, parser::SelectCacheDataType<SelectCacheType<KIND>(), true> contents)
     {
@@ -222,8 +212,6 @@ private:
 private:
     ArenaString resolvedSource_ {ERROR_LITERAL};
     ArenaString moduleName_ {};
-
-    panda_file::MetadataAccessor ma_;
 
     // NOTE(dkofanov): #32416 These fields should be refactored:
     const ArkTsConfig::ExternalModuleData *extModuleData_ {};
@@ -426,7 +414,8 @@ private:
     parser::Program *LookupProgramCaches(const ImportInfo &importInfo);
     void LookupMemCache(ImportInfo *importInfo);
     void LookupDiskData(ImportInfo *importInfo);
-    void LookupEtscacheFile(ImportInfo *importInfo);
+    void LookupEtscacheFile(ImportInfo *importInfo) const;
+    void LookupMetadata(ImportInfo *importInfo) const;
 
     void LookupSourceFile(ImportInfo *importInfo);
     void RegisterSourceFile(const ImportInfo &importInfo);
@@ -461,7 +450,7 @@ private:
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
-    std::unordered_set<std::string> processedAbcFiles_;
+    std::unordered_map<std::string, std::unique_ptr<panda_file::MetadataAccessor>> processedAbcFiles_;
 
     FileDependenciesMap fileDependencies_;
     FileDependenciesMap reverseFileDependencies_;

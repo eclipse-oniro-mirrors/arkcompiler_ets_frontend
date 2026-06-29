@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_PUBLIC_PUBLIC_H
 #define ES2PANDA_PUBLIC_PUBLIC_H
 
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include "public/es2panda_lib.h"
@@ -145,7 +146,8 @@ struct Context {
     bool isLspUsage = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
-    panda_file::MetadataByModules metadata;
+    panda_file::MetadataByPackages metadata;
+    std::function<void(ir::AstNode *)> materializeMembers;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:

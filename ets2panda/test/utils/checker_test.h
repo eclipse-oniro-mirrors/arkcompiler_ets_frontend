@@ -54,7 +54,7 @@ public:
     {
         if (publicContext_->parserProgram != nullptr) {
             publicContext_->parserProgram->ResetLineIndexCache();
-            publicContext_->parserProgram->GetExternalDecls()->Visit(
+            publicContext_->parserProgram->GetExternalPrograms()->Visit(
                 [](auto *program) { program->ResetLineIndexCache(); });
         }
         delete publicContext_->phaseManager;

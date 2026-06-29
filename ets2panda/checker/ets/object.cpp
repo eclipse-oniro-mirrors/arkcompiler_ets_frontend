@@ -29,6 +29,7 @@
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/signature.h"
 #include "compiler/lowering/phase.h"
+#include "public/public.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classElement.h"
 #include "ir/base/classProperty.h"
@@ -1317,6 +1318,11 @@ void ETSChecker::ResolveDeclaredMembersOfObject(const Type *type)
     if (objectType->IsETSStringLiteralType() || declNode == nullptr ||
         !(declNode->IsClassDefinition() || declNode->IsTSInterfaceDeclaration())) {
         return;
+    }
+
+    // NB: lazy members materialization (AST building on-demand) is used together metadata only
+    if (auto *lazyCtx = VarBinder()->GetContext(); lazyCtx && lazyCtx->materializeMembers) {
+        lazyCtx->materializeMembers(declNode);
     }
 
     if (objectType->IsGeneric() && objectType != objectType->GetOriginalBaseType()) {

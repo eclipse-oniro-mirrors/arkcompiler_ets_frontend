@@ -66,8 +66,8 @@ inline std::string GetDeclKindToLog(const ir::ClassDefinition *astDecl)
 inline size_t CalculateMetadataSize(panda_file::MetadataByModules *metadata)
 {
     size_t totalSize = 0;
-    for (const auto &[_, metadata_] : *metadata) {
-        totalSize += metadata_.size();
+    for (const auto &[moduleName, moduleMetadata] : *metadata) {
+        totalSize += moduleMetadata.size();
     }
     return totalSize;
 }

@@ -1289,21 +1289,21 @@ public:
         }
     }
 
-    void MaybeAddExactToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
+    void MaybeAddExactToExternalSources(parser::Program *newProg, parser::Program::ExternalPrograms *extPrograms)
     {
         auto *globalProgram = ipm_->GetGlobalProgram();
         if (newProg == nullptr || newProg == globalProgram) {
             return;
         }
         if (!IsReplacedExactSource(newProg)) {
-            MaybeAddToExternalSources(newProg, extDecls);
+            MaybeAddToExternalSources(newProg, extPrograms);
             return;
         }
 
         if (AlreadyInExternalSources(newProg, extDecls)) {
             return;
         }
-        extDecls->Add(newProg);
+        extPrograms->Add(newProg);
     }
 
     parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, const ArenaString &packageName)
@@ -1496,7 +1496,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
             resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalPrograms());
             auto *exact = SearchResolvedExact(*importInfo);
             if (exact != nullptr && exact != resolved) {
-                resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalDecls());
+                resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalPrograms());
             }
         }
         return resolved;
@@ -1524,7 +1524,7 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
         if (program != nullptr) {
             auto *resolvedProgram = SearchResolved(*importInfo);
-            resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalDecls());
+            resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalPrograms());
             if (program != resolvedProgram) {
                 resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalPrograms());
             }
@@ -1552,16 +1552,14 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
     ES2PANDA_ASSERT(importInfo->ResolvedPathIsVirtual());
 
     auto abcPath = importInfo->AbcPath();
-    if (processedAbcFiles_.count(abcPath) != 0) {
-        const auto pf = panda_file::OpenPandaFile(abcPath);
-        if (pf->IsMetadataEnabled()) {
-            importInfo->SetBinFile(*pf);
-            return;
+    if (const auto processedAbc = processedAbcFiles_.find(abcPath); processedAbc != processedAbcFiles_.end()) {
+        if (processedAbc->second != nullptr) {  // metadata is enabled for that abc
+            LookupMetadata(importInfo);
+        } else {
+            LookupEtscacheFile(importInfo);
         }
-        LookupEtscacheFile(importInfo);
         return;
     }
-    processedAbcFiles_.insert(abcPath);
 
     const auto pf = panda_file::OpenPandaFile(abcPath);
     if (pf == nullptr) {
@@ -1570,8 +1568,12 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
         return;
     }
 
-    if (pf->IsMetadataEnabled()) {
-        importInfo->SetBinFile(*pf);
+    const auto isMetadataEnabled = pf->IsMetadataEnabled();
+    processedAbcFiles_.insert(
+        {abcPath, isMetadataEnabled ? std::make_unique<panda_file::MetadataAccessor>(*pf) : nullptr});
+
+    if (isMetadataEnabled) {
+        LookupMetadata(importInfo);
         return;
     }
 
@@ -1580,7 +1582,19 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
     LookupEtscacheFile(importInfo);
 }
 
-void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo)
+void ImportPathManager::LookupMetadata(ImportInfo *importInfo) const
+{
+    const auto metadataAccessor = processedAbcFiles_.at(importInfo->AbcPath()).get();
+    std::string pkgName(importInfo->ModuleName());
+    if (!pkgName.empty() && pkgName.back() == '.') {
+        pkgName.pop_back();
+    }
+    auto metadata = metadataAccessor->ExtractMetadataForPackage(pkgName);
+    importInfo->SetData<ModuleKind::METADATA_DECL, true>(std::string(importInfo->extModuleData_->SourceFilePath()),
+                                                         std::move(metadata));
+}
+
+void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo) const
 {
     if (ArkTSConfig().CacheDir().empty()) {
         return;
