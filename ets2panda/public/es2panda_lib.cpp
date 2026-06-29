@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <cstring>
 #include <cstdint>
+#include <algorithm>
 
 #include "util/diagnostic.h"
 #include "util/eheap.h"
@@ -44,14 +45,26 @@
 #include "ir/expressions/binaryExpression.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/expressions/callExpression.h"
+#include "ir/ets/etsModule.h"
+#include "ir/ets/etsStructDeclaration.h"
 #include "ir/base/classProperty.h"
+#include "ir/module/exportDefaultDeclaration.h"
+#include "ir/module/exportNamedDeclaration.h"
+#include "ir/module/exportSpecifier.h"
 #include "ir/ets/etsFunctionType.h"
 #include "ir/statements/ifStatement.h"
+#include "ir/statements/classDeclaration.h"
+#include "ir/statements/functionDeclaration.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/ets/etsGenericInstantiatedNode.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
 #include "ir/ets/etsNewArrayInstanceExpression.h"
 #include "ir/ets/etsNewMultiDimArrayInstanceExpression.h"
+#include "ir/statements/variableDeclaration.h"
+#include "ir/statements/variableDeclarator.h"
+#include "ir/ts/tsEnumDeclaration.h"
+#include "ir/ts/tsInterfaceDeclaration.h"
+#include "ir/ts/tsTypeAliasDeclaration.h"
 #include "parser/ETSparser.h"
 #include "parser/context/parserContext.h"
 #include "parser/program/program.h"
@@ -971,6 +984,141 @@ extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramDirectExtern
     return reinterpret_cast<es2panda_ExternalSource **>(vec->data());
 }
 
+static bool VariableDeclarationHasName(const ir::VariableDeclaration *decl, util::StringView name)
+{
+    if (decl == nullptr) {
+        return false;
+    }
+
+    for (auto *declarator : decl->Declarators()) {
+        if (declarator != nullptr && declarator->Id() != nullptr && declarator->Id()->IsIdentifier() &&
+            declarator->Id()->AsIdentifier()->Name() == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool DeclarationHasName(const ir::AstNode *decl, util::StringView name)
+{
+    if (decl == nullptr) {
+        return false;
+    }
+    if (decl->IsIdentifier()) {
+        return decl->AsIdentifier()->Name() == name;
+    }
+    if (decl->IsClassDeclaration()) {
+        auto *ident = decl->AsClassDeclaration()->Definition()->Ident();
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsETSStructDeclaration()) {
+        auto *ident = decl->AsETSStructDeclaration()->Definition()->Ident();
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsETSModule()) {
+        auto *ident = decl->AsETSModule()->Ident();
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsFunctionDeclaration()) {
+        auto *func = decl->AsFunctionDeclaration()->Function();
+        auto *ident = func != nullptr ? func->Id() : nullptr;
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsVariableDeclaration()) {
+        return VariableDeclarationHasName(decl->AsVariableDeclaration(), name);
+    }
+    if (decl->IsTSEnumDeclaration()) {
+        auto *ident = decl->AsTSEnumDeclaration()->Key();
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsTSInterfaceDeclaration()) {
+        auto *ident = decl->AsTSInterfaceDeclaration()->Id();
+        return ident != nullptr && ident->Name() == name;
+    }
+    if (decl->IsTSTypeAliasDeclaration()) {
+        auto *ident = decl->AsTSTypeAliasDeclaration()->Id();
+        return ident != nullptr && ident->Name() == name;
+    }
+    return false;
+}
+
+static const ir::Identifier *ExportSpecifierLocalName(const ir::ExportSpecifier *specifier)
+{
+    if (specifier == nullptr) {
+        return nullptr;
+    }
+    // In the current export specifier IR, Exported() carries the source/local
+    // name and Local() carries the public exported name.
+    return specifier->Exported();
+}
+
+static bool ParsedAstHasLocalExportName(const parser::Program *program, util::StringView name)
+{
+    if (program == nullptr || program->Ast() == nullptr) {
+        return false;
+    }
+
+    for (auto *stmt : program->Ast()->Statements()) {
+        if (stmt == nullptr) {
+            continue;
+        }
+        if ((stmt->IsExported() || stmt->IsDefaultExported()) && DeclarationHasName(stmt, name)) {
+            return true;
+        }
+        if (stmt->IsExportDefaultDeclaration() &&
+            DeclarationHasName(stmt->AsExportDefaultDeclaration()->Decl(), name)) {
+            return true;
+        }
+        if (!stmt->IsExportNamedDeclaration()) {
+            continue;
+        }
+
+        auto *exportDecl = stmt->AsExportNamedDeclaration();
+        if (exportDecl->Decl() != nullptr && DeclarationHasName(exportDecl->Decl(), name)) {
+            return true;
+        }
+        if (exportDecl->Source() != nullptr) {
+            continue;
+        }
+        for (auto *specifier : exportDecl->Specifiers()) {
+            auto *localName = ExportSpecifierLocalName(specifier);
+            if (localName != nullptr && localName->Name() == name) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+static bool ExportFactsHaveLocalName(const parser::Program *program, util::StringView name)
+{
+    if (program == nullptr || program->VarBinder() == nullptr || !program->VarBinder()->IsETSBinder()) {
+        return false;
+    }
+
+    const auto &facts = program->VarBinder()->AsETSBinder()->GetExportFacts(const_cast<parser::Program *>(program));
+    auto hasName = [name](const varbinder::ExportFact &fact) { return !fact.isInvalid && fact.localName == name; };
+    return std::any_of(facts.locals.begin(), facts.locals.end(), hasName) ||
+           std::any_of(facts.namespaceExports.begin(), facts.namespaceExports.end(), hasName);
+}
+
+extern "C" __attribute__((unused)) bool ProgramLocalNameIsExported(es2panda_Context *context,
+                                                                   const es2panda_Program *program, const char *name)
+{
+    if (context == nullptr || program == nullptr || name == nullptr) {
+        return false;
+    }
+
+    auto *ctx = reinterpret_cast<Context *>(context);
+    auto *programE2p = reinterpret_cast<const parser::Program *>(program);
+    util::StringView nameE2p {name};
+    if (ctx->state >= ES2PANDA_STATE_BOUND && ExportFactsHaveLocalName(programE2p, nameE2p)) {
+        return true;
+    }
+    return ParsedAstHasLocalExportName(programE2p, nameE2p);
+}
+
 extern "C" __attribute__((unused)) char const *ExternalSourceName(es2panda_ExternalSource *eSource)
 {
     auto *entry = reinterpret_cast<ExternalSourceEntry *>(eSource);
@@ -1760,6 +1908,7 @@ es2panda_Impl g_impl = {
     ContextProgram,
     ProgramExternalSources,
     ProgramDirectExternalSources,
+    ProgramLocalNameIsExported,
     ExternalSourceName,
     ExternalSourcePrograms,
     AstNodeForEach,

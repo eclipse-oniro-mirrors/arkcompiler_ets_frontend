@@ -188,6 +188,7 @@ interface es2panda_Impl {
     parser.Program ContextProgram(es2panda_Context context);
     sequence<es2panda_ExternalSource> ProgramExternalSources(es2panda_Context context, parser.Program program);
     sequence<es2panda_ExternalSource> ProgramDirectExternalSources(es2panda_Context context, parser.Program program);
+    boolean ProgramLocalNameIsExported(es2panda_Context context, parser.Program program, String name);
     String ExternalSourceName(es2panda_ExternalSource e_source);
     sequence<parser.Program> ExternalSourcePrograms(es2panda_ExternalSource e_source);
 
