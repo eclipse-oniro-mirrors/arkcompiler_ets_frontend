@@ -15,7 +15,7 @@
 
 import * as fs from 'fs';
 import * as os from 'os';
-import { ErrorCode, DriverError } from '../../../src/util/error';
+import { ErrorCode, DriverError, DriverErrorList } from '../../../src/util/error';
 import { JobContentType, CompileJobType } from '../../../src/types';
 import { MAX_PATH_LENGTH } from '../../../src/pre_define';
 
@@ -236,6 +236,46 @@ describe('Ets2panda path length validation', () => {
     });
 
     describe('compile', () => {
+        test('should use code description and message from two-line diagnostics', () => {
+            const jobInfo = createCompileJobInfo('/short/input.ets');
+            const diagnosticMessage = [
+                'Failed to proceed to ES2PANDA_STATE_CHECKED',
+                '',
+                '1 ERROR: 11503319 Semantic error',
+                'Error Message: Type \'Int\' is not compatible with type \'String\' at property \'age\'',
+                '2 ERROR: 11503318 Semantic error',
+                'Error Message: Type \'Int\' cannot be assigned to type \'String\''
+            ].join('\n');
+
+            const ets2panda = Ets2panda.getInstance(createMockBuildConfig());
+            (ets2panda as any).koalaModule.arkts.proceedToState.mockImplementationOnce(() => {
+                throw new Error(diagnosticMessage);
+            });
+
+            let errorList: DriverErrorList | undefined;
+            try {
+                ets2panda.compile('testJob', jobInfo);
+            } catch (e: any) {
+                errorList = e;
+            }
+
+            expect(errorList).toBeInstanceOf(DriverErrorList);
+            const errors = errorList!.errors;
+            expect(errors).toHaveLength(2);
+            expect(errors[0]).toBeInstanceOf(DriverError);
+            expect(errors[0].logData.code).toBe('11503319');
+            expect(errors[0].logData.description).toBe('Semantic error');
+            expect(errors[0].logData.cause).toBe(
+                'Type \'Int\' is not compatible with type \'String\' at property \'age\''
+            );
+            expect(errors[1]).toBeInstanceOf(DriverError);
+            expect(errors[1].logData.code).toBe('11503318');
+            expect(errors[1].logData.description).toBe('Semantic error');
+            expect(errors[1].logData.cause).toBe(
+                'Type \'Int\' cannot be assigned to type \'String\''
+            );
+        });
+
         test('should throw DriverError with BUILDSYSTEM_PATH_TOO_LONG when output path exceeds MAX_PATH_LENGTH', () => {
             const jobInfo = createCompileJobInfo('/short/__LONG_OUTPUT_PATH__.ets');
 
