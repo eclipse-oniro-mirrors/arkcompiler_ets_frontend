@@ -484,6 +484,7 @@ SavedCheckerContext ETSChecker::CreateSavedCheckerContext(varbinder::Variable *c
             auto *classDef = iter->AsClassDefinition();
             Type *containingClass {};
             if (classDef->TsType() == nullptr) {
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 containingClass = BuildBasicClassProperties(classDef);
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 ResolveDeclaredMembersOfObject(containingClass);
@@ -544,6 +545,7 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
     switch (var->Declaration()->Type()) {
         case varbinder::DeclType::CLASS: {
             auto *classDef = var->Declaration()->Node()->AsClassDefinition();
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             BuildBasicClassProperties(classDef);
             variableType = classDef->TsType();
             break;
@@ -921,6 +923,7 @@ Type *ETSChecker::GetTypeFromClassReference(varbinder::Variable *var)
     status &= this->Context().Status();
     this->Context().Status() &= ~CheckerStatus::IN_STATIC_CONTEXT;
 
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *classType = BuildBasicClassProperties(classDef);
     var->SetTsType(classType);
     this->Context().Status() |= status;
@@ -1076,8 +1079,10 @@ void ETSChecker::CheckFunctionSignatureAnnotations(const ArenaVector<ir::Express
 {
     for (auto *param : params) {
         if (param->IsETSParameterExpression()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckAnnotations(param->AsETSParameterExpression());
             if (param->AsETSParameterExpression()->TypeAnnotation() != nullptr) {
+                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 CheckAnnotations(param->AsETSParameterExpression()->TypeAnnotation());
             }
         }
@@ -1085,12 +1090,14 @@ void ETSChecker::CheckFunctionSignatureAnnotations(const ArenaVector<ir::Express
 
     if (typeParams != nullptr) {
         for (auto *typeParam : typeParams->Params()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckAnnotations(typeParam);
         }
     }
 
     if (returnTypeAnnotation != nullptr) {
         ValidateThisUsage(returnTypeAnnotation);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         CheckAnnotations(returnTypeAnnotation);
     }
 }
@@ -1159,10 +1166,13 @@ void ETSChecker::CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &anno
     std::unordered_set<util::StringView> seenAnnotations;
     for (const auto &anno : annotations) {
         if (isAnnoDecl) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckStandardAnnotation(anno);
             // Order matters
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             anno->Check(this);
         } else {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             anno->Check(this);
             CheckAnnotationRetention(anno);
             CheckAnnotationTarget(anno);
@@ -1467,11 +1477,11 @@ void ETSChecker::HandleAnnotationTarget(ir::AnnotationUsage *anno, ir::Annotatio
 
 void ETSChecker::CheckStandardAnnotation(ir::AnnotationUsage *anno)
 {
-    if (anno->GetBaseName()->Variable() == nullptr || IsTypeError(anno->GetBaseName()->TsType())) {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *annoDecl = MaterializeAnnotationUsage(anno, AnnotationUseKind::META);
+    if (annoDecl == nullptr || IsTypeError(anno->GetBaseName()->TsType())) {
         return;
     }
-    ES2PANDA_ASSERT(anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration() != nullptr);
-    auto *annoDecl = anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
     auto annoName = annoDecl->InternalName().Mutf8();
     if (annoName.rfind(compiler::Signatures::STD_ANNOTATIONS) != 0 &&
         annoName != "arkruntime.annotation.AccessRestriction") {  // #34625

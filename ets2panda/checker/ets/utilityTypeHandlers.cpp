@@ -401,6 +401,7 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
     partialClassDef->SetInternalName(partialQualifiedName);
 
     // Create only class 'header' (no properties and methods, but base type created)
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     BuildBasicClassProperties(partialClassDef);
 
     compiler::SetSourceRangesRecursively(partialClassDef, typeDeclNode->Range());

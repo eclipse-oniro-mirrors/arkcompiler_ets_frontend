@@ -56,6 +56,7 @@ void ETSChecker::BuildExportedFunctionSignature(varbinder::Variable *var)
                     method->Parent()->AsClassDefinition()->Ident()->Name().Is(compiler::Signatures::ETS_GLOBAL));
     auto classDef = method->Parent()->AsClassDefinition();
     if (classDef->TsType() == nullptr) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         BuildBasicClassProperties(classDef);
     }
 

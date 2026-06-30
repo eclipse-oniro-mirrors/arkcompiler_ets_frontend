@@ -180,7 +180,7 @@ void ExportFactStore::AddLocalExport(parser::Program *program, util::StringView 
         }
         if (fact.variable == nullptr) {
             fact.variable = variable;
-            fact.isTypeOnly = IsTypeOnlyVariable(variable);
+            fact.isTypeOnlySurface = IsTypeOnlyVariable(variable);
         }
         return;
     }
@@ -195,12 +195,13 @@ void ExportFactStore::AddLocalExport(parser::Program *program, util::StringView 
         IsTypeOnlyVariable(variable),
         false,
         false,
+        false,
     });
 }
 
 void ExportFactStore::AddLocalExportAlias(parser::Program *program, util::StringView exportedName,
                                           util::StringView localName, Variable *variable, const ir::AstNode *origin,
-                                          bool isTypeOnly, bool isInvalid)
+                                          bool isExplicitTypeOnly, bool isInvalid)
 {
     RegisterProgramSurface(program);
     auto &snapshot = GetOrCreateSnapshot(program);
@@ -212,7 +213,8 @@ void ExportFactStore::AddLocalExportAlias(parser::Program *program, util::String
         nullptr,
         origin,
         variable,
-        isTypeOnly || IsTypeOnlyVariable(variable),
+        isExplicitTypeOnly || IsTypeOnlyVariable(variable),
+        isExplicitTypeOnly,
         true,
         isInvalid,
     });
@@ -221,7 +223,7 @@ void ExportFactStore::AddLocalExportAlias(parser::Program *program, util::String
 bool ExportFactStore::AddPendingLocalExportAlias(parser::Program *program, util::StringView exportedName,
                                                  util::StringView localName, const ir::AstNode *origin,
                                                  const ir::AstNode *exportDecl, const ir::AstNode *reportOrigin,
-                                                 bool originDeclaresName, bool isTypeOnly, LocalExportKind kind)
+                                                 bool originDeclaresName, bool isExplicitTypeOnly, LocalExportKind kind)
 {
     auto [it, _] = pendingLocalExportAliases_.try_emplace(program, allocator_->Adapter());
     auto &aliases = it->second;
@@ -235,7 +237,7 @@ bool ExportFactStore::AddPendingLocalExportAlias(parser::Program *program, util:
     }
 
     aliases.push_back(PendingLocalExportAlias {program, exportedName, localName, origin, exportDecl, reportOrigin,
-                                               originDeclaresName, isTypeOnly, false, kind});
+                                               originDeclaresName, isExplicitTypeOnly, false, kind});
     return true;
 }
 
@@ -265,7 +267,7 @@ const ArenaVector<PendingLocalExportAlias> &ExportFactStore::PendingLocalExportA
 
 void ExportFactStore::AddNamedReExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
                                        util::StringView exportedName, util::StringView importedName,
-                                       const ir::AstNode *origin, bool isTypeOnly)
+                                       const ir::AstNode *origin, bool isExplicitTypeOnly)
 {
     RegisterProgramSurface(program);
     auto &snapshot = GetOrCreateSnapshot(program);
@@ -277,14 +279,15 @@ void ExportFactStore::AddNamedReExport(parser::Program *program, const ir::ETSIm
         importDecl,
         origin,
         nullptr,
-        isTypeOnly,
+        isExplicitTypeOnly,
+        isExplicitTypeOnly,
         false,
         false,
     });
 }
 
 void ExportFactStore::AddStarExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
-                                    const ir::AstNode *origin, bool isTypeOnly)
+                                    const ir::AstNode *origin, bool isExplicitTypeOnly)
 {
     RegisterProgramSurface(program);
     auto &snapshot = GetOrCreateSnapshot(program);
@@ -296,7 +299,8 @@ void ExportFactStore::AddStarExport(parser::Program *program, const ir::ETSImpor
         importDecl,
         origin,
         nullptr,
-        isTypeOnly,
+        isExplicitTypeOnly,
+        isExplicitTypeOnly,
         false,
         false,
     });
@@ -304,7 +308,7 @@ void ExportFactStore::AddStarExport(parser::Program *program, const ir::ETSImpor
 
 void ExportFactStore::AddNamespaceExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
                                          util::StringView exportedName, Variable *variable, const ir::AstNode *origin,
-                                         bool isTypeOnly)
+                                         bool isExplicitTypeOnly)
 {
     RegisterProgramSurface(program);
     auto &snapshot = GetOrCreateSnapshot(program);
@@ -316,7 +320,8 @@ void ExportFactStore::AddNamespaceExport(parser::Program *program, const ir::ETS
         importDecl,
         origin,
         variable,
-        isTypeOnly || IsTypeOnlyVariable(variable),
+        isExplicitTypeOnly || IsTypeOnlyVariable(variable),
+        isExplicitTypeOnly,
         false,
         false,
     });

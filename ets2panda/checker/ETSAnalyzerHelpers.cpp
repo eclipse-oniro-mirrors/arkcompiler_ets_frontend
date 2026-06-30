@@ -17,6 +17,7 @@
 
 #include "ETSAnalyzerHelpers.h"
 #include "checker/types/typeError.h"
+#include "public/public.h"
 #include "util/diagnostic.h"
 
 namespace ark::es2panda::checker {
@@ -234,9 +235,23 @@ void CheckExtensionMethod(checker::ETSChecker *checker, ir::ScriptFunction *exte
     }
 }
 
+static bool IsGeneratedDeclarationBodyAllowedInRecheck(ETSChecker *checker, ir::MethodDefinition *node,
+                                                       ir::ScriptFunction *scriptFunc)
+{
+    auto *ctx = checker->VarBinder()->GetContext();
+    auto *program = node->Program();
+
+    return ctx->state >= ES2PANDA_STATE_CHECKED && program != nullptr && program->IsDeclarationModule() &&
+           node->IsDeclare() && scriptFunc->IsSynthetic();
+}
+
 static void CheckMethodBodyForNativeAbstractDeclare(ETSChecker *checker, ir::MethodDefinition *node,
                                                     ir::ScriptFunction *scriptFunc)
 {
+    if (IsGeneratedDeclarationBodyAllowedInRecheck(checker, node, scriptFunc)) {
+        return;
+    }
+
     if ((node->IsNative() && !node->IsConstructor()) || node->IsAbstract() || node->IsDeclare()) {
         checker->LogError(diagnostic::UNEXPECTED_FUNC_BODY, {}, scriptFunc->Body()->Start());
     }
@@ -760,8 +775,8 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
 
     //  First (or single) return statement in the function:
     const auto baseFuncReturnType =
-        stArgument ? checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)))
-                   : checker->GlobalETSUndefinedType();
+        stArgument != nullptr ? checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)))
+                              : checker->GlobalETSUndefinedType();
     /**
      * 15.7.2: If a function, a method, or a lambda is async, a return type is inferred by applying the above rules, and
      * if the return type T is not Promise, then the return type is assumed to be Promise<T>;

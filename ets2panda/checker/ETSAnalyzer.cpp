@@ -5186,15 +5186,16 @@ static void ProcessRequiredFields(ArenaUnorderedMap<util::StringView, ir::ClassP
 checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
 {
     ETSChecker *checker = GetETSChecker();
-    if (st->Expr()->TsType() != nullptr) {
-        checker->MaterializeAnnotationUsageBaseName(st);
-        return ReturnTypeForStatement(st);
+    auto kind = st->Parent() != nullptr && st->Parent()->IsAnnotationDeclaration() ? AnnotationUseKind::META
+                                                                                   : AnnotationUseKind::USER;
+    if (st->Expr()->TsType() == nullptr && !st->Expr()->IsIdentifier()) {
+        st->Expr()->Check(checker);
     }
-    st->Expr()->Check(checker);
 
     auto *baseName = st->GetBaseName();
-    checker->MaterializeAnnotationUsageBaseName(st);
-    if (baseName->Variable() == nullptr || !baseName->Variable()->Declaration()->Node()->IsAnnotationDeclaration()) {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *annoDecl = checker->MaterializeAnnotationUsage(st, kind);
+    if (annoDecl == nullptr) {
         if (!baseName->IsErrorPlaceHolder()) {
             checker->LogError(diagnostic::NOT_AN_ANNOTATION, {baseName->Name()}, baseName->Start());
         }
@@ -5207,7 +5208,6 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
         checker->LogError(diagnostic::UNSAFE_VARIANCE_ONLY_IN_STDLIB, {}, st->Start());
     }
 
-    auto *annoDecl = baseName->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
     annoDecl->Check(checker);
 
     auto *parentNode = st->Parent();

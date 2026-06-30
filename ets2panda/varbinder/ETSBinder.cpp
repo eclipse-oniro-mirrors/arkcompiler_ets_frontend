@@ -358,7 +358,7 @@ static void CollectPendingLocalExportAliases(ExportFactStore *store, parser::Pro
             auto *modifierNode = node->IsClassDefinition() && node->Parent() != nullptr ? node->Parent() : node;
             modifierNode->AddModifier(ir::ModifierFlags::DEFAULT_EXPORT);
         }
-        if (!alias.isTypeOnly && alias.exportedName == alias.localName &&
+        if (!alias.isExplicitTypeOnly && alias.exportedName == alias.localName &&
             ShouldCollectLocalExportFact(program, variable)) {
             continue;
         }
@@ -367,7 +367,7 @@ static void CollectPendingLocalExportAliases(ExportFactStore *store, parser::Pro
             continue;
         }
         store->AddLocalExportAlias(program, alias.exportedName, alias.localName, variable, alias.origin,
-                                   alias.isTypeOnly, alias.isInvalid);
+                                   alias.isExplicitTypeOnly, alias.isInvalid);
     }
 }
 
@@ -618,13 +618,13 @@ bool ETSBinder::AddSelectiveExportAlias(const SelectiveExportAlias &alias) noexc
     const auto localName = alias.localIdent->Name();
     const auto normalizedExportedName = NormalizeReExportName(alias.exportedName);
     const auto originDeclaresName = OriginDeclaresName(alias.decl, localName);
-    const auto kind = originDeclaresName && !alias.isTypeOnly && normalizedExportedName == localName &&
+    const auto kind = originDeclaresName && !alias.isExplicitTypeOnly && normalizedExportedName == localName &&
                               !normalizedExportedName.Is("default")
                           ? LocalExportKind::DECLARATION
                           : LocalExportKind::ALIAS;
     return exportFactStore_->AddPendingLocalExportAlias(alias.program, normalizedExportedName, localName, alias.decl,
                                                         alias.exportDecl, alias.reportOrigin, originDeclaresName,
-                                                        alias.isTypeOnly, kind);
+                                                        alias.isExplicitTypeOnly, kind);
 }
 
 void ETSBinder::LookupIdentReference(ir::Identifier *ident)

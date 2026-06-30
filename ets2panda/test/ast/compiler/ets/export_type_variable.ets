@@ -16,3 +16,4 @@
 let a: int = 5;
 
 export type {a}
+/* @@? 18:14 Error Semantic error ESE0371: Cannot find type 'a'. */

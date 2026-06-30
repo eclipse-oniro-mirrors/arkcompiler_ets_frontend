@@ -66,6 +66,14 @@ struct ResolvedImportResult {
     varbinder::ExportSurfaceId surface {};
 };
 
+enum class AnnotationUseKind {
+    // Annotation applied to a regular declaration such as class, function, property, or parameter.
+    USER,
+    // Annotation applied to an annotation declaration itself. The import/name materialization is shared with USER, but
+    // callers must additionally require a standard annotation after the declaration is resolved.
+    META
+};
+
 struct Accessor {
     bool isGetter {false};
     bool isSetter {false};
@@ -551,6 +559,7 @@ public:
     Type *ResolveImportBindingType(varbinder::LocalVariable *localVar, ir::Identifier *useSite);
     Type *MaterializeImportIdentifier(ir::Identifier *ident, varbinder::LocalVariable *localVar);
     Type *MaterializePrecheckedImportIdentifier(ir::Identifier *ident);
+    ir::AnnotationDeclaration *MaterializeAnnotationUsage(ir::AnnotationUsage *annotation, AnnotationUseKind kind);
     void MaterializeAnnotationUsageBaseName(ir::AnnotationUsage *annotation);
     void MaterializeImportTypeReferences(ir::TypeNode *typeNode);
     Type *GetTypeFromTypeAnnotation(ir::TypeNode *typeNode);
@@ -592,6 +601,7 @@ public:
     void CheckAnnotations(ir::AnnotationAllowed<T> *node, bool isAnnoDecl = false)
     {
         if (node->HasAnnotations()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckAnnotations(node->Annotations(), isAnnoDecl);
         }
     }

@@ -119,7 +119,7 @@ static const ir::ClassDefinition *FindDeclarationClass(parser::Program *program,
 static bool DeclarationClassHasProperty(parser::Program *program, const ir::ClassDefinition *classDef,
                                         util::StringView propertyName, uint32_t depth = 0)
 {
-    constexpr uint32_t maxSuperLookupDepth = 64U;
+    const uint32_t maxSuperLookupDepth = 64U;
     if (classDef == nullptr || depth > maxSuperLookupDepth) {
         return false;
     }
@@ -1075,6 +1075,7 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         CheckInheritedExplicitOverloadRedeclarationRequirement(interfaceType);
     }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckInterfaceAnnotations(interfaceDecl);
 
     return interfaceType;
@@ -1167,6 +1168,7 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         GetInterfaces(classType);
     }
     ctScope.TryCheckConstraints();
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckClassAnnotations(classDef);
     return classType;
 }
@@ -2483,9 +2485,11 @@ void ETSChecker::CheckClassElement(ir::ClassDefinition *classDef)
 
 void ETSChecker::CheckClassAnnotations(ir::ClassDefinition *classDef)
 {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckAnnotations(classDef);
     if (classDef->TypeParams() != nullptr) {
         for (auto *param : classDef->TypeParams()->Params()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckAnnotations(param);
         }
     }
@@ -2493,9 +2497,11 @@ void ETSChecker::CheckClassAnnotations(ir::ClassDefinition *classDef)
 
 void ETSChecker::CheckInterfaceAnnotations(ir::TSInterfaceDeclaration *interfaceDecl)
 {
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckAnnotations(interfaceDecl);
     if (interfaceDecl->TypeParams() != nullptr) {
         for (auto *param : interfaceDecl->TypeParams()->Params()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CheckAnnotations(param);
         }
     }
@@ -3317,11 +3323,23 @@ static varbinder::Variable *EffectiveExtensionFunctionVar(ETSChecker *checker, v
     return effective != nullptr ? effective : var;
 }
 
+static bool IsAnnotationCandidate(varbinder::Variable *var)
+{
+    return var != nullptr && var->Declaration() != nullptr && var->Declaration()->IsAnnotationDecl();
+}
+
 varbinder::Variable *ETSChecker::ResolveInstanceExtension(const ir::MemberExpression *const memberExpr)
 {
     auto propertyName = memberExpr->Property()->AsIdentifier()->Name();
     auto *globalFunctionVar = Scope()->FindInGlobal(propertyName, VO::STATIC_METHODS).variable;
     if (globalFunctionVar == nullptr) {
+        return nullptr;
+    }
+
+    // Extension lookup is a value/function candidate context; annotations are not type candidates here.
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *effectiveFunctionVar = EffectiveExtensionFunctionVar(this, globalFunctionVar);
+    if (IsAnnotationCandidate(effectiveFunctionVar)) {
         return nullptr;
     }
 
@@ -3331,7 +3349,7 @@ varbinder::Variable *ETSChecker::ResolveInstanceExtension(const ir::MemberExpres
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return EffectiveExtensionFunctionVar(this, globalFunctionVar);
+    return effectiveFunctionVar;
 }
 
 PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::Expression *const expr)

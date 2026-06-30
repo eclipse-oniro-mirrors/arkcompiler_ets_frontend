@@ -80,6 +80,16 @@ private:
                                   const ir::AstNode *reportNode);
     void CheckDuplicateReExportName(util::StringView exportName, util::StringView importedName,
                                     util::StringView sourceName, const ir::AstNode *reportNode);
+    void ReportUnresolvedValueExport(const varbinder::PendingLocalExportAlias &alias, util::StringView originalName,
+                                     lexer::SourcePosition startLoc, std::set<util::StringView> &unresolvedAliases,
+                                     std::set<util::StringView> &warnedUnresolvedAliases);
+    bool VerifyTypeOnlyExportAlias(const parser::Program *program, const varbinder::PendingLocalExportAlias &alias,
+                                   util::StringView exportName, util::StringView originalName, ir::AstNode *localDecl,
+                                   bool hasImportedSpecifier, lexer::SourcePosition startLoc,
+                                   const ir::AstNode *reportOrigin);
+    void VerifyCollectedExportAlias(const parser::Program *program, const varbinder::PendingLocalExportAlias &alias,
+                                    std::set<util::StringView> &unresolvedAliases,
+                                    std::set<util::StringView> &warnedUnresolvedAliases);
 
     varbinder::ETSBinder *varbinder_ {nullptr};
     std::map<util::StringView, ir::AstNode *> fieldMap_;

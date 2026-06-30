@@ -62,7 +62,7 @@ struct SelectiveExportAlias {
     const ir::AstNode *decl;
     const ir::AstNode *exportDecl;
     const ir::AstNode *reportOrigin;
-    bool isTypeOnly;
+    bool isExplicitTypeOnly;
 };
 
 class ETSBinder : public TypedBinder {

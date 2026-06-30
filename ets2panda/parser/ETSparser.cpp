@@ -1107,8 +1107,9 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
     if ((modifiers & ir::ModifierFlags::DEFAULT_EXPORT) != 0) {
         LogError(diagnostic::EXPORT_DEFAULT_NO_REEXPORT);
     }
-    // re-export directive
-    auto *reExportDeclaration = ParseImportPathBuildImport(std::move(specifiers), true, startLoc, ir::ImportKinds::ALL);
+    const auto importKind =
+        (modifiers & ir::ModifierFlags::EXPORT_TYPE) != 0U ? ir::ImportKinds::TYPES : ir::ImportKinds::ALL;
+    auto *reExportDeclaration = ParseImportPathBuildImport(std::move(specifiers), true, startLoc, importKind);
     return CreateReExportDeclarationNode(reExportDeclaration, startLoc, modifiers);
 }
 

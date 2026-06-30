@@ -101,7 +101,8 @@ protected:
         const auto &local = snapshot.locals[0];
         EXPECT_TRUE(local.exportedName.Is("LocalExport"));
         EXPECT_TRUE(local.importedName.Empty());
-        EXPECT_FALSE(local.isTypeOnly);
+        EXPECT_FALSE(local.isTypeOnlySurface);
+        EXPECT_FALSE(local.isExplicitTypeOnly);
         EXPECT_EQ(local.sourceProgram, program);
         EXPECT_EQ(local.importDecl, nullptr);
         EXPECT_NE(local.origin, nullptr);
@@ -115,7 +116,8 @@ protected:
                                         [](const auto &fact) { return fact.exportedName.Is("Renamed"); });
         ASSERT_NE(named, snapshot.namedReExports.end());
         EXPECT_TRUE(named->importedName.Is("Original"));
-        EXPECT_FALSE(named->isTypeOnly);
+        EXPECT_FALSE(named->isTypeOnlySurface);
+        EXPECT_FALSE(named->isExplicitTypeOnly);
         EXPECT_NE(named->importDecl, nullptr);
         EXPECT_TRUE(EndsWith(named->importDecl->ResolvedSource(), "/source.ets"));
         EXPECT_NE(named->origin, nullptr);
@@ -125,6 +127,8 @@ protected:
                                            [](const auto &fact) { return fact.exportedName.Is("ExportedType"); });
         ASSERT_NE(typeOnly, snapshot.namedReExports.end());
         EXPECT_TRUE(typeOnly->importedName.Is("TypeSource"));
+        EXPECT_TRUE(typeOnly->isTypeOnlySurface);
+        EXPECT_TRUE(typeOnly->isExplicitTypeOnly);
         EXPECT_NE(typeOnly->importDecl, nullptr);
         EXPECT_TRUE(EndsWith(typeOnly->importDecl->ResolvedSource(), "/source.ets"));
         EXPECT_NE(typeOnly->origin, nullptr);
@@ -139,7 +143,8 @@ protected:
         const auto &star = snapshot.starExports[0];
         EXPECT_TRUE(star.exportedName.Empty());
         EXPECT_TRUE(star.importedName.Empty());
-        EXPECT_FALSE(star.isTypeOnly);
+        EXPECT_FALSE(star.isTypeOnlySurface);
+        EXPECT_FALSE(star.isExplicitTypeOnly);
         EXPECT_NE(star.importDecl, nullptr);
         EXPECT_TRUE(EndsWith(star.importDecl->ResolvedSource(), "/source.ets"));
         EXPECT_NE(star.origin, nullptr);
@@ -147,7 +152,8 @@ protected:
         const auto &namespaceExport = snapshot.namespaceExports[0];
         EXPECT_TRUE(namespaceExport.exportedName.Is("NamespaceAlias"));
         EXPECT_TRUE(namespaceExport.importedName.Empty());
-        EXPECT_FALSE(namespaceExport.isTypeOnly);
+        EXPECT_FALSE(namespaceExport.isTypeOnlySurface);
+        EXPECT_FALSE(namespaceExport.isExplicitTypeOnly);
         EXPECT_NE(namespaceExport.importDecl, nullptr);
         EXPECT_TRUE(EndsWith(namespaceExport.importDecl->ResolvedSource(), "/source.ets"));
         EXPECT_NE(namespaceExport.origin, nullptr);

@@ -757,6 +757,53 @@ TEST_F(ExportResolutionTest, PackageExplicitReExportOverridesStarExportFromOther
     EXPECT_FALSE(Checker()->IsAnyError()) << (Checker()->IsAnyError() ? GetAnyError().Message() : std::string {});
 }
 
+TEST_F(ExportResolutionTest, PackageStarExportsSameOriginFromDifferentFractions)
+{
+    WriteFile("pkg/left.ets", R"ETS(
+        export * from "../shared.ets";
+    )ETS");
+    WriteFile("pkg/right.ets", R"ETS(
+        export * from "../shared.ets";
+    )ETS");
+    WriteFile("shared.ets", R"ETS(
+        export class A {}
+    )ETS");
+
+    InitializeFromFile("main.ets", R"ETS(
+        import { A } from "./pkg";
+
+        let value: A|null = null;
+    )ETS");
+
+    EXPECT_FALSE(Checker()->IsAnyError()) << (Checker()->IsAnyError() ? GetAnyError().Message() : std::string {});
+}
+
+TEST_F(ExportResolutionTest, PackageResolvesDirectAndSelectiveAnnotationExports)
+{
+    WriteFile("pkg/direct.ets", R"ETS(
+        @Retention({policy: "SOURCE"})
+        export @interface DirectAnno {}
+    )ETS");
+    WriteFile("pkg/selective.ets", R"ETS(
+        @Retention({policy: "SOURCE"})
+        @interface SelectiveAnno {}
+
+        export { SelectiveAnno };
+    )ETS");
+
+    InitializeFromFile("main.ets", R"ETS(
+        import { DirectAnno, SelectiveAnno } from "./pkg";
+
+        @DirectAnno
+        class DirectUse {}
+
+        @SelectiveAnno
+        class SelectiveUse {}
+    )ETS");
+
+    EXPECT_FALSE(Checker()->IsAnyError()) << (Checker()->IsAnyError() ? GetAnyError().Message() : std::string {});
+}
+
 TEST_F(ExportResolutionTest, ImportedSyntaxErrorStillAllowsRequestedNameError)
 {
     WriteFile("ex.ets", R"ETS(
