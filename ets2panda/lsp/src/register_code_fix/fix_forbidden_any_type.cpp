@@ -18,9 +18,7 @@
 #include <string>
 
 #include "generated/code_fix_register.h"
-#include "ir/expressions/identifier.h"
 #include "lsp/include/code_fix_provider.h"
-#include "lsp/include/internal_api.h"
 
 namespace ark::es2panda::lsp {
 using codefixes::FIX_FORBIDDEN_ANY_TYPE;
@@ -30,18 +28,17 @@ constexpr std::string_view ANY_UPPER = "Any";
 
 void FixForbiddenAnyType::MakeChange(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos)
 {
-    auto *token = GetTouchingToken(context, pos, false);
-    if (token == nullptr || !token->IsIdentifier()) {
-        return;
-    }
-
-    auto *identifier = token->AsIdentifier();
-    if (std::string(identifier->Name()) != std::string(ANY_LOWER)) {
-        return;
-    }
-
     auto astContext = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    TextRange range = {identifier->Start().index, identifier->End().index};
+    if (astContext == nullptr || astContext->sourceFile == nullptr) {
+        return;
+    }
+
+    auto source = std::string_view(astContext->sourceFile->source);
+    if (pos + ANY_LOWER.size() > source.size() || source.substr(pos, ANY_LOWER.size()) != ANY_LOWER) {
+        return;
+    }
+
+    TextRange range = {pos, pos + ANY_LOWER.size()};
     changeTracker.ReplaceRangeWithText(astContext->sourceFile, range, std::string(ANY_UPPER));
 }
 

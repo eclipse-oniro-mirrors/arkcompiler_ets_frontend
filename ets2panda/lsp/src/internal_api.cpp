@@ -25,6 +25,7 @@
 #include "code_fixes/code_fix_types.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
+#include "ir/ts/tsArrayType.h"
 #include "lexer/token/sourceLocation.h"
 #include "libarkbase/macros.h"
 #include "public/es2panda_lib.h"
@@ -1059,6 +1060,131 @@ static size_t IncludeSemicolonIfPresent(const std::string &sourceCode, size_t en
     return endPos < sourceCode.size() && sourceCode[endPos] == ';' ? endPos + 1 : endPos;
 }
 
+static bool IsForbiddenAnyTypeDiagnostic(int code)
+{
+    constexpr auto forbiddenAnyTypeCodes = codefixes::FIX_FORBIDDEN_ANY_TYPE.GetSupportedCodeNumbers();
+    return std::find(forbiddenAnyTypeCodes.begin(), forbiddenAnyTypeCodes.end(), code) != forbiddenAnyTypeCodes.end();
+}
+
+static bool IsTypeNodeKind(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+
+    switch (node->Type()) {
+        case ir::AstNodeType::ETS_PRIMITIVE_TYPE:
+        case ir::AstNodeType::ETS_TYPE_REFERENCE:
+        case ir::AstNodeType::ETS_TYPE_REFERENCE_PART:
+        case ir::AstNodeType::ETS_UNION_TYPE:
+        case ir::AstNodeType::TS_ANY_KEYWORD:
+        case ir::AstNodeType::TS_ARRAY_TYPE:
+        case ir::AstNodeType::TS_UNION_TYPE:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static const ir::TypeNode *GetTypeRangeNode(const ir::AstNode *node)
+{
+    if (node == nullptr || !IsTypeNodeKind(node)) {
+        return nullptr;
+    }
+
+    if (node->IsETSTypeReference()) {
+        auto *part = node->AsETSTypeReference()->Part();
+        if (part != nullptr && part->Name() != nullptr && part->Name()->IsIdentifier()) {
+            return static_cast<const ir::TypeNode *>(part);
+        }
+    }
+
+    return static_cast<const ir::TypeNode *>(node);
+}
+
+static const ir::TypeNode *GetOriginalArrayElementType(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    const auto *origin = node->OriginalNode();
+    if (origin != nullptr && IsTypeNodeKind(origin) && !origin->IsTSArrayType()) {
+        return GetTypeRangeNode(origin);
+    }
+    if (origin != nullptr && origin->IsTSArrayType()) {
+        return origin->AsTSArrayType()->ElementType();
+    }
+
+    return GetOriginalArrayElementType(node->Parent());
+}
+
+static const ir::TypeNode *FindOriginalArrayElementTypeInSubtree(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    const auto *origin = node->OriginalNode();
+    if (origin != nullptr && IsTypeNodeKind(origin) && !origin->IsTSArrayType()) {
+        return GetTypeRangeNode(origin);
+    }
+
+    const ir::TypeNode *result = nullptr;
+    node->Iterate([&result](const ir::AstNode *child) {
+        if (result == nullptr) {
+            result = FindOriginalArrayElementTypeInSubtree(child);
+        }
+    });
+    return result;
+}
+
+static bool IsArrayTypeSearchBoundary(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+
+    switch (node->Type()) {
+        case ir::AstNodeType::VARIABLE_DECLARATOR:
+        case ir::AstNodeType::CLASS_PROPERTY:
+        case ir::AstNodeType::ETS_PARAMETER_EXPRESSION:
+        case ir::AstNodeType::TS_AS_EXPRESSION:
+        case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+        case ir::AstNodeType::SCRIPT_FUNCTION:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static const ir::TypeNode *FindOriginalArrayElementTypeAround(const ir::AstNode *node)
+{
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        auto *elementType = FindOriginalArrayElementTypeInSubtree(current);
+        if (elementType != nullptr) {
+            return elementType;
+        }
+        if (IsArrayTypeSearchBoundary(current)) {
+            break;
+        }
+    }
+    return nullptr;
+}
+
+static std::optional<size_t> FindAnyAtPosition(std::string_view sourceCode, size_t pos)
+{
+    constexpr std::string_view anyText = "any";
+    if (pos + anyText.size() <= sourceCode.size() && sourceCode.substr(pos, anyText.size()) == anyText) {
+        return pos;
+    }
+    if (pos > 0 && pos - 1 + anyText.size() <= sourceCode.size() &&
+        sourceCode.substr(pos - 1, anyText.size()) == anyText) {
+        return pos - 1;
+    }
+    return std::nullopt;
+}
+
 // Find the export statement range from source code for duplicate export diagnostics.
 // Searches backward from pos for "export" keyword and forward to the statement boundary.
 static bool GetExportRangeFromSource(const std::string &sourceCode, size_t pos, size_t &rangeStart, size_t &rangeEnd)
@@ -1074,53 +1200,119 @@ static bool GetExportRangeFromSource(const std::string &sourceCode, size_t pos, 
     return true;
 }
 
-Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error)
+struct DiagnosticSourceInfo {
+    lexer::SourceLocation start;
+    lexer::SourceLocation end;
+    std::string source;
+};
+
+static DiagnosticSourceInfo EmptyDiagnosticSourceInfo(const public_lib::Context *ctx, const util::DiagnosticBase &error)
+{
+    auto location = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
+    return {location, location, ""};
+}
+
+static DiagnosticSourceInfo DiagnosticSourceInfoFromRange(const public_lib::Context *ctx, const lexer::LineIndex &index,
+                                                          const lexer::SourceRange &range, std::string source)
+{
+    auto startLocation = index.GetLocation(range.start);
+    auto endLocation = index.GetLocation(range.end);
+    return {lexer::SourceLocation(startLocation.line, startLocation.col, ctx->parserProgram),
+            lexer::SourceLocation(endLocation.line, endLocation.col, ctx->parserProgram), std::move(source)};
+}
+
+static DiagnosticSourceInfo DiagnosticSourceInfoFromOffsets(const public_lib::Context *ctx,
+                                                            const lexer::LineIndex &index, size_t start, size_t end,
+                                                            std::string source)
+{
+    auto [startLine, startCol] = index.GetLocation(start);
+    auto [endLine, endCol] = index.GetLocation(end);
+    return {lexer::SourceLocation(startLine, startCol, ctx->parserProgram),
+            lexer::SourceLocation(endLine, endCol, ctx->parserProgram), std::move(source)};
+}
+
+static DiagnosticSourceInfo DiagnosticSourceInfoFromToken(const public_lib::Context *ctx, const lexer::LineIndex &index,
+                                                          const ir::AstNode *token, const util::DiagnosticBase &error)
+{
+    if (token == nullptr) {
+        return EmptyDiagnosticSourceInfo(ctx, error);
+    }
+
+    return DiagnosticSourceInfoFromRange(ctx, index, token->Range(), token->DumpEtsSrc());
+}
+
+static std::optional<DiagnosticSourceInfo> TryGetDuplicateExportSourceInfo(const public_lib::Context *ctx,
+                                                                           const lexer::LineIndex &index, size_t offset)
+{
+    auto sourceCode = std::string(ctx->parserProgram->SourceCode());
+    size_t rangeStart = 0;
+    size_t rangeEnd = 0;
+    if (!GetExportRangeFromSource(sourceCode, offset, rangeStart, rangeEnd)) {
+        return std::nullopt;
+    }
+
+    return DiagnosticSourceInfoFromOffsets(ctx, index, rangeStart, rangeEnd,
+                                           std::string(sourceCode.substr(rangeStart, rangeEnd - rangeStart)));
+}
+
+static std::optional<DiagnosticSourceInfo> TryGetForbiddenAnySourceInfo(const public_lib::Context *ctx,
+                                                                        const lexer::LineIndex &index,
+                                                                        const ir::AstNode *touchingToken, size_t offset)
+{
+    if (auto anyPos = FindAnyAtPosition(ctx->parserProgram->SourceCode(), offset); anyPos.has_value()) {
+        constexpr size_t anyLength = 3;
+        return DiagnosticSourceInfoFromOffsets(ctx, index, *anyPos, *anyPos + anyLength, "any");
+    }
+
+    const auto *elementType = GetOriginalArrayElementType(touchingToken);
+    if (elementType == nullptr) {
+        elementType = FindOriginalArrayElementTypeAround(touchingToken);
+    }
+    if (elementType == nullptr) {
+        return std::nullopt;
+    }
+
+    return DiagnosticSourceInfoFromRange(ctx, index, elementType->Range(), elementType->DumpEtsSrc());
+}
+
+static DiagnosticSourceInfo GetDiagnosticSourceInfo(es2panda_Context *context, const util::DiagnosticBase &error,
+                                                    int code)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
     auto offset = index.GetOffset(lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram));
     auto touchingToken = GetTouchingToken(context, offset, false);
-    lexer::SourceRange sourceRange;
-    lexer::SourceLocation sourceStartLocation;
-    lexer::SourceLocation sourceEndLocation;
-    std::string source;
-    // For duplicate export aliases warnings, locate the range from source code
     constexpr int duplicateExportAliasesCode =
         static_cast<int>(util::DiagnosticType::WARNING) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + 73;
-    auto code = CreateCodeForDiagnostic(&error);
+
     if (code == duplicateExportAliasesCode) {
-        auto sourceCode = std::string(ctx->parserProgram->SourceCode());
-        size_t rangeStart = 0;
-        size_t rangeEnd = 0;
-        if (GetExportRangeFromSource(sourceCode, offset, rangeStart, rangeEnd)) {
-            auto [startLine, startCol] = index.GetLocation(rangeStart);
-            auto [endLine, endCol] = index.GetLocation(rangeEnd);
-            sourceStartLocation = lexer::SourceLocation(startLine, startCol, ctx->parserProgram);
-            sourceEndLocation = lexer::SourceLocation(endLine, endCol, ctx->parserProgram);
-            source = std::string(sourceCode.substr(rangeStart, rangeEnd - rangeStart));
-        } else {
-            sourceStartLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
-            sourceEndLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
-            source = "";
+        if (auto sourceInfo = TryGetDuplicateExportSourceInfo(ctx, index, offset); sourceInfo.has_value()) {
+            return *sourceInfo;
         }
-    } else if (touchingToken == nullptr) {
-        sourceStartLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
-        sourceEndLocation = lexer::SourceLocation(error.Line(), error.Offset(), ctx->parserProgram);
-        source = "";
-    } else {
-        sourceRange = touchingToken->Range();
-        sourceStartLocation = index.GetLocation(sourceRange.start);
-        sourceEndLocation = index.GetLocation(sourceRange.end);
-        source = touchingToken->DumpEtsSrc();
+        return EmptyDiagnosticSourceInfo(ctx, error);
     }
-    auto range = Range(Position(sourceStartLocation.line, sourceStartLocation.col),
-                       Position(sourceEndLocation.line, sourceEndLocation.col));
+
+    if (IsForbiddenAnyTypeDiagnostic(code)) {
+        if (auto sourceInfo = TryGetForbiddenAnySourceInfo(ctx, index, touchingToken, offset); sourceInfo.has_value()) {
+            return *sourceInfo;
+        }
+    }
+
+    return DiagnosticSourceInfoFromToken(ctx, index, touchingToken, error);
+}
+
+Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error)
+{
+    auto code = CreateCodeForDiagnostic(&error);
+    auto sourceInfo = GetDiagnosticSourceInfo(context, error, code);
+    auto range =
+        Range(Position(sourceInfo.start.line, sourceInfo.start.col), Position(sourceInfo.end.line, sourceInfo.end.col));
     auto severity = GetSeverity(error.Type());
     std::string message = error.Message();
     auto codeDescription = CodeDescription("test code description");
     auto tags = std::vector<DiagnosticTag>();
     auto relatedInformation = std::vector<DiagnosticRelatedInformation>();
-    return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, source);
+    return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, sourceInfo.source);
 }
 
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,

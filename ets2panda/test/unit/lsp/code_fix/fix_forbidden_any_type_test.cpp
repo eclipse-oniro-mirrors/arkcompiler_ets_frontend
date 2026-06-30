@@ -86,6 +86,31 @@ let x: Any = 1;
     initializer.DestroyContext(context);
 }
 
+TEST_F(FixForbiddenAnyTypeTest, FixForbiddenAnyTypeInTupleVariable)
+{
+    std::vector<std::string> fileNames = {"FixAnyToAnyTypeTuple.ets"};
+    std::vector<std::string> fileContents = {R"(let arr: any = [1, null, "hello", true, null])"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const auto errorPos = fileContents[0].find("any");
+    ASSERT_NE(errorPos, std::string::npos);
+
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, errorPos, errorPos + 1, errorCodes, options);
+    ASSERT_FALSE(fixes.empty());
+
+    const auto updated = ApplyFirstChange(fileContents[0], fixes[0]);
+    const std::string expected = R"(let arr: Any = [1, null, "hello", true, null])";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
 TEST_F(FixForbiddenAnyTypeTest, FixForbiddenAnyTypeInFunction)
 {
     std::vector<std::string> fileNames = {"FixAnyToAnyTypeFunc.ets"};
@@ -116,6 +141,44 @@ function f(p: Any): any {
 }
 )";
     ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixForbiddenAnyTypeTest, FixForbiddenAnyTypeInArrayType)
+{
+    std::vector<std::string> fileNames = {"FixAnyToAnyTypeArray.ets"};
+    std::vector<std::string> fileContents = {R"(let arr: any[] = [1, null, "hello", true, null]
+let arr2: any[] = arr)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const auto firstErrorPos = fileContents[0].find("any");
+    ASSERT_NE(firstErrorPos, std::string::npos);
+    const auto secondErrorPos = fileContents[0].find("any", firstErrorPos + 1);
+    ASSERT_NE(secondErrorPos, std::string::npos);
+
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+
+    auto firstFixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, firstErrorPos, firstErrorPos + 1, errorCodes, options);
+    ASSERT_FALSE(firstFixes.empty());
+    const auto firstUpdated = ApplyFirstChange(fileContents[0], firstFixes[0]);
+    const std::string firstExpected = R"(let arr: Any[] = [1, null, "hello", true, null]
+let arr2: any[] = arr)";
+    ASSERT_EQ(firstUpdated, firstExpected);
+
+    auto secondFixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, secondErrorPos, secondErrorPos + 1,
+                                                                      errorCodes, options);
+    ASSERT_FALSE(secondFixes.empty());
+    const auto secondUpdated = ApplyFirstChange(fileContents[0], secondFixes[0]);
+    const std::string secondExpected = R"(let arr: any[] = [1, null, "hello", true, null]
+let arr2: Any[] = arr)";
+    ASSERT_EQ(secondUpdated, secondExpected);
 
     initializer.DestroyContext(context);
 }

@@ -1586,7 +1586,7 @@ semantic:
 - name: TYPE_NOT_FOUND
   id: 371
   message: "Cannot find type '{}'."
-  code_fix_ids: [FixSpellingForType]
+  code_fix_ids: [FixSpellingForType, FixImportSource]
 
 - name: TYPE_NOT_PRESERVED_BY_ERASURE_FOR_FIXED_ARRAY
   id: 461884

@@ -138,6 +138,7 @@ std::vector<CodeFixAction> FixImportSource::GetCodeActions(const CodeFixContext 
 
     const std::string_view sourceCode = ctx->parserProgram->SourceCode();
     size_t insertPos = GetImportInsertPosition(ctx->parserProgram);
+    insertPos = AdjustInsertPositionForUseStaticDirective(insertPos, sourceCode);
 
     ActionBuildContext buildCtx {context, ctx, unresolvedName, sourceCode, insertPos};
 

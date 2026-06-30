@@ -61,59 +61,6 @@ std::string GetUnresolvedIdentifierName(es2panda_Context *context, TextSpan span
     return GetUnresolvedIdentifierNameAtPosition(context, span.start + span.length - 1);
 }
 
-bool IsUseStaticDirectiveAtFileTop(std::string_view source, size_t firstNonWhitespace)
-{
-    constexpr std::string_view SINGLE_QUOTE_USE_STATIC = "'use static'";
-    constexpr std::string_view DOUBLE_QUOTE_USE_STATIC = "\"use static\"";
-
-    if (firstNonWhitespace >= source.size()) {
-        return false;
-    }
-
-    auto remains = source.substr(firstNonWhitespace);
-    if (remains.rfind(SINGLE_QUOTE_USE_STATIC, 0) != 0 && remains.rfind(DOUBLE_QUOTE_USE_STATIC, 0) != 0) {
-        return false;
-    }
-
-    size_t directiveLen = remains.rfind(SINGLE_QUOTE_USE_STATIC, 0) == 0 ? SINGLE_QUOTE_USE_STATIC.size()
-                                                                         : DOUBLE_QUOTE_USE_STATIC.size();
-    size_t i = firstNonWhitespace + directiveLen;
-    while (i < source.size() && (source[i] == ' ' || source[i] == '\t')) {
-        ++i;
-    }
-    return i == source.size() || source[i] == ';' || source[i] == '\r' || source[i] == '\n';
-}
-
-size_t GetInsertPositionAfterFirstLine(std::string_view source, size_t lineStart)
-{
-    size_t lineBreakPos = source.find_first_of("\r\n", lineStart);
-    if (lineBreakPos == std::string_view::npos) {
-        return source.size();
-    }
-
-    if (source[lineBreakPos] == '\r' && (lineBreakPos + 1U) < source.size() && source[lineBreakPos + 1U] == '\n') {
-        return lineBreakPos + 2U;
-    }
-    return lineBreakPos + 1U;
-}
-
-size_t AdjustInsertPositionForUseStaticDirective(size_t originalPos, std::string_view source)
-{
-    size_t firstNonWhitespace = source.find_first_not_of(" \t\r\n");
-    if (firstNonWhitespace == std::string_view::npos) {
-        return originalPos;
-    }
-    if (originalPos != firstNonWhitespace) {
-        return originalPos;
-    }
-
-    if (!IsUseStaticDirectiveAtFileTop(source, firstNonWhitespace)) {
-        return originalPos;
-    }
-
-    return GetInsertPositionAfterFirstLine(source, firstNonWhitespace);
-}
-
 struct ImportCodeActionBuildContext {
     const std::string &unresolvedName;
     public_lib::Context *ctx;

@@ -88,6 +88,8 @@ ir::ETSImportDeclaration *FindMergeableImportDeclarationForModule(parser::Progra
 
 size_t GetImportInsertPosition(const parser::Program *program);
 
+size_t AdjustInsertPositionForUseStaticDirective(size_t insertPos, std::string_view source);
+
 std::string BuildImportInsertText(std::string_view source, size_t insertPos, const std::string &symbolName,
                                   const std::string &moduleName, bool isDefaultImport);
 
