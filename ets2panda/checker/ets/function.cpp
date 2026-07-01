@@ -104,6 +104,12 @@ static Signature *CheckDerivedStaticMethodCall(ETSChecker *checker, ir::CallExpr
         return signature;
     }
 
+    auto propertyName = memberExpr->Property()->AsIdentifier()->Name();
+    if (propertyName.Is(compiler::Signatures::STATIC_INSTANTIATE_METHOD) ||
+        propertyName.Is(compiler::Signatures::STATIC_INVOKE_METHOD)) {
+        return signature;
+    }
+
     checker->LogDiagnostic(diagnostic::STATIC_PROP_INHERITANCE, {memberExpr->Property()->AsIdentifier()->Name(), owner},
                            memberExpr->Property()->Start());
     return nullptr;

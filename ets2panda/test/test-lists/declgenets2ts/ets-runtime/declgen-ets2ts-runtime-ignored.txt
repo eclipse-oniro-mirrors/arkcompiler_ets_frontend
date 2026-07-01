@@ -114,3 +114,8 @@ overload_decl_inheritance/overload_decl_inherited_same_name_far_parent.ets
 
 # TSC Fail
 for_of_union_array_string.ets
+
+# TSC Fail
+static_callable_inheritance/static_instantiate_2.ets
+static_callable_inheritance/static_instantiate_3.ets
+static_callable_inheritance/static_invoke_3.ets
