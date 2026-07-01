@@ -512,6 +512,7 @@ static varbinder::ETSBinder *SetupNewVarBinderHierarchy(public_lib::Context *ctx
     newVarbinder->SetProgram(program);
     program->PushVarBinder(newVarbinder);
     varBinder->CopyTo(newVarbinder);
+    newVarbinder->CopyImportInfoFrom(varBinder);
 
     auto visitor = [newVarbinder, &varbindersCheckers](parser::Program *prog) {
         if (!prog->IsASTLowered() && prog->IsProgramModified()) {
