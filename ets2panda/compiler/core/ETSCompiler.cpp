@@ -616,6 +616,10 @@ void ETSCompiler::EmitCall(const ir::CallExpression *expr, compiler::VReg &calle
 
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
 
+    if (expr->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr);
+    }
+
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
@@ -822,7 +826,9 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
 
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
 
-    if (expr->TsType()->IsETSUndefinedType()) {
+    if (expr->TsType()->IsETSVoidType()) {
+        etsg->LoadAccumulatorUndefined(expr);
+    } else if (expr->TsType()->IsETSUndefinedType()) {
         etsg->CastToReftype(expr, expr->TsType(), false);
     }
 

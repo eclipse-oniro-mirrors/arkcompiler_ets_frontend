@@ -918,7 +918,7 @@ void ETSGen::ApplyConversion(const ir::AstNode *node, const checker::Type *targe
     if (accType != nullptr && accType->IsETSVoidType()) {
         auto *checker = const_cast<checker::ETSChecker *>(Checker());
         if (checker->Relation()->IsSupertypeOf(targetType, checker->GlobalETSUndefinedType()) ||
-            targetType->IsETSBooleanType()) {
+            targetType->IsETSBooleanType() || targetType->IsETSStringType()) {
             LoadAccumulatorUndefined(node);
             return;
         }
