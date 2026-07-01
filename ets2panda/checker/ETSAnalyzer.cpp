@@ -270,6 +270,8 @@ static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, 
                           {st->Id()->Name(), classDef->Ident()->Name(), superTypeName}, st->Start());
     }
 
+    st->SetOverride();
+    st->SetBasePropertyVar(propVar);
     if (!st->TsType()->IsETSTypeParameter() && propVar->Declaration()->Node()->IsClassProperty()) {
         auto *baseProp = propVar->Declaration()->Node()->AsClassProperty();
         if (baseProp->TsType() != nullptr && baseProp->TsType()->IsETSTypeParameter()) {
@@ -282,9 +284,6 @@ static void CheckOverridenFieldImpl(ir::ClassProperty *st, ETSChecker *checker, 
                           {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "", superTypeName},
                           st->Start());
     }
-
-    st->SetOverride();
-    st->SetBasePropertyVar(propVar);
     if (propNode->IsDefinite()) {
         st->AddModifier(ir::ModifierFlags::DEFINITE);
     } else {

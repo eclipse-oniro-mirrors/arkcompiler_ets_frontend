@@ -631,6 +631,26 @@ Type *ETSChecker::GuaranteedTypeForUncheckedCast(Type *base, Type *substituted)
     return Relation()->IsIdenticalTo(appSubst, appBase) ? nullptr : appBase;
 }
 
+// Determine if override property access from generic base requires cast from erased type
+Type *ETSChecker::GuaranteedTypeForUncheckedOverridePropAccess(ir::ClassProperty *classProp, varbinder::Variable *prop)
+{
+    if (!classProp->IsOverride()) {
+        return nullptr;
+    }
+    auto *basePropVar = classProp->BasePropertyVar();
+    if (basePropVar == nullptr || basePropVar->Declaration() == nullptr ||
+        basePropVar->Declaration()->Node() == nullptr) {
+        return nullptr;
+    }
+    auto *baseDeclNode = basePropVar->Declaration()->Node()->AsClassProperty();
+    auto *baseOrigType = baseDeclNode->TsType();
+    if (baseOrigType == nullptr) {
+        return nullptr;
+    }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    return GuaranteedTypeForUncheckedCast(baseOrigType, GetTypeOfVariable(prop));
+}
+
 // Determine if substituted property access requires cast from erased type
 Type *ETSChecker::GuaranteedTypeForUncheckedPropertyAccess(varbinder::Variable *const prop)
 {
@@ -657,7 +677,13 @@ Type *ETSChecker::GuaranteedTypeForUncheckedPropertyAccess(varbinder::Variable *
 
     switch (auto node = prop->Declaration()->Node(); node->Type()) {
         case ir::AstNodeType::CLASS_PROPERTY: {
-            auto *id = node->AsClassProperty()->Id();
+            auto *classProp = node->AsClassProperty();
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            auto *overrideResult = GuaranteedTypeForUncheckedOverridePropAccess(classProp, prop);
+            if (overrideResult != nullptr) {
+                return overrideResult;
+            }
+            auto *id = classProp->Id();
             ES2PANDA_ASSERT(id != nullptr);
             auto baseProp = id->Variable();
             if (baseProp == prop) {
