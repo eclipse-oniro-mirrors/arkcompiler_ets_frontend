@@ -15,10 +15,29 @@
 
 #include "resizableArrayLowering.h"
 #include "compiler/lowering/util.h"
+#include "ir/ets/etsTypeReference.h"
+#include "ir/ets/etsTypeReferencePart.h"
+#include "ir/ts/tsTypeParameterInstantiation.h"
 
 namespace ark::es2panda::compiler {
 
 using AstNodePtr = ir::AstNode *;
+
+static void SetElementTypeOriginalNode(ir::TypeNode *typeAnnotation, ir::TypeNode *elementType,
+                                       ArenaAllocator *allocator)
+{
+    if (typeAnnotation == nullptr || elementType == nullptr || allocator == nullptr ||
+        !typeAnnotation->IsETSTypeReference()) {
+        return;
+    }
+
+    auto *part = typeAnnotation->AsETSTypeReference()->Part();
+    if (part == nullptr || part->TypeParams() == nullptr || part->TypeParams()->Params().size() != 1) {
+        return;
+    }
+
+    part->TypeParams()->Params()[0]->SetOriginalNode(elementType->Clone(allocator, nullptr)->AsTypeNode());
+}
 
 static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_lib::Context *ctx, bool insideAnnotdecl)
 {
@@ -34,6 +53,8 @@ static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_li
     }
     typeAnnotation->SetParent(node->Parent());
     typeAnnotation->SetRange(node->Range());
+    typeAnnotation->SetOriginalNode(node);
+    SetElementTypeOriginalNode(typeAnnotation, const_cast<ir::TypeNode *>(node->ElementType()), ctx->Allocator());
     RefineSourceRanges(node);
     auto modifier = node->Modifiers();
     if (node->IsReadonlyType()) {

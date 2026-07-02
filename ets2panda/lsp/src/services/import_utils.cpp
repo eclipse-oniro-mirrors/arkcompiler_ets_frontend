@@ -31,6 +31,46 @@
 #include "util/helpers.h"
 
 namespace ark::es2panda::lsp {
+namespace {
+
+bool IsUseStaticDirectiveAtFileTop(std::string_view source, size_t firstNonWhitespace)
+{
+    constexpr std::string_view SINGLE_QUOTE_USE_STATIC = "'use static'";
+    constexpr std::string_view DOUBLE_QUOTE_USE_STATIC = "\"use static\"";
+
+    auto remains = source.substr(firstNonWhitespace);
+    if (remains.rfind(SINGLE_QUOTE_USE_STATIC, 0) != 0 && remains.rfind(DOUBLE_QUOTE_USE_STATIC, 0) != 0) {
+        return false;
+    }
+
+    const size_t directiveLength = remains.rfind(SINGLE_QUOTE_USE_STATIC, 0) == 0 ? SINGLE_QUOTE_USE_STATIC.size()
+                                                                                  : DOUBLE_QUOTE_USE_STATIC.size();
+    size_t pos = firstNonWhitespace + directiveLength;
+    while (pos < source.size() && (source[pos] == ' ' || source[pos] == '\t')) {
+        ++pos;
+    }
+    return pos == source.size() || source[pos] == ';' || source[pos] == '\r' || source[pos] == '\n';
+}
+
+}  // namespace
+
+size_t AdjustInsertPositionForUseStaticDirective(size_t insertPos, std::string_view source)
+{
+    const size_t firstNonWhitespace = source.find_first_not_of(" \t\r\n");
+    if (firstNonWhitespace == std::string_view::npos || insertPos > firstNonWhitespace ||
+        !IsUseStaticDirectiveAtFileTop(source, firstNonWhitespace)) {
+        return insertPos;
+    }
+
+    const size_t lineBreakPos = source.find_first_of("\r\n", firstNonWhitespace);
+    if (lineBreakPos == std::string_view::npos) {
+        return source.size();
+    }
+    if (source[lineBreakPos] == '\r' && lineBreakPos + 1U < source.size() && source[lineBreakPos + 1U] == '\n') {
+        return lineBreakPos + 2U;
+    }
+    return lineBreakPos + 1U;
+}
 
 bool IsLineBreak(char ch)
 {
@@ -325,11 +365,7 @@ size_t GetImportInsertPosition(const parser::Program *program)
         break;
     }
 
-    if (hasImport) {
-        return lastImportEndPos;
-    }
-
-    return hasFirstStatement ? firstStatementPos : 0;
+    return hasImport ? lastImportEndPos : (hasFirstStatement ? firstStatementPos : 0);
 }
 
 std::string BuildImportInsertText(std::string_view source, size_t insertPos, const std::string &symbolName,

@@ -17,6 +17,7 @@
 #include "../lsp_api_test.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <optional>
@@ -30,6 +31,10 @@ using ark::es2panda::lsp::Initializer;
 
 constexpr auto ERROR_CODES = ark::es2panda::lsp::codefixes::FIX_IMPORT_SOURCE.GetSupportedCodeNumbers();
 constexpr int DEFAULT_THROTTLE = 20;
+constexpr size_t FIRST_FILE_INDEX = 0;
+constexpr size_t SECOND_FILE_INDEX = 1;
+constexpr size_t THIRD_FILE_INDEX = 2;
+constexpr std::string_view FIX_IMPORT_SOURCE_NAME = "FixImportSource";
 
 class FixImportSourceTest : public LSPAPITests {
 public:
@@ -50,11 +55,45 @@ public:
     static std::optional<CodeFixActionInfo> FindFixImportSource(const std::vector<CodeFixActionInfo> &fixes)
     {
         auto it = std::find_if(fixes.begin(), fixes.end(),
-                               [](const CodeFixActionInfo &fix) { return fix.fixName_ == "FixImportSource"; });
+                               [](const CodeFixActionInfo &fix) { return fix.fixName_ == FIX_IMPORT_SOURCE_NAME; });
         if (it == fixes.end()) {
             return std::nullopt;
         }
         return *it;
+    }
+
+    static void BuildSymbolIndex(Initializer &initializer, const std::string &filePath)
+    {
+        auto *context = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        ASSERT_NE(context, nullptr);
+        ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(context));
+        initializer.DestroyContext(context);
+    }
+
+    static std::vector<CodeFixActionInfo> GetImportSourceFixes(es2panda_Context *context, const std::string &source,
+                                                               std::string_view unresolvedName)
+    {
+        const auto unresolvedPos = source.find(unresolvedName);
+        EXPECT_NE(unresolvedPos, std::string::npos);
+
+        std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+        CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+        return ark::es2panda::lsp::GetCodeFixesAtPositionImpl(
+            context, unresolvedPos, unresolvedPos + unresolvedName.size(), errorCodes, options);
+    }
+
+    static std::vector<std::string> ApplyImportSourceFixes(const std::vector<CodeFixActionInfo> &fixes,
+                                                           const std::string &source)
+    {
+        std::vector<std::string> updatedSources;
+        for (const auto &fix : fixes) {
+            if (fix.fixName_ == FIX_IMPORT_SOURCE_NAME) {
+                updatedSources.push_back(ApplyFirstChange(source, fix));
+            }
+        }
+        std::sort(updatedSources.begin(), updatedSources.end());
+        updatedSources.erase(std::unique(updatedSources.begin(), updatedSources.end()), updatedSources.end());
+        return updatedSources;
     }
 
 private:
@@ -72,6 +111,85 @@ private:
         return instance;
     }
 };
+
+TEST_F(FixImportSourceTest, ImportClassFromSourceFile)
+{
+    std::vector<std::string> fileNames = {"test1.ets", "test2.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+export class Aaaa {};
+)",
+        R"(
+let a = new Aaaa();
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    BuildSymbolIndex(initializer, filePaths[FIRST_FILE_INDEX]);
+
+    auto *context = initializer.CreateContext(filePaths[SECOND_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    auto fixes = GetImportSourceFixes(context, fileContents[SECOND_FILE_INDEX], "Aaaa");
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[SECOND_FILE_INDEX], importFix.value());
+    const std::string expected = R"(import { Aaaa } from './test1';
+let a = new Aaaa();
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, ImportMultiClassFromSourceFile)
+{
+    std::vector<std::string> fileNames = {"ImportMultiClassFromSourceFile1.ets", "ImportMultiClassFromSourceFile2.ets",
+                                          "ImportMultiClassFromSourceFile3.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+'use static'
+export class Bbbb {};
+)",
+        R"(
+'use static'
+export class Bbbb {};
+)",
+        R"(
+'use static'
+let a = new Bbbb();
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    BuildSymbolIndex(initializer, filePaths[FIRST_FILE_INDEX]);
+    BuildSymbolIndex(initializer, filePaths[SECOND_FILE_INDEX]);
+
+    auto *context = initializer.CreateContext(filePaths[THIRD_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    auto fixes = GetImportSourceFixes(context, fileContents[THIRD_FILE_INDEX], "Bbbb");
+    auto updatedSources = ApplyImportSourceFixes(fixes, fileContents[THIRD_FILE_INDEX]);
+
+    std::vector<std::string> expected = {
+        R"(
+'use static'
+import { Bbbb } from './ImportMultiClassFromSourceFile1';
+let a = new Bbbb();
+)",
+        R"(
+'use static'
+import { Bbbb } from './ImportMultiClassFromSourceFile2';
+let a = new Bbbb();
+)"};
+    std::sort(expected.begin(), expected.end());
+    ASSERT_EQ(updatedSources, expected);
+
+    initializer.DestroyContext(context);
+}
 
 TEST_F(FixImportSourceTest, ImportFromSourceFile)
 {

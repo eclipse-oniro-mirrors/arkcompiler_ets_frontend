@@ -22,6 +22,26 @@ using ark::es2panda::lsp::Initializer;
 
 class LspDiagnosticsTests : public LSPAPITests {};
 
+namespace {
+constexpr char FORBIDDEN_ANY_MESSAGE[] = "'any' type annotation is forbidden";
+
+struct ExpectedDiagnosticRange {
+    size_t startLine;
+    size_t startCharacter;
+    size_t endLine;
+    size_t endCharacter;
+};
+
+void AssertDiagnosticRange(const Diagnostic &diagnostic, const ExpectedDiagnosticRange &expected)
+{
+    ASSERT_EQ(diagnostic.message_, FORBIDDEN_ANY_MESSAGE);
+    ASSERT_EQ(diagnostic.range_.start.line_, expected.startLine);
+    ASSERT_EQ(diagnostic.range_.start.character_, expected.startCharacter);
+    ASSERT_EQ(diagnostic.range_.end.line_, expected.endLine);
+    ASSERT_EQ(diagnostic.range_.end.character_, expected.endCharacter);
+}
+}  // namespace
+
 TEST_F(LspDiagnosticsTests, GetSemanticDiagnostics1)
 {
     Initializer initializer = Initializer();
@@ -77,6 +97,35 @@ add("1", 2);)");
     ASSERT_NE(std::get<int>(result.diagnostic[thirdIndex].code_), 0);
     ASSERT_EQ(result.diagnostic[thirdIndex].message_, R"(Type '"1"' is not compatible with type 'Double' at index 1)");
     ASSERT_EQ(result.diagnostic[thirdIndex].codeDescription_.href_, "test code description");
+}
+
+TEST_F(LspDiagnosticsTests, GetSemanticDiagnosticsAnyArrayRange)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("GetSemanticDiagnosticsAnyArrayRange.ets", ES2PANDA_STATE_CHECKED,
+                                                      R"(let arr: any[] = [1, null, "hello", true, null]
+let arr2: any[] = arr)");
+    LSPAPI const *lspApi = GetImpl();
+    DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
+    initializer.DestroyContext(ctx);
+
+    constexpr size_t expectedErrorCount = 2;
+    constexpr size_t firstErrorIndex = 0;
+    constexpr size_t secondErrorIndex = 1;
+    constexpr size_t firstAnyLine = 1;
+    constexpr size_t firstAnyStartCharacter = 10;
+    constexpr size_t firstAnyEndCharacter = 13;
+    constexpr size_t secondAnyLine = 2;
+    constexpr size_t secondAnyStartCharacter = 11;
+    constexpr size_t secondAnyEndCharacter = 14;
+    constexpr ExpectedDiagnosticRange firstAnyRange {firstAnyLine, firstAnyStartCharacter, firstAnyLine,
+                                                     firstAnyEndCharacter};
+    constexpr ExpectedDiagnosticRange secondAnyRange {secondAnyLine, secondAnyStartCharacter, secondAnyLine,
+                                                      secondAnyEndCharacter};
+
+    ASSERT_EQ(result.diagnostic.size(), expectedErrorCount);
+    AssertDiagnosticRange(result.diagnostic[firstErrorIndex], firstAnyRange);
+    AssertDiagnosticRange(result.diagnostic[secondErrorIndex], secondAnyRange);
 }
 
 TEST_F(LspDiagnosticsTests, GetSyntacticDiagnostics1)

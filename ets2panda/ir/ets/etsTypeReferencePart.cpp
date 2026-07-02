@@ -20,6 +20,7 @@
 #include "checker/TSchecker.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
+#include "ir/ts/tsAnyKeyword.h"
 
 namespace ark::es2panda::ir {
 
@@ -166,6 +167,25 @@ static checker::Type *HandlePartialType(checker::ETSChecker *const checker, ETST
     return baseType;
 }
 
+static bool IsForbiddenAnyOriginalNode(const AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+
+    if (node->IsTSAnyKeyword()) {
+        return true;
+    }
+
+    if (node->IsETSTypeReference()) {
+        auto *part = node->AsETSTypeReference()->Part();
+        return part != nullptr && part->Name() != nullptr && part->Name()->IsIdentifier() &&
+               part->Name()->AsIdentifier()->Name() == compiler::Signatures::ANY;
+    }
+
+    return false;
+}
+
 static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const checker, ETSTypeReferencePart *ref)
 {
     auto const ident = ref->GetIdent();
@@ -174,7 +194,9 @@ static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const che
     }
     if (ident->Name() == compiler::Signatures::ANY) {
         if (!checker->IsRelaxedAnyTypeAnnotationAllowed()) {
-            checker->LogError(diagnostic::ANY_TYPE_ANNOTATION_FORBIDDEN, {}, ident->Start());
+            if (!IsForbiddenAnyOriginalNode(ref->Parent()->OriginalNode())) {
+                checker->LogError(diagnostic::ANY_TYPE_ANNOTATION_FORBIDDEN, {}, ident->Start());
+            }
             return checker->GlobalTypeError();
         }
         return checker->GetGlobalTypesHolder()->GlobalETSRelaxedAnyType();
@@ -274,6 +296,10 @@ checker::Type *ETSTypeReferencePart::GetType(checker::ETSChecker *checker)
     if (TypeParams() != nullptr) {
         for (auto *param : TypeParams()->Params()) {
             checker->CheckAnnotations(param);
+            auto *originalNode = param->OriginalNode();
+            if (IsForbiddenAnyOriginalNode(originalNode) && !checker->IsRelaxedAnyTypeAnnotationAllowed()) {
+                checker->LogError(diagnostic::ANY_TYPE_ANNOTATION_FORBIDDEN, {}, originalNode->Start());
+            }
             if (param->IsETSTypeReference()) {
                 param->Check(checker);
             }
