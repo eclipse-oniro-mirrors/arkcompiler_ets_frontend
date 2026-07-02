@@ -82,6 +82,86 @@
       }
     },
     {
+      "type": "ImportDeclaration",
+      "source": {
+        "type": "StringLiteral",
+        "value": "std/core",
+        "loc": {
+          "start": {
+            "line": 17,
+            "column": 19,
+            "program": "launch_this_callee.ets"
+          },
+          "end": {
+            "line": 17,
+            "column": 29,
+            "program": "launch_this_callee.ets"
+          }
+        }
+      },
+      "specifiers": [
+        {
+          "type": "ImportSpecifier",
+          "local": {
+            "type": "Identifier",
+            "name": "Job",
+            "loc": {
+              "start": {
+                "line": 17,
+                "column": 9,
+                "program": "launch_this_callee.ets"
+              },
+              "end": {
+                "line": 17,
+                "column": 12,
+                "program": "launch_this_callee.ets"
+              }
+            }
+          },
+          "imported": {
+            "type": "Identifier",
+            "name": "Job",
+            "loc": {
+              "start": {
+                "line": 17,
+                "column": 9,
+                "program": "launch_this_callee.ets"
+              },
+              "end": {
+                "line": 17,
+                "column": 12,
+                "program": "launch_this_callee.ets"
+              }
+            }
+          },
+          "loc": {
+            "start": {
+              "line": 17,
+              "column": 9,
+              "program": "launch_this_callee.ets"
+            },
+            "end": {
+              "line": 17,
+              "column": 12,
+              "program": "launch_this_callee.ets"
+            }
+          }
+        }
+      ],
+      "loc": {
+        "start": {
+          "line": 17,
+          "column": 1,
+          "program": "launch_this_callee.ets"
+        },
+        "end": {
+          "line": 17,
+          "column": 29,
+          "program": "launch_this_callee.ets"
+        }
+      }
+    },
+    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
@@ -89,12 +169,12 @@
           "name": "Foo",
           "loc": {
             "start": {
-              "line": 18,
+              "line": 19,
               "column": 7,
               "program": "launch_this_callee.ets"
             },
             "end": {
-              "line": 18,
+              "line": 19,
               "column": 10,
               "program": "launch_this_callee.ets"
             }
@@ -110,12 +190,12 @@
               "name": "bar",
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 20,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 19,
+                  "line": 20,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 }
@@ -135,12 +215,12 @@
                   "name": "bar",
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 20,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 19,
+                      "line": 20,
                       "column": 14,
                       "program": "launch_this_callee.ets"
                     }
@@ -156,16 +236,16 @@
                     "type": "ETSTypeReferencePart",
                     "name": {
                       "type": "Identifier",
-                      "name": "Promise",
+                      "name": "Job",
                       "loc": {
                         "start": {
-                          "line": 19,
+                          "line": 20,
                           "column": 18,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 19,
-                          "column": 25,
+                          "line": 20,
+                          "column": 21,
                           "program": "launch_this_callee.ets"
                         }
                       }
@@ -182,39 +262,39 @@
                               "name": "Foo",
                               "loc": {
                                 "start": {
-                                  "line": 19,
-                                  "column": 26,
+                                  "line": 20,
+                                  "column": 22,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 19,
-                                  "column": 29,
+                                  "line": 20,
+                                  "column": 25,
                                   "program": "launch_this_callee.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 19,
-                                "column": 26,
+                                "line": 20,
+                                "column": 22,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 19,
-                                "column": 29,
+                                "line": 20,
+                                "column": 25,
                                 "program": "launch_this_callee.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 19,
-                              "column": 26,
+                              "line": 20,
+                              "column": 22,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 19,
-                              "column": 29,
+                              "line": 20,
+                              "column": 25,
                               "program": "launch_this_callee.ets"
                             }
                           }
@@ -222,39 +302,39 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 19,
-                          "column": 25,
+                          "line": 20,
+                          "column": 21,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 19,
-                          "column": 30,
+                          "line": 20,
+                          "column": 26,
                           "program": "launch_this_callee.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 19,
+                        "line": 20,
                         "column": 18,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 19,
-                        "column": 30,
+                        "line": 20,
+                        "column": 26,
                         "program": "launch_this_callee.ets"
                       }
                     }
                   },
                   "loc": {
                     "start": {
-                      "line": 19,
+                      "line": 20,
                       "column": 18,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 19,
-                      "column": 30,
+                      "line": 20,
+                      "column": 26,
                       "program": "launch_this_callee.ets"
                     }
                   }
@@ -271,12 +351,12 @@
                           "name": "launch",
                           "loc": {
                             "start": {
-                              "line": 20,
+                              "line": 21,
                               "column": 12,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 20,
+                              "line": 21,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             }
@@ -296,12 +376,12 @@
                                   "name": "Foo",
                                   "loc": {
                                     "start": {
-                                      "line": 20,
+                                      "line": 21,
                                       "column": 19,
                                       "program": "launch_this_callee.ets"
                                     },
                                     "end": {
-                                      "line": 20,
+                                      "line": 21,
                                       "column": 22,
                                       "program": "launch_this_callee.ets"
                                     }
@@ -309,12 +389,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 20,
+                                    "line": 21,
                                     "column": 19,
                                     "program": "launch_this_callee.ets"
                                   },
                                   "end": {
-                                    "line": 20,
+                                    "line": 21,
                                     "column": 22,
                                     "program": "launch_this_callee.ets"
                                   }
@@ -322,12 +402,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 20,
+                                  "line": 21,
                                   "column": 19,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 20,
+                                  "line": 21,
                                   "column": 22,
                                   "program": "launch_this_callee.ets"
                                 }
@@ -336,12 +416,12 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 20,
+                              "line": 21,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 20,
+                              "line": 21,
                               "column": 23,
                               "program": "launch_this_callee.ets"
                             }
@@ -349,12 +429,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 20,
+                            "line": 21,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 22,
+                            "line": 23,
                             "column": 6,
                             "program": "launch_this_callee.ets"
                           }
@@ -362,12 +442,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 20,
+                          "line": 21,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 22,
+                          "line": 23,
                           "column": 7,
                           "program": "launch_this_callee.ets"
                         }
@@ -376,12 +456,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 19,
-                      "column": 31,
+                      "line": 20,
+                      "column": 27,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 23,
+                      "line": 24,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -389,12 +469,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 19,
+                    "line": 20,
                     "column": 14,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 23,
+                    "line": 24,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -402,12 +482,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 19,
+                  "line": 20,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 23,
+                  "line": 24,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -416,12 +496,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 19,
+                "line": 20,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 23,
+                "line": 24,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -434,12 +514,12 @@
               "name": "baz",
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 26,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 25,
+                  "line": 26,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 }
@@ -459,12 +539,12 @@
                   "name": "baz",
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 26,
                       "column": 14,
                       "program": "launch_this_callee.ets"
                     }
@@ -488,12 +568,12 @@
                             "name": "Foo",
                             "loc": {
                               "start": {
-                                "line": 25,
+                                "line": 26,
                                 "column": 18,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 25,
+                                "line": 26,
                                 "column": 21,
                                 "program": "launch_this_callee.ets"
                               }
@@ -501,12 +581,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 25,
+                              "line": 26,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 25,
+                              "line": 26,
                               "column": 21,
                               "program": "launch_this_callee.ets"
                             }
@@ -514,12 +594,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 25,
+                            "line": 26,
                             "column": 18,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 25,
+                            "line": 26,
                             "column": 21,
                             "program": "launch_this_callee.ets"
                           }
@@ -527,12 +607,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 26,
                           "column": 15,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 26,
                           "column": 21,
                           "program": "launch_this_callee.ets"
                         }
@@ -540,12 +620,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 26,
                         "column": 15,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 25,
+                        "line": 26,
                         "column": 21,
                         "program": "launch_this_callee.ets"
                       }
@@ -561,12 +641,12 @@
                       "name": "Foo",
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 26,
                           "column": 24,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 26,
                           "column": 27,
                           "program": "launch_this_callee.ets"
                         }
@@ -574,12 +654,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 26,
                         "column": 24,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 25,
+                        "line": 26,
                         "column": 27,
                         "program": "launch_this_callee.ets"
                       }
@@ -587,12 +667,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 24,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 26,
                       "column": 27,
                       "program": "launch_this_callee.ets"
                     }
@@ -608,12 +688,12 @@
                         "name": "x",
                         "loc": {
                           "start": {
-                            "line": 26,
+                            "line": 27,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 26,
+                            "line": 27,
                             "column": 13,
                             "program": "launch_this_callee.ets"
                           }
@@ -621,12 +701,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 26,
+                          "line": 27,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 26,
+                          "line": 27,
                           "column": 14,
                           "program": "launch_this_callee.ets"
                         }
@@ -635,12 +715,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 28,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 27,
+                      "line": 28,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -648,12 +728,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 26,
                     "column": 14,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 27,
+                    "line": 28,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -661,12 +741,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 26,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 27,
+                  "line": 28,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -675,12 +755,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 25,
+                "line": 26,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 27,
+                "line": 28,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -693,12 +773,12 @@
               "name": "bar2",
               "loc": {
                 "start": {
-                  "line": 29,
+                  "line": 30,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 29,
+                  "line": 30,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 }
@@ -718,12 +798,12 @@
                   "name": "bar2",
                   "loc": {
                     "start": {
-                      "line": 29,
+                      "line": 30,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 29,
+                      "line": 30,
                       "column": 15,
                       "program": "launch_this_callee.ets"
                     }
@@ -739,16 +819,16 @@
                     "type": "ETSTypeReferencePart",
                     "name": {
                       "type": "Identifier",
-                      "name": "Promise",
+                      "name": "Job",
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 30,
                           "column": 19,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 29,
-                          "column": 26,
+                          "line": 30,
+                          "column": 22,
                           "program": "launch_this_callee.ets"
                         }
                       }
@@ -765,39 +845,39 @@
                               "name": "Foo",
                               "loc": {
                                 "start": {
-                                  "line": 29,
-                                  "column": 27,
+                                  "line": 30,
+                                  "column": 23,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 29,
-                                  "column": 30,
+                                  "line": 30,
+                                  "column": 26,
                                   "program": "launch_this_callee.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 29,
-                                "column": 27,
+                                "line": 30,
+                                "column": 23,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 29,
-                                "column": 30,
+                                "line": 30,
+                                "column": 26,
                                 "program": "launch_this_callee.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 29,
-                              "column": 27,
+                              "line": 30,
+                              "column": 23,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 29,
-                              "column": 30,
+                              "line": 30,
+                              "column": 26,
                               "program": "launch_this_callee.ets"
                             }
                           }
@@ -805,39 +885,39 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 29,
-                          "column": 26,
+                          "line": 30,
+                          "column": 22,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 29,
-                          "column": 31,
+                          "line": 30,
+                          "column": 27,
                           "program": "launch_this_callee.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 29,
+                        "line": 30,
                         "column": 19,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 29,
-                        "column": 31,
+                        "line": 30,
+                        "column": 27,
                         "program": "launch_this_callee.ets"
                       }
                     }
                   },
                   "loc": {
                     "start": {
-                      "line": 29,
+                      "line": 30,
                       "column": 19,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 29,
-                      "column": 31,
+                      "line": 30,
+                      "column": 27,
                       "program": "launch_this_callee.ets"
                     }
                   }
@@ -854,12 +934,12 @@
                           "name": "launch",
                           "loc": {
                             "start": {
-                              "line": 30,
+                              "line": 31,
                               "column": 12,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 30,
+                              "line": 31,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             }
@@ -879,12 +959,12 @@
                                   "name": "Foo",
                                   "loc": {
                                     "start": {
-                                      "line": 30,
+                                      "line": 31,
                                       "column": 19,
                                       "program": "launch_this_callee.ets"
                                     },
                                     "end": {
-                                      "line": 30,
+                                      "line": 31,
                                       "column": 22,
                                       "program": "launch_this_callee.ets"
                                     }
@@ -892,12 +972,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 30,
+                                    "line": 31,
                                     "column": 19,
                                     "program": "launch_this_callee.ets"
                                   },
                                   "end": {
-                                    "line": 30,
+                                    "line": 31,
                                     "column": 22,
                                     "program": "launch_this_callee.ets"
                                   }
@@ -905,12 +985,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 30,
+                                  "line": 31,
                                   "column": 19,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 30,
+                                  "line": 31,
                                   "column": 22,
                                   "program": "launch_this_callee.ets"
                                 }
@@ -919,12 +999,12 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 30,
+                              "line": 31,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 30,
+                              "line": 31,
                               "column": 23,
                               "program": "launch_this_callee.ets"
                             }
@@ -932,12 +1012,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 30,
+                            "line": 31,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 32,
+                            "line": 33,
                             "column": 6,
                             "program": "launch_this_callee.ets"
                           }
@@ -945,12 +1025,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 30,
+                          "line": 31,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 33,
                           "column": 7,
                           "program": "launch_this_callee.ets"
                         }
@@ -959,12 +1039,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 29,
-                      "column": 32,
+                      "line": 30,
+                      "column": 28,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 33,
+                      "line": 34,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -972,12 +1052,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 29,
+                    "line": 30,
                     "column": 15,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 33,
+                    "line": 34,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -985,12 +1065,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 29,
+                  "line": 30,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 33,
+                  "line": 34,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -999,12 +1079,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 29,
+                "line": 30,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 33,
+                "line": 34,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -1017,12 +1097,12 @@
               "name": "baz2",
               "loc": {
                 "start": {
-                  "line": 35,
+                  "line": 36,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 35,
+                  "line": 36,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 }
@@ -1042,12 +1122,12 @@
                   "name": "baz2",
                   "loc": {
                     "start": {
-                      "line": 35,
+                      "line": 36,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 35,
+                      "line": 36,
                       "column": 15,
                       "program": "launch_this_callee.ets"
                     }
@@ -1071,12 +1151,12 @@
                             "name": "Foo",
                             "loc": {
                               "start": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 19,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 22,
                                 "program": "launch_this_callee.ets"
                               }
@@ -1084,12 +1164,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 35,
+                              "line": 36,
                               "column": 19,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 35,
+                              "line": 36,
                               "column": 22,
                               "program": "launch_this_callee.ets"
                             }
@@ -1097,12 +1177,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 35,
+                            "line": 36,
                             "column": 19,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 35,
+                            "line": 36,
                             "column": 22,
                             "program": "launch_this_callee.ets"
                           }
@@ -1110,12 +1190,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 35,
+                          "line": 36,
                           "column": 16,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 35,
+                          "line": 36,
                           "column": 22,
                           "program": "launch_this_callee.ets"
                         }
@@ -1123,12 +1203,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 35,
+                        "line": 36,
                         "column": 16,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 35,
+                        "line": 36,
                         "column": 22,
                         "program": "launch_this_callee.ets"
                       }
@@ -1143,12 +1223,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 35,
+                            "line": 36,
                             "column": 27,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 35,
+                            "line": 36,
                             "column": 30,
                             "program": "launch_this_callee.ets"
                           }
@@ -1156,12 +1236,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 35,
+                          "line": 36,
                           "column": 24,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 35,
+                          "line": 36,
                           "column": 30,
                           "program": "launch_this_callee.ets"
                         }
@@ -1169,12 +1249,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 35,
+                        "line": 36,
                         "column": 24,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 35,
+                        "line": 36,
                         "column": 30,
                         "program": "launch_this_callee.ets"
                       }
@@ -1190,12 +1270,12 @@
                       "name": "Foo",
                       "loc": {
                         "start": {
-                          "line": 35,
+                          "line": 36,
                           "column": 33,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 35,
+                          "line": 36,
                           "column": 36,
                           "program": "launch_this_callee.ets"
                         }
@@ -1203,12 +1283,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 35,
+                        "line": 36,
                         "column": 33,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 35,
+                        "line": 36,
                         "column": 36,
                         "program": "launch_this_callee.ets"
                       }
@@ -1216,12 +1296,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 35,
+                      "line": 36,
                       "column": 33,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 35,
+                      "line": 36,
                       "column": 36,
                       "program": "launch_this_callee.ets"
                     }
@@ -1237,12 +1317,12 @@
                         "name": "x",
                         "loc": {
                           "start": {
-                            "line": 36,
+                            "line": 37,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 36,
+                            "line": 37,
                             "column": 13,
                             "program": "launch_this_callee.ets"
                           }
@@ -1250,12 +1330,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 36,
+                          "line": 37,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 36,
+                          "line": 37,
                           "column": 14,
                           "program": "launch_this_callee.ets"
                         }
@@ -1264,12 +1344,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 35,
+                      "line": 36,
                       "column": 37,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 37,
+                      "line": 38,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -1277,12 +1357,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 35,
+                    "line": 36,
                     "column": 15,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 37,
+                    "line": 38,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -1290,12 +1370,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 35,
+                  "line": 36,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 37,
+                  "line": 38,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -1304,12 +1384,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 35,
+                "line": 36,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 37,
+                "line": 38,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -1322,12 +1402,12 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 18,
+                  "line": 19,
                   "column": 12,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 18,
+                  "line": 19,
                   "column": 12,
                   "program": "launch_this_callee.ets"
                 }
@@ -1346,12 +1426,12 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 18,
+                      "line": 19,
                       "column": 12,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 18,
+                      "line": 19,
                       "column": 12,
                       "program": "launch_this_callee.ets"
                     }
@@ -1366,12 +1446,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 18,
+                      "line": 19,
                       "column": 12,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 18,
+                      "line": 19,
                       "column": 12,
                       "program": "launch_this_callee.ets"
                     }
@@ -1379,12 +1459,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 18,
+                    "line": 19,
                     "column": 12,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 18,
+                    "line": 19,
                     "column": 12,
                     "program": "launch_this_callee.ets"
                   }
@@ -1392,12 +1472,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 18,
+                  "line": 19,
                   "column": 12,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 18,
+                  "line": 19,
                   "column": 12,
                   "program": "launch_this_callee.ets"
                 }
@@ -1420,12 +1500,12 @@
         ],
         "loc": {
           "start": {
-            "line": 18,
+            "line": 19,
             "column": 11,
             "program": "launch_this_callee.ets"
           },
           "end": {
-            "line": 38,
+            "line": 39,
             "column": 2,
             "program": "launch_this_callee.ets"
           }
@@ -1433,12 +1513,12 @@
       },
       "loc": {
         "start": {
-          "line": 18,
+          "line": 19,
           "column": 1,
           "program": "launch_this_callee.ets"
         },
         "end": {
-          "line": 38,
+          "line": 39,
           "column": 2,
           "program": "launch_this_callee.ets"
         }
@@ -1604,7 +1684,7 @@
       "program": "launch_this_callee.ets"
     },
     "end": {
-      "line": 39,
+      "line": 40,
       "column": 1,
       "program": "launch_this_callee.ets"
     }
