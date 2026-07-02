@@ -134,6 +134,7 @@ syntax:
 - name: CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME
   id: 344
   message: "Cannot export two different names with the same export alias name '{}'."
+  code_fix_ids: [FixImportSource]
 
 - name: CANNOT_INITIALIZE_ARRAY
   id: 63526
