@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_VARBINDER_ETSBINDER_H
 #define ES2PANDA_VARBINDER_ETSBINDER_H
 
+#include <algorithm>
+
 #include "varbinder/TypedBinder.h"
 #include "varbinder/exportFacts.h"
 #include "varbinder/recordTable.h"
@@ -217,9 +219,29 @@ public:
         return dynamicImports_;
     }
 
+    [[nodiscard]] ArenaVector<ir::ETSImportDeclaration *> DynamicImports(const parser::Program *program) const
+    {
+        ArenaVector<ir::ETSImportDeclaration *> imports(Allocator()->Adapter());
+        for (auto *import : dynamicImports_) {
+            if (import->Program() == program) {
+                imports.push_back(import);
+            }
+        }
+        return imports;
+    }
+
+    void CopyImportInfoFrom(const ETSBinder *source)
+    {
+        dynamicImports_ = source->dynamicImports_;
+        reExportImports_ = source->reExportImports_;
+    }
+
     void AddReExportImport(ir::ETSReExportDeclaration *reExport) noexcept
     {
-        reExportImports_[reExport->Program()].push_back(reExport);
+        auto &imports = reExportImports_[reExport->Program()];
+        if (std::find(imports.begin(), imports.end(), reExport) == imports.end()) {
+            imports.push_back(reExport);
+        }
     }
 
     const auto &ReExportImports() const

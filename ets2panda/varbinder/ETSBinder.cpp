@@ -947,6 +947,9 @@ void ETSBinder::AddFunctionThisParam(ir::ScriptFunction *func)
 void ETSBinder::AddDynamicImport(ir::ETSImportDeclaration *import)
 {
     ES2PANDA_ASSERT(import->Language().IsDynamic());
+    if (std::find(dynamicImports_.begin(), dynamicImports_.end(), import) != dynamicImports_.end()) {
+        return;
+    }
     dynamicImports_.push_back(import);
 }
 

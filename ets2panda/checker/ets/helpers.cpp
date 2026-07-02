@@ -3683,11 +3683,13 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *rootDecl = ProgramAllocator()->New<varbinder::ClassDecl>(moduleName);
+    rootDecl->BindNode(ident);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     varbinder::LocalVariable *rootVar =
         ProgramAllocator()->New<varbinder::LocalVariable>(rootDecl, varbinder::VariableFlags::NONE);
     ES2PANDA_ASSERT(rootVar != nullptr);
     rootVar->SetTsType(moduleObjectType);
+    moduleObjectType->SetVariable(rootVar);
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);

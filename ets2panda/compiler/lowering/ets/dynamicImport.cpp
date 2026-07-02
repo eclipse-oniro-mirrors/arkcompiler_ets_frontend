@@ -233,8 +233,10 @@ static checker::Type *CreateModuleObjectType(public_lib::Context *ctx, ir::ETSIm
         std::make_tuple(program->GlobalClass(), checker::ETSObjectFlags::CLASS, checker->Relation()));
 
     auto *rootDecl = allocator->New<varbinder::ClassDecl>(moduleName);
+    rootDecl->BindNode(program->GlobalClass());
     auto *rootVar = allocator->New<varbinder::LocalVariable>(rootDecl, varbinder::VariableFlags::NONE);
     rootVar->SetTsType(moduleObjectType);
+    moduleObjectType->SetVariable(rootVar);
     ImportNamespaceObjectTypeAddReExportType(ctx, program->VarBinder()->AsETSBinder(), importDecl, moduleObjectType);
     SetPropertiesForModuleObject(ctx, moduleObjectType, importPath, importDecl);
     moduleObjectType->AddObjectFlag(checker::ETSObjectFlags::LAZY_IMPORT_OBJECT);
@@ -697,7 +699,7 @@ bool DynamicImport::PerformForProgram(parser::Program *program)
         LazyImportsCount() = 0;
     }
 
-    auto dynamicImports = program->VarBinder()->AsETSBinder()->DynamicImports();
+    auto dynamicImports = program->VarBinder()->AsETSBinder()->DynamicImports(program);
     auto allocator = ctx->GetChecker()->ProgramAllocator();
     ArenaUnorderedMap<varbinder::Variable *, DynamicImportBinding> varMap {allocator->Adapter()};
     ArenaUnorderedMap<util::StringView, checker::ETSObjectType *> moduleMap {allocator->Adapter()};
