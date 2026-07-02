@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -201,5 +201,5 @@ export const USE_STATIC_STATEMENT = 'use static';
 
 export const GET_CONTEXT = 'getContext';
 export const UI_CONTEXT = 'UIContext';
-export const GET_FOCUSED_UI_CONTEXT = 'getFocusedUIContext';
+export const RESOLVE_UI_CONTEXT = 'resolveUIContext';
 export const UI_UTILS = 'UIUtils';

@@ -46,7 +46,7 @@ import {
   DISABLE_VIRTUAL_SCROLL_IDENTIFIER,
   USE_STATIC_STATEMENT,
   UI_CONTEXT,
-  GET_FOCUSED_UI_CONTEXT,
+  RESOLVE_UI_CONTEXT,
   GET_CONTEXT,
   GET_SHARED,
   GET_SHARED_CAPITALIZED,
@@ -5259,7 +5259,7 @@ export class Autofixer {
         ts.factory.createCallExpression(
           ts.factory.createPropertyAccessExpression(
             ts.factory.createIdentifier(UI_CONTEXT),
-            ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
+            ts.factory.createIdentifier(RESOLVE_UI_CONTEXT)
           ),
           undefined,
           []
