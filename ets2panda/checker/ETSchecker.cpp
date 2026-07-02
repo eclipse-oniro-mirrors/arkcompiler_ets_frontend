@@ -405,6 +405,10 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     SetProgram(program);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     program->GetExternalDecls()->Visit([this](auto *extProg) {
+        if (extProg->template Is<util::ModuleKind::PACKAGE>() &&
+            extProg->template As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
+            return;
+        }
         if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
             return;
         }

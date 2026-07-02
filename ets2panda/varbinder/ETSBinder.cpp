@@ -1322,6 +1322,12 @@ parser::Program *ETSBinder::GetExternalProgram(const ir::ETSImportDeclaration *i
         } else {
             ThrowError(import->Start(), diagnostic::IMPORT_NOT_FOUND_2, {import->ResolvedSource()});
         }
+        return nullptr;
+    }
+    if (importee->Is<util::ModuleKind::PACKAGE>() &&
+        importee->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
+        ThrowError(import->Start(), diagnostic::MODULE_INDEX_MISSING, {import->ResolvedSource()});
+        return nullptr;
     }
     return importee;
 }
@@ -1583,6 +1589,11 @@ void ETSBinder::BuildProgram()
 
 void ETSBinder::BuildExternalProgram(parser::Program *extProgram)
 {
+    if (extProgram->Is<util::ModuleKind::PACKAGE>() &&
+        extProgram->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
+        return;
+    }
+
     exportFactStore_->RegisterProgramSurface(extProgram);
     exportFactStore_->RegisterPackageSurface(extProgram);
 
