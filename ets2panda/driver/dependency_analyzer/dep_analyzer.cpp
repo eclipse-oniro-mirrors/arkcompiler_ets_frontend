@@ -145,7 +145,7 @@ int DepAnalyzer::AnalyzeDeps(const DepAnalyzerArgs &daArgs)
 }
 
 int DepAnalyzer::AnalyzeDeps(const std::string &exec, const std::string &arktsconfig,
-                             const std::vector<std::string> &fileList)
+                             const std::vector<std::string> &fileList, bool incremental)
 {
     const auto *impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
     impl->MemInitialize();
@@ -173,7 +173,10 @@ int DepAnalyzer::AnalyzeDeps(const std::string &exec, const std::string &arktsco
 
         es2panda_Context *ctx = impl->CreateContextFromFile(cfg, fileToAnalyze.c_str());
         auto *ctxImpl = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
-        ctxImpl->parser->SetParserStatus(ark::es2panda::parser::ParserStatus::DEPENDENCY_ANALYZER_MODE);
+        ctxImpl->parser->AddParserStatus(ark::es2panda::parser::ParserStatus::DEPENDENCY_ANALYZER_MODE);
+        if (incremental) {
+            ctxImpl->parser->AddParserStatus(ark::es2panda::parser::ParserStatus::INCREMENTAL_DEPENDENCY_ANALYZER_MODE);
+        }
         ctxImpl->depAnalyzer = this;
 
         impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED);

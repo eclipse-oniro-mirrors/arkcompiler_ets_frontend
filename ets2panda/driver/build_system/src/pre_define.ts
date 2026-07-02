@@ -20,6 +20,9 @@ export const LINKER_INPUT_FILE: string = 'fileInfo.txt';
 export const DEP_ANALYZER_INPUT_FILE: string = 'dependencyFileInfo.txt';
 export const DEP_ANALYZER_OUTPUT_FILE: string = 'dependency.json';
 export const DEP_ANALYZER_DIR: string = 'dep_analyzer';
+export const INCRE_DEP_ANALYZER_INPUT_FILE: string = 'incre_inputs.txt';
+export const INCRE_DEP_ANALYZER_OUTPUT_FILE: string = 'incre_dependency.json';
+export const INCRE_COMPILE_FILE: string = 'incre_compile.json';
 export const PROJECT_BUILD_CONFIG_FILE: string = 'projectionConfig.json';
 export const STATIC_RECORD_FILE: string = 'static.Record.d.ts';
 export const FILE_HASH_CACHE: string = 'hash_cache.json';
@@ -78,8 +81,14 @@ export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plug
 export const MAX_PATH_LENGTH: number = 260;
 export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
-export const CLUSTER_FILES_TRESHOLD: number = 460;
+export const CLUSTER_FILES_THRESHOLD: number = 460;
 // Declaration cache is not fixed right now
 export const ENABLE_DECL_FILE_CACHE: boolean = true;
 // Synchronize execution on declaration generation.
 export const ENABLE_DECLARATION_BARRIER: boolean = false;
+
+// process root cluster firstly or not
+export const ENABLE_DISPATCH_ROOT_CLUSTER_FIRST: boolean = true;
+
+// enable stats recorder or not
+export const ENABLE_STATS_RECORDER: boolean = false;

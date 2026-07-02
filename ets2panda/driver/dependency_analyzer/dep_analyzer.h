@@ -23,6 +23,7 @@ struct DepAnalyzerArgs {
     std::string arktsconfig;
     std::string inputFile;
     std::string outputFile;
+    bool incremental {false};
 };
 
 class DepAnalyzer {
@@ -32,7 +33,8 @@ public:
     using FileOutputMatching = std::unordered_map<std::string, std::string>;
 
     int AnalyzeDeps(const DepAnalyzerArgs &args);
-    int AnalyzeDeps(const std::string &exec, const std::string &arktsconfig, const std::vector<std::string> &fileList);
+    int AnalyzeDeps(const std::string &exec, const std::string &arktsconfig, const std::vector<std::string> &fileList,
+                    bool incremental = false);
     void DumpJson(std::string &outFilePath);
     void DumpJson(std::ostream &ostr = std::cout);
 

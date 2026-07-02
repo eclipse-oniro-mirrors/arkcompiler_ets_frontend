@@ -10,7 +10,7 @@ Build-config consists from several config structures:
 
 | Structure | Structure fields |
 |--------------|----------------|
-| **BuildBaseConfig** | `buildType: BUILD_TYPE`<br>`buildMode: BUILD_MODE`<br>`es2pandaMode: ES2PANDA_MODE`<br>`hasMainModule: boolean`<br>`isBuildConfigModified?: boolean`<br>`recordType?: 'OFF' \| 'ON'`<br>`dumpDependencyGraph?: boolean`<br>`dumpPerf?: boolean` |
+| **BuildBaseConfig** | `buildType: BUILD_TYPE`<br>`buildMode: BUILD_MODE`<br>`es2pandaMode: ES2PANDA_MODE`<br>`hasMainModule: boolean`<br>`isBuildConfigModified?: boolean`<br>`dumpDependencyGraph?: boolean`<br>`dumpPerf?: boolean` |
 | **DeclgenConfig** | `enableDeclgenEts2Ts: boolean`<br>`declgenV1OutPath?: string`<br>`declgenV2OutPath: string`<br>`declgenBridgeCodePath?: string`<br>`skipDeclCheck?: boolean`<br>`continueOnError?: boolean`<br>`genDeclAnnotations?: boolean` |
 | **LoggerConfig** | `getHvigorConsoleLogger?: Function` |
 | **ModuleConfig** | `packageName: string`<br>`moduleType: OHOS_MODULE_TYPE`<br>`moduleRootPath: string`<br>`sourceRoots: string[]`<br>`byteCodeHar: boolean`<br>`entryFile: string` |
@@ -61,7 +61,6 @@ Fields from BuildBaseConfig:
 | "es2pandaMode" | + | ES2PANDA_MODE('parallel', 'concurrent', 'simultaneous' or 'sequential') | Set the mode of es2panda run. Default mode is 'parallel'<br>'parallel': Executes tasks using multiple processes<br>'concurrent': Executes tasks using multiple threads with ast-cache <br>'simultaneous': Build with specific es2panda mode 'simultaneous' <br>'sequential': Executes tasks sequentially in a single process and single thread
 | "hasMainModule" | - | boolean | If 'hasMainModule' is true, but 'mainPackageName' or 'mainModuleRootPath' or 'mainSourceRoots' is empty, it returns error 'Main module info is not correct.' |
 | "isBuildConfigModified" | - | boolean | Sets in function 'checkCacheProjectConfig' as a result of comparing existing config and current build config. |
-| "recordType" | - | 'OFF' or 'ON' | The switch of performance analysis |
 | "dumpDependencyGraph" | - | boolean | Write .dot files with dependency graph dump in cacheDir |
 | "dumpPerf" | - | boolean | If true add flag '--dump-perf-metrics' |
 

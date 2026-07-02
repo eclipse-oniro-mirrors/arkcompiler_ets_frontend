@@ -32,6 +32,13 @@ DepAnalyzerArgs ParseArguments(const ark::Span<const char *const> &args)
             parsedArgs.outputFile = arg.substr(std::strlen("--output="));
         } else if (arg.find("@") == 0U) {
             parsedArgs.inputFile = arg.substr(std::strlen("@"));
+
+            // if inputFile ends with incre_inputs.txt , it is incremental dep analyzer
+            std::string suffix("incre_inputs.txt");
+            std::string inputFile = parsedArgs.inputFile;
+            if (inputFile.size() >= suffix.size() && inputFile.rfind(suffix) == inputFile.size() - suffix.size()) {
+                parsedArgs.incremental = true;
+            }
         }
     }
 

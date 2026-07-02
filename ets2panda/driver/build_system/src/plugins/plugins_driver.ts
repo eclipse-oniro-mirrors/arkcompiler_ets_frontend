@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@ import { BuildConfig, KPointer } from '../types';
 import { ErrorCode, DriverError } from '../util/error';
 import { FileManager } from './FileManager';
 import { initKoalaPlugins } from '../init/init_koala_modules';
+import { StatisticsRecorder } from '../util/statsRecorder';
 
 export enum PluginHook {
     NEW = 'afterNew',
@@ -73,6 +74,7 @@ class PluginContext {
     private projectConfig: object | undefined;
     private fileManager: FileManager | undefined;
     private contextPtr: KPointer | undefined;
+    private statsRecorder: StatisticsRecorder | undefined;
 
     constructor() {
         this.ast = undefined;
@@ -80,6 +82,7 @@ class PluginContext {
         this.projectConfig = undefined;
         this.fileManager = undefined;
         this.contextPtr = undefined;
+        this.statsRecorder = undefined;
     }
 
     public setArkTSAst(ast: object): void {
@@ -123,6 +126,14 @@ class PluginContext {
 
     public getContextPtr(): KPointer | undefined {
         return this.contextPtr;
+    }
+
+    public setStatsRecorder(statsRecorder: StatisticsRecorder) : void {
+        this.statsRecorder = statsRecorder;
+    }
+
+    public getStatsRecorder(): StatisticsRecorder | undefined {
+        return this.statsRecorder;
     }
 }
 
@@ -245,14 +256,19 @@ export class PluginDriver {
         return [...pre, ...normal, ...post];
     }
 
-    public runPluginHook(hook: PluginHook): void {
+    public runPluginHook(hook: PluginHook, statsRecorder?: StatisticsRecorder): void {
         let plugins: PluginExecutor[] | undefined = this.getPlugins(hook);
         if (!plugins) {
             return;
         }
         plugins.forEach((executor: PluginExecutor) => {
             this.logger.printInfo(`[Plugin Driver] executing plugin: ${executor.name}`);
-            return (executor.handler as Function).apply(this.getPluginContext());
+            let context = this.getPluginContext();
+            if (statsRecorder) {
+                statsRecorder.record(`${hook}##${executor.name}`, true);
+                context.setStatsRecorder(statsRecorder);
+            }
+            return (executor.handler as Function).apply(context);
         });
     }
 

@@ -39,6 +39,7 @@ import {
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
+    nextBatch,
     validatePathLength,
 } from './utils';
 import {
@@ -56,6 +57,7 @@ import {
 import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
+    BS_PERF_DIR,
     BS_PERF_FILE_NAME,
     RecordEvent,
     StatisticsRecorder,
@@ -63,17 +65,21 @@ import {
 
 enum Ets2pandaEvent {
     CREATE_INSTANCE = 'Create instance',
-    PARSE = 'Parse stage',
+    PARSE = 'Parse',
     PLUGIN_PARSE = 'Parse plugins stage',
     DECLGEN = 'Declgen stage',
-    CHECK = 'Checker stage',
+    CHECK = 'Check',
     PLUGIN_CHECK = 'Checker plugins stage',
+    LOWER = 'Lower',
+    GEN_ASM = 'Gen asm',
+    FREE_MEM = 'Free mem',
+    GEN_BIN = 'Gen bin',
     EMIT = 'Emit binary stage',
     DESTROY_INSTANCE = 'Destroy instance'
 }
 
 function formEvent(event: Ets2pandaEvent): string {
-    return '[Ets2panda] ' + event;
+    return event;
 }
 
 interface BuildSystemDiagnostic {
@@ -144,7 +150,6 @@ export class Ets2panda {
     private readonly declgenV2OutDir: string;
     private readonly cacheDir: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
-    private readonly recordType?: 'ON' | 'OFF';
     private readonly projectRootPath: string;
     private readonly debugBuild: boolean = false;
     private readonly dumpPerf: boolean = false;
@@ -161,7 +166,6 @@ export class Ets2panda {
         this.buildSdkPath = buildConfig.buildSdkPath;
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
-        this.recordType = buildConfig.recordType;
         this.declgenV2OutDir = buildConfig.declgenV2OutPath;
         this.pluginDriver.initPlugins(buildConfig);
         this.projectRootPath = buildConfig.projectRootPath;
@@ -308,12 +312,12 @@ export class Ets2panda {
         compAbcCb?: () => void
     ): void {
         let statsRecorder = new StatisticsRecorder(
-            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
-            this.recordType,
-            `Compile. Job id: ${jobId.slice(0, 5)}`
+            path.resolve(this.cacheDir, BS_PERF_DIR, BS_PERF_FILE_NAME),
+            `Ets2panda`
         );
 
         this.logger.printDebug(`Ets2panda.compile Job: ${jobId}`)
+        nextBatch();
 
         const ets2pandaCmd: string[] = this.formCompileCliCmd(job, incremental);
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
@@ -324,6 +328,8 @@ export class Ets2panda {
         } else {
             inputs = [(job.content as FileInfo).input];
         }
+        const clusterContent: string = inputs.join('\n') + '\n';
+        statsRecorder.cluster(clusterContent);
 
         let { arkts, arktsGlobal } = this.koalaModule;
         if (!ENABLE_DECLARATION_BARRIER) {
@@ -354,9 +360,8 @@ export class Ets2panda {
                 validatePathLength(fi.output, 'Output file path');
             }
 
-            statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
             this.transformImportStatementsWithAliasConfig()
-            this.pluginDriver.runPluginHook(PluginHook.PARSED);
+            this.pluginDriver.runPluginHook(PluginHook.PARSED, statsRecorder);
             this.logger.printInfo('[Ets2panda] Parser plugins finished');
 
             statsRecorder.record(formEvent(Ets2pandaEvent.CHECK));
@@ -391,18 +396,27 @@ export class Ets2panda {
             }
 
             if (job.jobType & CompileJobType.ABC) {
-                statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
-                this.pluginDriver.runPluginHook(PluginHook.CHECKED);
+                this.pluginDriver.runPluginHook(PluginHook.CHECKED, statsRecorder);
                 this.logger.printInfo('[Ets2panda] Checker plugins finished');
 
-                statsRecorder.record(formEvent(Ets2pandaEvent.EMIT));
+                statsRecorder.record(formEvent(Ets2pandaEvent.LOWER));
+                arkts.proceedToState(
+                    arkts.Es2pandaContextState.ES2PANDA_STATE_LOWERED,
+                    arktsGlobal.compilerContext.peer
+                );
+
+                statsRecorder.record(formEvent(Ets2pandaEvent.GEN_ASM));
                 arkts.proceedToState(
                     arkts.Es2pandaContextState.ES2PANDA_STATE_ASM_GENERATED,
                     arktsGlobal.compilerContext.peer
                 );
+
+                statsRecorder.record(formEvent(Ets2pandaEvent.FREE_MEM));
                 arktsGlobal.es2panda._FreeCompilerPartMemory(arktsGlobal.compilerContext.peer);
+
+                statsRecorder.record(formEvent(Ets2pandaEvent.GEN_BIN));
                 arkts.proceedToState(
                     arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED,
                     arktsGlobal.compilerContext.peer

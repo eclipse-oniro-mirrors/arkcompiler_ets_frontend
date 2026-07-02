@@ -44,7 +44,6 @@ jest.mock('../../../src/logger', () => {
     };
 });
 
-jest.mock('../../../src/dependency_analyzer');
 jest.mock('../../../src/init/init_koala_modules', () => ({
     initKoalaModules: jest.fn(() => ({
         arkts: {},
@@ -537,17 +536,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]) => {
-                        allOutputs.push('/mock/out.abc');
-                        return { hasNodes: () => true, nodes: [] };
-                    })
-                }))
-            };
-        });
-
         jest.doMock('../../../src/build/generate_arktsconfig', () => ({
             ArkTSConfigGenerator: {
                 getInstance: jest.fn(() => ({
@@ -567,6 +555,12 @@ describe('BaseMode', () => {
         const runParallelFn = (BaseModeClass as any).prototype.runParallel;
 
         const cfg = createMockBuildConfig({ compileFiles: Array.from({ length: 1000 }, (_, i) => `f${i}`) });
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]) => {
+                        allOutputs.push('/mock/out.abc');
+                        return { hasNodes: () => true, nodes: [] };
+                    })
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(Array.from({ length: 1000 }, (_, i) => `f${i}`)),
@@ -576,7 +570,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: require('../../../src/logger').Logger.getInstance(),
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         ctx.mergeAbcFiles = jest.fn();
 
@@ -600,14 +595,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({ hasNodes: () => true, nodes: [] }))
-                }))
-            };
-        });
-
         jest.doMock('../../../src/build/generate_arktsconfig', () => ({
             ArkTSConfigGenerator: {
                 getInstance: jest.fn(() => ({
@@ -626,6 +613,9 @@ describe('BaseMode', () => {
         const runParallelFn2 = (BaseModeClass2 as any).prototype.runParallel;
 
         const cfg2 = createMockBuildConfig({ compileFiles: Array.from({ length: 1000 }, (_, i) => `f${i}`) });
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => true, nodes: [] }))
+        };
         const ctx2: any = {
             buildConfig: cfg2,
             entryFiles: new Set(Array.from({ length: 1000 }, (_, i) => `f${i}`)),
@@ -635,7 +625,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: require('../../../src/logger').Logger.getInstance(),
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         await expect(runParallelFn2.call(ctx2)).rejects.toThrow('Parallel run failed.');
@@ -766,14 +757,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({ hasNodes: () => false }))
-                }))
-            };
-        });
-
         // mock TaskManager to ensure no workers are started when no nodes
         jest.doMock('../../../src/util/TaskManager', () => ({
             TaskManager: jest.fn().mockImplementation(() => ({
@@ -789,6 +772,9 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.generateDeclarationV1Parallel;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => false }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set<string>(),
@@ -804,7 +790,8 @@ describe('BaseMode', () => {
             needsRegeneration: jest.fn(),
             backupDeclgenFiles: jest.fn(),
             updateDeclFileMapForJobs: jest.fn(),
-            declFileMap: new Map()
+            declFileMap: new Map(),
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         ctx.needsRegeneration.mockReturnValue(true);
         ctx.backupDeclgenFiles.mockResolvedValue(undefined);
@@ -835,30 +822,6 @@ describe('BaseMode', () => {
         });
 
         const mockModuleInfo = createMockModuleInfo();
-        // mock dependency analyzer to provide a graph with one node
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((_1: any, _2: any, _3: any, _4: any[]): Partial<mockGraphType> => {
-                        return {
-                            hasNodes: () => true,
-                            nodes: new Set<mockGraphNodeType>([{
-                                id: 'n1',
-                                data: {
-                                    contentType: JobContentType.FILE,
-                                    content: { input: '/mock/module/a.ets', output: '' },
-                                    moduleName: mockModuleInfo.packageName,
-                                    jobType: CompileJobType.ABC,
-                                },
-                                predecessors: new Set<string>,
-                                descendants: new Set<string>
-                            }])
-                        };
-                    })
-                }))
-            };
-        });
-
         const mockFinish = jest.fn().mockResolvedValue(undefined);
         const startWorkersSpy = jest.fn();
         jest.doMock('../../../src/util/TaskManager', () => {
@@ -877,6 +840,24 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.generateDeclarationV1Parallel;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn((_1: any, _2: any, _3: any, _4: any[]): Partial<mockGraphType> => {
+                        return {
+                            hasNodes: () => true,
+                            nodes: new Set<mockGraphNodeType>([{
+                                id: 'n1',
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: { input: '/mock/module/a.ets', output: '' },
+                                    moduleName: mockModuleInfo.packageName,
+                                    jobType: CompileJobType.ABC,
+                                },
+                                predecessors: new Set<string>,
+                                descendants: new Set<string>
+                            }])
+                        };
+                    })
+        }
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -897,7 +878,8 @@ describe('BaseMode', () => {
             updateDeclFileMapForJobs: jest.fn(),
             declFileMap: new Map(),
             filterFilesNeedRegeneration: jest.fn(),
-            buildJobFileToModuleMap: jest.fn()
+            buildJobFileToModuleMap: jest.fn(),
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         ctx.needsRegeneration.mockReturnValue(true);
         ctx.filterFilesNeedRegeneration.mockImplementation((jobInfo: any) => {
@@ -935,14 +917,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({ hasNodes: () => false }))
-                }))
-            };
-        });
-
         // mock ets2panda to observe getInstance/destroyInstance
         const mockEtsLocal = {};
         jest.doMock('../../../src/util/ets2panda', () => ({
@@ -957,6 +931,9 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.generateDeclarationV1;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => false }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set<string>(),
@@ -966,7 +943,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         // should not throw and should call logger.printWarn
@@ -998,24 +976,6 @@ describe('BaseMode', () => {
             Graph: { topologicalSort: jest.fn(() => ['n1', 'n2']) }
         }));
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({
-                        hasNodes: () => true,
-                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
-                            id,
-                            data: {
-                                contentType: JobContentType.FILE,
-                                content: [],
-                                jobType: CompileJobType.NONE,
-                            }
-                        })
-                    }))
-                }))
-            };
-        });
-
         const mockEtsLocal = {};
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
@@ -1030,6 +990,19 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.generateDeclarationV1;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({
+                        hasNodes: () => true,
+                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                            id,
+                            data: {
+                                contentType: JobContentType.FILE,
+                                content: [],
+                                jobType: CompileJobType.NONE,
+                            }
+                        })
+                    }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -1041,7 +1014,8 @@ describe('BaseMode', () => {
             statsRecorder: { record: jest.fn() },
             moduleType: 'hap',
             // declgenV1 returns true for all jobs
-            declgenV1: jest.fn(() => true)
+            declgenV1: jest.fn(() => true),
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
@@ -1073,24 +1047,6 @@ describe('BaseMode', () => {
             Graph: { topologicalSort: jest.fn(() => ['only']) }
         }));
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({
-                        hasNodes: () => true,
-                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
-                            id,
-                            data: {
-                                contentType: JobContentType.FILE,
-                                content: [],
-                                jobType: CompileJobType.NONE,
-                            }
-                        })
-                    }))
-                }))
-            };
-        });
-
         const mockEtsLocal = {};
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
@@ -1105,6 +1061,19 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.generateDeclarationV1;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({
+                        hasNodes: () => true,
+                        getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                            id,
+                            data: {
+                                contentType: JobContentType.FILE,
+                                content: [],
+                                jobType: CompileJobType.NONE,
+                            }
+                        })
+                    }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -1116,7 +1085,8 @@ describe('BaseMode', () => {
             statsRecorder: { record: jest.fn() },
             moduleType: 'hap',
             // declgenV1 fails
-            declgenV1: jest.fn(() => false)
+            declgenV1: jest.fn(() => false),
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         await expect(fn.call(ctx)).rejects.toThrow();
@@ -1189,10 +1159,22 @@ describe('BaseMode', () => {
             Graph: { topologicalSort: jest.fn(() => ['n1']) }
         }));
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
+        const destroySpy = jest.fn();
+        jest.doMock('../../../src/util/ets2panda', () => ({
+            Ets2panda: {
+                getInstance: jest.fn(() => mockEtsLocal),
+                destroyInstance: destroySpy
+            }
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.run;
+
+        const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
                         allOutputs.push('/mock/out.abc');
                         return {
                             hasNodes: () => true,
@@ -1210,24 +1192,7 @@ describe('BaseMode', () => {
                             nodes: new Set<mockGraphNodeType>
                         };
                     })
-                }))
-            };
-        });
-
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
-        const destroySpy = jest.fn();
-        jest.doMock('../../../src/util/ets2panda', () => ({
-            Ets2panda: {
-                getInstance: jest.fn(() => mockEtsLocal),
-                destroyInstance: destroySpy
-            }
-        }));
-
-        const BaseModeModule = require('../../../src/build/base_mode');
-        const BaseModeClass = BaseModeModule.BaseMode;
-        const fn = (BaseModeClass as any).prototype.run;
-
-        const cfg = createMockBuildConfig();
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -1237,7 +1202,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         // provide compile implementation used by run
         ctx.compile = jest.fn(() => true);
@@ -1271,10 +1237,22 @@ describe('BaseMode', () => {
             Graph: { topologicalSort: jest.fn(() => ['n1']) }
         }));
 
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
+        const destroySpy = jest.fn();
+        jest.doMock('../../../src/util/ets2panda', () => ({
+            Ets2panda: {
+                getInstance: jest.fn(() => mockEtsLocal),
+                destroyInstance: destroySpy
+            }
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.run;
+
+        const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
                         allOutputs.push('/mock/out.abc');
                         return {
                             hasNodes: () => true,
@@ -1292,24 +1270,7 @@ describe('BaseMode', () => {
                             nodes: new Set<mockGraphNodeType>
                         };
                     })
-                }))
-            };
-        });
-
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
-        const destroySpy = jest.fn();
-        jest.doMock('../../../src/util/ets2panda', () => ({
-            Ets2panda: {
-                getInstance: jest.fn(() => mockEtsLocal),
-                destroyInstance: destroySpy
-            }
-        }));
-
-        const BaseModeModule = require('../../../src/build/base_mode');
-        const BaseModeClass = BaseModeModule.BaseMode;
-        const fn = (BaseModeClass as any).prototype.run;
-
-        const cfg = createMockBuildConfig();
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -1321,7 +1282,8 @@ describe('BaseMode', () => {
             statsRecorder: { record: jest.fn() },
             moduleType: 'hap',
             // make compile return false to simulate failure
-            compile: jest.fn(() => false)
+            compile: jest.fn(() => false),
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
 
@@ -1350,12 +1312,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => ({
-            DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                getGraph: jest.fn(() => ({ hasNodes: () => false }))
-            }))
-        }));
-
         const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
@@ -1370,6 +1326,9 @@ describe('BaseMode', () => {
         const fn = (BaseModeClass as any).prototype.run;
 
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => false }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set<string>(),
@@ -1379,7 +1338,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
@@ -1405,10 +1365,25 @@ describe('BaseMode', () => {
             };
         });
 
-        // dependency analyzer returns a graph with one node whose content length > 1
-        jest.doMock('../../../src/dependency_analyzer', () => ({
-            DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                getGraph: jest.fn((_entryFiles: any, _fileToModule: any, _moduleInfos: any, allOutputs: any[]) => {
+        // Graph.topologicalSort should return the node id
+        jest.doMock('../../../src/util/graph', () => ({ Graph: { topologicalSort: jest.fn(() => ['n1']) } }));
+
+        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
+        const destroySpy = jest.fn();
+        jest.doMock('../../../src/util/ets2panda', () => ({
+            Ets2panda: {
+                getInstance: jest.fn(() => mockEtsLocal),
+                destroyInstance: destroySpy
+            }
+        }));
+
+        const BaseModeModule = require('../../../src/build/base_mode');
+        const BaseModeClass = BaseModeModule.BaseMode;
+        const fn = (BaseModeClass as any).prototype.run;
+
+        const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn((_entryFiles: any, _fileToModule: any, _moduleInfos: any, allOutputs: any[]) => {
                     allOutputs.push('/mock/out.abc');
                     return {
                         hasNodes: () => true,
@@ -1432,26 +1407,7 @@ describe('BaseMode', () => {
                         nodes: []
                     };
                 })
-            }))
-        }));
-
-        // Graph.topologicalSort should return the node id
-        jest.doMock('../../../src/util/graph', () => ({ Graph: { topologicalSort: jest.fn(() => ['n1']) } }));
-
-        const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(), finalize: jest.fn() };
-        const destroySpy = jest.fn();
-        jest.doMock('../../../src/util/ets2panda', () => ({
-            Ets2panda: {
-                getInstance: jest.fn(() => mockEtsLocal),
-                destroyInstance: destroySpy
-            }
-        }));
-
-        const BaseModeModule = require('../../../src/build/base_mode');
-        const BaseModeClass = BaseModeModule.BaseMode;
-        const fn = (BaseModeClass as any).prototype.run;
-
-        const cfg = createMockBuildConfig();
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
@@ -1461,7 +1417,8 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
 
         // delegate compile to prototype implementation which uses mocked Ets2panda
@@ -1496,12 +1453,6 @@ describe('BaseMode', () => {
         const pre = require('../../../src/pre_define');
         const path = require('path');
 
-        jest.doMock('../../../src/dependency_analyzer', () => ({
-            DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                getGraph: jest.fn(() => ({ hasNodes: () => true }))
-            }))
-        }));
-
         const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(() => true), finalize: jest.fn() };
         const destroySpy = jest.fn();
         jest.doMock('../../../src/util/ets2panda', () => ({
@@ -1517,6 +1468,9 @@ describe('BaseMode', () => {
 
         const mainModule = createMockModuleInfo({ packageName: 'testPackage', entryFile: 'index.ets', arktsConfigFile: '/mock/arkts.json' });
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => true }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['index.ets']),
@@ -1527,7 +1481,8 @@ describe('BaseMode', () => {
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
             cacheDir: cfg.cachePath,
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         // ensure mainPackageName is available on the context
         ctx.mainPackageName = 'testPackage';
@@ -1563,12 +1518,6 @@ describe('BaseMode', () => {
             };
         });
 
-        jest.doMock('../../../src/dependency_analyzer', () => ({
-            DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                getGraph: jest.fn(() => ({ hasNodes: () => true }))
-            }))
-        }));
-
         const { ErrorCode, DriverError } = require('../../../src/util/error');
         const { LogDataFactory } = require('../../../src/logger');
         const mockEtsLocal = { initalize: jest.fn(), compile: jest.fn(() => { throw new DriverError(LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL, 'fail')) }), finalize: jest.fn() };
@@ -1586,6 +1535,9 @@ describe('BaseMode', () => {
 
         const mainModule = createMockModuleInfo({ packageName: 'testPackage', entryFile: 'index.ets', arktsConfigFile: '/mock/arkts.json' });
         const cfg = createMockBuildConfig();
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn(() => ({ hasNodes: () => true }))
+        };
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['index.ets']),
@@ -1596,7 +1548,8 @@ describe('BaseMode', () => {
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
             cacheDir: cfg.cachePath,
-            moduleType: 'hap'
+            moduleType: 'hap',
+            getDepAnalyzer: jest.fn(() => mockDepAnalyzerInstance)
         };
         // ensure mainPackageName is available on the context
         ctx.mainPackageName = 'testPackage';
