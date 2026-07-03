@@ -73,6 +73,7 @@ void ScopesInitPhase::VisitScriptFunction(ir::ScriptFunction *scriptFunction)
 
 void ScopesInitPhase::VisitBlockStatement(ir::BlockStatement *blockStmt)
 {
+    AttachLabelToScope(blockStmt);
     auto localCtx = LexicalScopeCreateOrEnter<varbinder::LocalScope>(VarBinder(), blockStmt);
     HandleBlockStmt(blockStmt, GetScope());
 }

@@ -194,10 +194,17 @@ void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept
         if (nn->IsTyped() && !(nn->IsExpression() && nn->AsExpression()->IsTypeNode())) {
             nn->AsTyped()->SetTsType(nullptr);
         }
-        if (nn->IsIdentifier()) {
+        auto *parent = nn->Parent();
+        if (nn->IsIdentifier() &&
+            (parent == nullptr ||
+             (!parent->IsLabelledStatement() && !parent->IsBreakStatement() && !parent->IsContinueStatement()))) {
             nn->AsIdentifier()->SetVariable(nullptr);
         }
-        if (!nn->IsETSTypeReference() && !nn->IsLabelledStatement()) {
+        if (nn->IsLabelledStatement()) {
+            doNode(nn->AsLabelledStatement()->Body());
+            return;
+        }
+        if (!nn->IsETSTypeReference()) {
             nn->Iterate([&](ir::AstNode *child) { doNode(child); });
         }
     };
