@@ -322,11 +322,35 @@ static std::string DumpImplicitImportsOfSpecifier(Declgen *dg, ImportSpecifier *
 
 void Declgen::DumpImports(std::string &res)
 {
-    if (!imports_.empty()) {
-        res += '\n';
-        for (auto const *import : imports_) {
-            res += import->DumpEtsSrc();  // Instead, 'DumpImport' should be called when it will be fixed.
+    if (imports_.empty()) {
+        return;
+    }
+
+    res += '\n';
+    std::unordered_set<std::string> dumpedSpecifiers;
+    auto *allocator = GetCtx()->Allocator();
+    for (auto const *import : imports_) {
+        ArenaVector<ir::AstNode *> specifiers(allocator->Adapter());
+        const std::string source {import->Source()->Str().Utf8()};
+        for (auto *specifier : import->Specifiers()) {
+            auto key = source + '\0' + (import->IsTypeKind() ? '1' : '0') + '\0' +
+                       std::to_string(static_cast<int>(specifier->Type())) + '\0' + specifier->DumpEtsSrc();
+            if (dumpedSpecifiers.emplace(std::move(key)).second) {
+                specifiers.push_back(specifier);
+            }
         }
+        if (specifiers.empty()) {
+            continue;
+        }
+        if (specifiers.size() == import->Specifiers().size()) {
+            res += import->DumpEtsSrc();
+            continue;
+        }
+
+        auto *filteredImport =
+            static_cast<ir::ImportDeclaration *>(const_cast<ir::ImportDeclaration *>(import)->ShallowClone(allocator));
+        filteredImport->SpecifiersForUpdate() = std::move(specifiers);
+        res += filteredImport->DumpEtsSrc();
     }
 }
 

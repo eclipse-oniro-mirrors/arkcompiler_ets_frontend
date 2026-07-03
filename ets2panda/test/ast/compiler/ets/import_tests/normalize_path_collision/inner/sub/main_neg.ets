@@ -25,4 +25,5 @@ import { value } from '../../'
 
 let x: int = /* @@ v1 */value;
 
+/* @@? 24:10 Warning Warning W125428: 'value' has already imported */
 /* @@@ v1 Error Semantic error ESE0143: Unresolved reference value */
