@@ -1063,8 +1063,16 @@ static bool IsValueBasedTruthinessType(const Type *const conditionType)
         return true;
     }
 
-    return conditionType->IsETSObjectType() &&
-           conditionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::VALUE_TYPED);
+    if (conditionType->IsETSObjectType() &&
+        conditionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::VALUE_TYPED)) {
+        return true;
+    }
+
+    if (conditionType->IsETSUnionType()) {
+        return conditionType->AsETSUnionType()->AnyOfConstituentTypes(
+            [](const Type *ct) { return IsValueBasedTruthinessType(ct); });
+    }
+    return false;
 }
 
 static std::optional<bool> TryResolveTypeKnownTruthiness(const ir::Expression *const test)

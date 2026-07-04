@@ -236,7 +236,7 @@ bool ETSUnionType::AssignmentSource(TypeRelation *relation, Type *target)
 {
     ES2PANDA_ASSERT(!target->IsETSPrimitiveType());
     return relation->Result(
-        AllOfConstituentTypes([relation, target](auto *t) { return relation->IsAssignableTo(t, target); }));
+        AllOfConstituentTypes([relation, target](auto *t) { return relation->IsSubtypeOf(t, target); }));
 }
 
 void ETSUnionType::AssignmentTarget(TypeRelation *relation, Type *source)

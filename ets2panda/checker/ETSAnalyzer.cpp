@@ -5294,7 +5294,7 @@ static bool IsArrayOrStringIterableType(Type *type)
 
 static bool IsNeutralIterableType(Type *type)
 {
-    return type != nullptr && (type->IsETSResizableArrayType() || type->IsETSStringType());
+    return type != nullptr && type->IsETSStringType();
 }
 
 static bool IsUnsupportedMixedIterableUnion(Type *type)
