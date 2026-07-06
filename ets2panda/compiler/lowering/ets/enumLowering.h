@@ -29,7 +29,10 @@ public:
     static constexpr std::string_view PARAM_NAME {"name"};
     static constexpr std::string_view PARAM_VALUE {"value"};
     static constexpr std::string_view PARAM_ORDINAL {"ordinal"};
-    static constexpr std::string_view ITEMS_ARRAY_NAME {checker::ETSEnumType::ITEMS_ARRAY_NAME};
+    static constexpr std::string_view ITEMS_ARRAY_NAME {"#ItemsArray"};
+    static constexpr std::string_view STRING_VALUES_ARRAY_NAME {checker::ETSEnumType::STRING_VALUES_ARRAY_NAME};
+    static constexpr std::string_view NAMES_ARRAY_NAME {checker::ETSEnumType::NAMES_ARRAY_NAME};
+    static constexpr std::string_view VALUES_ARRAY_NAME {checker::ETSEnumType::VALUES_ARRAY_NAME};
     static constexpr std::string_view BASE_CLASS_NAME {"BaseEnum"};
     static constexpr std::string_view ORDINAL_NAME {"#ordinal"};
     static constexpr auto ORDINAL_TYPE {ir::PrimitiveType::INT};
@@ -121,11 +124,23 @@ private:
 
     void CreateEnumItemFields(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass,
                               EnumType enumType);
+    ir::Identifier *CreateEnumNamesArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
+    template <ir::PrimitiveType TYPE>
+    ir::Identifier *CreateEnumValuesArray(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
+    ir::Identifier *CreateEnumStringValuesArray(const ir::TSEnumDeclaration *const enumDecl,
+                                                ir::ClassDefinition *enumClass);
     ir::Identifier *CreateEnumItemsArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
+    void CreateEnumToStringMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
+                                  ir::Identifier *const stringValuesArrayIdent);
+    void CreateEnumValueOfMethod(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *const enumClass,
+                                 ir::Identifier *const valuesArrayIdent,
+                                 std::optional<ir::PrimitiveType> primitiveType);
+    void CreateEnumGetNameMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
+                                 ir::Identifier *const namesArrayIdent);
     void CreateEnumGetValueOfMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
-                                    ir::Identifier *const itemsArrayIdent);
+                                    ir::Identifier *const namesArrayIdent, ir::Identifier *const itemsArrayIdent);
     void CreateEnumFromValueMethod(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *const enumClass,
-                                   ir::Identifier *const itemsArrayIdent,
+                                   ir::Identifier *const valuesArrayIdent, ir::Identifier *const itemsArrayIdent,
                                    std::optional<ir::PrimitiveType> primitiveType);
     void CreateEnumValuesMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
                                 ir::Identifier *const itemsArrayIdent);

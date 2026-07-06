@@ -119,10 +119,6 @@ CheckResult EnumHasCorrectType::operator()(const ir::AstNode *ast)
         return {CheckDecision::CORRECT, CheckAction::CONTINUE};
     }
 
-    if (enumType->IsETSStringType()) {
-        return {CheckDecision::CORRECT, CheckAction::CONTINUE};
-    }
-
     if (enumType->IsETSObjectType()) {
         const auto &asObject = enumType->AsETSObjectType();
         if (asObject->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_NUMERIC) ||
