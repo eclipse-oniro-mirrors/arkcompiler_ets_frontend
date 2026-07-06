@@ -118,7 +118,8 @@ bool IsBridgeCandidateType(Type const *type)
 {
     ES2PANDA_ASSERT(type != nullptr);
 
-    return type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive();
+    return (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) || type->IsETSUndefinedType() ||
+           type->IsETSVoidType();
 }
 
 bool RequiresBridgeConversion(Locator const &locator, Type const *sourceType, Type const *targetType)
@@ -127,15 +128,22 @@ bool RequiresBridgeConversion(Locator const &locator, Type const *sourceType, Ty
     ES2PANDA_ASSERT(targetType != nullptr);
     ES2PANDA_ASSERT(locator.Relation() != nullptr);
 
-    if (!IsBridgeCandidateType(sourceType)) {
+    auto const *effectiveSourceType =
+        sourceType->IsETSVoidType() ? locator.Checker()->GlobalETSUndefinedType() : sourceType;
+
+    if (targetType->IsETSAnyType() && effectiveSourceType->IsETSUndefinedType()) {
+        return true;
+    }
+
+    if (!IsBridgeCandidateType(sourceType) && !effectiveSourceType->IsETSUndefinedType()) {
         return false;
     }
 
-    if (locator.Relation()->IsIdenticalTo(sourceType, targetType)) {
+    if (locator.Relation()->IsIdenticalTo(effectiveSourceType, targetType)) {
         return false;
     }
 
-    if (locator.Relation()->IsSupertypeOf(targetType, sourceType)) {
+    if (locator.Relation()->IsSupertypeOf(targetType, effectiveSourceType)) {
         return true;
     }
 
@@ -163,6 +171,33 @@ bool IsNonIdenticalOverride(Locator const &locator, Signature const *super, Sign
 
     return locator.Relation()->SignatureIsSupertypeOf(super, sub);
 }
+
+bool IsVoidOrUndefinedToAnyBridgeOverride(Locator const &locator, Signature const *superSign, Signature const *subSign)
+{
+    ES2PANDA_ASSERT(superSign != nullptr);
+    ES2PANDA_ASSERT(subSign != nullptr);
+
+    if (superSign->Params().size() != subSign->Params().size()) {
+        return false;
+    }
+
+    if (!superSign->ReturnType()->IsETSAnyType()) {
+        return false;
+    }
+
+    auto const *subReturn = subSign->ReturnType();
+    if (!(subReturn->IsETSVoidType() || subReturn->IsETSUndefinedType())) {
+        return false;
+    }
+
+    auto const savedContext = std::make_pair(
+        SavedCheckerContext(locator.Checker(), locator.Checker()->Context().Status(), superSign->Owner()),
+        SavedTypeRelationFlagsContext(locator.Relation(),
+                                      TypeRelationFlag::OVERRIDING_CONTEXT | TypeRelationFlag::NO_RETURN_TYPE_CHECK));
+
+    return locator.Relation()->SignatureIsSupertypeOf(superSign, subSign);
+}
+
 class SignatureOverrideAnalyzer {
 public:
     explicit SignatureOverrideAnalyzer(Locator const &locator, Signature const *signature)
@@ -193,7 +228,8 @@ public:
     bool IsRequiresBridgeConversion(Signature const *superSign)
     {
         ES2PANDA_ASSERT(superSign != nullptr);
-        if (!IsNonIdenticalOverride(locator_, superSign, signature_)) {
+        if (!IsNonIdenticalOverride(locator_, superSign, signature_) &&
+            !IsVoidOrUndefinedToAnyBridgeOverride(locator_, superSign, signature_)) {
             return false;
         }
 
@@ -374,7 +410,7 @@ private:
     {
         auto const *superParamType = superParam->TsType();
         if (RequiresBridgeConversion(locator_, superParamType, subParamType)) {
-            ES2PANDA_ASSERT(superParamType->IsETSObjectType() && superParamType->AsETSObjectType()->IsBoxedPrimitive());
+            ES2PANDA_ASSERT(IsBridgeCandidateType(superParamType));
             typeNodes_.emplace_back(locator_.AllocOpaqueTypeNode(subParamType));
             out << superParam->Name().Utf8() << " as @@T" << typeNodes_.size();
         } else {
@@ -390,7 +426,7 @@ private:
         auto const *superReturn = superSign_->ReturnType();
         auto const *subReturn = subSign_->ReturnType();
         if (RequiresBridgeConversion(locator_, subReturn, superReturn)) {
-            ES2PANDA_ASSERT(subReturn->IsETSObjectType() && subReturn->AsETSObjectType()->IsBoxedPrimitive());
+            ES2PANDA_ASSERT(IsBridgeCandidateType(subReturn));
             typeNodes_.emplace_back(locator_.AllocOpaqueTypeNode(superReturn));
             writeExpr(out);
             out << " as @@T" << typeNodes_.size();
@@ -458,6 +494,9 @@ bool ShouldSkipBridgeCreation([[maybe_unused]] Locator const &locator, ir::Class
             continue;
         }
         auto const *method = member->AsMethodDefinition();
+        if (method == originalMethod) {
+            continue;
+        }
         if (method->Id()->Name() != methodName) {
             continue;
         }
@@ -468,15 +507,6 @@ bool ShouldSkipBridgeCreation([[maybe_unused]] Locator const &locator, ir::Class
         auto const *funcType = methodType->AsETSFunctionType();
         for (auto const *sign : funcType->CallSignatures()) {
             if (ETSChecker::HasSameAssemblySignature(sign, superSign)) {
-                return true;
-            }
-        }
-    }
-
-    auto const *originalMethodType = originalMethod->TsType();
-    if (originalMethodType != nullptr && originalMethodType->IsETSFunctionType()) {
-        for (auto const *existing : originalMethodType->AsETSFunctionType()->CallSignatures()) {
-            if (ETSChecker::HasSameAssemblySignature(existing, superSign)) {
                 return true;
             }
         }
@@ -571,17 +601,26 @@ void InitializeBridgeMethod(Locator const &locator, ir::ClassDefinition *classDe
 
     // Get original method type
     auto *originalMethodType = const_cast<checker::ETSFunctionType *>(originalMethod->TsType()->AsETSFunctionType());
-
-    // Check for identical overloads as in genericBridgesLowering
-    checker->CheckIdenticalOverloads(originalMethodType, bridgeMethodType, bridgeMethod, false,
-                                     checker::TypeRelationFlag::NONE);
+    auto const *bridgeSignature = bridgeMethod->Function()->Signature();
+    auto const hasExistingAssemblySignature =
+        std::any_of(originalMethodType->CallSignatures().begin(), originalMethodType->CallSignatures().end(),
+                    [bridgeSignature](checker::Signature const *existing) {
+                        return ETSChecker::HasSameAssemblySignature(existing, bridgeSignature);
+                    });
+    if (!hasExistingAssemblySignature) {
+        // Check for identical overloads as in genericBridgesLowering
+        checker->CheckIdenticalOverloads(originalMethodType, bridgeMethodType, bridgeMethod, false,
+                                         checker::TypeRelationFlag::NONE);
+    }
 
     bridgeMethod->SetTsType(bridgeMethodType);
 
     bridgeMethod->Function()->Body()->Check(checker);
 
-    // Add bridge signature to original method's type
-    originalMethodType->AddCallSignature(bridgeMethod->Function()->Signature());
+    if (!hasExistingAssemblySignature) {
+        // Add bridge signature to original method's type when it is not already tracked there.
+        originalMethodType->AddCallSignature(bridgeMethod->Function()->Signature());
+    }
 
     LOG(DEBUG, ES2PANDA) << "[CreateOverrideBridges] Bridge created: `" << classDefinition->Ident()->Name() << "."
                          << *bridgeMethod << "` for `" << *originalMethod << "`";
@@ -607,10 +646,20 @@ void AllSignaturesNeedingBridge(Locator const &locator, ETSObjectType const *sub
 {
     ES2PANDA_ASSERT(subSign->Function() != nullptr);
     SignatureOverrideAnalyzer analyzer(locator, subSign);
+    std::vector<Signature const *> fallbackSigns;
+    auto appendUniqueBridgeSign = [](std::vector<Signature const *> &target, Signature const *candidate) {
+        if (std::any_of(target.begin(), target.end(), [candidate](Signature const *existing) {
+                return existing == candidate || ETSChecker::HasSameAssemblySignature(existing, candidate);
+            })) {
+            return;
+        }
+        target.push_back(candidate);
+    };
 
     // Helper lambda to extract and process method signatures from a type
     // Looks up the method by name and processes all its signatures through the analyzer
-    auto processMethodSignaturesFrom = [&analyzer, subSign](ETSObjectType const *type) noexcept -> void {
+    auto processMethodSignaturesFrom = [&analyzer, &fallbackSigns, &appendUniqueBridgeSign, &locator,
+                                        subSign](ETSObjectType const *type) noexcept -> void {
         auto const &it = type->InstanceMethods().find(subSign->Function()->Id()->Name());
         if (it == type->InstanceMethods().end()) {
             return;
@@ -618,7 +667,14 @@ void AllSignaturesNeedingBridge(Locator const &locator, ETSObjectType const *sub
         if (!it->second->TsType()->IsETSFunctionType()) {
             return;
         }
-        analyzer.Process(it->second->TsType()->AsETSFunctionType());
+        auto const *funcType = it->second->TsType()->AsETSFunctionType();
+        analyzer.Process(funcType);
+        for (auto const *superSign : funcType->CallSignatures()) {
+            if (!IsVoidOrUndefinedToAnyBridgeOverride(locator, superSign, subSign)) {
+                continue;
+            }
+            appendUniqueBridgeSign(fallbackSigns, superSign);
+        }
     };
 
     // Helper lambda to process interface methods from a type's interfaces
@@ -644,7 +700,16 @@ void AllSignaturesNeedingBridge(Locator const &locator, ETSObjectType const *sub
     // Process interfaces implemented directly by the current class
     processInterfaces(subType);
 
-    for (auto const sign : analyzer.FoundSignatures()) {
+    std::vector<Signature const *> bridgeSigns;
+    bridgeSigns.reserve(analyzer.FoundSignatures().size() + fallbackSigns.size());
+    for (auto const *sign : analyzer.FoundSignatures()) {
+        appendUniqueBridgeSign(bridgeSigns, sign);
+    }
+    for (auto const *sign : fallbackSigns) {
+        appendUniqueBridgeSign(bridgeSigns, sign);
+    }
+
+    for (auto const *sign : bridgeSigns) {
         func(sign);
     }
 }
