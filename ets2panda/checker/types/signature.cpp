@@ -17,6 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "ets/etsObjectType.h"
+#include "ets/etsTypeParameter.h"
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::checker {
@@ -26,6 +27,83 @@ util::StringView Signature::InternalName() const
     return internalName_.Empty() && func_ != nullptr ? func_->Scope()->InternalName() : internalName_;
 }
 
+static Type *SubstituteDirectTypeParameter(Type *type, TypeRelation *relation, const Substitution *substitution)
+{
+    if (type == nullptr || !type->IsETSTypeParameter()) {
+        return nullptr;
+    }
+
+    auto *const substitutedType = type->Substitute(relation, substitution);
+    return substitutedType != type && substitutedType->IsETSObjectType() &&
+                   !substitutedType->HasTypeFlag(TypeFlag::GENERIC)
+               ? substitutedType
+               : nullptr;
+}
+
+static std::pair<Type *, Type *> GetSubstitutedTypeParameterProperties(SignatureInfo *signatureInfo, Type *returnType,
+                                                                       TypeRelation *relation,
+                                                                       const Substitution *substitution)
+{
+    if (signatureInfo->typeParams.size() != 1U || signatureInfo->restVar != nullptr) {
+        return {nullptr, nullptr};
+    }
+
+    auto *const type = signatureInfo->typeParams.front();
+    if (!type->IsETSTypeParameter() || returnType != type || type->Substitute(relation, substitution) != type) {
+        return {nullptr, nullptr};
+    }
+
+    auto *const typeParam = type->AsETSTypeParameter();
+    auto *const newDefaultType = SubstituteDirectTypeParameter(typeParam->GetDefaultType(), relation, substitution);
+    if (signatureInfo->params.empty() && newDefaultType != nullptr &&
+        typeParam->GetConstraintType()->Substitute(relation, substitution) == typeParam->GetConstraintType()) {
+        return {newDefaultType, nullptr};
+    }
+
+    auto *const newConstraintType =
+        SubstituteDirectTypeParameter(typeParam->GetConstraintType(), relation, substitution);
+    if (signatureInfo->params.size() == 1U && signatureInfo->params.front()->TsType() == type &&
+        typeParam->GetDefaultType() == nullptr && newConstraintType != nullptr) {
+        return {nullptr, newConstraintType};
+    }
+
+    return {nullptr, nullptr};
+}
+
+static std::pair<SignatureInfo *, bool> SubstituteTypeParameters(Signature *signature, TypeRelation *relation,
+                                                                 const Substitution *substitution,
+                                                                 Substitution *combinedSubstitution)
+{
+    auto *const checker = relation->GetChecker()->AsETSChecker();
+    auto *const signatureInfo = signature->GetSignatureInfo();
+    auto *const newSigInfo = checker->ProgramAllocator()->New<SignatureInfo>(checker->ProgramAllocator());
+    ES2PANDA_ASSERT(newSigInfo != nullptr);
+    bool anyChange = false;
+    auto [newDefaultType, newConstraintType] =
+        GetSubstitutedTypeParameterProperties(signatureInfo, signature->ReturnType(), relation, substitution);
+    if (newDefaultType == nullptr && newConstraintType == nullptr) {
+        for (auto *typeParam : signatureInfo->typeParams) {
+            auto *newTypeParam = typeParam->Substitute(relation, substitution);
+            newSigInfo->typeParams.push_back(newTypeParam);
+            anyChange |= (newTypeParam != typeParam);
+        }
+        return {newSigInfo, anyChange};
+    }
+
+    *combinedSubstitution = *substitution;
+    auto *const oldTypeParam = signatureInfo->typeParams.front()->AsETSTypeParameter();
+    auto *const newTypeParam = oldTypeParam->Clone(checker)->AsETSTypeParameter();
+    newTypeParam->SetUnderInference();
+    checker->EmplaceSubstituted(combinedSubstitution, oldTypeParam->GetOriginal(), newTypeParam);
+    if (newDefaultType != nullptr) {
+        newTypeParam->SetDefaultType(newDefaultType);
+    } else {
+        newTypeParam->SetConstraintType(newConstraintType);
+    }
+    newSigInfo->typeParams.push_back(newTypeParam);
+    return {newSigInfo, true};
+}
+
 Signature *Signature::Substitute(TypeRelation *relation, const Substitution *substitution)
 {
     if (substitution == nullptr || substitution->empty()) {
@@ -33,21 +111,14 @@ Signature *Signature::Substitute(TypeRelation *relation, const Substitution *sub
     }
     auto *checker = relation->GetChecker()->AsETSChecker();
     auto *allocator = checker->ProgramAllocator();
-    bool anyChange = false;
-    SignatureInfo *newSigInfo = allocator->New<SignatureInfo>(allocator);
-    ES2PANDA_ASSERT(newSigInfo != nullptr);
-    if (!signatureInfo_->typeParams.empty()) {
-        for (auto *tparam : signatureInfo_->typeParams) {
-            auto *newTparam = tparam->Substitute(relation, substitution);
-            newSigInfo->typeParams.push_back(newTparam);
-            anyChange |= (newTparam != tparam);
-        }
-    }
+    Substitution combinedSubstitution {};
+    auto [newSigInfo, anyChange] = SubstituteTypeParameters(this, relation, substitution, &combinedSubstitution);
+    auto *effectiveSubstitution = combinedSubstitution.empty() ? substitution : &combinedSubstitution;
     newSigInfo->minArgCount = signatureInfo_->minArgCount;
 
     for (auto *param : signatureInfo_->params) {
         auto *newParam = param;
-        auto *newParamType = param->TsType()->Substitute(relation, substitution);
+        auto *newParamType = param->TsType()->Substitute(relation, effectiveSubstitution);
         if (newParamType != param->TsType()) {
             anyChange = true;
             newParam = param->Copy(allocator, param->Declaration());
@@ -71,7 +142,7 @@ Signature *Signature::Substitute(TypeRelation *relation, const Substitution *sub
         newSigInfo = signatureInfo_;
     }
 
-    auto *newReturnType = returnType_->Substitute(relation, substitution);
+    auto *newReturnType = returnType_->Substitute(relation, effectiveSubstitution);
     if (newReturnType == returnType_ && !anyChange) {
         return this;
     }
