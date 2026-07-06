@@ -498,7 +498,7 @@ std::string GetTypeSig(const ir::AstNode *node)
             } else if (param->IsIdentifier() && (param->AsIdentifier()->TypeAnnotation() != nullptr)) {
                 typeStr = param->AsIdentifier()->TypeAnnotation()->DumpEtsSrc();
             } else {
-                typeStr = "any";
+                typeStr = "Any";
             }
             typeStr.erase(std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return IsSpace(c); }),
                           typeStr.end());
@@ -548,11 +548,15 @@ static std::string NormalizeTypeTextForCompletion(std::string typeText)
 static std::string GetTypeTextForCompletion(const ir::TypeNode *typeAnnotation, const checker::Type *tsType)
 {
     if (typeAnnotation != nullptr) {
-        auto typeText = typeAnnotation->TsType() != nullptr
-                            ? NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString())
-                            : NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+        auto typeText = NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
         if (!typeText.empty()) {
             return typeText;
+        }
+        if (typeAnnotation->TsType() != nullptr) {
+            typeText = NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString());
+            if (!typeText.empty()) {
+                return typeText;
+            }
         }
     }
     if (tsType != nullptr) {
@@ -601,26 +605,13 @@ static std::string GetDeclTypeForCompletion(const ir::AstNode *decl)
     return "";
 }
 
-static bool IsExportedGlobalFunction(const ir::ScriptFunction *func)
-{
-    for (auto *parent = func == nullptr ? nullptr : func->Parent(); parent != nullptr; parent = parent->Parent()) {
-        if (parent->IsMethodDefinition()) {
-            return parent->IsExported() && compiler::HasGlobalClassParent(parent);
-        }
-        if (parent->IsFunctionDeclaration() || parent->IsClassDefinition()) {
-            return false;
-        }
-    }
-    return false;
-}
-
 static std::string GetFunctionReturnTypeForCompletion(const ir::ScriptFunction *func)
 {
     if (func == nullptr) {
         return "void";
     }
     auto *retAnno = func->ReturnTypeAnnotation();
-    if (retAnno != nullptr && IsExportedGlobalFunction(func)) {
+    if (retAnno != nullptr) {
         auto ret = NormalizeTypeTextForCompletion(retAnno->DumpEtsSrc());
         if (!ret.empty()) {
             return ret;
@@ -636,7 +627,7 @@ static std::string GetFunctionReturnTypeForCompletion(const ir::ScriptFunction *
     if (signature != nullptr && signature->ReturnType() != nullptr) {
         auto ret = NormalizeTypeTextForCompletion(signature->ReturnType()->ToString());
         if (!ret.empty()) {
-            return ret;
+            return retAnno == nullptr && ret == "undefined" ? "void" : ret;
         }
     }
     if (retAnno != nullptr) {
@@ -664,23 +655,22 @@ static std::string BuildFunctionCompletionName(const std::string &functionName, 
         first = false;
 
         std::string paramName;
-        std::string paramType = "any";
+        std::string paramType = "Any";
         if (param->IsETSParameterExpression()) {
             auto *etsParam = param->AsETSParameterExpression();
             paramName = etsParam->Name().Mutf8();
             auto *typeAnnotation = etsParam->TypeAnnotation();
-            if (typeAnnotation != nullptr && typeAnnotation->TsType() != nullptr) {
-                paramType = NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString());
-            } else if (typeAnnotation != nullptr) {
-                paramType = NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+            auto *ident = etsParam->Ident();
+            paramType = GetTypeTextForCompletion(typeAnnotation, ident != nullptr ? ident->TsType() : nullptr);
+            if (paramType.empty()) {
+                paramType = "Any";
             }
         } else if (param->IsIdentifier()) {
-            paramName = param->AsIdentifier()->Name().Mutf8();
-            auto *typeAnnotation = param->AsIdentifier()->TypeAnnotation();
-            if (typeAnnotation != nullptr && typeAnnotation->TsType() != nullptr) {
-                paramType = NormalizeTypeTextForCompletion(typeAnnotation->TsType()->ToString());
-            } else if (typeAnnotation != nullptr) {
-                paramType = NormalizeTypeTextForCompletion(typeAnnotation->DumpEtsSrc());
+            auto *ident = param->AsIdentifier();
+            paramName = ident->Name().Mutf8();
+            paramType = GetTypeTextForCompletion(ident->TypeAnnotation(), ident->TsType());
+            if (paramType.empty()) {
+                paramType = "Any";
             }
         } else {
             paramName = param->DumpEtsSrc();
@@ -2381,7 +2371,8 @@ static std::vector<CompletionEntry> GetSymbolIndexedApiCompletions(const std::st
             existingNames.find(def.symbolName + "()") != existingNames.end()) {
             continue;
         }
-        completions.emplace_back(displayName, kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), def.symbolName,
+        auto insertText = kind == CompletionEntryKind::METHOD ? def.symbolName + "()" : def.symbolName;
+        completions.emplace_back(displayName, kind, std::string(sort_text::AUTO_IMPORT_SUGGESTIONS), insertText,
                                  CompletionEntryData(fileName, def.symbolName, def.fileName, def.symbolName), "", true);
     }
     return completions;

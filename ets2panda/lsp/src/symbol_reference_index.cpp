@@ -156,6 +156,12 @@ std::string GetFunctionReturnTypeForIndex(const ir::ScriptFunction *func)
         return "void";
     }
     auto *retAnno = func->ReturnTypeAnnotation();
+    if (retAnno != nullptr) {
+        auto ret = NormalizeTypeText(retAnno->DumpEtsSrc());
+        if (!ret.empty()) {
+            return ret;
+        }
+    }
     if (retAnno != nullptr && retAnno->TsType() != nullptr) {
         auto ret = NormalizeTypeText(retAnno->TsType()->ToString());
         if (!ret.empty()) {
@@ -166,13 +172,7 @@ std::string GetFunctionReturnTypeForIndex(const ir::ScriptFunction *func)
     if (signature != nullptr && signature->ReturnType() != nullptr) {
         auto ret = NormalizeTypeText(signature->ReturnType()->ToString());
         if (!ret.empty()) {
-            return ret;
-        }
-    }
-    if (retAnno != nullptr) {
-        auto ret = NormalizeTypeText(retAnno->DumpEtsSrc());
-        if (!ret.empty()) {
-            return ret;
+            return retAnno == nullptr && ret == "undefined" ? "void" : ret;
         }
     }
     return "void";
