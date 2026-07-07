@@ -33,6 +33,7 @@ describe('class FileManager', () => {
     };
 
     afterEach(() => {
+        jest.restoreAllMocks();
         FileManager.cleanFileManagerObject();
         FileManager.arkTSModuleMap.clear();
         FileManager.staticApiPath.clear();
@@ -103,7 +104,7 @@ describe('class FileManager', () => {
         fm = FileManager.getInstance();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(FileManager as any, 'isFirstLineUseStatic').mockReturnValue(true);
+        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
         FileManager.init({
             dependencyModuleList: [
@@ -120,7 +121,7 @@ describe('class FileManager', () => {
         fm = FileManager.getInstance();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        jest.spyOn(FileManager as any, 'isFirstLineUseStatic').mockReturnValue(false);
+        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(false);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
 
         FileManager.cleanFileManagerObject();
@@ -177,13 +178,6 @@ describe('class FileManager', () => {
         // @ts-ignore
         FileManager.instance = undefined;
         expect(() => FileManager.cleanFileManagerObject()).not.toThrow();
-    });
-
-    test('isFirstLineUseStatic', () => {
-        jest.spyOn(utils, 'readFirstLineSync').mockReturnValue('not static');
-        // Make tsc ignore the access of private member or type error
-        // @ts-ignore
-        expect(FileManager['isFirstLineUseStatic']('anyfile.ets')).toBe(false);
     });
 
     test('getLanguageVersionByFilePath handles empty compileFiles', () => {

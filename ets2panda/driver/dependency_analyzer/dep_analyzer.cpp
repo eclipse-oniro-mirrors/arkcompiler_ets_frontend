@@ -141,7 +141,7 @@ int DepAnalyzer::AnalyzeDeps(const DepAnalyzerArgs &daArgs)
         return 1;
     }
 
-    return AnalyzeDeps(daArgs.exec, daArgs.arktsconfig, fileList);
+    return AnalyzeDeps(daArgs.exec, daArgs.arktsconfig, fileList, daArgs.incremental);
 }
 
 int DepAnalyzer::AnalyzeDeps(const std::string &exec, const std::string &arktsconfig,

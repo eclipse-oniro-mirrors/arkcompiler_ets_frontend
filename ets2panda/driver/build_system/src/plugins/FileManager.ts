@@ -17,7 +17,7 @@ import * as path from 'path';
 import { BuildConfig, DependencyModuleConfig } from '../types';
 import {
     toUnixPath,
-    readFirstLineSync
+    isFirstLineUseStatic
 } from '../util/utils';
 import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION, PANDA_STDLIB_PATH_FROM_SDK } from '../pre_define';
 
@@ -85,10 +85,6 @@ export class FileManager {
 
         this.arkTSModuleMap = convertedMap;
     }
-    private static isFirstLineUseStatic(filePath: string): boolean {
-        const firstLine = readFirstLineSync(filePath);
-        return firstLine === '\'use static\'';
-    }
 
     getLanguageVersionByFilePath(filePath: string): string {
         const path = toUnixPath(filePath);
@@ -124,7 +120,7 @@ export class FileManager {
              * when process hybrid hsp or har we can't get info of 1.1,
              * only by module decl-fileinfo.json or `'use static'`
              */
-            if (FileManager.isFirstLineUseStatic(filePath)) {
+            if (isFirstLineUseStatic(filePath)) {
                 return LANGUAGE_VERSION.ARKTS_1_2;
             }
         }

@@ -170,6 +170,18 @@ export interface ModuleConfig {
     bundleName: string;
 }
 
+export interface MockParams {
+    mockConfigPath: string;
+}
+
+export interface MockConfig {
+    isOhosTest?: boolean;
+    isLocalTest?: boolean;
+    buildLoaderJson?: string;
+    hspNameOhmMap?: Record<string, string>;
+    harNameOhmMap?: Record<string, string>;
+}
+
 export interface PathConfig {
     loaderOutPath: string;
     cachePath: string;
@@ -183,6 +195,7 @@ export interface PathConfig {
     sdkAliasMap: Map<string, string>;
     interopSDKPaths: Set<string>;
     interopApiPaths: string[];
+    mockParams?: MockParams;
     projectRootPath: string;
     arkGuardPath?: string;
     toolChainsPath?: string;
@@ -337,7 +350,7 @@ export interface DeclFileNameCacheConfig {
     nameCachePath: string;
 }
 
-export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig, ObfuscationSystemConfig {
+export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig, ObfuscationSystemConfig, MockConfig {
     plugins: PluginsConfig;
     paths: PathsConfig; // paths config passed from template to generate arktsconfig.json "paths" configs.
     compileFiles: string[];
@@ -455,6 +468,7 @@ export interface CompilerOptions {
     useEmptyPackage?: boolean;
     cacheDir?: string;
     declgenV2OutPath?: string;
+    mock?: Record<string, { source: string }>;
 }
 
 export interface ArkTSConfigObject {

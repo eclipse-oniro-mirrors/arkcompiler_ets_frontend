@@ -118,6 +118,28 @@ export class ArkTSConfig {
         return this.object.compilerOptions.paths;
     }
 
+    public get mockSection(): Record<string, { source: string }> | undefined {
+        return this.object.compilerOptions.mock;
+    }
+
+    public set mockSection(value: Record<string, { source: string }> | undefined) {
+        this.object.compilerOptions.mock = value;
+    }
+
+    addMockConfig(mock: Record<string, { source: string }>): void {
+        if (!mock || Object.keys(mock).length === 0) {
+            return;
+        }
+        if (!this.mockSection) {
+            this.mockSection = {};
+        }
+        Object.entries(mock).forEach(([key, value]) => {
+            if (value && value.source) {
+                this.mockSection![key] = value;
+            }
+        });
+    }
+
     public set useEmptyPackage(value: boolean) {
         this.object.compilerOptions.useEmptyPackage = value;
     }
@@ -220,6 +242,7 @@ export class ArkTSConfigGenerator {
     public get externalApiPaths(): string[] {
         return this.buildConfig.externalApiPaths;
     }
+
 
     private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {
         function traverse(currentDir: string, relativePath: string = '', isExcludedDir: boolean = false, allowedExtensions: string[] = ['.d.ets']): void {
@@ -573,7 +596,6 @@ export class ArkTSConfigGenerator {
             this.buildConfig.projectRootPath, this.buildConfig.declgenV2OutPath);
         this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
         this.addPathSection(moduleInfo, arktsConfig);
-
         if (!enableDeclgenEts2Ts) {
             this.addDependenciesSection(moduleInfo, arktsConfig);
         }

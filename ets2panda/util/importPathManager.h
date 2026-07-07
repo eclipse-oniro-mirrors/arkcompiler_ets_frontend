@@ -378,6 +378,9 @@ private:
     void TryMatchDynamicResolvedPath(ResolvedPathRes *result, std::string_view importPath) const;
     bool CheckDependencyFileExists(const std::string &depPath, std::string_view messageParam) const;
     bool DeclarationIsInCache(ImportInfo &importInfo);
+    std::optional<std::string> ResolveMockPath(std::string_view curFile, std::string_view importFile,
+                                               const std::map<std::string, std::string, std::less<>> &mocks,
+                                               const std::set<std::string, std::less<>> &mockSources) const;
 
     template <ModuleKind KIND, typename VarBinderT = void>
     parser::ProgramAdapter<KIND> *IntroduceProgram(const ImportInfo &importInfo);

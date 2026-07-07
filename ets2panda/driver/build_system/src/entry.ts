@@ -53,7 +53,8 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
             if (projectConfig.enableDeclgenEts2Ts === true) {
                 logger.printInfo('generate Declaration')
                 await buildMode.generateDeclarationV1Parallel();
-            } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
+            } else if (projectConfig.buildType === BUILD_TYPE.BUILD ||
+                buildConfig.isLocalTest || buildConfig.isOhosTest) {
                 logger.printInfo('just build')
                 await buildMode.run();
             }

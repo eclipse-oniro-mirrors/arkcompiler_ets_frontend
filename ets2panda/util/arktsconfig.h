@@ -18,6 +18,7 @@
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -205,6 +206,14 @@ public:
     {
         return sourcePathMap_;
     }
+    const std::map<std::string, std::string, std::less<>> &MockMap() const
+    {
+        return mocks_;
+    }
+    const std::set<std::string, std::less<>> &MockSources() const
+    {
+        return mockSources_;
+    }
 
     using DependenciesLookupResult = std::optional<std::pair<const std::string &, const ExternalModuleData &>>;
     DependenciesLookupResult FindInDependencies(std::string_view importString) const;
@@ -237,6 +246,8 @@ private:
     bool ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl);
     bool ParseDependencies(const JsonObject::JsonObjPointer *options,
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
+    bool ParseMockList(const JsonObject::JsonObjPointer *options,
+                       std::map<std::string, std::string, std::less<>> &mockMap, const std::string &baseUrl);
     template <class Collection, class Function>
     bool ParseCollection(const JsonObject *config, Collection &out, const std::string &target, Function &&constructor);
     std::optional<std::string> ReadConfig(const std::string &path);
@@ -279,6 +290,8 @@ private:
     PathsMap paths_ {};
     std::map<std::string, ExternalModuleData, CompareByLength> dependencies_ {};
     std::map<std::string_view, std::string_view> sourcePathMap_ {};
+    std::map<std::string, std::string, std::less<>> mocks_ {};
+    std::set<std::string, std::less<>> mockSources_ {};
     std::vector<std::string> files_ {};
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     std::vector<Pattern> include_ {};

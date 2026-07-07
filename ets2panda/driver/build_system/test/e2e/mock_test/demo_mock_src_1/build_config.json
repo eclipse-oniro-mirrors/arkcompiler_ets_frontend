@@ -1,0 +1,27 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1/entry/src/main/ets/a.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "entry",
+    "isOhosTest": true,
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1/entry",
+    "projectRootPath": "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1",
+    "sourceRoots": [
+        "./"
+    ],
+    "mockParams": {
+        "mockConfigPath": "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1/entry/src/mock/mock-config-static.json5"
+    },
+    "cachePath": "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1/entry/.ohosTest/default/cache/default/default@CompileArkTSEvolution/debug/",
+    "loaderOutPath": "${absolute_path_to_build_system}/test/e2e/mock_test/demo_mock_src_1/entry/.ohosTest/default/intermediates/loader_out/default/ets/",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenV2OutPath": "./dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "dependentModuleList": [],
+    "hasMainModule": true
+}

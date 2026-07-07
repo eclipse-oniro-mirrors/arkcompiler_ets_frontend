@@ -137,6 +137,10 @@ export function readFirstLineSync(filePath: string): string | null {
     return firstLine;
 }
 
+export function isFirstLineUseStatic(filePath: string): boolean {
+    return readFirstLineSync(filePath) === "'use static'";
+}
+
 export function safeRealpath(path: string): string {
     try {
         return fs.realpathSync(path);
