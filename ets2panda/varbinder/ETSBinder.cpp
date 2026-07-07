@@ -1269,7 +1269,12 @@ void ETSBinder::AddImportSpecifiersToTopBindings(ir::ImportSpecifier *const impo
     if (previouslyImportedVariable != nullptr && previouslyImportedVariable->IsLocalVariable() &&
         previouslyImportedVariable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
         const ImportBindingKey key {import, imported, localName, import->IsTypeKind(), ImportBindingKind::NAMED};
-        if (IsSameImportBinding(previouslyImportedVariable->AsLocalVariable()->ImportBinding(), key)) {
+        auto *bindingInfo = previouslyImportedVariable->AsLocalVariable()->ImportBinding();
+        if (IsSameImportBinding(bindingInfo, key)) {
+            if (bindingInfo->importDecl != import && bindingInfo->origin != nullptr &&
+                bindingInfo->origin->Program() == importSpecifier->Program()) {
+                ThrowError(importSpecifier->Start(), diagnostic::DUPLICATE_IMPORT, {imported});
+            }
             bindImportedIdentifier(previouslyImportedVariable);
             local->SetVariable(previouslyImportedVariable);
             return;

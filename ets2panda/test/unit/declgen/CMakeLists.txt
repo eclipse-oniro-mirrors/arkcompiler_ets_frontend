@@ -157,6 +157,7 @@ set(ETS_TESTS
     export_directives_2
     func_union
     global
+    import_dedup
     namespace_ret
     nested
     optional

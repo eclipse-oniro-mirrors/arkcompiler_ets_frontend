@@ -1,0 +1,7 @@
+'use static'
+
+import { first } from "./import_dedup_dep";
+import { second } from "./import_dedup_dep";
+
+export declare const sum: int;
+
