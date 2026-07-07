@@ -323,6 +323,7 @@ void ETSChecker::InitializeBuiltin(varbinder::Variable *var, const util::StringV
 {
     Type *type {nullptr};
     if (var->Declaration()->Node()->IsClassDefinition()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         type = BuildBasicClassProperties(var->Declaration()->Node()->AsClassDefinition());
     } else {
         ES2PANDA_ASSERT(var->Declaration()->Node()->IsTSInterfaceDeclaration());

@@ -60,7 +60,7 @@ struct PendingLocalExportAlias {
     const ir::AstNode *exportDecl {};
     const ir::AstNode *reportOrigin {};
     bool originDeclaresName {};
-    bool isTypeOnly {};
+    bool isExplicitTypeOnly {};
     bool isInvalid {};
     LocalExportKind kind {LocalExportKind::ALIAS};
 };
@@ -85,7 +85,15 @@ struct ExportFact {
     // Binder only stores a directly attached local binding here.
     // Local exports and namespace exports have one, re-export edges do not.
     Variable *variable {};
-    bool isTypeOnly {};
+    // Export-surface classification: true when this name is present only on the type/export surface. This includes
+    // intrinsically type-like declarations such as interfaces, type aliases, and annotations. This flag is used for
+    // export closure bookkeeping and must not by itself make an annotation unusable as an annotation value.
+    bool isTypeOnlySurface {};
+    // Use-path classification: true only when this edge was introduced by explicit type-only export syntax
+    // (`export type ...`). This must stay separate from isTypeOnlySurface because annotations are type-only on the
+    // export surface, yet still legal annotation candidates through ordinary value imports/exports. Only an explicit
+    // type-only edge, or an import binding created by `import type`, makes a later annotation use invalid.
+    bool isExplicitTypeOnly {};
     bool isLocalAlias {};
     bool isInvalid {};
 };
@@ -179,23 +187,23 @@ public:
     void AddLocalExport(parser::Program *program, util::StringView exportedName, util::StringView localName,
                         Variable *variable, const ir::AstNode *origin);
     void AddLocalExportAlias(parser::Program *program, util::StringView exportedName, util::StringView localName,
-                             Variable *variable, const ir::AstNode *origin, bool isTypeOnly = false,
+                             Variable *variable, const ir::AstNode *origin, bool isExplicitTypeOnly = false,
                              bool isInvalid = false);
     bool AddPendingLocalExportAlias(parser::Program *program, util::StringView exportedName, util::StringView localName,
                                     const ir::AstNode *origin, const ir::AstNode *exportDecl,
-                                    const ir::AstNode *reportOrigin, bool originDeclaresName, bool isTypeOnly,
+                                    const ir::AstNode *reportOrigin, bool originDeclaresName, bool isExplicitTypeOnly,
                                     LocalExportKind kind);
     void MarkPendingLocalExportAliasInvalid(parser::Program *program, util::StringView exportedName,
                                             util::StringView localName, const ir::AstNode *reportOrigin);
     const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(parser::Program *program) const;
     void AddNamedReExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
                           util::StringView exportedName, util::StringView importedName, const ir::AstNode *origin,
-                          bool isTypeOnly);
+                          bool isExplicitTypeOnly);
     void AddStarExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl, const ir::AstNode *origin,
-                       bool isTypeOnly);
+                       bool isExplicitTypeOnly);
     void AddNamespaceExport(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
                             util::StringView exportedName, Variable *variable, const ir::AstNode *origin,
-                            bool isTypeOnly);
+                            bool isExplicitTypeOnly);
 
 private:
     ExportFactSnapshot &GetOrCreateSnapshot(parser::Program *program);

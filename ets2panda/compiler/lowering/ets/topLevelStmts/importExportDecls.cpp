@@ -149,15 +149,15 @@ void ImportExportDecls::PopulateAliasMap(parser::Program *program, const ir::Exp
         return;
     }
 
-    const bool isTypeOnly = (decl->Modifiers() & ir::ModifierFlags::EXPORT_TYPE) != 0U;
+    const bool isExplicitTypeOnly = (decl->Modifiers() & ir::ModifierFlags::EXPORT_TYPE) != 0U;
     for (auto spec : decl->Specifiers()) {
         const ir::AstNode *origin = spec->Local();
         if (auto field = fieldMap_.find(spec->Exported()->Name()); field != fieldMap_.end()) {
             origin = field->second;
         }
         const auto exportedName = isDefault ? util::StringView {"default"} : spec->Local()->Name();
-        const varbinder::SelectiveExportAlias alias {program, exportedName,  spec->Exported(), origin,
-                                                     decl,    spec->Local(), isTypeOnly};
+        const varbinder::SelectiveExportAlias alias {program, exportedName,  spec->Exported(),  origin,
+                                                     decl,    spec->Local(), isExplicitTypeOnly};
         if (!varbinder_->AddSelectiveExportAlias(alias)) {
             parser_->LogError(diagnostic::CANNOT_EXPORT_DIFFERENT_OBJECTS_WITH_SAME_NAME, {exportedName.Mutf8()},
                               spec->Local()->Start());
@@ -221,6 +221,34 @@ void ImportExportDecls::AddTypeOnlyExportFlags(util::StringView originalFieldNam
         return;
     }
     AddExportFlags(field, true);
+}
+
+static bool IsTypeOnlyExportTarget(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    if (node->IsClassDeclaration()) {
+        return !node->AsClassDeclaration()->Definition()->IsNamespaceTransformed();
+    }
+    if (node->IsClassDefinition()) {
+        return !node->AsClassDefinition()->IsNamespaceTransformed();
+    }
+    return node->IsTSInterfaceDeclaration() || node->IsTSEnumDeclaration() || node->IsTSTypeAliasDeclaration();
+}
+
+static bool ValidateTypeOnlyExportTarget(parser::ETSParser *parser, const ir::AstNode *target, util::StringView name,
+                                         const lexer::SourcePosition &pos)
+{
+    if (IsTypeOnlyExportTarget(target)) {
+        return true;
+    }
+    if (target != nullptr && target->IsAnnotationDeclaration()) {
+        parser->LogError(diagnostic::ANNOTATION_AS_TYPE, {}, pos);
+    } else {
+        parser->LogError(diagnostic::TYPE_NOT_FOUND, {name}, pos);
+    }
+    return false;
 }
 
 void ImportExportDecls::PopulateAliasMap(parser::Program *program, const ir::TSTypeAliasDeclaration *decl)
@@ -510,47 +538,87 @@ static bool IsUnresolvedValueExport(const varbinder::PendingLocalExportAlias &al
     return !hasLocalDeclaration && !alias.originDeclaresName && !isType && !hasImportedSpecifier;
 }
 
+void ImportExportDecls::ReportUnresolvedValueExport(const varbinder::PendingLocalExportAlias &alias,
+                                                    util::StringView originalName, lexer::SourcePosition startLoc,
+                                                    std::set<util::StringView> &unresolvedAliases,
+                                                    std::set<util::StringView> &warnedUnresolvedAliases)
+{
+    if (!alias.localName.Empty() && !unresolvedAliases.insert(alias.localName).second &&
+        warnedUnresolvedAliases.insert(alias.localName).second) {
+        ctx_->diagnosticEngine->LogDiagnostic(diagnostic::DUPLICATE_EXPORT_ALIASES,
+                                              util::DiagnosticMessageParams {alias.localName}, startLoc);
+    }
+    parser_->LogError(diagnostic::CAN_NOT_FIND_NAME_TO_EXPORT, {originalName}, startLoc);
+}
+
+bool ImportExportDecls::VerifyTypeOnlyExportAlias(const parser::Program *program,
+                                                  const varbinder::PendingLocalExportAlias &alias,
+                                                  util::StringView exportName, util::StringView originalName,
+                                                  ir::AstNode *localDecl, bool hasImportedSpecifier,
+                                                  lexer::SourcePosition startLoc, const ir::AstNode *reportOrigin)
+{
+    const bool isValidTypeOnlyExport = localDecl != nullptr
+                                           ? ValidateTypeOnlyExportTarget(parser_, localDecl, originalName, startLoc)
+                                           : hasImportedSpecifier;
+    if (isValidTypeOnlyExport) {
+        AddTypeOnlyExportFlags(originalName);
+        return true;
+    }
+
+    if (localDecl == nullptr && !hasImportedSpecifier) {
+        parser_->LogError(diagnostic::TYPE_NOT_FOUND, {originalName}, startLoc);
+    }
+    varbinder_->GetExportFactsStore().MarkPendingLocalExportAliasInvalid(const_cast<parser::Program *>(program),
+                                                                         exportName, alias.localName, reportOrigin);
+    AddTypeOnlyExportFlags(originalName);
+    return false;
+}
+
+void ImportExportDecls::VerifyCollectedExportAlias(const parser::Program *program,
+                                                   const varbinder::PendingLocalExportAlias &alias,
+                                                   std::set<util::StringView> &unresolvedAliases,
+                                                   std::set<util::StringView> &warnedUnresolvedAliases)
+{
+    const auto exportName = alias.exportedName;
+    const auto *reportOrigin = alias.reportOrigin != nullptr ? alias.reportOrigin : alias.origin;
+    const auto startLoc = reportOrigin != nullptr ? reportOrigin->Start() : lexer::SourcePosition {};
+    const bool isType = exportedTypes_.find(exportName) != exportedTypes_.end();
+    auto originNameIt = importedSpecifiersForExportCheck_.find(alias.localName);
+    auto originalName =
+        originNameIt != importedSpecifiersForExportCheck_.end() ? originNameIt->second : alias.localName;
+    auto result = fieldMap_.find(originalName);
+    const bool hasLocalDeclaration = result != fieldMap_.end();
+    const bool hasImportedSpecifier = originNameIt != importedSpecifiersForExportCheck_.end();
+    auto *localDecl = hasLocalDeclaration ? result->second : nullptr;
+
+    if (exportName.Is("default") && originalName.Is("default") && !hasLocalDeclaration) {
+        return;
+    }
+    if (IsUnresolvedValueExport(alias, isType, hasLocalDeclaration, hasImportedSpecifier)) {
+        ReportUnresolvedValueExport(alias, originalName, startLoc, unresolvedAliases, warnedUnresolvedAliases);
+    }
+    if (localDecl != nullptr && localDecl->IsAnnotationDeclaration() && exportName != originalName) {
+        parser_->LogError(diagnostic::CAN_NOT_RENAME_ANNOTATION, {originalName}, startLoc);
+    }
+    if (alias.isExplicitTypeOnly) {
+        VerifyTypeOnlyExportAlias(program, alias, exportName, originalName, localDecl, hasImportedSpecifier, startLoc,
+                                  reportOrigin);
+        return;
+    }
+    if (!isType && !HandleSelectiveExportWithAlias(originalName, exportName, startLoc)) {
+        varbinder_->GetExportFactsStore().MarkPendingLocalExportAliasInvalid(const_cast<parser::Program *>(program),
+                                                                             exportName, alias.localName, reportOrigin);
+    }
+}
+
 void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program)
 {
     CollectNamespaceDeclarations(program);
-    const auto &exportFacts = varbinder_->GetExportFactsStore();
     std::set<util::StringView> unresolvedAliases;
     std::set<util::StringView> warnedUnresolvedAliases;
+    const auto &exportFacts = varbinder_->GetExportFactsStore();
     for (const auto &alias : exportFacts.PendingLocalExportAliases(const_cast<parser::Program *>(program))) {
-        const auto exportName = alias.exportedName;
-        const auto *reportOrigin = alias.reportOrigin != nullptr ? alias.reportOrigin : alias.origin;
-        const auto startLoc = reportOrigin != nullptr ? reportOrigin->Start() : lexer::SourcePosition {};
-        const bool isType = exportedTypes_.find(exportName) != exportedTypes_.end();
-        auto originNameIt = importedSpecifiersForExportCheck_.find(alias.localName);
-        auto originalName =
-            originNameIt != importedSpecifiersForExportCheck_.end() ? originNameIt->second : alias.localName;
-        auto result = fieldMap_.find(originalName);
-        const bool hasLocalDeclaration = result != fieldMap_.end();
-        const bool hasImportedSpecifier = originNameIt != importedSpecifiersForExportCheck_.end();
-        if (exportName.Is("default") && originalName.Is("default") && !hasLocalDeclaration) {
-            continue;
-        }
-        if (IsUnresolvedValueExport(alias, isType, hasLocalDeclaration, hasImportedSpecifier)) {
-            if (!alias.localName.Empty() && !unresolvedAliases.insert(alias.localName).second &&
-                warnedUnresolvedAliases.insert(alias.localName).second) {
-                ctx_->diagnosticEngine->LogDiagnostic(diagnostic::DUPLICATE_EXPORT_ALIASES,
-                                                      util::DiagnosticMessageParams {alias.localName}, startLoc);
-            }
-            parser_->LogError(diagnostic::CAN_NOT_FIND_NAME_TO_EXPORT, {originalName}, startLoc);
-        }
-        if (hasLocalDeclaration && result->second->IsAnnotationDeclaration() && exportName != originalName) {
-            parser_->LogError(diagnostic::CAN_NOT_RENAME_ANNOTATION, {originalName}, startLoc);
-        }
-        if (alias.isTypeOnly) {
-            AddTypeOnlyExportFlags(originalName);
-            continue;
-        }
-        if (!isType) {
-            if (!HandleSelectiveExportWithAlias(originalName, exportName, startLoc)) {
-                varbinder_->GetExportFactsStore().MarkPendingLocalExportAliasInvalid(
-                    const_cast<parser::Program *>(program), exportName, alias.localName, reportOrigin);
-            }
-        }
+        VerifyCollectedExportAlias(program, alias, unresolvedAliases, warnedUnresolvedAliases);
     }
 }
 

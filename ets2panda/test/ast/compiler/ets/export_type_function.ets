@@ -18,3 +18,4 @@ function f(): int {
 }
 
 export type {f}
+/* @@? 20:14 Error Semantic error ESE0371: Cannot find type 'f'. */

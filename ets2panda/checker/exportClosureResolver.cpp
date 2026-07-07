@@ -29,6 +29,11 @@
 #include "ir/ets/etsModule.h"
 #include "ir/module/importNamespaceSpecifier.h"
 #include "ir/module/importSpecifier.h"
+#include "ir/statements/annotationDeclaration.h"
+#include "ir/statements/classDeclaration.h"
+#include "ir/ts/tsEnumDeclaration.h"
+#include "ir/ts/tsInterfaceDeclaration.h"
+#include "ir/ts/tsTypeAliasDeclaration.h"
 #include "parser/program/program.h"
 #include "generated/signatures.h"
 #include "util/helpers.h"
@@ -104,15 +109,31 @@ ResolvedExportResult MakeResult(ExportResolutionStatus status, const ir::AstNode
 }
 
 ResolvedExportResult MakeResolvedResult(varbinder::Variable *variable, const ir::AstNode *origin,
-                                        parser::Program *originProgram, const ir::AstNode *reportOrigin = nullptr)
+                                        parser::Program *originProgram, const ir::AstNode *reportOrigin = nullptr,
+                                        bool isTypeOnlyUse = false)
 {
     ResolvedExportResult result;
     result.status = ExportResolutionStatus::RESOLVED;
     result.entry.variable = variable;
     result.entry.origin = origin;
     result.entry.originProgram = originProgram;
+    result.entry.isTypeOnlyUse = isTypeOnlyUse;
     result.reportOrigin = reportOrigin != nullptr ? reportOrigin : origin;
     return result;
+}
+
+bool IsTypeOnlyImportBinding(varbinder::Variable *var)
+{
+    if (var == nullptr || !var->IsLocalVariable() || !var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return false;
+    }
+    auto *bindingInfo = var->AsLocalVariable()->ImportBinding();
+    return bindingInfo != nullptr && bindingInfo->isTypeOnly;
+}
+
+bool IsImportBindingVariable(varbinder::Variable *var)
+{
+    return var != nullptr && var->IsLocalVariable() && var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
 }
 
 ResolvedExportResult MakeResolvedSurfaceResult(const varbinder::ExportSurfaceId &surface, const ir::AstNode *origin,
@@ -215,6 +236,7 @@ MergeOutcome MergeResolvedResults(ResolvedExportResult *current, const ResolvedE
         return MergeOutcome::NEW_AMBIGUOUS;
     }
 
+    current->entry.isTypeOnlyUse = current->entry.isTypeOnlyUse && next.entry.isTypeOnlyUse;
     return MergeOutcome::UNCHANGED;
 }
 
@@ -291,21 +313,6 @@ parser::Program *FindOwningProgram(const ir::AstNode *node)
     return nullptr;
 }
 
-ResolvedExportResult ResolveMatchingFacts(const ArenaVector<varbinder::ExportFact> &facts,
-                                          util::StringView exportedName, parser::Program *originProgram)
-{
-    auto resolved = MakeResult(ExportResolutionStatus::NOT_FOUND);
-    for (const auto &fact : facts) {
-        if (fact.isInvalid || fact.exportedName != exportedName) {
-            continue;
-        }
-
-        (void)MergeResolvedResults(&resolved, MakeResolvedResult(fact.variable, fact.origin, originProgram));
-    }
-
-    return resolved;
-}
-
 bool MatchesDefaultExportName(const ResolvedExportResult *resolved, util::StringView importedName)
 {
     return resolved != nullptr && resolved->status == ExportResolutionStatus::RESOLVED &&
@@ -328,6 +335,40 @@ void CheckExportedVariableTypeAnnotation(Checker *checker, const ResolvedExportE
     const std::string entityType = util::Helpers::IsGlobalClass(classProp->Parent()) ? "variable" : "class property";
     checker->LogError(diagnostic::EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO, {entityType, classProp->Id()->Name()},
                       classProp->Start());
+}
+
+bool IsTypeOnlyExportTarget(const varbinder::Variable *var)
+{
+    auto *node = var == nullptr || var->Declaration() == nullptr ? nullptr : var->Declaration()->Node();
+    if (node == nullptr) {
+        return false;
+    }
+    if (node->IsClassDeclaration()) {
+        return !node->AsClassDeclaration()->Definition()->IsNamespaceTransformed();
+    }
+    if (node->IsClassDefinition()) {
+        return !node->AsClassDefinition()->IsNamespaceTransformed();
+    }
+    return node->IsTSInterfaceDeclaration() || node->IsTSEnumDeclaration() || node->IsTSTypeAliasDeclaration();
+}
+
+void CheckExplicitTypeOnlyExportTarget(Checker *checker, const varbinder::ExportFact &fact,
+                                       const ResolvedExportEntry &entry)
+{
+    if (checker == nullptr || !fact.isExplicitTypeOnly || IsTypeOnlyExportTarget(entry.variable) ||
+        fact.origin == nullptr) {
+        return;
+    }
+    auto *node = entry.variable == nullptr || entry.variable->Declaration() == nullptr
+                     ? nullptr
+                     : entry.variable->Declaration()->Node();
+    if (node != nullptr && node->IsAnnotationDeclaration()) {
+        checker->LogError(diagnostic::ANNOTATION_AS_TYPE, {}, fact.origin->Start());
+    } else {
+        auto name = !fact.importedName.Empty() ? fact.importedName : fact.localName;
+        name = !name.Empty() ? name : fact.exportedName;
+        checker->LogError(diagnostic::TYPE_NOT_FOUND, {name}, fact.origin->Start());
+    }
 }
 
 bool IsSameResolvedExport(const ResolvedExportResult &lhs, const ResolvedExportResult &rhs)
@@ -579,7 +620,11 @@ ResolvedExportResult ExportClosureResolver::SelectMaterializedReExportResult(
     auto surface = exactSurface;
     surface.effectiveKind = effectiveSurface.kind;
     surface.effectiveProgram = effectiveSurface.program;
-    return SelectMaterializedSurfaceEntry(surface, exportedName, exactResolved);
+    auto result = SelectMaterializedSurfaceEntry(surface, exportedName, exactResolved);
+    if (fact.isExplicitTypeOnly && result.status == ExportResolutionStatus::RESOLVED) {
+        result.entry.isTypeOnlyUse = true;
+    }
+    return result;
 }
 
 void ExportClosureResolver::Clear()
@@ -921,7 +966,7 @@ ResolvedExportResult ExportClosureResolver::ResolveProgramSurface(const varbinde
 ResolvedExportResult ExportClosureResolver::ResolveExplicitExports(const varbinder::ExportSurfaceId &surface,
                                                                    util::StringView exportedName, VisitingSet *visiting)
 {
-    auto resolved = ResolveLocalExport(surface, exportedName);
+    auto resolved = ResolveLocalExport(surface, exportedName, visiting);
     auto next = ResolveNamedReExport(surface, exportedName, visiting);
     if (MergeResolvedResults(&resolved, next) == MergeOutcome::NEW_AMBIGUOUS) {
         ReportAmbiguousExport(exportedName, next.reportOrigin);
@@ -948,9 +993,57 @@ ResolvedExportResult ExportClosureResolver::ResolveImplicitExports(const varbind
 }
 
 ResolvedExportResult ExportClosureResolver::ResolveLocalExport(const varbinder::ExportSurfaceId &surface,
-                                                               util::StringView exportedName)
+                                                               util::StringView exportedName, VisitingSet *visiting)
 {
-    return ResolveMatchingFacts(GetSnapshot(surface.program).locals, exportedName, surface.program);
+    auto resolved = MakeResult(ExportResolutionStatus::NOT_FOUND);
+    for (const auto &fact : GetSnapshot(surface.program).locals) {
+        if (fact.isInvalid || fact.exportedName != exportedName) {
+            continue;
+        }
+
+        (void)MergeResolvedResults(&resolved, ResolveLocalExportFact(fact, surface.program, visiting));
+    }
+
+    return resolved;
+}
+
+ResolvedExportResult ExportClosureResolver::ResolveLocalExportFact(const varbinder::ExportFact &fact,
+                                                                   parser::Program *originProgram,
+                                                                   VisitingSet *visiting)
+{
+    const bool isTypeOnlyUse = fact.isExplicitTypeOnly || IsTypeOnlyImportBinding(fact.variable);
+    auto candidate = MakeResolvedResult(fact.variable, fact.origin, originProgram, nullptr, isTypeOnlyUse);
+    if (fact.variable == nullptr || !fact.variable->IsLocalVariable() ||
+        !fact.variable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return candidate;
+    }
+
+    auto *bindingInfo = fact.variable->AsLocalVariable()->ImportBinding();
+    if (bindingInfo == nullptr) {
+        return candidate;
+    }
+
+    auto exactSurface = GetImportedSurface(bindingInfo->importDecl);
+    if (exactSurface.program == nullptr) {
+        return candidate;
+    }
+
+    if (bindingInfo->kind == varbinder::ImportBindingKind::NAMESPACE) {
+        candidate = MakeResolvedSurfaceResult(exactSurface, fact.origin, originProgram, fact.origin);
+        candidate.entry.isTypeOnlyUse = isTypeOnlyUse;
+        return candidate;
+    }
+
+    const auto importedName = bindingInfo->kind == varbinder::ImportBindingKind::DEFAULT ? util::StringView {"default"}
+                                                                                         : bindingInfo->importedName;
+    const auto *resolved = ResolveSurfaceName(exactSurface, importedName, visiting);
+    if (resolved == nullptr || resolved->status != ExportResolutionStatus::RESOLVED) {
+        return candidate;
+    }
+
+    candidate.entry = SelectMaterializedImportEntry(bindingInfo, exactSurface, importedName, *resolved);
+    candidate.entry.isTypeOnlyUse = candidate.entry.isTypeOnlyUse || isTypeOnlyUse;
+    return candidate;
 }
 
 ResolvedExportResult ExportClosureResolver::ResolveNamedReExport(const varbinder::ExportSurfaceId &surface,
@@ -1039,12 +1132,22 @@ void ExportClosureResolver::ValidateExplicitExportConflicts(const varbinder::Exp
     ExplicitExportConflictState state;
     const auto &snapshot = GetSnapshot(surface.program);
     for (const auto &fact : snapshot.locals) {
-        ValidateExplicitExportFact(&state, fact, MakeResolvedResult(fact.variable, fact.origin, surface.program));
+        auto candidate = ResolveLocalExportFact(fact, surface.program, visiting);
+        if (candidate.status == ExportResolutionStatus::RESOLVED && IsImportBindingVariable(fact.variable)) {
+            CheckExplicitTypeOnlyExportTarget(checker_, fact, candidate.entry);
+        }
+        ValidateExplicitExportFact(&state, fact, candidate);
     }
 
     for (const auto &fact : snapshot.namedReExports) {
-        const auto *resolved = ResolveSurfaceName(GetImportedSurface(fact), fact.importedName, visiting);
-        ValidateExplicitExportFact(&state, fact, ResultOrNotFound(resolved));
+        const auto exactSurface = GetImportedSurface(fact);
+        const auto *resolved = ResolveSurfaceName(exactSurface, fact.importedName, visiting);
+        auto candidate = RebindResultOrNotFound(resolved, fact.origin);
+        candidate = SelectMaterializedReExportResult(fact, exactSurface, fact.importedName, candidate);
+        if (candidate.status == ExportResolutionStatus::RESOLVED) {
+            CheckExplicitTypeOnlyExportTarget(checker_, fact, candidate.entry);
+        }
+        ValidateExplicitExportFact(&state, fact, candidate);
     }
 
     for (const auto &fact : snapshot.namespaceExports) {

@@ -28,6 +28,7 @@
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importNamespaceSpecifier.h"
 #include "ir/module/importSpecifier.h"
+#include "ir/statements/annotationDeclaration.h"
 #include "ir/statements/annotationUsage.h"
 #include "parser/program/program.h"
 #include "util/es2pandaMacros.h"
@@ -103,9 +104,7 @@ static void ValidateImportCallIdentifier(ETSChecker *checker, ir::Identifier *id
 static bool ShouldSkipValueImportMaterialization(ETSChecker *checker, varbinder::LocalVariable *localVar,
                                                  const ResolvedImportResult &result)
 {
-    auto *bindingInfo = localVar->ImportBinding();
-    return (bindingInfo != nullptr && bindingInfo->isTypeOnly) ||
-           IsDynamicStaticInteropImportTarget(checker, localVar, result);
+    return IsDynamicStaticInteropImportTarget(checker, localVar, result);
 }
 
 static Type *MaterializeResolvedImportIdentifier(ETSChecker *checker, ir::Identifier *ident,
@@ -192,14 +191,70 @@ Type *ETSChecker::MaterializePrecheckedImportIdentifier(ir::Identifier *ident)
     return MaterializeImportIdentifier(ident, var->AsLocalVariable());
 }
 
-void ETSChecker::MaterializeAnnotationUsageBaseName(ir::AnnotationUsage *annotation)
+static bool IsImportBindingVariable(varbinder::Variable *var)
+{
+    return var != nullptr && var->IsLocalVariable() && var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
+}
+
+static ir::AnnotationDeclaration *AsAnnotationDeclaration(varbinder::Variable *var)
+{
+    if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr ||
+        !var->Declaration()->Node()->IsAnnotationDeclaration()) {
+        return nullptr;
+    }
+    return var->Declaration()->Node()->AsAnnotationDeclaration();
+}
+
+ir::AnnotationDeclaration *ETSChecker::MaterializeAnnotationUsage(ir::AnnotationUsage *annotation,
+                                                                  [[maybe_unused]] AnnotationUseKind kind)
 {
     auto *baseName = annotation == nullptr ? nullptr : annotation->GetBaseName();
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *resolved = baseName == nullptr ? nullptr : ResolveEffectiveVariable(baseName->Variable());
-    if (resolved != nullptr) {
-        baseName->SetVariable(resolved);
+    if (baseName == nullptr || baseName->IsErrorPlaceHolder()) {
+        return nullptr;
     }
+
+    // USER and META annotation uses consume imports the same way. META-specific validation, namely requiring a
+    // standard annotation on @interface declarations, runs in CheckStandardAnnotation() after this resolves the name.
+    ES2PANDA_ASSERT(kind == AnnotationUseKind::USER || kind == AnnotationUseKind::META);
+
+    auto *sourceVar = baseName->Variable();
+    if (IsImportBindingVariable(sourceVar)) {
+        auto *bindingInfo = sourceVar->AsLocalVariable()->ImportBinding();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto result = ResolveImportBinding(sourceVar->AsLocalVariable(), {false, true});
+        varbinder::Variable *target = nullptr;
+        if (result.status == ImportResolutionStatus::RESOLVED_VARIABLE) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            target = ResolveEffectiveVariable(sourceVar);
+        }
+        if (auto *decl = AsAnnotationDeclaration(target); decl != nullptr) {
+            if (bindingInfo != nullptr && bindingInfo->isTypeOnly && !IsAnyError()) {
+                LogError(diagnostic::IMPORT_TYPE_NOT_ALLOWED, {}, baseName->Start());
+                return nullptr;
+            }
+            if (result.entry.isTypeOnlyUse && !IsAnyError()) {
+                LogError(diagnostic::ANNOTATION_AS_TYPE, {}, baseName->Start());
+                return nullptr;
+            }
+            baseName->SetVariable(target);
+            return decl;
+        }
+        return nullptr;
+    }
+
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *resolved = ResolveEffectiveVariable(baseName->Variable());
+    if (auto *decl = AsAnnotationDeclaration(resolved); decl != nullptr) {
+        baseName->SetVariable(resolved);
+        return decl;
+    }
+    return AsAnnotationDeclaration(baseName->Variable());
+}
+
+void ETSChecker::MaterializeAnnotationUsageBaseName(ir::AnnotationUsage *annotation)
+{
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    (void)MaterializeAnnotationUsage(annotation, AnnotationUseKind::USER);
 }
 
 static bool IsAnnotationVariable(varbinder::Variable *var)
@@ -253,11 +308,6 @@ static const char *DeclarationKindName(ImportConflictDeclarationKind kind)
         default:
             ES2PANDA_UNREACHABLE();
     }
-}
-
-static bool IsImportBindingVariable(varbinder::Variable *var)
-{
-    return var != nullptr && var->IsLocalVariable() && var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
 }
 
 static bool IsNamespaceImportBinding(varbinder::Variable *var)
@@ -414,6 +464,9 @@ static void ValidateResolvedImportSpecifier(ETSChecker *checker, ir::ImportDecla
     if (IsAnnotationVariable(target)) {
         if (st->IsTypeKind()) {
             checker->LogError(diagnostic::IMPORT_TYPE_NOT_ALLOWED, {}, spec->Start());
+        }
+        if (result.entry.isTypeOnlyUse) {
+            checker->LogError(diagnostic::ANNOTATION_AS_TYPE, {}, spec->Start());
         }
         if (spec->IsImportSpecifier() && spec->AsImportSpecifier()->Imported()->Name() != local->Name()) {
             checker->LogError(diagnostic::IMPORT_RENAMES_ANNOTATION, {spec->AsImportSpecifier()->Imported()->Name()},

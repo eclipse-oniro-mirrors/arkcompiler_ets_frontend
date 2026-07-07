@@ -2017,6 +2017,7 @@ Type *ETSChecker::ResolveReferencedType(varbinder::LocalVariable *refVar, const 
                 LogError(diagnostic::NAMESPACE_AS_TYPE, {refVar->Name()}, name->Start());
                 return GlobalTypeError();
             }
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             return GetTypeFromClassReference(refVar);
         case ir::AstNodeType::TS_TYPE_PARAMETER:
             return GetTypeFromTypeParameterReference(refVar, name->Start());

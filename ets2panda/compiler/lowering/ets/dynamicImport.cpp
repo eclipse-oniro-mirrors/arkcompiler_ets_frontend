@@ -450,6 +450,11 @@ static bool IsInTypeExpressionPattern(ir::AstNode *node)
     while (node->IsIdentifier() || node->IsTSQualifiedName() || node->IsETSTypeReferencePart()) {
         node = node->Parent();
     }
+    // Annotation names are resolved in the checker annotation-use context. They are not value uses, so rewriting them
+    // to lazy dynamic module member expressions would break later annotation lowerings.
+    if (node->IsAnnotationUsage()) {
+        return false;
+    }
     if (!node->IsETSTypeReference()) {
         return true;
     }
@@ -542,6 +547,10 @@ static AstNodePtr TransformMemberExpression(
     auto varBinder = checker->VarBinder()->AsETSBinder();
     auto allocator = checker->ProgramAllocator();
     if (!memberExpr->Object()->IsIdentifier() || !memberExpr->Property()->IsIdentifier()) {
+        return memberExpr;
+    }
+    // Keep annotation namespace/member syntax intact; annotation materialization owns this context.
+    if (memberExpr->Parent()->IsAnnotationUsage()) {
         return memberExpr;
     }
     auto *moduleId = memberExpr->Object()->AsIdentifier();

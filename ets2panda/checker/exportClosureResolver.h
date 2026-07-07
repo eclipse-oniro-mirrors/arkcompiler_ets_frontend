@@ -81,6 +81,10 @@ struct ResolvedExportEntry {
     varbinder::ExportSurfaceId surface {};
     const ir::AstNode *origin {};
     parser::Program *originProgram {};
+    // Checker-facing annotation-use result. `import type` is not a general value-use barrier in ArkTS, but annotations
+    // do not define types, so an annotation path becomes invalid when it crosses `export type` or `import type`.
+    // When multiple paths resolve to the same declaration, this remains true only if every path is type-only.
+    bool isTypeOnlyUse {};
 };
 
 enum class ExportResolutionStatus {
@@ -193,7 +197,10 @@ private:
     ResolvedExportResult ResolveImplicitExports(const varbinder::ExportSurfaceId &surface,
                                                 util::StringView exportedName,
                                                 std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
-    ResolvedExportResult ResolveLocalExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName);
+    ResolvedExportResult ResolveLocalExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName,
+                                            std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
+    ResolvedExportResult ResolveLocalExportFact(const varbinder::ExportFact &fact, parser::Program *originProgram,
+                                                std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
     ResolvedExportResult ResolveNamedReExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName,
                                               std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
     ResolvedExportResult ResolveNamespaceExport(const varbinder::ExportSurfaceId &surface,
