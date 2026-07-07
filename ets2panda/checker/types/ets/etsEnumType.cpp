@@ -42,7 +42,7 @@ static void SetGenerateValueOfFlag(TypeRelation *relation)
         return;
     }
 
-    if (!relation->GetNode()->TsType()->IsETSUnionType()) {
+    if (relation->GetNode()->TsType() != nullptr && !relation->GetNode()->TsType()->IsETSUnionType()) {
         relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         return;
     }
