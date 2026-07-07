@@ -26,6 +26,14 @@ export enum BUILD_MODE {
     RELEASE = 'Release'
 };
 
+export enum CLUSTERING_METHOD {
+    BASELINE = 'baseline',
+    SIZE_BASED = 'size_based',
+    AFFINITY = 'affinity',
+    NO_SORT = 'no_sort',
+    BFS = 'bfs'
+};
+
 export enum BUILD_TYPE {
     BUILD = 'build',
     PREVIEW = 'preview'
@@ -81,6 +89,7 @@ export interface BuildBaseConfig {
     dumpPerf?: boolean;
     /** AOP transform library path (bytecode pipeline). */
     transformLib?: string;
+    clusteringMethod?: CLUSTERING_METHOD;
 }
 
 export interface ArkTSGlobal {

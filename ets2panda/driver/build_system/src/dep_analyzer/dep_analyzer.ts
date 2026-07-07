@@ -26,6 +26,7 @@ import {
     DEP_ANALYZER_OUTPUT_FILE,
     FILE_HASH_CACHE,
     CLUSTER_FILES_THRESHOLD,
+    DEFAULT_CLUSTERING_METHOD,
     ENABLE_CLUSTERS,
     ENABLE_DECL_FILE_CACHE,
     DECL_ETS_SUFFIX,
@@ -51,6 +52,7 @@ import {
     JobInfo,
     FileInfo,
     OHOS_MODULE_TYPE,
+    CLUSTERING_METHOD,
     isHarOrHsp,
     FileChangeStatus,
     getDefaultFileChangeStatus
@@ -109,6 +111,7 @@ export abstract class DepAnalyzer {
     protected readonly statsRecorder: StatisticsRecorder;
     private readonly dumpGraph: boolean = false;
     private readonly clusteredBuild: boolean = false;
+    private readonly clusteringMethod: CLUSTERING_METHOD;
     protected readonly mainModuleType: OHOS_MODULE_TYPE;
     private readonly generator: ArkTSConfigGenerator;
     protected readonly declgenV2OutDir: string;
@@ -142,6 +145,7 @@ export abstract class DepAnalyzer {
         );
 
         this.clusteredBuild = clusteredBuild;
+        this.clusteringMethod = buildConfig.clusteringMethod ?? DEFAULT_CLUSTERING_METHOD;
         this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
         this.mainModuleType = buildConfig.moduleType;
         this.declgenV2OutDir = buildConfig.declgenV2OutPath;
@@ -580,19 +584,17 @@ export abstract class DepAnalyzer {
         if (this.clusteredBuild) {
             const mainModule = Array.from(moduleInfos.values()).find(module => module.isMainModule)!;
             this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
-            const nodeIds = Graph.topologicalSort(dependencyGraph);
-
-            while (nodeIds.length > 0) {
-                let cluster = dependencyGraph.getNodeById(nodeIds.shift()!);
-                cluster.data.arktsConfig = mainModule.arktsConfigFile;
-                cluster.data.moduleName = mainModule.packageName;
-
-                for (let counter = 0; counter < CLUSTER_FILES_THRESHOLD - 1 && nodeIds.length > 0; counter++) {
-                    const nodeToMerge = dependencyGraph.getNodeById(nodeIds.shift()!);
-                    cluster = dependencyGraph.mergeNodes(cluster, nodeToMerge, nodeMerger);
-                }
+            switch (this.clusteringMethod) {
+                case CLUSTERING_METHOD.AFFINITY:
+                    this.clusterByAffinity(dependencyGraph, mainModule, nodeMerger);
+                    break;
+                case CLUSTERING_METHOD.BFS:
+                    this.clusterByBFS(dependencyGraph, mainModule, nodeMerger);
+                    break;
+                default:
+                    this.clusterByBaseline(dependencyGraph, mainModule, nodeMerger);
+                    break;
             }
-
             this.verifyAndDumpGraph(dependencyGraph, 'graph.clustered.dot');
         }
 
@@ -602,5 +604,160 @@ export abstract class DepAnalyzer {
         this.statsRecorder.writeSumSingle();
 
         return dependencyGraph;
+    }
+
+    private clusterByBaseline(
+        dependencyGraph: Graph<CompileJobInfo>,
+        mainModule: ModuleInfo,
+        nodeMerger: (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>) => CompileJobInfo
+    ): void {
+        const order = Graph.topologicalSort(dependencyGraph);
+        this.clusterByOrder(dependencyGraph, order, mainModule, nodeMerger);
+    }
+
+    private clusterByBFS(
+        dependencyGraph: Graph<CompileJobInfo>,
+        mainModule: ModuleInfo,
+        nodeMerger: (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>) => CompileJobInfo
+    ): void {
+        const order = this.computeBFSOrder(dependencyGraph);
+        this.clusterByOrder(dependencyGraph, order, mainModule, nodeMerger);
+    }
+
+    private clusterByAffinity(
+        dependencyGraph: Graph<CompileJobInfo>,
+        mainModule: ModuleInfo,
+        nodeMerger: (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>) => CompileJobInfo
+    ): void {
+        const merged = new Set<string>();
+        const order = Graph.topologicalSort(dependencyGraph);
+        const affinityMap = this.buildAffinityMap(dependencyGraph);
+
+        for (const currentId of order) {
+            if (merged.has(currentId)) { continue };
+
+            let cluster = dependencyGraph.getNodeById(currentId);
+
+            const best = this.findBestAffinityNeighbor(affinityMap, currentId, merged);
+            if (best) {
+                cluster = dependencyGraph.mergeNodes(cluster, dependencyGraph.getNodeById(best), nodeMerger);
+                merged.add(best);
+            }
+
+            cluster.data.arktsConfig = mainModule.arktsConfigFile;
+            cluster.data.moduleName = mainModule.packageName;
+            merged.add(currentId);
+
+            this.fillClusterFromOrder(dependencyGraph, cluster, order, merged, nodeMerger, CLUSTER_FILES_THRESHOLD - 1);
+        }
+    }
+
+    private computeBFSOrder(graph: Graph<CompileJobInfo>): string[] {
+        const visited = new Set<string>();
+        const queue: string[] = [];
+        const order: string[] = [];
+
+        const enqueueIfReady = (nodeId: string): void => {
+            if (visited.has(nodeId)) { return };
+            const node = graph.getNodeById(nodeId);
+            if (Array.from(node.predecessors).every(id => visited.has(id))) {
+                visited.add(nodeId);
+                queue.push(nodeId);
+            }
+        };
+
+        for (const node of graph.nodes) {
+            if (node.predecessors.size === 0) {
+                visited.add(node.id);
+                queue.push(node.id);
+            }
+        }
+        if (queue.length === 0 && graph.nodes.size > 0) {
+            const first = Array.from(graph.nodes)[0];
+            visited.add(first.id);
+            queue.push(first.id);
+        }
+
+        while (queue.length > 0) {
+            const nodeId = queue.shift()!;
+            order.push(nodeId);
+            for (const descId of graph.getNodeById(nodeId).descendants) {
+                enqueueIfReady(descId);
+            }
+        }
+
+        for (const node of graph.nodes) {
+            if (!visited.has(node.id)) {
+                order.push(node.id);
+                visited.add(node.id);
+            }
+        }
+        return order;
+    }
+
+    private buildAffinityMap(graph: Graph<CompileJobInfo>): Map<string, Map<string, number>> {
+        const affinityMap = new Map<string, Map<string, number>>();
+        for (const node of graph.nodes) {
+            const weights = new Map<string, number>();
+            for (const neighbor of [...node.descendants, ...node.predecessors]) {
+                const weight = (node.descendants.has(neighbor) ? 1 : 0) + (node.predecessors.has(neighbor) ? 1 : 0);
+                weights.set(neighbor, weight);
+            }
+            affinityMap.set(node.id, weights);
+        }
+        return affinityMap;
+    }
+
+    private findBestAffinityNeighbor(
+        affinityMap: Map<string, Map<string, number>>,
+        currentId: string,
+        merged: Set<string>
+    ): string | null {
+        const affinities = affinityMap.get(currentId);
+        if (!affinities) { return null };
+
+        let best: string | null = null;
+        let maxAffinity = -1;
+        for (const [neighbor, affinity] of affinities) {
+            if (neighbor !== currentId && !merged.has(neighbor) && affinity > maxAffinity) {
+                maxAffinity = affinity;
+                best = neighbor;
+            }
+        }
+        return best;
+    }
+
+    private fillClusterFromOrder(
+        graph: Graph<CompileJobInfo>,
+        cluster: GraphNode<CompileJobInfo>,
+        order: string[],
+        consumed: Set<string>,
+        nodeMerger: (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>) => CompileJobInfo,
+        maxMerges: number
+    ): void {
+        let mergeCount = 0;
+        while (mergeCount < maxMerges && order.length > 0) {
+            const nextId = order.shift()!;
+            if (consumed.has(nextId)) { continue };
+            cluster = graph.mergeNodes(cluster, graph.getNodeById(nextId), nodeMerger);
+            consumed.add(nextId);
+            mergeCount++;
+        }
+    }
+
+    private clusterByOrder(
+        graph: Graph<CompileJobInfo>,
+        order: string[],
+        mainModule: ModuleInfo,
+        nodeMerger: (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>) => CompileJobInfo
+    ): void {
+        while (order.length > 0) {
+            let cluster = graph.getNodeById(order.shift()!);
+            cluster.data.arktsConfig = mainModule.arktsConfigFile;
+            cluster.data.moduleName = mainModule.packageName;
+            for (let counter = 0; counter < CLUSTER_FILES_THRESHOLD - 1 && order.length > 0; counter++) {
+                cluster = graph.mergeNodes(cluster, graph.getNodeById(order.shift()!), nodeMerger);
+            }
+        }
     }
 }
