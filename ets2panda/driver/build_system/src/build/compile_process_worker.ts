@@ -31,7 +31,7 @@ function compile(id: string, task: ProcessCompileTask): void {
 
     const declGeneratedCb = (): void => {
         process.send!({
-            type: WorkerMessageType.DECL_GENERATED,
+            type: WorkerMessageType.ABC_DECL_GENERATED,
             data: {
                 taskId: id,
             }

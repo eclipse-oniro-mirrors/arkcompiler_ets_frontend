@@ -48,6 +48,11 @@ interface WorkerDeclGeneratedMessage {
     data: { taskId: string };
 }
 
+interface WorkerAbcDeclGeneratedMessage {
+    type: WorkerMessageType.ABC_DECL_GENERATED;
+    data: { taskId: string };
+}
+
 interface WorkerAbcCompiledMessage {
     type: WorkerMessageType.ABC_COMPILED;
     data: { taskId: string };
@@ -76,6 +81,7 @@ type WorkerLogMessage = WorkerTextLogMessage | WorkerErrorLogMessage;
 
 type WorkerMessage =
     | WorkerDeclGeneratedMessage
+    | WorkerAbcDeclGeneratedMessage
     | WorkerAbcCompiledMessage
     | WorkerErrorMessage
     | WorkerTaskFinishedMessage
@@ -189,6 +195,7 @@ export class TaskManager<PayloadT extends JobInfo> {
     private taskTimeoutMs: number;
     private logger: Logger;
     private isDeclgen: boolean;
+    private queuedTaskCache = new Set<string>();
     public buildGraph: Graph<PayloadT> = new Graph<PayloadT>();
     private completionResolve?: (success: boolean) => void;
 
@@ -234,19 +241,19 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.runningTasks.set(task.id, task);
         workerInfo.currentTaskId = task.id;
 
-        task.timeoutTimer = setTimeout(() => {
-            this.logger.printWarn(`Worker with id ${workerInfo.id} exceeded timeout. Stopping it...`)
-            this.logger.printWarn(`Dropping task ${task.id}`)
-            const logData = LogDataFactory.newInstance(
-                this.isDeclgen ?
-                    ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER :
-                    ErrorCode.BUILDSYSTEM_COMPILE_FAILED_IN_WORKER,
-                `Task ${task.id} is not completed. Dropping it.`,
-                `Worker ${workerInfo.id} exceeded timeout of ${this.taskTimeoutMs} ms`,
-            )
-            this.logger.printError(logData)
-            this.handleTaskTimeout(workerInfo);
-        }, this.taskTimeoutMs);
+        if (this.isDeclgen) {
+            task.timeoutTimer = setTimeout(() => {
+                this.logger.printWarn(`Worker with id ${workerInfo.id} exceeded timeout. Stopping it...`)
+                this.logger.printWarn(`Dropping task ${task.id}`)
+                const logData = LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_DECLGEN_FAILED_IN_WORKER,
+                    `Task ${task.id} is not completed. Dropping it.`,
+                    `Worker ${workerInfo.id} exceeded timeout of ${this.taskTimeoutMs} ms`,
+                )
+                this.logger.printError(logData)
+                this.handleTaskTimeout(workerInfo);
+            }, this.taskTimeoutMs);
+        }
 
         this.logger.printDebug(`Dispatch task with id ${task.id} to worker ${workerInfo.id}`)
         workerInfo.worker.send(
@@ -275,6 +282,9 @@ export class TaskManager<PayloadT extends JobInfo> {
                 break;
             case WorkerMessageType.DECL_GENERATED:
                 this.onDeclGenerated(message.data.taskId);
+                break;
+            case WorkerMessageType.ABC_DECL_GENERATED:
+                this.onAbcDeclGenerated(message.data.taskId);
                 break;
             case WorkerMessageType.ABC_COMPILED:
                 this.onFileCompiled(message.data.taskId);
@@ -327,6 +337,11 @@ export class TaskManager<PayloadT extends JobInfo> {
 
     private onDeclGenerated(taskId: string): void {
         this.settleTask(taskId, false);
+        this.tryDispatch();
+    }
+
+    private onAbcDeclGenerated(taskId: string): void {
+        this.queueTasks(taskId);
         this.tryDispatch();
     }
 
@@ -449,6 +464,11 @@ export class TaskManager<PayloadT extends JobInfo> {
  	}
 
     private queueTasks(taskId: string): void {
+        if (this.queuedTaskCache.has(taskId)) {
+            return;
+        }
+        this.queuedTaskCache.add(taskId);
+
         if (ENABLE_DISPATCH_ROOT_CLUSTER_FIRST) {
             this.queuePredecessorTasks(taskId);
         } else {
@@ -531,6 +551,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.workers = [];
         this.idleWorkers = [];
         this.runningTasks.clear();
+        this.queuedTaskCache.clear();
         this.taskQueue = [];
     }
 }

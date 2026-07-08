@@ -45,6 +45,7 @@ export function isHarOrHsp(moduleType: OHOS_MODULE_TYPE): boolean {
 
 export enum WorkerMessageType {
     DECL_GENERATED = 'DECL_GENERATED',
+    ABC_DECL_GENERATED = 'ABC_DECL_GENERATED',
     ABC_COMPILED = 'ABC_COMPILED',
     ERROR_OCCURED = 'ERROR_OCCURED',
     ASSIGN_TASK = 'ASSIGN_TASK',
