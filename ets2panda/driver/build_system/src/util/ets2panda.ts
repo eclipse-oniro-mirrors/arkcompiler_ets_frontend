@@ -58,7 +58,6 @@ import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BS_PERF_DIR,
-    BS_PERF_FILE_NAME,
     RecordEvent,
     StatisticsRecorder,
 } from '../util/statsRecorder'
@@ -312,7 +311,7 @@ export class Ets2panda {
         compAbcCb?: () => void
     ): void {
         let statsRecorder = new StatisticsRecorder(
-            path.resolve(this.cacheDir, BS_PERF_DIR, BS_PERF_FILE_NAME),
+            path.resolve(this.cacheDir, BS_PERF_DIR),
             `Ets2panda`
         );
 

@@ -413,6 +413,29 @@ export function formatTimestamp(timestamp: number): string {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
 }
 
+export function formatMsCompact(totalMs: number): string {
+    const ms = totalMs % 1000;
+    const totalSec = Math.floor(totalMs / 1000);
+    const s = totalSec % 60;
+    const totalMin = Math.floor(totalSec / 60);
+    const min = totalMin % 60;
+    const h = Math.floor(totalMin / 60);
+
+    const parts: string[] = [];
+    if (h > 0) {
+        parts.push(`${h}h`);
+    }
+    if (min > 0) {
+        parts.push(`${min}min`);
+    }
+    if (s > 0) {
+        parts.push(`${s}s`);
+    }
+    parts.push(`${ms}ms`);
+
+    return parts.join(' ');
+}
+
 export function getPid(): number {
   return process.pid;
 }

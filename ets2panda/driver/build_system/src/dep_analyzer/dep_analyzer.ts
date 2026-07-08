@@ -57,7 +57,7 @@ import {
 } from '../types';
 
 import { Logger, LogDataFactory } from '../logger';
-import { BS_PERF_FILE_NAME, StatisticsRecorder, RecordEvent, BS_PERF_DIR } from '../util/statsRecorder';
+import { StatisticsRecorder, RecordEvent, BS_PERF_DIR } from '../util/statsRecorder';
 import { ErrorCode, DriverError } from '../util/error';
 import { ArkTSConfigGenerator, ArkTSConfig } from '../build/generate_arktsconfig';
 import { Graph, GraphNode } from '../util/graph';
@@ -137,7 +137,7 @@ export abstract class DepAnalyzer {
         this.filesChangeStatusCache = {};
 
         this.statsRecorder = new StatisticsRecorder(
-            path.resolve(this.cacheDir, BS_PERF_DIR, BS_PERF_FILE_NAME),
+            path.resolve(this.cacheDir, BS_PERF_DIR),
             'Dependency analyzer'
         );
 

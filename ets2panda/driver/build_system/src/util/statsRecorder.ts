@@ -15,7 +15,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { formatTimestamp, getPid, getBatchId } from './utils';
+import { formatTimestamp, getPid, getBatchId, formatMsCompact } from './utils';
 import { ENABLE_STATS_RECORDER } from '../pre_define';
 
 export const BS_PERF_DIR = 'perf';
@@ -45,8 +45,9 @@ export class StatisticsRecorder {
     private totalStartRss: number = 0;
     private totalEndRss: number = 0;
     private clusterDir: string = '';
-
-    constructor(private readonly output: string, private readonly title?: string) {
+    private pid: number = 0
+;
+    constructor(private readonly perfDir: string, private readonly title?: string) {
         this.enable = ENABLE_STATS_RECORDER;
         if (!this.enable) {
             return;
@@ -54,13 +55,13 @@ export class StatisticsRecorder {
 
         this.totalStartTime = new Date().getTime();
         this.totalStartRss = process.memoryUsage().rss;
-        const outputDir: string = path.dirname(this.output);
+        this.pid = getPid();
 
-        if (!fs.existsSync(outputDir)) {
-           fs.mkdirSync(outputDir, { recursive: true });
+        if (!fs.existsSync(this.perfDir)) {
+           fs.mkdirSync(this.perfDir, { recursive: true });
         }
 
-        this.clusterDir = path.resolve(outputDir , BS_CLUSTER_DIR);
+        this.clusterDir = path.resolve(this.perfDir , BS_CLUSTER_DIR);
         if (!fs.existsSync(this.clusterDir)) {
             fs.mkdirSync(this.clusterDir , {recursive: true});
         }
@@ -147,11 +148,13 @@ export class StatisticsRecorder {
 
         this.eventMap.forEach((data: EventData, event: string) => {
             const totalRss: number = (data.endRss < data.startRss) ? 0 :
-                Math.round((data.endRss - data.startRss) / 1024 / 1024)
-            let element = `${event}` + ', ' + `${data.endTime - data.startTime}` + 'ms' +', '+`${formatTimestamp(data.startTime)}`+ ', ' +`${formatTimestamp(data.endTime)}`+', '+ `${totalRss}` + 'M';
+                Math.round((data.endRss - data.startRss) / 1024 / 1024);
+            const cost = formatMsCompact(data.endTime - data.startTime);
+            let element = `${event}` + ', ' + `${cost}` +', '+`${formatTimestamp(data.startTime)}`+ ', ' +`${formatTimestamp(data.endTime)}`+', '+ `${totalRss}` + 'M';
             csvData.push(element);
         });
         csvData.push('\n');
-        fs.appendFileSync(this.output, csvData.join('\n'));
+        const perfFile = path.join(this.perfDir, `${this.pid}_${BS_PERF_FILE_NAME}`);
+        fs.appendFileSync(perfFile, csvData.join('\n'));
     }
 }
