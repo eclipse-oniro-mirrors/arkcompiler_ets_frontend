@@ -46,6 +46,7 @@ bool IsEditBoundaryNode(const ir::AstNode *n)
         case AstNodeType::TS_TYPE_ALIAS_DECLARATION:
         case AstNodeType::TS_MODULE_DECLARATION:
         case AstNodeType::IMPORT_DECLARATION:
+        case AstNodeType::ETS_IMPORT_DECLARATION:
         case AstNodeType::EXPORT_ALL_DECLARATION:
         case AstNodeType::EXPORT_DEFAULT_DECLARATION:
         case AstNodeType::EXPORT_NAMED_DECLARATION:

@@ -100,6 +100,7 @@ semantic:
 - name: AMBIGUOUS_EXPORT
   id: 362
   message: "Ambiguous export '{}'"
+  code_fix_ids: [FixImportSource]
 
 - name: AMBIGUOUS_FUNC_REF
   id: 126
@@ -1212,6 +1213,7 @@ semantic:
 - name: OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE
   id: 503573
   message: "All overloaded functions must be declared in the same module or namespace scope."
+  code_fix_ids: [FixImportSource]
 
 - name: OVERLOADED_MAIN
   id: 373
@@ -1377,10 +1379,12 @@ semantic:
 - name: REDEFINITION
   id: 349
   message: "{} '{}' is already defined."
+  code_fix_ids: [FixImportSource]
 
 - name: REDEFINITION_DIFF_TYPE
   id: 350
   message: "{} '{}' is already defined with different type."
+  code_fix_ids: [FixImportSource]
 
 - name: REF_INVALID
   id: 329

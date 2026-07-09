@@ -17,10 +17,12 @@
 #include "../lsp_api_test.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <optional>
+#include <string>
 
 #include "generated/code_fix_register.h"
 #include "lsp/include/cancellation_token.h"
@@ -35,9 +37,47 @@ constexpr size_t FIRST_FILE_INDEX = 0;
 constexpr size_t SECOND_FILE_INDEX = 1;
 constexpr size_t THIRD_FILE_INDEX = 2;
 constexpr std::string_view FIX_IMPORT_SOURCE_NAME = "FixImportSource";
+constexpr std::string_view FIX_REMOVE_DUPLICATE_EXPORT_IMPORT_NAME = "FixRemoveDuplicateExportImport";
+
+struct ImportRenameTestCase {
+    std::string name;
+    std::string firstDeclaration;
+    std::string secondDeclaration;
+    int errorCode;
+};
 
 class FixImportSourceTest : public LSPAPITests {
 public:
+    void SetUp() override
+    {
+        LSPAPITests::SetUp();
+        ark::es2panda::lsp::ClearSymbolReferenceIndex();
+    }
+
+    void TearDown() override
+    {
+        ark::es2panda::lsp::ClearSymbolReferenceIndex();
+    }
+
+    std::vector<std::string> CreateTempFile(std::vector<std::string> files, std::vector<std::string> texts)
+    {
+        std::vector<std::string> result {};
+        auto tempDir = GetTestTempDir();
+        for (size_t i = 0; i < files.size(); i++) {
+            std::filesystem::path outPath = tempDir / files[i];
+            std::filesystem::create_directories(outPath.parent_path());
+            std::ofstream outStream(outPath);
+            if (outStream.fail()) {
+                std::cerr << "Failed to open file: " << outPath << std::endl;
+                return result;
+            }
+            outStream << texts[i];
+            outStream.close();
+            result.push_back(outPath.string());
+        }
+        return result;
+    }
+
     static ark::es2panda::lsp::CancellationToken CreateToken()
     {
         return ark::es2panda::lsp::CancellationToken(DEFAULT_THROTTLE, &GetNullHost());
@@ -70,6 +110,15 @@ public:
         initializer.DestroyContext(context);
     }
 
+    static bool HasSemanticDiagnostic(es2panda_Context *context, int errorCode)
+    {
+        const auto diagnostics = GetImpl()->getSemanticDiagnostics(context);
+        return std::any_of(
+            diagnostics.diagnostic.begin(), diagnostics.diagnostic.end(), [errorCode](const Diagnostic &diagnostic) {
+                return std::holds_alternative<int>(diagnostic.code_) && std::get<int>(diagnostic.code_) == errorCode;
+            });
+    }
+
     static std::vector<CodeFixActionInfo> GetImportSourceFixes(es2panda_Context *context, const std::string &source,
                                                                std::string_view unresolvedName)
     {
@@ -96,6 +145,37 @@ public:
         return updatedSources;
     }
 
+protected:
+    static std::string SanitizePathPart(std::string value)
+    {
+        for (auto &ch : value) {
+            if (!std::isalnum(static_cast<unsigned char>(ch)) && ch != '_' && ch != '-') {
+                ch = '_';
+            }
+        }
+        return value;
+    }
+
+    std::filesystem::path GetTestTempDir()
+    {
+        if (!testTempDir_.empty()) {
+            return testTempDir_;
+        }
+
+        const auto *testInfo = testing::UnitTest::GetInstance()->current_test_info();
+        std::string testName = testInfo == nullptr ? "unknown" : testInfo->test_suite_name();
+        testName += "_";
+        testName += testInfo == nullptr ? "unknown" : testInfo->name();
+        testName += "_";
+        testName += std::to_string(getpid());
+
+        testTempDir_ = std::filesystem::path(testing::TempDir()) / GetExecutableName() / SanitizePathPart(testName);
+        std::filesystem::remove_all(testTempDir_);
+        std::filesystem::create_directories(testTempDir_);
+        tempFiles_.push_back(testTempDir_);
+        return testTempDir_;
+    }
+
 private:
     class NullCancellationToken : public ark::es2panda::lsp::HostCancellationToken {
     public:
@@ -110,17 +190,344 @@ private:
         static NullCancellationToken instance;
         return instance;
     }
+
+    std::filesystem::path testTempDir_;
 };
+
+class ImportRenameDeclarationKindsTest : public FixImportSourceTest,
+                                         public testing::WithParamInterface<ImportRenameTestCase> {};
+
+TEST_F(FixImportSourceTest, ReImportFromDifSourceFile)
+{
+    std::vector<std::string> fileNames = {"ReImportFromDifSourceFile1.ets", "ReImportFromDifSourceFile2.ets",
+                                          "ReImportFromDifSourceFile3.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+export class Aaaa {};
+)",
+        R"(
+export class Aaaa {};
+)",
+        R"(
+import { Aaaa } from './ReImportFromDifSourceFile1';
+import {
+    Aaaa
+} from './ReImportFromDifSourceFile2';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto redefinedPos = fileContents[2].rfind("Aaaa");
+    ASSERT_NE(redefinedPos, std::string::npos);
+
+    std::vector<int> errorCodes {2349};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 4, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[2], importFix.value());
+    const std::string expected = R"(
+import { Aaaa } from './ReImportFromDifSourceFile1';
+
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, DupExportFromSourceFile1)
+{
+    std::vector<std::string> fileNames = {"DupExportFromSourceFile1.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+function fvvv(): void {}
+export { fvvv }
+export { fvvv };
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto redefinedPos = 35;
+
+    std::vector<int> errorCodes {3073};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 1, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[0], importFix.value());
+    const std::string expected = R"(
+function fvvv(): void {}
+export { fvvv };
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, DupExportFromSourceFile)
+{
+    std::vector<std::string> fileNames = {"DupExportFromSourceFile.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ */
+
+function x(): void {}
+function y(): void {}
+export { x as Xxxx }
+export { y as Xxxx };
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto redefinedPos = fileContents[0].rfind("Xxxx");
+    ASSERT_NE(redefinedPos, std::string::npos);
+
+    std::vector<int> errorCodes {1344};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 4, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[0], importFix.value());
+    const std::string expected = R"(
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ */
+
+function x(): void {}
+function y(): void {}
+export { x as Xxxx }
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, ImportRenameFunc)
+{
+    std::vector<std::string> fileNames = {"ImportRenameFunc1.ets", "ImportRenameFunc2.ets", "ImportRenameFunc3.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+export function Aaaa(): void {};
+)",
+        R"(
+export function Bbbb(): void {};
+)",
+        R"(
+import { Aaaa as Xxxx } from './ImportRenameFunc1';
+import {
+    Bbbb as Xxxx
+} from './ImportRenameFunc2';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto redefinedPos = fileContents[2].rfind("Xxxx");
+    ASSERT_NE(redefinedPos, std::string::npos);
+
+    std::vector<int> errorCodes {505573};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 1, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[2], importFix.value());
+    const std::string expected = R"(
+import { Aaaa as Xxxx } from './ImportRenameFunc1';
+
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, NoFixForOverloadedFunctionOutsideImport)
+{
+    std::vector<std::string> fileNames = {"OverloadedFunction.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+class A {
+    static foo(): void {}
+}
+overload bar { A.foo }
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto overloadTargetPos = fileContents[0].find("A.foo");
+    ASSERT_NE(overloadTargetPos, std::string::npos);
+
+    std::vector<int> errorCodes {505573};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, overloadTargetPos, overloadTargetPos + 1,
+                                                                errorCodes, options);
+    ASSERT_FALSE(FindFixImportSource(fixes).has_value());
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixImportSourceTest, ImportRenameClass)
+{
+    std::vector<std::string> fileNames = {"ImportRenameClass1.ets", "ImportRenameClass2.ets", "ImportRenameClass3.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+export class Aaaa {};
+)",
+        R"(
+export class Bbbb {};
+)",
+        R"(
+import { Aaaa as Xxxx } from './ImportRenameClass1';
+import {
+    Bbbb as Xxxx
+} from './ImportRenameClass2';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto redefinedPos = 75;
+
+    std::vector<int> errorCodes {2349};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 4, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[2], importFix.value());
+    const std::string expected = R"(
+import { Aaaa as Xxxx } from './ImportRenameClass1';
+
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_P(ImportRenameDeclarationKindsTest, RemovesConflictingImport)
+{
+    const auto &testCase = GetParam();
+    const std::string baseName = "ImportRename" + testCase.name;
+    const std::vector<std::string> fileNames = {baseName + "1.ets", baseName + "2.ets", baseName + "3.ets"};
+    const std::vector<std::string> fileContents = {testCase.firstDeclaration + "\n", testCase.secondDeclaration + "\n",
+                                                   "import { Aaaa as Xxxx } from './" + baseName +
+                                                       "1';\n"
+                                                       "import { Bbbb as Xxxx } from './" +
+                                                       baseName + "2';\n"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[THIRD_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+    ASSERT_TRUE(HasSemanticDiagnostic(context, testCase.errorCode));
+
+    const auto redefinedPos = fileContents[THIRD_FILE_INDEX].rfind("Xxxx");
+    ASSERT_NE(redefinedPos, std::string::npos);
+    std::vector<int> errorCodes {testCase.errorCode};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes =
+        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, redefinedPos, redefinedPos + 4, errorCodes, options);
+    auto importFix = FindFixImportSource(fixes);
+    ASSERT_TRUE(importFix.has_value());
+
+    const auto updated = ApplyFirstChange(fileContents[THIRD_FILE_INDEX], importFix.value());
+    const std::string expected = "import { Aaaa as Xxxx } from './" + baseName + "1';\n\n";
+    ASSERT_EQ(updated, expected);
+    initializer.DestroyContext(context);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ImportKinds, ImportRenameDeclarationKindsTest,
+    testing::Values(ImportRenameTestCase {"Type", "export type Aaaa = int;", "export type Bbbb = string;", 2349},
+                    ImportRenameTestCase {"Variable", "export let Aaaa: int = 1;", "export let Bbbb: int = 2;", 2349},
+                    ImportRenameTestCase {"Const", "export const Aaaa: int = 1;", "export const Bbbb: int = 2;", 2349},
+                    ImportRenameTestCase {"ClassFunction", "export class Aaaa {};", "export function Bbbb(): void {};",
+                                          2350},
+                    ImportRenameTestCase {"FunctionVariable", "export function Aaaa(): void {};",
+                                          "export let Bbbb: int = 1;", 2350}),
+    [](const testing::TestParamInfo<ImportRenameTestCase> &info) { return info.param.name; });
+
+TEST_F(FixImportSourceTest, DuplicateImport)
+{
+    std::vector<std::string> fileNames = {"DuplicateImport1.ets", "DuplicateImport2.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+export class Aaaa {};
+)",
+        R"(
+import { Aaaa } from './DuplicateImport1';
+import { Aaaa } from './DuplicateImport1';
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(filePaths.size(), fileNames.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+
+    const auto duplicateImportPos = fileContents[SECOND_FILE_INDEX].rfind("Aaaa");
+    ASSERT_NE(duplicateImportPos, std::string::npos);
+
+    std::vector<int> errorCodes {128428};
+    CodeFixOptions options = {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, duplicateImportPos, duplicateImportPos + 4,
+                                                                errorCodes, options);
+    const auto duplicateImportFix = std::find_if(fixes.begin(), fixes.end(), [](const CodeFixActionInfo &fix) {
+        return fix.fixName_ == FIX_REMOVE_DUPLICATE_EXPORT_IMPORT_NAME;
+    });
+    ASSERT_NE(duplicateImportFix, fixes.end());
+
+    const auto updated = ApplyFirstChange(fileContents[SECOND_FILE_INDEX], *duplicateImportFix);
+    const std::string expected = R"(
+import { Aaaa } from './DuplicateImport1';
+)";
+    ASSERT_EQ(updated, expected);
+
+    initializer.DestroyContext(context);
+}
 
 TEST_F(FixImportSourceTest, ImportClassFromSourceFile)
 {
     std::vector<std::string> fileNames = {"test1.ets", "test2.ets"};
     std::vector<std::string> fileContents = {
         R"(
-export class Aaaa {};
+export class classA {};
 )",
         R"(
-let a = new Aaaa();
+let a = new classA();
 )"};
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_EQ(filePaths.size(), fileNames.size());
@@ -131,13 +538,13 @@ let a = new Aaaa();
     auto *context = initializer.CreateContext(filePaths[SECOND_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(context, nullptr);
 
-    auto fixes = GetImportSourceFixes(context, fileContents[SECOND_FILE_INDEX], "Aaaa");
+    auto fixes = GetImportSourceFixes(context, fileContents[SECOND_FILE_INDEX], "classA");
     auto importFix = FindFixImportSource(fixes);
     ASSERT_TRUE(importFix.has_value());
 
     const auto updated = ApplyFirstChange(fileContents[SECOND_FILE_INDEX], importFix.value());
-    const std::string expected = R"(import { Aaaa } from './test1';
-let a = new Aaaa();
+    const std::string expected = R"(import { classA } from './test1';
+let a = new classA();
 )";
     ASSERT_EQ(updated, expected);
 
@@ -151,15 +558,15 @@ TEST_F(FixImportSourceTest, ImportMultiClassFromSourceFile)
     std::vector<std::string> fileContents = {
         R"(
 'use static'
-export class Bbbb {};
+export class classB {};
 )",
         R"(
 'use static'
-export class Bbbb {};
+export class classB {};
 )",
         R"(
 'use static'
-let a = new Bbbb();
+let a = new classB();
 )"};
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_EQ(filePaths.size(), fileNames.size());
@@ -171,19 +578,19 @@ let a = new Bbbb();
     auto *context = initializer.CreateContext(filePaths[THIRD_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_NE(context, nullptr);
 
-    auto fixes = GetImportSourceFixes(context, fileContents[THIRD_FILE_INDEX], "Bbbb");
+    auto fixes = GetImportSourceFixes(context, fileContents[THIRD_FILE_INDEX], "classB");
     auto updatedSources = ApplyImportSourceFixes(fixes, fileContents[THIRD_FILE_INDEX]);
 
     std::vector<std::string> expected = {
         R"(
 'use static'
-import { Bbbb } from './ImportMultiClassFromSourceFile1';
-let a = new Bbbb();
+import { classB } from './ImportMultiClassFromSourceFile1';
+let a = new classB();
 )",
         R"(
 'use static'
-import { Bbbb } from './ImportMultiClassFromSourceFile2';
-let a = new Bbbb();
+import { classB } from './ImportMultiClassFromSourceFile2';
+let a = new classB();
 )"};
     std::sort(expected.begin(), expected.end());
     ASSERT_EQ(updatedSources, expected);
@@ -269,7 +676,7 @@ TEST_F(FixImportSourceTest, ImportFromSiblingDirectory)
 {
     // Create export file in a sibling directory: sibling/ExportModule.ets
     // Create consumer file in: consumer/Consumer.ets
-    std::filesystem::path baseDir = std::filesystem::path(testing::TempDir()) / "sibling_import_test";
+    std::filesystem::path baseDir = GetTestTempDir() / "sibling_import";
     std::filesystem::create_directories(baseDir / "sibling");
     std::filesystem::create_directories(baseDir / "consumer");
 
@@ -293,9 +700,6 @@ function test(): void {
         std::ofstream out(consumerPath);
         out << consumerContent;
     }
-
-    tempFiles_.push_back(baseDir);
-
     // Index the export file
     {
         Initializer exportInitializer;

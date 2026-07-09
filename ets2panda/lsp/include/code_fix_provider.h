@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +22,18 @@
 #include "services/text_change/change_tracker.h"
 #include "code_fixes/code_fix_types.h"
 #include "generated/code_fix_register.h"
+#include "generated/diagnostic.h"
 #include "es2panda.h"
 
 namespace ark::es2panda::lsp {
 using ark::es2panda::lsp::codefixes::DiagnosticCode;
+
+inline int GetDiagnosticCode(const diagnostic::DiagnosticKind &diagnosticKind)
+{
+    return static_cast<int>(diagnosticKind.Type()) * DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER +
+           static_cast<int>(diagnosticKind.Id());
+}
+
 class CodeFixProvider {
 private:
     std::unordered_map<std::string, std::vector<std::shared_ptr<CodeFixRegistration>>> errorCodeToFixes_;

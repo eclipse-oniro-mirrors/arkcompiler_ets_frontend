@@ -19,6 +19,7 @@
 #include "util/diagnostic.h"
 
 #include <algorithm>
+#include <optional>
 
 #include <gtest/gtest.h>
 
@@ -67,6 +68,13 @@ public:
         ASSERT_EQ(info.changes_[0].textChanges[0].span.start, expectedTextChangeStart);
         ASSERT_EQ(info.changes_[0].textChanges[0].span.length, expectedTextChangeLength);
         ASSERT_EQ(info.changes_[0].textChanges[0].newText, "");
+    }
+
+    static std::optional<CodeFixActionInfo> FindExpectedFix(const std::vector<CodeFixActionInfo> &fixes)
+    {
+        auto fix = std::find_if(fixes.begin(), fixes.end(),
+                                [](const CodeFixActionInfo &item) { return item.fixName_ == EXPECTED_FIX_NAME; });
+        return fix == fixes.end() ? std::nullopt : std::make_optional(*fix);
     }
 
     static bool HasWarningDiagnostic(es2panda_Context *context, size_t diagnosticId, const std::string &expectedMessage)
@@ -144,11 +152,7 @@ import { A } from './module2';
     const size_t start = LineColToPos(context, 4, 11);
     const size_t length = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
-    // Verify target error codes: DUPLICATE_EXPORT_ALIASES(3073), DUPLICATE_IMPORT(128428)
-    ASSERT_EQ(errorCodes.size(), 2U);
-    ASSERT_EQ(errorCodes[0], DUPLICATE_EXPORT_ALIASES_CODE);
-    ASSERT_EQ(errorCodes.back(), DUPLICATE_IMPORT_CODE);
+    std::vector<int> errorCodes {DUPLICATE_IMPORT_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
@@ -189,7 +193,7 @@ import { A } from './module1';
     const size_t start = LineColToPos(context, 3, 1);
     const size_t length = 6;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    std::vector<int> errorCodes {DUPLICATE_IMPORT_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
@@ -262,23 +266,15 @@ export { a };
     const size_t start = LineColToPos(context, 4, 10);
     const size_t length = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    std::vector<int> errorCodes {DUPLICATE_EXPORT_ALIASES_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
         ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 2U);
-
-    for (const auto &result : fixResult) {
-        ASSERT_EQ(result.fixName_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.fixId_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.description_, EXPECTED_FIX_DESCRIPTION);
-        ASSERT_EQ(result.changes_[0].fileName, filePaths[0]);
-        ASSERT_EQ(result.changes_[0].textChanges.size(), 1U);
-        ASSERT_EQ(result.changes_[0].textChanges[0].newText, "");
-        ASSERT_GT(result.changes_[0].textChanges[0].span.length, 0U);
-    }
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, length, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -303,23 +299,15 @@ export { y as a };
     const size_t start = LineColToPos(context, 5, 15);
     const size_t length = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    std::vector<int> errorCodes {DUPLICATE_EXPORT_ALIASES_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
         ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 2U);
-
-    for (const auto &result : fixResult) {
-        ASSERT_EQ(result.fixName_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.fixId_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.description_, EXPECTED_FIX_DESCRIPTION);
-        ASSERT_EQ(result.changes_[0].fileName, filePaths[0]);
-        ASSERT_EQ(result.changes_[0].textChanges.size(), 1U);
-        ASSERT_EQ(result.changes_[0].textChanges[0].newText, "");
-        ASSERT_GT(result.changes_[0].textChanges[0].span.length, 0U);
-    }
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, length, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -354,8 +342,9 @@ export { Foo } from './filename';
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -396,8 +385,9 @@ export {
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -438,8 +428,9 @@ export {
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -481,8 +472,9 @@ export {
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -518,8 +510,9 @@ export { a } // keep comment with ; and }
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -555,8 +548,9 @@ export { a } /* keep comment with ; and } */
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
     auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, end, errorCodes, options);
 
-    ASSERT_EQ(fixResult.size(), 1U);
-    ValidateCodeFixActionInfo(fixResult[0], start, end - start, filePaths[0]);
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, end - start, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -579,23 +573,15 @@ export { a };export { a };
     const size_t start = LineColToPos(context, 3, 23);
     const size_t length = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    std::vector<int> errorCodes {DUPLICATE_EXPORT_ALIASES_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
         ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
 
-    ASSERT_GE(fixResult.size(), 1U);
-
-    for (const auto &result : fixResult) {
-        ASSERT_EQ(result.fixName_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.fixId_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.description_, EXPECTED_FIX_DESCRIPTION);
-        ASSERT_EQ(result.changes_[0].fileName, filePaths[0]);
-        ASSERT_EQ(result.changes_[0].textChanges.size(), 1U);
-        ASSERT_EQ(result.changes_[0].textChanges[0].newText, "");
-        ASSERT_GT(result.changes_[0].textChanges[0].span.length, 0U);
-    }
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, length, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -619,23 +605,15 @@ export { a };
     const size_t start = LineColToPos(context, 4, 10);
     const size_t length = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    std::vector<int> errorCodes {DUPLICATE_EXPORT_ALIASES_CODE};
     CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
 
     auto fixResult =
         ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
 
-    ASSERT_GE(fixResult.size(), 1U);
-
-    for (const auto &result : fixResult) {
-        ASSERT_EQ(result.fixName_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.fixId_, EXPECTED_FIX_NAME);
-        ASSERT_EQ(result.description_, EXPECTED_FIX_DESCRIPTION);
-        ASSERT_EQ(result.changes_[0].fileName, filePaths[0]);
-        ASSERT_EQ(result.changes_[0].textChanges.size(), 1U);
-        ASSERT_EQ(result.changes_[0].textChanges[0].newText, "");
-        ASSERT_GT(result.changes_[0].textChanges[0].span.length, 0U);
-    }
+    auto expectedFix = FindExpectedFix(fixResult);
+    ASSERT_TRUE(expectedFix.has_value());
+    ValidateCodeFixActionInfo(expectedFix.value(), start, length, filePaths[0]);
 
     initializer.DestroyContext(context);
 }
