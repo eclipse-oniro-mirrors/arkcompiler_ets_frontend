@@ -136,6 +136,71 @@ static void AssertCompletionsOrder(const std::vector<CompletionEntry> &entries,
 }
 
 namespace {
+TEST_F(LSPCompletionsTests, GetCurrentTokenValueImportOnly)
+{
+    std::vector<std::string> files = {"getCurrentTokenValueImportOnly.ets", "getCurrentTokenValueImporOnly.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+'use static'
+import
+class A {}
+)delimiter",
+                                      R"delimiter(
+'use static'
+impor
+class A {}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto importCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto imporCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const size_t importOffset = 20;
+    std::string importToken = lspApi->getCurrentTokenValue(importCtx, importOffset);
+    ASSERT_EQ(importToken, "import");
+
+    const size_t imporOffset = 19;
+    std::string imporToken = lspApi->getCurrentTokenValue(imporCtx, imporOffset);
+    ASSERT_EQ(imporToken, "impor");
+
+    initializer.DestroyContext(importCtx);
+    initializer.DestroyContext(imporCtx);
+}
+
+TEST_F(LSPCompletionsTests, GetCurrentTokenValueImportOnly1)
+{
+    std::vector<std::string> files = {"getCurrentTokenValueImportOnly1.ets", "getCurrentTokenValueImporOnly1.ets"};
+    std::vector<std::string> texts = {R"delimiter('use static'
+        import)delimiter",
+                                      R"delimiter(
+'use static'
+impor)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto importCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto imporCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const size_t importOffset = 27;
+    std::string importToken = lspApi->getCurrentTokenValue(importCtx, importOffset);
+    ASSERT_EQ(importToken, "import");
+
+    const size_t imporOffset = 19;
+    std::string imporToken = lspApi->getCurrentTokenValue(imporCtx, imporOffset);
+    ASSERT_EQ(imporToken, "impor");
+
+    initializer.DestroyContext(importCtx);
+    initializer.DestroyContext(imporCtx);
+}
+
 TEST_F(LSPCompletionsTests, KeyWordCompletionsToInclude2)
 {
     std::vector<std::string> files = {"KeyWordCompletionsToInclude2.ets"};

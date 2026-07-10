@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import fs from "fs"
 import { getLspWithUi, getRealPath } from '../utils';
 
 describe('getCodeFixesAtPositionTest', () => {
@@ -25,7 +25,7 @@ describe('getCodeFixesAtPositionTest', () => {
           textChanges: [
             {
               span: {
-                start: 990,
+                start: 995,
                 length: 6
               },
               newText: ''
@@ -33,7 +33,7 @@ describe('getCodeFixesAtPositionTest', () => {
           ]
         }
       ],
-      description: "Remove the duplicate 'Entry' annotation",
+      description: "Remove the duplicate '@Entry' annotation.",
       fixName: 'Fix',
       fixId_: 'UI_PLUGIN_SUGGEST',
       fixAllDescription_: 'Fix All Description'
@@ -45,7 +45,7 @@ describe('getCodeFixesAtPositionTest', () => {
           textChanges: []
         }
       ],
-      description: "Remove the duplicate 'Entry' annotation",
+      description: "Remove the duplicate '@Entry' annotation.",
       fixName: 'Fix',
       fixId_: 'UI_PLUGIN_SUGGEST',
       fixAllDescription_: 'Fix All Description'
@@ -57,12 +57,13 @@ describe('getCodeFixesAtPositionTest', () => {
   describe('With UI Plugins', () => {
     const getUiLsp = (): ReturnType<typeof getLspWithUi> => getLspWithUi(moduleName);
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCodeFixesAtPosition_000', () => {
-      const res = getUiLsp().getCodeFixesAtPosition(
-        getRealPath(moduleName, 'getCodeFixesAtPosition1.ets'),
-        994,
-        995,
-        [4000]
-      );
+      const file = getRealPath(moduleName, 'getCodeFixesAtPosition1.ets');
+      const lsp = getUiLsp();
+      lsp.initAstCache();
+      lsp.modifyFilesMap(file, { newDoc: `${fs.readFileSync(file, 'utf8')}\n` });
+
+      const res = lsp.getCodeFixesAtPosition(file, 999, 1000, [4000]);
+
       expect(res).toMatchObject(EXPECT_000);
     });
   });

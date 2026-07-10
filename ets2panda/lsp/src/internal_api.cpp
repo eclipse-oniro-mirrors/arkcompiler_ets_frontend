@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include "api.h"
+#include "classifier.h"
 #include "internal_api.h"
 #include "checker/types/type.h"
 #include "code_fixes/code_fix_types.h"
@@ -667,20 +668,43 @@ std::string ReplaceQuotation(ark::es2panda::util::StringView strView)
     return str;
 }
 
+static std::string GetCurrentTokenValueFromLexer(es2panda_Context *context, ark::es2panda::util::StringView source,
+                                                 size_t position)
+{
+    auto lexer = InitLexer(context);
+    lexer->NextToken();
+    while (lexer->GetToken().Type() != lexer::TokenType::EOS) {
+        auto currentToken = lexer->GetToken();
+        if (currentToken.Start().index <= position && position <= currentToken.End().index) {
+            return ReplaceQuotation(source.Substr(currentToken.Start().index, position));
+        }
+        if (position < currentToken.Start().index) {
+            break;
+        }
+        lexer->NextToken();
+    }
+    return "";
+}
+
 std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *preceding)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto program = ctx->parserProgram;
-    auto ast = program->Ast();
-    ir::AstNode *node = nullptr;
-    if (preceding != nullptr) {
-        node = preceding;
-    } else {
-        node = FindPrecedingToken(position, ast);
+    if (preceding == nullptr) {
+        return GetCurrentTokenValueFromLexer(context, program->SourceCode(), position);
     }
-    return node != nullptr
-               ? ReplaceQuotation(program->SourceCode().substr(node->Start().index, position - node->Start().index))
-               : "";
+
+    auto *node = preceding;
+    if (node == nullptr) {
+        return "";
+    }
+
+    auto token = ReplaceQuotation(program->SourceCode().substr(node->Start().index, position - node->Start().index));
+    if (!token.empty()) {
+        return token;
+    }
+
+    return "";
 }
 
 ir::AstNode *FindLeftToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
