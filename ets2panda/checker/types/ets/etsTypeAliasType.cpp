@@ -59,7 +59,7 @@ void ETSTypeAliasType::ToString(std::stringstream &ss, bool precise) const
 void ETSTypeAliasType::ToAssemblerType(std::stringstream &ss) const
 {
     if (targetType_ == nullptr || recursionCount_) {
-        ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
+        ss << compiler::Signatures::BUILTIN_OBJECT;
         return;
     }
 
@@ -71,7 +71,7 @@ void ETSTypeAliasType::ToAssemblerType(std::stringstream &ss) const
 void ETSTypeAliasType::ToAssemblerTypeWithRank(std::stringstream &ss) const
 {
     if (targetType_ == nullptr || recursionCount_) {
-        ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
+        ss << compiler::Signatures::BUILTIN_OBJECT;
         return;
     }
 

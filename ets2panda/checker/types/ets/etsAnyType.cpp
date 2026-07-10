@@ -74,7 +74,7 @@ void ETSAnyType::ToString(std::stringstream &ss, [[maybe_unused]] bool precise) 
 
 void ETSAnyType::ToAssemblerType(std::stringstream &ss) const
 {
-    ss << compiler::Signatures::ANY_ASSEMBLY_TYPE;
+    ss << compiler::Signatures::BUILTIN_OBJECT;
 }
 
 TypeFacts ETSAnyType::GetTypeFacts() const
@@ -84,7 +84,7 @@ TypeFacts ETSAnyType::GetTypeFacts() const
 
 void ETSAnyType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::TYPE_DESCRIPTOR_ANY);
+    ss << ETSObjectType::NameToDescriptor(compiler::Signatures::BUILTIN_OBJECT);
 }
 
 Type *ETSAnyType::Instantiate(ArenaAllocator *allocator, [[maybe_unused]] TypeRelation *relation,

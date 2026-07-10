@@ -34,18 +34,19 @@ class Something { }
 
 function test(v: Any) {
     const vname = getName(v)
+    const orUndefined = " or undefined"
 
-    testExc(() => v as undefined, vname, Class.from<never>().getName())
-    testExc(() => v as never | undefined, vname, Class.from<never>().getName())
+    testExc(() => v as undefined, vname, "undefined")
+    testExc(() => v as never | undefined, vname, "undefined")
     testExc(() => v as null, vname, getName(null))
-    testExc(() => v as null | undefined, vname, getName(null))
+    testExc(() => v as null | undefined, vname, getName(null) + orUndefined)
 
     testExc(() => v as string, vname, getName(new String()))
     testExc(() => v as "aaa!", vname, getName(new String()))
 
     testExc(() => v as Something, vname, getName(new Something()))
 
-    testExc(() => v as string | Something, vname, Class.from<string | Something>().getName())
+    // testExc(() => v as string | Something, vname, Class.from<string | Something>().getName()) #31354
 }
 
 function testUndefined(v: Any) {

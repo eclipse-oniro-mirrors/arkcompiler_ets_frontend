@@ -32,11 +32,6 @@ class C {
 
 class G<T> {}
 
-class A {
-  neverFunc(): never {
-    throw Error("")
-  }
-}
 
 function InstanceTesting<T>(){
   arktest.assertEQ(Class.from<C>(), Class.of(new C))
@@ -56,7 +51,7 @@ function InstanceTesting<T>(){
   arktest.assertEQ(Class.from<undefined>(), Class.from<Any>())
   arktest.assertEQ(Class.from<void>(), Class.from<Any>())
   arktest.assertEQ(Class.from<T>(), Class.from<Any>())
-  arktest.assertEQ(Class.from<never>(), Class.from<A>().getInstanceMethod("neverFunc")!.getReturnType())
+  arktest.assertEQ(Class.from<never>(), Class.from<Object>())
 }
 
 function ArrayInstanceTesting(){

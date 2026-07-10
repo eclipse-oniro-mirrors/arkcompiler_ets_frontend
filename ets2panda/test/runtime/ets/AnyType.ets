@@ -39,10 +39,3 @@ asgn<C<Any>>(new C<null>())
 asgn<C<Any>>(new C<number>())
 asgn<C<Any>>(new C<string>())
 asgn<C<Any>>(new C<never>())
-
-function TestAnyObjectDifference(x: FixedArray<Any>, y: Any) {
-    x[0] = y;
-}
-
-const x: FixedArray<Object> = new FixedArray<Object>(10);
-arktest.expectThrow(() => { TestAnyObjectDifference(x, null) }, (e) => e instanceof ArrayStoreError )
