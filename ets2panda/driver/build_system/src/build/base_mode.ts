@@ -67,7 +67,6 @@ import {
 } from './generate_arktsconfig';
 import {
     BS_PERF_DIR,
-    BS_PERF_FILE_NAME,
     StatisticsRecorder,
 } from '../util/statsRecorder';
 import {
@@ -128,7 +127,7 @@ export abstract class BaseMode {
         this.abcFiles = new Set<string>();
         this.arktsConfigGenerator = new ArkTSConfigGenerator(buildConfig);
 
-        this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_DIR, BS_PERF_FILE_NAME),
+        this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_DIR),
                                                     `Build System`);
 
         this.processBuildConfig();
