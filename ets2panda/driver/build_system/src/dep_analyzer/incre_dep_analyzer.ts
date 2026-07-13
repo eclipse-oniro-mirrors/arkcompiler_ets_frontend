@@ -235,7 +235,7 @@ export class IncreDepAnalyzer extends DepAnalyzer {
         entryFiles: Set<string>,
         fileToModule: Map<string, ModuleInfo>,
         depMap: DependencyFileMap
-    ): boolean {
+    ): string[] {
         const modifiedFiles: string[] = [];
         for (const filePath of entryFiles) {
             const fileChangedFlag: boolean = this.fileChanged(filePath, fileToModule, depMap);
@@ -248,9 +248,8 @@ export class IncreDepAnalyzer extends DepAnalyzer {
             const increInputFile: string = path.join(this.outputDir, INCRE_DEP_ANALYZER_INPUT_FILE);
             const fileContent: string = modifiedFiles.join(os.EOL);
             fs.writeFileSync(increInputFile, fileContent);
-            return true;
         }
-        return false;
+        return modifiedFiles;
     }
 
     private updateDependencyItem(
@@ -283,7 +282,7 @@ export class IncreDepAnalyzer extends DepAnalyzer {
         }
     }
 
-    private updateFullDependency(prevDepMap: DependencyFileMap, modules: ModuleInfo[]): void {
+    private updateFullDependency(prevDepMap: DependencyFileMap, modules: ModuleInfo[], modifiedSourceFiles: string[]): void {
         if (!this.hasModified) {
             return;
         }
@@ -331,12 +330,15 @@ export class IncreDepAnalyzer extends DepAnalyzer {
             this.updateDependencyItem(increDepFileList, prevDepMap, prevDepList, filePath);
         }
 
-        for (const [filePath, outputPath] of Object.entries(increDepMap.outputMatching)) {
-            // if file in outputMatching and not in dependencies, it means that there is no import in file
-            if (!increDepMap.dependencies[filePath]) {
-                const prevDepList = prevDepMap.dependencies[filePath] || [];
-                this.updateDependencyItem([], prevDepMap, prevDepList, filePath);
+        // 3. if file in outputMatching and not in dependencies, it means that there is no import in file
+        for (const modifiedFile of modifiedSourceFiles) {
+            if (!increDepMap.dependencies[modifiedFile]) {
+                const prevDepList = prevDepMap.dependencies[modifiedFile] || [];
+                this.updateDependencyItem([], prevDepMap, prevDepList, modifiedFile);
             }
+        }
+
+        for (const [filePath, outputPath] of Object.entries(increDepMap.outputMatching)) {
             prevDepMap.outputMatching[filePath] = outputPath;
         }
     }
@@ -354,8 +356,9 @@ export class IncreDepAnalyzer extends DepAnalyzer {
 
         // 2. find all the added and modified source files and update prevDepMap
         this.statsRecorder.record(formEvent(IncreDepAnalyzerEvent.INCRE_FIND_MODIFIED_FILES));
-        this.hasModified = this.findModifiedSourceFiles(entryFiles, fileToModule, prevDepMap);
-        this.updateFullDependency(prevDepMap, modules);
+        let modifiedSourceFiles: string[] = this.findModifiedSourceFiles(entryFiles, fileToModule, prevDepMap);
+        this.hasModified = modifiedSourceFiles.length > 0;
+        this.updateFullDependency(prevDepMap, modules, modifiedSourceFiles);
 
         // 3. persist the prevDepMap to disk
         if (this.deletedFiles.length > 0 || this.hasModified) {

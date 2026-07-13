@@ -927,7 +927,6 @@ export abstract class BaseMode {
         if (!this.buildConfig.enableDeclgenEts2Ts && !this.buildConfig.frameworkMode) {
             this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX) && !file.endsWith(ETSCACHE_SUFFIX)));
         }
-        this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
 
     protected processBuildConfigForObfuscation(): void {
