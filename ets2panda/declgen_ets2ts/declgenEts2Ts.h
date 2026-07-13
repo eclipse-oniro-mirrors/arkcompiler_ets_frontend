@@ -235,6 +235,7 @@ private:
     void ProcessIndent();
 
     bool GenGlobalDescriptor();
+    void GenLazyHelperCode();
     void CollectGlueCodeImportSet();
     void CollectDefaultImport(const ir::AstNode *specifier);
     void CollectNamedImports(const ArenaVector<ir::AstNode *> &specifiers);

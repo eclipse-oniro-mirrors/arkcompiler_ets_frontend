@@ -406,6 +406,7 @@ bool TSDeclGen::Generate()
     if (!GenGlobalDescriptor()) {
         return false;
     }
+    GenLazyHelperCode();
     CollectDependencies();
     CollectGlueCodeImportSet();
     GenDeclarations();
@@ -426,6 +427,49 @@ bool TSDeclGen::GenGlobalDescriptor()
     OutTs("export {};");
     OutEndlTs();
     return true;
+}
+
+void TSDeclGen::GenLazyHelperCode()
+{
+    OutTs(
+        "function createLazy<T>(loader: () => T, label?: string): T {\n"
+        "  try {\n"
+        "    return loader();\n"
+        "  } catch (e) {\n"
+        "    console.error(`Interop: Load target ${label} failed,"
+        "use fallback placeholder object`);\n"
+        "    return createUnsupportedObject(e, label) as T;\n"
+        "  }\n"
+        "}\n"
+        "\n"
+        "function createUnsupportedObject(reason: unknown, label = 'object'): any {\n"
+        "  const make = (op: string) => (): never => {\n"
+        "    throw new Error(\n"
+        "      `Interop: Access failed on '${label}' (${op}): "
+        "${reason instanceof Error ? reason.message : String(reason)}`\n"
+        "    );\n"
+        "  };\n"
+        "\n"
+        "  const target: any = function () {};\n"
+        "\n"
+        "  return new Proxy(target, {\n"
+        "    get: make('get'),\n"
+        "    set: make('set'),\n"
+        "    has: make('has'),\n"
+        "    deleteProperty: make('delete'),\n"
+        "    apply: make('apply'),\n"
+        "    construct: make('construct'),\n"
+        "    ownKeys: make('ownKeys'),\n"
+        "    getOwnPropertyDescriptor: make('getOwnPropertyDescriptor'),\n"
+        "    defineProperty: make('defineProperty'),\n"
+        "    getPrototypeOf: make('getPrototypeOf'),\n"
+        "    setPrototypeOf: make('setPrototypeOf'),\n"
+        "    isExtensible: make('isExtensible'),\n"
+        "    preventExtensions: make('preventExtensions'),\n"
+        "  });\n"
+        "}\n"
+        "\n");
+    OutEndlTs();
 }
 
 void TSDeclGen::CollectGlueCodeImportSet()
@@ -2628,7 +2672,8 @@ void TSDeclGen::EmitClassGlueCode(const ir::ClassDefinition *classDef, const std
         return;
     }
     const std::string exportPrefix = classDef->Parent()->IsDefaultExported() ? "const " : "export const ";
-    OutTs(exportPrefix, className, " = (globalThis as any).Panda.getClass('", state_.currentClassDescriptor, "');");
+    OutTs(exportPrefix, className, " = createLazy(() => (globalThis as any).Panda.getClass('",
+          state_.currentClassDescriptor, "'), \"", className, "\");");
     OutEndlTs();
 
     if (classDef->Parent()->IsDefaultExported()) {
@@ -2811,20 +2856,20 @@ void TSDeclGen::EmitMethodGlueCode(const std::string &methodName, const ir::Iden
         return;
     }
     if (state_.inNamespace) {
-        OutTs("export const ", methodName,
-              " = (globalThis as any).Panda.getClass('" + state_.currentClassDescriptor + "')." + methodName + ";");
+        OutTs("export const ", methodName, " = createLazy(() => (globalThis as any).Panda.getClass('",
+              state_.currentClassDescriptor, "')." + methodName + ", \"", methodName, "\");");
         OutEndlTs();
         return;
     }
     if (methodIdentifier->Parent()->IsDefaultExported()) {
-        OutTs("const ", methodName, " = (globalThis as any).Panda.getFunction('", state_.currentClassDescriptor, "', '",
-              methodName, "');");
+        OutTs("const ", methodName, " = createLazy(() => (globalThis as any).Panda.getFunction('",
+              state_.currentClassDescriptor, "', '", methodName, "'), \"", methodName, "\");");
         OutEndlTs();
         OutTs("export default ", methodName, ";");
         OutEndlTs();
     } else {
-        OutTs("export const ", methodName, " = (globalThis as any).Panda.getFunction('", state_.currentClassDescriptor,
-              "', '", methodName, "');");
+        OutTs("export const ", methodName, " = createLazy(() => (globalThis as any).Panda.getFunction('",
+              state_.currentClassDescriptor, "', '", methodName, "'), \"", methodName, "\");");
         OutEndlTs();
     }
 }
@@ -2951,18 +2996,19 @@ void TSDeclGen::EmitPropGlueCode(const ir::ClassProperty *classProp, const std::
 {
     std::string propAccess;
     if (state_.inGlobalClass) {
-        propAccess = " = (globalThis as any).Panda.getClass('" + globalDesc_ + "')." + propName + ";";
+        propAccess = "(globalThis as any).Panda.getClass('" + globalDesc_ + "')." + propName;
     } else {
-        propAccess = " = (globalThis as any).Panda.getClass('" + state_.currentClassDescriptor + "')." + propName + ";";
+        propAccess = "(globalThis as any).Panda.getClass('" + state_.currentClassDescriptor + "')." + propName;
     }
     const bool isConst = classProp->IsConst();
     const bool CheckIsDefaultExported = classProp->IsDefaultExported();
     if (CheckIsDefaultExported) {
-        OutTs(isConst ? "const " : "let ", propName, propAccess);
+        OutTs(isConst ? "const " : "let ", propName, " = createLazy(() => ", propAccess, ", \"", propName, "\");");
         OutEndlTs();
         OutTs("export default ", propName, ";");
     } else {
-        OutTs(isConst ? "export const " : "export let ", propName, propAccess);
+        OutTs(isConst ? "export const " : "export let ", propName, " = createLazy(() => ", propAccess, ", \"", propName,
+              "\");");
     }
     OutEndlTs();
 }
