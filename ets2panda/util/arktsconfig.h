@@ -52,6 +52,7 @@ namespace fs = std::experimental::filesystem;
 
 namespace ark::es2panda::util {
 class DiagnosticEngine;
+class FsQueryCache;
 }  // namespace ark::es2panda::util
 
 namespace ark::es2panda {
@@ -150,7 +151,8 @@ public:
     }
     bool Parse();
 
-    std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false) const;
+    std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false,
+                                           util::FsQueryCache *fsQueryCache = nullptr) const;
 
     void FixupWithStdlibOption(const std::string &stdlib);
     void FixupWithoutStdlibOption();
@@ -242,7 +244,8 @@ private:
     std::optional<ArkTsConfig> ParseExtends(const std::string &configPath, const std::string &extends,
                                             const std::string &configDir);
     std::optional<std::string> ResolveImportPath(std::string_view path, const std::string &alias,
-                                                 const std::vector<std::string> &filePaths) const;
+                                                 const std::vector<std::string> &filePaths,
+                                                 util::FsQueryCache *fsQueryCache) const;
     bool ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl);
     bool ParseDependencies(const JsonObject::JsonObjPointer *options,
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
@@ -274,7 +277,7 @@ private:
                          std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
     std::optional<std::string> TryResolveWithDependencies(std::string_view path) const;
     std::optional<std::string> TryResolveWithDependencyAliases(std::string_view path) const;
-    std::optional<std::string> TryResolveWithPaths(std::string_view path) const;
+    std::optional<std::string> TryResolveWithPaths(std::string_view path, util::FsQueryCache *fsQueryCache) const;
     std::optional<std::string> ResolvePath(std::string_view path) const;
 
     bool isParsed_ = false;

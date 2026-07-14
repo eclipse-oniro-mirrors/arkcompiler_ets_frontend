@@ -29,6 +29,10 @@
 #include "parser/program/ImportCache.h"
 
 #include <unordered_set>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <unordered_map>
 
 namespace ark::panda_file {
 class File;
@@ -39,6 +43,7 @@ class ArkTsConfig;
 }  // namespace ark::es2panda
 
 namespace ark::es2panda::util {
+class FsQueryCache;
 namespace gen::extension {
 enum Enum : size_t;
 }  // namespace gen::extension
@@ -272,7 +277,7 @@ public:
     NO_COPY_SEMANTIC(ImportPathManager);
     NO_MOVE_SEMANTIC(ImportPathManager);
     ImportPathManager() = delete;
-    ~ImportPathManager() = default;
+    ~ImportPathManager();
 
     [[nodiscard]] const ArenaVector<ParseInfo> &GetParseQueue() const
     {
@@ -359,6 +364,8 @@ public:
         outputMatching_[ArenaString {file}] = outPath;
     }
 
+    void ClearResolutionCaches();
+
 private:
     template <typename VarBinderT, Language::Id LANG_ID>
     void SetupGlobalProgram(public_lib::Context *ctx);
@@ -375,6 +382,23 @@ private:
         bool hasError {false};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
+    struct ResolutionCacheKey {
+        bool isDynamic;
+        std::string path;
+
+        bool operator==(const ResolutionCacheKey &other) const noexcept
+        {
+            return isDynamic == other.isDynamic && path == other.path;
+        }
+    };
+
+    struct ResolutionCacheKeyHash {
+        size_t operator()(const ResolutionCacheKey &key) const noexcept
+        {
+            return std::hash<std::string> {}(key.path) ^ (std::hash<bool> {}(key.isDynamic) << 1U);
+        }
+    };
+
     ImportInfo ResolvePath(parser::Program *importer, std::string_view importPath) const;
     ResolvedPathRes ResolveAbsolutePath(std::string_view importPathNode) const;
     std::string DirOrDirWithIndexFile(std::string resolvedPathPrototype) const;
@@ -422,6 +446,8 @@ private:
     void RemoveReverseFileDependency(const ArenaString &dependency, const ArenaString &file);
 
 private:
+    ResolutionCacheKey BuildResolutionCacheKey(std::string_view path) const;
+
     public_lib::Context &ctx_;
     ArenaVector<ParseInfo> parseQueue_;
 
@@ -436,6 +462,10 @@ private:
     FileDependenciesMap fileDependencies_;
     FileDependenciesMap reverseFileDependencies_;
     FileOutputMatching outputMatching_;
+    std::unique_ptr<FsQueryCache> fsQueryCache_;
+    mutable std::unordered_map<ResolutionCacheKey, ResolvedPathRes, ResolutionCacheKeyHash>
+        appendExtensionOrIndexFileCache_;
+    mutable std::unordered_map<ResolutionCacheKey, std::optional<std::string>, ResolutionCacheKeyHash> arkTsPathCache_;
 };
 
 }  // namespace ark::es2panda::util

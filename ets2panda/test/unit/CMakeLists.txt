@@ -65,6 +65,10 @@ ets2panda_add_gtest(es2panda_union_emit_standard_test
     CPP_SOURCES union_emit_test.cpp
 )
 
+ets2panda_add_gtest(es2panda_fs_query_cache_tests
+    CPP_SOURCES fs_query_cache_test.cpp
+)
+
 if (PANDA_TARGET_LINUX AND PANDA_TARGET_64)
     # ets2panda_add_gtest(sizeof_node_tests #31974
     #     CPP_SOURCES sizeof_node_test.cpp
