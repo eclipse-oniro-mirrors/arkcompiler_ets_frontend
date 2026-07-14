@@ -822,7 +822,7 @@ describe('BaseMode', () => {
         });
 
         const mockModuleInfo = createMockModuleInfo();
-        const mockFinish = jest.fn().mockResolvedValue(undefined);
+        const mockFinish = jest.fn().mockResolvedValue(true);
         const startWorkersSpy = jest.fn();
         jest.doMock('../../../src/util/TaskManager', () => {
             return {

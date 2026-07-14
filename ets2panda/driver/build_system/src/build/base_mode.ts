@@ -1246,15 +1246,28 @@ export abstract class BaseMode {
             });
         }
 
+        // Prune edges that reference nodes which are not being regenerated.
+        // The retained nodes still carry predecessor/descendant ids that point to
+        // filtered-out nodes; leaving them dangling makes Graph.createGraphFromNodes
+        // fail in verify(). New Set instances are used so the original buildGraph
+        // nodes are left untouched. needRegenNodeIds is fully populated by now, so
+        // this must happen after the loop above.
+        for (const newNode of newNodes) {
+            newNode.predecessors = new Set(
+                [...newNode.predecessors].filter((id: string) => needRegenNodeIds.has(id))
+            );
+            newNode.descendants = new Set(
+                [...newNode.descendants].filter((id: string) => needRegenNodeIds.has(id))
+            );
+        }
+
         await this.backupDeclgenFiles(declgenJobs);
 
         const newGraph: Graph<ProcessDeclgenV1Task> = Graph.createGraphFromNodes(newNodes);
-        const filteredGraph = newGraph.filter((node: GraphNode<ProcessDeclgenV1Task>) => needRegenNodeIds.has(node.id));
 
-        taskManager.buildGraph = filteredGraph;
+        taskManager.buildGraph = newGraph;
         taskManager.initTaskQueue();
 
-        // Ignore the result
         await taskManager.finish();
 
         await this.updateDeclFileMapForJobs(declgenJobs);
