@@ -24,6 +24,7 @@
 #include "ir/expression.h"
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/binaryExpression.h"
+#include "ir/expressions/callExpression.h"
 #include "ir/expressions/conditionalExpression.h"
 #include "ir/expressions/literals/stringLiteral.h"
 #include "ir/expressions/objectExpression.h"

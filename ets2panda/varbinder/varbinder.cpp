@@ -483,6 +483,9 @@ void VarBinder::VisitScriptFunction(ir::ScriptFunction *func)
             ES2PANDA_ASSERT(GetContext()->diagnosticEngine->IsAnyError());
             return;
         }
+        if (func->TypeParams() != nullptr) {
+            ResolveReference(func->TypeParams());
+        }
         auto paramScopeCtx = LexicalScope<FunctionParamScope>::Enter(this, funcScope->ParamScope());
 
         for (auto *param : func->Params()) {

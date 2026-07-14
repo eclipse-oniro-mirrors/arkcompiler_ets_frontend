@@ -764,7 +764,8 @@ static void CheckOverloadSameNameMethod(ETSChecker *const checker, ir::OverloadD
                                       (overloadDecl->IsStatic() || overloadDecl->IsFunctionOverloadDeclaration()
                                            ? PropertySearchFlags::SEARCH_STATIC_METHOD
                                            : PropertySearchFlags::SEARCH_INSTANCE_METHOD);
-    if (!overloadDecl->IsStatic() && overloadDecl->IsClassMethodOverloadDeclaration()) {
+    if (!overloadDecl->IsStatic() &&
+        (overloadDecl->IsClassMethodOverloadDeclaration() || overloadDecl->IsInterfaceMethodOverloadDeclaration())) {
         searchFlags |= PropertySearchFlags::SEARCH_IN_INTERFACES | PropertySearchFlags::SEARCH_IN_BASE;
     }
     auto *sameNameMethod = objectType->AsETSObjectType()->GetProperty(overloadDecl->Id()->Name(), searchFlags);
@@ -773,13 +774,21 @@ static void CheckOverloadSameNameMethod(ETSChecker *const checker, ir::OverloadD
     }
 
     auto *methodOwner = static_cast<checker::ETSObjectType *>(nullptr);
+    auto *sameNameSignature = static_cast<checker::Signature *>(nullptr);
     if (sameNameMethod->TsType() != nullptr && sameNameMethod->TsType()->IsETSFunctionType() &&
         !sameNameMethod->TsType()->AsETSFunctionType()->CallSignatures().empty()) {
-        methodOwner = sameNameMethod->TsType()->AsETSFunctionType()->CallSignatures().front()->Owner();
+        sameNameSignature = sameNameMethod->TsType()->AsETSFunctionType()->CallSignatures().front();
+        methodOwner = sameNameSignature->Owner();
         if (sameNameMethod->HasFlag(varbinder::VariableFlags::PRIVATE) &&
             methodOwner != objectType->AsETSObjectType()) {
             return;
         }
+    }
+
+    if (overloadDecl->IsInterfaceMethodOverloadDeclaration() && methodOwner != objectType->AsETSObjectType() &&
+        sameNameSignature != nullptr && sameNameSignature->Function() != nullptr &&
+        sameNameSignature->Function()->HasBody()) {
+        return;
     }
 
     auto serachName = overloadDecl->Id()->Name().Mutf8();

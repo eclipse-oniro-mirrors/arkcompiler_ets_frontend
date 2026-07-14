@@ -120,9 +120,16 @@ bool TypeRelation::CheckTypeParameterConstraints(ArenaVector<Type *> const &type
     }
 
     if (paramNumber > 0U) {
+        auto *const checker = GetChecker()->AsETSChecker();
+        auto substitution = Substitution {};
+        for (std::size_t i = 0U; i < paramNumber; ++i) {
+            checker->EmplaceSubstituted(&substitution, typeParameters2[i]->AsETSTypeParameter(), typeParameters1[i]);
+        }
+
         for (std::size_t i = 0U; i < paramNumber; ++i) {
             auto const *const c1 = typeParameters1[i]->AsETSTypeParameter()->GetConstraintType();
-            auto const *const c2 = typeParameters2[i]->AsETSTypeParameter()->GetConstraintType();
+            auto *const c2 =
+                typeParameters2[i]->AsETSTypeParameter()->GetConstraintType()->Substitute(this, &substitution);
             if (!IsSupertypeOf(c1, c2)) {  // contravariance check
                 return false;
             }

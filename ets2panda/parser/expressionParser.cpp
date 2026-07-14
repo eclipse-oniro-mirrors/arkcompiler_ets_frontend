@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -80,6 +80,11 @@
 #include "parserImpl.h"
 
 namespace ark::es2panda::parser {
+
+bool ParserImpl::IsTokenOnDifferentLineThanExpressionEnd(const lexer::Token &token, const ir::Expression *expression)
+{
+    return expression != nullptr && token.Start().line != expression->End().line;
+}
 
 static ir::ValidationInfo ValidateExpression(ir::ArrayExpression *arrExpr);
 static ir::ValidationInfo ValidateExpression(ir::ObjectExpression *objExpr);
@@ -1616,7 +1621,8 @@ ir::CallExpression *ParserImpl::ParseCallExpression(ir::Expression *callee, bool
         callExpr->SetStart(callee->Start());
         isOptionalChain = false;
 
-        if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+        if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS ||
+            (IsETSParser() && IsTokenOnDifferentLineThanExpressionEnd(lexer_->GetToken(), callExpr))) {
             ParseTrailingBlock(callExpr);
             if (callExpr->TrailingBlock() != nullptr) {
                 callExpr->SetRange({callee->Start(), callExpr->TrailingBlock()->End()});

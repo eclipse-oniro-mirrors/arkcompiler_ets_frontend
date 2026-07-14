@@ -140,6 +140,8 @@ protected:
     virtual void ParseGlobalImpl();
     static ExpressionParseFlags CarryExpressionParserFlag(ExpressionParseFlags origin, ExpressionParseFlags carry);
     static ExpressionParseFlags CarryPatternFlags(ExpressionParseFlags flags);
+    // ETS treats a next-line '(' as a new parenthesized expression rather than a continuation of the previous call.
+    static bool IsTokenOnDifferentLineThanExpressionEnd(const lexer::Token &token, const ir::Expression *expression);
 
     void LogIfPrivateIdent(ClassElementDescriptor *desc, const diagnostic::DiagnosticKind &diagnostic,
                            const util::DiagnosticMessageParams &diagnosticParams = {});
@@ -375,7 +377,7 @@ protected:
     void CheckAccessorPair(const ArenaVector<ir::AstNode *> &properties, const ir::Expression *propName,
                            ir::MethodDefinitionKind methodKind, ir::ModifierFlags access);
     ir::Identifier *ParseNamedImport(lexer::Token *importedToken);
-    void ConsumeSemicolon(ir::Statement *statement);
+    virtual void ConsumeSemicolon(ir::Statement *statement);
     ir::ExportAllDeclaration *ParseExportAllDeclaration(const lexer::SourcePosition &startLoc);
     ir::ExportNamedDeclaration *ParseExportNamedSpecifiers(const lexer::SourcePosition &startLoc);
     ir::Statement *ParseVariableDeclaration(VariableParsingFlags flags = VariableParsingFlags::NO_OPTS);
