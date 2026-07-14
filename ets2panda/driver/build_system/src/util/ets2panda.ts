@@ -154,6 +154,7 @@ export class Ets2panda {
     private readonly dumpPerf: boolean = false;
     /** Directory where per-module decl obfuscation name-cache JSON files are written (see --generate-decl:nameCachePath). */
     private readonly declFileNameCachePath?: string;
+    private readonly targetApiVersion?: number;
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -171,6 +172,7 @@ export class Ets2panda {
         this.debugBuild = (buildConfig.buildMode === BUILD_MODE.DEBUG);
         this.dumpPerf = buildConfig.dumpPerf ?? false;
         this.declFileNameCachePath = buildConfig.declFileNameCacheConfig?.nameCachePath;
+        this.targetApiVersion = buildConfig.compatibleSdkVersion;
     }
 
     public static getInstance(buildConfig?: BuildConfig): Ets2panda {
@@ -262,6 +264,10 @@ export class Ets2panda {
         if (this.debugBuild) {
             ets2pandaCmd.push('--debug-info');
             ets2pandaCmd.push('--opt-level=0');
+        }
+
+        if (this.targetApiVersion) {
+            ets2pandaCmd.push(`--target-api-version=${this.targetApiVersion}`);
         }
 
         ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');

@@ -263,6 +263,9 @@ void ETSParser::ParseInSimultMode()
     GetImportPathManager()->InitParseQueueForSimult();
 
     ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+    // Propagate target API version from options to program
+    Context()->parserProgram->SetTargetApiVersion(
+        static_cast<uint8_t>(Context()->config->options->GetTargetApiVersion()));
 
     SetProgram(Context()->parserProgram);
     GetContext().SetProgram(Context()->parserProgram);

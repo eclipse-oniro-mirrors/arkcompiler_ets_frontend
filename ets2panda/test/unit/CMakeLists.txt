@@ -34,6 +34,10 @@ add_subdirectory(debug_info)
 add_subdirectory(filepath)
 add_subdirectory(relative_file_path_alias)
 
+ets2panda_add_gtest(es2panda_api_version_tests
+    CPP_SOURCES api_version_test.cpp
+)
+
 ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp
 )
