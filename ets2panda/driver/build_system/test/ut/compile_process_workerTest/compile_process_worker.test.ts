@@ -149,7 +149,7 @@ describe('compile_process_worker', () => {
         const declCallback = ets2panda.compile.mock.calls[0][3];
         declCallback();
         expect((process as any).send).toHaveBeenCalledWith({
-            type: WorkerMessageType.DECL_GENERATED,
+            type: WorkerMessageType.ABC_DECL_GENERATED,
             data: { taskId: mockTaskId },
         });
     });
