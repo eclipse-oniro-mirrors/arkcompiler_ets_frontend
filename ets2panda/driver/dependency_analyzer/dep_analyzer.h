@@ -32,7 +32,7 @@ public:
     using FileDependenciesMap = std::unordered_map<std::string, std::unordered_set<std::string>>;
     using FileOutputMatching = std::unordered_map<std::string, std::string>;
 
-    int AnalyzeDeps(const DepAnalyzerArgs &args);
+    int AnalyzeDeps(const DepAnalyzerArgs &daArgs);
     int AnalyzeDeps(const std::string &exec, const std::string &arktsconfig, const std::vector<std::string> &fileList,
                     bool incremental = false);
     void DumpJson(std::string &outFilePath);
