@@ -19,8 +19,10 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/flat_file.ets" "${RFPA_DATA_DIR}/fla
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/flat_decl_file.d.ets" "${RFPA_DATA_DIR}/flat_decl_file.d.ets" COPYONLY)
 
 get_filename_component(ETS_STDLIB_JSON_PATH "${PANDA_ROOT}/plugins/ets/stdlib/std" ABSOLUTE)
+get_filename_component(ETS_ESCOMPAT_JSON_PATH "${PANDA_ROOT}/plugins/ets/stdlib/escompat" ABSOLUTE)
 # JSON / compiler accept forward slashes on all host platforms
 string(REPLACE "\\" "/" ETS_STDLIB_JSON_PATH "${ETS_STDLIB_JSON_PATH}")
+string(REPLACE "\\" "/" ETS_ESCOMPAT_JSON_PATH "${ETS_ESCOMPAT_JSON_PATH}")
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/arktsconfig.in.json"

@@ -16,7 +16,6 @@
 files: ['./source.ets']
 ---*/
 
-import { Error } from "std/core"
 import { isNaN, ObjectType, isFinite } from "./source.ets"
 
 function main(): void {

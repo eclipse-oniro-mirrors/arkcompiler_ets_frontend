@@ -5,6 +5,9 @@
       "std": [
         "@ETS_STDLIB_JSON_PATH@"
       ],
+      "escompat": [
+        "@ETS_ESCOMPAT_JSON_PATH@"
+      ],
       "@ut_alias": [
         "./src/mod"
       ],

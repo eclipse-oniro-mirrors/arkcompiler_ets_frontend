@@ -39,7 +39,7 @@ ani_env *GetAniEnv();
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
 // CC-OFFNXT(G.FUD.06) solid logic, ODR
-inline void ThrowEtsError(const std::string &message, const std::string &errorType = "std.core.Error")
+inline void ThrowEtsError(const std::string &message, const std::string &errorType = "escompat.Error")
 {
     ani_env *env = GetAniEnv();
 
@@ -47,7 +47,7 @@ inline void ThrowEtsError(const std::string &message, const std::string &errorTy
     ani_status status = env->FindClass(errorType.c_str(), &cls);
     ANI_FATAL_ERROR(status, std::string("Failed to find ").append(errorType).append(" class"));
     ani_method ctor {};
-    status = env->Class_FindMethod(cls, "<ctor>", "C{std.core.String}C{std.core.ErrorOptions}:", &ctor);
+    status = env->Class_FindMethod(cls, "<ctor>", "C{std.core.String}C{escompat.ErrorOptions}:", &ctor);
     ANI_FATAL_ERROR(status, std::string("Failed to find ").append(errorType).append(" constructor"));
 
     ani_string errMsg {};
