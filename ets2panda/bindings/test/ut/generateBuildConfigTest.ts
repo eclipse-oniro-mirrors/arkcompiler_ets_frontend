@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,12 @@ describe('generateBuildConfigs test', () => {
   test('test without dependency', () => {
     const buildConfigs = generateBuildConfigs(pathConfig, modules);
     expect(buildConfigs['entry'].dependencies).toStrictEqual([]);
+  });
+
+  test('test with non-directory module path', () => {
+    const filePath = __filename;
+    const buildConfigs = generateBuildConfigs(pathConfig, [{ name: 'entry', moduleType: 'har', srcPath: filePath }]);
+    expect(buildConfigs['entry'].compileFiles).toStrictEqual([]);
   });
 });
 
