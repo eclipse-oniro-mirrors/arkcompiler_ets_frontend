@@ -17,7 +17,8 @@ import * as path from 'path';
 import { BuildConfig, DependencyModuleConfig } from '../types';
 import {
     toUnixPath,
-    isFirstLineUseStatic
+    isFirstLineUseStatic,
+    isSubPathOf
 } from '../util/utils';
 import { ETS_1_1, ETS_1_1_INTEROP, LANGUAGE_VERSION, PANDA_STDLIB_PATH_FROM_SDK } from '../pre_define';
 
@@ -115,6 +116,16 @@ export class FileManager {
             }
             if (moduleInfo.language !== LANGUAGE_VERSION.ARKTS_HYBRID) {
                 return moduleInfo.language;
+            }
+            const declgenV2OutPath = moduleInfo.declgenV2OutPath ? toUnixPath(moduleInfo.declgenV2OutPath) : undefined;
+            if (declgenV2OutPath && isSubPathOf(path, declgenV2OutPath)) {
+                return LANGUAGE_VERSION.ARKTS_1_1;
+            }
+            if (moduleInfo.declgenV1OutPath && isSubPathOf(path, moduleInfo.declgenV1OutPath)) {
+                return LANGUAGE_VERSION.ARKTS_1_2;
+            }
+            if (moduleInfo.declgenBridgeCodePath && isSubPathOf(path, moduleInfo.declgenBridgeCodePath)) {
+                return LANGUAGE_VERSION.ARKTS_1_2;
             }
             /**
              * when process hybrid hsp or har we can't get info of 1.1,

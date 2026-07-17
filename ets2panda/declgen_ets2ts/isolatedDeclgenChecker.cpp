@@ -198,9 +198,11 @@ std::string IsolatedDeclgenChecker::ProcessIdentifierArgument(ir::Identifier *id
         return "";
     }
 
-    if (decl->IsLetOrConstDecl()) {
-        auto *typeAnnotationRef = decl->Node()->AsClassProperty()->TypeAnnotation()->AsETSTypeReference();
-        return GetETSTypeReferenceName(typeAnnotationRef);
+    if (decl->IsLetOrConstDecl() && decl->Node() != nullptr && decl->Node()->IsClassProperty()) {
+        auto *typeAnnotation = decl->Node()->AsClassProperty()->TypeAnnotation();
+        if (typeAnnotation != nullptr && typeAnnotation->IsETSTypeReference()) {
+            return GetETSTypeReferenceName(typeAnnotation->AsETSTypeReference());
+        }
     }
     LogError(diagnostic::FUNCTION_MUST_HAVE_AN_EXPLICIT_RETURN_TYPE_ANNOTATION_WITH_ISOLATED_DECL, {},
              returnStatement->Start());

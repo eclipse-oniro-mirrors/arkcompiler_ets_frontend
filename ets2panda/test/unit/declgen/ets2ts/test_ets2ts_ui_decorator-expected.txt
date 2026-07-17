@@ -1,4 +1,6 @@
 import st from "@ohos.lang.interop";
+@Builder
+export declare function customBuilder(): void;
 @Component
 export declare class UIComponent {
     @State

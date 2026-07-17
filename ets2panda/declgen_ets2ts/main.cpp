@@ -88,6 +88,7 @@ static int Run(int argc, const char **argv)
     const auto *impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
     auto *cfg = impl->CreateConfig(newArgc, newArgv);
     if (cfg == nullptr) {
+        delete[] newArgv;
         return 1;
     }
     auto *cfgImpl = reinterpret_cast<ark::es2panda::public_lib::ConfigImpl *>(cfg);

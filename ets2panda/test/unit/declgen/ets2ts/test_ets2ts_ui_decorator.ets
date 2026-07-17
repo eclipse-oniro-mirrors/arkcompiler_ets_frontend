@@ -42,3 +42,7 @@ export declare class UIComponent1 {
     @Prop
     userName1: string;
 }
+
+@Builder
+export function customBuilder(): void {
+}
