@@ -27,7 +27,26 @@
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
-static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::AssignmentExpression *assignmentExpression)
+static bool IsGetSetExpression(const ir::MemberExpression *memberExpr) noexcept
+{
+    return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
+}
+
+static std::optional<checker::ETSTupleType const *> IsTupleAccess(const ir::MemberExpression *memberExpr) noexcept
+{
+    if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+        auto *type = memberExpr->Object()->TsType();
+        while (type->IsETSTypeAliasType()) {
+            type = type->AsETSTypeAliasType()->GetTargetType();
+        }
+        if (type->IsETSTupleType()) {
+            return std::make_optional(type->AsETSTupleType());
+        }
+    }
+    return std::nullopt;
+}
+
+static ir::AstNode *ProcessObjectSetAccess(public_lib::Context *ctx, ir::AssignmentExpression *assignmentExpression)
 {
     //  Note! We assume that parser and checker phase nave been already passed correctly, thus the class has
     //  required accessible index method[s] and all the types are properly resolved.
@@ -42,17 +61,18 @@ static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::Assignme
     ir::Expression *loweringResult = parser->CreateFormattedExpression(
         CALL_EXPRESSION, memberExpression->Object(), memberExpression->Property(), assignmentExpression->Right());
 
-    ES2PANDA_ASSERT(loweringResult != nullptr);
+    loweringResult->AddModifier(ir::ModifierFlags::SETTER);
     loweringResult->SetParent(assignmentExpression->Parent());
-    loweringResult->SetRange(assignmentExpression->Range());
+    SetSourceRangesRecursively(loweringResult, assignmentExpression->Range());
+
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
                                                                   NearestScope(assignmentExpression->Parent()));
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
-    loweringResult->AddModifier(ir::ModifierFlags::SETTER);
+
     return loweringResult;
 }
 
-static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberExpression *memberExpression)
+static ir::AstNode *ProcessObjectGetAccess(public_lib::Context *ctx, ir::MemberExpression *memberExpression)
 {
     auto *const parser = ctx->parser->AsETSParser();
     auto *const checker = ctx->GetChecker()->AsETSChecker();
@@ -65,11 +85,15 @@ static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberEx
     // Parse ArkTS code string and create and process corresponding AST node(s)
     auto *const loweringResult =
         parser->CreateFormattedExpression(CALL_EXPRESSION, memberExpression->Object(), memberExpression->Property());
+
     loweringResult->AddModifier(ir::ModifierFlags::GETTER);
     loweringResult->SetParent(memberExpression->Parent());
-    loweringResult->SetRange(memberExpression->Range());
+    SetSourceRangesRecursively(loweringResult, memberExpression->Range());
 
+    auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
+                                                                  NearestScope(memberExpression->Parent()));
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
+
     return loweringResult;
 }
 
@@ -137,9 +161,8 @@ static ir::AstNode *ProcessTupleGetAccess(public_lib::Context *ctx, ir::MemberEx
     }
 
     loweringResult = ctx->parser->AsETSParser()->CreateFormattedExpression(code, nodes);
-    ;
     loweringResult->SetParent(memberExpression->Parent());
-    loweringResult->SetRange(memberExpression->Property()->Range());
+    SetSourceRangesRecursively(loweringResult, memberExpression->Property()->Range());
 
     auto *const varbinder = checker->VarBinder()->AsETSBinder();
     auto *scope = NearestScope(memberExpression->Parent());
@@ -149,57 +172,46 @@ static ir::AstNode *ProcessTupleGetAccess(public_lib::Context *ctx, ir::MemberEx
     return loweringResult;
 }
 
+static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::AstNode *ast)
+{
+    if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
+        const auto *const memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
+        if (IsGetSetExpression(memberExpr)) {
+            return ProcessObjectSetAccess(ctx, ast->AsAssignmentExpression());
+        }
+
+        if (IsTupleAccess(memberExpr)) {
+            return ProcessTupleSetAccess(ctx, ast->AsAssignmentExpression());
+        }
+    }
+    return ast;
+}
+
+static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::AstNode *ast)
+{
+    if (ast->IsMemberExpression()) {
+        auto *const memberExpr = ast->AsMemberExpression();
+        if (IsGetSetExpression(memberExpr)) {
+            return ProcessObjectGetAccess(ctx, memberExpr);
+        }
+
+        if (auto type = IsTupleAccess(memberExpr); type.has_value()) {
+            return ProcessTupleGetAccess(ctx, memberExpr, *type);
+        }
+    }
+    return ast;
+}
+
 bool ObjectIndexLowering::PerformForProgram(parser::Program *program)
 {
-    const auto isGetSetExpression = [](const ir::MemberExpression *const memberExpr) {
-        return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
+    std::function<ir::AstNode *(ir::AstNode *)> transform = [ctx = Context(), name = Name(),
+                                                             &transform](ir::AstNode *ast) {
+        auto *const lowered = ProcessIndexSetAccess(ctx, ast);
+        lowered->TransformChildren(transform, name);
+        return ProcessIndexGetAccess(ctx, lowered);
     };
 
-    const auto isTupleAccess =
-        [](const ir::MemberExpression *const memberExpr) -> std::optional<checker::ETSTupleType const *> {
-        if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
-            auto *type = memberExpr->Object()->TsType();
-            while (type->IsETSTypeAliasType()) {
-                type = type->AsETSTypeAliasType()->GetTargetType();
-            }
-            if (type->IsETSTupleType()) {
-                return std::make_optional(type->AsETSTupleType());
-            }
-        }
-        return std::nullopt;
-    };
-
-    program->Ast()->TransformChildrenRecursively(
-        [ctx = Context(), &isGetSetExpression, &isTupleAccess](ir::AstNode *const ast) {
-            if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
-                const auto *const memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
-                if (isGetSetExpression(memberExpr)) {
-                    return ProcessIndexSetAccess(ctx, ast->AsAssignmentExpression());
-                }
-
-                if (isTupleAccess(memberExpr)) {
-                    return ProcessTupleSetAccess(ctx, ast->AsAssignmentExpression());
-                }
-            }
-            return ast;
-        },
-        Name());
-
-    program->Ast()->TransformChildrenRecursively(
-        [ctx = Context(), &isGetSetExpression, &isTupleAccess](ir::AstNode *const ast) {
-            if (ast->IsMemberExpression()) {
-                auto *const memberExpr = ast->AsMemberExpression();
-                if (isGetSetExpression(memberExpr)) {
-                    return ProcessIndexGetAccess(ctx, memberExpr);
-                }
-
-                if (auto type = isTupleAccess(memberExpr); type.has_value()) {
-                    return ProcessTupleGetAccess(ctx, memberExpr, *type);
-                }
-            }
-            return ast;
-        },
-        Name());
+    program->Ast()->TransformChildren(transform, Name());
 
     return true;
 }

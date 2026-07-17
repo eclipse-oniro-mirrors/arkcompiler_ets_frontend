@@ -15,32 +15,9 @@
 
 #include "overrideBridgesLowering.h"
 
-#include <algorithm>
-#include <cstddef>
-#include <functional>
-#include <ostream>
-#include <sstream>
-#include <string_view>
-#include <utility>
-#include <vector>
-
-#include "checker/ETSchecker.h"
-#include "checker/types/ets/etsFunctionType.h"
-#include "checker/types/ets/etsObjectType.h"
-#include "checker/types/signature.h"
-#include "checker/types/type.h"
-#include "checker/types/typeRelation.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
-#include "ir/astNode.h"
-#include "ir/base/classDefinition.h"
-#include "ir/base/methodDefinition.h"
-#include "libarkbase/utils/logger.h"
-#include "parser/ETSparser.h"
-#include "util/eheap.h"
-#include "util/es2pandaMacros.h"
-#include "util/ustring.h"
-#include "varbinder/ETSBinder.h"
-#include "varbinder/variable.h"
+#include "compiler/lowering/util-inl.h"
+#include "compiler/lowering/ets/genericBridgesLowering.h"
 
 namespace ark::es2panda::compiler {
 
@@ -262,29 +239,32 @@ private:
 };
 
 using MethodDefinitionHandler = std::function<bool(ir::MethodDefinition *)>;
+static constexpr char const LAMBDA_PREFIX[] = "lambda_invoke-";
 
-// Iterate over non-static, non-private instance methods in class definition
-void ForEachByMethod(ir::ClassDefinition *classDefinition, ArenaAllocator *allocator, MethodDefinitionHandler func)
+// Collect non-static, non-private, non-synthetic instance methods in class definition
+std::vector<ir::MethodDefinition *> CollectMethods(ir::ClassDefinition *classDefinition)
 {
     // Copy method pointers to avoid iterator invalidation when bridges are added
-    ArenaVector<ir::MethodDefinition *> methods(allocator->Adapter());
+    std::vector<ir::MethodDefinition *> methods {};
     for (auto *member : classDefinition->Body()) {
         if (!member->IsMethodDefinition()) {
             continue;
         }
+
         auto *method = member->AsMethodDefinition();
         if ((!method->IsMethod() && !method->IsGetter() && !method->IsSetter()) || method->IsStatic() ||
             method->IsPrivate()) {
             continue;
         }
-        methods.push_back(method);
-    }
 
-    for (auto *method : methods) {
-        if (func(method)) {
-            return;
+        auto const &name = method->Id()->Name();
+        if (name.Utf8().find(LAMBDA_PREFIX) != std::string_view::npos) {
+            continue;
         }
+
+        methods.emplace_back(method);
     }
+    return methods;
 }
 
 // Builder for generating bridge method signature and body
@@ -731,13 +711,11 @@ void ProcessFunction(Locator const &locator, ir::ClassDefinition *classDefinitio
 }
 
 // Process a single method definition for override bridge creation
-void Process(Locator const &locator, ir::ClassDefinition *classDefinition, ir::MethodDefinition *method)
+void ProcessMethod(Locator const &locator, ir::ClassDefinition *classDefinition, ir::MethodDefinition *method)
 {
-    ES2PANDA_ASSERT(classDefinition != nullptr);
     ES2PANDA_ASSERT(classDefinition->TsType() != nullptr);
     ES2PANDA_ASSERT(classDefinition->TsType()->IsETSObjectType());
 
-    ES2PANDA_ASSERT(method != nullptr);
     ES2PANDA_ASSERT(method->TsType() != nullptr);
     ES2PANDA_ASSERT(method->TsType()->IsETSFunctionType());
 
@@ -747,30 +725,31 @@ void Process(Locator const &locator, ir::ClassDefinition *classDefinition, ir::M
 
 // Process all methods in a class definition for override bridge creation
 // Returns the class definition for chaining
-ir::ClassDefinition *Process(Locator const &locator, ir::ClassDefinition *classDefinition)
+ir::ClassDefinition *Process(Locator const &locator, ir::ClassDefinition *classDefinition,
+                             GenericBridgesPhase const &genericBridges)
 {
-    ForEachByMethod(classDefinition, locator.Allocator(), [&locator, classDefinition](ir::MethodDefinition *method) {
-        auto const &name = method->Id()->Name();
-        if (name.Utf8().find("lambda_invoke-") != std::string_view::npos) {
-            return false;
-        }
-        Process(locator, classDefinition, method);
-        return false;
-    });
+    genericBridges.ProcessClassDefinition(classDefinition);
 
+    auto methods = CollectMethods(classDefinition);
+    if (!methods.empty()) {
+        std::for_each(methods.begin(), methods.end(), [&locator, classDefinition](ir::MethodDefinition *method) {
+            ProcessMethod(locator, classDefinition, method);
+        });
+    }
     return classDefinition;
 }
-
 }  // namespace
 
 bool OverrideBridgesPhase::PerformForProgram(parser::Program *program)
 {
     Locator const locator(Context());
-    program->Ast()->TransformChildrenRecursively(
-        // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [&locator](ir::AstNode *node) -> ir::AstNode * {
-            if (node->IsClassDefinition()) {
-                return Process(locator, node->AsClassDefinition());
+    GenericBridgesPhase const genericBridges {Context()};
+
+    TransformRecords(
+        program->Ast(),
+        [&locator, &genericBridges](ir::AstNode *node) {
+            if (node->IsClassDeclaration()) {
+                Process(locator, node->AsClassDeclaration()->Definition(), genericBridges);
             }
             return node;
         },
@@ -778,5 +757,4 @@ bool OverrideBridgesPhase::PerformForProgram(parser::Program *program)
 
     return true;
 }
-
 }  // namespace ark::es2panda::compiler

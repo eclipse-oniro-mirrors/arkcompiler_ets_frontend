@@ -16,18 +16,21 @@
 #ifndef ES2PANDA_GENERIC_BRIDGES_LOWERING_H
 #define ES2PANDA_GENERIC_BRIDGES_LOWERING_H
 
-#include "compiler/lowering/phase.h"
+#include "public/public.h"
 
 namespace ark::es2panda::compiler {
 
-class GenericBridgesPhase : public PhaseForProgramsWithBodies_LEGACY {
+class GenericBridgesPhase final {
 public:
-    std::string_view Name() const override
-    {
-        return "CreateGenericBridges";
-    }
+    virtual ~GenericBridgesPhase() = default;
+    GenericBridgesPhase() = delete;
 
-    bool PerformForProgram(parser::Program *program) override;
+    NO_COPY_SEMANTIC(GenericBridgesPhase);
+    NO_MOVE_SEMANTIC(GenericBridgesPhase);
+
+    explicit GenericBridgesPhase(public_lib::Context *ctx) : ctx_(ctx) {}
+
+    void ProcessClassDefinition(ir::ClassDefinition *classDefinition) const;
 
 private:
     struct Substitutions {
@@ -40,15 +43,10 @@ private:
                                           const checker::ETSObjectType *superType,
                                           const ArenaVector<checker::Type *> &typeParameters) const;
 
-    ir::ClassDefinition *ProcessClassDefinition(ir::ClassDefinition *classDefinition) const;
-
-    void ProcessInterfaces(ir::ClassDefinition *classDefinition) const;
+    void ProcessInterfaces(ir::ClassDefinition const *classDefinition, checker::ETSObjectType const *classType) const;
 
     Substitutions GetSubstitutions(checker::ETSObjectType const *const objectType,
                                    ArenaVector<checker::Type *> const &typeParameters) const;
-
-    void CreateGenericBridges(ir::ClassDefinition const *classDefinition, Substitutions &substitutions,
-                              ArenaVector<ir::AstNode *> const &items) const;
 
     void MaybeAddGenericBridges(ir::ClassDefinition const *classDefinition, ir::MethodDefinition *baseMethod,
                                 ir::MethodDefinition *derivedMethod, Substitutions const &substitutions) const;
@@ -77,6 +75,13 @@ private:
                                 std::vector<ir::AstNode *> &typeNodes) const noexcept;
 
     ir::OpaqueTypeNode *AllocOpaqueTypeNode(checker::Type const *type) const noexcept;
+
+    auto *Context() const noexcept
+    {
+        return ctx_;
+    }
+
+    public_lib::Context *ctx_ {nullptr};
 };
 }  // namespace ark::es2panda::compiler
 

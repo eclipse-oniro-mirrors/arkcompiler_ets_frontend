@@ -43,7 +43,6 @@
 #include "compiler/lowering/ets/exportAnonymousConst.h"
 #include "compiler/lowering/ets/expressionLambdaLowering.h"
 #include "compiler/lowering/ets/extensionAccessorLowering.h"
-#include "compiler/lowering/ets/genericBridgesLowering.h"
 #include "compiler/lowering/ets/initModuleLowering.h"
 #include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
 #include "compiler/lowering/ets/instantiateMethodsPhase.h"
@@ -182,7 +181,6 @@ std::vector<Phase *> GetETSPhaseList()
         new ConstructorInitLowering,
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
         new ObjectIndexLowering,
-        new GenericBridgesPhase,
         new OverrideBridgesPhase,
         new TypeFromLowering,
         new ClassFromExpressionLowering,

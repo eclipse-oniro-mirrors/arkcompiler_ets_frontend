@@ -17,7 +17,6 @@
 
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
-#include <sstream>
 
 namespace ark::es2panda::compiler {
 
@@ -166,7 +165,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
                                            checker::Signature const *baseSignature,
                                            ir::ScriptFunction *const derivedFunction) const
 {
-    auto *parser = Context()->parser->AsETSParser();
+    auto *const parser = Context()->parser->AsETSParser();
     std::vector<ir::AstNode *> typeNodes {};
     ES2PANDA_ASSERT(baseSignature);
     typeNodes.reserve(2U * baseSignature->Params().size() + 2U);
@@ -295,69 +294,43 @@ void GenericBridgesPhase::MaybeAddGenericBridges(ir::ClassDefinition const *cons
     }
 }
 
+static constexpr char const LAMBDA_PREFIX[] = "lambda_invoke-";
+
 static ir::MethodDefinition *FindBridgeCandidate(ir::ClassDefinition const *const classDefinition,
                                                  ir::MethodDefinition *baseMethod)
 {
-    auto const &classBody = classDefinition->Body();
-
     // Skip `static`, `final` and special methods...
     bool const isSpecialMethodKind =
         (baseMethod->Kind() != ir::MethodDefinitionKind::METHOD &&
          baseMethod->Kind() != ir::MethodDefinitionKind::GET && baseMethod->Kind() != ir::MethodDefinitionKind::SET);
     if (isSpecialMethodKind || baseMethod->IsStatic() || baseMethod->IsFinal() ||
-        baseMethod->Id()->Name().Utf8().find("lambda_invoke-") != std::string_view::npos) {
+        baseMethod->Id()->Name().Utf8().find(LAMBDA_PREFIX) != std::string_view::npos) {
         return nullptr;
     }
 
     // Check if the derived class has any possible overrides of this method
-    auto isOverridePred = [&name = baseMethod->Id()->Name()](ir::AstNode const *node) -> bool {
+    auto const isOverridePred = [&name = baseMethod->Id()->Name()](ir::AstNode const *node) -> bool {
         return node->IsMethodDefinition() && !node->IsStatic() && node->AsMethodDefinition()->Id()->Name() == name;
     };
+
+    auto const &classBody = classDefinition->Body();
     auto it = std::find_if(classBody.cbegin(), classBody.end(), isOverridePred);
     return it == classBody.cend() ? nullptr : (*it)->AsMethodDefinition();
 }
 
-static bool HasBridgeCandidates(ir::ClassDefinition const *const classDefinition,
-                                ArenaVector<ir::AstNode *> const &items)
+static std::vector<std::pair<ir::MethodDefinition *, ir::MethodDefinition *>> CollectBridgeCandidates(
+    ir::ClassDefinition const *const classDefinition, ArenaVector<ir::AstNode *> const &items)
 {
+    std::vector<std::pair<ir::MethodDefinition *, ir::MethodDefinition *>> methods {};
     for (auto *item : items) {
         if (item->IsMethodDefinition()) {
-            auto method = item->AsMethodDefinition();
-            auto derivedMethod = FindBridgeCandidate(classDefinition, method);
-            if (derivedMethod != nullptr) {
-                return true;
+            auto *baseMethod = item->AsMethodDefinition();
+            if (auto *derivedMethod = FindBridgeCandidate(classDefinition, baseMethod); derivedMethod != nullptr) {
+                methods.emplace_back(baseMethod, derivedMethod);
             }
         }
     }
-    return false;
-}
-
-void GenericBridgesPhase::CreateGenericBridges(ir::ClassDefinition const *const classDefinition,
-                                               Substitutions &substitutions,
-                                               ArenaVector<ir::AstNode *> const &items) const
-{
-    //  Collect type parameters defaults/constraints in the derived class
-    auto *checker = Context()->GetChecker()->AsETSChecker();
-    substitutions.derivedConstraints = checker::Substitution {};
-
-    auto const *const classType = classDefinition->TsType()->AsETSObjectType();
-    auto const &typeParameters = classType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
-    for (auto *const parameter : typeParameters) {
-        auto *const typeParameter = parameter->AsETSTypeParameter();
-        checker->EmplaceSubstituted(&substitutions.derivedConstraints, typeParameter,
-                                    typeParameter->GetConstraintType());
-    }
-
-    for (auto *item : items) {
-        if (item->IsMethodDefinition()) {
-            // Skip `static`, `final` and special methods...
-            auto *const method = item->AsMethodDefinition();
-            auto derivedMethod = FindBridgeCandidate(classDefinition, method);
-            if (derivedMethod != nullptr) {
-                MaybeAddGenericBridges(classDefinition, method, derivedMethod, substitutions);
-            }
-        }
-    }
+    return methods;
 }
 
 GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
@@ -384,36 +357,58 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
     return substitutions;
 }
 
-static std::unordered_set<checker::ETSObjectType *> CollectInterfacesTransitive(checker::ETSObjectType *type)
+static std::unordered_set<checker::ETSObjectType *> CollectInterfacesTransitive(
+    checker::ETSObjectType const *const type)
 {
-    std::unordered_set<checker::ETSObjectType *> collected;
+    std::unordered_set<checker::ETSObjectType *> collected {};
 
-    auto traverse = [&collected](auto &&self, checker::ETSObjectType *t) {
-        if (!collected.insert(t).second) {
-            return;
+    auto const traverse = [&collected](auto &&self, checker::ETSObjectType *t) {
+        auto const &tp = t->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
+        if (!tp.empty()) {
+            if (!collected.insert(t).second) {
+                return;
+            }
         }
+
         for (auto itf : t->Interfaces()) {
             self(self, itf);
         }
     };
+
     for (auto itf : type->Interfaces()) {
         traverse(traverse, itf);
     }
+
     return collected;
 }
 
-void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefinition) const
+void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition const *const classDefinition,
+                                            checker::ETSObjectType const *const classType) const
 {
-    auto interfaces = CollectInterfacesTransitive(classDefinition->TsType()->AsETSObjectType());
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
+
+    auto const interfaces = CollectInterfacesTransitive(classType);
 
     for (auto const *interfaceType : interfaces) {
         auto const &typeParameters = interfaceType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
-        if (!typeParameters.empty()) {
-            auto const &interfaceBody = interfaceType->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
-            if (HasBridgeCandidates(classDefinition, interfaceBody)) {
-                Substitutions substitutions = GetSubstitutions(interfaceType, typeParameters);
-                ES2PANDA_ASSERT(interfaceType->GetDeclNode()->IsTSInterfaceDeclaration());
-                CreateGenericBridges(classDefinition, substitutions, interfaceBody);
+        ES2PANDA_ASSERT(!typeParameters.empty());
+
+        ES2PANDA_ASSERT(interfaceType->GetDeclNode()->IsTSInterfaceDeclaration());
+        auto const &interfaceBody = interfaceType->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
+
+        if (auto const methods = CollectBridgeCandidates(classDefinition, interfaceBody); !methods.empty()) {
+            Substitutions substitutions = GetSubstitutions(interfaceType, typeParameters);
+            substitutions.derivedConstraints = checker::Substitution {};
+
+            auto const &classParameters = classType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
+            for (auto *const parameter : classParameters) {
+                auto *const typeParameter = parameter->AsETSTypeParameter();
+                checker->EmplaceSubstituted(&substitutions.derivedConstraints, typeParameter,
+                                            typeParameter->GetConstraintType());
+            }
+
+            for (auto [baseMethod, derivedMethod] : methods) {
+                MaybeAddGenericBridges(classDefinition, baseMethod, derivedMethod, substitutions);
             }
         }
     }
@@ -423,6 +418,8 @@ void GenericBridgesPhase::ProcessClassWithGenericSupertype(const ir::ClassDefini
                                                            const checker::ETSObjectType *const superType,
                                                            const ArenaVector<checker::Type *> &typeParameters) const
 {
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
+
     //  Check if the class derived from base generic class has either explicit class type substitutions
     //  or type parameters with narrowing constraints.
     Substitutions substitutions = GetSubstitutions(superType, typeParameters);
@@ -431,27 +428,37 @@ void GenericBridgesPhase::ProcessClassWithGenericSupertype(const ir::ClassDefini
         return;
     }
 
+    //  Check superclass interfaces.
+    ProcessInterfaces(classDefinition, superType);
+
     // If it has, then probably the generic bridges should be created.
     auto const &superClassBody = superType->GetDeclNode()->AsClassDefinition()->Body();
-    CreateGenericBridges(classDefinition, substitutions, superClassBody);
-    const ArenaVector<checker::ETSObjectType *> &interfaces = superType->Interfaces();
-    for (const checker::ETSObjectType *const interface : interfaces) {
-        Substitutions interfaceSubstitutions =
-            GetSubstitutions(interface, interface->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments());
-        const auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
-        CreateGenericBridges(classDefinition, interfaceSubstitutions, interfaceBody);
+    if (auto const methods = CollectBridgeCandidates(classDefinition, superClassBody); !methods.empty()) {
+        substitutions.derivedConstraints = checker::Substitution {};
+        auto const *const classType = classDefinition->TsType()->AsETSObjectType();
+
+        auto const &classParameters = classType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
+        for (auto *const parameter : classParameters) {
+            auto *const typeParameter = parameter->AsETSTypeParameter();
+            checker->EmplaceSubstituted(&substitutions.derivedConstraints, typeParameter,
+                                        typeParameter->GetConstraintType());
+        }
+
+        for (auto [baseMethod, derivedMethod] : methods) {
+            MaybeAddGenericBridges(classDefinition, baseMethod, derivedMethod, substitutions);
+        }
     }
 }
 
-ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefinition *const classDefinition) const
+void GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefinition *const classDefinition) const
 {
     //  Check class interfaces.
-    ProcessInterfaces(classDefinition);
+    ProcessInterfaces(classDefinition, classDefinition->TsType()->AsETSObjectType());
 
     //  Check if the base class is a generic class.
     if (classDefinition->Super() == nullptr || classDefinition->Super()->TsType() == nullptr ||
         !classDefinition->Super()->TsType()->IsETSObjectType()) {
-        return classDefinition;
+        return;
     }
 
     const auto *superType = classDefinition->Super()->TsType()->AsETSObjectType();
@@ -464,22 +471,6 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
         superType = superType->SuperType();
     }
 
-    return classDefinition;
+    return;
 }
-
-bool GenericBridgesPhase::PerformForProgram(parser::Program *program)
-{
-    program->Ast()->TransformChildrenRecursively(
-        // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [this](ir::AstNode *ast) -> ir::AstNode * {
-            if (ast->IsClassDefinition()) {
-                return ProcessClassDefinition(ast->AsClassDefinition());
-            }
-            return ast;
-        },
-        Name());
-
-    return true;
-}
-
 }  // namespace ark::es2panda::compiler
