@@ -357,6 +357,28 @@ extern "C" __attribute__((unused)) void InvalidateFileCache(es2panda_GlobalConte
     AddFileCache(globalContext, fileName);
 }
 
+static parser::Program *FindResolvedProgramForFilePath(util::ImportPathManager *importPathManager,
+                                                       std::string_view fileName)
+{
+    util::ImportInfo importInfo {*importPathManager, fileName, Language::Id::ETS};
+    return importPathManager->SearchResolved(importInfo);
+}
+
+static void PrepareIncrementalExportImportCaches(Context *ctx, parser::Program *program, bool programChanged)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    checker->PrepareExportImportCacheForIncrementalCheck(program, programChanged);
+    if (!programChanged || program == nullptr) {
+        return;
+    }
+
+    auto *importPathManager = ctx->parser->GetImportPathManager();
+    for (const auto &dependant : importPathManager->CollectReverseDependencies(program->AbsoluteName().Utf8())) {
+        checker->PrepareExportImportCacheForIncrementalCheck(
+            FindResolvedProgramForFilePath(importPathManager, dependant), true);
+    }
+}
+
 static void ResetContextAndProgram(Context *ctx, parser::Program *program)
 {
     ctx->phaseManager->Reset();
@@ -364,6 +386,7 @@ static void ResetContextAndProgram(Context *ctx, parser::Program *program)
     ctx->state = ES2PANDA_STATE_NEW;
     delete ctx->sourceFile;
     ctx->sourceFile = nullptr;
+    PrepareIncrementalExportImportCaches(ctx, program, true);
     program->Clear();
 }
 
@@ -417,6 +440,7 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
         delete ctx->sourceFile;
         ctx->sourceFile = new SourceFile(ctx->sourceFileName, ctx->input, ctx->config->options->IsModule());
         AddDirectDependenciesToExternalSourcesForIncremental(ctx, targetProgram);
+        PrepareIncrementalExportImportCaches(ctx, targetProgram, false);
         return 1;
     }
 

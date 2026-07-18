@@ -28,6 +28,8 @@
 #include "util/diagnosticEngine.h"
 #include "parser/program/ImportCache.h"
 
+#include <unordered_set>
+
 namespace ark::panda_file {
 class File;
 }  // namespace ark::panda_file
@@ -332,14 +334,16 @@ public:
         return fileDependencies_;
     }
 
-    auto &GetFileDependencies()
-    {
-        return fileDependencies_;
-    }
+    std::unordered_set<std::string> CollectReverseDependencies(std::string_view root) const;
+    void RemoveFileDependencies(std::string_view file);
+    void RemoveProgramsFromFileDependencies(const std::unordered_set<std::string> &files);
 
     void AddFileDependencies(std::string_view file, std::string_view depFile)
     {
-        fileDependencies_[ArenaString {file}].emplace(depFile);
+        auto fileKey = ArenaString {file};
+        auto depKey = ArenaString {depFile};
+        fileDependencies_[fileKey].emplace(depKey);
+        reverseFileDependencies_[depKey].emplace(fileKey);
     }
 
     const auto &GetOutputMatching() const
@@ -411,6 +415,8 @@ private:
     parser::Program *GetGlobalProgram() const;
 
     DiagnosticEngine *DE() const;
+    void RemoveDependenciesToFiles(const std::unordered_set<std::string_view> &files);
+    void RemoveReverseFileDependency(const ArenaString &dependency, const ArenaString &file);
 
 private:
     public_lib::Context &ctx_;
@@ -425,6 +431,7 @@ private:
     std::unordered_set<std::string> processedAbcFiles_;
 
     FileDependenciesMap fileDependencies_;
+    FileDependenciesMap reverseFileDependencies_;
     FileOutputMatching outputMatching_;
 };
 

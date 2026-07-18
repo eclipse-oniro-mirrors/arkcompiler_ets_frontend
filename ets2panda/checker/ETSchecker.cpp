@@ -333,14 +333,36 @@ void ETSChecker::InitializeBuiltin(varbinder::Variable *var, const util::StringV
     GetGlobalTypesHolder()->InitializeBuiltin(name, type);
 }
 
+void ETSChecker::InvalidateExportImportCacheForProgram(parser::Program *program)
+{
+    if (program == nullptr) {
+        return;
+    }
+
+    resolvedExportCaches_.erase(program);
+    exportClosureResolver_->InvalidateProgram(program);
+}
+
+void ETSChecker::PrepareExportImportCacheForIncrementalCheck(parser::Program *program, bool programChanged)
+{
+    if (programChanged) {
+        InvalidateExportImportCacheForProgram(program);
+    }
+    skipCacheClear_ = true;
+}
+
 bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Options &options)
 {
     if (options.IsParseOnly()) {
         return false;
     }
     permitRelaxedAny_ = options.IsPermitRelaxedAny();
-    resolvedExportCaches_.clear();
-    exportClosureResolver_->Clear();
+    if (skipCacheClear_) {
+        skipCacheClear_ = false;
+    } else {
+        resolvedExportCaches_.clear();
+        exportClosureResolver_->Clear();
+    }
 
     auto *etsBinder = varbinder->AsETSBinder();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

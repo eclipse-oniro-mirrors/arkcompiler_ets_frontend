@@ -907,6 +907,8 @@ public:
         apparentTypes_.clear();
     }
 
+    void PrepareExportImportCacheForIncrementalCheck(parser::Program *program, bool programChanged);
+
     void CleanUp() override
     {
         Checker::CleanUp();
@@ -923,6 +925,7 @@ public:
         resolvingImportBindings_.clear();
         resolvedExportCaches_.clear();
         exportClosureResolver_->Clear();
+        skipCacheClear_ = false;
     }
 
     // This helper finds the intersection of two callSignatures sets
@@ -979,6 +982,7 @@ private:
     void SetUpTypeParameterConstraint(ir::TSTypeParameter *param);
     void CheckProgram(parser::Program *program, bool runAnalysis = false);
     void CheckWarnings(parser::Program *program, const util::Options &options);
+    void InvalidateExportImportCacheForProgram(parser::Program *program);
 
     template <typename... Args>
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
@@ -1035,6 +1039,7 @@ private:
     std::unordered_set<ETSChecker *> readdedChecker_;
     std::unordered_set<varbinder::LocalVariable *> resolvingImportBindings_;
     bool permitRelaxedAny_ {false};
+    bool skipCacheClear_ {false};
     std::unordered_map<std::string, checker::ETSStringType *> stringLiteralTypes_;
     ArenaMap<parser::Program *, ResolvedExportCache *> resolvedExportCaches_;
     ExportClosureResolver *exportClosureResolver_ {nullptr};

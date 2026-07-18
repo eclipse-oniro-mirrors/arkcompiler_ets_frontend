@@ -41,8 +41,11 @@
 #include <algorithm>
 #include <cstdio>
 #include <memory>
+#include <queue>
 #include <string_view>
+#include <unordered_map>
 #include <utility>
+#include <vector>
 
 #ifdef PANDA_TARGET_WINDOWS
 #include <io.h>
@@ -510,9 +513,94 @@ void ImportPathManager::PrepareParseQueueForProgram(parser::Program *program)
 {
     ES2PANDA_ASSERT(program != nullptr);
     ClearParseList();
-    GetFileDependencies().erase(ArenaString {program->AbsoluteName().Utf8()});
+    RemoveFileDependencies(program->AbsoluteName().Utf8());
     parseQueue_.emplace_back(ParseInfo {false, program});
     srcPos_.SetProgram(program);
+}
+
+std::unordered_set<std::string> ImportPathManager::CollectReverseDependencies(std::string_view root) const
+{
+    std::unordered_set<std::string> visited {};
+    visited.reserve(reverseFileDependencies_.size());
+    std::queue<std::string_view> queue {};
+    queue.emplace(root);
+    while (!queue.empty()) {
+        auto current = queue.front();
+        queue.pop();
+        auto it = reverseFileDependencies_.find(ArenaString {current});
+        if (it == reverseFileDependencies_.end()) {
+            continue;
+        }
+        for (const auto &dependant : it->second) {
+            auto dependantView = std::string_view {dependant.data(), dependant.size()};
+            if (dependantView == root || !visited.emplace(dependantView).second) {
+                continue;
+            }
+            queue.push(dependantView);
+        }
+    }
+    return visited;
+}
+
+void ImportPathManager::RemoveFileDependencies(std::string_view file)
+{
+    auto fileKey = ArenaString {file};
+    auto depsIt = fileDependencies_.find(fileKey);
+    if (depsIt == fileDependencies_.end()) {
+        return;
+    }
+
+    for (const auto &dep : depsIt->second) {
+        RemoveReverseFileDependency(dep, fileKey);
+    }
+    fileDependencies_.erase(depsIt);
+}
+
+void ImportPathManager::RemoveReverseFileDependency(const ArenaString &dependency, const ArenaString &file)
+{
+    auto reverseIt = reverseFileDependencies_.find(dependency);
+    if (reverseIt == reverseFileDependencies_.end()) {
+        return;
+    }
+
+    reverseIt->second.erase(file);
+    if (reverseIt->second.empty()) {
+        reverseFileDependencies_.erase(reverseIt);
+    }
+}
+
+void ImportPathManager::RemoveProgramsFromFileDependencies(const std::unordered_set<std::string> &files)
+{
+    if (files.empty()) {
+        return;
+    }
+
+    std::unordered_set<std::string_view> deletedFiles {};
+    deletedFiles.reserve(files.size());
+    for (const auto &file : files) {
+        if (file.empty()) {
+            continue;
+        }
+        deletedFiles.insert(file);
+        RemoveFileDependencies(file);
+    }
+
+    RemoveDependenciesToFiles(deletedFiles);
+}
+
+void ImportPathManager::RemoveDependenciesToFiles(const std::unordered_set<std::string_view> &files)
+{
+    for (auto &[file, deps] : fileDependencies_) {
+        for (auto depIt = deps.begin(); depIt != deps.end();) {
+            if (files.count(std::string_view {depIt->data(), depIt->size()}) == 0) {
+                ++depIt;
+                continue;
+            }
+
+            RemoveReverseFileDependency(*depIt, file);
+            depIt = deps.erase(depIt);
+        }
+    }
 }
 
 static bool IsExtensionForPackageFraction(const std::string &extension)
