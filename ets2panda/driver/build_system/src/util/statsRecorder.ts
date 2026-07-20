@@ -21,7 +21,7 @@ import { ENABLE_STATS_RECORDER } from '../pre_define';
 export const BS_PERF_DIR = 'perf';
 export const BS_PERF_FILE_NAME = 'bs_record_perf.csv'
 const BS_CLUSTER_DIR = 'cluster';
-
+const ONE_MB = (1024 * 1024);
 
 export enum RecordEvent {
     START = 'Start recording',
@@ -144,13 +144,17 @@ export class StatisticsRecorder {
         if (this.title) {
             csvData.push(`title, ${this.title};pid=${getPid()};batchId=${getBatchId()}`)
         }
-        csvData.push('Stage, time(ms), startTime, endTime, mem(M)');
+        csvData.push('Stage, time(ms), startTime, endTime, increMem, startMem, endMem');
 
         this.eventMap.forEach((data: EventData, event: string) => {
-            const totalRss: number = (data.endRss < data.startRss) ? 0 :
-                Math.round((data.endRss - data.startRss) / 1024 / 1024);
             const cost = formatMsCompact(data.endTime - data.startTime);
-            let element = `${event}` + ', ' + `${cost}` +', '+`${formatTimestamp(data.startTime)}`+ ', ' +`${formatTimestamp(data.endTime)}`+', '+ `${totalRss}` + 'M';
+            const startTime = formatTimestamp(data.startTime);
+            const endTime = formatTimestamp(data.endTime);
+
+            const increMem: number = Math.round((data.endRss - data.startRss) / ONE_MB);
+            const startMem = Math.round(data.startRss / ONE_MB);
+            const endMem = Math.round(data.endRss / ONE_MB);
+            let element = `${event}` + ', ' + `${cost}` +', '+`${startTime}`+ ', ' +`${endTime}`+', '+ `${increMem}` + 'M'+', '+`${startMem}`+'M, '+`${endMem}`+'M';
             csvData.push(element);
         });
         csvData.push('\n');

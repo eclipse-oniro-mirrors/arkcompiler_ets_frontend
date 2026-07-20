@@ -20,11 +20,12 @@ import { initBuildConfig } from './init/process_build_config';
 import { BuildMode } from './build/build_mode';
 import { Logger, LoggerGetter, getConsoleLogger } from './logger';
 import { DriverError } from './util/error';
-import { substituteEnvVarsInJSON } from './util/utils';
+import { isMac, substituteEnvVarsInJSON } from './util/utils';
 import { PluginDriver } from './plugins/plugins_driver';
 import { BuildConfig, BUILD_TYPE } from './types';
 import { BuildFrameworkMode } from './build/build_framework_mode';
 import { cleanKoalaModule } from './init/init_koala_modules';
+import { buildForMac } from './entry_mac';
 
 // NOTE: to be refactored
 function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): void {
@@ -36,7 +37,7 @@ function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGet
     Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger), projectConfig.enableDebugOutput);
 }
 
-export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
+export async function runBuild(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
     backwardCompatibleBuildConfigStub(projectConfig, loggerGetter)
 
     let logger: Logger = Logger.getInstance();
@@ -62,9 +63,10 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
     } catch (error) {
         if (error instanceof DriverError) {
             Logger.getInstance().printErrorAndExit((error as DriverError).logData);
+            throw error;
         } else {
-            Logger.getInstance().printWarn('Error occured')
-            Logger.getInstance().printWarn('Error is not DriverError')
+            Logger.getInstance().printWarn('Error occured');
+            Logger.getInstance().printWarn('Error is not DriverError');
             throw error;
         }
     } finally {
@@ -78,11 +80,21 @@ function clean(): void {
     cleanKoalaModule();
 }
 
+export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
+    // execute build in child process for mac platform
+    // In mac platform with daemon mode , dlopen will success when first compiled in one process
+    // In the following compiled step , dlopen will fail
+    // So we make unique process with mac build
+    if (isMac()) {
+        return buildForMac(projectConfig, loggerGetter);
+    }
+    return runBuild(projectConfig, loggerGetter);
+}
+
 function main(): void {
     const buildConfigPath: string = path.resolve(process.argv[2]);
     const projectConfig: BuildConfig = substituteEnvVarsInJSON(JSON.parse(fs.readFileSync(buildConfigPath, 'utf-8')));
-
-    build(projectConfig)
+    build(projectConfig);
 }
 
 if (require.main === module) {
