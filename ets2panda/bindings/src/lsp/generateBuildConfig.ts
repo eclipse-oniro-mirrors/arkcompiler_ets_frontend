@@ -59,6 +59,15 @@ function parseJson5(filePath: string): Json5Object {
   }
 }
 
+function isDirectory(targetPath: string): boolean {
+  try {
+    return fs.statSync(targetPath).isDirectory();
+  } catch (error) {
+    logger.error(`Error while checking the path represents a directory: ${targetPath}`, error);
+    return false;
+  }
+}
+
 function getEtsFiles(modulePath: string): string[] {
   const files: string[] = [];
 
@@ -85,7 +94,7 @@ function getEtsFiles(modulePath: string): string[] {
   };
 
   const traverseDir = (dir: string): void => {
-    if (!fs.existsSync(dir)) {
+    if (!isDirectory(dir)) {
       return;
     }
 
