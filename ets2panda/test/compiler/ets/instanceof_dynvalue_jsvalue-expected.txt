@@ -538,4 +538,3 @@
   }
 }
 [instanceof_dynvalue_jsvalue.ets:22:16] Semantic error ESE0371: Cannot find type 'A'.
-[instanceof_dynvalue_jsvalue.ets:23:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true

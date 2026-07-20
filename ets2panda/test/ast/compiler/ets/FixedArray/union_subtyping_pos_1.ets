@@ -21,7 +21,7 @@ let ac: FixedArray<A> | FixedArray<C> = [new A(), new B()]
 let b: FixedArray<B> = [new B(), new B()]
 
 function assertFixedArrayOfA(u: FixedArray<A> | FixedArray<C>) {
-    if (u instanceof FixedArray<A>) {
+    if (u instanceof FixedArray<A | undefined>) {
         arktest.assertTrue(u.length === 2)
         for (let i = 0; i < u.length; i++) {
             arktest.assertTrue(u[i] instanceof A)
@@ -35,4 +35,3 @@ function main() {
     ac = b
     assertFixedArrayOfA(ac)
 }
-/* @@? 27:32 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

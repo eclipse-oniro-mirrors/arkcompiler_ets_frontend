@@ -76,7 +76,7 @@ function testAssignmentAndSubtyping() {
     let valueArr: ValueArray<int> = [1, 2, 3];
     let fixedArr: FixedArray<int> = [1, 2, 3];
     arktest.assertTrue(valueArr instanceof ValueArray<int>);
-    arktest.assertTrue(fixedArr instanceof FixedArray<int>);
+    arktest.assertTrue(fixedArr instanceof FixedArray<int | undefined>);
 
 
 }
@@ -106,16 +106,16 @@ function testGenericFunctions() {
         }
         return total;
     };
-    
+
     let arr: ValueArray<int> = [1, 2, 3, 4, 5];
     arktest.assertEQ(sum(arr), 15);
-    
+
     let intFirst = ([10, 20, 30] as ValueArray<int>)[0];
     arktest.assertEQ(intFirst, 10);
-    
+
     let doubleFirst = ([1.5, 2.5] as ValueArray<double>)[0];
     arktest.assertEQ(doubleFirst, 1.5);
-    
+
     let boolFirst = ([true, false] as ValueArray<boolean>)[0];
     arktest.assertEQ(boolFirst, true);
 }
@@ -126,14 +126,14 @@ function testBoundsChecking() {
     arr[4] = 200;
     arktest.assertEQ(arr[0], 100);
     arktest.assertEQ(arr[4], 200);
-    
+
     try {
         let x = arr[5];
         arktest.assertFalse(true);
     } catch (e) {
         arktest.assertTrue(e instanceof RangeError);
     }
-    
+
     try {
         let idx = -1;
         arr[idx] = 0;
@@ -150,7 +150,7 @@ function testSpreadOperator() {
     arktest.assertEQ(combined.length, 6);
     arktest.assertEQ(combined[0], 1);
     arktest.assertEQ(combined[5], 6);
-    
+
 }
 
 function testConstAndReadonly() {
@@ -159,7 +159,7 @@ function testConstAndReadonly() {
     arktest.assertEQ(constArr[1], 8);
     constArr[0] = 77;
     arktest.assertEQ(constArr[0], 77);
-    
+
     let readonlyArr: ValueArray<int> = [10, 20, 30];
     arktest.assertEQ(readonlyArr.length, 3);
     arktest.assertEQ(readonlyArr[1], 20);
@@ -174,15 +174,15 @@ function testMultiDimensional() {
     arktest.assertEQ(matrix[0].length, 3);
     arktest.assertEQ(matrix[1][2], 6);
     arktest.assertTrue(matrix[0] instanceof ValueArray<int>);
-    
+
 }
 
 function testTypeAssertions() {
     let arr: ValueArray<int> = [1, 2, 3];
     let valueAttempt = arr as Object as ValueArray<int>;
-    arktest.assertFalse(valueAttempt instanceof FixedArray<int>);
+    arktest.assertFalse(valueAttempt instanceof FixedArray<int | undefined>);
     arktest.assertTrue(valueAttempt instanceof ValueArray<int>);
-    
+
     let obj: Object = arr as Object;
     arktest.assertTrue(obj instanceof Object);
     arktest.assertTrue(obj instanceof ValueArray<int>);
@@ -191,38 +191,38 @@ function testTypeAssertions() {
 function testArrayMethods() {
     let arr: ValueArray<int> = [5, 10, 15, 20];
     arktest.assertEQ(arr.length, 4);
-    
+
     let sum = 0;
     for (let val of arr) {
         sum += val;
     }
     arktest.assertEQ(sum, 50);
-    
+
     let str = arr.toString();
     arktest.assertTrue(str.includes("5"));
-    
+
 }
 
 function testEdgeCases() {
     let empty: ValueArray<int> = [];
     arktest.assertEQ(empty.length, 0);
-    
+
     let single: ValueArray<double> = [3.14];
     arktest.assertEQ(single.length, 1);
     arktest.assertEQ(single[0], 3.14);
-    
+
     let large = new ValueArray<int>(1000);
     arktest.assertEQ(large.length, 1000);
     large[999] = 9999;
     arktest.assertEQ(large[999], 9999);
-    
+
     let defaultInts = new ValueArray<int>(5);
     arktest.assertEQ(defaultInts[0], 0);
     arktest.assertEQ(defaultInts[4], 0);
-    
+
     let defaultBools = new ValueArray<boolean>(3);
     arktest.assertEQ(defaultBools[0], false);
-    
+
     let defaultDoubles = new ValueArray<double>(2);
     arktest.assertEQ(defaultDoubles[0], 0.0);
 }
@@ -232,13 +232,13 @@ function testPerformancePatterns() {
     for (let i = 0; i < values.length; i++) {
         values[i] = i * 1.5;
     }
-    
+
     let total = 0.0;
     for (let i = 0; i < values.length; i++) {
         total += values[i];
     }
     arktest.assertTrue(total > 0);
-    
+
     let swapArr: ValueArray<int> = [1, 2];
     let temp = swapArr[0];
     swapArr[0] = swapArr[1];

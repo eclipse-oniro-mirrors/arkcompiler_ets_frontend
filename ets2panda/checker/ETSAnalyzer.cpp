@@ -5923,14 +5923,17 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
 
     auto *init = st->Init();
     auto *variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), init, flags);
+    auto *initType = init != nullptr ? init->TsType() : nullptr;
     if (variableType != nullptr) {
-        if (variableType->IsTypeError()) {
+        if (variableType->IsTypeError() || IsTypeError(initType)) {
             return st->SetTsType(variableType);
         }
         if (variableType->IsETSWildcardType()) {
             variableType = variableType->AsETSWildcardType()->GetUnderlying()->GetConstraintType();
             ident->Variable()->SetTsType(variableType);
         }
+    } else if (IsTypeError(initType)) {
+        return st->SetTsType(checker->GlobalTypeError());
     }
 
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing

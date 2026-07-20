@@ -37,33 +37,25 @@ function main(): void {
 
   let intArr: FixedArray<int> = [1, 2, 3];
 
-  arktest.assertTrue(intArr instanceof FixedArray<int>)
   arktest.assertTrue(intArr instanceof Object)
   arktest.assertTrue(!(intArr instanceof Long))
-  arktest.assertTrue((intArr instanceof FixedArray<Int>))
+  arktest.assertTrue((intArr instanceof FixedArray<Int | undefined>))
   arktest.assertTrue(!(intArr instanceof Int))
 
   let integerArr: FixedArray<Int> = new FixedArray<Int>(10);
 
-  arktest.assertTrue(integerArr instanceof FixedArray<Int>)
+  arktest.assertTrue(integerArr instanceof FixedArray<Int | undefined>)
   arktest.assertTrue(integerArr instanceof Object)
-  arktest.assertTrue(!(intArr instanceof FixedArray<Number>))
-  arktest.assertTrue((integerArr instanceof FixedArray<int>))
+  arktest.assertTrue(!(intArr instanceof FixedArray<Number | undefined>))
   arktest.assertTrue(!(integerArr instanceof Int))
 
   let integerArrArr: FixedArray<FixedArray<int>> = [[10], [20]];
 
-  arktest.assertTrue(integerArrArr instanceof FixedArray<FixedArray<int>>)
+  arktest.assertTrue(integerArrArr instanceof FixedArray<FixedArray<int | undefined> | undefined>)
   arktest.assertTrue(integerArrArr instanceof Object)
-  arktest.assertTrue(!(integerArrArr instanceof FixedArray<Int>))
+  arktest.assertTrue(!(integerArrArr instanceof FixedArray<Int | undefined>))
   arktest.assertTrue(!(integerArrArr instanceof Int))
-  arktest.assertTrue(!(integerArrArr instanceof FixedArray<FixedArray<Long>>))
+  arktest.assertTrue(!(integerArrArr instanceof FixedArray<FixedArray<Long | undefined> | undefined>))
 
-  let f: () => void = foo();
-
-  arktest.assertTrue(f instanceof (() => void))
-
-  arktest.assertTrue(bar instanceof (() => void))
-
-  return;
+    return;
 }

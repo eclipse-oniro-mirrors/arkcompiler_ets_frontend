@@ -18,6 +18,7 @@
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
 #include "ir/ets/etsUnionType.h"
@@ -1107,43 +1108,68 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
     return {GlobalETSBooleanBuiltinType(), promotedType};
 }
 
-static bool IsTypeRetainedAfterErasure(const Type *const typeToCheck)
+static bool IsTypeRetainedAfterErasure(Type const *const typeToCheck, bool const checkTypeParameter = true) noexcept
 {
-    // NOTE (smartin): #30480 - Many checks are missing from this function, to be able to merge this patch in time.
-    // These must be added.
-    if (typeToCheck->IsETSTypeParameter()) {
+    if (checkTypeParameter && typeToCheck->IsETSTypeParameter()) {
         return false;
     }
 
+    // Only signatures like '(x: Any, y: Any, ...) => never' are preserved
     if (typeToCheck->IsETSFunctionType()) {
-        auto *callSig = typeToCheck->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().front();
-        bool isSigRetained = IsTypeRetainedAfterErasure(callSig->ReturnType());
-        for (const auto *param : callSig->Params()) {
-            isSigRetained &= IsTypeRetainedAfterErasure(param->TsType());
+        auto *signature = typeToCheck->AsETSFunctionType()->ArrowSignature();
+        if (!signature->ReturnType()->IsETSNeverType()) {
+            return false;
         }
+        for (auto const *param : signature->Params()) {
+            if (!param->TsType()->IsETSAnyType()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        return isSigRetained;
+    // ETSTupleType is never preserved because has underlying implementation as internal generic tuple type
+    if (typeToCheck->IsETSTupleType()) {
+        return false;
+    }
+
+    // FixedArray<T> type is not preserved up to undefined - only form 'instanceof FixedArray<T|undefined>` is allowed
+    if (typeToCheck->IsETSArrayType() && !typeToCheck->AsETSArrayType()->IsValueArray()) {
+        auto const *const elementType = typeToCheck->AsETSArrayType()->ElementType();
+        return elementType->PossiblyETSUndefined() && IsTypeRetainedAfterErasure(elementType);
     }
 
     if (typeToCheck->IsETSUnionType()) {
-        return typeToCheck->AsETSUnionType()->AllOfConstituentTypes(IsTypeRetainedAfterErasure);
+        auto *unionType = typeToCheck->AsETSUnionType();
+        if (unionType->AllOfConstituentTypes([](Type const *item) { return IsTypeRetainedAfterErasure(item); })) {
+            return true;
+        }
+
+        // Extracted to standalone lambda for codestyle check
+        auto const predicate = [](Type const *item) -> bool { return IsTypeRetainedAfterErasure(item, false); };
+        // 'T | undefined' is preserved up to undefined even when T is a type parameter,
+        if (unionType->AllOfConstituentTypes(predicate)) {
+            return unionType->AnyOfConstituentTypes([](Type const *item) -> bool { return item->IsUndefinedType(); });
+        }
+        return false;
     }
 
     return true;
 }
 
 static BinaryExpressionValidity AreTypesValidInInstanceofExpression(const ir::Expression *const right,
-                                                                    const Type *const rightType)
+                                                                    const Type *const rightType) noexcept
 {
-    // NOTE (smartin): #30480 - many checks were removed intentionally, to be able to merge the fix in time, these will
-    // need to be added
-    bool isRightExprStringLiteral = right->IsETSStringLiteralType();
-    if (right->IsETSUnionType()) {
+    bool isRightTypeRetained;
+    if (UNLIKELY(right->IsETSUnionType())) {
         const auto &unionTypeTypes = right->AsETSUnionType()->Types();
-        isRightExprStringLiteral |= std::any_of(unionTypeTypes.begin(), unionTypeTypes.end(),
-                                                [](auto *type) { return type->IsETSStringLiteralType(); });
+        isRightTypeRetained = !std::any_of(unionTypeTypes.begin(), unionTypeTypes.end(),
+                                           [](auto *type) { return type->IsETSStringLiteralType(); });
+    } else {
+        isRightTypeRetained = !right->IsETSStringLiteralType();
     }
-    const bool isRightTypeRetained = IsTypeRetainedAfterErasure(rightType) && !isRightExprStringLiteral;
+
+    isRightTypeRetained = isRightTypeRetained && IsTypeRetainedAfterErasure(rightType);
     return isRightTypeRetained ? BinaryExpressionValidity::NO_ERR : BinaryExpressionValidity::RHS_ERR;
 }
 
@@ -1172,18 +1198,17 @@ static void ReportIfInstanceofTrivialKnown(ETSChecker *checker, Type *lhs, Type 
         return;
     }
 
+    auto *const relation = checker->Relation();
+    SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+
     auto *intersectionType = checker->Context().GetIntersectionOfTypes(lhs, rhs);
 
-    if (intersectionType != nullptr && checker->Relation()->IsIdenticalTo(lhs, intersectionType)) {
-        checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
-                               util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_TRUE_WORD}, pos);
-        return;
-    }
-
-    if (intersectionType == nullptr) {
-        if (HasInterfaceConstituent(lhs) && HasInterfaceConstituent(rhs)) {
-            return;
+    if (intersectionType != nullptr) {
+        if (relation->IsSupertypeOf(intersectionType, lhs)) {
+            checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
+                                   util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_TRUE_WORD}, pos);
         }
+    } else if (!HasInterfaceConstituent(lhs) || !HasInterfaceConstituent(rhs)) {
         checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
                                util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_FALSE_WORD}, pos);
     }
@@ -1193,8 +1218,7 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorInstanceOf(const ir::E
                                                                      checker::Type *leftType, checker::Type *rightType,
                                                                      lexer::SourcePosition pos)
 {
-    RepairTypeErrorsInOperands(this, &leftType, &rightType);
-    ERROR_TYPE_CHECK(this, leftType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
+    ERROR_TYPE_CHECK(this, rightType, return std::make_tuple(GlobalETSBooleanBuiltinType(), GlobalTypeError()));
 
     const BinaryExpressionValidity exprValidity = AreTypesValidInInstanceofExpression(right, rightType);
     switch (exprValidity) {

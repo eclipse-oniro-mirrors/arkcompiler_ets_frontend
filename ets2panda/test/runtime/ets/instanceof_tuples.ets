@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,21 @@
  * limitations under the License.
  */
 
-class A { fooA() {} }
-class B { fooB() {} }
+function main(): void {
+  let t: [number, string] = [1, 'a'];
+  let x: Tuple = t;
 
-class C<T> {
-    fld: T;
+  arktest.assertTrue(x instanceof Tuple);
+  arktest.assertTrue(x instanceof Tuple1)
+  arktest.assertTrue(x instanceof Tuple2)
+  arktest.assertFalse(x instanceof Tuple3)
+  arktest.assertFalse(x instanceof Tuple5)
+  arktest.assertTrue(x instanceof Object)
 
-    constructor(p: T) {
-        this.fld = p;
-    }
+  arktest.assertTrue(t instanceof Tuple)
+  arktest.assertTrue(t instanceof Tuple1)
+  arktest.assertTrue(t instanceof Tuple2)
+  arktest.assertFalse(t instanceof Tuple3)
+  arktest.assertFalse(t instanceof Tuple5)
+  arktest.assertTrue(t instanceof Object)
 }
-
-function foo(p: C<A>|C<B>|undefined) {
-    let v: C<A>|C<B>;
-    if (p instanceof C) {
-        v = p;				        // OK
-        let y: C<A> = /* @@ label */p;	  	// CTE
-        y.fld.fooA();
-    }
-}
-
-foo(new C<A>(new A ()))
-foo(new C<B>(new B()))
-
-
-/* @@@ label Error Semantic error ESE0318: Type 'C<A>|C<B>' cannot be assigned to type 'C<A>' */

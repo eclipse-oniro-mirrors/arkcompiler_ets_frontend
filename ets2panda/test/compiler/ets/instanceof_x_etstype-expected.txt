@@ -2082,4 +2082,3 @@
 [instanceof_x_etstype.ets:31:12] Warning W1001506: the value of the instanceof expression is known at compile-time as false
 [instanceof_x_etstype.ets:35:12] Warning W1001506: the value of the instanceof expression is known at compile-time as false
 [instanceof_x_etstype.ets:38:26] Semantic error ESE0371: Cannot find type 'AValue'.
-[instanceof_x_etstype.ets:39:12] Warning W1001506: the value of the instanceof expression is known at compile-time as true

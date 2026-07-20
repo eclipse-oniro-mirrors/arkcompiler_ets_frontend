@@ -305,26 +305,6 @@ private:
     ETSChecker *checker_;
     Type *result_ {};
 };
-
-// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
-class TypeRelationContext {
-public:
-    TypeRelationContext(ETSChecker *checker, ir::Expression *node, TypeRelationFlag flags) : checker_(checker)
-    {
-        checker_->Relation()->SetNode(node);
-        checker_->Relation()->SetFlags(flags);
-    }
-
-    ~TypeRelationContext()
-    {
-        checker_->Relation()->SetNode(nullptr);
-        checker_->Relation()->SetFlags(TypeRelationFlag::NONE);
-    }
-
-private:
-    ETSChecker *checker_;
-};
-
 }  // namespace ark::es2panda::checker
 
 #endif
