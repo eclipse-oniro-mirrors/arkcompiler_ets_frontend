@@ -1,0 +1,38 @@
+let ETSGLOBAL = (globalThis as any).Panda.getClass('LETSGLOBAL;');
+export {};
+function createLazy<T>(loader: () => T, label?: string): T {
+  try {
+    return loader();
+  } catch (e) {
+    console.error(`Interop: Load target ${label} failed,use fallback placeholder object`);
+    return createUnsupportedObject(e, label) as T;
+  }
+}
+
+function createUnsupportedObject(reason: unknown, label = 'object'): any {
+  const make = (op: string) => (): never => {
+    throw new Error(
+      `Interop: Access failed on '${label}' (${op}): ${reason instanceof Error ? reason.message : String(reason)}`
+    );
+  };
+
+  const target: any = function () {};
+
+  return new Proxy(target, {
+    get: make('get'),
+    set: make('set'),
+    has: make('has'),
+    deleteProperty: make('delete'),
+    apply: make('apply'),
+    construct: make('construct'),
+    ownKeys: make('ownKeys'),
+    getOwnPropertyDescriptor: make('getOwnPropertyDescriptor'),
+    defineProperty: make('defineProperty'),
+    getPrototypeOf: make('getPrototypeOf'),
+    setPrototypeOf: make('setPrototypeOf'),
+    isExtensible: make('isExtensible'),
+    preventExtensions: make('preventExtensions'),
+  });
+}
+
+
