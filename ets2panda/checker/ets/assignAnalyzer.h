@@ -21,6 +21,8 @@
 
 #include "libarkbase/utils/small_vector.h"
 
+#include <unordered_map>
+
 namespace ark::es2panda::ir {
 class AstNode;
 class AssignmentExpression;
@@ -230,9 +232,13 @@ public:
     }
 
 private:
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
     static constexpr size_t BS_WORD_BITS = 64;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
     static constexpr size_t BS_WORD_SHIFT = 6;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
     static constexpr size_t BS_WORD_MASK = BS_WORD_BITS - 1;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
     static constexpr uint64_t BS_WORD_ALL_SET = ~uint64_t(0);
 
     SmallVector<uint64_t, 4U> words_;
@@ -376,7 +382,7 @@ public:
 };
 
 using NodeId = int;
-using NodeIdMap = std::map<const ir::AstNode *, NodeId>;
+using NodeIdMap = std::unordered_map<const ir::AstNode *, NodeId>;
 
 class AssignAnalyzer : public BaseAnalyzer<AssignPendingExit> {
 public:
@@ -412,7 +418,7 @@ private:
     void AnalyzeSwitch(const ir::SwitchStatement *switchStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     void AnalyzeTry(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
     std::pair<Set, Set> AnalyzeTryCatchClauses(const ir::TryStatement *tryStmt, const ir::AstNode *currentTopLevelDecl,
-                                               const Set &initsTry, int nextAdrCatch);
+                                               const Set &initsCatchPrev, int nextAdrCatch);
     void AnalyzeBreak(const ir::BreakStatement *breakStmt);
     void AnalyzeContinue(const ir::ContinueStatement *contStmt);
     void AnalyzeReturn(const ir::ReturnStatement *retStmt, const ir::AstNode *currentTopLevelDecl = nullptr);
