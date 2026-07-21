@@ -14,7 +14,7 @@
  */
 
 type AliasAmbiguous = string | () => string | number  
-
-
+type AliasAmbiguousNested = string | () => () => string | number
 
 /* @@? 16:32 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
+/* @@? 17:38 Error Syntax error ESY113981: Using '() => () => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */

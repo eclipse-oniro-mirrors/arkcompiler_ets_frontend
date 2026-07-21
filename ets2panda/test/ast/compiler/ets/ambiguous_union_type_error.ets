@@ -14,6 +14,7 @@
  */
 
 type AliasAmbiguous = string | /* @@ label1 */() => string | number;
+type AliasAmbiguousNested = string | /* @@ label4 */() => () => string | number;
 
 function foo<T>(): void {}
 
@@ -22,9 +23,17 @@ function main(): void {
         return 1;
     };
 
+    let b: string | /* @@ label5 */() => () => string | number = () => () => {
+        return 1;
+    };
+
     foo<string | /* @@ label3 */() => string | number>();
+    foo<string | /* @@ label6 */() => () => string | number>();
 }
 
 /* @@@ label1 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
 /* @@@ label2 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
 /* @@@ label3 Error Syntax error ESY113981: Using '() => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
+/* @@@ label4 Error Syntax error ESY113981: Using '() => () => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
+/* @@@ label5 Error Syntax error ESY113981: Using '() => () => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
+/* @@@ label6 Error Syntax error ESY113981: Using '() => () => string | number' function type notation in a union causes ambiguity. Parenthesize the function type or its return type to make the meaning explicit. */
