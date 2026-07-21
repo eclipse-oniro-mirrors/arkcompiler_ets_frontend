@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@ function labeledTest01(): int {
 }
 
 
+/* @@? 20:5 Warning Warning W1284101: Label 'label1' is not used within the loop statement. */
 /* @@@ label Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@@ label1 Error Syntax error ESY0227: Unexpected token 'label1'. */
 /* @@@ label1 Error Semantic error ESE0330: Identifier 'label1' is used in wrong context. */

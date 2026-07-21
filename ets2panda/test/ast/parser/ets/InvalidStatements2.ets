@@ -54,6 +54,7 @@ function g(x: int): int {
 /* @@? 16:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 20:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
 /* @@? 20:27 Error Semantic error ESE0177: struct B is not extensible. */
+/* @@? 28:9 Warning Warning W1284101: Label 'aa' is not used within the loop statement. */
 /* @@? 30:17 Error Syntax error ESY0214: Label already declared. */
 /* @@? 40:1 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 43:12 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */

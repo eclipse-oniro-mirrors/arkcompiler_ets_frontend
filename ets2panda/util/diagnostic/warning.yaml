@@ -262,6 +262,10 @@ warning:
   strict: true
   softlist: ["allow_const_enum"]
 
+- name: UNUSED_LOOP_LABEL
+  id: 1284101
+  message: "Label '{}' is not used within the loop statement."
+
 - name: USED_TYPE_IS_NOT_EXPORTED
   id: 1236581
   message: "Type '{}' used in export declaration(s) is not exported."

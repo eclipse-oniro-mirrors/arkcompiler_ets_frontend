@@ -17,10 +17,12 @@
 #include "checker/types/globalTypesHolder.h"
 #include "compiler/lowering/util.h"
 
+#include <unordered_set>
+
 namespace ark::es2panda::compiler {
 
-static void LogError(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,
-                     const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
+static void LogDiagnostic(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,
+                          const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos)
 {
     ctx->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
 }
@@ -33,6 +35,22 @@ static void SetTarget(ir::AstNode *const node, ir::AstNode *const target)
         ES2PANDA_ASSERT(node->IsBreakStatement());
         node->AsBreakStatement()->SetTarget(target);
     }
+}
+
+static const ir::AstNode *GetTarget(const ir::AstNode *node)
+{
+    if (node->IsContinueStatement()) {
+        return node->AsContinueStatement()->Target();
+    }
+
+    ES2PANDA_ASSERT(node->IsBreakStatement());
+    return node->AsBreakStatement()->Target();
+}
+
+static bool IsLoopStatement(const ir::AstNode *node)
+{
+    return node->IsDoWhileStatement() || node->IsWhileStatement() || node->IsForUpdateStatement() ||
+           node->IsForOfStatement();
 }
 
 void SetJumpTargetPhase::FindJumpTarget(ir::AstNode *const node) const
@@ -58,7 +76,7 @@ void SetJumpTargetPhase::FindJumpTarget(ir::AstNode *const node) const
 
         // Failed to resolve variable for label
         if (!label->IsErrorPlaceHolder()) {
-            LogError(Context(), diagnostic::UNRESOLVED_REF, {label->Name()}, label->Start());
+            LogDiagnostic(Context(), diagnostic::UNRESOLVED_REF, {label->Name()}, label->Start());
         }
 
         SetTarget(node, nullptr);
@@ -90,15 +108,27 @@ void SetJumpTargetPhase::FindJumpTarget(ir::AstNode *const node) const
         target = target->Parent();
     }
 
-    LogError(Context(), diagnostic::FLOW_REDIRECTION_INVALID_CTX, {}, node->Start());
+    LogDiagnostic(Context(), diagnostic::FLOW_REDIRECTION_INVALID_CTX, {}, node->Start());
     SetTarget(node, nullptr);
 }
 
 bool SetJumpTargetPhase::PerformForProgram(parser::Program *program)
 {
-    program->Ast()->IterateRecursivelyPostorder([this](ir::AstNode *const node) -> void {
+    std::unordered_set<const ir::AstNode *> usedLabels;
+    program->Ast()->IterateRecursivelyPostorder([this, &usedLabels](ir::AstNode *const node) -> void {
         if (node->IsBreakStatement() || node->IsContinueStatement()) {
             FindJumpTarget(node);
+            auto *target = GetTarget(node);
+            if (target != nullptr && target->IsLabelledStatement()) {
+                usedLabels.insert(target);
+            }
+            return;
+        }
+
+        if (node->IsLabelledStatement() && IsLoopStatement(node->AsLabelledStatement()->Body()) &&
+            usedLabels.count(node) == 0) {
+            auto *ident = node->AsLabelledStatement()->Ident();
+            LogDiagnostic(Context(), diagnostic::UNUSED_LOOP_LABEL, {ident->Name()}, ident->Start());
         }
     });
     return true;
