@@ -3548,6 +3548,7 @@ bool TSDeclGenerator::GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSD
 }
 bool TSDeclGenerator::ProcessSingleFile(bool afterParsed)
 {
+    declBuilder_->SetChecker(GetChecker());
     if (afterParsed) {
         return GenerateExportsAfterParsed(declBuilder_.get(), &tsContent_, &dtsContent_);
     }
@@ -3586,6 +3587,7 @@ bool TSDeclGenerator::ProcessProgram(parser::Program *prog, bool afterParsed)
         fileContent.options.outputEts = outputEts_[idx];
         fileContent.declBuilder->SetDeclgenOptions(fileContent.options);
     }
+    fileContent.declBuilder->SetChecker(checker);
     if (afterParsed) {
         return GenerateExportsAfterParsed(fileContent.declBuilder.get(), &fileContent.tsContent,
                                           &fileContent.dtsContent);

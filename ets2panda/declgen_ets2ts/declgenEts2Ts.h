@@ -67,6 +67,11 @@ public:
     {
     }
 
+    void SetChecker(checker::ETSChecker *checker)
+    {
+        checker_ = checker;
+    }
+
     void SetDeclgenOptions(const DeclgenOptions &options)
     {
         declgenOptions_ = options;
@@ -423,9 +428,9 @@ public:
     TSDeclgenContent() = default;
     void PushImports(const std::string &imports);
     void PushExports(const std::string &exports);
-    void PushStatements(const std::string &stmts);
-    void PushInitModuleGlues(const std::string &glues);
-    void PushRecordImports(const std::string &recordImports);
+    void PushStatements(const std::string &statementStr);
+    void PushInitModuleGlues(const std::string &initModuleGlueStr);
+    void PushRecordImports(const std::string &recordImportStr);
     void RemoveDuplicateExports(const std::string &checkExports);
     bool HasLocalDeclaredExport(const std::string &line, const std::string &checkExports);
     bool WriteToFile(const std::string &path);
