@@ -76,11 +76,9 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest3)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 69;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 4;
-    std::vector<NodeInfo> expectedResult = {{"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
-                                            {"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
-                                            {"numbers", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
-                                            {"numbers", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 2;
+    std::vector<NodeInfo> expectedResult = {{"moreNumbers", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"numbers", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -93,11 +91,9 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest4)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 152;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 4;
-    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
-                                            {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
-                                            {"part1", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
-                                            {"part1", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 2;
+    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"part1", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -110,11 +106,9 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest5)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 162;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 4;
-    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
-                                            {"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
-                                            {"part2", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
-                                            {"part2", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 2;
+    std::vector<NodeInfo> expectedResult = {{"combined", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"part2", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -127,11 +121,9 @@ TEST_F(LspGetNodeInfoSpreadElementTests, GetNodeInfoSpreadElementTest6)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 223;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 4;
-    std::vector<NodeInfo> expectedResult = {{"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
-                                            {"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
-                                            {"original", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT},
-                                            {"original", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 2;
+    std::vector<NodeInfo> expectedResult = {{"copy", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
+                                            {"original", ark::es2panda::ir::AstNodeType::SPREAD_ELEMENT}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

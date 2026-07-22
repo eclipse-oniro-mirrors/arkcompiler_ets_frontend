@@ -77,10 +77,8 @@ TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest3)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 106;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 5;
+    const size_t expectedSize = 3;
     std::vector<NodeInfo> expectedResult = {{"foo1", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
-                                            {"foo1", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"result", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"result", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
                                             {"p", ark::es2panda::ir::AstNodeType::AWAIT_EXPRESSION}};
     ASSERT_EQ(result.size(), expectedSize);
@@ -95,13 +93,10 @@ TEST_F(LspGetNodeInfoAwaitExpressionTests, GetNodeInfoAwaitExpressionTest4)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 239;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 6;
+    const size_t expectedSize = 3;
     std::vector<NodeInfo> expectedResult = {{"foo2", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
-                                            {"foo2", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"result2", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATION},
                                             {"result2", ark::es2panda::ir::AstNodeType::VARIABLE_DECLARATOR},
-                                            {"x", ark::es2panda::ir::AstNodeType::AWAIT_EXPRESSION},
-                                            {"x", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"x", ark::es2panda::ir::AstNodeType::AWAIT_EXPRESSION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

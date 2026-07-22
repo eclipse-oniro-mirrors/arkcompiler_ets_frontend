@@ -30,6 +30,7 @@
 #include "ir/module/importSpecifier.h"
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/statements/annotationUsage.h"
+#include "parser/program/ImportCache.h"
 #include "parser/program/program.h"
 #include "util/es2pandaMacros.h"
 #include "util/helpers.h"
@@ -58,6 +59,12 @@ static parser::Program *ImportTargetProgram(ETSChecker *checker, varbinder::Loca
     }
 
     return checker->VarBinder()->AsETSBinder()->GetExternalProgram(bindingInfo->importDecl);
+}
+
+static bool IsStaticInteropImportFromDecllessDynamic(ETSChecker *checker, varbinder::LocalVariable *localVar)
+{
+    auto *targetProgram = ImportTargetProgram(checker, localVar);
+    return IsDynamicStaticInteropProgram(targetProgram) && targetProgram->Is<util::ModuleKind::DECLLESS_DYNAMIC>();
 }
 
 static bool IsDynamicStaticInteropImportTarget(ETSChecker *checker, varbinder::LocalVariable *localVar)
@@ -507,7 +514,7 @@ void ETSChecker::ResolveAndMaterializeImportSpecifier(ir::ImportDeclaration *imp
         return;
     }
 
-    if (IsDynamicStaticInteropImportTarget(this, var->AsLocalVariable())) {
+    if (IsStaticInteropImportFromDecllessDynamic(this, var->AsLocalVariable())) {
         return;
     }
 

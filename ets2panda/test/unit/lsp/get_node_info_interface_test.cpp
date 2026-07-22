@@ -92,9 +92,8 @@ TEST_F(LspGetNodeInfoIntrfaceTests, GetNodeInfoInterfaceTest4)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 145;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 2;
-    std::vector<NodeInfo> expectedResult = {{"Client", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION},
-                                            {"Client", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"Client", ark::es2panda::ir::AstNodeType::TS_INTERFACE_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

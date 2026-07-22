@@ -15,7 +15,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { LspCompletionInfo, LspDiagsNode } from '../../src';
+import { AstNodeType, LspCompletionInfo, LspDiagsNode } from '../../src';
 import { getLspWithUi, getRealPath } from '../utils';
 
 describe('importDynamicSdkTest', () => {
@@ -29,6 +29,20 @@ describe('importDynamicSdkTest', () => {
       message: `No matching call signature for info()`,
       range: { start: { line: 56, character: 1 }, end: { line: 56, character: 6 } }
     }
+  ];
+  const DIAGNOSTICS_DYNAMIC_IMPORT = [
+    {
+      message: `Cannot find imported element 'hilogdynamic'`,
+      range: { start: { line: 17, character: 9 }, end: { line: 17, character: 21 } }
+    },
+    {
+      message: `Cannot find imported element 'hilog123'`,
+      range: { start: { line: 18, character: 9 }, end: { line: 18, character: 17 } }
+    }
+  ];
+  const NODE_INFOS_INTEROP_DEFINITION = [
+    { name: 'hilog', kind: AstNodeType.CLASS_DECLARATION },
+    { name: 'getOutputDir', kind: AstNodeType.METHOD_DEFINITION }
   ];
   const COMPLETIONS_002 = [
     {
@@ -284,6 +298,22 @@ describe('importDynamicSdkTest', () => {
     (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_004', () => {
       const res = getUiLsp().getCompletionAtPosition(getRealPath(moduleName, 'importDynamicSdkCompletions.ets'), 1535);
       expectEntriesContainUnorderedWithCompletions(res, COMPLETIONS_002);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_005', () => {
+      const res = getUiLsp().getSemanticDiagnostics(
+        getRealPath(moduleName, 'importDynamicSdkDynamicImportDiagnostics.ets')
+      );
+      expectEntriesContainUnorderedWithDiagnostics(DIAGNOSTICS_DYNAMIC_IMPORT, res);
+    });
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('importDynamicSdk_006', () => {
+      const res = getUiLsp().getDefinitionAtPosition(
+        getRealPath(moduleName, 'importDynamicSdkInteropDefinition.ets'),
+        677
+      );
+      expect(res?.fileName.valueOf().endsWith('@ohos.hilog.d.ets')).toBe(true);
+      expect(res?.start).toBe(1032);
+      expect(res?.length).toBe(12);
+      expect(res?.nodeInfos?.map(({ name, kind }) => ({ name, kind }))).toEqual(NODE_INFOS_INTEROP_DEFINITION);
     });
   });
 });

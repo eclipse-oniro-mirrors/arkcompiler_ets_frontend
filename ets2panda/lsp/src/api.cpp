@@ -931,6 +931,22 @@ static parser::Program *GetProgramByFileName(public_lib::Context *ctx, std::stri
     return nullptr;
 }
 
+static bool IsNodeInfoSymbolKind(ir::AstNodeType kind)
+{
+    return kind == ir::AstNodeType::ANNOTATION_DECLARATION || kind == ir::AstNodeType::ANNOTATION_USAGE ||
+           kind == ir::AstNodeType::AWAIT_EXPRESSION || kind == ir::AstNodeType::CALL_EXPRESSION ||
+           kind == ir::AstNodeType::CLASS_DECLARATION || kind == ir::AstNodeType::CLASS_PROPERTY ||
+           kind == ir::AstNodeType::FUNCTION_DECLARATION || kind == ir::AstNodeType::FUNCTION_EXPRESSION ||
+           kind == ir::AstNodeType::IMPORT_DEFAULT_SPECIFIER || kind == ir::AstNodeType::IMPORT_NAMESPACE_SPECIFIER ||
+           kind == ir::AstNodeType::IMPORT_SPECIFIER || kind == ir::AstNodeType::METHOD_DEFINITION ||
+           kind == ir::AstNodeType::MEMBER_EXPRESSION || kind == ir::AstNodeType::PROPERTY ||
+           kind == ir::AstNodeType::SPREAD_ELEMENT || kind == ir::AstNodeType::STRUCT_DECLARATION ||
+           kind == ir::AstNodeType::TS_CLASS_IMPLEMENTS || kind == ir::AstNodeType::TS_ENUM_DECLARATION ||
+           kind == ir::AstNodeType::TS_ENUM_MEMBER || kind == ir::AstNodeType::TS_INTERFACE_DECLARATION ||
+           kind == ir::AstNodeType::TS_MODULE_DECLARATION || kind == ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION ||
+           kind == ir::AstNodeType::VARIABLE_DECLARATOR;
+}
+
 static std::vector<NodeInfo> GetNodeInfosByDefinitionDataImpl(es2panda_Context *context, std::string_view fileName,
                                                               size_t position)
 {
@@ -949,7 +965,7 @@ static std::vector<NodeInfo> GetNodeInfosByDefinitionDataImpl(es2panda_Context *
     while (node != nullptr) {
         const auto &nodeInfoHandlers = GetNodeInfoHandlers();
         auto it = nodeInfoHandlers.find(node->Type());
-        if (it != nodeInfoHandlers.end()) {
+        if (it != nodeInfoHandlers.end() && IsNodeInfoSymbolKind(node->Type())) {
             it->second(node, result);
         }
         node = node->Parent();

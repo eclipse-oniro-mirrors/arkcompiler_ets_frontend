@@ -92,12 +92,10 @@ TEST_F(LspGetInfoAnnotationUsageTests, GetInfoClassAnnotationUsage)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 307;
-    const size_t expectedSize = 4;
+    const size_t expectedSize = 2;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"DatabaseService", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"DatabaseService", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Injectable", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE},
-                                            {"Injectable", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Injectable", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -109,12 +107,10 @@ TEST_F(LspGetInfoAnnotationUsageTests, GetInfoClassAnnotationUsageWithProperties
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 486;
-    const size_t expectedSize = 4;
+    const size_t expectedSize = 2;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Component", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE},
-                                            {"Component", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Component", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -126,14 +122,11 @@ TEST_F(LspGetInfoAnnotationUsageTests, GetInfoMethodAnnotationUsage)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 563;
-    const size_t expectedSize = 6;
+    const size_t expectedSize = 3;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"doSomething", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION},
-                                            {"doSomething", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"Log", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE},
-                                            {"Log", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Log", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -145,14 +138,11 @@ TEST_F(LspGetInfoAnnotationUsageTests, GetInfoAnotherMethodAnnotationUsage)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 695;
-    const size_t expectedSize = 6;
+    const size_t expectedSize = 3;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"TestComponent", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"oldMethod", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION},
-                                            {"oldMethod", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"Deprecated", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE},
-                                            {"Deprecated", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Deprecated", ark::es2panda::ir::AstNodeType::ANNOTATION_USAGE}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

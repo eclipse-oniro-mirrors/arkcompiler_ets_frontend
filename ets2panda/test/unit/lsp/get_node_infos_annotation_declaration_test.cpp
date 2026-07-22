@@ -52,7 +52,7 @@ protected:
                 doSomething() {
                     // ...
                 }
-                
+
                 @Deprecated
                 oldMethod() {
                     // ...
@@ -86,10 +86,9 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetSimpleAnnotationDeclarationInfo
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 24;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"Validate", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
-                                            {"Validate", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"Validate", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -101,10 +100,9 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetAnnotationDeclarationWithProper
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 73;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"Log", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
-                                            {"Log", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"Log", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -116,10 +114,9 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetComplexAnnotationDeclarationInf
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 148;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"Component", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
-                                            {"Component", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"Component", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -131,10 +128,9 @@ TEST_F(LspGetInfosAnnotationDeclarationTests, GetAnotherSimpleAnnotationDeclarat
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 261;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"Deprecated", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION},
-                                            {"Deprecated", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"Deprecated", ark::es2panda::ir::AstNodeType::ANNOTATION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

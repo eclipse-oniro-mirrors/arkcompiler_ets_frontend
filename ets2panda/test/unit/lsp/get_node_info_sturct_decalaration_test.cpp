@@ -75,7 +75,7 @@ TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest3
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 20;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 1;
     std::vector<NodeInfo> expectedResult = {{"Index", ark::es2panda::ir::AstNodeType::STRUCT_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < expectedResult.size(); i++) {
@@ -89,7 +89,7 @@ TEST_F(LspGetNodeInfoStructDecalarationTests, GetNodeInfoStructDecalarationTest4
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 38;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 1;
     std::vector<NodeInfo> expectedResult = {{"Person", ark::es2panda::ir::AstNodeType::STRUCT_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < expectedResult.size(); i++) {
