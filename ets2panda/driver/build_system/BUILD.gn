@@ -16,7 +16,52 @@ import("//build/ohos.gni")
 
 npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
 
+build_system_sources = [
+  "./src/build/base_mode.ts",
+  "./src/build/build_framework_mode.ts",
+  "./src/build/build_mode.ts",
+  "./src/build/compile_process_worker.ts",
+  "./src/build/compile_thread_worker.ts",
+  "./src/build/declgen_process_worker.ts",
+  "./src/build/generate_arktsconfig.ts",
+  "./src/dep_analyzer/dep_analyzer.ts",
+  "./src/dep_analyzer/full_dep_analyzer.ts",
+  "./src/dep_analyzer/incre_dep_analyzer.ts",
+  "./src/entry.ts",
+  "./src/init/init_koala_modules.ts",
+  "./src/init/process_build_config.ts",
+  "./src/logger.ts",
+  "./src/obfuscation/obfuscation_bytecode_config.ts",
+  "./src/obfuscation/obfuscation_bytecode_executor.ts",
+  "./src/obfuscation/obfuscation_bytecode_executor_invoke.ts",
+  "./src/obfuscation/obfuscation_collect_whitelist.ts",
+  "./src/obfuscation/obfuscation_config.ts",
+  "./src/obfuscation/obfuscation_config_resolver.ts",
+  "./src/obfuscation/obfuscation_default_keep.ts",
+  "./src/obfuscation/obfuscation_merged_config.ts",
+  "./src/obfuscation/obfuscation_namecache_merger.ts",
+  "./src/obfuscation/obfuscation_options.ts",
+  "./src/obfuscation/obfuscation_transform_lib.ts",
+  "./src/plugins/FileManager.ts",
+  "./src/plugins/KitImportTransformer.ts",
+  "./src/plugins/plugins_driver.ts",
+  "./src/pre_define.ts",
+  "./src/types.ts",
+  "./src/util/TaskManager.ts",
+  "./src/util/dotGraphDump.ts",
+  "./src/util/error.ts",
+  "./src/util/ets2panda.ts",
+  "./src/util/graph.ts",
+  "./src/util/koala_wrapper.ts",
+  "./src/util/record_time_mem.ts",
+  "./src/util/statsRecorder.ts",
+  "./src/util/utils.ts",
+  "./src/util/worker_exit_handler.ts",
+]
+
 action("build_build_system") {
+  inputs = [ "build_build_system.py" ]
+  sources = build_system_sources
   deps = [ "../../bindings:build_bindings(${host_toolchain})" ]
   script = "build_build_system.py"
 
