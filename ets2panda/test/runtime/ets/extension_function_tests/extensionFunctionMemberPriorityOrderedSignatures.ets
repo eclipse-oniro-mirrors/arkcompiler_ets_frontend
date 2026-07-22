@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,20 +13,22 @@
  * limitations under the License.
  */
 
-class Banana {
-    private name(id: int): int {
-        return 6;
+class Fruit {
+    private pick(): int {
+        return 1;
+    }
+
+    inside(): int {
+        return this.pick();
     }
 }
 
-function name(this: Banana): int {
-    return 1;
+function pick(this: Fruit): int {
+    return 2;
 }
 
 function main() {
-    let banana = new Banana();
-    console.println(/* @@label */banana.name(2));
+    let fruit = new Fruit();
+    arktest.assertEQ(fruit.pick(), 2);
+    arktest.assertEQ(fruit.inside(), 1);
 }
-
-/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for println(...) */
-/* @@? 28:34 Error Semantic error ESE0139: Signature name(id: Int): Int is not visible here. */

@@ -20,6 +20,8 @@
 #include "public/public.h"
 #include "util/diagnostic.h"
 
+#include <array>
+
 namespace ark::es2panda::checker {
 
 static bool IsInterfaceObjLiteralAnnotation(ir::AnnotationUsage *annotation)
@@ -404,31 +406,34 @@ static void SwitchMethodCallToFunctionCall(checker::ETSChecker *checker, ir::Cal
     expr->Callee()->Check(checker);
 }
 
-checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
-                                                 ir::CallExpression *expr,
-                                                 [[maybe_unused]] const TypeRelationFlag reportFlag)
+static ArenaVector<ir::Expression *> MakeExtensionMemberCallArguments(checker::ETSChecker *checker,
+                                                                      ir::CallExpression *expr)
 {
-    // We have to ways to call ExtensionFunction `function foo(this: A, ...)`:
-    // 1. Make ExtensionFunction as FunctionCall: `foo(a,...);`
-    // 2. Make ExtensionFunction as MethodCall: `a.foo(...)`, here `a` is the receiver;
+    ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
+
+    ArenaVector<ir::Expression *> args(checker->Allocator()->Adapter());
+    auto *memberExpr = expr->Callee()->AsMemberExpression();
+    args.push_back(const_cast<ir::Expression *>(memberExpr->Object()));
+    args.insert(args.end(), expr->Arguments().begin(), expr->Arguments().end());
+    return args;
+}
+
+checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
+                                                 ir::CallExpression *expr)
+{
     auto &signatures = expr->IsETSConstructorCall()
                            ? functionType->AsETSObjectType()->ConstructSignatures()
                            : functionType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
     if (expr->Callee()->IsMemberExpression()) {
-        // when handle extension function as MethodCall, we temporarily transfer the expr node from `a.foo(...)` to
-        // `foo(a, ...)` and resolve the call. If we find the suitable signature, then switch the expr node to
-        // function call.
-        auto *memberExpr = expr->Callee()->AsMemberExpression();
-        expr->Arguments().insert(expr->Arguments().begin(), memberExpr->Object());
         ArenaVector<Signature *> extSignatures(checker->ProgramAllocator()->Adapter());
         for (auto *sig : signatures) {
             if (sig->HasSignatureFlag(checker::SignatureFlags::EXTENSION_FUNCTION)) {
                 extSignatures.push_back(sig);
             }
         }
-        auto *signature = checker->FirstMatchSignatures(extSignatures, expr);
+        auto args = MakeExtensionMemberCallArguments(checker, expr);
+        auto *signature = FirstMatchSignaturesWithArguments(checker, extSignatures, args, expr);
         if (signature == nullptr) {
-            expr->Arguments().erase(expr->Arguments().begin());
             return nullptr;
         }
 
@@ -436,114 +441,71 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
         return signature;
     }
 
-    return checker->FirstMatchSignatures(signatures, expr);
+    return FirstMatchSignatures(checker, signatures, expr);
 }
 
-checker::Signature *ResolveCallForClassMethod(checker::ETSExtensionFuncHelperType *type, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr)
+enum class CandidateKind { CLASS_METHOD, EXTENSION_FUNCTION };
+
+struct Candidate {
+    CandidateKind kind;
+    ArenaVector<Signature *> &signatures;
+    const ArenaVector<ir::Expression *> &arguments;
+};
+
+static Signature *MatchCandidate(ETSChecker *checker, const Candidate &candidate, ir::CallExpression *expr,
+                                 Signature **notVisibleClassSignature)
 {
-    ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
-    auto signature = checker->FirstMatchSignatures(type->ClassMethodType()->CallSignatures(), expr);
-    if (signature != nullptr) {
-        auto *memberExpr = expr->Callee()->AsMemberExpression();
-        auto *var = type->ClassMethodType()->Variable();
-        memberExpr->Property()->AsIdentifier()->SetVariable(var);
-    }
-    return signature;
-}
-
-checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::ETSExtensionFuncHelperType *type,
-                                                                      checker::ETSChecker *checker,
-                                                                      ir::CallExpression *expr)
-{
-    // We try to find the most suitable signature for a.foo(...) both in ExtensionFunctionType and ClassMethodType.
-    // So we temporarily transfer expr node from `a.foo(...)` to `a.foo(a, ...)`.
-    // For allCallSignatures in ClassMethodType, temporarily insert the dummyReceiver into their signatureInfo,
-    // otherwise we can't get the most suitable classMethod signature if all the extensionFunction signature mismatched.
-    ArenaVector<Signature *> signatures(checker->ProgramAllocator()->Adapter());
-    auto const &classMethodSignatures = type->ClassMethodType()->CallSignatures();
-    auto const &extensionMethodSignatures = type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow();
-
-    signatures.insert(signatures.end(), classMethodSignatures.cbegin(), classMethodSignatures.cend());
-    signatures.insert(signatures.end(), extensionMethodSignatures.cbegin(), extensionMethodSignatures.cend());
-
-    auto *memberExpr = expr->Callee()->AsMemberExpression();
-    auto *dummyReceiver = memberExpr->Object();
-    auto *dummyReceiverVar = extensionMethodSignatures[0]->Params()[0];
-    expr->Arguments().insert(expr->Arguments().begin(), dummyReceiver);
-    const bool typeParamsNeeded = dummyReceiverVar->TsType()->IsETSObjectType();
-
-    for (auto *methodCallSig : classMethodSignatures) {
-        methodCallSig->GetSignatureInfo()->minArgCount++;
-        auto &paramsVar = methodCallSig->Params();
-        paramsVar.insert(paramsVar.begin(), dummyReceiverVar);
-        auto &params = methodCallSig->Function()->ParamsForUpdate();
-        params.insert(params.begin(), dummyReceiver);
-        if (typeParamsNeeded) {
-            auto &typeParams = methodCallSig->TypeParams();
-            typeParams.insert(typeParams.end(), dummyReceiverVar->TsType()->AsETSObjectType()->TypeArguments().begin(),
-                              dummyReceiverVar->TsType()->AsETSObjectType()->TypeArguments().end());
-        }
+    if (candidate.kind == CandidateKind::CLASS_METHOD) {
+        auto matchResult = checker->MatchOrderSignaturesWithResult(candidate.signatures, candidate.arguments, expr);
+        *notVisibleClassSignature = matchResult.notVisibleSignature;
+        return matchResult.matchedSignature;
     }
 
-    auto *signature = checker->FirstMatchSignatures(signatures, expr);
-
-    for (auto *methodCallSig : classMethodSignatures) {
-        methodCallSig->GetSignatureInfo()->minArgCount--;
-        auto &paramsVar = methodCallSig->Params();
-        paramsVar.erase(paramsVar.begin());
-        auto &params = methodCallSig->Function()->ParamsForUpdate();
-        params.erase(params.begin());
-        if (typeParamsNeeded) {
-            auto &typeParams = methodCallSig->TypeParams();
-            typeParams.resize(typeParams.size() -
-                              dummyReceiverVar->TsType()->AsETSObjectType()->TypeArguments().size());
-        }
-    }
-    expr->Arguments().erase(expr->Arguments().begin());
-
-    if (signature != nullptr) {
-        if (signature->Owner()->GetDeclNode()->IsClassDefinition() &&
-            signature->Owner()->GetDeclNode()->AsClassDefinition()->IsGlobal()) {
-            SwitchMethodCallToFunctionCall(checker, expr, signature);
-        } else {
-            auto *var = type->ClassMethodType()->Variable();
-            memberExpr->Property()->AsIdentifier()->SetVariable(var);
-        }
-    }
-    return signature;
+    return FirstMatchSignaturesWithArguments(checker, candidate.signatures, candidate.arguments, expr, false);
 }
 
 checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensionFuncHelperType *type,
                                                              checker::ETSChecker *checker, ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
-    auto *calleeObj = expr->Callee()->AsMemberExpression()->Object();
-    ERROR_SANITY_CHECK(checker, calleeObj->TsType()->IsETSObjectType(), return nullptr);
-    bool isCalleeObjETSGlobal = calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->IsClassDefinition() &&
-                                calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->IsGlobal();
-    // for callExpr `a.foo`, there are 3 situations:
-    // 1.`a.foo` is private method call of class A;
-    // 2.`a.foo` is extension function of `A`(function with receiver `A`)
-    // 3.`a.foo` is public method call of class A;
-    Signature *signature = nullptr;
-    if (checker->IsTypeIdenticalTo(checker->Context().ContainingClass(), calleeObj->TsType()) || isCalleeObjETSGlobal) {
-        // When called `a.foo` in `a.anotherFunc`, we should find signature through private or protected method firstly.
-        signature = ResolveCallForClassMethod(type, checker, expr);
-        if (signature != nullptr) {
+    ERROR_SANITY_CHECK(checker, expr->Callee()->AsMemberExpression()->Object()->TsType()->IsETSObjectType(),
+                       return nullptr);
+
+    auto &classSigs = type->ClassMethodType()->CallSignatures();
+    auto extensionArgs = MakeExtensionMemberCallArguments(checker, expr);
+    auto &extensionSigs = type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow();
+    std::array<Candidate, 2U> candidates = {
+        Candidate {CandidateKind::CLASS_METHOD, classSigs, expr->Arguments()},
+        Candidate {CandidateKind::EXTENSION_FUNCTION, extensionSigs, extensionArgs},
+    };
+
+    Signature *notVisibleClassSignature = nullptr;
+    for (auto const &candidate : candidates) {
+        auto *signature = MatchCandidate(checker, candidate, expr, &notVisibleClassSignature);
+        if (signature == nullptr) {
+            continue;
+        }
+
+        if (candidate.kind == CandidateKind::CLASS_METHOD) {
+            auto *memberExpr = expr->Callee()->AsMemberExpression();
+            auto *var = type->ClassMethodType()->Variable();
+            memberExpr->Property()->AsIdentifier()->SetVariable(var);
             UpdateDeclarationFromSignature(checker, expr, signature);
             return signature;
         }
+
+        SwitchMethodCallToFunctionCall(checker, expr, signature);
+        return signature;
     }
 
-    signature = GetMostSpecificSigFromExtensionFuncAndClassMethod(type, checker, expr);
-    if (signature == nullptr) {
-        checker->LogSignatureMismatch(type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow(), expr->Arguments(),
-                                      expr->Start(), "call");
+    if (notVisibleClassSignature != nullptr) {
+        checker->LogError(diagnostic::SIG_INVISIBLE,
+                          {notVisibleClassSignature->Function()->Id()->Name(), notVisibleClassSignature},
+                          expr->Start());
+        return nullptr;
     }
 
-    UpdateDeclarationFromSignature(checker, expr, signature);
-    return signature;
+    return FirstMatchSignaturesWithArguments(checker, classSigs, expr->Arguments(), expr);
 }
 
 ArenaVector<checker::Signature *> GetUnionTypeSignatures(ETSChecker *checker, checker::ETSUnionType *etsUnionType)

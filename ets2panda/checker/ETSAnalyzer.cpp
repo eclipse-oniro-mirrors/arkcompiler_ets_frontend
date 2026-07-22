@@ -14,6 +14,7 @@
  */
 
 #include "ETSAnalyzer.h"
+#include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
 #include "checker/types/ets/etsTupleType.h"
@@ -2825,7 +2826,7 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
                            ? noSignatures
                            : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
 
-    return checker->FirstMatchSignatures(signatures, expr);
+    return FirstMatchSignatures(checker, signatures, expr);
 }
 
 static ETSObjectType *GetCallExpressionCalleeObject(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
