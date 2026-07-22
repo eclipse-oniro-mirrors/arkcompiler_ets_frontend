@@ -111,8 +111,14 @@ static Type *MaterializeResolvedImportIdentifier(ETSChecker *checker, ir::Identi
                                                  varbinder::LocalVariable *localVar, const ResolvedImportResult &result)
 {
     if (ShouldSkipValueImportMaterialization(checker, localVar, result)) {
+        // Dynamic-static interop imports still need callable-class validation
+        // so imported components can resolve through $_invoke/$_instantiate.
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return ident->SetTsType(checker->ResolveImportBindingType(localVar, ident));
+        auto *type = checker->ResolveImportBindingType(localVar, ident);
+        if (IsCallCallee(ident)) {
+            ValidateImportCallIdentifier(checker, ident, type);
+        }
+        return ident->SetTsType(type);
     }
 
     auto *target = checker->ResolveEffectiveVariable(localVar);
