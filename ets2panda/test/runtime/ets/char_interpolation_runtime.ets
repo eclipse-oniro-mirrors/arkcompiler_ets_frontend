@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-function main() {
-    const result = `Hello ${c'\u0041'} World`;
-    arktest.assertEQ(result, "Hello A World");
-}
+function main(): void {
+    let aChar: char = c'a'
+    let val = `${c'a'}`
+    let aCharString: string = aChar.toString()
 
-/* @@? 17:20 Error Semantic error ESE4201: Implicit 'char->string' conversion disallowed. */
+    arktest.assertEQ(val, aCharString)
+}

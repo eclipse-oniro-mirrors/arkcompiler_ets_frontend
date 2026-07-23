@@ -6016,27 +6016,19 @@ static bool ValueFitsTargetType(ir::TSAsExpression *expr)
     switch (primitiveType) {
         case ir::PrimitiveType::BYTE:
             return number.CanGetValue<int8_t>();
-            break;
         case ir::PrimitiveType::SHORT:
             return number.CanGetValue<int16_t>();
-            break;
         case ir::PrimitiveType::INT:
             return number.CanGetValue<int32_t>();
-            break;
         case ir::PrimitiveType::LONG:
             return number.CanGetValue<int64_t>();
-            break;
         case ir::PrimitiveType::FLOAT:
             return number.CanGetValue<float>();
-            break;
         case ir::PrimitiveType::DOUBLE:
             return number.CanGetValue<double>();
-            break;
         default:
-            break;
+            return true;
     }
-
-    return true;
 }
 
 //  Extracted from 'ETSAnalyzer::Check(ir::TSAsExpression *expr)' function to reduce its size

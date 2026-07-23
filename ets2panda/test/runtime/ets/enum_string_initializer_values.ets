@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,33 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum Direction {
-  Up,
-  Down,
-  Left,
-  Right
+
+const c: string = "const";
+let l: string = "let";
+
+enum Values: string {
+    FIRST = "literal" as string,
+    SECOND = c,
+    THIRD = l,
 }
 
-export enum Message {
-  Success = "SUCCESS",
-  Failure = "FAILURE",
-  Pending = "PENDING"
-}
+function main(): void {
+    let first = Values.FIRST;
+    let second = Values.SECOND;
+    let third = Values.THIRD;
 
-export enum NumbericEnumWithOps {
-  One = 1,
-  Two = 1+1,
-  Three = 1+2,
-  Four = 2*2,
-  Five = 10/5+(1*2)+1,
-  Six,
-}
-
-const ENUM_STRING: string = "const";
-
-export enum StringAsEnum {
-  A = ENUM_STRING,
-  B = "literal" as string,
-  C = "literal" as string,
-  D = "literal" as string,
+    arktest.assertTrue(first instanceof Values);
+    arktest.assertTrue(second instanceof Values);
+    arktest.assertTrue(third instanceof Values);
+    arktest.assertTrue(first.valueOf() == "literal");
+    arktest.assertTrue(second.valueOf() == "const");
+    arktest.assertTrue(third.valueOf() == "let");
 }
