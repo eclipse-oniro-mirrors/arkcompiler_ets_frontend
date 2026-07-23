@@ -14,6 +14,7 @@
  */
 
 #include "ETSemitter.h"
+#include "compiler/core/emitterExternalPass.h"
 #include <algorithm>
 #include <memory>
 #include <set>
@@ -136,6 +137,9 @@ public:
     inline const std::string &AddDependence(std::string const &str)
     {
         reachable_.insert(str);
+        if (trackExternalDeps_) {
+            toEmit_.insert(str);
+        }
         return str;
     }
 
@@ -153,6 +157,22 @@ public:
         toEmit_ = reachable_;
     }
 
+    void SetTrackExternalDeps(bool val)
+    {
+        trackExternalDeps_ = val;
+    }
+
+    void UpdateLastToEmitSize()
+    {
+        lastToEmitSize_ = reachable_.size();
+    }
+
+    bool MaybeRetryExternalPass() const
+    {
+        return reachable_.size() > lastToEmitSize_;
+    }
+
+    // Preserved for interface compatibility; no longer called from EmitRecordsImpl.
     void ProceedToEmitExternalDelta()
     {
         if (reachable_.size() == toEmit_.size()) {
@@ -174,6 +194,8 @@ public:
 private:
     std::unordered_set<std::string> reachable_ {};
     std::unordered_set<std::string> toEmit_ {};
+    bool trackExternalDeps_ {false};
+    size_t lastToEmitSize_ {0};
 };
 
 }  // namespace detail
@@ -475,10 +497,8 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
     // compile non-external dependencies
     traverseRecords(false);
     dependencies_->ProcessToEmitExternal();
-    // compile external dependencies
-    traverseRecords(true);                        // initial pass, which contributes to the difference
-    dependencies_->ProceedToEmitExternalDelta();  // compute the difference
-    traverseRecords(true);                        // re-run the pass
+    // compile external dependencies with dynamic retry
+    detail::RunExternalEmitPasses(dependencies_, [&traverseRecords]() { traverseRecords(true); });
 }
 
 void ETSEmitter::EmitRecords()
