@@ -553,6 +553,9 @@ ir::OverloadDeclaration *ETSParser::ParseClassOverloadDeclaration(ir::ModifierFl
         ParseListOptions::ALLOW_TRAILING_SEP);
     overloadDef->SetOverloadedList(std::move(overloads));
     overloadDef->SetRange({startLoc, endLoc});
+    if (overloadDef->OverloadedList().empty()) {
+        LogError(diagnostic::EMPTY_OVERLOAD_LIST, {}, startLoc);
+    }
     ValidateOverloadList(overloadDef->OverloadedList());
     return overloadDef;
 }
@@ -1140,6 +1143,9 @@ ir::OverloadDeclaration *ETSParser::ParseInterfaceOverload(ir::ModifierFlags mod
 
     overloadDef->SetOverloadedList(std::move(overloads));
     overloadDef->SetRange({startLoc, endLoc});
+    if (overloadDef->OverloadedList().empty()) {
+        LogError(diagnostic::EMPTY_OVERLOAD_LIST, {}, startLoc);
+    }
     ValidateOverloadList(overloadDef->OverloadedList());
     return overloadDef;
 }

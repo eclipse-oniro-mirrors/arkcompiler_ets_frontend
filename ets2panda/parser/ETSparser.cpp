@@ -2341,6 +2341,9 @@ ir::OverloadDeclaration *ETSParser::ParseOverloadDeclaration(ir::ModifierFlags m
         ParseListOptions::ALLOW_TRAILING_SEP);
     overloadDef->SetOverloadedList(std::move(overloads));
     overloadDef->SetRange({startLoc, endLoc});
+    if (overloadDef->OverloadedList().empty()) {
+        LogError(diagnostic::EMPTY_OVERLOAD_LIST, {}, startLoc);
+    }
     for (ir::Expression *overloadedName : overloadDef->OverloadedList()) {
         std::function<bool(ir::Expression *)> checkQualifiedName = [&checkQualifiedName](ir::Expression *expr) -> bool {
             if (expr->IsIdentifier()) {
