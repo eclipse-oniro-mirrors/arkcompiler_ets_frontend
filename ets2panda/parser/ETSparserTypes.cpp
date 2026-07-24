@@ -164,6 +164,26 @@ ir::TypeNode *ETSParser::GetTypeAnnotationOfPrimitiveType([[maybe_unused]] lexer
     return typeAnnotation;
 }
 
+// Bare function types in a union absorb trailing `| T` into the return type because `|` has the
+// lowest precedence. That is ambiguous with an outer union member. Parentheses (IsGrouped) resolve
+// it; nested bare function returns like `() => () => A | B` must still be diagnosed.
+static bool ReturnTypeCausesUnionAmbiguity(ir::TypeNode *returnType)
+{
+    if (returnType == nullptr) {
+        return false;
+    }
+    if (returnType->IsGrouped()) {
+        return false;
+    }
+    if (returnType->IsETSUnionType()) {
+        return true;
+    }
+    if (returnType->IsETSFunctionType()) {
+        return ReturnTypeCausesUnionAmbiguity(returnType->AsETSFunctionType()->ReturnType());
+    }
+    return false;
+}
+
 ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options)
 {
     auto startLoc = Lexer()->GetToken().Start();
@@ -194,7 +214,7 @@ ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options
         return nullptr;
     }
 
-    if (isUnionMember && isBareFunctionType && returnTypeAnnotation->IsETSUnionType()) {
+    if (isUnionMember && isBareFunctionType && ReturnTypeCausesUnionAmbiguity(returnTypeAnnotation)) {
         const auto endLoc = returnTypeAnnotation->End();
         const auto ambiguousType = GetProgram()->SourceCode().substr(startLoc.index, endLoc.index - startLoc.index);
         LogError(diagnostic::AMBIGUOUS_FUNC_TYPE_INUNION, {ambiguousType}, startLoc);
@@ -420,6 +440,11 @@ std::pair<ir::TypeNode *, bool> ETSParser::GetTypeAnnotationFromParentheses(Type
     }
 
     ParseRightParenthesis(options, typeAnnotation, savedPos);
+    // Mark types grouped by parentheses so bare function types in unions can treat
+    // `() => (A | B)` / `() => (() => A | B)` as unambiguous (see ParseFunctionType).
+    if (typeAnnotation != nullptr) {
+        typeAnnotation->SetGrouped();
+    }
 
     return std::make_pair(typeAnnotation, true);
 }
