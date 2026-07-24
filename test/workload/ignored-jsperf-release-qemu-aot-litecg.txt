@@ -1,6 +1,0 @@
-#18851
-Proxy.handler_applyProxy
-
-#33565
-String_toLocaleUpperCase
-String_toLocaleLowerCase
