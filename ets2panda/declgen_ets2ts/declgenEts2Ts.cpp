@@ -1751,7 +1751,7 @@ void TSDeclGen::GenNamedImports(const ir::ETSImportDeclaration *importDeclaratio
     }
     std::vector<ir::AstNode *> interfaceSpecifiers;
     std::vector<ir::AstNode *> normalSpecifiers;
-    SeparateInterfaceSpecifiers(specifiers, interfaceSpecifiers, normalSpecifiers);
+    SeparateInterfaceSpecifiers(specifiers, importDeclaration, interfaceSpecifiers, normalSpecifiers);
 
     if (!isTypeKind) {
         GenTsImportStatement(normalSpecifiers, importDeclaration);
@@ -1934,7 +1934,7 @@ void TSDeclGen::GenReExportDeclaration(const ir::ETSReExportDeclaration *reExpor
     bool isTypeKind = reExportDeclaration->IsExportedType();
     std::vector<ir::AstNode *> interfaceSpecifiers;
     std::vector<ir::AstNode *> normalSpecifiers;
-    SeparateInterfaceSpecifiers(specifiers, interfaceSpecifiers, normalSpecifiers);
+    SeparateInterfaceSpecifiers(specifiers, importDeclaration, interfaceSpecifiers, normalSpecifiers);
 
     GenDtsReExportStatement(specifiers, importDeclaration, isTypeKind);
 
@@ -1962,9 +1962,18 @@ bool TSDeclGen::GenNamespaceReExportDeclaration(const ir::AstNode *specifier,
 }
 
 void TSDeclGen::SeparateInterfaceSpecifiers(const ArenaVector<ir::AstNode *> &specifiers,
+                                            const ir::ETSImportDeclaration *importDeclaration,
                                             std::vector<ir::AstNode *> &interfaceSpecifiers,
                                             std::vector<ir::AstNode *> &normalSpecifiers)
 {
+    const checker::ResolvedExportCache *exportCache = nullptr;
+    if (importDeclaration != nullptr) {
+        auto *targetProgram = checker_->VarBinder()->AsETSBinder()->GetExternalProgram(importDeclaration);
+        if (targetProgram != nullptr) {
+            exportCache = &checker_->ResolveExportClosure(targetProgram);
+        }
+    }
+
     for (auto *specifier : specifiers) {
         if (!specifier->IsImportSpecifier()) {
             continue;
@@ -1975,6 +1984,13 @@ void TSDeclGen::SeparateInterfaceSpecifiers(const ArenaVector<ir::AstNode *> &sp
         if (variable != nullptr && variable->Declaration() != nullptr && variable->Declaration()->Node() != nullptr) {
             auto *node = variable->Declaration()->Node();
             isTypeDeclaration = node->IsTSTypeAliasDeclaration() || node->IsTSInterfaceDeclaration();
+        }
+        if (!isTypeDeclaration && exportCache != nullptr) {
+            const auto *entry = exportCache->Find(importSpecifier->Imported()->Name());
+            if (entry != nullptr && entry->origin != nullptr) {
+                isTypeDeclaration =
+                    entry->origin->IsTSTypeAliasDeclaration() || entry->origin->IsTSInterfaceDeclaration();
+            }
         }
         if (isTypeDeclaration) {
             interfaceSpecifiers.push_back(specifier);

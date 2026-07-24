@@ -165,6 +165,7 @@ private:
     bool GenNamespaceReExportDeclaration(const ir::AstNode *specifier,
                                          const ir::ETSImportDeclaration *importDeclaration);
     void SeparateInterfaceSpecifiers(const ArenaVector<ir::AstNode *> &specifiers,
+                                     const ir::ETSImportDeclaration *importDeclaration,
                                      std::vector<ir::AstNode *> &interfaceSpecifiers,
                                      std::vector<ir::AstNode *> &normalSpecifiers);
     void GenDtsReExportStatement(const ArenaVector<ir::AstNode *> &specifiers,

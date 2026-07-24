@@ -71,9 +71,10 @@ int main(int argc, char **argv)
     CheckForErrors("PARSED", context);
 
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
+    std::string tsName = GetDeclPrefix(argv[argc - 1]) + ".ets";
     const char *inputFiles[] = {argv[argc - 1]};
     const char *outputDeclEts[] = {declName.c_str()};
-    const char *outputEts[] = {"dump.ets"};
+    const char *outputEts[] = {tsName.c_str()};
     declgen = impl->CreateTsDeclgen(context, 1, inputFiles, outputDeclEts, outputEts, false, true, "", true);
     if (declgen == nullptr) {
         std::cerr << "[ERROR] FAILED TO CREATE DECLGEN for output: " << declName << std::endl;
