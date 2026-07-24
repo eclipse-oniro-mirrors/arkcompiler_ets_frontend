@@ -34,10 +34,7 @@ static Type *SubstituteDirectTypeParameter(Type *type, TypeRelation *relation, c
     }
 
     auto *const substitutedType = type->Substitute(relation, substitution);
-    return substitutedType != type && substitutedType->IsETSObjectType() &&
-                   !substitutedType->HasTypeFlag(TypeFlag::GENERIC)
-               ? substitutedType
-               : nullptr;
+    return substitutedType != type && substitutedType->IsETSReferenceType() ? substitutedType : nullptr;
 }
 
 static std::pair<Type *, Type *> GetSubstitutedTypeParameterProperties(SignatureInfo *signatureInfo, Type *returnType,

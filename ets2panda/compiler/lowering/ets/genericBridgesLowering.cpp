@@ -352,7 +352,13 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
         //  Collect type parameters defaults/constraints in the base class
         //  and type argument substitutions in the derived class
         checker->EmplaceSubstituted(&substitutions.derivedSubstitutions, typeParameter, typeArgument);
-        checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter, typeParameter->GetConstraintType());
+        auto *constraintType = typeParameter->GetConstraintType();
+        //  Resolve constraint chain transitively: if S extends T and T extends Object,
+        //  baseConstraints should map S -> Object (not S -> T), so that the erasure is
+        //  fully resolved rather than leaving intermediate type parameters that cannot be
+        //  substituted in the bridge method's context.
+        constraintType = constraintType->Substitute(checker->Relation(), &substitutions.baseConstraints);
+        checker->EmplaceSubstituted(&substitutions.baseConstraints, typeParameter, constraintType);
     }
     return substitutions;
 }
