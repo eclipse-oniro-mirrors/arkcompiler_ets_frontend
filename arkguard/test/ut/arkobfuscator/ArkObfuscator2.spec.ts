@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -243,6 +243,82 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
       };
       const result: ObfuscationResultType = await obfuscator.obfuscate('', sourceFilePathObj);
       expect(result).to.deep.equal({ content: undefined });
+    });
+
+    describe('mCompact and mKeepUncompactPaths', () => {
+      const baseCompactConfig: IOptions = {
+        mCompact: true,
+        mRemoveComments: true,
+        mEnableSourceMap: true,
+        mNameObfuscation: {
+          mEnable: false,
+          mNameGeneratorType: 1,
+          mReservedNames: [],
+          mRenameProperties: false,
+          mReservedProperties: [],
+          mTopLevel: false,
+          mReservedToplevelNames: [],
+        },
+        mKeepFileSourceCode: {
+          mKeepSourceOfPaths: new Set(),
+          mkeepFilesAndDependencies: new Set(),
+        },
+        mKeepUncompactPaths: new Set(),
+      };
+
+      it('should emit single-line output when compact and file not in mKeepUncompactPaths', async () => {
+        obfuscator.init({ ...baseCompactConfig, mKeepUncompactPaths: new Set() });
+        const result: ObfuscationResultType = await obfuscator.obfuscate(jsSourceFile, jsSourceFilePathObj);
+        expect(result.content).to.be.a('string');
+        expect(result.content!.indexOf('\n')).to.equal(-1);
+      });
+
+      it('should emit multi-line output when compact and file path is in mKeepUncompactPaths', async () => {
+        const pathKey = FileUtils.toUnixPath(jsSourceFile.fileName);
+        obfuscator.init({
+          ...baseCompactConfig,
+          mKeepUncompactPaths: new Set([pathKey]),
+        });
+        const result: ObfuscationResultType = await obfuscator.obfuscate(jsSourceFile, jsSourceFilePathObj);
+        expect(result.content!.indexOf('\n')).to.be.greaterThan(-1);
+      });
+
+      it('should emit multi-line when mCompact is false regardless of mKeepUncompactPaths', async () => {
+        obfuscator.init({
+          ...baseCompactConfig,
+          mCompact: false,
+          mKeepUncompactPaths: new Set(),
+        });
+        const result: ObfuscationResultType = await obfuscator.obfuscate(jsSourceFile, jsSourceFilePathObj);
+        expect(result.content!.indexOf('\n')).to.be.greaterThan(-1);
+      });
+    });
+
+    it('should set isKeptCurrentFile when mKeepSourceOfPaths contains original file path', async () => {
+      const pathKey = FileUtils.toUnixPath(sourceFile.fileName);
+      const config: IOptions = {
+        mCompact: false,
+        mRemoveComments: true,
+        mEnableSourceMap: true,
+        mNameObfuscation: {
+          mEnable: true,
+          mNameGeneratorType: 1,
+          mReservedNames: [],
+          mRenameProperties: true,
+          mReservedProperties: [],
+          mTopLevel: true,
+          mReservedToplevelNames: [],
+        },
+        mKeepFileSourceCode: {
+          mKeepSourceOfPaths: new Set([pathKey]),
+          mkeepFilesAndDependencies: new Set(),
+        },
+        mKeepUncompactPaths: new Set(),
+      };
+      obfuscator.init(config);
+      await obfuscator.obfuscate(sourceFile, sourceFilePathObj);
+      expect(ArkObfuscator.isKeptCurrentFile).to.be.true;
+      ArkObfuscator.isKeptCurrentFile = false;
     });
 
     it('should be correctly obfuscated for valid AST', async () => {
