@@ -22,10 +22,12 @@ class A{
     }
 }
 
-async function main(): Promise<void> {
-    let res1:string = await A.getData()
-    let res2:string = await A.getData("I'm a static method2 with name 'getData'")
-    arktest.assertEQ(res1, "I'm a static method1 with name 'getData'")
-    arktest.assertEQ(res2, "I'm a static method2 with name 'getData'")
+function main() {
+    waitForCompletion(async () => {
+        let res1:string = await A.getData()
+        let res2:string = await A.getData("I'm a static method2 with name 'getData'")
+        arktest.assertEQ(res1, "I'm a static method1 with name 'getData'")
+        arktest.assertEQ(res2, "I'm a static method2 with name 'getData'")
+    })
 }
 

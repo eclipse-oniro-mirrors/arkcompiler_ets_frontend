@@ -85,6 +85,6 @@ async function startTest() {
     await asyncFuncThrow2(true);
 }
 
-async function main(): Promise<void> {
-    await startTest();
+function main(): void {
+    waitForCompletion(startTest);
 }

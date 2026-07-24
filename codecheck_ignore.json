@@ -9,6 +9,7 @@
     "legacy_bin": "*",
     "merge_abc": "*",
     "ets2panda/bindings/src": "*",
+    "ets2panda/checker/ets/typeRelationContext.h": "*",
     "ets2panda/driver/build_system/src": "*",
     "ets2panda/public/headers_parser": "*",
     "ets2panda/linter/arkanalyzer": "*",

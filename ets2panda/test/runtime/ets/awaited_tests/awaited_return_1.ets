@@ -13,15 +13,17 @@
  * limitations under the License.
  */
 
-async function foo(): Promise<Awaited<Promise<string>>> {
-    return await new Promise<string>((resolve: (value: string) => void) => {
-        setTimeout(() => {
-            resolve("hello")
-        }, 1000)
+function foo<T>(): Awaited<T> {
+    return waitForCompletion(async () => {
+      return await new Promise<T>((resolve) => {
+          setTimeout(() => {
+            resolve("hello" as T)
+          }, 1000)
+      })
     })
 }
 
-async function main(): Promise<void> {
-    let actual: Awaited<Promise<string>> = await foo()
+function main() {
+    let actual = foo<string>()
     arktest.assertEQ(actual, "hello")
 }

@@ -13,24 +13,26 @@
  * limitations under the License.
  */
 
-async function main(): Promise<void> {
-    const lam1 = async () : Promise<int> => {
-        return Promise.resolve(1)
-            .then((val: int) => val * 2)
-            .then(async (val: int) => {
-                const d = await Promise.resolve(val * 2)
-                return d
-            })
-    }
+function main(): void {
+    waitForCompletion(async () => {
+        const lam1 = async () : Promise<int> => {
+            return Promise.resolve(1)
+                .then((val: int) => val * 2)
+                .then(async (val: int) => {
+                    const d = await Promise.resolve(val * 2)
+                    return d
+                })
+        }
 
-    const lam2 = async () : Promise<int> => {
-        return Promise.resolve(1)
-            .then((val: int) => val * 2)
-            .then(async (val: int) => {
-                return val * 2
-            })
-    }
+        const lam2 = async () : Promise<int> => {
+            return Promise.resolve(1)
+                .then((val: int) => val * 2)
+                .then(async (val: int) => {
+                    return val * 2
+                })
+        }
 
-    arktest.assertEQ(await lam1(), 4)
-    arktest.assertEQ(await lam2(), 4)
+        arktest.assertEQ(await lam1(), 4)
+        arktest.assertEQ(await lam2(), 4)
+    })
 }

@@ -32,6 +32,8 @@ async function foo() {
     }
 }
 
-async function main(): Promise<void> {
-    await foo()
+function main() {
+    waitForCompletion(async () => {
+        await foo()
+    })
 }

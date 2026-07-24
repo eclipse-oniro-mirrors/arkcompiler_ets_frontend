@@ -19,9 +19,11 @@ import { CC } from "./asyncfun_lambda_lib"
 import { DC } from "./asyncfun_lambda_lib"
 
 
-async function main(): Promise<void> {
+function main(): void {
     let aClass: AC = new AC();
-    await aClass.foo();
+    waitForCompletion(async () => {
+        await aClass.foo();
+    })
 
     let bClass: BC = new BC();
     bClass.bar();

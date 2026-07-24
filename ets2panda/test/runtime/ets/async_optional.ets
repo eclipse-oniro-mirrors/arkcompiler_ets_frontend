@@ -22,9 +22,11 @@ class A {
     }
 }
 
-async function main(): Promise<void> {
+function main() {
     let t : InputT = {name: "zztest"};
     let a: A = new A();
-    let b = await a.update(t);
-    arktest.assertEQ(b, "zztest")
+    waitForCompletion(async () => {
+        let b = await a.update(t);
+        arktest.assertEQ(b, "zztest")
+    })
 }
