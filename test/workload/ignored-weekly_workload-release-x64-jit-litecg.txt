@@ -1,14 +1,2 @@
-#19862
-typescript-compiler
-
-#26556
-date-format-tofte
-
-#33565
-n-body
-deltablue
-wsl
-
-#18740
-splay
+# x64: weekly workload JITLITECG Release
 
