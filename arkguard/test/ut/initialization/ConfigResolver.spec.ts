@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@ import {
   collectResevedFileNameInIDEConfig,
   readNameCache,
   handleUniversalPathInObf,
+  handleUniversalUncompactPathInObf,
   getArkguardNameCache,
   fillNameCache,
   writeObfuscationNameCache,
@@ -697,6 +698,34 @@ describe('test for ConfigResolve', function() {
       });
     });
 
+    describe('resolveKeepUncompactConfig', () => {
+      it('should put wildcard paths into keepUncompactUniversalPaths and excludeUncompactUniversalPaths', () => {
+        const keepUncompactConfigs = ['!test/*/exclude.js', 'test/?/include.js'];
+        const configs = new MergedConfig();
+        const configPath = './test/testData/obfuscation/keepDts/obfuscation-template.txt';
+
+        newObConfigResolver.resolveKeepUncompactConfig(keepUncompactConfigs, configs, configPath);
+
+        expect(configs.excludeUncompactUniversalPaths).to.have.lengthOf(1);
+        expect(configs.keepUncompactUniversalPaths).to.have.lengthOf(1);
+        expect(configs.excludeUncompactPathSet.size).to.equal(0);
+        expect(configs.keepUncompactSourceOfPaths).to.have.lengthOf(0);
+      });
+
+      it('should put concrete ! path into excludeUncompactPathSet and wildcard into keep side', () => {
+        const keepUncompactConfigs = ['!test/exclude.js', 'test/*/include.js'];
+        const configs = new MergedConfig();
+        const configPath = './test/testData/obfuscation/keepDts/obfuscation-template.txt';
+
+        newObConfigResolver.resolveKeepUncompactConfig(keepUncompactConfigs, configs, configPath);
+
+        expect(configs.excludeUncompactUniversalPaths).to.have.lengthOf(0);
+        expect(configs.keepUncompactUniversalPaths).to.have.lengthOf(1);
+        expect(configs.excludeUncompactPathSet.size).to.equal(1);
+        expect(configs.keepUncompactSourceOfPaths).to.have.lengthOf(0);
+      });
+    });
+
     describe('resolvePath', () => {
       it('should return the absolute path if token is already an absolute path', () => {
         const configPath = '/home/user/config.json';
@@ -783,6 +812,7 @@ describe('test for ConfigResolve', function() {
           ObConfigResolver.KEEP_FILE_NAME,
           ObConfigResolver.KEEP_COMMENTS,
           ObConfigResolver.KEEP_OBJECT_PROPS,
+          ObConfigResolver.KEEP_UNCOMPACT,
           ObConfigResolver.DISABLE_OBFUSCATION,
           ObConfigResolver.ENABLE_PROPERTY_OBFUSCATION,
           ObConfigResolver.ENABLE_STRING_PROPERTY_OBFUSCATION,
@@ -810,6 +840,7 @@ describe('test for ConfigResolve', function() {
           OptionTypeForTest.KEEP_FILE_NAME,
           OptionTypeForTest.KEEP_COMMENTS,
           OptionTypeForTest.KEEP_OBJECT_PROPS,
+          OptionTypeForTest.KEEP_UNCOMPACT,
           OptionTypeForTest.DISABLE_OBFUSCATION,
           OptionTypeForTest.ENABLE_PROPERTY_OBFUSCATION,
           OptionTypeForTest.ENABLE_STRING_PROPERTY_OBFUSCATION,
@@ -1700,9 +1731,14 @@ describe('test for ConfigResolve', function() {
         keepUniversalPaths: [/test\.js$/],
         excludeUniversalPaths: [/exclude\.js$/],
         excludePathSet: new Set(),
+        keepUncompactSourceOfPaths: [],
+        keepUncompactUniversalPaths: [],
+        excludeUncompactUniversalPaths: [],
+        excludeUncompactPathSet: new Set(),
         mergeKeepOptions: () => {},
         mergeAllRules: () => {},
         sortAndDeduplicate: () => {},
+        clearKeepUncompactWhenCompactDisabled: () => {},
         serializeMergedConfig: () => {
           return JSON.stringify(this);
         }
@@ -1732,9 +1768,14 @@ describe('test for ConfigResolve', function() {
         keepUniversalPaths: [],
         excludeUniversalPaths: [],
         excludePathSet: new Set(),
+        keepUncompactSourceOfPaths: [],
+        keepUncompactUniversalPaths: [],
+        excludeUncompactUniversalPaths: [],
+        excludeUncompactPathSet: new Set(),
         mergeKeepOptions: () => {},
         mergeAllRules: () => {},
         sortAndDeduplicate: () => {},
+        clearKeepUncompactWhenCompactDisabled: () => {},
         serializeMergedConfig: () => {
           return JSON.stringify(this);
         }
@@ -1743,6 +1784,125 @@ describe('test for ConfigResolve', function() {
       const result = handleUniversalPathInObf(mergedObConfig, allSourceFilePaths);
 
       expect(result).to.be.undefined;
+    });
+  });
+
+  describe('handleUniversalUncompactPathInObf', () => {
+    it('should append matched source files to keepUncompactSourceOfPaths', () => {
+      const mergedObConfig: MergedConfig = {
+        options: new ObOptionsForTest(),
+        reservedPropertyNames: [],
+        reservedGlobalNames: [],
+        reservedNames: [],
+        reservedFileNames: [],
+        keepComments: [],
+        keepSourceOfPaths: [],
+        universalReservedPropertyNames: [],
+        universalReservedGlobalNames: [],
+        keepUniversalPaths: [],
+        excludeUniversalPaths: [],
+        excludePathSet: new Set(),
+        keepUncompactSourceOfPaths: [],
+        keepUncompactUniversalPaths: [/uncompact\.ts$/],
+        excludeUncompactUniversalPaths: [/skip\.ts$/],
+        excludeUncompactPathSet: new Set(),
+        mergeKeepOptions: () => {},
+        mergeAllRules: () => {},
+        sortAndDeduplicate: () => {},
+        clearKeepUncompactWhenCompactDisabled: () => {},
+        serializeMergedConfig: () => {
+          return JSON.stringify(this);
+        }
+      };
+      const allSourceFilePaths = new Set(['a/uncompact.ts', 'b/skip.ts', 'c/other.ts']);
+      handleUniversalUncompactPathInObf(mergedObConfig, allSourceFilePaths);
+      expect(mergedObConfig.keepUncompactSourceOfPaths).to.deep.equal(['a/uncompact.ts']);
+      expect(mergedObConfig.excludeUncompactPathSet).to.deep.equal(new Set(['b/skip.ts']));
+    });
+
+    it('should return early when both universal arrays are empty', () => {
+      const mergedObConfig: MergedConfig = {
+        options: new ObOptionsForTest(),
+        reservedPropertyNames: [],
+        reservedGlobalNames: [],
+        reservedNames: [],
+        reservedFileNames: [],
+        keepComments: [],
+        keepSourceOfPaths: [],
+        universalReservedPropertyNames: [],
+        universalReservedGlobalNames: [],
+        keepUniversalPaths: [],
+        excludeUniversalPaths: [],
+        excludePathSet: new Set(),
+        keepUncompactSourceOfPaths: ['pre-existing'],
+        keepUncompactUniversalPaths: [],
+        excludeUncompactUniversalPaths: [],
+        excludeUncompactPathSet: new Set(),
+        mergeKeepOptions: () => {},
+        mergeAllRules: () => {},
+        sortAndDeduplicate: () => {},
+        clearKeepUncompactWhenCompactDisabled: () => {},
+        serializeMergedConfig: () => {
+          return JSON.stringify(this);
+        }
+      };
+      handleUniversalUncompactPathInObf(mergedObConfig, new Set(['x.ts']));
+      expect(mergedObConfig.keepUncompactSourceOfPaths).to.deep.equal(['pre-existing']);
+    });
+
+    it('should let exclude universal win over keep universal for the same file', () => {
+      const mergedObConfig: MergedConfig = {
+        options: new ObOptionsForTest(),
+        reservedPropertyNames: [],
+        reservedGlobalNames: [],
+        reservedNames: [],
+        reservedFileNames: [],
+        keepComments: [],
+        keepSourceOfPaths: [],
+        universalReservedPropertyNames: [],
+        universalReservedGlobalNames: [],
+        keepUniversalPaths: [],
+        excludeUniversalPaths: [],
+        excludePathSet: new Set(),
+        keepUncompactSourceOfPaths: [],
+        keepUncompactUniversalPaths: [/^.*\.ts$/],
+        excludeUncompactUniversalPaths: [/^pkg\/blocked\.ts$/],
+        excludeUncompactPathSet: new Set(),
+        mergeKeepOptions: () => {},
+        mergeAllRules: () => {},
+        sortAndDeduplicate: () => {},
+        clearKeepUncompactWhenCompactDisabled: () => {},
+        serializeMergedConfig: () => {
+          return JSON.stringify(this);
+        }
+      };
+      handleUniversalUncompactPathInObf(mergedObConfig, new Set(['pkg/blocked.ts', 'pkg/ok.ts']));
+      expect(mergedObConfig.keepUncompactSourceOfPaths).to.deep.equal(['pkg/ok.ts']);
+      expect(mergedObConfig.excludeUncompactPathSet.has('pkg/blocked.ts')).to.be.true;
+    });
+  });
+
+  describe('MergedConfig.clearKeepUncompactWhenCompactDisabled', () => {
+    it('should clear keep-uncompact when compact is off', () => {
+      const config = new MergedConfig();
+      config.options.compact = false;
+      config.keepUncompactSourceOfPaths = ['/a/b.ts'];
+      config.keepUncompactUniversalPaths.push(/^x$/);
+      config.excludeUncompactUniversalPaths.push(/^y$/);
+      config.excludeUncompactPathSet.add('/z');
+      config.clearKeepUncompactWhenCompactDisabled();
+      expect(config.keepUncompactSourceOfPaths).to.deep.equal([]);
+      expect(config.keepUncompactUniversalPaths).to.deep.equal([]);
+      expect(config.excludeUncompactUniversalPaths).to.deep.equal([]);
+      expect(config.excludeUncompactPathSet.size).to.equal(0);
+    });
+
+    it('should retain keep-uncompact when compact is on', () => {
+      const config = new MergedConfig();
+      config.options.compact = true;
+      config.keepUncompactSourceOfPaths = ['/a/b.ts'];
+      config.clearKeepUncompactWhenCompactDisabled();
+      expect(config.keepUncompactSourceOfPaths).to.deep.equal(['/a/b.ts']);
     });
   });
 
