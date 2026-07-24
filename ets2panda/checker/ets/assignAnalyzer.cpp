@@ -1047,13 +1047,18 @@ static bool CanUseDefaultValueAtCurrentPoint(const ir::AstNode *declNode, const 
         return false;
     }
 
+    // Module-level let/const are accessible only from their declaration point onward (spec: Scopes).
+    // Do not skip use-before-init via "has default value" when the use is textually before the declaration
+    // (e.g. a top-level statement lowered into _$init$_ that references a later let/const).
+    if (declNode->IsClassProperty() && declNode->AsClassProperty()->IsTopLevelLexicalDecl()) {
+        return IsDeclaredBefore(declNode, node);
+    }
+
     if (currentTopLevelDecl == nullptr || !declNode->IsClassProperty() || !currentTopLevelDecl->IsClassProperty()) {
         return true;
     }
 
-    const auto *declProp = declNode->AsClassProperty();
-    const auto *currentProp = currentTopLevelDecl->AsClassProperty();
-    if (!declProp->IsTopLevelLexicalDecl() || !currentProp->IsTopLevelLexicalDecl()) {
+    if (!currentTopLevelDecl->AsClassProperty()->IsTopLevelLexicalDecl()) {
         return true;
     }
 
