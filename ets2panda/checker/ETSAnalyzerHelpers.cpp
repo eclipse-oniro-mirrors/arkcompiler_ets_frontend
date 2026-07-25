@@ -16,6 +16,10 @@
 #include <algorithm>
 
 #include "ETSAnalyzerHelpers.h"
+#include "checker/types/ets/etsArrayType.h"
+#include "checker/types/ets/etsFunctionType.h"
+#include "checker/types/ets/etsTupleType.h"
+#include "checker/types/ets/etsUnionType.h"
 #include "checker/types/typeError.h"
 #include "public/public.h"
 #include "util/diagnostic.h"
@@ -23,6 +27,54 @@
 #include <array>
 
 namespace ark::es2panda::checker {
+
+bool IsTypePreservedUpToUndefined(const Type *const typeToCheck, const bool checkTypeParameter) noexcept
+{
+    if (checkTypeParameter && typeToCheck->IsETSTypeParameter()) {
+        return false;
+    }
+
+    // Only signatures like '(x: Any, y: Any, ...) => never' are preserved.
+    if (typeToCheck->IsETSFunctionType()) {
+        auto *signature = typeToCheck->AsETSFunctionType()->ArrowSignature();
+        if (!signature->ReturnType()->IsETSNeverType()) {
+            return false;
+        }
+        for (const auto *param : signature->Params()) {
+            if (!param->TsType()->IsETSAnyType()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ETSTupleType is never preserved because its underlying implementation is an internal generic tuple type.
+    if (typeToCheck->IsETSTupleType()) {
+        return false;
+    }
+
+    // FixedArray<T> is preserved up to undefined only in the form FixedArray<T | undefined>.
+    if (typeToCheck->IsETSArrayType() && !typeToCheck->AsETSArrayType()->IsValueArray()) {
+        const auto *elementType = typeToCheck->AsETSArrayType()->ElementType();
+        return elementType->PossiblyETSUndefined() && IsTypePreservedUpToUndefined(elementType);
+    }
+
+    if (typeToCheck->IsETSUnionType()) {
+        auto *unionType = typeToCheck->AsETSUnionType();
+        if (unionType->AllOfConstituentTypes([](const Type *item) { return IsTypePreservedUpToUndefined(item); })) {
+            return true;
+        }
+
+        const auto predicate = [](const Type *item) -> bool { return IsTypePreservedUpToUndefined(item, false); };
+        // T | undefined is preserved up to undefined even when T is a type parameter.
+        if (unionType->AllOfConstituentTypes(predicate)) {
+            return unionType->AnyOfConstituentTypes([](const Type *item) -> bool { return item->IsUndefinedType(); });
+        }
+        return false;
+    }
+
+    return true;
+}
 
 static bool IsInterfaceObjLiteralAnnotation(ir::AnnotationUsage *annotation)
 {

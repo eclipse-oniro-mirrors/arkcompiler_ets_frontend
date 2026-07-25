@@ -27,3 +27,4 @@ function main() {
 
 /* @@? 24:17 Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type '((() => undefined))|Double' */
 /* @@? 25:24 Warning Warning W65001: The equality expression is always false. */
+/* @@? 25:25 Warning Warning W369037: Cast expression `as (() => undefined)` is type unsafe. 'ClassCastError' exception can be thrown at runtime */
