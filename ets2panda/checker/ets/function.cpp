@@ -1908,6 +1908,7 @@ enum class OverrideErrorCode {
     INCOMPATIBLE_RETURN,
     INCOMPATIBLE_TYPEPARAM,
     OVERRIDDEN_WEAKER,
+    INCOMPATIBLE_NULLISH_PARAM,
 };
 
 static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature, Signature *other)
@@ -1961,51 +1962,69 @@ Signature *ETSChecker::AdjustForTypeParameters(Signature *source, Signature *tar
 static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signature *overriddenSignature,
                                 const OverrideErrorCode &errorCode)
 {
-    switch (errorCode) {
-        case OverrideErrorCode::OVERRIDDEN_FINAL: {
-            checker->LogError(diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_FINAL,
-                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                               overriddenSignature->Owner()},
-                              signature->Function()->Start());
-            return;
-        }
-        case OverrideErrorCode::INCOMPATIBLE_RETURN: {
-            if (overriddenSignature->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
-                checker->LogError(diagnostic::CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN,
-                                  {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                                   overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                                   overriddenSignature->Owner()},
-                                  signature->Function()->Start());
-                return;
-            }
-            checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_RETURN,
-                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                               overriddenSignature->Owner()},
-                              signature->Function()->Start());
-            return;
-        }
-        case OverrideErrorCode::OVERRIDDEN_WEAKER: {
-            checker->LogError(diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_WEAKER,
-                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                               overriddenSignature->Owner()},
-                              signature->Function()->Start());
-            return;
-        }
-        case OverrideErrorCode::INCOMPATIBLE_TYPEPARAM: {
-            checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM,
-                              {signature->Function()->Id()->Name(), signature->ReturnType(), signature->Owner(),
-                               overriddenSignature->Function()->Id()->Name(), overriddenSignature->ReturnType(),
-                               overriddenSignature->Owner()},
-                              signature->Function()->Start());
-            return;
-        }
-        default: {
-            ES2PANDA_UNREACHABLE();
-        }
+    auto *sigFunc = signature->Function();
+    auto *overFunc = overriddenSignature->Function();
+    util::DiagnosticMessageParams params = {
+        sigFunc->Id()->Name(),  signature->ReturnType(),           signature->Owner(),
+        overFunc->Id()->Name(), overriddenSignature->ReturnType(), overriddenSignature->Owner()};
+    if (errorCode == OverrideErrorCode::INCOMPATIBLE_NULLISH_PARAM) {
+        params = util::DiagnosticMessageParams {sigFunc->Id()->Name(), signature->Owner(), overFunc->Id()->Name(),
+                                                overriddenSignature->Owner()};
     }
+
+    const diagnostic::DiagnosticKind *kind = nullptr;
+    switch (errorCode) {
+        case OverrideErrorCode::OVERRIDDEN_FINAL:
+            kind = &diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_FINAL;
+            break;
+        case OverrideErrorCode::INCOMPATIBLE_RETURN:
+            kind = overriddenSignature->Owner()->HasObjectFlag(ETSObjectFlags::INTERFACE)
+                       ? &diagnostic::CANNOT_IMPLEMENT_INCOMPATIBLE_RETURN
+                       : &diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_RETURN;
+            break;
+        case OverrideErrorCode::OVERRIDDEN_WEAKER:
+            kind = &diagnostic::CANNOT_OVERRIDE_OVERRIDDEN_WEAKER;
+            break;
+        case OverrideErrorCode::INCOMPATIBLE_TYPEPARAM:
+            kind = &diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_TYPEPARAM;
+            break;
+        case OverrideErrorCode::INCOMPATIBLE_NULLISH_PARAM:
+            kind = &diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_NULLISH_PARAM;
+            break;
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+    checker->LogError(*kind, params, sigFunc->Start());
+}
+
+static bool IsPartialOverrideCompatible(ETSChecker *checker, Signature *base, Signature *derived)
+{
+    auto const &baseParams = base->Params();
+    auto const &derivedParams = derived->Params();
+    if (baseParams.size() != derivedParams.size()) {
+        return false;
+    }
+    SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK |
+                                                                         TypeRelationFlag::OVERRIDING_CONTEXT);
+    bool anyNullishPartial = false;
+    for (size_t i = 0; i < baseParams.size(); ++i) {
+        auto *u = checker->RemoveUndefinedType(baseParams[i]->TsType());
+        auto *t = derivedParams[i]->TsType();
+        if (checker->Relation()->IsSupertypeOf(t, u)) {
+            continue;
+        }
+        auto *nonNullish = checker->GetNonNullishType(u);
+        if (nonNullish->IsETSNeverType() || !checker->Relation()->IsSupertypeOf(t, nonNullish)) {
+            return false;
+        }
+        anyNullishPartial = true;
+    }
+    return anyNullishPartial;
+}
+
+static bool IsOverrideTargetInvalid(varbinder::LocalVariable *target)
+{
+    return target == nullptr || target->TsType() == nullptr || target->TsType()->IsTypeError();
 }
 
 static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectType *site)
@@ -2014,8 +2033,9 @@ static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectTy
         PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
     auto *target = site->GetProperty(signature->Function()->Id()->Name(), flags);
     bool isOverridingAnySignature = false;
+    Signature *partialOverrideCandidate = nullptr;
 
-    if (target == nullptr || target->TsType() == nullptr || target->TsType()->IsTypeError()) {
+    if (IsOverrideTargetInvalid(target)) {
         return isOverridingAnySignature;
     }
 
@@ -2039,6 +2059,10 @@ static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectTy
         }
 
         if (!IsMethodOverridesOther(checker, itSubst, signature)) {
+            if (partialOverrideCandidate == nullptr && !signature->HasSignatureFlag(SignatureFlags::STATIC) &&
+                IsPartialOverrideCompatible(checker, itSubst, signature)) {
+                partialOverrideCandidate = it;
+            }
             continue;
         }
 
@@ -2053,6 +2077,12 @@ static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectTy
         }
 
         isOverridingAnySignature = true;
+    }
+
+    if (!isOverridingAnySignature && partialOverrideCandidate != nullptr) {
+        ReportOverrideError(checker, signature, partialOverrideCandidate,
+                            OverrideErrorCode::INCOMPATIBLE_NULLISH_PARAM);
+        return false;
     }
 
     return isOverridingAnySignature;

@@ -54,12 +54,12 @@ class Derived4 extends Base4 {
     foo(x: Object): string { return "derived" }
 }
 
-// Test 5: char | boolean | null -> Object (negative - no override due to null in union)
+// Test 5: char | boolean | null -> Any
 class Base5 {
     foo(x: char | boolean | null): string { return "base" }
 }
 class Derived5 extends Base5 {
-    foo(x: Object): string { return "derived" }
+    foo(x: Any): string { return "derived" }
 }
 
 // Test 6: int | string | boolean | float -> Object
@@ -239,12 +239,10 @@ function main() {
         arktest.assertEQ(base.foo(val), "derived")
     })
 
-    // Negative test: no override when union contains null
-    ts.addTest("5. char|boolean|null -> Object (no override)", () => {
+    ts.addTest("5. char|boolean|null -> Any", () => {
         let derived = new Derived5()
         let base: Base5 = derived as Base5
         let val: char = c'a'
-        // No override should happen because union contains null
         arktest.assertEQ(base.foo(val), "derived")
     })
 
