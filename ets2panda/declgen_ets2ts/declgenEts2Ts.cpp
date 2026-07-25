@@ -964,7 +964,7 @@ bool TSDeclGen::HandleObjectType(const checker::Type *checkerType)
         OutDts("number");
     } else if (typeStr == "BigInt") {
         OutDts("bigint");
-    } else if (typeStr == "ESValue") {
+    } else if (typeStr == "ESValue" || typeStr == "Function") {
         OutDts("ESObject");
     } else {
         GenObjectType(checkerType->AsETSObjectType());
@@ -2083,7 +2083,7 @@ std::string TSDeclGen::ConvertInteropTypeName(const std::string &typeName)
         return "st.Map";
     } else if (typeName == "Set") {
         return "st.Set";
-    } else if (typeName == "Class") {
+    } else if (typeName == "Class" || typeName == "Function") {
         return "ESObject";
     } else if (typeName == "es.Array") {
         return "Array";
@@ -2125,7 +2125,7 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
 {
     auto typePart = typeReference->Part();
     auto partName = typePart->GetIdent()->Name().Mutf8();
-    if (partName == "Type" || partName == "Function0") {
+    if (partName == "Type" || partName == "Function0" || partName == "Function") {
         OutDts("ESObject");
         return;
     }
@@ -2614,7 +2614,7 @@ void TSDeclGen::GenPartName(std::string &partName)
         partName = "ESObject";
     } else if (partName == "Floating" || partName == "Integral") {
         partName = "number";
-    } else if (partName == "Class") {
+    } else if (partName == "Class" || partName == "Function") {
         partName = "ESObject";
     }
 }

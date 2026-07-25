@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import {BaseMode} from '../../../src/build/base_mode';
-import {buildDeclgenOutputPath} from '../../../src/util/utils';
+import {buildDeclgenOutputPath, unlinkSync} from '../../../src/util/utils';
 import {
     BuildConfig,
     ModuleInfo,
@@ -1074,5 +1074,32 @@ describe('BaseMode declaration file map management tests', () => {
         expect((testMode as any).loadDeclFileMap).toHaveBeenCalled();
         expect((testMode as any).saveDeclFileMap).toHaveBeenCalled();
     });
+});
+
+describe('unlinkSync', () => {
+    const testFilePath = './testfile.txt';
+    const actualFs = jest.requireActual('fs');
+
+    beforeEach(() => {
+        (fs.existsSync as jest.Mock).mockImplementation(actualFs.existsSync);
+        actualFs.writeFileSync(testFilePath, 'test data', { encoding: 'utf-8' });
+    });
+
+    afterEach(() => {
+        if (actualFs.existsSync(testFilePath)) {
+            actualFs.unlinkSync(testFilePath);
+        }
+    });
+
+    it('atc_should delete the file if it exists', () => {
+        unlinkSync(testFilePath);
+        const exists = actualFs.existsSync(testFilePath);
+        expect(exists).toBe(false);
+    });
+
+    it('atc_should not throw an error if the file does not exist', () => {
+        expect(() => unlinkSync('/non/existent/path')).not.toThrow();
+    });
+
 });
 

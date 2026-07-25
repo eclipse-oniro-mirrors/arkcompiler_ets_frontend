@@ -147,3 +147,11 @@ export interface IMethodSigs {
     /** @interop param 1 string */
     process(a: number, b: boolean): void;
 }
+
+export function f(): Function{
+    return ()=>{
+      return "hello"  
+    }
+}
+export function f2(func: Function): void{
+}
