@@ -1990,6 +1990,17 @@ static bool IsConvertibleFunctionReference(const ir::AstNode *node)
     return false;
 }
 
+[[nodiscard]] static bool IsInferenceOnlyTopLevelInit(ir::ClassProperty const *cp) noexcept
+{
+    return cp->IsImmediateInit() && cp->Value() != nullptr && (cp->TypeAnnotation() == nullptr || cp->IsConst());
+}
+
+[[nodiscard]] static bool ContainsLambda(ir::AstNode const *node)
+{
+    return node->IsArrowFunctionExpression() ||
+           node->IsAnyChild([](ir::AstNode const *n) { return n->IsArrowFunctionExpression(); });
+}
+
 static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::AstNode *node)
 {
     if (node->IsArrowFunctionExpression() && !IsMethodInLiteral(node->AsArrowFunctionExpression())) {
@@ -2097,6 +2108,18 @@ bool LambdaConversionPhase::PerformForProgram(parser::Program *program)
         (Context()->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS)) {
         ResetCalleeCount();
     }
+
+    // An untyped-or-const top-level field (globalDeclTransformer path B) keeps its Value() only for the
+    // checker and clones it into the static ctor; detach the dead copy so a lambda initializer emits one class.
+    program->Ast()->IterateRecursivelyPreorder([](ir::AstNode *node) {
+        if (!node->IsClassProperty()) {
+            return;
+        }
+        auto *cp = node->AsClassProperty();
+        if (IsInferenceOnlyTopLevelInit(cp) && ContainsLambda(cp->Value())) {
+            cp->SetValue(nullptr);
+        }
+    });
 
     program->Ast()->TransformChildrenRecursivelyPostorder(
         [ctx = Context()](ir::AstNode *node) { return BuildLambdaClassWhenNeeded(ctx, node); }, Name());

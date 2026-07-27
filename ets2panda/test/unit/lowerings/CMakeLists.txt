@@ -42,6 +42,10 @@ ets2panda_add_gtest(relaxed_any_lowering_test
     CPP_SOURCES relaxed_any_lowering.cpp
 )
 
+ets2panda_add_gtest(lambda_lowering_test
+    CPP_SOURCES lambda_lowering.cpp
+)
+
 # ets2panda_add_gtest(convert_primitive_cast_method_call
 #     CPP_SOURCES convert_primitive_cast_method_call.cpp
 # )
