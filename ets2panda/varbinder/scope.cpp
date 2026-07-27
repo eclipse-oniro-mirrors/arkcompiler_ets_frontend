@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -705,11 +705,43 @@ Scope::InsertResult GlobalScope::InsertImpl(const util::StringView &name, Variab
 
 bool GlobalScope::IsForeignBinding(const util::StringView &name) const
 {
+    // A name absent from the local bindings is foreign if it is delegated via the shared
+    // stdlib export map. Otherwise it is not a binding this scope owns at all.
+    if (Bindings().find(name) == Bindings().end()) {
+        return FindInSharedForeign(name) != nullptr;
+    }
     // Asserts make sure that the passed in key comes from this scope
-    ES2PANDA_ASSERT(Bindings().find(name) != Bindings().end());
     ES2PANDA_ASSERT(foreignBindings_.find(name) != foreignBindings_.end());
 
     return foreignBindings_.at(name);
+}
+
+Variable *GlobalScope::FindInSharedForeign(const util::StringView &name) const
+{
+    const auto it = mergedSharedForeign_.find(name);
+    return it != mergedSharedForeign_.end() ? it->second : nullptr;
+}
+
+Variable *GlobalScope::FindLocal(const util::StringView &name, ResolveBindingOptions options) const
+{
+    // Local bindings win (shadow stdlib).
+    if (auto *local = Scope::FindLocal(name, options); local != nullptr) {
+        return local;
+    }
+    if (mergedSharedForeign_.empty()) {
+        return nullptr;
+    }
+    // Mirror Scope::FindLocal's INTERFACES handling for the shared maps.
+    if ((options & ResolveBindingOptions::INTERFACES) != 0) {
+        const std::string tsBindingName = varbinder::TSBinding::ToTSBinding(name);
+        if (auto *iface = FindInSharedForeign(util::StringView(tsBindingName)); iface != nullptr) {
+            return iface;
+        }
+        if ((options & ResolveBindingOptions::BINDINGS) == 0) {
+            return nullptr;
+        }
+    }
+    return FindInSharedForeign(name);
 }
 
 Scope::InsertResult GlobalScope::InsertDynamicBinding(const util::StringView &name, Variable *const var)

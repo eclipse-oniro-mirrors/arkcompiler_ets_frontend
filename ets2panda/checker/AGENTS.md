@@ -91,4 +91,5 @@ checker/
 
 - **New ETS type**: Add the type class under `types/ets/`, wire it into `typeRelation` and ETSChecker/ETS analysis.
 - **New ETS check rule**: Add branches in ETSAnalyzer/ETSChecker or `ets/` visitors and report diagnostics. Checker-side updates must stay metadata-only (types/variables), with no AST shape changes.
+- **Stdlib symbol lookup**: use `TopScope()->FindLocal(name, ResolveBindingOptions::ALL)` — not `Bindings().find()` — stdlib symbols may live in shared foreign maps rather than the scope's own bindings.
 - **New AST node kind**: In **ETSAnalyzer.h** declare `Check(ir::NodeType *node)` via `AST_NODE_MAPPING`; implement the check in **ETSAnalyzer.cpp** and recurse via the node’s `Check(checker)`.

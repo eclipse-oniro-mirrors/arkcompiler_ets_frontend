@@ -34,6 +34,12 @@ varbinder/
 - **Scope construction**: Create Scopes for blocks, functions, classes, modules; maintain parent-child relationships and variable/declaration registration.
 - **ETS-specific**: RecordTable, package/module imports, dynamic import; **ResolveReferencesForScopeWithContext** is used by lowering to bind newly created nodes locally.
 
+## Stdlib Foreign-Binding Sharing
+
+Stdlib imports use **delegate mode**: `ETSBinder` builds a shared export map per stdlib program (`foreignExportCache_`) and merges it into `GlobalScope::mergedSharedForeign_` via `AddSharedForeign` instead of calling `InsertForeignBinding` for each symbol. `mergedSharedForeign_` is a single flat `ArenaUnorderedMap` — entries from all imported stdlib modules are merged into it on first `AddSharedForeign` call, so lookups remain O(1). `GlobalScope::FindLocal` checks `mergedSharedForeign_` on a local-binding miss; local bindings always win.
+
+**Rule**: use `FindLocal(name, ResolveBindingOptions::ALL)` — not raw `Bindings()` scans — when searching `GlobalScope` for stdlib symbols.
+
 ## Hard Constraints
 
 - **No AST shape mutation**: binder must not rewrite AST structure or perform tree transformations.

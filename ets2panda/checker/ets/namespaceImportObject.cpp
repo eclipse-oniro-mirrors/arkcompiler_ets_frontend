@@ -293,10 +293,10 @@ void ETSChecker::SetrModuleObjectTsType(ir::Identifier *local, checker::ETSObjec
 {
     auto *etsBinder = static_cast<varbinder::ETSBinder *>(VarBinder());
 
-    for (auto [bindingName, var] : etsBinder->TopScope()->Bindings()) {
-        if (bindingName.Is(local->Name().Mutf8())) {
-            var->SetTsType(moduleObjType);
-        }
+    // FindLocal (not a Bindings() scan) so it works with shared stdlib too.
+    if (auto *var = etsBinder->TopScope()->FindLocal(local->Name(), varbinder::ResolveBindingOptions::ALL);
+        var != nullptr) {
+        var->SetTsType(moduleObjType);
     }
 }
 

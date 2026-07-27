@@ -97,10 +97,10 @@ void ETSChecker::ReputCheckerData()
 
 static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signature)
 {
-    const auto &varMap = checker->VarBinder()->TopScope()->Bindings();
-    const auto iterator = varMap.find(signature);
-    ES2PANDA_ASSERT(iterator != varMap.end());
-    auto *var = iterator->second;
+    // FindLocal works whether stdlib is flattened or shared.
+    auto *var =
+        checker->VarBinder()->TopScope()->FindLocal(util::StringView(signature), varbinder::ResolveBindingOptions::ALL);
+    ES2PANDA_ASSERT(var != nullptr);
     Type *type {nullptr};
     if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
         if (var->Declaration()->Node()->IsClassDefinition()) {
@@ -109,9 +109,9 @@ static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signat
             ES2PANDA_ASSERT(var->Declaration()->Node()->IsTSInterfaceDeclaration());
             type = checker->BuildBasicInterfaceProperties(var->Declaration()->Node()->AsTSInterfaceDeclaration());
         }
-        checker->GetGlobalTypesHolder()->InitializeBuiltin(iterator->first, type);
+        checker->GetGlobalTypesHolder()->InitializeBuiltin(util::StringView(signature), type);
     }
-    return iterator->first;
+    return util::StringView(signature);
 }
 
 void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties)
@@ -144,14 +144,6 @@ void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &pro
         } else {
             methodNames.insert(propName);
         }
-    }
-}
-
-static void SetupBuiltinMember(varbinder::Variable *var)
-{
-    auto *type = var->TsType();
-    if (type == nullptr || !type->IsETSObjectType()) {
-        return;
     }
 }
 
@@ -281,8 +273,9 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
         return;
     }
 
-    const auto varMap = varbinder->TopScope()->Bindings();
-    if (varMap.find(compiler::Signatures::BUILTIN_OBJECT_CLASS) == varMap.end()) {
+    const auto &varMap = varbinder->TopScope()->Bindings();
+    if (varbinder->TopScope()->FindLocal(util::StringView(compiler::Signatures::BUILTIN_OBJECT_CLASS),
+                                         varbinder::ResolveBindingOptions::ALL) == nullptr) {
         return;
     }
 
@@ -296,16 +289,10 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
 
     IntializeFunctionInterfaces(GetGlobalTypesHolder());
 
-    for (const auto &[name, var] : varMap) {
-        (void)name;
-        SetupBuiltinMember(var);
-    }
-
-    for (const auto &[name, var] : varMap) {
+    auto initBuiltinVar = [this, &objectName](const util::StringView &name, varbinder::Variable *var) {
         if (name == objectName) {
-            continue;
+            return;
         }
-
         if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
             if (var->TsType() == nullptr) {
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -314,6 +301,13 @@ void ETSChecker::InitializeBuiltins(varbinder::ETSBinder *varbinder)
                 GetGlobalTypesHolder()->InitializeBuiltin(name, var->TsType());
             }
         }
+    };
+    for (const auto &[name, var] : varMap) {
+        initBuiltinVar(name, var);
+    }
+    // Shared (delegated) stdlib builtins are not in varMap, so init them from the shared maps too.
+    for (const auto &[name, var] : varbinder->TopScope()->SharedForeign()) {
+        initBuiltinVar(name, var);
     }
 
     AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
