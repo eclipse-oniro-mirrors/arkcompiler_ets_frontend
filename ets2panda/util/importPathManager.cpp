@@ -740,8 +740,8 @@ private:
             FlockTrace(filename, "Waiting RO unlock");
 #ifdef PANDA_TARGET_WINDOWS
             auto const fd =
-                ::CreateFileW(Utf8ToWString(filename).c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
-                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                ::CreateFileW(Utf8ToWString(ark::os::file::File::GetExtendedFilePath(filename)).c_str(), GENERIC_READ,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
             if (fd == INVALID_HANDLE_VALUE) {
                 std::cerr << "File opening error '" << filename << "': " << GetErrorMessage(::GetLastError())
                           << std::endl;
@@ -783,8 +783,9 @@ private:
             FlockTrace(filename, "Open for write");
 #endif
 #ifdef PANDA_TARGET_WINDOWS
-            FD fd = ::CreateFileW(Utf8ToWString(filename).c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-                                  NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+            FD fd =
+                ::CreateFileW(Utf8ToWString(ark::os::file::File::GetExtendedFilePath(filename)).c_str(), GENERIC_WRITE,
+                              FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             if (fd == INVALID_HANDLE_VALUE) {
                 std::cerr << "File opening error '" << filename << "': " << GetErrorMessage(::GetLastError())
                           << std::endl;

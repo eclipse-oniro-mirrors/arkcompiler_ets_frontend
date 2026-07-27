@@ -167,8 +167,11 @@ private:
     void SetTextFile(const std::string &file, util::DiagnosticEngine *de)
     {
         static_assert(KIND != ModuleKind::METADATA_DECL);  // metadata is not stored as a text
-
+#if defined(PANDA_TARGET_WINDOWS)
+        std::ifstream inputStream {ark::os::file::File::GetExtendedFilePath(file)};
+#else
         std::ifstream inputStream {file};
+#endif
         if (!inputStream) {
             de->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {file});
             return;

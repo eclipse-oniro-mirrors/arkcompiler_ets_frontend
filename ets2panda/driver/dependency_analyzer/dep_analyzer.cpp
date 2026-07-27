@@ -17,7 +17,11 @@
 
 void DepAnalyzer::DumpJson(std::string &outFilePath)
 {
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ofstream outFile {ark::os::file::File::GetExtendedFilePath(outFilePath)};
+#else
     std::ofstream outFile(outFilePath);
+#endif
     if (outFile.fail()) {
         std::cerr << "Error when opening a file " << outFilePath << std::endl;
         return;
@@ -86,7 +90,11 @@ static void DumpJsonHelper(std::ostream &ostr, std::string_view name, const Valu
 
 static int CollectFilesToProcess(const std::string &fileListPath, std::vector<std::string> &fileList)
 {
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ifstream inFile {ark::os::file::File::GetExtendedFilePath(fileListPath)};
+#else
     std::ifstream inFile(fileListPath);
+#endif
     if (inFile.fail()) {
         std::cerr << "Error when opening a file " << fileListPath << std::endl;
         return 1;

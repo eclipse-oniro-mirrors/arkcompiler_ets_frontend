@@ -114,7 +114,11 @@ static bool CheckOptionsBeforePhase(const public_lib::Context &context, const st
 
 static void WriteStringToFile(public_lib::Context *context, const std::string &outputPath, std::string_view contents)
 {
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ofstream outFile {ark::os::file::File::GetExtendedFilePath(outputPath)};
+#else
     std::ofstream outFile(outputPath);
+#endif
     if (!outFile.is_open()) {
         context->diagnosticEngine->LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {outputPath},
                                                  lexer::SourcePosition());
