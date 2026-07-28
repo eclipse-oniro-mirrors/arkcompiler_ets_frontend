@@ -75,6 +75,7 @@ runtime/ets/fuzz/repeated_del.ets
 runtime/ets/fuzz/too_many_expression.ets
 runtime/ets/fuzz/class_body_interface.ets
 runtime/ets/fuzz/create_partial.ets
+runtime/ets/fuzz/incomplete_class_property.ets
 ast/compiler/ets/DeclareIndexerTest.ets
 
 #New failures at #FailKind.SRC_DUMPER_FAI
