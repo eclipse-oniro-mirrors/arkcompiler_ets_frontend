@@ -1,2 +1,0 @@
-#23382
-Promise_promiseconstructor
