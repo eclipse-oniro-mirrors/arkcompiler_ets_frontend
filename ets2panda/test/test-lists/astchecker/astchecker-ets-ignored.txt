@@ -44,9 +44,6 @@ ast/parser/ets/InvalidLexer.ets
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
 
-#33503
-ast/compiler/ets/export_non_type_anno.ets
-
 # Issue: #23074
 # after the fix the test fails to detect another type error
 ast/parser/ets/unexpected_token_51.ets
