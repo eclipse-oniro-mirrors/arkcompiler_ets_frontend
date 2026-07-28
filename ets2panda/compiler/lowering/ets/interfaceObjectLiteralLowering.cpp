@@ -773,6 +773,8 @@ static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSigna
 static bool HasMatchingObjectLiteralProperty(checker::TypeRelation *relation, ir::ObjectExpression *objectExpr,
                                              util::StringView name, checker::Signature *signature)
 {
+    auto *checker = relation->GetChecker()->AsETSChecker();
+
     for (auto *propExpr : objectExpr->Properties()) {
         if (!propExpr->IsProperty()) {
             continue;
@@ -783,11 +785,23 @@ static bool HasMatchingObjectLiteralProperty(checker::TypeRelation *relation, ir
             continue;
         }
 
-        checker::SavedTypeRelationFlagsContext ctx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
         auto *valType = propExpr->AsProperty()->Value()->TsType();
-        if (valType->IsETSArrowType() &&
-            relation->SignatureIsSupertypeOf(signature, valType->AsETSFunctionType()->ArrowSignature())) {
-            return true;
+        if (!valType->IsETSArrowType()) {
+            continue;
+        }
+
+        auto *sourceSignature = valType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()[0U];
+
+        if (relation->CheckTypeParameterConstraints(sourceSignature->TypeParams(), signature->TypeParams())) {
+            auto *substSignature = checker->AdjustForTypeParameters(sourceSignature, signature);
+            if (substSignature == nullptr) {
+                continue;
+            }
+
+            checker::SavedTypeRelationFlagsContext ctx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+            if (relation->SignatureIsSupertypeOf(substSignature, sourceSignature)) {
+                return true;
+            }
         }
     }
 
