@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+import { CLUSTERING_METHOD } from './types';
+
 export const ARKTSCONFIG_JSON_FILE: string = 'arktsconfig.json';
 export const MERGED_ABC_FILE: string = 'modules_static.abc';
 export const MERGED_INTERMEDIATE_FILE: string = 'modules_intermediate.abc';
@@ -82,6 +84,8 @@ export const MAX_PATH_LENGTH: number = 260;
 export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
 export const CLUSTER_FILES_THRESHOLD: number = 460;
+// Default clustering method
+export const DEFAULT_CLUSTERING_METHOD: CLUSTERING_METHOD = CLUSTERING_METHOD.BASELINE;
 // Declaration cache is not fixed right now
 export const ENABLE_DECL_FILE_CACHE: boolean = true;
 // Synchronize execution on declaration generation.
