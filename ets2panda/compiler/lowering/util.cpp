@@ -17,6 +17,7 @@
 
 #include "checker/checkerContext.h"
 #include "checker/exportClosureResolver.h"
+#include "checker/types/ets/etsFunctionType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "ir/expressions/identifier.h"
@@ -670,6 +671,30 @@ static varbinder::Variable *EffectiveVariableFromIdentifier(const ir::Identifier
     return resolved != nullptr ? resolved : idVar;
 }
 
+static ir::AstNode *DeclarationFromFunctionType(checker::Type *type)
+{
+    if (type == nullptr || !type->IsETSFunctionType()) {
+        return nullptr;
+    }
+
+    for (auto *signature : type->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()) {
+        if (signature == nullptr) {
+            continue;
+        }
+        if (signature->HasFunction()) {
+            auto *function = signature->Function();
+            return function->Parent() != nullptr ? function->Parent() : function;
+        }
+        auto *ownerVar = signature->OwnerVar();
+        auto *decl = ownerVar == nullptr ? nullptr : ownerVar->Declaration();
+        if (decl != nullptr && decl->Node() != nullptr) {
+            return decl->Node();
+        }
+    }
+
+    return nullptr;
+}
+
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
 ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
 {
@@ -683,7 +708,7 @@ ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
     }
     auto decl = idVar->Declaration();
     if (decl == nullptr) {
-        return nullptr;
+        return DeclarationFromFunctionType(idVar->TsType());
     }
     return decl->Node();
 }

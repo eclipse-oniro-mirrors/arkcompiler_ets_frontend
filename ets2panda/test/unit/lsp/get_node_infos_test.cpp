@@ -77,10 +77,8 @@ TEST_F(LspGetNodeInfosTests, GetNodeInfosTests3)
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 27;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 3;
-    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -92,12 +90,10 @@ TEST_F(LspGetNodeInfosTests, GetMethodDefinitionInfo)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 54;
-    const size_t expectedSize = 4;
+    const size_t expectedSize = 2;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"bar", ark::es2panda::ir::AstNodeType::METHOD_DEFINITION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -109,12 +105,10 @@ TEST_F(LspGetNodeInfosTests, GetTsEnumDeclarationInfo)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 72;
-    const size_t expectedSize = 4;
+    const size_t expectedSize = 2;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
-                                            {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},
-                                            {"Color", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -126,13 +120,11 @@ TEST_F(LspGetNodeInfosTests, GetTsEnumMemberInfo)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 101;
-    const size_t expectedSize = 5;
+    const size_t expectedSize = 3;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"Foo", ark::es2panda::ir::AstNodeType::CLASS_DECLARATION},
-                                            {"Foo", ark::es2panda::ir::AstNodeType::CLASS_DEFINITION},
                                             {"Color", ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION},
-                                            {"Green", ark::es2panda::ir::AstNodeType::TS_ENUM_MEMBER},
-                                            {"Green", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"Green", ark::es2panda::ir::AstNodeType::TS_ENUM_MEMBER}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

@@ -26,13 +26,57 @@
 #include "lsp/include/user_preferences.h"
 #include <cstddef>
 #include <string>
+#include <string_view>
+#include <utility>
 
 namespace {
+using AstNodeKindName = std::pair<ark::es2panda::ir::AstNodeType, std::string_view>;
+using AstNodeType = ark::es2panda::ir::AstNodeType;
 using ark::es2panda::lsp::ClassHierarchy;
 using ark::es2panda::lsp::ClassHierarchyInfo;
 using ark::es2panda::lsp::ClassHierarchyItem;
 using ark::es2panda::lsp::ClassMethodItem;
 using ark::es2panda::lsp::ClassPropertyItem;
+
+static constexpr AstNodeKindName NODE_INFO_KIND_NAMES[] = {
+    {AstNodeType::ANNOTATION_DECLARATION, "ANNOTATION_DECLARATION"},
+    {AstNodeType::ANNOTATION_USAGE, "ANNOTATION_USAGE"},
+    {AstNodeType::AWAIT_EXPRESSION, "AWAIT_EXPRESSION"},
+    {AstNodeType::CALL_EXPRESSION, "CALL_EXPRESSION"},
+    {AstNodeType::CLASS_DECLARATION, "CLASS_DECLARATION"},
+    {AstNodeType::CLASS_DEFINITION, "CLASS_DEFINITION"},
+    {AstNodeType::CLASS_PROPERTY, "CLASS_PROPERTY"},
+    {AstNodeType::FUNCTION_DECLARATION, "FUNCTION_DECLARATION"},
+    {AstNodeType::FUNCTION_EXPRESSION, "FUNCTION_EXPRESSION"},
+    {AstNodeType::IDENTIFIER, "IDENTIFIER"},
+    {AstNodeType::IMPORT_DEFAULT_SPECIFIER, "IMPORT_DEFAULT_SPECIFIER"},
+    {AstNodeType::IMPORT_NAMESPACE_SPECIFIER, "IMPORT_NAMESPACE_SPECIFIER"},
+    {AstNodeType::IMPORT_SPECIFIER, "IMPORT_SPECIFIER"},
+    {AstNodeType::MEMBER_EXPRESSION, "MEMBER_EXPRESSION"},
+    {AstNodeType::METHOD_DEFINITION, "METHOD_DEFINITION"},
+    {AstNodeType::PROPERTY, "PROPERTY"},
+    {AstNodeType::SCRIPT_FUNCTION, "SCRIPT_FUNCTION"},
+    {AstNodeType::SPREAD_ELEMENT, "SPREAD_ELEMENT"},
+    {AstNodeType::STRUCT_DECLARATION, "STRUCT_DECLARATION"},
+    {AstNodeType::TS_CLASS_IMPLEMENTS, "TS_CLASS_IMPLEMENTS"},
+    {AstNodeType::TS_ENUM_DECLARATION, "TS_ENUM_DECLARATION"},
+    {AstNodeType::TS_ENUM_MEMBER, "TS_ENUM_MEMBER"},
+    {AstNodeType::TS_INTERFACE_DECLARATION, "TS_INTERFACE_DECLARATION"},
+    {AstNodeType::TS_MODULE_DECLARATION, "TS_MODULE_DECLARATION"},
+    {AstNodeType::TS_TYPE_ALIAS_DECLARATION, "TS_TYPE_ALIAS_DECLARATION"},
+    {AstNodeType::VARIABLE_DECLARATION, "VARIABLE_DECLARATION"},
+    {AstNodeType::VARIABLE_DECLARATOR, "VARIABLE_DECLARATOR"},
+};
+
+std::string_view GetNodeInfoKindName(AstNodeType kind)
+{
+    for (const auto &[nodeKind, name] : NODE_INFO_KIND_NAMES) {
+        if (kind == nodeKind) {
+            return name;
+        }
+    }
+    return "UNKNOWN";
+}
 }  // namespace
 
 KNativePointer impl_getCurrentTokenValue(KNativePointer context, KInt position)
@@ -2299,6 +2343,16 @@ KNativePointer impl_getNameByNodeInfo(KNativePointer nodeInfo)
     return new std::string(info->name);
 }
 TS_INTEROP_1(getNameByNodeInfo, KNativePointer, KNativePointer)
+
+KNativePointer impl_getKindByNodeInfo(KNativePointer nodeInfo)
+{
+    auto *info = reinterpret_cast<NodeInfo *>(nodeInfo);
+    if (info == nullptr) {
+        return nullptr;
+    }
+    return new std::string(GetNodeInfoKindName(info->kind));
+}
+TS_INTEROP_1(getKindByNodeInfo, KNativePointer, KNativePointer)
 
 KNativePointer impl_CreateNodeInfoPtr(KStringPtr &nodeName, KInt nodeKind)
 {

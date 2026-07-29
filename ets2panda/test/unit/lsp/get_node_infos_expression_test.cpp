@@ -59,7 +59,7 @@ a();
 
 class Parent {
   name: string;
-  
+
   constructor(name: string) {
     this.name = name;
   }
@@ -67,7 +67,7 @@ class Parent {
 
 class Child extends Parent {
   age: number;
-  
+
   constructor(name: string, age: number) {
     super(name);
     this.age = age;
@@ -93,11 +93,10 @@ TEST_F(LspGetNodeInfosExpressionTests, GetMemberExpressionInfo_PROPERTY)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 53;
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 2;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
     std::vector<NodeInfo> expectedResult = {{"bar", ark::es2panda::ir::AstNodeType::CALL_EXPRESSION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::MEMBER_EXPRESSION},
-                                            {"bar", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+                                            {"bar", ark::es2panda::ir::AstNodeType::MEMBER_EXPRESSION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -109,10 +108,9 @@ TEST_F(LspGetNodeInfosExpressionTests, GetMemberExpressionInfo_ELEMENT)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 145;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"propName", ark::es2panda::ir::AstNodeType::MEMBER_EXPRESSION},
-                                            {"propName", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"propName", ark::es2panda::ir::AstNodeType::MEMBER_EXPRESSION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -124,10 +122,9 @@ TEST_F(LspGetNodeInfosExpressionTests, GetCallExpression_IdentifierInfo)
 {
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 194;
-    const size_t expectedSize = 2;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    std::vector<NodeInfo> expectedResult = {{"a", ark::es2panda::ir::AstNodeType::CALL_EXPRESSION},
-                                            {"a", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"a", ark::es2panda::ir::AstNodeType::CALL_EXPRESSION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

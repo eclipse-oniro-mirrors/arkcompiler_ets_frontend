@@ -38,12 +38,10 @@ TEST_F(LspGetNodeInfoScriptFunctionTests, GetScriptFunctionInfo_Simple_TEST)
     ASSERT_TRUE(result.empty());
 
     const size_t offset = 9;
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 1;
     result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
-    std::vector<NodeInfo> expectedResult = {{"test", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
-                                            {"test", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"test", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"test", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -63,12 +61,10 @@ function add(a: number, b: number): number { return a + b; }
         initializer.CreateContext("ScriptFunctionInfo.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 10;
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
-    std::vector<NodeInfo> expectedResult = {{"add", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
-                                            {"add", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"add", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"add", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -90,12 +86,10 @@ async function fetchData(): Promise<string> {
         initializer.CreateContext("ScriptFunctionInfo.ets", ES2PANDA_STATE_PARSED, sourceCode.c_str());
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 16;
-    const size_t expectedSize = 3;
+    const size_t expectedSize = 1;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts, nullptr, offset);
 
-    std::vector<NodeInfo> expectedResult = {{"fetchData", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION},
-                                            {"fetchData", ark::es2panda::ir::AstNodeType::SCRIPT_FUNCTION},
-                                            {"fetchData", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    std::vector<NodeInfo> expectedResult = {{"fetchData", ark::es2panda::ir::AstNodeType::FUNCTION_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);

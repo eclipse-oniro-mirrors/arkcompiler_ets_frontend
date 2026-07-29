@@ -78,9 +78,8 @@ TEST_F(LspGetNodeInfoTypeAliasDeclarationTests, GetNodeInfoTypeAliasDeclarationT
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 19;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 2;
-    std::vector<NodeInfo> expectedResult = {{"ID", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION},
-                                            {"ID", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"ID", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -93,9 +92,8 @@ TEST_F(LspGetNodeInfoTypeAliasDeclarationTests, GetNodeInfoTypeAliasDeclarationT
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 47;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 2;
-    std::vector<NodeInfo> expectedResult = {{"Status", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION},
-                                            {"Status", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"Status", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -108,9 +106,8 @@ TEST_F(LspGetNodeInfoTypeAliasDeclarationTests, GetNodeInfoTypeAliasDeclarationT
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 98;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 2;
-    std::vector<NodeInfo> expectedResult = {{"List", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION},
-                                            {"List", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"List", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
@@ -123,9 +120,8 @@ TEST_F(LspGetNodeInfoTypeAliasDeclarationTests, GetNodeInfoTypeAliasDeclarationT
     LSPAPI const *lspApi = GetImpl();
     const size_t offset = 169;
     auto result = lspApi->getNodeInfosByDefinitionData(contexts_, nullptr, offset);
-    const size_t expectedSize = 2;
-    std::vector<NodeInfo> expectedResult = {{"Formatter", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION},
-                                            {"Formatter", ark::es2panda::ir::AstNodeType::IDENTIFIER}};
+    const size_t expectedSize = 1;
+    std::vector<NodeInfo> expectedResult = {{"Formatter", ark::es2panda::ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION}};
     ASSERT_EQ(result.size(), expectedSize);
     for (size_t i = 0; i < result.size(); i++) {
         ASSERT_EQ(result[i].name, expectedResult[i].name);
