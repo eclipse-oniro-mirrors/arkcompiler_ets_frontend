@@ -44,3 +44,6 @@ ets2panda_add_gtest(annotations_for_functional_objects
 ets2panda_add_gtest(annotations_for_class_method
     CPP_SOURCES annotations_for_class_method.cpp
 )
+ets2panda_add_gtest(namespace_imported_meta_annotations
+    CPP_SOURCES namespace_imported_meta_annotations.cpp
+)
