@@ -14,6 +14,7 @@
  */
 
 #include "serialization.h"
+#include "util/apiVersion.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/methodDefinition.h"
 #include "schemaMetadataGenerated.h"
@@ -309,6 +310,11 @@ void MetadataSerializationPhase::ProcessStatement(FlatBufferBuilder &builder, co
 bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
 {
     if (!Context()->config->options->IsEmitMetadata()) {
+        return true;
+    }
+
+    // Metadata is only supported on API 26+
+    if (!api_version::METADATA.AllowedInVersion(Context()->parserProgram->TargetApiVersion())) {
         return true;
     }
 

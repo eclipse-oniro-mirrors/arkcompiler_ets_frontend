@@ -349,6 +349,17 @@ public:
 
     void SetPackageInfo(std::string_view mname, util::ModuleKind kind);
 
+    // ─── API Version ───
+    uint8_t TargetApiVersion() const
+    {
+        return targetApiVersion_;
+    }
+
+    void SetTargetApiVersion(uint8_t version)
+    {
+        targetApiVersion_ = version;
+    }
+
     const util::ModuleInfo &ModuleInfo() const
     {
         return moduleInfo_;
@@ -505,6 +516,7 @@ private:
     bool isModified_ {true};
     bool isBuiltSimultaneously_ {false};
     ScriptExtension extension_ {};
+    uint8_t targetApiVersion_ {0};
     ETSNolintsCollectionMap etsnolintCollection_;
     util::ModuleInfo moduleInfo_;
     lexer::SourcePosition packageStartPosition_ {};

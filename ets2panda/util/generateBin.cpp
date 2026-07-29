@@ -18,6 +18,8 @@
 #include "bytecode_optimizer/optimize_bytecode.h"
 #include "compiler/compiler_logger.h"
 #include "compiler/compiler_options.h"
+#include "libarkfile/include/file_format_version.h"
+#include "util/apiVersion.h"
 #include "util/options.h"
 #include "util/perfMetrics.h"
 
@@ -44,9 +46,10 @@ static bool OptimizeBytecode(ark::pandasm::Program *prog, const std::string &out
     InitializeLogging(options);
     ark::pandasm::AsmEmitter::PandaFileToPandaAsmMaps maps {};
 
+    auto bcVersion = ark::panda_file::GetVersionByApi(static_cast<uint8_t>(options.GetTargetApiVersion()));
     // NOTE(mshimenkov): AsmEmitter is called mainly to fill PandaFileToPandaAsmMaps map that is used in bytecode
     // optimizer later
-    if (!ark::pandasm::AsmEmitter::Emit(output, *prog, nullptr, &maps, true)) {
+    if (!ark::pandasm::AsmEmitter::Emit(output, *prog, nullptr, &maps, true, nullptr, bcVersion)) {
         reporter(diagnostic::EMIT_FAILED, {ark::pandasm::AsmEmitter::GetLastError()});
         return false;
     }
@@ -92,13 +95,15 @@ static int EmitBytecodeToBinaryFile(ark::pandasm::Program *prog, const std::stri
         return 1;
     }
 
+    auto bcVersion = ark::panda_file::GetVersionByApi(static_cast<uint8_t>(options.GetTargetApiVersion()));
+
     std::map<std::string, size_t> stat;
     std::map<std::string, size_t> *statp = nullptr;
     if ((options.GetOptLevel() != 0) && options.IsDumpSizeStat()) {
         statp = &stat;
     }
 
-    if (!ark::pandasm::AsmEmitter::Emit(output, *prog, statp, nullptr, true)) {
+    if (!ark::pandasm::AsmEmitter::Emit(output, *prog, statp, nullptr, true, nullptr, bcVersion)) {
         reporter(diagnostic::EMIT_FAILED, {ark::pandasm::AsmEmitter::GetLastError()});
         return 1;
     }

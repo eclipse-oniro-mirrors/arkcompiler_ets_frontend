@@ -71,6 +71,9 @@ void ParserImpl::ParseGlobal()
     ES2PANDA_ASSERT(Context()->parserProgram == nullptr);
     importPathManager_->SetupGlobalProgram();
     ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+    // Propagate target API version from options to program
+    Context()->parserProgram->SetTargetApiVersion(
+        static_cast<uint8_t>(Context()->config->options->GetTargetApiVersion()));
     SetProgram(Context()->parserProgram);
     GetContext().SetProgram(Context()->parserProgram);
     GetContext().SetLanguage(ToLanguage(Context()->parserProgram->Extension()));

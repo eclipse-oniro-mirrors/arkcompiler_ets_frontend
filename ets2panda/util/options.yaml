@@ -27,6 +27,11 @@ options:
   default: false
   description: Print version and exit
 
+- name: target-api-version
+  type: int
+  default: 0
+  description: Target API version for bytecode generation (0 = latest, e.g. 24, 26)
+
 - name: arktsconfig
   type: std::string
   default: $ORIGIN/arktsconfig.json
