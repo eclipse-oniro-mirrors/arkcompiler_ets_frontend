@@ -76,7 +76,8 @@ enum OptionType {
   ENABLE_BYTECODE_OBFUSCATION_ENHANCED,
   ENABLE_BYTECODE_OBFUSCATION_ARKUI,
   KEEP_OBJECT_PROPS,
-  STRIP_NOT_COMPILED_MODULE_NAME
+  STRIP_NOT_COMPILED_MODULE_NAME,
+  KEEP_UNCOMPACT
 }
 export { OptionType as OptionTypeForTest };
 
@@ -175,6 +176,10 @@ export class MergedConfig {
   keepUniversalPaths: RegExp[] = []; // Support reserved paths contain wildcards.
   excludeUniversalPaths: RegExp[] = []; // Support excluded paths contain wildcards.
   excludePathSet: Set<string> = new Set();
+  keepUncompactSourceOfPaths: string[] = [];
+  keepUncompactUniversalPaths: RegExp[] = [];
+  excludeUncompactUniversalPaths: RegExp[] = [];
+  excludeUncompactPathSet: Set<string> = new Set();
 
   mergeKeepOptions(other: MergedConfig): void {
     this.reservedPropertyNames.push(...other.reservedPropertyNames);
@@ -186,6 +191,12 @@ export class MergedConfig {
     this.excludeUniversalPaths.push(...other.excludeUniversalPaths);
     other.excludePathSet.forEach((excludePath) => {
       this.excludePathSet.add(excludePath);
+    });
+    this.keepUncompactSourceOfPaths.push(...other.keepUncompactSourceOfPaths);
+    this.keepUncompactUniversalPaths.push(...other.keepUncompactUniversalPaths);
+    this.excludeUncompactUniversalPaths.push(...other.excludeUncompactUniversalPaths);
+    other.excludeUncompactPathSet.forEach((excludePath) => {
+      this.excludeUncompactPathSet.add(excludePath);
     });
   }
 
@@ -201,6 +212,19 @@ export class MergedConfig {
     this.reservedFileNames = sortAndDeduplicateStringArr(this.reservedFileNames);
     this.keepComments = sortAndDeduplicateStringArr(this.keepComments);
     this.keepSourceOfPaths = sortAndDeduplicateStringArr(this.keepSourceOfPaths);
+    this.keepUncompactSourceOfPaths = sortAndDeduplicateStringArr(this.keepUncompactSourceOfPaths);
+  }
+
+  /**
+   * -keep-uncompact only applies when -compact is enabled; drop parsed paths otherwise.
+   */
+  clearKeepUncompactWhenCompactDisabled(): void {
+    if (!this.options.compact) {
+      this.keepUncompactSourceOfPaths = [];
+      this.keepUncompactUniversalPaths = [];
+      this.excludeUncompactUniversalPaths = [];
+      this.excludeUncompactPathSet.clear();
+    }
   }
 
   serializeMergedConfig(): string {
@@ -319,6 +343,7 @@ export class ObConfigResolver {
     if (!enableObfuscation) {
       this.emitConsumerConfigFiles();
     }
+    mergedConfigs.clearKeepUncompactWhenCompactDisabled();
     return mergedConfigs;
   }
 
@@ -422,6 +447,7 @@ export class ObConfigResolver {
   static readonly STRIP_NOT_COMPILED_MODULE_NAME = 'strip-not-compiled-module-name';
   // obfuscation options for add object literal props to white list
   static readonly KEEP_OBJECT_PROPS = '-keep-object-props';
+  static readonly KEEP_UNCOMPACT = '-keep-uncompact';
 
   // renameFileName, printNameCache, applyNameCache, removeComments and keepComments won't be reserved in obfuscation.txt file.
   static exportedSwitchMap: Map<string, string> = new Map([
@@ -463,7 +489,8 @@ export class ObConfigResolver {
     ObConfigResolver.STRIP_SYSTEM_API_ARGS,
     ObConfigResolver.KEEP_PARAMETER_NAMES,
     ObConfigResolver.STRIP_NOT_COMPILED_MODULE_NAME,
-    ObConfigResolver.KEEP_OBJECT_PROPS
+    ObConfigResolver.KEEP_OBJECT_PROPS,
+    ObConfigResolver.KEEP_UNCOMPACT
   ];
 
   /** 
@@ -582,6 +609,8 @@ export class ObConfigResolver {
         return OptionType.STRIP_NOT_COMPILED_MODULE_NAME; 
       case ObConfigResolver.KEEP_OBJECT_PROPS:
         return OptionType.KEEP_OBJECT_PROPS;
+      case ObConfigResolver.KEEP_UNCOMPACT:
+        return OptionType.KEEP_UNCOMPACT;
       default:
         return OptionType.NONE;
     }
@@ -599,6 +628,7 @@ export class ObConfigResolver {
     let tokenType: OptionType;
     let dtsFilePaths: string[] = [];
     let keepConfigs: string[] = [];
+    let keepUncompactConfigs: string[] = [];
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
       tokenType = this.getTokenType(token);
@@ -700,6 +730,7 @@ export class ObConfigResolver {
           continue;
         }
         case OptionType.KEEP:
+        case OptionType.KEEP_UNCOMPACT:
         case OptionType.KEEP_DTS:
         case OptionType.KEEP_GLOBAL_NAME:
         case OptionType.KEEP_PROPERTY_NAME:
@@ -725,6 +756,10 @@ export class ObConfigResolver {
       switch (type) {
         case OptionType.KEEP: {
           keepConfigs.push(token);
+          continue;
+        }
+        case OptionType.KEEP_UNCOMPACT: {
+          keepUncompactConfigs.push(token);
           continue;
         }
         case OptionType.KEEP_DTS: {
@@ -775,6 +810,7 @@ export class ObConfigResolver {
 
     this.resolveDts(dtsFilePaths, configs);
     this.resolveKeepConfig(keepConfigs, configs, configPath);
+    this.resolveKeepUncompactConfig(keepUncompactConfigs, configs, configPath);
   }
 
   public isMatchedExtraOptions(extraOptionType: OptionType, tokenType: OptionType, configs: MergedConfig): boolean {
@@ -860,6 +896,38 @@ export class ObConfigResolver {
       }
       tempAbsPath = fs.realpathSync(tempAbsPath);
       configs.keepSourceOfPaths.push(FileUtils.toUnixPath(tempAbsPath));
+    }
+  }
+
+  public resolveKeepUncompactConfig(keepUncompactConfigs: string[], configs: MergedConfig, configPath: string): void {
+    for (let keepPath of keepUncompactConfigs) {
+      let tempAbsPath: string;
+      const isExclude: boolean = keepPath.startsWith('!');
+      tempAbsPath = FileUtils.getAbsPathBaseConfigPath(configPath, isExclude ? keepPath.substring(1) : keepPath);
+
+      if (containWildcards(tempAbsPath)) {
+        const regexPattern = wildcardTransformer(tempAbsPath, true);
+        const regexOperator = new RegExp(`^${regexPattern}$`);
+        if (isExclude) {
+          configs.excludeUncompactUniversalPaths.push(regexOperator);
+        } else {
+          configs.keepUncompactUniversalPaths.push(regexOperator);
+        }
+        continue;
+      }
+
+      if (isExclude) {
+        configs.excludeUncompactPathSet.add(tempAbsPath);
+        continue;
+      }
+
+      if (!FileUtils.fileExists(tempAbsPath)) {
+        const warnInfo: string = `ArkTS: The path of obfuscation \'-keep-uncompact\' configuration does not exist: ${keepPath}`;
+        this.printObfLogger(warnInfo, warnInfo, 'warn');
+        continue;
+      }
+      tempAbsPath = fs.realpathSync(tempAbsPath);
+      configs.keepUncompactSourceOfPaths.push(FileUtils.toUnixPath(tempAbsPath));
     }
   }
 
@@ -1249,6 +1317,38 @@ export function handleUniversalPathInObf(mergedObConfig: MergedConfig, allSource
     }
     if (isReserved) {
       mergedObConfig.keepSourceOfPaths.push(realFilePath);
+    }
+  }
+}
+
+/**
+ * Expand -keep-uncompact paths that use wildcards against the compilation file set.
+ */
+export function handleUniversalUncompactPathInObf(mergedObConfig: MergedConfig, allSourceFilePaths: Set<string>): void {
+  if (
+    !mergedObConfig ||
+    (mergedObConfig.keepUncompactUniversalPaths.length === 0 &&
+      mergedObConfig.excludeUncompactUniversalPaths.length === 0)
+  ) {
+    return;
+  }
+  for (const realFilePath of allSourceFilePaths) {
+    let isUncompact = false;
+    for (const universalPath of mergedObConfig.keepUncompactUniversalPaths) {
+      if (universalPath.test(realFilePath)) {
+        isUncompact = true;
+        break;
+      }
+    }
+    for (const excludePath of mergedObConfig.excludeUncompactUniversalPaths) {
+      if (excludePath.test(realFilePath)) {
+        isUncompact = false;
+        mergedObConfig.excludeUncompactPathSet.add(realFilePath);
+        break;
+      }
+    }
+    if (isUncompact) {
+      mergedObConfig.keepUncompactSourceOfPaths.push(realFilePath);
     }
   }
 }

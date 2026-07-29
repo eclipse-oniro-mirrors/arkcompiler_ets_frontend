@@ -129,6 +129,7 @@ export {
   getRelativeSourcePath,
   handleObfuscatedFilePath,
   handleUniversalPathInObf,
+  handleUniversalUncompactPathInObf,
   mangleFilePath,
   MergedConfig,
   ObConfigResolver,
@@ -285,6 +286,10 @@ export class ArkObfuscator {
 
   public setKeepSourceOfPaths(mKeepSourceOfPaths: Set<string>): void {
     this.mCustomProfiles.mKeepFileSourceCode.mKeepSourceOfPaths = mKeepSourceOfPaths;
+  }
+
+  public setKeepUncompactPaths(paths: Set<string>): void {
+    this.mCustomProfiles.mKeepUncompactPaths = paths;
   }
 
   public handleTsHarComments(sourceFile: SourceFile, originalPath: string | undefined): void {
@@ -646,13 +651,21 @@ export class ArkObfuscator {
     this.handleTsHarComments(ast, originalFilePath);
     const recordInfo = ArkObfuscator.recordStage(MemoryDottingDefine.CREATE_PRINTER);
     startSingleFileEvent(EventList.CREATE_PRINTER, performancePrinter.timeSumPrinter);
-    this.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, this.mTextWriter, sourceMapGenerator);
+    const originalPathForUncompact: string = FileUtils.toUnixPath(originalFilePath ?? ast.fileName);
+    const keepUncompact: Set<string> | undefined = this.mCustomProfiles.mKeepUncompactPaths;
+    const useCompactSingleLine: boolean =
+      !!this.mCustomProfiles.mCompact &&
+      !(keepUncompact !== undefined && keepUncompact.size > 0 && keepUncompact.has(originalPathForUncompact));
+    const emitWriter: EmitTextWriter = useCompactSingleLine
+      ? createObfTextSingleLineWriter()
+      : createTextWriter('\n');
+    this.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, emitWriter, sourceMapGenerator);
     endSingleFileEvent(EventList.CREATE_PRINTER, performancePrinter.timeSumPrinter);
     ArkObfuscator.stopRecordStage(recordInfo);
 
     startSingleFileEvent(EventList.GET_OBFUSCATED_CODE);
     result.filePath = ast.fileName;
-    result.content = this.mTextWriter.getText();
+    result.content = emitWriter.getText();
     endSingleFileEvent(EventList.GET_OBFUSCATED_CODE);
 
     if (this.mCustomProfiles.mUnobfuscationOption?.mPrintKeptNames) {
