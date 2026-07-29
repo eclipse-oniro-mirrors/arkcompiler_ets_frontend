@@ -454,11 +454,12 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
         // resolveIdentifier, we might obtain the wrong variable, which breaks the consistency between the variable and
         // its tsType. see wrong_variable_binding.ets for more details.
         auto ident = st->Id();
-        auto [decl, var] = checker->VarBinder()->NewVarDecl<varbinder::LetDecl>(
-            ident->Start(), compiler::GenName(checker->ProgramAllocator()).View());
+        auto *decl = checker->ProgramAllocator()->New<varbinder::LetDecl>(
+            compiler::GenName(checker->ProgramAllocator()).View(), ident);
+        auto *var = checker->ProgramAllocator()->New<varbinder::LocalVariable>(
+            decl, varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::PROPERTY);
         var->SetScope(checker->VarBinder()->GetScope());
         ident->SetVariable(var);
-        decl->BindNode(ident);
         ident->SetTsType(var->SetTsType(checker->GlobalTypeError()));
     }
 
