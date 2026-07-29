@@ -751,7 +751,7 @@ bool ETSChecker::CheckValidEqualReferenceType(checker::Type *const leftType, che
     }
 
     if (FindOpArgsType(this, leftType, rightType, GetGlobalTypesHolder()->GlobalNumericBuiltinType()) &&
-        (leftType->IsETSEnumType() || rightType->IsETSEnumType())) {
+        (leftType->IsETSNumericEnumType() || rightType->IsETSNumericEnumType())) {
         return true;
     }
 
