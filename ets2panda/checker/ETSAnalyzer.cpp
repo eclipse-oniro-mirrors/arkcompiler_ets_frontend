@@ -102,7 +102,14 @@ static bool IsExpressionInClassPropertyInitializer(const ir::Expression *expr)
 static void LogNonExportedTypeError(ETSChecker *checker, checker::Type const *type, ir::AstNode const *decl)
 {
     if (!util::Helpers::IsExported(decl) && !util::Helpers::IsStdLib(decl->Program())) {
-        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()}, decl->Start());
+        auto pos = decl->Start();
+        // Use the identifier position for a more precise error location pointing to the type name itself
+        if (decl->IsTSInterfaceDeclaration()) {
+            pos = decl->AsTSInterfaceDeclaration()->Id()->Start();
+        } else if (decl->IsClassDefinition()) {
+            pos = decl->AsClassDefinition()->Ident()->Start();
+        }
+        checker->LogError(diagnostic::USED_TYPE_IS_NOT_EXPORTED, {type->ToString()}, pos);
     }
 }
 
@@ -239,8 +246,13 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
 
     if ((node->IsExported() || node->IsDefaultExported()) && node->TsType() != nullptr) {
         const auto *classType = node->TsType();
-        if (classType->IsETSObjectType() && classType->AsETSObjectType()->SuperType() != nullptr) {
-            CheckExport(checker, classType->AsETSObjectType()->SuperType());
+        if (classType->IsETSObjectType()) {
+            if (classType->AsETSObjectType()->SuperType() != nullptr) {
+                CheckExport(checker, classType->AsETSObjectType()->SuperType());
+            }
+            for (auto *interface : classType->AsETSObjectType()->Interfaces()) {
+                CheckExport(checker, interface);
+            }
         }
         CheckExportForTypeParams(checker, node->TypeParams());
     }
@@ -6192,6 +6204,20 @@ checker::Type *ETSAnalyzer::Check(ir::TSInterfaceDeclaration *st) const
 
     st->SetTsType(stmtType);  // NOTE(vpukhov): #31391
     checker->CheckDynamicInheritanceAndImplement(interfaceType->AsETSObjectType());
+
+    if ((st->IsExported() || st->IsDefaultExported()) && st->TsType() != nullptr) {
+        const auto *ifaceType = st->TsType();
+        if (ifaceType->IsETSObjectType()) {
+            if (ifaceType->AsETSObjectType()->SuperType() != nullptr) {
+                CheckExport(checker, ifaceType->AsETSObjectType()->SuperType());
+            }
+            for (auto *iface : ifaceType->AsETSObjectType()->Interfaces()) {
+                CheckExport(checker, iface);
+            }
+        }
+        CheckExportForTypeParams(checker, st->TypeParams());
+    }
+
     checker::ScopeContext scopeCtx(checker, st->Scope());
     auto savedContext = checker::SavedCheckerContext(checker, checker::CheckerStatus::IN_INTERFACE, interfaceType);
 

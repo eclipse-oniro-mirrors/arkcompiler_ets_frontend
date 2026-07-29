@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class A /* @@ label */{}
+class /* @@ label */ A {}
 
 export class B extends A {}
 

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-interface I{ }
+export interface I{ }
 
 export class A extends Array<int> implements I{
     get length(): int{
