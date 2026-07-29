@@ -164,6 +164,19 @@ bool IsMemoKeyForSurface(const NameResolutionKey &key, const varbinder::ExportSu
     return key.surfaceKind == surface.kind && key.surfaceProgram == surface.program;
 }
 
+template <typename Container, typename GetSurfaceProgram>
+void EraseProgramEntries(Container &container, parser::Program *program, const GetSurfaceProgram &getSurfaceProgram)
+{
+    for (auto iter = container.begin(); iter != container.end();) {
+        if (getSurfaceProgram(*iter) == program) {
+            auto eraseIter = iter++;
+            container.erase(eraseIter);
+            continue;
+        }
+        ++iter;
+    }
+}
+
 bool IsSameOrigin(const ResolvedExportEntry &lhs, const ResolvedExportEntry &rhs)
 {
     if (lhs.originProgram == rhs.originProgram && lhs.variable != nullptr && lhs.variable == rhs.variable) {
@@ -632,6 +645,17 @@ void ExportClosureResolver::Clear()
     memo_.clear();
     validatingSurfaces_.clear();
     validatedSurfaces_.clear();
+}
+
+void ExportClosureResolver::InvalidateProgram(parser::Program *program)
+{
+    if (program == nullptr) {
+        return;
+    }
+
+    EraseProgramEntries(memo_, program, [](const auto &entry) { return entry.first.surfaceProgram; });
+    EraseProgramEntries(validatingSurfaces_, program, [](const auto &surface) { return surface.surfaceProgram; });
+    EraseProgramEntries(validatedSurfaces_, program, [](const auto &surface) { return surface.surfaceProgram; });
 }
 
 ResolvedImportBindingResult ExportClosureResolver::ResolveImportBinding(const varbinder::ImportBindingInfo *bindingInfo,

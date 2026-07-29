@@ -15,7 +15,6 @@
 
 #include "api.h"
 #include <cstddef>
-#include <queue>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -1174,30 +1173,15 @@ static int BatchDeleteProgramsForFiles(public_lib::Context *ctx,
         return 0;
     }
 
-    std::unordered_set<std::string_view> deleteLookup {};
-    deleteLookup.reserve(uniqueDeleteNames.size());
     auto *importPathManager = ctx->parser->GetImportPathManager();
-    auto &fileDependencies = importPathManager->GetFileDependencies();
     for (const auto &file : uniqueDeleteNames) {
         if (file.empty()) {
             continue;
         }
-        deleteLookup.insert(file);
         ArenaString key {file};
         importPathManager->RemoveProgramFromResolvedSources(key);
-        fileDependencies.erase(key);
     }
-
-    // Scan all remaining deps and remove entries that point to deleted files.
-    for (auto &[_, deps] : fileDependencies) {
-        for (auto depIt = deps.begin(); depIt != deps.end();) {
-            if (deleteLookup.find(std::string_view {depIt->data(), depIt->size()}) != deleteLookup.end()) {
-                depIt = deps.erase(depIt);
-            } else {
-                ++depIt;
-            }
-        }
-    }
+    importPathManager->RemoveProgramsFromFileDependencies(uniqueDeleteNames);
     return 0;
 }
 
@@ -1219,37 +1203,7 @@ int DeleteDependantProgramsForFiles(es2panda_Context *context, const char *fileN
     }
 
     auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto root = std::string_view {fileName};
-    auto &fileDependencies = ctx->parser->GetImportPathManager()->GetFileDependencies();
-    std::unordered_map<std::string_view, std::vector<std::string_view>> reverseDependencies {};
-    reverseDependencies.reserve(fileDependencies.size());
-    for (const auto &[file, deps] : fileDependencies) {
-        auto dependantFile = std::string_view {file.data(), file.size()};
-        for (const auto &dep : deps) {
-            reverseDependencies[std::string_view {dep.data(), dep.size()}].emplace_back(dependantFile);
-        }
-    }
-
-    std::unordered_set<std::string> visited {};
-    visited.reserve(reverseDependencies.size());
-    std::queue<std::string_view> queue {};
-    queue.emplace(root);
-    while (!queue.empty()) {
-        auto current = queue.front();
-        queue.pop();
-        auto it = reverseDependencies.find(current);
-        if (it == reverseDependencies.end()) {
-            continue;
-        }
-        for (const auto dependant : it->second) {
-            if (dependant == root || !visited.emplace(dependant).second) {
-                continue;
-            }
-            queue.push(dependant);
-        }
-    }
-
-    return BatchDeleteProgramsForFiles(ctx, visited);
+    return BatchDeleteProgramsForFiles(ctx, ctx->parser->GetImportPathManager()->CollectReverseDependencies(fileName));
 }
 
 bool CollectApiInfoWrapper(es2panda_Context *context)

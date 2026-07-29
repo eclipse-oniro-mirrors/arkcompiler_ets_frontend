@@ -177,6 +177,7 @@ public:
     varbinder::Variable *ResolveEffectiveImportVariable(varbinder::Variable *var,
                                                         ImportBindingResolveOptions options = {});
     void Clear();
+    void InvalidateProgram(parser::Program *program);
     static varbinder::Variable *ResolveEffectiveImportVariableForDeclaration(
         const varbinder::ImportBindingInfo *bindingInfo);
 

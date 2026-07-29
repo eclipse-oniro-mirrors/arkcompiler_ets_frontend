@@ -30,6 +30,10 @@ ets2panda_add_gtest(lsp_get_file_references_test CPP_SOURCES
     get_file_references_test.cpp
 )
 
+ets2panda_add_gtest(lsp_incremental_prepare_test CPP_SOURCES
+    lsp_incremental_prepare_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_script_element_kind CPP_SOURCES
     script_element_kind_test.cpp
 )
