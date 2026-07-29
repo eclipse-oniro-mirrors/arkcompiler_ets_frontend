@@ -852,6 +852,7 @@ bool ETSChecker::PrecheckTypeParameterConstraintCycles(ir::TSTypeParameterDeclar
 
 void ETSChecker::AssignTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams)
 {
+    checker::ScopeContext scopeCtx(this, typeParams->Scope());
     ConstraintCheckScope ctScope(this);
     // The type parameter might be used in the constraint, like 'K extend Comparable<K>',
     // so we need to create their type first, then set up the constraint

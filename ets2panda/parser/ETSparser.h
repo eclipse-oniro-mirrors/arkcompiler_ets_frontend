@@ -453,6 +453,7 @@ private:
     ir::Statement *ParseTopLevelDeclStatement(StatementParsingFlags flags);
     ir::Statement *ParseTopLevelStatement();
     void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) override;
+    void ConsumeSemicolon(ir::Statement *statement) override;
     bool IsInOperatorTypeSupported() const override
     {
         return false;
@@ -466,6 +467,13 @@ private:
     friend class InnerSourceParser;
 
 private:
+    bool InClassMemberContext() const;
+    bool CanContinueObjectLiteralArgumentsAcrossNewLine() const;
+    bool CanContinueObjectLiteralCallAcrossNewLine() const;
+    bool ShouldStopPostPrimaryForNewLineCall(ir::Expression *returnExpression);
+    std::optional<ir::Expression *> ParseQuestionDotPostPrimary(ir::Expression *returnExpression,
+                                                                lexer::SourcePosition periodPos,
+                                                                bool *isChainExpression);
     std::optional<ir::Expression *> GetPostPrimaryExpression(ir::Expression *returnExpression,
                                                              lexer::SourcePosition startLoc, bool ignoreCallExpression,
                                                              [[maybe_unused]] bool *isChainExpression);

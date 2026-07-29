@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,8 @@ function foo(MyAnno({testProperty1: ""}) x: int, MyAnno({testProperty1: ""}) y: 
 }
 
 /* @@? 19:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 19:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 19:20 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 19:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 19:20 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 19:42 Error Syntax error ESY0227: Unexpected token 'x'. */
 /* @@? 19:45 Error Syntax error ESY0038: Label must be followed by a loop statement. */
@@ -39,24 +39,24 @@ function foo(MyAnno({testProperty1: ""}) x: int, MyAnno({testProperty1: ""}) y: 
 /* @@? 22:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 22:20 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 22:42 Error Syntax error ESY0227: Unexpected token 'x'. */
-/* @@? 22:45 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 22:45 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 22:45 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 22:48 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 22:50 Error Syntax error ESY0227: Unexpected token 'MyAnno'. */
-/* @@? 22:50 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 22:50 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 22:50 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 22:78 Error Syntax error ESY0227: Unexpected token 'y'. */
 /* @@? 22:81 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 22:81 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
 /* @@? 22:87 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 22:89 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 25:1 Error Semantic error ESE0130: Function foo is already declared. */
-/* @@? 25:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 25:20 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 25:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 25:20 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 25:42 Error Syntax error ESY0227: Unexpected token 'x'. */
-/* @@? 25:45 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 25:45 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 25:45 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 25:48 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 25:50 Error Syntax error ESY0227: Unexpected token 'MyAnno'. */
 /* @@? 25:50 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */

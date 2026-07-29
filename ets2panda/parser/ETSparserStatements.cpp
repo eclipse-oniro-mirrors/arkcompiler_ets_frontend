@@ -116,6 +116,30 @@ class FunctionContext;
 
 using namespace std::literals::string_literals;
 
+static bool CanOmitSemicolonBeforeTokenOnSameLine(const ir::Statement *statement, const lexer::Token &token)
+{
+    if (statement == nullptr || !statement->IsExpressionStatement()) {
+        return false;
+    }
+
+    auto *expr = statement->AsExpressionStatement()->GetExpression();
+    if (expr == nullptr || !expr->IsCallExpression()) {
+        return false;
+    }
+
+    auto &arguments = expr->AsCallExpression()->Arguments();
+    if (arguments.empty()) {
+        return false;
+    }
+
+    auto *lastArg = arguments.back();
+    if (lastArg == nullptr || (!lastArg->IsArrowFunctionExpression() && !lastArg->IsFunctionExpression())) {
+        return false;
+    }
+
+    return token.Type() == lexer::TokenType::LITERAL_IDENT;
+}
+
 ArenaVector<ir::Statement *> ETSParser::ParseTopLevelStatements()
 {
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
@@ -246,6 +270,24 @@ ir::Statement *ETSParser::ParseTopLevelStatement()
         result = ParseStatement(flags);
     }
     return result;
+}
+
+void ETSParser::ConsumeSemicolon(ir::Statement *statement)
+{
+    auto const &token = Lexer()->GetToken();
+    auto tokenType = token.Type();
+    if (tokenType == lexer::TokenType::PUNCTUATOR_SEMI_COLON) {
+        ES2PANDA_ASSERT(statement != nullptr);
+        statement->SetEnd(token.End());
+        Lexer()->NextToken();
+        return;
+    }
+
+    if (!token.NewLine() && tokenType != lexer::TokenType::EOS &&
+        tokenType != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE &&
+        !CanOmitSemicolonBeforeTokenOnSameLine(statement, token)) {
+        LogUnexpectedToken(token);
+    }
 }
 
 ir::Statement *ETSParser::ParseInitModuleStatement()

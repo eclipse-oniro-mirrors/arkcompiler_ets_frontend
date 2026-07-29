@@ -43,17 +43,17 @@ class C {
 /* @@? 20:33 Error Semantic error ESE0369: Identifier 'A' has already been declared. */
 /* @@? 20:34 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 20:40 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 20:44 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 20:44 Error Syntax error ESY0227: Unexpected token 'extends'. */
 /* @@? 20:44 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 20:44 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 20:52 Error Semantic error ESE0369: Identifier 'B' has already been declared. */
 /* @@? 20:53 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 20:55 Error Syntax error ESY0228: Unexpected token, expected '>'. */
 /* @@? 20:58 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 20:63 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 20:63 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 20:63 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 20:63 Error Syntax error ESY0227: Unexpected token '<'. */
+/* @@? 20:63 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 20:63 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 20:64 Error Semantic error ESE0351: Variable 'U' has already been declared. */
 /* @@? 20:65 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 20:65 Error Syntax error ESY0227: Unexpected token '>'. */
@@ -64,8 +64,8 @@ class C {
 /* @@? 24:12 Error Syntax error ESY0227: Unexpected token 'foo2'. */
 /* @@? 24:12 Error Semantic error ESE0143: Unresolved reference foo2 */
 /* @@? 24:23 Error Semantic error ESE0371: Cannot find type 'U'. */
-/* @@? 24:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 24:26 Error Syntax error ESY0227: Unexpected token 'c'. */
+/* @@? 24:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 24:26 Error Semantic error ESE0143: Unresolved reference c */
 /* @@? 24:27 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 24:28 Error Syntax error ESY0227: Unexpected token ':'. */
@@ -82,6 +82,7 @@ class C {
 /* @@? 24:59 Error Syntax error ESY0227: Unexpected token 'B'. */
 /* @@? 24:59 Error Semantic error ESE0143: Unresolved reference B */
 /* @@? 24:61 Error Semantic error ESE0371: Cannot find type 'V'. */
+/* @@? 24:65 Error Semantic error ESE0143: Unresolved reference U */
 /* @@? 24:67 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 25:9 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 27:1 Error Syntax error ESY0227: Unexpected token '}'. */

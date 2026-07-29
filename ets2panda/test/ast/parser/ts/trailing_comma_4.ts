@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +31,7 @@ foo(,)
 /* @@? 24:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 25:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 26:5 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 27:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 27:10 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 27:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 27:14 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 28:5 Error Syntax error ESY0227: Unexpected token ','. */

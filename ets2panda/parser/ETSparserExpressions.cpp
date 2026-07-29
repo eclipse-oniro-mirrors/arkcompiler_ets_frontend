@@ -703,30 +703,64 @@ std::optional<ir::Expression *> ETSParser::ParsePunctuatorLessThan(ir::Expressio
     return returnExpression;
 }
 
+bool ETSParser::ShouldStopPostPrimaryForNewLineCall(ir::Expression *returnExpression)
+{
+    return !InClassMemberContext() && !CanContinueObjectLiteralCallAcrossNewLine() &&
+           (returnExpression->IsNewExpression() || returnExpression->IsETSNewClassInstanceExpression()) &&
+           Lexer()->GetToken().NewLine() && Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS;
+}
+
+bool ETSParser::InClassMemberContext() const
+{
+    const auto parserStatus = GetContext().Status();
+    return (parserStatus & ParserStatus::IN_CLASS_BODY) != 0 && (parserStatus & ParserStatus::FUNCTION) == 0;
+}
+
+bool ETSParser::CanContinueObjectLiteralArgumentsAcrossNewLine() const
+{
+    return Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS &&
+           Lexer()->Lookahead() == lexer::LEX_CHAR_LEFT_BRACE;
+}
+
+bool ETSParser::CanContinueObjectLiteralCallAcrossNewLine() const
+{
+    return CanContinueObjectLiteralArgumentsAcrossNewLine();
+}
+
+std::optional<ir::Expression *> ETSParser::ParseQuestionDotPostPrimary(ir::Expression *returnExpression,
+                                                                       lexer::SourcePosition periodPos,
+                                                                       bool *isChainExpression)
+{
+    if (*isChainExpression) {
+        return std::nullopt;  // terminate current chain
+    }
+    *isChainExpression = true;
+    Lexer()->NextToken();  // eat ?.
+
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
+        return ParseElementAccess(returnExpression, true);
+    }
+
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+        return ParseCallExpression(returnExpression, true, false);
+    }
+
+    return ParsePropertyAccess(returnExpression, periodPos, true);
+}
+
 std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expression *returnExpression,
                                                                     lexer::SourcePosition startLoc,
                                                                     bool ignoreCallExpression,
                                                                     [[maybe_unused]] bool *isChainExpression)
 {
+    if (ShouldStopPostPrimaryForNewLineCall(returnExpression)) {
+        return std::nullopt;
+    }
+
     auto periodPos = Lexer()->GetToken().End();
     switch (Lexer()->GetToken().Type()) {
-        case lexer::TokenType::PUNCTUATOR_QUESTION_DOT: {
-            if (*isChainExpression) {
-                return std::nullopt;  // terminate current chain
-            }
-            *isChainExpression = true;
-            Lexer()->NextToken();  // eat ?.
-
-            if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
-                return ParseElementAccess(returnExpression, true);
-            }
-
-            if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
-                return ParseCallExpression(returnExpression, true, false);
-            }
-
-            return ParsePropertyAccess(returnExpression, periodPos, true);
-        }
+        case lexer::TokenType::PUNCTUATOR_QUESTION_DOT:
+            return ParseQuestionDotPostPrimary(returnExpression, periodPos, isChainExpression);
         case lexer::TokenType::PUNCTUATOR_PERIOD: {
             Lexer()->NextToken();  // eat period
 
@@ -738,7 +772,9 @@ std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expressi
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
             return ParsePunctuatorLessThan(returnExpression, startLoc, ignoreCallExpression);
         case lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS:
-            if (ignoreCallExpression) {
+            if (ignoreCallExpression ||
+                (IsTokenOnDifferentLineThanExpressionEnd(Lexer()->GetToken(), returnExpression) &&
+                 !CanContinueObjectLiteralCallAcrossNewLine())) {
                 return std::nullopt;
             }
             return ParseCallExpression(returnExpression, false, false);
@@ -812,7 +848,9 @@ void ETSParser::ParseArgumentsNewExpression(ArenaVector<ir::Expression *> &argum
 {
     lexer::SourcePosition endLoc = typeReference->End();
 
-    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS &&
+        (!Lexer()->GetToken().NewLine() || InClassMemberContext() ||
+         CanContinueObjectLiteralArgumentsAcrossNewLine())) {
         Lexer()->NextToken();
 
         ParseList(
