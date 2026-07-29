@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "[dep.ets:17:13] Semantic error ESE0280: Property '_valueDep' might not have been initialized.\n[main.ets:19:13] Semantic error ESE0280: Property '_valueMain' might not have been initialized.\n",
+    "stderr": ""
+}

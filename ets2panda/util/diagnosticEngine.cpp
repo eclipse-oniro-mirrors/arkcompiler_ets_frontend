@@ -18,6 +18,7 @@
 #include "util/diagnostic.h"
 #include "util/helpers.h"
 #include "util/options.h"
+#include "lexer/token/sourceLocation.h"
 
 #include <csignal>
 
@@ -206,6 +207,38 @@ bool DiagnosticEngine::IsAnyError() const noexcept
     for (size_t i = DiagnosticType::BEGIN; i < DiagnosticType::COUNT; ++i) {
         if (IsError(static_cast<DiagnosticType>(i)) && !diagnostics_[i].empty()) {
             return true;
+        }
+    }
+    return false;
+}
+
+bool DiagnosticEngine::HasErrorsSince(const DiagnosticCheckpoint &checkpoint) const noexcept
+{
+    for (size_t i = DiagnosticType::BEGIN; i < DiagnosticType::COUNT; ++i) {
+        if (IsError(static_cast<DiagnosticType>(i)) && diagnostics_[i].size() > checkpoint[i]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool DiagnosticEngine::HasErrorDiagnosticsFor(const parser::Program *program) const noexcept
+{
+    for (size_t i = DiagnosticType::BEGIN; i < DiagnosticType::COUNT; ++i) {
+        if (!IsError(static_cast<DiagnosticType>(i))) {
+            continue;
+        }
+        for (const auto &diag : diagnostics_[i]) {
+            const parser::Program *diagProgram = nullptr;
+            if (diag->HasPosition()) {
+                diagProgram = diag->Position()->Program();
+            } else if (diag->HasLocation()) {
+                diagProgram = diag->Location()->Program();
+            }
+            // No program attached: treat as blocking for analyzer safety.
+            if (diagProgram == nullptr || diagProgram == program) {
+                return true;
+            }
         }
     }
     return false;

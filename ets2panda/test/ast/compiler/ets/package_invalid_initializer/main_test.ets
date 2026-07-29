@@ -15,7 +15,9 @@
 
 import {nn, nn1, nn2} from "./P3"
 
-
+/* @@? P3.ets:16:9 Error Syntax error ESY139148: The package keyword is deprecated. */
+/* @@? P3.ets:29:14 Error Semantic error ESE71336: Exported variable 'c_nn' requires type annotation. */
 /* @@? P3.ets:29:18 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? P3.ets:33:1 Error Syntax error ESY0291: Invalid package toplevel statement */
 /* @@? P3.ets:34:1 Error Syntax error ESY0291: Invalid package toplevel statement */
+/* @@? P3.ets:39:14 Error Semantic error ESE0363: Missing initializer in const declaration */

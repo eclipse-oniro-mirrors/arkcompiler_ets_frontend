@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": "@CMAKE_CURRENT_SOURCE_DIR@",
+    "rootDir": "@CMAKE_CURRENT_SOURCE_DIR@",
+    "cacheDir": "@CMAKE_CURRENT_BINARY_DIR@/decls"
+  },
+  "files": [
+    "@CMAKE_CURRENT_SOURCE_DIR@/main.ets",
+    "@CMAKE_CURRENT_SOURCE_DIR@/dep.ets"
+  ]
+}
