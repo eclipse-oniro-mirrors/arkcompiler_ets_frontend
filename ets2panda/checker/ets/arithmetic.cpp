@@ -1108,55 +1108,6 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperatorLessGreater(ir::Expres
     return {GlobalETSBooleanBuiltinType(), promotedType};
 }
 
-static bool IsTypeRetainedAfterErasure(Type const *const typeToCheck, bool const checkTypeParameter = true) noexcept
-{
-    if (checkTypeParameter && typeToCheck->IsETSTypeParameter()) {
-        return false;
-    }
-
-    // Only signatures like '(x: Any, y: Any, ...) => never' are preserved
-    if (typeToCheck->IsETSFunctionType()) {
-        auto *signature = typeToCheck->AsETSFunctionType()->ArrowSignature();
-        if (!signature->ReturnType()->IsETSNeverType()) {
-            return false;
-        }
-        for (auto const *param : signature->Params()) {
-            if (!param->TsType()->IsETSAnyType()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // ETSTupleType is never preserved because has underlying implementation as internal generic tuple type
-    if (typeToCheck->IsETSTupleType()) {
-        return false;
-    }
-
-    // FixedArray<T> type is not preserved up to undefined - only form 'instanceof FixedArray<T|undefined>` is allowed
-    if (typeToCheck->IsETSArrayType() && !typeToCheck->AsETSArrayType()->IsValueArray()) {
-        auto const *const elementType = typeToCheck->AsETSArrayType()->ElementType();
-        return elementType->PossiblyETSUndefined() && IsTypeRetainedAfterErasure(elementType);
-    }
-
-    if (typeToCheck->IsETSUnionType()) {
-        auto *unionType = typeToCheck->AsETSUnionType();
-        if (unionType->AllOfConstituentTypes([](Type const *item) { return IsTypeRetainedAfterErasure(item); })) {
-            return true;
-        }
-
-        // Extracted to standalone lambda for codestyle check
-        auto const predicate = [](Type const *item) -> bool { return IsTypeRetainedAfterErasure(item, false); };
-        // 'T | undefined' is preserved up to undefined even when T is a type parameter,
-        if (unionType->AllOfConstituentTypes(predicate)) {
-            return unionType->AnyOfConstituentTypes([](Type const *item) -> bool { return item->IsUndefinedType(); });
-        }
-        return false;
-    }
-
-    return true;
-}
-
 static BinaryExpressionValidity AreTypesValidInInstanceofExpression(const ir::Expression *const right,
                                                                     const Type *const rightType) noexcept
 {
@@ -1169,7 +1120,7 @@ static BinaryExpressionValidity AreTypesValidInInstanceofExpression(const ir::Ex
         isRightTypeRetained = !right->IsETSStringLiteralType();
     }
 
-    isRightTypeRetained = isRightTypeRetained && IsTypeRetainedAfterErasure(rightType);
+    isRightTypeRetained = isRightTypeRetained && IsTypePreservedUpToUndefined(rightType);
     return isRightTypeRetained ? BinaryExpressionValidity::NO_ERR : BinaryExpressionValidity::RHS_ERR;
 }
 

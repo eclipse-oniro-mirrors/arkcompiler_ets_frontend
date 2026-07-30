@@ -15,6 +15,11 @@
 
 class A {}
 class B extends A {}
+
+function pass(value: Any): Any {
+    return value
+}
+
 function main(): int {
     let t: char = c'a'
     /* @@ label1 */ t as boolean
@@ -25,9 +30,21 @@ function main(): int {
     let n: Object | null = null
     /* @@ label3 */ n as Object
 
+    let fun: (p: number) => string = (p: number): string => '=' + p
+    /* @@ label4 */ pass(fun) as ((p: number) => string)
+
+    let tuple: [number, string] = [1.0, 'a']
+    /* @@ label5 */ pass(tuple) as [number, string]
+
+    let readonlyTuple: readonly [number, string] = tuple
+    /* @@ label6 */ pass(readonlyTuple) as readonly [number, string]
+
     return 0
 }
 
 /* @@@ label1 Warning Warning W0326: Attempting to cast type 'Char' to 'Boolean' can throw 'ClassCastError' exception at runtime */
 /* @@@ label2 Warning Warning W369037: Cast expression `as Array<A>` is type unsafe. 'ClassCastError' exception can be thrown at runtime */
 /* @@@ label3 Warning Warning W0304: Possible cast of 'null' or 'undefined' to non-nullish type can throw 'ClassCastError' exception at runtime */
+/* @@@ label4 Warning Warning W369037: Cast expression `as (p: Double)=>String` is type unsafe. 'ClassCastError' exception can be thrown at runtime */
+/* @@@ label5 Warning Warning W369037: Cast expression `as [Double, String]` is type unsafe. 'ClassCastError' exception can be thrown at runtime */
+/* @@@ label6 Warning Warning W369037: Cast expression `as readonly [Double, String]` is type unsafe. 'ClassCastError' exception can be thrown at runtime */

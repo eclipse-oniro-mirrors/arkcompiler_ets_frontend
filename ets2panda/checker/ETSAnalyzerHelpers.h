@@ -52,6 +52,7 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
 bool HasSingleReturnStatement(const ir::AstNode *node);
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument);
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *arrayExprPreferredType);
+bool IsTypePreservedUpToUndefined(const Type *typeToCheck, bool checkTypeParameter = true) noexcept;
 checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
                                        ir::Expression *stArgument);
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);

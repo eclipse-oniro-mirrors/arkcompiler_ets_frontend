@@ -30,6 +30,8 @@
 #include "ir/base/property.h"
 #include "ir/ets/etsDestructuring.h"
 
+#include <sstream>
+
 namespace ark::es2panda::checker {
 
 static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(Type *)> const &predicate);
@@ -6097,9 +6099,54 @@ static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Ty
     return true;
 }
 
+static bool IsUnsafeTypeErasureCastTarget(Type *targetType)
+{
+    if (targetType->IsETSFunctionType() || targetType->IsETSTupleType()) {
+        return !IsTypePreservedUpToUndefined(targetType);
+    }
+
+    return targetType->IsETSObjectType() && targetType->AsETSObjectType()->IsGeneric() &&
+           std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
+                       targetType->AsETSObjectType()->TypeArguments().end(),
+                       [](Type *item) { return !item->IsETSTypeParameter() && !item->IsETSWildcardType(); });
+}
+
+static std::string TypeErasureCastTargetToString(const ir::TypeNode *targetAnnotation, Type *targetType)
+{
+    std::stringstream ss;
+    if (targetType->IsETSFunctionType() && targetAnnotation->IsETSFunctionType()) {
+        const auto &annotationParams = targetAnnotation->AsETSFunctionType()->Params();
+        const auto *signature = targetType->AsETSFunctionType()->ArrowSignature();
+        const auto &signatureParams = signature->Params();
+        if (annotationParams.size() != signatureParams.size()) {
+            return targetType->ToString();
+        }
+
+        ss << "(";
+        for (size_t index = 0; index < signatureParams.size(); ++index) {
+            const auto *annotationParam = annotationParams[index]->AsETSParameterExpression();
+            ss << annotationParam->Name().Utf8();
+            if (annotationParam->IsOptional()) {
+                ss << "?";
+            }
+            ss << ": ";
+            signatureParams[index]->TsType()->ToString(ss);
+            if (index + 1U != signatureParams.size()) {
+                ss << ",";
+            }
+        }
+        ss << ")=>";
+        signature->ReturnType()->ToString(ss);
+        return ss.str();
+    }
+
+    return targetType->ToString();
+}
+
 //  Extracted from 'ETSAnalyzer::Check(ir::TSAsExpression *expr)' function to reduce its size
 static checker::CastingContext CheckTSAsExpressionCastable(ir::Expression *castExpr, checker::Type *sourceType,
-                                                           checker::Type *targetType, ETSChecker *checker)
+                                                           checker::Type *targetType,
+                                                           const ir::TypeNode *targetAnnotation, ETSChecker *checker)
 {
     diagnostic::DiagnosticKind const *message = &diagnostic::INVALID_CAST;
     util::DiagnosticMessageParams parameters = {sourceType, targetType};
@@ -6123,14 +6170,12 @@ static checker::CastingContext CheckTSAsExpressionCastable(ir::Expression *castE
         checker->Relation(), *message, parameters,
         checker::CastingContext::ConstructorData {castExpr, sourceType, targetType, castExpr->Start()});
 
-    if (checker->Relation()->IsTrue() && !ctx.TrivialCast() && targetType->IsETSObjectType() &&
-        targetType->AsETSObjectType()->IsGeneric() && !castExpr->IsArrayExpression() &&
-        !castExpr->IsObjectExpression() && !compiler::IsSyntheticIdentifier(castExpr) &&
-        compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME &&
-        std::any_of(targetType->AsETSObjectType()->TypeArguments().begin(),
-                    targetType->AsETSObjectType()->TypeArguments().end(),
-                    [](Type *item) { return !item->IsETSTypeParameter() && !item->IsETSWildcardType(); })) {
-        checker->LogDiagnostic(diagnostic::GENERIC_TYPE_CAST, {targetType->ToString()}, castExpr->Start());
+    if (checker->Relation()->IsTrue() && !ctx.TrivialCast() && IsUnsafeTypeErasureCastTarget(targetType) &&
+        !castExpr->IsArrayExpression() && !castExpr->IsObjectExpression() &&
+        !compiler::IsSyntheticIdentifier(castExpr) &&
+        compiler::GetPhaseManager()->CurrentPhase()->Name() == compiler::CheckerPhase::NAME) {
+        checker->LogDiagnostic(diagnostic::GENERIC_TYPE_CAST,
+                               {TypeErasureCastTargetToString(targetAnnotation, targetType)}, castExpr->Start());
     }
 
     return ctx;
@@ -6173,7 +6218,8 @@ checker::Type *ETSAnalyzer::Check(ir::TSAsExpression *expr) const
         return expr->SetTsType(targetType);
     }
 
-    const checker::CastingContext ctx = CheckTSAsExpressionCastable(castExpr, sourceType, targetType, checker);
+    const checker::CastingContext ctx =
+        CheckTSAsExpressionCastable(castExpr, sourceType, targetType, expr->TypeAnnotation()->AsTypeNode(), checker);
     expr->isUncheckedCast_ = ctx.UncheckedCast();
 
     // Make sure the array type symbol gets created for the assembler to be able to emit checkcast.

@@ -35,6 +35,8 @@ function foo(x: Object): void {
     console.log("(p: Any, q: Any) => never");
   } else if (x instanceof /* @@ label7 */[number]) {
     console.log("[number]");
+  } else if (x instanceof /* @@ label12 */readonly [number, string]) {
+    console.log("readonly [number, string]");
   } else if (x instanceof /* @@ label8 */FixedArray</* @@ label9 */Array<Int>>) {
     console.log("FixedArray<Array<Int>>");
   } else if (x instanceof /* @@ label10 */FixedArray<Array>) {
@@ -55,6 +57,7 @@ function foo(x: Object): void {
 /* @@@ label5 Error Semantic error ESE38251: Type 'FixedArray<Int>' cannot be used on the right hand side of an 'instanceof' expression */
 /* @@@ label6 Error Semantic error ESE38251: Type '((p: number)=> void)' cannot be used on the right hand side of an 'instanceof' expression */
 /* @@@ label7 Error Semantic error ESE38251: Type '[number]' cannot be used on the right hand side of an 'instanceof' expression */
+/* @@@ label12 Error Semantic error ESE38251: Type '[number, string]' cannot be used on the right hand side of an 'instanceof' expression */
 /* @@@ label8 Error Semantic error ESE38251: Type 'FixedArray<Array<Int>>' cannot be used on the right hand side of an 'instanceof' expression */
 /* @@@ label9 Error Syntax error ESY18871: Type parameter is erased from type 'Array' when used in instanceof expression. */
 /* @@@ label10 Error Semantic error ESE38251: Type 'FixedArray<Array>' cannot be used on the right hand side of an 'instanceof' expression */
