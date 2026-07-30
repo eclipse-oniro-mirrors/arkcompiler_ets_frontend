@@ -21,8 +21,6 @@
 
 namespace ark::es2panda::compiler {
 
-static constexpr std::size_t const LOOP_STATEMENT_POSITION = 2U;
-
 std::string_view ArrayForOfLowering::Name() const
 {
     static std::string const NAME = "ArrayForOfLowering";
@@ -104,6 +102,12 @@ static bool IsArrayOrStringUnion(checker::Type *type)
                [](checker::Type *const ct) { return IsArrayOrStringType(ct); });
 }
 
+static bool IsFixedArrayUnionType(checker::Type *type)
+{
+    return type != nullptr && type->IsETSUnionType() &&
+           type->AsETSUnionType()->AllOfConstituentTypes([](checker::Type *const ct) { return ct->IsETSArrayType(); });
+}
+
 static ir::Statement *CreateLoopVariableAssignment(
     ArenaAllocator *allocator, parser::ETSParser *parser,
     std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, bool const needNonNullish = false)
@@ -169,6 +173,67 @@ static ir::IfStatement *CreateLoopVariableTypeGuard(
     return ifStatement;
 }
 
+static ir::Statement *CreateUnionLengthAssignment(public_lib::Context *context, ir::Identifier *iterableIdent,
+                                                  ir::Identifier *lengthIdent, checker::Type *exprType)
+{
+    auto *const parser = context->parser->AsETSParser();
+    auto *const allocator = context->Allocator();
+    auto *const checker = context->GetChecker()->AsETSChecker();
+
+    auto *lengthDecl = parser->CreateFormattedStatement("let @@I1: int;", lengthIdent->Clone(allocator, nullptr));
+
+    auto const &constituentTypes = exprType->AsETSUnionType()->ConstituentTypes();
+    ES2PANDA_ASSERT(!constituentTypes.empty());
+
+    ir::IfStatement *ifRoot = nullptr;
+    ir::IfStatement *ifCurrent = nullptr;
+
+    for (std::size_t i = 0; i + 1U < constituentTypes.size(); ++i) {
+        auto *constituentType = constituentTypes[i];
+
+        if (constituentType->IsETSArrayType() && !constituentType->AsETSArrayType()->IsValueArray()) {
+            auto *elementType = constituentType->AsETSArrayType()->ElementType();
+            if (!elementType->PossiblyETSUndefined()) {
+                elementType = checker->CreateETSUnionType({elementType, checker->GlobalETSUndefinedType()});
+                constituentType = checker->CreateETSArrayType(elementType);
+            }
+        }
+
+        auto *test = parser->CreateFormattedExpression("@@I1 instanceof @@T2", iterableIdent->Clone(allocator, nullptr),
+                                                       constituentType);
+        auto *consequent = parser->CreateFormattedStatement(
+            "@@I1 = @@I2.length;", lengthIdent->Clone(allocator, nullptr), iterableIdent->Clone(allocator, nullptr));
+        auto *ifStatement = allocator->New<ir::IfStatement>(test, consequent, nullptr);
+        test->SetParent(ifStatement);
+        consequent->SetParent(ifStatement);
+
+        if (ifRoot == nullptr) {
+            ifRoot = ifStatement;
+        } else {
+            ifCurrent->SetAlternate(ifStatement);
+        }
+        ifCurrent = ifStatement;
+    }
+
+    auto *finalBranch = parser->CreateFormattedStatement("@@I1 = @@I2.length;", lengthIdent->Clone(allocator, nullptr),
+                                                         iterableIdent->Clone(allocator, nullptr));
+
+    ArenaVector<ir::Statement *> statements(allocator->Adapter());
+    statements.push_back(lengthDecl);
+    if (ifRoot == nullptr) {
+        statements.push_back(finalBranch);
+    } else {
+        ifCurrent->SetAlternate(finalBranch);
+        statements.push_back(ifRoot);
+    }
+
+    auto *block = allocator->New<ir::BlockStatement>(allocator, std::move(statements));
+    for (auto *st : block->Statements()) {
+        st->SetParent(block);
+    }
+    return block;
+}
+
 static ir::Statement *CreateUnionLoopVariableLoad(
     public_lib::Context *context, ir::ForOfStatement *forOfStatement,
     std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &idents, checker::Type *loopVariableType)
@@ -227,6 +292,57 @@ static ir::Statement *GenerateLoopVariableLoad(
     return CreateUnionLoopVariableLoad(context, forOfStatement, idents, loopVariableType);
 }
 
+static void AppendLoadToLoopBody(ir::BlockStatement *outerBlock, ir::Statement *load)
+{
+    auto *loopBody = outerBlock->Statements().back()->AsForUpdateStatement()->Body()->AsBlockStatement();
+    if (load->IsBlockStatement()) {
+        for (auto *statement : load->AsBlockStatement()->Statements()) {
+            loopBody->AddStatement(statement);
+        }
+    } else {
+        loopBody->AddStatement(load);
+    }
+}
+
+static ir::BlockStatement *BuildUnionFixedArrayBlock(
+    public_lib::Context *context, std::tuple<ir::Identifier *, ir::Identifier *, ir::Identifier *> const &loopIdents,
+    ir::ForOfStatement *forOfStatement)
+{
+    auto *const parser = context->parser->AsETSParser();
+    auto *const allocator = context->Allocator();
+    auto *exprType = forOfStatement->Right()->TsType();
+    auto [iterableIdent, lengthIdent, indexIdent] = loopIdents;
+
+    auto *iterableDecl = parser->CreateFormattedStatement("let @@I1 = @@E2;", iterableIdent->Clone(allocator, nullptr),
+                                                          forOfStatement->Right());
+
+    auto *unionLength = CreateUnionLengthAssignment(context, iterableIdent, lengthIdent, exprType);
+
+    auto *forLoop = parser->CreateFormattedStatement(
+        "for (let @@I1: int = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { }", indexIdent->Clone(allocator, nullptr),
+        indexIdent->Clone(allocator, nullptr), lengthIdent->Clone(allocator, nullptr),
+        indexIdent->Clone(allocator, nullptr), indexIdent->Clone(allocator, nullptr));
+
+    ArenaVector<ir::Statement *> statements(allocator->Adapter());
+    statements.push_back(iterableDecl);
+
+    if (unionLength->IsBlockStatement()) {
+        for (auto *st : unionLength->AsBlockStatement()->Statements()) {
+            statements.push_back(st);
+        }
+    } else {
+        statements.push_back(unionLength);
+    }
+
+    statements.push_back(forLoop);
+
+    auto *block = allocator->New<ir::BlockStatement>(allocator, std::move(statements));
+    for (auto *st : block->Statements()) {
+        st->SetParent(block);
+    }
+    return block;
+}
+
 static ir::Statement *GenerateLoweredStatement(public_lib::Context *context, ir::ForOfStatement *forOfStatement)
 {
     auto *const parser = context->parser->AsETSParser();
@@ -250,26 +366,24 @@ static ir::Statement *GenerateLoweredStatement(public_lib::Context *context, ir:
     auto *load = GenerateLoopVariableLoad(context, forOfStatement, {iterableIdent, indexIdent, loopVariableIdent},
                                           loopVariableType);
 
-    auto *lowered = parser->CreateFormattedStatement(
-        "let @@I1 = @@E2; let @@I3: int = @@I4.length; for (let @@I5: int = 0; @@I6 < @@I7; @@I8 = @@I9 + 1) { }",
-        iterableIdent->Clone(allocator, nullptr), forOfStatement->Right(), lengthIdent->Clone(allocator, nullptr),
-        iterableIdent->Clone(allocator, nullptr), indexIdent->Clone(allocator, nullptr),
-        indexIdent->Clone(allocator, nullptr), lengthIdent->Clone(allocator, nullptr),
-        indexIdent->Clone(allocator, nullptr), indexIdent->Clone(allocator, nullptr));
-    auto *loopBody = lowered->AsBlockStatement()
-                         ->Statements()[LOOP_STATEMENT_POSITION]
-                         ->AsForUpdateStatement()
-                         ->Body()
-                         ->AsBlockStatement();
-    if (load->IsBlockStatement()) {
-        for (auto *statement : load->AsBlockStatement()->Statements()) {
-            loopBody->AddStatement(statement);
-        }
+    auto *exprType = forOfStatement->Right()->TsType();
+    ES2PANDA_ASSERT(exprType != nullptr);
+
+    ir::BlockStatement *resultBlock;
+    if (IsFixedArrayUnionType(exprType)) {
+        resultBlock = BuildUnionFixedArrayBlock(context, {iterableIdent, lengthIdent, indexIdent}, forOfStatement);
     } else {
-        loopBody->AddStatement(load);
+        auto *lowered = parser->CreateFormattedStatement(
+            "let @@I1 = @@E2; let @@I3: int = @@I4.length; for (let @@I5: int = 0; @@I6 < @@I7; @@I8 = @@I9 + 1) { }",
+            iterableIdent->Clone(allocator, nullptr), forOfStatement->Right(), lengthIdent->Clone(allocator, nullptr),
+            iterableIdent->Clone(allocator, nullptr), indexIdent->Clone(allocator, nullptr),
+            indexIdent->Clone(allocator, nullptr), lengthIdent->Clone(allocator, nullptr),
+            indexIdent->Clone(allocator, nullptr), indexIdent->Clone(allocator, nullptr));
+        resultBlock = lowered->AsBlockStatement();
     }
 
-    return lowered;
+    AppendLoadToLoopBody(resultBlock, load);
+    return resultBlock;
 }
 
 static ir::Statement *ProcessArrayForOf(public_lib::Context *context, ir::ForOfStatement *forOfStatement)
@@ -295,8 +409,7 @@ static ir::Statement *ProcessArrayForOf(public_lib::Context *context, ir::ForOfS
     loweringResult->SetRange(forOfStatement->Range());
     RefineSourceRanges(loweringResult);
 
-    auto loweredLoop =
-        loweringResult->AsBlockStatement()->Statements()[LOOP_STATEMENT_POSITION]->AsForUpdateStatement();
+    auto loweredLoop = loweringResult->AsBlockStatement()->Statements().back()->AsForUpdateStatement();
     auto loopBody = loweredLoop->Body()->AsBlockStatement();
     TransferForOfLoopBody(forOfStatement->Body(), loopBody);
 
