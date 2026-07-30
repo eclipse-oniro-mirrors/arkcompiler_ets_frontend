@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,6 +53,12 @@ void TSEnumMember::Dump(ir::AstDumper *dumper) const
 
 void TSEnumMember::Dump(ir::SrcDumper *dumper) const
 {
+    // Record enum member in name cache if declgen is enabled
+    // If enum member is dumped, it means the containing enum is exported or indirectly dependent
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->RecordNodeInNameCache(this);
+    }
+
     ES2PANDA_ASSERT(key_ != nullptr);
     dumper->DumpJsdocBeforeTargetNode(this);
     key_->Dump(dumper);

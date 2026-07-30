@@ -132,6 +132,16 @@ static void WriteStringToFile(public_lib::Context *context, const std::string &o
 void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath)
 {
     ir::Declgen dg {context};
+
+    // Initialize name cache if nameCachePath is set in options
+    const auto &options = *context->config->options;
+    std::string nameCachePath = options.GetGenerateDeclNamecachepath();
+    if (!nameCachePath.empty()) {
+        // Get relative module name (format: entry.src.main.ets.xxx.file_name.ets)
+        std::string moduleName {program->ModuleName()};
+        dg.InitNameCache(moduleName);
+    }
+
     ir::SrcDumper dumper {&dg};
     program->Ast()->Dump(&dumper);
     dumper.GetDeclgen()->Run();
@@ -150,6 +160,14 @@ void HandleGenerateDecl(public_lib::Context *context, const parser::Program *pro
     }
 
     WriteStringToFile(context, outputPath, textToWrite);
+
+    // Generate nameCache.json file if nameCachePath is set
+    if (!nameCachePath.empty() && dg.GetNameCache() != nullptr) {
+        if (!dg.GenerateNameCacheJson(nameCachePath)) {
+            context->diagnosticEngine->LogFatalError(
+                diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {nameCachePath}, lexer::SourcePosition());
+        }
+    }
 }
 
 static bool CheckOptionsAfterPhase(const public_lib::Context &context, const std::string &name)

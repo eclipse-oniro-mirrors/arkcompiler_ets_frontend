@@ -341,6 +341,11 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         if (FilterForDeclGen()) {
             return;
         }
+
+        if (!IsPrivate()) {
+            dumper->GetDeclgen()->RecordNodeInNameCache(this);
+        }
+
         if (Parent() != nullptr && (IsGetter() || IsSetter()) && IsOptionalDeclaration() &&
             Parent()->IsTSInterfaceBody() && OriginalNode() != nullptr && OriginalNode()->IsClassProperty()) {
             OriginalNode()->AsClassProperty()->ForceDump(dumper);

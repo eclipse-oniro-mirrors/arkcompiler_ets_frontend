@@ -451,6 +451,12 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
+    // Record class/namespace in name cache if declgen is enabled
+    // If we reach here, the node will be dumped (either exported or in post-dump phase)
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->RecordNodeInNameCache(this);
+    }
+
     dumper->DumpJsdocBeforeTargetNode(this);
 
     DumpAnnotations(dumper);

@@ -217,4 +217,41 @@ foreach(test_file IN LISTS ETS_TESTS)
     add_dependencies(declgen-ets-test declgen-ets-test_${TARGET_NAME})
 endforeach()
 
+# nameCache.json generation during declgen (see --generate-decl:nameCachePath)
+set(NAMECACHE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../../declgen/namecache.ets)
+set(NAMECACHE_EXPECTED ${CMAKE_CURRENT_SOURCE_DIR}/../../declgen/namecache-expected.json)
+set(NAMECACHE_WORKDIR ${CMAKE_CURRENT_BINARY_DIR}/namecache)
+set(NAMECACHE_DECL_OUT ${NAMECACHE_WORKDIR}/namecache.d.ets)
+set(NAMECACHE_JSON_OUT ${NAMECACHE_WORKDIR}/namecache.json)
+set(NAMECACHE_STAMP ${NAMECACHE_WORKDIR}/namecache.stamp)
+file(MAKE_DIRECTORY ${NAMECACHE_WORKDIR})
+
+add_custom_command(
+    OUTPUT ${NAMECACHE_JSON_OUT} ${NAMECACHE_DECL_OUT}
+    COMMAND ${CMAKE_COMMAND} -E env
+        LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
+        $<TARGET_FILE:es2panda> --generate-decl:enabled --generate-decl:path=${NAMECACHE_DECL_OUT}
+        --generate-decl:nameCachePath=${NAMECACHE_WORKDIR}
+        --opt-level=0 ${NAMECACHE_INPUT}
+    WORKING_DIRECTORY ${NAMECACHE_WORKDIR}
+    DEPENDS ${NAMECACHE_INPUT} es2panda es2panda-lib
+    VERBATIM
+)
+
+add_custom_command(
+    OUTPUT ${NAMECACHE_STAMP}
+    COMMAND ${CMAKE_COMMAND} -E compare_files ${NAMECACHE_JSON_OUT} ${NAMECACHE_EXPECTED}
+    COMMAND ${CMAKE_COMMAND} -E touch ${NAMECACHE_STAMP}
+    WORKING_DIRECTORY ${NAMECACHE_WORKDIR}
+    DEPENDS ${NAMECACHE_JSON_OUT} ${NAMECACHE_EXPECTED}
+    VERBATIM
+)
+
+add_custom_target(declgen-ets-test_namecache
+    DEPENDS ${NAMECACHE_STAMP}
+)
+add_dependencies(declgen-ets-test_namecache es2panda es2panda-lib)
+add_dependencies(declgen-ets-test declgen-ets-test_namecache)
+
 add_dependencies(es2panda_tests declgen-ets2ts-plugin-test)
+add_dependencies(es2panda_tests declgen-ets-test_namecache)
