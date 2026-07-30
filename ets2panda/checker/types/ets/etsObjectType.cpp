@@ -1309,6 +1309,9 @@ Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *
     ES2PANDA_ASSERT(copiedType != nullptr);
 
     copiedType->typeFlags_ = typeFlags_;
+    // For ETSEnumType (ETSNumericEnumType), it will ignores the flags_ and always creates Enum with hardcoded flags_ =
+    // CLASS | NUMERIC_ENUM_OBJECT.
+    copiedType->flags_ = flags_;
     copiedType->RemoveObjectFlag(ETSObjectFlags::INCOMPLETE_INSTANTIATION | ETSObjectFlags::CHECKED_INVOKE_LEGITIMACY);
 
     copiedType->SetVariable(variable_);
