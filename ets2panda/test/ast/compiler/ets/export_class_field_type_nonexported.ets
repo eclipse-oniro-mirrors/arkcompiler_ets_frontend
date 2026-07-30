@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class Hidden /* @@ label */{}
+class /* @@ label */ Hidden {}
 
 export class C {
     f: Hidden = new Hidden()

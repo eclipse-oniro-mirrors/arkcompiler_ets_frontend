@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class C /* @@ label */{}
+class /* @@ label */ C {}
 
 export class B<T> { x: T }
 

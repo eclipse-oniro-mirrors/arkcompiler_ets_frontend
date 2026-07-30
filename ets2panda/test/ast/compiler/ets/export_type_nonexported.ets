@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class C /* @@ label */{}
+class /* @@ label */ C {}
 
 export type A = C
 

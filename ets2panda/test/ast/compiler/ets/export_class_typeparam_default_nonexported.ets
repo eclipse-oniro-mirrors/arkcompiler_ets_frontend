@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class Arg /* @@ label */{}
+class /* @@ label */ Arg {}
 
 export class Container<T = Arg> {}
 

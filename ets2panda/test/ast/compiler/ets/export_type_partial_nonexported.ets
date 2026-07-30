@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class B /* @@ label */{}
+class /* @@ label */ B {}
 
 export type A = Partial<B>
 

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class Arg /* @@ label */{}
+class /* @@ label */ Arg {}
 
 export function foo<T extends Arg>(): void {}
 

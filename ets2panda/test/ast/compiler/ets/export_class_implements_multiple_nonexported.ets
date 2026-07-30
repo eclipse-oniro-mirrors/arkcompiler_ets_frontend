@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-class /* @@ label */ Arg {}
+interface /* @@ label1 */ I1 {}
+interface /* @@ label2 */ I2 {}
 
-export class Container<T extends Arg> {}
+export class A implements I1, I2 {}
 
-
-/* @@@ label Error Semantic error ESE1236581: Type 'Arg' used in export declaration(s) is not exported. */
+/* @@@ label1 Error Semantic error ESE1236581: Type 'I1' used in export declaration(s) is not exported. */
+/* @@@ label2 Error Semantic error ESE1236581: Type 'I2' used in export declaration(s) is not exported. */
