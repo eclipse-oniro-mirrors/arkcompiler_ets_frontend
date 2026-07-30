@@ -1,15 +1,3 @@
-#21067
-xml_js_test
-
-#33565
-jsDiff_test
-
-#19576
-js-joda_test
-
-#24147
-jBox2d_test
-zxing_test
-
-#19623
+# x64: third_lib_js AOT LLVMCG FastVerify
+#19623 
 rebound_test
