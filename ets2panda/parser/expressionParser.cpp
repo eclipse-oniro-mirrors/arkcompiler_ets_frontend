@@ -792,6 +792,9 @@ ir::Expression *ParserImpl::ParseAssignmentExpression(ir::Expression *lhsExpress
 
             return ParseArrowFunctionExpression(lhsExpression, nullptr, nullptr, false);
         case lexer::TokenType::PUNCTUATOR_SUBSTITUTION: {
+            if ((flags & ExpressionParseFlags::DISALLOW_ASSIGNMENT) != 0 && !lhsExpression->IsBrokenExpression()) {
+                break;
+            }
             ValidateAssignmentTarget(flags, lhsExpression);
 
             lexer_->NextToken();
@@ -882,6 +885,9 @@ ir::Expression *ParserImpl::ParseAssignmentEqualExpression(const lexer::TokenTyp
         case lexer::TokenType::PUNCTUATOR_BITWISE_OR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_BITWISE_XOR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL: {
+            if ((flags & ExpressionParseFlags::DISALLOW_ASSIGNMENT) != 0 && !lhsExpression->IsBrokenExpression()) {
+                break;
+            }
             ValidateLvalueAssignmentTarget(lhsExpression);
 
             lexer_->NextToken();
@@ -1522,7 +1528,8 @@ ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left, Expressi
         newFlags |= ExpressionParseFlags::INSTANCEOF;
     }
 
-    ir::Expression *rightExpr = ParseExpressionOrTypeAnnotation(operatorType, ExpressionParseFlags::DISALLOW_YIELD);
+    ir::Expression *rightExpr =
+        ParseExpressionOrTypeAnnotation(operatorType, newFlags | ExpressionParseFlags::DISALLOW_ASSIGNMENT);
 
     // NOTE(rsipka): 'in' operator is not supported but parsed the expression above for more detailed error reporting
     if (operatorType == lexer::TokenType::KEYW_IN && !IsInOperatorTypeSupported()) {
