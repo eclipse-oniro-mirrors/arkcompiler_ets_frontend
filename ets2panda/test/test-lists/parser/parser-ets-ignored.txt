@@ -1,9 +1,6 @@
 parser/as/test_class_method.ts
 parser/as/test_class_property.ts
 parser/as/test_decorators4.ts
-parser/ets/dynamic_import_tests/modules/instanceof.ets
-compiler/ets/instanceof_object_jsvalue.ets
-compiler/ets/instanceof_x_object.ets
 
 # remove decorator
 parser/as/test_decorators1.ts
@@ -15,8 +12,6 @@ parser/ts/test_decorator3.ts
 #32155
 ast/compiler/ets/annotation_new.ets
 
-#33653
-compiler/ets/invalidInheritance3.ets
 #33676
 parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
 #33677

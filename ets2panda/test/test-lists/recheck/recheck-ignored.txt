@@ -1,8 +1,4 @@
 # Tests that fails after recheck: Issue #24651
-parser/ets/re_export/diamond/D.ets
-parser/ets/re_export/diamond/D2.ets
-parser/ets/re_export/import_14.ets
-parser/ets/re_export/import_2.ets
 runtime/ets/extension_function_tests/extensionFunctionReturnThis2.ets
 runtime/ets/lambda_with_receiver/lambda_with_receiver_return_this2.ets
 runtime/ets/multisource_inheritance-2.ets
@@ -14,10 +10,5 @@ runtime/ets/typealias_function_name_conflict.ets
 #Test that failed before CheckerPhase (on ConstantExpressionLowering)
 #Test that failed with abort before plugins-after-check phase
 
-#Issue #30577
-runtime/ets/re_export_default/import_reexport3.ets
 #32155
 ast/compiler/ets/annotation_new.ets
-
-# Tests that fails after recheck: Issue # 838
-runtime/ets/nested_array_2.ets
