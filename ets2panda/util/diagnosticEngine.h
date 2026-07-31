@@ -24,7 +24,10 @@
 #include "util/es2pandaMacros.h"
 #include "generated/diagnostic.h"
 #include "util/diagnostic.h"
-#include "lexer/token/sourceLocation.h"
+
+namespace ark::es2panda::parser {
+class Program;
+}  // namespace ark::es2panda::parser
 
 namespace ark::es2panda::util {
 
@@ -91,6 +94,13 @@ public:
     void UndoRange(const DiagnosticCheckpoint &from, const DiagnosticCheckpoint &to);
 
     [[nodiscard]] bool IsAnyError() const noexcept;
+
+    // True if any error-class diagnostic was logged after `checkpoint`.
+    [[nodiscard]] bool HasErrorsSince(const DiagnosticCheckpoint &checkpoint) const noexcept;
+
+    // True if an error-class diagnostic is attached to `program` (or has no program).
+    // Used to decide whether post-check analyzers are safe to run for that unit.
+    [[nodiscard]] bool HasErrorDiagnosticsFor(const parser::Program *program) const noexcept;
 
     void InsertLog(std::shared_ptr<DiagnosticBase> &&logInfo)
     {

@@ -451,8 +451,14 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     }
 
     if (runAnalysis) {
+        // Post-check analyzers require a sufficiently consistent AST/types.
+        // Default: any existing error suppresses them (historical behavior).
+        // Simultaneous units: only errors attached to *this* program suppress them,
+        // so diagnostics from other units do not hide initialization/liveness issues.
         Program()->Ast()->Check(this);
-        if (!IsAnyError()) {
+        const bool skipAnalyzers =
+            Program()->IsBuiltSimultaneously() ? DiagnosticEngine().HasErrorDiagnosticsFor(Program()) : IsAnyError();
+        if (!skipAnalyzers) {
             AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
             AssignAnalyzer(this).Analyze(Program()->Ast());
         }
