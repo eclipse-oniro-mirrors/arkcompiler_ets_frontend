@@ -334,4 +334,101 @@ TEST_F(ScopeLineInfoCapiTest, NoDebugLineFlagMakesLambdaFunctionInvalid)
            "after AstNodeSetNoDebugLineFlag was applied.";
 }
 
+TEST_F(ScopeLineInfoTest, EnumSynthesizedMethods_HaveIllegalLineNumbers)
+{
+    // Enum on line 3 so that SetDefaultPositionInUnfilledClassNodes does not
+    // accidentally assign line 0 (which the emitter also treats as invalid).
+    std::string_view text = R"(
+        // padding
+        enum Color { RED, GREEN, BLUE }
+    )";
+
+    std::array args = {
+        ES2PANDA_BIN_PATH,
+        "--debug-info=true",
+        "--opt-level=0",
+        "--ets-unnamed",
+    };
+
+    auto program = GetCurrentProgramWithArgs({args.data(), args.size()}, text);
+    ASSERT_NE(program, nullptr);
+
+    // Collect all function names matching the Color class pattern
+    std::vector<std::string> enumMethodNames;
+    ForEachFunction(*program, [&](const std::string &fnName, const pandasm::Function & /*func*/) {
+        if (fnName.find("Color.") != std::string::npos) {
+            enumMethodNames.push_back(fnName);
+        }
+    });
+    ASSERT_FALSE(enumMethodNames.empty()) << "Expected to find Color enum methods";
+
+    // Enum synthesized methods that should have all-illegal line numbers
+    static constexpr std::string_view kEnumSyntheticMethodPatterns[] = {
+        "getName", "getOrdinal", "toString", "valueOf", "getValueOf", "fromValue", "values",
+    };
+
+    for (const auto &pattern : kEnumSyntheticMethodPatterns) {
+        auto it = std::find_if(enumMethodNames.begin(), enumMethodNames.end(),
+                               [&](const std::string &n) { return n.find(pattern) != std::string::npos; });
+        ASSERT_NE(it, enumMethodNames.end()) << "Missing function matching: " << pattern;
+        const auto *func = FindFunctionByName(*program, *it);
+        ASSERT_NE(func, nullptr) << "Function not found: " << *it;
+        EXPECT_FALSE(func->ins.empty()) << "Function has no instructions: " << *it;
+        for (const auto &ins : func->ins) {
+            EXPECT_TRUE(IsIllegalLine(ins.insDebug.LineNumber()))
+                << *it << ": expected illegal line, got " << ins.insDebug.LineNumber();
+        }
+    }
+
+    // NOTE: _cctor_ / _ctor_ line-number verification is handled separately.
+    // This test only validates the fully-synthesized methods (getName etc.).
+}
+
+TEST_F(ScopeLineInfoTest, ObjectLiteralSynthesizedMethods_HaveIllegalLineNumbers)
+{
+    std::string_view text = R"(
+        // padding
+        interface Shape {
+            name: string
+        }
+        let shape: Shape = { name: "circle" }
+    )";
+
+    std::array args = {
+        ES2PANDA_BIN_PATH,
+        "--debug-info=true",
+        "--opt-level=0",
+        "--ets-unnamed",
+    };
+
+    auto program = GetCurrentProgramWithArgs({args.data(), args.size()}, text);
+    ASSERT_NE(program, nullptr);
+
+    // Locate the ObjectLiteral class — its name contains "$ObjectLiteral"
+    std::string objectLiteralClassName;
+    bool foundAccessor = false;
+    ForEachFunction(*program, [&](const std::string &fnName, const pandasm::Function &func) {
+        if (fnName.find("$ObjectLiteral") == std::string::npos) {
+            return;
+        }
+        if (fnName.find("%%get-") != std::string::npos || fnName.find("%%set-") != std::string::npos) {
+            foundAccessor = true;
+            EXPECT_FALSE(func.ins.empty()) << fnName;
+            for (const auto &ins : func.ins) {
+                EXPECT_TRUE(IsIllegalLine(ins.insDebug.LineNumber()))
+                    << fnName << ": expected illegal line, got " << ins.insDebug.LineNumber();
+            }
+        }
+        if (fnName.find("_ctor_") != std::string::npos) {
+            EXPECT_FALSE(func.ins.empty()) << fnName;
+            for (const auto &ins : func.ins) {
+                EXPECT_TRUE(IsIllegalLine(ins.insDebug.LineNumber()))
+                    << fnName << ": expected illegal line, got " << ins.insDebug.LineNumber();
+            }
+        }
+    });
+
+    EXPECT_TRUE(foundAccessor) << "Expected to find at least one ObjectLiteral accessor method";
+}
+
 }  // namespace ark::es2panda::compiler::test

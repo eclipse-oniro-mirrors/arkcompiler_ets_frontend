@@ -55,6 +55,7 @@ static std::pair<ir::ScriptFunction *, ir::Identifier *> CreateScriptFunction(pu
                                                                   ir::ModifierFlags::PUBLIC});
     ES2PANDA_ASSERT(func != nullptr);
     func->SetIdent(id);
+    func->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
 
     return std::make_pair(func, id);
 }
@@ -243,6 +244,7 @@ static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<
 
     auto *accessor = CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, isSetter, anonClassFieldName);
     accessor->SetOriginalNode(field);
+    accessor->Function()->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
     classBody.emplace_back(accessor);
     SetSourceRangesRecursively(accessor, ifaceMethod->Range());
 
@@ -250,6 +252,7 @@ static void AddAnonClassFieldAndAccessors(public_lib::Context *ctx, ArenaVector<
         auto *anotherAccessor =
             CreateAnonClassFieldGetterSetter(ctx, copyIfaceMethod, fieldType, !isSetter, anonClassFieldName);
         anotherAccessor->SetOriginalNode(field);
+        anotherAccessor->Function()->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
         classBody.emplace_back(anotherAccessor);
         SetSourceRangesRecursively(anotherAccessor, ifaceMethod->Range());
     }

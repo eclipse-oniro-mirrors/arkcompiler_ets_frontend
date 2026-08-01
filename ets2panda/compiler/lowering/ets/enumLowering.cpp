@@ -165,6 +165,10 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
             ir::ScriptFunctionFlags::METHOD, functionInfo.flags});
     // clang-format on
 
+    // Enum methods created here are entirely synthetic — they have no source correspondence.
+    // Suppress debug line info so that the emitter consistently outputs invalid line numbers for them.
+    function->AddAstNodeFlags(ir::AstNodeFlags::NO_DEBUG_LINE_INFO);
+
     return function;
 }
 
