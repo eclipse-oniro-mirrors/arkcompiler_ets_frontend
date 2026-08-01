@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,18 @@
  * limitations under the License.
  */
 
-function valueOf(this: double): Double {
-    return 1.2;
+class A {
+    foo(): int {
+        return 1;
+    }
+}
+
+function foo(this: A): int {
+    return 2;
+}
+function main() {
+    let b1: A = new A;
+    arktest.assertEQ(b1.foo(), 1)
+    let b2: A = new A;
+    arktest.assertEQ(foo(b2), 2)
 }

@@ -181,10 +181,7 @@ void CheckExtensionIsShadowedInCurrentClassOrInterface(checker::ETSChecker *chec
         if (signature->Function()->IsGetter() || signature->Function()->IsSetter()) {
             checker->LogError(diagnostic::EXTENSION_NAME_CONFLICT_WITH_METHOD, {funcType->Name(), objType->Name()},
                               extensionFunc->Body()->Start());
-        } else if (funcSignature->HasSignatureFlag(SignatureFlags::PUBLIC)) {
-            checker->LogError(diagnostic::EXTENSION_FUNC_NAME_CONFLICT_WITH_METH, {funcType->Name(), objType->Name()},
-                              extensionFunc->Body()->Start());
-        } else {
+        } else if (!funcSignature->HasSignatureFlag(SignatureFlags::PUBLIC)) {
             checker->LogDiagnostic(diagnostic::EXTENSION_NONPUBLIC_COLLISION, {funcType->Name(), objType->Name()},
                                    extensionFunc->Body()->Start());
         }
@@ -516,11 +513,22 @@ static Signature *MatchCandidate(ETSChecker *checker, const Candidate &candidate
     return FirstMatchSignaturesWithArguments(checker, candidate.signatures, candidate.arguments, expr, false);
 }
 
+static bool IsETSObjectOrAllObjectUnion(const checker::Type *type)
+{
+    if (type->IsETSObjectType()) {
+        return true;
+    }
+    if (!type->IsETSUnionType()) {
+        return false;
+    }
+    return type->AsETSUnionType()->AllOfConstituentTypes([](const checker::Type *t) { return t->IsETSObjectType(); });
+}
+
 checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensionFuncHelperType *type,
                                                              checker::ETSChecker *checker, ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
-    ERROR_SANITY_CHECK(checker, expr->Callee()->AsMemberExpression()->Object()->TsType()->IsETSObjectType(),
+    ERROR_SANITY_CHECK(checker, IsETSObjectOrAllObjectUnion(expr->Callee()->AsMemberExpression()->Object()->TsType()),
                        return nullptr);
 
     auto &classSigs = type->ClassMethodType()->CallSignatures();

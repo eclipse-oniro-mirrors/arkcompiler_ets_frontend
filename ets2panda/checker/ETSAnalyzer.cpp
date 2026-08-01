@@ -1084,7 +1084,8 @@ static bool IsTypeNotPreservedByErasure(checker::Type const *elementType, bool i
 
 // Validates the element type for FixedArray / ValueArray construction.
 template <typename T, typename = typename std::enable_if_t<std::is_base_of_v<ir::Expression, T>>>
-static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, checker::Type *elementType)
+static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, checker::Type *elementType,
+                                  bool needsParamlessCtor = true)
 {
     ES2PANDA_ASSERT(checker != nullptr);
     ES2PANDA_ASSERT(newArrayInstanceExpr != nullptr);
@@ -1101,10 +1102,12 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
         const auto flags = checker::ETSObjectFlags::ABSTRACT | checker::ETSObjectFlags::INTERFACE;
         if (!calleeObj->HasObjectFlag(flags)) {
             // A workaround check for new Interface[...] in test cases
-            newArrayInstanceExpr->SetSignature(CollectParameterlessConstructor(
-                checker, calleeObj->ConstructSignatures(), newArrayInstanceExpr->Start()));
-            checker->ValidateSignatureAccessibility(calleeObj, newArrayInstanceExpr->Signature(),
-                                                    newArrayInstanceExpr->Start());
+            if (needsParamlessCtor) {
+                newArrayInstanceExpr->SetSignature(CollectParameterlessConstructor(
+                    checker, calleeObj->ConstructSignatures(), newArrayInstanceExpr->Start()));
+                checker->ValidateSignatureAccessibility(calleeObj, newArrayInstanceExpr->Signature(),
+                                                        newArrayInstanceExpr->Start());
+            }
         } else {
             checker->LogError(diagnostic::ABSTRACT_CLASS_AS_ARRAY_ELEMENT_TYPE, {}, newArrayInstanceExpr->Start());
             return false;
@@ -1210,6 +1213,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
             checker->LogError(diagnostic::MISSING_ARRAY_SIZE, {type->ToString()}, expr->Start());
             return expr->SetTsType(checker->GlobalTypeError());
         }
+        constexpr size_t ARRAY_CTOR_MIN_ARGS_WITH_INIT = 2U;
         if (expr->GetArguments().size() > 1) {
             auto *arg = expr->GetArguments()[1];
             if (!arg->IsArrowFunctionExpression()) {
@@ -1220,7 +1224,8 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
             arg->Check(checker);
         }
         checker->ValidateArrayIndex(expr->GetArguments()[0], true);
-        CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), type->AsETSArrayType()->ElementType());
+        CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), type->AsETSArrayType()->ElementType(),
+                              expr->GetArguments().size() < ARRAY_CTOR_MIN_ARGS_WITH_INIT);
         expr->SetTsType(type);
         checker->CreateBuiltinArraySignature(expr->TsType()->AsETSArrayType(), 1);
         return type;

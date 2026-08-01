@@ -29,10 +29,8 @@ interface SubFruit extends Fruit {}
 
 class Banana implements SubFruit, Yellow {}
 
-function foo(this:Banana, id2: int, k2: String): int/* @@ label */{
+function foo(this:Banana, id2: int, k2: String): int {
     return 2;
 }
 
-
-/* @@@ label Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class Yellow */
 /* @@? 32:10 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '(=t: Banana, id2: Int, k2: String) => Int' will never be selected for a call, as the preceding entity with the signature '(=t: Fruit, id1: Int, k1: String) => Int' prevails. */

@@ -1897,14 +1897,6 @@ static bool CheckOverloadedName(ETSChecker *checker, ir::OverloadDeclaration *no
         overloadedName->SetTsType(checker->GlobalTypeError());
         return false;
     }
-    // Constructor will lowering to multiple Constructor if have rest parameters or optional parameters.
-    // Need to modify RestTupleConstructionPhase.
-    if (!identDeclNode->AsMethodDefinition()->Overloads().empty() && !identDeclNode->IsConstructor()) {
-        checker->LogError(diagnostic::OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION, {overloadedName->Variable()->Name()},
-                          overloadedName->Start());
-        overloadedName->SetTsType(checker->GlobalTypeError());
-        return false;
-    }
 
     return CheckAccessModifierForOverloadDeclaration(checker, node->Modifiers(), identDeclNode->Modifiers(),
                                                      overloadedName->Start());
