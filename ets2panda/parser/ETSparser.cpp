@@ -1972,8 +1972,7 @@ ir::Statement *ETSParser::ParseExportDeclaration([[maybe_unused]] StatementParsi
     return AllocBrokenStatement(Lexer()->GetToken().Loc());
 }
 
-ir::Expression *ETSParser::ParseExpressionOrTypeAnnotation(lexer::TokenType type,
-                                                           [[maybe_unused]] ExpressionParseFlags flags)
+ir::Expression *ETSParser::ParseExpressionOrTypeAnnotation(lexer::TokenType type, ExpressionParseFlags flags)
 {
     if (type == lexer::TokenType::KEYW_INSTANCEOF) {
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR |
@@ -1992,7 +1991,7 @@ ir::Expression *ETSParser::ParseExpressionOrTypeAnnotation(lexer::TokenType type
         return ParseTypeAnnotation(&options);
     }
 
-    return ParseExpression(ExpressionParseFlags::DISALLOW_YIELD);
+    return ParseExpression(flags | ExpressionParseFlags::DISALLOW_YIELD);
 }
 
 bool ETSParser::ParsePotentialGenericFunctionCall(ir::Expression *primaryExpr, ir::Expression **returnExpression,
