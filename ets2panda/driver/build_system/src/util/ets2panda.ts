@@ -394,6 +394,10 @@ export class Ets2panda {
                 if (ENABLE_DECLARATION_BARRIER) {
                     declGenCb?.();
                 }
+                // Emit the completion signal for DECL-only jobs (incremental build: declarations stale, abc fresh) so the task settles normally.
+                if ((job.jobType & CompileJobType.ABC) === 0) {
+                    compAbcCb?.();
+                }
             }
 
             if (job.jobType & CompileJobType.ABC) {
