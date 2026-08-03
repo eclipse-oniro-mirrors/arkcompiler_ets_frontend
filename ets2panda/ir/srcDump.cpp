@@ -18,6 +18,16 @@
 
 #include "util/helpers.h"
 #include "varbinder/ETSBinder.h"
+#include "ir/obfuscationNameCache.h"
+#include "ir/statements/functionDeclaration.h"
+#include "ir/base/classDefinition.h"
+#include "ir/statements/variableDeclaration.h"
+#include "ir/ts/tsInterfaceDeclaration.h"
+#include "ir/ts/tsEnumDeclaration.h"
+#include "ir/statements/annotationDeclaration.h"
+#include "ir/base/classProperty.h"
+#include "ir/base/methodDefinition.h"
+#include "ir/ts/tsEnumMember.h"
 
 #include <unordered_set>
 
@@ -387,6 +397,102 @@ void Declgen::Run()
         taskQueue_.pop();
         task();
     }
+}
+
+void Declgen::InitNameCache(const std::string &moduleName)
+{
+    if (nameCache_ == nullptr) {
+        nameCache_ = std::make_unique<ObfuscationNameCache>();
+        if (!moduleName.empty()) {
+            nameCache_->SetModuleName(moduleName);
+        }
+    }
+}
+
+bool Declgen::GenerateNameCacheJson(const std::string &outputPath)
+{
+    if (nameCache_ == nullptr) {
+        return false;
+    }
+    return nameCache_->GenerateJsonFile(outputPath);
+}
+
+void Declgen::RecordNodeInNameCache(const FunctionDeclaration *node)
+{
+    if (nameCache_ == nullptr || node == nullptr) {
+        return;
+    }
+    // Only record if exported or in post-dump phase (indirectly dependent)
+    if (node->IsExported() || node->IsDefaultExported() || IsPostDumpIndirectDepsPhase()) {
+        nameCache_->RecordFunction(node);
+    }
+}
+
+void Declgen::RecordNodeInNameCache(const ClassDefinition *node)
+{
+    if (nameCache_ == nullptr || node == nullptr) {
+        return;
+    }
+    // This should be called after RegisterUnexportedForDeclGen check,
+    // so if we reach here, the node will be dumped (either exported or in post-dump phase)
+    nameCache_->RecordClass(node);
+}
+
+void Declgen::RecordNodeInNameCache(const TSInterfaceDeclaration *node)
+{
+    if (nameCache_ == nullptr || node == nullptr) {
+        return;
+    }
+    // This should be called after checking if node will be dumped,
+    // so if we reach here, the node will be dumped (either exported or in post-dump phase)
+    nameCache_->RecordInterface(node);
+}
+
+void Declgen::RecordNodeInNameCache(const TSEnumDeclaration *node)
+{
+    if (nameCache_ == nullptr || node == nullptr) {
+        return;
+    }
+    // This should be called after RegisterUnexportedForDeclGen check,
+    // so if we reach here, the node will be dumped (either exported or in post-dump phase)
+    nameCache_->RecordEnum(node);
+}
+
+void Declgen::RecordNodeInNameCache(const AnnotationDeclaration *node)
+{
+    if (nameCache_ == nullptr || node == nullptr) {
+        return;
+    }
+    // This should be called after checking if node will be dumped,
+    // so if we reach here, the node will be dumped (either exported or in post-dump phase)
+    nameCache_->RecordAnnotationDeclaration(node);
+}
+
+void Declgen::RecordNodeInNameCache(const ClassProperty *node)
+{
+    if (nameCache_ == nullptr || node == nullptr || node->Parent() == nullptr) {
+        return;
+    }
+    // If property is dumped, it means the containing class is exported or indirectly dependent
+    nameCache_->RecordClassProperty(node);
+}
+
+void Declgen::RecordNodeInNameCache(const MethodDefinition *node)
+{
+    if (nameCache_ == nullptr || node == nullptr || node->Parent() == nullptr) {
+        return;
+    }
+    // If method is dumped, it means the containing class is exported or indirectly dependent
+    nameCache_->RecordMethod(node);
+}
+
+void Declgen::RecordNodeInNameCache(const TSEnumMember *node)
+{
+    if (nameCache_ == nullptr || node == nullptr || node->Parent() == nullptr) {
+        return;
+    }
+    // If enum member is dumped, it means the containing enum is exported or indirectly dependent
+    nameCache_->RecordEnumMember(node);
 }
 
 }  // namespace ark::es2panda::ir

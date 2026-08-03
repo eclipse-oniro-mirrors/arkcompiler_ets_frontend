@@ -18,7 +18,10 @@
 #include <fstream>
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
+#include "generated/diagnostic.h"
 #include "ir/ets/etsPackageDeclaration.h"
+#include "lexer/token/sourceLocation.h"
+#include "util/diagnosticEngine.h"
 #include "util/helpers.h"
 #include "util/path.h"
 #include "util/importPathManager.h"
@@ -71,9 +74,12 @@ static void GenerateAnnotation(public_lib::Context *ctx, ir::ClassDefinition *gl
     Recheck(phaseManager, checker->VarBinder()->AsETSBinder(), checker, annotationUsage);
 }
 
-static void CallDeclgen(public_lib::Context *ctx, parser::Program *prog)
+static bool CallDeclgen(public_lib::Context *ctx, parser::Program *prog, const std::string &nameCachePath = "")
 {
     ir::Declgen dg {ctx};
+    if (!nameCachePath.empty()) {
+        dg.InitNameCache(std::string(prog->ModuleName()));
+    }
     ir::SrcDumper dumper {&dg};
     if (prog->Is<util::ModuleKind::PACKAGE>()) {
         for (const auto *fraction : prog->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms()) {
@@ -88,6 +94,15 @@ static void CallDeclgen(public_lib::Context *ctx, parser::Program *prog)
     dg.DumpImports(res);
     res += dumper.Str();
     GenerateAnnotation(ctx, prog->GlobalClass(), res);
+
+    if (!nameCachePath.empty() && dg.GetNameCache() != nullptr) {
+        if (!dg.GenerateNameCacheJson(nameCachePath)) {
+            ctx->diagnosticEngine->LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {nameCachePath},
+                                                 lexer::SourcePosition());
+            return false;
+        }
+    }
+    return true;
 }
 
 static void HandleGenStdlib(public_lib::Context *ctx)
@@ -109,13 +124,21 @@ bool DeclGenPhase::Perform()
         return true;
     }
 
+    const std::string nameCachePath = Context()->config->options->GetGenerateDeclNamecachepath();
     auto program = Context()->parserProgram;
-    CallDeclgen(Context(), program);
+    if (!CallDeclgen(Context(), program, nameCachePath)) {
+        return false;
+    }
 
+    bool success = true;
     program->GetExternalDecls()->Visit<true, false, util::ModuleKind::MODULE>(
-        [ctx = Context()](auto *extProg) { CallDeclgen(ctx, extProg); });
+        [ctx = Context(), &nameCachePath, &success](auto *extProg) {
+            if (!CallDeclgen(ctx, extProg, nameCachePath)) {
+                success = false;
+            }
+        });
 
-    return true;
+    return success;
 }
 
 }  // namespace ark::es2panda::compiler

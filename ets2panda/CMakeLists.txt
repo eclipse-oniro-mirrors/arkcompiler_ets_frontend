@@ -408,6 +408,7 @@ set(ES2PANDA_LIB_SRC
   compiler/metadata/deserialization.cpp
   compiler/lowering/ets/internalAPICheck.cpp
   ir/astDump.cpp
+  ir/obfuscationNameCache.cpp
   ir/srcDump.cpp
   ir/astNode.cpp
   ir/astNodeHistory.cpp

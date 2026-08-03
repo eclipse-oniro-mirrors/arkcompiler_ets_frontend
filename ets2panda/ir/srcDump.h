@@ -17,7 +17,9 @@
 #define ES2PANDA_IR_SRCDUMP_H
 
 #include "ir/astNode.h"
+#include "ir/obfuscationNameCache.h"
 #include "parser/JsdocHelper.h"
+#include <memory>
 
 namespace ark::es2panda::ir {
 
@@ -27,6 +29,11 @@ class TSTypeAliasDeclaration;
 class ClassProperty;
 class TSInterfaceDeclaration;
 class TSEnumDeclaration;
+class FunctionDeclaration;
+class VariableDeclaration;
+class MethodDefinition;
+class TSEnumMember;
+class AnnotationDeclaration;
 
 class SrcDumper;
 
@@ -141,8 +148,27 @@ public:
         return ctx_;
     }
 
+    ObfuscationNameCache *GetNameCache()
+    {
+        return nameCache_.get();
+    }
+
+    void InitNameCache(const std::string &moduleName = "");
+
+    bool GenerateNameCacheJson(const std::string &outputPath);
+
+    void RecordNodeInNameCache(const FunctionDeclaration *node);
+    void RecordNodeInNameCache(const ClassDefinition *node);
+    void RecordNodeInNameCache(const TSInterfaceDeclaration *node);
+    void RecordNodeInNameCache(const TSEnumDeclaration *node);
+    void RecordNodeInNameCache(const AnnotationDeclaration *node);
+    void RecordNodeInNameCache(const ClassProperty *node);
+    void RecordNodeInNameCache(const MethodDefinition *node);
+    void RecordNodeInNameCache(const TSEnumMember *node);
+
 private:
     public_lib::Context *ctx_;
+    std::unique_ptr<ObfuscationNameCache> nameCache_;
 
     /* "pre-dump": */
     std::vector<const ir::ImportDeclaration *> imports_;

@@ -196,6 +196,10 @@ options:
     type: std::string
     default: ""
     description: Output path for generated static declaration files
+  - name: nameCachePath
+    type: std::string
+    default: ""
+    description: Output path for generated nameCache.json file
 
 - name: emit-declaration
   type: bool

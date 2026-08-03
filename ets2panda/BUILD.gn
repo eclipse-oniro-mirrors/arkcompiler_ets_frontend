@@ -406,6 +406,7 @@ libes2panda_sources = [
   "ir/module/importDefaultSpecifier.cpp",
   "ir/module/importNamespaceSpecifier.cpp",
   "ir/module/importSpecifier.cpp",
+  "ir/obfuscationNameCache.cpp",
   "ir/opaqueTypeNode.cpp",
   "ir/srcDump.cpp",
   "ir/statement.cpp",

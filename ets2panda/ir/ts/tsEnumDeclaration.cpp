@@ -101,6 +101,12 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+
+    // Record enum in name cache if declgen is enabled
+    // If we reach here, the node will be dumped (either exported or in post-dump phase)
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->RecordNodeInNameCache(this);
+    }
     dumper->DumpJsdocBeforeTargetNode(this);
     if (key_->Parent()->IsExported() && dumper->IsDeclgen()) {
         dumper->Add("export ");

@@ -114,6 +114,7 @@ void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
     }
     if (dumper->IsDeclgen()) {
         dumper->TryDeclareAmbientContext();
+        dumper->GetDeclgen()->RecordNodeInNameCache(this);
     }
     dumper->Add("@interface ");
     Expr()->Dump(dumper);
