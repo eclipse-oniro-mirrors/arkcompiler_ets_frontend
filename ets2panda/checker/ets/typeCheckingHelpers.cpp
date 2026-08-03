@@ -1508,7 +1508,8 @@ void ETSChecker::CheckStandardAnnotation(ir::AnnotationUsage *anno)
     }
     auto annoName = annoDecl->InternalName().Mutf8();
     if (annoName.rfind(compiler::Signatures::STD_ANNOTATIONS) != 0 &&
-        annoName != "arkruntime.annotation.AccessRestriction") {  // #34625
+        annoName != "arkruntime.annotation.AccessRestriction" &&  // #34625
+        !util::Helpers::IsStdLib(anno->Program())) {
         LogError(diagnostic::STANDARD_ANNOTATION_REQUIRED, {}, anno->Start());
     }
     if (annoName == compiler::Signatures::STD_ANNOTATIONS_RETENTION) {

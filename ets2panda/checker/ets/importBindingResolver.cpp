@@ -209,6 +209,16 @@ static bool IsImportBindingVariable(varbinder::Variable *var)
     return var != nullptr && var->IsLocalVariable() && var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING);
 }
 
+static bool IsNamespaceImportBinding(varbinder::Variable *var)
+{
+    if (!IsImportBindingVariable(var)) {
+        return false;
+    }
+
+    auto *bindingInfo = var->AsLocalVariable()->ImportBinding();
+    return bindingInfo != nullptr && bindingInfo->kind == varbinder::ImportBindingKind::NAMESPACE;
+}
+
 static ir::AnnotationDeclaration *AsAnnotationDeclaration(varbinder::Variable *var)
 {
     if (var == nullptr || var->Declaration() == nullptr || var->Declaration()->Node() == nullptr ||
@@ -219,11 +229,16 @@ static ir::AnnotationDeclaration *AsAnnotationDeclaration(varbinder::Variable *v
 }
 
 ir::AnnotationDeclaration *ETSChecker::MaterializeAnnotationUsage(ir::AnnotationUsage *annotation,
-                                                                  [[maybe_unused]] AnnotationUseKind kind)
+                                                                  AnnotationUseKind kind)
 {
     auto *baseName = annotation == nullptr ? nullptr : annotation->GetBaseName();
     if (baseName == nullptr || baseName->IsErrorPlaceHolder()) {
         return nullptr;
+    }
+
+    if (kind == AnnotationUseKind::META && annotation->Expr()->TsType() == nullptr &&
+        !annotation->Expr()->IsIdentifier()) {
+        annotation->Expr()->Check(this);
     }
 
     // USER and META annotation uses consume imports the same way. META-specific validation, namely requiring a
@@ -321,16 +336,6 @@ static const char *DeclarationKindName(ImportConflictDeclarationKind kind)
         default:
             ES2PANDA_UNREACHABLE();
     }
-}
-
-static bool IsNamespaceImportBinding(varbinder::Variable *var)
-{
-    if (!IsImportBindingVariable(var)) {
-        return false;
-    }
-
-    auto *bindingInfo = var->AsLocalVariable()->ImportBinding();
-    return bindingInfo != nullptr && bindingInfo->kind == varbinder::ImportBindingKind::NAMESPACE;
 }
 
 static ir::Identifier *ImportSpecifierLocalIdentifier(ir::AstNode *spec)
