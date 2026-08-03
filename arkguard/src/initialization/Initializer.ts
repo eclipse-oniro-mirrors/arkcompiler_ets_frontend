@@ -149,6 +149,7 @@ function initArkGuardConfig(
     },
     mStripLanguageDefaultWhitelist: mergedObConfig.options.stripLanguageDefault,
     mAllowEtsAnnotations: mergedObConfig.options.enableEtsAnnotation,
+    mKeepUncompactPaths: new Set<string>(),
   };
 
   const arkObfuscator: ArkObfuscator = new ArkObfuscator();
