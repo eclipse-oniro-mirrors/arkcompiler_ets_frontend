@@ -1,0 +1,45 @@
+{
+  "name": "glue-generator",
+  "version": "1.0.0",
+  "description": "TypeScript wrapper for glue_gen: generate glue code for ArkTS interop",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "main": "dist/entry.js",
+  "types": "dist/entry.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/entry.d.ts",
+      "require": "./dist/entry.js",
+      "default": "./dist/entry.js"
+    }
+  },
+  "bin": {
+    "gluegen": "dist/cli.js"
+  },
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc",
+    "build:debug": "npm run clean && tsc -p tsconfig.debug.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "json5": "2.2.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.6.0",
+    "@types/jest": "29.5.12",
+    "@types/node": "22.10.7",
+    "eslint": "9.6.0",
+    "jest": "29.7.0",
+    "prettier": "3.8.2",
+    "ts-jest": "29.4.11",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.64.0"
+  }
+}
