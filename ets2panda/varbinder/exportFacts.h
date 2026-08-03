@@ -181,6 +181,7 @@ public:
         return false;
     }
     void ResetProgram(parser::Program *program);
+    void RemoveProgram(parser::Program *program);
     void ClearImportTargets(parser::Program *sourceProgram);
     void AddLocalExport(parser::Program *program, util::StringView exportedName, Variable *variable,
                         const ir::AstNode *origin);

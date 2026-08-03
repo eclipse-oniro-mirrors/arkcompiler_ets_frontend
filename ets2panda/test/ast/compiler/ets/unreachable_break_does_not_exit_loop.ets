@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,12 @@
  * limitations under the License.
  */
 
-function foo(a: boolean | undefined) : int {
-    if (a instanceof Boolean) {
-        if (a == false) {
-            return 0;
-        } else {
-            return 1;
-        }
-    } else {
-    //a is undefined
-        if (/* @@ label */a == false) {
-            return 0;
-        } else {
-            return 1;
+function unreachableBreakDoesNotExitLoop(): int {
+    while (true) {
+        if (false) {
+            break;
         }
     }
 }
 
-function main() {
-    foo(true);
-    foo(false);
-    foo(undefined);
-}
-
-
-/* @@@ label Warning Warning W65001: The equality expression is always false. */
-/* @@? 26:13 Warning Warning W0026: Unreachable statement. */
+/* @@? 19:13 Warning Warning W0026: Unreachable statement. */

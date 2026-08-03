@@ -16,18 +16,68 @@
 #include "lsp/include/register_code_fix/fix_spelling_for_type.h"
 
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
 #include "lsp/include/symbol_reference_index.h"
+#include "ir/ets/etsNewClassInstanceExpression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/newExpression.h"
+#include "ir/ts/tsInterfaceDeclaration.h"
 #include "public/public.h"
 
 namespace ark::es2panda::lsp {
 
 using codefixes::FIX_SPELLING_FOR_TYPE;
+
+namespace {
+
+bool IsNewExpressionCallee(const ir::AstNode *token)
+{
+    auto *node = token;
+    while (node != nullptr) {
+        auto *parent = node->Parent();
+        if (parent == nullptr) {
+            return false;
+        }
+        if (parent->IsNewExpression()) {
+            return parent->AsNewExpression()->Callee() == node;
+        }
+        if (parent->IsETSNewClassInstanceExpression()) {
+            return parent->AsETSNewClassInstanceExpression()->GetTypeRef() == node;
+        }
+        node = parent;
+    }
+    return false;
+}
+
+std::unordered_set<std::string> CollectInterfaceNames(const public_lib::Context *ctx)
+{
+    std::unordered_set<std::string> interfaceNames;
+    if (ctx == nullptr || ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return interfaceNames;
+    }
+
+    auto *ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    ast->FindChild([&interfaceNames](ir::AstNode *child) {
+        if (child->IsTSInterfaceDeclaration() && child->AsTSInterfaceDeclaration()->Id() != nullptr) {
+            interfaceNames.emplace(child->AsTSInterfaceDeclaration()->Id()->Name().Utf8());
+        }
+        return false;
+    });
+    return interfaceNames;
+}
+
+bool ShouldSkipCandidate(const std::unordered_set<std::string> &interfaceNames, bool isNewExpressionCallee,
+                         const std::string &candidate)
+{
+    return isNewExpressionCallee && interfaceNames.count(candidate) != 0;
+}
+
+}  // namespace
 
 FixSpellingForType::FixSpellingForType()
 {
@@ -73,6 +123,8 @@ std::vector<CodeFixAction> FixSpellingForType::GetCodeActions(const CodeFixConte
     if (candidates.empty()) {
         return returnedActions;
     }
+    const bool isNewExpressionCallee = IsNewExpressionCallee(token);
+    const auto interfaceNames = isNewExpressionCallee ? CollectInterfaceNames(ctx) : std::unordered_set<std::string> {};
 
     CodeFixAction action;
     action.fixName = FIX_SPELLING_FOR_TYPE.GetFixId().data();
@@ -80,6 +132,9 @@ std::vector<CodeFixAction> FixSpellingForType::GetCodeActions(const CodeFixConte
     action.fixAllDescription = "Fix all type spelling errors";
 
     for (const auto &candidate : candidates) {
+        if (ShouldSkipCandidate(interfaceNames, isNewExpressionCallee, candidate)) {
+            continue;
+        }
         auto changes = GetCodeActionsToFixSpellingForType(context, candidate);
         if (changes.empty()) {
             continue;
@@ -95,18 +150,23 @@ std::vector<CodeFixAction> FixSpellingForType::GetCodeActions(const CodeFixConte
 
 CombinedCodeActions FixSpellingForType::GetAllCodeActions(const CodeFixAllContext &codeFixAllCtx)
 {
+    auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(codeFixAllCtx.context);
+    const auto interfaceNames = CollectInterfaceNames(ctx);
     CodeFixProvider provider;
     const auto changes = provider.CodeFixAll(
-        codeFixAllCtx, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+        codeFixAllCtx, GetErrorCodes(), [&, ctx](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
             auto *token = GetTouchingTokenRightMatch(codeFixAllCtx.context, diag.GetStart());
             if (token == nullptr || !token->IsIdentifier()) {
                 return;
             }
-            auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(codeFixAllCtx.context);
             std::string fileName = ctx->parserProgram->AbsoluteName().Mutf8();
             std::string typeName(token->AsIdentifier()->Name().Utf8());
             auto candidates = FindSimilarSymbolNames(typeName, fileName);
+            const bool isNewExpressionCallee = IsNewExpressionCallee(token);
             for (const auto &candidate : candidates) {
+                if (ShouldSkipCandidate(interfaceNames, isNewExpressionCallee, candidate)) {
+                    continue;
+                }
                 MakeChangeForFixSpellingForType(tracker, codeFixAllCtx.context, diag.GetStart(), candidate);
             }
         });

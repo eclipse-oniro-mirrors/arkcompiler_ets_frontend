@@ -144,6 +144,7 @@ public:
         externalRecordTable_.clear();
         globalRecordTable_->CleanUp();
         reExportImports_.erase(program);
+        exportFactStore_->RemoveProgram(program);
     }
 
     void HandleCustomNodes(ir::AstNode *childNode) override;

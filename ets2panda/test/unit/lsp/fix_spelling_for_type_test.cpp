@@ -62,6 +62,26 @@ public:
         ASSERT_EQ(info.changes_[0].textChanges[0].newText, expectedNewText);
     }
 
+    static std::vector<CodeFixActionInfo> GetCodeFixes(es2panda_Context *context, const size_t start,
+                                                       const size_t length)
+    {
+        std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+        CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+        return ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
+    }
+
+    static bool ContainsSuggestion(const std::vector<CodeFixActionInfo> &fixResult, const std::string &suggestion,
+                                   const std::string &expectedFileName)
+    {
+        for (const auto &result : fixResult) {
+            if (result.description_.find(suggestion) != std::string::npos) {
+                ValidateCodeFixActionInfo(result, suggestion, expectedFileName);
+                return true;
+            }
+        }
+        return false;
+    }
+
 private:
     class NullCancellationToken : public ark::es2panda::lsp::HostCancellationToken {
     public:
@@ -123,6 +143,38 @@ let x: MyClas = new MyClass();
         }
     }
     ASSERT_TRUE(foundClassSuggestion);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixSpellingForTypeTests, TestFixSpellingForTypeSkipsInterfaceConstructor)
+{
+    constexpr size_t TARGET_LINE = 3;
+    constexpr size_t TYPE_COLUMN = 10;
+    constexpr size_t CONSTRUCTOR_COLUMN = 27;
+    constexpr size_t MISSPELLED_TYPE_LENGTH = 9;
+    const std::string expectedTypeName = "IMyService";
+    std::vector<std::string> fileNames = {"TestFixSpellingForTypeSkipsInterfaceConstructor.ets"};
+    std::vector<std::string> fileContents = {R"(
+interface IMyService {}
+let svc: IMyServic = new IMyServic();
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(context);
+
+    const auto typeStart = LineColToPos(context, TARGET_LINE, TYPE_COLUMN);
+    auto typeFixResult = GetCodeFixes(context, typeStart, MISSPELLED_TYPE_LENGTH);
+    ASSERT_GE(typeFixResult.size(), 1U);
+    ASSERT_TRUE(ContainsSuggestion(typeFixResult, expectedTypeName, filePaths[0]));
+
+    const auto constructorStart = LineColToPos(context, TARGET_LINE, CONSTRUCTOR_COLUMN);
+    auto constructorFixResult = GetCodeFixes(context, constructorStart, MISSPELLED_TYPE_LENGTH);
+    ASSERT_EQ(constructorFixResult.size(), 0U);
 
     initializer.DestroyContext(context);
 }

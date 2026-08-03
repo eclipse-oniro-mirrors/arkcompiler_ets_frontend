@@ -29,16 +29,18 @@ function main() {
     if (/* @@ label1 */s1 instanceof undefined) {
         arktest.assertEQ(s1, undefined);
     } else {
-        arktest.assertEQ(s1, "");
+        /* @@ label3 */arktest.assertEQ(s1, "");
     }
 
     if (/* @@ label2 */s2 instanceof undefined) {
         arktest.assertEQ(s2, undefined);
     } else {
-        arktest.assertEQ(s2, "");
+        /* @@ label4 */arktest.assertEQ(s2, "");
     }
 }
 
 
 /* @@@ label1 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@@ label2 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
+/* @@@ label3 Warning Warning W0026: Unreachable statement. */
+/* @@@ label4 Warning Warning W0026: Unreachable statement. */

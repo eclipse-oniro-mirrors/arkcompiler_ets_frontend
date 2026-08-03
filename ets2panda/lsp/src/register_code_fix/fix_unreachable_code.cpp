@@ -16,6 +16,7 @@
 #include "lsp/include/register_code_fix/fix_unreachable_code.h"
 #include <iostream>
 #include "generated/code_fix_register.h"
+#include "lsp/include/api.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
 
@@ -33,6 +34,129 @@ FixUnreachableCode::FixUnreachableCode()
 static inline bool IsTerminatorStmt(const ir::AstNode *s)
 {
     return (s != nullptr) && (s->IsReturnStatement() || s->IsThrowStatement());
+}
+
+static TextRange GetStatementRange(ir::Statement *statement)
+{
+    // For block bodies, delete only the unreachable statements inside braces.
+    if (statement == nullptr) {
+        return {0, 0};
+    }
+
+    if (statement->IsBlockStatement()) {
+        const auto &statements = statement->AsBlockStatement()->Statements();
+        if (statements.empty()) {
+            return {0, 0};
+        }
+        return {statements.front()->Start().index, statements.back()->End().index};
+    }
+
+    return {statement->Start().index, statement->End().index};
+}
+
+static ir::AstNode *FindControlStatement(ir::AstNode *statement)
+{
+    // Diagnostics may point at a nested token, so climb to the owning control statement.
+    while (statement != nullptr) {
+        if (statement->IsWhileStatement() || statement->IsIfStatement() || statement->IsForUpdateStatement()) {
+            return statement;
+        }
+        statement = statement->Parent();
+    }
+    return nullptr;
+}
+
+static ir::Expression *GetControlStatementTest(ir::AstNode *statement)
+{
+    if (statement->IsWhileStatement()) {
+        return statement->AsWhileStatement()->Test();
+    }
+    if (statement->IsIfStatement()) {
+        return statement->AsIfStatement()->Test();
+    }
+    if (statement->IsForUpdateStatement()) {
+        return statement->AsForUpdateStatement()->Test();
+    }
+    return nullptr;
+}
+
+static bool IsFalseLikeExpression(ir::Expression *expr)
+{
+    // Match the literal false-like tests that make a control body unreachable.
+    if (expr == nullptr) {
+        return false;
+    }
+    if (expr->IsBooleanLiteral()) {
+        return !expr->AsBooleanLiteral()->Value();
+    }
+    if (expr->IsNumberLiteral()) {
+        return expr->AsNumberLiteral()->Number().IsZero();
+    }
+    if (expr->IsStringLiteral()) {
+        return expr->AsStringLiteral()->ToString().empty();
+    }
+    if (expr->IsCharLiteral()) {
+        return expr->AsCharLiteral()->ToString().empty();
+    }
+    return expr->IsNullLiteral() || expr->IsUndefinedLiteral();
+}
+
+static TextRange GetUnreachableBodyRange(ir::AstNode *statement)
+{
+    // Prefer removing the unreachable body while preserving the surrounding control form.
+    if (statement->IsIfStatement()) {
+        auto *ifStmt = statement->AsIfStatement();
+        if (ifStmt->Consequent()->IsBlockStatement()) {
+            return GetStatementRange(ifStmt->Consequent());
+        }
+        if (ifStmt->Alternate() == nullptr) {
+            return {statement->Start().index, statement->End().index};
+        }
+        return {0, 0};
+    }
+    if (statement->IsWhileStatement()) {
+        auto *body = statement->AsWhileStatement()->Body();
+        return body->IsBlockStatement() ? GetStatementRange(body)
+                                        : TextRange {statement->Start().index, statement->End().index};
+    }
+    if (statement->IsForUpdateStatement()) {
+        auto *body = statement->AsForUpdateStatement()->Body();
+        return body->IsBlockStatement() ? GetStatementRange(body)
+                                        : TextRange {statement->Start().index, statement->End().index};
+    }
+    return {0, 0};
+}
+
+static bool HasUnreachableDiagnosticAtPosition(es2panda_Context *context, size_t pos)
+{
+    // Confirm token-level fixes against diagnostics to avoid deleting unrelated statements.
+    auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    auto *parserProgram = ctx->parserProgram;
+    auto index = lexer::LineIndex(parserProgram->SourceCode());
+    auto isTargetDiagnostic = [pos, &index, parserProgram](const Diagnostic &diagnostic) {
+        if (!std::holds_alternative<int>(diagnostic.code_)) {
+            return false;
+        }
+
+        auto errorCodes = FIX_UNREACHABLE_CODE.GetSupportedCodeNumbers();
+        if (std::find(errorCodes.begin(), errorCodes.end(), std::get<int>(diagnostic.code_)) == errorCodes.end()) {
+            return false;
+        }
+        const auto start = index.GetOffset(
+            lexer::SourceLocation(diagnostic.range_.start.line_, diagnostic.range_.start.character_, parserProgram));
+        return start == pos;
+    };
+
+    LSPAPI const *lspApi = GetImpl();
+    auto semanticDiagnostics = lspApi->getSemanticDiagnostics(context);
+    auto syntacticDiagnostics = lspApi->getSyntacticDiagnostics(context);
+    auto suggestionDiagnostics = lspApi->getSuggestionDiagnostics(context);
+    return std::any_of(semanticDiagnostics.diagnostic.begin(), semanticDiagnostics.diagnostic.end(),
+                       isTargetDiagnostic) ||
+           std::any_of(syntacticDiagnostics.diagnostic.begin(), syntacticDiagnostics.diagnostic.end(),
+                       isTargetDiagnostic) ||
+           std::any_of(suggestionDiagnostics.diagnostic.begin(), suggestionDiagnostics.diagnostic.end(),
+                       isTargetDiagnostic);
 }
 
 TextRange FixUnreachableCode::HandleUnreachableAfterTerminator(ir::AstNode *stmt)
@@ -87,55 +211,15 @@ TextRange FixUnreachableCode::HandleUnreachableAfterTerminator(ir::AstNode *stmt
 
 TextRange FixUnreachableCode::HandleUnreachableStatement(ir::AstNode *statement)
 {
+    statement = FindControlStatement(statement);
     if (statement == nullptr) {
         return {0, 0};
     }
 
-    while (statement != nullptr) {
-        if (statement->IsWhileStatement() || statement->IsIfStatement() || statement->IsForUpdateStatement()) {
-            break;
-        }
-        statement = statement->Parent();
+    auto *expr = GetControlStatementTest(statement);
+    if (IsFalseLikeExpression(expr)) {
+        return GetUnreachableBodyRange(statement);
     }
-
-    if (statement == nullptr) {
-        return {0, 0};
-    }
-
-    ir::Expression *expr = nullptr;
-    if (statement->IsWhileStatement()) {
-        expr = statement->AsWhileStatement()->Test();
-    } else if (statement->IsIfStatement()) {
-        expr = statement->AsIfStatement()->Test();
-    } else if (statement->IsForUpdateStatement()) {
-        expr = statement->AsForUpdateStatement()->Test();
-    }
-
-    if (expr == nullptr) {
-        return {0, 0};
-    }
-
-    if (expr->IsBooleanLiteral()) {
-        auto boolLiteral = expr->AsBooleanLiteral();
-        if (!boolLiteral->Value()) {
-            return {statement->Start().index, statement->End().index};
-        }
-    } else if (expr->IsNumberLiteral()) {
-        if (expr->AsNumberLiteral()->Number().IsZero()) {
-            return {statement->Start().index, statement->End().index};
-        }
-    } else if (expr->IsStringLiteral()) {
-        if (expr->AsStringLiteral()->ToString().empty()) {
-            return {statement->Start().index, statement->End().index};
-        }
-    } else if (expr->IsCharLiteral()) {
-        if (expr->AsCharLiteral()->ToString().empty()) {
-            return {statement->Start().index, statement->End().index};
-        }
-    } else if (expr->IsNullLiteral()) {
-        return {statement->Start().index, statement->End().index};
-    }
-
     return {0, 0};
 }
 
@@ -156,6 +240,19 @@ void FixUnreachableCode::MakeChangeForUnreachableCode(ChangeTracker &changeTrack
         return;
     }
 
+    auto *controlStatement = FindControlStatement(token);
+    if (controlStatement != nullptr && controlStatement->IsIfStatement()) {
+        auto *ifStmt = controlStatement->AsIfStatement();
+        if (IsFalseLikeExpression(ifStmt->Test()) && !ifStmt->Consequent()->IsBlockStatement() &&
+            ifStmt->Alternate() != nullptr) {
+            auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+            const auto consequentRange =
+                TextRange {ifStmt->Consequent()->Start().index, ifStmt->Consequent()->End().index};
+            changeTracker.ReplaceRangeWithText(ctx->sourceFile, consequentRange, "{}");
+            return;
+        }
+    }
+
     range = HandleUnreachableStatement(token);
     if (range.pos != range.end) {
         auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
@@ -168,6 +265,11 @@ void FixUnreachableCode::MakeChangeForUnreachableCode(ChangeTracker &changeTrack
         auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
         changeTracker.DeleteRange(ctx->sourceFile, {range.pos, range.end});
         return;
+    }
+
+    if (pos == token->Start().index && HasUnreachableDiagnosticAtPosition(context, pos)) {
+        auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+        changeTracker.DeleteRange(ctx->sourceFile, {token->Start().index, token->End().index});
     }
 }
 

@@ -24,3 +24,4 @@ class A {
     current : C | undefined
 }
 /* @@? 22:13 Warning Warning W65001: The equality expression is always false. */
+/* @@? 22:34 Warning Warning W0026: Unreachable statement. */

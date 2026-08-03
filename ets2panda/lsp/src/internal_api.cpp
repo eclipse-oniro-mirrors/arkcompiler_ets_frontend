@@ -930,6 +930,32 @@ int CreateCodeForDiagnostic(const util::DiagnosticBase *error)
     return static_cast<int>(error->Type()) * codefixes::DiagnosticCode::DIAGNOSTIC_CODE_MULTIPLIER + code;
 }
 
+std::variant<int, std::string> GetDiagnosticData(const util::DiagnosticBase &error)
+{
+    const auto type = error.Type();
+    const auto id = error.GetId();
+    if (type == util::DiagnosticType::WARNING && id == diagnostic::UNREACHABLE_STMT.Id()) {
+        return std::string("unusedSymbol");
+    }
+
+    if ((type == util::DiagnosticType::WARNING &&
+         (id == diagnostic::DEPRECATED_PUBLIC_API.Id() || id == diagnostic::PACKAGE_DEPRECATED_WARNING.Id())) ||
+        (type == util::DiagnosticType::SEMANTIC &&
+         (id == diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED.Id() || id == diagnostic::MULTI_CATCH_DEPRECATED.Id()))) {
+        return std::string("depreciatedSymbol");
+    }
+
+    if (type == util::DiagnosticType::SEMANTIC &&
+        (id == diagnostic::DUPLICATE_ACCESSOR.Id() || id == diagnostic::DUPLICATE_OVERLOADED_NAME.Id() ||
+         id == diagnostic::DUPLICATE_TYPE_PARAM.Id() || id == diagnostic::EXCEPTION_REDECLARATION.Id() ||
+         id == diagnostic::ID_REDECLARED.Id() || id == diagnostic::INTERFACE_REDECLARED.Id() ||
+         id == diagnostic::OBJ_LIT_PROPERTY_REDECLARATION.Id() || id == diagnostic::VARIABLE_REDECLARED.Id())) {
+        return std::string("redeclareSymbol");
+    }
+
+    return {};
+}
+
 constexpr size_t DOUBLE_CHAR_TOKEN_LENGTH = 2;
 
 struct ExportRangeScanState {
@@ -1312,7 +1338,9 @@ Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::Diagn
     auto codeDescription = CodeDescription("test code description");
     auto tags = std::vector<DiagnosticTag>();
     auto relatedInformation = std::vector<DiagnosticRelatedInformation>();
-    return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, sourceInfo.source);
+    auto data = GetDiagnosticData(error);
+    return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, sourceInfo.source,
+                      data);
 }
 
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,

@@ -42,3 +42,4 @@ function test() {
 test()
 
 /* @@? 23:20 Warning Warning W0014: Operand of the ensure-not-nullish expression is 'null' or 'undefined'. */
+/* @@? 29:17 Warning Warning W0026: Unreachable statement. */
