@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 
-function toString(this: FixedArray<double>) /* @@ label */{ 
+function toString(this: FixedArray<double>) { 
     return "ext-func"
 }
-
-
-/* @@@ label Error Semantic error ESE0081: The extension function 'toString' has the same name with public method in class Object */

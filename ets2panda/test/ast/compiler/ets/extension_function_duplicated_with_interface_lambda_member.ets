@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,15 +18,14 @@ interface A{
     foo : () => String
 };
 
-function foo(this:A)/* @@ label */{
+function foo(this:A) {
     return this.b;
 }
 
 let a:A = {
     b: "a",
-    foo : /* @@ label1 */foo
+    foo : /* @@ label */foo
 };
 console.log(a.foo())
 
-/* @@@ label Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class A */
-/* @@@ label1 Error Semantic error ESE0319: Type '((p1: A) => String)' is not compatible with type '(() => String)' at property 'foo' */
+/* @@@ label Error Semantic error ESE0319: Type '((p1: A) => String)' is not compatible with type '(() => String)' at property 'foo' */

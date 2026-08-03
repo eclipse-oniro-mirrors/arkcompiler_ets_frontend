@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,3 @@ function price(this:B) /* @@label2 */{
 
 function xxx(this:A, id: int) {
 }
-
-
-/* @@@ label1 Error Semantic error ESE0081: The extension function 'sweetness1' has the same name with public method in class B */
-/* @@@ label2 Error Semantic error ESE0081: The extension function 'price' has the same name with public method in class B */

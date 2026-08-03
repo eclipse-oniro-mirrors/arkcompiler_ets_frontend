@@ -570,10 +570,6 @@ semantic:
   id: 59
   message: "Extension accessor can't be used as a method call or function call."
 
-- name: EXTENSION_FUNC_NAME_CONFLICT_WITH_METH
-  id: 81
-  message: "The extension function '{}' has the same name with public method in class {}"
-
 - name: EXTENSION_FUNC_ON_INEXETENSIBLE
   id: 82
   message: "Extension function can only defined for class, interface or array."
@@ -844,7 +840,8 @@ semantic:
 
 - name: INVALID_INSTANTIATE_FACTORY_PARAM
   id: 37484
-  message: "Invalid type call expression as there is no static method $_instantiate with the first parameter of the function type defined in class {}"
+  message: "Invalid type call expression as there is no static method $_instantiate with the first parameter of the function
+    type defined in class {}"
 
 - name: INVALID_INTRINSIC
   id: 61055
@@ -1226,10 +1223,6 @@ semantic:
 - name: OVERLOADED_NAME_MUST_FUNCTION
   id: 384
   message: "overloaded name must refer to an accessible method."
-
-- name: OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION
-  id: 389
-  message: "The overloaded name '{}' can't refer to a function with overload signatures."
 
 - name: OVERLOADED_UNION_CALL
   id: 391

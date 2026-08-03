@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,11 +16,9 @@
 class Base {
     foo/* @@ label1 */(a: number) : string
     foo(a: string) : string
-    overload foo {/* @@ label2 */foo, /* @@ label3 */foo}
+    overload foo {foo, /* @@ label2 */foo}
 }
 
 
 /* @@@ label1 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@@ label2 Error Semantic error ESE0389: The overloaded name 'foo' can't refer to a function with overload signatures. */
-/* @@@ label3 Error Semantic error ESE0385: Duplicate overloaded method. */
-/* @@@ label3 Error Semantic error ESE0389: The overloaded name 'foo' can't refer to a function with overload signatures. */
+/* @@@ label2 Error Semantic error ESE0385: Duplicate overloaded method. */
