@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,8 +34,9 @@ function main(): void {
 }
 
 
-/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
 /* @@? 24:3 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 26:7 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 27:7 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
 /* @@? 29:20 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
 /* @@? 30:20 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
 /* @@? 32:26 Error Semantic error ESE0371: Cannot find type 'keyofA'. */

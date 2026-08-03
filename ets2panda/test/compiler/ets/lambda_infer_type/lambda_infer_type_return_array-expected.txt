@@ -90,13 +90,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 17,
+                                      "column": 7,
                                       "program": "lambda_infer_type_return_array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 8,
                                       "program": "lambda_infer_type_return_array.ets"
                                     }
                                   }
@@ -113,39 +113,39 @@
                                           "name": "number",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 7,
                                               "program": "lambda_infer_type_return_array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 8,
                                               "program": "lambda_infer_type_return_array.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 17,
+                                            "column": 7,
                                             "program": "lambda_infer_type_return_array.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 17,
+                                            "column": 8,
                                             "program": "lambda_infer_type_return_array.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 7,
                                           "program": "lambda_infer_type_return_array.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 8,
                                           "program": "lambda_infer_type_return_array.ets"
                                         }
                                       }
@@ -153,26 +153,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 7,
                                       "program": "lambda_infer_type_return_array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 8,
                                       "program": "lambda_infer_type_return_array.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 17,
+                                    "column": 7,
                                     "program": "lambda_infer_type_return_array.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 8,
                                     "program": "lambda_infer_type_return_array.ets"
                                   }
                                 }
@@ -180,7 +180,7 @@
                               "loc": {
                                 "start": {
                                   "line": 17,
-                                  "column": 17,
+                                  "column": 11,
                                   "program": "lambda_infer_type_return_array.ets"
                                 },
                                 "end": {
@@ -448,13 +448,13 @@
                                     "name": "Array",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 1,
+                                        "line": 19,
+                                        "column": 24,
                                         "program": "lambda_infer_type_return_array.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 19,
+                                        "column": 32,
                                         "program": "lambda_infer_type_return_array.ets"
                                       }
                                     }
@@ -471,39 +471,39 @@
                                             "name": "number",
                                             "loc": {
                                               "start": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 19,
+                                                "column": 24,
                                                 "program": "lambda_infer_type_return_array.ets"
                                               },
                                               "end": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 19,
+                                                "column": 32,
                                                 "program": "lambda_infer_type_return_array.ets"
                                               }
                                             }
                                           },
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 19,
+                                              "column": 24,
                                               "program": "lambda_infer_type_return_array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 19,
+                                              "column": 32,
                                               "program": "lambda_infer_type_return_array.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 19,
+                                            "column": 24,
                                             "program": "lambda_infer_type_return_array.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 19,
+                                            "column": 32,
                                             "program": "lambda_infer_type_return_array.ets"
                                           }
                                         }
@@ -511,26 +511,26 @@
                                     ],
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 19,
+                                        "column": 24,
                                         "program": "lambda_infer_type_return_array.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 19,
+                                        "column": 32,
                                         "program": "lambda_infer_type_return_array.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 19,
+                                      "column": 24,
                                       "program": "lambda_infer_type_return_array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 19,
+                                      "column": 32,
                                       "program": "lambda_infer_type_return_array.ets"
                                     }
                                   }
@@ -538,7 +538,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 19,
-                                    "column": 30,
+                                    "column": 24,
                                     "program": "lambda_infer_type_return_array.ets"
                                   },
                                   "end": {

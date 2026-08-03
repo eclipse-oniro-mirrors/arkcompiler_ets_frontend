@@ -28,13 +28,13 @@
             "name": "Array",
             "loc": {
               "start": {
-                "line": 1,
-                "column": 1,
+                "line": 16,
+                "column": 15,
                 "program": "type_alias_2.ets"
               },
               "end": {
-                "line": 1,
-                "column": 3,
+                "line": 16,
+                "column": 22,
                 "program": "type_alias_2.ets"
               }
             }
@@ -51,13 +51,13 @@
                     "name": "Array",
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 16,
+                        "column": 15,
                         "program": "type_alias_2.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 16,
+                        "column": 22,
                         "program": "type_alias_2.ets"
                       }
                     }
@@ -69,13 +69,13 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 16,
+                            "column": 15,
                             "program": "type_alias_2.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 16,
+                            "column": 22,
                             "program": "type_alias_2.ets"
                           }
                         }
@@ -83,39 +83,39 @@
                     ],
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 16,
+                        "column": 15,
                         "program": "type_alias_2.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 16,
+                        "column": 22,
                         "program": "type_alias_2.ets"
                       }
                     }
                   },
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 16,
+                      "column": 15,
                       "program": "type_alias_2.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 16,
+                      "column": 22,
                       "program": "type_alias_2.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 16,
+                    "column": 15,
                     "program": "type_alias_2.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 16,
+                    "column": 22,
                     "program": "type_alias_2.ets"
                   }
                 }
@@ -123,26 +123,26 @@
             ],
             "loc": {
               "start": {
-                "line": 1,
-                "column": 3,
+                "line": 16,
+                "column": 15,
                 "program": "type_alias_2.ets"
               },
               "end": {
-                "line": 1,
-                "column": 3,
+                "line": 16,
+                "column": 22,
                 "program": "type_alias_2.ets"
               }
             }
           },
           "loc": {
             "start": {
-              "line": 1,
-              "column": 1,
+              "line": 16,
+              "column": 15,
               "program": "type_alias_2.ets"
             },
             "end": {
-              "line": 1,
-              "column": 3,
+              "line": 16,
+              "column": 22,
               "program": "type_alias_2.ets"
             }
           }
@@ -150,7 +150,7 @@
         "loc": {
           "start": {
             "line": 16,
-            "column": 20,
+            "column": 15,
             "program": "type_alias_2.ets"
           },
           "end": {

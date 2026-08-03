@@ -416,13 +416,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 20,
+                      "column": 8,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 13,
                       "program": "launch_expression.ets"
                     }
                   }
@@ -434,13 +434,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 8,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 13,
                           "program": "launch_expression.ets"
                         }
                       }
@@ -448,26 +448,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 8,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 13,
                       "program": "launch_expression.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 20,
+                    "column": 8,
                     "program": "launch_expression.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 20,
+                    "column": 13,
                     "program": "launch_expression.ets"
                   }
                 }
@@ -475,7 +475,7 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 11,
+                  "column": 8,
                   "program": "launch_expression.ets"
                 },
                 "end": {
@@ -532,13 +532,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 8,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 13,
                       "program": "launch_expression.ets"
                     }
                   }
@@ -550,13 +550,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 8,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 13,
                           "program": "launch_expression.ets"
                         }
                       }
@@ -564,26 +564,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 8,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 13,
                       "program": "launch_expression.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 21,
+                    "column": 8,
                     "program": "launch_expression.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 21,
+                    "column": 13,
                     "program": "launch_expression.ets"
                   }
                 }
@@ -591,7 +591,7 @@
               "loc": {
                 "start": {
                   "line": 21,
-                  "column": 11,
+                  "column": 8,
                   "program": "launch_expression.ets"
                 },
                 "end": {
@@ -1564,13 +1564,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 34,
+                                      "column": 9,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 34,
+                                      "column": 10,
                                       "program": "launch_expression.ets"
                                     }
                                   }
@@ -1587,39 +1587,39 @@
                                           "name": "P",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 34,
+                                              "column": 9,
                                               "program": "launch_expression.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 34,
+                                              "column": 10,
                                               "program": "launch_expression.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 34,
+                                            "column": 9,
                                             "program": "launch_expression.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 34,
+                                            "column": 10,
                                             "program": "launch_expression.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 34,
+                                          "column": 9,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 34,
+                                          "column": 10,
                                           "program": "launch_expression.ets"
                                         }
                                       }
@@ -1627,26 +1627,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 34,
+                                      "column": 9,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 34,
+                                      "column": 10,
                                       "program": "launch_expression.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 34,
+                                    "column": 9,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 34,
+                                    "column": 10,
                                     "program": "launch_expression.ets"
                                   }
                                 }
@@ -1654,7 +1654,7 @@
                               "loc": {
                                 "start": {
                                   "line": 34,
-                                  "column": 13,
+                                  "column": 12,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {

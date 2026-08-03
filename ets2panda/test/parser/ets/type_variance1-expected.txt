@@ -2112,13 +2112,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 20,
+                                "column": 37,
                                 "program": "type_variance1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 20,
+                                "column": 45,
                                 "program": "type_variance1.ets"
                               }
                             }
@@ -2135,39 +2135,39 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 20,
+                                        "column": 37,
                                         "program": "type_variance1.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 20,
+                                        "column": 45,
                                         "program": "type_variance1.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 20,
+                                      "column": 37,
                                       "program": "type_variance1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 20,
+                                      "column": 45,
                                       "program": "type_variance1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 37,
                                     "program": "type_variance1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 45,
                                     "program": "type_variance1.ets"
                                   }
                                 }
@@ -2175,26 +2175,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 20,
+                                "column": 37,
                                 "program": "type_variance1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 20,
+                                "column": 45,
                                 "program": "type_variance1.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 20,
+                              "column": 37,
                               "program": "type_variance1.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 45,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -2202,7 +2202,7 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 43,
+                            "column": 37,
                             "program": "type_variance1.ets"
                           },
                           "end": {
@@ -2304,13 +2304,13 @@
                           "name": "Array",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 20,
+                              "column": 19,
                               "program": "type_variance1.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 27,
                               "program": "type_variance1.ets"
                             }
                           }
@@ -2327,39 +2327,39 @@
                                   "name": "Object",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 20,
+                                      "column": 19,
                                       "program": "type_variance1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 20,
+                                      "column": 27,
                                       "program": "type_variance1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 19,
                                     "program": "type_variance1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 27,
                                     "program": "type_variance1.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 20,
+                                  "column": 19,
                                   "program": "type_variance1.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 20,
+                                  "column": 27,
                                   "program": "type_variance1.ets"
                                 }
                               }
@@ -2367,26 +2367,26 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 19,
                               "program": "type_variance1.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 27,
                               "program": "type_variance1.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 1,
+                            "line": 20,
+                            "column": 19,
                             "program": "type_variance1.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 20,
+                            "column": 27,
                             "program": "type_variance1.ets"
                           }
                         }
@@ -2394,7 +2394,7 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 25,
+                          "column": 19,
                           "program": "type_variance1.ets"
                         },
                         "end": {
@@ -2846,13 +2846,13 @@
                                           "name": "Array",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 1,
+                                              "line": 40,
+                                              "column": 18,
                                               "program": "type_variance1.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 26,
                                               "program": "type_variance1.ets"
                                             }
                                           }
@@ -2869,39 +2869,39 @@
                                                   "name": "Object",
                                                   "loc": {
                                                     "start": {
-                                                      "line": 1,
-                                                      "column": 3,
+                                                      "line": 40,
+                                                      "column": 18,
                                                       "program": "type_variance1.ets"
                                                     },
                                                     "end": {
-                                                      "line": 1,
-                                                      "column": 3,
+                                                      "line": 40,
+                                                      "column": 26,
                                                       "program": "type_variance1.ets"
                                                     }
                                                   }
                                                 },
                                                 "loc": {
                                                   "start": {
-                                                    "line": 1,
-                                                    "column": 3,
+                                                    "line": 40,
+                                                    "column": 18,
                                                     "program": "type_variance1.ets"
                                                   },
                                                   "end": {
-                                                    "line": 1,
-                                                    "column": 3,
+                                                    "line": 40,
+                                                    "column": 26,
                                                     "program": "type_variance1.ets"
                                                   }
                                                 }
                                               },
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 40,
+                                                  "column": 18,
                                                   "program": "type_variance1.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 40,
+                                                  "column": 26,
                                                   "program": "type_variance1.ets"
                                                 }
                                               }
@@ -2909,26 +2909,26 @@
                                           ],
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 18,
                                               "program": "type_variance1.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 26,
                                               "program": "type_variance1.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 1,
+                                            "line": 40,
+                                            "column": 18,
                                             "program": "type_variance1.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 40,
+                                            "column": 26,
                                             "program": "type_variance1.ets"
                                           }
                                         }
@@ -2936,7 +2936,7 @@
                                       "loc": {
                                         "start": {
                                           "line": 40,
-                                          "column": 24,
+                                          "column": 18,
                                           "program": "type_variance1.ets"
                                         },
                                         "end": {
@@ -3033,13 +3033,13 @@
                                           "name": "Array",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 1,
+                                              "line": 40,
+                                              "column": 37,
                                               "program": "type_variance1.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 45,
                                               "program": "type_variance1.ets"
                                             }
                                           }
@@ -3056,39 +3056,39 @@
                                                   "name": "Object",
                                                   "loc": {
                                                     "start": {
-                                                      "line": 1,
-                                                      "column": 3,
+                                                      "line": 40,
+                                                      "column": 37,
                                                       "program": "type_variance1.ets"
                                                     },
                                                     "end": {
-                                                      "line": 1,
-                                                      "column": 3,
+                                                      "line": 40,
+                                                      "column": 45,
                                                       "program": "type_variance1.ets"
                                                     }
                                                   }
                                                 },
                                                 "loc": {
                                                   "start": {
-                                                    "line": 1,
-                                                    "column": 3,
+                                                    "line": 40,
+                                                    "column": 37,
                                                     "program": "type_variance1.ets"
                                                   },
                                                   "end": {
-                                                    "line": 1,
-                                                    "column": 3,
+                                                    "line": 40,
+                                                    "column": 45,
                                                     "program": "type_variance1.ets"
                                                   }
                                                 }
                                               },
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 40,
+                                                  "column": 37,
                                                   "program": "type_variance1.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 40,
+                                                  "column": 45,
                                                   "program": "type_variance1.ets"
                                                 }
                                               }
@@ -3096,26 +3096,26 @@
                                           ],
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 37,
                                               "program": "type_variance1.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 40,
+                                              "column": 45,
                                               "program": "type_variance1.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 1,
+                                            "line": 40,
+                                            "column": 37,
                                             "program": "type_variance1.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 40,
+                                            "column": 45,
                                             "program": "type_variance1.ets"
                                           }
                                         }
@@ -3123,7 +3123,7 @@
                                       "loc": {
                                         "start": {
                                           "line": 40,
-                                          "column": 43,
+                                          "column": 37,
                                           "program": "type_variance1.ets"
                                         },
                                         "end": {

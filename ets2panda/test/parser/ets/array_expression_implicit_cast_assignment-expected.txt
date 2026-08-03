@@ -208,13 +208,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "array_expression_implicit_cast_assignment.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 10,
                                       "program": "array_expression_implicit_cast_assignment.ets"
                                     }
                                   }
@@ -231,39 +231,39 @@
                                           "name": "Double",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 9,
                                               "program": "array_expression_implicit_cast_assignment.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 10,
                                               "program": "array_expression_implicit_cast_assignment.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 17,
+                                            "column": 9,
                                             "program": "array_expression_implicit_cast_assignment.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 17,
+                                            "column": 10,
                                             "program": "array_expression_implicit_cast_assignment.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 9,
                                           "program": "array_expression_implicit_cast_assignment.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 10,
                                           "program": "array_expression_implicit_cast_assignment.ets"
                                         }
                                       }
@@ -271,26 +271,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "array_expression_implicit_cast_assignment.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 10,
                                       "program": "array_expression_implicit_cast_assignment.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 17,
+                                    "column": 9,
                                     "program": "array_expression_implicit_cast_assignment.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 10,
                                     "program": "array_expression_implicit_cast_assignment.ets"
                                   }
                                 }
@@ -298,7 +298,7 @@
                               "loc": {
                                 "start": {
                                   "line": 17,
-                                  "column": 19,
+                                  "column": 13,
                                   "program": "array_expression_implicit_cast_assignment.ets"
                                 },
                                 "end": {

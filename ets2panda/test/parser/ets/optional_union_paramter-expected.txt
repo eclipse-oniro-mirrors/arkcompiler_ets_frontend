@@ -297,13 +297,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 17,
+                          "column": 61,
                           "program": "optional_union_paramter.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 69,
                           "program": "optional_union_paramter.ets"
                         }
                       }
@@ -320,39 +320,39 @@
                               "name": "String",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 61,
                                   "program": "optional_union_paramter.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 69,
                                   "program": "optional_union_paramter.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 61,
                                 "program": "optional_union_paramter.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 69,
                                 "program": "optional_union_paramter.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 61,
                               "program": "optional_union_paramter.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 69,
                               "program": "optional_union_paramter.ets"
                             }
                           }
@@ -360,26 +360,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 61,
                           "program": "optional_union_paramter.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 69,
                           "program": "optional_union_paramter.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 17,
+                        "column": 61,
                         "program": "optional_union_paramter.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 17,
+                        "column": 69,
                         "program": "optional_union_paramter.ets"
                       }
                     }
@@ -387,7 +387,7 @@
                   "loc": {
                     "start": {
                       "line": 17,
-                      "column": 67,
+                      "column": 61,
                       "program": "optional_union_paramter.ets"
                     },
                     "end": {

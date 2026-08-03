@@ -730,13 +730,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 27,
+                      "column": 16,
                       "program": "ambient_object_iterable.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 24,
                       "program": "ambient_object_iterable.ets"
                     }
                   }
@@ -753,39 +753,39 @@
                           "name": "string",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 16,
                               "program": "ambient_object_iterable.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 24,
                               "program": "ambient_object_iterable.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 27,
+                            "column": 16,
                             "program": "ambient_object_iterable.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 27,
+                            "column": 24,
                             "program": "ambient_object_iterable.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 27,
+                          "column": 16,
                           "program": "ambient_object_iterable.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 27,
+                          "column": 24,
                           "program": "ambient_object_iterable.ets"
                         }
                       }
@@ -793,26 +793,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 16,
                       "program": "ambient_object_iterable.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 24,
                       "program": "ambient_object_iterable.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 27,
+                    "column": 16,
                     "program": "ambient_object_iterable.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 27,
+                    "column": 24,
                     "program": "ambient_object_iterable.ets"
                   }
                 }
@@ -820,7 +820,7 @@
               "loc": {
                 "start": {
                   "line": 27,
-                  "column": 22,
+                  "column": 16,
                   "program": "ambient_object_iterable.ets"
                 },
                 "end": {

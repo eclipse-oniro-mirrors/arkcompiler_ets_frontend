@@ -310,13 +310,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 11,
                       "program": "array_indexing_without_chaining_non_nullish.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 18,
+                      "column": 19,
                       "program": "array_indexing_without_chaining_non_nullish.ets"
                     }
                   }
@@ -333,39 +333,39 @@
                           "name": "Object",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 18,
+                              "column": 11,
                               "program": "array_indexing_without_chaining_non_nullish.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 18,
+                              "column": 19,
                               "program": "array_indexing_without_chaining_non_nullish.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 18,
+                            "column": 11,
                             "program": "array_indexing_without_chaining_non_nullish.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 18,
+                            "column": 19,
                             "program": "array_indexing_without_chaining_non_nullish.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 18,
+                          "column": 11,
                           "program": "array_indexing_without_chaining_non_nullish.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 18,
+                          "column": 19,
                           "program": "array_indexing_without_chaining_non_nullish.ets"
                         }
                       }
@@ -373,26 +373,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 18,
+                      "column": 11,
                       "program": "array_indexing_without_chaining_non_nullish.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 18,
+                      "column": 19,
                       "program": "array_indexing_without_chaining_non_nullish.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 18,
+                    "column": 11,
                     "program": "array_indexing_without_chaining_non_nullish.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 18,
+                    "column": 19,
                     "program": "array_indexing_without_chaining_non_nullish.ets"
                   }
                 }
@@ -400,7 +400,7 @@
               "loc": {
                 "start": {
                   "line": 18,
-                  "column": 17,
+                  "column": 11,
                   "program": "array_indexing_without_chaining_non_nullish.ets"
                 },
                 "end": {

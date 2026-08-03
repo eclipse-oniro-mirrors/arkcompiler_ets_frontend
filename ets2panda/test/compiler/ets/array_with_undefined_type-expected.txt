@@ -105,13 +105,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "array_with_undefined_type.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 4,
+                                      "line": 17,
+                                      "column": 12,
                                       "program": "array_with_undefined_type.ets"
                                     }
                                   }
@@ -123,13 +123,13 @@
                                       "type": "ETSUndefinedType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 4,
+                                          "line": 17,
+                                          "column": 9,
                                           "program": "array_with_undefined_type.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 4,
+                                          "line": 17,
+                                          "column": 12,
                                           "program": "array_with_undefined_type.ets"
                                         }
                                       }
@@ -137,26 +137,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 4,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "array_with_undefined_type.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 4,
+                                      "line": 17,
+                                      "column": 12,
                                       "program": "array_with_undefined_type.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 17,
+                                    "column": 9,
                                     "program": "array_with_undefined_type.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 4,
+                                    "line": 17,
+                                    "column": 12,
                                     "program": "array_with_undefined_type.ets"
                                   }
                                 }
@@ -164,7 +164,7 @@
                               "loc": {
                                 "start": {
                                   "line": 17,
-                                  "column": 23,
+                                  "column": 14,
                                   "program": "array_with_undefined_type.ets"
                                 },
                                 "end": {

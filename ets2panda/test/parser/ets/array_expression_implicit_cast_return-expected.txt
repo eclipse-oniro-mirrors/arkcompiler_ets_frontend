@@ -182,13 +182,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 16,
+                          "column": 17,
                           "program": "array_expression_implicit_cast_return.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 16,
+                          "column": 25,
                           "program": "array_expression_implicit_cast_return.ets"
                         }
                       }
@@ -205,39 +205,39 @@
                               "name": "Double",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 16,
+                                  "column": 17,
                                   "program": "array_expression_implicit_cast_return.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 16,
+                                  "column": 25,
                                   "program": "array_expression_implicit_cast_return.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 16,
+                                "column": 17,
                                 "program": "array_expression_implicit_cast_return.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 16,
+                                "column": 25,
                                 "program": "array_expression_implicit_cast_return.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 16,
+                              "column": 17,
                               "program": "array_expression_implicit_cast_return.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 16,
+                              "column": 25,
                               "program": "array_expression_implicit_cast_return.ets"
                             }
                           }
@@ -245,26 +245,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 16,
+                          "column": 17,
                           "program": "array_expression_implicit_cast_return.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 16,
+                          "column": 25,
                           "program": "array_expression_implicit_cast_return.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 16,
+                        "column": 17,
                         "program": "array_expression_implicit_cast_return.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 16,
+                        "column": 25,
                         "program": "array_expression_implicit_cast_return.ets"
                       }
                     }
@@ -272,7 +272,7 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 23,
+                      "column": 17,
                       "program": "array_expression_implicit_cast_return.ets"
                     },
                     "end": {

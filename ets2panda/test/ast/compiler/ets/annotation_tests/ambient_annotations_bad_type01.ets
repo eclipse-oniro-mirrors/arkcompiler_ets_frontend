@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,7 @@ import {ClassAuthor, Color} from "./annotation_src"
     /* @@ label5 */favorColor: Color
     /* @@ label6 */color: Color[]
     reviewers: string[] = ["Bob", "Jim", "Tom"]
-    reviewersAge: int/* @@ label7 */[] = [18, 21, 32]
+    reviewersAge: /* @@ label7 */int[] = [18, 21, 32]
     testBools: boolean[] = [false, true, false]
     mutiArray: number[][] = [
         [1, 2, 3],

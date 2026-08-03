@@ -491,13 +491,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 19,
                       "program": "generics_instantiation_3.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 22,
                       "program": "generics_instantiation_3.ets"
                     }
                   }
@@ -514,39 +514,39 @@
                           "name": "T",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 21,
+                              "column": 19,
                               "program": "generics_instantiation_3.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 21,
+                              "column": 22,
                               "program": "generics_instantiation_3.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 21,
+                            "column": 19,
                             "program": "generics_instantiation_3.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 21,
+                            "column": 22,
                             "program": "generics_instantiation_3.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 19,
                           "program": "generics_instantiation_3.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 22,
                           "program": "generics_instantiation_3.ets"
                         }
                       }
@@ -554,26 +554,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 19,
                       "program": "generics_instantiation_3.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 21,
+                      "column": 22,
                       "program": "generics_instantiation_3.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 21,
+                    "column": 19,
                     "program": "generics_instantiation_3.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 21,
+                    "column": 22,
                     "program": "generics_instantiation_3.ets"
                   }
                 }
@@ -581,7 +581,7 @@
               "loc": {
                 "start": {
                   "line": 21,
-                  "column": 20,
+                  "column": 19,
                   "program": "generics_instantiation_3.ets"
                 },
                 "end": {

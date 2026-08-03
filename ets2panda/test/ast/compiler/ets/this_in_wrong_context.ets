@@ -17,8 +17,8 @@ export declare @interface ClassAuthor {
     color: Color[] = [this.listener !== undefined]
 }
 
-/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'Color'. */
 /* @@? 17:5 Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
+/* @@? 17:12 Error Semantic error ESE0371: Cannot find type 'Color'. */
 /* @@? 17:22 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
 /* @@? 17:23 Error Semantic error ESE0203: Cannot reference 'this' in this context. */
 /* @@? 17:23 Warning Warning W65001: The equality expression is always false. */

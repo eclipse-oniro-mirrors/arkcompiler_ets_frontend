@@ -927,13 +927,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 27,
+                      "column": 19,
                       "program": "array_creation_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 36,
                       "program": "array_creation_expression.ets"
                     }
                   }
@@ -953,39 +953,39 @@
                               "name": "T",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 27,
+                                  "column": 19,
                                   "program": "array_creation_expression.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 27,
+                                  "column": 36,
                                   "program": "array_creation_expression.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 27,
+                                "column": 19,
                                 "program": "array_creation_expression.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 27,
+                                "column": 36,
                                 "program": "array_creation_expression.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 19,
                               "program": "array_creation_expression.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 36,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -994,13 +994,13 @@
                           "type": "ETSUndefinedType",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 19,
                               "program": "array_creation_expression.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 27,
+                              "column": 36,
                               "program": "array_creation_expression.ets"
                             }
                           }
@@ -1008,13 +1008,13 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 27,
+                          "column": 19,
                           "program": "array_creation_expression.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 27,
+                          "column": 36,
                           "program": "array_creation_expression.ets"
                         }
                       }
@@ -1022,26 +1022,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 19,
                       "program": "array_creation_expression.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 27,
+                      "column": 36,
                       "program": "array_creation_expression.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 27,
+                    "column": 19,
                     "program": "array_creation_expression.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 27,
+                    "column": 36,
                     "program": "array_creation_expression.ets"
                   }
                 }
@@ -1049,7 +1049,7 @@
               "loc": {
                 "start": {
                   "line": 27,
-                  "column": 34,
+                  "column": 19,
                   "program": "array_creation_expression.ets"
                 },
                 "end": {

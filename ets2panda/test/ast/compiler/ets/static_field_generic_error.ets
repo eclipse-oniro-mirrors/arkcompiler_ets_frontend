@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,15 +22,15 @@ class A<T> {
     static a4: T;
 }
 
-/* @@? 1:3 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
-/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'T'. */
-/* @@? 18:18 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
 /* @@? 18:18 Error Semantic error ESE0371: Cannot find type 'T'. */
-/* @@? 20:17 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 18:18 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 19:16 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 19:16 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
 /* @@? 20:17 Error Semantic error ESE0371: Cannot find type 'T'. */
-/* @@? 21:21 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 20:17 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
 /* @@? 21:21 Error Semantic error ESE0371: Cannot find type 'T'. */
-/* @@? 21:27 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 21:21 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
 /* @@? 21:27 Error Semantic error ESE0371: Cannot find type 'T'. */
-/* @@? 22:16 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 21:27 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
 /* @@? 22:16 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 22:16 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */

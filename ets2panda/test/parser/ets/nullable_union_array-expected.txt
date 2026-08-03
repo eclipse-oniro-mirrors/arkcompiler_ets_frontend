@@ -105,13 +105,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "nullable_union_array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 15,
                                       "program": "nullable_union_array.ets"
                                     }
                                   }
@@ -131,39 +131,39 @@
                                               "name": "string",
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 17,
+                                                  "column": 9,
                                                   "program": "nullable_union_array.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 17,
+                                                  "column": 15,
                                                   "program": "nullable_union_array.ets"
                                                 }
                                               }
                                             },
                                             "loc": {
                                               "start": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 17,
+                                                "column": 9,
                                                 "program": "nullable_union_array.ets"
                                               },
                                               "end": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 17,
+                                                "column": 15,
                                                 "program": "nullable_union_array.ets"
                                               }
                                             }
                                           },
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 9,
                                               "program": "nullable_union_array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 15,
                                               "program": "nullable_union_array.ets"
                                             }
                                           }
@@ -177,39 +177,39 @@
                                               "name": "Int",
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 17,
+                                                  "column": 9,
                                                   "program": "nullable_union_array.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 17,
+                                                  "column": 15,
                                                   "program": "nullable_union_array.ets"
                                                 }
                                               }
                                             },
                                             "loc": {
                                               "start": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 17,
+                                                "column": 9,
                                                 "program": "nullable_union_array.ets"
                                               },
                                               "end": {
-                                                "line": 1,
-                                                "column": 3,
+                                                "line": 17,
+                                                "column": 15,
                                                 "program": "nullable_union_array.ets"
                                               }
                                             }
                                           },
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 9,
                                               "program": "nullable_union_array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 15,
                                               "program": "nullable_union_array.ets"
                                             }
                                           }
@@ -218,13 +218,13 @@
                                           "type": "ETSNullType",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 9,
                                               "program": "nullable_union_array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 17,
+                                              "column": 15,
                                               "program": "nullable_union_array.ets"
                                             }
                                           }
@@ -232,13 +232,13 @@
                                       ],
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 9,
                                           "program": "nullable_union_array.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 15,
                                           "program": "nullable_union_array.ets"
                                         }
                                       }
@@ -246,26 +246,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "nullable_union_array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 15,
                                       "program": "nullable_union_array.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 17,
+                                    "column": 9,
                                     "program": "nullable_union_array.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 15,
                                     "program": "nullable_union_array.ets"
                                   }
                                 }
@@ -273,7 +273,7 @@
                               "loc": {
                                 "start": {
                                   "line": 17,
-                                  "column": 34,
+                                  "column": 17,
                                   "program": "nullable_union_array.ets"
                                 },
                                 "end": {

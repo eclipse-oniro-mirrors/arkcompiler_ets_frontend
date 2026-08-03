@@ -1276,13 +1276,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 20,
+                      "column": 30,
                       "program": "MathCordic.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 38,
                       "program": "MathCordic.ets"
                     }
                   }
@@ -1294,13 +1294,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 30,
                           "program": "MathCordic.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 38,
                           "program": "MathCordic.ets"
                         }
                       }
@@ -1308,26 +1308,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 30,
                       "program": "MathCordic.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 20,
+                      "column": 38,
                       "program": "MathCordic.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 20,
+                    "column": 30,
                     "program": "MathCordic.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 20,
+                    "column": 38,
                     "program": "MathCordic.ets"
                   }
                 }
@@ -1335,7 +1335,7 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 36,
+                  "column": 30,
                   "program": "MathCordic.ets"
                 },
                 "end": {

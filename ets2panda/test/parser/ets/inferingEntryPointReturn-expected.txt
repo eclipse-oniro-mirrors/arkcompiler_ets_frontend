@@ -90,13 +90,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "inferingEntryPointReturn.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 10,
                                       "program": "inferingEntryPointReturn.ets"
                                     }
                                   }
@@ -108,13 +108,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 9,
                                           "program": "inferingEntryPointReturn.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 17,
+                                          "column": 10,
                                           "program": "inferingEntryPointReturn.ets"
                                         }
                                       }
@@ -122,26 +122,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 9,
                                       "program": "inferingEntryPointReturn.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 10,
                                       "program": "inferingEntryPointReturn.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 17,
+                                    "column": 9,
                                     "program": "inferingEntryPointReturn.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 10,
                                     "program": "inferingEntryPointReturn.ets"
                                   }
                                 }
@@ -149,7 +149,7 @@
                               "loc": {
                                 "start": {
                                   "line": 17,
-                                  "column": 19,
+                                  "column": 12,
                                   "program": "inferingEntryPointReturn.ets"
                                 },
                                 "end": {
