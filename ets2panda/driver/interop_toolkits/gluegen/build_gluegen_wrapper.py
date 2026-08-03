@@ -75,6 +75,10 @@ def build(options):
     work_path = os.path.join(options.work_dir, "gluegen_wrapper_work")
     shutil.rmtree(work_path, ignore_errors=True)
     copy_tree(options.source_path, work_path)
+    copy_file(
+        options.native_binary,
+        os.path.join(work_path, "bin", os.path.basename(options.native_binary)),
+    )
     run_command(
         [options.node, options.npm, "run", "build"],
         work_path,
@@ -110,6 +114,10 @@ def copy_output(work_path, output_path):
         os.path.join(work_path, "package.json"),
         os.path.join(output_path, "package.json"),
     )
+    copy_tree(
+        os.path.join(work_path, "bin"),
+        os.path.join(output_path, "bin"),
+    )
 
 
 def parse_args():
@@ -130,6 +138,11 @@ def parse_args():
         "--output-path",
         required=True,
         help="path to the packaged output",
+    )
+    parser.add_argument(
+        "--native-binary",
+        required=True,
+        help="path to the staged gluegen native executable",
     )
     return parser.parse_args()
 

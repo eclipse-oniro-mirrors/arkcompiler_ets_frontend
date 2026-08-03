@@ -281,7 +281,7 @@ describe('GlueGenRunner data flow', () => {
 
   it('resolves the native executable from the wrapper sibling bin directory', () => {
     const executableName = process.platform === 'win32' ? 'gluegen.exe' : 'gluegen';
-    expect(defaultNativeExecutablePath()).toBe(path.resolve(__dirname, '..', '..', 'src', 'bin', executableName));
+    expect(defaultNativeExecutablePath()).toBe(path.resolve(__dirname, '..', '..', 'bin', executableName));
   });
 
   it('checks required command options when building GlueGenInvocation', () => {

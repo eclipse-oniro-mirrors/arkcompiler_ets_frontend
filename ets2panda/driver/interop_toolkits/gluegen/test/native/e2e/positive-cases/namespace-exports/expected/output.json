@@ -1,0 +1,74 @@
+{
+  "files": {
+    "<CASE_DIR>/input/a.ets": {
+      "globalClassDescriptor": "La/ETSGLOBAL;",
+      "root": {
+        "OutsideNamespaceClass": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "OutsideNamespaceClass",
+          "name": "OutsideNamespaceClass",
+          "runtimeName": "La/OutsideNamespaceClass;",
+          "source": null
+        },
+        "OutsideNamespaceFunction": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "function",
+          "localName": "OutsideNamespaceFunction",
+          "name": "OutsideNamespaceFunction",
+          "runtimeName": "La/ETSGLOBAL;",
+          "source": null
+        },
+        "OutsideNamespaceProperty": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "property",
+          "localName": "OutsideNamespaceProperty",
+          "name": "OutsideNamespaceProperty",
+          "runtimeName": "La/ETSGLOBAL;",
+          "source": null
+        },
+        "ns": {
+          "children": {
+            "InsideNamespaceClass": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "InsideNamespaceClass",
+              "name": "InsideNamespaceClass",
+              "runtimeName": "La/ns/InsideNamespaceClass;",
+              "source": null
+            },
+            "InsideNamespaceFunction": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "function",
+              "localName": "InsideNamespaceFunction",
+              "name": "InsideNamespaceFunction",
+              "runtimeName": "La/ns;",
+              "source": null
+            },
+            "InsideNamespaceProperty": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "property",
+              "localName": "InsideNamespaceProperty",
+              "name": "InsideNamespaceProperty",
+              "runtimeName": "La/ns;",
+              "source": null
+            }
+          },
+          "initModuleParam": null,
+          "kind": "namespace",
+          "localName": "ns",
+          "name": "ns",
+          "runtimeName": "La/ns;",
+          "source": null
+        }
+      }
+    }
+  },
+  "status": "success"
+}

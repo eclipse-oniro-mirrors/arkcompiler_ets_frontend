@@ -1,0 +1,9 @@
+{
+  "description": "--arktsconfig points at a path that does not exist on disk; gluegen must fail fast (exit 1) rather than proceed without it.",
+  "args": {
+    "arktsconfig": "no-such-arktsconfig.json"
+  },
+  "expect": {
+    "diagnostics": [{ "code": "11420001", "severity": "error" }]
+  }
+}

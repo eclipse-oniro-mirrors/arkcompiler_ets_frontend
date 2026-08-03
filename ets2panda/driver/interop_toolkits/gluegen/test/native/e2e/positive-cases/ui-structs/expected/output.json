@@ -1,0 +1,38 @@
+{
+  "files": {
+    "<CASE_DIR>/input/ui.ets": {
+      "globalClassDescriptor": "Lui/ETSGLOBAL;",
+      "root": {
+        "default": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "MainPage",
+          "name": "default",
+          "runtimeName": "Lui/MainPage;",
+          "source": null
+        },
+        "ns": {
+          "children": {
+            "SubPage": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "SubPage",
+              "name": "SubPage",
+              "runtimeName": "Lui/ns/SubPage;",
+              "source": null
+            }
+          },
+          "initModuleParam": null,
+          "kind": "namespace",
+          "localName": "ns",
+          "name": "ns",
+          "runtimeName": "Lui/ns;",
+          "source": null
+        }
+      }
+    }
+  },
+  "status": "success"
+}
