@@ -34,28 +34,37 @@ const SILENT_LOGGER: ILogger = {
 };
 
 describe('interop preparation', () => {
-  it('resolves static targets, skips missing source roots, and rebuilds the file list', async () => {
+  it('resolves static targets, skips missing and module-root source roots, and rebuilds the file list', async () => {
     const projectRoot = await fs.mkdtemp(path.join(tmpdir(), 'gluegen-interop-'));
     try {
       const entryRoot = path.join(projectRoot, 'entry');
       const libraryRoot = path.join(projectRoot, 'library');
       const librarySource = path.join(libraryRoot, 'src');
+      const dynamicLibraryRoot = path.join(projectRoot, 'dynamic-library');
       const leafRoot = path.join(projectRoot, 'leaf');
       const leafSource = path.join(leafRoot, 'src');
       const entryFile = path.join(entryRoot, 'Index.ets');
+      const libraryEntryFile = path.join(libraryRoot, 'Index.ets');
+      const dynamicLibraryEntryFile = path.join(dynamicLibraryRoot, 'Index.ets');
       const libraryFile = path.join(librarySource, 'Library.ets');
       const declarationFile = path.join(librarySource, 'Library.d.ets');
       const dynamicFile = path.join(librarySource, 'Dynamic.ets');
+      const generatedFile = path.join(libraryRoot, 'build', 'Generated.ets');
       const selectedLeafFile = path.join(leafSource, 'Selected.ets');
       const ownLeafFile = path.join(leafSource, 'Own.ets');
       await fs.mkdir(entryRoot, { recursive: true });
       await fs.mkdir(librarySource, { recursive: true });
+      await fs.mkdir(dynamicLibraryRoot, { recursive: true });
+      await fs.mkdir(path.dirname(generatedFile), { recursive: true });
       await fs.mkdir(leafSource, { recursive: true });
       await Promise.all([
         fs.writeFile(entryFile, '', 'utf8'),
+        fs.writeFile(libraryEntryFile, "'use static'\n", 'utf8'),
+        fs.writeFile(dynamicLibraryEntryFile, '', 'utf8'),
         fs.writeFile(libraryFile, "'use static'\n", 'utf8'),
         fs.writeFile(declarationFile, "'use static'\n", 'utf8'),
         fs.writeFile(dynamicFile, '', 'utf8'),
+        fs.writeFile(generatedFile, "'use static'\n", 'utf8'),
         fs.writeFile(selectedLeafFile, '', 'utf8'),
         fs.writeFile(ownLeafFile, '', 'utf8'),
         fs.writeFile(path.join(leafSource, 'Unselected.ets'), "'use static'\n", 'utf8'),
@@ -70,7 +79,7 @@ describe('interop preparation', () => {
                         static: ['Index.ets', './Index.ets'],
                         dynamic: ['Missing.ets'],
                         dependency: {
-                            package: ['library'],
+                            package: ['library', 'dynamic-library'],
                             source: {
                                 leaf: {
                                     static: ['src/Selected.ets'],
@@ -108,14 +117,14 @@ describe('interop preparation', () => {
             modulePath: entryRoot,
             sourceRoots: ['.'],
             entryFile: 'Index.ets',
-            dependencies: ['library'],
+            dependencies: ['library', 'dynamic-library'],
             interopConfigPath: 'interop.json5',
           },
           {
             packageName: 'library',
             moduleType: 'har',
             modulePath: libraryRoot,
-            sourceRoots: ['missing', 'src'],
+            sourceRoots: ['missing', 'src', '.'],
             entryFile: 'Index.ets',
             dependencies: ['leaf'],
           },
@@ -126,6 +135,14 @@ describe('interop preparation', () => {
             sourceRoots: ['src'],
             entryFile: 'Index.ets',
             interopConfigPath: 'interop.json5',
+          },
+          {
+            packageName: 'dynamic-library',
+            moduleType: 'har',
+            modulePath: dynamicLibraryRoot,
+            sourceRoots: ['.'],
+            entryFile: 'Index.ets',
+            dependencies: [],
           },
         ],
         hasMainModule: true,
@@ -152,9 +169,13 @@ describe('interop preparation', () => {
 
       expect(outputPath).toBe(expectedPath);
       const fileList = (await fs.readFile(outputPath, 'utf8')).split('\n').filter(Boolean);
-      expect(fileList).toHaveLength(5);
+      expect(fileList).toHaveLength(6);
       const files = new Set(fileList);
-      expect(files).toEqual(new Set([entryFile, libraryFile, declarationFile, selectedLeafFile, ownLeafFile]));
+      expect(files).toEqual(
+        new Set([entryFile, libraryEntryFile, libraryFile, declarationFile, selectedLeafFile, ownLeafFile]),
+      );
+      expect(files).not.toContain(dynamicLibraryEntryFile);
+      expect(files).not.toContain(generatedFile);
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
     }

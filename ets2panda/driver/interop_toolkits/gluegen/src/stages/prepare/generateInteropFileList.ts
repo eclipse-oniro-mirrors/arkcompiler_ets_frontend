@@ -73,10 +73,35 @@ async function collectInteropFiles(targets: ReadonlyMap<string, InteropTarget>):
 
 async function scanPackage(module: ModuleInfo): Promise<readonly string[]> {
   const files: string[] = [];
+  await scanEntryFile(module, files);
   for (const sourceRoot of module.sourceRoots) {
+    // "./" is a compatibility fallback for module resolution, not a source tree to scan.
+    if (sourceRoot === module.modulePath) {
+      continue;
+    }
     await scanSourceRoot(sourceRoot, module, files);
   }
   return files;
+}
+
+async function scanEntryFile(module: ModuleInfo, files: string[]): Promise<void> {
+  const entryFile = module.entryFile;
+  if (!hasEtsSourceExtension(entryFile)) {
+    return;
+  }
+
+  let stats;
+  try {
+    stats = await fs.stat(entryFile);
+  } catch (error) {
+    if (isNotFoundError(error)) {
+      return;
+    }
+    throw unreadableStaticFile(module.packageName, entryFile, error);
+  }
+  if (stats.isFile() && (await isStaticFile(entryFile, module))) {
+    files.push(entryFile);
+  }
 }
 
 async function scanSourceRoot(sourceRoot: string, module: ModuleInfo, files: string[]): Promise<void> {
@@ -139,16 +164,7 @@ async function isStaticFile(filePath: string, module: ModuleInfo): Promise<boole
   try {
     return await hasUseStaticDirectiveInFile(filePath);
   } catch (error) {
-    throw new GlueGenDiagnosticError(
-      new LogData({
-        code: GlueGenErrorCode.GENERATE_INTEROP_FILE_LIST_FAIL,
-        description: `A source file in package "${module.packageName}" cannot be inspected.`,
-        cause: errorMessage(error, 'unknown interop file-list failure'),
-        position: filePath,
-        solutions: ['Check that the file is readable.'],
-        moreInfo: { packageName: module.packageName },
-      }),
-    );
+    throw unreadableStaticFile(module.packageName, filePath, error);
   }
 }
 
@@ -172,6 +188,19 @@ function unreadableSourceRoot(packageName: string, sourceRoot: string, error: un
       cause: errorMessage(error, 'unknown interop file-list failure'),
       position: sourceRoot,
       solutions: ['Check that the directory exists and is readable.'],
+      moreInfo: { packageName },
+    }),
+  );
+}
+
+function unreadableStaticFile(packageName: string, filePath: string, error: unknown): GlueGenDiagnosticError {
+  return new GlueGenDiagnosticError(
+    new LogData({
+      code: GlueGenErrorCode.GENERATE_INTEROP_FILE_LIST_FAIL,
+      description: `A source file in package "${packageName}" cannot be inspected.`,
+      cause: errorMessage(error, 'unknown interop file-list failure'),
+      position: filePath,
+      solutions: ['Check that the file is readable.'],
       moreInfo: { packageName },
     }),
   );

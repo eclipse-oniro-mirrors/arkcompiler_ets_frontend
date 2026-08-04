@@ -423,13 +423,14 @@ describe('arktsconfig stage', () => {
     expect(config.compilerOptions.dependencies['entry/src/target3/Foo']).toBeUndefined();
   });
 
-  it('keeps hybrid static files in paths when the package entry is dynamic', async () => {
+  it('keeps the hybrid bare-package path without adding a static Index path for a dynamic entry', async () => {
     const entryModulePath = path.join(projectRootPath, 'entry');
     const sourceRoot = path.join(entryModulePath, 'src');
+    const additionalSourceRoot = path.join(entryModulePath, 'generated');
     const entryFile = path.join(sourceRoot, 'Index.ets');
     const staticFile = path.join(sourceRoot, 'StaticPart.ets');
     const declFilesPath = path.join(entryModulePath, 'decl-fileInfo.json');
-    await fs.mkdir(sourceRoot, { recursive: true });
+    await Promise.all([fs.mkdir(sourceRoot, { recursive: true }), fs.mkdir(additionalSourceRoot, { recursive: true })]);
     await Promise.all([
       fs.writeFile(entryFile, 'export const entry = true;\n'),
       fs.writeFile(staticFile, "'use static'\nexport const staticPart = true;\n"),
@@ -458,7 +459,7 @@ describe('arktsconfig stage', () => {
           moduleName: 'entry',
           moduleType: 'entry',
           modulePath: entryModulePath,
-          sourceRoots: ['src'],
+          sourceRoots: ['src', 'generated'],
           entryFile: 'src/Index.ets',
           declFilesPath,
           dependencies: [],
@@ -476,7 +477,7 @@ describe('arktsconfig stage', () => {
       });
     const config = JSON.parse(await fs.readFile(outputPath, 'utf8')) as ArkTSConfig;
 
-    expect(config.compilerOptions.paths.entry).toBeUndefined();
+    expect(config.compilerOptions.paths.entry).toEqual([additionalSourceRoot, sourceRoot, entryModulePath]);
     expect(config.compilerOptions.paths['entry/Index']).toBeUndefined();
     expect(config.compilerOptions.paths['entry/src/StaticPart']).toEqual([staticFile]);
     expect(config.compilerOptions.dependencies.entry?.path).toBe(path.join(entryModulePath, 'Index.d.ets'));

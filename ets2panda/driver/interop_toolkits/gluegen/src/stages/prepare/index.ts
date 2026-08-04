@@ -15,10 +15,15 @@
 
 import type { GlueGenContext } from '../../pipeline/context';
 import { Stage } from '../../pipeline';
+import type { ProvidedStage } from '../../pipeline/stage';
 import { CONFIGURATION_ARTIFACT, INTEROP_FILE_LIST_ARTIFACT } from '../stageArtifacts';
 import { generateInteropFileList } from './generateInteropFileList';
 
-export function createPrepareStage() {
+export function createPrepareStage(): ProvidedStage<
+  GlueGenContext,
+  readonly [typeof CONFIGURATION_ARTIFACT],
+  typeof INTEROP_FILE_LIST_ARTIFACT
+> {
   return Stage.start<GlueGenContext>('prepare')
     .requires(CONFIGURATION_ARTIFACT)
     .use('generate-interop-file-list', {

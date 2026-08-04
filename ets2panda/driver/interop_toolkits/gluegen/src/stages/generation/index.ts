@@ -15,10 +15,15 @@
 
 import type { GlueGenContext } from '../../pipeline/context';
 import { Stage } from '../../pipeline';
+import type { HookStage } from '../../pipeline/stage';
 import { ARKTS_CONFIG_ARTIFACT, CONFIGURATION_ARTIFACT, INTEROP_FILE_LIST_ARTIFACT } from '../stageArtifacts';
 import { runNative } from './runNative';
 
-export function createGenerationStage() {
+export function createGenerationStage(): HookStage<
+  GlueGenContext,
+  readonly [typeof CONFIGURATION_ARTIFACT, typeof INTEROP_FILE_LIST_ARTIFACT, typeof ARKTS_CONFIG_ARTIFACT],
+  Readonly<Record<'run-native', void>>
+> {
   return Stage.start<GlueGenContext>('generation')
     .requires(CONFIGURATION_ARTIFACT, INTEROP_FILE_LIST_ARTIFACT, ARKTS_CONFIG_ARTIFACT)
     .use('run-native', {
