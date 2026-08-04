@@ -99,6 +99,13 @@ static void AssertCompletionsNotContainEntries(const std::vector<CompletionEntry
     }
 }
 
+static CompletionEntry *FindCompletionEntry(std::vector<CompletionEntry> &entries, const std::string &name)
+{
+    auto iter = std::find_if(entries.begin(), entries.end(),
+                             [&name](const CompletionEntry &entry) { return entry.GetName() == name; });
+    return iter == entries.end() ? nullptr : &(*iter);
+}
+
 static void AssertCompletionsOrder(const std::vector<CompletionEntry> &entries,
                                    const std::vector<CompletionEntry> &expectedEntries)
 {
@@ -1426,6 +1433,51 @@ foo
                         std::string(GLOBALS_OR_KEYWORDS), "foo2()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, ImportedDeclareStructCompletionShouldNotBeAutoImport)
+{
+    std::vector<std::string> apiFiles = {"declare_struct_api.ets", "declare_struct_user.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+declare enum ApiFilter {
+    ONE,
+}
+@Component
+declare struct ApiStruct {
+    build(): void;
+}
+export { ApiFilter, ApiStruct };
+)delimiter",
+                                      R"delimiter(
+import { ApiFilter, ApiStruct } from './declare_struct_api';
+Api
+)delimiter"};
+    auto filePaths = CreateTempFile(apiFiles, texts);
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx0 = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto ctx1 = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx0);
+    lspApi->buildSymbolReferenceIndexForContextWithExternal(ctx1);
+    auto collected = lspApi->collectApiInfo(ctx1);
+    ASSERT_TRUE(collected);
+
+    auto markerPos = texts[1].rfind("Api");
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("Api").size();
+    auto res = lspApi->getCompletionsAtPosition(ctx1, offset);
+    auto entries = res.GetEntries();
+    auto *structEntry = FindCompletionEntry(entries, "ApiStruct");
+    ASSERT_NE(structEntry, nullptr) << "Expected completion ApiStruct not found. Actual completions: "
+                                    << FormatCompletionEntries(entries);
+    EXPECT_EQ(structEntry->GetSortText(), std::string(GLOBALS_OR_KEYWORDS));
+    EXPECT_FALSE(structEntry->GetHasAction());
+
+    initializer.DestroyContext(ctx0);
+    initializer.DestroyContext(ctx1);
 }
 
 TEST_F(LSPCompletionsTests, getApiCompletionsAtPosition32)
