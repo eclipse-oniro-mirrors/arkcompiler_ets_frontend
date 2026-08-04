@@ -14,6 +14,7 @@
  */
 
 #include "aliveAnalyzer.h"
+#include <algorithm>
 #include <cstddef>
 
 #include "ir/base/classDefinition.h"
@@ -38,13 +39,19 @@
 #include "ir/statements/continueStatement.h"
 #include "ir/statements/returnStatement.h"
 #include "ir/statements/tryStatement.h"
+#include "ir/expressions/binaryExpression.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/memberExpression.h"
+#include "ir/expressions/updateExpression.h"
+#include "ir/expressions/literals/numberLiteral.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
 #include "ir/ets/etsStructDeclaration.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
+#include "ir/ts/tsNonNullExpression.h"
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/types/globalTypesHolder.h"
+#include "ir/astNode.h"
 #include "varbinder/variable.h"
 #include "varbinder/declaration.h"
 #include "checker/ETSchecker.h"
@@ -52,6 +59,49 @@
 #include "ir/base/catchClause.h"
 
 namespace ark::es2panda::checker {
+
+AliveAnalyzer::FunctionAnalysisScope::FunctionAnalysisScope(AliveAnalyzer *analyzer) : analyzer_(analyzer)
+{
+    // Keep flow facts local to the function currently being analyzed.
+    if (!analyzer->numericConstants_.empty()) {
+        hasOuterNumericConstants_ = true;
+        numericConstants_.emplace(std::move(analyzer->numericConstants_));
+    }
+    if (!analyzer->booleanConstants_.empty()) {
+        hasOuterBooleanConstants_ = true;
+        booleanConstants_.emplace(std::move(analyzer->booleanConstants_));
+    }
+    if (!analyzer->trueConditions_.empty()) {
+        hasOuterTrueConditions_ = true;
+        trueConditions_.emplace(std::move(analyzer->trueConditions_));
+    }
+}
+
+AliveAnalyzer::FunctionAnalysisScope::~FunctionAnalysisScope()
+{
+    analyzer_->numericConstants_.clear();
+    analyzer_->booleanConstants_.clear();
+    analyzer_->trueConditions_.clear();
+
+    if (hasOuterNumericConstants_) {
+        analyzer_->numericConstants_ = std::move(numericConstants_.value());
+    }
+    if (hasOuterBooleanConstants_) {
+        analyzer_->booleanConstants_ = std::move(booleanConstants_.value());
+    }
+    if (hasOuterTrueConditions_) {
+        analyzer_->trueConditions_ = std::move(trueConditions_.value());
+    }
+}
+
+const varbinder::Variable *AliveAnalyzer::GetBoundVariable(const ir::Expression *expr) const
+{
+    if (expr == nullptr || !expr->IsIdentifier()) {
+        return nullptr;
+    }
+
+    return expr->AsIdentifier()->Variable();
+}
 
 void AliveAnalyzer::AnalyzeNodes(const ir::AstNode *node)
 {
@@ -95,6 +145,18 @@ void AliveAnalyzer::AnalyzeNode(const ir::AstNode *node)
         }
         case ir::AstNodeType::ASSIGNMENT_EXPRESSION: {
             AnalyzeAssignExp(node->AsAssignmentExpression());
+            break;
+        }
+        case ir::AstNodeType::UPDATE_EXPRESSION: {
+            AnalyzeUpdateExp(node->AsUpdateExpression());
+            break;
+        }
+        case ir::AstNodeType::MEMBER_EXPRESSION: {
+            AnalyzeMemberExp(node->AsMemberExpression());
+            break;
+        }
+        case ir::AstNodeType::TS_NON_NULL_EXPRESSION: {
+            AnalyzeTSNonNullExp(node->AsTSNonNullExpression());
             break;
         }
         case ir::AstNodeType::CLASS_PROPERTY: {
@@ -263,6 +325,7 @@ void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnT
     }
 
     status_ = LivenessStatus::ALIVE;
+    FunctionAnalysisScope funcScope(this);
     AnalyzeStat(func->Body());
 
     const auto isSupertypeOfUndefined =
@@ -334,6 +397,7 @@ void AliveAnalyzer::AnalyzeArrFuncExp(const ir::ArrowFunctionExpression *arrFunc
 void AliveAnalyzer::AnalyzeVarDef(const ir::VariableDeclaration *varDef)
 {
     for (auto *it : varDef->Declarators()) {
+        TrackVariableDeclaration(it);
         if (it->Init() == nullptr) {
             continue;
         }
@@ -344,12 +408,38 @@ void AliveAnalyzer::AnalyzeVarDef(const ir::VariableDeclaration *varDef)
 
 void AliveAnalyzer::AnalyzeAssignExp(const ir::AssignmentExpression *assignExp)
 {
+    ForgetAssignmentTarget(assignExp->Left());
     if (assignExp->Left() != nullptr) {
         AnalyzeNode(assignExp->Left());
+    }
+    if (ContainsDefinitelyNullishNonNullExpression(assignExp->Left())) {
+        return;
     }
     if (assignExp->Right() != nullptr) {
         AnalyzeNode(assignExp->Right());
     }
+}
+
+void AliveAnalyzer::AnalyzeUpdateExp(const ir::UpdateExpression *updateExp)
+{
+    ForgetAssignmentTarget(updateExp->Argument());
+    AnalyzeNode(updateExp->Argument());
+}
+
+void AliveAnalyzer::AnalyzeMemberExp(const ir::MemberExpression *memberExpr)
+{
+    AnalyzeNode(memberExpr->Object());
+    if (status_ == LivenessStatus::DEAD) {
+        return;
+    }
+    if (memberExpr->IsComputed()) {
+        AnalyzeNode(memberExpr->Property());
+    }
+}
+
+void AliveAnalyzer::AnalyzeTSNonNullExp(const ir::TSNonNullExpression *nonNullExpr)
+{
+    AnalyzeNode(nonNullExpr->Expr());
 }
 
 void AliveAnalyzer::AnalyzeClassProp(const ir::ClassProperty *prop)
@@ -378,11 +468,20 @@ void AliveAnalyzer::AnalyzeWhileLoop(const ir::WhileStatement *whileStmt)
     SetOldPendingExits(PendingExits());
     AnalyzeNode(whileStmt->Test());
     ES2PANDA_ASSERT(whileStmt->Test()->TsType());
-    const auto exprRes = IsConstantTestValue(whileStmt->Test());
-    status_ = And(status_, static_cast<LivenessStatus>(!std::get<0>(exprRes) || std::get<1>(exprRes)));
-    AnalyzeStat(whileStmt->Body());
+    const auto [resolvedConstant, constantValue] = IsConstantTestValue(whileStmt->Test());
+    const auto resolvedTestValue =
+        resolvedConstant ? std::optional<bool>(constantValue) : TryResolveTestValue(whileStmt->Test());
+    const auto isDefinitelyFalse = resolvedTestValue.has_value() && !resolvedTestValue.value();
+    status_ = And(status_, From(!isDefinitelyFalse));
+    if (isDefinitelyFalse) {
+        AnalyzeDeadStatement(whileStmt->Body());
+    } else {
+        ForgetAllConstants();
+        AnalyzeStat(whileStmt->Body());
+        ForgetAllConstants();
+    }
     status_ = Or(status_, ResolveContinues(whileStmt));
-    status_ = Or(ResolveBreaks(whileStmt), From(!std::get<0>(exprRes) || !std::get<1>(exprRes)));
+    status_ = Or(ResolveBreaks(whileStmt), From(!resolvedConstant || !constantValue));
 }
 
 void AliveAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
@@ -390,23 +489,33 @@ void AliveAnalyzer::AnalyzeForLoop(const ir::ForUpdateStatement *forStmt)
     AnalyzeNode(forStmt->Init());
     SetOldPendingExits(PendingExits());
     const Type *condType {};
-    bool resolveType = false;
-    bool res = false;
+    std::optional<bool> testValue;
 
     if (forStmt->Test() != nullptr) {
         AnalyzeNode(forStmt->Test());
         ES2PANDA_ASSERT(forStmt->Test()->TsType());
         condType = forStmt->Test()->TsType();
-        std::tie(resolveType, res) = IsConstantTestValue(forStmt->Test());
-        status_ = From(!resolveType || res);
+        const auto [resolvedConstant, constantValue] = IsConstantTestValue(forStmt->Test());
+        testValue = resolvedConstant ? std::optional<bool>(constantValue) : TryResolveTestValue(forStmt->Test());
+        status_ = From(!testValue.has_value() || testValue.value());
+        if (!resolvedConstant && testValue.has_value() && testValue.value()) {
+            testValue.reset();
+        }
     } else {
         status_ = LivenessStatus::ALIVE;
     }
 
-    AnalyzeStat(forStmt->Body());
+    if (testValue.has_value() && !testValue.value()) {
+        AnalyzeDeadStatement(forStmt->Body());
+    } else {
+        ForgetAllConstants();
+        AnalyzeStat(forStmt->Body());
+        ForgetAllConstants();
+    }
     status_ = Or(status_, ResolveContinues(forStmt));
     AnalyzeNode(forStmt->Update());
-    status_ = Or(ResolveBreaks(forStmt), From(condType != nullptr && (!resolveType || !res)));
+    ForgetAllConstants();
+    status_ = Or(ResolveBreaks(forStmt), From(condType != nullptr && (!testValue.has_value() || !testValue.value())));
 }
 
 void AliveAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
@@ -426,18 +535,277 @@ void AliveAnalyzer::AnalyzeForOfLoop(const ir::ForOfStatement *forOfStmt)
     status_ = LivenessStatus::ALIVE;
 }
 
+std::optional<double> AliveAnalyzer::TryResolveNumberValue(const ir::Expression *expr) const
+{
+    if (expr == nullptr) {
+        return std::nullopt;
+    }
+
+    if (expr->IsNumberLiteral()) {
+        return expr->AsNumberLiteral()->Number().GetDouble();
+    }
+
+    const auto *boundVar = GetBoundVariable(expr);
+    if (boundVar == nullptr || numericConstants_.empty()) {
+        return std::nullopt;
+    }
+
+    const auto found = numericConstants_.find(boundVar);
+    if (found == numericConstants_.end()) {
+        return std::nullopt;
+    }
+    return found->second;
+}
+
+std::optional<bool> AliveAnalyzer::TryResolveNumberComparison(const ir::BinaryExpression *binary) const
+{
+    auto left = TryResolveNumberValue(binary->Left());
+    auto right = TryResolveNumberValue(binary->Right());
+    if (!left.has_value() || !right.has_value()) {
+        return std::nullopt;
+    }
+
+    switch (binary->OperatorType()) {
+        case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
+            return left.value() > right.value();
+        case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
+            return left.value() >= right.value();
+        case lexer::TokenType::PUNCTUATOR_LESS_THAN:
+            return left.value() < right.value();
+        case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
+            return left.value() <= right.value();
+        case lexer::TokenType::PUNCTUATOR_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
+            return left.value() == right.value();
+        case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
+        case lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL:
+            return left.value() != right.value();
+        default:
+            return std::nullopt;
+    }
+}
+
+std::optional<bool> AliveAnalyzer::TryResolveInstanceOfComparison(const ir::BinaryExpression *binary) const
+{
+    if (binary->OperatorType() != lexer::TokenType::KEYW_INSTANCEOF) {
+        return std::nullopt;
+    }
+
+    auto *const leftType = const_cast<Type *>(binary->Left()->TsType());
+    auto *const rightType = const_cast<Type *>(binary->Right()->TsType());
+    if (leftType == nullptr || rightType == nullptr || leftType->IsTypeError() || rightType->IsTypeError() ||
+        leftType == checker_->GlobalETSAnyType() || rightType == checker_->GlobalETSAnyType()) {
+        return std::nullopt;
+    }
+
+    if ((leftType->IsETSObjectType() && leftType->AsETSObjectType()->IsGradual()) ||
+        (rightType->IsETSObjectType() && rightType->AsETSObjectType()->IsGradual())) {
+        return std::nullopt;
+    }
+
+    auto *const intersectionType = checker_->Context().GetIntersectionOfTypes(leftType, rightType);
+    if (intersectionType != nullptr && checker_->Relation()->IsIdenticalTo(leftType, intersectionType)) {
+        return true;
+    }
+
+    return std::nullopt;
+}
+
+std::optional<bool> AliveAnalyzer::TryResolveTestValue(const ir::Expression *test) const
+{
+    // Fold only simple and proven conditions used by liveness checks.
+    if (test->IsBooleanLiteral()) {
+        return test->AsBooleanLiteral()->Value();
+    }
+
+    if (test->IsNullLiteral() || test->IsUndefinedLiteral()) {
+        return false;
+    }
+
+    if (test->IsIdentifier()) {
+        const auto *boundVar = GetBoundVariable(test);
+        if (boundVar != nullptr && !trueConditions_.empty() &&
+            std::find(trueConditions_.begin(), trueConditions_.end(), boundVar) != trueConditions_.end()) {
+            return true;
+        }
+        if (boundVar != nullptr && !booleanConstants_.empty()) {
+            const auto found = booleanConstants_.find(boundVar);
+            if (found != booleanConstants_.end()) {
+                return found->second;
+            }
+        }
+    }
+
+    if (test->IsBinaryExpression()) {
+        auto instanceofResolved = TryResolveInstanceOfComparison(test->AsBinaryExpression());
+        if (instanceofResolved.has_value()) {
+            return instanceofResolved;
+        }
+        auto resolved = TryResolveConditionalTestValue(test);
+        if (resolved.has_value()) {
+            return resolved;
+        }
+        return TryResolveNumberComparison(test->AsBinaryExpression());
+    }
+
+    return std::nullopt;
+}
+
+bool AliveAnalyzer::ContainsDefinitelyNullishNonNullExpression(const ir::AstNode *node) const
+{
+    // A definitely nullish non-null assertion stops evaluation before the RHS.
+    if (node == nullptr) {
+        return false;
+    }
+
+    if (node->IsTSNonNullExpression()) {
+        const auto *expr = node->AsTSNonNullExpression()->Expr();
+        return expr->TsType() != nullptr && expr->TsType()->DefinitelyETSNullish();
+    }
+
+    bool found = false;
+    node->Iterate([this, &found](auto *childNode) {
+        if (!found) {
+            found = ContainsDefinitelyNullishNonNullExpression(childNode);
+        }
+    });
+    return found;
+}
+
+void AliveAnalyzer::AnalyzeIfConsequent(const ir::IfStatement *ifStmt)
+{
+    // Treat a bare identifier condition as true inside its consequent.
+    if (!ifStmt->Test()->IsIdentifier()) {
+        AnalyzeStat(ifStmt->Consequent());
+        return;
+    }
+
+    auto *const boundVar = GetBoundVariable(ifStmt->Test());
+    if (boundVar == nullptr) {
+        AnalyzeStat(ifStmt->Consequent());
+        return;
+    }
+
+    const auto previousTrueConditionsSize = trueConditions_.size();
+    trueConditions_.push_back(boundVar);
+    AnalyzeStat(ifStmt->Consequent());
+    if (trueConditions_.size() > previousTrueConditionsSize &&
+        trueConditions_[previousTrueConditionsSize] == boundVar) {
+        trueConditions_.erase(trueConditions_.begin() + previousTrueConditionsSize);
+    }
+}
+
+void AliveAnalyzer::AnalyzeDeadStatement(const ir::Statement *stmt)
+{
+    // Visit dead code to report nested diagnostics without changing outer liveness.
+    const auto prevStatus = status_;
+    const auto prevPendingExits = PendingExits();
+    const auto prevOldPendingExits = OldPendingExits();
+    status_ = LivenessStatus::DEAD;
+    if (stmt != nullptr && stmt->IsBlockStatement()) {
+        AnalyzeStats(stmt->AsBlockStatement()->Statements());
+    } else {
+        AnalyzeStat(stmt);
+    }
+    status_ = prevStatus;
+    SetPendingExits(prevPendingExits);
+    SetOldPendingExits(prevOldPendingExits);
+}
+
 void AliveAnalyzer::AnalyzeIf(const ir::IfStatement *ifStmt)
 {
     AnalyzeNode(ifStmt->Test());
-    AnalyzeStat(ifStmt->Consequent());
+    auto testValue = TryResolveTestValue(ifStmt->Test());
+    if (testValue.has_value() && !testValue.value()) {
+        AnalyzeDeadStatement(ifStmt->Consequent());
+        if (ifStmt->Alternate() != nullptr) {
+            status_ = LivenessStatus::ALIVE;
+            AnalyzeStat(ifStmt->Alternate());
+        } else {
+            status_ = LivenessStatus::ALIVE;
+        }
+        return;
+    }
+
+    AnalyzeIfConsequent(ifStmt);
     if (ifStmt->Alternate() != nullptr) {
         LivenessStatus prevStatus = status_;
-        status_ = LivenessStatus::ALIVE;
-        AnalyzeStat(ifStmt->Alternate());
+        if (testValue.has_value() && testValue.value()) {
+            AnalyzeDeadStatement(ifStmt->Alternate());
+        } else {
+            status_ = LivenessStatus::ALIVE;
+            AnalyzeStat(ifStmt->Alternate());
+        }
         status_ = Or(status_, prevStatus);
-    } else {
+    } else if (!testValue.has_value() || !testValue.value()) {
         status_ = LivenessStatus::ALIVE;
     }
+}
+
+void AliveAnalyzer::TrackVariableDeclaration(const ir::VariableDeclarator *declarator)
+{
+    // Remember literal bindings that can make later branch tests deterministic.
+    if (declarator == nullptr || declarator->Id() == nullptr || !declarator->Id()->IsIdentifier()) {
+        return;
+    }
+
+    auto *const boundVar = declarator->Id()->AsIdentifier()->Variable();
+    if (boundVar == nullptr) {
+        return;
+    }
+
+    if (declarator->Init() == nullptr) {
+        ForgetBoundVariable(boundVar);
+        return;
+    }
+
+    if (declarator->Init()->IsNumberLiteral()) {
+        ForgetBoundVariable(boundVar);
+        numericConstants_[boundVar] = declarator->Init()->AsNumberLiteral()->Number().GetDouble();
+        return;
+    }
+
+    if (declarator->Init()->IsBooleanLiteral()) {
+        ForgetBoundVariable(boundVar);
+        booleanConstants_[boundVar] = declarator->Init()->AsBooleanLiteral()->Value();
+        return;
+    }
+
+    ForgetBoundVariable(boundVar);
+}
+
+void AliveAnalyzer::ForgetAssignmentTarget(const ir::Expression *expr)
+{
+    if (expr == nullptr || !expr->IsIdentifier()) {
+        return;
+    }
+    const auto *boundVar = GetBoundVariable(expr);
+    ForgetBoundVariable(boundVar);
+}
+
+void AliveAnalyzer::ForgetBoundVariable(const varbinder::Variable *boundVar)
+{
+    if (boundVar == nullptr) {
+        return;
+    }
+
+    if (!numericConstants_.empty()) {
+        numericConstants_.erase(boundVar);
+    }
+    if (!booleanConstants_.empty()) {
+        booleanConstants_.erase(boundVar);
+    }
+    if (!trueConditions_.empty()) {
+        trueConditions_.erase(std::remove(trueConditions_.begin(), trueConditions_.end(), boundVar),
+                              trueConditions_.end());
+    }
+}
+
+void AliveAnalyzer::ForgetAllConstants()
+{
+    numericConstants_.clear();
+    booleanConstants_.clear();
+    trueConditions_.clear();
 }
 
 void AliveAnalyzer::AnalyzeLabelled(const ir::LabelledStatement *labelledStmt)
@@ -456,10 +824,13 @@ void AliveAnalyzer::AnalyzeNewClass(const ir::ETSNewClassInstanceExpression *new
 
 void AliveAnalyzer::AnalyzeCall(const ir::CallExpression *callExpr)
 {
-    AnalyzeNode(callExpr->Callee());
+    if (!callExpr->Callee()->IsMemberExpression()) {
+        AnalyzeNode(callExpr->Callee());
+    }
     for (const auto *it : callExpr->Arguments()) {
         AnalyzeNode(it);
     }
+    ForgetAllConstants();
     if (callExpr->Signature() != nullptr &&
         callExpr->Signature()->ReturnType() == checker_->GetGlobalTypesHolder()->GlobalETSNeverType()) {
         MarkDead();

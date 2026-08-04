@@ -145,6 +145,27 @@ void ExportFactStore::ResetProgram(parser::Program *program)
     facts_.erase(program);
 }
 
+void ExportFactStore::RemoveProgram(parser::Program *program)
+{
+    if (program == nullptr) {
+        return;
+    }
+
+    facts_.erase(program);
+    pendingLocalExportAliases_.erase(program);
+    packageSurfaces_.erase(program);
+    ClearImportTargets(program);
+
+    surfacesByProgram_.erase(program);
+    for (auto it = surfaceByResolvedSource_.begin(); it != surfaceByResolvedSource_.end();) {
+        if (it->second == program) {
+            it = surfaceByResolvedSource_.erase(it);
+            continue;
+        }
+        ++it;
+    }
+}
+
 void ExportFactStore::ClearImportTargets(parser::Program *sourceProgram)
 {
     for (auto it = importTargets_.begin(); it != importTargets_.end();) {

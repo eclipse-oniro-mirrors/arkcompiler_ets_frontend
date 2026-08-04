@@ -19,16 +19,29 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/baseAnalyzer.h"
 
+#include <optional>
+
 namespace ark::es2panda::ir {
 class AstNode;
+class BinaryExpression;
+class Expression;
+class IfStatement;
+class MemberExpression;
 class Statement;
 class ClassDefinition;
 class MethodDefinition;
 class TSInterfaceDeclaration;
 class DoWhileStatement;
+class UpdateExpression;
 class VariableDeclaration;
+class VariableDeclarator;
 class ScriptFunction;
+class TSNonNullExpression;
 }  // namespace ark::es2panda::ir
+
+namespace ark::es2panda::varbinder {
+class Variable;
+}
 
 namespace ark::es2panda::checker {
 class AliveAnalyzer : public BaseAnalyzer<PendingExit> {
@@ -71,6 +84,9 @@ private:
                         bool isArrow = false);
     void AnalyzeVarDef(const ir::VariableDeclaration *varDef);
     void AnalyzeAssignExp(const ir::AssignmentExpression *assignExp);
+    void AnalyzeUpdateExp(const ir::UpdateExpression *updateExp);
+    void AnalyzeMemberExp(const ir::MemberExpression *memberExpr);
+    void AnalyzeTSNonNullExp(const ir::TSNonNullExpression *nonNullExpr);
     void AnalyzeClassProp(const ir::ClassProperty *prop);
     void AnalyzeDoLoop(const ir::DoWhileStatement *doWhile);
     void AnalyzeWhileLoop(const ir::WhileStatement *whileStmt);
@@ -87,8 +103,46 @@ private:
     void AnalyzeContinue(const ir::ContinueStatement *contStmt);
     void AnalyzeReturn(const ir::ReturnStatement *retStmt);
 
+    using NumericConstants = ArenaUnorderedMap<const varbinder::Variable *, double>;
+    using BooleanConstants = ArenaUnorderedMap<const varbinder::Variable *, bool>;
+    using TrueConditions = ArenaVector<const varbinder::Variable *>;
+
+    class FunctionAnalysisScope {
+    public:
+        explicit FunctionAnalysisScope(AliveAnalyzer *analyzer);
+        ~FunctionAnalysisScope();
+
+        NO_COPY_SEMANTIC(FunctionAnalysisScope);
+        NO_MOVE_SEMANTIC(FunctionAnalysisScope);
+
+    private:
+        AliveAnalyzer *analyzer_;
+        bool hasOuterNumericConstants_ {false};
+        bool hasOuterBooleanConstants_ {false};
+        bool hasOuterTrueConditions_ {false};
+        std::optional<NumericConstants> numericConstants_;
+        std::optional<BooleanConstants> booleanConstants_;
+        std::optional<TrueConditions> trueConditions_;
+    };
+
+    std::optional<bool> TryResolveTestValue(const ir::Expression *test) const;
+    std::optional<double> TryResolveNumberValue(const ir::Expression *expr) const;
+    const varbinder::Variable *GetBoundVariable(const ir::Expression *expr) const;
+    std::optional<bool> TryResolveNumberComparison(const ir::BinaryExpression *binary) const;
+    std::optional<bool> TryResolveInstanceOfComparison(const ir::BinaryExpression *binary) const;
+    bool ContainsDefinitelyNullishNonNullExpression(const ir::AstNode *node) const;
+    void AnalyzeIfConsequent(const ir::IfStatement *ifStmt);
+    void AnalyzeDeadStatement(const ir::Statement *stmt);
+    void TrackVariableDeclaration(const ir::VariableDeclarator *declarator);
+    void ForgetAssignmentTarget(const ir::Expression *expr);
+    void ForgetBoundVariable(const varbinder::Variable *boundVar);
+    void ForgetAllConstants();
+
     ETSChecker *checker_;
     LivenessStatus status_ {LivenessStatus::ALIVE};
+    NumericConstants numericConstants_;
+    BooleanConstants booleanConstants_;
+    TrueConditions trueConditions_;
 };
 }  // namespace ark::es2panda::checker
 

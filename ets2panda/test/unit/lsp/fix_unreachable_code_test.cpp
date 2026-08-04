@@ -33,6 +33,9 @@ constexpr auto ERROR_CODES = FIX_UNREACHABLE_CODE.GetSupportedCodeNumbers();
 constexpr int UNREACHABLE_STMT_CODE = 3026;
 constexpr std::string_view EXPECTED_FIX_DESCRIPTION = "Remove unreachable code";
 constexpr int DEFAULT_THROTTLE = 20;
+constexpr size_t DEFAULT_FIX_SPAN_LENGTH = 1;
+constexpr size_t EXPECTED_SINGLE_DIAGNOSTIC = 1;
+constexpr size_t EXPECTED_SINGLE_FIX = 1;
 
 class FixUnreachableCodeTests : public LSPAPITests {
 public:
@@ -49,7 +52,8 @@ public:
     }
 
     static void ValidateCodeFixActionInfo(const CodeFixActionInfo &info, const size_t expectedTextChangeStart,
-                                          const size_t expectedTextChangeLength, const std::string &expectedFileName)
+                                          const size_t expectedTextChangeLength, const std::string &expectedFileName,
+                                          const std::string &expectedNewText = "")
     {
         ASSERT_EQ(info.fixName_, EXPECTED_FIX_NAME);
         ASSERT_EQ(info.fixId_, EXPECTED_FIX_NAME);
@@ -57,7 +61,78 @@ public:
         ASSERT_EQ(info.changes_[0].fileName, expectedFileName);
         ASSERT_EQ(info.changes_[0].textChanges[0].span.start, expectedTextChangeStart);
         ASSERT_EQ(info.changes_[0].textChanges[0].span.length, expectedTextChangeLength);
-        ASSERT_EQ(info.changes_[0].textChanges[0].newText, "");
+        ASSERT_EQ(info.changes_[0].textChanges[0].newText, expectedNewText);
+    }
+
+    static std::vector<Diagnostic> GetUnreachableDiagnostics(es2panda_Context *context)
+    {
+        LSPAPI const *lspApi = GetImpl();
+        auto semanticDiagnostics = lspApi->getSemanticDiagnostics(context);
+        auto syntacticDiagnostics = lspApi->getSyntacticDiagnostics(context);
+        auto suggestionDiagnostics = lspApi->getSuggestionDiagnostics(context);
+        std::vector<Diagnostic> result;
+        auto collectUnreachableDiagnostics = [&result](const DiagnosticReferences &diagnostics) {
+            for (const auto &diagnostic : diagnostics.diagnostic) {
+                if (std::get<int>(diagnostic.code_) == UNREACHABLE_STMT_CODE) {
+                    result.push_back(diagnostic);
+                }
+            }
+        };
+        collectUnreachableDiagnostics(semanticDiagnostics);
+        collectUnreachableDiagnostics(syntacticDiagnostics);
+        collectUnreachableDiagnostics(suggestionDiagnostics);
+        return result;
+    }
+
+    static void AssertNoUnreachableDiagnostic(es2panda_Context *context)
+    {
+        auto diagnostics = GetUnreachableDiagnostics(context);
+        ASSERT_EQ(diagnostics.size(), 0U);
+    }
+
+    static size_t FindOffset(const std::string &source, const std::string &text)
+    {
+        const auto offset = source.find(text);
+        EXPECT_NE(offset, std::string::npos);
+        return offset;
+    }
+
+    static void ValidateUnreachableDiagnosticAndFix(es2panda_Context *context, const std::string &source,
+                                                    const std::string &unreachableText,
+                                                    const std::string &expectedFileName)
+    {
+        auto diagnostics = GetUnreachableDiagnostics(context);
+        ASSERT_EQ(diagnostics.size(), EXPECTED_SINGLE_DIAGNOSTIC);
+        ASSERT_EQ(std::get<int>(diagnostics[0].code_), UNREACHABLE_STMT_CODE);
+        ASSERT_EQ(diagnostics[0].severity_, DiagnosticSeverity::Warning);
+        ASSERT_EQ(std::get<std::string>(diagnostics[0].data_), "unusedSymbol");
+
+        const auto start =
+            LineColToPos(context, diagnostics[0].range_.start.line_, diagnostics[0].range_.start.character_);
+        const auto expectedTextChangeStart = FindOffset(source, unreachableText);
+        ASSERT_EQ(start, expectedTextChangeStart);
+
+        std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+        CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+        auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + DEFAULT_FIX_SPAN_LENGTH,
+                                                                        errorCodes, options);
+        ASSERT_EQ(fixResult.size(), EXPECTED_SINGLE_FIX);
+
+        ValidateCodeFixActionInfo(fixResult[0], expectedTextChangeStart, unreachableText.size(), expectedFileName);
+    }
+
+    static void ValidateCodeFixForText(es2panda_Context *context, const std::string &source, const std::string &posText,
+                                       const std::string &deletedText, const std::string &expectedFileName)
+    {
+        const auto pos = FindOffset(source, posText);
+        const auto expectedTextChangeStart = FindOffset(source, deletedText);
+        std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+        CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+        auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, pos, pos + DEFAULT_FIX_SPAN_LENGTH,
+                                                                        errorCodes, options);
+        ASSERT_EQ(fixResult.size(), EXPECTED_SINGLE_FIX);
+
+        ValidateCodeFixActionInfo(fixResult[0], expectedTextChangeStart, deletedText.size(), expectedFileName);
     }
 
 private:
@@ -109,6 +184,270 @@ console.log("log");
     ASSERT_EQ(fixResult.size(), expectedFixResultSize);
 
     ValidateCodeFixActionInfo(fixResult[0], expectedTextChangeStart, expectedTextChangeLength, filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInIfFalseBlock)
+{
+    const std::string source = R"(
+function case3(): void {
+  if (false) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeIfFalseBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInIfUndefinedBlock)
+{
+    const std::string source = R"(
+function caseUndefined(): void {
+  if (undefined) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeIfUndefinedBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInResolvedVariableConditionBlock)
+{
+    const std::string source = R"(
+function case3(): void {
+  let num: number = 0;
+  if (num > 0) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeVariableConditionBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBooleanVariableConditionBlock)
+{
+    const std::string source = R"(
+function case3(): void {
+  let flag: boolean = false;
+  if (flag) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBooleanVariableConditionBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBracelessIfFalse)
+{
+    const std::string source = R"(
+function case3(): void {
+  if (false) return;
+  let reachable: number = 10;
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBracelessIfFalse.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateCodeFixForText(context, source, "return;", "if (false) return;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveBracelessIfFalseAndPreserveElseBody)
+{
+    const std::string source = R"(
+function case3(): void {
+  if (false) foo();
+  else bar();
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBracelessIfFalseWithElse.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const auto pos = FindOffset(source, "foo();");
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    auto fixResult = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, pos, pos + DEFAULT_FIX_SPAN_LENGTH,
+                                                                    errorCodes, options);
+    ASSERT_EQ(fixResult.size(), EXPECTED_SINGLE_FIX);
+    ValidateCodeFixActionInfo(fixResult[0], pos, std::string("foo();").size(), filePaths[0], "{}");
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableForShadowedBooleanVariableCondition)
+{
+    const std::string source = R"(
+function case3(): void {
+  let flag: boolean = true;
+  if (flag) {
+    let flag: boolean = false;
+    if (flag) {
+      let unreach: number = 10;
+    }
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeShadowedBooleanCondition.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestNoFalsePositiveAfterIncrementedNumericVariableCondition)
+{
+    const std::string source = R"(
+function case3(): void {
+  let num: number = 0;
+  num++;
+  if (num == 0) {
+    return;
+  }
+  let reachable: number = 10;
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeIncrementedNumericCondition.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    AssertNoUnreachableDiagnostic(context);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestNoFalsePositiveAfterDecrementedNumericVariableCondition)
+{
+    const std::string source = R"(
+function case3(): void {
+  let num: number = 0;
+  --num;
+  if (num != 0) {
+    let reachable: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeDecrementedNumericCondition.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    AssertNoUnreachableDiagnostic(context);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestNoFalsePositiveAfterAssignmentInTrueCondition)
+{
+    const std::string source = R"(
+function case3(flag: boolean): void {
+  if (flag) {
+    flag = false;
+    if (flag) {
+      return;
+    }
+    let reachable: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeAssignmentInTrueCondition.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    AssertNoUnreachableDiagnostic(context);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableAfterNestedSameConditionalReturn)
+{
+    const std::string source = R"(
+function case3(flag: boolean): void {
+  if (flag) {
+    if (flag) {
+        return;
+    }
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeNestedConditionalReturn.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -243,8 +582,8 @@ console.log("log2");
     auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     const size_t start = LineColToPos(context, 4, 1);
     const size_t length = 1;
-    const size_t expectedTextChangeStart = 34;
-    const size_t expectedTextChangeLength = 68;
+    const size_t expectedTextChangeStart = 52;
+    const size_t expectedTextChangeLength = 48;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
@@ -331,15 +670,15 @@ console.log("log");
 
 TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableAfterWhileFalse1)
 {
-    std::vector<std::string> fileNames = {"FixUnreachableCodeWhileFalse1.ets"};
-    std::vector<std::string> fileContents = {
-        R"(
+    const std::string source = R"(
 function test(): void{
 while (false) {
 console.log("log");
 }
 }
-)"};
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeWhileFalse1.ets"};
+    std::vector<std::string> fileContents = {source};
 
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_EQ(fileNames.size(), filePaths.size());
@@ -347,20 +686,52 @@ console.log("log");
     Initializer initializer;
     auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
 
-    const size_t start = LineColToPos(context, 3, 13);
-    const size_t length = 1;
-    const size_t expectedTextChangeStart = 24;
-    const size_t expectedTextChangeLength = 37;
-    const int expectedFixResultSize = 1;
+    ValidateUnreachableDiagnosticAndFix(context, source, "console.log(\"log\");", filePaths[0]);
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
-    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    initializer.DestroyContext(context);
+}
 
-    auto fixResult =
-        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
-    ASSERT_EQ(fixResult.size(), expectedFixResultSize);
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBracelessWhileFalse)
+{
+    const std::string source = R"(
+function case3(): void {
+  while (false) return;
+  let reachable: number = 10;
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBracelessWhileFalse.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
 
-    ValidateCodeFixActionInfo(fixResult[0], expectedTextChangeStart, expectedTextChangeLength, filePaths[0]);
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateCodeFixForText(context, source, "return;", "while (false) return;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBooleanVariableWhileBlock)
+{
+    const std::string source = R"(
+function case3(): void {
+  let flag: boolean = false;
+  while (flag) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBooleanVariableWhileBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
 
     initializer.DestroyContext(context);
 }
@@ -385,8 +756,8 @@ console.log("log");
 
     const size_t start = LineColToPos(context, 3, 11);
     const size_t length = 1;
-    const size_t expectedTextChangeStart = 24;
-    const size_t expectedTextChangeLength = 33;
+    const size_t expectedTextChangeStart = 36;
+    const size_t expectedTextChangeLength = 19;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
@@ -421,8 +792,8 @@ console.log("log");
 
     const size_t start = LineColToPos(context, 4, 12);
     const size_t length = 1;
-    const size_t expectedTextChangeStart = 35;
-    const size_t expectedTextChangeLength = 36;
+    const size_t expectedTextChangeStart = 50;
+    const size_t expectedTextChangeLength = 19;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
@@ -456,8 +827,8 @@ console.log("log");
 
     const size_t start = LineColToPos(context, 3, 12);
     const size_t length = 1;
-    const size_t expectedTextChangeStart = 24;
-    const size_t expectedTextChangeLength = 36;
+    const size_t expectedTextChangeStart = 39;
+    const size_t expectedTextChangeLength = 19;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
@@ -474,35 +845,94 @@ console.log("log");
 
 TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableAfterForFalse)
 {
-    std::vector<std::string> fileNames = {"FixUnreachableCodeIfFalse.ets"};
-    std::vector<std::string> fileContents = {
-        R"(
+    const std::string source = R"(
 function test() : void {
 for (; false ;) {
         console.log("log");
 }
 }
-)"};
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeIfFalse.ets"};
+    std::vector<std::string> fileContents = {source};
 
     auto filePaths = CreateTempFile(fileNames, fileContents);
     ASSERT_EQ(fileNames.size(), filePaths.size());
 
     Initializer initializer;
     auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    const size_t start = LineColToPos(context, 3, 17);
-    const size_t length = 1;
-    const size_t expectedTextChangeStart = 26;
-    const size_t expectedTextChangeLength = 47;
-    const int expectedFixResultSize = 1;
 
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
-    CodeFixOptions options = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    ValidateUnreachableDiagnosticAndFix(context, source, "console.log(\"log\");", filePaths[0]);
 
-    auto fixResult =
-        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
-    ASSERT_EQ(fixResult.size(), expectedFixResultSize);
+    initializer.DestroyContext(context);
+}
 
-    ValidateCodeFixActionInfo(fixResult[0], expectedTextChangeStart, expectedTextChangeLength, filePaths[0]);
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBracelessForFalse)
+{
+    const std::string source = R"(
+function case3(): void {
+  for (; false ;) return;
+  let reachable: number = 10;
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBracelessForFalse.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateCodeFixForText(context, source, "return;", "for (; false ;) return;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestFixRemoveUnreachableInBooleanVariableForBlock)
+{
+    const std::string source = R"(
+function case3(): void {
+  let flag: boolean = false;
+  for (; flag ;) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeBooleanVariableForBlock.ets"};
+    std::vector<std::string> fileContents = {source};
+
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    ValidateUnreachableDiagnosticAndFix(context, source, "let unreach: number = 10;", filePaths[0]);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(FixUnreachableCodeTests, TestNoFalsePositiveForShadowedNumericVariableCondition)
+{
+    const std::string source = R"(
+function case3(): void {
+  let x: number = 0;
+  {
+    let x: number = 1;
+  }
+  if (x == 0) {
+    let unreach: number = 10;
+  }
+}
+)";
+    std::vector<std::string> fileNames = {"FixUnreachableCodeShadowedNumericCondition.ets"};
+    std::vector<std::string> fileContents = {source};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    AssertNoUnreachableDiagnostic(context);
 
     initializer.DestroyContext(context);
 }
@@ -526,8 +956,8 @@ return;
     auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     const size_t start = LineColToPos(context, 4, 11);
     const size_t length = 1;
-    const size_t expectedTextChangeStart = 27;
-    const size_t expectedTextChangeLength = 34;
+    const size_t expectedTextChangeStart = 40;
+    const size_t expectedTextChangeLength = 19;
     const int expectedFixResultSize = 1;
 
     std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());

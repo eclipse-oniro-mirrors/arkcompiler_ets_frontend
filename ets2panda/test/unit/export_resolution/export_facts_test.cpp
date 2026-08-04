@@ -251,6 +251,27 @@ TEST_F(ExportFactsTest, CollectsSameNameSelectiveExportAsClassDefinition)
         << static_cast<int>(alias->variable->Declaration()->Node()->Type());
 }
 
+TEST_F(ExportFactsTest, ProgramCleanupRemovesPendingLocalExportAliases)
+{
+    InitializeFromFile("main.ets", R"ETS(
+        function a() {}
+        export { a };
+    )ETS");
+
+    auto *program = CurrentProgram();
+    ASSERT_NE(program, nullptr);
+    auto *binder = program->VarBinder()->AsETSBinder();
+    ASSERT_EQ(binder->PendingLocalExportAliases(program).size(), 1U);
+
+    binder->GetExportFactsStore().ResetProgram(program);
+    ASSERT_EQ(binder->PendingLocalExportAliases(program).size(), 1U);
+
+    binder->CleanScopesAndRecordTables(program);
+    EXPECT_TRUE(binder->PendingLocalExportAliases(program).empty());
+    EXPECT_TRUE(binder->GetExportFacts(program).locals.empty());
+    EXPECT_EQ(binder->GetExportFactsStore().FindSurfaceByProgram(program), nullptr);
+}
+
 TEST_F(ExportFactsTest, CollectsExportDeclareNamespace)
 {
     InitializeFromFile("main.ets", R"ETS(

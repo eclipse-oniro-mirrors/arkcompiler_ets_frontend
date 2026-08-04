@@ -38,3 +38,4 @@ function main() {
 
 
 /* @@@ label Warning Warning W65001: The equality expression is always false. */
+/* @@? 26:13 Warning Warning W0026: Unreachable statement. */

@@ -140,13 +140,13 @@ export class LspDiagnosticNode extends LspNode {
     if (global.interop._getTypeOfVariant(codeVarPtr) === VariantTypes.VARIANT_INT) {
       this.code = global.interop._GetIntFromVariant(codeVarPtr);
     } else {
-      this.code = unpackString(global.interop._getStringFromVariant(codeVarPtr));
+      this.code = unpackString(global.interop._GetStringFromVariant(codeVarPtr));
     }
     let dataPtr = global.es2panda._getDiagData(peer);
     if (global.interop._getTypeOfVariant(dataPtr) === VariantTypes.VARIANT_INT) {
       this.data = global.interop._GetIntFromVariant(dataPtr);
     } else {
-      this.data = unpackString(global.interop._getStringFromVariant(dataPtr));
+      this.data = unpackString(global.interop._GetStringFromVariant(dataPtr));
     }
     this.severity = global.es2panda._getDiagSeverity(peer);
     this.codeDescription = new LspCodeDescription(global.es2panda._getDiagCodeDescription(peer));
