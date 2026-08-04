@@ -21,8 +21,9 @@ export class AbstractDaoSession{
     }
 }
 
-/* @@? 1:4 Error Semantic error ESE0070: 'ValueType' type does not exist. */
-/* @@? 1:4 Error Semantic error ESE0371: Cannot find type 'dataRdb'. */
+/* @@? 17:80 Error Semantic error ESE0070: 'ValueType' type does not exist. */
+/* @@? 17:80 Error Semantic error ESE0371: Cannot find type 'dataRdb'. */
 /* @@? 17:62 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 19:17 Error Semantic error ESE0371: Cannot find type 'AbstractDao'. */
 /* @@? 19:17 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
+/* @@? 19:45 Error Semantic error ESE0087: Property 'getDao' does not exist on type 'AbstractDaoSession' */

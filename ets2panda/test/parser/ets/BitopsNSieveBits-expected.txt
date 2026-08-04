@@ -84,13 +84,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 17,
+                                "column": 26,
                                 "program": "BitopsNSieveBits.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 31,
                                 "program": "BitopsNSieveBits.ets"
                               }
                             }
@@ -102,13 +102,13 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 26,
                                     "program": "BitopsNSieveBits.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 31,
                                     "program": "BitopsNSieveBits.ets"
                                   }
                                 }
@@ -116,26 +116,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 26,
                                 "program": "BitopsNSieveBits.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 31,
                                 "program": "BitopsNSieveBits.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 17,
+                              "column": 26,
                               "program": "BitopsNSieveBits.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 31,
                               "program": "BitopsNSieveBits.ets"
                             }
                           }
@@ -143,7 +143,7 @@
                         "loc": {
                           "start": {
                             "line": 17,
-                            "column": 29,
+                            "column": 26,
                             "program": "BitopsNSieveBits.ets"
                           },
                           "end": {
@@ -1923,13 +1923,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 35,
+                          "column": 43,
                           "program": "BitopsNSieveBits.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 35,
+                          "column": 48,
                           "program": "BitopsNSieveBits.ets"
                         }
                       }
@@ -1941,13 +1941,13 @@
                           "type": "ETSPrimitiveType",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 35,
+                              "column": 43,
                               "program": "BitopsNSieveBits.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 35,
+                              "column": 48,
                               "program": "BitopsNSieveBits.ets"
                             }
                           }
@@ -1955,26 +1955,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 35,
+                          "column": 43,
                           "program": "BitopsNSieveBits.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 35,
+                          "column": 48,
                           "program": "BitopsNSieveBits.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 35,
+                        "column": 43,
                         "program": "BitopsNSieveBits.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 35,
+                        "column": 48,
                         "program": "BitopsNSieveBits.ets"
                       }
                     }
@@ -1982,7 +1982,7 @@
                   "loc": {
                     "start": {
                       "line": 35,
-                      "column": 46,
+                      "column": 43,
                       "program": "BitopsNSieveBits.ets"
                     },
                     "end": {
@@ -2012,13 +2012,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 37,
+                                      "column": 9,
                                       "program": "BitopsNSieveBits.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 37,
+                                      "column": 16,
                                       "program": "BitopsNSieveBits.ets"
                                     }
                                   }
@@ -2030,13 +2030,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 37,
+                                          "column": 9,
                                           "program": "BitopsNSieveBits.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 37,
+                                          "column": 16,
                                           "program": "BitopsNSieveBits.ets"
                                         }
                                       }
@@ -2044,26 +2044,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 37,
+                                      "column": 9,
                                       "program": "BitopsNSieveBits.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 37,
+                                      "column": 16,
                                       "program": "BitopsNSieveBits.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 37,
+                                    "column": 9,
                                     "program": "BitopsNSieveBits.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 37,
+                                    "column": 16,
                                     "program": "BitopsNSieveBits.ets"
                                   }
                                 }
@@ -2071,7 +2071,7 @@
                               "loc": {
                                 "start": {
                                   "line": 37,
-                                  "column": 21,
+                                  "column": 18,
                                   "program": "BitopsNSieveBits.ets"
                                 },
                                 "end": {
@@ -2853,13 +2853,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 47,
+                                      "column": 9,
                                       "program": "BitopsNSieveBits.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 47,
+                                      "column": 15,
                                       "program": "BitopsNSieveBits.ets"
                                     }
                                   }
@@ -2871,13 +2871,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 47,
+                                          "column": 9,
                                           "program": "BitopsNSieveBits.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 47,
+                                          "column": 15,
                                           "program": "BitopsNSieveBits.ets"
                                         }
                                       }
@@ -2885,26 +2885,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 47,
+                                      "column": 9,
                                       "program": "BitopsNSieveBits.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 47,
+                                      "column": 15,
                                       "program": "BitopsNSieveBits.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 47,
+                                    "column": 9,
                                     "program": "BitopsNSieveBits.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 47,
+                                    "column": 15,
                                     "program": "BitopsNSieveBits.ets"
                                   }
                                 }
@@ -2912,7 +2912,7 @@
                               "loc": {
                                 "start": {
                                   "line": 47,
-                                  "column": 20,
+                                  "column": 17,
                                   "program": "BitopsNSieveBits.ets"
                                 },
                                 "end": {

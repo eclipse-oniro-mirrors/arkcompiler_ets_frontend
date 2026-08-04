@@ -55,7 +55,8 @@ static ir::AstNode *ConvertToResizableArrayType(ir::TSArrayType *node, public_li
     typeAnnotation->SetRange(node->Range());
     typeAnnotation->SetOriginalNode(node);
     SetElementTypeOriginalNode(typeAnnotation, const_cast<ir::TypeNode *>(node->ElementType()), ctx->Allocator());
-    RefineSourceRanges(node);
+    RefineSourceRanges(typeAnnotation);
+    typeAnnotation->SetRange(node->Range());
     auto modifier = node->Modifiers();
     if (node->IsReadonlyType()) {
         modifier &= ~ir::ModifierFlags::READONLY_PARAMETER;

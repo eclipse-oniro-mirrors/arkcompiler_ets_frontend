@@ -62,13 +62,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 17,
+                          "column": 27,
                           "program": "returnTypeGenericArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 44,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }
@@ -88,39 +88,39 @@
                                   "name": "T",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 27,
                                       "program": "returnTypeGenericArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 44,
                                       "program": "returnTypeGenericArray.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 27,
                                     "program": "returnTypeGenericArray.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 44,
                                     "program": "returnTypeGenericArray.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 27,
                                   "program": "returnTypeGenericArray.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 44,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -129,13 +129,13 @@
                               "type": "ETSUndefinedType",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 27,
                                   "program": "returnTypeGenericArray.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 17,
+                                  "column": 44,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -143,13 +143,13 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 27,
                               "program": "returnTypeGenericArray.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 44,
                               "program": "returnTypeGenericArray.ets"
                             }
                           }
@@ -157,26 +157,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 27,
                           "program": "returnTypeGenericArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 44,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 17,
+                        "column": 27,
                         "program": "returnTypeGenericArray.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 17,
+                        "column": 44,
                         "program": "returnTypeGenericArray.ets"
                       }
                     }
@@ -184,7 +184,7 @@
                   "loc": {
                     "start": {
                       "line": 17,
-                      "column": 42,
+                      "column": 27,
                       "program": "returnTypeGenericArray.ets"
                     },
                     "end": {
@@ -577,13 +577,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 21,
+                          "column": 36,
                           "program": "returnTypeGenericArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 53,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }
@@ -603,39 +603,39 @@
                                   "name": "T",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 21,
+                                      "column": 36,
                                       "program": "returnTypeGenericArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 21,
+                                      "column": 53,
                                       "program": "returnTypeGenericArray.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 21,
+                                    "column": 36,
                                     "program": "returnTypeGenericArray.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 21,
+                                    "column": 53,
                                     "program": "returnTypeGenericArray.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 21,
+                                  "column": 36,
                                   "program": "returnTypeGenericArray.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 21,
+                                  "column": 53,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -644,13 +644,13 @@
                               "type": "ETSUndefinedType",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 21,
+                                  "column": 36,
                                   "program": "returnTypeGenericArray.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 21,
+                                  "column": 53,
                                   "program": "returnTypeGenericArray.ets"
                                 }
                               }
@@ -658,13 +658,13 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 21,
+                              "column": 36,
                               "program": "returnTypeGenericArray.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 21,
+                              "column": 53,
                               "program": "returnTypeGenericArray.ets"
                             }
                           }
@@ -672,26 +672,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 36,
                           "program": "returnTypeGenericArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 21,
+                          "column": 53,
                           "program": "returnTypeGenericArray.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 21,
+                        "column": 36,
                         "program": "returnTypeGenericArray.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 21,
+                        "column": 53,
                         "program": "returnTypeGenericArray.ets"
                       }
                     }
@@ -699,7 +699,7 @@
                   "loc": {
                     "start": {
                       "line": 21,
-                      "column": 51,
+                      "column": 36,
                       "program": "returnTypeGenericArray.ets"
                     },
                     "end": {

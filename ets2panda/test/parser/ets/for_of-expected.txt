@@ -56,13 +56,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 8,
                       "program": "for_of.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 13,
                       "program": "for_of.ets"
                     }
                   }
@@ -74,13 +74,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 8,
                           "program": "for_of.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 13,
                           "program": "for_of.ets"
                         }
                       }
@@ -88,26 +88,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 8,
                       "program": "for_of.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 13,
                       "program": "for_of.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 17,
+                    "column": 8,
                     "program": "for_of.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 17,
+                    "column": 13,
                     "program": "for_of.ets"
                   }
                 }
@@ -115,7 +115,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 11,
+                  "column": 8,
                   "program": "for_of.ets"
                 },
                 "end": {

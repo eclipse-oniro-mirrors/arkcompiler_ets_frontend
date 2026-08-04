@@ -99,13 +99,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 16,
+                                "column": 20,
                                 "program": "functions_with_ambiguous_rest_parameter.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 16,
+                                "column": 28,
                                 "program": "functions_with_ambiguous_rest_parameter.ets"
                               }
                             }
@@ -122,39 +122,39 @@
                                     "name": "number",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 16,
+                                        "column": 20,
                                         "program": "functions_with_ambiguous_rest_parameter.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 16,
+                                        "column": 28,
                                         "program": "functions_with_ambiguous_rest_parameter.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 16,
+                                      "column": 20,
                                       "program": "functions_with_ambiguous_rest_parameter.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 16,
+                                      "column": 28,
                                       "program": "functions_with_ambiguous_rest_parameter.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 16,
+                                    "column": 20,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 16,
+                                    "column": 28,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   }
                                 }
@@ -162,26 +162,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 16,
+                                "column": 20,
                                 "program": "functions_with_ambiguous_rest_parameter.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 16,
+                                "column": 28,
                                 "program": "functions_with_ambiguous_rest_parameter.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 16,
+                              "column": 20,
                               "program": "functions_with_ambiguous_rest_parameter.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 16,
+                              "column": 28,
                               "program": "functions_with_ambiguous_rest_parameter.ets"
                             }
                           }
@@ -189,7 +189,7 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 26,
+                            "column": 20,
                             "program": "functions_with_ambiguous_rest_parameter.ets"
                           },
                           "end": {
@@ -360,13 +360,13 @@
                                 "name": "Array",
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 20,
+                                    "column": 20,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 28,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   }
                                 }
@@ -383,39 +383,39 @@
                                         "name": "string",
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 20,
+                                            "column": 20,
                                             "program": "functions_with_ambiguous_rest_parameter.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 20,
+                                            "column": 28,
                                             "program": "functions_with_ambiguous_rest_parameter.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 20,
+                                          "column": 20,
                                           "program": "functions_with_ambiguous_rest_parameter.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 20,
+                                          "column": 28,
                                           "program": "functions_with_ambiguous_rest_parameter.ets"
                                         }
                                       }
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 20,
+                                        "column": 20,
                                         "program": "functions_with_ambiguous_rest_parameter.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 20,
+                                        "column": 28,
                                         "program": "functions_with_ambiguous_rest_parameter.ets"
                                       }
                                     }
@@ -423,26 +423,26 @@
                                 ],
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 20,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 20,
+                                    "column": 28,
                                     "program": "functions_with_ambiguous_rest_parameter.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 1,
+                                  "line": 20,
+                                  "column": 20,
                                   "program": "functions_with_ambiguous_rest_parameter.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 20,
+                                  "column": 28,
                                   "program": "functions_with_ambiguous_rest_parameter.ets"
                                 }
                               }
@@ -450,7 +450,7 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 26,
+                                "column": 20,
                                 "program": "functions_with_ambiguous_rest_parameter.ets"
                               },
                               "end": {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,18 +14,18 @@
  */
 
 class A<in T1,out T2,T3>{
-    field1:T1/* @@ label1 */[];   //CTE
-    field2:T2/* @@ label2 */[];   //CTE
+    field1:/* @@ label1 */T1[];   //CTE
+    field2:/* @@ label2 */T2[];   //CTE
     field3:T3[];
-    readonly readonlyfield1:T1/* @@ label3 */[];   //CTE
-    readonly readonlyfield2:T2/* @@ label4 */[];   //CTE
+    readonly readonlyfield1:/* @@ label3 */T1[];   //CTE
+    readonly readonlyfield2:/* @@ label4 */T2[];   //CTE
     readonly readonlyfield3:T3[];
 
-    returnTypeFunc1():T1/* @@ label5 */[]{   //CTE
+    returnTypeFunc1():/* @@ label5 */T1[]{   //CTE
         return this.readonlyfield1;
     }
 
-    returnTypeFunc2():T2/* @@ label6 */[]{   //CTE
+    returnTypeFunc2():/* @@ label6 */T2[]{   //CTE
         return this.readonlyfield2;
     }
 
@@ -33,13 +33,13 @@ class A<in T1,out T2,T3>{
         return this.readonlyfield3;
     }
 
-    paramsFunc1(a:T1/* @@ label7 */[]){}   //CTE
-    paramsFunc2(a:T2/* @@ label8 */[]){}   //CTE
+    paramsFunc1(a:/* @@ label7 */T1[]){}   //CTE
+    paramsFunc2(a:/* @@ label8 */T2[]){}   //CTE
     paramsFunc3(a:T3[]){}
-    paramsFunc4(a:T1/* @@ label9 */[], b:T2/* @@ label10 */[]){}   //CTE
-    paramsFunc5(a:T1/* @@ label11 */[], b:T3[]){}   //CTE
-    paramsFunc6(a:T2/* @@ label12 */[], b:T3[]){}   //CTE
-    paramsFunc7(a:T1/* @@ label13 */[], b:T2/* @@ label14 */[], c:T3[]){}   //CTE
+    paramsFunc4(a:/* @@ label9 */T1[], b:/* @@ label10 */T2[]){}   //CTE
+    paramsFunc5(a:/* @@ label11 */T1[], b:T3[]){}   //CTE
+    paramsFunc6(a:/* @@ label12 */T2[], b:T3[]){}   //CTE
+    paramsFunc7(a:/* @@ label13 */T1[], b:/* @@ label14 */T2[], c:T3[]){}   //CTE
 }
 
 

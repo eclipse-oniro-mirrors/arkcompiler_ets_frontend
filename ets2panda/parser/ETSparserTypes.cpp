@@ -515,19 +515,20 @@ ir::TypeNode *ETSParser::ParseTsArrayType(ir::TypeNode *typeNode, TypeAnnotation
             return typeNode;
         }
 
-        lexer::SourcePosition startPos = Lexer()->GetToken().Start();
+        lexer::SourcePosition arrayStartPos = typeNode->Start();
+        lexer::SourcePosition bracketStartPos = Lexer()->GetToken().Start();
 
         Lexer()->NextToken();  // eat '['
 
         if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET) {
             if ((*options & TypeAnnotationParsingOptions::REPORT_ERROR) != 0) {
-                return CreateErrorForWrongArrayType(startPos);
+                return CreateErrorForWrongArrayType(bracketStartPos);
             }
-            return AllocBrokenType(startPos);
+            return AllocBrokenType(bracketStartPos);
         }
 
         typeNode = AllocNode<ir::TSArrayType>(typeNode, Allocator());
-        typeNode->SetRange({startPos, Lexer()->GetToken().End()});
+        typeNode->SetRange({arrayStartPos, Lexer()->GetToken().End()});
         Lexer()->NextToken();  // eat ']'
     }
     return typeNode;

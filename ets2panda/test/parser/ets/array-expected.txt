@@ -159,13 +159,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 16,
+                      "column": 8,
                       "program": "array.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 16,
+                      "column": 13,
                       "program": "array.ets"
                     }
                   }
@@ -177,13 +177,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 16,
+                          "column": 8,
                           "program": "array.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 16,
+                          "column": 13,
                           "program": "array.ets"
                         }
                       }
@@ -191,26 +191,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 16,
+                      "column": 8,
                       "program": "array.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 16,
+                      "column": 13,
                       "program": "array.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 16,
+                    "column": 8,
                     "program": "array.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 16,
+                    "column": 13,
                     "program": "array.ets"
                   }
                 }
@@ -218,7 +218,7 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 11,
+                  "column": 8,
                   "program": "array.ets"
                 },
                 "end": {
@@ -275,13 +275,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 8,
                       "program": "array.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 16,
                       "program": "array.ets"
                     }
                   }
@@ -298,39 +298,39 @@
                           "name": "String",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 8,
                               "program": "array.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 16,
                               "program": "array.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 8,
                             "program": "array.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 16,
                             "program": "array.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 8,
                           "program": "array.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 16,
                           "program": "array.ets"
                         }
                       }
@@ -338,26 +338,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 8,
                       "program": "array.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 16,
                       "program": "array.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 17,
+                    "column": 8,
                     "program": "array.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 17,
+                    "column": 16,
                     "program": "array.ets"
                   }
                 }
@@ -365,7 +365,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 14,
+                  "column": 8,
                   "program": "array.ets"
                 },
                 "end": {
@@ -450,13 +450,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 19,
+                                "column": 20,
                                 "program": "array.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 19,
+                                "column": 28,
                                 "program": "array.ets"
                               }
                             }
@@ -468,13 +468,13 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 19,
+                                    "column": 20,
                                     "program": "array.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 19,
+                                    "column": 28,
                                     "program": "array.ets"
                                   }
                                 }
@@ -482,26 +482,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 19,
+                                "column": 20,
                                 "program": "array.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 19,
+                                "column": 28,
                                 "program": "array.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 19,
+                              "column": 20,
                               "program": "array.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 19,
+                              "column": 28,
                               "program": "array.ets"
                             }
                           }
@@ -509,7 +509,7 @@
                         "loc": {
                           "start": {
                             "line": 19,
-                            "column": 26,
+                            "column": 20,
                             "program": "array.ets"
                           },
                           "end": {
@@ -932,13 +932,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 26,
+                                      "column": 9,
                                       "program": "array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 26,
+                                      "column": 10,
                                       "program": "array.ets"
                                     }
                                   }
@@ -955,13 +955,13 @@
                                           "name": "Array",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 1,
+                                              "line": 26,
+                                              "column": 9,
                                               "program": "array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 26,
+                                              "column": 10,
                                               "program": "array.ets"
                                             }
                                           }
@@ -973,13 +973,13 @@
                                               "type": "ETSPrimitiveType",
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 26,
+                                                  "column": 9,
                                                   "program": "array.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 26,
+                                                  "column": 10,
                                                   "program": "array.ets"
                                                 }
                                               }
@@ -987,39 +987,39 @@
                                           ],
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 26,
+                                              "column": 9,
                                               "program": "array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 26,
+                                              "column": 10,
                                               "program": "array.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 1,
+                                            "line": 26,
+                                            "column": 9,
                                             "program": "array.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 26,
+                                            "column": 10,
                                             "program": "array.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 26,
+                                          "column": 9,
                                           "program": "array.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 26,
+                                          "column": 10,
                                           "program": "array.ets"
                                         }
                                       }
@@ -1027,26 +1027,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 26,
+                                      "column": 9,
                                       "program": "array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 26,
+                                      "column": 10,
                                       "program": "array.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 26,
+                                    "column": 9,
                                     "program": "array.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 26,
+                                    "column": 10,
                                     "program": "array.ets"
                                   }
                                 }
@@ -1054,7 +1054,7 @@
                               "loc": {
                                 "start": {
                                   "line": 26,
-                                  "column": 18,
+                                  "column": 12,
                                   "program": "array.ets"
                                 },
                                 "end": {
@@ -1203,13 +1203,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 27,
+                                      "column": 9,
                                       "program": "array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 27,
+                                      "column": 10,
                                       "program": "array.ets"
                                     }
                                   }
@@ -1226,13 +1226,13 @@
                                           "name": "Array",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 1,
+                                              "line": 27,
+                                              "column": 9,
                                               "program": "array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 27,
+                                              "column": 10,
                                               "program": "array.ets"
                                             }
                                           }
@@ -1244,13 +1244,13 @@
                                               "type": "ETSPrimitiveType",
                                               "loc": {
                                                 "start": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 27,
+                                                  "column": 9,
                                                   "program": "array.ets"
                                                 },
                                                 "end": {
-                                                  "line": 1,
-                                                  "column": 3,
+                                                  "line": 27,
+                                                  "column": 10,
                                                   "program": "array.ets"
                                                 }
                                               }
@@ -1258,39 +1258,39 @@
                                           ],
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 27,
+                                              "column": 9,
                                               "program": "array.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 27,
+                                              "column": 10,
                                               "program": "array.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 1,
+                                            "line": 27,
+                                            "column": 9,
                                             "program": "array.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 27,
+                                            "column": 10,
                                             "program": "array.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 27,
+                                          "column": 9,
                                           "program": "array.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 27,
+                                          "column": 10,
                                           "program": "array.ets"
                                         }
                                       }
@@ -1298,26 +1298,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 27,
+                                      "column": 9,
                                       "program": "array.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 27,
+                                      "column": 10,
                                       "program": "array.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 27,
+                                    "column": 9,
                                     "program": "array.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 27,
+                                    "column": 10,
                                     "program": "array.ets"
                                   }
                                 }
@@ -1325,7 +1325,7 @@
                               "loc": {
                                 "start": {
                                   "line": 27,
-                                  "column": 18,
+                                  "column": 12,
                                   "program": "array.ets"
                                 },
                                 "end": {

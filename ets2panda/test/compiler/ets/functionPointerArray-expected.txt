@@ -337,13 +337,13 @@
                       "name": "Array",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 20,
+                          "column": 37,
                           "program": "functionPointerArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 48,
                           "program": "functionPointerArray.ets"
                         }
                       }
@@ -360,39 +360,39 @@
                               "name": "func_type",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 20,
+                                  "column": 37,
                                   "program": "functionPointerArray.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 3,
+                                  "line": 20,
+                                  "column": 48,
                                   "program": "functionPointerArray.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 20,
+                                "column": 37,
                                 "program": "functionPointerArray.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 20,
+                                "column": 48,
                                 "program": "functionPointerArray.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 37,
                               "program": "functionPointerArray.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 20,
+                              "column": 48,
                               "program": "functionPointerArray.ets"
                             }
                           }
@@ -400,26 +400,26 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 37,
                           "program": "functionPointerArray.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 20,
+                          "column": 48,
                           "program": "functionPointerArray.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 20,
+                        "column": 37,
                         "program": "functionPointerArray.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 20,
+                        "column": 48,
                         "program": "functionPointerArray.ets"
                       }
                     }
@@ -427,7 +427,7 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 46,
+                      "column": 37,
                       "program": "functionPointerArray.ets"
                     },
                     "end": {
@@ -624,13 +624,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 25,
+                                      "column": 7,
                                       "program": "functionPointerArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 25,
+                                      "column": 10,
                                       "program": "functionPointerArray.ets"
                                     }
                                   }
@@ -647,39 +647,39 @@
                                           "name": "func_type",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 25,
+                                              "column": 7,
                                               "program": "functionPointerArray.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 25,
+                                              "column": 10,
                                               "program": "functionPointerArray.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 25,
+                                            "column": 7,
                                             "program": "functionPointerArray.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 25,
+                                            "column": 10,
                                             "program": "functionPointerArray.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 25,
+                                          "column": 7,
                                           "program": "functionPointerArray.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 25,
+                                          "column": 10,
                                           "program": "functionPointerArray.ets"
                                         }
                                       }
@@ -687,26 +687,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 25,
+                                      "column": 7,
                                       "program": "functionPointerArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 25,
+                                      "column": 10,
                                       "program": "functionPointerArray.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 25,
+                                    "column": 7,
                                     "program": "functionPointerArray.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 25,
+                                    "column": 10,
                                     "program": "functionPointerArray.ets"
                                   }
                                 }
@@ -714,7 +714,7 @@
                               "loc": {
                                 "start": {
                                   "line": 25,
-                                  "column": 21,
+                                  "column": 12,
                                   "program": "functionPointerArray.ets"
                                 },
                                 "end": {
@@ -926,13 +926,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 28,
+                                      "column": 7,
                                       "program": "functionPointerArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 28,
+                                      "column": 12,
                                       "program": "functionPointerArray.ets"
                                     }
                                   }
@@ -949,39 +949,39 @@
                                           "name": "func_type",
                                           "loc": {
                                             "start": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 28,
+                                              "column": 7,
                                               "program": "functionPointerArray.ets"
                                             },
                                             "end": {
-                                              "line": 1,
-                                              "column": 3,
+                                              "line": 28,
+                                              "column": 12,
                                               "program": "functionPointerArray.ets"
                                             }
                                           }
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 28,
+                                            "column": 7,
                                             "program": "functionPointerArray.ets"
                                           },
                                           "end": {
-                                            "line": 1,
-                                            "column": 3,
+                                            "line": 28,
+                                            "column": 12,
                                             "program": "functionPointerArray.ets"
                                           }
                                         }
                                       },
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 28,
+                                          "column": 7,
                                           "program": "functionPointerArray.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 28,
+                                          "column": 12,
                                           "program": "functionPointerArray.ets"
                                         }
                                       }
@@ -989,26 +989,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 28,
+                                      "column": 7,
                                       "program": "functionPointerArray.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 28,
+                                      "column": 12,
                                       "program": "functionPointerArray.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 28,
+                                    "column": 7,
                                     "program": "functionPointerArray.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 28,
+                                    "column": 12,
                                     "program": "functionPointerArray.ets"
                                   }
                                 }
@@ -1016,7 +1016,7 @@
                               "loc": {
                                 "start": {
                                   "line": 28,
-                                  "column": 23,
+                                  "column": 14,
                                   "program": "functionPointerArray.ets"
                                 },
                                 "end": {

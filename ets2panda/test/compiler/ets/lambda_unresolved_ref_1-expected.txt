@@ -789,13 +789,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 23,
+                                "column": 19,
                                 "program": "lambda_unresolved_ref_1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 23,
+                                "column": 27,
                                 "program": "lambda_unresolved_ref_1.ets"
                               }
                             }
@@ -812,39 +812,39 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 23,
+                                        "column": 19,
                                         "program": "lambda_unresolved_ref_1.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 23,
+                                        "column": 27,
                                         "program": "lambda_unresolved_ref_1.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 23,
+                                      "column": 19,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 23,
+                                      "column": 27,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 23,
+                                    "column": 19,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 23,
+                                    "column": 27,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   }
                                 }
@@ -852,26 +852,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 23,
+                                "column": 19,
                                 "program": "lambda_unresolved_ref_1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 23,
+                                "column": 27,
                                 "program": "lambda_unresolved_ref_1.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 23,
+                              "column": 19,
                               "program": "lambda_unresolved_ref_1.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 23,
+                              "column": 27,
                               "program": "lambda_unresolved_ref_1.ets"
                             }
                           }
@@ -879,7 +879,7 @@
                         "loc": {
                           "start": {
                             "line": 23,
-                            "column": 25,
+                            "column": 19,
                             "program": "lambda_unresolved_ref_1.ets"
                           },
                           "end": {
@@ -1471,13 +1471,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 30,
+                                "column": 20,
                                 "program": "lambda_unresolved_ref_1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 30,
+                                "column": 28,
                                 "program": "lambda_unresolved_ref_1.ets"
                               }
                             }
@@ -1494,39 +1494,39 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 30,
+                                        "column": 20,
                                         "program": "lambda_unresolved_ref_1.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 30,
+                                        "column": 28,
                                         "program": "lambda_unresolved_ref_1.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 30,
+                                      "column": 20,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 30,
+                                      "column": 28,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 30,
+                                    "column": 20,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 30,
+                                    "column": 28,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   }
                                 }
@@ -1534,26 +1534,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 30,
+                                "column": 20,
                                 "program": "lambda_unresolved_ref_1.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 30,
+                                "column": 28,
                                 "program": "lambda_unresolved_ref_1.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 30,
+                              "column": 20,
                               "program": "lambda_unresolved_ref_1.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 30,
+                              "column": 28,
                               "program": "lambda_unresolved_ref_1.ets"
                             }
                           }
@@ -1561,7 +1561,7 @@
                         "loc": {
                           "start": {
                             "line": 30,
-                            "column": 26,
+                            "column": 20,
                             "program": "lambda_unresolved_ref_1.ets"
                           },
                           "end": {
@@ -2239,13 +2239,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 40,
+                                      "column": 6,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 40,
+                                      "column": 9,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
@@ -2257,13 +2257,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 40,
+                                          "column": 6,
                                           "program": "lambda_unresolved_ref_1.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 40,
+                                          "column": 9,
                                           "program": "lambda_unresolved_ref_1.ets"
                                         }
                                       }
@@ -2271,26 +2271,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 40,
+                                      "column": 6,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 40,
+                                      "column": 9,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 40,
+                                    "column": 6,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 40,
+                                    "column": 9,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   }
                                 }
@@ -2298,7 +2298,7 @@
                               "loc": {
                                 "start": {
                                   "line": 40,
-                                  "column": 16,
+                                  "column": 11,
                                   "program": "lambda_unresolved_ref_1.ets"
                                 },
                                 "end": {
@@ -3227,13 +3227,13 @@
                                   "name": "Array",
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 1,
+                                      "line": 51,
+                                      "column": 9,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 51,
+                                      "column": 12,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
@@ -3245,13 +3245,13 @@
                                       "type": "ETSPrimitiveType",
                                       "loc": {
                                         "start": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 51,
+                                          "column": 9,
                                           "program": "lambda_unresolved_ref_1.ets"
                                         },
                                         "end": {
-                                          "line": 1,
-                                          "column": 3,
+                                          "line": 51,
+                                          "column": 12,
                                           "program": "lambda_unresolved_ref_1.ets"
                                         }
                                       }
@@ -3259,26 +3259,26 @@
                                   ],
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 51,
+                                      "column": 9,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 51,
+                                      "column": 12,
                                       "program": "lambda_unresolved_ref_1.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 1,
+                                    "line": 51,
+                                    "column": 9,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 51,
+                                    "column": 12,
                                     "program": "lambda_unresolved_ref_1.ets"
                                   }
                                 }
@@ -3286,7 +3286,7 @@
                               "loc": {
                                 "start": {
                                   "line": 51,
-                                  "column": 19,
+                                  "column": 14,
                                   "program": "lambda_unresolved_ref_1.ets"
                                 },
                                 "end": {

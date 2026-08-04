@@ -2290,13 +2290,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 39,
                       "program": "StringBase64.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 19,
+                      "column": 44,
                       "program": "StringBase64.ets"
                     }
                   }
@@ -2308,13 +2308,13 @@
                       "type": "ETSPrimitiveType",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 19,
+                          "column": 39,
                           "program": "StringBase64.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 19,
+                          "column": 44,
                           "program": "StringBase64.ets"
                         }
                       }
@@ -2322,26 +2322,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 19,
+                      "column": 39,
                       "program": "StringBase64.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 19,
+                      "column": 44,
                       "program": "StringBase64.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 19,
+                    "column": 39,
                     "program": "StringBase64.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 19,
+                    "column": 44,
                     "program": "StringBase64.ets"
                   }
                 }
@@ -2349,7 +2349,7 @@
               "loc": {
                 "start": {
                   "line": 19,
-                  "column": 42,
+                  "column": 39,
                   "program": "StringBase64.ets"
                 },
                 "end": {

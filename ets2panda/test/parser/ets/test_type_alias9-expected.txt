@@ -74,13 +74,13 @@
             "name": "Array",
             "loc": {
               "start": {
-                "line": 1,
-                "column": 1,
+                "line": 17,
+                "column": 15,
                 "program": "test_type_alias9.ets"
               },
               "end": {
-                "line": 1,
-                "column": 3,
+                "line": 17,
+                "column": 25,
                 "program": "test_type_alias9.ets"
               }
             }
@@ -97,13 +97,13 @@
                     "name": "Array",
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1,
+                        "line": 17,
+                        "column": 15,
                         "program": "test_type_alias9.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 17,
+                        "column": 25,
                         "program": "test_type_alias9.ets"
                       }
                     }
@@ -115,13 +115,13 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 15,
                             "program": "test_type_alias9.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 25,
                             "program": "test_type_alias9.ets"
                           }
                         }
@@ -129,39 +129,39 @@
                     ],
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 17,
+                        "column": 15,
                         "program": "test_type_alias9.ets"
                       },
                       "end": {
-                        "line": 1,
-                        "column": 3,
+                        "line": 17,
+                        "column": 25,
                         "program": "test_type_alias9.ets"
                       }
                     }
                   },
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 15,
                       "program": "test_type_alias9.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 25,
                       "program": "test_type_alias9.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 17,
+                    "column": 15,
                     "program": "test_type_alias9.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 17,
+                    "column": 25,
                     "program": "test_type_alias9.ets"
                   }
                 }
@@ -169,26 +169,26 @@
             ],
             "loc": {
               "start": {
-                "line": 1,
-                "column": 3,
+                "line": 17,
+                "column": 15,
                 "program": "test_type_alias9.ets"
               },
               "end": {
-                "line": 1,
-                "column": 3,
+                "line": 17,
+                "column": 25,
                 "program": "test_type_alias9.ets"
               }
             }
           },
           "loc": {
             "start": {
-              "line": 1,
-              "column": 1,
+              "line": 17,
+              "column": 15,
               "program": "test_type_alias9.ets"
             },
             "end": {
-              "line": 1,
-              "column": 3,
+              "line": 17,
+              "column": 25,
               "program": "test_type_alias9.ets"
             }
           }
@@ -196,7 +196,7 @@
         "loc": {
           "start": {
             "line": 17,
-            "column": 23,
+            "column": 15,
             "program": "test_type_alias9.ets"
           },
           "end": {

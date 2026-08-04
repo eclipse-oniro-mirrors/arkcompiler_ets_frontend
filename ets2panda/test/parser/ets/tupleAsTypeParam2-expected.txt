@@ -104,13 +104,13 @@
                   "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 15,
                       "program": "tupleAsTypeParam2.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 18,
                       "program": "tupleAsTypeParam2.ets"
                     }
                   }
@@ -127,39 +127,39 @@
                           "name": "T",
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 15,
                               "program": "tupleAsTypeParam2.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 18,
                               "program": "tupleAsTypeParam2.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 15,
                             "program": "tupleAsTypeParam2.ets"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 3,
+                            "line": 17,
+                            "column": 18,
                             "program": "tupleAsTypeParam2.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 15,
                           "program": "tupleAsTypeParam2.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 3,
+                          "line": 17,
+                          "column": 18,
                           "program": "tupleAsTypeParam2.ets"
                         }
                       }
@@ -167,26 +167,26 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 15,
                       "program": "tupleAsTypeParam2.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 3,
+                      "line": 17,
+                      "column": 18,
                       "program": "tupleAsTypeParam2.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
+                    "line": 17,
+                    "column": 15,
                     "program": "tupleAsTypeParam2.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 3,
+                    "line": 17,
+                    "column": 18,
                     "program": "tupleAsTypeParam2.ets"
                   }
                 }
@@ -194,7 +194,7 @@
               "loc": {
                 "start": {
                   "line": 17,
-                  "column": 16,
+                  "column": 15,
                   "program": "tupleAsTypeParam2.ets"
                 },
                 "end": {
@@ -279,13 +279,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 18,
+                                "column": 27,
                                 "program": "tupleAsTypeParam2.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 18,
+                                "column": 30,
                                 "program": "tupleAsTypeParam2.ets"
                               }
                             }
@@ -302,39 +302,39 @@
                                     "name": "T",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 18,
+                                        "column": 27,
                                         "program": "tupleAsTypeParam2.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 18,
+                                        "column": 30,
                                         "program": "tupleAsTypeParam2.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 18,
+                                      "column": 27,
                                       "program": "tupleAsTypeParam2.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 18,
+                                      "column": 30,
                                       "program": "tupleAsTypeParam2.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 18,
+                                    "column": 27,
                                     "program": "tupleAsTypeParam2.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 18,
+                                    "column": 30,
                                     "program": "tupleAsTypeParam2.ets"
                                   }
                                 }
@@ -342,26 +342,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 18,
+                                "column": 27,
                                 "program": "tupleAsTypeParam2.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 18,
+                                "column": 30,
                                 "program": "tupleAsTypeParam2.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 18,
+                              "column": 27,
                               "program": "tupleAsTypeParam2.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 18,
+                              "column": 30,
                               "program": "tupleAsTypeParam2.ets"
                             }
                           }
@@ -369,7 +369,7 @@
                         "loc": {
                           "start": {
                             "line": 18,
-                            "column": 28,
+                            "column": 27,
                             "program": "tupleAsTypeParam2.ets"
                           },
                           "end": {

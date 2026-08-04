@@ -99,13 +99,13 @@
                             "name": "Array",
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 1,
+                                "line": 17,
+                                "column": 28,
                                 "program": "class_def_varargs_2.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 36,
                                 "program": "class_def_varargs_2.ets"
                               }
                             }
@@ -122,39 +122,39 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 17,
+                                        "column": 28,
                                         "program": "class_def_varargs_2.ets"
                                       },
                                       "end": {
-                                        "line": 1,
-                                        "column": 3,
+                                        "line": 17,
+                                        "column": 36,
                                         "program": "class_def_varargs_2.ets"
                                       }
                                     }
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 28,
                                       "program": "class_def_varargs_2.ets"
                                     },
                                     "end": {
-                                      "line": 1,
-                                      "column": 3,
+                                      "line": 17,
+                                      "column": 36,
                                       "program": "class_def_varargs_2.ets"
                                     }
                                   }
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 28,
                                     "program": "class_def_varargs_2.ets"
                                   },
                                   "end": {
-                                    "line": 1,
-                                    "column": 3,
+                                    "line": 17,
+                                    "column": 36,
                                     "program": "class_def_varargs_2.ets"
                                   }
                                 }
@@ -162,26 +162,26 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 28,
                                 "program": "class_def_varargs_2.ets"
                               },
                               "end": {
-                                "line": 1,
-                                "column": 3,
+                                "line": 17,
+                                "column": 36,
                                 "program": "class_def_varargs_2.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
+                              "line": 17,
+                              "column": 28,
                               "program": "class_def_varargs_2.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 3,
+                              "line": 17,
+                              "column": 36,
                               "program": "class_def_varargs_2.ets"
                             }
                           }
@@ -189,7 +189,7 @@
                         "loc": {
                           "start": {
                             "line": 17,
-                            "column": 34,
+                            "column": 28,
                             "program": "class_def_varargs_2.ets"
                           },
                           "end": {
