@@ -944,6 +944,27 @@ void ETSChecker::SetUpDefaultTypeDependenciesIfNeeded(ir::TSTypeParameter *const
     SetUpReferencedTypeParameterConstraints(param, defaultType, paramScope, localTypeParams);
 }
 
+static bool HasSelfReferenceToAliasInDefaultType(const ir::TypeNode *defaultType,
+                                                 const ir::TSTypeAliasDeclaration *typeAliasDecl)
+{
+    auto *const aliasVar = typeAliasDecl->Id()->Variable();
+    bool hasSelfReference = false;
+    std::function<void(ir::AstNode *)> findSelfReference = [&findSelfReference, aliasVar, typeAliasDecl,
+                                                            &hasSelfReference](ir::AstNode *node) {
+        if (hasSelfReference) {
+            return;
+        }
+        if (node->IsETSTypeReferencePart()) {
+            auto *typeRefPart = node->AsETSTypeReferencePart();
+            auto *ident = typeRefPart->GetIdent();
+            hasSelfReference = ident->Variable() == aliasVar || ident->Name() == typeAliasDecl->Id()->Name();
+        }
+        node->Iterate(findSelfReference);
+    };
+    const_cast<ir::TypeNode *>(defaultType)->Iterate(findSelfReference);
+    return hasSelfReference;
+}
+
 void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 {
     ETSTypeParameter *const paramType = param->Name()->Variable()->TsType()->AsETSTypeParameter();
@@ -970,8 +991,18 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 
     if (param->DefaultType() != nullptr) {
         SetUpDefaultTypeDependenciesIfNeeded(param, param->DefaultType(), paramScope, localTypeParams);
-        // NOTE: #14993 ensure default matches constraint
-        paramType->SetDefaultType(param->DefaultType()->GetType(this));
+        auto *typeParamOwner = typeParamDecl->Parent();
+        bool shouldDelayTypeAliasDefault = false;
+        if (typeParamOwner->IsTSTypeAliasDeclaration()) {
+            shouldDelayTypeAliasDefault =
+                HasSelfReferenceToAliasInDefaultType(param->DefaultType(), typeParamOwner->AsTSTypeAliasDeclaration());
+        }
+        if (!shouldDelayTypeAliasDefault) {
+            // NOTE: #14993 ensure default matches constraint
+            paramType->SetDefaultType(param->DefaultType()->GetType(this));
+        }
+        // Self-referential type alias defaults are resolved on demand in HandleTypeAlias(),
+        // after the alias target type is fully initialized.
     }
 }
 
