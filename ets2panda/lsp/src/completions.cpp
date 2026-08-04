@@ -2010,9 +2010,14 @@ bool IsLetVar(const ir::AstNode *node)
     return IsVariableOfKind(node->AsIdentifier(), ir::VariableDeclaration::VariableDeclarationKind::LET);
 }
 
+bool IsSyntheticStructClassDefinition(const ir::AstNode *node)
+{
+    return node != nullptr && node->IsClassDefinition() && node->AsClassDefinition()->IsFromStruct();
+}
+
 bool IsValidDecl(const ir::AstNode *decl)
 {
-    return decl != nullptr && NodeHasTokens(decl) &&
+    return decl != nullptr && (NodeHasTokens(decl) || IsSyntheticStructClassDefinition(decl)) &&
            (decl->IsMethodDefinition() || IsLetVar(decl) || IsConstVar(decl) || IsGlobalVar(decl) ||
             IsNamespaceVar(decl) || decl->IsClassDefinition() || decl->IsTSInterfaceDeclaration());
 }
@@ -2057,7 +2062,7 @@ CompletionEntry InitEntry(const ir::AstNode *decl)
         }
         insertText.append("()");
     } else if (decl->IsClassDefinition()) {
-        kind = CompletionEntryKind::MODULE;
+        kind = decl->AsClassDefinition()->IsFromStruct() ? CompletionEntryKind::STRUCT : CompletionEntryKind::MODULE;
     }
     if (kind == CompletionEntryKind::VARIABLE || kind == CompletionEntryKind::CONSTANT) {
         auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(decl));
