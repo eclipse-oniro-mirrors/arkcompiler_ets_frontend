@@ -143,11 +143,14 @@ export class ModuleRule implements ArkTSConfigRule {
     const sourceRoots = await this.existingSourceRoots(module);
     await this.addStaticSourceFiles(fragment, module, sourceRoots, inspectFileMarker);
 
-    if (!hasStaticEntry || entryFile === '') {
+    if (entryFile === '') {
       return;
     }
     // Keep "./" as the lowest-priority bare-package fallback for compatibility.
     appendUniquePath(fragment.paths, module.packageName, [...[...sourceRoots].reverse(), module.modulePath]);
+    if (!hasStaticEntry) {
+      return;
+    }
     appendUniquePath(fragment.paths, `${module.packageName}/Index`, [entryFile]);
   }
 

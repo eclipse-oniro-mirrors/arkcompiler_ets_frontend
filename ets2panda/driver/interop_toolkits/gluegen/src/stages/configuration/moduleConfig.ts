@@ -81,7 +81,7 @@ export function copyStringMap(value: unknown, field: string): Readonly<Record<st
       ? [...value.entries()]
       : isRecord(value)
         ? Object.entries(value)
-        : (() => {
+        : ((): never => {
             throw invalidBuildConfig(`Build configuration field "${field}" must be a Map or object.`);
           })();
   const copiedEntries = entries

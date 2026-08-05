@@ -15,13 +15,14 @@
 
 import type { GlueGenContext } from '../../pipeline/context';
 import { Stage } from '../../pipeline';
+import type { ProvidedStage } from '../../pipeline/stage';
 import { CONFIGURATION_ARTIFACT } from '../stageArtifacts';
 import type { ConfigurationResult } from './configurationResult';
 import { resolveInteropConfig } from './resolveInteropConfig';
 import { resolveModules } from './resolveModules';
 import { validate } from './validate';
 
-export function createConfigurationStage() {
+export function createConfigurationStage(): ProvidedStage<GlueGenContext, readonly [], typeof CONFIGURATION_ARTIFACT> {
   return Stage.start<GlueGenContext>('configuration')
     .use('validate', {
       inputs: [],

@@ -15,10 +15,15 @@
 
 import type { GlueGenContext } from '../../pipeline/context';
 import { Stage } from '../../pipeline';
+import type { ProvidedStage } from '../../pipeline/stage';
 import { ARKTS_CONFIG_ARTIFACT, CONFIGURATION_ARTIFACT } from '../stageArtifacts';
 import { generateArkTSConfig } from './generateArkTSConfig';
 
-export function createArkTSConfigStage() {
+export function createArkTSConfigStage(): ProvidedStage<
+  GlueGenContext,
+  readonly [typeof CONFIGURATION_ARTIFACT],
+  typeof ARKTS_CONFIG_ARTIFACT
+> {
   return Stage.start<GlueGenContext>('arktsconfig')
     .requires(CONFIGURATION_ARTIFACT)
     .use('generate-arktsconfig', {
