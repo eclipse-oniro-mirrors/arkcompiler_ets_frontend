@@ -323,38 +323,38 @@ public:
 
     void EmitAnyLdbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
     {
-        Ra().Emit<AnyLdbyname>(node, objReg, prop, 0);
+        Ra().Emit<AnyLdbyname>(node, objReg, prop, GetNextAnyIcSlot());
     }
 
     void EmitAnyStbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
     {
-        Ra().Emit<AnyStbyname>(node, objReg, prop, 0);
+        Ra().Emit<AnyStbyname>(node, objReg, prop, GetNextAnyIcSlot());
     }
 
     void EmitAnyLdbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
         LoadAccumulator(node, propReg);  // a simplification for the instruction format handling
-        Ra().Emit<AnyLdbyidx>(node, objectReg, 0);
+        Ra().Emit<AnyLdbyidx>(node, objectReg, GetNextAnyIcSlot());
     }
 
     void EmitAnyStbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyStbyidx>(node, objectReg, propReg, 0);
+        Ra().Emit<AnyStbyidx>(node, objectReg, propReg, GetNextAnyIcSlot());
     }
 
     void EmitAnyLdbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyLdbyval>(node, objectReg, propReg, 0);
+        Ra().Emit<AnyLdbyval>(node, objectReg, propReg, GetNextAnyIcSlot());
     }
 
     void EmitAnyStbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyStbyval>(node, objectReg, propReg, 0);
+        Ra().Emit<AnyStbyval>(node, objectReg, propReg, GetNextAnyIcSlot());
     }
 
     void EmitAnyIsinstance(const ir::AstNode *node, VReg typeReg)
     {
-        Ra().Emit<AnyIsinstance>(node, typeReg, 0);
+        Ra().Emit<AnyIsinstance>(node, typeReg, GetNextAnyIcSlot());
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,
@@ -869,12 +869,12 @@ private:
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, prop, athis, 0);
+                Ra().Emit<Zero>(node, prop, athis, GetNextAnyIcSlot());
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, prop, athis, arg0, 0);
+                Ra().Emit<Short>(node, prop, athis, arg0, GetNextAnyIcSlot());
                 break;
             }
             default: {
@@ -883,7 +883,8 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size(), 0);
+                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size(),
+                                  GetNextAnyIcSlot());
             }
         }
     }
@@ -895,12 +896,12 @@ private:
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, athis, 0);
+                Ra().Emit<Zero>(node, athis, GetNextAnyIcSlot());
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, athis, arg0, 0);
+                Ra().Emit<Short>(node, athis, arg0, GetNextAnyIcSlot());
                 break;
             }
             default: {
@@ -909,7 +910,8 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), athis, argStart, arguments.size(), 0);
+                Rra().Emit<Range>(node, argStart, arguments.size(), athis, argStart, arguments.size(),
+                                  GetNextAnyIcSlot());
             }
         }
     }
@@ -926,11 +928,17 @@ private:
     bool EmitFloatingAccumulatorTargetType(const ir::AstNode *node, checker::TypeFlag typeKind, T number);
     void InitializeContainingClass();
 
+    uint8_t GetNextAnyIcSlot()
+    {
+        return anyIcIdx_ == UINT8_MAX ? UINT8_MAX : anyIcIdx_++;
+    }
+
     friend class TargetTypeContext;
 
     VReg acc_ {};
     const checker::Type *targetType_ {};
     const checker::ETSObjectType *containingObjectType_ {};
+    uint8_t anyIcIdx_ = 0;
 };
 
 }  // namespace ark::es2panda::compiler
