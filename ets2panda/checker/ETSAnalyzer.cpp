@@ -117,11 +117,15 @@ static void LogNonExportedTypeError(ETSChecker *checker, checker::Type const *ty
 
 static void CheckPartialTypeExport(ETSChecker *checker, checker::ETSObjectType const *partialType)
 {
-    auto *baseType = partialType->GetBaseType();
+    auto *baseType = partialType->GetOriginalBaseType();
     if (baseType == nullptr || baseType->HasObjectFlag(ETSObjectFlags::BUILTIN_TYPE)) {
         return;
     }
-    LogNonExportedTypeError(checker, static_cast<Type const *>(baseType), baseType->GetDeclNode());
+
+    auto *declNode = baseType->GetDeclNode();
+    if (!util::Helpers::IsExported(declNode)) {
+        LogNonExportedTypeError(checker, static_cast<Type const *>(baseType), declNode);
+    }
 }
 
 static void CheckExport(ETSChecker *checker, checker::Type const *type)
@@ -926,19 +930,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSClassLiteral *expr) const
     auto *const literal = expr->Expr();
 
     checker->LogError(diagnostic::UNSUPPORTED_CLASS_LITERAL, {}, literal->Start());
-    expr->SetTsType(checker->GlobalTypeError());
-    return expr->TsType();
-
-    auto exprType = literal->Check(checker);
-
-    ArenaVector<checker::Type *> typeArgTypes(checker->ProgramAllocator()->Adapter());
-    typeArgTypes.push_back(exprType);  // NOTE: Box it if it's a primitive type
-
-    checker::InstantiationContext ctx(checker, checker->GlobalBuiltinTypeType(), std::move(typeArgTypes),
-                                      expr->Range().start);
-    expr->SetTsType(ctx.Result());
-
-    return expr->TsType();
+    return expr->SetTsType(checker->GlobalTypeError());
 }
 
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::ETSIntrinsicNode *node) const
@@ -4432,7 +4424,8 @@ static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::Obje
 
         varbinder::LocalVariable *lv = objType->GetProperty(*propertyName, searchFlags);
         if (lv == nullptr) {
-            checker->LogError(diagnostic::UNDEFINED_PROPERTY, {objType->Name(), *propertyName}, propExpr->Start());
+            checker->LogError(diagnostic::UNDEFINED_PROPERTY, {static_cast<Type *>(objType)->ToString(), *propertyName},
+                              propExpr->Start());
             propExpr->SetTsType(checker->GlobalTypeError());
             continue;
         }
@@ -6256,7 +6249,9 @@ checker::Type *ETSAnalyzer::Check(ir::TSInterfaceDeclaration *st) const
     checker->CheckInvokeMethodsLegitimacy(interfaceType);
 
     st->SetTsType(stmtType);  // NOTE(vpukhov): #31391
-    checker->CheckDynamicInheritanceAndImplement(interfaceType->AsETSObjectType());
+    if (!interfaceType->IsPartial()) {
+        checker->CheckDynamicInheritanceAndImplement(interfaceType->AsETSObjectType());
+    }
 
     if ((st->IsExported() || st->IsDefaultExported()) && st->TsType() != nullptr) {
         const auto *ifaceType = st->TsType();

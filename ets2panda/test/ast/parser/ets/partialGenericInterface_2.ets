@@ -32,5 +32,8 @@ function foo(a: Partial<A<beta>>): void {}
 
 
 function foa(b: Partial<B<gamma>>): void {
-	foo(b);
+    /* @@ label1 */foo(/* @@ label2 */b);
 }
+
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo(Partial<B<gamma>>) */
+/* @@@ label2 Error Semantic error ESE0046: Type 'Partial<B<gamma>>' is not compatible with type 'Partial<A<beta>>' at index 1 */

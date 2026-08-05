@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +33,6 @@ function main(){
 }
 
 
-/* @@? 28:32 Error Semantic error ESE0065: type %%partial-I has no property named a */
+/* @@? 28:32 Error Semantic error ESE0065: type Partial<I> has no property named a */
 /* @@? 29:34 Error Semantic error ESE0319: Type '"abcd"' is not compatible with type 'Int|undefined' at property 'i' */
 /* @@? 32:14 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

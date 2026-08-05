@@ -335,13 +335,6 @@ static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassPro
     return {classDefProgram, classDefProgram->GetRecordTable()};
 }
 
-template <typename T>
-static T *CloneNodeIfNotNullptr(T *node, ArenaAllocator *allocator)
-{
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return node != nullptr ? node->Clone(allocator, nullptr) : nullptr;
-}
-
 Type *ETSChecker::CreatePartialType(Type *const typeToBePartial)
 {
     ES2PANDA_ASSERT(typeToBePartial->IsETSReferenceType());
@@ -349,29 +342,61 @@ Type *ETSChecker::CreatePartialType(Type *const typeToBePartial)
         return typeToBePartial;
     }
 
-    if (typeToBePartial->IsETSTypeParameter()) {
-        return CreatePartialTypeParameter(typeToBePartial->AsETSTypeParameter());
-    }
+    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::PARTIAL)>();
+    Type *partialType = nullptr;
 
-    if (typeToBePartial->IsETSUnionType()) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return HandleUnionForPartialType(typeToBePartial->AsETSUnionType());
-    }
+    if (typeToBePartial->IsETSObjectType()) {
+        ETSObjectType *objectType = typeToBePartial->AsETSObjectType();
+        ETSObjectType *baseType = objectType->GetOriginalBaseType();
 
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return CreatePartialTypeClass(typeToBePartial->AsETSObjectType(),
-                                  typeToBePartial->Variable()->Declaration()->Node());
+        if (auto found = typeCache.find(baseType); found != typeCache.end()) {
+            partialType = found->second;
+        } else {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            partialType = CreatePartialTypeClass(baseType, typeToBePartial->Variable()->Declaration()->Node());
+            if (!partialType->IsTypeError()) {
+                typeCache.emplace(baseType, partialType);
+            }
+        }
+
+        if (partialType->IsETSObjectType() && !partialType->AsETSObjectType()->TypeArguments().empty()) {
+            auto const &parameters = partialType->AsETSObjectType()->TypeArguments();
+            auto const &arguments = objectType->TypeArguments();
+
+            auto const paramNumber = parameters.size();
+            ES2PANDA_ASSERT(paramNumber == arguments.size());
+
+            Substitution substitution {};
+            for (std::size_t i = 0U; i < paramNumber; ++i) {
+                EmplaceSubstituted(&substitution, parameters[i]->AsETSTypeParameter(), arguments[i]);
+            }
+
+            if (!substitution.empty()) {
+                partialType = partialType->Substitute(Relation(), &substitution);
+            }
+        }
+    } else {
+        if (auto found = typeCache.find(typeToBePartial); found != typeCache.end()) {
+            return found->second;
+        }
+
+        if (typeToBePartial->IsETSTypeParameter()) {
+            partialType = CreatePartialTypeParameter(typeToBePartial->AsETSTypeParameter());
+        } else if (typeToBePartial->IsETSUnionType()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            partialType = HandleUnionForPartialType(typeToBePartial->AsETSUnionType());
+        }
+
+        if (!partialType->IsTypeError()) {
+            typeCache.emplace(typeToBePartial, partialType);
+        }
+    }
+    return partialType;
 }
 
 Type *ETSChecker::CreatePartialTypeParameter(ETSTypeParameter *typeToBePartial)
 {
-    auto &typeCache = CachedUtilityTypes<static_cast<std::size_t>(UtilityType::PARTIAL)>();
-    if (const auto found = typeCache.find(typeToBePartial); found != typeCache.end()) {
-        return found->second;
-    }
-
     auto *partialType = ProgramAllocator()->New<ETSPartialTypeParameter>(typeToBePartial, this);
-    typeCache.emplace(typeToBePartial, partialType);
     return partialType;
 }
 
@@ -450,165 +475,62 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
 ir::ClassProperty *ETSChecker::CreateNullishPropertyFromAccessor(ir::MethodDefinition *const accessor,
                                                                  ir::ClassDefinition *const newClassDefinition)
 {
-    auto *id = accessor->Id();
-    ES2PANDA_ASSERT(id != nullptr);
+    bool const isGetter = accessor->Function()->IsGetter();
+
+    ES2PANDA_ASSERT(accessor->TsType() != nullptr && accessor->TsType()->IsETSFunctionType());
+    auto callSign = accessor->TsType()->AsETSFunctionType()->CallSignatures()[0];
+    checker::Type *tsType = isGetter ? callSign->ReturnType() : callSign->Params()[0]->TsType();
+
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    return CreateNullishProperty(accessor->Id(), ir::ModifierFlags::NONE, tsType, newClassDefinition);
+}
+
+ir::ClassProperty *ETSChecker::CreateNullishProperty(ir::Identifier *const id, ir::ModifierFlags const flags,
+                                                     Type *const tsType, ir::ClassDefinition *const newClassDefinition)
+{
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *ident = id->Clone(ProgramAllocator(), nullptr);
-    ES2PANDA_ASSERT(accessor->Function() != nullptr);
-    auto modifierFlag = ir::ModifierFlags::NONE;
-
-    auto *prop =
+    ir::ClassProperty *prop =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        ProgramAllocator()->New<ir::ClassProperty>(ident, nullptr, nullptr, modifierFlag, ProgramAllocator(), false);
-    ES2PANDA_ASSERT(prop != nullptr);
+        ProgramAllocNode<ir::ClassProperty>(ident, nullptr, nullptr, flags, ProgramAllocator(), false);
     prop->SetParent(newClassDefinition);
-    ident->SetParent(prop);
-
-    ES2PANDA_ASSERT(accessor->Function() != nullptr);
-    prop->SetTypeAnnotation(accessor->Function()->IsGetter()
-                                ? accessor->Function()->ReturnTypeAnnotation()
-                                : accessor->Function()->Params()[0]->AsETSParameterExpression()->TypeAnnotation());
-
-    if (prop->TypeAnnotation() != nullptr) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return CreateNullishProperty(prop, newClassDefinition);
-    }
-
-    ES2PANDA_ASSERT(accessor->TsType()->IsETSFunctionType());
-    auto callSign = accessor->TsType()->AsETSFunctionType()->CallSignatures()[0];
-
-    ES2PANDA_ASSERT(accessor->Function() != nullptr);
-    auto tsType = accessor->Function()->IsGetter() ? callSign->ReturnType() : callSign->Params()[0]->TsType();
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    prop->SetTypeAnnotation(ProgramAllocator()->New<ir::OpaqueTypeNode>(tsType, ProgramAllocator()));
+    prop->SetValue(ProgramAllocator()->New<ir::UndefinedLiteral>());
+    prop->Value()->SetTsType(GlobalETSUndefinedType());
 
+    std::vector<checker::Type *> types {tsType, GlobalETSUndefinedType()};
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return CreateNullishProperty(prop, newClassDefinition);
-}
+    auto *type = CreateETSUnionType(Span<Type *const>(types));
+    prop->SetTsType(prop->Id()->SetTsType(type));
 
-ir::ClassProperty *ETSChecker::CreateNullishProperty(ir::ClassProperty *const prop,
-                                                     ir::TSInterfaceDeclaration *const newTSInterfaceDefinition)
-{
-    auto *const propSavedValue = prop->Value();
-
-    // Set value to nullptr to prevent cloning it (as for arrow functions that is not possible yet), we set it
-    // to 'undefined' anyway
-    prop->SetValue(nullptr);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *const propClone = prop->Clone(ProgramAllocator(), newTSInterfaceDefinition->Body())->AsClassProperty();
-
-    // Revert original property value
-    prop->SetValue(propSavedValue);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    propClone->SetValue(ProgramAllocator()->New<ir::UndefinedLiteral>());
-
-    auto *propTypeAnn = propClone->TypeAnnotation();
-    ArenaVector<ir::TypeNode *> types(ProgramAllocator()->Adapter());
-
-    // Handle implicit type annotation
-    if (propTypeAnn == nullptr) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        propTypeAnn = ProgramAllocator()->New<ir::OpaqueTypeNode>(prop->TsType(), ProgramAllocator());
-    }
-
-    // Create new nullish type
-    types.push_back(propTypeAnn);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    types.push_back(ProgramAllocNode<ir::ETSUndefinedType>(ProgramAllocator()));
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *const unionType = ProgramAllocNode<ir::ETSUnionType>(std::move(types), ProgramAllocator());
-    propClone->SetTypeAnnotation(unionType);
-
-    // Set new parents
-    unionType->SetParent(propClone);
-    propClone->SetParent(newTSInterfaceDefinition->Body());
-
-    return propClone;
-}
-
-ir::ClassProperty *ETSChecker::CreateNullishProperty(ir::ClassProperty *const prop,
-                                                     ir::ClassDefinition *const newClassDefinition)
-{
-    auto *const propSavedValue = prop->Value();
-
-    // Set value to nullptr to prevent cloning it (as for arrow functions that is not possible yet), we set it
-    // to 'undefined' anyway
-    prop->SetValue(nullptr);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *const propClone = prop->Clone(ProgramAllocator(), newClassDefinition)->AsClassProperty();
-    std::function<void(ir::AstNode *)> cleanNode = [&](ir::AstNode *node) {
-        if (node->IsOpaqueTypeNode()) {
-            return;
-        }
-        if (node->IsTyped() && !(node->IsExpression() && node->AsExpression()->IsTypeNode())) {
-            node->AsTyped()->SetTsType(nullptr);
-        }
-        node->Iterate([&](auto *childNode) { cleanNode(childNode); });
-    };
-    cleanNode(propClone);
-
-    // Revert original property value
-    prop->SetValue(propSavedValue);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    propClone->SetValue(ProgramAllocator()->New<ir::UndefinedLiteral>());
-    propClone->AsClassProperty()->Value()->Check(this);
-
-    ir::TypeNode *propertyTypeAnnotation = propClone->TypeAnnotation();
-    if (propertyTypeAnnotation == nullptr) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        propertyTypeAnnotation = ProgramAllocator()->New<ir::OpaqueTypeNode>(prop->Check(this), ProgramAllocator());
-    }
-
-    // Create new nullish type annotation
-    ArenaVector<ir::TypeNode *> types(ProgramAllocator()->Adapter());
-    types.push_back(propertyTypeAnnotation);
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    types.push_back(ProgramAllocNode<ir::ETSUndefinedType>(ProgramAllocator()));
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    propertyTypeAnnotation = ProgramAllocNode<ir::ETSUnionType>(std::move(types), ProgramAllocator());
-    propClone->SetTypeAnnotation(propertyTypeAnnotation);
-    propClone->SetTsType(nullptr);
-
-    // Set new parents
-    propertyTypeAnnotation->SetParent(propClone);
-    propClone->SetParent(newClassDefinition);
-
-    return propClone;
+    return prop;
 }
 
 ir::TSTypeParameterDeclaration *ETSChecker::ProcessTypeParamAndGenSubstitution(
     ir::TSTypeParameterDeclaration const *const thisTypeParams,
-    ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution,
-    ir::TSTypeParameterDeclaration *newTypeParams = nullptr)
+    std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> &substitution,
+    ir::TSTypeParameterDeclaration *newTypeParams)
 {
-    ArenaVector<ir::TSTypeParameter *> typeParams(ProgramAllocator()->Adapter());
     if (newTypeParams == nullptr) {
+        ArenaVector<ir::TSTypeParameter *> typeParams(ProgramAllocator()->Adapter());
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         newTypeParams = ProgramAllocNode<ir::TSTypeParameterDeclaration>(std::move(typeParams), typeParams.size());
     }
-    for (auto *const classOrInterfaceDefTypeParam : thisTypeParams->Params()) {
+
+    for (auto *const typeParam : thisTypeParams->Params()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *newTypeParam = ProgramAllocNode<ir::TSTypeParameter>(
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            CloneNodeIfNotNullptr(classOrInterfaceDefTypeParam->Name(), ProgramAllocator()),
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            CloneNodeIfNotNullptr(classOrInterfaceDefTypeParam->Constraint(), ProgramAllocator()),
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            CloneNodeIfNotNullptr(classOrInterfaceDefTypeParam->DefaultType(), ProgramAllocator()), ProgramAllocator());
-        ES2PANDA_ASSERT(newTypeParam != nullptr);
-        newTypeParam->AddModifier(classOrInterfaceDefTypeParam->Modifiers());
+        auto *newTypeParam = typeParam->Clone(ProgramAllocator(), newTypeParams);
         newTypeParams->AddParam(newTypeParam);
-        newTypeParam->SetParent(newTypeParams);
-        ES2PANDA_ASSERT(likeSubstitution != nullptr);
-        (*likeSubstitution)[classOrInterfaceDefTypeParam] = newTypeParam;
+        substitution[typeParam] = newTypeParam;
     }
+
     return newTypeParams;
 }
 
 ir::TSTypeParameterInstantiation *ETSChecker::CreateNewSuperPartialRefTypeParamsDecl(
-    ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *> *likeSubstitution, const Type *const superPartialType,
-    ir::Expression *superRef)
+    std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> const &substitution,
+    const Type *const superPartialType, ir::Expression *superRef)
 {
     ir::TSTypeParameterInstantiation *superPartialRefTypeParams = nullptr;
     if (superPartialType == nullptr || superRef == nullptr ||
@@ -627,8 +549,8 @@ ir::TSTypeParameterInstantiation *ETSChecker::CreateNewSuperPartialRefTypeParams
             continue;
         }
         auto type = originRefParams[ix]->AsETSTypeReference()->Part()->TsType();
-        auto it = likeSubstitution->find(type->AsETSTypeParameter()->GetDeclNode());
-        if (it != likeSubstitution->end()) {
+        auto it = substitution.find(type->AsETSTypeParameter()->GetDeclNode());
+        if (it != substitution.end()) {
             auto *typeParamRefPart =
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 ProgramAllocNode<ir::ETSTypeReferencePart>(it->second->Name()->Clone(ProgramAllocator(), nullptr),
@@ -676,68 +598,35 @@ ir::ETSTypeReference *ETSChecker::BuildSuperPartialTypeReference(
     return superPartialRef;
 }
 
-// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
-void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newClassDefinition,
-                                               ir::ClassDefinition *classDef)
+// Extracted from 'ETSChecker::CreatePartialClassDeclaration(...)' to reduce its size and complexity
+void ETSChecker::ProcessClassProperties(ir::AstNode *node, ir::ClassDefinition *const oldClassDef,
+                                        ir::ClassDefinition *const newClassDef)
 {
-    if (classDef->TypeParams() != nullptr) {
-        ArenaVector<ir::TSTypeParameter *> typeParams(ProgramAllocator()->Adapter());
-        for (auto *const classDefTypeParam : classDef->TypeParams()->Params()) {
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            auto *const newTypeParam = ProgramAllocNode<ir::TSTypeParameter>(
-                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                CloneNodeIfNotNullptr(classDefTypeParam->Name(), ProgramAllocator()),
-                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                CloneNodeIfNotNullptr(classDefTypeParam->Constraint(), ProgramAllocator()),
-                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                CloneNodeIfNotNullptr(classDefTypeParam->DefaultType(), ProgramAllocator()), ProgramAllocator());
-            newTypeParam->AddModifier(classDefTypeParam->Modifiers());
-            typeParams.emplace_back(newTypeParam);
+    // Only handle class properties (members) including those implemented via getters/setters.
+    // Method calls on partial classes will make the class not type safe, so we don't copy any methods
+    if (node->IsClassProperty()) {
+        auto *const property = node->AsClassProperty();
+        if (property->Id() == nullptr || (property->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
+            return;
         }
 
-        auto *const newTypeParams =
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            ProgramAllocNode<ir::TSTypeParameterDeclaration>(std::move(typeParams),
-                                                             classDef->TypeParams()->RequiredParams());
-        ES2PANDA_ASSERT(newTypeParams != nullptr);
-        newClassDefinition->SetTypeParams(newTypeParams);
-        newTypeParams->SetParent(newClassDefinition);
-    }
+        auto const flags = static_cast<ir::ModifierFlags>(property->Modifiers() & ~ir::ModifierFlags::OVERRIDE);
 
-    newClassDefinition->SetVariable(newClassDefinition->Ident()->Variable());
-    newClassDefinition->AddModifier(static_cast<const ir::AstNode *>(classDef)->Modifiers());
+        ir::TypeNode *const typeAnnotation = property->TypeAnnotation();
+        checker::Type *tsType = typeAnnotation != nullptr ? typeAnnotation->GetType(this) : property->Check(this);
 
-    for (auto *const prop : classDef->Body()) {
-        // Only handle class properties (members)
-        // Method calls on partial classes will make the class not type safe, so we don't copy any methods
-        if (prop->IsClassProperty()) {
-            if (prop->AsClassProperty()->Id() == nullptr ||
-                (prop->Modifiers() & ir::ModifierFlags::GETTER_SETTER) != 0U) {
-                continue;
-            }
-
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            auto *const newProp = CreateNullishProperty(prop->AsClassProperty(), newClassDefinition);
-
-            // Put the new property into the class declaration
-            newClassDefinition->EmplaceBody(newProp);
-        }
-        if (classDef->Implements().empty() || !prop->IsMethodDefinition() ||
-            prop->AsMethodDefinition()->Function() == nullptr ||
-            (!prop->AsMethodDefinition()->Function()->IsGetter() &&
-             !prop->AsMethodDefinition()->Function()->IsSetter())) {
-            continue;
-        }
-
-        auto *method = prop->AsMethodDefinition();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        newClassDef->EmplaceBody(CreateNullishProperty(property->Id(), flags, tsType, newClassDef));
+    } else if (!oldClassDef->Implements().empty() && node->IsMethodDefinition() &&
+               node->AsMethodDefinition()->Function() != nullptr &&
+               node->AsMethodDefinition()->Function()->IsGetterOrSetter()) {
+        auto *const method = node->AsMethodDefinition();
         ES2PANDA_ASSERT(method->Id() != nullptr);
-        auto isBrokenSetter = method->Function()->IsSetter() && method->Function()->Params().size() != 1;
-        auto isBrokenGetter = method->Function()->IsGetter() && !method->Function()->Params().empty();
-        if (newClassDefinition->Scope()->FindLocal(method->Id()->Name(), varbinder::ResolveBindingOptions::VARIABLES) !=
-                nullptr ||
-            isBrokenSetter || isBrokenGetter) {
+
+        if (newClassDef->Scope()->FindLocal(method->Id()->Name(), varbinder::ResolveBindingOptions::VARIABLES) !=
+            nullptr) {
             ES2PANDA_ASSERT(IsAnyError());
-            continue;
+            return;
         }
 
         if (method->TsType() == nullptr) {
@@ -746,9 +635,40 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
 
         if (method->TsType() != nullptr && !method->TsType()->IsTypeError()) {
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            newClassDefinition->EmplaceBody(CreateNullishPropertyFromAccessor(method, newClassDefinition));
+            newClassDef->EmplaceBody(CreateNullishPropertyFromAccessor(method, newClassDef));
         }
     }
+}
+
+void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newClassDefinition,
+                                               ir::ClassDefinition *const classDef)
+{
+    if (classDef->TypeParams() != nullptr) {
+        ArenaVector<ir::TSTypeParameter *> typeParams(ProgramAllocator()->Adapter());
+        for (auto *const typeParam : classDef->TypeParams()->Params()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            auto *const newTypeParam = typeParam->Clone(ProgramAllocator(), nullptr);
+            typeParams.emplace_back(newTypeParam);
+        }
+
+        auto *const newTypeParams =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            ProgramAllocNode<ir::TSTypeParameterDeclaration>(std::move(typeParams),
+                                                             classDef->TypeParams()->RequiredParams());
+        newClassDefinition->SetTypeParams(newTypeParams);
+        newTypeParams->SetParent(newClassDefinition);
+    }
+
+    newClassDefinition->SetVariable(newClassDefinition->Ident()->Variable());
+    newClassDefinition->AddModifier(static_cast<const ir::AstNode *>(classDef)->Modifiers());
+
+    for (auto *const node : classDef->Body()) {
+        if (node->IsPublic()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            ProcessClassProperties(node, classDef, newClassDefinition);
+        }
+    }
+
     if (classDef->IsDeclare()) {
         newClassDefinition->AddModifier(ir::ModifierFlags::DECLARE);
     }
@@ -936,14 +856,14 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
         ES2PANDA_ASSERT(func != nullptr);
         ES2PANDA_ASSERT((func->Flags() & ir::ScriptFunctionFlags::OVERLOAD) == 0U);
 
-        if (func->IsGetter() || func->IsSetter()) {
+        if (func->IsGetterOrSetter()) {
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             addNullishAccessor(CreateNullishAccessor(method, partialInterface));
         }
 
         for (auto *overload : method->Overloads()) {
             ES2PANDA_ASSERT(overload->Function() != nullptr);
-            if (overload->Function()->IsGetter() || overload->Function()->IsSetter()) {
+            if (overload->Function()->IsGetterOrSetter()) {
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 addNullishAccessor(CreateNullishAccessor(overload, partialInterface));
             }
@@ -987,13 +907,12 @@ Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *con
     CreatePartialTypeInterfaceMethods(interfaceDecl, partialInterface);
     // Create nullish properties of the partial class
     // Build the new Partial class based on the 'T' type parameter of 'Partial<T>'
-    auto *likeSubstitution =
-        ProgramAllocator()->New<ArenaMap<ir::TSTypeParameter *, ir::TSTypeParameter *>>(ProgramAllocator()->Adapter());
+    std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> substitution {};
 
     if (interfaceDecl->TypeParams() != nullptr) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        ProcessTypeParamAndGenSubstitution(interfaceDecl->TypeParams(), likeSubstitution,
-                                           partialInterface->TypeParams());
+        partialInterface->SetTypeParams(ProcessTypeParamAndGenSubstitution(interfaceDecl->TypeParams(), substitution,
+                                                                           partialInterface->TypeParams()));
     }
 
     compiler::InitScopesPhaseETS::RunExternalNode(partialInterface, VarBinder());
@@ -1021,7 +940,7 @@ Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *con
         if (auto *superPartialType = CreatePartialType(t); superPartialType != nullptr) {
             ir::TSTypeParameterInstantiation *superPartialRefTypeParams =
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                CreateNewSuperPartialRefTypeParamsDecl(likeSubstitution, superPartialType, extend->Expr());
+                CreateNewSuperPartialRefTypeParamsDecl(substitution, superPartialType, extend->Expr());
 
             ir::ETSTypeReference *superPartialRef =
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -1035,7 +954,7 @@ Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *con
     compiler::SetSourceRangesRecursively(partialInterface, interfaceDecl->Range());
 
     auto *const partialType = partialInterface->Check(this)->AsETSObjectType();
-    partialType->SetBaseType(typeToBePartial);
+    partialType->SetBaseType(typeToBePartial->GetOriginalBaseType());
 
     return partialType;
 }
@@ -1171,7 +1090,7 @@ Type *ETSChecker::CreatePartialTypeClassDef(ir::ClassDefinition *const partialCl
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *const partialSuper = CreatePartialType((classDef->Super() == nullptr || !classDef->Super()->IsTypeNode())
+    Type *const partialSuper = CreatePartialType((classDef->Super() == nullptr || !classDef->Super()->IsTypeNode())
                                                      ? GlobalETSObjectType()
                                                      : classDef->Super()->TsType());
     if (partialSuper->IsTypeError()) {
@@ -1181,13 +1100,13 @@ Type *ETSChecker::CreatePartialTypeClassDef(ir::ClassDefinition *const partialCl
     partialClassDef->SetSuper(ProgramAllocator()->New<ir::OpaqueTypeNode>(partialSuper, ProgramAllocator()));
 
     // Run checker
-    auto *const partialType = partialClassDef->Check(this)->AsETSObjectType();
-    partialType->SetBaseType(typeToBePartial);
-    auto *partialSuperType = partialSuper->AsETSObjectType();
+    ETSObjectType *const partialType = partialClassDef->Check(this)->AsETSObjectType();
+    partialType->SetBaseType(typeToBePartial->GetOriginalBaseType());
+
     for (auto *interface : typeToBePartial->Interfaces()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         auto *partialInterface = CreatePartialType(interface)->AsETSObjectType();
-        if (HasInterfaceInHierarchy(partialSuperType, partialInterface)) {
+        if (HasInterfaceInHierarchy(partialSuper->AsETSObjectType(), partialInterface)) {
             continue;
         }
         partialType->AddInterface(partialInterface);

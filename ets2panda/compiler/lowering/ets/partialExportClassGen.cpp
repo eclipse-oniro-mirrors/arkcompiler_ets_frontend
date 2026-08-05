@@ -16,49 +16,61 @@
 #include "partialExportClassGen.h"
 
 #include "checker/ETSchecker.h"
-#include "varbinder/ETSBinder.h"
+#include "checker/types/ets/etsObjectType.h"
 
 namespace ark::es2panda::compiler {
 
 static void GeneratePartialDeclForExported(const public_lib::Context *const ctx, ir::AstNode *const node)
 {
-    // NOTE (mmartin): handle interfaces
-    if (node->IsClassDeclaration() && !node->AsClassDeclaration()->Definition()->IsModule()) {
-        auto type = node->AsClassDeclaration()->Definition()->TsType()->AsETSObjectType();
-        if (type->IsPartial()) {
-            return;
-        }
-        ctx->GetChecker()->AsETSChecker()->CreatePartialType(type);
+    checker::ETSObjectType *type = nullptr;
+    if (node->IsClassDeclaration()) {
+        type = node->AsClassDeclaration()->Definition()->TsType()->AsETSObjectType();
+    } else if (node->IsTSInterfaceDeclaration()) {
+        type = node->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType();
+    } else {
+        ES2PANDA_UNREACHABLE();
     }
-    if (node->IsTSInterfaceDeclaration()) {
-        auto type = node->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType();
-        if (type->IsPartial()) {
-            return;
-        }
+
+    if (!type->IsPartial()) {
         ctx->GetChecker()->AsETSChecker()->CreatePartialType(type);
     }
 }
 
-static void CreatePartialDecls(public_lib::Context *ctx, parser::Program *program, std::string_view phaseName)
+static bool IsExportedPartialCandidate(const ir::AstNode *const ast)
 {
-    program->Ast()->TransformChildrenRecursively(
-        [ctx, program](ir::AstNode *const ast) {
-            if ((ast->IsClassDeclaration() || ast->IsTSInterfaceDeclaration()) &&
-                (ast->IsExported() || ast->IsDefaultExported())) {
-                auto *const savedProg = ctx->GetChecker()->VarBinder()->AsETSBinder()->Program();
-                ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(program);
-                GeneratePartialDeclForExported(ctx, ast);
-                ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(savedProg);
-            }
+    return ((ast->IsClassDeclaration() && !ast->AsClassDeclaration()->Definition()->IsModule()) ||
+            ast->IsTSInterfaceDeclaration()) &&
+           (ast->IsExported() || ast->IsDefaultExported());
+}
 
-            return ast;
-        },
-        phaseName);
+static void CollectExportedPartialCandidates(const ArenaVector<ir::Statement *> &statements,
+                                             std::vector<ir::AstNode *> *const candidates)
+{
+    for (auto *const node : statements) {
+        if (node->IsETSModule() && node->AsETSModule()->IsNamespace()) {
+            CollectExportedPartialCandidates(node->AsETSModule()->Statements(), candidates);
+        } else if (IsExportedPartialCandidate(node)) {
+            candidates->emplace_back(node);
+        }
+    }
+}
+
+static void CreatePartialDecls(public_lib::Context *ctx, parser::Program *program)
+{
+    std::vector<ir::AstNode *> exportedPartialCandidates {};
+    CollectExportedPartialCandidates(program->Ast()->Statements(), &exportedPartialCandidates);
+
+    auto *const savedProg = ctx->GetChecker()->VarBinder()->AsETSBinder()->Program();
+    ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(program);
+    for (auto *const ast : exportedPartialCandidates) {
+        GeneratePartialDeclForExported(ctx, ast);
+    }
+    ctx->GetChecker()->VarBinder()->AsETSBinder()->SetProgram(savedProg);
 }
 
 bool PartialExportClassGen::PerformForProgram(parser::Program *program)
 {
-    CreatePartialDecls(Context(), program, Name());
+    CreatePartialDecls(Context(), program);
     return true;
 }
 

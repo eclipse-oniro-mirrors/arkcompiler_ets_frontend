@@ -156,15 +156,17 @@ static checker::Type *HandleArrayType(checker::ETSChecker *checker, ETSTypeRefer
 
 static checker::Type *HandlePartialType(checker::ETSChecker *const checker, ETSTypeReferencePart *ref)
 {
-    auto *baseType = checker->HandleUtilityTypeParameterNode(ref->TypeParams(), ref->GetIdent());
-    if (baseType != nullptr && baseType->IsETSObjectType() && !baseType->AsETSObjectType()->TypeArguments().empty()) {
-        // we treat Partial<A<T,D>> class as a different copy from A<T,D> now,
-        // but not a generic type param for Partial<>
-        ArenaVector<checker::Type *> typeArgTypes(baseType->AsETSObjectType()->TypeArguments());
-        checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), std::move(typeArgTypes), ref->Start());
-        baseType = ctx.Result();
+    auto *partialType = checker->HandleUtilityTypeParameterNode(ref->TypeParams(), ref->GetIdent());
+    if (partialType != nullptr && partialType->IsETSObjectType() &&
+        !partialType->AsETSObjectType()->TypeArguments().empty()) {
+        ES2PANDA_ASSERT(ref->TypeParams()->Params().size() == 1U);
+        auto *baseType = ref->TypeParams()->Params()[0U]->TsType();
+        std::vector<checker::Type *> typeArgTypes(baseType->AsETSObjectType()->TypeArguments().begin(),
+                                                  baseType->AsETSObjectType()->TypeArguments().end());
+        checker::InstantiationContext ctx(checker, partialType->AsETSObjectType(), typeArgTypes, ref->Start());
+        partialType = ctx.Result();
     }
-    return baseType;
+    return partialType;
 }
 
 static bool IsForbiddenAnyOriginalNode(const AstNode *node)

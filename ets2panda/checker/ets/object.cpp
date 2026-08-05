@@ -2459,6 +2459,11 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ResolveDeclaredMembersOfObject(classType);
 
+    if (classType->IsPartial()) {
+        CheckClassElement(classDef);
+        return;
+    }
+
     if (classDef->IsAbstract()) {
         AddStatus(checker::CheckerStatus::IN_ABSTRACT);
         classType->AddObjectFlag(checker::ETSObjectFlags::ABSTRACT);

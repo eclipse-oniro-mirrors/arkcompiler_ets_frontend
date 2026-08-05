@@ -21,7 +21,6 @@
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/type.h"
 #include "ir/statements/annotationDeclaration.h"
-#include "util/perfMetrics.h"
 
 #include <compiler/lowering/phase.h>
 
@@ -145,7 +144,7 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes, bool ne
         return nullptr;
     }
 
-    std::stringstream ss;
+    std::stringstream ss {};
     ss << needSubtypeReduction;
     for (auto t : constituentTypes) {
         ss << ":" << t;
@@ -161,7 +160,7 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes, bool ne
     newConstituentTypes.assign(constituentTypes.begin(), constituentTypes.end());
     ETSUnionType::LinearizeAndEraseIdentical(Relation(), newConstituentTypes, needSubtypeReduction);
     if (newConstituentTypes.size() == 1) {
-        cache.insert({hash, newConstituentTypes.front()});
+        cache.insert({std::move(hash), newConstituentTypes.front()});
         return newConstituentTypes.front();
     }
 
@@ -174,11 +173,12 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes, bool ne
     }
 
     auto *normalizedUnion = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
-    auto ut = normalizedUnion->GetAssemblerType().Mutf8();
+    auto ut = normalizedUnion->GetAssemblerType().Utf8();
     if (std::count_if(ut.begin(), ut.end(), [](char c) { return c == ','; }) > 0) {
         UnionAssemblerTypes().insert(normalizedUnion->GetAssemblerType());
     }
-    cache.insert({hash, normalizedUnion});
+    cache.insert({std::move(hash), normalizedUnion});
+
     return normalizedUnion;
 }
 
