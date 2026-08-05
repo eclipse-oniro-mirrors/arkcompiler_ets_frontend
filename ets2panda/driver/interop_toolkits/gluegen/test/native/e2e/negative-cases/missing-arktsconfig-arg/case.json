@@ -1,0 +1,9 @@
+{
+  "description": "gluegen is invoked without --arktsconfig at all; it must fail fast (exit 1) instead of e.g. silently falling back to some default.",
+  "args": {
+    "arktsconfig": null
+  },
+  "expect": {
+    "diagnostics": [{ "code": "11420001", "severity": "error" }]
+  }
+}

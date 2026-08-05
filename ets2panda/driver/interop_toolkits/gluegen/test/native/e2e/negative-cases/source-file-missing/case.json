@@ -1,0 +1,7 @@
+{
+  "description": "--input-file-list references a source file that was never created; gluegen must fail fast (exit 1) rather than silently skip it.",
+  "inputFiles": ["input/missing.ets"],
+  "expect": {
+    "diagnostics": [{ "code": "11420001", "severity": "error" }]
+  }
+}

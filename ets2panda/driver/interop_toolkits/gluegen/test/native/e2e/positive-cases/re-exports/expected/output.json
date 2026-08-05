@@ -1,0 +1,224 @@
+{
+  "files": {
+    "<CASE_DIR>/input/a.ets": {
+      "globalClassDescriptor": "La/ETSGLOBAL;",
+      "root": {
+        "B2": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C2",
+          "name": "B2",
+          "runtimeName": "Lb/C2;",
+          "source": null
+        },
+        "B4": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C4",
+          "name": "B4",
+          "runtimeName": "Lb/C4;",
+          "source": null
+        },
+        "C3": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C3",
+          "name": "C3",
+          "runtimeName": "Lb/C3;",
+          "source": null
+        },
+        "default": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C1",
+          "name": "default",
+          "runtimeName": "Lb/C1;",
+          "source": null
+        }
+      }
+    },
+    "<CASE_DIR>/input/b.ets": {
+      "globalClassDescriptor": "Lb/ETSGLOBAL;",
+      "root": {
+        "C1": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C1",
+          "name": "C1",
+          "runtimeName": "Lb/C1;",
+          "source": null
+        },
+        "C2": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C2",
+          "name": "C2",
+          "runtimeName": "Lb/C2;",
+          "source": null
+        },
+        "C3": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C3",
+          "name": "C3",
+          "runtimeName": "Lb/C3;",
+          "source": null
+        },
+        "C4": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C4",
+          "name": "C4",
+          "runtimeName": "Lb/C4;",
+          "source": null
+        }
+      }
+    },
+    "<CASE_DIR>/input/c.ets": {
+      "globalClassDescriptor": "Lc/ETSGLOBAL;",
+      "root": {
+        "C1": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C1",
+          "name": "C1",
+          "runtimeName": "Lb/C1;",
+          "source": null
+        },
+        "C2": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C2",
+          "name": "C2",
+          "runtimeName": "Lb/C2;",
+          "source": null
+        },
+        "C3": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C3",
+          "name": "C3",
+          "runtimeName": "Lb/C3;",
+          "source": null
+        },
+        "C4": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C4",
+          "name": "C4",
+          "runtimeName": "Lb/C4;",
+          "source": null
+        },
+        "d": {
+          "children": {
+            "C5": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "C5",
+              "name": "C5",
+              "runtimeName": "Ld/C5;",
+              "source": null
+            },
+            "C6": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "C6",
+              "name": "C6",
+              "runtimeName": "Ld/C6;",
+              "source": null
+            },
+            "C7": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "C7",
+              "name": "C7",
+              "runtimeName": "Ld/C7;",
+              "source": null
+            },
+            "C8": {
+              "children": {},
+              "initModuleParam": null,
+              "kind": "class",
+              "localName": "C8",
+              "name": "C8",
+              "runtimeName": "Ld/C8;",
+              "source": null
+            }
+          },
+          "initModuleParam": null,
+          "kind": "namespace",
+          "localName": null,
+          "name": "d",
+          "runtimeName": null,
+          "source": null
+        }
+      }
+    },
+    "<CASE_DIR>/input/d.ets": {
+      "globalClassDescriptor": "Ld/ETSGLOBAL;",
+      "root": {
+        "C5": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C5",
+          "name": "C5",
+          "runtimeName": "Ld/C5;",
+          "source": null
+        },
+        "C6": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C6",
+          "name": "C6",
+          "runtimeName": "Ld/C6;",
+          "source": null
+        },
+        "C7": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C7",
+          "name": "C7",
+          "runtimeName": "Ld/C7;",
+          "source": null
+        },
+        "C8": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "C8",
+          "name": "C8",
+          "runtimeName": "Ld/C8;",
+          "source": null
+        },
+        "default": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "CDefault",
+          "name": "default",
+          "runtimeName": "Ld/CDefault;",
+          "source": null
+        }
+      }
+    }
+  },
+  "status": "success"
+}

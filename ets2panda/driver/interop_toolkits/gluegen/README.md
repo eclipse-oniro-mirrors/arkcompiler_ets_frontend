@@ -23,7 +23,7 @@ TypeScript wrapper
         │
         ▼
 Native generator
-  ├─ declgen-bridageconfig.json # decided by hvigor
+  ├─ declgen-bridgeconfig.json # decided by hvigor
   └─ report.json
 ```
 

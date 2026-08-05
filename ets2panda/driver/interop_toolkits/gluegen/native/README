@@ -1,0 +1,138 @@
+# Gluegen Native Tool
+
+`gluegen` is a native command-line tool for ArkTS and TypeScript interop workflows. It analyzes `.ets` and `.ts` source files and writes JSON metadata describing their exported symbols, runtime names, and resolved re-exports. Downstream binding and interop generators consume this metadata; `gluegen` does not generate source code itself.
+
+## What It Produces
+
+For each requested source file, Gluegen collects exported classes, functions, properties, namespaces, `initModule()` declarations, and re-exports. The output records the runtime descriptor needed by downstream tools.
+
+Static re-exports are resolved across the supplied source files:
+
+- `export * from 'module'` adds the module's non-default exports.
+- `export * as name from 'module'` produces a namespace export.
+- `export { source as target } from 'module'` creates a renamed export.
+- Re-exports from dynamic or interop modules are retained as `dynamic-re-export` entries.
+
+Local declarations and earlier re-exports take precedence when names conflict. Re-export cycles are detected and do not recurse indefinitely.
+
+## Usage
+
+```text
+gluegen --input-file-list <file> [options]
+```
+
+`--input-file-list` is required. Its content is plain text with one source-file path per line; blank lines are ignored.
+
+| Option | Description |
+| --- | --- |
+| `--input-file-list <path>` | Required path to the source-file list. |
+| `--arktsconfig <path>` | Path to `arktsconfig.json`. Defaults to `arktsconfig.json` in the current directory. |
+| `--output <path>` | Output JSON path. Defaults to `gluegen.json` in the current directory. |
+| `--cache-path <dir>` | Directory for incremental intermediate caches. Omit to disable caching. |
+| `--report-path <path>` | Diagnostic report path. Defaults to `report.json` beside the output. A directory path writes `report.json` in that directory. |
+| `--single-file-emit` | Write one JSON file per source file instead of one combined output. |
+| `--target-api-version <number>` | Reserved for future use. |
+
+Example:
+
+```sh
+cat > sources.txt <<'EOF'
+src/main.ets
+src/shared.ets
+EOF
+
+gluegen \
+  --input-file-list sources.txt \
+  --arktsconfig arktsconfig.json \
+  --output out/gluegen.json \
+  --cache-path out/gluegen-cache
+```
+
+## Output
+
+By default, Gluegen writes one `GlueConfig` JSON file:
+
+```json
+{
+  "files": {
+    "src/main.ets": {
+      "root": {
+        "createApp": {
+          "name": "createApp",
+          "kind": "function",
+          "runtimeName": "Lentry/src/main/ETSGLOBAL;",
+          "localName": null,
+          "initModuleParam": null,
+          "source": null,
+          "children": {}
+        }
+      },
+      "globalClassDescriptor": "Lentry/src/main/ETSGLOBAL;"
+    }
+  },
+  "status": "success"
+}
+```
+
+`files` keys always use forward slashes for deterministic, cross-platform output. Symbol kinds are `function`, `class`, `property`, `namespace`, `dynamic-re-export`, and `init-module`.
+
+With `--single-file-emit`, Gluegen uses `rootDir` from `arktsconfig.json` and mirrors the source directory structure beneath the output directory. Each generated JSON contains one `files` entry.
+
+When source parsing fails, Gluegen writes:
+
+```json
+{ "status": "syntax-error" }
+```
+
+A source syntax error is a completed analysis result, so the process exits successfully. Tool, configuration, file-list, or output failures exit with code `1`.
+
+## Diagnostics
+
+Diagnostics are written even when an earlier processing stage fails. The default report location is `report.json` beside the main output.
+
+```json
+{
+  "diagnostics": {
+    "warnings": [],
+    "errors": []
+  }
+}
+```
+
+Diagnostics are also printed to standard error in a human-readable form. Warnings can report unresolved re-export sources or missing named exports. Errors include invalid configuration, I/O failures, output failures, and missing link targets.
+
+## Incremental Cache
+
+Pass `--cache-path` to enable incremental processing. Gluegen stores one intermediate record per source file plus a manifest and run logs:
+
+```text
+<cache-path>/
+  manifest.json
+  intermediates/
+  gluegen-<timestamp>.log
+```
+
+A cached entry is reused only when the source file modification timestamp matches the manifest. Missing or unreadable cache entries fall back to rebuilding that source file.
+
+## Build Integration
+
+The native executable is built as `gluegen`:
+
+- CMake target: `gluegen`
+- GN target: `//ets2panda/driver/interop_toolkits/gluegen:gluegen_native`
+
+The GN target is an internal tool and is not installed into the public Panda SDK. Product packaging stages the executable into the Gluegen wrapper package.
+
+## Source Layout
+
+| Path | Purpose |
+| --- | --- |
+| `include/cli.h` | Command-line option parsing. |
+| `include/gluegen.h` | Pipeline orchestration and es2panda session management. |
+| `include/gluec.h` | Per-file export collection and intermediate cache support. |
+| `include/gluel.h` | Re-export resolution and final configuration linking. |
+| `include/diagnostic.h` | Diagnostics and report serialization. |
+| `include/symbol.h` | Export symbol model. |
+| `src/` | Native implementation and executable entry point. |
+
+For implementation-level behavior and data contracts, see the parent `SPEC.md`.

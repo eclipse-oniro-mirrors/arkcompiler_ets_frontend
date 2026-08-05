@@ -1,0 +1,28 @@
+{
+  "files": {
+    "<CASE_DIR>/input/a.ets": {
+      "globalClassDescriptor": "La/ETSGLOBAL;",
+      "root": {
+        "Foo": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "Foo",
+          "name": "Foo",
+          "runtimeName": "La/Foo;",
+          "source": null
+        },
+        "bar": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "function",
+          "localName": "bar",
+          "name": "bar",
+          "runtimeName": "La/ETSGLOBAL;",
+          "source": null
+        }
+      }
+    }
+  },
+  "status": "success"
+}

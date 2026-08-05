@@ -1,0 +1,28 @@
+{
+    "files": {
+        "<CASE_DIR>/input/entry.ets": {
+            "globalClassDescriptor": "Lentry/ETSGLOBAL;",
+            "root": {
+                "InteropNs": {
+                    "children": {},
+                    "initModuleParam": null,
+                    "kind": "dynamic-re-export",
+                    "localName": "*",
+                    "name": "InteropNs",
+                    "runtimeName": null,
+                    "source": "dyn/entry"
+                },
+                "StaticClassA": {
+                    "children": {},
+                    "initModuleParam": null,
+                    "kind": "class",
+                    "localName": "StaticClassA",
+                    "name": "StaticClassA",
+                    "runtimeName": "LstaticDep/StaticClassA;",
+                    "source": null
+                }
+            }
+        }
+    },
+    "status": "success"
+}

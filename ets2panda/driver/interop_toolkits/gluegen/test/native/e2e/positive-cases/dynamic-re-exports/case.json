@@ -1,0 +1,6 @@
+{
+    "description": "dynamic re-exports tests",
+    "inputFiles": [
+        "input/entry.ets"
+    ]
+}

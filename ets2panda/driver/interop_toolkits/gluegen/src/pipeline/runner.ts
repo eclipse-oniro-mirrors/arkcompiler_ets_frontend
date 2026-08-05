@@ -85,5 +85,5 @@ export class GlueGenRunner {
 
 export function defaultNativeExecutablePath(): string {
   const executableName = process.platform === 'win32' ? 'gluegen.exe' : 'gluegen';
-  return path.resolve(__dirname, '..', 'bin', executableName);
+  return path.resolve(__dirname, '..', '..', 'bin', executableName);
 }
