@@ -196,7 +196,6 @@ export interface PathConfig {
 
 export interface DeclgenConfig {
   declgenV1OutPath?: string;
-  declgenBridgeCodePath?: string;
 }
 
 export interface BuildConfig extends DeclgenConfig, ModuleConfig, PathConfig {
@@ -216,7 +215,6 @@ export interface ModuleInfo {
   compileFiles: string[];
   depModuleCompileFiles: string[];
   declgenV1OutPath: string | undefined;
-  declgenBridgeCodePath: string | undefined;
   staticDepModuleInfos: string[];
   dynamicDepModuleInfos: string[];
   language: string;

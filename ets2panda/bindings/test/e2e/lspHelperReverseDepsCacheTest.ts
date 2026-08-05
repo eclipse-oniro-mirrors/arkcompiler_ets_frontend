@@ -49,7 +49,6 @@ function createModuleInfo(name: string, compileFiles: string[], depModuleCompile
     compileFiles,
     depModuleCompileFiles,
     declgenV1OutPath: '',
-    declgenBridgeCodePath: '',
     staticDepModuleInfos: [],
     dynamicDepModuleInfos: [],
     language: ''

@@ -73,7 +73,7 @@ export function buildDeclgenOutputPath(
     inputFile: string,
     moduleInfo: ModuleInfo,
     cacheDir?: string
-): { declEtsOutputPath: string; glueCodeOutputPath: string } {
+): { declEtsOutputPath: string; glueCodeOutputPath?: string } {
     let filePathFromModuleRoot: string;
     if (cacheDir && inputFile.endsWith(ETSCACHE_SUFFIX)) {
         filePathFromModuleRoot = path.relative(cacheDir, inputFile);
@@ -81,12 +81,16 @@ export function buildDeclgenOutputPath(
             path.resolve(moduleInfo.declgenV1OutPath!, filePathFromModuleRoot),
             DECL_ETS_SUFFIX
         );
-        const glueCodeOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(moduleInfo.declgenBridgeCodePath!, filePathFromModuleRoot),
-            TS_SUFFIX
-        );
+        const glueCodeOutputPath = moduleInfo.declgenBridgeCodePath
+            ? changeDeclgenFileExtension(
+                path.resolve(moduleInfo.declgenBridgeCodePath, filePathFromModuleRoot),
+                TS_SUFFIX
+            )
+            : undefined;
         ensurePathExists(declEtsOutputPath);
-        ensurePathExists(glueCodeOutputPath);
+        if (glueCodeOutputPath) {
+            ensurePathExists(glueCodeOutputPath);
+        }
         return { declEtsOutputPath, glueCodeOutputPath };
     }
     filePathFromModuleRoot = path.relative(moduleInfo.moduleRootPath, inputFile);
@@ -94,12 +98,16 @@ export function buildDeclgenOutputPath(
         path.resolve(moduleInfo.declgenV1OutPath!, moduleInfo.packageName, filePathFromModuleRoot),
         DECL_ETS_SUFFIX
     );
-    const glueCodeOutputPath: string = changeDeclgenFileExtension(
-        path.resolve(moduleInfo.declgenBridgeCodePath!, moduleInfo.packageName, filePathFromModuleRoot),
-        TS_SUFFIX
-    );
+    const glueCodeOutputPath = moduleInfo.declgenBridgeCodePath
+        ? changeDeclgenFileExtension(
+            path.resolve(moduleInfo.declgenBridgeCodePath, moduleInfo.packageName, filePathFromModuleRoot),
+            TS_SUFFIX
+        )
+        : undefined;
     ensurePathExists(declEtsOutputPath);
-    ensurePathExists(glueCodeOutputPath);
+    if (glueCodeOutputPath) {
+        ensurePathExists(glueCodeOutputPath);
+    }
     return { declEtsOutputPath, glueCodeOutputPath };
 }
 

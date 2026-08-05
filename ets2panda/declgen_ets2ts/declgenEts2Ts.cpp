@@ -800,15 +800,6 @@ void TSDeclGen::GenImportDeclarations()
     }
 }
 
-void TSDeclGen::GenImportRecordDeclarations(const std::string &source)
-{
-    const std::string recordKey = "escompat.Record";
-    if (IsDependency(recordKey)) {
-        OutDts("import type { Record } from \"", source, "\";");
-        OutEndlDts();
-    }
-}
-
 template <class T, class CB>
 void TSDeclGen::GenSeparated(const T &container, const CB &cb, const char *separator, bool isReExport, bool isDtsExport)
 {
@@ -3447,11 +3438,6 @@ void TSDeclgenContent::PushInitModuleGlues(const std::string &initModuleGlueStr)
     initModuleGlues_ += initModuleGlueStr;
 }
 
-void TSDeclgenContent::PushRecordImports(const std::string &recordImportStr)
-{
-    recordImports_ += recordImportStr;
-}
-
 bool TSDeclgenContent::WriteToFile(const std::string &path)
 {
 #if defined(PANDA_TARGET_WINDOWS)
@@ -3462,7 +3448,7 @@ bool TSDeclgenContent::WriteToFile(const std::string &path)
     if (outStream.fail()) {
         return false;
     }
-    outStream << recordImports_ << imports_ << initModuleGlues_ << statements_ << exports_;
+    outStream << imports_ << initModuleGlues_ << statements_ << exports_;
     outStream.close();
     if (outStream.good()) {
         return true;
@@ -3568,8 +3554,7 @@ checker::ETSChecker *TSDeclGenerator::GetChecker() const
 
 bool ValidateDeclgenOptions(const DeclgenOptions &options, checker::ETSChecker *checker)
 {
-    if ((options.outputDeclEts.empty() && !options.outputEts.empty()) ||
-        (!options.outputDeclEts.empty() && options.outputEts.empty())) {
+    if (options.outputDeclEts.empty() && !options.outputEts.empty()) {
         checker->DiagnosticEngine().LogDiagnostic(diagnostic::GENERATE_DYNAMIC_DECLARATIONS,
                                                   util::DiagnosticMessageParams {});
         return false;
@@ -3638,7 +3623,7 @@ bool TSDeclGenerator::GenerateExportsAfterParsed(TSDeclGen *declBuilder, TSDeclg
     return true;
 }
 bool TSDeclGenerator::GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSDeclgenContent *tsContent,
-                                                     TSDeclgenContent *dtsContent, const DeclgenOptions &options)
+                                                     TSDeclgenContent *dtsContent)
 {
     declBuilder->ResetTsOutput();
     declBuilder->ResetDtsOutput();
@@ -3659,11 +3644,6 @@ bool TSDeclGenerator::GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSD
     declBuilder->GenImportDeclarations();
     tsContent->PushImports(declBuilder->GetTsOutput());
     dtsContent->PushImports(declBuilder->GetDtsOutput());
-    if (!options.recordFile.empty()) {
-        declBuilder->ResetDtsOutput();
-        declBuilder->GenImportRecordDeclarations(options.recordFile);
-        dtsContent->PushRecordImports(declBuilder->GetDtsOutput());
-    }
     return true;
 }
 bool TSDeclGenerator::ProcessSingleFile(bool afterParsed)
@@ -3672,8 +3652,7 @@ bool TSDeclGenerator::ProcessSingleFile(bool afterParsed)
     if (afterParsed) {
         return GenerateExportsAfterParsed(declBuilder_.get(), &tsContent_, &dtsContent_);
     }
-    return GenerateDeclarationsAfterCheck(declBuilder_.get(), &tsContent_, &dtsContent_,
-                                          declBuilder_->GetDeclgenOptions());
+    return GenerateDeclarationsAfterCheck(declBuilder_.get(), &tsContent_, &dtsContent_);
 }
 bool TSDeclGenerator::ProcessProgram(parser::Program *prog, bool afterParsed)
 {
@@ -3713,7 +3692,7 @@ bool TSDeclGenerator::ProcessProgram(parser::Program *prog, bool afterParsed)
                                           &fileContent.dtsContent);
     }
     return GenerateDeclarationsAfterCheck(fileContent.declBuilder.get(), &fileContent.tsContent,
-                                          &fileContent.dtsContent, fileContent.options);
+                                          &fileContent.dtsContent);
 }
 
 bool WriteSingleFile(const std::string &path, TSDeclgenContent &content, checker::ETSChecker *checker)

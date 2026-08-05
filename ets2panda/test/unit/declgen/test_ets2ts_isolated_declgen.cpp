@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
     const char *inputFiles[] = {argv[argc - 1]};
     const char *outputDeclEts[] = {declName.c_str()};
-    const char *outputEts[] = {"dump.ets"};
+    const char *outputEts[] = {""};
     es2panda_TsDeclgen *declgen =
         impl->CreateTsDeclgen(context, 1, inputFiles, outputDeclEts, outputEts, false, true, "", false);
     if (declgen == nullptr) {

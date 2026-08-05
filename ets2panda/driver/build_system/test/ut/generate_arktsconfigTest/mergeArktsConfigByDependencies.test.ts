@@ -55,7 +55,6 @@ function createMockModuleInfo(packageName: string): ModuleInfo {
         dependentSet: new Set(),
         declgenV1OutPath: undefined,
         declgenV2OutPath: undefined,
-        declgenBridgeCodePath: undefined,
         byteCodeHar: false,
     } as any;
 }

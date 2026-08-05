@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -48,7 +48,6 @@ set(ETS2TS_TESTS
     "./ets2ts/test_ets2ts_class_implements_interface_field.ets"
     "./ets2ts/test_ets2ts_reexport_default_alias.ets"
     "./ets2ts/test_ets2ts_export_named_default_expr.ets"
-    "./ets2ts/reexport_interface/reexport_interface.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
@@ -144,15 +143,6 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
         )
         add_dependencies(declgen-ets2ts-plugin-test-expected-${FILE_NAME} declgen-ets2ts-plugin-test-compile-${FILE_NAME} es2panda-lib)
         add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-expected-${FILE_NAME})
-
-        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ETS2TS}/${FILE_NAME}-expected-ts.txt")
-            add_custom_target(declgen-ets2ts-plugin-test-expected-ts-${FILE_NAME}
-                COMMAND ${CMAKE_COMMAND} -E compare_files
-                    "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.ets" "${CMAKE_CURRENT_SOURCE_DIR}/${ETS2TS}/${FILE_NAME}-expected-ts.txt"
-            )
-            add_dependencies(declgen-ets2ts-plugin-test-expected-ts-${FILE_NAME} declgen-ets2ts-plugin-test-compile-${FILE_NAME} es2panda-lib)
-            add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-expected-ts-${FILE_NAME})
-        endif()
     endforeach()
 endforeach()
 

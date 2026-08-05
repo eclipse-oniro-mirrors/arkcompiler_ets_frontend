@@ -44,9 +44,6 @@ import {
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
-    DECL_TS_SUFFIX,
-    STATIC_RECORD_FILE,
-    STATIC_RECORD_FILE_CONTENT,
     ENABLE_DECLARATION_BARRIER,
     MERGED_INTERMEDIATE_FILE
 } from '../pre_define';
@@ -475,21 +472,9 @@ export class Ets2panda {
                 file, jobInfo.fileToModuleMap[file], this.cacheDir
             );
             outputDeclEtsPaths.push(declEtsOutputPath);
-            outputEtsPaths.push(glueCodeOutputPath);
+            outputEtsPaths.push(glueCodeOutputPath ?? '');
         }
-
         const firstFileModule = jobInfo.fileToModuleMap[inputFiles[0]];
-        const staticRecordPath = path.join(
-            firstFileModule.declgenV1OutPath!,
-            STATIC_RECORD_FILE
-        )
-        const declEtsOutputDir = path.dirname(outputDeclEtsPaths[0]);
-        const staticRecordRelativePath = changeFileExtension(
-            path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
-            '',
-            DECL_TS_SUFFIX
-        );
-        createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
         let ets2pandaCmd = this.formDeclgenCliCmd(jobInfo)
         this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
 
@@ -508,7 +493,7 @@ export class Ets2panda {
                 outputEtsPaths,
                 false,
                 false,
-                staticRecordRelativePath,
+                '',
                 genDeclAnnotations
             );
             let ast = arkts.EtsScript.fromContext();

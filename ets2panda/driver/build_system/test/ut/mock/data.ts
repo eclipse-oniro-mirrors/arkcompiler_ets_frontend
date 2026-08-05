@@ -40,7 +40,6 @@ export function getMockedBuildConfig(): BuildConfig {
         enableDeclgenEts2Ts: false,
         declgenV1OutPath: "",
         declgenV2OutPath: "",
-        declgenBridgeCodePath: "",
         skipDeclCheck: undefined,
 
         // LoggerConfig
@@ -110,7 +109,6 @@ export const moduleInfoWithNullSourceRoots: ModuleInfo = {
     arktsConfigFile: 'arktsconfig.json',
     declgenV1OutPath: "",
     declgenV2OutPath: "",
-    declgenBridgeCodePath: "",
     byteCodeHar: false,
     dependencies: [],
     staticDependencyModules: new Map(),
@@ -128,7 +126,6 @@ export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
     arktsConfigFile: 'arktsconfig.json',
     declgenV1OutPath: "",
     declgenV2OutPath: "",
-    declgenBridgeCodePath: "",
     byteCodeHar: false,
     dependencies: [],
     staticDependencyModules: new Map(),
@@ -149,7 +146,6 @@ export const moduleInfo: ModuleInfo = {
     dynamicDependencyModules: new Map(),
     declgenV1OutPath: '/path/to/moduleA/declgen/v1',
     declgenV2OutPath: '/path/to/moduleA/declgen/v2',
-    declgenBridgeCodePath: '/path/to/moduleA/bridge/code',
     language: "1.2",
     declFilesPath: '/path/to/moduleA/declFiles',
     byteCodeHar: true,

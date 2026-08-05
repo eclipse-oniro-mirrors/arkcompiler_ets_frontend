@@ -86,7 +86,6 @@ public:
     void GenImportDeclarations();
     void GenExportNamedDeclarations();
     void GenInitModuleGlueCode();
-    void GenImportRecordDeclarations(const std::string &source);
 
     std::string GetDtsOutput() const
     {
@@ -431,7 +430,6 @@ public:
     void PushExports(const std::string &exports);
     void PushStatements(const std::string &statementStr);
     void PushInitModuleGlues(const std::string &initModuleGlueStr);
-    void PushRecordImports(const std::string &recordImportStr);
     void RemoveDuplicateExports(const std::string &checkExports);
     bool HasLocalDeclaredExport(const std::string &line, const std::string &checkExports);
     bool WriteToFile(const std::string &path);
@@ -441,7 +439,6 @@ private:
     std::string exports_;
     std::string statements_;
     std::string initModuleGlues_;
-    std::string recordImports_;
 };
 
 class TSDeclGenerator {
@@ -487,7 +484,7 @@ private:
     bool ProcessSingleFile(bool afterParsed);
     bool GenerateExportsAfterParsed(TSDeclGen *declBuilder, TSDeclgenContent *tsContent, TSDeclgenContent *dtsContent);
     bool GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSDeclgenContent *tsContent,
-                                        TSDeclgenContent *dtsContent, const DeclgenOptions &options);
+                                        TSDeclgenContent *dtsContent);
 };
 
 }  // namespace ark::es2panda::declgen_ets2ts
