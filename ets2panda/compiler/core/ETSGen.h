@@ -528,6 +528,12 @@ private:
     void UnaryMinus(const ir::AstNode *node);
     void UnaryTilde(const ir::AstNode *node);
 
+    void CompileInRegScope(const ir::Expression *expr)
+    {
+        RegScope argRs(this);
+        expr->Compile(this);
+    }
+
     util::StringView ToAssemblerType(const es2panda::checker::Type *type) const;
 
     template <bool IS_SRTICT = false>
@@ -856,7 +862,7 @@ private:
     auto *param##idx = arguments[idx];                         \
     auto *paramType##idx = param##idx->TsType();               \
     auto ttctx##idx = TargetTypeContext(this, paramType##idx); \
-    arguments[idx]->Compile(this);                             \
+    CompileInRegScope(arguments[idx]);                         \
     VReg arg##idx = AllocReg();                                \
     ApplyConversion(arguments[idx], nullptr);                  \
     ApplyConversionAndStoreAccumulator(arguments[idx], arg##idx, paramType##idx)
