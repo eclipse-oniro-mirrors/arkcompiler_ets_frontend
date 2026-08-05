@@ -2,6 +2,8 @@ import st from "@ohos.lang.interop";
 export declare function retFunc(x: number): string;
 export declare function paramFunc(x: string): void;
 export declare function paramFunc2(x: string, y: Base): undefined;
+export declare function f(): ESObject;
+export declare function f2(func: ESObject): void;
 export declare class Base {
     constructor();
 }

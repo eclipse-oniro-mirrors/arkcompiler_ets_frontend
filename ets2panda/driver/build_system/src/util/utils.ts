@@ -103,6 +103,12 @@ export function buildDeclgenOutputPath(
     return { declEtsOutputPath, glueCodeOutputPath };
 }
 
+export function unlinkSync(filePath: string): void {
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+}
+
 export function ensurePathExists(filePath: string): void {
     const dirPath: string = path.dirname(filePath);
     ensureDirExists(dirPath);

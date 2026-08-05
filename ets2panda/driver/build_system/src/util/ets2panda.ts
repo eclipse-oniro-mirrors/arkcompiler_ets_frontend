@@ -40,6 +40,7 @@ import {
     createFileIfNotExists,
     ensurePathExists,
     nextBatch,
+    unlinkSync,
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
@@ -388,6 +389,7 @@ export class Ets2panda {
                     )
                     ensurePathExists(declEtsOutputPath);
                     // .etscache files are generated separately from .abc file right now
+                    unlinkSync(declEtsOutputPath);
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${fi.input}`)
                 }
