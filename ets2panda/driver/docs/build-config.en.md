@@ -11,7 +11,7 @@ Build-config consists from several config structures:
 | Structure | Structure fields |
 |--------------|----------------|
 | **BuildBaseConfig** | `buildType: BUILD_TYPE`<br>`buildMode: BUILD_MODE`<br>`es2pandaMode: ES2PANDA_MODE`<br>`hasMainModule: boolean`<br>`isBuildConfigModified?: boolean`<br>`dumpDependencyGraph?: boolean`<br>`dumpPerf?: boolean` |
-| **DeclgenConfig** | `enableDeclgenEts2Ts: boolean`<br>`declgenV1OutPath?: string`<br>`declgenV2OutPath: string`<br>`declgenBridgeCodePath?: string`<br>`skipDeclCheck?: boolean`<br>`continueOnError?: boolean`<br>`genDeclAnnotations?: boolean` |
+| **DeclgenConfig** | `enableDeclgenEts2Ts: boolean`<br>`declgenV1OutPath?: string`<br>`declgenV2OutPath: string`<br>`skipDeclCheck?: boolean`<br>`continueOnError?: boolean`<br>`genDeclAnnotations?: boolean` |
 | **LoggerConfig** | `getHvigorConsoleLogger?: Function` |
 | **ModuleConfig** | `packageName: string`<br>`moduleType: OHOS_MODULE_TYPE`<br>`moduleRootPath: string`<br>`sourceRoots: string[]`<br>`byteCodeHar: boolean`<br>`entryFile: string` |
 | **PathConfig** | `loaderOutPath: string`<br>`cachePath: string`<br>`buildSdkPath: string`<br>`pandaSdkPath?: string`<br>`pandaStdlibPath?: string`<br>`externalApiPaths: string[]`<br>`abcLinkerPath?: string`<br>`dependencyAnalyzerPath?: string`<br>`sdkAliasConfigPaths?: string[]`<br>`sdkAliasMap: Map<string, string>`<br>`interopSDKPaths: Set<string>`<br>`interopApiPaths: string[]`<br>`projectRootPath: string` |

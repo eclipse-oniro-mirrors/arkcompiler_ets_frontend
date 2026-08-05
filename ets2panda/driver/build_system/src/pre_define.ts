@@ -26,7 +26,6 @@ export const INCRE_DEP_ANALYZER_INPUT_FILE: string = 'incre_inputs.txt';
 export const INCRE_DEP_ANALYZER_OUTPUT_FILE: string = 'incre_dependency.json';
 export const INCRE_COMPILE_FILE: string = 'incre_compile.json';
 export const PROJECT_BUILD_CONFIG_FILE: string = 'projectionConfig.json';
-export const STATIC_RECORD_FILE: string = 'static.Record.d.ts';
 export const FILE_HASH_CACHE: string = 'hash_cache.json';
 export const DECL_FILE_MAP_NAME: string = 'decl_file_map.json';
 export const DECL_ETS_SUFFIX: string = '.d.ets';
@@ -67,12 +66,6 @@ export const DYNAMIC_PREFIX: string = 'dynamic/';
 
 export const CONTEXT_DATA_STORAGE_BUNDLE: string = '/data/storage/el1/bundle/';
 export const DYNAMIC_ABC_FILE: string = 'modules.abc';
-
-export const STATIC_RECORD_FILE_CONTENT: string = `// generated for static Record
-export type Record<K extends keyof any, T> = {
-  [P in K]: T;
-};
-`;
 // Koala experimental variables
 export const LIBARKTS_PATH_FROM_SDK: string = './build-tools/libarkts/lib/libarkts.js'
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'

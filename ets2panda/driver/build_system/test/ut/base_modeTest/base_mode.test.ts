@@ -114,7 +114,6 @@ function createMockModuleInfo(overrides: Partial<ModuleInfo> = {}): ModuleInfo {
         dynamicDependencyModules: new Map(),
         staticDependencyModules: new Map(),
         declgenV1OutPath: '/mock/declgen/v1',
-        declgenBridgeCodePath: '/mock/declgen/bridge',
         dependencies: [],
         ...overrides
     } as ModuleInfo;

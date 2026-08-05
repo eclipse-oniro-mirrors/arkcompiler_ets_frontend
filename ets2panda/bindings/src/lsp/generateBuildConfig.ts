@@ -222,10 +222,6 @@ export function generateBuildConfigs(
         languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
           ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static')
           : undefined,
-      declgenBridgeCodePath:
-        languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
-          ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static', 'declgenBridgeCode')
-          : undefined,
       dependencies: processDependencies(module.name, dependencies, definedModules),
       sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined
     };

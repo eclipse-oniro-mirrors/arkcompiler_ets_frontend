@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,6 @@ export const moduleInfoWithNullSourceRoots: ModuleInfo = {
     compileFileInfos: [],
     declgenV1OutPath: undefined,
     declgenV2OutPath: undefined,
-    declgenBridgeCodePath: undefined,
     byteCodeHar: false,
     staticDepModuleInfos: new Map(),
     dynamicDepModuleInfos: new Map(),
@@ -45,7 +44,6 @@ export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
     compileFileInfos: [],
     declgenV1OutPath: undefined,
     declgenV2OutPath: undefined,
-    declgenBridgeCodePath: undefined,
     byteCodeHar: false,
     staticDepModuleInfos: new Map(),
     dynamicDepModuleInfos: new Map(),
@@ -68,7 +66,6 @@ export const moduleInfo: ModuleInfo = {
     dependentSet: new Set(),
     declgenV1OutPath: '/path/to/moduleA/declgen/v1',
     declgenV2OutPath: '/path/to/moduleA/declgen/v2',
-    declgenBridgeCodePath: '/path/to/moduleA/bridge/code',
     language: "1.2",
     declFilesPath: '/path/to/moduleA/declFiles',
     dependencies: [],

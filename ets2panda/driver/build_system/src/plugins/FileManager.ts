@@ -77,7 +77,6 @@ export class FileManager {
                 ...module,
                 modulePath: toUnixPath(module.modulePath),
                 declgenV1OutPath: module.declgenV1OutPath ? toUnixPath(module.declgenV1OutPath) : undefined,
-                declgenBridgeCodePath: module.declgenBridgeCodePath ? toUnixPath(module.declgenBridgeCodePath) : undefined,
                 declFilesPath: module.declFilesPath ? toUnixPath(module.declFilesPath) : undefined,
             };
             convertedMap.set(module.packageName, convertedModule);

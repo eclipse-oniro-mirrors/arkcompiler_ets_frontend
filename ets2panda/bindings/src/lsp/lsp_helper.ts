@@ -59,7 +59,7 @@ import {
   LspFormattingTextChanges,
   TextChange
 } from './lspNode';
-import { passStringArray, unpackString } from '../common/private';
+import { passString, passStringArray, unpackString } from '../common/private';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';
 import {
   BuildConfig,
@@ -436,17 +436,12 @@ export class Lsp {
       path.join(moduleInfo.declgenV1OutPath!, modulePath),
       DECL_ETS_SUFFIX
     );
-    const etsOutputPath: string = changeDeclgenFileExtension(
-      path.join(moduleInfo.declgenBridgeCodePath!, modulePath),
-      TS_SUFFIX
-    );
     this.declFileMap[declEtsOutputPath] = filePath;
     ensurePathExists(declEtsOutputPath);
-    ensurePathExists(etsOutputPath);
     const declgen = global.es2pandaPublic._CreateTsDeclgen(ctx, 1,
       passStringArray([filePath]),
       passStringArray([declEtsOutputPath]),
-      passStringArray([etsOutputPath]), 1, 0, '', 1
+      passStringArray(['']), 1, 0, passString(''), 1
     );
     try {
       global.es2pandaPublic._GenerateTsDeclarationsAfterParsed(declgen);

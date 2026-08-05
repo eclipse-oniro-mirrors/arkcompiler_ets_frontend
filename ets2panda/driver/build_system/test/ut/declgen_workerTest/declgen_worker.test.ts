@@ -179,7 +179,6 @@ describe('declgen_worker', () => {
         compileFileInfos: [],
         declgenV1OutPath: undefined,
         declgenV2OutPath: undefined,
-        declgenBridgeCodePath: undefined,
         byteCodeHar: false,
         staticDepModuleInfos: new Map(),
         dynamicDepModuleInfos: new Map(),
@@ -189,7 +188,7 @@ describe('declgen_worker', () => {
 
     const moduleInfos = [['pkg', moduleInfo]];
 
-    test('generate declaration && glue files && exit', () => {
+    test('generate declaration file and exit', () => {
         require('fs').readFileSync.mockReturnValue('source code');
         const id = 'processId1';
         const payload = {
@@ -200,7 +199,7 @@ describe('declgen_worker', () => {
         require('../../../src/build/declgen_worker');
         (process as any).emit('message', { id, payload });
 
-        expect(require('../../../src/util/utils').ensurePathExists).toHaveBeenCalledTimes(2);
+        expect(require('../../../src/util/utils').ensurePathExists).toHaveBeenCalledTimes(1);
         expect(fakeArkts.Config.create).toHaveBeenCalled();
         expect(fakeArkts.Context.createFromStringWithHistory).toHaveBeenCalled();
         expect(fakeArkts.proceedToState).toHaveBeenCalledWith(1, 'peer', true);

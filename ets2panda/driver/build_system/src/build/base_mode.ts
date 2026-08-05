@@ -206,15 +206,17 @@ export abstract class BaseMode {
                 return false;
             }
         };
-        const [declFileExists, glueCodeExists] =
-            await Promise.all([isFileExists(declEtsOutputPath), isFileExists(glueCodeOutputPath)]);
+        const [declFileExists, glueCodeExists] = await Promise.all([
+            isFileExists(declEtsOutputPath),
+            glueCodeOutputPath ? isFileExists(glueCodeOutputPath) : false,
+        ]);
 
         if (declFileExists && declInfo?.declLastModified != null) {
             const declStat = await fs.promises.stat(declEtsOutputPath);
             needsDeclBackup = declStat.mtimeMs > declInfo.declLastModified;
         }
 
-        if (glueCodeExists && declInfo?.glueCodeLastModified != null) {
+        if (glueCodeExists && glueCodeOutputPath && declInfo?.glueCodeLastModified != null) {
             const glueStat = await fs.promises.stat(glueCodeOutputPath);
             needsGlueCodeBackup = glueStat.mtimeMs > declInfo.glueCodeLastModified;
         }
@@ -256,7 +258,7 @@ export abstract class BaseMode {
         if (needsDecl) {
             backups.push(doCopy(declEtsOutputPath, 'declaration file'));
         }
-        if (needsGlue) {
+        if (needsGlue && glueCodeOutputPath) {
             backups.push(doCopy(glueCodeOutputPath, 'glue code file'));
         }
         await Promise.all(backups);
@@ -269,15 +271,14 @@ export abstract class BaseMode {
         if (!moduleInfo) {
             return;
         }
-        const { declEtsOutputPath, glueCodeOutputPath } =
-            buildDeclgenOutputPath(file, moduleInfo, this.cacheDir);
+        const { declEtsOutputPath, glueCodeOutputPath } = buildDeclgenOutputPath(file, moduleInfo, this.cacheDir);
 
         const [sourceFileStat, declStat, glueCodeStat] = await Promise.all([
             fs.promises.stat(file), fs.promises.stat(declEtsOutputPath).catch(() => null),
-            fs.promises.stat(glueCodeOutputPath).catch(() => null)
+            glueCodeOutputPath ? fs.promises.stat(glueCodeOutputPath).catch(() => null) : null,
         ]);
 
-        if (declStat || glueCodeStat) {
+        if (declStat) {
             this.declFileMap.set(file, {
                 delFilePath: declEtsOutputPath,
                 declLastModified: declStat?.mtimeMs ?? null,
@@ -288,7 +289,7 @@ export abstract class BaseMode {
             });
             this.logger.printDebug(`Updated decl file map for: ${file}`);
         } else {
-            const detail = `Expected outputs missing: ${declEtsOutputPath} or ${glueCodeOutputPath}`;
+            const detail = `Expected output missing: ${declEtsOutputPath}`;
             const logData = LogDataFactory.newInstance(
                 ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
                 `Build integrity error for ${file}`,

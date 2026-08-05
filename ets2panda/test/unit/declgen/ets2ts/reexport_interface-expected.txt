@@ -1,2 +1,0 @@
-import st from "@ohos.lang.interop";
-export { A } from "./source";

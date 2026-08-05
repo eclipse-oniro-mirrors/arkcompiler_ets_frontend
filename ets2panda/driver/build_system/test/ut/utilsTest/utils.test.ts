@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { ensurePathExists } from '../../../src/util/utils';
+import { buildDeclgenOutputPath, ensurePathExists } from '../../../src/util/utils';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
@@ -25,6 +25,7 @@ import {
     toUnixPath, safeRealpath
 } from '../../../src/util/utils';
 import { DECL_ETS_SUFFIX } from '../../../src/pre_define';
+import { ModuleInfo } from '../../../src/types';
 
 describe('Check if the path exists. If not, create it and ensure it exists', () => {
     const testDir = path.join(__dirname, 'testDir');
@@ -44,6 +45,52 @@ describe('Check if the path exists. If not, create it and ensure it exists', () 
     test('test ensurePathExists', () => {
         test_ensurePathExists(testDir);
     });
+});
+
+describe('buildDeclgenOutputPath', () => {
+    const testDir = path.join(__dirname, 'declgenOutput');
+    const inputFile = path.join(testDir, 'src', 'index.ets');
+
+    afterEach(() => {
+        if (fs.existsSync(testDir)) {
+            fs.rmSync(testDir, { recursive: true });
+        }
+    });
+
+    test('does not create a glue code output path without declgenBridgeCodePath', () => {
+        const moduleInfo = createModuleInfo();
+
+        const outputPaths = buildDeclgenOutputPath(inputFile, moduleInfo);
+
+        expect(outputPaths.declEtsOutputPath).toBe(path.join(testDir, 'decl', 'module', 'src', 'index.d.ets'));
+        expect(outputPaths.glueCodeOutputPath).toBeUndefined();
+    });
+
+    test('creates a glue code output path with declgenBridgeCodePath', () => {
+        const moduleInfo = createModuleInfo(path.join(testDir, 'bridge'));
+
+        const outputPaths = buildDeclgenOutputPath(inputFile, moduleInfo);
+
+        expect(outputPaths.glueCodeOutputPath).toBe(path.join(testDir, 'bridge', 'module', 'src', 'index.ts'));
+    });
+
+    function createModuleInfo(declgenBridgeCodePath?: string): ModuleInfo {
+        return {
+            isMainModule: true,
+            packageName: 'module',
+            moduleRootPath: testDir,
+            moduleType: 'entry',
+            sourceRoots: [],
+            entryFile: '',
+            arktsConfigFile: '',
+            declgenV1OutPath: path.join(testDir, 'decl'),
+            declgenBridgeCodePath,
+            dependencies: [],
+            staticDependencyModules: new Map(),
+            dynamicDependencyModules: new Map(),
+            staticFiles: [],
+        };
+    }
 });
 
 describe('utils', () => {

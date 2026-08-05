@@ -65,7 +65,8 @@ jest.mock(
         Logger: {
             getInstance: jest.fn(
                 () => ({printDebug: jest.fn(), printInfo: jest.fn(), printWarn: jest.fn(), printError: jest.fn()}))
-        }
+        },
+        LogDataFactory: {newInstance: jest.fn()}
     })
 );
 
@@ -188,16 +189,16 @@ class TestableBaseMode extends BaseMode {
         return this.saveDeclFileMap();
     }
 
-    public testGetOutputFilePaths(file: string): {declEtsOutputPath: string, glueCodeOutputPath: string} {
+    public testGetOutputFilePath(file: string): string {
         let moduleInfo: ModuleInfo = (this as any).fileToModule.get(file);
-        return buildDeclgenOutputPath(file, moduleInfo, (this as any).cacheDir);
+        return buildDeclgenOutputPath(file, moduleInfo, (this as any).cacheDir).declEtsOutputPath;
     }
 
-    public async testNeedsBackup(file: string): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
-        return (this as any).needsBackup(file);
+    public async testNeedsBackup(file: string): Promise<boolean> {
+        return (await (this as any).needsBackup(file)).needsDeclBackup;
     }
 
-    public async testBackupFiles(file: string, needsDecl: boolean, needsGlue: boolean): Promise<void> {
+    public async testBackupFiles(file: string, needsDecl: boolean, needsGlue = false): Promise<void> {
         return (this as any).backupFiles(file, needsDecl, needsGlue);
     }
 
@@ -230,7 +231,6 @@ function createMockBuildConfig(overrides: Partial<BuildConfig> = {}): BuildConfi
     return {
         cachePath: '/test/cache',
         declgenV1OutPath: '/test/declgen/v1',
-        declgenBridgeCodePath: '/test/bridge/code',
         declgenV2OutPath: '/test/declgen/v2',
         entryFile: 'index.ets',
         packageName: 'test-package',
@@ -287,7 +287,6 @@ function createMockModuleInfo(overrides: Partial<ModuleInfo> = {}): ModuleInfo {
         dynamicDependencyModules: new Map(),
         language: 'ARKTS_1_2',
         declgenV1OutPath: '/test/declgen/v1',
-        declgenBridgeCodePath: '/test/bridge/code',
         declgenV2OutPath: '/test/declgen/v2',
         byteCodeHar: false,
         staticFiles: [],
@@ -330,8 +329,6 @@ describe('BaseMode declaration file map management tests', () => {
             '/test/source/file1.ets': {
                 delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
                 declLastModified: 1700000000000,
-                glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-                glueCodeLastModified: 1700000001000,
                 sourceFilePath: '/test/source/file1.ets',
                 sourceFileLastModified: 1700000000500
             }
@@ -355,19 +352,17 @@ describe('BaseMode declaration file map management tests', () => {
         expect(fs.promises.writeFile).toHaveBeenCalledWith('/test/cache/decl_file_map.json', '{}');
     });
 
-    test('getOutputFilePaths generates correct paths for ETS file', () => {
+    test('getOutputFilePath generates the declaration path for an ETS file', () => {
         const file = '/test/module/root/src/components/MyComponent.ets';
         testMode.setFileToModule(file, createMockModuleInfo({
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
-        const result = testMode.testGetOutputFilePaths(file);
+        const result = testMode.testGetOutputFilePath(file);
 
-        expect(result.declEtsOutputPath).toBe('/test/declgen/v1/test-package/src/components/MyComponent.d.ets');
-        expect(result.glueCodeOutputPath).toBe('/test/bridge/code/test-package/src/components/MyComponent.ts');
+        expect(result).toBe('/test/declgen/v1/test-package/src/components/MyComponent.d.ets');
     });
 
     test('needsBackup returns false when files do not exist', async () => {
@@ -376,13 +371,11 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         const result = await testMode.testNeedsBackup(file);
 
-        expect(result.needsDeclBackup).toBe(false);
-        expect(result.needsGlueCodeBackup).toBe(false);
+        expect(result).toBe(false);
     });
 
     test('needsBackup returns true when declaration file timestamp changed externally', async () => {
@@ -392,14 +385,11 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         testMode.getDeclFileMap().set(file, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 1000,
             sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
         });
@@ -416,8 +406,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         const result = await testMode.testNeedsBackup(file);
 
-        expect(result.needsDeclBackup).toBe(true);
-        expect(result.needsGlueCodeBackup).toBe(true);
+        expect(result).toBe(true);
     });
 
     test('needsBackup returns false when declaration file timestamp unchanged', async () => {
@@ -428,14 +417,11 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         testMode.getDeclFileMap().set(file, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 1000,
             sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
         });
@@ -452,8 +438,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         const result = await testMode.testNeedsBackup(file);
 
-        expect(result.needsDeclBackup).toBe(false);
-        expect(result.needsGlueCodeBackup).toBe(false);
+        expect(result).toBe(false);
     });
 
     test('backupFilesForFile does backup when needed', async () => {
@@ -462,15 +447,14 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(file, true, true);
+        await testMode.testBackupFiles(file, true);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(4);
-        expect(fs.promises.copyFile).toHaveBeenCalledTimes(2);
+        expect(fs.existsSync).toHaveBeenCalledTimes(2);
+        expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
     test('backupFiles only backs up declaration file when needed', async () => {
@@ -480,33 +464,31 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(file, true, false);
+        await testMode.testBackupFiles(file, true);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(3);
+        expect(fs.existsSync).toHaveBeenCalledTimes(2);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
-    test('backupFiles only backs up glue code file when needed', async () => {
+    test('backupFiles skips backup when declaration output is unchanged', async () => {
         const file = '/test/module/root/src/file1.ets';
 
         testMode.setFileToModule(file, createMockModuleInfo({
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(file, false, true);
+        await testMode.testBackupFiles(file, false);
 
-        expect(fs.existsSync).toHaveBeenCalledTimes(3);
-        expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
+        expect(fs.existsSync).toHaveBeenCalledTimes(1);
+        expect(fs.promises.copyFile).not.toHaveBeenCalled();
     });
 
     test('updateDeclFileMapAsync updates declaration file map when files exist', async () => {
@@ -516,24 +498,21 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         (fs.promises.stat as jest.Mock)
             .mockResolvedValueOnce({mtimeMs: currentTime - 1000})
-            .mockResolvedValueOnce({mtimeMs: currentTime - 500})
-            .mockResolvedValueOnce({mtimeMs: currentTime - 200});
+            .mockResolvedValueOnce({mtimeMs: currentTime - 500});
 
         await testMode.testUpdateDeclFileMapAsync(file);
 
         const fileInfo = testMode.getDeclFileMap().get(file);
 
         expect(fileInfo?.declLastModified).toBe(currentTime - 500);
-        expect(fileInfo?.glueCodeLastModified).toBe(currentTime - 200);
         expect(fileInfo?.sourceFileLastModified).toBe(currentTime - 1000);
     });
 
-    test('updateDeclFileMapAsync handles missing output files gracefully', async () => {
+    test('updateDeclFileMapAsync rejects when the declaration output is missing', async () => {
         const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
 
@@ -541,21 +520,13 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         (fs.promises.stat as jest.Mock)
             .mockResolvedValueOnce({mtimeMs: currentTime - 1000})
-            .mockRejectedValueOnce(new Error('File not found'))
-            .mockResolvedValueOnce({mtimeMs: currentTime - 200});
+            .mockRejectedValueOnce(new Error('File not found'));
 
-        await testMode.testUpdateDeclFileMapAsync(file);
-
-        const fileInfo = testMode.getDeclFileMap().get(file);
-
-        expect(fileInfo?.declLastModified).toBe(null);
-        expect(fileInfo?.glueCodeLastModified).toBe(currentTime - 200);
-        expect(fileInfo?.sourceFileLastModified).toBe(currentTime - 1000);
+        await expect(testMode.testUpdateDeclFileMapAsync(file)).rejects.toThrow('Expected output missing');
     });
 
     test('needsRegeneration returns true when source file not in map', () => {
@@ -576,8 +547,6 @@ describe('BaseMode declaration file map management tests', () => {
         testMode.getDeclFileMap().set(sourceFile, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 2000
         });
@@ -596,8 +565,6 @@ describe('BaseMode declaration file map management tests', () => {
         testMode.getDeclFileMap().set(sourceFile, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 1000
         });
@@ -616,8 +583,6 @@ describe('BaseMode declaration file map management tests', () => {
         testMode.getDeclFileMap().set(sourceFile, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: null
         });
@@ -637,7 +602,6 @@ describe('BaseMode declaration file map management tests', () => {
                                           packageName: 'test-package',
                                           moduleRootPath: '/test/module/root',
                                           declgenV1OutPath: '/test/declgen/v1',
-                                          declgenBridgeCodePath: '/test/bridge/code'
                                       }));
 
              testMode.getDeclFileMap().clear();
@@ -648,8 +612,7 @@ describe('BaseMode declaration file map management tests', () => {
              expect(needsGen).toBe(true);
 
              const backupResult = await testMode.testNeedsBackup(sourceFile);
-             expect(backupResult.needsDeclBackup).toBe(false);
-             expect(backupResult.needsGlueCodeBackup).toBe(false);
+             expect(backupResult).toBe(false);
          });
 
     test('regeneration scenario with external modification', async () => {
@@ -660,14 +623,11 @@ describe('BaseMode declaration file map management tests', () => {
                                      packageName: 'test-package',
                                      moduleRootPath: '/test/module/root',
                                      declgenV1OutPath: '/test/declgen/v1',
-                                     declgenBridgeCodePath: '/test/bridge/code'
                                  }));
 
         testMode.getDeclFileMap().set(sourceFile, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 2000,
-            glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
-            glueCodeLastModified: currentTime - 2000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 1500
         });
@@ -688,11 +648,10 @@ describe('BaseMode declaration file map management tests', () => {
         expect(needsGen).toBe(true);
 
         const backupResult = await testMode.testNeedsBackup(sourceFile);
-        expect(backupResult.needsDeclBackup).toBe(true);
-        expect(backupResult.needsGlueCodeBackup).toBe(true);
+        expect(backupResult).toBe(true);
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
-        await testMode.testBackupFiles(sourceFile, true, true);
+        await testMode.testBackupFiles(sourceFile, true);
 
         expect(fs.existsSync).toHaveBeenCalled();
         expect(fs.promises.copyFile).toHaveBeenCalled();
@@ -711,7 +670,6 @@ describe('BaseMode declaration file map management tests', () => {
             packageName: moduleName,
             moduleRootPath: moduleRoot,
             declgenV1OutPath: '/output',
-            declgenBridgeCodePath: '/bridge'
         });
 
         mockFileToModule.set(fileA, mockModuleInfo);
@@ -908,7 +866,6 @@ describe('BaseMode declaration file map management tests', () => {
             packageName: moduleName,
             moduleRootPath: moduleRoot,
             declgenV1OutPath: '/output',
-            declgenBridgeCodePath: '/bridge'
         });
 
         mockFileToModule.set(fileA, mockModuleInfo);

@@ -111,7 +111,6 @@ function checkArktsConfig(config: BuildConfig) {
 
 function checkDeclgenOutputs(config: any) {
   const outPaths = [
-    config.declgenBridgeCodePath,
     config.declgenV1OutPath,
     config.declgenV2OutPath
   ].filter(Boolean);
