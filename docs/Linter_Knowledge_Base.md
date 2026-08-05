@@ -5,8 +5,8 @@ description: Reference knowledge base for ets2panda/linter migration tool. Use w
 
 # Linter Knowledge Base
 
-> Document version: v1.0
-> Last updated: 2026-06-04
+> Document version: v1.1
+> Last updated: 2026-07-31
 > Scope: `arkcompiler/ets_frontend/ets2panda/linter` (repo-relative path: ets2panda/linter)
 
 ## Summary
@@ -14,6 +14,7 @@ description: Reference knowledge base for ets2panda/linter migration tool. Use w
 1. Linter is migration assistance (≠ compiler), helps ArkTS-dynamic → ArkTS-static
 2. TypeScriptLinter (single-file) vs HomeCheck (cross-file) → check Decision Table first
 3. Rule changes need 8-point/6-point synchronization → follow Verification Checklist
+4. Dependency reproducibility is part of linter correctness → lock transitive npm behavior and verify all package layers
 
 ## When to Use
 
@@ -21,6 +22,7 @@ description: Reference knowledge base for ets2panda/linter migration tool. Use w
 - Debugging autofix conflicts or migration behavior
 - Investigating false positives/negatives in lint
 - Setting up linter build/test environment
+- Debugging npm install/build drift, `@types/node` conflicts, HomeCheck/ArkAnalyzer packaging, or lockfile behavior
 
 **When NOT to use:**
 - Compiler semantic changes → `ets2panda/Static_Frontend_Knowledge_Base.md`
@@ -41,6 +43,7 @@ Input: `.ets/.ts/.js` files, project config, SDK paths, rule config. Output: lin
 - `InteropTypescriptLinter`: TS/ETS interoperability rules
 
 **Typical issues**: rule false positives/negatives, autofix conflicts, unexpected migration, abnormal IDE JSON, SDK resolution errors, test expectation mismatches.
+Dependency issues also occur: transitive npm updates, mismatched `@types/node`, unstable `package-lock.json`, and install scripts that temporarily rewrite package metadata.
 
 ## Directory Structure And Code Map
 
@@ -89,6 +92,8 @@ ets2panda/linter/
 | `LinterRunner.ts` | Main executor: file filtering, rule execution, migration |
 | `rule-config.json` | IDE/migration rule classification |
 | `homecheck/ruleSet.json` | HomeCheck rule set (16 rules currently) |
+| `package.json` / `package-lock.json` | Reproducible npm dependency graph for linter, HomeCheck, ArkAnalyzer |
+| `scripts/install-ohos-typescript-and-homecheck.mjs` | Packs and installs ohos-typescript, ArkAnalyzer, HomeCheck into the linter package |
 
 ## Responsibility Boundaries
 
@@ -119,8 +124,9 @@ By symptom, start with these files in order:
 | **IDE protocol abnormal** | `LinterCLI.ts` → `ProblemInfo.ts` → check `indictor` field and JSON structure |
 | **SDK resolution error** | `ResolveSdks.ts` → `src/lib/data/*.json` → verify SDK path and declarations |
 | **Test expectation mismatch** | `test/**/results/*.diff` → inspect actual output → fix logic → then update |
+| **Dependency/install drift** | nearest `package.json` → nearest `package-lock.json` → `scripts/install-ohos-typescript-and-homecheck.mjs` |
 
-## Top 10 Don'ts (Critical)
+## Top Don'ts (Critical)
 
 **Do NOT**:
 1. **Modify compiler for linter issues** → Check Decision Table first, linter is migration assistance
@@ -133,6 +139,8 @@ By symptom, start with these files in order:
 8. **Copy compiler type system** → Linter uses TypeScript's checker, not ArkTS-static
 9. **Forget synchronization points** → Incomplete rule changes, verify checklist
 10. **Treat diagnostic differences as bugs** → Designed differences exist (IDE mode disables strict diagnostics)
+11. **Ignore lockfiles in linter package layers** → Transitive npm drift can break builds without source changes
+12. **Assume semver patch updates are harmless** → Type declarations can change compatibility, especially through `@types/node`
 
 ## Core Data Flow Or Control Flow
 
@@ -195,6 +203,7 @@ interface Autofix {
 - Autofix, migration → `src/lib/autofixes/QuasiEditor.ts`, `src/lib/autofixes/Autofixer.ts`
 - HomeCheck rules → `homecheck/src/checker/migration/*`, `homecheck/src/utils/common/CheckerIndex.ts`
 - SDK paths, resolution → `src/lib/ts-compiler/ResolveSdks.ts`
+- Dependency drift, lockfiles, npm packaging → `package.json`, `package-lock.json`, `scripts/install-ohos-typescript-and-homecheck.mjs`
 - Compiler type system → `ets2panda/Static_Frontend_Knowledge_Base.md`
 - LSP interaction → `ets2panda/LSP_Knowledge_Base.md`
 - Build/test → see Build section below
@@ -250,13 +259,51 @@ metaData.description → findRuleTagByDesc() extracts rule name from parentheses
 
 > ⚠️ **Drift-prone content**: Commands, scripts, and versions may change. Verify against current tree before use.
 
-### Build Commands (drift-prone, verify current version)
+### Build Modes (drift-prone, verify current version)
+
+There are two different linter build modes. Do not mix their assumptions.
+
+**Pipeline build**:
+- Uses `build_linter.py`
+- Must use the pipeline-specified Node.js and npm versions
+- Known pipeline versions: Node.js `v14.21.1`, npm `6.14.17`
+- Before running `build_linter.py`, run `npm install` with the specified npm executable in each package layer: `arkanalyzer`, `homecheck`, then linter root
+- Pass absolute paths from the current build environment; do not copy a developer machine path into scripts or documentation
+
+Example command shape:
+
+```bash
+cd <repo>/ets2panda/linter/arkanalyzer
+<node-v14.21.1>/bin/npm install
+
+cd <repo>/ets2panda/linter/homecheck
+<node-v14.21.1>/bin/npm install
+
+cd <repo>/ets2panda/linter
+<node-v14.21.1>/bin/npm install
+
+python3 build_linter.py \
+  --source-path <repo>/ets2panda/linter \
+  --output-path <output-dir> \
+  --npm <node-v14.21.1>/bin/npm \
+  --typescript <repo>/ets2panda/linter/<ohos-typescript-package>.tgz \
+  --version <linter-version>
+```
+
+**Local developer build**:
+- Follow `ets2panda/linter/README.md`
+- Does not require the pipeline Node.js/npm versions unless reproducing a pipeline-only issue
+- Run `npm install`, then `npm run install-ohos-typescript`
+- Run `npm run build` when build/package validation is needed
+
+### Common Commands
 
 | Command | Purpose | When to use |
 |---------|---------|-------------|
-| `npm install` | Install dependencies | First-time setup |
-| `npm run install-ohos-typescript` | Install ohos-typescript, arkanalyzer, homecheck | After dependency update |
-| `npm run build` | Local build (clean → compile → webpack → pack) | Before testing |
+| `npm install` | Install dependencies | Local setup, or pipeline preinstall when run with the specified npm |
+| `npm run install-ohos-typescript` | Install ohos-typescript, arkanalyzer, homecheck | Local developer setup after dependency update |
+| `python3 build_linter.py ...` | Pipeline-style package build | Reproducing pipeline package behavior |
+| `npm run build` | Local build (clean → compile → webpack → pack) | Local validation before testing |
 | `npm test` | Full test suite (runs `npm run fix` first) | Regression |
 | `npm run testrunner -- -d test/rules -p 'rule-name*'` | Single rule test | Debugging |
 | `npm run testrunner -- -d test/main --sdk` | SDK-dependent tests | SDK scenarios |
@@ -277,6 +324,68 @@ metaData.description → findRuleTagByDesc() extracts rule name from parentheses
 
 **Critical parameters**: `--project <tsconfig>` (construct program), `--project-folder <dir>` (collect files), `--check-ts-and-js` (allow .ts/.js), `--rule-config <path>` (rule classification), `--sdk-default-api-path` (must contain `build-tools/ets-loader/declarations`).
 
+## Dependency And Packaging Stability
+
+`ets2panda/linter` is a multi-package npm workspace in practice, even though it is arranged as repo subdirectories instead of a formal npm workspace. The root linter package depends on local `homecheck`, and `homecheck` depends on local `arkanalyzer`. A build or packaging issue may come from any of these layers:
+
+```
+ets2panda/linter/package.json
+  → homecheck/package.json
+    → arkanalyzer/package.json
+  → build_linter.py
+  → scripts/install-ohos-typescript-and-homecheck.mjs
+  → package-lock.json files generated for each package layer
+```
+
+### Dependency Drift Rules
+
+Treat dependency reproducibility as a compatibility boundary for the migration tool. A dependency-only change can break `npm run compile`, generated package contents, IDE integration, or downstream SDK builds even when linter TypeScript source code is unchanged.
+
+**Rules**:
+- Keep `package-lock.json` tracked for linter package layers that participate in build/package reproduction; do not hide them with `.gitignore`.
+- When an install script temporarily mutates a managed `package.json`, back up and restore the matching `package-lock.json` as well.
+- Treat an absent, ignored, or accidentally regenerated lockfile as dependency graph drift until proven intentional.
+- Prefer explicit pins or npm `overrides` for transitive packages known to affect TypeScript declaration, runtime, or package-export compatibility.
+- After changing dependencies or package scripts, inspect the resolved transitive versions in `package-lock.json`, not only direct dependencies in `package.json`.
+- Verify the full package chain with the relevant build mode: pipeline uses specified Node.js/npm plus `build_linter.py`; local development follows `README.md` with `npm install` and `npm run install-ohos-typescript`.
+
+**General pattern**: If lockfiles are missing or not restored after temporary installs, transitive packages can move under the same direct dependency declarations. The failure may appear as an unrelated TypeScript compile error, changed package contents, or SDK build break. Fix the reproducibility boundary first: restore or commit the correct lockfiles, then add pins/overrides only for dependencies whose resolved versions must remain constrained.
+
+### Install Script Safety
+
+`build_linter.py` and `scripts/install-ohos-typescript-and-homecheck.mjs` run `npm install`, `npm pack`, and local package installation across `arkanalyzer`, `homecheck`, and `linter`. These scripts can create or rewrite package metadata as a side effect.
+
+**When touching these scripts**:
+- Treat `package.json` and `package-lock.json` as a pair.
+- If a lockfile did not exist before a temporary install, restore by removing the generated lockfile after packaging.
+- If a lockfile existed before a temporary install, restore the original file after packaging.
+- Confirm the final worktree contains only intentional dependency metadata changes.
+- For pipeline behavior, reproduce with the specified Node.js/npm versions and `build_linter.py`.
+- For local developer behavior, run `npm run install-ohos-typescript` and then `npm run build` when dependency/package behavior changes.
+
+### Dependency Debugging Checklist
+
+For npm compile/install failures, check in this order:
+
+1. Identify which package layer fails: linter root, `homecheck`, or `arkanalyzer`
+2. Compare direct dependencies in the nearest `package.json`
+3. Inspect resolved transitive versions in the nearest `package-lock.json`
+4. Check whether `@types/node` or another type package is resolved through multiple incompatible paths
+5. Check whether `overrides` or exact pins are needed for known fragile transitive packages
+6. Re-run the package chain from the lowest failing layer upward, using the same build mode that failed
+
+Useful commands:
+
+```bash
+npm ls <package> @types/node
+npm explain <package>
+npm explain @types/node
+npm --prefix arkanalyzer run compile
+npm --prefix homecheck run compile
+npm run compile
+python3 build_linter.py --source-path <repo>/ets2panda/linter --output-path <output-dir> --npm <node-v14.21.1>/bin/npm --typescript <repo>/ets2panda/linter/<ohos-typescript-package>.tgz --version <linter-version>
+```
+
 ## Expert Experience
 
 **Common rationalizations (anti-excuses)**:
@@ -291,6 +400,8 @@ metaData.description → findRuleTagByDesc() extracts rule name from parentheses
 | "I'll rebuild `Scene` in my checker" | Makes project-level rules exponentially slower. Use `Utils.ts` helpers. |
 | "I'll calculate offsets from token text" | `QuasiEditor` applies patches by original source offsets. Shifted offsets corrupt all later replacements. |
 | "I'll hardcode SDK paths" | SDK directories change across versions. Use `ResolveSdks.ts` and `src/lib/data/*.json`. |
+| "It's only a transitive npm patch update" | Type declarations and package exports can change build compatibility. Check lockfile resolution and compile every package layer. |
+| "The script only changes package.json temporarily" | `npm install` can also rewrite `package-lock.json`; back up and restore both files. |
 
 ## Anti-Patterns
 
@@ -303,6 +414,8 @@ metaData.description → findRuleTagByDesc() extracts rule name from parentheses
 - Calculating autofix offsets from token text or intermediate text
 - Hardcoding SDK API allowlist paths
 - Changing stdout/stderr protocol in IDE mode without verifying consumer side
+- Ignoring generated or updated `package-lock.json` files after package/install scripts
+- Fixing a dependency build failure only in the root linter package while `homecheck` or `arkanalyzer` still resolves a different transitive graph
 
 ## Debugging And Verification
 
@@ -319,6 +432,8 @@ When modifying linter rules or documentation:
 - [ ] Test commands run successfully: `npm run testrunner -- -d test/rules -p 'rule-name*'`
 - [ ] No compiler files modified (unless intentional cross-component change)
 - [ ] HomeCheck rule count verified against `homecheck/ruleSet.json`
+- [ ] Dependency changes verified across linter, `homecheck`, and `arkanalyzer` package layers
+- [ ] `package-lock.json` changes are intentional, reviewed, and restored when produced only by temporary install steps
 
 ### Common Issues Diagnosis
 
@@ -329,6 +444,9 @@ When modifying linter rules or documentation:
 | **HomeCheck results missing** | Check: 1) `--ide-interactive --arkts-2 --homecheck` all passed, 2) file not filtered by `removeOutOfRangeFiles()`, 3) interop direction not filtered |
 | **HomeCheck rule tag -1** | Check: final parentheses rule name in `metaData.description` can be found in `cookBookTag` (regex: `desc.match(/\(([^)]+)\)/)`) |
 | **Test line/column differ** | Check: 1) `TsUtils.getHighlightRange()` logic, 2) node `getStart()` method, 3) autofix range calculation, 4) TSC diagnostics merge order changed |
+| **`npm run compile` fails after dependency refresh** | Check: 1) failing package layer, 2) missing/rewritten `package-lock.json`, 3) transitive version drift, 4) type package compatibility, 5) npm `overrides`/pins |
+| **Package script leaves dirty lockfiles** | Check: 1) temporary `npm install` paths, 2) backup/restore of both `package.json` and `package-lock.json`, 3) final `git status --short` |
+| **Unexpected `.d.ts` type errors** | Check: whether an unlocked transitive dependency changed its declarations or pulled a different `@types/*` version; restore lockfile stability before changing source code |
 
 ## FAQ
 
@@ -341,6 +459,8 @@ When modifying linter rules or documentation:
 7. **Test fails but line/column differ slightly** → Do not update expectations first. Check `TsUtils.getHighlightRange()`, node `getStart()`, autofix range
 8. **HomeCheck rule tag -1** → See Common Issues table above
 9. **Rule counts missing from statistics** → Confirm `ProblemInfo.rule` contains final parentheses rule name, `rule-config.json` contains rule
+10. **Dependency install or compile suddenly fails** → Check lockfiles and transitive type packages first; semver-compatible updates can still change `.d.ts` compatibility
+11. **Why track linter lockfiles?** → The linter package chain depends on transitive npm resolution. Lockfiles preserve the tested graph for root linter, HomeCheck, and ArkAnalyzer.
 
 ## Related Documents
 
