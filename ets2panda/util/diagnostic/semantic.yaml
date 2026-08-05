@@ -284,6 +284,12 @@ semantic:
   id: 174
   message: "Cannot infer type for {} because class composite needs an explicit target type"
 
+- name: CANNOT_OVERRIDE_INCOMPATIBLE_NULLISH_PARAM
+  id: 1029298
+  message: "Member {} in {} cannot override {} in {} because a parameter type of the overridden method contains a nullish
+    value that is not a subtype of the corresponding parameter type of the overriding method, while the non-nullish part of
+    that parameter type is non-empty and is a subtype of it."
+
 - name: CANNOT_OVERRIDE_INCOMPATIBLE_RETURN
   id: 141
   message: "Class member {} with type {} in {} cannot override {} with type {} field from class {} because the overriding
