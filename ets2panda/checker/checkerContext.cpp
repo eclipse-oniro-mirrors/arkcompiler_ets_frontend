@@ -14,6 +14,8 @@
  */
 
 #include "ETSchecker.h"
+#include "ir/expressions/literals/stringLiteral.h"
+#include "ir/expressions/typeofExpression.h"
 
 namespace ark::es2panda::checker {
 
@@ -443,6 +445,123 @@ void CheckerContext::CheckBinarySmartCastCondition(ir::BinaryExpression *const b
     }
 }
 
+static checker::Type *GetTypeofNumericSmartCastTarget(ETSChecker *checker, util::StringView typeofName)
+{
+    if (typeofName == "byte") {
+        return checker->MaybeBoxType(checker->GlobalByteType());
+    }
+    if (typeofName == "short") {
+        return checker->MaybeBoxType(checker->GlobalShortType());
+    }
+    if (typeofName == "int") {
+        return checker->MaybeBoxType(checker->GlobalIntType());
+    }
+    if (typeofName == "long") {
+        return checker->MaybeBoxType(checker->GlobalLongType());
+    }
+    if (typeofName == "float") {
+        return checker->MaybeBoxType(checker->GlobalFloatType());
+    }
+    if (typeofName == "number") {
+        return checker->MaybeBoxType(checker->GlobalDoubleType());
+    }
+    return nullptr;
+}
+
+static checker::Type *GetTypeofNonObjectTypes(ETSChecker *checker)
+{
+    std::vector<checker::Type *> types {checker->MaybeBoxType(checker->GlobalETSBooleanType()),
+                                        checker->GlobalETSStringLiteralType(),
+                                        checker->GlobalETSBigIntType(),
+                                        checker->MaybeBoxType(checker->GlobalCharType()),
+                                        checker->MaybeBoxType(checker->GlobalByteType()),
+                                        checker->MaybeBoxType(checker->GlobalShortType()),
+                                        checker->MaybeBoxType(checker->GlobalIntType()),
+                                        checker->MaybeBoxType(checker->GlobalLongType()),
+                                        checker->MaybeBoxType(checker->GlobalFloatType()),
+                                        checker->MaybeBoxType(checker->GlobalDoubleType())};
+    return checker->CreateETSUnionType(std::move(types));
+}
+
+static std::pair<checker::Type *, checker::Type *> GetTypeofSmartCastTarget(ETSChecker *checker,
+                                                                            util::StringView typeofName)
+{
+    if (auto *numericType = GetTypeofNumericSmartCastTarget(checker, typeofName); numericType != nullptr) {
+        return {numericType, nullptr};
+    }
+    if (typeofName == "boolean") {
+        return {checker->MaybeBoxType(checker->GlobalETSBooleanType()), nullptr};
+    }
+    if (typeofName == "string") {
+        return {checker->GlobalETSStringLiteralType(), nullptr};
+    }
+    if (typeofName == "bigint") {
+        return {checker->GlobalETSBigIntType(), nullptr};
+    }
+    if (typeofName == "char") {
+        return {checker->MaybeBoxType(checker->GlobalCharType()), nullptr};
+    }
+    if (typeofName == "undefined") {
+        return {checker->GlobalETSUndefinedType(), nullptr};
+    }
+    if (typeofName == "object") {
+        return {checker->GlobalETSObjectType(), GetTypeofNonObjectTypes(checker)};
+    }
+    return {nullptr, nullptr};
+}
+
+static varbinder::Variable const *GetTypeofSmartCastVariable(ir::Expression *typeofOperand,
+                                                             ir::Expression *literalOperand)
+{
+    if (!typeofOperand->IsTypeofExpression() || !literalOperand->IsStringLiteral()) {
+        return nullptr;
+    }
+
+    auto *const argument = typeofOperand->AsTypeofExpression()->Argument();
+    if (!argument->IsIdentifier()) {
+        return nullptr;
+    }
+
+    auto *const resolvedVariable = argument->AsIdentifier()->Variable();
+    return resolvedVariable != nullptr && resolvedVariable->TsType() != nullptr ? resolvedVariable : nullptr;
+}
+
+static bool IsTypeofSmartCastApplicable(ETSChecker *checker, checker::Type *variableType, checker::Type *testedType,
+                                        checker::Type *excludedTypes)
+{
+    if (variableType->IsETSAnyType()) {
+        return false;
+    }
+    if (testedType->IsETSUndefinedType()) {
+        return variableType->PossiblyETSUndefined();
+    }
+    return excludedTypes != nullptr || checker->Relation()->IsSupertypeOf(variableType, testedType);
+}
+
+struct TypeofSmartCastTarget final {
+    varbinder::Variable const *variable;
+    checker::Type *testedType;
+    checker::Type *excludedTypes;
+};
+
+static std::optional<TypeofSmartCastTarget> ExtractTypeofSmartCastTarget(ETSChecker *checker,
+                                                                         ir::Expression *typeofOperand,
+                                                                         ir::Expression *literalOperand)
+{
+    auto *const resolvedVariable = GetTypeofSmartCastVariable(typeofOperand, literalOperand);
+    if (resolvedVariable == nullptr) {
+        return std::nullopt;
+    }
+
+    auto [testedType, excludedTypes] = GetTypeofSmartCastTarget(checker, literalOperand->AsStringLiteral()->Str());
+    auto *const variableType = resolvedVariable->TsType();
+    if (testedType == nullptr || !IsTypeofSmartCastApplicable(checker, variableType, testedType, excludedTypes)) {
+        return std::nullopt;
+    }
+
+    return TypeofSmartCastTarget {resolvedVariable, testedType, excludedTypes};
+}
+
 //  Extracted just to avoid large length and depth of method 'CheckBinarySmartCastCondition()'.
 void CheckerContext::CheckSmartCastEqualityCondition(ir::BinaryExpression *const binaryExpression) noexcept
 {
@@ -452,6 +571,20 @@ void CheckerContext::CheckSmartCastEqualityCondition(ir::BinaryExpression *const
 
     bool strict = operatorType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL ||
                   operatorType == lexer::TokenType::PUNCTUATOR_STRICT_EQUAL;
+
+    auto *checker = parent_->AsETSChecker();
+    auto typeofTarget = ExtractTypeofSmartCastTarget(checker, binaryExpression->Left(), binaryExpression->Right());
+    if (!typeofTarget.has_value()) {
+        typeofTarget = ExtractTypeofSmartCastTarget(checker, binaryExpression->Right(), binaryExpression->Left());
+    }
+
+    if (typeofTarget.has_value()) {
+        bool const negate = operatorType == lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL ||
+                            operatorType == lexer::TokenType::PUNCTUATOR_NOT_EQUAL;
+        ES2PANDA_ASSERT(testCondition_.variable == nullptr);
+        testCondition_ = {typeofTarget->variable, typeofTarget->testedType, negate, true, typeofTarget->excludedTypes};
+        return;
+    }
 
     // extracted just to avoid extra nested level
     auto const getTestedType = [&variable, &testedType, &strict](ir::Identifier const *const identifier,

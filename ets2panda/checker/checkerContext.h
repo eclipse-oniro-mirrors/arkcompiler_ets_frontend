@@ -113,6 +113,8 @@ struct SmartCastCondition final {
     checker::Type *testedType = nullptr;
     bool negate = false;
     bool strict = true;
+    // Represents a type-difference condition: testedType - excludedTypes.
+    checker::Type *excludedTypes = nullptr;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 
