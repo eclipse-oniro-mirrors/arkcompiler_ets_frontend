@@ -21,8 +21,8 @@ if ((defined(ark_standalone_build) && ark_standalone_build) ||
       "//build/config/components/runtime_core/static_core/ark_common_config.gni")
 }
 
-nodejs_path = "${node_path}/node"
-npm_path = "${node_path}/npm"
+nodejs_path = "//prebuilts/build-tools/common/nodejs/current/bin/node"
+npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
 gluegen_output_dir = "$target_gen_dir/gluegen"
 gluegen_native_output_name = "gluegen"
 gluegen_native_output =

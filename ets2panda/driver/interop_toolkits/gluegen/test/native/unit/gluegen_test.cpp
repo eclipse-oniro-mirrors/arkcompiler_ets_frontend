@@ -14,7 +14,6 @@
  */
 
 #include <cstdint>
-#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <gtest/gtest.h>
@@ -51,30 +50,29 @@ class ScopedTempDir {
 public:
     explicit ScopedTempDir(const std::string &prefix)
     {
-        path_ = std::filesystem::temp_directory_path() /
-                (prefix + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(this)));
-        std::filesystem::create_directories(path_);
+        path_ = fs::temp_directory_path() / (prefix + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(this)));
+        fs::create_directories(path_);
     }
 
     ~ScopedTempDir()
     {
         std::error_code ec;
-        std::filesystem::remove_all(path_, ec);
+        fs::remove_all(path_, ec);
     }
 
     ScopedTempDir(const ScopedTempDir &) = delete;
     ScopedTempDir &operator=(const ScopedTempDir &) = delete;
 
-    const std::filesystem::path &Path() const
+    const fs::path &Path() const
     {
         return path_;
     }
 
 private:
-    std::filesystem::path path_;
+    fs::path path_;
 };
 
-std::string ReadFile(const std::filesystem::path &path)
+std::string ReadFile(const fs::path &path)
 {
     std::ifstream in(path, std::ios::binary);
     std::ostringstream contentStream;
@@ -87,7 +85,7 @@ protected:
     void SetUp() override
     {
         arktsconfigPath_ = ArktsConfigPath();
-        if (!std::filesystem::exists(arktsconfigPath_)) {
+        if (!fs::exists(arktsconfigPath_)) {
             std::string skipMsg = "gtest arktsconfig.json fixture not found at " + arktsconfigPath_ +
                                   " -- build the repo's gtests first so ets2panda's CMakeLists.txt "
                                   "generates it.";
@@ -120,7 +118,7 @@ TEST_F(GluegenRunTest, RunProducesExpectedSymbolsForValidSource)
     Gluegen gluegen(options);
     auto result = gluegen.Run();
     ASSERT_TRUE(result) << result.Error();
-    ASSERT_TRUE(std::filesystem::exists(outputPath));
+    ASSERT_TRUE(fs::exists(outputPath));
 
     ark::es2panda::gluegen::SymbolNodeManager manager;
     auto config = GlueConfig::deserialize(ReadFile(outputPath), manager);
@@ -157,7 +155,7 @@ TEST_F(GluegenRunTest, RunWritesSyntaxErrorStatusForInvalidSource)
     auto result = gluegen.Run();
     // A syntax error is a normal, terminal outcome for Run() -- not a tool failure.
     ASSERT_TRUE(result) << (result ? std::string() : result.Error());
-    ASSERT_TRUE(std::filesystem::exists(outputPath));
+    ASSERT_TRUE(fs::exists(outputPath));
 
     auto j = nlohmann::json::parse(ReadFile(outputPath));
     ASSERT_TRUE(j.contains("status"));
@@ -166,7 +164,7 @@ TEST_F(GluegenRunTest, RunWritesSyntaxErrorStatusForInvalidSource)
     // The negative outcome should also be visible via DiagnosticEngine's own structured report
     // (written to --report-path), not just the ad hoc {"status": ...} file -- assert against the
     // recorded code/severity there rather than any particular wording.
-    ASSERT_TRUE(std::filesystem::exists(reportPath));
+    ASSERT_TRUE(fs::exists(reportPath));
     auto report = nlohmann::json::parse(ReadFile(reportPath));
     ASSERT_TRUE(report.contains("diagnostics"));
     const auto &warnings = report.at("diagnostics").at("warnings");
@@ -201,11 +199,11 @@ TEST_F(GluegenRunTest, RunReportsDiagnosticForMissingArktsconfig)
     auto result = gluegen.Run();
     ASSERT_FALSE(result);
     EXPECT_NE(result.Error().find("Arktsconfig"), std::string::npos) << result.Error();
-    EXPECT_FALSE(std::filesystem::exists(outputPath));
+    EXPECT_FALSE(fs::exists(outputPath));
 
     // Even on a hard failure, WriteDiagnosticsReport() still runs (see Gluegen::Run()), so the
     // ERROR diagnostic is observable via the structured report.
-    ASSERT_TRUE(std::filesystem::exists(reportPath));
+    ASSERT_TRUE(fs::exists(reportPath));
     auto report = nlohmann::json::parse(ReadFile(reportPath));
     const auto &errors = report.at("diagnostics").at("errors");
     ASSERT_FALSE(errors.empty());
@@ -235,8 +233,8 @@ TEST_F(GluegenRunTest, RunWithCacheDirPopulatesDiskCacheAndSecondRunSucceeds)
         auto result = gluegen.Run();
         ASSERT_TRUE(result) << result.Error();
     }
-    EXPECT_TRUE(std::filesystem::exists(cacheDir / "manifest.json"));
-    EXPECT_TRUE(std::filesystem::exists(cacheDir / "intermediates"));
+    EXPECT_TRUE(fs::exists(cacheDir / "manifest.json"));
+    EXPECT_TRUE(fs::exists(cacheDir / "intermediates"));
 
     // Second run against the now-populated cache should still succeed (whether or not it
     // actually reuses the cache internally is not observable from the public API, but it must
@@ -272,7 +270,7 @@ TEST_F(GluegenRunTest, RunSucceedsForValidSource)
     Gluegen gluegen(options);
     auto result = gluegen.Run();
     ASSERT_TRUE(result) << result.Error();
-    EXPECT_TRUE(std::filesystem::exists(outputPath));
+    EXPECT_TRUE(fs::exists(outputPath));
 }
 
 TEST_F(GluegenRunTest, RunFailsWhenNoSourceFilesProvided)

@@ -20,7 +20,6 @@
 #include <chrono>
 #include <cstring>
 #include <ctime>
-#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <iomanip>
@@ -51,12 +50,11 @@ namespace {
 // Gluegen::Link() (the normal GlueConfig JSON output) and Gluegen::WriteStatusOutput() (the
 // early-exit "syntax-error" status file), so the create-directories+open+write+check sequence
 // only needs to be written (and checked for errors) once.
-ark::Expected<std::monostate, std::string> WriteFile(const std::filesystem::path &outputPath,
-                                                     const std::string &content)
+ark::Expected<std::monostate, std::string> WriteFile(const fs::path &outputPath, const std::string &content)
 {
     std::error_code ec;
     if (outputPath.has_parent_path()) {
-        std::filesystem::create_directories(ToLongPathIfNeeded(outputPath.parent_path()), ec);
+        fs::create_directories(ToLongPathIfNeeded(outputPath.parent_path()), ec);
         if (ec) {
             return ark::Unexpected<std::string>(
                 "Failed to create output directory: " + outputPath.parent_path().string() + ": " + ec.message());
@@ -162,13 +160,13 @@ std::string StripSourceExtension(const std::string &filename)
 // "<reportPath>/report.json" instead. A path is treated as a directory when it already exists as
 // one on disk, or when it's spelled with a trailing path separator (so a not-yet-created directory
 // can still be requested explicitly, e.g. "--report-path ./out/").
-std::filesystem::path ResolveDiagnosticsReportFilePath(const std::string &reportPath)
+fs::path ResolveDiagnosticsReportFilePath(const std::string &reportPath)
 {
     static constexpr const char *defaultReportFileName = "report.json";
-    std::filesystem::path path(reportPath);
+    fs::path path(reportPath);
     const bool endsWithSeparator = !reportPath.empty() && (reportPath.back() == '/' || reportPath.back() == '\\');
     std::error_code ec;
-    const bool isExistingDirectory = std::filesystem::is_directory(ToLongPathIfNeeded(path), ec);
+    const bool isExistingDirectory = fs::is_directory(ToLongPathIfNeeded(path), ec);
     if (endsWithSeparator || isExistingDirectory) {
         return path / defaultReportFileName;
     }
@@ -210,10 +208,10 @@ std::string GenerateLogFileName()
 // so a long-lived cache directory doesn't accumulate an unbounded number of per-run log files.
 // Called once per run, after this run's own log file has already been created (see Initialize()),
 // so it is naturally counted among the files being kept.
-void PruneOldLogFiles(const std::filesystem::path &dir, std::size_t maxCount, log::Logger &logger)
+void PruneOldLogFiles(const fs::path &dir, std::size_t maxCount, log::Logger &logger)
 {
     std::error_code ec;
-    if (!std::filesystem::is_directory(dir, ec)) {
+    if (!fs::is_directory(dir, ec)) {
         if (ec) {
             GLUEGEN_LOG_WARN(logger) << "Failed to check log directory for pruning: " << dir.string() << " ("
                                      << ec.message() << ")";
@@ -221,8 +219,8 @@ void PruneOldLogFiles(const std::filesystem::path &dir, std::size_t maxCount, lo
         return;
     }
 
-    std::vector<std::filesystem::directory_entry> logFiles;
-    for (const auto &entry : std::filesystem::directory_iterator(dir, ec)) {
+    std::vector<fs::directory_entry> logFiles;
+    for (const auto &entry : fs::directory_iterator(dir, ec)) {
         if (ec) {
             GLUEGEN_LOG_WARN(logger) << "Failed to iterate log directory for pruning: " << dir.string() << " ("
                                      << ec.message() << ")";
@@ -233,7 +231,7 @@ void PruneOldLogFiles(const std::filesystem::path &dir, std::size_t maxCount, lo
         const auto suffixLen = std::strlen(LOG_FILE_SUFFIX);
         const bool hasSuffix = fileName.size() >= suffixLen &&
                                fileName.compare(fileName.size() - suffixLen, suffixLen, LOG_FILE_SUFFIX) == 0;
-        if (entry.is_regular_file(ec) && hasPrefix && hasSuffix) {
+        if (fs::is_regular_file(entry.path(), ec) && hasPrefix && hasSuffix) {
             logFiles.push_back(entry);
         }
     }
@@ -245,10 +243,10 @@ void PruneOldLogFiles(const std::filesystem::path &dir, std::size_t maxCount, lo
     std::sort(logFiles.begin(), logFiles.end(), [](const auto &lhs, const auto &rhs) {
         std::error_code lhsEc;
         std::error_code rhsEc;
-        return std::filesystem::last_write_time(lhs, lhsEc) > std::filesystem::last_write_time(rhs, rhsEc);
+        return fs::last_write_time(lhs, lhsEc) > fs::last_write_time(rhs, rhsEc);
     });
     for (std::size_t i = maxCount; i < logFiles.size(); ++i) {
-        std::filesystem::remove(logFiles[i], ec);
+        fs::remove(logFiles[i], ec);
         if (ec) {
             GLUEGEN_LOG_WARN(logger) << "Failed to prune old log file: " << logFiles[i].path().string() << " ("
                                      << ec.message() << ")";
@@ -306,14 +304,14 @@ void Es2pandaSession::Reset()
     }
 }
 
-ark::Expected<std::filesystem::path, std::string> ValidateArktsconfigPath(const std::string &arktsconfigPath)
+ark::Expected<fs::path, std::string> ValidateArktsconfigPath(const std::string &arktsconfigPath)
 {
     if (arktsconfigPath.empty()) {
         return ark::Unexpected<std::string>("Arktsconfig path was not specified");
     }
-    auto path = std::filesystem::path(arktsconfigPath);
+    auto path = fs::path(arktsconfigPath);
     std::error_code ec;
-    if (!std::filesystem::exists(ToLongPathIfNeeded(path), ec)) {
+    if (!fs::exists(ToLongPathIfNeeded(path), ec)) {
         return ark::Unexpected<std::string>("Arktsconfig file does not exist: " + path.string());
     }
     return path;
@@ -371,12 +369,12 @@ std::vector<const char *> BuildCreateConfigArgv(const std::string &arktsconfigPa
     return argv;
 }
 
-std::vector<std::filesystem::path> NormalizeSourceFiles(const std::vector<std::string> &sourceFiles)
+std::vector<fs::path> NormalizeSourceFiles(const std::vector<std::string> &sourceFiles)
 {
-    std::vector<std::filesystem::path> result;
+    std::vector<fs::path> result;
     result.reserve(sourceFiles.size());
     for (const auto &sourceFile : sourceFiles) {
-        result.emplace_back(NormalizePath(std::filesystem::path(sourceFile)));
+        result.emplace_back(NormalizePath(fs::path(sourceFile)));
     }
     return result;
 }
@@ -435,10 +433,9 @@ std::string JoinArgv(const std::vector<const char *> &argv)
 // On any failure (bad arktsconfig, failed CreateConfig, failed CreateContext, ...) returns an
 // error string directly -- no ParseFailure indirection needed because callers only care about
 // "did init succeed" at this point.
-ark::Expected<Es2pandaSession, std::string> InitEs2panda(const es2panda_Impl *impl,
-                                                         const std::filesystem::path &arktsconfigPath,
+ark::Expected<Es2pandaSession, std::string> InitEs2panda(const es2panda_Impl *impl, const fs::path &arktsconfigPath,
                                                          const std::string &workingDirectory,
-                                                         const std::vector<std::filesystem::path> &files)
+                                                         const std::vector<fs::path> &files)
 {
     const std::string etsWarningsBasePathArg = "--ets-warnings:base-path=" + workingDirectory;
     const std::string arktsconfigPathStr = arktsconfigPath.string();
@@ -534,7 +531,7 @@ ark::Expected<std::monostate, std::string> Gluegen::Initialize()
     //  - The Logger's sinks must be attached and its backend thread started before any log call
     //    is made -- including calls made from within InitializeOptions() itself -- otherwise
     //    those records have nowhere to go.
-    context_.workingDirectory = std::filesystem::current_path().string();
+    context_.workingDirectory = fs::current_path().string();
 
     // This is must be called after context_.workingDirectory is set!
     InitializeOptions();
@@ -545,9 +542,9 @@ ark::Expected<std::monostate, std::string> Gluegen::Initialize()
         // Only the 5 most recent runs' log files are kept -- see PruneOldLogFiles() -- so the
         // cache directory doesn't accumulate an unbounded number of them over time.
         static constexpr std::size_t MAX_LOG_FILES_KEPT = 5;
-        const auto logDir = std::filesystem::path(options_.cacheDir);
+        const auto logDir = fs::path(options_.cacheDir);
         std::error_code ec;
-        std::filesystem::create_directories(logDir, ec);
+        fs::create_directories(logDir, ec);
         const auto logPath = logDir / GenerateLogFileName();
         context_.logger.AddSink(std::make_shared<log::FileSink>(logPath.string()));
         PruneOldLogFiles(logDir, MAX_LOG_FILES_KEPT, context_.logger);
@@ -910,7 +907,7 @@ ark::Expected<std::monostate, std::string> Gluegen::Link()
         return ark::Unexpected<std::string>(std::move(linkResult.Error()));
     }
 
-    const auto outputPath = std::filesystem::path(options_.outputPath);
+    const auto outputPath = fs::path(options_.outputPath);
     if (!options_.singleFileEmit) {
         return WriteDefaultMode(*linkResult.Value(), outputPath);
     }
@@ -918,7 +915,7 @@ ark::Expected<std::monostate, std::string> Gluegen::Link()
 }
 
 ark::Expected<std::monostate, std::string> Gluegen::WriteDefaultMode(const GlueConfig &config,
-                                                                     const std::filesystem::path &outputPath)
+                                                                     const fs::path &outputPath)
 {
     auto writeResult = WriteFile(outputPath, GlueConfig::serialize(config));
     if (!writeResult) {
@@ -932,7 +929,7 @@ ark::Expected<std::monostate, std::string> Gluegen::WriteDefaultMode(const GlueC
 }
 
 ark::Expected<std::monostate, std::string> Gluegen::WriteSingleFileEmitMode(const GlueConfig &config,
-                                                                            const std::filesystem::path &outputDir)
+                                                                            const fs::path &outputDir)
 {
     auto rootDirOpt = GetRootDirFromArktsConfig();
     if (!rootDirOpt) {
@@ -941,19 +938,21 @@ ark::Expected<std::monostate, std::string> Gluegen::WriteSingleFileEmitMode(cons
         context_.diagnosticEngine.Error(DiagnosticCode::INVALID_CONFIG, message);
         return ark::Unexpected<std::string>(message);
     }
-    const auto rootDir = std::filesystem::path(*rootDirOpt);
+    const auto rootDir = fs::path(*rootDirOpt);
 
     for (const auto &[sourceFile, fileConfig] : config.files) {
         // sourceFile is in forward-slash form (GlueConfig key convention); convert to native for
         // filesystem relative-path computation.
-        auto sourcePath = std::filesystem::path(sourceFile);
+        auto sourcePath = fs::path(sourceFile);
 
-        std::error_code ec;
-        auto relativePath = std::filesystem::relative(sourcePath, rootDir, ec);
-        if (ec) {
-            const std::string message = "Failed to compute relative path for " + sourceFile + ": " + ec.message();
-            GLUEGEN_LOG_ERROR(context_.logger)
-                << "Failed to compute relative path for " << sourceFile << " from " << rootDir << ": " << ec.message();
+        fs::path relativePath;
+        try {
+            relativePath = RelativePath(sourcePath, rootDir);
+        } catch (const fs::filesystem_error &error) {
+            const std::string message =
+                "Failed to compute relative path for " + sourceFile + ": " + error.code().message();
+            GLUEGEN_LOG_ERROR(context_.logger) << "Failed to compute relative path for " << sourceFile << " from "
+                                               << rootDir << ": " << error.code().message();
             context_.diagnosticEngine.Error(DiagnosticCode::INVALID_CONFIG, message);
             return ark::Unexpected<std::string>(message);
         }
@@ -990,7 +989,7 @@ ark::Expected<std::monostate, std::string> Gluegen::WriteSingleFileEmitMode(cons
 // consumer expecting a per-file output still receives an unambiguous terminal signal.
 ark::Expected<std::monostate, std::string> Gluegen::WriteStatusOutput(const std::string &status)
 {
-    auto outputPath = std::filesystem::path(options_.outputPath);
+    auto outputPath = fs::path(options_.outputPath);
 
     if (!options_.singleFileEmit) {
         nlohmann::json j;
@@ -1020,16 +1019,17 @@ ark::Expected<std::monostate, std::string> Gluegen::WriteStatusOutput(const std:
         }
         return writeResult;
     }
-    const auto rootDir = std::filesystem::path(*rootDirOpt);
+    const auto rootDir = fs::path(*rootDirOpt);
 
     for (const auto &sourceFile : options_.sourceFiles) {
-        auto sourcePath = std::filesystem::path(sourceFile);
+        auto sourcePath = fs::path(sourceFile);
 
-        std::error_code ec;
-        auto relativePath = std::filesystem::relative(sourcePath, rootDir, ec);
-        if (ec) {
+        fs::path relativePath;
+        try {
+            relativePath = RelativePath(sourcePath, rootDir);
+        } catch (const fs::filesystem_error &error) {
             GLUEGEN_LOG_WARN(context_.logger) << "singleFileEmit: cannot compute relative path for " << sourceFile
-                                              << " from " << rootDir << ": " << ec.message() << ", skipping";
+                                              << " from " << rootDir << ": " << error.code().message() << ", skipping";
             continue;
         }
 
@@ -1055,7 +1055,7 @@ void Gluegen::InitializeOptions()
 {
     // verify output path
     if (options_.outputPath.empty()) {
-        options_.outputPath = NormalizePath(std::filesystem::path(context_.workingDirectory) / "gluegen.json");
+        options_.outputPath = NormalizePath(fs::path(context_.workingDirectory) / "gluegen.json");
     }
     // verify report path: defaults to "report.json" next to the final output, so the diagnostics
     // report ends up co-located with the generated artifact unless the caller asks for somewhere
@@ -1063,7 +1063,7 @@ void Gluegen::InitializeOptions()
     // it isn't mistaken for a directory-that-doesn't-exist-yet by
     // ResolveDiagnosticsReportFilePath's is_directory check.
     if (options_.reportPath.empty()) {
-        options_.reportPath = (std::filesystem::path(options_.outputPath).parent_path() / "report.json").string();
+        options_.reportPath = (fs::path(options_.outputPath).parent_path() / "report.json").string();
     }
     // verify cache dir
     // cacheEnabled_ must be captured *before* defaulting an unspecified cacheDir below: an
@@ -1073,7 +1073,7 @@ void Gluegen::InitializeOptions()
     cacheEnabled_ = !options_.cacheDir.empty();
     // verify arktsconfig path
     if (options_.arktsconfigPath.empty()) {
-        options_.arktsconfigPath = NormalizePath(std::filesystem::path(context_.workingDirectory) / "arktsconfig.json");
+        options_.arktsconfigPath = NormalizePath(fs::path(context_.workingDirectory) / "arktsconfig.json");
     }
 }
 
@@ -1105,14 +1105,14 @@ ark::Expected<std::monostate, std::string> Gluegen::ValidateOptions()
         return ark::Unexpected<std::string>(message);
     }
     for (auto &filePath : options_.sourceFiles) {
-        if (!std::filesystem::exists(filePath)) {
+        if (!fs::exists(filePath)) {
             const std::string message = "Source file does not exist: " + filePath;
             context_.diagnosticEngine.Error(DiagnosticCode::INVALID_CONFIG, message);
             return ark::Unexpected<std::string>(message);
         }
         filePath = NormalizePath(filePath);
     }
-    if (!std::filesystem::exists(options_.arktsconfigPath)) {
+    if (!fs::exists(options_.arktsconfigPath)) {
         const std::string message = "Arktsconfig file does not exist: " + options_.arktsconfigPath;
         context_.diagnosticEngine.Error(DiagnosticCode::INVALID_CONFIG, message);
         return ark::Unexpected<std::string>(message);
