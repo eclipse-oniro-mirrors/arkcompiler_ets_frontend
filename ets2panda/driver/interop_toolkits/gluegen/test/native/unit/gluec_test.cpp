@@ -14,7 +14,6 @@
  */
 
 #include <atomic>
-#include <filesystem>
 #include <fstream>
 #include <memory>
 #include <gtest/gtest.h>
@@ -47,28 +46,28 @@ class ScopedTempDir {
 public:
     explicit ScopedTempDir(const std::string &prefix)
     {
-        auto unique = std::filesystem::temp_directory_path() /
-                      (prefix + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(this)));
+        auto unique =
+            fs::temp_directory_path() / (prefix + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(this)));
         path_ = unique;
-        std::filesystem::create_directories(path_);
+        fs::create_directories(path_);
     }
 
     ~ScopedTempDir()
     {
         std::error_code ec;
-        std::filesystem::remove_all(path_, ec);
+        fs::remove_all(path_, ec);
     }
 
     ScopedTempDir(const ScopedTempDir &) = delete;
     ScopedTempDir &operator=(const ScopedTempDir &) = delete;
 
-    const std::filesystem::path &Path() const
+    const fs::path &Path() const
     {
         return path_;
     }
 
 private:
-    std::filesystem::path path_;
+    fs::path path_;
 };
 
 SymbolNode *MakeSymbol(SymbolNodeManager &manager, const std::string &name, SymbolKind kind)
@@ -221,8 +220,8 @@ TEST(GluegenGluecTest, WriterThenReaderRoundTripsCacheThroughDisk)
         EXPECT_TRUE(errors.empty());
     }
 
-    EXPECT_TRUE(std::filesystem::exists(cacheDir.Path() / "manifest.json"));
-    EXPECT_TRUE(std::filesystem::exists(cacheDir.Path() / "intermediates"));
+    EXPECT_TRUE(fs::exists(cacheDir.Path() / "manifest.json"));
+    EXPECT_TRUE(fs::exists(cacheDir.Path() / "intermediates"));
 
     IntermediateCacheReader reader(cacheDir.Path().string(), context);
     auto cachedMTime = reader.CachedMTime(normalizedSourceFile);

@@ -22,15 +22,98 @@
 
 namespace ark::es2panda::gluegen {
 
-std::filesystem::path ToLongPathIfNeeded(const std::filesystem::path &path)
+#if !defined(GLUEGEN_FORCE_EXPERIMENTAL_FILESYSTEM) && __has_include(<filesystem>)
+fs::path AbsolutePath(const fs::path &path)
+{
+    return fs::absolute(path);
+}
+
+fs::path WeaklyCanonical(const fs::path &path)
+{
+    return fs::weakly_canonical(path);
+}
+
+fs::path RelativePath(const fs::path &path, const fs::path &base)
+{
+    return fs::relative(path, base);
+}
+#else
+fs::path AbsolutePath(const fs::path &path)
+{
+    return fs::absolute(path);
+}
+
+fs::path WeaklyCanonical(const fs::path &path)
+{
+    fs::path existingPath = AbsolutePath(path);
+    std::vector<fs::path> missingComponents;
+    while (!fs::exists(existingPath)) {
+        const auto parentPath = existingPath.parent_path();
+        if (parentPath == existingPath) {
+            return existingPath;
+        }
+        missingComponents.push_back(existingPath.filename());
+        existingPath = parentPath;
+    }
+
+    auto canonicalPath = fs::canonical(existingPath);
+    for (auto it = missingComponents.rbegin(); it != missingComponents.rend(); ++it) {
+        if (*it == ".") {
+            continue;
+        }
+        if (*it == "..") {
+            canonicalPath = canonicalPath.parent_path();
+            continue;
+        }
+        canonicalPath /= *it;
+    }
+    return canonicalPath;
+}
+
+fs::path RelativePath(const fs::path &path, const fs::path &base)
+{
+    const auto absolutePath = WeaklyCanonical(AbsolutePath(path));
+    const auto absoluteBase = WeaklyCanonical(AbsolutePath(base));
+    // Mirror std::filesystem::path::lexically_relative: no relative form exists across a
+    // differing root-name (e.g. Windows drives) or differing absoluteness -- return empty.
+    if (absolutePath.root_name() != absoluteBase.root_name() ||
+        absolutePath.is_absolute() != absoluteBase.is_absolute() ||
+        (!absolutePath.has_root_directory() && absoluteBase.has_root_directory())) {
+        return fs::path();
+    }
+
+    auto pathIt = absolutePath.begin();
+    auto baseIt = absoluteBase.begin();
+    while (pathIt != absolutePath.end() && baseIt != absoluteBase.end() && *pathIt == *baseIt) {
+        ++pathIt;
+        ++baseIt;
+    }
+
+    fs::path result;
+    for (; baseIt != absoluteBase.end(); ++baseIt) {
+        // Skip empty (trailing-separator) and "." elements, matching lexically_relative.
+        if (baseIt->empty() || *baseIt == ".") {
+            continue;
+        }
+        result /= "..";
+    }
+    for (; pathIt != absolutePath.end(); ++pathIt) {
+        result /= *pathIt;
+    }
+    return result.empty() ? fs::path(".") : result;
+}
+#endif
+
+fs::path ToLongPathIfNeeded(const fs::path &path)
 {
 #if defined(_WIN32)
     constexpr std::size_t WINDOWS_MAX_PATH_LENGTH = 260;
 
-    std::error_code ec;
-    auto absolutePath = std::filesystem::absolute(path, ec);
-    if (ec) {
-        absolutePath = path;
+    fs::path absolutePath = path;
+    try {
+        absolutePath = AbsolutePath(path);
+    } catch (const fs::filesystem_error &) {
+        // Keep the pre-try fallback (the raw input path) rather than propagating the error.
     }
 
     const auto &native = absolutePath.native();
@@ -40,37 +123,37 @@ std::filesystem::path ToLongPathIfNeeded(const std::filesystem::path &path)
     if (native.rfind(LR"(\\)", 0) == 0) {
         // UNC path (\\server\share\...): the extended-length form is \\?\UNC\server\share\...
         static constexpr std::size_t kUncPrefixLen = 2;
-        return std::filesystem::path(LR"(\\?\UNC\)" + native.substr(kUncPrefixLen));
+        return fs::path(LR"(\\?\UNC\)" + native.substr(kUncPrefixLen));
     }
-    return std::filesystem::path(LR"(\\?\)" + native);
+    return fs::path(LR"(\\?\)" + native);
 #else
     return path;
 #endif
 }
 
-std::optional<std::filesystem::file_time_type> GetLastModifiedTime(const std::filesystem::path &path)
+std::optional<fs::file_time_type> GetLastModifiedTime(const fs::path &path)
 {
     auto queryPath = ToLongPathIfNeeded(path);
     std::error_code ec;
-    if (!std::filesystem::exists(queryPath, ec) || ec) {
+    if (!fs::exists(queryPath, ec) || ec) {
         return std::nullopt;
     }
 
-    auto time = std::filesystem::last_write_time(queryPath, ec);
+    auto time = fs::last_write_time(queryPath, ec);
     if (ec) {
         return std::nullopt;
     }
     return time;
 }
 
-std::string FileTimeToString(const std::filesystem::file_time_type &fileTime)
+std::string FileTimeToString(const fs::file_time_type &fileTime)
 {
     using namespace std::chrono;
 
-    // std::filesystem::file_time_type uses an unspecified clock, so it must be
+    // fs::file_time_type uses an unspecified clock, so it must be
     // rebased against system_clock before it can be formatted as calendar time.
-    const auto systemTime = time_point_cast<system_clock::duration>(
-        fileTime - std::filesystem::file_time_type::clock::now() + system_clock::now());
+    const auto systemTime =
+        time_point_cast<system_clock::duration>(fileTime - fs::file_time_type::clock::now() + system_clock::now());
 
     const auto timeT = system_clock::to_time_t(systemTime);
     const auto ms = duration_cast<milliseconds>(systemTime.time_since_epoch()) % 1000;

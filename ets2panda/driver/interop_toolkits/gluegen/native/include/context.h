@@ -51,7 +51,7 @@ public:
     log::Logger logger;
 
     // Absolute path to the working directory this run was invoked from (see
-    // std::filesystem::current_path()), used to resolve default option paths (output/cache/
+    // fs::current_path()), used to resolve default option paths (output/cache/
     // arktsconfig) and passed through to es2panda for `--ets-warnings:base-path`.
     std::string workingDirectory;
 };

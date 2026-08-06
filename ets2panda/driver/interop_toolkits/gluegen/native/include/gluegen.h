@@ -23,6 +23,7 @@
 #include "libarkbase/utils/expected.h"
 #include "public/es2panda_lib.h"
 #include "./gluec.h"
+#include "./utils.h"
 
 namespace ark::es2panda::gluegen {
 
@@ -148,13 +149,12 @@ private:
     std::optional<std::string> GetRootDirFromArktsConfig();
 
     // Writes the full merged GlueConfig as a single JSON file to outputPath (default mode).
-    ark::Expected<std::monostate, std::string> WriteDefaultMode(const GlueConfig &config,
-                                                                const std::filesystem::path &outputPath);
+    ark::Expected<std::monostate, std::string> WriteDefaultMode(const GlueConfig &config, const fs::path &outputPath);
 
     // Writes one JSON file per entry in GlueConfig::files to outputDir, each containing only that
     // file's entry in its `files` map. Output paths mirror the source tree relative to rootDir.
     ark::Expected<std::monostate, std::string> WriteSingleFileEmitMode(const GlueConfig &config,
-                                                                       const std::filesystem::path &outputDir);
+                                                                       const fs::path &outputDir);
 
     GluegenOptions options_;
     // Owns the Config/Context produced by Parse() so Link() (and any future

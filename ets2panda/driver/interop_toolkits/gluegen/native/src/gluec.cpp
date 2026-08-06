@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <filesystem>
 #include <fstream>
 #include <functional>
 #include <iomanip>
@@ -100,7 +99,7 @@ std::unordered_map<std::string, CacheManifestEntry> LoadManifestFile(const std::
                                                                      DiagnosticEngine &diagnosticEngine)
 {
     std::unordered_map<std::string, CacheManifestEntry> manifest;
-    const auto manifestPath = std::filesystem::path(cacheDir) / "manifest.json";
+    const auto manifestPath = fs::path(cacheDir) / "manifest.json";
     std::ifstream in(ToLongPathIfNeeded(manifestPath), std::ios::binary);
     if (!in.is_open()) {
         return manifest;
@@ -214,7 +213,7 @@ public:
         // shares, so doing it up front keeps that mutation off the background threads (only the
         // actual disk I/O -- and `RecordError` -- happens there).
         auto cacheFileName = AssignCacheFileName(cache->sourceFile, cache->sourceMTime);
-        auto outputPath = std::filesystem::path(cacheDir_).append("intermediates").append(cacheFileName);
+        auto outputPath = fs::path(cacheDir_).append("intermediates").append(cacheFileName);
         WritingTask task {std::move(cache), std::move(outputPath)};
         pool_.Post([this, task = std::move(task)]() { WriteToDisk(task); });
     }
@@ -233,7 +232,7 @@ private:
     // else.
     struct WritingTask {
         std::shared_ptr<IntermediateCache> cache;
-        std::filesystem::path outputPath;
+        fs::path outputPath;
     };
 
     void Join()
@@ -289,7 +288,7 @@ private:
         constexpr std::size_t kHexDigitsPerByte = 2;
         hashHex << std::hex << std::setfill('0') << std::setw(sizeof(std::size_t) * kHexDigitsPerByte)
                 << std::hash<std::string> {}(sourceFile);
-        const auto baseName = std::filesystem::path(sourceFile).filename().string();
+        const auto baseName = fs::path(sourceFile).filename().string();
 
         std::lock_guard<std::mutex> lock(manifestMutex_);
         // A previous Enqueue() for the same sourceFile (should not normally happen -- each
@@ -314,7 +313,7 @@ private:
     }
 
     // Writes `manifest_` to `<cacheDir_>/manifest.json`, via a temp-file-then-rename so a reader
-    // never observes a partially-written manifest (`std::filesystem::rename` replaces the
+    // never observes a partially-written manifest (`fs::rename` replaces the
     // destination atomically on POSIX, and via `MoveFileExW`/`MOVEFILE_REPLACE_EXISTING` on
     // Windows). Called once, from `Wait()`, after every enqueued write has finished -- not
     // incrementally per-file -- so it never needs its own background scheduling.
@@ -325,9 +324,9 @@ private:
             return;
         }
 
-        const auto manifestPath = std::filesystem::path(cacheDir_) / "manifest.json";
+        const auto manifestPath = fs::path(cacheDir_) / "manifest.json";
         std::error_code ec;
-        std::filesystem::create_directories(ToLongPathIfNeeded(manifestPath.parent_path()), ec);
+        fs::create_directories(ToLongPathIfNeeded(manifestPath.parent_path()), ec);
         if (ec) {
             RecordError("Failed to create cache manifest directory: " + manifestPath.parent_path().string(),
                         ec.message());
@@ -351,7 +350,7 @@ private:
             }
         }
 
-        std::filesystem::rename(ToLongPathIfNeeded(tmpPath), ToLongPathIfNeeded(manifestPath), ec);
+        fs::rename(ToLongPathIfNeeded(tmpPath), ToLongPathIfNeeded(manifestPath), ec);
         if (ec) {
             RecordError("Failed to finalize cache manifest file: " + manifestPath.string(), ec.message());
         }
@@ -360,7 +359,7 @@ private:
     void WriteToDisk(const WritingTask &task)
     {
         std::error_code ec;
-        std::filesystem::create_directories(ToLongPathIfNeeded(task.outputPath.parent_path()), ec);
+        fs::create_directories(ToLongPathIfNeeded(task.outputPath.parent_path()), ec);
         if (ec) {
             RecordError("Failed to create intermediate cache directory: " + task.outputPath.parent_path().string(),
                         ec.message());
@@ -446,7 +445,7 @@ public:
             pool_.Post([onLoaded = std::move(onLoaded)]() { onLoaded(nullptr); });
             return;
         }
-        auto cachePath = std::filesystem::path(cacheDir_) / "intermediates" / it->second.cacheFile;
+        auto cachePath = fs::path(cacheDir_) / "intermediates" / it->second.cacheFile;
         pool_.Post([this, cachePath = std::move(cachePath), onLoaded = std::move(onLoaded)]() {
             onLoaded(ReadFromDisk(cachePath, context_));
         });
@@ -472,7 +471,7 @@ private:
     // symbol.h). A read/parse failure here means the manifest had a matching entry but the cache
     // file itself is missing/corrupt -- a genuine (if non-fatal) anomaly, so it's reported as a
     // Warning via `context.diagnosticEngine`; Gluegen::Parse() falls back to a fresh Gluec parse.
-    static std::shared_ptr<IntermediateCache> ReadFromDisk(const std::filesystem::path &cachePath, Context &context)
+    static std::shared_ptr<IntermediateCache> ReadFromDisk(const fs::path &cachePath, Context &context)
     {
         std::ifstream in(ToLongPathIfNeeded(cachePath), std::ios::binary);
         if (!in.is_open()) {

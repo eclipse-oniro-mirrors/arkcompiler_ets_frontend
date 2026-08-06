@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "TypeScript wrapper for glue_gen: generate glue code for ArkTS interop",
   "private": true,
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "main": "dist/entry.js",
   "types": "dist/entry.d.ts",
   "exports": {
