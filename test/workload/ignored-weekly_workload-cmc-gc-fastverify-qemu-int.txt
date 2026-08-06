@@ -1,21 +1,2 @@
 # Known failures list for weekly workload - cmc-gc-fastverify-qemu-int
 
-#27147
-json-parse-inspector
-float-mm
-typescript-compiler
-wsl
-
-#18740
-splay
-
-#27787
-stanford-crypto-pbkdf2
-
-#33565
-crypto
-json-stringify-inspector
-numericalComputation
-navier-stokes
-OfflineAssembler
-stanford-crypto-pbkdf2
