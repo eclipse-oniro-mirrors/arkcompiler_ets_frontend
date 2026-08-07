@@ -1526,6 +1526,78 @@ static std::pair<Type *, Type *> ComputeConditionalSubtypes(TypeRelation *relati
     return {condition, actual};
 }
 
+static Type *CreateTypeofConditionalUnion(ETSChecker *checker, const std::vector<Type *> &types)
+{
+    std::vector<Type *> filteredTypes;
+    auto *const neverType = checker->GlobalETSNeverType();
+    for (auto *type : types) {
+        if (!type->IsETSNeverType()) {
+            filteredTypes.emplace_back(type);
+        }
+    }
+    if (filteredTypes.empty()) {
+        return neverType;
+    }
+    return filteredTypes.size() == 1U ? filteredTypes.front() : checker->CreateETSUnionType(std::move(filteredTypes));
+}
+
+static std::pair<Type *, Type *> ComputeTypeofObjectConditionalSubtypes(ETSChecker *checker, Type *excludedTypes,
+                                                                        Type *actualType)
+{
+    auto *const neverType = checker->GlobalETSNeverType();
+    if (actualType->IsETSTypeParameter()) {
+        auto *const constraintType = actualType->AsETSTypeParameter()->GetConstraintType();
+        auto [constraintConsequent, constraintAlternate] =
+            ComputeTypeofObjectConditionalSubtypes(checker, excludedTypes, constraintType);
+        if (constraintConsequent->IsETSNeverType()) {
+            return {neverType, actualType};
+        }
+        if (constraintAlternate->IsETSNeverType()) {
+            return {actualType, neverType};
+        }
+        return {actualType, actualType};
+    }
+
+    if (actualType->IsETSUnionType()) {
+        std::vector<Type *> consequentTypes;
+        std::vector<Type *> alternateTypes;
+        for (auto *constituent : actualType->AsETSUnionType()->ConstituentTypes()) {
+            auto [consequent, alternate] = ComputeTypeofObjectConditionalSubtypes(checker, excludedTypes, constituent);
+            consequentTypes.emplace_back(consequent);
+            alternateTypes.emplace_back(alternate);
+        }
+        return {CreateTypeofConditionalUnion(checker, consequentTypes),
+                CreateTypeofConditionalUnion(checker, alternateTypes)};
+    }
+
+    if (actualType->IsETSObjectType() && actualType->AsETSObjectType()->IsGlobalETSObjectType()) {
+        return {actualType, excludedTypes};
+    }
+
+    auto *const boxedActualType = checker->MaybeBoxType(actualType);
+    if (checker->Relation()->IsSupertypeOf(excludedTypes, boxedActualType)) {
+        return {neverType, actualType};
+    }
+
+    if (actualType->IsETSFunctionType() || actualType->IsETSUndefinedType()) {
+        return {neverType, actualType};
+    }
+
+    if (actualType->IsETSObjectType() || actualType->IsETSArrayType() || actualType->IsETSTupleType() ||
+        actualType->IsETSNullType()) {
+        return {actualType, neverType};
+    }
+
+    return {actualType, actualType};
+}
+
+static bool IsUnchangedTypeofSmartCast(ETSChecker *checker, Type *actualType, Type *consequentType, Type *alternateType)
+{
+    auto *const relation = checker->Relation();
+    SavedTypeRelationFlagsContext const savedFlags(relation, TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+    return relation->IsIdenticalTo(actualType, consequentType) && relation->IsIdenticalTo(actualType, alternateType);
+}
+
 checker::Type *CheckerContext::GetUnionOfTypes(checker::Type *const type1, checker::Type *const type2) const noexcept
 {
     if (type1 == nullptr || type2 == nullptr) {
@@ -1739,7 +1811,13 @@ std::optional<SmartCastTuple> CheckerContext::ResolveSmartCastTypes()
     Type *consequentType = nullptr;
     Type *alternateType = nullptr;
 
-    if (testCondition_.testedType->DefinitelyETSNullish()) {
+    if (testCondition_.excludedTypes != nullptr) {
+        std::tie(consequentType, alternateType) =
+            ComputeTypeofObjectConditionalSubtypes(checker, testCondition_.excludedTypes, smartType);
+        if (IsUnchangedTypeofSmartCast(checker, smartType, consequentType, alternateType)) {
+            return std::nullopt;
+        }
+    } else if (testCondition_.testedType->DefinitelyETSNullish()) {
         // In case of testing for 'null' and/or 'undefined' remove corresponding null-like types.
         std::tie(consequentType, alternateType) =
             checker->CheckTestNullishCondition(testCondition_.testedType, smartType, testCondition_.strict);
