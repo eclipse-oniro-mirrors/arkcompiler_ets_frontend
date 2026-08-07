@@ -15,7 +15,7 @@
 
 import { ImportedCallback } from "./alias_export.ets";
 
-class ResponseType {}
+declare class ResponseType {}
 
 declare interface Attribute {
     default bind(callback: ImportedCallback<ResponseType> | undefined): this;

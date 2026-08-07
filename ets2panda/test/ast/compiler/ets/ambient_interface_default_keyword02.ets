@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,13 +20,11 @@ declare interface XXX {
     foo(a: number): void {}
 }
 
-interface YYY {
+declare interface YYY {
       default foo(): void
       default baz(): void {}
 }
 
-
 /* @@? 17:36 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
 /* @@? 20:26 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
-/* @@? 24:7 Error Syntax error ESY0224: Identifier expected, got 'default'. */
-/* @@? 25:7 Error Syntax error ESY0224: Identifier expected, got 'default'. */
+/* @@? 25:27 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

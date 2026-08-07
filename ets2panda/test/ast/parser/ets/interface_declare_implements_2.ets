@@ -17,6 +17,6 @@ export interface B{
     a:number
 }
 
-export declare class A implements B{
+export class A implements B{
     a:number
 }

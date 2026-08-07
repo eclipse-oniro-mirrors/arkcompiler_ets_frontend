@@ -15,8 +15,8 @@
 
 //Not support non-declare function has same assembly code
 export class A<T> {}
-export declare function foo(a:A<number>):void
+export function foo(a:A<number>):void {}
 export function foo(a:A<string>):number {}
 
-
 /* @@? 19:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+

@@ -452,6 +452,7 @@ private:
     bool IsExportedDeclaration(ir::ModifierFlags memberModifiers);
     ir::Statement *ParseTopLevelDeclStatement(StatementParsingFlags flags);
     ir::Statement *ParseTopLevelStatement();
+    void CheckAmbientNonAmbientMix(const ArenaVector<ir::Statement *> &statements);
     void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) override;
     void ConsumeSemicolon(ir::Statement *statement) override;
     bool IsInOperatorTypeSupported() const override

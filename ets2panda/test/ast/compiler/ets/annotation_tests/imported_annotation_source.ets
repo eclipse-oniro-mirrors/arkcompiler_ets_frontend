@@ -18,4 +18,4 @@ export @interface ImportedAnno {
 }
 
 @Retention({policy: "SOURCE"})
-export declare @interface ImportedDeclareAnno {}
+export @interface ImportedDeclareAnno {}

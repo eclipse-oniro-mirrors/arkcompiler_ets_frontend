@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,8 @@
 
 type ValueAlias<V extends string> = Record<"val", V>;
 
-declare function value<U>(): ValueAlias</* @@ label */U>;
-
+function value<U>(): ValueAlias</* @@ label */U> {
+    throw new Error()
+}
 
 /* @@@ label Error Semantic error ESE0228: Type argument 'U' should be a subtype of 'String' constraint */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,11 +17,11 @@ function foo(a: "aa"|"bb") {
     return a
 }
 
-declare let cond: boolean;
+let cond: boolean = false;
 
 let x = cond ? "aa" : "bb"  // type of x is string
 let y = foo(x)
 
-
 /* @@? 23:9 Error Semantic error ESE0127: No matching call signature for foo(String) */
 /* @@? 23:13 Error Semantic error ESE0046: Type 'String' is not compatible with type '"aa"|"bb"' at index 1 */
+

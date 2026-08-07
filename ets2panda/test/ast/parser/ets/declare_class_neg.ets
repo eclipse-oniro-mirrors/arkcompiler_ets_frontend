@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,12 +14,11 @@
  */
 
 declare class A {
-  declare/* @@ label */ constructor()
+  declare constructor()
 }
-class B {
-  declare/* @@ label1 */ constructor()
+declare class B {
+  declare constructor()
 }
 
 /* @@? 17:10 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 20:10 Error Syntax error ESY0121: Field type annotation expected. */
-/* @@? 20:37 Error Semantic error ESE0017: Only abstract or native methods can't have body. */

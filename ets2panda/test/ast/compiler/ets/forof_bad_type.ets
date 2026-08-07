@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-declare class A<T> {
-    a: A<T>
-    foo(f: (a: FixedArray<Tadad> | A<T>[]) => void):void
-    bar():A<T>
+class A<T> {
+    a: A<T> = undefined as A<T>
+    foo(f: (a: FixedArray<Tadad> | A<T>[]) => void): void {}
+    bar(): A<T> { return this.a }
 }
 
 new A<number>().bar().a.foo((x) => {
@@ -25,4 +25,6 @@ new A<number>().bar().a.foo((x) => {
     }
 })
 
+/* @@? 17:15 Warning Warning W0304: Possible cast of 'null' or 'undefined' to non-nullish type can throw 'ClassCastError' exception at runtime */
 /* @@? 18:27 Error Semantic error ESE0371: Cannot find type 'Tadad'. */
+/* @@? 23:19 Error Semantic error ESE0402: Unions of types with iterator and fixed/value arrays are currently unsupported in an iteration: FixedArray<*ERROR_TYPE*>|Array<A<Double>>. */

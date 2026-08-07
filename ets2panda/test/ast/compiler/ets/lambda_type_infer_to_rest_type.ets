@@ -13,10 +13,12 @@
  * limitations under the License.
  */
 
-declare function testRest<T>(a: (t: T, t1: T, ...ts: T[]) => void): T
+function testRest<T>(a: (t: T, t1: T, ...ts: T[]) => void): T {
+    throw new Error()
+}
 
 testRest((t1:number, t2:boolean, t3) => {})
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for testRest(((p1: Double, p2: Boolean, p3: T) => undefined)) */
-/* @@? 18:1 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'testRest'. Specify the type argument explicitly. */
-/* @@? 18:10 Error Semantic error ESE0046: Type '((p1: Double, p2: Boolean, p3: T) => undefined)' is not compatible with type '((p1: T, p2: T, ...p3: Array<T>) => undefined)' at index 1 */
+/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for testRest(((p1: Double, p2: Boolean, p3: T) => undefined)) */
+/* @@? 20:1 Error Semantic error ESE8745: Type parameter 'T' can not be inferred for the call to 'testRest'. Specify the type argument explicitly. */
+/* @@? 20:10 Error Semantic error ESE0046: Type '((p1: Double, p2: Boolean, p3: T) => undefined)' is not compatible with type '((p1: T, p2: T, ...p3: Array<T>) => undefined)' at index 1 */

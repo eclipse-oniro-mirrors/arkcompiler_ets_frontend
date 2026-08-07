@@ -13,11 +13,19 @@
  * limitations under the License.
  */
 
-declare class IterBox implements Iterable<int> {
-    $_iterator(): Iterator<int>
+class IntIterator implements Iterator<int> {
+    next(): IteratorResult<int> {
+        return new IteratorResult<int>(true, 0)
+    }
 }
 
-declare let box: IterBox
+class IterBox implements Iterable<int> {
+    $_iterator(): Iterator<int> {
+        return new IntIterator()
+    }
+}
+
+let box: IterBox = new IterBox()
 
 function test(flag: boolean) {
     let fixed = [1, 2, 3] as FixedArray<int>
@@ -26,4 +34,4 @@ function test(flag: boolean) {
     }
 }
 
-/* @@? 25:19 Error Semantic error ESE0402: Unions of types with iterator and fixed/value arrays are currently unsupported in an iteration: FixedArray<Int>|IterBox. */
+/* @@? 33:19 Error Semantic error ESE0402: Unions of types with iterator and fixed/value arrays are currently unsupported in an iteration: FixedArray<Int>|IterBox. */

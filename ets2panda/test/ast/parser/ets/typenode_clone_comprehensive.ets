@@ -63,20 +63,21 @@ type ComplexType<K extends keyof ObjectType = keyof ObjectType> = {
 };
 
 // Test instantiation to trigger ValidateGenericTypeAliasForClonedNode
-declare const test1: ComplexType<'n'>;
-declare const test2: ComplexType<'s'>;
-declare const test3: ComplexType<'b'>;
+const test1: ComplexType<'n'>;
+const test2: ComplexType<'s'>;
+const test3: ComplexType<'b'>;
 
 /* @@@ label1 Error Semantic error ESE0350: Variable 'ObjectType' is already defined with different type. */
+
 /* @@? 21:34 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 21:45 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 21:56 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 32:42 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 35:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 35:59 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 35:59 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 35:59 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 35:60 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@@ label2 Error Semantic error ESE0350: Class 'TupleType' is already defined with different type. */
+/* @@? 38:16 Error Semantic error ESE0350: Class 'TupleType' is already defined with different type. */
 /* @@? 38:34 Error Semantic error ESE0371: Cannot find type 'a'. */
 /* @@? 38:35 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 38:35 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
@@ -91,21 +92,20 @@ declare const test3: ComplexType<'b'>;
 /* @@? 41:22 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 41:24 Error Syntax error ESY0227: Unexpected token 'in'. */
 /* @@? 41:32 Error Syntax error ESY0121: Field type annotation expected. */
-/* @@? 41:43 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 41:43 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 41:43 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 41:44 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 41:46 Error Syntax error ESY0295: string is a predefined type, cannot be used as an identifier */
 /* @@? 44:41 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 44:60 Error Syntax error ESY0228: Unexpected token, expected ']'. */
-/* @@@ label3 Error Semantic error ESE0350: Class 'UnionType' is already defined with different type. */
+/* @@? 50:16 Error Semantic error ESE0350: Class 'UnionType' is already defined with different type. */
 /* @@? 54:34 Error Semantic error ESE0371: Cannot find type 'InvalidMap'. */
 /* @@? 54:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 57:45 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 57:63 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 57:67 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 58:12 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 59:23 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 59:23 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 59:23 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 59:24 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 59:25 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 60:29 Error Syntax error ESY0228: Unexpected token, expected ']'. */
@@ -117,9 +117,12 @@ declare const test3: ComplexType<'b'>;
 /* @@? 62:13 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 62:16 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 62:18 Error Syntax error ESY0227: Unexpected token 'in'. */
-/* @@? 62:22 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 62:22 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 62:22 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 62:23 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 62:35 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 62:36 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 62:37 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 66:7 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 67:7 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 68:7 Error Semantic error ESE0363: Missing initializer in const declaration */

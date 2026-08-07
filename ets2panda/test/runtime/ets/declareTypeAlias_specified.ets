@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,42 +14,42 @@
  */
 
 // Union
-export declare type type_union = string | boolean;
+export type type_union = string | boolean;
 
 
 // Array
-export declare type type_array_1 = Array<boolean>;
-declare type type_array_2 = boolean[];
+export type type_array_1 = Array<boolean>;
+type type_array_2 = boolean[];
 
 
 // Array + Union
-export declare type type_union_array_1 = Array<boolean> | Array<string>
-declare type type_union_array_2 = Array<boolean | string>
+export type type_union_array_1 = Array<boolean> | Array<string>
+type type_union_array_2 = Array<boolean | string>
 
 
 // Array + Type Alias
-export declare type type_array_alias_1 = Array<type_union>
-declare type type_array_alias_2 = Array<type_union> | type_union
-declare type type_array_alias_3 = Array<type_array_1> | type_array_2
+export type type_array_alias_1 = Array<type_union>
+type type_array_alias_2 = Array<type_union> | type_union
+type type_array_alias_3 = Array<type_array_1> | type_array_2
 
 
 // Tuple
-declare type type_tuple_1 = [string, boolean, number]
-declare type type_tuple_2 = [string, Array<boolean>, number]
-declare type type_tuple_3 = [string, [string, boolean], number]
-declare type type_tuple_4 = [string, boolean[], number]
+type type_tuple_1 = [string, boolean, number]
+type type_tuple_2 = [string, Array<boolean>, number]
+type type_tuple_3 = [string, [string, boolean], number]
+type type_tuple_4 = [string, boolean[], number]
 
 // Tuple + Union
-declare type type_tuple_union_1 = [string, boolean | null, number]
-declare type type_tuple_union_2 = [string, Array<boolean> | boolean, number]
-declare type type_tuple_union_3 = [string, boolean, number] | Array<boolean> | [string, null, number]
-declare type type_tuple_union_4 = [string, boolean, number] | (boolean | undefined)[]
+type type_tuple_union_1 = [string, boolean | null, number]
+type type_tuple_union_2 = [string, Array<boolean> | boolean, number]
+type type_tuple_union_3 = [string, boolean, number] | Array<boolean> | [string, null, number]
+type type_tuple_union_4 = [string, boolean, number] | (boolean | undefined)[]
 
 // Tuple + Type Alias
-declare type type_tuple_alias_1 = [string, boolean | null, type_union_array_1]
-declare type type_tuple_alias_2 = [string, Array<boolean> | boolean, type_union_array_1]
-declare type type_tuple_alias_3 = [string, boolean, number] | Array<boolean> | [string, null, number] | type_tuple_union_4
-declare type type_tuple_alias_4 = [string, boolean, number] | (boolean | undefined)[] | type_tuple_union_3
+type type_tuple_alias_1 = [string, boolean | null, type_union_array_1]
+type type_tuple_alias_2 = [string, Array<boolean> | boolean, type_union_array_1]
+type type_tuple_alias_3 = [string, boolean, number] | Array<boolean> | [string, null, number] | type_tuple_union_4
+type type_tuple_alias_4 = [string, boolean, number] | (boolean | undefined)[] | type_tuple_union_3
 
 
 // Utility
@@ -57,15 +57,15 @@ interface Issue {
 	title : string
 	description : string
 }
-declare type type_utility_1 = Partial<Issue>;
+type type_utility_1 = Partial<Issue>;
 
 interface Issue2 {
 	title?: string
 	description?: string
 }
-declare type type_utility_2 = Required<Issue2>;
-declare type type_utility_3 = Readonly<Issue>;
-declare type type_utility_4 = Record<number, Object>;
+type type_utility_2 = Required<Issue2>;
+type type_utility_3 = Readonly<Issue>;
+type type_utility_4 = Record<number, Object>;
 
 
 function main() {

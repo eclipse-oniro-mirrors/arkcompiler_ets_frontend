@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,10 @@ class C {
 interface I {
   gen<T>(x: T): T;
 }
-declare const i: I;
+class Impl implements I {
+  gen<T>(x: T): T { return x; }
+}
+const i: I = new Impl()
 
 function main() {
   let c = new C();
@@ -29,6 +32,7 @@ function main() {
   let b = C.sgen;
   let d = i.gen;
 }
-/* @@? 28:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */
-/* @@? 29:11 Error Semantic error ESE655063: Generic function sgen requires explicit type arguments when used as a value. */
-/* @@? 30:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */
+/* @@? 31:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */
+/* @@? 32:11 Error Semantic error ESE655063: Generic function sgen requires explicit type arguments when used as a value. */
+/* @@? 33:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */
+
