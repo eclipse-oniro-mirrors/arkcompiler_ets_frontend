@@ -18,6 +18,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
 #include "checker/types/typeRelation.h"
+#include "compiler/lowering/util-inl.h"
 #include "compiler/lowering/util.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 
@@ -82,7 +83,6 @@ static ir::ClassDeclaration *BuildClass(checker::ETSChecker *checker, util::Stri
     auto *classDef =
         checker->ProgramAllocNode<ir::ClassDefinition>(allocator, classId, ir::ClassDefinitionModifiers::CLASS_DECL,
                                                        ir::ModifierFlags::NONE, Language(Language::Id::ETS));
-
     auto *classDecl = checker->ProgramAllocNode<ir::ClassDeclaration>(classDef, allocator);
 
     auto *const varBinder = checker->VarBinder()->AsETSBinder();
@@ -90,13 +90,13 @@ static ir::ClassDeclaration *BuildClass(checker::ETSChecker *checker, util::Stri
 
     program->Ast()->AddStatement(classDecl);
     classDecl->SetParent(program->Ast());
+    classDecl->SetProgram(program);
 
     ES2PANDA_ASSERT(varBinder->CheckRecordTablesConsistency(program));
     varbinder::BoundContext boundCtx(program->GetRecordTable(), classDef);
 
     ArenaVector<ir::AstNode *> classBody(allocator->Adapter());
     builder(classBody);
-
     classDef->AddProperties(std::move(classBody));
 
     compiler::InitScopesPhaseETS::RunExternalNode(classDecl, varBinder);
@@ -129,23 +129,6 @@ std::string_view InterfaceObjectLiteralLowering::Name() const
 bool InterfaceObjectLiteralLowering::ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const
 {
     return !methodOnly_ || objectExpr->HasMethodDefinition();
-}
-
-bool InterfaceObjectLiteralLowering::ShouldLowerObjectLiteral() const
-{
-    return !methodOnly_;
-}
-
-static inline bool IsInterfaceType(const checker::Type *type)
-{
-    return type != nullptr && type->IsETSObjectType() &&
-           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE);
-}
-
-static inline bool IsAbstractClassType(const checker::Type *type)
-{
-    return type != nullptr && type->IsETSObjectType() &&
-           type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::ABSTRACT);
 }
 
 static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ReadonlyFields &readonlyFields)
@@ -340,41 +323,36 @@ static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDe
         checker->ProgramAllocNode<ir::Identifier>(Signatures::INTERFACE_OBJ_LITERAL, checker->ProgramAllocator());
     annoId->SetAnnotationUsage();
     auto *annoUsage = checker->ProgramAllocNode<ir::AnnotationUsage>(annoId, checker->ProgramAllocator());
-    ES2PANDA_ASSERT(annoUsage);
     annoUsage->AddModifier(ir::ModifierFlags::ANNOTATION_USAGE);
     annoUsage->SetParent(classDef);
-    annoId->SetParent(annoUsage);
     classDef->EmplaceAnnotation(annoUsage);
-    RefineSourceRanges(annoUsage);
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, annoUsage);
 }
 
-ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringView const className,
-                                        ir::AstNode const *const decl,
-                                        const checker::ETSChecker::ClassBuilder &bodyBuilder, checker::Type *declTsType,
-                                        varbinder::Scope *useSiteScope)
+static ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringView const className,
+                                               ir::AstNode const *const decl,
+                                               const checker::ETSChecker::ClassBuilder &bodyBuilder,
+                                               checker::Type *declTsType)
 {
     ES2PANDA_ASSERT(decl != nullptr && (decl->IsTSInterfaceDeclaration() || decl->IsClassDefinition()));
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *allocator = ctx->Allocator();
+    auto *varbinder = checker->VarBinder()->AsETSBinder();
 
-    auto scopeCtx = checker::ScopeContext(checker, useSiteScope);
-    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), useSiteScope);
+    auto *const scope = varbinder->Program()->GlobalClassScope();
+    auto scopeCtx = checker::ScopeContext(checker, scope);
+    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
 
     auto *classDecl = BuildClass(checker, className, bodyBuilder);
-    RefineSourceRanges(classDecl);
+    SetSourceRangesRecursively(classDecl, decl->Range());
 
     auto *classDef = classDecl->Definition();
+    classDef->SetAnonymousModifier();
+
     auto *classType = classDef->TsType()->AsETSObjectType();
     if (classType->IsGradual()) {
         return classDecl;
     }
-
-    classDef->SetAnonymousModifier();
-
-    auto const range = decl->Range();
-    classDecl->SetRange(range);
-    classDef->SetRange(range);
 
     // Class type params
     auto const *const typeParams = decl->IsTSInterfaceDeclaration() ? decl->AsTSInterfaceDeclaration()->TypeParams()
@@ -405,8 +383,7 @@ ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringVi
     return classDecl;
 }
 
-static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode,
-                                                     ir::AstNode *astNode)
+static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
 {
     if (ifaceNode->GetAnonClass() != nullptr) {
         return ifaceNode->GetAnonClass()->Definition()->TsType();
@@ -422,9 +399,8 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
     };
 
     auto anonClassName = util::UString(GenerateAnonClassName(ifaceNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl =
-        GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder,
-                          ifaceNode->AsTSInterfaceDeclaration()->TsType(), compiler::NearestScope(astNode));
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder,
+                                        ifaceNode->AsTSInterfaceDeclaration()->TsType());
 
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         ifaceNode->SetAnonClass(classDecl);
@@ -433,11 +409,11 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
     return classDecl->Definition()->TsType();
 }
 
-static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode,
-                                               ir::AstNode *astNode)
+static checker::Type *GenerateAnonClassFromAbstractClass(public_lib::Context *ctx,
+                                                         ir::ClassDefinition *abstractClassNode)
 {
     if (abstractClassNode->GetAnonClass() != nullptr) {
-        return;
+        return abstractClassNode->GetAnonClass()->Definition()->TsType();
     }
 
     auto classBodyBuilder = [ctx](ArenaVector<ir::AstNode *> &classBody) -> void {
@@ -453,12 +429,13 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl =
-        GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
-                          abstractClassNode->AsClassDefinition()->TsType(), compiler::NearestScope(astNode));
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                                        abstractClassNode->AsClassDefinition()->TsType());
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         abstractClassNode->SetAnonClass(classDecl);
     }
+
+    return classDecl->Definition()->TsType();
 }
 
 using InterfaceMethod = std::tuple<util::StringView, checker::Signature *, bool>;
@@ -750,15 +727,15 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
     auto anonClassName =
         util::UString(GenerateAnonClassName(interfaceDecl->InternalName().Utf8(), true), ctx->Allocator());
     auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), interfaceDecl, classBodyBuilder,
-                                        objectExpr->AsObjectExpression()->TsType(), compiler::NearestScope(objectExpr));
+                                        objectExpr->AsObjectExpression()->TsType());
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
                                                                                       : checker->GlobalTypeError();
 }
 
-static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSignature(checker::ETSObjectType *targetType,
-                                                                                     util::StringView name)
+static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSignature(
+    checker::ETSObjectType const *const targetType, util::StringView const name)
 {
     if (targetType != nullptr) {
         varbinder::LocalVariable *lv =
@@ -811,8 +788,8 @@ static bool HasMatchingObjectLiteralProperty(checker::TypeRelation *relation, ir
     return false;
 }
 
-static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
-                           ir::ObjectExpression *objectExpr, InterfaceMethods &methods)
+static void CheckMethods(checker::TypeRelation *relation, ir::AstNode *node, ir::ObjectExpression *objectExpr,
+                         InterfaceMethods &methods)
 {
     auto checkOverriding = [&methods, objectExpr, relation](ir::MethodDefinition const *methodDef,
                                                             checker::Signature *sig) {
@@ -840,14 +817,23 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
         }
     };
 
-    ES2PANDA_ASSERT(interfaceDecl->Body());
-    for (auto *node : interfaceDecl->Body()->Body()) {
-        if (node->IsOverloadDeclaration()) {
+    ArenaVector<ir::AstNode *> const *body;
+    if (node->IsTSInterfaceDeclaration()) {
+        ES2PANDA_ASSERT(node->AsTSInterfaceDeclaration()->Body() != nullptr);
+        body = &node->AsTSInterfaceDeclaration()->Body()->Body();
+    } else if (node->IsClassDefinition()) {
+        body = &node->AsClassDefinition()->Body();
+    } else {
+        ES2PANDA_UNREACHABLE();
+    }
+
+    for (auto const *it : *body) {
+        if (it->IsOverloadDeclaration()) {
             continue;
         }
 
-        auto *methodDef = node->AsMethodDefinition();
-        auto *objType = objectExpr->TsType()->AsETSObjectType();
+        auto const *const methodDef = it->AsMethodDefinition();
+        auto const *const objType = objectExpr->TsType()->AsETSObjectType();
         auto signatures = GetInterfaceGenericSignature(objType, methodDef->Key()->AsIdentifier()->Name());
         for (auto *sig : signatures) {
             if (!methodDef->Function()->IsGetterOrSetter()) {
@@ -857,31 +843,37 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
     }
 }
 
-static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
-                                               ir::ObjectExpression *objectExpr)
+static bool CanGenerateAnonClass(checker::ETSChecker *checker, checker::Type const *exprType,
+                                 ir::ObjectExpression *objectExpr)
 {
     InterfaceMethods methods {};
 
     // Iterate through all the implemented interfaces
     auto const checkMethods = [&methods, objectExpr, checker](auto &&self,
-                                                              checker::ETSObjectType const *interfaceType) -> void {
-        CheckInterface(checker->Relation(), interfaceType->GetDeclNode()->AsTSInterfaceDeclaration(), objectExpr,
-                       methods);
+                                                              checker::ETSObjectType const *objectType) -> void {
+        CheckMethods(checker->Relation(), objectType->GetDeclNode(), objectExpr, methods);
 
-        for (auto const *type : interfaceType->Interfaces()) {
+        auto const *const superType = objectType->SuperType();
+        if (superType != nullptr && superType->IsETSObjectType()) {
+            self(self, superType->AsETSObjectType());
+        }
+
+        for (auto const *const type : objectType->Interfaces()) {
             self(self, type);
         }
     };
 
-    checker::Type const *const iType = interfaceDecl->Check(checker);
-    if (iType == nullptr || !iType->IsETSObjectType() || iType->AsETSObjectType()->IsGradual()) {
+    if (exprType == nullptr || !exprType->IsETSObjectType() || exprType->AsETSObjectType()->IsGradual()) {
         return false;
     }
 
-    checkMethods(checkMethods, iType->AsETSObjectType());
+    checkMethods(checkMethods, exprType->AsETSObjectType());
 
-    for (auto const &[_1, _2, hasBody] : methods) {
+    for (auto const &[name, _0, hasBody] : methods) {
         if (!hasBody) {
+            if (exprType->AsETSObjectType()->GetDeclNode()->IsClassDefinition()) {
+                checker->LogError(diagnostic::ABSTRACT_METH_IN_ABSTRACT_CLASS, {name}, objectExpr->Start());
+            }
             return false;
         }
     }
@@ -889,33 +881,28 @@ static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir:
     return true;
 }
 
-static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::TSInterfaceDeclaration *interfaceDecl,
-                                                  ir::ObjectExpression *objectExpr)
+static bool CheckAbstractClassShouldGenerateAnonClass(checker::ETSChecker *checker, ir::ClassDefinition *classDef,
+                                                      lexer::SourcePosition const &pos)
 {
-    auto *checker = ctx->GetChecker()->AsETSChecker();
-    auto *const helperClass = interfaceDecl->GetAnonClass();
+    checker::Type const *const type = classDef->Check(checker);
+    auto constructorSigs = type->AsETSObjectType()->ConstructSignatures();
+    if (auto res = std::find_if(constructorSigs.cbegin(), constructorSigs.cend(),
+                                [](checker::Signature *sig) -> bool { return sig->MinArgCount() == 0; });
+        res == constructorSigs.cend()) {
+        return false;
+    }
 
-    if (objectExpr->HasMethodDefinition()) {
-        //  If object literal has method [re-]definition(s) create unique auxilary class for it.
-        if (helperClass != nullptr || CheckInterfaceCanGenerateAnonClass(checker, interfaceDecl, objectExpr)) {
-            return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
-        }
-    } else {
-        if (helperClass != nullptr) {
-            return helperClass->Definition()->TsType();
-        }
-        // because of lazy checker auxilary classes can be no created here
-        interfaceDecl->Check(checker);
-        if (CheckInterfaceShouldGenerateAnonClass(checker, interfaceDecl)) {
-            return GenerateAnonClassFromInterface(ctx, interfaceDecl, objectExpr);
+    for (auto const *const node : classDef->Body()) {
+        if (node->IsMethodDefinition() && node->AsMethodDefinition()->IsAbstract()) {
+            auto const *const method = node->AsMethodDefinition();
+            ES2PANDA_ASSERT(method->Id() != nullptr);
+            checker->LogError(diagnostic::ABSTRACT_METH_IN_ABSTRACT_CLASS, {method->Id()->Name()}, pos);
+            return false;
         }
     }
 
-    checker->LogError(diagnostic::INTERFACE_WITH_METHOD, {}, interfaceDecl->Start());
-    return checker->GlobalTypeError();
+    return true;
 }
-
-//==========[ Processing of object interface literals with re-defined methods =>  end  ]==========//
 
 static checker::Type *GenerateAnonClassFromAbstractClassWithMethods(public_lib::Context *ctx,
                                                                     ir::ClassDefinition *abstractClassNode,
@@ -938,19 +925,66 @@ static checker::Type *GenerateAnonClassFromAbstractClassWithMethods(public_lib::
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8(), true), ctx->Allocator());
-    auto *classDecl =
-        GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
-                          abstractClassNode->AsClassDefinition()->TsType(), compiler::NearestScope(objectExpr));
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                                        abstractClassNode->AsClassDefinition()->TsType());
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
                                                                                       : checker->GlobalTypeError();
 }
 
+static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::TSInterfaceDeclaration *interfaceDecl,
+                                                  ir::ObjectExpression *objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *const helperClass = interfaceDecl->GetAnonClass();
+
+    if (objectExpr->HasMethodDefinition()) {
+        //  If object literal has method [re-]definition(s) create unique auxilary class for it.
+        if (helperClass != nullptr || CanGenerateAnonClass(checker, interfaceDecl->Check(checker), objectExpr)) {
+            return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
+        }
+    } else {
+        if (helperClass != nullptr) {
+            return helperClass->Definition()->TsType();
+        }
+        if (CheckInterfaceShouldGenerateAnonClass(checker, interfaceDecl)) {
+            return GenerateAnonClassFromInterface(ctx, interfaceDecl);
+        }
+    }
+
+    checker->LogError(diagnostic::INTERFACE_WITH_METHOD, {}, interfaceDecl->Start());
+    return checker->GlobalTypeError();
+}
+
+static checker::Type *ProcessAbstractClassWithMethods(public_lib::Context *ctx, ir::ClassDefinition *classDef,
+                                                      ir::ObjectExpression *objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *const helperClass = classDef->GetAnonClass();
+
+    if (objectExpr->HasMethodDefinition()) {
+        //  If object literal has method [re-]definition(s) create unique auxilary class for it.
+        if (helperClass != nullptr || CanGenerateAnonClass(checker, classDef->Check(checker), objectExpr)) {
+            return GenerateAnonClassFromAbstractClassWithMethods(ctx, classDef, objectExpr);
+        }
+    } else {
+        if (helperClass != nullptr) {
+            return helperClass->Definition()->TsType();
+        }
+        if (CheckAbstractClassShouldGenerateAnonClass(checker, classDef, objectExpr->Start())) {
+            return GenerateAnonClassFromAbstractClass(ctx, classDef);
+        }
+    }
+
+    return checker->GlobalTypeError();
+}
+
+//==========[ Processing of object interface literals with re-defined methods =>  end  ]==========//
+
 static checker::Type *ProcessDeclNode(public_lib::Context *ctx, checker::ETSObjectType *targetType,
                                       ir::ObjectExpression *objExpr)
 {
-    auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *declNode = targetType->GetDeclNode();
 
     if (declNode->IsTSInterfaceDeclaration()) {
@@ -960,106 +994,28 @@ static checker::Type *ProcessDeclNode(public_lib::Context *ctx, checker::ETSObje
     auto *classDef = declNode->AsClassDefinition();
     ES2PANDA_ASSERT(classDef->IsAbstract());
 
-    if (objExpr->HasMethodDefinition()) {
-        return GenerateAnonClassFromAbstractClassWithMethods(ctx, classDef, objExpr);
-    }
-
-    if (classDef->GetAnonClass() == nullptr) {
-        for (auto it : classDef->Body()) {
-            if (!it->IsMethodDefinition() || !it->AsMethodDefinition()->IsAbstract()) {
-                continue;
-            }
-
-            ES2PANDA_ASSERT(it->AsMethodDefinition()->Id());
-            checker->LogError(diagnostic::ABSTRACT_METH_IN_ABSTRACT_CLASS, {it->AsMethodDefinition()->Id()->Name()},
-                              objExpr->Start());
-            return checker->GlobalTypeError();
-        }
-        ES2PANDA_UNREACHABLE();
-    }
-    return classDef->GetAnonClass()->Definition()->TsType();
+    return ProcessAbstractClassWithMethods(ctx, classDef, objExpr);
 }
 
 static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpression *objExpr)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *targetType = objExpr->TsType()->AsETSObjectType();
+
     checker->CheckObjectLiteralKeys(objExpr->Properties());
 
     checker::Type *resultType = ProcessDeclNode(ctx, targetType, objExpr);
-
-    if (resultType->IsTypeError()) {
-        objExpr->SetTsType(resultType);
-        return;
-    }
-
-    if (!targetType->TypeArguments().empty()) {
-        std::vector<checker::Type *> typeArgTypes(targetType->TypeArguments().begin(),
-                                                  targetType->TypeArguments().end());
-        checker::InstantiationContext instantiationCtx(checker, resultType->AsETSObjectType(), typeArgTypes,
-                                                       objExpr->Start());
-        resultType = instantiationCtx.Result();
-    }
-
-    if (const auto *const parent = objExpr->Parent();
-        parent->IsArrayExpression() && !parent->AsArrayExpression()->TsType()->IsETSTupleType()) {
-        for (auto *elem : parent->AsArrayExpression()->Elements()) {
-            if (elem->IsObjectExpression()) {
-                elem->AsObjectExpression()->SetTsType(resultType);
-            }
+    if (!resultType->IsTypeError()) {
+        if (!targetType->TypeArguments().empty()) {
+            std::vector<checker::Type *> typeArgTypes(targetType->TypeArguments().begin(),
+                                                      targetType->TypeArguments().end());
+            checker::InstantiationContext instantiationCtx(checker, resultType->AsETSObjectType(), typeArgTypes,
+                                                           objExpr->Start());
+            resultType = instantiationCtx.Result();
         }
     }
+
     objExpr->SetTsType(resultType);
-}
-
-static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *classDef)
-{
-    auto constructorSigs = classDef->TsType()->AsETSObjectType()->ConstructSignatures();
-    if (auto res = std::find_if(constructorSigs.cbegin(), constructorSigs.cend(),
-                                [](checker::Signature *sig) -> bool { return sig->MinArgCount() == 0; });
-        res == constructorSigs.cend()) {
-        return false;
-    }
-    for (auto it : classDef->Body()) {
-        if (it->IsMethodDefinition() && it->AsMethodDefinition()->IsAbstract()) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-static void TransformInterfaceDecl(public_lib::Context *ctx, parser::Program *program,
-                                   std::unordered_set<ir::AstNode *> &requiredTypes)
-{
-    auto const cmode = ctx->config->options->GetCompilationMode();
-    bool isLocal = program == ctx->parserProgram || cmode == CompilationMode::GEN_STD_LIB ||
-                   ((cmode == CompilationMode::SIMULTANEOUS || cmode == CompilationMode::SIMULTANEOUS_INCREMENTAL) &&
-                    program->IsBuiltSimultaneously());
-
-    auto const isRequired = [&requiredTypes, isLocal](checker::ETSObjectType *type) {
-        if (isLocal && (type->GetDeclNode()->IsExported() || type->GetDeclNode()->IsDefaultExported())) {
-            return true;
-        }
-        return requiredTypes.find(type->GetDeclNode()) != requiredTypes.end();
-    };
-
-    program->Ast()->IterateRecursivelyPostorder([ctx, program, isRequired](ir::AstNode *ast) -> void {
-        if (!ast->IsTyped() || ast->AsTyped()->TsType() == nullptr) {
-            return;
-        }
-        if (ast->IsTSInterfaceDeclaration() &&
-            isRequired(ast->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType()) &&
-            CheckInterfaceShouldGenerateAnonClass(ctx->GetChecker()->AsETSChecker(), ast->AsTSInterfaceDeclaration())) {
-            GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration(), ast);
-        } else if (ast->IsClassDefinition() && ast != program->GlobalClass() &&
-                   ast->AsClassDefinition()->IsAbstract() &&
-                   !ast->AsClassDefinition()->TsType()->AsETSObjectType()->IsGradual() &&
-                   isRequired(ast->AsClassDefinition()->TsType()->AsETSObjectType()) &&
-                   CheckAbstractClassShouldGenerateAnonClass(ast->AsClassDefinition())) {
-            GenerateAnonClassFromAbstractClass(ctx, ast->AsClassDefinition(), ast);
-        }
-    });
 }
 
 template <typename F>
@@ -1069,10 +1025,13 @@ static void TraverseObjectLiteralExpressions(parser::Program *program, F const &
         if (!ast->IsObjectExpression()) {
             return;
         }
-        auto objExpr = ast->AsObjectExpression();
-        if ((IsInterfaceType(objExpr->TsType()) || IsAbstractClassType(objExpr->TsType())) &&
-            !objExpr->TsType()->AsETSObjectType()->IsGradual()) {
-            cb(ast->AsObjectExpression());
+        auto *const objExpr = ast->AsObjectExpression();
+        auto const *const type = objExpr->TsType();
+        if (type != nullptr && type->IsETSObjectType() &&
+            type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE |
+                                                   checker::ETSObjectFlags::ABSTRACT) &&
+            !type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::GRADUAL)) {
+            cb(objExpr);
         }
     });
 }
@@ -1083,43 +1042,22 @@ bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
     if (prog != ctx->parserProgram) {
         return true;
     }
+
     // NOTE: InterfaceObjectLiteralLowering runs twice in the pipeline (before and after lambda conversion).
     // We automatically derive the mode from the current phase position to avoid constructor/call parameters.
     auto *varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
     auto *savedProgram = varbinder->Program();
     auto *savedRecordTable = varbinder->GetRecordTable();
     auto *savedTopScope = varbinder->TopScope();
-    if (ShouldLowerObjectLiteral()) {
-        std::unordered_set<ir::AstNode *> requiredTypes {};
-        ProgramsToBeEmittedSelector::Apply(ctx, [&requiredTypes](parser::Program *program) {
-            TraverseObjectLiteralExpressions(program, [&requiredTypes](ir::ObjectExpression *objExpr) {
-                requiredTypes.insert(objExpr->TsType()->AsETSObjectType()->GetDeclNode());
-            });
-        });
-        ctx->parserProgram->GetExternalDecls()->Visit([ctx, varbinder, &requiredTypes](auto *extProg) {
-            if (extProg->IsASTLowered()) {
-                return;
-            }
-            varbinder->ResetTopScope(extProg->GlobalScope());
-            varbinder->SetRecordTable(extProg->GetRecordTable());
-            varbinder->SetProgram(extProg);
-            TransformInterfaceDecl(ctx, extProg, requiredTypes);
-        });
-        varbinder->ResetTopScope(prog->GlobalScope());
-        varbinder->SetRecordTable(prog->GetRecordTable());
-        varbinder->SetProgram(prog);
-        TransformInterfaceDecl(ctx, prog, requiredTypes);
-    }
 
     ProgramsToBeEmittedSelector::Apply(ctx, [ctx, varbinder, this](parser::Program *program) {
         varbinder->ResetTopScope(program->GlobalScope());
         varbinder->SetRecordTable(program->GetRecordTable());
         varbinder->SetProgram(program);
         TraverseObjectLiteralExpressions(program, [ctx, this](ir::ObjectExpression *expr) {
-            if (!ShouldLowerObjectLiteral(expr)) {
-                return;
+            if (ShouldLowerObjectLiteral(expr)) {
+                HandleInterfaceLowering(ctx, expr);
             }
-            HandleInterfaceLowering(ctx, expr);
         });
     });
 
@@ -1129,4 +1067,20 @@ bool InterfaceObjectLiteralLowering::PerformForProgram(parser::Program *prog)
     return true;
 }
 
+bool InterfaceObjectLiteralLowering::PostconditionForProgram(const parser::Program *program)
+{
+    return !program->Ast()->IsAnyChild([](const ir::AstNode *node) -> bool {
+        if (!node->IsObjectExpression()) {
+            return false;
+        }
+        auto const *const type = node->AsObjectExpression()->TsType();
+        if (type != nullptr && type->IsETSObjectType() &&
+            type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::INTERFACE |
+                                                   checker::ETSObjectFlags::ABSTRACT) &&
+            !type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::GRADUAL)) {
+            return true;
+        }
+        return false;
+    });
+}
 }  // namespace ark::es2panda::compiler
