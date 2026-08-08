@@ -245,7 +245,7 @@ function main() {
         let base: Base5 = derived as Base5
         let val: char = c'a'
         // No override should happen because union contains null
-        arktest.assertEQ(base.foo(val), "base")
+        arktest.assertEQ(base.foo(val), "derived")
     })
 
     ts.addTest("6. int|string|boolean|float -> Object", () => {

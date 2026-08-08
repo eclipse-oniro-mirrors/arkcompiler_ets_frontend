@@ -121,6 +121,8 @@ public:
     bool PossiblyETSValueTyped() const;
     bool PossiblyETSValueTypedExceptNullish() const;
 
+    bool PossiblyInForeignDomain() const;
+
     ETSStringType *AsETSStringType()
     {
         ES2PANDA_ASSERT(IsETSObjectType());

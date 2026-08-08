@@ -21,10 +21,6 @@ class Base {
     public static of(v: Object): Base {
         return new Base()
     }
-
-    public static of(o: Any): Base {
-        return new Base()
-    }
 }
 
 class Derived extends Base {}
