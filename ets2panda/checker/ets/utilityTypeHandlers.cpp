@@ -221,7 +221,7 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
         return cacheType(CreateETSUnionType(Span<Type *const>(awaitedTypes)));
     }
 
-    if (IsPromiseType(typeToBeAwaited)) {
+    if (IsPromiseType(typeToBeAwaited) && typeToBeAwaited->IsETSObjectType()) {
         Type *typeArg = typeToBeAwaited->AsETSObjectType()->TypeArguments().at(0);
         auto unwrappedType = UnwrapPromiseType(typeArg);
         return cacheType(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
