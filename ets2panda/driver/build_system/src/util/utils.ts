@@ -95,7 +95,7 @@ export function buildDeclgenOutputPath(
     }
     filePathFromModuleRoot = path.relative(moduleInfo.moduleRootPath, inputFile);
     const declEtsOutputPath: string = changeDeclgenFileExtension(
-        path.resolve(moduleInfo.declgenV1OutPath!, moduleInfo.packageName, filePathFromModuleRoot),
+        path.resolve(moduleInfo.declgenV1OutPath!, filePathFromModuleRoot),
         DECL_ETS_SUFFIX
     );
     const glueCodeOutputPath = moduleInfo.declgenBridgeCodePath
