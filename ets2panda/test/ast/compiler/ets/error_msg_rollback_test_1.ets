@@ -35,9 +35,7 @@ function foo1(a: number) {
 foo1(NS.age)
 NS.bar()
 
-/* @@? 23:9 Error Semantic error ESE0127: No matching call signature for log(NS.age) */
+/* @@? 22:5 Error Semantic error ESE71336: Exported function 'bar' requires type annotation. */
 /* @@? 23:24 Error Semantic error ESE0206: 'age' is not exported in 'NS' */
-/* @@? 24:9 Error Semantic error ESE0127: No matching call signature for log("test") */
 /* @@? 24:34 Error Semantic error ESE0206: 'age' is not exported in 'NS' */
-/* @@? 35:1 Error Semantic error ESE0127: No matching call signature for foo1(NS.age) */
 /* @@? 35:9 Error Semantic error ESE0206: 'age' is not exported in 'NS' */

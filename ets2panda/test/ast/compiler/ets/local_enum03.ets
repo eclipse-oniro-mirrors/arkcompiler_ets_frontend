@@ -23,7 +23,5 @@ function main() {
 }
 
 /* @@? 19:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
-/* @@? 20:5 Error Semantic error ESE0127: No matching call signature for assertEQ(Foo.Bar, Int) */
 /* @@? 20:22 Error Semantic error ESE0143: Unresolved reference Foo */
-/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for assertEQ(Foo.Baz, Int) */
 /* @@? 22:22 Error Semantic error ESE0143: Unresolved reference Foo */

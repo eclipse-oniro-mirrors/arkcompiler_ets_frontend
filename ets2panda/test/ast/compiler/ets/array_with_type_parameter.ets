@@ -84,18 +84,11 @@ function foo6<T>() {
 }
 
 
-/* @@? 18:5 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 18:5 Error Semantic error ESE0292: This expression is not constructible. */
-/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 22:5 Error Semantic error ESE0292: This expression is not constructible. */
 /* @@? 23:5 Error Semantic error ESE0292: This expression is not constructible. */
-/* @@? 24:1 Error Syntax error ESY63526: Expression to initialize array element is missed. */
-/* @@? 31:5 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 31:5 Error Semantic error ESE0292: This expression is not constructible. */
-/* @@? 35:5 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 35:5 Error Semantic error ESE0292: This expression is not constructible. */
-/* @@? 40:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
-/* @@? 41:5 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 41:5 Error Semantic error ESE0292: This expression is not constructible. */
 /* @@? 42:5 Error Semantic error ESE0371: Cannot find type 'U'. */
 /* @@? 76:9 Error Semantic error ESE0127: No matching call signature for create(Int, undefined) */

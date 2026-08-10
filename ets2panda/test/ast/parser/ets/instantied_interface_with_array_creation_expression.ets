@@ -20,5 +20,4 @@ function main(): void {
 }
 
 
-/* @@@ label Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
-/* @@@ label Error Semantic error ESE0275: iface is an interface therefore cannot be instantiated. */
+/* @@? 19:17 Error Semantic error ESE0275: iface is an interface therefore cannot be instantiated. */

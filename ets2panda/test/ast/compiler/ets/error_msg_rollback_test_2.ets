@@ -25,25 +25,14 @@ console.log(`resultcom:end` + tag);
 console.log('resultcom:end' + tag);
 console.log("resultcom:end" + tag);
 
-/* @@? 16:1 Error Semantic error ESE0127: No matching call signature for log("${tag} resultcom:end") */
 /* @@? 16:16 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 17:1 Error Semantic error ESE0127: No matching call signature for info("${tag} resultcom:end") */
 /* @@? 17:17 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for debug("${tag} resultcom:end") */
 /* @@? 18:18 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 19:1 Error Semantic error ESE0127: No matching call signature for warn("${tag} resultcom:end") */
 /* @@? 19:17 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for error("${tag} resultcom:end") */
 /* @@? 20:18 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 21:1 Error Semantic error ESE0127: No matching call signature for log("resultcom:end", tag) */
 /* @@? 21:30 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 22:1 Error Semantic error ESE0127: No matching call signature for log(tag, "resultcom:end") */
 /* @@? 22:13 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 23:1 Error Semantic error ESE0127: No matching call signature for log(String) */
 /* @@? 23:13 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 24:1 Error Semantic error ESE0127: No matching call signature for log(String) */
 /* @@? 24:31 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 25:1 Error Semantic error ESE0127: No matching call signature for log(String) */
 /* @@? 25:31 Error Semantic error ESE0143: Unresolved reference tag */
-/* @@? 26:1 Error Semantic error ESE0127: No matching call signature for log(String) */
 /* @@? 26:31 Error Semantic error ESE0143: Unresolved reference tag */

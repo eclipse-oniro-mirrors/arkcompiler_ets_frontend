@@ -27,7 +27,5 @@ class A {
 }
 
 
-/* @@? 24:9 Error Semantic error ESE0127: No matching call signature for assertEQ(tuple[A.KEY], Int) */
 /* @@? 24:32 Error Semantic error ESE0199: Only constant expression allowed for element access on tuples. */
-/* @@? 25:9 Error Semantic error ESE0127: No matching call signature for assertEQ(tuple[A.KEY1], "a") */
 /* @@? 25:32 Error Semantic error ESE0199: Only constant expression allowed for element access on tuples. */

@@ -18,5 +18,4 @@ import {foo, flt} from "import_tests/packages";
 // Throw error: "dbl" is not visible.
 let x = foo(dbl);
 
-/* @@? 19:9 Error Semantic error ESE0127: No matching call signature for foo(dbl) */
 /* @@? 19:13 Error Semantic error ESE0143: Unresolved reference dbl */

@@ -23,5 +23,4 @@ function mustCallArgSize() {
     });
 }
 
-/* @@? 19:5 Error Semantic error ESE0127: No matching call signature for push((() => undefined)) */
 /* @@? 20:9 Error Semantic error ESE0143: Unresolved reference xf */

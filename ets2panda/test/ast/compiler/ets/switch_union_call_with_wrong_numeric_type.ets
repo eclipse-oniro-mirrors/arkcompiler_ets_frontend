@@ -29,6 +29,5 @@ function main(): void {
     arktest.assertEQ(unitedSwitch(input), '1');
 }
 
-/* @@? 29:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., "1") */
 /* @@? 29:22 Error Semantic error ESE0127: No matching call signature for unitedSwitch(Int) */
 /* @@? 29:35 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Short|undefined' at index 1 */

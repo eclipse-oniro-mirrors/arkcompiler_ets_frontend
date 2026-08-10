@@ -26,7 +26,5 @@ function foo(x?: A | B) {
 }
 
 
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for log(...) */
 /* @@@ label2 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@@ label2 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-

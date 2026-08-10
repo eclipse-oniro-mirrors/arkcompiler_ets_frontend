@@ -28,5 +28,4 @@ function main() {
     console.println(/* @@label */banana.name(2));
 }
 
-/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for println(...) */
 /* @@? 28:34 Error Semantic error ESE0139: Signature name(id: Int): Int is not visible here. */

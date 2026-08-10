@@ -250,6 +250,54 @@ bool InferMatchContext::ValidMatchStatus() noexcept
     return allErrorsOutsideRange;
 }
 
+// Errors reported inside 'excludedRanges' do not invalidate the match status. This is used when
+// the errors were already reported while checking the call arguments themselves, so they must not
+// make the enclosing call look mismatched.
+bool InferMatchContext::ValidMatchStatus(const ArenaVector<lexer::SourceRange> &excludedRanges) noexcept
+{
+    std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
+    const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
+    const size_t savedErrorCnt = diagnosticCheckpoint_[diagnosticKind_];
+
+    if (savedErrorCnt == currentErrorCnt) {
+        return true;
+    }
+
+    const util::DiagnosticStorage &currentErrorLog = diagnosticEngine_.GetDiagnosticStorage(diagnosticKind_);
+    bool allErrorsOutsideRange = true;
+    for (size_t idx = savedErrorCnt; idx < currentErrorCnt; ++idx) {
+        auto const &errorLog = *(currentErrorLog[idx]);
+        if (IsErrorInRange(errorLog) && !IsErrorInExcludedRange(errorLog, excludedRanges)) {
+            allErrorsOutsideRange = false;
+            break;
+        }
+    }
+
+    return allErrorsOutsideRange;
+}
+
+bool InferMatchContext::IsErrorInExcludedRange(const util::DiagnosticBase &errorLog,
+                                               const ArenaVector<lexer::SourceRange> &excludedRanges) const noexcept
+{
+    for (auto const &excludedRange : excludedRanges) {
+        auto *pos = errorLog.Position();
+        // Unlike the main range (see IsErrorInRange), an empty/unresolvable excluded range must not
+        // hide any error: exclude only when the containment is definite.
+        if (pos->Program() == nullptr || excludedRange.start.Program() == nullptr || pos->index == 0 ||
+            excludedRange.start.index == 0 || excludedRange.end.index == 0) {
+            continue;
+        }
+        if (excludedRange.start.Program() != pos->Program()) {
+            continue;
+        }
+        if (excludedRange.start.index <= pos->index && pos->index <= excludedRange.end.index) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool InferMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const noexcept
 {
     auto *pos = errorLog.Position();

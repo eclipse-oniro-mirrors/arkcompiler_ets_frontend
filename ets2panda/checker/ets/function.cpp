@@ -2919,8 +2919,22 @@ static Signature *ValidateOrderSignature(
     auto count = std::min(signature->ArgCount(), argCount);
     // Check all required formal parameter(s) first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    if (!ValidateOrderSignatureRequiredParams(checker, signature, arguments, flags, argTypeInferenceRequired) ||
-        !signatureMatchContext.ValidMatchStatus()) {
+    if (!ValidateOrderSignatureRequiredParams(checker, signature, arguments, flags, argTypeInferenceRequired)) {
+        return nullptr;
+    }
+
+    // All arguments have been accepted by this signature (an argument with an error type is assignable
+    // to any target type). Errors reported inside the arguments' ranges were raised while checking the
+    // arguments themselves, so in the final reporting pass they must not invalidate this signature's
+    // match; otherwise a failing nested call would cascade "No matching call signature" errors into the
+    // enclosing calls.
+    ArenaVector<lexer::SourceRange> excludedRanges(checker->Allocator()->Adapter());
+    if (reportErrors) {
+        for (auto *argument : arguments) {
+            excludedRanges.push_back(argument->Range());
+        }
+    }
+    if (!signatureMatchContext.ValidMatchStatus(excludedRanges)) {
         return nullptr;
     }
 
@@ -2929,7 +2943,7 @@ static Signature *ValidateOrderSignature(
         return signature;
     }
     if (!ValidateSignatureRestParams(checker, signature, arguments, flags) ||
-        !signatureMatchContext.ValidMatchStatus()) {
+        !signatureMatchContext.ValidMatchStatus(excludedRanges)) {
         return nullptr;
     }
 

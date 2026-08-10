@@ -17,5 +17,4 @@ class D{
     strB = (new StringBuilder).append('{ ').append(strB.toString()).append(' }')       
 }
 
-/* @@? 17:12 Error Semantic error ESE0127: No matching call signature for append(...) */
 /* @@? 17:52 Error Semantic error ESE0145: Property 'strB' must be accessed through 'this' */

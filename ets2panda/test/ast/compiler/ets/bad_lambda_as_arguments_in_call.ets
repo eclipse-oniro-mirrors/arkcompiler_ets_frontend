@@ -30,8 +30,7 @@ const visited: Base10[] = [];
 
 /* @@ label2 */[0, 1, 2].forEach(()=>{/* @@ label3 */({})});
 
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for forEach(((p1: Double|String) => undefined)) */
+/* @@? 28:27 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 28:33 Error Semantic error ESE0087: Property 'value' does not exist on type 'Double' */
 /* @@? 28:33 Error Semantic error ESE0087: Property 'value' does not exist on type 'String' */
-/* @@@ label2 Error Semantic error ESE0127: No matching call signature for forEach((() => undefined)) */
-/* @@@ label3 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 31:54 Error Semantic error ESE0062: need to specify target type for class composite */
