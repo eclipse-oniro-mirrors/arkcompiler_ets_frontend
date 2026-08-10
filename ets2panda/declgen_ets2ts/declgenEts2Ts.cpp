@@ -2178,6 +2178,12 @@ bool TSDeclGen::ProcessTypeAnnotationSpecificTypes(const checker::Type *checkerT
 
 void TSDeclGen::ProcessTypeAnnotationType(const ir::TypeNode *typeAnnotation, const checker::Type *checkerType)
 {
+    if (typeAnnotation == nullptr) {
+        if (checkerType != nullptr) {
+            GenType(checkerType);
+        }
+        return;
+    }
     auto *aliasedType = const_cast<ir::TypeNode *>(typeAnnotation)->GetType(checker_);
 
     if (HasExplicitVoidAnnotation(typeAnnotation)) {
