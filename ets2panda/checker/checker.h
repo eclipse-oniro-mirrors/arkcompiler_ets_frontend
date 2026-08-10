@@ -497,8 +497,11 @@ public:
     }
 
     [[nodiscard]] bool ValidMatchStatus() noexcept;
+    [[nodiscard]] bool ValidMatchStatus(const ArenaVector<lexer::SourceRange> &excludedRanges) noexcept;
     void CheckErrorInRange() noexcept;
     bool IsErrorInRange(const util::DiagnosticBase &errorLog) const noexcept;
+    bool IsErrorInExcludedRange(const util::DiagnosticBase &errorLog,
+                                const ArenaVector<lexer::SourceRange> &excludedRanges) const noexcept;
 
     // NOLINTNEXTLINE(bugprone-exception-escape)
     ~InferMatchContext() noexcept;

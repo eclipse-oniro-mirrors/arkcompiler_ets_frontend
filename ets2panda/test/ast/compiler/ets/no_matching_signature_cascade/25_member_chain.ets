@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+class C {
+  m(x: number): number {
+    return x;
+  }
+}
+
+function main(): void {
+  let c = new C();
+  c.m(take("str")).m(1);
+}
+
+function take(x: number): number {
+  return x;
+}
+
+/* @@? 24:7 Error Semantic error ESE0127: No matching call signature for take("str") */
+/* @@? 24:12 Error Semantic error ESE0046: Type '"str"' is not compatible with type 'Double' at index 1 */
+/* @@? 24:20 Error Semantic error ESE0087: Property 'm' does not exist on type 'Double' */

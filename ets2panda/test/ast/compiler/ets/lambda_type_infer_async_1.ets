@@ -19,5 +19,5 @@ p.then(obj => {
     const result = typeof /* @@ label */obj?.prop;
 });
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => PromiseLike<undefined>|undefined)) */
+/* @@? 19:41 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */
 /* @@@ label Warning Warning W0014: Operand of the optional-chaining expression is 'null' or 'undefined'. */

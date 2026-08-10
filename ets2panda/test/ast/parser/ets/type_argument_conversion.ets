@@ -31,7 +31,7 @@ function main(): int {
 }
 
 
-/* @@? 29:24 Error Semantic error ESE0127: No matching construct signature for type_argument_conversion.A(...) */
+/* @@? 29:24 Error Semantic error ESE0127: No matching construct signature for type_argument_conversion.A(Array<A<Y>>) */
 /* @@? 29:38 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 29:38 Error Semantic error ESE0127: No matching call signature for create(Int, ...) */
 /* @@? 29:38 Error Semantic error ESE0127: No matching construct signature for type_argument_conversion.A() */
+/* @@? 29:38 Error Semantic error ESE0046: Type 'Array<A<Y>>' is not compatible with type 'Array<A<X>>' at index 1 */

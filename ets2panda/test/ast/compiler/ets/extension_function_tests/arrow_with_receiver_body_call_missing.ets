@@ -29,5 +29,4 @@ let a: A = new A();
 console.log(a.foo());
 console.log(a.foo2());
 
-/* @@? 30:1 Error Semantic error ESE0127: No matching call signature for log(...) */
 /* @@? 30:15 Error Semantic error ESE0087: Property 'foo2' does not exist on type 'A' */

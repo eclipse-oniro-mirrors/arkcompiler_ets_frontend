@@ -37,11 +37,8 @@ function main() {
     let right2 = f0([() => a]);
 }
 
-/* @@? 29:14 Error Semantic error ESE0127: No matching call signature for f0(...) */
 /* @@? 29:18 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 30:14 Error Semantic error ESE0127: No matching call signature for f1(...) */
 /* @@? 30:18 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 31:14 Error Semantic error ESE0127: No matching call signature for f2(...) */
 /* @@? 31:18 Error Semantic error ESE0143: Unresolved reference x */
 /* @@? 32:14 Error Semantic error ESE0127: No matching call signature for f0(...) */
 /* @@? 32:17 Error Semantic error ESE0132: The type of parameter 'p' cannot be inferred */

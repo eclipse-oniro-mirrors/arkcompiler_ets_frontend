@@ -23,5 +23,4 @@ function main() {
 }
 
 /* @@? 20:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
-/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 22:22 Error Semantic error ESE0143: Unresolved reference TestEnum */

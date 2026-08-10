@@ -26,7 +26,5 @@ function main() {
 }
 
 /* @@? 21:7 Error Syntax error ESY0040: Illegal start of ENUM expression. */
-/* @@? 22:7 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 22:32 Error Semantic error ESE0087: Property 'toInt' does not exist on type 'Foo' */
-/* @@? 25:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 25:30 Error Semantic error ESE0087: Property 'toInt' does not exist on type 'Foo' */

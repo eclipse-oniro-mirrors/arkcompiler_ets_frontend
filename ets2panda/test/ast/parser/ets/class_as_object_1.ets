@@ -15,4 +15,4 @@
 
 console.log(Object)
 
-/* @@? 16:1 Error Semantic error ESE0127: No matching call signature for log(Object) */
+/* @@? 16:13 Error Semantic error ESE132307: Class 'Object' cannot be used as object */

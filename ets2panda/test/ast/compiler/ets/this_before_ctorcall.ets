@@ -25,6 +25,5 @@ class Derived extends Base {
     }
 }
 
-/* @@? 22:9 Error Semantic error ESE0127: No matching call signature for bar(...) */
 /* @@? 22:13 Error Semantic error ESE0679: 'this' cannot be referenced before super() call or this() call. */
 /* @@? 23:19 Error Semantic error ESE0679: 'this' cannot be referenced before super() call or this() call. */

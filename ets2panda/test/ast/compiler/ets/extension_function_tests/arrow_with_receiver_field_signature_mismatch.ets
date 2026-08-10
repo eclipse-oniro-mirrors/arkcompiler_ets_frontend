@@ -29,6 +29,5 @@ function main() {
     arktest.assertEQ(a.f(1), 1)
 }
 
-/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for assertEQ(..., Int) */
 /* @@? 28:22 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 28:22 Error Semantic error ESE0128: No matching call signature */

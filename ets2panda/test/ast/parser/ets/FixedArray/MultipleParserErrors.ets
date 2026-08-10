@@ -284,14 +284,12 @@ function main(): void {
 /* @@? 141:5 Error Semantic error ESE0127: No matching call signature for assertTrue(undefined, undefined) */
 /* @@? 141:24 Error Semantic error ESE0046: Type 'undefined' is not compatible with type 'Boolean' at index 1 */
 /* @@? 145:18 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
-/* @@? 146:5 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 146:28 Error Semantic error ESE0087: Property 'getInner' does not exist on type 'A' */
 /* @@? 148:25 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
 /* @@? 149:24 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
 /* @@? 151:20 Error Semantic error ESE0371: Cannot find type 'D0'. */
 /* @@? 151:29 Error Semantic error ESE0371: Cannot find type 'D0'. */
 /* @@? 157:16 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
-/* @@? 158:5 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 158:26 Error Semantic error ESE0087: Property 'getInner' does not exist on type 'A' */
 /* @@? 161:9 Error Syntax error ESY0316: Hard keyword 'let' cannot be used as identifier */
 /* @@? 161:9 Error Syntax error ESY0224: Identifier expected, got 'let'. */
@@ -301,4 +299,4 @@ function main(): void {
 /* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
-/* @@? 305:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 303:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

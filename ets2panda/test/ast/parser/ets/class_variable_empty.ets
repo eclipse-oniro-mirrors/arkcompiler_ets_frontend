@@ -26,6 +26,5 @@ function main(): void {
 /* @@@ label2 Error Semantic error ESE0371: Cannot find type 'A'. */
 /* @@@ label3 Error Semantic error ESE0371: Cannot find type 'A'. */
 /* @@@ label4 Warning Warning W65001: The equality expression is always false. */
-/* @@? 22:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 22:22 Error Semantic error ESE0143: Unresolved reference a */
 /* @@? 22:22 Warning Warning W65001: The equality expression is always false. */

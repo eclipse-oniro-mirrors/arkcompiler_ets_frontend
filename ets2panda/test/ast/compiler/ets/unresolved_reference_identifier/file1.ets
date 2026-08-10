@@ -25,5 +25,6 @@ export function atomicTask(): int {
 
 /* @@? 21:5 Error Semantic error ESE0127: No matching call signature for add(shareArray, Int, Long) */
 /* @@? 21:17 Error Semantic error ESE0143: Unresolved reference shareArray */
-/* @@? 23:12 Error Semantic error ESE0127: No matching call signature for load(shareArray, Int) */
+/* @@? 21:32 Error Semantic error ESE0046: Type 'Long' is not compatible with type 'BigInt' at index 3 */
+/* @@? 23:12 Error Semantic error ESE0091: Type 'BigInt' is not compatible with the enclosing method's return type 'Int' */
 /* @@? 23:25 Error Semantic error ESE0143: Unresolved reference shareArray */

@@ -20,6 +20,5 @@ function main() {
     sum(...null!)
 }
 
-/* @@? 20:5 Error Semantic error ESE0127: No matching call signature for sum(...) */
 /* @@? 20:9 Error Semantic error ESE0049: The spread expression of type 'never' must be of iterable or tuple type. */
 /* @@? 20:12 Warning Warning W0014: Operand of the ensure-not-nullish expression is 'null' or 'undefined'. */

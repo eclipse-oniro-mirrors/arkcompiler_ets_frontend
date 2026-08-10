@@ -36,7 +36,6 @@ function main() {
 /* @@? 22:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type '%%partial-I' */
 /* @@? 27:18 Error Semantic error ESE0065: type I has no property named var_one */
 /* @@? 27:46 Error Semantic error ESE0065: type I has no property named var_two */
-/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for foo(a.var_one) */ 
 /* @@? 28:11 Error Semantic error ESE0087: Property 'var_one' does not exist on type 'I' */
 /* @@? 29:9 Error Semantic error ESE0351: Variable 'a' has already been declared. */
 /* @@? 29:18 Error Semantic error ESE0065: type I has no property named var_two */
