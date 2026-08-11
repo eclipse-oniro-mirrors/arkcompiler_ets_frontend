@@ -232,7 +232,7 @@ semantic:
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
   message: "Await in a non-async function is deprecated; please move it to an async function."
-  code_fix_ids: [FixRemoveIllegalAwait]
+  code_fix_ids: [FixRemoveIllegalAwait, RemoveIllegalAwaitKeyword]
 
 - name: BINOP_INCOMPARABLE
   id: 114

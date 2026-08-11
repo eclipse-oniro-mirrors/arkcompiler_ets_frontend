@@ -35,9 +35,11 @@
 namespace ark::es2panda::lsp {
 
 using codefixes::FIX_REMOVE_ILLEGAL_AWAIT;
+using codefixes::REMOVE_ILLEGAL_AWAIT_KEYWORD;
 
 namespace {
 constexpr std::string_view ASYNC_KEYWORD = "async ";
+constexpr std::string_view AWAIT_KEYWORD = "await";
 constexpr std::string_view FUNCTION_KEYWORD = "function";
 constexpr std::string_view FUNCTION_KEYWORD_WITH_SPACE = "function ";
 constexpr std::string_view PROMISE_NAME = "Promise";
@@ -292,11 +294,11 @@ FixRemoveIllegalAwait::FixRemoveIllegalAwait()
 {
     auto errorCodes = FIX_REMOVE_ILLEGAL_AWAIT.GetSupportedCodeNumbers();
     SetErrorCodes({errorCodes.begin(), errorCodes.end()});
-    SetFixIds({FIX_REMOVE_ILLEGAL_AWAIT.GetFixId().data()});
+    SetFixIds({FIX_REMOVE_ILLEGAL_AWAIT.GetFixId().data(), REMOVE_ILLEGAL_AWAIT_KEYWORD.GetFixId().data()});
 }
 
-void FixRemoveIllegalAwait::MakeChangeForRemoveIllegalAwait(ChangeTracker &changeTracker, es2panda_Context *context,
-                                                            size_t pos)
+void FixRemoveIllegalAwait::MakeChangeForAddAsyncModifier(ChangeTracker &changeTracker, es2panda_Context *context,
+                                                          size_t pos)
 {
     IllegalAwaitFixInfo info;
     if (!GetIllegalAwaitFixInfo(context, pos, info)) {
@@ -307,6 +309,36 @@ void FixRemoveIllegalAwait::MakeChangeForRemoveIllegalAwait(ChangeTracker &chang
     const auto source = ctx->parserProgram->SourceCode();
     changeTracker.InsertText(ctx->sourceFile, info.asyncInsertPos, std::string(ASYNC_KEYWORD));
     WrapReturnTypeInPromise(changeTracker, ctx->sourceFile, source, info.returnType);
+}
+
+void FixRemoveIllegalAwait::MakeChangeForRemoveIllegalAwait(ChangeTracker &changeTracker, es2panda_Context *context,
+                                                            size_t pos)
+{
+    auto *awaitExpression = FindAwaitExpressionAt(context, pos);
+    auto *ctx = GetPublicContext(context);
+    if (awaitExpression == nullptr || ctx == nullptr || ctx->parserProgram == nullptr) {
+        return;
+    }
+
+    const auto source = ctx->parserProgram->SourceCode();
+    const auto awaitStart = awaitExpression->Start().index;
+    if (!StartsWith(source, awaitStart, AWAIT_KEYWORD)) {
+        return;
+    }
+
+    auto deleteEnd = awaitStart + AWAIT_KEYWORD.size();
+    while (deleteEnd < source.size() && source[deleteEnd] == ' ') {
+        deleteEnd++;
+    }
+    changeTracker.DeleteRange(ctx->sourceFile, {awaitStart, deleteEnd});
+}
+
+std::vector<FileTextChanges> FixRemoveIllegalAwait::GetCodeActionsToAddAsyncModifier(const CodeFixContext &context)
+{
+    TextChangesContext textChangesContext = {context.host, context.formatContext, context.preferences};
+    return ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
+        MakeChangeForAddAsyncModifier(tracker, context.context, context.span.start);
+    });
 }
 
 std::vector<FileTextChanges> FixRemoveIllegalAwait::GetCodeActionsToRemoveIllegalAwait(const CodeFixContext &context)
@@ -320,14 +352,25 @@ std::vector<FileTextChanges> FixRemoveIllegalAwait::GetCodeActionsToRemoveIllega
 std::vector<CodeFixAction> FixRemoveIllegalAwait::GetCodeActions(const CodeFixContext &context)
 {
     std::vector<CodeFixAction> returnedActions;
-    auto changes = GetCodeActionsToRemoveIllegalAwait(context);
-    if (!changes.empty()) {
+    auto addAsyncChanges = GetCodeActionsToAddAsyncModifier(context);
+    if (!addAsyncChanges.empty()) {
         CodeFixAction codeAction;
         codeAction.fixName = FIX_REMOVE_ILLEGAL_AWAIT.GetFixId().data();
         codeAction.fixId = FIX_REMOVE_ILLEGAL_AWAIT.GetFixId().data();
         codeAction.fixAllDescription = "Add async modifier to all containing functions";
         codeAction.description = "Add async modifier to containing function";
-        codeAction.changes = changes;
+        codeAction.changes = std::move(addAsyncChanges);
+        returnedActions.push_back(std::move(codeAction));
+    }
+
+    auto removeAwaitChanges = GetCodeActionsToRemoveIllegalAwait(context);
+    if (!removeAwaitChanges.empty()) {
+        CodeFixAction codeAction;
+        codeAction.fixName = REMOVE_ILLEGAL_AWAIT_KEYWORD.GetFixId().data();
+        codeAction.fixId = REMOVE_ILLEGAL_AWAIT_KEYWORD.GetFixId().data();
+        codeAction.fixAllDescription = "Remove all illegal 'await' keywords";
+        codeAction.description = "Remove illegal 'await' keyword";
+        codeAction.changes = std::move(removeAwaitChanges);
         returnedActions.push_back(std::move(codeAction));
     }
 
@@ -337,21 +380,34 @@ std::vector<CodeFixAction> FixRemoveIllegalAwait::GetCodeActions(const CodeFixCo
 CombinedCodeActions FixRemoveIllegalAwait::GetAllCodeActions(const CodeFixAllContext &codeFixAllCtx)
 {
     CodeFixProvider provider;
-    std::unordered_set<size_t> fixedFunctions;
-    const auto changes = provider.CodeFixAll(
-        codeFixAllCtx, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
-            IllegalAwaitFixInfo info;
-            if (!GetIllegalAwaitFixInfo(codeFixAllCtx.context, diag.GetStart(), info) ||
-                !fixedFunctions.insert(info.asyncInsertPos).second) {
-                return;
-            }
+    CombinedCodeActions changes;
+    if (codeFixAllCtx.fixId == REMOVE_ILLEGAL_AWAIT_KEYWORD.GetFixId()) {
+        std::unordered_set<size_t> fixedAwaits;
+        changes = provider.CodeFixAll(
+            codeFixAllCtx, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+                auto *awaitExpression = FindAwaitExpressionAt(codeFixAllCtx.context, diag.GetStart());
+                if (awaitExpression == nullptr || !fixedAwaits.insert(awaitExpression->Start().index).second) {
+                    return;
+                }
+                MakeChangeForRemoveIllegalAwait(tracker, codeFixAllCtx.context, diag.GetStart());
+            });
+    } else if (codeFixAllCtx.fixId == FIX_REMOVE_ILLEGAL_AWAIT.GetFixId()) {
+        std::unordered_set<size_t> fixedFunctions;
+        changes = provider.CodeFixAll(
+            codeFixAllCtx, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+                IllegalAwaitFixInfo info;
+                if (!GetIllegalAwaitFixInfo(codeFixAllCtx.context, diag.GetStart(), info) ||
+                    !fixedFunctions.insert(info.asyncInsertPos).second) {
+                    return;
+                }
 
-            MakeChangeForRemoveIllegalAwait(tracker, codeFixAllCtx.context, diag.GetStart());
-        });
+                MakeChangeForAddAsyncModifier(tracker, codeFixAllCtx.context, diag.GetStart());
+            });
+    }
 
     CombinedCodeActions combinedCodeActions;
-    combinedCodeActions.changes = changes.changes;
-    combinedCodeActions.commands = changes.commands;
+    combinedCodeActions.changes = std::move(changes.changes);
+    combinedCodeActions.commands = std::move(changes.commands);
     return combinedCodeActions;
 }
 

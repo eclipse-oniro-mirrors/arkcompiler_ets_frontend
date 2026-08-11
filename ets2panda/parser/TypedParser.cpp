@@ -1457,7 +1457,7 @@ ParserStatus TypedParser::ValidateArrowParameterAssignment(ir::AssignmentExpress
     }
 
     if (assignmentExpr->Right()->IsAwaitExpression()) {
-        LogError(diagnostic::AWAIT_IN_ARROW_FUN_PARAM);
+        LogError(diagnostic::AWAIT_IN_ARROW_FUN_PARAM, {}, assignmentExpr->Right()->Start());
     }
 
     if (!assignmentExpr->ConvertibleToAssignmentPattern()) {
