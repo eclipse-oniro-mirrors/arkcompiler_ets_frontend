@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,22 @@
  * limitations under the License.
  */
 
-function add(a: number, b: number) {
-    return a + b;
+import { Row, Text } from '@kit.ArkUI';
+import { Entry, Component } from '@ohos.arkui.component';
+
+@Entry
+@Component
+struct KitUnusedWarningComponent {
+  private title: string = 'Hello Kit'
+
+  private formatTitle(): string {
+    let unusedKitUiLocal: number = 1
+    return this.title
+  }
+
+  build() {
+    Row() {
+      Text(this.formatTitle())
+    }
+  }
 }
-let n = 333;
-let res = add(n, n);
-console.log(res);

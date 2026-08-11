@@ -46,7 +46,8 @@ export const TextPositionUtils = {
 export function formEts2pandaCmd(
   defaultArkTsConfig: string,
   input: string,
-  simultaneous: boolean = false
+  simultaneous: boolean = false,
+  extraOptions: string[] = []
 ): string[] {
 
   const ets2pandaCmd: string[] = [
@@ -61,6 +62,7 @@ export function formEts2pandaCmd(
       ets2pandaCmd.push('--simultaneous')
   }
 
+  ets2pandaCmd.push(...extraOptions)
   ets2pandaCmd.push(input)
   return ets2pandaCmd
 }

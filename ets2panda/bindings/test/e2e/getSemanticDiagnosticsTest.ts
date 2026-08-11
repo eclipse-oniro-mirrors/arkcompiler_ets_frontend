@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import { LspDiagnosticNode } from '../../src/lsp';
 import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getSemanticDiagnosticsTest', () => {
@@ -41,6 +42,62 @@ describe('getSemanticDiagnosticsTest', () => {
       range: { start: { line: 19, character: 10 }, end: { line: 19, character: 15 } }
     }
   ];
+
+  const UNUSED_WARNING_MESSAGES = [
+    `'UnusedModule' is never used`,
+    `'unusedTopLevelValue' is never used`,
+    `'unusedTopLevelArrow' is never used`,
+    `'UnusedClass' is never used`,
+    `'unusedFunction' is never used`,
+    `'UnusedEnum' is never used`,
+    `'UnusedInterface' is never used`,
+    `'UnusedTypeAlias' is never used`,
+    `'DerivedFromUsedAsParentInterface' is never used`,
+    `'unusedParam' is never used`,
+    `'writtenOnlyParam' is never used`,
+    `'unusedRest' is never used`,
+    `'unusedLocal' is never used`,
+    `'writtenOnlyLocal' is never used`,
+    `'unusedFor' is never used`,
+    `'unusedField' is never used`,
+    `'writtenOnlyField' is never used`,
+    `'unusedMethod' is never used`,
+    `'value' is never used`,
+    `'helper' is never used`,
+    `'NamespaceA' is never used`,
+    `'usedByLocalInitializer' is never used`,
+    `'NamespaceB' is never used`
+  ];
+  const USED_SYMBOL_MESSAGES = [
+    `'UsedImport' is never used`,
+    `'exportedTopLevelArrow' is never used`,
+    `'UsedAsBaseClass' is never used`,
+    `'DerivedFromUsedAsBaseClass' is never used`,
+    `'UsedAsParentInterface' is never used`,
+    `'UsedTypeAlias' is never used`,
+    `'usesTypeAlias' is never used`,
+    `'localParameterAndForCases' is never used`,
+    `'PrivateMemberCases' is never used`,
+    `'SamePrivateFieldA' is never used`,
+    `'SamePrivateFieldB' is never used`,
+    `'SamePrivateMethodA' is never used`,
+    `'SamePrivateMethodB' is never used`,
+    `'useImport' is never used`,
+    `'useDeclarations' is never used`
+  ];
+
+  function expectUnusedWarnings(diagnostics: LspDiagnosticNode[], expectedMessages: string[]): void {
+    expectedMessages.forEach((message) => {
+      const diagnostic = diagnostics.find((item) => item.message === message);
+      expect(diagnostic).toBeDefined();
+      expect(diagnostic).toMatchObject({
+        message,
+        severity: 2,
+        data: 'unusedSymbol'
+      });
+    });
+  }
+
   describe('No UI Plugins', () => {
     const lsp = getLsp(moduleName);
     test('getSemanticDiagnostics_000', () => {
@@ -51,6 +108,17 @@ describe('getSemanticDiagnosticsTest', () => {
       const res = lsp.getSemanticDiagnostics(getRealPath(moduleName, 'getSemanticDiagnostics2.ets'));
       expect(res?.diagnostics.length).toBe(3);
       expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_001);
+    });
+
+    test('getSemanticDiagnostics_unused_warnings', () => {
+      const filePath = getRealPath(moduleName, 'getSemanticDiagnosticsUnused.ets');
+      const diagnostics = lsp.getSemanticDiagnostics(filePath)?.diagnostics ?? [];
+      const messages = diagnostics.map((diagnostic) => diagnostic.message);
+
+      expectUnusedWarnings(diagnostics, UNUSED_WARNING_MESSAGES);
+      USED_SYMBOL_MESSAGES.forEach((message) => {
+        expect(messages).not.toContain(message);
+      });
     });
   });
 

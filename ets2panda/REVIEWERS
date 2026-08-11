@@ -67,6 +67,7 @@
 /ets2panda/checker/ets/function.cpp ^gogabr ^vpukhov ^igelhaus ^Prof @zhaoshuting
 /ets2panda/checker/ets/helpers.cpp  ^zelentsovdmitry ^igelhaus ^Prof
 /ets2panda/checker/ets/object.cpp ^zelentsovdmitry ^vpukhov ^igelhaus ^Prof 
+/ets2panda/checker/ets/unusedVarsAnalyzer.* @m0_59467138 @huyunhui1 @jokerxd-liu @H_awson @zmw1 @blue_gym
 /ets2panda/checker/ets/utilityTypeHandlers.cpp ^pimenovdmitry ^igelhaus ^Prof @zhaoshuting
 /ets2panda/checker/types/ets ^zhelyapovaleksey ^victor_petukhov ^igelhaus ^Prof @dddzzzhhh
 /ets2panda/checker/types/signature.* ^vpukhov ^victor_petukhov ^igelhaus ^Prof ^zelentsovdmitry @zhaoshuting

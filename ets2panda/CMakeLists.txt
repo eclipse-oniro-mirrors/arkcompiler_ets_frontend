@@ -635,6 +635,7 @@ set(ES2PANDA_LIB_SRC
   checker/typeChecker/TypeChecker.cpp
   checker/ets/aliveAnalyzer.cpp
   checker/ets/etsWarningAnalyzer.cpp
+  checker/ets/unusedVarsAnalyzer.cpp
   checker/ets/arithmetic.cpp
   checker/ets/assignAnalyzer.cpp
   checker/ets/baseAnalyzer.cpp

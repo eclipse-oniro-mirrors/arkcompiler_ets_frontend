@@ -94,6 +94,7 @@ libes2panda_sources = [
   "checker/ets/castingContext.cpp",
   "checker/ets/conversion.cpp",
   "checker/ets/etsWarningAnalyzer.cpp",
+  "checker/ets/unusedVarsAnalyzer.cpp",
   "checker/ets/function.cpp",
   "checker/ets/helpers.cpp",
   "checker/ets/importBindingResolver.cpp",

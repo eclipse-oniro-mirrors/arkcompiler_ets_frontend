@@ -422,11 +422,14 @@ DiagnosticReferences GetSemanticDiagnostics(es2panda_Context *context)
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SEMANTIC);
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::FATAL);
+    ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::WARNING);
     SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
     const auto &diagnosticsFatal = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::FATAL);
+    const auto &diagnosticsWarning = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::WARNING);
     MakeDiagnosticReferences(context, diagnostics, result);
     MakeDiagnosticReferences(context, diagnosticsFatal, result);
+    MakeDiagnosticReferences(context, diagnosticsWarning, result);
     return result;
 }
 
@@ -437,13 +440,11 @@ DiagnosticReferences GetSyntacticDiagnostics(es2panda_Context *context)
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SYNTAX);
     SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SYNTAX);
-    const auto &diagnosticsWarning = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::WARNING);
     const auto &diagnosticsPluginError =
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_ERROR);
     const auto &diagnosticsPluginWarning =
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_WARNING);
     MakeDiagnosticReferences(context, diagnostics, result);
-    MakeDiagnosticReferences(context, diagnosticsWarning, result);
     MakeDiagnosticReferences(context, diagnosticsPluginError, result);
     MakeDiagnosticReferences(context, diagnosticsPluginWarning, result);
     return result;

@@ -128,7 +128,7 @@ Initializer::Initializer(bool isLogAwaible)
     if (path != nullptr) {
         buildDir = std::string(path);
     }
-    std::array<const char *, 1> argv = {buildDir.c_str()};
+    std::array<const char *, 2> argv = {buildDir.c_str(), "--unused-vars-analyzer"};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
 }
 
@@ -958,7 +958,8 @@ std::variant<int, std::string> GetDiagnosticData(const util::DiagnosticBase &err
 {
     const auto type = error.Type();
     const auto id = error.GetId();
-    if (type == util::DiagnosticType::WARNING && id == diagnostic::UNREACHABLE_STMT.Id()) {
+    if (type == util::DiagnosticType::WARNING &&
+        (id == diagnostic::UNREACHABLE_STMT.Id() || id == diagnostic::UNUSED_SYMBOL.Id())) {
         return std::string("unusedSymbol");
     }
 

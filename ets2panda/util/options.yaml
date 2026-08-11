@@ -206,6 +206,11 @@ options:
   default: false
   description: Emit declaration to .abc file
 
+- name: unused-vars-analyzer
+  type: bool
+  default: false
+  description: Enable detection of unused declarations
+
 - name: thread
   type: int
   default: 0

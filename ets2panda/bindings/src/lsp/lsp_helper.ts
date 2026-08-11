@@ -94,6 +94,7 @@ import { TextPositionUtils, formEts2pandaCmd } from './utils';
 import { ArkTSConfigGenerator } from '../common/arkTSConfigGenerator'
 
 const ets2pandaCmdPrefix = ['-', '--extension', 'ets', '--arktsconfig'];
+const LSP_OPTIONS = ['--unused-vars-analyzer'];
 
 function initBuildEnv(): void {
   const currentPath: string | undefined = process.env.PATH;
@@ -405,7 +406,7 @@ export class Lsp {
       logger.error('Missing arktsconfig for ', filePath);
     }
 
-    const ets2pandaCmd = [...ets2pandaCmdPrefix, arktsconfig];
+    const ets2pandaCmd = [...ets2pandaCmdPrefix, arktsconfig, ...LSP_OPTIONS];
     const localCfg = this.lspDriverHelper.createCfg(ets2pandaCmd, filePath, this.pandaLibPath);
     const source = fileSource ? fileSource : this.getFileSource(filePath);
 
@@ -2220,7 +2221,7 @@ export class Lsp {
     // Collect all the exported API in the SDK.
     this.compileKits(this.kitFiles);
     let files: string[] = Array.from(Object.keys(this.moduleInfos));
-    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true);
+    const ets2pandaCmd: string[] = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true, LSP_OPTIONS);
     let lspDriverHelper = new LspDriverHelper();
     let config = lspDriverHelper.createCfg(ets2pandaCmd, files[0]);
     const ctx = lspDriverHelper.createContextSimultaneousModeForLsp(config.peer, files.length, files, true);
@@ -2253,7 +2254,14 @@ export class Lsp {
 
   private compileExternalProgram(jobInfo: JobInfo): void {
     PluginDriver.getInstance().initPlugins(jobInfo.buildConfig);
-    let ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', jobInfo.arktsConfigFile];
+    let ets2pandaCmd = [
+      '-',
+      '--extension',
+      'ets',
+      '--arktsconfig',
+      jobInfo.arktsConfigFile,
+      ...LSP_OPTIONS
+    ];
     let lspDriverHelper = new LspDriverHelper();
     let config = lspDriverHelper.createCfg(ets2pandaCmd, jobInfo.filePath);
     if (!fs.existsSync(jobInfo.filePath) || fs.statSync(jobInfo.filePath).isDirectory()) {
