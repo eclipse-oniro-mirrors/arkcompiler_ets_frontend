@@ -1656,6 +1656,8 @@ void TSDeclGen::GenAnnotationPropertyValue(ir::Expression *propValue)
         GenSeparated(propValue->AsArrayExpression()->Elements(),
                      [this](ir::Expression *element) { GenAnnotationPropertyValue(element); });
         OutDts("]");
+    } else if (propValue->IsIdentifier()) {
+        OutDts(propValue->AsIdentifier()->Name().Mutf8());
     } else {
         GenType(propValue->Check(checker_));
     }
