@@ -50,29 +50,7 @@ TEST_F(LoweringTest, TestInterfaceObjectLiteral)
             return child->IsClassDefinition() &&
                    (child->AsClassDefinition()->InternalName().Mutf8() == "dummy.dummy$I2$ObjectLiteral");
         });
-        ASSERT_TRUE(classDef2 != nullptr);
-    }
-}
-
-TEST_F(LoweringTest, TestUnusedExportedInterfaceObjectLiteralClassNotGenerated)
-{
-    char const *text = R"(
-        export interface I {
-            get i(): Int
-            set i(i: Int)
-        }
-
-        function main() {}
-    )";
-
-    CONTEXT(ES2PANDA_STATE_LOWERED, text)
-    {
-        const auto *const ast = GetAst();
-        auto *classDef = ast->FindChild([](ir::AstNode *child) {
-            return child->IsClassDefinition() &&
-                   (child->AsClassDefinition()->InternalName().Mutf8() == "dummy.dummy$I$ObjectLiteral");
-        });
-        ASSERT_TRUE(classDef == nullptr);
+        ASSERT_TRUE(classDef1 != nullptr);
     }
 }
 

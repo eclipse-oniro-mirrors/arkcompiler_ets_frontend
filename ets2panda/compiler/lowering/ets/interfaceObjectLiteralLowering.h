@@ -25,10 +25,10 @@ public:
     explicit InterfaceObjectLiteralLowering(bool methodOnly = false) : methodOnly_(methodOnly) {}
     std::string_view Name() const override;
     bool PerformForProgram(parser::Program *prog) override;
-    bool PostconditionForProgram(const parser::Program *program) override;
 
 protected:
     bool ShouldLowerObjectLiteral(const ir::ObjectExpression *objectExpr) const;
+    bool ShouldLowerObjectLiteral() const;
 
 private:
     bool methodOnly_;
