@@ -18,9 +18,3 @@ export declare enum NumbericEnumWithOps {
     Five = 5,
     Six = 6,
 }
-export declare enum StringAsEnum {
-    A = "const",
-    B = "literal",
-    C = "literal",
-    D = "literal",
-}

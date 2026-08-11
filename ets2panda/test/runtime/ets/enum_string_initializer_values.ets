@@ -13,13 +13,10 @@
  * limitations under the License.
  */
 
-const c: string = "const";
-let l: string = "let";
-
 enum Values: string {
-    FIRST = "literal" as string,
-    SECOND = c,
-    THIRD = l,
+    FIRST = "literal",
+    SECOND = "another",
+    THIRD = "third",
 }
 
 function main(): void {
@@ -31,6 +28,6 @@ function main(): void {
     arktest.assertTrue(second instanceof Values);
     arktest.assertTrue(third instanceof Values);
     arktest.assertTrue(first.valueOf() == "literal");
-    arktest.assertTrue(second.valueOf() == "const");
-    arktest.assertTrue(third.valueOf() == "let");
+    arktest.assertTrue(second.valueOf() == "another");
+    arktest.assertTrue(third.valueOf() == "third");
 }

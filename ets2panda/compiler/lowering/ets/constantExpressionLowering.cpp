@@ -23,6 +23,7 @@
 #include "compiler/lowering/util.h"
 #include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
+#include "ir/ets/etsTypeReference.h"
 #include "ir/ts/tsAsExpression.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
@@ -1222,6 +1223,42 @@ static bool TryCastInteger(lexer::Number &number)
     return false;
 }
 
+// Force-narrow an integer literal to a narrower integer type, wrapping on overflow instead of
+// reporting a range error. This mirrors the runtime `++`/`+` semantics of the narrow type and is
+// used for the generated `prev + 1` initializers of integer enums (e.g. a `short` enum whose
+// preceding member is the type's max value: `prev + 1` must wrap to the min value, not error).
+static bool WrapCastInteger(lexer::Number &number, ir::PrimitiveType dst)
+{
+    const bool preserveNegativeZero = number.IsNegativeZero();
+    switch (dst) {
+        case ir::PrimitiveType::BYTE:
+            number = lexer::Number(number.GetValueAndCastTo<int8_t>());
+            break;
+        case ir::PrimitiveType::SHORT:
+            number = lexer::Number(number.GetValueAndCastTo<int16_t>());
+            break;
+        case ir::PrimitiveType::INT:
+            number = lexer::Number(number.GetValueAndCastTo<int32_t>());
+            break;
+        case ir::PrimitiveType::LONG:
+            number = lexer::Number(number.GetValueAndCastTo<int64_t>());
+            break;
+        default:
+            return false;
+    }
+    if (preserveNegativeZero && number.IsZero()) {
+        number.SetNegativeZero(true);
+    }
+    return true;
+}
+
+// Returns true if `parent` is a generated (auto-incremented) enum member whose initializer is the
+// constant expression being folded, i.e. the case where overflow must wrap rather than error.
+static bool IsGeneratedEnumMemberInit(const ir::AstNode *parent)
+{
+    return parent != nullptr && parent->IsTSEnumMember() && parent->AsTSEnumMember()->IsGenerated();
+}
+
 static ir::PrimitiveType TryExtractPrimitiveType(ir::TypeNode *constraint)
 {
     if (constraint->IsETSPrimitiveType()) {
@@ -1382,8 +1419,31 @@ bool ConstantExpressionLoweringImpl::CalculateAndCheck(DAGNode *user)
     auto *res = nc.Calculate(user);
     ES2PANDA_ASSERT(!res || res->IsLiteral());
 
-    if (auto constr = GetTypeAnnotation(user->Ir()->Parent());
-        (res == nullptr) || ((constr != nullptr) && !CheckCastLiteral(context_->diagnosticEngine, constr, res))) {
+    auto *const initParent = user->Ir()->Parent();
+    auto *const constr = GetTypeAnnotation(initParent);
+
+    if (res == nullptr) {
+        user->UsersIds()->clear();
+        return false;
+    }
+
+    // A generated enum member initializer (the auto-incremented `prev + 1`) must wrap on overflow
+    // to match the runtime semantics of the enum's integer base type, instead of being rejected as
+    // an out-of-range constant. Handle this before CheckCastLiteral, which would otherwise log the
+    // range error.
+    if (IsGeneratedEnumMemberInit(initParent) && constr != nullptr && res->IsNumberLiteral()) {
+        auto &number = res->AsNumberLiteral()->Number();
+        if (number.IsInteger()) {
+            auto dst = TryExtractPrimitiveType(constr);
+            if (dst != ir::PrimitiveType::VOID && !TryCastNumber<false>(number, dst)) {
+                WrapCastInteger(number, dst);
+            }
+            RegisterReplacement(user, res);
+            return true;
+        }
+    }
+
+    if ((constr != nullptr) && !CheckCastLiteral(context_->diagnosticEngine, constr, res)) {
         user->UsersIds()->clear();
         return false;
     }

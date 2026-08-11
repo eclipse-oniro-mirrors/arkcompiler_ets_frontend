@@ -713,34 +713,6 @@ ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
     return decl->Node();
 }
 
-ir::AstNode *DeclarationFromIdentifierWithScopeFallback(const ir::Identifier *node)
-{
-    auto *declNode = DeclarationFromIdentifier(node);
-    if (declNode != nullptr || node == nullptr) {
-        return declNode;
-    }
-
-    static constexpr varbinder::ResolveBindingOptions OPTION =
-        varbinder::ResolveBindingOptions::ALL_DECLARATION | varbinder::ResolveBindingOptions::ALL_VARIABLES;
-
-    auto *scope = NearestScope(node);
-    while (scope != nullptr) {
-        auto *res = scope->Find(node->Name(), OPTION).variable;
-        if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr) {
-            bool isAcceptableClassProperty = node->Parent()->IsMemberExpression() ||
-                                             !res->Declaration()->Node()->IsClassProperty() ||
-                                             !res->GetScope()->Node()->IsClassDefinition() ||
-                                             res->GetScope()->Node()->AsClassDefinition()->IsGlobal();
-            if (isAcceptableClassProperty) {
-                return res->Declaration()->Node();
-            }
-        }
-        scope = scope->Parent();
-    }
-
-    return nullptr;
-}
-
 // NOTE: used to get the license string from the input root node.
 util::StringView GetLicenseFromRootNode(const ir::AstNode *node)
 {

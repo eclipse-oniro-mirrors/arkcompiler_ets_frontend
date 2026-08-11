@@ -2495,7 +2495,7 @@ checker::Type *CheckDestructuringExpression(ETSChecker *checker, ir::ETSDestruct
             }
 
             if (isVarDecl) {
-                auto initElementType = arrayElement->Check(checker);
+                auto initElementType = checker->GetNonConstantType(arrayElement->Check(checker));
                 dstrElement->SetTsType(initElementType);
                 tupleTypeList.emplace_back(initElementType);
                 continue;
@@ -2503,7 +2503,7 @@ checker::Type *CheckDestructuringExpression(ETSChecker *checker, ir::ETSDestruct
 
             auto dstrType = dstrElement->TsType();
             checker->SetPreferredTypeForExpression(arrayElement, nullptr, arrayElement, dstrType);
-            auto initElementType = arrayElement->Check(checker);
+            auto initElementType = checker->GetNonConstantType(arrayElement->Check(checker));
             if (checker->Relation()->IsAssignableTo(initElementType, dstrType)) {
                 tupleTypeList.emplace_back(initElementType);
             } else {

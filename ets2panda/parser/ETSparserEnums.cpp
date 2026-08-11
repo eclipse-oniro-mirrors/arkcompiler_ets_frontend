@@ -222,12 +222,22 @@ bool ETSParser::ParseNumberEnumHelper()
     return minusSign;
 }
 
-// Use int64_t for :long enums to prevent signed overflow during constant folding of auto-increment.
+// Use the enum's declared base type to pick the literal rank for auto-increment seeds, so that
+// constant folding of generated `prev + 1` members performs arithmetic in the narrow type and wraps
+// on overflow (matching the runtime `++` semantics of the base type) instead of promoting to int32.
 static lexer::Number GetEnumDefaultNumber(ir::TypeNode *typeAnnotation, int32_t value)
 {
-    if (typeAnnotation != nullptr && typeAnnotation->IsETSPrimitiveType() &&
-        typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::LONG) {
-        return lexer::Number(static_cast<int64_t>(value));
+    if (typeAnnotation != nullptr && typeAnnotation->IsETSPrimitiveType()) {
+        switch (typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType()) {
+            case ir::PrimitiveType::LONG:
+                return lexer::Number(static_cast<int64_t>(value));
+            case ir::PrimitiveType::SHORT:
+                return lexer::Number(static_cast<int16_t>(value));
+            case ir::PrimitiveType::BYTE:
+                return lexer::Number(static_cast<int8_t>(value));
+            default:
+                break;
+        }
     }
     return lexer::Number(value);
 }
@@ -270,18 +280,8 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
         // Increment the value by one
         auto incrementNode = AllocNode<ir::NumberLiteral>(GetEnumDefaultNumber(typeAnnotation, 1));
         ir::Expression *dummyNode = currentNumberExpr->Clone(Allocator(), nullptr)->AsExpression();
-        ir::Expression *nextValue =
+        currentNumberExpr =
             AllocNode<ir::BinaryExpression>(dummyNode, incrementNode, lexer::TokenType::PUNCTUATOR_PLUS);
-        if (typeAnnotation != nullptr && typeAnnotation->IsETSPrimitiveType() &&
-            (typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::BYTE ||
-             typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::SHORT)) {
-            // Narrow integer enums need the target type preserved on generated members; plain `previous + 1`
-            // is already enough for int/long, but byte/short would otherwise be seen as ordinary integer math.
-            auto *primitiveType =
-                AllocNode<ir::ETSPrimitiveType>(typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType(), Allocator());
-            nextValue = AllocNode<ir::TSAsExpression>(nextValue, primitiveType, false);
-        }
-        currentNumberExpr = nextValue;
         return true;
     };
 
