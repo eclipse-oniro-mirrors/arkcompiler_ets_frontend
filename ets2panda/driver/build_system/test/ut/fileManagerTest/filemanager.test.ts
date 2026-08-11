@@ -220,4 +220,88 @@ describe('class FileManager', () => {
         expect(fm.getLanguageVersionByFilePath('/mock/library/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
         expect(fm.getLanguageVersionByFilePath('/mock/library123/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
     });
+
+    test('hybrid declgen product classified by output path', () => {
+        FileManager.cleanFileManagerObject();
+        FileManager.arkTSModuleMap.clear();
+        FileManager.staticApiPath.clear();
+        FileManager.dynamicApiPath.clear();
+        FileManager.stdLibPath.clear();
+        // Make tsc ignore the access of private member or type error
+        // @ts-ignore
+        FileManager.buildConfig = { compileFiles: [] };
+        // declgen output paths reside under modulePath, since the module
+        // boundary check (path.startsWith(modulePath + '/')) gates the
+        // declgen classification that follows it.
+        FileManager.init({
+            dependencyModuleList: [
+                {
+                    packageName: 'modH',
+                    modulePath: '/mock/hybrid',
+                    language: LANGUAGE_VERSION.ARKTS_HYBRID,
+                    declgenV1OutPath: '/mock/hybrid/declgenV1',
+                    declgenV2OutPath: '/mock/hybrid/declgenV2',
+                    declgenBridgeCodePath: '/mock/hybrid/declgenBridge'
+                }
+            ],
+            externalApiPaths: [],
+            buildSdkPath: '/mock/sdk',
+            compileFiles: []
+        } as any);
+        const fm = FileManager.getInstance();
+
+        // A V2 (dynamic) product is 1.1 even when the first line falsely says 'use static'.
+        // Make tsc ignore the access of private member or type error
+        // @ts-ignore
+        const useStaticSpy = jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenV2/modH/file.d.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
+
+        // A V1 (static) product is 1.2 even when the first line is NOT 'use static'.
+        useStaticSpy.mockReturnValue(false);
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenV1/modH/file.d.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+
+        // A bridge-code product is 1.2.
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenBridge/modH/file.ts')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+        useStaticSpy.mockRestore();
+
+        // Source files under modulePath are still governed by the 'use static' marker.
+        // Make tsc ignore the access of private member or type error
+        // @ts-ignore
+        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(true);
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/src/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+        // Make tsc ignore the access of private member or type error
+        // @ts-ignore
+        jest.spyOn(utils, 'isFirstLineUseStatic').mockReturnValue(false);
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/src/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
+    });
+
+    test('hybrid declgen path prefix boundary - v2 vs v2X', () => {
+        FileManager.cleanFileManagerObject();
+        FileManager.arkTSModuleMap.clear();
+        FileManager.staticApiPath.clear();
+        FileManager.dynamicApiPath.clear();
+        FileManager.stdLibPath.clear();
+        // Make tsc ignore the access of private member or type error
+        // @ts-ignore
+        FileManager.buildConfig = { compileFiles: [] };
+        // declgenV2 path is a prefix of declgenV1 path; boundary matching must
+        // prevent a V1 product from being misclassified as V2 (dynamic).
+        FileManager.init({
+            dependencyModuleList: [
+                {
+                    packageName: 'modH',
+                    modulePath: '/mock/hybrid',
+                    language: LANGUAGE_VERSION.ARKTS_HYBRID,
+                    declgenV1OutPath: '/mock/hybrid/declgenV2X',
+                    declgenV2OutPath: '/mock/hybrid/declgenV2'
+                }
+            ],
+            externalApiPaths: [],
+            buildSdkPath: '/mock/sdk',
+            compileFiles: []
+        } as any);
+        const fm = FileManager.getInstance();
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenV2/modH/file.d.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
+        expect(fm.getLanguageVersionByFilePath('/mock/hybrid/declgenV2X/modH/file.d.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+    });
 });
