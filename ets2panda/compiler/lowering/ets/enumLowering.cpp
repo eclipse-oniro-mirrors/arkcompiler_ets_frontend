@@ -25,6 +25,7 @@
 
 namespace ark::es2panda::compiler {
 
+using AstNodePtr = ir::AstNode *;
 namespace {
 
 [[nodiscard]] ir::ETSParameterExpression *MakeFunctionParam(public_lib::Context *ctx, const util::StringView &name,
@@ -67,118 +68,6 @@ ir::MethodDefinition *MakeMethodDef(public_lib::Context *ctx, ir::ClassDefinitio
     return methodDef;
 }
 
-template <typename T>
-[[nodiscard]] ir::NumberLiteral *MakeWrappedNarrowNumberLiteral(public_lib::Context *ctx, const lexer::Number &number)
-{
-    return ctx->AllocNode<ir::NumberLiteral>(lexer::Number(static_cast<T>(number.GetValueAndCastTo<int64_t>())));
-}
-
-[[nodiscard]] bool IsStringEnumAsType(const ir::TypeNode *typeAnnotation)
-{
-    return typeAnnotation != nullptr && typeAnnotation->IsETSTypeReference() &&
-           (typeAnnotation->AsETSTypeReference()->BaseName()->Name() == EnumLoweringPhase::STRING_REFERENCE_TYPE ||
-            typeAnnotation->AsETSTypeReference()->BaseName()->Name() == EnumLoweringPhase::STRING_TYPE);
-}
-
-[[nodiscard]] bool IsNumericEnumAsType(const ir::TypeNode *typeAnnotation)
-{
-    return typeAnnotation != nullptr &&
-           ((typeAnnotation->IsETSPrimitiveType() &&
-             typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() != ir::PrimitiveType::BOOLEAN) ||
-            (typeAnnotation->IsETSTypeReference() &&
-             typeAnnotation->AsETSTypeReference()->BaseName()->Name() == EnumLoweringPhase::NUMBER_TYPE));
-}
-
-[[nodiscard]] std::optional<util::StringView> ExtractStringEnumValue(const ir::Expression *expr,
-                                                                     parser::Program *program)
-{
-    if (expr->IsStringLiteral()) {
-        return expr->AsStringLiteral()->Str();
-    }
-
-    if (expr->IsTSAsExpression()) {
-        auto *const asExpr = expr->AsTSAsExpression();
-        return IsStringEnumAsType(asExpr->TypeAnnotation()) ? ExtractStringEnumValue(asExpr->Expr(), program)
-                                                            : std::nullopt;
-    }
-
-    if (!expr->IsIdentifier()) {
-        return std::nullopt;
-    }
-
-    auto *const ident = expr->AsIdentifier();
-    auto *const declNode = DeclarationFromIdentifierWithScopeFallback(ident);
-    if (declNode == nullptr) {
-        return std::nullopt;
-    }
-
-    if (declNode->IsClassProperty()) {
-        auto *const classProperty = declNode->AsClassProperty();
-        if (program == nullptr || program->Ast() == nullptr) {
-            return classProperty->Value() == nullptr ? std::nullopt
-                                                     : ExtractStringEnumValue(classProperty->Value(), program);
-        }
-
-        ir::AstNode *assignmentNode = nullptr;
-        program->Ast()->IterateRecursivelyPostorder([declNode, &assignmentNode](ir::AstNode *node) {
-            if (!node->IsAssignmentExpression()) {
-                return;
-            }
-
-            auto *assignment = node->AsAssignmentExpression();
-            auto *left = assignment->Left();
-            if (assignment->OperatorType() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION || !left->IsIdentifier()) {
-                return;
-            }
-
-            if (DeclarationFromIdentifierWithScopeFallback(left->AsIdentifier()) == declNode) {
-                assignmentNode = node;
-            }
-        });
-
-        if (assignmentNode != nullptr) {
-            return ExtractStringEnumValue(assignmentNode->AsAssignmentExpression()->Right(), program);
-        }
-
-        if (classProperty->Value() == nullptr) {
-            return std::nullopt;
-        }
-
-        return ExtractStringEnumValue(classProperty->Value(), program);
-    }
-
-    return std::nullopt;
-}
-
-[[nodiscard]] std::optional<lexer::Number> ExtractNumericEnumValue(const ir::Expression *expr)
-{
-    if (expr->IsNumberLiteral()) {
-        return expr->AsNumberLiteral()->Number();
-    }
-
-    if (expr->IsTSAsExpression()) {
-        auto *const asExpr = expr->AsTSAsExpression();
-        return IsNumericEnumAsType(asExpr->TypeAnnotation()) ? ExtractNumericEnumValue(asExpr->Expr()) : std::nullopt;
-    }
-
-    if (expr->IsBinaryExpression()) {
-        auto *const binaryExpr = expr->AsBinaryExpression();
-        auto left = ExtractNumericEnumValue(binaryExpr->Left());
-        auto right = ExtractNumericEnumValue(binaryExpr->Right());
-        if (!left.has_value() || !right.has_value()) {
-            return std::nullopt;
-        }
-        if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_PLUS) {
-            return lexer::Number(left->GetValueAndCastTo<int64_t>() + right->GetValueAndCastTo<int64_t>());
-        }
-        if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_MINUS) {
-            return lexer::Number(left->GetValueAndCastTo<int64_t>() - right->GetValueAndCastTo<int64_t>());
-        }
-    }
-
-    return std::nullopt;
-}
-
 }  // namespace
 
 void EnumLoweringPhase::LogError(const diagnostic::DiagnosticKind &diagnostic,
@@ -186,6 +75,21 @@ void EnumLoweringPhase::LogError(const diagnostic::DiagnosticKind &diagnostic,
                                  const lexer::SourcePosition &pos)
 {
     context_->diagnosticEngine->LogDiagnostic(diagnostic, diagnosticParams, pos);
+}
+
+// This function was created to reduce the size of `CheckEnumMemberType`
+template <EnumLoweringPhase::EnumType TYPE_NODE>
+void EnumLoweringPhase::HandleIntEnumLongLiteralError(ir::TSEnumMember *member, const lexer::Number &asNumber,
+                                                      bool &hasLoggedError, bool *hasLongLiteral)
+{
+    if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::INT) {
+        *hasLongLiteral = true;
+        LogError(diagnostic::ERROR_NO_ENUM_MIXED_TYPES, {}, member->Init()->Start());
+        if (member->IsGenerated() && asNumber.GetLong() == std::numeric_limits<int64_t>::min()) {
+            LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, member->Init()->Start());
+            hasLoggedError = true;
+        }
+    }
 }
 
 template <EnumLoweringPhase::EnumType TYPE_NODE>
@@ -208,16 +112,15 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
         };
 
         if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::STRING) {
-            mixedTypesError(ExtractStringEnumValue(init, program_).has_value(), true);
+            mixedTypesError(init->IsStringLiteral(), true);
             continue;
         }
 
-        auto enumNumber = ExtractNumericEnumValue(init);
-        if (!mixedTypesError(enumNumber.has_value(), false)) {
+        if (!mixedTypesError(init->IsNumberLiteral(), false)) {
             continue;
         }
 
-        auto &asNumber = enumNumber.value();
+        auto &asNumber = init->AsNumberLiteral()->Number();
 
         if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::INT) {
             if (isAnnoted) {
@@ -227,12 +130,8 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
             if (!mixedTypesError(asNumber.IsInteger(), false) || !asNumber.IsLong()) {
                 continue;
             }
-            *hasLongLiteral = true;
-            LogError(diagnostic::ERROR_NO_ENUM_MIXED_TYPES, {}, member->AsTSEnumMember()->Init()->Start());
-            if (member->AsTSEnumMember()->IsGenerated() && asNumber.GetLong() == std::numeric_limits<int64_t>::min()) {
-                LogError(diagnostic::ERROR_ARKTS_NO_ENUM_MIXED_TYPES, {}, member->AsTSEnumMember()->Init()->Start());
-                hasLoggedError = true;
-            }
+            HandleIntEnumLongLiteralError<TYPE_NODE>(member->AsTSEnumMember(), asNumber, hasLoggedError,
+                                                     hasLongLiteral);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::LONG) {
             mixedTypesError(asNumber.CanGetValue<int64_t>(), false);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::FLOAT) {
@@ -240,9 +139,9 @@ bool EnumLoweringPhase::CheckEnumMemberType(const ArenaVector<ir::AstNode *> &en
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::DOUBLE) {
             mixedTypesError(init->AsNumberLiteral(), true);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::BYTE) {
-            mixedTypesError(asNumber.CanGetValue<int8_t>() || member->AsTSEnumMember()->IsGenerated(), false);
+            mixedTypesError(asNumber.CanGetValue<int8_t>(), false);
         } else if constexpr (TYPE_NODE == EnumLoweringPhase::EnumType::SHORT) {
-            mixedTypesError(asNumber.CanGetValue<int16_t>() || member->AsTSEnumMember()->IsGenerated(), false);
+            mixedTypesError(asNumber.CanGetValue<int16_t>(), false);
         } else {
             ES2PANDA_UNREACHABLE();  // Unsupported TypeNode in CheckEnumMemberType.
         }
@@ -305,38 +204,38 @@ ir::Expression *EnumLoweringPhase::CheckEnumTypeForItemFields(EnumType enumType,
     switch (enumType) {
         case EnumType::INT: {
             auto enumFieldValue =
-                ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value().GetValue<std::int32_t>();
+                member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<std::int32_t>();
             valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::LONG: {
             auto enumFieldValue =
-                ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value().GetValue<std::int64_t>();
+                member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<std::int64_t>();
             valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::DOUBLE: {
-            auto enumFieldValue = ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value().GetValue<double>();
+            auto enumFieldValue = member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<double>();
             valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::FLOAT: {
-            auto enumFieldValue = ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value().GetValue<float>();
+            auto enumFieldValue = member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<float>();
             valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::BYTE: {
-            valueArgument = MakeWrappedNarrowNumberLiteral<int8_t>(
-                context_, ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value());
+            auto enumFieldValue = member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<int8_t>();
+            valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::SHORT: {
-            valueArgument = MakeWrappedNarrowNumberLiteral<int16_t>(
-                context_, ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value());
+            auto enumFieldValue = member->AsTSEnumMember()->Init()->AsNumberLiteral()->Number().GetValue<int16_t>();
+            valueArgument = AllocNode<ir::NumberLiteral>(lexer::Number(enumFieldValue));
             break;
         }
         case EnumType::STRING: {
-            auto enumFieldValue = ExtractStringEnumValue(member->AsTSEnumMember()->Init(), program_).value();
+            auto enumFieldValue = member->AsTSEnumMember()->Init()->AsStringLiteral()->Str();
             valueArgument = AllocNode<ir::StringLiteral>(enumFieldValue);
             break;
         }
@@ -861,7 +760,7 @@ checker::AstNodePtr EnumLoweringPhase::TransformEnumChildrenRecursively(checker:
                                       : CreateEnumNumericClassFromEnumDeclaration<EnumType::INT>(enumDecl, flags);
             return res;
         }
-    } else if (ExtractStringEnumValue(itemInit, program_).has_value() &&
+    } else if (itemInit->IsStringLiteral() &&
                CheckEnumMemberType<EnumType::STRING>(enumDecl->Members(), hasLoggedError, false)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::STRING>(enumDecl, flags);
     }
@@ -915,14 +814,12 @@ ir::Identifier *EnumLoweringPhase::CreateEnumValuesArray(ir::TSEnumDeclaration *
     // clang-format off
     return MakeArray(enumDecl, enumClass, VALUES_ARRAY_NAME, arrayTypeAnnotation,
                      [this](const ir::TSEnumMember *const member) {
-                        auto number = ExtractNumericEnumValue(member->AsTSEnumMember()->Init()).value();
-                        if constexpr (TYPE == ir::PrimitiveType::BYTE) {
-                            return MakeWrappedNarrowNumberLiteral<int8_t>(context_, number);
-                        }
-                        if constexpr (TYPE == ir::PrimitiveType::SHORT) {
-                            return MakeWrappedNarrowNumberLiteral<int16_t>(context_, number);
-                        }
-                        return AllocNode<ir::NumberLiteral>(lexer::Number(number));
+                        auto *const enumValueLiteral = AllocNode<ir::NumberLiteral>(
+                            lexer::Number(member->AsTSEnumMember()
+                                                ->Init()
+                                                ->AsNumberLiteral()
+                                                ->Number()));
+                        return enumValueLiteral;
                     });
     // clang-format on
 }
@@ -938,11 +835,12 @@ ir::Identifier *EnumLoweringPhase::CreateEnumStringValuesArray(const ir::TSEnumD
                      [this](const ir::TSEnumMember *const member) {
                         auto *const init = member->AsTSEnumMember()->Init();
                         util::StringView stringValue;
+                        std::ostringstream preciseFloatRepresentation;
 
-                        if (auto enumString = ExtractStringEnumValue(init, program_); enumString.has_value()) {
-                            stringValue = enumString.value();
+                        if (init->IsStringLiteral()) {
+                            stringValue = init->AsStringLiteral()->Str();
                         } else {
-                            std::string str = ir::NumberLiteral(ExtractNumericEnumValue(init).value()).ToString();
+                            std::string str = init->AsNumberLiteral()->ToString();
                             stringValue = util::UString(str, Allocator()).View();
                         }
                         auto *const enumValueStringLiteral = AllocNode<ir::StringLiteral>(stringValue);

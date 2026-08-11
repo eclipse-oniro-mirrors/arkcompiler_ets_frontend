@@ -48,7 +48,6 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
 
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
 ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node);
-ir::AstNode *DeclarationFromIdentifierWithScopeFallback(const ir::Identifier *node);
 // NOTE: used to get the declaration name in Plugin API and LSP
 std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node);
 // NOTE: used to get the license string from the input root node.

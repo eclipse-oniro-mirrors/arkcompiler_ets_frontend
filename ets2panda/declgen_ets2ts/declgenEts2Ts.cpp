@@ -2320,101 +2320,6 @@ void TSDeclGen::GenTypeAliasDeclaration(const ir::TSTypeAliasDeclaration *typeAl
     }
 }
 
-[[nodiscard]] static std::optional<lexer::Number> ExtractDeclgenEnumNumber(const ir::Expression *expr)
-{
-    if (expr->IsNumberLiteral()) {
-        return expr->AsNumberLiteral()->Number();
-    }
-
-    if (expr->IsTSAsExpression()) {
-        auto *const asExpr = expr->AsTSAsExpression();
-        auto *const typeAnnotation = asExpr->TypeAnnotation();
-        bool isNonBooleanPrimitive =
-            typeAnnotation != nullptr && typeAnnotation->IsETSPrimitiveType() &&
-            typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() != ir::PrimitiveType::BOOLEAN;
-        bool isNumberReference = typeAnnotation != nullptr && typeAnnotation->IsETSTypeReference() &&
-                                 typeAnnotation->AsETSTypeReference()->BaseName()->Name() == "number";
-        if (!isNonBooleanPrimitive && !isNumberReference) {
-            return std::nullopt;
-        }
-        return ExtractDeclgenEnumNumber(asExpr->Expr());
-    }
-
-    if (!expr->IsBinaryExpression()) {
-        return std::nullopt;
-    }
-
-    auto *const binaryExpr = expr->AsBinaryExpression();
-    auto left = ExtractDeclgenEnumNumber(binaryExpr->Left());
-    auto right = ExtractDeclgenEnumNumber(binaryExpr->Right());
-    if (!left.has_value() || !right.has_value()) {
-        return std::nullopt;
-    }
-
-    if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_PLUS) {
-        return lexer::Number(left->GetValueAndCastTo<int64_t>() + right->GetValueAndCastTo<int64_t>());
-    }
-
-    if (binaryExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_MINUS) {
-        return lexer::Number(left->GetValueAndCastTo<int64_t>() - right->GetValueAndCastTo<int64_t>());
-    }
-
-    return std::nullopt;
-}
-
-[[nodiscard]] static std::optional<util::StringView> ExtractDeclgenEnumString(const ir::Expression *expr,
-                                                                              const parser::Program *program)
-{
-    if (expr->IsStringLiteral()) {
-        return expr->AsStringLiteral()->Str();
-    }
-
-    if (expr->IsTSAsExpression()) {
-        auto *const asExpr = expr->AsTSAsExpression();
-        auto *const typeAnnotation = asExpr->TypeAnnotation();
-        if (typeAnnotation == nullptr || !typeAnnotation->IsETSTypeReference() ||
-            (typeAnnotation->AsETSTypeReference()->BaseName()->Name() != "String" &&
-             typeAnnotation->AsETSTypeReference()->BaseName()->Name() != "string")) {
-            return std::nullopt;
-        }
-        return ExtractDeclgenEnumString(asExpr->Expr(), program);
-    }
-
-    if (!expr->IsIdentifier() || program == nullptr || program->Ast() == nullptr) {
-        return std::nullopt;
-    }
-
-    auto *const ident = expr->AsIdentifier();
-    auto *const declNode = compiler::DeclarationFromIdentifierWithScopeFallback(ident);
-    auto *const classProperty = declNode == nullptr ? nullptr : declNode->AsClassProperty();
-    if (classProperty == nullptr) {
-        return std::nullopt;
-    }
-
-    ir::AstNode *assignmentNode = nullptr;
-    program->Ast()->IterateRecursivelyPostorder([declNode, &assignmentNode](ir::AstNode *node) {
-        if (!node->IsAssignmentExpression()) {
-            return;
-        }
-
-        auto *assignment = node->AsAssignmentExpression();
-        auto *left = assignment->Left();
-        if (assignment->OperatorType() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION || !left->IsIdentifier()) {
-            return;
-        }
-
-        if (compiler::DeclarationFromIdentifierWithScopeFallback(left->AsIdentifier()) == declNode) {
-            assignmentNode = node;
-        }
-    });
-
-    if (assignmentNode != nullptr) {
-        return ExtractDeclgenEnumString(assignmentNode->AsAssignmentExpression()->Right(), program);
-    }
-
-    return classProperty->Value() == nullptr ? std::nullopt : ExtractDeclgenEnumString(classProperty->Value(), program);
-}
-
 void TSDeclGen::GenEnumDeclaration(const ir::ClassProperty *enumMember)
 {
     const auto *originEnumMember = enumMember->OriginEnumMember();
@@ -2429,16 +2334,11 @@ void TSDeclGen::GenEnumDeclaration(const ir::ClassProperty *enumMember)
     const auto *init = originEnumMember->Init();
     if (init != nullptr) {
         OutDts(" = ");
-        if (init->IsLiteral()) {
-            GenLiteral(init->AsLiteral());
-        } else if (auto stringValue = ExtractDeclgenEnumString(init, program_); stringValue.has_value()) {
-            GenLiteral(checker_->AllocNode<ir::StringLiteral>(stringValue.value()));
-        } else if (auto number = ExtractDeclgenEnumNumber(init); number.has_value()) {
-            GenLiteral(checker_->AllocNode<ir::NumberLiteral>(number.value()));
-        } else {
+        if (!init->IsLiteral()) {
             LogError(diagnostic::NOT_LITERAL_ENUM_INITIALIZER, {}, init->Start());
-            return;
         }
+
+        GenLiteral(init->AsLiteral());
     }
 
     OutDts(",");

@@ -21,5 +21,5 @@ function main() {
     [aa, bb, cc] = [1, 2, 3];
 }
 
-/* @@? 18:18 Error Semantic error ESE0318: Type '"abc"' cannot be assigned to type 'Int' */
+/* @@? 18:18 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
 /* @@? 21:27 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

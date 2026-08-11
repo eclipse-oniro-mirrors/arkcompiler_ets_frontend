@@ -13,20 +13,16 @@
  * limitations under the License.
  */
 
-const v1: string = "11"
-const v2: "12" = "12"
-const v3: "13" = "13"
-
 enum InferredStringEnum {
-    FIRST = v1,
-    SECOND = v2,
-    THIRD = v3,
+    FIRST = "11",
+    SECOND = "12",
+    THIRD = "13",
 }
 
 enum ExplicitStringEnum: string {
-    FIRST = v1,
-    SECOND = v2,
-    THIRD = v3,
+    FIRST = "11",
+    SECOND = "12",
+    THIRD = "13",
 }
 
 function main(): void {
