@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,7 @@ let {/* @@ label40 */public } = 0;
 (...x /* @@ label49 */= 4/* @@ label50 */, [...x, b]/* @@ label51 */) /* @@ label52 */=> expression;
 (async f /* @@ label53 */= await b()) /* @@ label54 */=> expression;
 async (...x = await 4, a) /* @@ label55 */=> expression;
-async (x = await 7) /* @@ label56 */=> expression;
+async (x = /* @@ label58 */await 7) /* @@ label56 */=> expression;
 (a, b) => { 7 /* @@ label57 */];
 // This should be the last line to check syntax error about missing '}'
 
@@ -139,7 +139,7 @@ async (x = await 7) /* @@ label56 */=> expression;
 /* @@@ label54 Error Syntax error ESY0016: Unexpected token. */
 /* @@@ label55 Error Syntax error ESY0055: Invalid rest element. */
 /* @@@ label55 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
-/* @@@ label56 Error Syntax error ESY0046: await is not allowed in arrow function parameters. */
+/* @@@ label58 Error Syntax error ESY0046: await is not allowed in arrow function parameters. */
 /* @@@ label56 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
 /* @@@ label57 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 145:80 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 146:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

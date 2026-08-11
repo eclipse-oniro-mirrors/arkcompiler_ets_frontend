@@ -34,7 +34,9 @@ public:
     CombinedCodeActions GetAllCodeActions(const CodeFixAllContext &codeFixAll) override;
 
 private:
+    void MakeChangeForAddAsyncModifier(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos);
     void MakeChangeForRemoveIllegalAwait(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos);
+    std::vector<FileTextChanges> GetCodeActionsToAddAsyncModifier(const CodeFixContext &context);
     std::vector<FileTextChanges> GetCodeActionsToRemoveIllegalAwait(const CodeFixContext &context);
 };
 

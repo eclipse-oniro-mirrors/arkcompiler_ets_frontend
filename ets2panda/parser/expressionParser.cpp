@@ -482,7 +482,7 @@ void ParserImpl::ValidateArrowParameterAssignment(ir::AssignmentExpression *expr
     if (expr->Right()->IsYieldExpression()) {
         LogError(diagnostic::YIELD_IN_ARROW_FUN_PARAM);
     } else if (expr->Right()->IsAwaitExpression()) {
-        LogError(diagnostic::AWAIT_IN_ARROW_FUN_PARAM);
+        LogError(diagnostic::AWAIT_IN_ARROW_FUN_PARAM, {}, expr->Right()->Start());
     } else if (!expr->ConvertibleToAssignmentPattern()) {
         LogError(diagnostic::INVALID_DESTRUCTURING_TARGET);
     }
