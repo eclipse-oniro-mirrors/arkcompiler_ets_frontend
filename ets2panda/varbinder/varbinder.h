@@ -20,6 +20,8 @@
 #include "scope.h"
 #include "varbinder/scope.h"
 
+#include <vector>
+
 namespace ark::es2panda::parser {
 class Program;
 }  // namespace ark::es2panda::parser
@@ -146,7 +148,8 @@ public:
         topScope_ = nullptr;
         scope_ = nullptr;
         varScope_ = nullptr;
-        functionScopes_.clear();
+        compilablePrograms_.clear();
+        compilableCount_ = 0;
     }
 
     [[nodiscard]] bool IsETSBinder() const noexcept
@@ -191,14 +194,28 @@ public:
         return allocator_;
     }
 
-    // NOTE(mshimenkov): Used during code gen phase and stores function scopes that serves as the primary scope context
-    // to be compiled during code gen. The scope determines whether the current compilation target is:
+    // NOTE(mshimenkov): Function scopes serve as the primary scope context to be compiled during code gen. The scope
+    // determines whether the current compilation target is:
     // 1. A regular function → compiled with function semantics (parameters, return handling)
     // 2. A global block → compiled as module-level code (static properties, top-level statements)
-    [[nodiscard]] ArenaVector<FunctionScope *> &FunctionScopes() noexcept
+    // The scopes themselves are owned per-program (parser::Program::CompilableFunctionScopes). The binder only keeps a
+    // lightweight registry of programs that have any, so a full (cross-program) walk is still possible.
+    [[nodiscard]] const ArenaUnorderedSet<parser::Program *> &CompilablePrograms() const noexcept
     {
-        return functionScopes_;
+        return compilablePrograms_;
     }
+
+    // Registers an already-populated program in the binder registry without touching its function scopes. Used on
+    // recheck to make a freshly created binder aware of unchanged programs (whose scopes are kept by the program).
+    void RegisterCompilableProgram(parser::Program *program)
+    {
+        compilablePrograms_.insert(program);
+    }
+
+    [[nodiscard]] std::vector<FunctionScope *> GetAllCompilableFunctionScopes() const;
+
+    // Registers funcScope as compilable both in the given program and in the binder registry.
+    void AddCompilableFunctionScope(varbinder::FunctionScope *funcScope, parser::Program *program);
 
     [[nodiscard]] virtual ScriptExtension Extension() const noexcept
     {
@@ -270,8 +287,6 @@ protected:
     void VisitScriptFunction(ir::ScriptFunction *func);
     [[nodiscard]] util::StringView BuildFunctionName(util::StringView name, uint32_t idx);
 
-    void AddCompilableFunctionScope(varbinder::FunctionScope *funcScope);
-
     void InitializeClassBinding(ir::ClassDefinition *classDef);
     void InitializeClassIdent(ir::ClassDefinition *classDef);
 
@@ -284,14 +299,17 @@ protected:
     virtual void BuildClassDefinition(ir::ClassDefinition *classDef);
     virtual void BuildClassProperty(const ir::ClassProperty *prop);
     [[nodiscard]] virtual bool BuildInternalName(ir::ScriptFunction *scriptFunc);
-    virtual void AddCompilableFunction(ir::ScriptFunction *func);
+    // `program` is the authoritative owner of `func`. The traversal path passes the binder's current Program().
+    // Synthetic functions generated for a possibly-foreign program must pass their real owner.
+    virtual void AddCompilableFunction(ir::ScriptFunction *func, parser::Program *program);
 
     virtual void CleanUp()
     {
         topScope_ = nullptr;
         scope_ = nullptr;
         varScope_ = nullptr;
-        functionScopes_.clear();
+        compilablePrograms_.clear();
+        compilableCount_ = 0;
     }
 
     virtual void CopyTo(VarBinder *target)
@@ -309,7 +327,11 @@ private:
     GlobalScope *topScope_ {};
     Scope *scope_ {};
     VariableScope *varScope_ {};
-    ArenaVector<FunctionScope *> functionScopes_;
+    // Programs that have any compilable function scope, see CompilablePrograms().
+    ArenaUnorderedSet<parser::Program *> compilablePrograms_;
+    // Monotonic count of all compilable function scopes registered through this binder. Used to build unique internal
+    // names (independent of where the scopes are stored).
+    size_t compilableCount_ {};
     bool genStdLib_ {false};
 };
 

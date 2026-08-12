@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 
 #include "util/es2pandaMacros.h"
 #include "libarkbase/os/thread.h"
+#include "libarkbase/utils/span.h"
 #include "es2panda.h"
 #include "compiler/core/compileJob.h"
 #include "util/diagnostic.h"
@@ -45,7 +46,7 @@ public:
     NO_MOVE_SEMANTIC(CompileQueue);
     ~CompileQueue();
 
-    void Schedule(public_lib::Context *context);
+    void Schedule(public_lib::Context *context, Span<varbinder::FunctionScope *const> functions);
     void Consume();
     void Wait(const JobsFinishedCb &onFinishedCb);
 

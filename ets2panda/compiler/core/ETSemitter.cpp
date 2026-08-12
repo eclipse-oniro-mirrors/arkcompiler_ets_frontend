@@ -47,6 +47,7 @@
 #include "checker/types/type.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
+#include "util/generateBin.h"
 #include "util/nameMangler.h"
 #include "assembly-program.h"
 
@@ -415,29 +416,42 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     Program()->AddToFunctionTable(std::move(func));
 }
 
-std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitter::EmitRecordsSimultIncMode()
+void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 {
-    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL);
+    ES2PANDA_ASSERT(ctx == Context());
+    ES2PANDA_ASSERT(ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL);
 
-    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
-    ES2PANDA_ASSERT(varbinder->Program() == Context()->parserProgram);
+    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    ES2PANDA_ASSERT(varbinder->Program() == ctx->parserProgram);
     ES2PANDA_ASSERT(varbinder->Program()->Is<util::ModuleKind::SIMULT_MAIN>());
 
     // NOTE(mshimenkov): Treat every 'direct' external source as the main module and emit records for it.
     // In simultaneous mode every 'direct' external source is a separate program
-    const auto &programsHolder = Context()->parserProgram->GetExternalDecls()->Direct();
-    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> outProgsHolder = {};
-    outProgsHolder.reserve(programsHolder.size());
+    const auto &programsHolder = ctx->parserProgram->GetExternalDecls()->Direct();
+
+    auto emitter = this;
+
+    auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
+        ctx->diagnosticEngine->LogDiagnostic(kind, params);
+    };
 
     for (const auto &[path, prog] : programsHolder) {
-        if (Context()->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
+        if (ctx->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
             continue;
         }
         ES2PANDA_ASSERT(prog->IsBuiltSimultaneously());
 
         auto pandasmProg = std::unique_ptr<pandasm::Program>(GetOrCreatePandasmProgram(prog));
-
         SetProgram(pandasmProg.get());
+
+        /* Main thread can also be used instead of idling */
+        const auto &functions = prog->CompilableFunctionScopes();
+        ctx->queue->Schedule(ctx, Span<varbinder::FunctionScope *const>(functions.data(), functions.size()));
+        emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
+        ctx->queue->Consume();
+        ctx->queue->Wait(
+            [emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
+
         varbinder->SetProgram(prog);
         varbinder->SetGlobalRecordTable(prog->GetRecordTable());
         SetupDependenciesForTheProgram(prog);
@@ -446,10 +460,11 @@ std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> ETSEmitt
         DumpDebugInfo();
 
         auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo());
-        outProgsHolder.emplace(abcPath, std::move(pandasmProg));
+        // Error (if any) is already reported via reporter, so just stop processing remaining files on failure.
+        if (util::GenerateBinaryFile(pandasmProg.get(), abcPath, *ctx->config->options, reporter) != 0) {
+            return;
+        }
     }
-
-    return outProgsHolder;
 }
 
 void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)

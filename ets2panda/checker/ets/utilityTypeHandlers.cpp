@@ -464,8 +464,9 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
 
     auto savedScope = VarBinder()->TopScope();
     VarBinder()->ResetTopScope(partialProgram->GlobalScope());
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *partialType = CreatePartialTypeInterfaceDecl(interfaceDecl, typeToBePartial, partialInterDecl);
+    auto *partialType =
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        CreatePartialTypeInterfaceDecl(interfaceDecl, typeToBePartial, partialInterDecl, partialProgram);
     VarBinder()->ResetTopScope(savedScope);
     ES2PANDA_ASSERT(partialType != nullptr);
 
@@ -708,7 +709,7 @@ static void SetupFunctionParams(ir::ScriptFunction *function, checker::ETSChecke
 
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *const accessor,
-                                                        ir::TSInterfaceDeclaration *interface)
+                                                        ir::TSInterfaceDeclaration *interface, parser::Program *program)
 {
     const auto interfaceCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(VarBinder(), interface->Scope());
 
@@ -762,7 +763,11 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
     VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(nullishAccessor,
                                                                      compiler::NearestScope(nullishAccessor));
     if (!function->IsAbstract()) {
-        VarBinder()->AsETSBinder()->AddCompilableFunction(function);
+        // The synthetic accessor's source range is copied from the original accessor (SetRange above), so its
+        // position-derived Program() may point at the program where the original type lives. Re-tag the node to
+        // `program` (the partial type's program), the authoritative owner for code gen.
+        function->SetProgram(program);
+        VarBinder()->AsETSBinder()->AddCompilableFunction(function, program);
     }
     return nullishAccessor;
 }
@@ -816,7 +821,8 @@ ir::TSInterfaceDeclaration *ETSChecker::CreateInterfaceProto(util::StringView na
 }
 
 void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *const interfaceDecl,
-                                                   ir::TSInterfaceDeclaration *partialInterface)
+                                                   ir::TSInterfaceDeclaration *partialInterface,
+                                                   parser::Program *partialProgram)
 {
     auto &partialInterfaceMethods = partialInterface->Body()->Body();
 
@@ -858,14 +864,14 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
 
         if (func->IsGetterOrSetter()) {
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            addNullishAccessor(CreateNullishAccessor(method, partialInterface));
+            addNullishAccessor(CreateNullishAccessor(method, partialInterface, partialProgram));
         }
 
         for (auto *overload : method->Overloads()) {
             ES2PANDA_ASSERT(overload->Function() != nullptr);
             if (overload->Function()->IsGetterOrSetter()) {
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                addNullishAccessor(CreateNullishAccessor(overload, partialInterface));
+                addNullishAccessor(CreateNullishAccessor(overload, partialInterface, partialProgram));
             }
         }
     }
@@ -901,10 +907,11 @@ ir::AstNode *ETSChecker::CreateGetterOrSetterBodyForOptional(bool isSetter, bool
 
 Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *const interfaceDecl,
                                                  ETSObjectType *const typeToBePartial,
-                                                 ir::TSInterfaceDeclaration *partialInterface)
+                                                 ir::TSInterfaceDeclaration *partialInterface,
+                                                 parser::Program *partialProgram)
 {
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CreatePartialTypeInterfaceMethods(interfaceDecl, partialInterface);
+    CreatePartialTypeInterfaceMethods(interfaceDecl, partialInterface, partialProgram);
     // Create nullish properties of the partial class
     // Build the new Partial class based on the 'T' type parameter of 'Partial<T>'
     std::unordered_map<ir::TSTypeParameter *, ir::TSTypeParameter *> substitution {};
@@ -1179,7 +1186,7 @@ ir::MethodDefinition *ETSChecker::CreateNonStaticClassInitializer(varbinder::Cla
     VarBinder()->AsETSBinder()->BuildInternalNameWithCustomRecordTable(func, recordTable);
     VarBinder()->AsETSBinder()->BuildFunctionName(func);
     if (!recordTable->IsExternal()) {
-        VarBinder()->FunctionScopes().push_back(functionScope);
+        VarBinder()->AddCompilableFunctionScope(functionScope, recordTable->Program());
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

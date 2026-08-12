@@ -390,6 +390,7 @@ void Program::Clear()
     ResetAst();
     RemoveASTLowered();
     SetProgramModified(true);
+    ClearCompilableFunctionScopes();
     VarBinder()->AsETSBinder()->CleanScopesAndRecordTables(this);
     GetExternalDecls()->Direct().clear();
     GetExternalDecls()->Get<ModuleKind::MODULE>().clear();

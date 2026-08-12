@@ -86,7 +86,9 @@ public:
     NO_MOVE_SEMANTIC(ETSEmitter);
 
     void EmitRecords() override;
-    std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> EmitRecordsSimultIncMode();
+    // Schedules compilation per file and writes the binaries directly. Takes the mutable context from the caller
+    // because driving the compile queue is orchestration, the emitter itself keeps only a const view.
+    void EmitBinariesInSimultIncMode(public_lib::Context *ctx);
     void AddProgramElement(ProgramElement *programElement) override;
 
     bool IsETSEmitter() override

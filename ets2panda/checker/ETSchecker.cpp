@@ -376,8 +376,10 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     }
 
 #ifndef NDEBUG
-    for (auto *func : varbinder->FunctionScopes()) {
-        ES2PANDA_ASSERT(!func->Node()->AsScriptFunction()->Scope()->Name().Empty());
+    for (auto *program : varbinder->CompilablePrograms()) {
+        for (auto *func : program->CompilableFunctionScopes()) {
+            ES2PANDA_ASSERT(!func->Node()->AsScriptFunction()->Scope()->Name().Empty());
+        }
     }
 #endif
 
