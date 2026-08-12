@@ -988,6 +988,9 @@ void ETSChecker::CreateConstructorForPartialType(ir::ClassDefinition *const part
     partialType->AddConstructSignature(ctorFunc->Signature());
     ctorFunc->Signature()->SetOwner(partialType);
     ctor->SetParent(partialClassDef);
+    // The constructor is created after the partial class received its range.
+    // Propagate it to the nested ScriptFunction so recheck retains its scope.
+    compiler::SetSourceRangesRecursively(ctor, partialClassDef->Range());
     ctorId->SetVariable(ProgramAllocator()->New<varbinder::LocalVariable>(
         ProgramAllocator()->New<varbinder::MethodDecl>(ctorId->Name()), varbinder::VariableFlags::METHOD));
     ctor->Id()->SetVariable(ctorId->Variable());
