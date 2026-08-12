@@ -266,6 +266,8 @@ static ir::ScriptFunction *CreateNewScriptFunction(public_lib::Context *ctx, ir:
                        body, ir::FunctionSignature(newParamDeclaration, std::move(newParams), newReturnTypeAnno),
                        scriptFunc->Flags() | ir::ScriptFunctionFlags::SYNTHETIC});
     ES2PANDA_ASSERT(newScriptFunc != nullptr);
+    // The empty synthetic body has no source location, so the ScriptFunction constructor cannot infer its program.
+    newScriptFunc->SetRange(scriptFunc->Range());
     newScriptFunc->AddModifier(scriptFunc->AsScriptFunction()->Modifiers());
 
     if (scriptFunc->HasAnnotations()) {
