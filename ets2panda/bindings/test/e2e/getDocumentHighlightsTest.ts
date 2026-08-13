@@ -373,8 +373,8 @@ describe('getDocumentHighlightsTest', () => {
           {
             fileName: getRealPath(moduleName, 'getDocumentHighlights9.ets'),
             textSpan: {
-              start: 618,
-              length: 4
+              start: 616,
+              length: 5
             },
             contextSpan: {
               start: 0,
@@ -385,8 +385,8 @@ describe('getDocumentHighlightsTest', () => {
           {
             fileName: getRealPath(moduleName, 'getDocumentHighlights9.ets'),
             textSpan: {
-              start: 655,
-              length: 4
+              start: 643,
+              length: 5
             },
             contextSpan: {
               start: 0,
