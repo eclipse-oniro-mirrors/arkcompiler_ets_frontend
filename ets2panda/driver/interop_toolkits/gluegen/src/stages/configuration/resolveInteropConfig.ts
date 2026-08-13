@@ -83,9 +83,8 @@ export async function resolveInteropConfig(
 async function buildInteropTargets(table: ModuleTable): Promise<ReadonlyMap<string, InteropTarget>> {
   const targets = new Map<string, InteropTarget>();
   const modules = reachableModulesOf(table);
-  const modulesByPackage = new Map(modules.map((module) => [module.packageName, module]));
   for (const module of modules) {
-    const contributions = await resolveModuleInteropConfig(modulesByPackage, module);
+    const contributions = await resolveModuleInteropConfig(table.byPackage, module);
     for (const contribution of contributions) {
       mergeTarget(targets, contribution.packageName, contribution.target);
     }
@@ -282,7 +281,7 @@ function validateStaticFileLocation(filePath: string, module: ModuleInfo): void 
 }
 
 /**
- * Validates that a package named in interopConfig is in the Main Module dependency graph.
+ * Validates that a package named in interopConfig is present in the project's dependent module list.
  * This guard can be removed once IDE-side schema validation guarantees valid package references.
  */
 function requireInteropModule(
@@ -297,9 +296,9 @@ function requireInteropModule(
       new LogData({
         code: GlueGenErrorCode.INVALID_INTEROP_CONFIG,
         description: `Package "${ownerPackageName}" does not have a dependency named ` + `"${packageName}".`,
-        cause: `No package named "${packageName}" is reachable in the Main Module ` + 'dependency graph.',
+        cause: `No package named "${packageName}" exists in the dependent module list.`,
         position: interopConfigPath,
-        solutions: [`Add "${packageName}" to the module dependencies, or remove the ` + 'interop reference.'],
+        solutions: [`Add "${packageName}" to the oh-package.json5, or remove the interop reference.`],
         moreInfo: {
           packageName: ownerPackageName,
           dependencyName: packageName,
