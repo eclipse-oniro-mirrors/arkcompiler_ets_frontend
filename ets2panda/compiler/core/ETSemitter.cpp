@@ -49,6 +49,7 @@
 #include "public/public.h"
 #include "util/generateBin.h"
 #include "util/nameMangler.h"
+#include "util/patchFix.h"
 #include "assembly-program.h"
 
 namespace ark::es2panda::compiler {
@@ -416,6 +417,39 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     Program()->AddToFunctionTable(std::move(func));
 }
 
+static std::vector<std::string> CollectExportsForProgram(parser::Program *program)
+{
+    std::vector<std::string> exportedNames;
+    auto &exportFacts = program->VarBinder()->AsETSBinder()->GetExportFactsStore().GetExportFacts(program);
+    for (const auto &fact : exportFacts.locals) {
+        exportedNames.push_back(std::string(fact.exportedName));
+    }
+    return exportedNames;
+}
+
+static std::vector<std::tuple<std::string, std::string, std::string>> CollectClassInfosForProgram(
+    parser::Program *program)
+{
+    std::vector<std::tuple<std::string, std::string, std::string>> classInfos;
+    for (const auto *stmt : program->Ast()->Statements()) {
+        if (!stmt->IsClassDeclaration()) {
+            continue;
+        }
+        auto *classDef = stmt->AsClassDeclaration()->Definition();
+        auto *objType = classDef->TsType()->AsETSObjectType();
+        std::string parent;
+        if (objType->SuperType() != nullptr) {
+            parent = ToAssemblerType(objType->SuperType()->GetDeclNode());
+        }
+        std::stringstream ifaces;
+        for (auto *it : objType->Interfaces()) {
+            ifaces << ToAssemblerType(it->GetDeclNode()->AsTSInterfaceDeclaration()) << ";";
+        }
+        classInfos.emplace_back(ToAssemblerType(classDef), parent, ifaces.str());
+    }
+    return classInfos;
+}
+
 void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 {
     ES2PANDA_ASSERT(ctx == Context());
@@ -434,6 +468,10 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
     auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
         ctx->diagnosticEngine->LogDiagnostic(kind, params);
     };
+
+    if (Context()->patchFixHelper != nullptr) {
+        CollectReloadInfo(Context()->parserProgram);
+    }
 
     for (const auto &[path, prog] : programsHolder) {
         if (ctx->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
@@ -458,6 +496,10 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 
         EmitRecordsImpl(true);
         DumpDebugInfo();
+
+        if (Context()->patchFixHelper != nullptr) {
+            CollectReloadInfo(prog);
+        }
 
         auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo());
         // Error (if any) is already reported via reporter, so just stop processing remaining files on failure.
@@ -519,7 +561,19 @@ void ETSEmitter::EmitRecordsImpl(bool isIncrementalBuild)
 void ETSEmitter::EmitRecords()
 {
     ES2PANDA_ASSERT(Context()->parserProgram->VarBinder()->AsETSBinder()->CheckRecordTablesConsistency());
-    return EmitRecordsImpl();
+    EmitRecordsImpl();
+
+    if (Context()->patchFixHelper != nullptr) {
+        CollectReloadInfo(Context()->parserProgram);
+    }
+}
+
+void ETSEmitter::CollectReloadInfo(parser::Program *program)
+{
+    auto *pf = Context()->patchFixHelper.get();
+    pf->ProcessModule(program);
+    pf->ProcessExports(program, CollectExportsForProgram(program));
+    pf->ProcessClassInfo(program, CollectClassInfosForProgram(program));
 }
 
 void ETSEmitter::EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals)

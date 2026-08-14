@@ -1,0 +1,1 @@
+[Patch] Function '{NAME}.ETSGLOBAL.add:i32;i32;i32' hash mismatch with origin symbol table

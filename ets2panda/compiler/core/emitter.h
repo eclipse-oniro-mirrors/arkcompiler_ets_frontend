@@ -41,6 +41,10 @@ namespace ark::es2panda::public_lib {
 struct Context;
 }  // namespace ark::es2panda::public_lib
 
+namespace ark::es2panda::util {
+class PatchFix;
+}  // namespace ark::es2panda::util
+
 namespace ark::es2panda::compiler {
 class CodeGen;
 class DebugInfo;

@@ -1,0 +1,2 @@
+[Patch] Function '{NAME}.ETSGLOBAL.main:void' hash mismatch with origin symbol table
+[Patch] Found import/export expression changed in {FILE}, not supported!

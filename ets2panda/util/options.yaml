@@ -442,3 +442,23 @@ options:
   type: bool
   default: false
   description: "(experimental) Use metadata (if recorded) when importing the module with abc file provided"
+
+- name: cold-reload
+  type: bool
+  default: false
+  description: "Enable Cold Reload mode for incremental compilation"
+
+- name: hot-reload
+  type: bool
+  default: false
+  description: "Enable Hot Reload mode (allows function body changes without app restart)"
+
+- name: dump-symbol-table
+  type: std::string
+  default: ""
+  description: "Dump symbol table to the specified file path"
+
+- name: input-symbol-table
+  type: std::string
+  default: ""
+  description: "Input symbol table file for Cold Reload compatibility check"
