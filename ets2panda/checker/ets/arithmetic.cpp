@@ -1176,7 +1176,7 @@ static void ReportIfInstanceofTrivialKnown(ETSChecker *checker, Type *lhs, Type 
             checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
                                    util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_TRUE_WORD}, pos);
         }
-    } else if (!HasInterfaceConstituent(lhs) || !HasInterfaceConstituent(rhs)) {
+    } else if (!HasInterfaceConstituent(lhs) && !HasInterfaceConstituent(rhs)) {
         checker->LogDiagnostic(diagnostic::INSTANCEOF_ALWAYS_KNOWN,
                                util::DiagnosticMessageParams {INSTANCEOF_ALWAYS_FALSE_WORD}, pos);
     }

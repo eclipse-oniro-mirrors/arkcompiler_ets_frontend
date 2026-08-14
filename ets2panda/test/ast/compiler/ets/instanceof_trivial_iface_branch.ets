@@ -26,6 +26,5 @@ function qux(x: A): boolean {
     return false
 }
 
-/* @@? 21:17 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 22:17 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 23:17 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
