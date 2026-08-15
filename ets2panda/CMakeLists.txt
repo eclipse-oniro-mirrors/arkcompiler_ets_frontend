@@ -733,6 +733,7 @@ set(ES2PANDA_LIB_SRC
   util/eheap.cpp
   util/errorRecovery.cpp
   util/es2pandaMacros.cpp
+  util/generateBin.cpp
   util/helpers.cpp
   util/importPathManager.cpp
   util/nameMangler.cpp
@@ -787,7 +788,7 @@ endif()
 
 panda_target_link_libraries(es2panda-lib
   PUBLIC arkbase hmicuuc.z
-  PRIVATE arkassembler arkdisassembler arkfile
+  PRIVATE arkassembler arkdisassembler arkfile arkbytecodeopt
 )
 
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1) OR
