@@ -27,6 +27,8 @@
 #include "public/public.h"
 #include "generated/signatures.h"
 #include "es2panda.h"
+#include "util/patchFix.h"
+#include "util/symbolTable.h"
 #include "varbinder/ETSBinder.h"
 #include "checker/ETSAnalyzer.h"
 #include "checker/ETSchecker.h"
@@ -842,6 +844,16 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_LOWERED);
 
     ES2PANDA_PERF_SCOPE("@EmitProgram");
+
+    // --- Cold/Hot Reload: initialize PatchFix and SymbolTable ---
+    auto [ok, pf] = util::InitPatchFix(*ctx->config->options, std::string(ctx->parserProgram->GetImportInfo().Key()));
+    if (!ok) {
+        ctx->state = ES2PANDA_STATE_ERROR;
+        ctx->errorMessage = "Failed to initialize cold/hot reload";
+        return ctx;
+    }
+    ctx->patchFixHelper = std::move(pf);
+
     auto *emitter = ctx->emitter;
 
     // Handle context literals.
@@ -880,6 +892,13 @@ __attribute__((unused)) Context *GenerateBin(Context *ctx)
     if (ctx->state < ES2PANDA_STATE_ASM_GENERATED) {
         ctx = GenerateAsm(ctx);
     }
+
+    std::string errorMsg;
+    if (ctx->patchFixHelper && !util::FinalizePatchFix(*ctx->patchFixHelper, &errorMsg)) {
+        ctx->state = ES2PANDA_STATE_ERROR;
+        ctx->errorMessage = errorMsg;
+    }
+    ctx->patchFixHelper.reset();
 
     if (ctx->state == ES2PANDA_STATE_ERROR) {
         return ctx;
@@ -947,6 +966,7 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
     if (ctx->emitter != nullptr) {
         FreeCompilerPartMemory(context);
     }
+    ctx->patchFixHelper.reset();
     delete ctx;
 }
 

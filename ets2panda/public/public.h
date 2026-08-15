@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_PUBLIC_PUBLIC_H
 #define ES2PANDA_PUBLIC_PUBLIC_H
 
+#include <memory>
 #include <unordered_map>
 #include "public/es2panda_lib.h"
 
@@ -27,9 +28,11 @@
 #include "checker/ETSchecker.h"
 #include "compiler/core/emitter.h"
 #include "compiler/core/compileQueue.h"
+#include "util/patchFix.h"
 
 namespace ark::es2panda::util {
 class Options;
+class PatchFix;
 }  // namespace ark::es2panda::util
 
 namespace ark::es2panda::compiler {
@@ -125,6 +128,7 @@ struct Context {
 
     parser::ParserImpl *parser = nullptr;
     compiler::Emitter *emitter = nullptr;
+    std::unique_ptr<util::PatchFix> patchFixHelper;
 
     // NOTE(mshimenkov): In case of using ETSEmitter and building in simultaneous incremental mode
     // This map will contain more than one entry

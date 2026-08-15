@@ -1,0 +1,2 @@
+[Patch] Function 'change-parent.Foo.<ctor>:void' hash mismatch with origin symbol table
+[Patch] Found class inheritance or interface change in change-parent.ets:classinfo, not supported!

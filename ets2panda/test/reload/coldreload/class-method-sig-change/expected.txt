@@ -1,0 +1,1 @@
+[Patch] Function '{NAME}.Foo.bar:i32;i32' signature changed — not supported!

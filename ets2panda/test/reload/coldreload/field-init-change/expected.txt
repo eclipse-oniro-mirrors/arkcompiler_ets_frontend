@@ -1,0 +1,1 @@
+[Patch] Function '{NAME}.Foo.<ctor>:void' hash mismatch with origin symbol table

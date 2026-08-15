@@ -1061,4 +1061,18 @@ checker::Type *Helpers::CreateUnionOfTupleConstituentTypes(checker::ETSChecker *
     return checker->CreateETSUnionType(std::move(tupleTypes));
 }
 
+// FNV-1a 64-bit hash, identical to es2panda's implementation for symbol table compatibility.
+std::string Helpers::GetHashString(const std::string &str)
+{
+    static constexpr uint64_t FNV_OFFSET = 14695981039346656037ULL;
+    static constexpr uint64_t FNV_PRIME = 1099511628211ULL;
+
+    uint64_t result = FNV_OFFSET;
+    for (unsigned char c : str) {
+        result ^= static_cast<uint64_t>(c);
+        result *= FNV_PRIME;
+    }
+    return std::to_string(result);
+}
+
 }  // namespace ark::es2panda::util

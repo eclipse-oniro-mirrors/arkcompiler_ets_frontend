@@ -127,6 +127,7 @@ add_subdirectory(unit)
 add_subdirectory(depanalyzer)
 add_subdirectory(arkts_bindings)
 add_subdirectory(metadata)
+add_subdirectory(reload)
 
 set(FLATBUFFERS_CXX_FLAGS "-Wno-error")
 set(FLATBUFFERS_DIR "${PANDA_THIRD_PARTY_SOURCES_DIR}/flatbuffers")

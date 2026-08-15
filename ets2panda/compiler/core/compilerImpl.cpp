@@ -43,7 +43,9 @@
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "util/eheap.h"
+#include "util/patchFix.h"
 #include "util/perfMetrics.h"
+#include "util/symbolTable.h"
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {
@@ -404,6 +406,15 @@ static void ClearContext(public_lib::Context *context)
     context->emitter = nullptr;
 }
 
+static bool SetupPatchFix(public_lib::Context *context, const CompilationUnit &unit)
+{
+    auto [ok, pf] = util::InitPatchFix(unit.options, std::string(context->parserProgram->GetImportInfo().Key()));
+    if (ok) {
+        context->patchFixHelper = std::move(pf);
+    }
+    return ok;
+}
+
 // NOTE(dkofanov): should be alligned with the public-lib context initialization and processing.
 template <typename Parser, typename Checker, typename Analyzer, typename AstCompiler, typename CodeGen,
           typename RegSpiller, typename FunctionEmitter, typename Emitter>
@@ -436,6 +447,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
     auto analyzer = Analyzer(&checker);
     checker.SetAnalyzer(&analyzer);
     context->PushAnalyzer(checker.GetAnalyzer());
+
     context->codeGenCb = MakeCompileJob<CodeGen, RegSpiller, FunctionEmitter, Emitter, AstCompiler>();
     context->diagnosticEngine = &unit.diagnosticEngine;
 
@@ -444,7 +456,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
 
     std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res = {};
     try {
-        if (ParseAndRunPhases(context)) {
+        if (ParseAndRunPhases(context) && SetupPatchFix(context, unit)) {
             MarkAsLowered(context);
             res = EmitProgram(compilerImpl, context);
         }
@@ -453,6 +465,10 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
         e.EnsureLocation();
         ClearContext(context);
         throw e;
+    }
+
+    if (context->patchFixHelper && !FinalizePatchFix(*context->patchFixHelper)) {
+        res.clear();
     }
 
     context->diagnosticEngine->EnsureLocations();

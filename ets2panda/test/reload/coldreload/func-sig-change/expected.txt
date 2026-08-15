@@ -1,0 +1,2 @@
+[Patch] Function 'func-sig-change.ETSGLOBAL.main:void' hash mismatch with origin symbol table
+[Patch] Function 'func-sig-change.ETSGLOBAL.greet:std.core.String;std.core.String' signature changed — not supported!

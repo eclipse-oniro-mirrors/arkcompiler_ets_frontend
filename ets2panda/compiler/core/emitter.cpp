@@ -17,6 +17,7 @@
 
 #include "ir/irnode.h"
 #include "util/helpers.h"
+#include "util/patchFix.h"
 #include "varbinder/scope.h"
 #include "varbinder/variable.h"
 #include "compiler/base/literals.h"
@@ -134,6 +135,11 @@ void FunctionEmitter::Generate()
     GenSourceFileDebugInfo(func);
     GenFunctionCatchTables(func);
     GenFunctionAnnotations(func);
+
+    auto *pf = cg_->Context()->patchFixHelper.get();
+    if (pf != nullptr) {
+        pf->ProcessFunction(const_cast<CodeGen *>(cg_), func);
+    }
 }
 
 util::StringView FunctionEmitter::SourceCode() const

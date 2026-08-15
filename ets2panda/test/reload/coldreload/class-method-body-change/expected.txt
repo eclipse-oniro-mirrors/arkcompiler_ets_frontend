@@ -1,0 +1,1 @@
+[Patch] Function '{NAME}.Foo.bar:i32' hash mismatch with origin symbol table
