@@ -61,7 +61,6 @@ function quux(x: string | undefined): number {
     return x.length + (t1 ? 1 : 0) + (t2 ? 1 : 0)
 }
 
-/* @@? 31:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 32:16 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 39:16 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 46:16 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */

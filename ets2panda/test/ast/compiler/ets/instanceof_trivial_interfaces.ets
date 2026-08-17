@@ -48,5 +48,4 @@ function quz(x: C): boolean {
 
 /* @@? 30:12 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 34:12 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
-/* @@? 43:21 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */
 /* @@? 44:21 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as true */

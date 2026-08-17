@@ -1508,6 +1508,12 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *te
             return {testedType, GetGlobalTypesHolder()->GlobalETSNeverType()};
         }
 
+        // When neither type is a supertype of the other, instanceof can still succeed if
+        // at least one type is an interface.
+        if (testedType->IsInterface() || objectType->IsInterface()) {
+            return {testedType, actualType};
+        }
+
         return {GetGlobalTypesHolder()->GlobalETSNeverType(), actualType};
     }
 

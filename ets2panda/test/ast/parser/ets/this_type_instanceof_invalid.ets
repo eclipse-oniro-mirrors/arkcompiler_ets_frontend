@@ -62,7 +62,6 @@ class C<T> {
 }
 
 
-/* @@? 20:8 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 20:28 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
 /* @@? 36:9 Warning Warning W1001506: the value of the instanceof expression is known at compile-time as false */
 /* @@? 36:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
