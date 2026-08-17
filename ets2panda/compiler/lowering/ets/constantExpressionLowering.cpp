@@ -791,18 +791,22 @@ private:
                                        const ir::NumberLiteral *right)
     {
         auto opType = expr->OperatorType();
-        switch (std::max(left->Number().GetTypeRank(), right->Number().GetTypeRank())) {
+        switch (left->Number().GetTypeRank()) {
             case TypeRank::DOUBLE:
             case TypeRank::INT64: {
-                return PerformShiftOperation(ExtractFromLiteral<int64_t>(left), ExtractFromLiteral<int64_t>(right),
-                                             opType);
+                auto *result = PerformShiftOperation(ExtractFromLiteral<int64_t>(left),
+                                                     ExtractFromLiteral<int64_t>(right), opType);
+                result->SetTsType(const_cast<checker::Type *>(expr->TsType()));
+                return result;
             }
             case TypeRank::FLOAT:
             case TypeRank::INT32:
             case TypeRank::INT16:
             case TypeRank::INT8: {
-                return PerformShiftOperation(ExtractFromLiteral<int32_t>(left), ExtractFromLiteral<int32_t>(right),
-                                             opType);
+                auto *result = PerformShiftOperation(ExtractFromLiteral<int32_t>(left),
+                                                     ExtractFromLiteral<int32_t>(right), opType);
+                result->SetTsType(const_cast<checker::Type *>(expr->TsType()));
+                return result;
             }
             default:
                 ES2PANDA_UNREACHABLE();

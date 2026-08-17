@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -105,9 +105,31 @@ function test_signed_right_shift_long(): void
     arktest.assertEQ(-4 >> 63, -1)
 }
 
+function test_mixed_shift_operand_types(): void
+{
+    let doubleShift: double = -1.1
+    let doubleValue: double = 1.0
+
+    // A floating-point right operand is truncated, but it must not widen
+    // the shift operation. The converted left operand determines its width.
+    arktest.assertEQ(1 << -1.1, 1 << doubleShift)
+    arktest.assertEQ(1 >> -1.1, 1 >> doubleShift)
+    arktest.assertEQ(1 >>> -1.1, 1 >>> doubleShift)
+
+    arktest.assertEQ(1 << -1.1, -2147483648)
+    arktest.assertEQ(1 << 32.9, 1)
+    arktest.assertEQ(1 << 63.9, -2147483648)
+
+    arktest.assertEQ((1 as long) << -1.1, -9223372036854775808)
+    arktest.assertEQ((1 as long) << 32.9, 4294967296)
+    arktest.assertEQ(1.0 << -1, doubleValue << -1)
+    arktest.assertEQ(1.0 << -1, -9223372036854775808)
+}
+
 
 function main(): void
 {
     test_signed_right_shift_int();
     test_signed_right_shift_long();
+    test_mixed_shift_operand_types();
 }
