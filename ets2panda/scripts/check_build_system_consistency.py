@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -85,18 +85,20 @@ def parse_root_cmake(file_path):
 def parse_public_cmake(file_path):
     with open(file_path, "r") as f:
         content = f.read()
-    headers, yamls = [], []
-    headers_dict, yamls_dict = {}, {}
+    sources, headers, yamls = [], [], []
+    sources_dict, headers_dict, yamls_dict = {}, {}, {}
 
     for match in re.finditer(r"set\s*\(\s*\w+\s+(.*?)\s*\)", content, re.DOTALL):
-        files, files_dict = parse_cmake_file_list(match.group(1), (".h", ".yaml"))
-        _, h, y, _, hd, yd = classify_files(files, files_dict)
+        files, files_dict = parse_cmake_file_list(match.group(1), (".cpp", ".h", ".yaml"))
+        s, h, y, sd, hd, yd = classify_files(files, files_dict)
+        sources.extend(s)
         headers.extend(h)
         yamls.extend(y)
+        sources_dict.update(sd)
         headers_dict.update(hd)
         yamls_dict.update(yd)
 
-    return headers, yamls, headers_dict, yamls_dict
+    return sources, sources_dict, headers, headers_dict, yamls, yamls_dict
 
 
 def parse_gn(file_path):
@@ -107,7 +109,7 @@ def parse_gn(file_path):
     sources_dict, headers_dict, yamls_dict = {}, {}, {}
 
     for match in re.finditer(
-        r"(libes2panda_sources|HEADERS_TO_BE_PARSED|"
+        r"(libes2panda_sources|libes2panda_public_sources|HEADERS_TO_BE_PARSED|"
         r"ES2PANDA_API_GENERATED|ES2PANDA_API|"
         r"generated_headers)\s*=\s*\[(.*?)\]",
         content,
@@ -162,18 +164,23 @@ def main():
     work_dir = sys.argv[1]
     cmake_src, cmake_src_dict = parse_root_cmake(os.path.join(work_dir, "CMakeLists.txt"))
     (
+        cmake_pub_src,
+        cmake_pub_src_dict,
         cmake_hdr,
-        cmake_yaml,
         cmake_hdr_dict,
+        cmake_yaml,
         cmake_yaml_dict,
     ) = parse_public_cmake(os.path.join(work_dir, "public/CMakeLists.txt"))
+
+    cmake_all_src = cmake_src + cmake_pub_src
+    cmake_all_src_dict = {**cmake_pub_src_dict, **cmake_src_dict}
 
     gn_src, gn_src_dict, gn_hdr, gn_hdr_dict, gn_yaml, gn_yaml_dict = parse_gn(
         os.path.join(work_dir, "BUILD.gn")
     )
 
     src_consistent = compare_file_lists(
-        cmake_src, cmake_src_dict, gn_src, gn_src_dict, "*.cpp", "ES2PANDA_LIB_SRC"
+        cmake_all_src, cmake_all_src_dict, gn_src, gn_src_dict, "*.cpp", "ES2PANDA_LIB_SRC"
     )
     hdr_consistent = compare_file_lists(
         cmake_hdr, cmake_hdr_dict, gn_hdr, gn_hdr_dict, "*.h", "HEADERS_TO-BE-PARSED"

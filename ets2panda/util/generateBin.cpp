@@ -23,6 +23,16 @@
 #include "util/options.h"
 #include "util/perfMetrics.h"
 
+#if !defined(PANDA_TARGET_MOBILE)
+#if __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+#endif
+
 namespace ark::es2panda::util {
 
 [[maybe_unused]] static void InitializeLogging(const util::Options &options)
@@ -118,7 +128,7 @@ static int EmitBytecodeToBinaryFile(ark::pandasm::Program *prog, const std::stri
 int GenerateBinaryFiles([[maybe_unused]] std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> &progs,
                         [[maybe_unused]] const util::Options &options, [[maybe_unused]] const ReporterFun &reporter)
 {
-#if not defined PANDA_TARGET_MOBILE
+#if !defined(PANDA_TARGET_MOBILE)
     for (auto &[abcFile, prog] : progs) {
         if (GenerateBinaryFile(prog.get(), abcFile, options, reporter)) {
             return 1;
@@ -134,8 +144,10 @@ int GenerateBinaryFile(ark::pandasm::Program *prog, const std::string &output, c
 {
     ES2PANDA_PERF_SCOPE("@GenerateBinaryFile");
 
+#if !defined(PANDA_TARGET_MOBILE)
     auto progParentDir = ark::os::GetParentDir(output);
     fs::create_directories(progParentDir);
+#endif
 
 #ifdef PANDA_WITH_BYTECODE_OPTIMIZER
     {
