@@ -1230,6 +1230,10 @@ semantic:
   id: 384
   message: "overloaded name must refer to an accessible method."
 
+- name: OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION
+  id: 389
+  message: "The overloaded name '{}' can't refer to a function with overload signatures."
+
 - name: OVERLOADED_UNION_CALL
   id: 391
   message: "Overload declaration cannot be called by union."
