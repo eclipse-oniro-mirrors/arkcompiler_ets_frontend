@@ -1899,6 +1899,13 @@ static bool CheckOverloadedName(ETSChecker *checker, ir::OverloadDeclaration *no
         return false;
     }
 
+    if (!identDeclNode->AsMethodDefinition()->Overloads().empty() && !identDeclNode->IsConstructor()) {
+        checker->LogError(diagnostic::OVERLOADED_NAME_REFER_TO_OVERLOAD_FUNCTION, {overloadedName->Variable()->Name()},
+                          overloadedName->Start());
+        overloadedName->SetTsType(checker->GlobalTypeError());
+        return false;
+    }
+
     return CheckAccessModifierForOverloadDeclaration(checker, node->Modifiers(), identDeclNode->Modifiers(),
                                                      overloadedName->Start());
 }
