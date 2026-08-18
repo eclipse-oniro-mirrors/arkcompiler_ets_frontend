@@ -22,7 +22,7 @@ import { GlueGenDiagnosticError } from '../../src/errors';
 import type { ILogger } from '../../src/logger';
 import { Pipeline } from '../../src/pipeline';
 import type { GlueGenContext } from '../../src/pipeline/context';
-import { createConfigurationStage } from '../../src/stages/configuration';
+import { createConfigurationStage, reachableModulesOf } from '../../src/stages/configuration';
 import { createPrepareStage } from '../../src/stages/prepare';
 
 const SILENT_LOGGER: ILogger = {
@@ -249,15 +249,89 @@ describe('interop preparation', () => {
       expect(diagnostic).toMatchObject({
         code: '11420002',
         description: 'Package "entry" does not have a dependency named "stalib".',
-        cause: 'No package named "stalib" is reachable in the Main Module dependency graph.',
+        cause: 'No package named "stalib" exists in the dependent module list.',
         position: interopConfigPath,
-        solutions: ['Add "stalib" to the module dependencies, or remove the interop reference.'],
+        solutions: ['Add "stalib" to the oh-package.json5, or remove the interop reference.'],
         moreInfo: {
           packageName: 'entry',
           dependencyName: 'stalib',
         },
       });
       expect(logger.printError).not.toHaveBeenCalled();
+    } finally {
+      await fs.rm(projectRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('resolves a global interop dependency outside the main module dependency graph', async () => {
+    const projectRoot = await fs.mkdtemp(path.join(tmpdir(), 'gluegen-global-interop-'));
+    try {
+      const entryRoot = path.join(projectRoot, 'entry');
+      const globalRoot = path.join(projectRoot, 'pkg1');
+      await Promise.all([fs.mkdir(entryRoot, { recursive: true }), fs.mkdir(globalRoot, { recursive: true })]);
+      await Promise.all([
+        fs.writeFile(
+          path.join(entryRoot, 'interop.json5'),
+          `{ interopEntries: { dependency: { package: ['pkg1'] } } }`,
+          'utf8',
+        ),
+        fs.writeFile(path.join(entryRoot, 'Index.ets'), '', 'utf8'),
+        fs.writeFile(path.join(globalRoot, 'Index.ets'), "'use static'\n", 'utf8'),
+      ]);
+
+      const buildConfig: BuildConfig = {
+        plugins: [],
+        buildMode: 'Debug',
+        buildType: 'BUILD',
+        projectRootPath: projectRoot,
+        cachePath: 'cache',
+        compileSdkVersion: 10,
+        compatibleSdkVersion: 10,
+        bundleName: 'com.example.app',
+        moduleType: 'entry',
+        moduleName: 'entry',
+        packageName: 'entry',
+        buildSdkPath: 'sdk/build',
+        dependentModuleList: [
+          {
+            packageName: 'entry',
+            moduleType: 'entry',
+            modulePath: entryRoot,
+            sourceRoots: ['.'],
+            entryFile: 'Index.ets',
+            dependencies: [],
+            interopConfigPath: 'interop.json5',
+          },
+          {
+            packageName: 'pkg1',
+            moduleType: 'har',
+            modulePath: globalRoot,
+            sourceRoots: ['.'],
+            entryFile: 'Index.ets',
+            dependencies: [],
+          },
+        ],
+        hasMainModule: true,
+        modulePath: entryRoot,
+        externalApiPaths: [],
+        byteCodeHar: false,
+        interopApiPaths: [],
+        declgenBridgeConfigPath: path.join(projectRoot, 'declgen-bridge.json'),
+        interopConfigPath: '',
+      };
+      const context: GlueGenContext = {
+        buildConfig,
+        logger: SILENT_LOGGER,
+        runtime: { nativeExecutablePath: '' },
+      };
+
+      const configuration = await Pipeline.start<GlueGenContext>().stage(createConfigurationStage()).run(context);
+
+      expect(reachableModulesOf(configuration.moduleTable).map((module) => module.packageName)).toEqual(['entry']);
+      expect(configuration.interopTargets.get('pkg1')).toEqual({
+        kind: 'package',
+        moduleInfo: configuration.moduleTable.byPackage.get('pkg1'),
+      });
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
     }
