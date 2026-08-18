@@ -26,6 +26,7 @@
 #include "get_safe_delete_info.h"
 #include "internal_api.h"
 #include "ir/astNode.h"
+#include "ir/ets/etsReExportDeclaration.h"
 #include "find_safe_delete_location.h"
 #include "references.h"
 #include "public/es2panda_lib.h"
@@ -56,6 +57,30 @@ using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 extern "C" {
 namespace ark::es2panda::lsp {
 
+static std::string GetDefinitionFilePathFromImportNamespaceAlias(const ir::AstNode *declNode)
+{
+    if (declNode == nullptr || !declNode->IsImportNamespaceSpecifier()) {
+        return {};
+    }
+
+    const auto *parent = declNode->Parent();
+    if (parent == nullptr) {
+        return {};
+    }
+
+    const ir::ETSImportDeclaration *importDecl = nullptr;
+    if (parent->IsETSImportDeclaration()) {
+        importDecl = parent->AsETSImportDeclaration();
+    } else if (parent->IsETSReExportDeclaration()) {
+        importDecl = parent->AsETSReExportDeclaration()->GetETSImportDeclarations();
+    }
+    if (importDecl == nullptr) {
+        return {};
+    }
+
+    return GetImportFilePath(importDecl->ImportInfo());
+}
+
 DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
@@ -74,6 +99,12 @@ DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t positio
     if (declInfo.first == nullptr) {
         return result;
     }
+
+    auto importNamespaceAliasFilePath = GetDefinitionFilePathFromImportNamespaceAlias(declInfo.first);
+    if (!importNamespaceAliasFilePath.empty()) {
+        return {importNamespaceAliasFilePath, 0, 0};
+    }
+
     auto node = declInfo.first;
     auto targetNode = declInfo.first->FindChild([&declInfo](ir::AstNode *childNode) {
         return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == declInfo.second;

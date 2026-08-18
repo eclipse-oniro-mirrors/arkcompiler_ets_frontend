@@ -1452,14 +1452,17 @@ std::string GetImportFilePath(es2panda_Context *context, size_t pos)
     }
     auto parent = node->Parent();
     if (parent != nullptr && parent->IsETSImportDeclaration() && parent->AsETSImportDeclaration()->Source() == node) {
-        const auto &importInfo = parent->AsETSImportDeclaration()->ImportInfo();
-        if (node->IsStringLiteral() && node->AsStringLiteral()->Str().StartsWith("dynamic@")) {
-            res = std::string(importInfo.TextSource());
-        } else {
-            res = std::string(importInfo.ResolvedSource());
-        }
+        res = GetImportFilePath(parent->AsETSImportDeclaration()->ImportInfo());
     }
     return res;
+}
+
+std::string GetImportFilePath(const util::ImportInfo &importInfo)
+{
+    if (importInfo.HasSpecifiedDeclPath() && !importInfo.ReferencesABC()) {
+        return std::string(importInfo.DeclPath());
+    }
+    return std::string(importInfo.ResolvedSource());
 }
 
 std::vector<ir::AstNode *> RemoveRefDuplicates(const std::vector<ir::AstNode *> &nodes)

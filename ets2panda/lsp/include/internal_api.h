@@ -24,6 +24,10 @@
 #include "public/public.h"
 #include "util/eheap.h"
 
+namespace ark::es2panda::util {
+class ImportInfo;
+}  // namespace ark::es2panda::util
+
 namespace ark::es2panda::lsp {
 
 class Initializer {
@@ -169,6 +173,7 @@ varbinder::Decl *FindDeclInFunctionScope(varbinder::Scope *scope, const util::St
 varbinder::Decl *FindDeclInGlobalScope(varbinder::Scope *scope, const util::StringView &name);
 varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util::StringView &name);
 std::string GetImportFilePath(es2panda_Context *context, size_t pos);
+std::string GetImportFilePath(const util::ImportInfo &importInfo);
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
                               DiagnosticReferences &result);
 std::string GetTokenTypes(ir::ModifierFlags flags);
