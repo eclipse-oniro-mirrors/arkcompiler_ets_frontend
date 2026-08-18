@@ -12,22 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-enum ApplicationState {
-  CREATE = 1 << 0,
-  // The application's foreground state.
-  FOREGROUND = 1 << 1,
-  /* The application's background state. */
-  BACKGROUND = 1 << 2,
+/*---
+    tags: [compile-only, negative]
+    expected_out: "Syntax error ESY0265: Newline is not allowed in strings"
+---*/
+
+enum Flags {
+    VALUE = 1 << 0,
 }
 
-function main(): int
-{
-  let num: number = 1.0
-  let str: string = ""
-  arktest.assertTrue(typeof num < typeof str)
-  arktest.assertEQ(ApplicationState.CREATE, 1)
-  arktest.assertEQ(ApplicationState.FOREGROUND, 2)
-  arktest.assertEQ(ApplicationState.BACKGROUND, 4)
-
-  return 0;
-}
+const text = 'unterminated
