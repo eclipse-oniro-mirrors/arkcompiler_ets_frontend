@@ -14,12 +14,37 @@
  */
 
 #include <gtest/gtest.h>
+#include <array>
 #include <cstddef>
+#include <memory>
 #include <string>
+#include <utility>
 #include "lsp_api_test.h"
 #include "lsp/include/internal_api.h"
 
 using ark::es2panda::lsp::Initializer;
+
+namespace {
+
+constexpr size_t DYNAMIC_DEPENDENCY_INDEX = 0U;
+constexpr size_t STATIC_IMPLEMENTATION_INDEX = 1U;
+constexpr size_t STATIC_DECLARATION_INDEX = 2U;
+constexpr size_t DEPENDENCY_USE_INDEX = 3U;
+constexpr size_t DEPENDENCY_CONFIG_INDEX = 4U;
+constexpr size_t DEPENDENCY_FILE_COUNT = 5U;
+
+std::string MakeDependencyConfig(const std::filesystem::path &tempDir, const std::vector<std::string> &files)
+{
+    const auto dynamicDependencyPath = (tempDir / files[DYNAMIC_DEPENDENCY_INDEX]).string();
+    const auto staticImplementationPath = (tempDir / files[STATIC_IMPLEMENTATION_INDEX]).string();
+    const auto staticDeclarationPath = (tempDir / files[STATIC_DECLARATION_INDEX]).string();
+    return R"({"compilerOptions": {"baseUrl": ")" + tempDir.string() +
+           R"(", "dependencies": {"js": {"language": "js", "path": ")" + dynamicDependencyPath +
+           R"(", "ohmUrl": "js"}, "staticLib": {"language": "ets", "path": ")" + staticDeclarationPath +
+           R"(", "sourceFilePath": ")" + staticImplementationPath + R"("}}}})";
+}
+
+}  // namespace
 
 class LspGetDefTests : public LSPAPITests {};
 
@@ -494,6 +519,162 @@ TEST_F(LspGetDefTests, DisableLoweringTest4)
     ASSERT_EQ(result.fileName, expectedFileName);
     ASSERT_EQ(result.start, expectedStart);
     ASSERT_EQ(result.length, expectedLength);
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPosition_ImportNamespaceAliasDeclaration)
+{
+    std::vector<std::string> files = {"getDefinitionAtPositionNamespaceAliasDeclarationSource.ets",
+                                      "getDefinitionAtPositionNamespaceAliasDeclarationUse.ets"};
+    std::vector<std::string> texts = {
+        R"(export class A {})", R"(import * as aaaa from './getDefinitionAtPositionNamespaceAliasDeclarationSource';)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    const auto offset = texts[1].find("aaaa");
+    ASSERT_NE(offset, std::string::npos);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+
+    ASSERT_EQ(result.fileName, filePaths[0]);
+    ASSERT_EQ(result.start, 0U);
+    ASSERT_EQ(result.length, 0U);
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPosition_ImportNamespaceModulePath)
+{
+    std::vector<std::string> files = {"getDefinitionAtPositionNamespacePathSource.ets",
+                                      "getDefinitionAtPositionNamespacePathUse.ets"};
+    const std::string importPath = "./getDefinitionAtPositionNamespacePathSource";
+    std::vector<std::string> texts = {R"(export class A {})",
+                                      R"(import * as aaaa from './getDefinitionAtPositionNamespacePathSource';)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    const auto offset = texts[1].find(importPath);
+    ASSERT_NE(offset, std::string::npos);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+
+    ASSERT_EQ(result.fileName, filePaths[0]);
+    ASSERT_EQ(result.start, 0U);
+    ASSERT_EQ(result.length, 0U);
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPosition_ArktsconfigDependency)
+{
+    std::vector<std::string> files = {
+        "getDefinitionAtPositionDynamicDependency.d.ets", "getDefinitionAtPositionStaticDependency.ets",
+        "getDefinitionAtPositionStaticDependency.d.ets", "getDefinitionAtPositionDependencyUse.ets",
+        "getDefinitionAtPositionDependencyArktsconfig.json"};
+    const auto tempDir = std::filesystem::path(testing::TempDir()).append(GetExecutableName());
+    const auto configText = MakeDependencyConfig(tempDir, files);
+    std::vector<std::string> texts = {R"(export declare class DynamicA {})", R"(export class StaticA {})",
+                                      R"(export declare class StaticA {})",
+                                      R"('use static'
+
+import * as jsModule from 'js';
+import * as staticModule from 'staticLib';)",
+                                      configText};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), DEPENDENCY_FILE_COUNT);
+
+    const auto configOption = "--arktsconfig=" + filePaths[DEPENDENCY_CONFIG_INDEX];
+    std::array<const char *, 2U> args = {filePaths[DEPENDENCY_USE_INDEX].c_str(), configOption.c_str()};
+    auto *compilerImpl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
+    ASSERT_NE(compilerImpl, nullptr);
+
+    auto configDeleter = [compilerImpl](es2panda_Config *config) { compilerImpl->DestroyConfigWithoutLog(config); };
+    std::unique_ptr<es2panda_Config, decltype(configDeleter)> config(
+        compilerImpl->CreateConfig(args.size(), args.data()), configDeleter);
+    ASSERT_NE(config, nullptr);
+
+    auto contextDeleter = [compilerImpl](es2panda_Context *context) { compilerImpl->DestroyContext(context); };
+    std::unique_ptr<es2panda_Context, decltype(contextDeleter)> context(
+        compilerImpl->CreateContextFromFile(config.get(), filePaths[DEPENDENCY_USE_INDEX].c_str()), contextDeleter);
+    ASSERT_NE(context, nullptr);
+    compilerImpl->ProceedToState(context.get(), ES2PANDA_STATE_BOUND);
+
+    const auto dynamicAliasOffset = texts[DEPENDENCY_USE_INDEX].find("jsModule");
+    const auto dynamicSourceOffset = texts[DEPENDENCY_USE_INDEX].rfind("js");
+    const auto staticAliasOffset = texts[DEPENDENCY_USE_INDEX].find("staticModule");
+    const auto staticSourceOffset = texts[DEPENDENCY_USE_INDEX].rfind("staticLib");
+    ASSERT_NE(dynamicAliasOffset, std::string::npos);
+    ASSERT_NE(dynamicSourceOffset, std::string::npos);
+    ASSERT_NE(staticAliasOffset, std::string::npos);
+    ASSERT_NE(staticSourceOffset, std::string::npos);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::array<std::pair<size_t, std::string>, 4U> expectedDefinitions = {
+        {{dynamicAliasOffset, filePaths[DYNAMIC_DEPENDENCY_INDEX]},
+         {dynamicSourceOffset, filePaths[DYNAMIC_DEPENDENCY_INDEX]},
+         {staticAliasOffset, filePaths[STATIC_DECLARATION_INDEX]},
+         {staticSourceOffset, filePaths[STATIC_DECLARATION_INDEX]}}};
+    for (const auto &[offset, expectedFile] : expectedDefinitions) {
+        const auto result = lspApi->getDefinitionAtPosition(context.get(), offset);
+        EXPECT_EQ(result.fileName, expectedFile);
+        EXPECT_EQ(result.start, 0U);
+        EXPECT_EQ(result.length, 0U);
+    }
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPosition_ImportNamespaceAliasUsage)
+{
+    std::vector<std::string> files = {"getDefinitionAtPositionNamespaceAliasUsageSource.ets",
+                                      "getDefinitionAtPositionNamespaceAliasUsageUse.ets"};
+    std::vector<std::string> texts = {R"(export class A {})",
+                                      R"(import * as aaaa from './getDefinitionAtPositionNamespaceAliasUsageSource';
+let instance = new aaaa.A();)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    const auto offset = texts[1].rfind("aaaa");
+    ASSERT_NE(offset, std::string::npos);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+
+    ASSERT_EQ(result.fileName, filePaths[0]);
+    ASSERT_EQ(result.start, 0U);
+    ASSERT_EQ(result.length, 0U);
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPosition_ReExportNamespaceAliasInDeclaration)
+{
+    std::vector<std::string> files = {"getDefinitionAtPositionReExportNamespaceAliasSource.ets",
+                                      "getDefinitionAtPositionReExportNamespaceAliasUse.ets"};
+    std::vector<std::string> texts = {
+        R"(export class A {})",
+        R"(export * as components from './getDefinitionAtPositionReExportNamespaceAliasSource';)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    const auto offset = texts[1].find("components");
+    ASSERT_NE(offset, std::string::npos);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+
+    ASSERT_EQ(result.fileName, filePaths[0]);
+    ASSERT_EQ(result.start, 0U);
+    ASSERT_EQ(result.length, 0U);
 }
 
 TEST_F(LspGetDefTests, negativeTest1)
