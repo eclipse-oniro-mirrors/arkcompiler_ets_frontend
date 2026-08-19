@@ -34,6 +34,11 @@ export enum CLUSTERING_METHOD {
     BFS = 'bfs'
 };
 
+export enum COMPILE_MODE {
+    MEMORY = 'memory',
+    PERFORMANCE = 'performance',
+}
+
 export enum BUILD_TYPE {
     BUILD = 'build',
     PREVIEW = 'preview'
@@ -89,7 +94,7 @@ export interface BuildBaseConfig {
     dumpPerf?: boolean;
     /** AOP transform library path (bytecode pipeline). */
     transformLib?: string;
-    clusteringMethod?: CLUSTERING_METHOD;
+    compileMode?: COMPILE_MODE;
 }
 
 export interface ArkTSGlobal {

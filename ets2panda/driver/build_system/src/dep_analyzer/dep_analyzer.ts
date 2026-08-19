@@ -55,7 +55,8 @@ import {
     CLUSTERING_METHOD,
     isHarOrHsp,
     FileChangeStatus,
-    getDefaultFileChangeStatus
+    getDefaultFileChangeStatus,
+    COMPILE_MODE
 } from '../types';
 
 import { Logger, LogDataFactory } from '../logger';
@@ -145,7 +146,24 @@ export abstract class DepAnalyzer {
         );
 
         this.clusteredBuild = clusteredBuild;
-        this.clusteringMethod = buildConfig.clusteringMethod ?? DEFAULT_CLUSTERING_METHOD;
+        // AFFINITY
+        this.clusteringMethod = DEFAULT_CLUSTERING_METHOD;
+        switch (buildConfig.compileMode) {
+            case COMPILE_MODE.PERFORMANCE: {
+                this.clusteringMethod = CLUSTERING_METHOD.AFFINITY;
+                break;
+            }
+
+            case COMPILE_MODE.MEMORY: {
+                this.clusteringMethod = CLUSTERING_METHOD.AFFINITY;
+                break;
+            }
+
+            default: {
+                this.clusteringMethod = DEFAULT_CLUSTERING_METHOD;
+                break;
+            }    
+        }
         this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
         this.mainModuleType = buildConfig.moduleType;
         this.declgenV2OutDir = buildConfig.declgenV2OutPath;

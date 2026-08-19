@@ -59,7 +59,8 @@ import {
     OHOS_MODULE_TYPE,
     DeclFileInfo,
     JobContentType,
-    FileInfo
+    FileInfo,
+    COMPILE_MODE
 } from '../types';
 import {
     ArkTSConfigGenerator,
@@ -1034,7 +1035,11 @@ export abstract class BaseMode {
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
 
-        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit, false, DEFAULT_WORKER_NUMS);
+        let workerNum = DEFAULT_WORKER_NUMS;
+        if (this.buildConfig.compileMode === COMPILE_MODE.MEMORY) {
+            workerNum--;
+        }
+        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit, false, workerNum);
         const workerFactory = new DriverProcessFactory(
             path.resolve(__dirname, 'compile_process_worker.js'),
             ['process child:' + __filename],
