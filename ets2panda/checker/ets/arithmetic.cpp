@@ -383,6 +383,17 @@ checker::Type *ETSChecker::CheckBinaryOperatorMulDivMod(
         return GlobalTypeError();
     }
 
+    // if the divisor value of integer division is detected to be *0* during compilation, then a CTE occurs.
+    if ((operationType == lexer::TokenType::PUNCTUATOR_DIVIDE ||
+         operationType == lexer::TokenType::PUNCTUATOR_DIVIDE_EQUAL ||
+         operationType == lexer::TokenType::PUNCTUATOR_MOD ||
+         operationType == lexer::TokenType::PUNCTUATOR_MOD_EQUAL) &&
+        unboxedL != nullptr && unboxedL->HasTypeFlag(TypeFlag::ETS_INTEGRAL_NUMERIC) && !left->IsNumberLiteral() &&
+        IsIntegerZeroNumberLiteral(right)) {
+        LogError(diagnostic::DIVISION_BY_ZERO, {}, pos);
+        return GlobalTypeError();
+    }
+
     if (promotedType == nullptr || !CheckIfNumeric(leftType) || !CheckIfNumeric(rightType)) {
         auto type = CheckBinaryOperatorForNumericEnums(this, leftType, rightType);
         if (type != nullptr) {

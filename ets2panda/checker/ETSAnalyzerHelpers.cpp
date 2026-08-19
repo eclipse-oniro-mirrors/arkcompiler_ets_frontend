@@ -946,6 +946,12 @@ bool IsBigIntZeroLiteral(const ir::Expression *expr)
     return expr->AsBigIntLiteral()->Str() == "0";
 }
 
+bool IsIntegerZeroNumberLiteral(const ir::Expression *expr)
+{
+    return expr->IsNumberLiteral() && expr->AsNumberLiteral()->Number().IsInteger() &&
+           expr->AsNumberLiteral()->Number().IsZero();
+}
+
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
 {
     if (expr->IsNullLiteral() || expr->IsUndefinedLiteral()) {
