@@ -51,6 +51,7 @@ export async function runNative(scope: StageScope<GlueGenContext, GenerationRequ
   }
   const arktsConfigPath = scope.get(ARKTS_CONFIG_ARTIFACT);
   const workspaceRoot = path.join(moduleTable.mainModule.cachePath, 'gluegen');
+  const intermediatesPath = path.join(workspaceRoot, 'intermediates');
   const outputPath = context.buildConfig.declgenBridgeConfigPath;
   const reportPath = path.join(workspaceRoot, 'report.json');
   const invocation = GlueGenInvocation.builder({
@@ -71,6 +72,7 @@ export async function runNative(scope: StageScope<GlueGenContext, GenerationRequ
   let processResult: NativeProcessResult;
   try {
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
+    await fs.mkdir(intermediatesPath, { recursive: true });
     await fs.rm(reportPath, { force: true });
     processResult = await invocation.execute();
   } catch (error) {

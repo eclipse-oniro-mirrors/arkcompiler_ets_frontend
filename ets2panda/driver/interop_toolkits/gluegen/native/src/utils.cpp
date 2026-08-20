@@ -14,6 +14,7 @@
  */
 
 #include "utils.h"
+#include "public/public.h"
 
 #include <chrono>
 #include <ctime>
@@ -106,26 +107,8 @@ fs::path RelativePath(const fs::path &path, const fs::path &base)
 
 fs::path ToLongPathIfNeeded(const fs::path &path)
 {
-#if defined(_WIN32)
-    constexpr std::size_t WINDOWS_MAX_PATH_LENGTH = 260;
-
-    fs::path absolutePath = path;
-    try {
-        absolutePath = AbsolutePath(path);
-    } catch (const fs::filesystem_error &) {
-        // Keep the pre-try fallback (the raw input path) rather than propagating the error.
-    }
-
-    const auto &native = absolutePath.native();
-    if (native.size() <= WINDOWS_MAX_PATH_LENGTH || native.rfind(LR"(\\?\)", 0) == 0) {
-        return absolutePath;
-    }
-    if (native.rfind(LR"(\\)", 0) == 0) {
-        // UNC path (\\server\share\...): the extended-length form is \\?\UNC\server\share\...
-        static constexpr std::size_t kUncPrefixLen = 2;
-        return fs::path(LR"(\\?\UNC\)" + native.substr(kUncPrefixLen));
-    }
-    return fs::path(LR"(\\?\)" + native);
+#if defined(PANDA_TARGET_WINDOWS)
+    return fs::path(ark::os::file::File::GetExtendedFilePath(path.string()));
 #else
     return path;
 #endif
