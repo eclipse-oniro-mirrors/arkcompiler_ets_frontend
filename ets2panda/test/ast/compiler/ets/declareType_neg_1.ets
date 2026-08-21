@@ -13,10 +13,8 @@
  * limitations under the License.
  */
 
-declare const type typeA = int;
-
+declare const type = int;
 
 /* @@? 16:15 Error Semantic error ESE1111: Missing type annotation for the 'type'. */
-/* @@? 16:20 Error Syntax error ESY0227: Unexpected token 'typeA'. */
-/* @@? 16:20 Error Semantic error ESE0143: Unresolved reference typeA */
-/* @@? 16:28 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 16:22 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 16:22 Error Semantic error ESE125125: Initializers are not allowed in ambient contexts: type */

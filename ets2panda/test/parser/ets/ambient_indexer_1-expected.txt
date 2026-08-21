@@ -636,14 +636,14 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "ambient_indexer_1.ets"
+                  "line": 1,
+                  "column": 1,
+                  "program": null
                 },
                 "end": {
-                  "line": 20,
-                  "column": 14,
-                  "program": "ambient_indexer_1.ets"
+                  "line": 1,
+                  "column": 1,
+                  "program": null
                 }
               }
             },
@@ -661,14 +661,14 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "ambient_indexer_1.ets"
+                      "line": 1,
+                      "column": 1,
+                      "program": null
                     },
                     "end": {
-                      "line": 20,
-                      "column": 14,
-                      "program": "ambient_indexer_1.ets"
+                      "line": 1,
+                      "column": 1,
+                      "program": null
                     }
                   }
                 },
@@ -678,200 +678,42 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "VariableDeclaration",
-                      "declarations": [
-                        {
-                          "type": "VariableDeclarator",
-                          "id": {
-                            "type": "Identifier",
-                            "name": "a",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "A",
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 13,
-                                      "program": "ambient_indexer_1.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 14,
-                                      "program": "ambient_indexer_1.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 13,
-                                    "program": "ambient_indexer_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 14,
-                                    "program": "ambient_indexer_1.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 13,
-                                  "program": "ambient_indexer_1.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 14,
-                                  "program": "ambient_indexer_1.ets"
-                                }
-                              }
-                            },
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 9,
-                                "program": "ambient_indexer_1.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 10,
-                                "program": "ambient_indexer_1.ets"
-                              }
-                            }
-                          },
-                          "init": {
-                            "type": "ETSNewClassInstanceExpression",
-                            "typeReference": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "A",
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 21,
-                                      "program": "ambient_indexer_1.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 22,
-                                      "program": "ambient_indexer_1.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 21,
-                                    "program": "ambient_indexer_1.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 22,
-                                    "program": "ambient_indexer_1.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 21,
-                                  "program": "ambient_indexer_1.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 22,
-                                  "program": "ambient_indexer_1.ets"
-                                }
-                              }
-                            },
-                            "arguments": [],
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 17,
-                                "program": "ambient_indexer_1.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 25,
-                                "program": "ambient_indexer_1.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 9,
-                              "program": "ambient_indexer_1.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 25,
-                              "program": "ambient_indexer_1.ets"
-                            }
-                          }
-                        }
-                      ],
-                      "kind": "let",
-                      "loc": {
-                        "start": {
-                          "line": 21,
-                          "column": 5,
-                          "program": "ambient_indexer_1.ets"
-                        },
-                        "end": {
-                          "line": 21,
-                          "column": 25,
-                          "program": "ambient_indexer_1.ets"
-                        }
-                      }
-                    }
-                  ],
+                  "statements": [],
                   "loc": {
                     "start": {
-                      "line": 20,
-                      "column": 17,
+                      "line": 1,
+                      "column": 1,
                       "program": "ambient_indexer_1.ets"
                     },
                     "end": {
-                      "line": 22,
-                      "column": 2,
+                      "line": 1,
+                      "column": 1,
                       "program": "ambient_indexer_1.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 20,
-                    "column": 10,
+                    "line": 1,
+                    "column": 1,
                     "program": "ambient_indexer_1.ets"
                   },
                   "end": {
-                    "line": 22,
-                    "column": 2,
+                    "line": 1,
+                    "column": 1,
                     "program": "ambient_indexer_1.ets"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 20,
-                  "column": 10,
+                  "line": 1,
+                  "column": 1,
                   "program": "ambient_indexer_1.ets"
                 },
                 "end": {
-                  "line": 22,
-                  "column": 2,
+                  "line": 1,
+                  "column": 1,
                   "program": "ambient_indexer_1.ets"
                 }
               }
@@ -879,13 +721,13 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 20,
+                "line": 1,
                 "column": 1,
                 "program": "ambient_indexer_1.ets"
               },
               "end": {
-                "line": 22,
-                "column": 2,
+                "line": 1,
+                "column": 1,
                 "program": "ambient_indexer_1.ets"
               }
             }
@@ -925,7 +767,7 @@
       "program": "ambient_indexer_1.ets"
     },
     "end": {
-      "line": 23,
+      "line": 19,
       "column": 1,
       "program": "ambient_indexer_1.ets"
     }

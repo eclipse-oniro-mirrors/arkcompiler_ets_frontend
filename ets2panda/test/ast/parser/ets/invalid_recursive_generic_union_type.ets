@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,14 +18,6 @@
 // ArkTS does not support recursive type aliases or type declarations inside namespaces.
 // We flatten the structure and define types globally to avoid unsupported features.
 
-type Container<T> = T | { [i: string]: Container<T> };
+declare type Container<T> = T | { [i: string]: Container<T> };
 
-declare namespace Test1 {
-}
-
-
-/* @@? 21:25 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 21:28 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 21:49 Error Syntax error ESY0227: Unexpected token '<'. */
-/* @@? 21:51 Error Syntax error ESY0121: Field type annotation expected. */
-/* @@? 21:51 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 21:33 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */

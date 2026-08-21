@@ -13,6 +13,11 @@
 
 warning:
 
+
+- name: AMBIENT_NON_AMBIENT_MIXED
+  id: 293075
+  message: "Ambient and non-ambient declarations cannot be mixed in the same module."
+
 - name: ANNOTATION_UNUSED_GENERIC_ALIAS_WARN
   id: 9
   message: "Type alias generic parameter '{}' is not used in type annotation"
@@ -272,7 +277,6 @@ warning:
   strict: true
   softlist: ["allow_implicit_export"]
   hardlist: ["disallow_implicit_export"]
-
 graveyard:
 - 18
 - 27

@@ -19,12 +19,12 @@ declare namespace MySpace{
     }
 }
 
-@interface MySpace.ClassAuthor {
+declare @interface MySpace.ClassAuthor {
     authorName: string = "Jima"
 }
 
-/* @@? 16:19 Error Semantic error ESE0351: Variable 'MySpace' has already been declared. */
 /* @@? 16:19 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 22:19 Error Syntax error ESY0230: Expected '{', got '.'. */
-/* @@? 22:32 Error Semantic error ESE1111: Missing type annotation for the 'ClassAuthor'. */
-/* @@? 22:32 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 16:19 Error Semantic error ESE0351: Variable 'MySpace' has already been declared. */
+/* @@? 22:27 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 22:40 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 22:40 Error Semantic error ESE1111: Missing type annotation for the 'ClassAuthor'. */

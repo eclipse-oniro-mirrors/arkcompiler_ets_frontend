@@ -19,10 +19,11 @@ class MyIterable implements Iterator<String> {
   }
 }
 
-declare interface IterableInterface  {
-  [Symbol.iterator](): MyIterable
+interface IterableInterface  {
+  $_iterator(): MyIterable
 }
 
  function main(){
    let map = new Map<string,IterableInterface>();
  }
+

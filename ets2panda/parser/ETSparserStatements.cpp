@@ -59,6 +59,7 @@
 #include "ir/module/importSpecifier.h"
 #include "ir/module/exportSpecifier.h"
 #include "ir/module/exportNamedDeclaration.h"
+#include "ir/module/exportDefaultDeclaration.h"
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/blockStatement.h"
@@ -115,6 +116,69 @@ namespace ark::es2panda::parser {
 class FunctionContext;
 
 using namespace std::literals::string_literals;
+
+// Peel export wrappers so ambient checks see the real declaration (class/function/...).
+// Most `export declare class` nodes already carry DECLARE on the declaration itself;
+// this covers ExportNamed/DefaultDeclaration forms.
+static ir::AstNode *UnwrapExportedDeclaration(ir::Statement *stmt)
+{
+    if (stmt->IsExportNamedDeclaration()) {
+        return const_cast<ir::AstNode *>(stmt->AsExportNamedDeclaration()->Decl());
+    }
+    if (stmt->IsExportDefaultDeclaration()) {
+        return const_cast<ir::AstNode *>(stmt->AsExportDefaultDeclaration()->Decl());
+    }
+    return stmt;
+}
+
+static bool IsNeutralForAmbientMix(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return true;
+    }
+    // Imports/re-exports do not participate in ambient/non-ambient mix checks.
+    // Type aliases and interfaces are declarations and must not be mixed with ambient decls.
+    if (node->IsETSImportDeclaration() || node->IsETSReExportDeclaration()) {
+        return true;
+    }
+    if (node->IsExpressionStatement()) {
+        auto *expr = node->AsExpressionStatement()->GetExpression();
+        return expr != nullptr && expr->IsStringLiteral() &&
+               expr->AsStringLiteral()->Str() == compiler::Signatures::STATIC_PROGRAM_FLAG;
+    }
+    return false;
+}
+
+void ETSParser::CheckAmbientNonAmbientMix(const ArenaVector<ir::Statement *> &statements)
+{
+    // Declaration modules are ambient by nature and get rewritten later.
+    if (GetProgram()->IsDeclarationModule()) {
+        return;
+    }
+
+    bool hasAmbient = false;
+    for (auto *stmt : statements) {
+        auto *node = UnwrapExportedDeclaration(stmt);
+        if (IsNeutralForAmbientMix(node)) {
+            continue;
+        }
+        if (node->IsDeclare() || stmt->IsDeclare()) {
+            hasAmbient = true;
+            break;
+        }
+    }
+    if (!hasAmbient) {
+        return;
+    }
+
+    for (auto *stmt : statements) {
+        auto *node = UnwrapExportedDeclaration(stmt);
+        if (IsNeutralForAmbientMix(node) || node->IsDeclare() || stmt->IsDeclare()) {
+            continue;
+        }
+        LogError(diagnostic::AMBIENT_NON_AMBIENT_MIXED, {}, stmt->Start());
+    }
+}
 
 static bool CanOmitSemicolonBeforeTokenOnSameLine(const ir::Statement *statement, const lexer::Token &token)
 {
@@ -330,6 +394,7 @@ ir::Statement *ETSParser::ParseAnnotationsInStatement(StatementParsingFlags flag
 ArenaVector<ir::Statement *> ETSParser::ParseTopLevelDeclaration()
 {
     auto topStatements = ParseTopLevelStatements();
+    CheckAmbientNonAmbientMix(topStatements);
     Lexer()->NextToken();
     return topStatements;
 }

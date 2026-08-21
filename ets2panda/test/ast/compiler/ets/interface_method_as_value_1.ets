@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,18 @@
  * limitations under the License.
  */
 
-declare function g(a: string): void;
+function g(a: string): void {}
 let gg: (a: string)=>void = g;
 
 interface Obj<T> {
     method(value: T): void;
 }
 
-declare const o1: Obj<string>;
+class ObjImpl implements Obj<string> {
+    method(value: string): void {}
+}
+
+const o1: Obj<string> = new ObjImpl();
 
 gg = o1.method;
 

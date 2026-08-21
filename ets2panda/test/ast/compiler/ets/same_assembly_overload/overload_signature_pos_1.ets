@@ -14,7 +14,7 @@
  */
 
 //Without rest parameter
-export class A<T> {}
+export declare class A<T> {}
 export declare function foo(a:A<number>):void
 export declare function foo(a:A<string>):number
 export declare function foo(a:int, b:int):void

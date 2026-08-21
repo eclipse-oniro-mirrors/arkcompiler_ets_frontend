@@ -19,9 +19,9 @@
  * the `this` keyword is able to resolve the correct ContainingClass.
  */
 
-declare class A {
-    on(type: 'A', cb: () => void): void
-    on(type: 'B', cb: () => void): void
+class A {
+    on(type: 'A', cb: () => void): void {}
+    on(type: 'B', cb: () => void): void {}
 }
 
 let a = new A();
@@ -35,3 +35,4 @@ class B {
     }
 }
 /* @@? 24:5 Error Semantic error ESE0131: Function on with this assembly signature already declared. */
+

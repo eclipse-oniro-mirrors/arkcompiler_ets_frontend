@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,9 @@ interface Issue {
 	title : string
 	description : string
 }
-declare type type_utility = Partial<Issue>;
+type type_utility = Partial<Issue>;
 
 let a : type_utility = {description : 1234}
 
-
 /* @@? 22:39 Error Semantic error ESE0319: Type 'Int' is not compatible with type 'String|undefined' at property 'description' */
+

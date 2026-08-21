@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,20 +42,22 @@ type MixedType<N extends number, S extends string, B extends boolean> = {
 };
 
 // Test instantiation to trigger ValidateGenericTypeAliasForClonedNode
-declare const num: NumAlias<42>;
-declare const str: StrAlias<"test">;
-declare const bool: BoolAlias<true>;
-
+const num: NumAlias<42>;
+const str: StrAlias<"test">;
+const bool: BoolAlias<true>;
 
 /* @@? 37:73 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 38:16 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 39:16 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 40:17 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 45:29 Error Syntax error ESY0138: Invalid Type. */
-/* @@? 45:29 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 45:29 Error Syntax error ESY0227: Unexpected token '>'. */
-/* @@? 45:32 Error Syntax error ESY0227: Unexpected token ';'. */
-/* @@? 47:31 Error Syntax error ESY0138: Invalid Type. */
-/* @@? 47:31 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 47:31 Error Syntax error ESY0227: Unexpected token '>'. */
-/* @@? 47:36 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 45:7 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 45:21 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 45:21 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 45:21 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 45:24 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 46:7 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 47:7 Error Semantic error ESE0363: Missing initializer in const declaration */
+/* @@? 47:23 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 47:23 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 47:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 47:28 Error Syntax error ESY0227: Unexpected token ';'. */

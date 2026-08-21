@@ -14,15 +14,15 @@
  */
 
 class A<T> {}
-declare function foo(a:A<number>):void
-declare function foo(a:A<string>):number
-declare function foo(a:int, b:int):void
-declare function foo(a:double):void
-declare function foo(...args:string[]):void
+function foo(a:A<number>):void {}
+function foo(a:A<string>):number { return 0 }
+function foo(a:int, b:int):void {}
+function foo(a:double):void {}
+function foo(...args:string[]):void {}
 let b :A<number>
 foo(b)
 foo(1,2)
 foo(1.1)
 
-
 /* @@? 18:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+

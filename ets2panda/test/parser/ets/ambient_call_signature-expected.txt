@@ -378,14 +378,14 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "ambient_call_signature.ets"
+                  "line": 1,
+                  "column": 1,
+                  "program": null
                 },
                 "end": {
-                  "line": 20,
-                  "column": 14,
-                  "program": "ambient_call_signature.ets"
+                  "line": 1,
+                  "column": 1,
+                  "program": null
                 }
               }
             },
@@ -403,14 +403,14 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "ambient_call_signature.ets"
+                      "line": 1,
+                      "column": 1,
+                      "program": null
                     },
                     "end": {
-                      "line": 20,
-                      "column": 14,
-                      "program": "ambient_call_signature.ets"
+                      "line": 1,
+                      "column": 1,
+                      "program": null
                     }
                   }
                 },
@@ -420,108 +420,42 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "CallExpression",
-                        "callee": {
-                          "type": "Identifier",
-                          "name": "A",
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 5,
-                              "program": "ambient_call_signature.ets"
-                            },
-                            "end": {
-                              "line": 21,
-                              "column": 6,
-                              "program": "ambient_call_signature.ets"
-                            }
-                          }
-                        },
-                        "arguments": [
-                          {
-                            "type": "NumberLiteral",
-                            "value": 2,
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 7,
-                                "program": "ambient_call_signature.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 8,
-                                "program": "ambient_call_signature.ets"
-                              }
-                            }
-                          }
-                        ],
-                        "optional": false,
-                        "loc": {
-                          "start": {
-                            "line": 21,
-                            "column": 5,
-                            "program": "ambient_call_signature.ets"
-                          },
-                          "end": {
-                            "line": 21,
-                            "column": 9,
-                            "program": "ambient_call_signature.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 21,
-                          "column": 5,
-                          "program": "ambient_call_signature.ets"
-                        },
-                        "end": {
-                          "line": 21,
-                          "column": 9,
-                          "program": "ambient_call_signature.ets"
-                        }
-                      }
-                    }
-                  ],
+                  "statements": [],
                   "loc": {
                     "start": {
-                      "line": 20,
-                      "column": 17,
+                      "line": 1,
+                      "column": 1,
                       "program": "ambient_call_signature.ets"
                     },
                     "end": {
-                      "line": 22,
-                      "column": 2,
+                      "line": 1,
+                      "column": 1,
                       "program": "ambient_call_signature.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 20,
-                    "column": 10,
+                    "line": 1,
+                    "column": 1,
                     "program": "ambient_call_signature.ets"
                   },
                   "end": {
-                    "line": 22,
-                    "column": 2,
+                    "line": 1,
+                    "column": 1,
                     "program": "ambient_call_signature.ets"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 20,
-                  "column": 10,
+                  "line": 1,
+                  "column": 1,
                   "program": "ambient_call_signature.ets"
                 },
                 "end": {
-                  "line": 22,
-                  "column": 2,
+                  "line": 1,
+                  "column": 1,
                   "program": "ambient_call_signature.ets"
                 }
               }
@@ -529,13 +463,13 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 20,
+                "line": 1,
                 "column": 1,
                 "program": "ambient_call_signature.ets"
               },
               "end": {
-                "line": 22,
-                "column": 2,
+                "line": 1,
+                "column": 1,
                 "program": "ambient_call_signature.ets"
               }
             }
@@ -575,7 +509,7 @@
       "program": "ambient_call_signature.ets"
     },
     "end": {
-      "line": 23,
+      "line": 19,
       "column": 1,
       "program": "ambient_call_signature.ets"
     }

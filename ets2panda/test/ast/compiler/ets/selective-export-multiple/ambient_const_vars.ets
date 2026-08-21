@@ -15,8 +15,8 @@
 
 // this file is imported and used by `./import_ambient_const_neg.ets`
 
-export declare const double_1: double;
-declare const double_2: double, double_3: double;
+export const double_1: double = 0.0;
+const double_2: double = 0.0, double_3: double = 0.0;
 export { double_3 }
 
 let double_4: double = 1.0;

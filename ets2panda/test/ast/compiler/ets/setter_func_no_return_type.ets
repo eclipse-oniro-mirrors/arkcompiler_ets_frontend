@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-export declare class Class1 {
-    set setX/* @@ label */(x: string): string
+export class Class1 {
+    set setX/* @@ label */(x: string): string {}
 }
 
 class Class2 {
@@ -33,3 +33,4 @@ class Class3 {
 /* @@@ label Error Syntax error ESY0241: Setter must not have return type even if it is void. */
 /* @@@ label1 Error Syntax error ESY0241: Setter must not have return type even if it is void. */
 /* @@@ label2 Error Syntax error ESY0241: Setter must not have return type even if it is void. */
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@
  * Can not moved into ast/compiler while #19557 isn't resolved
  */
 
-export declare enum AmbientColor  { Yellow }
+export enum AmbientColor  { Yellow }
 
 export enum Color {
     Red, Blue = 42, Green

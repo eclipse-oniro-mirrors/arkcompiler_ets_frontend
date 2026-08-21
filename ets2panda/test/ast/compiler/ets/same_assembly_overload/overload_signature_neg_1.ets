@@ -15,10 +15,7 @@
 
 //declare function has body
 export class A<T> {}
-export declare function foo(a:A<number>):void
-export declare function foo(a:A<string>):number {}
-
+export function foo(a:A<number>):void {}
+export function foo(a:A<string>):number {}
 
 /* @@? 19:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
-/* @@? 19:49 Error Syntax error ESY0331: Ambient functions, constructors, and methods cannot have bodies. Ambient modules and namespaces can contain only ambient declarations. */
-/* @@? 19:49 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

@@ -21,9 +21,9 @@ interface BType {
     f(): void;
 }
 
-declare const x: AType | BType;
+function test(x: AType | BType) {
+    (x as AType | BType).f;
+}
 
-(x as AType | BType).f;
-
-/* @@? 26:1 Error Semantic error ESE186623: Union member method reference is not supported now */
-/* @@? 26:2 Warning Warning W670214: This cast can be excessive because it always succeeds */
+/* @@? 25:5 Error Semantic error ESE186623: Union member method reference is not supported now */
+/* @@? 25:6 Warning Warning W670214: This cast can be excessive because it always succeeds */

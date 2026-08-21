@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,15 +19,11 @@ declare interface XXX {
     default goo(a: number, b: string): void
 }
 
-interface YYY {
+declare interface YYY {
       goo(): void
-      bar(): void {}
+      bar(): void
 }
 
-class AAA implements XXX {
-
+declare class AAA implements XXX {
 }
 
-let aaa = new AAA();
-
-aaa.goo();

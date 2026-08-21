@@ -24,6 +24,109 @@
         "implements": [],
         "body": [
           {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "main",
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": true,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "main",
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "declare_ambient_const_variable.ets"
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "declare_ambient_const_variable.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "declare_ambient_const_variable.ets"
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "declare_ambient_const_variable.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "declare_ambient_const_variable.ets"
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "declare_ambient_const_variable.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": "declare_ambient_const_variable.ets"
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": "declare_ambient_const_variable.ets"
+              }
+            }
+          },
+          {
             "type": "ClassProperty",
             "key": {
               "type": "Identifier",
@@ -106,156 +209,6 @@
                 "program": "declare_ambient_const_variable.ets"
               }
             }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "main",
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 10,
-                  "program": "declare_ambient_const_variable.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 14,
-                  "program": "declare_ambient_const_variable.ets"
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "main",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 10,
-                      "program": "declare_ambient_const_variable.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 14,
-                      "program": "declare_ambient_const_variable.ets"
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "returnType": {
-                  "type": "ETSPrimitiveType",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 19,
-                      "program": "declare_ambient_const_variable.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 22,
-                      "program": "declare_ambient_const_variable.ets"
-                    }
-                  }
-                },
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ReturnStatement",
-                      "argument": {
-                        "type": "NumberLiteral",
-                        "value": 0,
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 12,
-                            "program": "declare_ambient_const_variable.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 13,
-                            "program": "declare_ambient_const_variable.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 5,
-                          "program": "declare_ambient_const_variable.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 14,
-                          "program": "declare_ambient_const_variable.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 23,
-                      "program": "declare_ambient_const_variable.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 2,
-                      "program": "declare_ambient_const_variable.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 18,
-                    "column": 10,
-                    "program": "declare_ambient_const_variable.ets"
-                  },
-                  "end": {
-                    "line": 20,
-                    "column": 2,
-                    "program": "declare_ambient_const_variable.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 10,
-                  "program": "declare_ambient_const_variable.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 2,
-                  "program": "declare_ambient_const_variable.ets"
-                }
-              }
-            },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 18,
-                "column": 1,
-                "program": "declare_ambient_const_variable.ets"
-              },
-              "end": {
-                "line": 20,
-                "column": 2,
-                "program": "declare_ambient_const_variable.ets"
-              }
-            }
           }
         ],
         "loc": {
@@ -292,8 +245,8 @@
       "program": "declare_ambient_const_variable.ets"
     },
     "end": {
-      "line": 20,
-      "column": 2,
+      "line": 17,
+      "column": 1,
       "program": "declare_ambient_const_variable.ets"
     }
   }

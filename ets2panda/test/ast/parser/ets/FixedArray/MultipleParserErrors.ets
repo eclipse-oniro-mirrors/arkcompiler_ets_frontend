@@ -122,9 +122,9 @@ function foo<T, U>(a: T, case: U): T {
 
 let ,abc = 0;
 
-declare async function foo(): Promise<void>
+async function foo(): Promise<void>
 
-declare function addResult(): number;
+function addResult(): number;
 
 function main(): void {
     try {
@@ -271,8 +271,9 @@ function main(): void {
 /* @@? 123:6 Error Syntax error ESY0227: Unexpected token 'abc'. */
 /* @@? 123:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error Semantic error ESE0143: Unresolved reference abc */
-/* @@? 125:24 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => Promise<undefined>' will never be selected for a call, as the preceding entity with the signature '(param: Object|undefined) => undefined' prevails. */
-/* @@? 127:1 Error Syntax error ESY0106: The modifier async cannot be used in an ambient context. */
+/* @@? 125:16 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 125:16 Warning Warning W2323: The order of entities in an overload set implies that the overloaded entity with the signature '() => Promise<undefined>' will never be selected for a call, as the preceding entity with the signature '(param: Object|undefined) => undefined' prevails. */
+/* @@? 127:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 132:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
 /* @@? 137:16 Error Syntax error ESY0230: Expected ')', got '='. */
@@ -299,4 +300,4 @@ function main(): void {
 /* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
-/* @@? 303:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 304:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-declare namespace api {
-    class A{}
+namespace api {
+    export class A{}
 }
 
 export default api
