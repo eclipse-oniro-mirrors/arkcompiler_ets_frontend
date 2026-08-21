@@ -33,7 +33,7 @@ let non_prim_c: Char = c'b';
 let s: String = "abc";
 
 // see 3.2.2 Array types
-let a: FixedArray<int> = new FixedArray<int>(5)
+let a: FixedArray<int> = new FixedArray<int>(5, 0)
 
 
 /* @@? 23:25 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */

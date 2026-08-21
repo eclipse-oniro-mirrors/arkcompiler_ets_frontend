@@ -113,7 +113,7 @@ function arrays(): void {
                     force(() => {
                         a3[3] = a2[2];
                         arktest.assertEQ(a0[0] + a0[1] + a0[2] + a0[3], 4)
-                        a0 = new FixedArray<double>(5);
+                        a0 = new FixedArray<double>(5, 0);
                         arktest.assertEQ(a0.length, 5)
                         arktest.assertEQ(a0[0] + a0[1] + a0[2] + a0[3] + a0[4], 0)
                         arktest.assertEQ(a1[0] + a1[1] + a1[2] + a1[3], 4)

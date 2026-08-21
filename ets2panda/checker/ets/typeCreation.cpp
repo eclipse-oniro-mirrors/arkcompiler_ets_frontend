@@ -606,11 +606,23 @@ std::tuple<util::StringView, SignatureInfo *> ETSChecker::CreateBuiltinArraySign
         auto *paramVar =
             varbinder::Scope::CreateVar(ProgramAllocator(), param.View(), varbinder::VariableFlags::NONE, nullptr);
         ES2PANDA_ASSERT(paramVar != nullptr);
-        paramVar->SetTsType(GlobalIntType());
+        paramVar->SetTsType(GlobalIntBuiltinType());
 
         info->params.push_back(paramVar);
 
         ss << compiler::Signatures::MANGLE_SEPARATOR << compiler::Signatures::PRIMITIVE_INT;
+    }
+    // Spec-defined constructor for 1-D arrays: (len: int, elem: T)
+    if (dim == 1U) {
+        util::UString param(util::StringView("elem"), ProgramAllocator());
+        auto *paramVar =
+            varbinder::Scope::CreateVar(ProgramAllocator(), param.View(), varbinder::VariableFlags::NONE, nullptr);
+        ES2PANDA_ASSERT(paramVar != nullptr);
+        paramVar->SetTsType(MaybeBoxType(const_cast<checker::Type *>(arrayType->ElementType())));
+        info->params.push_back(paramVar);
+        info->minArgCount = 2U;
+        ss << compiler::Signatures::MANGLE_SEPARATOR;
+        arrayType->ElementType()->ToAssemblerTypeWithRank(ss);
     }
 
     ss << compiler::Signatures::MANGLE_SEPARATOR << compiler::Signatures::PRIMITIVE_VOID

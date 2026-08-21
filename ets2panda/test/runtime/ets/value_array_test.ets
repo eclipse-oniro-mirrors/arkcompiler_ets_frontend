@@ -57,7 +57,7 @@ function testPrimitiveArrays() {
 }
 
 function testNewConstructor() {
-    let arr1 = new ValueArray<int>(10);
+    let arr1 = new ValueArray<int>(10, 0);
     arktest.assertEQ(arr1.length, 10);
     arktest.assertEQ(arr1[0], 0); // default initialized to 0
     arr1[9] = 42;
@@ -121,7 +121,7 @@ function testGenericFunctions() {
 }
 
 function testBoundsChecking() {
-    let arr: ValueArray<int> = new ValueArray<int>(5);
+    let arr: ValueArray<int> = new ValueArray<int>(5, 0);
     arr[0] = 100;
     arr[4] = 200;
     arktest.assertEQ(arr[0], 100);
@@ -211,24 +211,24 @@ function testEdgeCases() {
     arktest.assertEQ(single.length, 1);
     arktest.assertEQ(single[0], 3.14);
 
-    let large = new ValueArray<int>(1000);
+    let large = new ValueArray<int>(1000, 0);
     arktest.assertEQ(large.length, 1000);
     large[999] = 9999;
     arktest.assertEQ(large[999], 9999);
 
-    let defaultInts = new ValueArray<int>(5);
+    let defaultInts = new ValueArray<int>(5, 0);
     arktest.assertEQ(defaultInts[0], 0);
     arktest.assertEQ(defaultInts[4], 0);
 
-    let defaultBools = new ValueArray<boolean>(3);
+    let defaultBools = new ValueArray<boolean>(3, false);
     arktest.assertEQ(defaultBools[0], false);
 
-    let defaultDoubles = new ValueArray<double>(2);
+    let defaultDoubles = new ValueArray<double>(2, 0);
     arktest.assertEQ(defaultDoubles[0], 0.0);
 }
 
 function testPerformancePatterns() {
-    let values: ValueArray<double> = new ValueArray<double>(100);
+    let values: ValueArray<double> = new ValueArray<double>(100, 0);
     for (let i = 0; i < values.length; i++) {
         values[i] = i * 1.5;
     }

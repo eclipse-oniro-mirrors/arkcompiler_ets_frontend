@@ -20,7 +20,7 @@ export class AccessNSieve {
   static isPrime: FixedArray<boolean>
 
   public setup(): void {
-    AccessNSieve.isPrime = new FixedArray<boolean>((1 << AccessNSieve.n1) * AccessNSieve.n2 + 1)
+    AccessNSieve.isPrime = new FixedArray<boolean>((1 << AccessNSieve.n1) * AccessNSieve.n2 + 1, false)
   }
 
   private static nsieve(m: int): int {
