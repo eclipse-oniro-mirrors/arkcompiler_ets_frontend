@@ -62,7 +62,7 @@ describe('buildDeclgenOutputPath', () => {
 
         const outputPaths = buildDeclgenOutputPath(inputFile, moduleInfo);
 
-        expect(outputPaths.declEtsOutputPath).toBe(path.join(testDir, 'decl', 'module', 'src', 'index.d.ets'));
+        expect(outputPaths.declEtsOutputPath).toBe(path.join(testDir, 'decl', 'src', 'index.d.ets'));
         expect(outputPaths.glueCodeOutputPath).toBeUndefined();
     });
 

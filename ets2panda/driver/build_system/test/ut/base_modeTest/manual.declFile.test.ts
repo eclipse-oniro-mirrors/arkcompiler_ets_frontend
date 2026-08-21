@@ -327,7 +327,7 @@ describe('BaseMode declaration file map management tests', () => {
     test('loadDeclFileMap loads declaration file map correctly', () => {
         const mockData = {
             '/test/source/file1.ets': {
-                delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+                delFilePath: '/test/declgen/v1/src/file1.d.ets',
                 declLastModified: 1700000000000,
                 sourceFilePath: '/test/source/file1.ets',
                 sourceFileLastModified: 1700000000500
@@ -362,7 +362,7 @@ describe('BaseMode declaration file map management tests', () => {
 
         const result = testMode.testGetOutputFilePath(file);
 
-        expect(result).toBe('/test/declgen/v1/test-package/src/components/MyComponent.d.ets');
+        expect(result).toBe('/test/declgen/v1/src/components/MyComponent.d.ets');
     });
 
     test('needsBackup returns false when files do not exist', async () => {
@@ -388,7 +388,7 @@ describe('BaseMode declaration file map management tests', () => {
                                  }));
 
         testMode.getDeclFileMap().set(file, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
@@ -420,7 +420,7 @@ describe('BaseMode declaration file map management tests', () => {
                                  }));
 
         testMode.getDeclFileMap().set(file, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
@@ -545,7 +545,7 @@ describe('BaseMode declaration file map management tests', () => {
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 2000
@@ -563,7 +563,7 @@ describe('BaseMode declaration file map management tests', () => {
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 1000
@@ -581,7 +581,7 @@ describe('BaseMode declaration file map management tests', () => {
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: null
@@ -626,7 +626,7 @@ describe('BaseMode declaration file map management tests', () => {
                                  }));
 
         testMode.getDeclFileMap().set(sourceFile, {
-            delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
+            delFilePath: '/test/declgen/v1/src/file1.d.ets',
             declLastModified: currentTime - 2000,
             sourceFilePath: sourceFile,
             sourceFileLastModified: currentTime - 1500
@@ -790,7 +790,7 @@ describe('BaseMode declaration file map management tests', () => {
         testMode.declFileMap = new Map<string, any>([
             [
                 fileA, {
-                    delFilePath: '/output/test-package/src/A.d.ets',
+                    delFilePath: '/output/src/A.d.ets',
                     declLastModified: 1000,
                     glueCodeFilePath: '/bridge/test-package/src/A.ts',
                     glueCodeLastModified: 1000,
@@ -800,7 +800,7 @@ describe('BaseMode declaration file map management tests', () => {
             ],
             [
                 fileB, {
-                    delFilePath: '/output/test-package/src/B.d.ets',
+                    delFilePath: '/output/src/B.d.ets',
                     declLastModified: 1000,
                     glueCodeFilePath: '/bridge/test-package/src/B.ts',
                     glueCodeLastModified: 1000,
@@ -810,7 +810,7 @@ describe('BaseMode declaration file map management tests', () => {
             ],
             [
                 fileC, {
-                    delFilePath: '/output/test-package/src/C.d.ets',
+                    delFilePath: '/output/src/C.d.ets',
                     declLastModified: 1000,
                     glueCodeFilePath: '/bridge/test-package/src/C.ts',
                     glueCodeLastModified: 1000,
@@ -972,7 +972,7 @@ describe('BaseMode declaration file map management tests', () => {
         testMode.declFileMap = new Map<string, any>([
             [
                 fileA, {
-                    delFilePath: '/output/test-package/src/A.d.ets',
+                    delFilePath: '/output/src/A.d.ets',
                     declLastModified: 1000,
                     glueCodeFilePath: '/bridge/test-package/src/A.ts',
                     glueCodeLastModified: 1000,
@@ -982,7 +982,7 @@ describe('BaseMode declaration file map management tests', () => {
             ],
             [
                 fileB, {
-                    delFilePath: '/output/test-package/src/B.d.ets',
+                    delFilePath: '/output/src/B.d.ets',
                     declLastModified: 900,
                     glueCodeFilePath: '/bridge/test-package/src/B.ts',
                     glueCodeLastModified: 1000,
@@ -992,7 +992,7 @@ describe('BaseMode declaration file map management tests', () => {
             ],
             [
                 fileC, {
-                    delFilePath: '/output/test-package/src/C.d.ets',
+                    delFilePath: '/output/src/C.d.ets',
                     declLastModified: 1000,
                     glueCodeFilePath: '/bridge/test-package/src/C.ts',
                     glueCodeLastModified: 1000,
