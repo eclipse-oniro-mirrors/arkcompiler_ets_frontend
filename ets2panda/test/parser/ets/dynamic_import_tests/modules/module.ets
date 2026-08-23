@@ -60,6 +60,11 @@ export declare class MyError extends Error {
     mycode: number
 }
 
+export declare enum MyEnum {
+    A = 1,
+    B = 2
+}
+
 export declare interface OptionalInterface {
     s?: string
 }
