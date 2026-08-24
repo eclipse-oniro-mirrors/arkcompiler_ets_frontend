@@ -97,7 +97,7 @@ public:
 
     static Diagnostic GetWarningDiagnostic(es2panda_Context *context, const std::string &expectedMessage)
     {
-        auto diagnostics = GetImpl()->getSyntacticDiagnostics(context);
+        auto diagnostics = GetImpl()->getSemanticDiagnostics(context);
         for (const auto &diagnostic : diagnostics.diagnostic) {
             if (diagnostic.message_ == expectedMessage) {
                 return diagnostic;
@@ -108,7 +108,7 @@ public:
 
     static Diagnostic GetWarningDiagnosticByCode(es2panda_Context *context, int expectedCode)
     {
-        auto diagnostics = GetImpl()->getSyntacticDiagnostics(context);
+        auto diagnostics = GetImpl()->getSemanticDiagnostics(context);
         for (const auto &diagnostic : diagnostics.diagnostic) {
             if (std::holds_alternative<int>(diagnostic.code_) && std::get<int>(diagnostic.code_) == expectedCode) {
                 return diagnostic;

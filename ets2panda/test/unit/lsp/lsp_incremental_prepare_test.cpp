@@ -68,6 +68,7 @@ TEST_F(LspIncrementalPrepareTest, IncrementalPrepareInvalidatesChangedExportWith
             import { Unrelated } from "./unrelated.ets";
             let value: Source | null = null;
             let unrelated: Unrelated | null = null;
+            console.log(value, unrelated);
         )ETS",
     };
     auto filePaths = CreateTempFile(files, texts);

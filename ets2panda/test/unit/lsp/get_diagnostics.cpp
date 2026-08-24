@@ -54,7 +54,9 @@ let res = add(n, n);)");
     LSPAPI const *lspApi = GetImpl();
     DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
     initializer.DestroyContext(ctx);
-    ASSERT_EQ(result.diagnostic.size(), 0);
+    ASSERT_EQ(result.diagnostic.size(), 1);
+    ASSERT_EQ(result.diagnostic[0].severity_, DiagnosticSeverity::Warning);
+    ASSERT_EQ(result.diagnostic[0].message_, "'res' is never used");
 }
 
 TEST_F(LspDiagnosticsTests, GetSemanticDiagnostics2)
@@ -286,5 +288,9 @@ export function foo2(){})"};
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
     initializer.DestroyContext(ctx);
-    ASSERT_EQ(result.diagnostic.size(), 0);
+    ASSERT_EQ(result.diagnostic.size(), 1);
+    ASSERT_EQ(result.diagnostic[0].severity_, DiagnosticSeverity::Warning);
+    ASSERT_EQ(result.diagnostic[0].message_, "'foo2' is never used");
+    ASSERT_TRUE(std::holds_alternative<std::string>(result.diagnostic[0].data_));
+    ASSERT_EQ(std::get<std::string>(result.diagnostic[0].data_), "unusedSymbol");
 }

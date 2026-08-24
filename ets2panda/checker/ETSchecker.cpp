@@ -31,6 +31,7 @@
 #include "checker/ets/aliveAnalyzer.h"
 #include "checker/ets/assignAnalyzer.h"
 #include "checker/ets/etsWarningAnalyzer.h"
+#include "checker/ets/unusedVarsAnalyzer.h"
 #include "checker/types/globalTypesHolder.h"
 #include "ir/base/scriptFunction.h"
 #include "util/helpers.h"
@@ -385,6 +386,11 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
 
     if (options.IsDumpDynamicAst()) {
         std::cout << Program()->Dump() << std::endl;
+    }
+
+    if (!IsAnyError() && options.IsUnusedVarsAnalyzer()) {
+        UnusedVarsAnalyzer unusedVarsAnalyzer(DiagnosticEngine());
+        unusedVarsAnalyzer.Analyze(Program()->Ast());
     }
 
     CheckWarnings(Program(), options);

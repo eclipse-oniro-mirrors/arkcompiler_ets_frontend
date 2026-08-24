@@ -25,7 +25,7 @@ describe('getCodeFixesAtPositionTest', () => {
           textChanges: [
             {
               span: {
-                start: 995,
+                start: 996,
                 length: 6
               },
               newText: ''

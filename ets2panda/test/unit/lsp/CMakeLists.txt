@@ -50,6 +50,11 @@ ets2panda_add_gtest(lsp_diagnostic_test CPP_SOURCES
     diagnostic_test.cpp
 )
 
+ets2panda_add_gtest(lsp_unused_warning_diagnostic_test CPP_SOURCES
+    unused_warning_diagnostic_test.cpp
+    unused_warning_ast_coverage_test.cpp
+)
+
 ets2panda_add_gtest(lsp_isolated_declaration_test CPP_SOURCES
     isolated_declaration.cpp
 )
