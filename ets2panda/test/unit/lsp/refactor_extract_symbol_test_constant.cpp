@@ -1569,4 +1569,265 @@ let a = newLocal;
     initializer->DestroyContext(refactorContext->context);
 }
 
+TEST_F(LspExtrSymblGetEditsTestsConstant, ExtractConstant31)
+{
+    const std::string code = R"(
+class C {
+  a = 1;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+    let b = 1;
+    let x = 1;
+  }
+}
+)";
+    const std::string expected = R"(
+class C {
+  a = 1;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+    const newLocal: Int = 1;
+    let b = newLocal;
+    let x = newLocal;
+  }
+}
+)";
+    const std::string target = "let x = 1";
+    const size_t spanStart = code.find(target) + target.rfind("1");
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + 1U;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
+    const bool hasConstantEnclose = std::any_of(applicable.begin(), applicable.end(),
+                                                [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasConstantEnclose);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripWhitespace(actual), StripWhitespace(expected));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsConstant, ExtractConstant32)
+{
+    const std::string code = R"(
+class C {
+  a = 1;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+let b = 1;
+let x = 1;
+  }
+}
+)";
+    const std::string expected = R"(
+class C {
+  const newLocal: Int = 1;
+  a = newLocal;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+    let b = newLocal;
+    let x = newLocal;
+  }
+}
+)";
+    const std::string target = "let x = 1";
+    const size_t spanStart = code.find(target) + target.rfind("1");
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + 1U;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
+    const bool hasConstantGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                               [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasConstantGlobal);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripWhitespace(actual), StripWhitespace(expected));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsConstant, ExtractConstant33)
+{
+    const std::string code = R"(
+function F() {
+  let a = 1;
+  if (true) {
+    let b = 1;
+    let c = 1;
+  }
+  let d = 1;
+}
+)";
+    const std::string expected = R"(
+function F() {
+  let a = 1;
+  if (true) {
+    const newLocal: Int = 1;
+    let b = newLocal;
+    let c = newLocal;
+  }
+  let d = 1;
+}
+)";
+    const std::string target = "let c = 1";
+    const size_t spanStart = code.find(target) + target.rfind("1");
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + 1U;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
+    const bool hasConstantEnclose = std::any_of(applicable.begin(), applicable.end(),
+                                                [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasConstantEnclose);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripWhitespace(actual), StripWhitespace(expected));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsConstant, ExtractConstant34)
+{
+    const std::string code = R"(
+let a = 1;
+function F() {
+  let b = 1;
+  let x = 1;
+}
+)";
+    const std::string expected = R"(
+const newLocal: Int = 1;
+let a = newLocal;
+function F() {
+  let b = newLocal;
+  let x = newLocal;
+}
+)";
+    const std::string target = "let a = 1";
+    const size_t spanStart = code.find(target) + target.rfind("1");
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + 1U;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
+    const bool hasConstantGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                               [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasConstantGlobal);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripWhitespace(actual), StripWhitespace(expected));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsConstant, ExtractConstant35)
+{
+    const std::string code = R"(
+'use static'
+class C {
+  a = 1;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+    let x = /*start*/1/*end*/;
+  }
+}
+)";
+    const std::string expected = R"(
+'use static'
+const newLocal: Int = 1;
+class C {
+  a = newLocal;
+  M1() { }
+  b = 2;
+  M2() { }
+  M3() {
+    let x = /*start*/newLocal/*end*/;
+  }
+}
+)";
+    const std::string target = "/*start*/1/*end*/";
+    const size_t spanStart = code.find(target) + target.rfind("1");
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + 1U;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
+    const bool hasConstantGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                               [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasConstantGlobal);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+
+    const std::string actual = ApplyEdits(code, fileEdit.textChanges);
+    EXPECT_EQ(StripWhitespace(actual), StripWhitespace(expected));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 }  // namespace

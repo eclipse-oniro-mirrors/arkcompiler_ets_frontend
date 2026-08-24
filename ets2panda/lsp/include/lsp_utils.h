@@ -16,13 +16,22 @@
 #ifndef LSP_UTILS_H
 #define LSP_UTILS_H
 
+#include <optional>
 #include <string>
+#include <vector>
+#include "types.h"
 
 namespace ark::es2panda::lsp {
 
 size_t CodePointOffsetToByteOffset(const std::string &content, size_t charOffset);
 
 size_t ByteOffsetToCodePointOffset(const std::string &content, size_t byteOffset);
+
+std::string ApplyRefactorTextChangesToSource(const std::string &source, const std::vector<TextChange> &textChanges);
+
+std::string GetRefactoredSourceForRenameLocation(const std::string &source,
+                                                 const std::vector<FileTextChanges> &fileTextChanges,
+                                                 const std::optional<std::string> &renameFileName);
 
 }  // namespace ark::es2panda::lsp
 

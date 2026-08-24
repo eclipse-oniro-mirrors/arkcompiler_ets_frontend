@@ -238,14 +238,15 @@ class Point {
 
     initializer.DestroyContext(context);
 
-    ASSERT_EQ(infos.size(), 4U);
+    ASSERT_EQ(infos.size(), 5U);
     EXPECT_TRUE(HasAction(infos, EXTRACT_SYMBOL_REFACTOR, ACTION_EXTRACT_FUNCTION_CLASS));
     EXPECT_TRUE(HasAction(infos, EXTRACT_SYMBOL_REFACTOR, ACTION_EXTRACT_FUNCTION_GLOBAL));
+    EXPECT_TRUE(HasActionKind(infos, KIND_EXTRACT_VARIABLE));
     EXPECT_TRUE(HasAction(infos, EXTRACT_TYPE_REFACTOR, ACTION_EXTRACT_TYPE));
     EXPECT_TRUE(HasAction(infos, MOVE_TO_NEW_FILE_REFACTOR, MOVE_TO_NEW_FILE_REFACTOR));
     for (const auto &info : infos) {
         if (info.name == EXTRACT_SYMBOL_REFACTOR) {
-            EXPECT_EQ(info.action.kind, KIND_EXTRACT_FUNCTION);
+            EXPECT_TRUE(info.action.kind == KIND_EXTRACT_FUNCTION || info.action.kind == KIND_EXTRACT_VARIABLE);
         }
         if (info.name == MOVE_TO_NEW_FILE_REFACTOR) {
             EXPECT_EQ(info.action.kind, KIND_MOVE_TO_NEW_FILE);
@@ -412,7 +413,8 @@ class Point {
 
     initializer.DestroyContext(context);
 
-    ASSERT_EQ(allInfos.size(), 4U);
+    ASSERT_EQ(allInfos.size(), 5U);
+    EXPECT_TRUE(HasActionKind(allInfos, KIND_EXTRACT_VARIABLE));
 
     ASSERT_EQ(moveInfos.size(), 1U);
     EXPECT_EQ(moveInfos[0].name, MOVE_TO_NEW_FILE_REFACTOR);

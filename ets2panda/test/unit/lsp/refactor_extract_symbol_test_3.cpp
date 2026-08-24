@@ -188,7 +188,7 @@ const std::array<ActionExpectation, 4> BOUNDARY_SELECTION_CASES = {{
     // name, code, target, varEnclose, varGlobal, constEnclose, constGlobal
     {"PartialBinaryOperand", BOUNDARY_PARTIAL_BINARY_CODE, "1 + 2", false, true, false, true},
     {"InitializerWithTrailingSemicolon", BOUNDARY_DECLARATION_CODE, "41 + 1;", false, false, false, false},
-    {"ReturnKeywordPrefix", BOUNDARY_RETURN_PREFIX_CODE, "return base", true, false, true, true},
+    {"ReturnKeywordPrefix", BOUNDARY_RETURN_PREFIX_CODE, "return base", true, false, true, false},
     {"IncompleteBinaryOperand", BOUNDARY_INCOMPLETE_CODE, "value *", true, false, true, false},
 }};
 
@@ -261,7 +261,7 @@ TEST_F(LspExtractSymbolBoundaryTests, WholeReturnStatementExtractsFunction)
 {
     const std::string code = BOUNDARY_RETURN_PREFIX_CODE;
     const std::string expected = R"(
-function newFunction(base: number): Double {
+function newFunction(base: number): number {
     return base + 10;
 }
 function compute(base: number): number {
@@ -311,7 +311,7 @@ TEST_F(LspExtractSymbolCaptureTests, FreeVariablesBecomeParametersInDeclarationO
 {
     const std::string code = CAPTURE_MULTIPLE_READS_CODE;
     const std::string expected = R"(
-function newFunction(base: number, factor: number): Double {
+function newFunction(base: number, factor: number): number {
     return (base + factor) * 2;
 }
 function compute(base: number, factor: number): number {
@@ -341,12 +341,12 @@ TEST_F(LspExtractSymbolCaptureTests, WrittenVariableAssignmentBecomesReturnedExp
 {
     const std::string code = CAPTURE_WRITE_AND_READ_CODE;
     const std::string expected = R"(
-function newFunction(total: number): Double {
-    return total = total + 1;
+function newFunction(total: number): number {
+    return total + 1;
 }
 function accumulate(seed: number): number {
     let total = seed;
-    newFunction(total);
+    total = newFunction(total);
     return total * 2;
 }
 )";
@@ -571,11 +571,11 @@ class Counter {
     const std::string expected = R"(
 class Counter {
     value: number = 0;
-    private newMethod(step: number): Counter {
-        return this.value = this.value + step;
+    private newMethod(step: number) {
+        this.value = this.value + step;
     }
     increase(step: number): void {
-        this.newMethod(step);
+        this.newMethod(step)
     }
 }
 )";
@@ -649,7 +649,7 @@ class BaseGreeter {
 }
 
 class SubGreeter extends BaseGreeter {
-    private newMethod(): String {
+    private newMethod(): string {
         return "say:" + super.greet();
     }
     describe(): string {
@@ -727,7 +727,7 @@ function newFunction(): number {
     return 0;
 }
 
-function newFunction_1(a: number, b: number): Double {
+function newFunction_1(a: number, b: number): number {
     return a + b;
 }
 
@@ -783,7 +783,7 @@ function first(g: number): number {
     return g;
 }
 let g = 5;
-function newFunction(): Int {
+function newFunction(): number {
     return g + 1;
 }
 
@@ -1012,10 +1012,9 @@ let origin: Point = { x: 0, y: 0 };
     initializer->DestroyContext(refactorContext->context);
 }
 
-// Covers BuildNamespaceQualifierFromScopes (extract_symbol.cpp): a free class
-// value declared inside a namespace gets its parameter type qualified with the
-// enclosing namespace when extracted to a global function.
-TEST_F(LspExtractSymbolReturnTypeFallbackTests, NamespaceClassValueParamGetsQualified)
+// A class value referenced from inside a namespace is not extracted: moving it
+// would require cross-namespace value qualification and visibility checks.
+TEST_F(LspExtractSymbolReturnTypeFallbackTests, NamespaceClassValueParamIsNotExtractable)
 {
     const std::string code = R"(
 namespace N {
@@ -1025,8 +1024,11 @@ namespace N {
     }
 }
 )";
+    const std::string declaration = "let c = ";
+    const size_t declarationStart = code.find(declaration);
+    ASSERT_NE(declarationStart, std::string::npos);
     const std::string target = "Foo";
-    const size_t spanStart = code.find(target);
+    const size_t spanStart = code.find(target, declarationStart + declaration.size());
     ASSERT_NE(spanStart, std::string::npos);
     const size_t spanEnd = spanStart + target.size();
 
@@ -1034,17 +1036,15 @@ namespace N {
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    const std::string globalAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
-    EXPECT_TRUE(HasApplicableAction(applicable, globalAction));
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, globalAction);
-    ASSERT_NE(edits, nullptr);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const auto &fileEdit = edits->GetFileTextChanges().front();
-    ASSERT_FALSE(fileEdit.textChanges.empty());
-    const std::string result = ApplyEdits(code, fileEdit.textChanges);
-    EXPECT_NE(result.find("N.Foo"), std::string::npos);
+    EXPECT_FALSE(HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name)));
+    EXPECT_FALSE(
+        HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_ENCLOSE.name)));
+    EXPECT_FALSE(HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name)));
+    EXPECT_FALSE(
+        HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name)));
+    EXPECT_FALSE(HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name)));
+    EXPECT_FALSE(
+        HasApplicableAction(applicable, std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name)));
 
     initializer->DestroyContext(refactorContext->context);
 }

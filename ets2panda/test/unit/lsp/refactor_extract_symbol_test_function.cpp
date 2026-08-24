@@ -2464,7 +2464,7 @@ TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction48)
 let str: string = 123 - 23 + 'abc';
 )";
     const std::string expected = R"(
-function newFunction(): String {
+function newFunction(): string {
   return 123 - 23 + 'abc';
 }
 
@@ -2487,6 +2487,84 @@ let str: string = newFunction();
     EXPECT_TRUE(hasGlobal);
 
     ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction49)
+{
+    const std::string code = R"(
+export function TestFunction(params: number) :void{
+  let TestLambda  = () => {
+    let FF_strVar: string = 123 - 23 + 'abc';
+  }
+}
+)";
+    const std::string expected = R"(
+function newFunction(): string {
+  return 123 - 23 + 'abc';
+}
+
+export function TestFunction(params: number) :void{
+  let TestLambda  = () => {
+    let FF_strVar: string = newFunction();
+  }
+}
+)";
+    const std::string target = R"(123 - 23 + 'abc')";
+    const size_t spanStart = code.find(target);
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + target.size();
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string globalScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const bool hasGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                       [&](const auto &info) { return info.action.name == globalScopeAction; });
+    EXPECT_TRUE(hasGlobal);
+
+    ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction50)
+{
+    const std::string code = R"(
+@Component
+struct Index {
+  @State message: string = 'Hello World'
+  build() { Row() { Column() { Text(this.message).fontSize(50).fontWeight(FontWeight.Bold)
+    Button().onClick(() => { /*start*/console.log('Button Clicked');/*end*/ }) }.width('100%') }.height('100%') }
+}
+)";
+    const std::string expected = R"(
+@Component
+struct Index {
+  @State message: string = 'Hello World'
+  build() { Row() { Column() { Text(this.message).fontSize(50).fontWeight(FontWeight.Bold)
+    Button().onClick(() => { /*start*/this.newMethod()/*end*/ }) }.width('100%') }.height('100%') }
+  private newMethod() {
+    console.log('Button Clicked');
+  }
+}
+)";
+    const std::string target = R"(console.log('Button Clicked');)";
+    const size_t spanStart = code.find(target);
+    EXPECT_NE(spanStart, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string classScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_CLASS.name);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    EXPECT_TRUE(HasApplicableAction(applicable, classScopeAction));
+    ExpectExtractionApplies(code, refactorContext, refactorName, classScopeAction, expected);
 
     initializer->DestroyContext(refactorContext->context);
 }

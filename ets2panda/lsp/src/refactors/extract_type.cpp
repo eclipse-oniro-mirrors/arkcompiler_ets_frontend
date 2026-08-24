@@ -199,6 +199,109 @@ bool ContainsOnlyIdentifierChars(std::string_view text)
     return true;
 }
 
+bool ContainsIdentifierToken(std::string_view text, std::string_view token)
+{
+    if (token.empty() || text.size() < token.size()) {
+        return false;
+    }
+    size_t pos = text.find(token);
+    while (pos != std::string_view::npos) {
+        const bool leftOk = pos == 0 || !ContainsOnlyIdentifierChars(text.substr(pos - 1, 1));
+        const size_t end = pos + token.size();
+        const bool rightOk = end >= text.size() || !ContainsOnlyIdentifierChars(text.substr(end, 1));
+        if (leftOk && rightOk) {
+            return true;
+        }
+        pos = text.find(token, end);
+    }
+    return false;
+}
+
+const ir::TSTypeParameterDeclaration *GetTypeParameterDeclaration(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+    if (node->IsClassDeclaration()) {
+        auto *definition = node->AsClassDeclaration()->Definition();
+        return definition == nullptr ? nullptr : definition->TypeParams();
+    }
+    if (node->IsClassDefinition()) {
+        return node->AsClassDefinition()->TypeParams();
+    }
+    if (node->IsTSInterfaceDeclaration()) {
+        return node->AsTSInterfaceDeclaration()->TypeParams();
+    }
+    if (node->IsTSTypeAliasDeclaration()) {
+        return node->AsTSTypeAliasDeclaration()->TypeParams();
+    }
+    if (node->IsScriptFunction()) {
+        return node->AsScriptFunction()->TypeParams();
+    }
+    return nullptr;
+}
+
+bool ContainsParameterName(const std::vector<std::string> &params, const std::string &name)
+{
+    for (const auto &param : params) {
+        if (param == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<std::string> CollectTypeParameterNames(const TypeEditBuildContext &ctx)
+{
+    std::vector<std::vector<std::string>> scopes;
+    for (ir::AstNode *node = ctx.target.typeExpr; node != nullptr; node = node->Parent()) {
+        auto *typeParams = GetTypeParameterDeclaration(node);
+        if (typeParams == nullptr) {
+            continue;
+        }
+        std::vector<std::string> scopeParams;
+        for (auto *param : typeParams->Params()) {
+            std::string name(param->AsTSTypeParameter()->Name()->Name());
+            if (ContainsIdentifierToken(ctx.selectedType, name)) {
+                scopeParams.push_back(name);
+            }
+        }
+        if (!scopeParams.empty()) {
+            scopes.push_back(std::move(scopeParams));
+        }
+    }
+
+    std::vector<std::string> params;
+    for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+        for (const auto &name : *it) {
+            if (!ContainsParameterName(params, name)) {
+                params.push_back(name);
+            }
+        }
+    }
+    return params;
+}
+
+std::string BuildTypeParameterSuffix(const TypeEditBuildContext &ctx)
+{
+    if (!ctx.isInterfaceAction) {
+        return "";
+    }
+    std::vector<std::string> params = CollectTypeParameterNames(ctx);
+    if (params.empty()) {
+        return "";
+    }
+    std::string suffix = "<";
+    for (size_t i = 0; i < params.size(); ++i) {
+        if (i > 0) {
+            suffix += ", ";
+        }
+        suffix += params[i];
+    }
+    suffix += ">";
+    return suffix;
+}
+
 /// @brief Verifies that the provided AST node fully covers the selection span.
 bool NodeContainsSpan(const ir::AstNode &node, const TextRange &span)
 {
@@ -1164,13 +1267,14 @@ std::vector<FileTextChanges> BuildTypeExtractionEdits(const RefactorContext &con
                                                       size_t insertionPos, const std::string &declarationName)
 {
     const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-    DeclarationContext declCtx {ctx.isInterfaceAction, declarationName,
+    const std::string typeName = declarationName + BuildTypeParameterSuffix(ctx);
+    DeclarationContext declCtx {ctx.isInterfaceAction, typeName,
                                 ctx.selectedType,      newLine,
                                 insertionPos,          ShouldPreferExpandedInterface(context)};
     const std::string extractedDeclaration = BuildDeclarationText(declCtx, ctx.fileSource);
     return ChangeTracker::With(*context.textChangesContext, [&](ChangeTracker &tracker) {
         tracker.InsertText(ctx.pub->sourceFile, insertionPos, extractedDeclaration);
-        tracker.ReplaceRangeWithText(ctx.pub->sourceFile, TextRange {ctx.start, ctx.end}, declarationName);
+        tracker.ReplaceRangeWithText(ctx.pub->sourceFile, TextRange {ctx.start, ctx.end}, typeName);
     });
 }
 

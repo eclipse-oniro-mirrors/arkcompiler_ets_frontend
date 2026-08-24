@@ -14,6 +14,7 @@
  */
 
 #include "lsp_utils.h"
+#include <algorithm>
 #include <string>
 
 namespace ark::es2panda::lsp {
@@ -70,6 +71,58 @@ size_t ByteOffsetToCodePointOffset(const std::string &content, size_t byteOffset
         bytes += charLen;
     }
     return chars;
+}
+
+std::string ApplyRefactorTextChangesToSource(const std::string &source, const std::vector<TextChange> &textChanges)
+{
+    if (textChanges.empty()) {
+        return source;
+    }
+
+    std::vector<const TextChange *> ordered;
+    ordered.reserve(textChanges.size());
+    for (const auto &change : textChanges) {
+        ordered.push_back(&change);
+    }
+    std::stable_sort(ordered.begin(), ordered.end(),
+                     [](const TextChange *lhs, const TextChange *rhs) { return lhs->span.start < rhs->span.start; });
+
+    std::string result;
+    result.reserve(source.size());
+    size_t cursor = 0;
+    for (const auto *change : ordered) {
+        if (change->span.start > source.size()) {
+            continue;
+        }
+        const size_t originalStart = change->span.start;
+        const size_t start = std::max(originalStart, cursor);
+        const size_t remaining = source.size() - originalStart;
+        const size_t end = originalStart + std::min(change->span.length, remaining);
+        if (cursor < start) {
+            result.append(source, cursor, start - cursor);
+        }
+        result.append(change->newText);
+        cursor = std::max(cursor, end);
+    }
+    if (cursor < source.size()) {
+        result.append(source, cursor, source.size() - cursor);
+    }
+    return result;
+}
+
+std::string GetRefactoredSourceForRenameLocation(const std::string &source,
+                                                 const std::vector<FileTextChanges> &fileTextChanges,
+                                                 const std::optional<std::string> &renameFileName)
+{
+    if (!renameFileName.has_value()) {
+        return source;
+    }
+    for (const auto &fileChange : fileTextChanges) {
+        if (fileChange.fileName == renameFileName.value()) {
+            return ApplyRefactorTextChangesToSource(source, fileChange.textChanges);
+        }
+    }
+    return source;
 }
 
 }  // namespace ark::es2panda::lsp

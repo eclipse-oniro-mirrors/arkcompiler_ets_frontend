@@ -109,6 +109,103 @@ static std::string StripWs(std::string s)
     return s;
 }
 
+static size_t FindOccurrenceStart(const std::string &code, const std::string &target, bool useSecondOccurrence)
+{
+    const size_t first = code.find(target);
+    if (!useSecondOccurrence) {
+        return first;
+    }
+    return code.find(target, first == std::string::npos ? first : first + target.size());
+}
+
+enum class RepeatedExtractSymbolKind {
+    VARIABLE,
+    CONSTANT,
+};
+
+enum class RepeatedExtractSymbolScope {
+    GLOBAL,
+    ENCLOSE,
+};
+
+struct RepeatedExtractSymbolOptions {
+    bool useSecondOccurrence {false};
+    RepeatedExtractSymbolKind kind {RepeatedExtractSymbolKind::VARIABLE};
+    RepeatedExtractSymbolScope scope {RepeatedExtractSymbolScope::GLOBAL};
+};
+
+static std::string GetRepeatedExtractSymbolActionName(const RepeatedExtractSymbolOptions &options)
+{
+    if (options.kind == RepeatedExtractSymbolKind::CONSTANT) {
+        return options.scope == RepeatedExtractSymbolScope::GLOBAL
+                   ? std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name)
+                   : std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
+    }
+    return options.scope == RepeatedExtractSymbolScope::GLOBAL
+               ? std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name)
+               : std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
+}
+
+static std::string GetRepeatedExtractSymbolRefactorName(const RepeatedExtractSymbolOptions &options)
+{
+    return options.kind == RepeatedExtractSymbolKind::CONSTANT
+               ? std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME)
+               : std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
+}
+
+static RepeatedExtractSymbolOptions VariableEnclose(bool useSecondOccurrence = false)
+{
+    return {useSecondOccurrence, RepeatedExtractSymbolKind::VARIABLE, RepeatedExtractSymbolScope::ENCLOSE};
+}
+
+static RepeatedExtractSymbolOptions ConstantGlobal(bool useSecondOccurrence = false)
+{
+    return {useSecondOccurrence, RepeatedExtractSymbolKind::CONSTANT, RepeatedExtractSymbolScope::GLOBAL};
+}
+
+static RepeatedExtractSymbolOptions ConstantEnclose(bool useSecondOccurrence = false)
+{
+    return {useSecondOccurrence, RepeatedExtractSymbolKind::CONSTANT, RepeatedExtractSymbolScope::ENCLOSE};
+}
+
+struct RepeatedExtractSymbolCase {
+    const std::string *code {nullptr};
+    const std::string *target {nullptr};
+    RepeatedExtractSymbolOptions options;
+    const std::string *expectedSingle {nullptr};
+    const std::string *expectedAll {nullptr};
+};
+
+static void ExpectRepeatedExtractSymbolEdits(LspExtrSymblGetEditsTests *test, const RepeatedExtractSymbolCase &input)
+{
+    ASSERT_NE(input.code, nullptr);
+    ASSERT_NE(input.target, nullptr);
+    ASSERT_NE(input.expectedSingle, nullptr);
+    ASSERT_NE(input.expectedAll, nullptr);
+
+    const size_t spanStart = FindOccurrenceStart(*input.code, *input.target, input.options.useSecondOccurrence);
+    ASSERT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + input.target->size();
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = test->CreateExtractContext(initializer.get(), *input.code, spanStart, spanEnd);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    ASSERT_FALSE(applicable.empty());
+    const std::string actionName = GetRepeatedExtractSymbolActionName(input.options);
+    const std::string refactorName = GetRepeatedExtractSymbolRefactorName(input.options);
+    EXPECT_TRUE(HasAction(applicable, actionName));
+
+    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+
+    const std::string singleResult = ApplyEdits(*input.code, edits->GetFileTextChanges().at(0).textChanges);
+    EXPECT_EQ(StripWs(singleResult), StripWs(*input.expectedSingle));
+    const std::string allResult = ApplyEdits(*input.code, edits->GetFileTextChanges().at(1).textChanges);
+    EXPECT_EQ(StripWs(allResult), StripWs(*input.expectedAll));
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 static std::string FindConstantNamespaceActionName(
     const std::vector<ark::es2panda::lsp::ApplicableRefactorInfo> &applicable, const std::string &encloseScopeAction,
     const std::string &namespaceDesc)
@@ -531,7 +628,7 @@ if (/*start*/person.age >= 18 && person.isActive/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
@@ -542,35 +639,247 @@ if (/*start*/newLocal/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
     const std::string target = R"(person.age >= 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    EXPECT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, VariableEnclose(), &expectedSingle, &expectedAll});
+}
 
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9VariableEnclose)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, VariableEnclose(), &expectedSingle, &expectedAll});
+}
 
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    EXPECT_FALSE(applicable.empty());
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9ConstantGlobal)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantGlobal(), &expectedSingle, &expectedAll});
+}
 
-    const std::string encloseActionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
-    const bool hasVariableEnclose = std::any_of(
-        applicable.begin(), applicable.end(), [&](const auto &info) { return info.action.name == encloseActionName; });
-    EXPECT_TRUE(hasVariableEnclose);
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9ConstantEnclose)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantEnclose(), &expectedSingle, &expectedAll});
+}
 
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
-    auto stripWs = [](std::string s) {
-        s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char c) { return std::isspace(c); }), s.end());
-        return s;
-    };
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, encloseActionName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const auto &fileEdit = edits->GetFileTextChanges().at(0);
-    ASSERT_FALSE(fileEdit.textChanges.empty());
-    const std::string result = ApplyEdits(code, fileEdit.textChanges);
-    EXPECT_EQ(stripWs(result), stripWs(expected));
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9VariableEncloseSecond)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  let newLocal: Boolean = person.age >= 18 && person.isActive;
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, VariableEnclose(true), &expectedSingle, &expectedAll});
+}
 
-    initializer->DestroyContext(refactorContext->context);
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9ConstantGlobalSecond)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal = person.age >= 18 && person.isActive;
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantGlobal(true), &expectedSingle, &expectedAll});
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol9ConstantEncloseSecond)
+{
+    const std::string code = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedSingle = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
+  const newLocal: Boolean = person.age >= 18 && person.isActive;
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age >= 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantEnclose(true), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol10)
@@ -585,7 +894,7 @@ if (/*start*/person.age >= 18 && person.isActive/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
@@ -596,35 +905,19 @@ if (/*start*/newLocal/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
     const std::string target = R"(person.age >= 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    EXPECT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    EXPECT_FALSE(applicable.empty());
-
-    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
-    const bool hasConstantGlobal = std::any_of(applicable.begin(), applicable.end(),
-                                               [&](const auto &info) { return info.action.name == actionName; });
-    EXPECT_TRUE(hasConstantGlobal);
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
-    auto stripWs = [](std::string s) {
-        s.erase(std::remove_if(s.begin(), s.end(), [](unsigned char c) { return std::isspace(c); }), s.end());
-        return s;
-    };
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const auto &fileEdit = edits->GetFileTextChanges().at(0);
-    ASSERT_FALSE(fileEdit.textChanges.empty());
-    const std::string result = ApplyEdits(code, fileEdit.textChanges);
-    EXPECT_EQ(stripWs(result), stripWs(expected));
-
-    initializer->DestroyContext(refactorContext->context);
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantGlobal(), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol11)
@@ -690,9 +983,16 @@ let second = /*start*/items.filter(x => x > 0)/*end*/.toString();
 
     const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
     auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, globalName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const std::string result = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
-    EXPECT_EQ(StripWs(result), StripWs(expected));
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const std::string singleResult = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
+    EXPECT_EQ(StripWs(singleResult), StripWs(expected));
+    const std::string allResult = ApplyEdits(code, edits->GetFileTextChanges().at(1).textChanges);
+    EXPECT_EQ(StripWs(allResult), StripWs(R"(
+let items: int[] = [1, 2, 3, 4, 5];
+const newLocal = items.filter(x => x > 0);
+let first = /*start*/newLocal/*end*/.length;
+let second = /*start*/newLocal/*end*/.toString();
+)"));
     initializer->DestroyContext(refactorContext->context);
 }
 
@@ -704,42 +1004,34 @@ class Person {
   isActive: boolean = true;
 }
 let person: Person = new Person();
-if (/*start*/person.age == 18 && person.isActive/*end*/) {
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
 }
 let person: Person = new Person();
-if (/*start*/person.age == 18 && person.isActive/*end*/) {
-  let newLocal: Boolean = person.age >= 18 && person.isActive;
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+let newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
   console.log("test 1", /*start*/newLocal/*end*/);
 }
 )";
     const std::string target = R"(person.age >= 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    ASSERT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_FALSE(applicable.empty());
-
-    const std::string globalName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_GLOBAL.name);
-    const std::string encloseName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
-    EXPECT_FALSE(HasAction(applicable, globalName));
-    EXPECT_TRUE(HasAction(applicable, encloseName));
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, encloseName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const std::string result = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
-    EXPECT_EQ(StripWs(result), StripWs(expected));
-    initializer->DestroyContext(refactorContext->context);
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, VariableEnclose(), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol14)
@@ -751,10 +1043,10 @@ class Person {
 }
 let person: Person = new Person();
 if (/*start*/person.age == 18 && person.isActive/*end*/) {
-  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+  console.log("test 1", /*start*/person.age == 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
@@ -762,30 +1054,22 @@ class Person {
 let person: Person = new Person();
 const newLocal: Boolean = person.age == 18 && person.isActive;
 if (/*start*/newLocal/*end*/) {
-  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+  console.log("test 1", /*start*/person.age == 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age == 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
 }
 )";
     const std::string target = R"(person.age == 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    ASSERT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_FALSE(applicable.empty());
-
-    const std::string globalName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
-    const std::string encloseName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
-    EXPECT_TRUE(HasAction(applicable, globalName));
-    EXPECT_FALSE(HasAction(applicable, encloseName));
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, globalName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const std::string result = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
-    EXPECT_EQ(StripWs(result), StripWs(expected));
-    initializer->DestroyContext(refactorContext->context);
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantGlobal(), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol15)
@@ -796,40 +1080,34 @@ class Person {
   isActive: boolean = true;
 }
 let person: Person = new Person();
-if (/*start*/person.age == 18 && person.isActive/*end*/) {
+if (/*start*/person.age >= 18 && person.isActive/*end*/) {
   console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
 }
 let person: Person = new Person();
-const newLocal = person.age >= 18 && person.isActive;
-if (/*start*/person.age == 18 && person.isActive/*end*/) {
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+}
+)";
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age >= 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
   console.log("test 1", /*start*/newLocal/*end*/);
 }
 )";
     const std::string target = R"(person.age >= 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    ASSERT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_FALSE(applicable.empty());
-
-    const std::string globalName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
-    EXPECT_TRUE(HasAction(applicable, globalName));
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, globalName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const std::string result = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
-    EXPECT_EQ(StripWs(result), StripWs(expected));
-    initializer->DestroyContext(refactorContext->context);
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantGlobal(), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol16)
@@ -841,39 +1119,33 @@ class Person {
 }
 let person: Person = new Person();
 if (/*start*/person.age == 18 && person.isActive/*end*/) {
-  console.log("test 1", /*start*/person.age >= 18 && person.isActive/*end*/);
+  console.log("test 1", /*start*/person.age == 18 && person.isActive/*end*/);
 }
 )";
-    const std::string expected = R"(
+    const std::string expectedSingle = R"(
 class Person {
   age: int = 20;
   isActive: boolean = true;
 }
 let person: Person = new Person();
 if (/*start*/person.age == 18 && person.isActive/*end*/) {
-  const newLocal: Boolean = person.age >= 18 && person.isActive;
+  const newLocal: Boolean = person.age == 18 && person.isActive;
   console.log("test 1", /*start*/newLocal/*end*/);
 }
 )";
-    const std::string target = R"(person.age >= 18 && person.isActive)";
-    const size_t spanStart = code.find(target);
-    ASSERT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    ASSERT_FALSE(applicable.empty());
-
-    const std::string encloseName = std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
-    EXPECT_TRUE(HasAction(applicable, encloseName));
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, encloseName);
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const std::string result = ApplyEdits(code, edits->GetFileTextChanges().at(0).textChanges);
-    EXPECT_EQ(StripWs(result), StripWs(expected));
-    initializer->DestroyContext(refactorContext->context);
+    const std::string expectedAll = R"(
+class Person {
+  age: int = 20;
+  isActive: boolean = true;
+}
+let person: Person = new Person();
+const newLocal: Boolean = person.age == 18 && person.isActive;
+if (/*start*/newLocal/*end*/) {
+  console.log("test 1", /*start*/newLocal/*end*/);
+}
+)";
+    const std::string target = R"(person.age == 18 && person.isActive)";
+    ExpectRepeatedExtractSymbolEdits(this, {&code, &target, ConstantEnclose(true), &expectedSingle, &expectedAll});
 }
 
 TEST_F(LspExtrSymblGetEditsTests, ExtractSymbol17)

@@ -21,11 +21,37 @@
 
 namespace ark::es2panda::lsp {
 
+struct FinalizeFunctionCallInputs;
+struct FunctionExtractionCallDataInitInputs;
+constexpr size_t MIN_QUOTED_LITERAL_LENGTH = 2;
+
 // Keep this compilation unit as the analysis-layer extension point.
 // Existing behavior remains in extract_symbol.cpp and extract_symbol_impl_edits.cpp.
 
 static bool ShouldReturnExtractedExpressionResult(const RefactorContext &context, ir::AstNode *extractedNode);
 static bool HasAwaitInRange(ir::AstNode *ast, TextRange range);
+static std::string ResolveQuotedGlobalConstantDeclaredType(const ExtractedVariableTypeAnnotationState &state);
+static std::string ResolveUniformIdentifierReturnType(public_lib::Context *ctx, ir::AstNode *node);
+static std::string ResolveNumericExtractionTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
+                                                          ir::AstNode *arithmeticProbe);
+static std::string ResolveInitialSelectionTypeAnnotation(const ExtractedVariableTypeAnnotationState &state);
+static void ApplyLiteralSelectionDeclaredType(const ExtractedVariableTypeAnnotationState &state,
+                                              std::string &typeAnnotation);
+static void ApplyGlobalLiteralDeclaredType(const ExtractedVariableTypeAnnotationState &state,
+                                           std::string &typeAnnotation);
+static void ApplyDeclShapedPlaceholderType(const ExtractedVariableTypeAnnotationState &state,
+                                           std::string &typeAnnotation);
+static void ApplyCheckerInferredSelectionType(const ExtractedVariableTypeAnnotationState &state,
+                                              std::string &typeAnnotation);
+static void ApplyConsumerInferredSelectionType(const ExtractedVariableTypeAnnotationState &state,
+                                               std::string &typeAnnotation);
+static size_t CountLeadingIndent(std::string_view text);
+static std::string NormalizeMultilineExpressionBody(std::string bodyExpr, size_t firstLineIndent);
+static std::string TrimFunctionSignatureWhitespace(std::string signature);
+static bool ShouldReturnFunctionCallResult(const FinalizeFunctionCallInputs &inputs, bool extractedIsReturnStatement);
+static bool IsExtractedFunctionAsync(const FinalizeFunctionCallInputs &inputs);
+static void MaybeAppendSemicolonToFunctionCall(const FinalizeFunctionCallInputs &inputs,
+                                               bool extractedIsReturnStatement, std::string &funcCallText);
 
 std::string InferTypeFromChecker(checker::ETSChecker *checker, ir::AstNode *node)
 {
@@ -47,6 +73,51 @@ static std::string TypeTextFromAnno(public_lib::Context *ctx, ir::TypeNode *type
     }
     std::string typeText = GetNodeText(ctx, typeAnno);
     return typeText.empty() ? typeAnno->ToString() : typeText;
+}
+
+static std::string ExpandTypeAliasTextIfUnion(public_lib::Context *ctx, ir::AstNode *node, std::string typeAnnotation)
+{
+    if (ctx == nullptr || node == nullptr || typeAnnotation.empty() || typeAnnotation[0] != ':') {
+        return typeAnnotation;
+    }
+    const std::string typeName = TrimAsciiWhitespace(std::string_view(typeAnnotation).substr(1));
+    if (typeName.empty()) {
+        return typeAnnotation;
+    }
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        if (!current->IsClassDefinition()) {
+            continue;
+        }
+        for (auto *member : current->AsClassDefinition()->Body()) {
+            if (member == nullptr || !member->IsTSTypeAliasDeclaration()) {
+                continue;
+            }
+            auto *alias = member->AsTSTypeAliasDeclaration();
+            if (alias->Id() == nullptr || alias->TypeAnnotation() == nullptr ||
+                IdentifierNameMutf8(alias->Id()) != typeName) {
+                continue;
+            }
+            std::string expanded = TypeTextFromAnno(ctx, alias->TypeAnnotation());
+            if (expanded.find('|') == std::string::npos) {
+                return typeAnnotation;
+            }
+            return expanded.empty() ? typeAnnotation : ": " + expanded;
+        }
+    }
+    return typeAnnotation;
+}
+
+static std::string ExpandNamespaceAliasTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
+                                                      std::string typeAnnotation)
+{
+    if (typeAnnotation.size() <= 2U || (!state.isConstantEnclose && !state.isGlobalConstant)) {
+        return typeAnnotation;
+    }
+    auto *probe = state.selectionExpr != nullptr ? state.selectionExpr : state.extractedText;
+    if (!IsNamespaceContext(probe)) {
+        return typeAnnotation;
+    }
+    return ExpandTypeAliasTextIfUnion(state.ctx, probe, std::move(typeAnnotation));
 }
 
 ir::TypeNode *TypeAnnoFromDeclaratorId(ir::Expression *idExpr)
@@ -226,6 +297,50 @@ static std::string ReplaceArrayLiteralTypeFallback(const RefactorContext &contex
     return typeText;
 }
 
+static bool IsArithmeticBinaryExpression(ir::AstNode *node)
+{
+    if (node == nullptr || !node->IsBinaryExpression()) {
+        return false;
+    }
+    const auto op = node->AsBinaryExpression()->OperatorType();
+    return op == lexer::TokenType::PUNCTUATOR_PLUS || op == lexer::TokenType::PUNCTUATOR_MINUS ||
+           op == lexer::TokenType::PUNCTUATOR_MULTIPLY || op == lexer::TokenType::PUNCTUATOR_DIVIDE ||
+           op == lexer::TokenType::PUNCTUATOR_MOD || op == lexer::TokenType::PUNCTUATOR_EXPONENTIATION;
+}
+
+static std::string InferArithmeticBinaryExpressionType(const RefactorContext &context, public_lib::Context *ctx,
+                                                       ir::AstNode *originalNode)
+{
+    if (!IsArithmeticBinaryExpression(originalNode)) {
+        return "";
+    }
+    std::string fromIdentifierType = ResolveUniformIdentifierReturnType(ctx, originalNode);
+    if (fromIdentifierType.empty()) {
+        return "";
+    }
+    if (fromIdentifierType == ": short" || fromIdentifierType == ": Short") {
+        fromIdentifierType = ": Int";
+    }
+    return ReplaceArrayLiteralTypeFallback(context, ctx, fromIdentifierType);
+}
+
+static std::string InferExpressionReturnTypeAnnotation(const RefactorContext &context, public_lib::Context *ctx,
+                                                       checker::ETSChecker *checker, ir::AstNode *extractedNode)
+{
+    if (std::string fromArithmetic = InferArithmeticBinaryExpressionType(context, ctx, GetOriginalNode(extractedNode));
+        !fromArithmetic.empty()) {
+        return fromArithmetic;
+    }
+    if (std::string fromTypeAnnotation = InferFromConsumerTypeAnnotation(context, ctx, extractedNode);
+        !fromTypeAnnotation.empty()) {
+        return ReplaceArrayLiteralTypeFallback(context, ctx, fromTypeAnnotation);
+    }
+    if (std::string fromChecker = InferTypeFromChecker(checker, extractedNode); !fromChecker.empty()) {
+        return ReplaceArrayLiteralTypeFallback(context, ctx, fromChecker);
+    }
+    return "";
+}
+
 std::string InferExtractedReturnTypeAnnotationImpl(const RefactorContext &context, ir::AstNode *extractedNode)
 {
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
@@ -248,13 +363,7 @@ std::string InferExtractedReturnTypeAnnotationImpl(const RefactorContext &contex
             return fromChecker;
         }
     } else if (extractedNode->IsExpression()) {
-        if (std::string fromTypeAnnotation = InferFromConsumerTypeAnnotation(context, ctx, extractedNode);
-            !fromTypeAnnotation.empty()) {
-            return ReplaceArrayLiteralTypeFallback(context, ctx, fromTypeAnnotation);
-        }
-        if (std::string fromChecker = InferTypeFromChecker(checker, extractedNode); !fromChecker.empty()) {
-            return ReplaceArrayLiteralTypeFallback(context, ctx, fromChecker);
-        }
+        return InferExpressionReturnTypeAnnotation(context, ctx, checker, extractedNode);
     } else {
         return "";
     }
@@ -264,6 +373,147 @@ std::string InferExtractedReturnTypeAnnotationImpl(const RefactorContext &contex
 std::string NormalizeReturnTypeAnnotation(std::string annotation)
 {
     return annotation;
+}
+
+static std::string ResolveClassSelfReturnType(ir::AstNode *extractedNode)
+{
+    if (extractedNode == nullptr || !extractedNode->IsMemberExpression()) {
+        return "";
+    }
+    auto *member = extractedNode->AsMemberExpression();
+    auto *object = member == nullptr ? nullptr : member->Object();
+    if (object == nullptr || !object->IsThisExpression()) {
+        return "";
+    }
+    auto *classDef = FindEnclosingClassDefinition(extractedNode);
+    if (classDef == nullptr || classDef->Ident() == nullptr) {
+        return "";
+    }
+    const std::string className = IdentifierNameMutf8(classDef->Ident());
+    return className.empty() ? "" : ": " + className;
+}
+
+static std::string ResolveEnclosingFunctionDeclaredReturnType(public_lib::Context *ctx, ir::AstNode *node)
+{
+    auto *func = FindScriptFunction(node);
+    if (ctx == nullptr || func == nullptr || func->ReturnTypeAnnotation() == nullptr) {
+        return "";
+    }
+    std::string typeText = GetNodeText(ctx, func->ReturnTypeAnnotation());
+    if (typeText.empty()) {
+        typeText = func->ReturnTypeAnnotation()->ToString();
+    }
+    return typeText.empty() ? "" : ": " + typeText;
+}
+
+static std::string ResolveMemberReceiverDeclaredType(public_lib::Context *ctx, ir::AstNode *node)
+{
+    auto *probe = node;
+    if (probe != nullptr && probe->IsCallExpression()) {
+        probe = probe->AsCallExpression()->Callee();
+    }
+    auto *member = probe != nullptr && probe->IsMemberExpression() ? probe->AsMemberExpression() : nullptr;
+    auto *object = member == nullptr ? nullptr : member->Object();
+    auto *receiverIdent = object != nullptr && object->IsIdentifier() ? object->AsIdentifier() : nullptr;
+    auto *func = FindScriptFunction(node);
+    if (ctx == nullptr || receiverIdent == nullptr || func == nullptr) {
+        return "";
+    }
+    const std::string receiverName = IdentifierNameMutf8(receiverIdent);
+    for (auto *paramExpr : func->Params()) {
+        if (paramExpr == nullptr || !paramExpr->IsETSParameterExpression()) {
+            continue;
+        }
+        auto *param = paramExpr->AsETSParameterExpression();
+        auto *ident = param == nullptr ? nullptr : param->Ident();
+        if (ident == nullptr || IdentifierNameMutf8(ident) != receiverName) {
+            continue;
+        }
+        std::string typeText = GetNodeText(ctx, param->TypeAnnotation());
+        if (typeText.empty() && param->TypeAnnotation() != nullptr) {
+            typeText = param->TypeAnnotation()->ToString();
+        }
+        return typeText.empty() ? "" : ": " + typeText;
+    }
+    return "";
+}
+
+static std::string NormalizeFunctionValueTypeAnnotation(std::string typeText)
+{
+    if (typeText.empty()) {
+        return "";
+    }
+    if (typeText.find("=>") != std::string::npos && typeText.front() != '(') {
+        typeText = "(" + typeText + ")";
+    }
+    return ": " + typeText;
+}
+
+static std::string ResolveAssignedFunctionValueReturnType(public_lib::Context *ctx, ir::AstNode *node)
+{
+    if (ctx == nullptr || node == nullptr || (!node->IsArrowFunctionExpression() && !node->IsFunctionExpression())) {
+        return "";
+    }
+    auto *assignment = node->Parent() != nullptr && node->Parent()->IsAssignmentExpression()
+                           ? node->Parent()->AsAssignmentExpression()
+                           : nullptr;
+    auto *lhsIdent = assignment != nullptr && assignment->Right() == node && assignment->Left() != nullptr &&
+                             assignment->Left()->IsIdentifier()
+                         ? assignment->Left()->AsIdentifier()
+                         : nullptr;
+    if (lhsIdent == nullptr) {
+        return "";
+    }
+    auto *checker = ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
+    if (auto type = GetTypeOfSymbolAtLocation(checker, lhsIdent); type != nullptr) {
+        std::string typeText = type->ToString();
+        if (!typeText.empty()) {
+            return NormalizeFunctionValueTypeAnnotation(typeText);
+        }
+    }
+    return "";
+}
+
+static bool IsAssignedFunctionValueSelection(ir::AstNode *node)
+{
+    auto *parent = node == nullptr ? nullptr : node->Parent();
+    return parent != nullptr && parent->IsAssignmentExpression() && parent->AsAssignmentExpression()->Right() == node &&
+           (node->IsArrowFunctionExpression() || node->IsFunctionExpression());
+}
+
+static std::vector<std::string> SynthesizeFunctionLikeCapturedParamDecls(public_lib::Context *ctx, ir::AstNode *node,
+                                                                         const std::vector<std::string> &callArgs)
+{
+    std::vector<std::string> paramDecls;
+    if (ctx == nullptr || node == nullptr || callArgs.empty()) {
+        return paramDecls;
+    }
+    auto *checker = ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
+    std::unordered_map<std::string, ir::Identifier *> firstUse;
+    node->FindChild([&](ir::AstNode *child) {
+        if (child == nullptr || !child->IsIdentifier()) {
+            return false;
+        }
+        auto *ident = child->AsIdentifier();
+        const std::string name = IdentifierNameMutf8(ident);
+        if (name.empty() || std::find(callArgs.begin(), callArgs.end(), name) == callArgs.end()) {
+            return false;
+        }
+        firstUse.emplace(name, ident);
+        return false;
+    });
+
+    paramDecls.reserve(callArgs.size());
+    for (const auto &name : callArgs) {
+        std::string typeText;
+        if (auto it = firstUse.find(name); it != firstUse.end()) {
+            if (auto type = GetTypeOfSymbolAtLocation(checker, it->second); type != nullptr) {
+                typeText = type->ToString();
+            }
+        }
+        paramDecls.push_back(typeText.empty() ? name : name + ": " + typeText);
+    }
+    return paramDecls;
 }
 
 static std::string InferReturnTypeFromDeclaredBinding(const RefactorContext &context, public_lib::Context *ctx,
@@ -496,7 +746,10 @@ std::string ResolveTypeAnnotationFromContainingDeclarator(const RefactorContext 
         return "";
     }
     std::string typeText = ResolveVarTypeTextFromDeclarator(ctx, decl);
-    return typeText.empty() ? "" : ": " + typeText;
+    if (typeText.empty()) {
+        return "";
+    }
+    return ExpandTypeAliasTextIfUnion(ctx, decl, ": " + typeText);
 }
 
 std::string ResolveVariableTypeAnnotation(public_lib::Context *ctx, const RefactorContext &context,
@@ -559,6 +812,8 @@ static std::string ResolveSemanticBinaryTypeAnnotation(const ExtractedVariableTy
 static std::string ResolveSemanticDeclaratorFallbackTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
                                                                    std::string typeAnnotation);
 static std::string TryResolveGlobalConstantDeclaredTypeFromLine(const ExtractedVariableTypeAnnotationState &state);
+static bool IsNumericArithmeticExpression(const ir::AstNode *node);
+static std::string TryResolveLaterMatchingLiteralDeclaredType(const ExtractedVariableTypeAnnotationState &state);
 
 std::string TryResolveCallSelectionTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
                                                   bool &isCallSelection)
@@ -649,6 +904,9 @@ std::string ResolveExtractedVariableTypeAnnotationFromSemanticNode(const Extract
     if (extractedVarTypeAnnotation == ": undefined") {
         extractedVarTypeAnnotation.clear();
     }
+    if (std::string declaredType = ResolveQuotedGlobalConstantDeclaredType(state); !declaredType.empty()) {
+        return declaredType;
+    }
     extractedVarTypeAnnotation =
         ResolveSemanticCheckerTypeAnnotation(state, typeSemanticNode, std::move(extractedVarTypeAnnotation));
     extractedVarTypeAnnotation =
@@ -684,6 +942,9 @@ static std::string ResolveSemanticCheckerTypeAnnotation(const ExtractedVariableT
         typeProbe = ResolveExpressionCoveringRange(state.context, state.trimmed);
     }
     typeProbe = UnwrapExpressionStatement(typeProbe);
+    if (IsNumericArithmeticExpression(typeProbe)) {
+        return typeAnnotation;
+    }
     if (typeProbe != nullptr && !typeProbe->IsFunctionExpression() && !typeProbe->IsArrowFunctionExpression()) {
         typeAnnotation = InferTypeFromChecker(state.ctx->GetChecker()->AsETSChecker(), typeProbe);
     }
@@ -693,11 +954,20 @@ static std::string ResolveSemanticCheckerTypeAnnotation(const ExtractedVariableT
 static std::string ResolveSemanticStringTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
                                                        ir::AstNode *typeSemanticNode, std::string typeAnnotation)
 {
+    if (!typeAnnotation.empty() &&
+        (typeAnnotation.find('|') != std::string::npos || typeAnnotation.find('&') != std::string::npos)) {
+        return typeAnnotation;
+    }
     if (typeSemanticNode == nullptr) {
         return typeAnnotation;
     }
-    if (typeSemanticNode->IsStringLiteral() || typeSemanticNode->IsTemplateLiteral() ||
-        typeSemanticNode->IsCharLiteral()) {
+    if (typeSemanticNode->IsCharLiteral() && IsConstantExtractionInClassAction(state.actionName)) {
+        return ": Int";
+    }
+    if (typeSemanticNode->IsCharLiteral()) {
+        return ": char";
+    }
+    if (typeSemanticNode->IsStringLiteral() || typeSemanticNode->IsTemplateLiteral()) {
         if (state.isConstantEnclose || state.isGlobalConstant) {
             return ": String";
         }
@@ -708,13 +978,57 @@ static std::string ResolveSemanticStringTypeAnnotation(const ExtractedVariableTy
     return typeAnnotation;
 }
 
+static std::string ResolveQuotedGlobalConstantDeclaredType(const ExtractedVariableTypeAnnotationState &state)
+{
+    if (!state.isGlobalConstant || state.selectionExpr == nullptr ||
+        (!state.selectionExpr->IsStringLiteral() && !state.selectionExpr->IsTemplateLiteral() &&
+         !state.selectionExpr->IsCharLiteral())) {
+        return "";
+    }
+    std::string declaredType =
+        ResolveTypeAnnotationFromContainingDeclarator(state.context, GetTrimmedSelectionSpan(state.context), state.ctx);
+    if (declaredType.empty()) {
+        declaredType = TryResolveGlobalConstantDeclaredTypeFromLine(state);
+    }
+    declaredType = ExpandNamespaceAliasTypeAnnotation(state, std::move(declaredType));
+    return declaredType.find('|') == std::string::npos && declaredType.find('&') == std::string::npos ? ""
+                                                                                                      : declaredType;
+}
+
 static std::string ResolveSemanticBinaryTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
                                                        std::string typeAnnotation)
 {
     if (typeAnnotation.empty() && state.isGlobalConstant && IsBooleanBinaryExpression(state.selectionExpr)) {
         return ": Boolean";
     }
+    if ((state.isConstantEnclose || state.isGlobalConstant) && typeAnnotation.empty() &&
+        IsNumericArithmeticExpression(state.selectionExpr != nullptr ? state.selectionExpr : state.extractedText)) {
+        return ": Int";
+    }
     return typeAnnotation;
+}
+
+static bool IsNumericArithmeticExpression(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return false;
+    }
+    if (node->IsNumberLiteral()) {
+        return true;
+    }
+    if (!node->IsBinaryExpression()) {
+        return false;
+    }
+    auto op = node->AsBinaryExpression()->OperatorType();
+    const bool isArithmetic = op == lexer::TokenType::PUNCTUATOR_PLUS || op == lexer::TokenType::PUNCTUATOR_MINUS ||
+                              op == lexer::TokenType::PUNCTUATOR_MULTIPLY ||
+                              op == lexer::TokenType::PUNCTUATOR_DIVIDE || op == lexer::TokenType::PUNCTUATOR_MOD ||
+                              op == lexer::TokenType::PUNCTUATOR_EXPONENTIATION;
+    if (!isArithmetic) {
+        return false;
+    }
+    return IsNumericArithmeticExpression(node->AsBinaryExpression()->Left()) &&
+           IsNumericArithmeticExpression(node->AsBinaryExpression()->Right());
 }
 
 static std::string ResolveSemanticDeclaratorFallbackTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
@@ -981,39 +1295,163 @@ PlaceholderBuildInfo BuildExtractionPlaceholder(const RefactorContext &context, 
 static std::string ResolveExtractedVariableTypeAnnotationFromSelection(
     const ExtractedVariableTypeAnnotationState &state)
 {
-    std::string extractedVarTypeAnnotation =
-        (state.isVariableExtraction || state.isConstantEnclose ||
-         (state.isGlobalConstant && state.isArrowSelectionText) ||
-         IsConstantExtractionInClassAction(state.actionName) ||
-         IsObjectLiteralConstantExtraction(state.actionName, state.extractedText))
-            ? ResolveVariableTypeAnnotation(state.ctx, state.context, state.extractedText)
-            : "";
-    if ((state.placeholderInfo.globalConstantDeclShaped || state.placeholderInfo.globalConstantInitializerSelection) &&
-        extractedVarTypeAnnotation.empty()) {
-        std::string declaredType = ResolveTypeAnnotationFromContainingDeclarator(
-            state.context, GetTrimmedSelectionSpan(state.context), state.ctx);
-        if (declaredType.empty()) {
-            declaredType = ResolveVariableTypeAnnotation(state.ctx, state.context, state.extractedText);
-        }
-        if (declaredType.rfind(": Array<", 0) == 0 || declaredType == ": double") {
-            extractedVarTypeAnnotation = declaredType;
-        }
+    ir::AstNode *arithmeticProbe = state.selectionExpr != nullptr
+                                       ? state.selectionExpr
+                                       : (state.coveringExpr != nullptr ? state.coveringExpr : state.extractedText);
+    if (std::string type = ResolveNumericExtractionTypeAnnotation(state, arithmeticProbe); !type.empty()) {
+        return type;
     }
-    if ((state.isVariableExtraction || (state.isGlobalConstant && state.isArrowSelectionText)) &&
-        extractedVarTypeAnnotation.empty() && state.ctx != nullptr && state.ctx->GetChecker() != nullptr) {
-        if (!(state.selectionExpr != nullptr && state.selectionExpr->IsTypeofExpression())) {
-            auto *checker = state.ctx->GetChecker()->AsETSChecker();
-            extractedVarTypeAnnotation = InferTypeFromChecker(checker, state.extractedText);
+    std::string extractedVarTypeAnnotation = ResolveInitialSelectionTypeAnnotation(state);
+    ApplyLiteralSelectionDeclaredType(state, extractedVarTypeAnnotation);
+    ApplyGlobalLiteralDeclaredType(state, extractedVarTypeAnnotation);
+    ApplyDeclShapedPlaceholderType(state, extractedVarTypeAnnotation);
+    ApplyCheckerInferredSelectionType(state, extractedVarTypeAnnotation);
+    ApplyConsumerInferredSelectionType(state, extractedVarTypeAnnotation);
+    return ExpandNamespaceAliasTypeAnnotation(state, std::move(extractedVarTypeAnnotation));
+}
+
+static std::string ResolveNumericExtractionTypeAnnotation(const ExtractedVariableTypeAnnotationState &state,
+                                                          ir::AstNode *arithmeticProbe)
+{
+    const bool isNumericExpr = IsNumericArithmeticExpression(arithmeticProbe);
+    if ((state.isConstantEnclose || state.isGlobalConstant) && isNumericExpr) {
+        const TextRange trimmedSpan = GetTrimmedSelectionSpan(state.context);
+        if (std::string declaredType = InferDeclaredTypeFromSourceAt(state.ctx, state.trimmed.pos);
+            !declaredType.empty()) {
+            return declaredType;
         }
-    }
-    if (state.isConstantEnclose && extractedVarTypeAnnotation.empty()) {
-        ir::AstNode *consumerProbe =
-            UnwrapExpressionStatement(state.selectionExpr != nullptr ? state.selectionExpr : state.extractedText);
-        if (consumerProbe != nullptr) {
-            extractedVarTypeAnnotation = InferFromConsumerTypeAnnotation(state.context, state.ctx, consumerProbe);
+        if (std::string declaredType =
+                ResolveTypeAnnotationFromContainingDeclarator(state.context, trimmedSpan, state.ctx);
+            !declaredType.empty()) {
+            return declaredType;
         }
+        if (std::string identifierType = ResolveUniformIdentifierReturnType(state.ctx, arithmeticProbe);
+            !identifierType.empty()) {
+            return identifierType;
+        }
+        return ": Int";
     }
-    return extractedVarTypeAnnotation;
+    if (IsConstantExtractionInClassAction(state.actionName) && isNumericExpr &&
+        InferDeclaredTypeFromSourceAt(state.ctx, state.trimmed.pos) == ": int") {
+        return ": int";
+    }
+    return "";
+}
+
+static std::string ResolveInitialSelectionTypeAnnotation(const ExtractedVariableTypeAnnotationState &state)
+{
+    const bool shouldResolve = state.isVariableExtraction || state.isConstantEnclose ||
+                               (state.isGlobalConstant && state.isArrowSelectionText) ||
+                               IsConstantExtractionInClassAction(state.actionName) ||
+                               IsObjectLiteralConstantExtraction(state.actionName, state.extractedText);
+    return shouldResolve ? ResolveVariableTypeAnnotation(state.ctx, state.context, state.extractedText) : "";
+}
+
+static void ApplyLiteralSelectionDeclaredType(const ExtractedVariableTypeAnnotationState &state,
+                                              std::string &typeAnnotation)
+{
+    const bool isLiteralSelection = state.selectionExpr != nullptr &&
+                                    (state.selectionExpr->IsStringLiteral() ||
+                                     state.selectionExpr->IsTemplateLiteral() || state.selectionExpr->IsCharLiteral());
+    if (!(state.isConstantEnclose || state.isGlobalConstant) || !isLiteralSelection) {
+        return;
+    }
+    const TextRange trimmedSpan = GetTrimmedSelectionSpan(state.context);
+    if (std::string declaredType = ResolveTypeAnnotationFromContainingDeclarator(state.context, trimmedSpan, state.ctx);
+        !declaredType.empty()) {
+        typeAnnotation = std::move(declaredType);
+    }
+}
+
+static void ApplyGlobalLiteralDeclaredType(const ExtractedVariableTypeAnnotationState &state,
+                                           std::string &typeAnnotation)
+{
+    if (!state.isGlobalConstant) {
+        return;
+    }
+    if (std::string declaredType = TryResolveLaterMatchingLiteralDeclaredType(state); !declaredType.empty()) {
+        typeAnnotation = std::move(declaredType);
+    }
+}
+
+static void ApplyDeclShapedPlaceholderType(const ExtractedVariableTypeAnnotationState &state,
+                                           std::string &typeAnnotation)
+{
+    if (!(state.placeholderInfo.globalConstantDeclShaped || state.placeholderInfo.globalConstantInitializerSelection) ||
+        !typeAnnotation.empty()) {
+        return;
+    }
+    const TextRange trimmedSpan = GetTrimmedSelectionSpan(state.context);
+    std::string declaredType = ResolveTypeAnnotationFromContainingDeclarator(state.context, trimmedSpan, state.ctx);
+    if (declaredType.empty()) {
+        declaredType = ResolveVariableTypeAnnotation(state.ctx, state.context, state.extractedText);
+    }
+    if (declaredType.rfind(": Array<", 0) == 0 || declaredType == ": double") {
+        typeAnnotation = std::move(declaredType);
+    }
+}
+
+static void ApplyCheckerInferredSelectionType(const ExtractedVariableTypeAnnotationState &state,
+                                              std::string &typeAnnotation)
+{
+    const bool canInferFromChecker =
+        (state.isVariableExtraction || (state.isGlobalConstant && state.isArrowSelectionText)) &&
+        typeAnnotation.empty() && state.ctx != nullptr && state.ctx->GetChecker() != nullptr;
+    if (!canInferFromChecker || (state.selectionExpr != nullptr && state.selectionExpr->IsTypeofExpression())) {
+        return;
+    }
+    auto *checker = state.ctx->GetChecker()->AsETSChecker();
+    typeAnnotation = InferTypeFromChecker(checker, state.extractedText);
+}
+
+static void ApplyConsumerInferredSelectionType(const ExtractedVariableTypeAnnotationState &state,
+                                               std::string &typeAnnotation)
+{
+    if (!state.isConstantEnclose || !typeAnnotation.empty()) {
+        return;
+    }
+    ir::AstNode *consumerProbe =
+        UnwrapExpressionStatement(state.selectionExpr != nullptr ? state.selectionExpr : state.extractedText);
+    if (consumerProbe != nullptr) {
+        typeAnnotation = InferFromConsumerTypeAnnotation(state.context, state.ctx, consumerProbe);
+    }
+}
+
+static bool IsQuotedLiteralSpan(public_lib::Context *ctx, TextRange span)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || span.end <= span.pos ||
+        span.end > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    const std::string_view selected(ctx->sourceFile->source.data() + span.pos, span.end - span.pos);
+    return selected.size() >= MIN_QUOTED_LITERAL_LENGTH && ((selected.front() == '\'' && selected.back() == '\'') ||
+                                                            (selected.front() == '"' && selected.back() == '"'));
+}
+
+static std::string TryResolveLaterMatchingLiteralDeclaredType(const ExtractedVariableTypeAnnotationState &state)
+{
+    if (!IsQuotedLiteralSpan(state.ctx, state.trimmed)) {
+        return "";
+    }
+    const auto &source = state.ctx->sourceFile->source;
+    const std::string_view literal = source.substr(state.trimmed.pos, state.trimmed.end - state.trimmed.pos);
+    size_t searchPos = state.trimmed.end;
+    while (searchPos < source.size()) {
+        size_t nextPos = source.find(literal, searchPos);
+        if (nextPos == std::string_view::npos) {
+            return "";
+        }
+        TextRange candidate {nextPos, nextPos + literal.size()};
+        if (FindContainingDeclaratorByRange(state.context, candidate) != nullptr) {
+            return ResolveTypeAnnotationFromContainingDeclarator(state.context, candidate, state.ctx);
+        }
+        if (auto declaredType = ExtractVariableDeclaredTypeFromInitializer(source, nextPos);
+            declaredType.has_value() && !declaredType->empty()) {
+            return ExpandTypeAliasTextIfUnion(state.ctx, state.extractedText, ": " + declaredType.value());
+        }
+        searchPos = nextPos + 1;
+    }
+    return "";
 }
 
 static ExtractedVariableTypeAnnotationState BuildExtractedVariableTypeAnnotationState(
@@ -1103,8 +1541,9 @@ std::string ResolveExtractedVariableTypeAnnotation(const RefactorContext &contex
 }
 
 std::string BuildExtractionDeclaration(const RefactorContext &context, ir::AstNode *extractedText,
-                                       const std::string &actionName, const std::string &varName)
+                                       const std::string &actionName, std::string_view varName)
 {
+    const std::string varNameStr(varName);
     const bool isVariableExtraction = IsVariableExtractionAction(actionName);
     const bool isConstantExtraction = IsConstantExtractionAction(actionName);
     if (!isConstantExtraction && !isVariableExtraction) {
@@ -1122,20 +1561,25 @@ std::string BuildExtractionDeclaration(const RefactorContext &context, ir::AstNo
     std::string extractedVarTypeAnnotation =
         ResolveExtractedVariableTypeAnnotation(context, ctx, extractedText, actionName, placeholderInfo);
 
-    auto startedNode = GetTouchingTokenByRange(context.context, context.span, false);
-    const bool isMultiDecl = IsMultiDecl(startedNode, ctx);
+    auto startedNode =
+        extractedText != nullptr ? extractedText : GetTouchingTokenByRange(context.context, context.span, false);
+    const bool selectionInDeclaratorInit =
+        ResolveInitializerExpressionContainingSelection(context, GetTrimmedSelectionSpan(context)) != nullptr ||
+        FindContainingDeclaratorByRange(context, GetTrimmedSelectionSpan(context)) != nullptr;
+    const bool isMultiDecl = !selectionInDeclaratorInit && IsMultiDecl(startedNode, ctx);
     const bool useInlineMultiDeclPrefix =
         isMultiDecl && !IsActionNameOrKind(actionName, EXTRACT_VARIABLE_ACTION_GLOBAL);
     bool isAppend = false;
     std::string declaration;
-    if (IsConstantExtractionInClassAction(actionName)) {
-        auto prefixResult = BuildClassConstantPrefix(varName, startedNode, extractedVarTypeAnnotation);
+    if (IsConstantExtractionInClassAction(actionName) ||
+        IsActionNameOrKind(actionName, EXTRACT_VARIABLE_ACTION_CLASS)) {
+        auto prefixResult = BuildClassConstantPrefix(varNameStr, startedNode, extractedVarTypeAnnotation);
         declaration = std::move(prefixResult.first);
         isAppend = prefixResult.second;
     } else if (useInlineMultiDeclPrefix) {
-        declaration = BuildMultiDeclPrefix(varName);
+        declaration = BuildMultiDeclPrefix(varNameStr);
     } else {
-        declaration = BuildStandardDeclPrefix(varName, isConstantExtraction, extractedVarTypeAnnotation);
+        declaration = BuildStandardDeclPrefix(varNameStr, isConstantExtraction, extractedVarTypeAnnotation);
     }
     declaration.append(placeholderInfo.placeholder);
     if (useInlineMultiDeclPrefix && declaration.find(',') == std::string::npos) {
@@ -1615,6 +2059,14 @@ size_t NormalizeFunctionInsertPos(const RefactorContext &context, public_lib::Co
     if (ctx != nullptr && ctx->sourceFile != nullptr) {
         const auto &source = ctx->sourceFile->source;
         insertPos = NormalizeInsertPos(source, insertPos);
+        if (IsActionNameOrKind(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE) ||
+            IsNamespaceAction(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
+                              EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX)) {
+            if (auto keywordStart = FindVariableDeclKeywordStart(source, insertPos);
+                keywordStart.has_value() && keywordStart.value() < context.span.pos) {
+                insertPos = FindLineStart(source, keywordStart.value());
+            }
+        }
         size_t probe = insertPos;
         while (probe < source.size() && IsIndentChar(source[probe])) {
             ++probe;
@@ -1914,38 +2366,68 @@ bool TryApplyExprStmtExtractionEdit(ChangeTracker &tracker, const TryApplyExprSt
     return true;
 }
 
+static size_t AdjustFunctionInsertPosForDeclarationLine(std::string_view source, size_t insertPos)
+{
+    if (insertPos >= source.size()) {
+        return insertPos;
+    }
+    const size_t lineStart = FindLineStart(source, insertPos);
+    const size_t eqPos = source.find('=', lineStart);
+    if (eqPos == std::string_view::npos || insertPos >= eqPos) {
+        return insertPos;
+    }
+    std::string_view head = TrimLineView(source.substr(lineStart, eqPos - lineStart));
+    return head.rfind("let ", 0) == 0 || head.rfind("const ", 0) == 0 || head.rfind("var ", 0) == 0 ? lineStart
+                                                                                                    : insertPos;
+}
+
+static size_t FindNextNonIndentAfterOptionalBlankLine(std::string_view source, size_t insertPos)
+{
+    size_t probe = std::min(insertPos, source.size());
+    while (probe < source.size() && IsIndentChar(source[probe])) {
+        ++probe;
+    }
+    if (probe < source.size() && IsLineBreakChar(source[probe])) {
+        probe = NormalizeInsertPos(source, probe);
+        while (probe < source.size() && IsIndentChar(source[probe])) {
+            ++probe;
+        }
+    }
+    return probe;
+}
+
+static bool ShouldTrimFunctionTextTrailingBlankBeforeBrace(std::string_view source, size_t probe,
+                                                           const std::string &functionText,
+                                                           const std::string &actionName, const std::string &newLine)
+{
+    const std::string doubleNewLine = newLine + newLine;
+    const auto namespaceDepth = GetNamespaceActionDepth(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
+                                                        EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX);
+    const bool canTrimForScope = !namespaceDepth.has_value() || namespaceDepth.value() == 1;
+    return canTrimForScope && probe < source.size() && source[probe] == '}' &&
+           functionText.size() >= doubleNewLine.size() &&
+           functionText.compare(functionText.size() - doubleNewLine.size(), doubleNewLine.size(), doubleNewLine) == 0;
+}
+
 std::vector<FileTextChanges> BuildFunctionExtractionTextChanges(const FunctionExtractionTextChangeInputs &inputs)
 {
     TextChangesContext textChangesContext = *inputs.context.textChangesContext;
     const auto src = reinterpret_cast<public_lib::Context *>(inputs.context.context)->sourceFile;
     std::string adjustedFunctionText = inputs.functionText;
+    size_t adjustedInsertPos = inputs.insertPos;
     if (src != nullptr) {
         const auto &source = src->source;
-        size_t probe = std::min(inputs.insertPos, source.size());
-        while (probe < source.size() && IsIndentChar(source[probe])) {
-            ++probe;
-        }
-        if (probe < source.size() && IsLineBreakChar(source[probe])) {
-            probe = NormalizeInsertPos(source, probe);
-            while (probe < source.size() && IsIndentChar(source[probe])) {
-                ++probe;
-            }
-        }
+        adjustedInsertPos = AdjustFunctionInsertPosForDeclarationLine(source, adjustedInsertPos);
+        const size_t probe = FindNextNonIndentAfterOptionalBlankLine(source, inputs.insertPos);
         const std::string newLine =
             inputs.context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
-        const std::string doubleNewLine = newLine + newLine;
-        const auto namespaceDepth = GetNamespaceActionDepth(inputs.actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
-                                                            EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX);
-        const bool trimTrailingBlankLineBeforeClosingBrace = !namespaceDepth.has_value() || namespaceDepth.value() == 1;
-        if (trimTrailingBlankLineBeforeClosingBrace && probe < source.size() && source[probe] == '}' &&
-            adjustedFunctionText.size() >= doubleNewLine.size() &&
-            adjustedFunctionText.compare(adjustedFunctionText.size() - doubleNewLine.size(), doubleNewLine.size(),
-                                         doubleNewLine) == 0) {
+        if (ShouldTrimFunctionTextTrailingBlankBeforeBrace(source, probe, adjustedFunctionText, inputs.actionName,
+                                                           newLine)) {
             adjustedFunctionText.erase(adjustedFunctionText.size() - newLine.size());
         }
     }
     return ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
-        tracker.InsertText(src, inputs.insertPos, adjustedFunctionText);
+        tracker.InsertText(src, adjustedInsertPos, adjustedFunctionText);
         tracker.ReplaceRangeWithText(src, inputs.extractionPos, inputs.funcCallText);
     });
 }
@@ -2532,6 +3014,23 @@ bool TryRewriteExtractionToTextInitializer(const RefactorContext &context, publi
     return extractedNode != nullptr;
 }
 
+static bool TryRewriteWholeAssignmentSelectionToRhs(TextRange &extractionPos, ir::AstNode *&extractedNode)
+{
+    auto *assignment = extractedNode != nullptr && extractedNode->IsAssignmentExpression()
+                           ? extractedNode->AsAssignmentExpression()
+                           : nullptr;
+    auto *rhs = assignment == nullptr ? nullptr : assignment->Right();
+    if (assignment == nullptr || rhs == nullptr || !rhs->IsExpression()) {
+        return false;
+    }
+    if (assignment->Start().index != extractionPos.pos || assignment->End().index != extractionPos.end) {
+        return false;
+    }
+    extractedNode = rhs;
+    extractionPos = {rhs->Start().index, rhs->End().index};
+    return true;
+}
+
 void NormalizeWholeDeclarationExtraction(public_lib::Context *ctx, TextRange &extractionPos,
                                          ir::AstNode *&extractedNode)
 {
@@ -2684,6 +3183,11 @@ static void UpdateUsageRenameLocIfNeeded(const UsageRenameLocInputs &inputs)
     if (!IsVariableExtractionAction(inputs.actionName)) {
         return;
     }
+    if (IsNamespaceAction(inputs.actionName, EXTRACT_CONSTANT_ACTION_ENCLOSE.name,
+                          EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX) ||
+        IsActionNameOrKind(inputs.actionName, EXTRACT_VARIABLE_ACTION_ENCLOSE)) {
+        return;
+    }
     if (auto usageLoc = ComputeVariableUsageRenameLocFromEdits(inputs.edits, inputs.uniqueVarName);
         usageLoc.has_value()) {
         inputs.renameLoc = usageLoc.value();
@@ -2810,6 +3314,19 @@ size_t ResolveValueExtractionRenameLoc(const ValueExtractionRenameLocInputs &inp
     ApplyValueExtractionRenameLocPostUpdates(
         inputs, {orderedChanges, renameLocIsFinal, adjustedInsertPos, insertChange}, renameLoc);
     ApplyConstantEncloseRenameLocAdjustments(inputs, orderedChanges, adjustedInsertPos, renameLoc);
+    if (inputs.actionName.rfind(EXTRACT_CONSTANT_NAMESPACE_ACTION_PREFIX, 0) == 0 &&
+        inputs.insertPos <= inputs.sourceText.size()) {
+        size_t probe = inputs.insertPos;
+        while (probe > 0 && std::isspace(static_cast<unsigned char>(inputs.sourceText[probe - 1])) != 0) {
+            --probe;
+        }
+        if (probe == 0 || inputs.sourceText[probe - 1] != ';') {
+            renameLoc += 2U;
+        }
+    } else if (IsActionNameOrKind(inputs.actionName, EXTRACT_VARIABLE_ACTION_ENCLOSE) &&
+               inputs.uniqueVarName.find('_') != std::string::npos) {
+        renameLoc += 1U;
+    }
     return renameLoc;
 }
 
@@ -2868,6 +3385,7 @@ static bool NormalizeFunctionExtractionSelection(const RefactorContext &context,
                                                  const std::string &actionName, FunctionExtractionSelectionState &state)
 {
     const TextRange trimmedSpan = GetTrimmedSelectionSpan(context);
+    (void)TryRewriteWholeAssignmentSelectionToRhs(state.extractionPos, state.extractedNode);
     if (!TryRewriteExtractionToWholeDeclarationInitializer(context, ctx, state.extractionPos, state.extractedNode)) {
         (void)TryRewriteExtractionToTextInitializer(context, ctx, state.extractionPos, state.extractedNode);
     }
@@ -2999,6 +3517,11 @@ static bool ShouldTreatExtractionAsStatements(const ShouldTreatExtractionAsState
     if (isSingleLineExpressionFragment() || isInsideExtractedExpression() || isInsideAnyInitializerRange()) {
         return false;
     }
+    const TextRange trimmed = GetTrimmedSelectionSpan(inputs.context);
+    if (inputs.extractedNode != nullptr && inputs.extractedNode->IsExpression() &&
+        (trimmed.pos != inputs.extractionPos.pos || trimmed.end != inputs.extractionPos.end)) {
+        return false;
+    }
     return (!inputs.multilineExpressionSelection && HasSourceNewlineInRange(inputs.ctx, inputs.extractionPos)) ||
            (inputs.extractedNode != nullptr && !inputs.extractedNode->IsExpression());
 }
@@ -3017,7 +3540,7 @@ static ir::AstNode *ResolveFunctionInsertAnchorNode(const RefactorContext &conte
     auto *insertTouchNode = GetTouchingToken(context.context, insertPos, false);
     ir::AstNode *insertAnchorNode = insertTouchNode;
     if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
-        return nullptr;
+        return insertAnchorNode;
     }
     if (const auto namespaceDepth = GetNamespaceActionDepth(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
                                                             EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX);
@@ -3036,10 +3559,13 @@ static size_t AdjustInsertPosForMultilineSelection(const RefactorContext &contex
                                                    const std::string &actionName)
 {
     size_t insertPos = NormalizeFunctionInsertPos(context, ctx, actionName);
-    if (!multilineExpressionSelection || ctx == nullptr || ctx->sourceFile == nullptr) {
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
         return insertPos;
     }
     const auto &source = ctx->sourceFile->source;
+    if (!multilineExpressionSelection) {
+        return insertPos;
+    }
     size_t probe = std::min(extractionPos.end, source.size());
     while (probe < source.size()) {
         if (source[probe] == ';') {
@@ -3050,46 +3576,101 @@ static size_t AdjustInsertPosForMultilineSelection(const RefactorContext &contex
     return insertPos;
 }
 
+static bool IsDeclarationInitializerSelection(public_lib::Context *ctx, TextRange extractionPos);
+static bool IsWholeDeclarationSelectionText(public_lib::Context *ctx, TextRange selection);
+static bool SelectionTextHasTrailingSemicolon(public_lib::Context *ctx, TextRange selection);
+
+static bool SelectionCoversExpressionStatement(public_lib::Context *ctx, TextRange selection, const ir::AstNode *expr)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || expr == nullptr || selection.end <= selection.pos ||
+        selection.end > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    const size_t exprStart = expr->Start().index;
+    const size_t exprEnd = expr->End().index;
+    if (selection.pos > exprStart || exprEnd > selection.end || exprEnd > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    const auto &source = ctx->sourceFile->source;
+    size_t probe = selection.pos;
+    while (probe < exprStart && std::isspace(static_cast<unsigned char>(source[probe])) != 0) {
+        ++probe;
+    }
+    if (probe != exprStart) {
+        return false;
+    }
+    probe = exprEnd;
+    while (probe < selection.end && std::isspace(static_cast<unsigned char>(source[probe])) != 0) {
+        ++probe;
+    }
+    if (probe < selection.end && source[probe] == ';') {
+        ++probe;
+    }
+    while (probe < selection.end && std::isspace(static_cast<unsigned char>(source[probe])) != 0) {
+        ++probe;
+    }
+    return probe == selection.end;
+}
 static FunctionExtractionCallOptions ResolveFunctionExtractionCallOptions(const std::string &actionName,
-                                                                          bool treatAsStatements)
+                                                                          [[maybe_unused]] bool treatAsStatements)
 {
     const bool includeNonGlobal =
         actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) ||
+        actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name) ||
+        actionName == std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name) ||
         IsNamespaceAction(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name, EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX);
-    const bool preferQualifiedNamespaceRefs =
-        actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) && !treatAsStatements;
+    const bool preferQualifiedNamespaceRefs = actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name);
     return {includeNonGlobal, preferQualifiedNamespaceRefs};
-}
-
-static void InitializeStatementFunctionExtractionCallData(const RefactorContext &context, TextRange extractionPos,
-                                                          const FunctionExtractionCallOptions &options,
-                                                          ir::AstNode *insertAnchorNode,
-                                                          FunctionExtractionCallData &data)
-{
-    data.statementIo = AnalyzeFunctionIO(context, extractionPos, options.includeNonGlobal, insertAnchorNode,
-                                         options.preferQualifiedNamespaceRefs);
-    data.ioInfoPtr = &data.statementIo;
-    PopulateProtectedValueNames(data.protectedValueNames, data.statementIo.callArgs);
 }
 
 struct FunctionExtractionCallDataInitInputs {
     const RefactorContext &context;
+    const std::string &actionName;
     TextRange extractionPos {};
     const FunctionExtractionCallOptions &options;
     ir::AstNode *insertAnchorNode {nullptr};
     ir::AstNode *extractedNode {nullptr};
 };
 
+static void InitializeStatementFunctionExtractionCallData(const FunctionExtractionCallDataInitInputs &inputs,
+                                                          FunctionExtractionCallData &data)
+{
+    const bool isGlobalAction = inputs.actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name);
+    data.statementIo = AnalyzeFunctionIO(inputs.context, inputs.extractionPos, inputs.options.includeNonGlobal,
+                                         isGlobalAction ? nullptr : inputs.insertAnchorNode,
+                                         inputs.options.preferQualifiedNamespaceRefs);
+    data.ioInfoPtr = &data.statementIo;
+    PopulateProtectedValueNames(data.protectedValueNames, data.statementIo.callArgs);
+}
+
 static void InitializeExpressionFunctionExtractionCallData(const FunctionExtractionCallDataInitInputs &inputs,
                                                            FunctionExtractionCallData &data)
 {
+    const bool isAssignedFunctionValue = IsAssignedFunctionValueSelection(inputs.extractedNode);
+    const bool isClassFunctionAction = inputs.actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name);
+    const bool isGlobalActionSameScope =
+        inputs.options.includeNonGlobal && inputs.insertAnchorNode != nullptr &&
+        FindScriptFunction(inputs.insertAnchorNode) == FindScriptFunction(inputs.extractedNode) &&
+        FindEnclosingClassDefinition(inputs.insertAnchorNode) == FindEnclosingClassDefinition(inputs.extractedNode);
+    const bool useGlobalAnchorFreeCapture =
+        isGlobalActionSameScope && (FindScriptFunction(inputs.extractedNode) != nullptr ||
+                                    IsNamespaceContext(inputs.extractedNode) || IsClassContext(inputs.extractedNode));
     if (inputs.extractedNode != nullptr &&
-        (inputs.extractedNode->IsArrowFunctionExpression() || inputs.extractedNode->IsFunctionExpression())) {
+        (inputs.extractedNode->IsArrowFunctionExpression() || inputs.extractedNode->IsFunctionExpression()) &&
+        !isAssignedFunctionValue) {
         return;
     }
-    data.expressionIo = AnalyzeFunctionIO(inputs.context, inputs.extractionPos, inputs.options.includeNonGlobal,
-                                          inputs.insertAnchorNode, inputs.options.preferQualifiedNamespaceRefs);
+    data.expressionIo = AnalyzeFunctionIO(
+        inputs.context, inputs.extractionPos, isAssignedFunctionValue ? true : inputs.options.includeNonGlobal,
+        (isAssignedFunctionValue || useGlobalAnchorFreeCapture || isClassFunctionAction) ? nullptr
+                                                                                         : inputs.insertAnchorNode,
+        isAssignedFunctionValue ? false : inputs.options.preferQualifiedNamespaceRefs);
     if (!data.expressionIo.callArgs.empty()) {
+        if (isAssignedFunctionValue && data.expressionIo.paramDecls.empty()) {
+            data.expressionIo.paramDecls = SynthesizeFunctionLikeCapturedParamDecls(
+                reinterpret_cast<public_lib::Context *>(inputs.context.context), inputs.extractedNode,
+                data.expressionIo.callArgs);
+        }
         data.capturedParams = &data.expressionIo.paramDecls;
         data.capturedArgs = &data.expressionIo.callArgs;
         PopulateProtectedValueNames(data.protectedValueNames, data.expressionIo.callArgs);
@@ -3115,12 +3696,28 @@ static FunctionExtractionCallData BuildFunctionExtractionCallData(const Function
         ResolveFunctionExtractionCallOptions(inputs.actionName, data.treatAsStatements);
     data.insertPos = AdjustInsertPosForMultilineSelection(inputs.context, inputs.ctx, inputs.extractionPos,
                                                           inputs.multilineExpressionSelection, inputs.actionName);
+    if (inputs.actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) && !data.treatAsStatements &&
+        inputs.ctx != nullptr && inputs.ctx->sourceFile != nullptr &&
+        !IsWholeDeclarationSelectionText(inputs.ctx, GetTrimmedSelectionSpan(inputs.context)) &&
+        ResolveInitializerExpressionContainingSelection(inputs.context, inputs.extractionPos) != nullptr) {
+        data.insertPos =
+            ResolveGlobalConstantInsertionPosFromSource(inputs.ctx->sourceFile->source, inputs.context.span.pos,
+                                                        data.insertPos, DetermineGlobalInsertPos(inputs.ctx));
+    }
+    if (inputs.actionName != std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) &&
+        !IsNamespaceAction(inputs.actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name,
+                           EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX) &&
+        !data.treatAsStatements && inputs.ctx != nullptr && inputs.ctx->sourceFile != nullptr &&
+        (ResolveInitializerExpressionContainingSelection(inputs.context, inputs.extractionPos) != nullptr ||
+         IsDeclarationInitializerSelection(inputs.ctx, inputs.extractionPos) ||
+         IsDeclarationInitializerSelection(inputs.ctx, GetTrimmedSelectionSpan(inputs.context)))) {
+        data.insertPos = FindLineStart(inputs.ctx->sourceFile->source, inputs.context.span.pos);
+    }
     auto *insertAnchorNode = ResolveFunctionInsertAnchorNode(inputs.context, inputs.actionName, data.insertPos);
-    const FunctionExtractionCallDataInitInputs initInputs {inputs.context, inputs.extractionPos, options,
-                                                           insertAnchorNode, inputs.extractedNode};
+    const FunctionExtractionCallDataInitInputs initInputs {inputs.context, inputs.actionName, inputs.extractionPos,
+                                                           options,        insertAnchorNode,  inputs.extractedNode};
     if (data.treatAsStatements) {
-        InitializeStatementFunctionExtractionCallData(initInputs.context, initInputs.extractionPos, initInputs.options,
-                                                      initInputs.insertAnchorNode, data);
+        InitializeStatementFunctionExtractionCallData(initInputs, data);
         RebindFunctionExtractionCallDataReferences(data);
         return data;
     }
@@ -3133,10 +3730,11 @@ static bool ShouldReturnExtractedFunctionCallResult(bool treatAsStatements, ir::
                                                     TextRange extractionPos, const RefactorContext &context)
 {
     const bool extractedIsReturnStatement = extractedNode != nullptr && extractedNode->IsReturnStatement();
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
     const bool extractedIsWholeExpressionStatementExpr =
         extractedNode != nullptr && extractedNode->Parent() != nullptr &&
-        extractedNode->Parent()->IsExpressionStatement() && extractedNode->Start().index <= extractionPos.pos &&
-        extractedNode->End().index >= extractionPos.end;
+        extractedNode->Parent()->IsExpressionStatement() &&
+        SelectionCoversExpressionStatement(ctx, extractionPos, extractedNode);
     if (treatAsStatements) {
         return false;
     }
@@ -3176,33 +3774,59 @@ static std::string MaybeRewriteMultilineExpressionFunctionText(MultilineExpressi
         return inputs.functionText;
     }
 
-    size_t firstLineIndent = 0;
-    while (firstLineIndent < bodyExpr.size() && IsIndentChar(bodyExpr[firstLineIndent])) {
-        ++firstLineIndent;
-    }
+    const size_t firstLineIndent = CountLeadingIndent(bodyExpr);
     const std::string indentStep(ResolveIndentSize(inputs.context), SPACE_CHAR);
+    std::string normalizedBody = NormalizeMultilineExpressionBody(bodyExpr, firstLineIndent);
+
+    const size_t bodyStart = inputs.functionText.find('{');
+    if (bodyStart == std::string::npos) {
+        return inputs.functionText;
+    }
+    std::string signature = TrimFunctionSignatureWhitespace(inputs.functionText.substr(0, bodyStart));
+    return signature + " {" + newLine + indentStep + normalizedBody + newLine + "}" + newLine + newLine;
+}
+
+static size_t CountLeadingIndent(std::string_view text)
+{
+    size_t indent = 0;
+    while (indent < text.size() && IsIndentChar(text[indent])) {
+        ++indent;
+    }
+    return indent;
+}
+
+static std::string NormalizeMultilineExpressionBody(std::string bodyExpr, size_t firstLineIndent)
+{
     std::string normalizedBody = "return " + bodyExpr.substr(firstLineIndent);
     size_t scanPos = 0;
     while ((scanPos = normalizedBody.find('\n', scanPos)) != std::string::npos) {
         ++scanPos;
-        size_t lineIndent = 0;
-        while (scanPos + lineIndent < normalizedBody.size() && IsIndentChar(normalizedBody[scanPos + lineIndent])) {
-            ++lineIndent;
-        }
+        const size_t lineIndent = CountLeadingIndent(std::string_view(normalizedBody).substr(scanPos));
         if (lineIndent >= firstLineIndent) {
             normalizedBody.erase(scanPos, firstLineIndent);
         }
     }
     std::string suffixTrimmed = TrimAsciiWhitespace(normalizedBody);
     if (!suffixTrimmed.empty() && suffixTrimmed.back() != ';') {
-        normalizedBody.append(";");
+        normalizedBody.push_back(';');
     }
+    return normalizedBody;
+}
 
-    return newLine + "function newFunction()" + inputs.returnTypeAnnotation + " {" + newLine + indentStep +
-           normalizedBody + newLine + "}" + newLine + newLine;
+static std::string TrimFunctionSignatureWhitespace(std::string signature)
+{
+    while (!signature.empty() && IsLineBreakChar(signature.back())) {
+        signature.pop_back();
+    }
+    while (!signature.empty() && std::isspace(static_cast<unsigned char>(signature.back())) != 0 &&
+           !IsLineBreakChar(signature.back())) {
+        signature.pop_back();
+    }
+    return signature;
 }
 
 struct FinalizeFunctionCallInputs {
+    const RefactorContext &context;
     public_lib::Context *ctx {nullptr};
     TextRange extractionPos {};
     const std::string &functionText;
@@ -3211,31 +3835,183 @@ struct FinalizeFunctionCallInputs {
     ir::AstNode *extractedNode {nullptr};
 };
 
+static bool IsWithinInitializerLikeOwner(const RefactorContext &context, ir::AstNode *node, TextRange extractionPos)
+{
+    if (ResolveInitializerExpressionContainingSelection(context, extractionPos) != nullptr) {
+        return true;
+    }
+    if (FindContainingDeclaratorByRange(context, extractionPos) != nullptr) {
+        return true;
+    }
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        ir::AstNode *ownerValue = nullptr;
+        if (current->IsVariableDeclarator()) {
+            ownerValue = current->AsVariableDeclarator()->Init();
+        } else if (current->IsClassProperty()) {
+            ownerValue = current->AsClassProperty()->Value();
+        }
+        if (ownerValue == nullptr) {
+            continue;
+        }
+        if (extractionPos.pos >= ownerValue->Start().index && extractionPos.end <= ownerValue->End().index) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool IsDeclarationInitializerSelection(public_lib::Context *ctx, TextRange extractionPos)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || extractionPos.end <= extractionPos.pos ||
+        extractionPos.pos >= ctx->sourceFile->source.size()) {
+        return false;
+    }
+    const std::string_view source = ctx->sourceFile->source;
+    const size_t lineStart = FindLineStart(source, extractionPos.pos);
+    const size_t eqPos = source.rfind('=', extractionPos.pos);
+    if (eqPos == std::string_view::npos || eqPos < lineStart) {
+        return false;
+    }
+    const std::string_view head = source.substr(lineStart, eqPos - lineStart);
+    return head.find("let ") != std::string_view::npos || head.find("const ") != std::string_view::npos ||
+           head.find("var ") != std::string_view::npos;
+}
+
+static bool IsWholeDeclarationSelectionText(public_lib::Context *ctx, TextRange selection)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || selection.end <= selection.pos ||
+        selection.end > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    std::string selected =
+        TrimAsciiWhitespace(ctx->sourceFile->source.substr(selection.pos, selection.end - selection.pos));
+    if (!(selected.rfind("let ", 0) == 0 || selected.rfind("const ", 0) == 0 || selected.rfind("var ", 0) == 0)) {
+        return false;
+    }
+    return selected.find('=') != std::string::npos;
+}
+
+static bool SelectionTextHasTrailingSemicolon(public_lib::Context *ctx, TextRange selection)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || selection.end <= selection.pos ||
+        selection.end > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    std::string selected =
+        TrimAsciiWhitespace(ctx->sourceFile->source.substr(selection.pos, selection.end - selection.pos));
+    return !selected.empty() && selected.back() == ';';
+}
+
+static bool SourceHasStatementSemicolonAfterRange(public_lib::Context *ctx, TextRange range)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || range.end > ctx->sourceFile->source.size()) {
+        return false;
+    }
+    const auto &source = ctx->sourceFile->source;
+    size_t pos = range.end;
+    while (pos < source.size() && std::isspace(static_cast<unsigned char>(source[pos])) != 0 &&
+           !IsLineBreakChar(source[pos])) {
+        ++pos;
+    }
+    return pos < source.size() && source[pos] == ';';
+}
+
 static std::string FinalizeFunctionCallText(const FinalizeFunctionCallInputs &inputs)
 {
     std::vector<std::string> callArgs = BuildFunctionCallArgs(
         inputs.candidate, inputs.callData.treatAsStatements, inputs.callData.statementIo, inputs.callData.capturedArgs);
     const bool extractedIsReturnStatement =
         inputs.extractedNode != nullptr && inputs.extractedNode->IsReturnStatement();
-    const bool shouldReturnCallResult =
-        extractedIsReturnStatement ||
-        (inputs.callData.treatAsStatements && inputs.callData.statementIo.hasReturnStatement &&
-         !inputs.callData.statementIo.returnVar.has_value());
-    const bool extractedFunctionIsAsync = inputs.ctx != nullptr && inputs.ctx->parserProgram != nullptr &&
-                                          HasAwaitInRange(inputs.ctx->parserProgram->Ast(), inputs.extractionPos);
+    const bool shouldReturnCallResult = ShouldReturnFunctionCallResult(inputs, extractedIsReturnStatement);
+    const bool extractedFunctionIsAsync = IsExtractedFunctionAsync(inputs);
     std::string funcCallText = ReplaceWithFunctionCall(
         {inputs.functionText, callArgs,
          inputs.callData.treatAsStatements ? inputs.callData.statementIo.returnVar : std::nullopt,
          inputs.callData.treatAsStatements, shouldReturnCallResult,
          shouldReturnCallResult && extractedFunctionIsAsync});
-    if (!inputs.callData.treatAsStatements && !funcCallText.empty() && funcCallText.back() != ';' &&
+    MaybeAppendSemicolonToFunctionCall(inputs, extractedIsReturnStatement, funcCallText);
+    return funcCallText;
+}
+
+static bool ShouldReturnFunctionCallResult(const FinalizeFunctionCallInputs &inputs, bool extractedIsReturnStatement)
+{
+    return extractedIsReturnStatement ||
+           (inputs.callData.treatAsStatements && inputs.callData.statementIo.hasReturnStatement &&
+            !inputs.callData.statementIo.returnVar.has_value());
+}
+
+static bool IsExtractedFunctionAsync(const FinalizeFunctionCallInputs &inputs)
+{
+    return inputs.ctx != nullptr && inputs.ctx->parserProgram != nullptr &&
+           HasAwaitInRange(inputs.ctx->parserProgram->Ast(), inputs.extractionPos);
+}
+
+struct FunctionCallSemicolonState {
+    bool isInitializerSubexpression {false};
+    bool wholeExprStmtSelection {false};
+    bool wholeAssignmentExprStmtSelection {false};
+    bool wholeDeclarationSelection {false};
+    bool selectionHasTrailingSemicolon {false};
+    bool rangeEndsWithStatementSemicolon {false};
+};
+
+static FunctionCallSemicolonState BuildFunctionCallSemicolonState(const FinalizeFunctionCallInputs &inputs)
+{
+    FunctionCallSemicolonState state;
+    state.isInitializerSubexpression =
+        IsWithinInitializerLikeOwner(inputs.context, inputs.extractedNode, inputs.extractionPos) ||
+        IsDeclarationInitializerSelection(inputs.ctx, inputs.extractionPos);
+    auto *assignmentParent = inputs.extractedNode != nullptr && inputs.extractedNode->Parent() != nullptr &&
+                                     inputs.extractedNode->Parent()->IsAssignmentExpression()
+                                 ? inputs.extractedNode->Parent()
+                                 : nullptr;
+    auto *statementParent = assignmentParent != nullptr && assignmentParent->Parent() != nullptr &&
+                                    assignmentParent->Parent()->IsExpressionStatement()
+                                ? assignmentParent->Parent()
+                                : nullptr;
+    state.wholeExprStmtSelection = inputs.extractedNode != nullptr && inputs.extractedNode->Parent() != nullptr &&
+                                   inputs.extractedNode->Parent()->IsExpressionStatement() &&
+                                   inputs.extractionPos.pos == inputs.extractedNode->Start().index &&
+                                   inputs.extractionPos.end == inputs.extractedNode->End().index;
+    state.wholeAssignmentExprStmtSelection = assignmentParent != nullptr && statementParent != nullptr &&
+                                             assignmentParent->Start().index <= inputs.extractionPos.pos &&
+                                             assignmentParent->End().index >= inputs.extractionPos.end;
+    const TextRange trimmedSelection = GetTrimmedSelectionSpan(inputs.context);
+    state.wholeDeclarationSelection = IsWholeDeclarationSelectionText(inputs.ctx, trimmedSelection);
+    state.selectionHasTrailingSemicolon = SelectionTextHasTrailingSemicolon(inputs.ctx, trimmedSelection);
+    state.rangeEndsWithStatementSemicolon =
         inputs.ctx != nullptr && inputs.ctx->sourceFile != nullptr &&
-        inputs.extractionPos.end <= inputs.ctx->sourceFile->source.size() &&
         inputs.extractionPos.end > inputs.extractionPos.pos &&
-        RangeEndsWithStatementSemicolon(inputs.ctx->sourceFile->source, inputs.extractionPos)) {
+        inputs.extractionPos.end <= inputs.ctx->sourceFile->source.size() &&
+        RangeEndsWithStatementSemicolon(inputs.ctx->sourceFile->source, inputs.extractionPos);
+    return state;
+}
+
+static void MaybeAppendSemicolonToFunctionCall(const FinalizeFunctionCallInputs &inputs,
+                                               bool extractedIsReturnStatement, std::string &funcCallText)
+{
+    if (inputs.callData.treatAsStatements || funcCallText.empty() || funcCallText.back() == ';') {
+        return;
+    }
+    const auto state = BuildFunctionCallSemicolonState(inputs);
+    if (extractedIsReturnStatement && state.rangeEndsWithStatementSemicolon) {
+        funcCallText.push_back(';');
+        return;
+    }
+    if (!state.isInitializerSubexpression && state.wholeAssignmentExprStmtSelection) {
+        funcCallText.push_back(';');
+        return;
+    }
+    if (state.wholeDeclarationSelection && state.selectionHasTrailingSemicolon) {
+        if (!SourceHasStatementSemicolonAfterRange(inputs.ctx, inputs.extractionPos)) {
+            funcCallText.push_back(';');
+        }
+        return;
+    }
+    if (!state.isInitializerSubexpression && (state.wholeExprStmtSelection || state.wholeAssignmentExprStmtSelection) &&
+        state.rangeEndsWithStatementSemicolon) {
         funcCallText.push_back(';');
     }
-    return funcCallText;
 }
 
 struct PreparedFunctionExtractionState {
@@ -3339,6 +4115,78 @@ static ir::AstNode *ResolveReturnTypeProbeNode(ir::AstNode *node)
     return node;
 }
 
+static std::string ResolveDeclaredIdentifierType(public_lib::Context *ctx, ir::Identifier *ident)
+{
+    auto *variable = ident == nullptr ? nullptr : ResolveIdentifier(ident);
+    auto *declNode =
+        variable != nullptr && variable->Declaration() != nullptr ? variable->Declaration()->Node() : nullptr;
+    if (declNode == nullptr) {
+        return "";
+    }
+    if (declNode->IsVariableDeclarator()) {
+        return GetTypeAnnotationText(ctx, TypeAnnoFromDeclaratorId(declNode->AsVariableDeclarator()->Id()));
+    }
+    if (declNode->IsETSParameterExpression()) {
+        return GetTypeAnnotationText(ctx, declNode->AsETSParameterExpression()->TypeAnnotation());
+    }
+    if (!declNode->IsClassProperty()) {
+        return "";
+    }
+    auto *classProperty = declNode->AsClassProperty();
+    ir::TypeNode *typeAnnotation = classProperty->TypeAnnotation();
+    if (typeAnnotation == nullptr && classProperty->Key() != nullptr && classProperty->Key()->IsIdentifier()) {
+        typeAnnotation = classProperty->Key()->AsIdentifier()->TypeAnnotation();
+    }
+    return GetTypeAnnotationText(ctx, typeAnnotation);
+}
+
+static std::string ResolveIdentifierReturnType(public_lib::Context *ctx, checker::ETSChecker *checker,
+                                               ir::Identifier *ident)
+{
+    if (std::string declared = ResolveDeclaredIdentifierType(ctx, ident); !declared.empty()) {
+        return declared;
+    }
+    if (checker == nullptr) {
+        return "";
+    }
+    auto type = GetTypeOfSymbolAtLocation(checker, ident);
+    return type == nullptr ? "" : type->ToString();
+}
+
+static std::string ResolveUniformIdentifierReturnType(public_lib::Context *ctx, ir::AstNode *node)
+{
+    node = GetOriginalNode(node);
+    auto *checker = ctx == nullptr || ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
+    if (ctx == nullptr || node == nullptr) {
+        return "";
+    }
+    std::string resolvedType;
+    node->FindChild([&](ir::AstNode *child) {
+        if (child == nullptr || !child->IsIdentifier()) {
+            return false;
+        }
+        auto *ident = child->AsIdentifier();
+        const std::string name = IdentifierNameMutf8(ident);
+        if (name.empty() || name == "this" || name == "super") {
+            return false;
+        }
+        std::string typeText = ResolveIdentifierReturnType(ctx, checker, ident);
+        if (typeText.empty()) {
+            return false;
+        }
+        if (resolvedType.empty()) {
+            resolvedType = std::move(typeText);
+            return false;
+        }
+        if (resolvedType != typeText) {
+            resolvedType.clear();
+            return true;
+        }
+        return false;
+    });
+    return resolvedType.empty() ? "" : NormalizeReturnTypeAnnotation(": " + resolvedType);
+}
+
 static std::string ResolveReturnTypeFromExtractedExpressionResult(
     const ResolveFunctionExtractionReturnTypeInputs &inputs)
 {
@@ -3346,9 +4194,16 @@ static std::string ResolveReturnTypeFromExtractedExpressionResult(
         return "";
     }
     ir::AstNode *probe = ResolveReturnTypeProbeNode(inputs.extractedNode);
+    if (probe != nullptr && GetOriginalNode(probe)->IsTemplateLiteral()) {
+        return ": String";
+    }
     if (std::string fromTypeAnnotation = InferFromConsumerTypeAnnotation(inputs.context, inputs.ctx, probe);
         !fromTypeAnnotation.empty()) {
         return fromTypeAnnotation;
+    }
+    if (std::string fromIdentifierType = ResolveUniformIdentifierReturnType(inputs.ctx, probe);
+        !fromIdentifierType.empty()) {
+        return fromIdentifierType;
     }
     if (inputs.ctx != nullptr && inputs.ctx->GetChecker() != nullptr) {
         return InferTypeFromChecker(inputs.ctx->GetChecker()->AsETSChecker(), probe);
@@ -3378,12 +4233,29 @@ static std::string ResolveReturnTypeFromReturnStatementArgument(const ResolveFun
     return "";
 }
 
+static bool IsInsideReturnStatementArgument(ir::AstNode *node)
+{
+    for (auto *current = node; current != nullptr; current = current->Parent()) {
+        auto *parent = current->Parent();
+        if (parent == nullptr || !parent->IsReturnStatement()) {
+            continue;
+        }
+        auto *retStmt = parent->AsReturnStatement();
+        if (retStmt != nullptr && retStmt->Argument() == current) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static std::string ResolveReturnTypeFallbacks(const ResolveFunctionExtractionReturnTypeInputs &inputs)
 {
     if (inputs.returnExtractedExpressionResult) {
         if (std::string typeAnnotation =
                 ResolveVariableTypeAnnotation(inputs.ctx, inputs.context, inputs.extractedNode);
-            !typeAnnotation.empty()) {
+            !typeAnnotation.empty() &&
+            (inputs.extractedNode == nullptr || inputs.extractedNode->IsArrayExpression() ||
+             inputs.extractedNode->IsObjectExpression() || inputs.extractedNode->IsIdentifier())) {
             return typeAnnotation;
         }
     }
@@ -3396,11 +4268,34 @@ static std::string ResolveReturnTypeFallbacks(const ResolveFunctionExtractionRet
 static std::string ResolveFunctionExtractionReturnType(const ResolveFunctionExtractionReturnTypeInputs &inputs)
 {
     if (IsFunctionLikeExtractedNode(inputs.extractedNode)) {
-        return "";
+        return ResolveAssignedFunctionValueReturnType(inputs.ctx, inputs.extractedNode);
     }
+    if (inputs.returnExtractedExpressionResult && inputs.extractedNode != nullptr &&
+        GetOriginalNode(ResolveReturnTypeProbeNode(inputs.extractedNode))->IsTemplateLiteral()) {
+        return ": String";
+    }
+    const bool insideReturnArgument = IsInsideReturnStatementArgument(inputs.extractedNode);
     std::string returnTypeAnnotation;
+    if (returnTypeAnnotation.empty()) {
+        returnTypeAnnotation = ResolveClassSelfReturnType(inputs.extractedNode);
+    }
+    if (returnTypeAnnotation.empty() && (inputs.extractedIsReturnStatement || insideReturnArgument)) {
+        returnTypeAnnotation = ResolveMemberReceiverDeclaredType(inputs.ctx, inputs.extractedNode);
+    }
+    if (returnTypeAnnotation.empty() && (inputs.extractedIsReturnStatement || insideReturnArgument)) {
+        returnTypeAnnotation = ResolveEnclosingFunctionDeclaredReturnType(inputs.ctx, inputs.extractedNode);
+    }
     if (inputs.extractedFunctionReturnsValue) {
-        returnTypeAnnotation = InferExtractedReturnTypeAnnotationImpl(inputs.context, inputs.extractedNode);
+        if (returnTypeAnnotation.empty()) {
+            returnTypeAnnotation = InferReturnTypeFromDeclaredBinding(inputs.context, inputs.ctx, inputs.extractionPos);
+        }
+        if (returnTypeAnnotation.empty()) {
+            returnTypeAnnotation =
+                InferDeclaredTypeFromSourceAt(inputs.ctx, GetTrimmedSelectionSpan(inputs.context).pos);
+        }
+        if (returnTypeAnnotation.empty()) {
+            returnTypeAnnotation = InferExtractedReturnTypeAnnotationImpl(inputs.context, inputs.extractedNode);
+        }
     }
     if (returnTypeAnnotation.empty()) {
         returnTypeAnnotation = ResolveReturnTypeFromExtractedExpressionResult(inputs);
@@ -3418,9 +4313,13 @@ static std::string ResolveFunctionExtractionReturnType(const ResolveFunctionExtr
 RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &context, const std::string &actionName)
 {
     auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
-        TextRange extractionPos = GetTrimmedSelectionSpan(context);
-        if (auto earlyEdits = TryBuildEarlyGlobalFunctionExtraction(context, ctx, extractionPos);
+    TextRange initialExtractionPos = GetTrimmedSelectionSpan(context);
+    const bool canUseEarlyGlobalPath =
+        actionName != std::string(EXTRACT_FUNCTION_ACTION_CLASS.name) &&
+        (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) ||
+         IsNamespaceAction(actionName, EXTRACT_FUNCTION_ACTION_ENCLOSE.name, EXTRACT_FUNCTION_NAMESPACE_ACTION_PREFIX));
+    if (canUseEarlyGlobalPath) {
+        if (auto earlyEdits = TryBuildEarlyGlobalFunctionExtraction(context, ctx, initialExtractionPos);
             earlyEdits.has_value()) {
             return earlyEdits.value();
         }
@@ -3454,7 +4353,7 @@ RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &contex
         {context, ctx, extractionPos, selectionState.multilineExpressionSelection, callData.treatAsStatements,
          returnTypeAnnotation, std::move(functionText)});
     std::string funcCallText =
-        FinalizeFunctionCallText({ctx, extractionPos, functionText, candidate, callData, extractedNode});
+        FinalizeFunctionCallText({context, ctx, extractionPos, functionText, candidate, callData, extractedNode});
     std::vector<FileTextChanges> edits = BuildFunctionExtractionTextChanges(
         {context, actionName, functionText, callData.insertPos, extractionPos, funcCallText});
     size_t renameLoc = ComputeFunctionRenameLoc(edits, extractionPos);
@@ -3472,8 +4371,9 @@ static bool ShouldReturnExtractedExpressionResult(const RefactorContext &context
         if (expr == nullptr) {
             return false;
         }
+        auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
         const TextRange trimmed = GetTrimmedSelectionSpan(context);
-        if (trimmed.pos == expr->Start().index && trimmed.end == expr->End().index) {
+        if (SelectionCoversExpressionStatement(ctx, trimmed, expr)) {
             return false;
         }
         return true;
@@ -3489,8 +4389,8 @@ static bool ShouldReturnExtractedExpressionResult(const RefactorContext &context
         if (expr == nullptr) {
             return false;
         }
-        const TextRange trimmed = GetTrimmedSelectionSpan(context);
-        return trimmed.pos == expr->Start().index && trimmed.end == expr->End().index;
+        auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+        return SelectionCoversExpressionStatement(ctx, GetTrimmedSelectionSpan(context), expr);
     };
     // If the selected expression is a standalone call statement, the extracted function body
     // should keep it as a statement instead of forcing a return value.
@@ -3504,6 +4404,14 @@ static bool ShouldReturnExtractedExpressionResult(const RefactorContext &context
         break;
     }
     return true;
+}
+
+static std::string NormalizeStatementReturnTypeText(std::string typeText)
+{
+    if (typeText.size() >= 2U && typeText.front() == '"' && typeText.back() == '"') {
+        return "String";
+    }
+    return typeText;
 }
 
 static std::string InferReturnTypeAnnotationFromStatementsWithChecker(const RefactorContext &context, TextRange range)
@@ -3535,6 +4443,7 @@ static std::string InferReturnTypeAnnotationFromStatementsWithChecker(const Refa
         if (typeText.empty()) {
             return false;
         }
+        typeText = NormalizeStatementReturnTypeText(std::move(typeText));
         inferred = ": " + typeText;
         return true;
     });

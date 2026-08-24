@@ -752,6 +752,10 @@ std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
     }
 
     auto fileTextChanges = edits->GetFileTextChanges();
+    std::string refactoredSource = source;
+    if (edits->GetRenameLocation().has_value()) {
+        refactoredSource = GetRefactoredSourceForRenameLocation(source, fileTextChanges, edits->GetRenameFileName());
+    }
     for (auto &fileChange : fileTextChanges) {
         for (auto &textChange : fileChange.textChanges) {
             size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, textChange.span.start);
@@ -764,7 +768,7 @@ std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
     edits->SetFileTextChanges(fileTextChanges);
     if (edits->GetRenameLocation().has_value()) {
         const size_t renameByteOffset = edits->GetRenameLocation().value();
-        edits->SetRenameLocation(ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, renameByteOffset));
+        edits->SetRenameLocation(ark::es2panda::lsp::ByteOffsetToCodePointOffset(refactoredSource, renameByteOffset));
     }
 
     return edits;

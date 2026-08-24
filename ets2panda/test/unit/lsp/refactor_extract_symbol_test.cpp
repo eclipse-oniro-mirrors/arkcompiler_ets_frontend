@@ -605,6 +605,11 @@ const b = 1;
 const newLocal: Int = 1;
 const a = newLocal;
 )";
+    const std::string expectedAll = R"(
+const newLocal: Int = 1;
+const b = newLocal;
+const a = newLocal;
+)";
     const size_t spanStart = 24;
     const size_t spanEnd = 25;
 
@@ -618,9 +623,18 @@ const a = newLocal;
     // Step 2: run GetEditsForRefactorsImpl
     auto edits =
         ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
-    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
-    const auto &fileEdit = edits->GetFileTextChanges().at(0);
-    ASSERT_FALSE(fileEdit.textChanges.empty());
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 2U);
+    const auto stripWs = [](std::string text) {
+        text.erase(std::remove_if(text.begin(), text.end(), [](unsigned char c) { return std::isspace(c); }),
+                   text.end());
+        return text;
+    };
+    const auto &singleEdit = edits->GetFileTextChanges().at(0);
+    ASSERT_FALSE(singleEdit.textChanges.empty());
+    EXPECT_EQ(stripWs(ApplyEdits(code, singleEdit.textChanges)), stripWs(expected));
+    const auto &allEdit = edits->GetFileTextChanges().at(1);
+    ASSERT_FALSE(allEdit.textChanges.empty());
+    EXPECT_EQ(stripWs(ApplyEdits(code, allEdit.textChanges)), stripWs(expectedAll));
     const std::string token = "newLocal";
     ExpectRenameLocExact(expected, *edits, token);
     initializer->DestroyContext(refactorContext->context);
@@ -1046,20 +1060,12 @@ namespace X {
     initializer->DestroyContext(refactorContext->context);
 }
 
-TEST_F(LspExtrSymblGetEditsTests, ExtractConstantInNamespaceClassShowsClassNamespaceGlobalActions)
+TEST_F(LspExtrSymblGetEditsTests, ExtractConstantInNamespaceClassShowsClassGlobalActions)
 {
     const std::string code = R"(
 namespace N {
   class C {
     a = 1 + 1;
-  }
-}
-)";
-    const std::string expected = R"(
-namespace N {
-  const newLocal: Int = 1 + 1;
-  class C {
-    a = newLocal;
   }
 }
 )";
@@ -1074,8 +1080,7 @@ namespace N {
 
     const auto *constEnclose =
         FindApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name);
-    ASSERT_NE(constEnclose, nullptr) << FormatApplicableActions(applicable);
-    EXPECT_EQ(constEnclose->action.description, "Extract to constant in namespace 'N'");
+    EXPECT_EQ(constEnclose, nullptr) << FormatApplicableActions(applicable);
 
     const auto *classConst = FindApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_CLASS.name);
     ASSERT_NE(classConst, nullptr);
@@ -1083,12 +1088,6 @@ namespace N {
 
     const auto *globalConst = FindApplicableAction(applicable, ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name);
     ASSERT_NE(globalConst, nullptr);
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME);
-    auto edits =
-        ExpectExtractResultIgnoringWhitespace(refactorContext, code, expected, refactorName,
-                                              std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name));
-    ASSERT_NE(edits, nullptr);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -1611,14 +1610,14 @@ const a: int = 1 + 1;
 
     // Expect generated const extraction
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "const newLocal: Int = 1 + 1;";
+    std::string_view expect = "const newLocal: int = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
     const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
     const std::string expected = R"(
 'use static'
-const newLocal: Int = 1 + 1;
+const newLocal: int = 1 + 1;
 const a: int = newLocal;
 )";
     const std::string token = "newLocal";
@@ -2814,7 +2813,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractMethodExportedNestedNamespaceExpression
 {
     const std::string code = std::string(K_EXPORTED_NESTED_NAMESPACE_EXTRACT_EXPR_GLOBAL_CODE);
     const std::string expected = R"(
-function newFunction(y: int): number {
+function newFunction(y: int): Int {
   return y + 1;
 }
 

@@ -35,6 +35,8 @@ constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_ENCLOSE {
     "extract_constant_scope_0", "Extract to constant in enclosing scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_GLOBAL {
     "extract_variable_scope_2", "Extract to variable in global scope", "refactor.extract.variable"};
+constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_CLASS {
+    "extract_variable_scope_1", "Extract to variable in class scope", "refactor.extract.variable"};
 constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_ENCLOSE {
     "extract_variable_scope_0", "Extract to variable in enclosing scope", "refactor.extract.variable"};
 
