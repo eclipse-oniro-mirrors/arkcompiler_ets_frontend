@@ -218,7 +218,17 @@ void ThreadPool::WorkerLoop()
             task = std::move(tasks_.front());
             tasks_.pop();
         }
-        task();
+        // A task must never let an exception escape: it would propagate out of this worker's
+        // std::thread function, which calls std::terminate and takes the whole process down --
+        // and with several workers failing at once that surfaces as "terminate called
+        // recursively", hiding whatever the original error was. Every task posted to these pools
+        // reports its own failures through its owner's DiagnosticEngine, so reaching this handler
+        // means something unforeseen went wrong; swallowing it here keeps the remaining tasks
+        // running and lets the owner finish and report normally.
+        try {
+            task();
+        } catch (...) {  // NOLINT(bugprone-empty-catch)
+        }
     }
 }
 
