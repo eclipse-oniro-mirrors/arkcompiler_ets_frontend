@@ -18,7 +18,110 @@
 #include "generated/keywords.h"
 
 namespace ark::es2panda::lexer {
-constexpr int32_t QUOTE_PAIR_MODULO = 2;
+namespace {
+enum class MatchingGreaterThanScanState : uint8_t {
+    NORMAL,
+    SINGLE_QUOTED_STRING,
+    DOUBLE_QUOTED_STRING,
+    TEMPLATE_STRING,
+    SINGLE_LINE_COMMENT,
+    MULTI_LINE_COMMENT,
+};
+
+struct MatchingGreaterThanScanContext {
+    MatchingGreaterThanScanState state {MatchingGreaterThanScanState::NORMAL};
+    bool escaped {false};
+};
+
+constexpr size_t COMMENT_DELIMITER_LENGTH = 2U;
+
+char32_t PeekNext(util::StringView::Iterator &iterator)
+{
+    iterator.Forward(1);
+    auto nextCp = iterator.Peek();
+    iterator.Backward(1);
+    return nextCp;
+}
+
+bool ScanComment(util::StringView::Iterator &iterator, MatchingGreaterThanScanContext &context, char32_t cp)
+{
+    if (context.state == MatchingGreaterThanScanState::SINGLE_LINE_COMMENT) {
+        if (cp == LEX_CHAR_CR || cp == LEX_CHAR_LF || cp == LEX_CHAR_LS || cp == LEX_CHAR_PS) {
+            context.state = MatchingGreaterThanScanState::NORMAL;
+        }
+        iterator.Forward(1);
+        return true;
+    }
+    if (context.state != MatchingGreaterThanScanState::MULTI_LINE_COMMENT) {
+        return false;
+    }
+    if (cp == LEX_CHAR_ASTERISK && PeekNext(iterator) == LEX_CHAR_SLASH) {
+        iterator.Forward(COMMENT_DELIMITER_LENGTH);
+        context.state = MatchingGreaterThanScanState::NORMAL;
+    } else {
+        iterator.Forward(1);
+    }
+    return true;
+}
+
+bool IsStringEnd(MatchingGreaterThanScanState state, char32_t cp)
+{
+    return (state == MatchingGreaterThanScanState::SINGLE_QUOTED_STRING && cp == LEX_CHAR_SINGLE_QUOTE) ||
+           (state == MatchingGreaterThanScanState::DOUBLE_QUOTED_STRING && cp == LEX_CHAR_DOUBLE_QUOTE) ||
+           (state == MatchingGreaterThanScanState::TEMPLATE_STRING && cp == LEX_CHAR_BACK_TICK);
+}
+
+bool ScanQuotedRegion(util::StringView::Iterator &iterator, MatchingGreaterThanScanContext &context, char32_t cp)
+{
+    if (context.state != MatchingGreaterThanScanState::SINGLE_QUOTED_STRING &&
+        context.state != MatchingGreaterThanScanState::DOUBLE_QUOTED_STRING &&
+        context.state != MatchingGreaterThanScanState::TEMPLATE_STRING) {
+        return false;
+    }
+    if (context.escaped) {
+        context.escaped = false;
+    } else if (cp == LEX_CHAR_BACKSLASH) {
+        context.escaped = true;
+    } else if (IsStringEnd(context.state, cp)) {
+        context.state = MatchingGreaterThanScanState::NORMAL;
+    }
+    iterator.Forward(1);
+    return true;
+}
+
+bool StartQuotedRegion(util::StringView::Iterator &iterator, MatchingGreaterThanScanContext &context, char32_t cp)
+{
+    if (cp == LEX_CHAR_SINGLE_QUOTE) {
+        context.state = MatchingGreaterThanScanState::SINGLE_QUOTED_STRING;
+    } else if (cp == LEX_CHAR_DOUBLE_QUOTE) {
+        context.state = MatchingGreaterThanScanState::DOUBLE_QUOTED_STRING;
+    } else if (cp == LEX_CHAR_BACK_TICK) {
+        context.state = MatchingGreaterThanScanState::TEMPLATE_STRING;
+    } else {
+        return false;
+    }
+    iterator.Forward(1);
+    return true;
+}
+
+bool StartComment(util::StringView::Iterator &iterator, MatchingGreaterThanScanContext &context, char32_t cp)
+{
+    if (cp != LEX_CHAR_SLASH) {
+        return false;
+    }
+    const auto nextCp = PeekNext(iterator);
+    if (nextCp == LEX_CHAR_SLASH) {
+        context.state = MatchingGreaterThanScanState::SINGLE_LINE_COMMENT;
+    } else if (nextCp == LEX_CHAR_ASTERISK) {
+        context.state = MatchingGreaterThanScanState::MULTI_LINE_COMMENT;
+    } else {
+        return false;
+    }
+    iterator.Forward(COMMENT_DELIMITER_LENGTH);
+    return true;
+}
+}  // namespace
+
 LexerPosition::LexerPosition(const util::StringView &source) : iterator_(source) {}
 
 Lexer::Lexer(const parser::ParserContext *parserContext, std::string_view sourceCode,
@@ -1722,24 +1825,24 @@ bool Lexer::HasMatchingGreaterThan()
     int32_t parenSize = 0;
     int32_t braceSize = 0;
     int32_t squareSize = 0;
-    int32_t sigleQuoteSize = 0;
-    int32_t doubleQuoteSize = 0;
+    MatchingGreaterThanScanContext scanContext;
+
     while (depth > 0) {
         auto cp = Iterator().Peek();
-        if (cp == LEX_CHAR_SINGLE_QUOTE) {
-            sigleQuoteSize++;
-        } else if (cp == LEX_CHAR_DOUBLE_QUOTE) {
-            doubleQuoteSize++;
-        }
-        if ((sigleQuoteSize % QUOTE_PAIR_MODULO != 0) || (doubleQuoteSize % QUOTE_PAIR_MODULO != 0)) {
-            Iterator().Forward(1);
-            continue;
-        }
-
-        if (!HasMatchingGreaterThanInner(savedIter, depth, parenSize, braceSize, squareSize)) {
+        // Always check the end of input before any state-specific continue. This guarantees that malformed input
+        // cannot make the lookahead scan run past EOF indefinitely.
+        if (cp == util::StringView::Iterator::INVALID_CP) {
+            Iterator().Rewind(savedIter);
             return false;
         }
 
+        if (ScanComment(Iterator(), scanContext, cp) || ScanQuotedRegion(Iterator(), scanContext, cp) ||
+            StartQuotedRegion(Iterator(), scanContext, cp) || StartComment(Iterator(), scanContext, cp)) {
+            continue;
+        }
+        if (!HasMatchingGreaterThanInner(savedIter, depth, parenSize, braceSize, squareSize)) {
+            return false;
+        }
         if (parenSize < 0 || braceSize < 0 || squareSize < 0) {
             Iterator().Rewind(savedIter);
             return false;

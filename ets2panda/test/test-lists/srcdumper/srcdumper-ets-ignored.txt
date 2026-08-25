@@ -52,6 +52,7 @@ parser/ets/import_tests/import_several_7.ets
 compiler/ets/abstractNewClassInstanceExpression.ets
 runtime/ets/conditionalExpressionGenericLUB.ets
 runtime/ets/funcRefWithRestArguments.ets
+runtime/ets/punctuator_less_than_unterminated_string_negative.ets
 runtime/ets/type_param_in_union.ets
 runtime/ets/StringFasta.ets
 runtime/ets/struct-identifier.ets
