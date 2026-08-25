@@ -200,6 +200,14 @@ ir::ETSModule *ETSParser::ParseImportsAndReExportOnly(lexer::SourcePosition star
 
     auto imports = ParseImportDeclarations();
     statements.insert(statements.end(), imports.begin(), imports.end());
+
+    while (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_EXPORT) {
+        auto *statement = ParseTopLevelDeclStatement(StatementParsingFlags::ALLOW_LEXICAL);
+        if (statement->IsETSReExportDeclaration()) {
+            statements.emplace_back(statement);
+        }
+    }
+
     etsnolintParser.ApplyETSNolintsToStatements(statements);
 
     auto ident = AllocNode<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, Allocator());

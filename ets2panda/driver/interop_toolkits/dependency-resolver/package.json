@@ -1,0 +1,46 @@
+{
+  "name": "dependency-resolver",
+  "version": "1.0.0",
+  "description": "Arkts dependency resolver across arkts-sta and arkts-dyn",
+  "private": true,
+  "main": "dist/entry.js",
+  "types": "dist/entry.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/entry.d.ts",
+      "require": "./dist/entry.js",
+      "default": "./dist/entry.js"
+    }
+  },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "scripts": {
+    "install-tsc": "bash ./scripts/install-tsc.sh",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc",
+    "build:debug": "npm run clean && tsc -p tsconfig.debug.json",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint src test",
+    "lint:fix": "eslint src test --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@interop-toolkits/common": "file:../common",
+    "json5": "2.2.3",
+    "typescript": "npm:ohos-typescript@4.9.5-r9",
+    "commander": "13.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.6.0",
+    "@types/jest": "29.5.12",
+    "@types/node": "22.10.7",
+    "eslint": "9.6.0",
+    "jest": "29.7.0",
+    "prettier": "3.5.2",
+    "ts-jest": "29.4.11",
+    "typescript-eslint": "8.55.0"
+  }
+}

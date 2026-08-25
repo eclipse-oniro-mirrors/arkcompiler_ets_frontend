@@ -1,0 +1,207 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/config/components/ets_frontend/ets2abc_config.gni")
+import("//build/ohos.gni")
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
+  import("//arkcompiler/runtime_core/static_core/ark_config.gni")
+} else {
+  import(
+      "//build/config/components/runtime_core/static_core/ark_common_config.gni")
+}
+
+import("//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits/workspace.gni")
+
+nodejs_path = "//prebuilts/build-tools/common/nodejs/current/bin/node"
+npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
+
+_interop_toolkits_label =
+    "//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits"
+_common_label = "$_interop_toolkits_label/common"
+_dependency_resolver_label = "$_interop_toolkits_label/dependency-resolver"
+_bindings_path = "//arkcompiler/ets_frontend/ets2panda/bindings"
+
+_common_tgz = "$interop_toolkits_pack_dir/common.tgz"
+_dependency_resolver_tgz = "$interop_toolkits_pack_dir/dependency-resolver.tgz"
+_declgen_workspace = "$interop_toolkits_workspace_dir/declgen"
+
+declgen_sources = [
+  "./src/adapter/declgenAdapter.ts",
+  "./src/adapter/dynamicDeclgenAdapter.ts",
+  "./src/adapter/index.ts",
+  "./src/adapter/staticDeclgenAdapter.ts",
+  "./src/buildConfig.ts",
+  "./src/dynamic/cache/cacheKey.ts",
+  "./src/dynamic/cache/cacheStore.ts",
+  "./src/dynamic/cache/cacheVersion.ts",
+  "./src/dynamic/cache/hash.ts",
+  "./src/dynamic/cache/implHash.generated.ts",
+  "./src/dynamic/cache/index.ts",
+  "./src/dynamic/cache/interopSignature.ts",
+  "./src/dynamic/cli/cli.ts",
+  "./src/dynamic/cli/declgenCLI.ts",
+  "./src/dynamic/compiler/compiler.ts",
+  "./src/dynamic/compiler/virtualFileHost.ts",
+  "./src/dynamic/declgen.ts",
+  "./src/dynamic/generateInteropDecls.ts",
+  "./src/dynamic/index.ts",
+  "./src/dynamic/logger/consoleLogger.ts",
+  "./src/dynamic/logger/index.ts",
+  "./src/dynamic/logger/logger.ts",
+  "./src/dynamic/logger/silentLogger.ts",
+  "./src/dynamic/main.ts",
+  "./src/dynamic/pipeline.ts",
+  "./src/dynamic/plugin/pluginRegistry.ts",
+  "./src/dynamic/plugin/plugin.ts",
+  "./src/dynamic/stages/affected/affectedAnalysisStage.ts",
+  "./src/dynamic/stages/affected/initialAffectedAnalysisStage.ts",
+  "./src/dynamic/stages/ast-fix-stage/astAutofixer.ts",
+  "./src/dynamic/stages/ast-fix-stage/astFixStage.ts",
+  "./src/dynamic/stages/cache/cacheLoadStage.ts",
+  "./src/dynamic/stages/cache/cacheSaveStage.ts",
+  "./src/dynamic/stages/CompileStage.ts",
+  "./src/dynamic/stages/conversion-stage/conversionStage.ts",
+  "./src/dynamic/stages/conversion-stage/preScan.ts",
+  "./src/dynamic/stages/conversion-stage/typeConversionTraverser.ts",
+  "./src/dynamic/stages/declaration-conversion-stage/declarationConversionStage.ts",
+  "./src/dynamic/stages/index.ts",
+  "./src/dynamic/stages/interop-tags-stage/interopCommandParser.ts",
+  "./src/dynamic/stages/interop-tags-stage/interopTagsStage.ts",
+  "./src/dynamic/stages/interop-types-conversion-stage/interopTypesConversionStage.ts",
+  "./src/dynamic/stages/recheck-stage/recheckStage.ts",
+  "./src/dynamic/stages/semantic-fix-stage/overloadFixStage.ts",
+  "./src/dynamic/stages/semantic-fix-stage/overrideFixStage.ts",
+  "./src/dynamic/stages/semantic-fix-stage/semanticFixStage.ts",
+  "./src/dynamic/stages/Stage.ts",
+  "./src/dynamic/stages/TransformationDiagnosticMessages.ts",
+  "./src/dynamic/stages/TransformationDiagnostic.ts",
+  "./src/dynamic/stages/Traverser.ts",
+  "./src/dynamic/stages/utils/astHelpers.ts",
+  "./src/dynamic/stages/utils/astTransformer.ts",
+  "./src/dynamic/stages/utils/faultId.ts",
+  "./src/dynamic/stages/utils/typeUtils.ts",
+  "./src/dynamic/utils/extension.ts",
+  "./src/dynamic/utils/logTscDiagnostics.ts",
+  "./src/entry.ts",
+  "./src/errors.ts",
+  "./src/logger.ts",
+  "./src/predefine.ts",
+  "./src/runner/context.ts",
+  "./src/runner/index.ts",
+  "./src/runner/runner.ts",
+  "./src/runner/stages/arktsconfig.ts",
+  "./src/runner/stages/computeInteropClosure.ts",
+  "./src/runner/stages/generateInteropDeclaration.ts",
+  "./src/runner/stages/resolveDependencyGraph.ts",
+  "./src/runner/stages/resolveInteropEntries.ts",
+  "./src/runner/stages/stageArtifacts.ts",
+  "./src/static/declgen/dagScheduler.ts",
+  "./src/static/declgen/declgen.ts",
+  "./src/static/declgen/depAnalyzer.ts",
+  "./src/static/declgen/executor.ts",
+  "./src/static/declgen/graph.ts",
+  "./src/static/declgen/index.ts",
+  "./src/static/declgen/taskManager.ts",
+  "./src/static/declgen/task.ts",
+  "./src/static/declgen/worker.ts",
+  "./src/static/index.ts",
+  "./src/static/libarkts/index.ts",
+  "./src/static/libarkts/types.ts",
+  "./src/static/plugins/index.ts",
+  "./src/static/plugins/pluginDriver.ts",
+  "./src/utils.ts",
+]
+
+# Install the prebuilt common tarball into declgen's node_modules.
+action("install_common_pkg") {
+  script = "../ci-build/install_pkg.py"
+  inputs = [
+    "../ci-build/install_pkg.py",
+    "$_common_tgz",
+  ]
+  deps = [
+    "$_interop_toolkits_label:interop_toolkits_install_tsc",
+    "$_common_label:build_common_pkg",
+  ]
+  outputs =
+      [ "$_declgen_workspace/node_modules/@interop-toolkits/common" ]
+
+  args = [
+    "--source-path",
+    rebase_path("$_declgen_workspace"),
+    "--pkg",
+    rebase_path("$_common_tgz"),
+  ]
+}
+
+# Install the prebuilt dependency-resolver tarball into declgen's node_modules.
+action("install_dependency_resolver_pkg") {
+  script = "../ci-build/install_pkg.py"
+  inputs = [
+    "../ci-build/install_pkg.py",
+    "$_dependency_resolver_tgz",
+  ]
+  deps = [
+    ":install_common_pkg",
+    "$_dependency_resolver_label:build_dependency_resolver_pkg",
+  ]
+  outputs = [ "$_declgen_workspace/node_modules/dependency-resolver" ]
+
+  args = [
+    "--source-path",
+    rebase_path("$_declgen_workspace"),
+    "--pkg",
+    rebase_path("$_dependency_resolver_tgz"),
+  ]
+}
+
+# Install @es2panda/bindings (built from source) into declgen's node_modules.
+action("install_bindings_pkg") {
+  script = "install_bindings.py"
+  inputs = [ "install_bindings.py" ]
+  deps = [
+    ":install_dependency_resolver_pkg",
+    "$_bindings_path:build_bindings(${host_toolchain})",
+  ]
+  outputs = [ "$_declgen_workspace/node_modules/@es2panda/bindings" ]
+
+  args = [
+    "--source-path",
+    rebase_path("$_declgen_workspace"),
+    "--bindings-path",
+    rebase_path("$_bindings_path"),
+    "--npm",
+    rebase_path(npm_path),
+  ]
+}
+
+# Build the declgen package and pack it into a tarball.
+action("build_declgen_pkg") {
+  script = "../ci-build/build_pkg.py"
+  inputs = [ "../ci-build/build_pkg.py" ]
+  sources = declgen_sources
+  deps = [ ":install_bindings_pkg" ]
+  outputs = [ "$interop_toolkits_pack_dir/declgen.tgz" ]
+
+  args = [
+    "--source-path",
+    rebase_path("$_declgen_workspace"),
+    "--node-path",
+    rebase_path(nodejs_path),
+    "--npm-path",
+    rebase_path(npm_path),
+    "--pack-path",
+    rebase_path("$interop_toolkits_pack_dir/declgen.tgz"),
+  ]
+}
