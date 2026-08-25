@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./build/cookbook",
+    "declaration": false,
+    "types": ["node"]
+  },
+  "include": ["./src/**/*", "./test/dynamic/framework/**/*.ts"],
+  "exclude": ["dist", "build", "node_modules", "test/dynamic/unit"]
+}

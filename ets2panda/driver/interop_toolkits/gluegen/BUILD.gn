@@ -21,9 +21,14 @@ if ((defined(ark_standalone_build) && ark_standalone_build) ||
       "//build/config/components/runtime_core/static_core/ark_common_config.gni")
 }
 
+import("//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits/workspace.gni")
+
+_interop_toolkits_label =
+    "//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits"
+
 nodejs_path = "//prebuilts/build-tools/common/nodejs/current/bin/node"
 npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
-gluegen_output_dir = "$target_gen_dir/gluegen"
+
 gluegen_native_output_name = "gluegen"
 gluegen_native_output =
     "$root_out_dir/arkcompiler/ets_frontend/$gluegen_native_output_name"
@@ -32,10 +37,10 @@ if (is_mingw) {
   gluegen_native_output += ".exe"
   gluegen_native_name += ".exe"
 }
-gluegen_native_staging_path =
-    "$target_gen_dir/gluegen_native/bin/$gluegen_native_name"
+_gluegen_workspace_dir = "$interop_toolkits_workspace_dir/gluegen"
+_gluegen_workspace_native = "$_gluegen_workspace_dir/bin/$gluegen_native_name"
 
-gluegen_wrapper_sources = [
+gluegen_sources = [
   "./src/cli.ts",
   "./src/contracts/buildConfig.ts",
   "./src/contracts/index.ts",
@@ -79,35 +84,6 @@ gluegen_wrapper_sources = [
   "./src/utils/fileTree.ts",
   "./src/utils/staticSource.ts",
 ]
-
-action("build_gluegen_wrapper") {
-  inputs = [
-    "build_gluegen_wrapper.py",
-    "package-lock.json",
-    "package.json",
-    "tsconfig.json",
-  ]
-  sources = gluegen_wrapper_sources
-  script = "build_gluegen_wrapper.py"
-  deps = [ ":copy_gluegen_native" ]
-
-  args = [
-    "--source-path",
-    rebase_path(get_path_info(".", "abspath")),
-    "--work-dir",
-    rebase_path(target_out_dir),
-    "--output-path",
-    rebase_path(gluegen_output_dir),
-    "--npm",
-    rebase_path(npm_path),
-    "--node",
-    rebase_path(nodejs_path),
-    "--native-binary",
-    rebase_path(gluegen_native_staging_path),
-  ]
-
-  outputs = [ gluegen_output_dir ]
-}
 
 ohos_executable("gluegen_native") {
   sources = [
@@ -177,26 +153,40 @@ ohos_executable("gluegen_native") {
   subsystem_name = "arkcompiler"
 }
 
-action("copy_gluegen_native") {
-  deps = [ ":gluegen_native" ]
+# Copy the built gluegen_native executable into the workspace gluegen/bin.
+action("copy_gluegen_native_to_workspace") {
   script = "scripts/copy_gluegen_native.py"
   inputs = [ gluegen_native_output ]
-  outputs = [ gluegen_native_staging_path ]
+  deps = [
+    ":gluegen_native",
+    "$_interop_toolkits_label:interop_toolkits_init_workspace",
+  ]
+  outputs = [ _gluegen_workspace_native ]
 
   args = [
     "--source",
     rebase_path(gluegen_native_output),
     "--destination",
-    rebase_path(gluegen_native_staging_path),
+    rebase_path(_gluegen_workspace_native),
   ]
 }
 
-ohos_copy("ets2panda_build_gluegen") {
-  deps = [ ":build_gluegen_wrapper" ]
-  sources = [ rebase_path(gluegen_output_dir) ]
-  outputs = [ "$target_out_dir/gluegen" ]
-  module_source_dir = "$target_out_dir/gluegen"
-  module_install_name = ""
-  part_name = "ets_frontend"
-  subsystem_name = "arkcompiler"
+# Build the gluegen package inside the workspace and pack it into a tarball.
+action("build_gluegen_pkg") {
+  script = "../ci-build/build_pkg.py"
+  inputs = [ "../ci-build/build_pkg.py" ]
+  sources = gluegen_sources
+  deps = [ ":copy_gluegen_native_to_workspace" ]
+  outputs = [ "$interop_toolkits_pack_dir/gluegen.tgz" ]
+
+  args = [
+    "--source-path",
+    rebase_path(_gluegen_workspace_dir),
+    "--node-path",
+    rebase_path(nodejs_path),
+    "--npm-path",
+    rebase_path(npm_path),
+    "--pack-path",
+    rebase_path("$interop_toolkits_pack_dir/gluegen.tgz"),
+  ]
 }

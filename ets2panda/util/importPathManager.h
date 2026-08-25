@@ -378,6 +378,7 @@ private:
     ImportInfo ResolvePath(parser::Program *importer, std::string_view importPath) const;
     ResolvedPathRes ResolveAbsolutePath(std::string_view importPathNode) const;
     std::string DirOrDirWithIndexFile(std::string resolvedPathPrototype) const;
+    bool IsDepAnalyzerMode() const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(std::string resolvedPathPrototype) const;
     std::string TryMatchDependencies(std::string_view fixedPath) const;
     ResolvedPathRes TryResolvePath(std::string resolvedPathPrototype) const;

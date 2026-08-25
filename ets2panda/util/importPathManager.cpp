@@ -32,6 +32,7 @@
 #include "libarkbase/utils/logger.h"
 
 #include "util/es2pandaMacros.h"
+#include "util/language.h"
 #include "util/path.h"
 #include "varbinder/ETSBinder.h"
 #include "varbinder/TSBinder.h"
@@ -240,6 +241,11 @@ bool ImportPathManager::CheckDependencyFileExists(const std::string &depPath, st
     return true;
 }
 
+bool ImportPathManager::IsDepAnalyzerMode() const
+{
+    return ctx_.depAnalyzer != nullptr;
+}
+
 void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes *result,
                                                     std::string_view importPath) const
 {
@@ -248,7 +254,8 @@ void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedP
         result->resolvedPath = packagePathPair->second;
         result->resolvedIsExternalModule = true;
         const auto &dependencies = ArkTSConfig().Dependencies();
-        if (auto depIt = dependencies.find(result->resolvedPath); depIt != dependencies.cend()) {
+        if (auto depIt = dependencies.find(result->resolvedPath);
+            depIt != dependencies.cend() && !IsDepAnalyzerMode()) {
             if (!CheckDependencyFileExists(depIt->second.Path(), importPath)) {
                 result->resolvedPath.clear();
                 result->resolvedIsExternalModule = false;
@@ -1498,6 +1505,10 @@ void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo)
 
 void ImportPathManager::LookupSourceFile(ImportInfo *importInfo)
 {
+    if (IsDepAnalyzerMode() && Language(importInfo->Lang()).IsDynamic()) {
+        importInfo->SetData<ModuleKind::DECLLESS_DYNAMIC>(std::string(importInfo->ResolvedSource()), "");
+        return;
+    }
     if (importInfo->HasSpecifiedDeclPath() && !importInfo->ReferencesABC()) {
         importInfo->SetTextFile<ModuleKind::SOURCE_DECL>(std::string(importInfo->DeclPath()), DE());
     } else if (Helpers::EndsWith(importInfo->ResolvedSource(), D_ETS_SUFFIX)) {
@@ -1518,7 +1529,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string
         resolvedDependency != std::nullopt) {
         // Since declgen is decoupled from the compile process, a dynamic ArkTS declaration file may be declared
         // in arktsconfig but missing on disk. Report an error when such a declaration is referenced but absent.
-        if (!CheckDependencyFileExists(resolvedDependency->second.Path(), resolvedPathPrototype)) {
+        if (!IsDepAnalyzerMode() &&
+            !CheckDependencyFileExists(resolvedDependency->second.Path(), resolvedPathPrototype)) {
             return {"", false, true};
         }
         return {resolvedPathPrototype, true};

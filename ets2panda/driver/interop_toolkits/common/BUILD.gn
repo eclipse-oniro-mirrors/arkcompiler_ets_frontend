@@ -1,0 +1,81 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/config/components/ets_frontend/ets2abc_config.gni")
+import("//build/ohos.gni")
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
+  import("//arkcompiler/runtime_core/static_core/ark_config.gni")
+} else {
+  import(
+      "//build/config/components/runtime_core/static_core/ark_common_config.gni")
+}
+
+# Shared workspace path from the parent interop_toolkits directory.
+import("//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits/workspace.gni")
+
+nodejs_path = "//prebuilts/build-tools/common/nodejs/current/bin/node"
+npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
+
+common_sources = [
+  "./src/arktsconfig/arktsconfig.ts",
+  "./src/arktsconfig/builder.ts",
+  "./src/arktsconfig/context.ts",
+  "./src/arktsconfig/generator.ts",
+  "./src/arktsconfig/index.ts",
+  "./src/arktsconfig/rules/arktsconfigRule.ts",
+  "./src/arktsconfig/rules/externalSdkRule.ts",
+  "./src/arktsconfig/rules/fileTree.ts",
+  "./src/arktsconfig/rules/interopSdkRule.ts",
+  "./src/arktsconfig/rules/moduleRule.ts",
+  "./src/arktsconfig/rules/ruleOutput.ts",
+  "./src/arktsconfig/rules/stdlibRule.ts",
+  "./src/errors.ts",
+  "./src/fileManager.ts",
+  "./src/fileUtils.ts",
+  "./src/framework/index.ts",
+  "./src/framework/pipeline/artifact.ts",
+  "./src/framework/pipeline/index.ts",
+  "./src/framework/pipeline/pipeline.ts",
+  "./src/framework/pipeline/stage.ts",
+  "./src/hvigorLogger.ts",
+  "./src/index.ts",
+  "./src/interop-config/errors.ts",
+  "./src/interop-config/index.ts",
+  "./src/interop-config/resolve.ts",
+  "./src/interop-config/types.ts",
+]
+
+# Build the common package inside the workspace and pack it into a tarball.
+action("build_common_pkg") {
+  script = "../ci-build/build_pkg.py"
+  inputs = [ "../ci-build/build_pkg.py" ]
+  sources = common_sources
+  deps = [
+    "//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits:interop_toolkits_init_node_modules",
+  ]
+  outputs = [
+    "$interop_toolkits_pack_dir/common.tgz",
+  ]
+
+  args = [
+    "--source-path",
+    rebase_path("$interop_toolkits_workspace_dir/common"),
+    "--node-path",
+    rebase_path(nodejs_path),
+    "--npm-path",
+    rebase_path(npm_path),
+    "--pack-path",
+    rebase_path("$interop_toolkits_pack_dir/common.tgz"),
+  ]
+}

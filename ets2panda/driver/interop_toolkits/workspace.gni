@@ -1,0 +1,28 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Target-independent shared paths (avoid $target_out_dir/$target_gen_dir:
+# they differ per importing target).
+_interop_toolkits_dir = "//arkcompiler/ets_frontend/ets2panda/driver/interop_toolkits"
+_interop_toolkits_out_dir = get_path_info(_interop_toolkits_dir, "out_dir")
+_interop_toolkits_gen_dir = get_path_info(_interop_toolkits_dir, "gen_dir")
+
+# Store source files and intermediate artifacts
+interop_toolkits_workspace_dir =
+    "$_interop_toolkits_gen_dir/interop_toolkits_workspace"
+# Store final artifacts for interop_toolkits
+interop_toolkits_artifacts_dir =
+    "$_interop_toolkits_out_dir/interop_toolkits_artifacts"
+# Store temporary packs
+interop_toolkits_pack_dir =
+    "$interop_toolkits_workspace_dir/pack"
