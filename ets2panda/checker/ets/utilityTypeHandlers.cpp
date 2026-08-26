@@ -212,7 +212,8 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
     if (typeToBeAwaited->IsETSUnionType()) {
         std::vector<Type *> awaitedTypes;
         for (Type *type : typeToBeAwaited->AsETSUnionType()->ConstituentTypes()) {
-            Type *unwrapped = IsPromiseType(type) ? type->AsETSObjectType()->TypeArguments().at(0) : type;
+            Type *unwrapped =
+                IsPromiseType(type) && type->IsETSObjectType() ? type->AsETSObjectType()->TypeArguments().at(0) : type;
             if (unwrapped->IsETSTypeParameter()) {
                 unwrapped = HandleAwaitedUtilityType(unwrapped);
             }

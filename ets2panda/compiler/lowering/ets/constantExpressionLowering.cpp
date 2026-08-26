@@ -416,6 +416,10 @@ private:
                     tmpStr += inputs_[i]->ToString();
                 } else if (inputs_[i]->IsStringLiteral()) {
                     tmpStr += inputs_[i]->AsStringLiteral()->Str().Utf8();
+                } else if (inputs_[i]->IsBigIntLiteral()) {
+                    // NOTE: 'Str()' does not include the trailing 'n' suffix, which matches
+                    // the runtime semantics of converting a bigint value to a string.
+                    tmpStr += inputs_[i]->AsBigIntLiteral()->Str().Utf8();
                 } else {
                     ES2PANDA_UNREACHABLE();
                 }
