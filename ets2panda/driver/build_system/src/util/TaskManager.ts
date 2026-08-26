@@ -17,11 +17,17 @@ import { ChildProcess, fork } from 'child_process'
 import * as os from 'os';
 
 import { DEFAULT_WORKER_NUMS, ENABLE_DISPATCH_ROOT_CLUSTER_FIRST } from '../pre_define';
-import { Logger, LogDataFactory, LogData } from '../logger';
+import { Logger, LogDataFactory, LogData, logErrorMessages } from '../logger';
 import { Worker as Thread } from 'worker_threads';
-import { WorkerMessageType, JobInfo, LogLevel } from '../types';
+import {
+    WorkerMessageType,
+    JobInfo,
+    WorkerLogMessage,
+    WorkerMessage,
+} from '../types';
 import { ErrorCode } from './error'
 import { Graph, GraphNode } from './graph';
+import { handleLogMessage } from './logger_util';
 
 export interface Task<PayloadT> {
     id: string;
@@ -42,50 +48,6 @@ type OnWorkerExitCallback<PayloadT> = (
     code: number | null,
     signal: NodeJS.Signals | null
 ) => LogData;
-
-interface WorkerDeclGeneratedMessage {
-    type: WorkerMessageType.DECL_GENERATED;
-    data: { taskId: string };
-}
-
-interface WorkerAbcDeclGeneratedMessage {
-    type: WorkerMessageType.ABC_DECL_GENERATED;
-    data: { taskId: string };
-}
-
-interface WorkerAbcCompiledMessage {
-    type: WorkerMessageType.ABC_COMPILED;
-    data: { taskId: string };
-}
-
-interface WorkerErrorMessage {
-    type: WorkerMessageType.ERROR_OCCURED;
-    data: { taskId: string; error: LogData | LogData[] };
-}
-
-interface WorkerTaskFinishedMessage {
-    type: WorkerMessageType.TASK_FINISHED;
-}
-
-interface WorkerTextLogMessage {
-    type: WorkerMessageType.LOG;
-    data: { level: LogLevel.INFO | LogLevel.WARN | LogLevel.DEBUG; message: string };
-}
-
-interface WorkerErrorLogMessage {
-    type: WorkerMessageType.LOG;
-    data: { level: LogLevel.ERROR | LogLevel.ERROR_AND_EXIT; error: LogData };
-}
-
-type WorkerLogMessage = WorkerTextLogMessage | WorkerErrorLogMessage;
-
-type WorkerMessage =
-    | WorkerDeclGeneratedMessage
-    | WorkerAbcDeclGeneratedMessage
-    | WorkerAbcCompiledMessage
-    | WorkerErrorMessage
-    | WorkerTaskFinishedMessage
-    | WorkerLogMessage;
 
 interface DriverWorker {
     on(msg: string, listener: (...args: any) => void): DriverWorker;
@@ -274,10 +236,10 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.logger.printDebug(`WorkerMessage: ${JSON.stringify(message, null, 1)}`)
         switch (message.type) {
             case WorkerMessageType.LOG:
-                this.handleWorkerLog(message);
+                handleLogMessage(this.logger, message as WorkerLogMessage);
                 break;
             case WorkerMessageType.ERROR_OCCURED:
-                this.logErrorMessages(message.data.error);
+                logErrorMessages(this.logger, message.data.error);
                 this.onTaskFailed(message.data.taskId);
                 break;
             case WorkerMessageType.DECL_GENERATED:
@@ -291,28 +253,6 @@ export class TaskManager<PayloadT extends JobInfo> {
                 break;
             case WorkerMessageType.TASK_FINISHED:
                 this.onTaskFinished(workerInfo);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private handleWorkerLog(message: WorkerLogMessage): void {
-        switch (message.data.level) {
-            case LogLevel.INFO:
-                this.logger.printInfo(message.data.message);
-                break;
-            case LogLevel.WARN:
-                this.logger.printWarn(message.data.message);
-                break;
-            case LogLevel.DEBUG:
-                this.logger.printDebug(message.data.message);
-                break;
-            case LogLevel.ERROR:
-                this.logErrorMessage(message.data.error);
-                break;
-            case LogLevel.ERROR_AND_EXIT:
-                this.logErrorMessage(message.data.error, true);
                 break;
             default:
                 break;
@@ -524,23 +464,6 @@ export class TaskManager<PayloadT extends JobInfo> {
 
         this.logger.printDebug(`Worker with id ${newWorker.getId()} is now idle`);
         this.idleWorkers.push(workerInfo);
-    }
-
-    // Reconstruct LogData from a plain object to restore class methods lost during IPC serialization.
-    private reconstructLogData(error: LogData): LogData {
-        return new LogData(error.code, error.description, error.cause, error.position, error.solutions, error.moreInfo);
-    }
-
-    private logErrorMessage(error: LogData, exitAfter: boolean = false): void {
-        const logData = this.reconstructLogData(error);
-        exitAfter ? this.logger.printErrorAndExit(logData) : this.logger.printError(logData);
-    }
-
-    private logErrorMessages(error: LogData | LogData[]): void {
-        const errors = Array.isArray(error) ? error : [error];
-        errors.forEach((err: LogData) => {
-            this.logErrorMessage(err);
-        });
     }
 
     public shutdownWorkers(): void {

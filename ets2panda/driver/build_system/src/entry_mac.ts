@@ -16,31 +16,16 @@
 import * as path from 'path';
 import { fork } from 'child_process';
 
-import { LoggerGetter } from './logger';
-import { BuildConfig } from './types';
 import { runBuild } from './entry';
-
-enum MessageType {
-    BUILD = 'BUILD',
-}
-
-interface MainToSubMsg {
-    task: MessageType;
-    config: BuildConfig;
-    loggerGetter?: LoggerGetter;
-}
-
-interface SubToMainMsg {
-    success: boolean;
-    errMsg?: string;
-}
+import { BuildConfig, WorkerMessageType, WorkerMessage, WorkerLogMessage, WorkerToMainMessage, MainToWorkerMessage } from './types';
+import { getInterProcessLogger, Logger } from './logger';
+import { handleLogMessage } from './util/logger_util';
 
 /**
  * main process
  */
 export async function buildForMac(
     projectConfig: BuildConfig,
-    loggerGetter?: LoggerGetter
 ): Promise<void> {
     return new Promise((resolve, reject) => {
         // 1. create child process with current file , execute if (process.send) below
@@ -48,18 +33,24 @@ export async function buildForMac(
 
         // 2. send build msg to child process
         child.send({
-            task: MessageType.BUILD,
+            type: WorkerMessageType.BUILD,
             config: projectConfig,
-            loggerGetter,
-        } as MainToSubMsg);
+        } as MainToWorkerMessage);
 
         // 3. response child msg
         child.on('message', (rawMsg: unknown) => {
-            const msg = rawMsg as SubToMainMsg;
-            if (msg.success) {
-                resolve();
-            } else {
-                reject(new Error(msg.errMsg));
+            const msg = rawMsg as WorkerMessage;
+            if (msg.type === WorkerMessageType.SUB_RESPONSE) {
+                const rspMsg = msg as WorkerToMainMessage;
+                if (rspMsg.success) {
+                    resolve();
+                } else {
+                    reject(new Error(rspMsg.errMsg));
+                }
+            }
+
+            if (msg.type === WorkerMessageType.LOG) {
+                handleLogMessage(Logger.getInstance(), msg as WorkerLogMessage);
             }
         });
 
@@ -80,19 +71,23 @@ export async function buildForMac(
  */
 if (process.send) {
     process.on('message', async (rawMsg: unknown) => {
-        const msg = rawMsg as MainToSubMsg;
-        if (msg.task === MessageType.BUILD) {
+        const msg = rawMsg as WorkerMessage;
+        if (msg.type === WorkerMessageType.BUILD) {
+            let mainMsg = msg as MainToWorkerMessage;
             try {
                 // build in child process and response to main process
-                await runBuild(msg.config, msg.loggerGetter);
-                process.send!({ success: true } as SubToMainMsg);
+                // init sub process logger , print log to main process
+                Logger.getInstance(getInterProcessLogger, mainMsg.config.enableDebugOutput);
+                await runBuild(mainMsg.config);
+                process.send!({ type: WorkerMessageType.SUB_RESPONSE, success: true } as WorkerToMainMessage);
                 process.exit(0);
             } catch (e) {
                 const err = e as Error;
                 process.send!({
+                    type: WorkerMessageType.SUB_RESPONSE,
                     success: false,
                     errMsg: err.message,
-                } as SubToMainMsg);
+                } as WorkerToMainMessage);
                 process.exit(1);
             }
         }

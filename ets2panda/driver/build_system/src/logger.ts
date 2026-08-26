@@ -264,3 +264,15 @@ export function getInterProcessLogger(subsystemCode: string): InterProcessLogger
 export function patchBuildConfigLogger(buildConfig: BuildConfig, loggerGetter: LoggerGetter): void {
     buildConfig.getHvigorConsoleLogger = loggerGetter;
 }
+
+export function logErrorMessage(logger: Logger, error: LogData, exitAfter: boolean = false): void {
+    const logData = new LogData(error.code, error.description, error.cause, error.position, error.solutions, error.moreInfo);
+    exitAfter ? logger.printErrorAndExit(logData) : logger.printError(logData);
+}
+
+export function logErrorMessages(logger: Logger, error: LogData | LogData[]): void {
+    const errors = Array.isArray(error) ? error : [error];
+    errors.forEach((err: LogData) => {
+        logErrorMessage(logger, err);
+    });
+}
