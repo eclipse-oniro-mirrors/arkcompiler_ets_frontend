@@ -22,6 +22,30 @@ python3 test/runner.py --version-control ../../../out/rk3568/clang_x64/arkcompil
 ### 可选参数：
 
 * `--version-control`:执行版本控制测试套
+* `--jobs N / -j N`：并行度（默认 `min(CPU核数, 16)`；`--jobs=1` 强制串行，用于问题复现/调试）。
+  注意该参数为全局参数：除 version-control 套件外，还会限定 regression 等套件进程池的并行度。
+* `--filter <glob> / -f <glob>`：只运行路径匹配的用例，可单跑某个用例，例如：
+  * `-f "*lazy_import*"`：单跑（含模块依赖的用例也可单独运行）
+  * `-f "*bytecode_compile*version_API12beta1*"`：只跑某个 abc 输入用例
+* `--vc-versions API12beta3[,API18,...]`：只跑指定版本（编译目标版本与 VM 版本两个维度同时生效），
+  可与 `--filter` 组合实现"指定用例在指定版本上跑"；`API12` 为族名，等价于 `API12beta1,API12beta2,API12beta3`。
+  非法版本名会在启动时报错并列出合法值。示例：
+* `--vc-phase source|abc|es2abc[,..]`：只运行指定阶段（默认三个阶段全部执行），用于分阶段调试：
+  * `source`：P1 源码级用例（编译 dump 对比 + VM 矩阵），此阶段不生成/不依赖 abc 输入；
+  * `abc`：P2 abc 输入重编译 + VM 执行；
+  * `es2abc`：P3 对旧版 es2abc 生成的 abc 输入重编译（仅编译对比）。
+  非法阶段名会在启动时报错。注意：多阶段同跑时 P1 与后续阶段并行执行以缩短总时长，
+  此时各阶段汇总统一在全部阶段结束后按固定顺序打印；该参数是调试用切片，CI/门禁全量运行不应携带。
+
+```
+# 单跑一个用例的全部版本矩阵
+python3 test/runner.py --version-control $BUILD -f "*lazy_import*"
+
+# 指定用例只在 API12beta3 上跑（编译目标=12beta3，VM 也只跑 12beta3）
+python3 test/runner.py --version-control $BUILD -f "*lazy_import.ts" --vc-versions API12beta3
+```
+
+注意：`--vc-versions` 是调试用的矩阵切片，不改变被选中单元格的比较逻辑；CI/门禁全量运行不应携带此参数。
 
 ## 测试原理
 
