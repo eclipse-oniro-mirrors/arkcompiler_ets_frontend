@@ -413,8 +413,8 @@ std::optional<std::unique_ptr<ArkTsConfig>> Options::ParseArktsConfig()
                                         util::DiagnosticMessageParams {util::StringView(GetArktsconfig())});
         return std::nullopt;
     }
-    if (WasSetStdlib() && !config->FixupWithStdlibOption(GetStdlib())) {
-        return std::nullopt;
+    if (WasSetStdlib()) {
+        config->FixupWithStdlibOption(GetStdlib());
     }
     config->FixupWithoutStdlibOption();
     config->ResolveAllDependenciesInArkTsConfig();

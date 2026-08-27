@@ -154,7 +154,7 @@ public:
     std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false,
                                            util::FsQueryCache *fsQueryCache = nullptr) const;
 
-    bool FixupWithStdlibOption(const std::string &stdlib);
+    void FixupWithStdlibOption(const std::string &stdlib);
     void FixupWithoutStdlibOption();
 
     void ResolveAllDependenciesInArkTsConfig();

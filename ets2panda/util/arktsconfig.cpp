@@ -440,18 +440,15 @@ static std::string ValueOrEmptyString(const JsonObject::JsonObjPointer *json, co
     return (res != nullptr) ? *res : "";
 }
 
-bool ArkTsConfig::FixupWithStdlibOption(const std::string &stdlib)
+void ArkTsConfig::FixupWithStdlibOption(const std::string &stdlib)
 {
     for (std::string prefix : {"std", "escompat", "arkruntime"}) {
         std::string path = stdlib + util::PATH_DELIMITER;
         path += prefix;
         auto stdlibRealpath = ark::os::GetAbsolutePath(path);
-        if (!Check(!stdlibRealpath.empty(), diagnostic::NO_FILE, {path})) {
-            return false;
-        }
+        ES2PANDA_ASSERT(!stdlibRealpath.empty());
         paths_[prefix] = {stdlibRealpath};
     }
-    return true;
 }
 
 void ArkTsConfig::FixupWithoutStdlibOption()
