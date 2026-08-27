@@ -18,6 +18,7 @@
 #include <libarkbase/os/filesystem.h>
 #include "util/arktsconfig.h"
 #include "util/diagnostic.h"
+#include "util/fsQueryCache.h"
 #include "util/diagnosticEngine.h"
 #include "generated/diagnostic.h"
 
@@ -43,6 +44,7 @@
 #include <cstdio>
 #include <memory>
 #include <queue>
+#include <optional>
 #include <string_view>
 #include <unordered_map>
 #include <utility>
@@ -221,6 +223,15 @@ void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPa
     }
 }
 
+static bool ImportFileExists(FsQueryCache &fsQueryCache, const std::string &path)
+{
+#if defined(PANDA_TARGET_WINDOWS)
+    return fsQueryCache.IsRegularFile(path, true);
+#else
+    return fsQueryCache.IsRegularFile(path);
+#endif
+}
+
 bool ImportPathManager::CheckDependencyFileExists(const std::string &depPath, std::string_view messageParam) const
 {
     // A dynamic dependency without a path is valid for ESValue/declless interop scenarios
@@ -228,12 +239,8 @@ bool ImportPathManager::CheckDependencyFileExists(const std::string &depPath, st
     if (depPath.empty()) {
         return true;
     }
-#if defined(PANDA_TARGET_WINDOWS)
-    bool fileExistsExt = ark::os::file::File::IsRegularFileCaseSensitive(depPath);
-#else
-    bool fileExistsExt = ark::os::file::File::IsRegularFile(depPath);
-#endif
-    if (!fileExistsExt) {
+    const bool fileExists = ImportFileExists(*fsQueryCache_, depPath);
+    if (!fileExists) {
         DE()->LogDiagnostic(diagnostic::INTEROP_DYNAMIC_FILE_NOT_FOUND, util::DiagnosticMessageParams {messageParam},
                             srcPos_);
         return false;
@@ -353,7 +360,15 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolveAbsolutePath(std::s
         return AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
     }
 
-    auto resolvedPath = ArkTSConfig().ResolvePath(importPath, isDynamic_);
+    const auto arkTsPathCacheKey = BuildResolutionCacheKey(importPath);
+    auto arkTsPathCacheIter = arkTsPathCache_.find(arkTsPathCacheKey);
+    std::optional<std::string> resolvedPath;
+    if (arkTsPathCacheIter != arkTsPathCache_.end()) {
+        resolvedPath = arkTsPathCacheIter->second;
+    } else {
+        resolvedPath = ArkTSConfig().ResolvePath(importPath, isDynamic_, fsQueryCache_.get());
+        arkTsPathCache_.emplace(arkTsPathCacheKey, resolvedPath);
+    }
     if (!resolvedPath) {
         DE()->LogDiagnostic(
             diagnostic::IMPORT_CANT_FIND_PREFIX,
@@ -378,11 +393,6 @@ parser::PackageProgram *ImportPathManager::NewEmptyPackage(const ImportInfo &imp
     return package;
 }
 
-std::string GetRealPath(const std::string &path)
-{
-    return ark::os::GetAbsolutePath(path);
-}
-
 template <typename VarBinderT, Language::Id LANG_ID>
 void ImportPathManager::SetupGlobalProgram(public_lib::Context *ctx)
 {
@@ -390,7 +400,7 @@ void ImportPathManager::SetupGlobalProgram(public_lib::Context *ctx)
     // NOTE(dkofanov): this code tries to handle pseudo-files provided by unrelated 'ctx->sourceFile->filePath' and
     // 'ctx->input'.
 
-    auto normalizedPathForGlobalProg = GetRealPath(std::string(ctx->sourceFile->filePath));
+    auto normalizedPathForGlobalProg = ark::os::GetAbsolutePath(std::string(ctx->sourceFile->filePath));
     if (normalizedPathForGlobalProg.empty()) {
         normalizedPathForGlobalProg = ark::os::NormalizePath(std::string(ctx->sourceFile->filePath));
     }
@@ -498,6 +508,13 @@ parser::Program *ImportPathManager::IntroduceStdlibImportProgram(std::string &&c
     return IntroduceProgram<ModuleKind::MODULE>(importInfo);
 }
 
+void ImportPathManager::ClearResolutionCaches()
+{
+    fsQueryCache_->Clear();
+    appendExtensionOrIndexFileCache_.clear();
+    arkTsPathCache_.clear();
+}
+
 void ImportPathManager::IntroduceMainProgramForSimult()
 {
     ES2PANDA_ASSERT(Context()->parserProgram == nullptr);
@@ -521,6 +538,7 @@ void ImportPathManager::PrepareParseQueueForProgram(parser::Program *program)
     ES2PANDA_ASSERT(program != nullptr);
     ClearParseList();
     RemoveFileDependencies(program->AbsoluteName().Utf8());
+    ClearResolutionCaches();
     parseQueue_.emplace_back(ParseInfo {false, program});
     srcPos_.SetProgram(program);
 }
@@ -1496,7 +1514,7 @@ void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo)
     }
     auto cachefile = FormEtscacheFilePath(std::string {importInfo->ModuleName()}, ArkTSConfig().CacheDir());
     ES2PANDA_ASSERT(cachefile.find(ArkTSConfig().CacheDir()) == 0);
-    if (!ark::os::file::File::IsRegularFile(cachefile)) {
+    if (!fsQueryCache_->IsRegularFile(cachefile)) {
         return;
     }
 
@@ -1549,17 +1567,17 @@ std::string ImportPathManager::DirOrDirWithIndexFile(std::string resolvedPathPro
     // Supported index files: keep this checking order
     for (auto indexFile : indexFiles) {
         std::string indexFilePath = resolvedPathPrototype + pathDelimiter_.at(0) + indexFile;
-#if defined(PANDA_TARGET_WINDOWS)
-        bool fileExists = ark::os::file::File::IsRegularFileCaseSensitive(indexFilePath);
-#else
-        bool fileExists = ark::os::file::File::IsRegularFile(indexFilePath);
-#endif
-        if (fileExists) {
+        if (ImportFileExists(*fsQueryCache_, indexFilePath)) {
             return indexFilePath;
         }
     }
 
     return resolvedPathPrototype;
+}
+
+ImportPathManager::ResolutionCacheKey ImportPathManager::BuildResolutionCacheKey(std::string_view path) const
+{
+    return {isDynamic_, std::string {path}};
 }
 
 ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFileIfOmitted(
@@ -1571,34 +1589,37 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         [delim](char c) { return ((delim != c) && ((c == '\\') || (c == '/'))); }, delim);
 
     resolvedPathPrototype = ark::os::NormalizePath(resolvedPathPrototype);
-    if (auto resPathInfo = TryResolvePath(resolvedPathPrototype);
-        !resPathInfo.resolvedPath.empty() || resPathInfo.hasError) {
-        return resPathInfo;
+    const auto cacheKey = BuildResolutionCacheKey(resolvedPathPrototype);
+    auto cached = appendExtensionOrIndexFileCache_.find(cacheKey);
+    if (cached != appendExtensionOrIndexFileCache_.end()) {
+        return cached->second;
     }
 
-#if defined(PANDA_TARGET_WINDOWS)
-    bool fileExists = ark::os::file::File::IsRegularFileCaseSensitive(resolvedPathPrototype);
-#else
-    bool fileExists = ark::os::file::File::IsRegularFile(resolvedPathPrototype);
-#endif
-    if (fileExists) {
-        return {GetRealPath(resolvedPathPrototype)};
+    auto cacheAndReturn = [this, &cacheKey](ResolvedPathRes resPathInfo) {
+        if (!resPathInfo.hasError && !resPathInfo.resolvedPath.empty()) {
+            appendExtensionOrIndexFileCache_.emplace(cacheKey, resPathInfo);
+        }
+        return resPathInfo;
+    };
+
+    if (auto resPathInfo = TryResolvePath(resolvedPathPrototype);
+        !resPathInfo.resolvedPath.empty() || resPathInfo.hasError) {
+        return cacheAndReturn(resPathInfo);
+    }
+
+    if (ImportFileExists(*fsQueryCache_, resolvedPathPrototype)) {
+        return cacheAndReturn({ark::os::GetAbsolutePath(resolvedPathPrototype)});
     }
 
     for (const auto &extension : supportedExtensions) {
         auto pathWithExtension = resolvedPathPrototype + std::string(extension);
-#if defined(PANDA_TARGET_WINDOWS)
-        bool fileExistsExt = ark::os::file::File::IsRegularFileCaseSensitive(pathWithExtension);
-#else
-        bool fileExistsExt = ark::os::file::File::IsRegularFile(pathWithExtension);
-#endif
-        if (fileExistsExt) {
-            return {GetRealPath(pathWithExtension)};
+        if (ImportFileExists(*fsQueryCache_, pathWithExtension)) {
+            return cacheAndReturn({ark::os::GetAbsolutePath(pathWithExtension)});
         }
     }
 
-    if (ark::os::file::File::IsDirectory(resolvedPathPrototype)) {
-        return {GetRealPath(DirOrDirWithIndexFile(resolvedPathPrototype))};
+    if (fsQueryCache_->IsDirectory(resolvedPathPrototype)) {
+        return cacheAndReturn({ark::os::GetAbsolutePath(DirOrDirWithIndexFile(resolvedPathPrototype))});
     }
 
     DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {resolvedPathPrototype}, srcPos_);
@@ -1869,9 +1890,12 @@ bool ImportInfo::IsValid() const
 ImportPathManager::ImportPathManager(public_lib::Context *context)
     : ctx_(*context),
       parseQueue_(context->Allocator()->Adapter()),
-      resolvedSources_(*ArenaAllocator::New<ResolvedSources>(this))
+      resolvedSources_(*ArenaAllocator::New<ResolvedSources>(this)),
+      fsQueryCache_(std::make_unique<FsQueryCache>())
 {
 }
+
+ImportPathManager::~ImportPathManager() = default;
 
 }  // namespace ark::es2panda::util
 #undef USE_UNIX_SYSCALL

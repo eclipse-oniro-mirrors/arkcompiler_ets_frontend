@@ -533,6 +533,7 @@ libes2panda_sources = [
   "util/eheap.cpp",
   "util/errorRecovery.cpp",
   "util/es2pandaMacros.cpp",
+  "util/fsQueryCache.cpp",
   "util/helpers.cpp",
   "util/patchFix.cpp",
   "util/symbolTable.cpp",

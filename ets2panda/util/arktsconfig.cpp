@@ -21,6 +21,7 @@
 #include "util/path.h"
 #include "generated/signatures.h"
 #include "util/helpers.h"
+#include "util/fsQueryCache.h"
 
 #include <fstream>
 #include <memory>
@@ -615,10 +616,20 @@ static std::string TrimPath(const std::string &path)
     return trimmedPath;
 }
 
-static bool CheckFilePath(const std::string &path)
+static bool IsRegularFile(const std::string &path, util::FsQueryCache *fsQueryCache)
+{
+    return fsQueryCache != nullptr ? fsQueryCache->IsRegularFile(path) : ark::os::file::File::IsRegularFile(path);
+}
+
+static bool IsDirectory(const std::string &path, util::FsQueryCache *fsQueryCache)
+{
+    return fsQueryCache != nullptr ? fsQueryCache->IsDirectory(path) : ark::os::file::File::IsDirectory(path);
+}
+
+static bool CheckFilePath(const std::string &path, util::FsQueryCache *fsQueryCache)
 {
     for (const auto &extension : util::ImportPathManager::supportedExtensions) {
-        if (ark::os::file::File::IsRegularFile(path + std::string(extension))) {
+        if (IsRegularFile(path + std::string(extension), fsQueryCache)) {
             return true;
         }
     }
@@ -626,29 +637,31 @@ static bool CheckFilePath(const std::string &path)
 }
 
 std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path, const std::string &alias,
-                                                          const std::vector<std::string> &filePaths) const
+                                                          const std::vector<std::string> &filePaths,
+                                                          util::FsQueryCache *fsQueryCache) const
 {
     for (const auto &filePath : filePaths) {
         auto resolved = std::string(path);
         std::string newPrefix = TrimPath(filePath);
         resolved.replace(0, alias.length(), newPrefix);
 
-        if (ark::os::file::File::IsDirectory(resolved) || ark::os::file::File::IsRegularFile(resolved)) {
+        if (IsDirectory(resolved, fsQueryCache) || IsRegularFile(resolved, fsQueryCache)) {
             return resolved;
         }
 
-        if (CheckFilePath(resolved)) {
+        if (CheckFilePath(resolved, fsQueryCache)) {
             return resolved;
         }
     }
     return std::nullopt;
 }
 
-std::optional<std::string> ArkTsConfig::TryResolveWithPaths(std::string_view path) const
+std::optional<std::string> ArkTsConfig::TryResolveWithPaths(std::string_view path,
+                                                            util::FsQueryCache *fsQueryCache) const
 {
     // remove this?
     if (auto indexIt = paths_.find(std::string(path) + "/Index"); indexIt != paths_.end()) {
-        auto result = ResolveImportPath(path, TrimPath(indexIt->first), indexIt->second);
+        auto result = ResolveImportPath(path, TrimPath(indexIt->first), indexIt->second, fsQueryCache);
         if (result.has_value()) {
             return result;
         }
@@ -656,7 +669,7 @@ std::optional<std::string> ArkTsConfig::TryResolveWithPaths(std::string_view pat
     for (const auto &[alias, paths] : paths_) {
         auto trimmedAlias = TrimPath(alias);
         if (path.rfind(trimmedAlias, 0) == 0) {
-            return ResolveImportPath(path, trimmedAlias, paths);
+            return ResolveImportPath(path, trimmedAlias, paths, fsQueryCache);
         }
     }
     return std::nullopt;
@@ -698,7 +711,8 @@ std::optional<std::string> ArkTsConfig::TryResolveWithDependencyAliases(std::str
     return std::nullopt;
 }
 
-std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic) const
+std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic,
+                                                    util::FsQueryCache *fsQueryCache) const
 {
     std::optional<std::string> result = TryResolveWithDependencies(path);
     if (result) {
@@ -710,9 +724,9 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
         if (result) {
             return result;
         }
-        result = TryResolveWithPaths(path);
+        result = TryResolveWithPaths(path, fsQueryCache);
     } else {
-        result = TryResolveWithPaths(path);
+        result = TryResolveWithPaths(path, fsQueryCache);
         if (result) {
             return result;
         }

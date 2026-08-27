@@ -735,6 +735,7 @@ set(ES2PANDA_LIB_SRC
   util/errorRecovery.cpp
   util/es2pandaMacros.cpp
   util/generateBin.cpp
+  util/fsQueryCache.cpp
   util/helpers.cpp
   util/patchFix.cpp
   util/symbolTable.cpp

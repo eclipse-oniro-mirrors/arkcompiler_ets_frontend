@@ -1230,6 +1230,7 @@ static int BatchDeleteProgramsForFiles(public_lib::Context *ctx,
         importPathManager->RemoveProgramFromResolvedSources(key);
     }
     importPathManager->RemoveProgramsFromFileDependencies(uniqueDeleteNames);
+    importPathManager->ClearResolutionCaches();
     return 0;
 }
 
