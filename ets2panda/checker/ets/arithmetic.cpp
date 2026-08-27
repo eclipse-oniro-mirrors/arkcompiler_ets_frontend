@@ -274,10 +274,6 @@ bool ETSChecker::CheckBinaryOperatorForBigInt(Type *left, Type *right, lexer::To
     // The non-BigInt operand will be converted to BigInt during lowering.
     if ((leftIsBigInt && CheckIfNumeric(right)) || (rightIsBigInt && CheckIfNumeric(left))) {
         switch (op) {
-            case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
-            case lexer::TokenType::PUNCTUATOR_LESS_THAN:
-            case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
-            case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
             case lexer::TokenType::PUNCTUATOR_EQUAL:
             case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
             case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
@@ -1582,6 +1578,7 @@ static std::tuple<Type *, Type *> ResolveCheckBinaryOperatorForBigInt(ETSChecker
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
         case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
         case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
+            return {checker->GlobalETSBooleanBuiltinType(), checker->GlobalETSBooleanBuiltinType()};
         case lexer::TokenType::PUNCTUATOR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_NOT_EQUAL:
         case lexer::TokenType::PUNCTUATOR_STRICT_EQUAL:
@@ -1648,6 +1645,20 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
         IsBigIntZeroLiteral(right)) {
         LogError(diagnostic::BIGINT_DIVISION_BY_ZERO, {}, right->Start());
         return {GlobalTypeError(), GlobalTypeError()};
+    }
+
+    if (HasBigIntNonBigIntEqualityPairing(this, leftType, rightType)) {
+        switch (operationType) {
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN:
+            case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL:
+            case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
+                LogOperatorCannotBeApplied(this, operationType, GetNonConstantType(leftType),
+                                           GetNonConstantType(rightType), pos);
+                return {GlobalETSBooleanBuiltinType(), GlobalETSBooleanBuiltinType()};
+            default:
+                break;
+        }
     }
 
     if (CheckBinaryOperatorForBigInt(leftType, rightType, operationType)) {
