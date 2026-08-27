@@ -1,14 +1,4 @@
 # Known failure list for test262 -other -cmc-gc-fastverify-x64-int
-
-#31093
-test262/data/other_tests/built-ins/RegExp/property-escapes/generated/Script_Extensions_-Pau_Cin_Hau.js
-
-#26458
-test262/data/other_tests/language/statements/class/elements/after-same-line-static-async-gen-rs-private-method-alt.js
-
-#27147
-test262/data/other_tests/language/module-code/top-level-await/syntax/if-expr-await-expr-template-literal.js
-
 # Issue 11781
 # After shielding and fixing the daylight saving time issue, the test262 test cases below need to be excluded.  
 # Because these cases mistakenly assumes that China's time zone from 1900 to 1927 was UTC+08:05. But in reality,
