@@ -355,7 +355,6 @@ export function collectReservedNameForObf(
   obfuscationConfig: MergedConfig | undefined,
   shouldTransformToJs: boolean,
   parentEvent?: CompileEvent): TransformerFactory<SourceFile> {
-  const eventCollectReservedNameForObf = createAndStartEvent(parentEvent, 'collectReservedNameForObf');
   const disableObf = obfuscationConfig?.options === undefined || obfuscationConfig.options.disableObfuscation;
   const enablePropertyObf = obfuscationConfig?.options.enablePropertyObfuscation;
   // process.env.compiler === 'on': indicates that during the Webpack packaging process,
@@ -367,11 +366,15 @@ export function collectReservedNameForObf(
 
   return (context: TransformationContext) => {
     return (node: SourceFile) => {
-      if (shouldCollect) {
-        node = visitEachChild(node, collectReservedNames, context);
+      if (!shouldCollect) {
+        return node;
       }
-      stopEvent(eventCollectReservedNameForObf);
-      return node;
+      const eventCollectReservedNameForObf = createAndStartEvent(parentEvent, 'collectReservedNameForObf');
+      try {
+        return visitEachChild(node, collectReservedNames, context);
+      } finally {
+        stopEvent(eventCollectReservedNameForObf);
+      }
     };
 
     function collectReservedNames(node: Node): Node {
