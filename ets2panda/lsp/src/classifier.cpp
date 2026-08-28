@@ -22,6 +22,7 @@
 #include "generated/tokenType.h"
 #include "internal_api.h"
 #include "ir/astNode.h"
+#include "lexer/ETSLexer.h"
 #include "lexer/lexer.h"
 #include "libarkbase/macros.h"
 #include "public/es2panda_lib.h"
@@ -30,12 +31,10 @@
 
 namespace ark::es2panda::lsp {
 
-std::unique_ptr<lexer::Lexer> InitLexer(es2panda_Context *context)
+std::unique_ptr<lexer::Lexer> InitLexer(es2panda_Context *context, parser::ParserContext *parserContext)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto parserContext = parser::ParserContext(ctx->parserProgram, parser::ParserStatus::NO_OPTS);
-    std::unique_ptr<lexer::Lexer> lexer = std::make_unique<lexer::Lexer>(&parserContext, *ctx->diagnosticEngine);
-    return lexer;
+    return std::make_unique<lexer::ETSLexer>(parserContext, *ctx->diagnosticEngine);
 }
 
 ClassificationType AstNodeTypeToClassificationType(ir::AstNodeType type)
@@ -132,8 +131,9 @@ char const *ClassificationTypeToString(ClassificationType type)
 
 std::vector<ClassifiedSpan *> GetSyntacticClassifications(es2panda_Context *context, size_t startPos, size_t length)
 {
-    auto lexer = InitLexer(context);
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto parserContext = parser::ParserContext(ctx->parserProgram, parser::ParserStatus::NO_OPTS);
+    auto lexer = InitLexer(context, &parserContext);
     auto result = std::vector<ClassifiedSpan *>();
     lexer->NextToken();
     while (lexer->GetToken().Type() != lexer::TokenType::EOS) {
@@ -186,7 +186,8 @@ std::vector<ClassifiedSpan *> GetSemanticClassifications(es2panda_Context *conte
     auto result = std::vector<ClassifiedSpan *>();
 
     auto decls = GetDecls(ast);
-    auto lexer = InitLexer(context);
+    auto parserContext = parser::ParserContext(ctx->parserProgram, parser::ParserStatus::NO_OPTS);
+    auto lexer = InitLexer(context, &parserContext);
     lexer->NextToken();
     while (lexer->GetToken().Type() != lexer::TokenType::EOS) {
         ir::AstNode *currentNode = nullptr;

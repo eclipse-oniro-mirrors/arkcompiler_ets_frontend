@@ -2238,4 +2238,194 @@ let a: aAa
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsTests, getCompletionsFunctionParameterScope)
+{
+    std::vector<std::string> files = {"getCompletionsFunctionParameterScope.ets"};
+    const std::string text = R"delimiter('use static'
+
+class Mes {
+    id: int = 1;
+    name: string = "a";
+    isAdmin: boolean = false;
+}
+
+export function ns_func1(arg1: Mes): void {
+    arg1.id += 1;
+    let n = arg
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), 1);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "let n = arg";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "arg1: Mes", ark::es2panda::lsp::CompletionEntryKind::VARIABLE, std::string(GLOBALS_OR_KEYWORDS), "arg1")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsExtensionReceiverScope)
+{
+    std::vector<std::string> files = {"getCompletionsExtensionReceiverScope.ets"};
+    const std::string text = R"delimiter('use static'
+
+class Mes {}
+
+function ext(this: Mes, arg1: Mes): void {
+    let value = =
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), 1);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "let value = =";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto receiver = std::find_if(res.GetEntries().begin(), res.GetEntries().end(), [](const CompletionEntry &entry) {
+        return entry.GetInsertText() == "=t" && entry.GetCompletionKind() == CompletionEntryKind::VARIABLE;
+    });
+    EXPECT_EQ(receiver, res.GetEntries().end());
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsFunctionParameterDotClass)
+{
+    std::vector<std::string> files = {"getCompletionsFunctionParameterDotClass.ets"};
+    const std::string text = R"delimiter('use static'
+
+class Mes {
+    id: int = 1;
+    name: string = "a";
+    isAdmin: boolean = false;
+}
+
+export function ns_func1(arg1: Mes): void {
+    arg1.id += 1;
+    arg1.
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), 1);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "arg1.";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("id: int", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "id", std::nullopt, "int"),
+        CompletionEntry("name: string", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "name", std::nullopt, "string"),
+        CompletionEntry("isAdmin: boolean", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "isAdmin", std::nullopt, "boolean")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsFunctionParameterDotInterface)
+{
+    std::vector<std::string> files = {"getCompletionsFunctionParameterDotInterface.ets"};
+    const std::string text = R"delimiter('use static'
+
+namespace ns {
+    export interface Mes {
+        id: int;
+        name: string;
+        isAdmin: boolean;
+    }
+
+    export function ns_func1(arg1: Mes): void {
+        arg1.id += 1;
+        arg1.
+    }
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), 1);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "arg1.";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("id: int", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(CLASS_MEMBER_SNIPPETS), "id", std::nullopt, "int"),
+        CompletionEntry("name: string", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(CLASS_MEMBER_SNIPPETS), "name", std::nullopt, "string"),
+        CompletionEntry("isAdmin: boolean", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(CLASS_MEMBER_SNIPPETS), "isAdmin", std::nullopt, "boolean")};
+    const auto &entries = res.GetEntries();
+    std::string actualEntries;
+    for (const auto &entry : entries) {
+        actualEntries += entry.GetName() + " | " + std::to_string(static_cast<int>(entry.GetCompletionKind())) + " | " +
+                         entry.GetSortText() + " | " + entry.GetTypeSig() + "\n";
+    }
+    ASSERT_EQ(entries.size(), expectedEntries.size()) << actualEntries;
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsFunctionParameterDotStruct)
+{
+    std::vector<std::string> files = {"getCompletionsFunctionParameterDotStruct.ets"};
+    const std::string text = R"delimiter('use static'
+
+struct Mes {
+    id: int = 1;
+    name: string = "a";
+    isAdmin: boolean = false;
+}
+
+export function ns_func1(arg1: Mes): void {
+    arg1.id += 1;
+    arg1.
+}
+)delimiter";
+    std::vector<std::string> texts = {text};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), 1);
+
+    LSPAPI const *lspApi = GetImpl();
+    const std::string marker = "arg1.";
+    auto markerPos = text.find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + marker.size();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("id: int", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "id", std::nullopt, "int"),
+        CompletionEntry("name: string", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "name", std::nullopt, "string"),
+        CompletionEntry("isAdmin: boolean", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "isAdmin", std::nullopt, "boolean")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 }  // namespace
