@@ -1397,13 +1397,13 @@ void TSDeclGen::HandleTypeArgument(checker::Type *arg, const std::string &typeSt
     if (typeStr == "Promise" && arg != nullptr && arg->HasTypeFlag(checker::TypeFlag::ETS_UNDEFINED)) {
         OutDts("void");
     } else if (arg != nullptr) {
-        if (!state_.currentTypeAliasName.empty() && !arg->HasTypeFlag(checker::TypeFlag::ETS_TYPE_PARAMETER) &&
+        if (!state_.typeAliasCtx.name.empty() && !arg->HasTypeFlag(checker::TypeFlag::ETS_TYPE_PARAMETER) &&
             (arg->IsETSObjectType() && !arg->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_TYPE))) {
-            OutDts(state_.currentTypeAliasName);
-            if (state_.currentTypeParams != nullptr) {
-                AddImport(state_.currentTypeParams->Params()[0]->Name()->Name().Mutf8());
+            OutDts(state_.typeAliasCtx.name);
+            if (state_.typeAliasCtx.typeParams != nullptr) {
+                AddImport(state_.typeAliasCtx.typeParams->Params()[0]->Name()->Name().Mutf8());
                 OutDts("<");
-                OutDts(state_.currentTypeParams->Params()[0]->Name()->Name());
+                OutDts(state_.typeAliasCtx.typeParams->Params()[0]->Name()->Name());
                 OutDts(">");
             }
         } else {
@@ -2122,20 +2122,16 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
         OutDts("ESObject");
         return;
     }
+    if (ShouldConvertSelfReference(typeReference, partName)) {
+        OutDts("ESObject");
+        return;
+    }
     AddImport(partName);
     if (typePart->TypeParams() != nullptr && typePart->TypeParams()->IsTSTypeParameterInstantiation()) {
-        if (partName == "ReadonlyArray" || partName == "FixedArray" ||
-            (typeReference->Parent()->Parent()->IsETSParameterExpression() &&
-             typeReference->Parent()->Parent()->AsETSParameterExpression()->TypeAnnotation() != nullptr &&
-             typeReference->Parent()->Parent()->AsETSParameterExpression()->TypeAnnotation()->IsReadonlyType() &&
-             partName == "Array")) {
+        if (IsReadonlyArrayType(partName, typeReference)) {
             GenArrayType(typePart->TypeParams()->Params()[0]->GetType(checker_));
         } else {
-            OutDts(ConvertInteropTypeName(partName));
-            OutDts("<");
-            GenSeparated(typePart->TypeParams()->Params(),
-                         [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
-            OutDts(">");
+            GenTypeReferenceWithParams(partName, typeReference);
         }
     } else if (ProcessTSQualifiedName(typeReference)) {
         return;
@@ -2145,6 +2141,76 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
         GenPartName(partName);
         OutDts(ConvertInteropTypeName(partName));
     }
+}
+
+bool TSDeclGen::ShouldConvertSelfReference(const ir::ETSTypeReference *typeReference, const std::string &partName)
+{
+    return !state_.typeAliasCtx.name.empty() && partName == state_.typeAliasCtx.name &&
+           !state_.typeAliasCtx.passedDeferredBoundary && state_.typeAliasCtx.inConstruct &&
+           IsSelfReference(typeReference);
+}
+
+bool TSDeclGen::IsReadonlyArrayType(const std::string &partName, const ir::ETSTypeReference *typeReference)
+{
+    if (partName == "ReadonlyArray" || partName == "FixedArray") {
+        return true;
+    }
+    if (partName != "Array") {
+        return false;
+    }
+    auto *parent = typeReference->Parent()->Parent();
+    if (!parent->IsETSParameterExpression()) {
+        return false;
+    }
+    auto *typeAnnotation = parent->AsETSParameterExpression()->TypeAnnotation();
+    return typeAnnotation != nullptr && typeAnnotation->IsReadonlyType();
+}
+
+void TSDeclGen::GenTypeReferenceWithParams(const std::string &partName, const ir::ETSTypeReference *typeReference)
+{
+    OutDts(ConvertInteropTypeName(partName));
+    OutDts("<");
+    bool savedPassedDeferred = state_.typeAliasCtx.passedDeferredBoundary;
+    bool savedInConstruct = state_.typeAliasCtx.inConstruct;
+    if (!IsTypeAliasReference(typeReference)) {
+        state_.typeAliasCtx.passedDeferredBoundary = true;
+    }
+    state_.typeAliasCtx.inConstruct = true;
+    GenSeparated(typeReference->Part()->TypeParams()->Params(),
+                 [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
+    state_.typeAliasCtx.passedDeferredBoundary = savedPassedDeferred;
+    state_.typeAliasCtx.inConstruct = savedInConstruct;
+    OutDts(">");
+}
+
+bool TSDeclGen::IsTypeAliasReference(const ir::ETSTypeReference *typeReference)
+{
+    auto *ident = typeReference->Part()->GetIdent();
+    if (ident == nullptr) {
+        return false;
+    }
+    auto partName = ident->Name().Mutf8();
+    if (utilityTypes_.count(partName) != 0U) {
+        return true;
+    }
+    auto *variable = ident->Variable();
+    if (variable == nullptr || variable->Declaration() == nullptr || variable->Declaration()->Node() == nullptr) {
+        return false;
+    }
+    return variable->Declaration()->Node()->IsTSTypeAliasDeclaration();
+}
+
+bool TSDeclGen::IsSelfReference(const ir::ETSTypeReference *typeReference)
+{
+    auto *ident = typeReference->Part()->GetIdent();
+    if (ident == nullptr) {
+        return false;
+    }
+    auto *variable = ident->Variable();
+    if (variable == nullptr || variable->Declaration() == nullptr || variable->Declaration()->Node() == nullptr) {
+        return false;
+    }
+    return variable->Declaration()->Node() == state_.typeAliasCtx.decl;
 }
 
 bool TSDeclGen::ProcessTypeAnnotationSpecificTypes(const checker::Type *checkerType)
@@ -2243,9 +2309,15 @@ void TSDeclGen::ProcessETSTypeReference(const ir::TypeNode *typeAnnotation, cons
 void TSDeclGen::ProcessETSTuple(const ir::ETSTuple *etsTuple)
 {
     OutDts("[");
+    bool savedPassedDeferred = state_.typeAliasCtx.passedDeferredBoundary;
+    bool savedInConstruct = state_.typeAliasCtx.inConstruct;
+    state_.typeAliasCtx.passedDeferredBoundary = true;
+    state_.typeAliasCtx.inConstruct = true;
     GenSeparated(
         etsTuple->GetTupleTypeAnnotationsList(),
         [this](ir::TypeNode *arg) { ProcessTypeAnnotationType(arg, arg->GetType(checker_)); }, " , ");
+    state_.typeAliasCtx.passedDeferredBoundary = savedPassedDeferred;
+    state_.typeAliasCtx.inConstruct = savedInConstruct;
     OutDts("]");
 }
 
@@ -2253,8 +2325,11 @@ void TSDeclGen::ProcessETSUnionType(const ir::ETSUnionType *etsUnionType)
 {
     state_.inUnionBodyStack.push(true);
     std::vector<ir::TypeNode *> filteredTypes = FilterUnionTypes(etsUnionType->Types());
+    bool savedInConstruct = state_.typeAliasCtx.inConstruct;
+    state_.typeAliasCtx.inConstruct = true;
     GenSeparated(
         filteredTypes, [this](ir::TypeNode *arg) { ProcessTypeAnnotationType(arg, arg->GetType(checker_)); }, " | ");
+    state_.typeAliasCtx.inConstruct = savedInConstruct;
     state_.inUnionBodyStack.pop();
 }
 
@@ -2268,6 +2343,10 @@ void TSDeclGen::ProcessETSFunctionType(const ir::ETSFunctionType *etsFunction)
     if (etsFunction->TypeParams() != nullptr) {
         GenTypeParameters(etsFunction->TypeParams());
     }
+    bool savedPassedDeferred = state_.typeAliasCtx.passedDeferredBoundary;
+    bool savedInConstruct = state_.typeAliasCtx.inConstruct;
+    state_.typeAliasCtx.passedDeferredBoundary = true;
+    state_.typeAliasCtx.inConstruct = true;
     bool inUnionBody = !state_.inUnionBodyStack.empty() && state_.inUnionBodyStack.top();
     OutDts(inUnionBody ? "((" : "(");
     GenSeparated(etsFunction->Params(), [this](ir::Expression *param) {
@@ -2285,17 +2364,18 @@ void TSDeclGen::ProcessETSFunctionType(const ir::ETSFunctionType *etsFunction)
     OutDts(") => ");
     ProcessTypeAnnotationType(etsFunction->ReturnType(), etsFunction->ReturnType()->TsType());
     OutDts(inUnionBody ? ")" : "");
+    state_.typeAliasCtx.passedDeferredBoundary = savedPassedDeferred;
+    state_.typeAliasCtx.inConstruct = savedInConstruct;
 }
 
 void TSDeclGen::GenTypeAliasDeclaration(const ir::TSTypeAliasDeclaration *typeAlias)
 {
     const auto name = typeAlias->Id()->Name().Mutf8();
-    state_.currentTypeAliasName = name;
-    state_.currentTypeParams = typeAlias->TypeParams();
     DebugPrint("GenTypeAliasDeclaration: " + name);
     if (!ShouldEmitDeclaration(typeAlias)) {
         return;
     }
+    state_.typeAliasCtx.Enter(typeAlias);
     if (state_.inClass) {
         auto indent = GetIndent();
         OutDts(indent);
@@ -2320,6 +2400,7 @@ void TSDeclGen::GenTypeAliasDeclaration(const ir::TSTypeAliasDeclaration *typeAl
         OutDts("export default ", name, ";");
         OutEndlDts();
     }
+    state_.typeAliasCtx.Exit();
 }
 
 void TSDeclGen::GenEnumDeclaration(const ir::ClassProperty *enumMember)

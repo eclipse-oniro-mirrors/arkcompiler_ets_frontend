@@ -48,6 +48,7 @@ set(ETS2TS_TESTS
     "./ets2ts/test_ets2ts_class_implements_interface_field.ets"
     "./ets2ts/test_ets2ts_reexport_default_alias.ets"
     "./ets2ts/test_ets2ts_export_named_default_expr.ets"
+    "./ets2ts/test_ets2ts_circular_type_alias.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})
