@@ -96,6 +96,15 @@ ProgramAdapter<KIND> *Program::New(const util::ImportInfo &importInfo, public_li
 
 namespace ark::es2panda::util {
 
+namespace {
+
+bool ShouldUseMetadata(const public_lib::Context *ctx)
+{
+    return ctx->config->options->IsReadMetadata() && !ctx->config->options->IsGenStdlib();
+}
+
+}  // namespace
+
 size_t HandleSpecialSymbols(const std::string &input, std::string &output, const size_t &i)
 {
     switch (input[i + 1]) {
@@ -1163,8 +1172,7 @@ parser::Program *ImportPathManager::IntroduceProgram(const ImportInfo &importInf
         case ModuleKind::PACKAGE:
             return IntroduceProgram<ModuleKind::PACKAGE>(importInfo);
         case ModuleKind::METADATA_DECL: {
-            const bool isStdlibAbc = importInfo.AbcPath().find("etsstdlib") != std::string::npos;
-            if (!ctx_.config->options->IsReadMetadata() && !isStdlibAbc) {
+            if (!ShouldUseMetadata(&ctx_)) {
                 DE()->LogDiagnostic(diagnostic::UNSUPPORTED_IMPORT_WITH_METADATA,
                                     DiagnosticMessageParams {importInfo.AbcPath()});
                 return nullptr;
@@ -1573,9 +1581,10 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
         }
         ExtractEtscacheToFile(*pf, abcPath, ArkTSConfig().CacheDir());
     };
+    const auto shouldReadMetadata = ShouldUseMetadata(&ctx_);
 
     if (const auto processedAbc = processedAbcFiles_.find(abcPath); processedAbc != processedAbcFiles_.end()) {
-        if (processedAbc->second != nullptr && LookupMetadata(importInfo)) {
+        if (shouldReadMetadata && processedAbc->second != nullptr && LookupMetadata(importInfo)) {
             return;
         }
         if (processedAbc->second != nullptr) {
@@ -1593,10 +1602,11 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
     }
 
     const auto isMetadataEnabled = pf->IsMetadataEnabled();
-    processedAbcFiles_.insert(
-        {abcPath, isMetadataEnabled ? std::make_unique<panda_file::MetadataAccessor>(*pf) : nullptr});
+    processedAbcFiles_.insert({abcPath, shouldReadMetadata && isMetadataEnabled
+                                            ? std::make_unique<panda_file::MetadataAccessor>(*pf)
+                                            : nullptr});
 
-    if (isMetadataEnabled && LookupMetadata(importInfo)) {
+    if (shouldReadMetadata && isMetadataEnabled && LookupMetadata(importInfo)) {
         return;
     }
 
