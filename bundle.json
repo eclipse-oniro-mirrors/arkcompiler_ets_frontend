@@ -65,6 +65,9 @@
                 },
                 {
                     "name": "//arkcompiler/ets_frontend/es2panda:es2abc_js_file"
+                },
+                {
+                    "name": "//arkcompiler/ets_frontend/ets2panda/bindings:ohos_ets_bindings"
                 }
             ],
             "test": [

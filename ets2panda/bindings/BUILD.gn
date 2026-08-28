@@ -402,6 +402,7 @@ action("build_bindings") {
     "src/common/types.ts",
     "src/common/ui_plugins_driver.ts",
     "src/common/utils.ts",
+    "src/diagnostics.ts",
     "src/generated/Es2pandaEnums.ts",
     "src/generated/Es2pandaNativeModule.ts",
     "src/index.ts",
@@ -434,6 +435,17 @@ ohos_copy("ets2panda_build_bindings") {
   sources = [ rebase_path("$target_gen_dir") ]
   outputs = [ target_out_dir + "/$target_name" ]
   module_source_dir = target_out_dir + "/$target_name"
+  module_install_name = ""
+  part_name = "ets_frontend"
+  subsystem_name = "arkcompiler"
+}
+
+ohos_copy("ohos_ets_bindings") {
+  deps = [ ":build_bindings(${host_toolchain})" ]
+  sources = [ rebase_path(get_label_info(":build_bindings(${host_toolchain})",
+                                         "target_gen_dir")) ]
+  outputs = [ "$root_build_dir/ohos_ets/build-tools/bindings" ]
+  module_source_dir = "$root_build_dir/ohos_ets/build-tools/bindings"
   module_install_name = ""
   part_name = "ets_frontend"
   subsystem_name = "arkcompiler"
