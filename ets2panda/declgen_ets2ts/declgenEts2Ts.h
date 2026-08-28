@@ -279,6 +279,11 @@ private:
     bool HandleSpecificObjectTypes(const checker::ETSObjectType *objectType);
     void HandleArrayType(const checker::Type *checkerType);
     void HandleTypeArgument(checker::Type *arg, const std::string &typeStr);
+    bool IsTypeAliasReference(const ir::ETSTypeReference *typeReference);
+    bool IsSelfReference(const ir::ETSTypeReference *typeReference);
+    bool ShouldConvertSelfReference(const ir::ETSTypeReference *typeReference, const std::string &partName);
+    bool IsReadonlyArrayType(const std::string &partName, const ir::ETSTypeReference *typeReference);
+    void GenTypeReferenceWithParams(const std::string &partName, const ir::ETSTypeReference *typeReference);
 
     void ProcessInterfaceBody(const ir::TSInterfaceBody *body);
     void ProcessInterfaceMethodDefinition(const ir::MethodDefinition *methodDef);
@@ -350,8 +355,36 @@ private:
         bool isDeclareNamespace {false};
         std::string currentClassDescriptor {};
         std::stack<bool> inUnionBodyStack {};
-        std::string currentTypeAliasName;
-        const ir::TSTypeParameterDeclaration *currentTypeParams {nullptr};
+        struct TypeAliasCtx {
+            // current type alias name being processed
+            std::string name;
+            // type params of the current type alias
+            const ir::TSTypeParameterDeclaration *typeParams {nullptr};
+            // AST node for symbol identity check
+            const ir::TSTypeAliasDeclaration *decl {nullptr};
+            // true if traversed through a deferred type (class/interface/array/tuple/function)
+            bool passedDeferredBoundary {false};
+            // true if inside a construct (union/type-arg), false for direct self-ref
+            bool inConstruct {false};
+
+            void Enter(const ir::TSTypeAliasDeclaration *typeAlias)
+            {
+                name = typeAlias->Id()->Name().Mutf8();
+                typeParams = typeAlias->TypeParams();
+                decl = typeAlias;
+                passedDeferredBoundary = false;
+                inConstruct = false;
+            }
+
+            void Exit()
+            {
+                name.clear();
+                typeParams = nullptr;
+                decl = nullptr;
+                passedDeferredBoundary = false;
+                inConstruct = false;
+            }
+        } typeAliasCtx;
     } state_ {};
 
     struct ClassNode {
@@ -400,6 +433,9 @@ private:
     const std::unordered_set<std::string_view> stdlibNamespaceList_ = {
         "StdProcess", "taskpool", "functions",    "containers", "Intl",     "GC",
         "jsonx",      "proxy",    "unsafeMemory", "reflect",    "StdDebug", "arktest"};
+    // ArkTS supported utility types
+    const std::unordered_set<std::string_view> utilityTypes_ = {"Record",   "Partial", "Readonly",
+                                                                "Required", "Awaited", "ReturnType"};
     const std::set<std::string> extensions_ = {".sts", ".ets", ".ts", ".js"};
     const std::string interopSdkName_ = "@ohos.lang.interop";
 

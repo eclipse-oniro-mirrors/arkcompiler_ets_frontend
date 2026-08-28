@@ -1,0 +1,21 @@
+import st from "@ohos.lang.interop";
+declare interface Holder<T> {
+}
+type MyAlias<T> = Holder<T>;
+export type DirectRecord = Record<string, ESObject>;
+export type MixedUnion = string | Record<string, ESObject> | Holder<MixedUnion>;
+export type NestedRecord = Record<string, Record<number, ESObject>>;
+export type TwoBranches = Record<string, ESObject> | Record<number, ESObject>;
+export type GenericAlias<T> = Record<string, ESObject>;
+export type AliasSelfRef = MyAlias<ESObject>;
+export type ThroughHolder = Record<string, Holder<ThroughHolder>>;
+export type HolderDirect = Holder<HolderDirect>;
+export type HolderInUnion = string | Holder<HolderInUnion>;
+export type RecordThroughHolder = Record<string, Holder<RecordThroughHolder>>;
+export type HolderWrappingRecord = Holder<Record<string, HolderWrappingRecord>>;
+export type NonRecursive = Record<string, number>;
+export type DirectSelfRef = DirectSelfRef;
+export type RecordThroughTuple = Record<string, [RecordThroughTuple , number]>;
+export type RecordThroughFunc = Record<string, () => RecordThroughFunc>;
+export type MixedDeferred = Record<string, Holder<MixedDeferred> | [MixedDeferred] | (() => MixedDeferred)>;
+export type ArrayShorthand = st.Array<ArrayShorthand>;
