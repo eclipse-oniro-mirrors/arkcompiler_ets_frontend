@@ -266,8 +266,6 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
     auto *const parser = ctx->parser->AsETSParser();
     auto *const varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
-    checker->CheckObjectLiteralKeys(objExpr->Properties());
-
     std::stringstream ss;
     // Double-ended queue for storing nested block expressions that have already been processed earlier
     std::deque<ir::BlockExpression *> nestedBlckExprs;
