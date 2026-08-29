@@ -2653,17 +2653,23 @@ void TSDeclGen::GenInteropAnyInterface(const ir::TSInterfaceDeclaration *interfa
     const bool isDefault = interfaceDecl->IsDefaultExported();
     const bool isExported = interfaceDecl->IsExported() || declgenOptions_.exportAll;
     if (isDefault) {
-        OutDts("type ", interfaceName, " = ESObject;");
+        OutDts("type ", interfaceName);
+        GenTypeParameters(interfaceDecl->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
         OutDts("export default ", interfaceName, ";");
         OutEndlDts();
         exportSet_.insert(interfaceName);
     } else if (isExported) {
         exportSet_.insert(interfaceName);
-        OutDts("export type ", interfaceName, " = ESObject;");
+        OutDts("export type ", interfaceName);
+        GenTypeParameters(interfaceDecl->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
     } else {
-        OutDts("type ", interfaceName, " = ESObject;");
+        OutDts("type ", interfaceName);
+        GenTypeParameters(interfaceDecl->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
     }
 }
@@ -3055,17 +3061,23 @@ void TSDeclGen::EmitInteropAnyClass(const ir::ClassDefinition *classDef, const s
     const bool isDefault = classDef->IsDefaultExported();
     const bool isExported = classDef->IsExported() || declgenOptions_.exportAll;
     if (isDefault) {
-        OutDts("type ", className, " = ESObject;");
+        OutDts("type ", className);
+        GenTypeParameters(classDef->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
         OutDts("export default ", className, ";");
         OutEndlDts();
         exportSet_.insert(className);
     } else if (isExported) {
         exportSet_.insert(className);
-        OutDts("export type ", className, " = ESObject;");
+        OutDts("export type ", className);
+        GenTypeParameters(classDef->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
     } else {
-        OutDts("type ", className, " = ESObject;");
+        OutDts("type ", className);
+        GenTypeParameters(classDef->TypeParams(), false, nullptr);
+        OutDts(" = ESObject;");
         OutEndlDts();
     }
 }

@@ -34,6 +34,10 @@ export declare interface IWithSignatures {
 export type AnyClass = ESObject;
 export type AnyInterface = ESObject;
 export type AnyEnum = ESObject;
+export type AnyGenericClass<T> = ESObject;
+export type AnyGenericInterface<T, U> = ESObject;
+export type AnyConstrainedClass<T extends Base> = ESObject;
+export type AnyDefaultClass<T = Base> = ESObject;
 export declare class BreakExtendsClass {
     constructor();
 }
