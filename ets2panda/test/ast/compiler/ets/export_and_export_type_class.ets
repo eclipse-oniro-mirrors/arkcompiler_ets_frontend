@@ -13,5 +13,5 @@
  * limitations under the License.
  */
 
-export class A {} /* @@? 16:1 Warning Warning W0073: Duplicated export aliases for 'A'. */
+export class A {}
 export type {A}

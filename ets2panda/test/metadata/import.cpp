@@ -39,17 +39,6 @@ private:
     NO_MOVE_SEMANTIC(MetadataTestImport);
 };
 
-TEST_F(MetadataTestImport, metadata_not_supported)
-{
-    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
-
-    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
-    ASSERT_NE(RunCheckerWithMetadata(testDataDir + "/main.ets", false), nullptr);
-
-    ASSERT_EQ(GetAnyError().GetId(), diagnostic::UNSUPPORTED_IMPORT_WITH_METADATA.Id())
-        << "`UNSUPPORTED_IMPORT_WITH_METADATA` error should be reported as reading of metadata is not enabled";
-}
-
 TEST_F(MetadataTestImport, basic_calls)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();

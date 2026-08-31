@@ -60,6 +60,6 @@ export default function TestFuncToo(): void {}
 
 /* @@? 16:10 Error Syntax error ESY0279: Cannot find name 'foo' to export. */
 /* @@? 27:27 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo2'. */
-/* @@? 45:1 Warning Warning W0073: Duplicated export aliases for 'MyI'. */
+/* @@? 53:14 Error Semantic error ESE0371: Cannot find type 'f'. */
 /* @@? 56:1 Error Semantic error ESE0374: Only one default export is allowed in a module */
 /* @@? 57:1 Error Semantic error ESE0374: Only one default export is allowed in a module */

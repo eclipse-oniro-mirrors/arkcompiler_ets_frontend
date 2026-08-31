@@ -19,5 +19,3 @@ import type {StandardExportedClass as IT1, ClassForExport as IT2} from "./type_b
 function main () {
     let c1 = new IT1
 }
-
-/* @@? type_binding_neg_to_export.ets:17:1 Warning Warning W0073: Duplicated export aliases for 'ClassForExport'. */

@@ -17,9 +17,3 @@ import type {A, C} from /* @@ label */'./export_type.ets'
 
 let a = new A();
 let b = new C();
-
-/* @@? export_type.ets:16:1 Warning Warning W0073: Duplicated export aliases for 'A'. */
-/* @@? export_type.ets:17:1 Warning Warning W0073: Duplicated export aliases for 'B'. */
-
-/* @@? export_type.ets:16:1 Warning Warning W0073: Duplicated export aliases for 'A'. */
-/* @@? export_type.ets:17:1 Warning Warning W0073: Duplicated export aliases for 'B'. */

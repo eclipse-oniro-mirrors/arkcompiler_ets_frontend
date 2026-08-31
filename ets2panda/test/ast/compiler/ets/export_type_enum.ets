@@ -16,5 +16,3 @@
 export enum E { A = 5, B = 5 }
 
 export type {E}
-
-/* @@? 16:1 Warning Warning W0073: Duplicated export aliases for 'E'. */

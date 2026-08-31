@@ -16,5 +16,3 @@
 export class StandardExportedClass {} // exported class type
 export class ClassForExport {}
 export type {ClassForExport} // class exported as type only
-
-/* @@? 17:1 Warning Warning W0073: Duplicated export aliases for 'ClassForExport'. */

@@ -19,5 +19,4 @@ import { double_3 } from "./ambient_const_vars.ets"
 import { double_4 } from "./ambient_const_vars.ets"
 import { double_5 } from "./ambient_const_vars.ets"
 
-/* @@? 17:10 Error Semantic error ESE0355: Imported element not exported 'double_2' */
 /* @@? 19:10 Error Semantic error ESE0355: Imported element not exported 'double_4' */

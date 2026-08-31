@@ -13,5 +13,5 @@
  * limitations under the License.
  */
 
-export interface I {} /* @@? 16:1 Warning Warning W0073: Duplicated export aliases for 'I'. */
+export interface I {}
 export type {I}

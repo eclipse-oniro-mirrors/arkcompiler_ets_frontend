@@ -422,7 +422,7 @@ bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
         return false;
     }
 
-    if (IsExported() || IsDefaultExported()) {
+    if (IsExported() || IsDefaultExported() || IsExportedType() || HasExportAlias()) {
         return false;
     }
 

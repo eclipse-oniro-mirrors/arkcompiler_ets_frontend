@@ -1405,7 +1405,7 @@ void ExportClosureResolver::ValidateExplicitExportNameConflict(ExplicitExportCon
             return;
         }
         if (state->warnedAliases.insert(name).second && checker_ != nullptr && fact.origin != nullptr &&
-            !fact.origin->IsOverloadDeclaration()) {
+            !fact.origin->IsOverloadDeclaration() && !fact.origin->HasExportAlias()) {
             checker_->LogDiagnostic(diagnostic::DUPLICATE_EXPORT_ALIASES, {fact.exportedName}, fact.origin->Start());
         }
         return;

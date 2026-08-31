@@ -19,6 +19,3 @@ export interface B {}
 export class C {}
 export type {A, B}
 export type class D {}
-
-/* @@? 16:1 Warning Warning W0073: Duplicated export aliases for 'A'. */
-/* @@? 17:1 Warning Warning W0073: Duplicated export aliases for 'B'. */
