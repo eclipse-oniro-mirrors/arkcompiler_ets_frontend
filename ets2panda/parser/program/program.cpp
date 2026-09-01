@@ -404,7 +404,7 @@ void Program::PromoteToMainProgram(public_lib::Context *ctx)
     ES2PANDA_ASSERT(Is<util::ModuleKind::PACKAGE>());
     ES2PANDA_ASSERT(GetExternalPrograms()->Empty());
 
-    auto *packages = &oldMain->externaPrograms_.Get<ModuleKind::PACKAGE>();
+    auto *packages = &oldMain->externalPrograms_.Get<ModuleKind::PACKAGE>();
     auto toRemove = std::find(packages->begin(), packages->end(), this);
     // NOTE(dkofanov): the later 'if' should be an assert. The case handled by 'if' relates to the broken functionality
     // of 'ETSPackageDeclaration' expressed in `EnsurePackageIsRegisteredByPackageFraction`.
@@ -412,10 +412,10 @@ void Program::PromoteToMainProgram(public_lib::Context *ctx)
         packages->erase(toRemove);
     }
 
-    externaPrograms_.transitiveExternals_ = std::move(oldMain->externaPrograms_.transitiveExternals_);
-    externaPrograms_.direct_ = std::move(oldMain->externaPrograms_.direct_);
+    externalPrograms_.transitiveExternals_ = std::move(oldMain->externalPrograms_.transitiveExternals_);
+    externalPrograms_.direct_ = std::move(oldMain->externalPrograms_.direct_);
 
-    oldMain->externaPrograms_ = ExternalPrograms();
+    oldMain->externalPrograms_ = ExternalPrograms();
     ctx->parserProgram = this;
 }
 

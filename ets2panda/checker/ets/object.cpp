@@ -2368,7 +2368,7 @@ void ETSChecker::AddOptionalProps(std::vector<ETSFunctionType *> *optionalProps,
     }
     auto functionType = function->TsType()->AsETSFunctionType();
     for (auto signature : functionType->CallSignatures()) {
-        if (signature->Function()->IsAbstract() || signature->Function()->IsStatic()) {
+        if (!signature->Function()->HasBody() || signature->Function()->IsStatic()) {
             continue;
         }
 

@@ -913,9 +913,6 @@ bool MetadataSerializationPhase::ShouldProcessMethod(const ir::MethodDefinition 
     if (func->Signature()->ReturnType() == nullptr) {
         return false;
     }
-    if (method->IsProtected() && method->IsFinal()) {
-        return false;
-    }
 
     const auto signatureKey = func->Id()->ToString() + func->Signature()->ToString();
     if (!seenMethodSignatures.emplace(signatureKey).second) {

@@ -367,13 +367,6 @@ static bool ParseAndRunPhases(public_lib::Context *context)
     }
     ES2PANDA_ASSERT(context->parserProgram != nullptr);
 
-    if (context->config->options->GetCompilationMode() == CompilationMode::GEN_STD_LIB) {
-        std::cout << "\n========== ETSSTDLIB BUILD ==========" << std::endl;
-        std::cout << "[etsstdlib] emit-metadata=" << (context->config->options->IsEmitMetadata() ? "true" : "false")
-                  << std::endl;
-        std::cout << "=====================================\n" << std::endl;
-    }
-
     //  We have to check the return status of 'RunVerifierAndPhase` and 'RunPhases` separately because there can be
     //  some internal errors (say, in Post-Conditional check) or terminate options (say in 'CheckOptionsAfterPhase')
     //  that were not reported to the log.

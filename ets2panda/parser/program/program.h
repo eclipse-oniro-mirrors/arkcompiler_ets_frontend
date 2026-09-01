@@ -312,12 +312,12 @@ public:
 
     ExternalPrograms *GetExternalPrograms()
     {
-        return &externaPrograms_;
+        return &externalPrograms_;
     }
 
     const ExternalPrograms *GetExternalPrograms() const
     {
-        return &externaPrograms_;
+        return &externalPrograms_;
     }
 
     // Function scopes to be compiled during code gen that belong to this program. Owned by the program (not by the
@@ -519,7 +519,7 @@ private:
 
     void SetExternalPrograms(const ExternalPrograms *externalPrograms)
     {
-        externaPrograms_ = *externalPrograms;
+        externalPrograms_ = *externalPrograms;
     }
 
 private:
@@ -543,7 +543,7 @@ private:
 
     // NOTE(dkofanov): externalSources_ are stored only in main program. This field should be moved to
     // 'public_lib::Context'.
-    ExternalPrograms externaPrograms_;
+    ExternalPrograms externalPrograms_;
 
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;
