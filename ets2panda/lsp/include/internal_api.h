@@ -146,6 +146,8 @@ FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagno
                                        const std::vector<std::string> &args = std::vector<std::string>());
 std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *preceding);
 void GetRangeOfEnclosingComment(es2panda_Context *context, size_t pos, CommentRange *result);
+void GetRangeOfCommentFromContext(std::string const &sourceCode, size_t leftPos, size_t rightPos, size_t pos,
+                                  CommentRange *result);
 Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error);
 Diagnostic CreateDiagnosticWithoutFile(const util::DiagnosticBase &error);
 void GetGlobalDiagnostics(es2panda_Context *context, DiagnosticReferences &compilerOptionsDiagnostics);

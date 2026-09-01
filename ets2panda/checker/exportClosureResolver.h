@@ -16,7 +16,9 @@
 #ifndef ES2PANDA_CHECKER_EXPORT_CLOSURE_RESOLVER_H
 #define ES2PANDA_CHECKER_EXPORT_CLOSURE_RESOLVER_H
 
+#include <string>
 #include <unordered_set>
+#include <vector>
 
 #include "util/eheap.h"
 #include "util/ustring.h"
@@ -100,6 +102,11 @@ struct ResolvedExportResult {
     const ir::AstNode *reportOrigin {};
 };
 
+struct VisibleExportEntry {
+    std::string exportedName;
+    ResolvedExportEntry entry {};
+};
+
 enum class ImportBindingResolutionStatus {
     RESOLVED_VARIABLE,
     RESOLVED_SURFACE,
@@ -176,6 +183,7 @@ public:
                                                      ImportBindingResolveOptions options = {});
     varbinder::Variable *ResolveEffectiveImportVariable(varbinder::Variable *var,
                                                         ImportBindingResolveOptions options = {});
+    std::vector<VisibleExportEntry> GetVisibleNamespaceExports(const varbinder::ExportSurfaceId &surface);
     void Clear();
     void InvalidateProgram(parser::Program *program);
     static varbinder::Variable *ResolveEffectiveImportVariableForDeclaration(
@@ -208,6 +216,8 @@ private:
                                                 util::StringView exportedName);
     ResolvedExportResult ResolveStarExport(const varbinder::ExportSurfaceId &surface, util::StringView exportedName,
                                            std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);
+    void CollectExportedNames(const varbinder::ExportSurfaceId &surface, std::unordered_set<std::string> *exportedNames,
+                              std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visitedSurfaces);
     void ValidateExportSurface(const varbinder::ExportSurfaceId &surface);
     void ValidateExplicitExportConflicts(const varbinder::ExportSurfaceId &surface,
                                          std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visiting);

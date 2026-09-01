@@ -14,6 +14,9 @@
  */
 
 #include "completions.h"
+#include "checker/ETSchecker.h"
+#include "checker/exportClosureResolver.h"
+#include "checker/types/ets/etsObjectType.h"
 #include "internal_api.h"
 #include "quick_info.h"
 #include "symbol_reference_index.h"
@@ -48,7 +51,8 @@ static std::vector<CompletionEntry> GetCompletionsForDeclaration(ir::AstNode *de
                                                                  bool isStatic = false,
                                                                  const ir::ClassDefinition *accessClass = nullptr);
 static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preNode, const std::string &triggerWord,
-                                                               std::optional<bool> staticContextOverride);
+                                                               std::optional<bool> staticContextOverride,
+                                                               checker::ExportClosureResolver *resolver = nullptr);
 static std::string NormalizeCompletionMatchPrefix(const std::string &prefix);
 
 static std::unordered_map<std::string, std::vector<ExternalApiCollectInfo>> g_externalApiCollects {};
@@ -690,6 +694,50 @@ static std::string BuildFunctionCompletionName(const std::string &functionName, 
     return completionName;
 }
 
+static CompletionEntryKind GetExportDeclarationCompletionKind(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return CompletionEntryKind::PROPERTY;
+    }
+    if (node->IsClassDeclaration()) {
+        node = node->AsClassDeclaration()->Definition();
+    }
+    if (node == nullptr) {
+        return CompletionEntryKind::PROPERTY;
+    }
+    if (node->IsClassDefinition()) {
+        if (node->AsClassDefinition()->IsNamespaceTransformed()) {
+            return CompletionEntryKind::MODULE;
+        }
+        if (node->AsClassDefinition()->IsEnumTransformed()) {
+            return CompletionEntryKind::ENUM;
+        }
+        return CompletionEntryKind::CLASS;
+    }
+    if (node->IsFunctionDeclaration() || node->IsMethodDefinition() || node->IsOverloadDeclaration()) {
+        return CompletionEntryKind::METHOD;
+    }
+    if (node->IsTSInterfaceDeclaration()) {
+        return CompletionEntryKind::INTERFACE;
+    }
+    if (node->IsTSTypeAliasDeclaration()) {
+        return CompletionEntryKind::ALIAS_TYPE;
+    }
+    if (node->IsTSEnumDeclaration()) {
+        return CompletionEntryKind::ENUM;
+    }
+    if (node->IsAnnotationDeclaration()) {
+        return CompletionEntryKind::ANNOTATION;
+    }
+    if (node->IsETSStructDeclaration()) {
+        return CompletionEntryKind::STRUCT;
+    }
+    if (node->IsTSModuleDeclaration()) {
+        return CompletionEntryKind::MODULE;
+    }
+    return CompletionEntryKind::PROPERTY;
+}
+
 CompletionEntry BuildCallableDeclarationEntry(ir::AstNode *node, const std::string &name,
                                               const ir::ScriptFunction *func, bool isInETSImportStatement)
 {
@@ -698,8 +746,8 @@ CompletionEntry BuildCallableDeclarationEntry(ir::AstNode *node, const std::stri
         completionName = name;
     }
     auto insertText = isInETSImportStatement ? name : name + "()";
-    return CompletionEntry(completionName, CompletionEntryKind::METHOD, std::string(sort_text::GLOBALS_OR_KEYWORDS),
-                           insertText, std::nullopt, GetTypeSig(node));
+    return CompletionEntry(completionName, GetExportDeclarationCompletionKind(node),
+                           std::string(sort_text::GLOBALS_OR_KEYWORDS), insertText, std::nullopt, GetTypeSig(node));
 }
 
 CompletionEntry GetInterfaceDeclarationEntry(ir::TSInterfaceDeclaration *interfaceDecl)
@@ -708,7 +756,8 @@ CompletionEntry GetInterfaceDeclarationEntry(ir::TSInterfaceDeclaration *interfa
         return CompletionEntry();
     }
     auto name = std::string(interfaceDecl->Id()->Name());
-    return CompletionEntry(name, CompletionEntryKind::INTERFACE, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+    return CompletionEntry(name, GetExportDeclarationCompletionKind(interfaceDecl),
+                           std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
 }
 
 CompletionEntry GetStructDeclarationEntry(ir::ETSStructDeclaration *structDecl)
@@ -718,7 +767,8 @@ CompletionEntry GetStructDeclarationEntry(ir::ETSStructDeclaration *structDecl)
         return CompletionEntry();
     }
     auto name = std::string(definition->Ident()->Name());
-    return CompletionEntry(name, CompletionEntryKind::STRUCT, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+    return CompletionEntry(name, GetExportDeclarationCompletionKind(structDecl),
+                           std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
 }
 
 CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool isInETSImportStatement)
@@ -730,10 +780,20 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool isInETSImportStateme
     // GetClassPropertyName function could get name of ClassDeclaration
     if (node->IsClassDeclaration()) {
         name = GetClassPropertyName(node);
-        return CompletionEntry(name, CompletionEntryKind::CLASS, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+        return CompletionEntry(name, GetExportDeclarationCompletionKind(node),
+                               std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsTSInterfaceDeclaration()) {
         return GetInterfaceDeclarationEntry(node->AsTSInterfaceDeclaration());
+    }
+    if (node->IsTSTypeAliasDeclaration()) {
+        auto *id = node->AsTSTypeAliasDeclaration()->Id();
+        if (id == nullptr) {
+            return CompletionEntry();
+        }
+        name = std::string(id->Name());
+        return CompletionEntry(name, GetExportDeclarationCompletionKind(node),
+                               std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     }
     if (node->IsFunctionDeclaration()) {
         auto *func = node->AsFunctionDeclaration()->Function();
@@ -755,13 +815,23 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node, bool isInETSImportStateme
     if (node->IsClassProperty()) {
         name = GetClassPropertyName(node);
         auto completionName = BuildValueCompletionName(name, GetDeclTypeForCompletion(node));
-        return CompletionEntry(completionName, CompletionEntryKind::PROPERTY,
+        return CompletionEntry(completionName, GetExportDeclarationCompletionKind(node),
                                std::string(sort_text::GLOBALS_OR_KEYWORDS), name, std::nullopt, GetTypeSig(node));
     }
     if (node->IsETSStructDeclaration()) {
         return GetStructDeclarationEntry(node->AsETSStructDeclaration());
     }
     return CompletionEntry();
+}
+
+static CompletionEntry GetExportEntry(ir::AstNode *node, bool isInImportStatement)
+{
+    auto entry = GetDeclarationEntry(node, isInImportStatement);
+    if (!isInImportStatement || !node->IsDefaultExported() || node->IsExported() || entry.GetName().empty()) {
+        return entry;
+    }
+    return CompletionEntry(entry.GetName(), entry.GetCompletionKind(), entry.GetSortText(),
+                           "default as " + entry.GetInsertText(), std::nullopt, entry.GetTypeSig());
 }
 
 static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries,
@@ -792,8 +862,8 @@ std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, con
                 GetExportFromClass(classDef, exportEntries, fileName, isInImportStatement);
             }
         }
-        if (stmt->IsExported()) {
-            auto entry = GetDeclarationEntry(stmt, isInImportStatement);
+        if (stmt->IsExported() || (isInImportStatement && stmt->IsDefaultExported())) {
+            auto entry = GetExportEntry(stmt, isInImportStatement);
             if (!entry.GetName().empty() &&
                 (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
@@ -1513,6 +1583,128 @@ static void AddFunctionCompletion(ir::Statement *stmt, const std::string &trigge
     }
 }
 
+static CompletionEntry BuildNamespaceExportCompletion(const checker::VisibleExportEntry &exportEntry)
+{
+    const auto &name = exportEntry.exportedName;
+    const auto sortText = std::string(sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT);
+    if (exportEntry.entry.surface.program != nullptr) {
+        return CompletionEntry(name, CompletionEntryKind::MODULE, sortText, name);
+    }
+
+    auto *variable = exportEntry.entry.variable;
+    auto *declaration = variable == nullptr ? nullptr : variable->Declaration();
+    auto *node = declaration == nullptr ? nullptr : const_cast<ir::AstNode *>(declaration->Node());
+    if (node == nullptr) {
+        return CompletionEntry(name, CompletionEntryKind::PROPERTY, sortText, name);
+    }
+    if (node->IsIdentifier() && node->Parent() != nullptr && node->Parent()->IsVariableDeclarator()) {
+        node = node->Parent();
+    }
+    auto kind = GetExportDeclarationCompletionKind(node);
+    if (node->IsVariableDeclarator()) {
+        auto *id = node->AsVariableDeclarator()->Id();
+        auto *ident = id != nullptr && id->IsIdentifier() ? id->AsIdentifier() : nullptr;
+        auto typeText = ident == nullptr ? "" : GetTypeTextForCompletion(ident->TypeAnnotation(), ident->TsType());
+        return CompletionEntry(BuildValueCompletionName(name, typeText), kind, sortText, name);
+    }
+    if (node->IsFunctionDeclaration()) {
+        auto *func = node->AsFunctionDeclaration()->Function();
+        return CompletionEntry(BuildFunctionCompletionName(name, func), kind, sortText, name + "()");
+    }
+    if (node->IsMethodDefinition()) {
+        auto *func = node->AsMethodDefinition()->Function();
+        return CompletionEntry(BuildFunctionCompletionName(name, func), kind, sortText, name + "()", std::nullopt,
+                               GetTypeSig(node));
+    }
+    if (node->IsClassProperty()) {
+        return CompletionEntry(BuildValueCompletionName(name, GetDeclTypeForCompletion(node)), kind, sortText, name,
+                               std::nullopt, GetTypeSig(node));
+    }
+    if (node->IsOverloadDeclaration()) {
+        return CompletionEntry(name + "()", kind, sortText, name + "()");
+    }
+    return CompletionEntry(name, kind, sortText, name);
+}
+
+static CompletionEntry BuildImportExportCompletion(const checker::VisibleExportEntry &exportEntry)
+{
+    auto entry = BuildNamespaceExportCompletion(exportEntry);
+    return CompletionEntry(entry.GetName(), entry.GetCompletionKind(), std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                           exportEntry.exportedName, entry.GetCompletionEntryData(), entry.GetTypeSig(),
+                           entry.GetHasAction());
+}
+
+static std::string GetImportCompletionExportedName(const CompletionEntry &entry)
+{
+    if (StartsWith(entry.GetInsertText(), "default as ")) {
+        return entry.GetName();
+    }
+    return entry.GetInsertText().empty() ? entry.GetName() : entry.GetInsertText();
+}
+
+static checker::ExportClosureResolver *GetNavigationExportClosureResolver(es2panda_Context *context)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto *checker = ctx == nullptr || ctx->GetChecker() == nullptr ? nullptr : ctx->GetChecker()->AsETSChecker();
+    return checker == nullptr ? nullptr : checker->GetNavigationExportClosureResolver();
+}
+
+static std::vector<CompletionEntry> GetImportExportCompletions(parser::Program *program, const std::string &prefix,
+                                                               const std::unordered_set<std::string> &hasImported,
+                                                               checker::ExportClosureResolver *resolver)
+{
+    if (resolver == nullptr) {
+        checker::ExportClosureResolver fallbackResolver(program->Allocator(), nullptr);
+        return GetImportExportCompletions(program, prefix, hasImported, &fallbackResolver);
+    }
+    auto exports = resolver->GetVisibleNamespaceExports(resolver->GetSurface(program));
+    std::vector<CompletionEntry> completions;
+    completions.reserve(exports.size() + 1U);
+    std::unordered_set<std::string> seen;
+    for (const auto &exportEntry : exports) {
+        if (hasImported.count(exportEntry.exportedName) != 0U || !seen.insert(exportEntry.exportedName).second) {
+            continue;
+        }
+        if (prefix.empty() || exportEntry.exportedName.compare(0, prefix.length(), prefix) == 0) {
+            completions.emplace_back(BuildImportExportCompletion(exportEntry));
+        }
+    }
+    for (auto &entry : GetExportsFromProgram(program, prefix, true)) {
+        auto exportedName = GetImportCompletionExportedName(entry);
+        if (!exportedName.empty() && hasImported.count(exportedName) == 0U && seen.insert(exportedName).second) {
+            completions.emplace_back(std::move(entry));
+        }
+    }
+    return completions;
+}
+
+static std::optional<std::vector<CompletionEntry>> GetNamespaceExportCompletions(
+    ir::Identifier *receiver, const std::string &triggerWord, checker::ExportClosureResolver *resolver)
+{
+    auto *type = receiver->Variable() == nullptr ? receiver->TsType() : receiver->Variable()->TsType();
+    if (type == nullptr || !type->IsETSObjectType() || !type->AsETSObjectType()->HasExportSurface()) {
+        return std::nullopt;
+    }
+
+    auto surface = type->AsETSObjectType()->ExportSurface();
+    if (surface.program == nullptr) {
+        return std::vector<CompletionEntry> {};
+    }
+    if (resolver == nullptr) {
+        checker::ExportClosureResolver fallbackResolver(surface.program->Allocator(), nullptr);
+        return GetNamespaceExportCompletions(receiver, triggerWord, &fallbackResolver);
+    }
+    auto exports = resolver->GetVisibleNamespaceExports(surface);
+    std::vector<CompletionEntry> completions;
+    completions.reserve(exports.size());
+    for (const auto &exportEntry : exports) {
+        if (StartsWithIgnoreCase(exportEntry.exportedName, triggerWord)) {
+            completions.emplace_back(BuildNamespaceExportCompletion(exportEntry));
+        }
+    }
+    return completions;
+}
+
 static void AddCompletionFromStatement(ir::Statement *stmt, const std::string &triggerWord,
                                        std::vector<CompletionEntry> &completions)
 {
@@ -1855,7 +2047,7 @@ static bool IsStaticContext(ir::AstNode *node)
 
 std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const std::string &triggerWord)
 {
-    return GetPropertyCompletionsImpl(preNode, triggerWord, std::nullopt);
+    return GetPropertyCompletionsImpl(preNode, triggerWord, std::nullopt, nullptr);
 }
 
 static ir::AstNode *NormalizePropertyCompletionReceiver(ir::AstNode *preNode)
@@ -1914,7 +2106,8 @@ static std::vector<CompletionEntry> CollectCompletionsFromDecls(const std::vecto
 }
 
 static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preNode, const std::string &triggerWord,
-                                                               std::optional<bool> staticContextOverride)
+                                                               std::optional<bool> staticContextOverride,
+                                                               checker::ExportClosureResolver *resolver)
 {
     preNode = NormalizePropertyCompletionReceiver(preNode);
     if (preNode == nullptr) {
@@ -1925,6 +2118,11 @@ static std::vector<CompletionEntry> GetPropertyCompletionsImpl(ir::AstNode *preN
     }
     if (!preNode->IsIdentifier()) {
         return {};
+    }
+
+    if (auto namespaceCompletions = GetNamespaceExportCompletions(preNode->AsIdentifier(), triggerWord, resolver);
+        namespaceCompletions.has_value()) {
+        return std::move(namespaceCompletions.value());
     }
 
     auto decls = GetDefinitionFromIdentifier(preNode);
@@ -2144,7 +2342,8 @@ bool IsAnnotationBeginning(std::string sourceCode, size_t pos)
 }
 
 std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, std::vector<CompletionEntry> &completions,
-                                                   ir::ETSImportDeclaration *importDecl, ir::AstNode *node = nullptr)
+                                                   ir::ETSImportDeclaration *importDecl, ir::AstNode *node = nullptr,
+                                                   bool isSelectiveImport = true)
 {
     if (importDecl == nullptr || !importDecl->IsValid()) {
         return completions;
@@ -2157,10 +2356,13 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
 
     auto specifiers = importDecl->Specifiers();
     std::unordered_set<std::string> hasImported;
+    bool hasDefaultImport = false;
     for (auto &specifier : specifiers) {
         if (specifier->IsImportSpecifier()) {
             auto name = specifier->AsImportSpecifier()->Imported()->Name();
             hasImported.emplace(name.Utf8());
+        } else if (specifier->IsImportDefaultSpecifier() && (node == nullptr || node->Parent() != specifier)) {
+            hasDefaultImport = true;
         }
     }
 
@@ -2168,13 +2370,42 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
     if (node != nullptr && node->IsIdentifier() && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
         specStr = node->AsIdentifier()->Name().Utf8();
     }
-    auto ans = GetExportsFromProgram(program, specStr, true);
+
+    auto ans = GetImportExportCompletions(program, specStr, hasImported, GetNavigationExportClosureResolver(context));
     for (auto &entry : ans) {
-        if (hasImported.count(entry.GetName()) == 0U) {
-            completions.emplace_back(std::move(entry));
+        const bool isDefaultImport = StartsWith(entry.GetInsertText(), "default as ");
+        if (hasImported.count(entry.GetName()) == 0U && (!isDefaultImport || !hasDefaultImport)) {
+            if (isSelectiveImport) {
+                completions.emplace_back(std::move(entry));
+                continue;
+            }
+            auto insertText = isDefaultImport ? entry.GetName() : "{ " + entry.GetInsertText() + " }";
+            completions.emplace_back(entry.GetName(), entry.GetCompletionKind(), entry.GetSortText(), insertText,
+                                     entry.GetCompletionEntryData(), entry.GetTypeSig(), entry.GetHasAction());
         }
     }
     return completions;
+}
+
+static bool IsSelectiveImportPosition(es2panda_Context *context, const ir::ETSImportDeclaration *importDecl, size_t pos)
+{
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    std::string sourceCode(ctx->parserProgram->SourceCode());
+    auto start = importDecl->Start().index;
+    if (start >= pos || pos > sourceCode.length()) {
+        return false;
+    }
+    for (auto bracePos = sourceCode.find('{', start); bracePos < pos; bracePos = sourceCode.find('{', bracePos + 1)) {
+        CommentRange commentRange;
+        commentRange.pos_ = 0;
+        commentRange.end_ = 0;
+        commentRange.kind_ = CommentKind::SINGLE_LINE;
+        GetRangeOfCommentFromContext(sourceCode, start, pos, bracePos, &commentRange);
+        if (commentRange.pos_ == 0 && commentRange.end_ == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<CompletionEntry> GetImportStatementPathCompletions(std::vector<CompletionEntry> &completions,
@@ -2224,9 +2455,8 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
         auto importDecl = node->AsETSImportDeclaration();
         auto source = GetCurrentTokenValueImpl(context, pos, importDecl);
         if (source.find('}') == std::string::npos) {
-            // When the cursor is positioned within the {} brackets, like "import {a,} from './xxx'".
-            // Get completion of export var from import path
-            return GetCompletionFromPath(context, completions, importDecl);
+            return GetCompletionFromPath(context, completions, importDecl, nullptr,
+                                         IsSelectiveImportPosition(context, importDecl, pos));
         }
         auto sourceStr = importDecl->Source()->Str();
         // Handle the input code "import {x} from " again reminder "from" keyword.
@@ -2269,7 +2499,8 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
                    parent->IsImportNamespaceSpecifier()) {
             importDecl = parent->Parent()->AsETSImportDeclaration();
         }
-        return GetCompletionFromPath(context, completions, importDecl, node);
+        return GetCompletionFromPath(context, completions, importDecl, node,
+                                     IsSelectiveImportPosition(context, importDecl, pos));
     }
     return completions;
 }
@@ -2730,7 +2961,8 @@ static ir::AstNode *FindNewExpressionAncestor(ir::AstNode *node)
 }
 
 static std::vector<CompletionEntry> GetPropertyCompletionsWithoutPoint(ir::AstNode *precedingToken,
-                                                                       const std::string &triggerWord)
+                                                                       const std::string &triggerWord,
+                                                                       checker::ExportClosureResolver *resolver)
 {
     if (precedingToken == nullptr) {
         return {};
@@ -2740,27 +2972,28 @@ static std::vector<CompletionEntry> GetPropertyCompletionsWithoutPoint(ir::AstNo
         if (parent != nullptr && parent->IsTSQualifiedName()) {
             auto *newExprAncestor = FindNewExpressionAncestor(parent);
             if (newExprAncestor != nullptr) {
-                return GetPropertyCompletionsImpl(newExprAncestor, triggerWord, false);
+                return GetPropertyCompletionsImpl(newExprAncestor, triggerWord, false, resolver);
             }
         }
-        return GetPropertyCompletions(precedingToken, triggerWord);
+        return GetPropertyCompletionsImpl(precedingToken, triggerWord, std::nullopt, resolver);
     }
     if (precedingToken->IsCallExpression() || precedingToken->IsMemberExpression() ||
         precedingToken->IsThisExpression() || precedingToken->IsNewExpression() ||
         precedingToken->IsETSNewClassInstanceExpression()) {
-        return GetPropertyCompletions(precedingToken, triggerWord);
+        return GetPropertyCompletionsImpl(precedingToken, triggerWord, std::nullopt, resolver);
     }
     return {};
 }
 
 static std::vector<CompletionEntry> GetPropertyCompletionsFromMemberExpression(ir::AstNode *memberExp,
-                                                                               const std::string &triggerWord)
+                                                                               const std::string &triggerWord,
+                                                                               checker::ExportClosureResolver *resolver)
 {
     auto *object = memberExp->AsMemberExpression()->Object();
     if (object != nullptr && (object->IsNewExpression() || object->IsETSNewClassInstanceExpression())) {
-        return GetPropertyCompletionsImpl(object, triggerWord, false);
+        return GetPropertyCompletionsImpl(object, triggerWord, false, resolver);
     }
-    return GetPropertyCompletions(object, triggerWord);
+    return GetPropertyCompletionsImpl(object, triggerWord, std::nullopt, resolver);
 }
 
 static ir::AstNode *ResolveQualifiedNameReceiver(ir::AstNode *precedingToken, ir::TSQualifiedName *qualifiedName)
@@ -2774,19 +3007,21 @@ static ir::AstNode *ResolveQualifiedNameReceiver(ir::AstNode *precedingToken, ir
 
 static std::vector<CompletionEntry> GetPropertyCompletionsFromQualifiedName(ir::AstNode *memberExp,
                                                                             ir::AstNode *precedingToken,
-                                                                            const std::string &triggerWord)
+                                                                            const std::string &triggerWord,
+                                                                            checker::ExportClosureResolver *resolver)
 {
     auto *newExprAncestor = FindNewExpressionAncestor(memberExp);
     if (newExprAncestor != nullptr) {
-        return GetPropertyCompletionsImpl(newExprAncestor, triggerWord, false);
+        return GetPropertyCompletionsImpl(newExprAncestor, triggerWord, false, resolver);
     }
     auto *qualifiedName = memberExp->AsTSQualifiedName();
     auto *receiver = ResolveQualifiedNameReceiver(precedingToken, qualifiedName);
-    return GetPropertyCompletions(receiver, triggerWord);
+    return GetPropertyCompletionsImpl(receiver, triggerWord, std::nullopt, resolver);
 }
 
 std::vector<CompletionEntry> GetPropertyCompletionsWithValidPoint(ir::AstNode *precedingToken,
-                                                                  const std::string &triggerWord)
+                                                                  const std::string &triggerWord,
+                                                                  checker::ExportClosureResolver *resolver)
 {
     if (precedingToken == nullptr) {
         return {};
@@ -2796,13 +3031,13 @@ std::vector<CompletionEntry> GetPropertyCompletionsWithValidPoint(ir::AstNode *p
         memberExp = memberExp->Parent();
     }
     if (!IsTokenAfterPoint(memberExp)) {
-        return GetPropertyCompletionsWithoutPoint(precedingToken, triggerWord);
+        return GetPropertyCompletionsWithoutPoint(precedingToken, triggerWord, resolver);
     }
     if (memberExp->IsMemberExpression()) {
-        return GetPropertyCompletionsFromMemberExpression(memberExp, triggerWord);
+        return GetPropertyCompletionsFromMemberExpression(memberExp, triggerWord, resolver);
     }
     if (memberExp->IsTSQualifiedName()) {
-        return GetPropertyCompletionsFromQualifiedName(memberExp, precedingToken, triggerWord);
+        return GetPropertyCompletionsFromQualifiedName(memberExp, precedingToken, triggerWord, resolver);
     }
     return {};
 }
@@ -2865,12 +3100,13 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
         return GetAnnotationCompletions(context, pos, precedingToken);  // need to filter annotation
     }
     auto triggerValue = GetCurrentTokenValueImpl(context, pos, precedingToken);
+    auto *resolver = GetNavigationExportClosureResolver(context);
     if (IsEndWithValidPoint(triggerValue)) {
-        return GetPropertyCompletionsWithValidPoint(precedingToken, "");
+        return GetPropertyCompletionsWithValidPoint(precedingToken, "", resolver);
     }
     auto memberExpr = GetMemberExprOfIdentifier(precedingToken);
     if (IsEndWithToken(precedingToken, triggerValue) && IsTokenAfterPoint(memberExpr)) {
-        return GetPropertyCompletionsWithValidPoint(precedingToken, triggerValue);
+        return GetPropertyCompletionsWithValidPoint(precedingToken, triggerValue, resolver);
     }
     if (IsNameForDelaration(precedingToken)) {
         return {};

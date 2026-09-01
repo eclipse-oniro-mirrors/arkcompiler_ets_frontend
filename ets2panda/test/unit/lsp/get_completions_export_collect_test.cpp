@@ -705,8 +705,7 @@ export const ckUsed: number = 1;
     auto entries = CompletionsAfterMarker(filePaths, 1, texts[1], "import { RcCk", ES2PANDA_STATE_CHECKED);
     EXPECT_NE(FindEntry(entries, "RcCkVisible"), nullptr) << "direct export missing at CHECKED";
     EXPECT_NE(FindEntry(entries, "RcCkHidden"), nullptr) << "specifier re-export missing at CHECKED";
-    // CURRENT BEHAVIOR: the aliased re-export does not surface under the alias name.
-    EXPECT_EQ(FindEntry(entries, "RcCkAlias"), nullptr);
+    EXPECT_NE(FindEntry(entries, "RcCkAlias"), nullptr) << "aliased re-export missing at CHECKED";
 }
 
 // An anonymous default-exported function declaration in an '@'-prefixed module has
