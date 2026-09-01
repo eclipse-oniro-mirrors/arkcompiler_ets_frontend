@@ -54,14 +54,39 @@ export class DeclgenRunner {
         .stage(createGenerateInteropDeclarationStage());
       await pipeline.run(this.context);
     } catch (error) {
-      if (error instanceof common.errors.InternalError) {
-        logger.printError(error.logData(errors.ErrorCode.DECLGEN_INTERNAL_ERROR));
-      } else if (error instanceof common.interopConfig.InteropConfigError) {
-        logger.printError(error.logData(errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG));
-      } else if (error instanceof errors.SentinelNotConfiguredError) {
-        logger.printError(error.logData(errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG));
-      }
-      throw error;
+      reportDeclgenError(error);
+      throw new Error('Declgen error');
     }
   }
+}
+
+/** Maps a caught error to its hvigor error code and prints it as error block(s). */
+export function reportDeclgenError(error: unknown): void {
+  if (error instanceof common.errors.InternalError) {
+    logger.printError(error.logData(errors.ErrorCode.DECLGEN_INTERNAL_ERROR));
+    return;
+  }
+  if (error instanceof common.errors.AggregateUserError) {
+    for (const innerError of error.errors) {
+      reportDeclgenError(innerError);
+    }
+    return;
+  }
+  if (error instanceof common.errors.UserError) {
+    const code = userErrorCode(error);
+    if (code !== undefined) {
+      logger.printError(error.logData(code));
+    }
+  }
+}
+
+/** Error codes are subsystem-scoped: this tool maps each user error type to its declgen code. */
+function userErrorCode(error: common.errors.UserError): string | undefined {
+  if (error instanceof common.interopConfig.InteropConfigError) {
+    return errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG;
+  }
+  if (error instanceof errors.SentinelNotConfiguredError) {
+    return errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG;
+  }
+  return undefined;
 }
