@@ -984,7 +984,6 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *targetType = objExpr->TsType()->AsETSObjectType();
-    checker->CheckObjectLiteralKeys(objExpr->Properties());
 
     checker::Type *resultType = ProcessDeclNode(ctx, targetType, objExpr);
 

@@ -4182,6 +4182,9 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
     }
 
     expr->SetTsType(tsType);
+    if (tsType->IsETSObjectType() && !IsMapOrRecordBuiltinType(checker, tsType->AsETSObjectType())) {
+        checker->CheckObjectLiteralKeys(expr->Properties());
+    }
     return tsType;
 }
 

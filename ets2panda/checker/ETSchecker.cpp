@@ -133,13 +133,13 @@ void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &pro
         // number kind only used here
         auto propName = propKey->IsIdentifier() ? propKey->AsIdentifier()->Name() : propKey->AsStringLiteral()->Str();
         if (fieldNames.find(propName) != fieldNames.end()) {
-            LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
+            LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, propKey->Start());
         }
 
         // Method names can duplicate because of possible overloading
         if (!propertyDecl->Value()->IsArrowFunctionExpression()) {
             if (methodNames.find(propName) != methodNames.end()) {
-                LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
+                LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, propKey->Start());
             }
             fieldNames.insert(propName);
         } else {

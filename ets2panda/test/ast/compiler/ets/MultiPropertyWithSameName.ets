@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,11 +33,21 @@ let c: A = {
     "field": '3',
 }
 
+interface I {
+    field: string
+}
 
+let d: I = {
+    field: "1",
+    field: "2",
+}
 
-/* @@? 20:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
-/* @@? 20:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
-/* @@? 25:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
-/* @@? 25:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
-/* @@? 31:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
-/* @@? 31:12 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 22:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 22:5 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 27:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 28:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 28:5 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 32:5 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 33:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
+/* @@? 33:5 Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+/* @@? 42:5 Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */
