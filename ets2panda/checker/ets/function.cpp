@@ -1219,7 +1219,7 @@ static bool CheckLambdaInfer(ETSChecker *checker, ir::AstNode *typeAnnotation,
         return true;
     }
 
-    if (!typeAnnotation->IsETSFunctionType()) {
+    if (!typeAnnotation->IsETSFunctionType() || !subParameterType->IsETSFunctionType()) {
         return false;
     }
 
@@ -1229,6 +1229,60 @@ static bool CheckLambdaInfer(ETSChecker *checker, ir::AstNode *typeAnnotation,
     checker->InferTypesForLambda(lambda, calleeType, subParameterType->AsETSFunctionType()->ArrowSignature());
 
     return true;
+}
+
+static void RestoreLambdaTypes(ir::ScriptFunction *lambda, const std::vector<ir::TypeNode *> &lambdaParamTypes,
+                               ir::TypeNode *lambdaReturnTypeAnnotation)
+{
+    for (std::size_t i = 0U; i < lambda->Params().size(); ++i) {
+        if (lambdaParamTypes[i] == nullptr) {
+            lambda->Params()[i]->AsETSParameterExpression()->Ident()->SetTsTypeAnnotation(nullptr);
+        }
+    }
+    if (lambdaReturnTypeAnnotation == nullptr) {
+        lambda->SetReturnTypeAnnotation(nullptr);
+    }
+}
+
+struct LambdaUnionCheckContext {
+    ETSChecker *checker;
+    ir::ArrowFunctionExpression *arrowFuncExpr;
+    const ArenaVector<ir::TypeNode *> &typeAnnotations;
+    const ArenaVector<Type *> &parameterTypes;
+    const std::vector<ir::TypeNode *> &lambdaParamTypes;
+    ir::TypeNode *lambdaReturnTypeAnnotation;
+    TypeRelationFlag flags;
+};
+
+template <typename CheckInvocable>
+static bool CheckLambdaUnionTypeAnnotation(const LambdaUnionCheckContext &ctx, CheckInvocable &&checkInvocable)
+{
+    ir::ScriptFunction *const lambda = ctx.arrowFuncExpr->Function();
+    auto tryMatch = [&ctx, lambda, &checkInvocable](size_t annotationIndex, size_t parameterIndex) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        if (CheckLambdaInfer(ctx.checker, ctx.typeAnnotations[annotationIndex], ctx.arrowFuncExpr,
+                             ctx.parameterTypes[parameterIndex]) &&
+            checkInvocable(ctx.flags)) {
+            return true;
+        }
+        RestoreLambdaTypes(lambda, ctx.lambdaParamTypes, ctx.lambdaReturnTypeAnnotation);
+        return false;
+    };
+
+    for (size_t ix = 0; ix < ctx.typeAnnotations.size(); ++ix) {
+        if (tryMatch(ix, ix)) {
+            return true;
+        }
+    }
+
+    for (size_t annotationIndex = 0; annotationIndex < ctx.typeAnnotations.size(); ++annotationIndex) {
+        for (size_t parameterIndex = 0; parameterIndex < ctx.parameterTypes.size(); ++parameterIndex) {
+            if (annotationIndex != parameterIndex && tryMatch(annotationIndex, parameterIndex)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
@@ -1278,26 +1332,9 @@ static bool CheckLambdaTypeAnnotation(ETSChecker *checker, ir::ETSParameterExpre
 
     const auto typeAnnsOfUnion = typeAnnotation->AsETSUnionType()->Types();
     const auto typeParamOfUnion = parameterType->AsETSUnionType()->ConstituentTypes();
-    for (size_t ix = 0; ix < typeAnnsOfUnion.size(); ++ix) {
-        auto *typeNode = typeAnnsOfUnion[ix];
-        auto *paramNode = typeParamOfUnion[ix];
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        if (CheckLambdaInfer(checker, typeNode, arrowFuncExpr, paramNode) && checkInvocable(flags)) {
-            return true;
-        }
-
-        //  Restore inferring lambda types:
-        for (std::size_t i = 0U; i < lambda->Params().size(); ++i) {
-            if (lambdaParamTypes[i] == nullptr) {
-                lambda->Params()[i]->AsETSParameterExpression()->Ident()->SetTsTypeAnnotation(nullptr);
-            }
-        }
-        if (lambdaReturnTypeAnnotation == nullptr) {
-            lambda->SetReturnTypeAnnotation(nullptr);
-        }
-    }
-
-    return false;
+    const LambdaUnionCheckContext unionCtx {
+        checker, arrowFuncExpr, typeAnnsOfUnion, typeParamOfUnion, lambdaParamTypes, lambdaReturnTypeAnnotation, flags};
+    return CheckLambdaUnionTypeAnnotation(unionCtx, checkInvocable);
 }
 
 static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature, size_t paramPosition,
