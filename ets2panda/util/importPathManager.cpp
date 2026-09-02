@@ -31,6 +31,7 @@
 #include "libarkfile/class_data_accessor-inl.h"
 #include "libarkfile/file-inl.h"
 #include "libarkbase/utils/logger.h"
+#include "schemaMetadataGenerated.h"
 
 #include "util/es2pandaMacros.h"
 #include "util/language.h"
@@ -101,6 +102,23 @@ namespace {
 bool ShouldUseMetadata(const public_lib::Context *ctx)
 {
     return ctx->config->options->IsReadMetadata() && !ctx->config->options->IsGenStdlib();
+}
+
+bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata)
+{
+    for (const auto &[moduleName, moduleMetadata] : metadata) {
+        if (moduleMetadata.empty()) {
+            continue;
+        }
+
+        flatbuffers::Verifier verifier(moduleMetadata.data(), moduleMetadata.size());
+        if (!Metadata::VerifyDeclsBuffer(verifier)) {
+            LOG(WARNING, ES2PANDA) << "Rejected malformed metadata blob for module '" << moduleName << "'";
+            return false;
+        }
+    }
+
+    return true;
 }
 
 }  // namespace
@@ -1623,7 +1641,7 @@ bool ImportPathManager::LookupMetadata(ImportInfo *importInfo) const
         pkgName.pop_back();
     }
     auto metadata = metadataAccessor->ExtractMetadataForPackage(pkgName);
-    if (metadata.empty()) {
+    if (metadata.empty() || !VerifyMetadataModules(metadata)) {
         return false;
     }
     auto sourceFilePath = std::string(importInfo->extModuleData_->SourceFilePath());
