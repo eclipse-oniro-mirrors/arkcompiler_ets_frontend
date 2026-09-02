@@ -26,6 +26,10 @@ ets2panda_add_gtest(lsp_get_definition_at_position_test CPP_SOURCES
     get_definition_at_position_test.cpp
 )
 
+ets2panda_add_gtest(lsp_get_definition_at_position_test_1 CPP_SOURCES
+    get_definition_at_position_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_get_file_references_test CPP_SOURCES
     get_file_references_test.cpp
 )
@@ -103,6 +107,10 @@ ets2panda_add_gtest(lsp_api_test_organize_imports CPP_SOURCES
     organize_imports_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_organize_imports_1 CPP_SOURCES
+    organize_imports_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_quick_info_api_test CPP_SOURCES
     quick_info_test.cpp
 )
@@ -145,6 +153,10 @@ ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_function CPP_SOURCES
 
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_constant CPP_SOURCES
     refactor_extract_symbol_test_constant.cpp
+)
+
+ets2panda_add_gtest(lsp_api_extract_symbol_inline_insertion_test CPP_SOURCES
+    extract_symbol_inline_insertion_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_refactors_convert_chain CPP_SOURCES
@@ -200,8 +212,24 @@ ets2panda_add_gtest(lsp_api_diagnostics_test CPP_SOURCES
     get_diagnostics.cpp
 )
 
+ets2panda_add_gtest(lsp_api_diagnostics_test_1 CPP_SOURCES
+    get_diagnostics_1.cpp
+)
+
 ets2panda_add_gtest(lsp_api_get_adjusted_location_test CPP_SOURCES
     get_adjusted_location_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_adjusted_location_test_1 CPP_SOURCES
+    get_adjusted_location_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_adjusted_location_test_2 CPP_SOURCES
+    get_adjusted_location_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_adjusted_location_test_import CPP_SOURCES
+    get_adjusted_location_test_import.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_class_hierarchy CPP_SOURCES
@@ -280,6 +308,10 @@ ets2panda_add_gtest(lsp_api_fix_import_source_test CPP_SOURCES
     code_fix/fix_import_source_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_fix_import_source_test_1 CPP_SOURCES
+    code_fix/fix_import_source_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_get_class_hierarchy_info CPP_SOURCES
     class_hierarchy_info_test.cpp
 )
@@ -316,12 +348,36 @@ ets2panda_add_gtest(lsp_api_test_find_rename_locations_2 CPP_SOURCES
     find_rename_locations_test_2.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_find_rename_locations_3 CPP_SOURCES
+    find_rename_locations_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_find_rename_locations_4 CPP_SOURCES
+    find_rename_locations_test_4.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_get_references_at_position_1 CPP_SOURCES
+    get_references_at_position_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_completions_module_test_1 CPP_SOURCES
+    get_completions_module_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_change_tracker CPP_SOURCES
     change_tracker_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_change_tracker_2 CPP_SOURCES
+    change_tracker_test_2.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_get_safe_delete_info CPP_SOURCES
     get_safe_delete_info_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_get_safe_delete_info_1 CPP_SOURCES
+    get_safe_delete_info_test_1.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_create_type_help_items CPP_SOURCES
@@ -411,12 +467,20 @@ ets2panda_add_gtest(lsp_api_test_fix_extends_interface_becomes_implements CPP_SO
     fix_extends_interface_becomes_implements_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_fix_nan_equality CPP_SOURCES
+    fix_nan_equality_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_forgotten_this_property_access CPP_SOURCES
     forgotten_this_property_access_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_remove_accidental_call_parentheses CPP_SOURCES
     remove_accidental_call_parentheses_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_missing_call_parantheses_test CPP_SOURCES
+    fix_missing_call_parantheses_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_fix_remove_override_modifier_test CPP_SOURCES
@@ -429,6 +493,10 @@ ets2panda_add_gtest(lsp_api_add_missing_new_operator CPP_SOURCES
 
 ets2panda_add_gtest(lsp_api_test_add_local_variable CPP_SOURCES
     add_local_variable_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_add_local_variable_1 CPP_SOURCES
+    add_local_variable_test_1.cpp
 )
 
 ets2panda_add_gtest(lsp_get_import_file_path_test CPP_SOURCES
@@ -497,16 +565,32 @@ ets2panda_add_gtest(lsp_api_fix_spelling_for_type_test CPP_SOURCES
     fix_spelling_for_type_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_fix_spelling_for_type_test_1 CPP_SOURCES
+    fix_spelling_for_type_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_api_fix_remove_illegal_await_test CPP_SOURCES
     fix_remove_illegal_await_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_remove_illegal_await_test_1 CPP_SOURCES
+    fix_remove_illegal_await_test_1.cpp
 )
 
 ets2panda_add_gtest(lsp_api_fix_remove_duplicate_export_import_test CPP_SOURCES
     fix_remove_duplicate_export_import_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_fix_remove_duplicate_export_import_test_1 CPP_SOURCES
+    fix_remove_duplicate_export_import_test_1.cpp
+)
+
 ets2panda_add_gtest(lsp_api_fix_spelling_for_property_test CPP_SOURCES
     fix_spelling_for_property_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_spelling_for_property_test_1 CPP_SOURCES
+    fix_spelling_for_property_test_1.cpp
 )
 
 ets2panda_add_gtest(lsp_api_get_node_etsstring_literal_test CPP_SOURCES
@@ -626,6 +710,10 @@ ets2panda_add_gtest(lsp_api_get_node_infos_expression_test CPP_SOURCES
     get_node_infos_expression_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_get_node_info_symbol_kind_gate_test CPP_SOURCES
+    get_node_info_symbol_kind_gate_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_get_node_info_await_expression_test CPP_SOURCES
     get_node_info_await_expression_test.cpp
 )
@@ -660,6 +748,222 @@ ets2panda_add_gtest(lsp_api_test_smart_indenter_test CPP_SOURCES
     smart_indenter_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_smart_indenter_test_2 CPP_SOURCES
+    smart_indenter_test_2.cpp
+)
+
 ets2panda_add_gtest(lsp_api_get_token_native_test CPP_SOURCES
     get_token_native_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_symbol_reference_index CPP_SOURCES
+    symbol_reference_index_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_type_hierarchy CPP_SOURCES
+    type_hierarchy_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_completions_corner_test_1 CPP_SOURCES
+    get_completions_corner_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_crlf_unicode_boundary CPP_SOURCES
+    crlf_unicode_boundary_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_cancellation_token_scenarios CPP_SOURCES
+    cancellation_token_scenarios_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_rename_conflict CPP_SOURCES
+    rename_conflict_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_diagnostics_boundary CPP_SOURCES
+    diagnostics_boundary_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_2 CPP_SOURCES
+    add_local_variable_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_spelling_for_property_test_2 CPP_SOURCES
+    fix_spelling_for_property_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_spelling_for_type_test_2 CPP_SOURCES
+    fix_spelling_for_type_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_remove_duplicate_export_import_test_2 CPP_SOURCES
+    fix_remove_duplicate_export_import_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_import_fixes_test_1 CPP_SOURCES
+    code_fix/import_fixes_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_class_interface_codefixes_test_1 CPP_SOURCES
+    class_interface_codefixes_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_convert_remove_codefixes_test_1 CPP_SOURCES
+    convert_remove_codefixes_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_diagnostics_2 CPP_SOURCES
+    get_diagnostics_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_definition_at_position_test_2 CPP_SOURCES
+    get_definition_at_position_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_implementation_location_test_1 CPP_SOURCES
+    get_implementation_location_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_references_at_position_test_2 CPP_SOURCES
+    get_references_at_position_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_find_rename_locations_test_5 CPP_SOURCES
+    find_rename_locations_test_5.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_safe_delete_info_test_2 CPP_SOURCES
+    get_safe_delete_info_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_completions_2 CPP_SOURCES
+    get_completions_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_completions_module_test_2 CPP_SOURCES
+    get_completions_module_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_completions_export_collect_test CPP_SOURCES
+    get_completions_export_collect_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_completions_receiver_test CPP_SOURCES
+    get_completions_receiver_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_quick_info_test_2 CPP_SOURCES
+    quick_info_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_quick_info_test_3 CPP_SOURCES
+    quick_info_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_quick_info_test_4 CPP_SOURCES
+    quick_info_test_4.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_signature_test_1 CPP_SOURCES
+    get_signature_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_inlay_hints_test_1 CPP_SOURCES
+    inlay_hints_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_formatting_test_4 CPP_SOURCES
+    formatting_test_4.cpp
+)
+
+ets2panda_add_gtest(lsp_api_formatting_after_keystroke_test_1 CPP_SOURCES
+    formatting_after_keystroke_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_organize_imports_test_2 CPP_SOURCES
+    organize_imports_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_refactor_provider_test_1 CPP_SOURCES
+    refactor_provider_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_refactor_extract_symbol_test_3 CPP_SOURCES
+    refactor_extract_symbol_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_refactors_move_generate_test_1 CPP_SOURCES
+    refactors_move_generate_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_node_token_offset_boundary_test_1 CPP_SOURCES
+    node_token_offset_boundary_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_symbol_reference_index_test_1 CPP_SOURCES
+    symbol_reference_index_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_symbol_reference_index_test_2 CPP_SOURCES
+    symbol_reference_index_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_class_hierarchy5 CPP_SOURCES
+    class_hierarchy5_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_class_type_hierarchy_test_1 CPP_SOURCES
+    class_type_hierarchy_test_1.cpp
+)
+
+ets2panda_add_gtest(lsp_api_get_diagnostics_3 CPP_SOURCES
+    get_diagnostics_3.cpp
+)
+
+ets2panda_add_gtest(lsp_document_highlights_test_2 CPP_SOURCES
+    document_highlights_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_wrapper_paths_test CPP_SOURCES
+    api_wrapper_paths_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_3 CPP_SOURCES
+    add_local_variable_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_4 CPP_SOURCES
+    add_local_variable_test_4.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_5 CPP_SOURCES
+    add_local_variable_test_5.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_6 CPP_SOURCES
+    add_local_variable_test_6.cpp
+)
+
+ets2panda_add_gtest(lsp_api_add_local_variable_test_7 CPP_SOURCES
+    add_local_variable_test_7.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_import_source_test_2 CPP_SOURCES
+    code_fix/fix_import_source_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_import_source_test_3 CPP_SOURCES
+    code_fix/fix_import_source_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_fix_import_source_test_4 CPP_SOURCES
+    code_fix/fix_import_source_test_4.cpp
+)
+
+ets2panda_add_gtest(lsp_api_import_fixes_test_2 CPP_SOURCES
+    code_fix/import_fixes_test_2.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_fix_nan_equality_1 CPP_SOURCES
+    fix_nan_equality_test_1.cpp
 )
