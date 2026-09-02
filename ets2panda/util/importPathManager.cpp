@@ -203,6 +203,46 @@ static bool IsRelativePath(std::string_view path)
     return false;
 }
 
+static std::string NormalizePathPrototype(std::string resolvedPathPrototype, char pathDelimiter)
+{
+    std::replace_if(
+        resolvedPathPrototype.begin(), resolvedPathPrototype.end(),
+        [pathDelimiter](char c) { return ((pathDelimiter != c) && ((c == '\\') || (c == '/'))); }, pathDelimiter);
+    return ark::os::NormalizePath(resolvedPathPrototype);
+}
+
+static std::string NormalizeArktsconfigLookupPath(std::string path)
+{
+    std::replace(path.begin(), path.end(), '\\', '/');
+    return ark::os::NormalizePath(path);
+}
+
+static bool IsSubPathOrSame(std::string_view path, std::string_view base)
+{
+    if (!Helpers::StartsWith(path, base)) {
+        return false;
+    }
+    return path.size() == base.size() || (!base.empty() && base.back() == '/') || path.at(base.size()) == '/';
+}
+
+static std::optional<std::string> FormCacheRelativeModulePath(std::string targetPath, std::string cacheDir)
+{
+    targetPath = NormalizeArktsconfigLookupPath(std::move(targetPath));
+    cacheDir = NormalizeArktsconfigLookupPath(std::move(cacheDir));
+    if (cacheDir.empty() || !IsSubPathOrSame(targetPath, cacheDir)) {
+        return std::nullopt;
+    }
+
+    auto relativePath = targetPath.substr(cacheDir.size());
+    if (!relativePath.empty() && relativePath.front() == '/') {
+        relativePath.erase(relativePath.begin());
+    }
+    if (relativePath.empty()) {
+        return std::nullopt;
+    }
+    return relativePath;
+}
+
 util::StringView ImportPathManager::ResolvePathAPI(parser::Program *importer, ir::StringLiteral *importPath) const
 {
     srcPos_ = importPath->Start();
@@ -294,6 +334,36 @@ std::optional<std::string> ImportPathManager::ResolveMockPath(
     return std::nullopt;
 }
 
+ImportPathManager::ResolvedPathRes ImportPathManager::ResolveEtscacheRelativePath(
+    std::string physicalPathPrototype) const
+{
+    physicalPathPrototype = NormalizePathPrototype(std::move(physicalPathPrototype), pathDelimiter_.at(0));
+    auto physicalResult = ProbeExtensionOrIndexFile(physicalPathPrototype);
+    if (!physicalResult.resolvedPath.empty() || physicalResult.hasError) {
+        return physicalResult;
+    }
+
+    auto relativeModulePath = FormCacheRelativeModulePath(physicalPathPrototype, ArkTSConfig().CacheDir());
+    if (!relativeModulePath.has_value()) {
+        DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {physicalPathPrototype},
+                            srcPos_);
+        return {"", false, true};
+    }
+
+    // The cache-relative module path is a key in arktsconfig paths/dependencies.
+    // Dynamic declarations must be located through that mapping, not the HAR declaration output directory.
+    auto resolvedPath = ArkTSConfig().ResolvePath(*relativeModulePath, false, fsQueryCache_.get());
+    if (resolvedPath) {
+        auto result = ProbeExtensionOrIndexFile(std::move(*resolvedPath));
+        if (!result.resolvedPath.empty() || result.hasError) {
+            return result;
+        }
+    }
+
+    DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {physicalPathPrototype}, srcPos_);
+    return {"", false, true};
+}
+
 ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string_view importPath) const
 {
     if (importPath.empty()) {
@@ -319,7 +389,9 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
         std::string resolvedPathPrototype {currentDir};
         resolvedPathPrototype += pathDelimiter_;
         resolvedPathPrototype += importPath;
-        result = AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
+        result = importer->Is<ModuleKind::ETSCACHE_DECL>()
+                     ? ResolveEtscacheRelativePath(std::move(resolvedPathPrototype))
+                     : AppendExtensionOrIndexFileIfOmitted(std::move(resolvedPathPrototype));
         if (result.hasError) {
             return {};
         }
@@ -1211,33 +1283,7 @@ public:
             (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
         ES2PANDA_ASSERT(!isPackageFraction);
         if (auto pointedProgram = SearchResolved(newProg->GetImportInfo()); pointedProgram == newProg) {
-            auto alreadyInExternalSources = [newProg, extDecls]() -> bool {
-                switch (newProg->GetModuleKind()) {
-                    case ModuleKind::MODULE: {
-                        const auto &programs = extDecls->Get<ModuleKind::MODULE>();
-                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
-                    }
-                    case ModuleKind::SOURCE_DECL: {
-                        const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
-                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
-                    }
-                    case ModuleKind::PACKAGE: {
-                        const auto &programs = extDecls->Get<ModuleKind::PACKAGE>();
-                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
-                    }
-                    case ModuleKind::ETSCACHE_DECL: {
-                        const auto &programs = extDecls->Get<ModuleKind::ETSCACHE_DECL>();
-                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
-                    }
-                    case ModuleKind::METADATA_DECL: {
-                        const auto &programs = extDecls->Get<ModuleKind::METADATA_DECL>();
-                        return std::find(programs.begin(), programs.end(), newProg) != programs.end();
-                    }
-                    default:
-                        return false;
-                }
-            };
-            if (alreadyInExternalSources()) {
+            if (AlreadyInExternalSources(newProg, extDecls)) {
                 return;
             }
             extDecls->Add(newProg);
@@ -1259,8 +1305,7 @@ public:
             return;
         }
 
-        const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
-        if (std::find(programs.begin(), programs.end(), newProg) != programs.end()) {
+        if (AlreadyInExternalSources(newProg, extDecls)) {
             return;
         }
         extDecls->Add(newProg);
@@ -1314,6 +1359,34 @@ public:
     }
 
 private:
+    static bool AlreadyInExternalSources(const parser::Program *newProg, const parser::Program::ExternalDecls *extDecls)
+    {
+        switch (newProg->GetModuleKind()) {
+            case ModuleKind::MODULE: {
+                const auto &programs = extDecls->Get<ModuleKind::MODULE>();
+                return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+            }
+            case ModuleKind::SOURCE_DECL: {
+                const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
+                return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+            }
+            case ModuleKind::PACKAGE: {
+                const auto &programs = extDecls->Get<ModuleKind::PACKAGE>();
+                return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+            }
+            case ModuleKind::ETSCACHE_DECL: {
+                const auto &programs = extDecls->Get<ModuleKind::ETSCACHE_DECL>();
+                return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+            }
+            case ModuleKind::METADATA_DECL: {
+                const auto &programs = extDecls->Get<ModuleKind::METADATA_DECL>();
+                return std::find(programs.begin(), programs.end(), newProg) != programs.end();
+            }
+            default:
+                return false;
+        }
+    }
+
     ImportPathManager *ipm_ {};
     ArenaMap<ArenaString, parser::Program *, CompareByLength> exactProgsByResolvedPath_;
     ArenaMap<ArenaString, parser::Program *, CompareByLength> progsByResolvedPath_;
@@ -1580,15 +1653,9 @@ ImportPathManager::ResolutionCacheKey ImportPathManager::BuildResolutionCacheKey
     return {isDynamic_, std::string {path}};
 }
 
-ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFileIfOmitted(
-    std::string resolvedPathPrototype) const
+ImportPathManager::ResolvedPathRes ImportPathManager::ProbeExtensionOrIndexFile(std::string resolvedPathPrototype) const
 {
-    char delim = pathDelimiter_.at(0);
-    std::replace_if(
-        resolvedPathPrototype.begin(), resolvedPathPrototype.end(),
-        [delim](char c) { return ((delim != c) && ((c == '\\') || (c == '/'))); }, delim);
-
-    resolvedPathPrototype = ark::os::NormalizePath(resolvedPathPrototype);
+    resolvedPathPrototype = NormalizePathPrototype(std::move(resolvedPathPrototype), pathDelimiter_.at(0));
     const auto cacheKey = BuildResolutionCacheKey(resolvedPathPrototype);
     auto cached = appendExtensionOrIndexFileCache_.find(cacheKey);
     if (cached != appendExtensionOrIndexFileCache_.end()) {
@@ -1622,8 +1689,19 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
         return cacheAndReturn({ark::os::GetAbsolutePath(DirOrDirWithIndexFile(resolvedPathPrototype))});
     }
 
-    DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {resolvedPathPrototype}, srcPos_);
     return {""};
+}
+
+ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFileIfOmitted(
+    std::string resolvedPathPrototype) const
+{
+    resolvedPathPrototype = NormalizePathPrototype(std::move(resolvedPathPrototype), pathDelimiter_.at(0));
+    auto result = ProbeExtensionOrIndexFile(resolvedPathPrototype);
+    if (result.resolvedPath.empty() && !result.hasError) {
+        DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {resolvedPathPrototype},
+                            srcPos_);
+    }
+    return result;
 }
 
 // Transform a/b/c.d.ets to a/b/c
