@@ -146,6 +146,22 @@ describe('FileManager metadata', () => {
     expect(manager.dynamicSourceFiles).toEqual(new Set([dynamicModuleFile]));
   });
 
+  it('skips scan paths that do not exist', () => {
+    const staticSdkFile = createFile('sdk/static/@ohos.static.d.ets');
+    const manager = new FileManagerBuilder()
+      .addStaticSdkPath(path.join(projectRootPath, 'missing/static'))
+      .addStaticSdkPath(path.dirname(staticSdkFile))
+      .addDynamicSdkPath(path.join(projectRootPath, 'missing/dynamic'))
+      .addStaticInteropSdkPath(path.join(projectRootPath, 'missing/static-interop'))
+      .addDynamicInteropSdkPath(path.join(projectRootPath, 'missing/dynamic-interop'))
+      .build();
+
+    expect(manager.queryStaticSdkPath('@ohos.static')).toBe(staticSdkFile);
+    expect(manager.queryDynamicSdkPath('@ohos.static')).toBeUndefined();
+    expect(manager.queryStaticInteropSdkPath('@ohos.static')).toBeUndefined();
+    expect(manager.queryDynamicInteropSdkPath('@ohos.static')).toBeUndefined();
+  });
+
   it('recognizes files under a static standard library path', () => {
     const staticStdLibFile = createFile('stdlib/core/Runtime.d.ets');
     const manager = new FileManagerBuilder().addStaticStdLibPath(path.join(projectRootPath, 'stdlib')).build();

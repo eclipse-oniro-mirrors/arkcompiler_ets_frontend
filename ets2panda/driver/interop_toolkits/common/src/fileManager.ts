@@ -417,7 +417,10 @@ export class FileManager {
     const pendingPaths = rootPaths.map(normalizePath);
     while (pendingPaths.length > 0) {
       const currentPath = pendingPaths.pop()!;
-      const stat = fs.statSync(currentPath);
+      const stat = fs.statSync(currentPath, { throwIfNoEntry: false });
+      if (stat === undefined) {
+        continue;
+      }
       if (stat.isDirectory()) {
         for (const entry of fs.readdirSync(currentPath)) {
           pendingPaths.push(normalizePath(path.join(currentPath, entry)));
