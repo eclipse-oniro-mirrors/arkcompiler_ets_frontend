@@ -13,8 +13,20 @@
  * limitations under the License.
  */
 
-function foo(a: int[] | Object[]) {}
+function bar(a: int[] | string[]): void {
+    arktest.assertEQ(a.length, 2)
+}
 
-foo(/* @@ label */[])
-/* @@@ label Error Semantic error ESE146473: Cannot infer a specific type of the Array Expression, ambiguous between type `Array<Int>` and type `Array<Object>`. */
-/* @@@ label Error Semantic error ESE0301: Can't resolve array type */
+function baz(a: int[] | Object[]): void {
+    arktest.assertEQ(a.length, 2)
+}
+
+function qux(a: Object | int[]): void {
+    arktest.assertTrue(a instanceof Array)
+}
+
+function main() {
+    bar([1, 2])
+    baz([1, new Object()])
+    qux([1, undefined])
+}
