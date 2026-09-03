@@ -15,10 +15,8 @@
 
 import * as path from 'node:path';
 import * as common from '@interop-toolkits/common';
-import * as errors from '../../errors';
 import { SentinelNotConfiguredError } from '../../errors';
 import type * as dependencyResolver from 'dependency-resolver';
-import { logger } from '../../logger';
 import type { Context } from '../context';
 import {
   DEPENDENCY_GRAPH_ARTIFACT,
@@ -65,6 +63,7 @@ function validateSentinels(
   entryFiles: InteropEntryFiles,
   dependencyGraph: dependencyResolver.DependencyGraph,
 ): void {
+  const unconfiguredEntries: { fileName: string; error: SentinelNotConfiguredError }[] = [];
   for (const sentinel of dependencyGraph.getSentinels()) {
     if (
       !context.fileManager.isSourceFile(sentinel.fileName) ||
@@ -73,17 +72,40 @@ function validateSentinels(
     ) {
       continue;
     }
-    const relativePath = path.relative(context.buildConfig.projectRootPath, sentinel.fileName);
     const fileMeta = context.fileManager.queryFileMeta(sentinel.fileName);
     if (fileMeta === undefined) {
       throw new common.errors.InternalError(`File meta for ${sentinel.fileName} is not found.`);
     }
-    const language = fileMeta!.language === common.fileUtils.Language.DYNAMIC ? 'Dynamic' : 'Static';
-    throw new SentinelNotConfiguredError({
-      description: `${language} file ${relativePath} is imported by a ${language === 'Dynamic' ? 'Static' : 'Dynamic'} file, but it is not configured as an interop entry.`,
-      solutions: [`Add it into the interop configuration.`],
+    const moduleInfo = fileMeta.module;
+    if (moduleInfo === undefined) {
+      throw new common.errors.InternalError(`Module info for ${sentinel.fileName} is not found.`);
+    }
+    const language = fileMeta.language === common.fileUtils.Language.DYNAMIC ? 'Dynamic' : 'Static';
+    const importerLanguage = language === 'Dynamic' ? 'static' : 'dynamic';
+    const relativePath = path.relative(moduleInfo.modulePath, sentinel.fileName);
+    unconfiguredEntries.push({
+      fileName: sentinel.fileName,
+      error: new SentinelNotConfiguredError({
+        description: 'Failed to validate interop entries.',
+        cause:
+          `${language} file '${relativePath}' of package ${moduleInfo.packageName} ` +
+          `is imported by some ${importerLanguage} files. ` +
+          'But it is not configured as an interop entry.',
+        solutions: [`Add it into the interop configuration.`],
+      }),
     });
   }
+  if (unconfiguredEntries.length > 0) {
+    unconfiguredEntries.sort((left, right) => comparePath(left.fileName, right.fileName));
+    throw new common.errors.AggregateUserError(unconfiguredEntries.map((entry) => entry.error));
+  }
+}
+
+function comparePath(left: string, right: string): number {
+  if (left === right) {
+    return 0;
+  }
+  return left < right ? -1 : 1;
 }
 
 function getDeclgenInputClosure(

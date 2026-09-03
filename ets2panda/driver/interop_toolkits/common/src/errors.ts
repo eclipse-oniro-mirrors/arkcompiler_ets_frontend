@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { LogDataInit, LogData } from './hvigorLogger';
+import { type LogDataInit, LogData } from './hvigorLogger';
 
 export type ErrorMessage = Omit<LogDataInit, 'code'>;
 
@@ -30,6 +30,17 @@ export class UserError extends Error {
 
   public logData(code: string): LogData {
     return new LogData({ ...this.errorMessage, code });
+  }
+}
+
+/**
+ * Aggregates multiple user errors detected in one validation pass so that all
+ * of them are reported before the run aborts. The wrapped errors are rendered
+ * individually; this container itself carries no user-facing details.
+ */
+export class AggregateUserError extends UserError {
+  public constructor(public readonly errors: readonly UserError[]) {
+    super({ description: `Multiple errors occurred: ${errors.length} error(s) found.` });
   }
 }
 
