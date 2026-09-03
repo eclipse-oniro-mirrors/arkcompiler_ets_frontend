@@ -18,6 +18,10 @@
 
 #include "varbinder/ETSBinder.h"
 
+namespace ark::es2panda::checker {
+class ExportClosureResolver;
+}  // namespace ark::es2panda::checker
+
 namespace ark::es2panda::compiler {
 
 class PhaseManager;
@@ -47,7 +51,9 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
              ir::AstNode *node);
 
 // NOTE: used to get the declaration from identifier in Plugin API and LSP
-ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node);
+ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node, checker::ExportClosureResolver *resolver = nullptr);
+ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node, checker::ExportClosureResolver *resolver,
+                                       varbinder::Variable **resolvedVariable);
 // NOTE: used to get the declaration name in Plugin API and LSP
 std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node);
 // NOTE: used to get the license string from the input root node.

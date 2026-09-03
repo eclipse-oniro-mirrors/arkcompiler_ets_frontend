@@ -24,9 +24,9 @@
 #include "get_node.h"
 #include "lsp/include/organize_imports.h"
 #include "get_safe_delete_info.h"
+#include "get_definition_at_position.h"
 #include "internal_api.h"
 #include "ir/astNode.h"
-#include "ir/ets/etsReExportDeclaration.h"
 #include "find_safe_delete_location.h"
 #include "references.h"
 #include "public/es2panda_lib.h"
@@ -57,30 +57,6 @@ using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 extern "C" {
 namespace ark::es2panda::lsp {
 
-static std::string GetDefinitionFilePathFromImportNamespaceAlias(const ir::AstNode *declNode)
-{
-    if (declNode == nullptr || !declNode->IsImportNamespaceSpecifier()) {
-        return {};
-    }
-
-    const auto *parent = declNode->Parent();
-    if (parent == nullptr) {
-        return {};
-    }
-
-    const ir::ETSImportDeclaration *importDecl = nullptr;
-    if (parent->IsETSImportDeclaration()) {
-        importDecl = parent->AsETSImportDeclaration();
-    } else if (parent->IsETSReExportDeclaration()) {
-        importDecl = parent->AsETSReExportDeclaration()->GetETSImportDeclarations();
-    }
-    if (importDecl == nullptr) {
-        return {};
-    }
-
-    return GetImportFilePath(importDecl->ImportInfo());
-}
-
 DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
@@ -90,51 +66,14 @@ DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t positio
 
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
 
-    auto importFilePath = GetImportFilePath(context, byteOffset);
-    if (!importFilePath.empty()) {
-        return {importFilePath, 0, 0};
-    }
-    auto declInfo = GetDefinitionAtPositionImpl(context, byteOffset);
-    DefinitionInfo result {};
-    if (declInfo.first == nullptr) {
-        return result;
+    auto target = GetDefinitionTargetAtPosition(context, byteOffset);
+    if (target.source.empty()) {
+        return {target.fileName, target.start, target.length};
     }
 
-    auto importNamespaceAliasFilePath = GetDefinitionFilePathFromImportNamespaceAlias(declInfo.first);
-    if (!importNamespaceAliasFilePath.empty()) {
-        return {importNamespaceAliasFilePath, 0, 0};
-    }
-
-    auto node = declInfo.first;
-    auto targetNode = declInfo.first->FindChild([&declInfo](ir::AstNode *childNode) {
-        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == declInfo.second;
-    });
-    std::string name;
-    while (node != nullptr) {
-        if (node->Range().start.Program() != nullptr) {
-            name = std::string(node->Range().start.Program()->SourceFile().GetAbsolutePath().Utf8());
-            break;
-        }
-        if (node->IsETSModule()) {
-            name = std::string(node->AsETSModule()->Program()->SourceFilePath());
-            break;
-        }
-        node = node->Parent();
-    }
-    if (targetNode != nullptr) {
-        std::string targetSource;
-        if (targetNode->Range().start.Program() != nullptr) {
-            targetSource = std::string(targetNode->Range().start.Program()->SourceCode());
-        } else {
-            targetSource = source;
-        }
-        size_t startCharOffset =
-            ark::es2panda::lsp::ByteOffsetToCodePointOffset(targetSource, targetNode->Start().index);
-        size_t lengthChar =
-            ark::es2panda::lsp::ByteOffsetToCodePointOffset(targetSource, targetNode->End().index) - startCharOffset;
-        result = {name, startCharOffset, lengthChar};
-    }
-    return result;
+    size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(target.source, target.start);
+    size_t endCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(target.source, target.start + target.length);
+    return {target.fileName, startCharOffset, endCharOffset - startCharOffset};
 }
 
 DefinitionInfo GetImplementationAtPosition(es2panda_Context *context, size_t position)

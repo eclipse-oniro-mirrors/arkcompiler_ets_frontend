@@ -179,7 +179,7 @@ public:
     void Clear();
     void InvalidateProgram(parser::Program *program);
     static varbinder::Variable *ResolveEffectiveImportVariableForDeclaration(
-        const varbinder::ImportBindingInfo *bindingInfo);
+        const varbinder::ImportBindingInfo *bindingInfo, ExportClosureResolver *resolver = nullptr);
 
 private:
     struct ExplicitExportConflictState;

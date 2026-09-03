@@ -73,6 +73,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/generate_constructor.cpp",
     "src/get_adjusted_location.cpp",
     "src/get_class_property_info.cpp",
+    "src/get_definition_at_position.cpp",
     "src/get_definition_and_bound_span.cpp",
     "src/get_edits_for_refactor.cpp",
     "src/get_name_or_dotted_name_span.cpp",

@@ -1425,7 +1425,17 @@ size_t GetTokenPosOfNode(const ir::AstNode *astNode)
 
 std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_Context *context, size_t pos)
 {
+    return GetDefinitionAtPositionImpl(context, pos, nullptr);
+}
+
+std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_Context *context, size_t pos,
+                                                                       checker::ExportClosureResolver *resolver,
+                                                                       varbinder::Variable **resolvedVariable)
+{
     std::pair<ir::AstNode *, util::StringView> res;
+    if (resolvedVariable != nullptr) {
+        *resolvedVariable = nullptr;
+    }
     auto node = GetTouchingTokenRightMatch(context, pos);
     if (node == nullptr) {
         return res;
@@ -1440,7 +1450,8 @@ std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_
     if (!node->IsIdentifier()) {
         return res;
     }
-    res = {compiler::DeclarationFromIdentifier(node->AsIdentifier()), node->AsIdentifier()->Name()};
+    res = {compiler::DeclarationFromIdentifier(node->AsIdentifier(), resolver, resolvedVariable),
+           node->AsIdentifier()->Name()};
     return res;
 }
 
