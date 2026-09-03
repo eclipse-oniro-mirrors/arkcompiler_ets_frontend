@@ -730,6 +730,16 @@ util::StringView JsdocStringFromDeclaration(const ir::AstNode *node)
     return jsdocGetter->GetJsdocBackward();
 }
 
+// NOTE: used to get all valid comments string from the input node.
+util::StringView GetCommentsStringFromDeclaration(const ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return util::StringView("");
+    }
+    std::unique_ptr<parser::JsdocHelper> jsdocGetter = std::make_unique<parser::JsdocHelper>(node);
+    return jsdocGetter->GetCommentsBackward();
+}
+
 // Note: run varbinder on the new node generated in lowering phases (without ClearTypesVariablesAndScopes)
 void BindLoweredNode(varbinder::ETSBinder *varBinder, ir::AstNode *node)
 {

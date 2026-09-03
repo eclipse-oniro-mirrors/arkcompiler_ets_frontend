@@ -277,6 +277,7 @@ struct CAPI_EXPORT es2panda_Impl {
     es2panda_AstNode *(*DeclarationFromIdentifier)(es2panda_Context *ctx, es2panda_AstNode *node);
     bool (*IsImportTypeKind)(es2panda_Context *ctx, es2panda_AstNode *node);
     char *(*JsdocStringFromDeclaration)(es2panda_Context *ctx, es2panda_AstNode *node);
+    char *(*GetCommentsStringFromDeclaration)(es2panda_Context *ctx, es2panda_AstNode *node);
     char *(*GetLicenseFromRootNode)(es2panda_Context *ctx, es2panda_AstNode *node);
     es2panda_AstNode *(*FirstDeclarationByNameFromNode)(es2panda_Context *ctx, const es2panda_AstNode *node,
                                                         const char *name);

@@ -1556,6 +1556,16 @@ extern "C" char *JsdocStringFromDeclaration([[maybe_unused]] es2panda_Context *c
     return StringViewToCString(allocator, compiler::JsdocStringFromDeclaration(E2pNode));
 }
 
+extern "C" char *GetCommentsStringFromDeclaration([[maybe_unused]] es2panda_Context *ctx, es2panda_AstNode *node)
+{
+    auto *allocator = reinterpret_cast<Context *>(ctx)->allocator;
+    if (node == nullptr) {
+        return StringViewToCString(allocator, util::StringView(""));
+    }
+    auto E2pNode = reinterpret_cast<const ir::AstNode *>(node);
+    return StringViewToCString(allocator, compiler::GetCommentsStringFromDeclaration(E2pNode));
+}
+
 extern "C" es2panda_AstNode *FirstDeclarationByNameFromNode([[maybe_unused]] es2panda_Context *ctx,
                                                             const es2panda_AstNode *node, const char *name)
 {
@@ -2009,6 +2019,7 @@ es2panda_Impl g_impl = {
     DeclarationFromIdentifier,
     IsImportTypeKind,
     JsdocStringFromDeclaration,
+    GetCommentsStringFromDeclaration,
     GetLicenseFromRootNode,
     FirstDeclarationByNameFromNode,
     FirstDeclarationByNameFromProgram,
