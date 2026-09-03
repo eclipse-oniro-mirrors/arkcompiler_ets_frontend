@@ -15,7 +15,6 @@
 
 import * as os from 'node:os';
 import * as path from 'node:path';
-import * as fs from 'node:fs';
 
 import * as common from '@interop-toolkits/common';
 
@@ -60,9 +59,14 @@ export function getDynamicTsConfigPath(buildConfig: BuildConfig): string {
 }
 
 export function loadTsCompilerOptions(tsconfigPath: string): ts.CompilerOptions {
-  const tsConfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'));
+  const { config: tsConfig, error } = ts.readConfigFile(tsconfigPath, ts.sys.readFile);
+  if (error !== undefined) {
+    throw new common.errors.InternalError(
+      `Failed to parse tsconfig file ${tsconfigPath}: ${ts.flattenDiagnosticMessageText(error.messageText, ts.sys.newLine)}`,
+    );
+  }
   const compilerOptions = ts.convertCompilerOptionsFromJson(
-    tsConfig.compilerOptions ?? {},
+    tsConfig?.compilerOptions ?? {},
     path.dirname(tsconfigPath),
   ).options;
   Object.assign(compilerOptions, {
@@ -99,7 +103,9 @@ export function loadTsCompilerOptions(tsconfigPath: string): ts.CompilerOptions 
     tsImportSendableEnable: false,
     skipPathsInKeyForCompilationSettings: true,
   });
-  compilerOptions.ets!.customComponent = undefined;
+  if (compilerOptions.ets !== undefined) {
+    compilerOptions.ets.customComponent = undefined;
+  }
   return compilerOptions;
 }
 
