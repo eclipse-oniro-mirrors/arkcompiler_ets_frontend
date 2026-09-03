@@ -82,6 +82,28 @@ TEST_F(LSPAPITests, GetCurrentTokenValue4)
     ASSERT_EQ(result, "ab");
 }
 
+TEST_F(LSPAPITests, GetCurrentTokenValueAfterFloatSuffix)
+{
+    const std::string source = R"('use static'
+const value: float = 1f;
+function foo(arg1: int): void {
+    arg1
+}
+)";
+    Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext("float-suffix.ets", ES2PANDA_STATE_CHECKED, source.c_str());
+    ASSERT_NE(ctx, nullptr);
+
+    const auto *api = GetImpl();
+    ASSERT_TRUE(api->getSyntacticDiagnostics(ctx).diagnostic.empty());
+    const auto position = source.rfind("arg1") + std::string_view("arg1").size();
+    const std::string result = api->getCurrentTokenValue(ctx, position);
+    ASSERT_TRUE(api->getSyntacticDiagnostics(ctx).diagnostic.empty());
+
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(result, "arg1");
+}
+
 TEST_F(LSPAPITests, GetTokenPosOfNode1)
 {
     using ark::es2panda::ir::AstNode;

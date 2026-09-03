@@ -671,7 +671,9 @@ std::string ReplaceQuotation(ark::es2panda::util::StringView strView)
 static std::string GetCurrentTokenValueFromLexer(es2panda_Context *context, ark::es2panda::util::StringView source,
                                                  size_t position)
 {
-    auto lexer = InitLexer(context);
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto parserContext = parser::ParserContext(ctx->parserProgram, parser::ParserStatus::NO_OPTS);
+    auto lexer = InitLexer(context, &parserContext);
     lexer->NextToken();
     while (lexer->GetToken().Type() != lexer::TokenType::EOS) {
         auto currentToken = lexer->GetToken();

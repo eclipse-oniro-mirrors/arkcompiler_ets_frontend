@@ -46,7 +46,7 @@ struct ClassifiedSpan {
     char const *name;
 };
 
-std::unique_ptr<lexer::Lexer> InitLexer(es2panda_Context *context);
+std::unique_ptr<lexer::Lexer> InitLexer(es2panda_Context *context, parser::ParserContext *parserContext);
 ClassificationType GetClassificationType(const lexer::Token &token);
 ClassificationType AstNodeTypeToClassificationType(ir::AstNodeType type);
 char const *ClassificationTypeToString(ClassificationType type);

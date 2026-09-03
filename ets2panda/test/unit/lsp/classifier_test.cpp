@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -306,7 +306,7 @@ TEST_F(LspClassificationTests, GetSyntacticClassifications12)
         {95, 4, "punctuation"},  {100, 1, "identifier"},  {101, 1, "punctuation"}, {103, 1, "identifier"},
         {104, 2, "punctuation"}, {106, 1, "punctuation"}, {108, 1, "identifier"},  {110, 1, "punctuation"},
         {112, 1, "identifier"},  {113, 1, "punctuation"}, {115, 3, "keyword"},     {119, 4, "identifier"},
-        {123, 1, "punctuation"}, {125, 1, "punctuation"}, {126, 6, "identifier"},  {132, 1, "punctuation"},
+        {123, 1, "punctuation"}, {125, 1, "punctuation"}, {126, 6, "keyword"},     {132, 1, "punctuation"},
         {133, 1, "punctuation"}, {134, 1, "punctuation"}, {135, 1, "punctuation"}, {137, 1, "punctuation"},
         {138, 1, "identifier"},  {139, 1, "punctuation"}, {140, 1, "punctuation"}, {142, 3, "keyword"},
         {146, 1, "identifier"},  {147, 1, "punctuation"}, {148, 1, "punctuation"}, {149, 1, "punctuation"},
