@@ -111,6 +111,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_log_diagnostic_with_suggestions compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "use_plugin_to_test_column_number compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_jsdoc compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_check_comments compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_parse_and_verifier_position compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_recheck_opaque_type_node compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_recheck_create_opaque_type compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"

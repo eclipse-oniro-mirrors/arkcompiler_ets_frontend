@@ -1,0 +1,163 @@
+# Section 1: Comment types
+COMMENTS:
+/** jsdoc only */
+JSDOC:
+/** jsdoc only */
+COMMENTS:
+/* block only */
+JSDOC:
+
+COMMENTS:
+// line only
+JSDOC:
+
+COMMENTS:
+// line comment 1
+// line comment 2
+JSDOC:
+
+COMMENTS:
+// line a
+/** jsdoc b */
+JSDOC:
+/** jsdoc b */
+COMMENTS:
+/* block a */
+/** jsdoc b */
+JSDOC:
+/** jsdoc b */
+COMMENTS:
+/** jsdoc a */
+/** jsdoc b */
+JSDOC:
+/** jsdoc a */
+/** jsdoc b */
+# Section 2: Node types
+/** class jsdoc */
+/** method jsdoc */
+/** property jsdoc */
+/** getter jsdoc */
+/** setter jsdoc */
+/** interface jsdoc */
+/** interface method jsdoc */
+/** interface prop jsdoc */
+/** annotation jsdoc */
+/** type alias jsdoc */
+/** variable jsdoc */
+/** param jsdoc */
+/** p1 jsdoc */
+/** enum jsdoc */
+/** member jsdoc */
+/** struct jsdoc */
+/** struct prop jsdoc */
+/**
+ * import jsdoc
+ */
+/**
+ * export jsdoc
+ */
+/**
+ * re-export jsdoc
+ */
+# Section 3: Edge cases
+COMMENTS:
+
+JSDOC:
+
+COMMENTS:
+/**
+ * with annotation jsdoc
+ */
+JSDOC:
+/**
+ * with annotation jsdoc
+ */
+COMMENTS:
+/**
+ * export declare jsdoc
+ */
+JSDOC:
+/**
+ * export declare jsdoc
+ */
+COMMENTS:
+/*
+ * adjacent block
+ */
+/** adjacent jsdoc */
+JSDOC:
+/** adjacent jsdoc */
+COMMENTS:
+/**
+this is jsdoc of tool
+*/
+JSDOC:
+/**
+this is jsdoc of tool
+*/
+COMMENTS:
+/*
+this isn't jsdoc of tool2
+*/
+JSDOC:
+
+# Section 8: Comment-like content in string literals and comments
+COMMENTS:
+
+JSDOC:
+
+COMMENTS:
+// real comment after string
+JSDOC:
+
+COMMENTS:
+// see https://example.cn for details
+JSDOC:
+
+COMMENTS:
+// trailing star close */
+JSDOC:
+
+COMMENTS:
+// line comment with fake start /* inside
+JSDOC:
+
+COMMENTS:
+
+JSDOC:
+
+COMMENTS:
+
+JSDOC:
+
+COMMENTS:
+/* nested outer
+ * nested /* inner (inert) */
+JSDOC:
+
+# Section 4: Chain method comments
+// test for chain method2
+// test for chain method3
+// test for chain method1 on arg
+# Section 5: Optional chain method comments
+// test for optional chain method2
+// test for optional chain method3
+// test for optional chain method1 on arg
+# Section 6: Struct chain comments at PARSED (before plugins-after-parse)
+// test for struct chain method1
+// test for struct chain method2
+// test for struct chain method3
+// test for struct chain method1 on arg
+# Section 7: Misc declaration / call / property comments
+// test for const var declaration
+// test for non-const var declaration
+// test for single method call
+// test for single optional method call
+// test for multiple method calls
+// test for property access
+// test for property access with optional chaining
+// test for function call
+// test for eof property access
+# Section 9: Null node handling
+COMMENTS:
+

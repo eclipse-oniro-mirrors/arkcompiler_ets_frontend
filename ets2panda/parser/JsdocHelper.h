@@ -39,6 +39,7 @@ public:
     ~JsdocHelper() = default;
 
     util::StringView GetJsdocBackward();
+    util::StringView GetCommentsBackward();
     util::StringView GetLicenseStringFromStart();
 
     const ir::AstNode *Node()
@@ -54,6 +55,11 @@ public:
     util::StringView SourceView(size_t begin, size_t end) const
     {
         return sourceCode_.Substr(begin, end);
+    }
+
+    size_t SourceLength() const
+    {
+        return sourceCode_.Length();
     }
 
     void BackwardAndSkipSpace(size_t offset)
@@ -163,6 +169,10 @@ private:
     }
 
     bool BackWardUntilJsdocStart();
+    bool BackWardUntilBlockCommentStart();
+    bool StepBackwardFromAsterisk();
+    bool TryConsumeLineCommentBackward();
+    util::StringView CollectCommentsFromCurrent();
 
     const ir::AstNode *root_ {};
     const parser::Program *program_ {};
