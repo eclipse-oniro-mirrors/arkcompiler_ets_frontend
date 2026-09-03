@@ -714,6 +714,10 @@ static std::string GetEscapedCharacter(const unsigned char c)
             escapedStr << '"';
             break;
         }
+        case lexer::LEX_CHAR_BACKSLASH: {
+            escapedStr << '\\';
+            break;
+        }
         case lexer::LEX_CHAR_BS: {
             escapedStr << 'b';
             break;
@@ -756,7 +760,9 @@ std::string Helpers::CreateEscapedString(std::string_view const str)
     for (const unsigned char c : str) {
         // check if a given character is printable
         // the cast is necessary to avoid undefined behaviour
-        if (LIKELY((std::isprint(c) != 0U || c >= lexer::LEX_ASCII_MAX_BITS) && c != lexer::LEX_CHAR_DOUBLE_QUOTE)) {
+        // CC-OFFNXT(G.FUD.06) solid logic
+        if (LIKELY((std::isprint(c) != 0U || c >= lexer::LEX_ASCII_MAX_BITS) && c != lexer::LEX_CHAR_DOUBLE_QUOTE &&
+                   c != lexer::LEX_CHAR_BACKSLASH)) {
             escapedStr += c;
         } else {
             escapedStr += GetEscapedCharacter(c);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -255,4 +255,38 @@ TEST_F(LoweringTest, TestConstantExpressionConcatNumeric)
             ast->IsAnyChild([](ir::AstNode *const node) { return CheckNumberLiteral<int64_t, expectA>(node); }));
     }
 }
+TEST_F(LoweringTest, TestConstantExpressionTemplateLiteralBigInt)
+{
+    char const *text = R"(
+        function main() {
+            let a = `${1n}`;
+            let b = `${true ? 2n : 3n}`;
+            let c = `n=${1n};c=${true ? 2n : 3n}`;
+        }
+    )";
+
+    CONTEXT(ES2PANDA_STATE_CHECKED, text)
+    {
+        const auto *const ast = GetAst();
+
+        ASSERT_FALSE(ast->IsAnyChild([](ir::AstNode *const node) { return node->IsTemplateLiteral(); }));
+
+        char const *expectA = "1";
+        char const *expectB = "2";
+        char const *expectC = "n=1;c=2";
+
+        ASSERT_TRUE(ast->IsAnyChild([expectA](ir::AstNode *const node) {
+            return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expectA);
+        }));
+
+        ASSERT_TRUE(ast->IsAnyChild([expectB](ir::AstNode *const node) {
+            return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expectB);
+        }));
+
+        ASSERT_TRUE(ast->IsAnyChild([expectC](ir::AstNode *const node) {
+            return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is(expectC);
+        }));
+    }
+}
+
 }  // namespace ark::es2panda

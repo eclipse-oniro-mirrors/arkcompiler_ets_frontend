@@ -33,11 +33,8 @@ ir::AstNode *ModifySyntaxToConstructorCall([[maybe_unused]] public_lib::Context 
         }
     }
 
-    auto *loweringResult = arrInstance->Initializer()->IsArrowFunctionExpression()
-                               ? parser->CreateFormattedExpression("new Array<@@T1>(@@E2, @@E3)", typeRef, size,
-                                                                   arrInstance->Initializer())
-                               : parser->CreateFormattedExpression("Array.create<@@T1>(@@E2, @@E3)", typeRef, size,
-                                                                   arrInstance->Initializer());
+    auto *loweringResult =
+        parser->CreateFormattedExpression("Array.create<@@T1>(@@E2, @@E3)", typeRef, size, arrInstance->Initializer());
     SetSourceRangesRecursively(loweringResult, node->Range());
     loweringResult->SetParent(node->Parent());
     ClearTypesVariablesAndScopes(loweringResult);
