@@ -96,6 +96,7 @@ table ClassDecl {
     extended_class:Type;
     implemented_interfaces:[Type];
     is_final:bool;
+    is_abstract:bool;
 }
 
 table InterfaceDecl {

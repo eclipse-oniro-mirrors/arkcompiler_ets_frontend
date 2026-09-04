@@ -35,11 +35,6 @@
 #include "util/es2pandaMacros.h"
 #include "varbinder/variable.h"
 #include "utils.h"
-#include <optional>
-
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
 
 namespace ark::es2panda::compiler {
 
@@ -696,11 +691,11 @@ Offset<Metadata::ClassDecl> MetadataSerializationPhase::BuildClassDecl(FlatBuffe
         (astDecl->Variable() != nullptr && astDecl->Variable()->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) ||
         IsBuiltinErrorAliasDecl(astDecl);
 
-    return Metadata::CreateClassDecl(builder, className, astDecl->IsNamespaceTransformed(), isBuiltin, enumKind,
-                                     builder.CreateVector(enumValues), enumTypeKind, enumTypeOff, methods, properties,
-                                     decls, typeParams, extendedClassKind, extendedClassOff,
-                                     builder.CreateVector<uint8_t>(implementedInterfaceKinds),
-                                     builder.CreateVector<Offset<>>(implementedInterfaces), astDecl->IsFinal());
+    return Metadata::CreateClassDecl(
+        builder, className, astDecl->IsNamespaceTransformed(), isBuiltin, enumKind, builder.CreateVector(enumValues),
+        enumTypeKind, enumTypeOff, methods, properties, decls, typeParams, extendedClassKind, extendedClassOff,
+        builder.CreateVector<uint8_t>(implementedInterfaceKinds), builder.CreateVector<Offset<>>(implementedInterfaces),
+        astDecl->IsFinal(), astDecl->IsAbstract());
 }
 
 std::pair<std::vector<Offset<>>, std::vector<uint8_t>> MetadataSerializationPhase::BuildExtends(
@@ -730,7 +725,7 @@ Offset<Metadata::InterfaceDecl> MetadataSerializationPhase::BuildInterfaceDecl(
                                                            : ""));
 
     LOG_METADATA_NESTING_INC();
-    const auto methods = BuildMethodDecls(builder, interfaceDecl->Body()->Body(), false, true);
+    const auto methods = BuildMethodDecls(builder, interfaceDecl->Body()->Body());
     const auto properties = BuildPropertyDecls(builder, interfaceDecl->Body()->Body(), false);
     LOG_METADATA_NESTING_DEC();
     const auto isBuiltin = interfaceDecl->Variable() != nullptr &&
@@ -864,16 +859,15 @@ static std::unordered_map<std::string, std::pair<std::string, int32_t>> CollectM
 }
 
 Offset<Vector<Offset<Metadata::FunctionDecl>>> MetadataSerializationPhase::BuildMethodDecls(
-    FlatBufferBuilder &builder, const ArenaVector<ir::AstNode *> &body, const bool isFromNamespaceOrTopLevel,
-    const bool isInterface)
+    FlatBufferBuilder &builder, const ArenaVector<ir::AstNode *> &body, const bool isFromNamespaceOrTopLevel)
 {
     const auto overloadGroupOf = CollectMethodOverloadGroups(body);
 
     std::vector<Offset<Metadata::FunctionDecl>> methods;
     std::unordered_set<std::string> seenMethodSignatures;
 
-    const auto appendMethod = [this, &builder, &methods, &seenMethodSignatures, &overloadGroupOf,
-                               isInterface](const ir::MethodDefinition *method) {
+    const auto appendMethod = [this, &builder, &methods, &seenMethodSignatures,
+                               &overloadGroupOf](const ir::MethodDefinition *method) {
         if (!ShouldProcessMethod(method, seenMethodSignatures)) {
             return;
         }
@@ -886,9 +880,10 @@ Offset<Vector<Offset<Metadata::FunctionDecl>>> MetadataSerializationPhase::Build
             overloadGroupIndex = it->second.second;
         }
 
+        bool isAbstract = method->IsAbstract() || (!func->HasBody() && !method->IsNative());
         methods.emplace_back(BuildFunctionDecl(builder, func, method->IsProtected(), method->IsGetter(),
-                                               method->IsSetter(), method->IsFinal(), method->IsNative(),
-                                               isInterface && method->IsAbstract(), overloadGroup, overloadGroupIndex));
+                                               method->IsSetter(), method->IsFinal(), method->IsNative(), isAbstract,
+                                               overloadGroup, overloadGroupIndex));
     };
 
     IterateMethods(body, isFromNamespaceOrTopLevel, appendMethod);

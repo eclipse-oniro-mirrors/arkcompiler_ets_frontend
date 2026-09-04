@@ -62,8 +62,7 @@ private:
                                                        const ir::TSInterfaceDeclaration *interfaceDecl);
     Offset<Vector<Offset<Metadata::FunctionDecl>>> BuildMethodDecls(FlatBufferBuilder &builder,
                                                                     const ArenaVector<ir::AstNode *> &body,
-                                                                    bool isFromNamespaceOrTopLevel = false,
-                                                                    bool isInterface = false);
+                                                                    bool isFromNamespaceOrTopLevel = false);
     bool ShouldProcessMethod(const ir::MethodDefinition *method, std::unordered_set<std::string> &seenMethodSignatures);
     void IterateMethods(const ArenaVector<ir::AstNode *> &body, const bool isFromNamespaceOrTopLevel,
                         const std::function<void(const ir::MethodDefinition *)> &appendMethod);

@@ -572,6 +572,9 @@ public:
         if (fbClassDecl_->is_final()) {
             classDef->AddModifier(ir::ModifierFlags::FINAL);
         }
+        if (fbClassDecl_->is_abstract()) {
+            classDef->AddModifier(ir::ModifierFlags::ABSTRACT);
+        }
         if (!isSyntheticGlobalClass) {
             classDef->Parent()->AddModifier(ir::ModifierFlags::EXPORT);
         }
@@ -1819,7 +1822,7 @@ ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDecls(const Metad
             nodes.emplace_back(reExportDecl);
         }
     }
-    
+
     AddDeclarations(decls, isNested, moduleProg, store, nodes);
 
     return nodes;
@@ -2192,7 +2195,7 @@ void MetadataDeserializationPhase::ProcessMetadata(MetadataByModules *metadata)
 
         const auto root = Metadata::GetDecls(moduleMetadata.data());
         auto *moduleProg = resolveMetadataModuleProgram(root, moduleName);
-        
+
         ProcessMetadataModule(moduleProg, root);
     }
 
