@@ -141,6 +141,7 @@ private:
     std::unordered_map<ScopedMemberKey, DeclarationInfo, ScopedMemberKeyHash> scopedMemberDeclarations_ {};
     std::unordered_set<ScopedMemberKey, ScopedMemberKeyHash> scopedMemberReferences_ {};
     std::unordered_set<const ir::AstNode *> declarationNameNodes_ {};
+    std::unordered_set<const ir::AstNode *> visitedReferenceNodes_ {};
 };
 
 }  // namespace ark::es2panda::checker
