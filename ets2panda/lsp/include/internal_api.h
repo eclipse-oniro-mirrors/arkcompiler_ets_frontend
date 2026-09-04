@@ -28,6 +28,10 @@ namespace ark::es2panda::util {
 class ImportInfo;
 }  // namespace ark::es2panda::util
 
+namespace ark::es2panda::checker {
+class ExportClosureResolver;
+}  // namespace ark::es2panda::checker
+
 namespace ark::es2panda::lsp {
 
 class Initializer {
@@ -148,6 +152,9 @@ void GetGlobalDiagnostics(es2panda_Context *context, DiagnosticReferences &compi
 void GetOptionDiagnostics(es2panda_Context *context, DiagnosticReferences &compilerOptionsDiagnostics);
 size_t GetTokenPosOfNode(const ir::AstNode *astNode);
 std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_Context *context, size_t pos);
+std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(
+    es2panda_Context *context, size_t pos, checker::ExportClosureResolver *resolver,
+    varbinder::Variable **resolvedVariable = nullptr);
 DocumentHighlights GetDocumentHighlightsImpl(es2panda_Context *context, size_t position);
 
 void GetReferenceLocationAtPositionImpl(FileNodeInfo fileNodeInfo, es2panda_Context *referenceFileContext,

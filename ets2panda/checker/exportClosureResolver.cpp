@@ -770,7 +770,7 @@ varbinder::Variable *ExportClosureResolver::ResolveEffectiveImportVariable(varbi
 }
 
 varbinder::Variable *ExportClosureResolver::ResolveEffectiveImportVariableForDeclaration(
-    const varbinder::ImportBindingInfo *bindingInfo)
+    const varbinder::ImportBindingInfo *bindingInfo, ExportClosureResolver *resolver)
 {
     if (bindingInfo == nullptr) {
         return nullptr;
@@ -781,25 +781,29 @@ varbinder::Variable *ExportClosureResolver::ResolveEffectiveImportVariableForDec
         return nullptr;
     }
 
-    ExportClosureResolver resolver(program->Allocator(), nullptr);
-    auto result = resolver.ResolveImportBinding(bindingInfo, {false, false});
+    if (resolver == nullptr) {
+        ExportClosureResolver localResolver(program->Allocator(), nullptr);
+        return ResolveEffectiveImportVariableForDeclaration(bindingInfo, &localResolver);
+    }
+
+    auto result = resolver->ResolveImportBinding(bindingInfo, {false, false});
     if (result.status == ImportBindingResolutionStatus::RESOLVED_VARIABLE) {
-        return resolver.ResolveEffectiveImportVariable(result.entry.variable, {false, false});
+        return resolver->ResolveEffectiveImportVariable(result.entry.variable, {false, false});
     }
 
     if (bindingInfo->kind != varbinder::ImportBindingKind::NAMED) {
         return nullptr;
     }
 
-    auto targetSurface = resolver.GetImportedSurface(program, bindingInfo->importDecl);
+    auto targetSurface = resolver->GetImportedSurface(program, bindingInfo->importDecl);
     auto *resolved = targetSurface.program == nullptr
                          ? nullptr
-                         : resolver.ResolveExportNameWithoutAmbiguousDiagnostic(targetSurface, "default");
+                         : resolver->ResolveExportNameWithoutAmbiguousDiagnostic(targetSurface, "default");
     if (resolved == nullptr || resolved->status != ExportResolutionStatus::RESOLVED ||
         resolved->entry.variable == nullptr || resolved->entry.variable->Name() != bindingInfo->importedName) {
         return nullptr;
     }
-    return resolver.ResolveEffectiveImportVariable(resolved->entry.variable, {false, false});
+    return resolver->ResolveEffectiveImportVariable(resolved->entry.variable, {false, false});
 }
 
 void ExportClosureResolver::ReportAmbiguousExport(util::StringView exportedName, const ir::AstNode *origin) const

@@ -336,6 +336,9 @@ void ETSChecker::InvalidateExportImportCacheForProgram(parser::Program *program)
 
     resolvedExportCaches_.erase(program);
     exportClosureResolver_->InvalidateProgram(program);
+    if (navigationExportClosureResolver_ != nullptr) {
+        navigationExportClosureResolver_->InvalidateProgram(program);
+    }
 }
 
 void ETSChecker::PrepareExportImportCacheForIncrementalCheck(parser::Program *program, bool programChanged)
@@ -357,6 +360,9 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     } else {
         resolvedExportCaches_.clear();
         exportClosureResolver_->Clear();
+        if (navigationExportClosureResolver_ != nullptr) {
+            navigationExportClosureResolver_->Clear();
+        }
     }
 
     auto *etsBinder = varbinder->AsETSBinder();

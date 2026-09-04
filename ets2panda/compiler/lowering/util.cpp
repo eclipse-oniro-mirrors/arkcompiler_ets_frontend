@@ -642,6 +642,8 @@ std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
             return std::string(node->AsClassProperty()->Id()->Name().Utf8());
         case ir::AstNodeType::TS_INTERFACE_DECLARATION:
             return std::string(node->AsTSInterfaceDeclaration()->Id()->Name().Utf8());
+        case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+            return std::string(node->AsTSTypeAliasDeclaration()->Id()->Name().Utf8());
         case ir::AstNodeType::VARIABLE_DECLARATION:
             if (node->AsVariableDeclaration()->Declarators()[0]->Id()->IsIdentifier()) {
                 ir::Identifier *ident = node->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
@@ -654,7 +656,8 @@ std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
     }
 }
 
-static varbinder::Variable *EffectiveVariableFromIdentifier(const ir::Identifier *node)
+static varbinder::Variable *EffectiveVariableFromIdentifier(const ir::Identifier *node,
+                                                            checker::ExportClosureResolver *resolver)
 {
     auto *idVar = VariableForIdentifier(node);
     if (idVar == nullptr || !idVar->IsLocalVariable() || !idVar->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
@@ -670,7 +673,8 @@ static varbinder::Variable *EffectiveVariableFromIdentifier(const ir::Identifier
         return bindingInfo->resolvedVariable;
     }
 
-    auto *resolved = checker::ExportClosureResolver::ResolveEffectiveImportVariableForDeclaration(bindingInfo);
+    auto *resolved =
+        checker::ExportClosureResolver::ResolveEffectiveImportVariableForDeclaration(bindingInfo, resolver);
     return resolved != nullptr ? resolved : idVar;
 }
 
@@ -698,16 +702,27 @@ static ir::AstNode *DeclarationFromFunctionType(checker::Type *type)
     return nullptr;
 }
 
-// NOTE: used to get the declaration from identifier in Plugin API and LSP
-ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node)
+ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node, checker::ExportClosureResolver *resolver)
 {
+    return DeclarationFromIdentifier(node, resolver, nullptr);
+}
+
+ir::AstNode *DeclarationFromIdentifier(const ir::Identifier *node, checker::ExportClosureResolver *resolver,
+                                       varbinder::Variable **resolvedVariable)
+{
+    if (resolvedVariable != nullptr) {
+        *resolvedVariable = nullptr;
+    }
     if (node == nullptr) {
         return nullptr;
     }
 
-    auto idVar = EffectiveVariableFromIdentifier(node);
+    auto idVar = EffectiveVariableFromIdentifier(node, resolver);
     if (idVar == nullptr) {
         return nullptr;
+    }
+    if (resolvedVariable != nullptr) {
+        *resolvedVariable = idVar;
     }
     auto decl = idVar->Declaration();
     if (decl == nullptr) {

@@ -233,6 +233,13 @@ public:
     void InitializeBuiltin(varbinder::Variable *var, const util::StringView &name);
     bool StartChecker([[maybe_unused]] varbinder::VarBinder *varbinder, const util::Options &options) override;
     const ResolvedExportCache &ResolveExportClosure(parser::Program *program);
+    ExportClosureResolver *GetNavigationExportClosureResolver()
+    {
+        if (navigationExportClosureResolver_ == nullptr) {
+            navigationExportClosureResolver_ = Allocator()->New<ExportClosureResolver>(Allocator(), nullptr);
+        }
+        return navigationExportClosureResolver_;
+    }
     Type *CheckTypeCached(ir::Expression *expr) override;
     void ResolveStructuredTypeMembers([[maybe_unused]] Type *type) override {};
     Type *GetTypeFromVariableDeclaration(varbinder::Variable *const var);
@@ -922,6 +929,9 @@ public:
         resolvingImportBindings_.clear();
         resolvedExportCaches_.clear();
         exportClosureResolver_->Clear();
+        if (navigationExportClosureResolver_ != nullptr) {
+            navigationExportClosureResolver_->Clear();
+        }
         skipCacheClear_ = false;
     }
 
@@ -1053,6 +1063,8 @@ private:
     std::unordered_map<std::string, checker::ETSStringType *> stringLiteralTypes_;
     ArenaMap<parser::Program *, ResolvedExportCache *> resolvedExportCaches_;
     ExportClosureResolver *exportClosureResolver_ {nullptr};
+    // Navigation reuses a separate resolver to avoid diagnostics and per-request arena cache growth.
+    ExportClosureResolver *navigationExportClosureResolver_ {nullptr};
 };
 
 }  // namespace ark::es2panda::checker
