@@ -1984,9 +1984,22 @@ static void CheckModuleName(const ImportPathManager &ipm, const ImportInfo &imd)
     }
 }
 
+bool ImportInfo::PointsToPackage() const
+{
+    if (ResolvedPathIsVirtual()) {
+        return false;
+    }
+    if (ark::os::file::File::IsDirectory(std::string(resolvedSource_))) {
+        return true;
+    }
+
+    const auto *program = importPathManager_->SearchResolvedExact(*this);
+    return program != nullptr && program->IsBuiltSimultaneously();
+}
+
 ImportInfo::ImportInfo(const ImportPathManager &ipm, std::string_view resolvedSource, Language::Id lang,
                        bool isExternalModule)
-    : resolvedSource_ {resolvedSource}
+    : resolvedSource_ {resolvedSource}, importPathManager_ {&ipm}
 {
     SetKey(resolvedSource_);
     if (isExternalModule) {
@@ -2014,6 +2027,7 @@ const ImportInfo &ImportInfo::operator=(const ImportInfo &other)
     parser::CacheReference<>::operator=(other);
     resolvedSource_ = other.resolvedSource_;
     moduleName_ = other.moduleName_;
+    importPathManager_ = other.importPathManager_;
     extModuleData_ = other.extModuleData_;
     lang_ = other.lang_;
 

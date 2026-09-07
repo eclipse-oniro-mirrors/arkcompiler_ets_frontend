@@ -137,11 +137,7 @@ public:
 
     std::string_view OhmUrl() const;
 
-    bool PointsToPackage() const
-    {
-        // External-library check is intended to avoid interpreting dynamic-path as directory.
-        return !ResolvedPathIsVirtual() && ark::os::file::File::IsDirectory(std::string(resolvedSource_));
-    }
+    bool PointsToPackage() const;
 
     bool ReferencesABC() const
     {
@@ -212,6 +208,7 @@ private:
 private:
     ArenaString resolvedSource_ {ERROR_LITERAL};
     ArenaString moduleName_ {};
+    const ImportPathManager *importPathManager_ {};
 
     // NOTE(dkofanov): #32416 These fields should be refactored:
     const ArkTsConfig::ExternalModuleData *extModuleData_ {};

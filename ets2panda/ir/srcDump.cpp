@@ -361,6 +361,9 @@ static std::string PackageQualifiedImportSource(const ir::ImportDeclaration *imp
         return source;
     }
 
+    if (!import->AsETSImportDeclaration()->ImportInfo().PointsToPackage()) {
+        return source;
+    }
     const std::string moduleName {import->AsETSImportDeclaration()->ImportInfo().ModuleName()};
     const auto separator = moduleName.rfind('.');
     if (separator == std::string::npos || separator == 0 || separator + 1 == moduleName.size()) {
