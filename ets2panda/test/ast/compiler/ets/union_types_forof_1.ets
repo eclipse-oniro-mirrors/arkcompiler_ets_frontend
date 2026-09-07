@@ -30,3 +30,6 @@ const testValues: (string | number)[] = ['hello', 42, 'world', 7];
 for (const item of testValues) {
     processValue(item);
 }
+
+
+/* @@? 19:26 Error Semantic error ESE0258: Object type doesn't have proper iterator method. */

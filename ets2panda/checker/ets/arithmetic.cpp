@@ -881,12 +881,6 @@ static std::optional<bool> ShouldReturnPredefinedEqualityExpressionResult(ETSChe
     return std::nullopt;
 }
 
-static bool IsTypeofStringLiteralComparison(const ir::Expression *left, const ir::Expression *right)
-{
-    return (left->IsTypeofExpression() && right->IsStringLiteral()) ||
-           (right->IsTypeofExpression() && left->IsStringLiteral());
-}
-
 static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker, ir::Expression *left,
                                                             ir::Expression *right, checker::Type *leftType,
                                                             checker::Type *rightType)
@@ -896,13 +890,6 @@ static std::optional<bool> EvaluateEqualityExpressionResult(ETSChecker *checker,
     }
 
     if (HasBigIntNonBigIntEqualityPairing(checker, leftType, rightType)) {
-        return false;
-    }
-
-    auto *const typeofType = left->IsTypeofExpression() && right->IsStringLiteral() ? leftType : rightType;
-    auto *const literalType = left->IsTypeofExpression() && right->IsStringLiteral() ? rightType : leftType;
-    if (IsTypeofStringLiteralComparison(left, right) && typeofType->IsETSUnionType() &&
-        !typeofType->AsETSUnionType()->IsOverlapWith(checker->Relation(), literalType)) {
         return false;
     }
 
@@ -963,10 +950,6 @@ static Type *CheckBinaryOperatorEqual(ETSChecker *checker, BinaryArithmOperands 
     [[maybe_unused]] auto const [expr, typeL, typeR, reducedL, reducedR] = ops;
 
     ERROR_TYPE_CHECK(checker, typeL, return checker->GlobalTypeError());
-
-    if (IsTypeofStringLiteralComparison(expr->Left(), expr->Right())) {
-        return checker->CreateETSUnionType({typeL, typeR});
-    }
 
     auto *const appL = checker->GetApparentType(typeL);
     auto *const appR = checker->GetApparentType(typeR);
@@ -1410,10 +1393,8 @@ static std::tuple<Type *, Type *> CheckBinaryOperatorHelper(ETSChecker *checker,
         case lexer::TokenType::PUNCTUATOR_EQUAL:
         case lexer::TokenType::PUNCTUATOR_NOT_EQUAL: {
             if (auto res = CheckBinaryOperatorEqual(checker, opsRepaired); res != nullptr) {
-                bool canEmitWarning = IsTypeofStringLiteralComparison(left, right);
-                if (canEmitWarning) {
-                    checker->Relation()->SetNode(left);
-                } else if (opsRepaired.typeL->IsETSReferenceType() && opsRepaired.typeR->IsETSReferenceType()) {
+                bool canEmitWarning = true;
+                if (opsRepaired.typeL->IsETSReferenceType() && opsRepaired.typeR->IsETSReferenceType()) {
                     checker->Relation()->SetNode(left);
                     canEmitWarning = checker->CheckValidEqualReferenceType(opsRepaired.typeL, opsRepaired.typeR);
                 }
