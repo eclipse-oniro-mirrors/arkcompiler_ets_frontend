@@ -17,8 +17,12 @@
 #include <cstddef>
 #include <cstring>
 #include <cstdint>
+#include <atomic>
 #include <algorithm>
-
+#include <cstdio>
+#include <sstream>
+#include <fstream>
+#include <unistd.h>
 #include "util/diagnostic.h"
 #include "util/eheap.h"
 #include "util/perfMetrics.h"
@@ -46,6 +50,7 @@
 #include "ir/expressions/assignmentExpression.h"
 #include "ir/expressions/binaryExpression.h"
 #include "ir/statements/blockStatement.h"
+#include "ir/statements/functionDeclaration.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/ets/etsModule.h"
 #include "ir/ets/etsStructDeclaration.h"
@@ -71,7 +76,10 @@
 #include "parser/context/parserContext.h"
 #include "parser/program/program.h"
 #include "util/generateBin.h"
+#include "util/base64.h"
+#include "assembler/assembly-emitter.h"
 #include "util/options.h"
+#include "evaluate/expressionASTTransformer.h"
 #include "compiler/lowering/util.h"
 #include "generated/es2panda_lib/es2panda_lib_include.inc"
 #include "declgen_ets2ts/declgenEts2Ts.h"
@@ -1947,6 +1955,234 @@ extern "C" int ExtractDeclarationsFromAbcFile(const char *abcFile, const char *c
     return 0;
 }
 
+static ir::Expression *ExtractExpressionFromAst(es2panda_Context *ctx)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    auto *program = ctxPtr->parserProgram;
+    auto &topStmts = program->Ast()->Statements();
+
+    ir::ScriptFunction *evalFunc = nullptr;
+    for (auto *stmt : topStmts) {
+        if (stmt->IsFunctionDeclaration()) {
+            evalFunc = stmt->AsFunctionDeclaration()->Function();
+            break;
+        }
+    }
+
+    if (evalFunc == nullptr) {
+        return nullptr;
+    }
+
+    auto *bodyBlock = evalFunc->Body()->AsBlockStatement();
+    auto &stmts = bodyBlock->Statements();
+    if (stmts.empty()) {
+        return nullptr;
+    }
+    auto *last = stmts.back();
+    if (last->IsExpressionStatement()) {
+        return last->AsExpressionStatement()->GetExpression();
+    }
+    if (last->IsReturnStatement()) {
+        return last->AsReturnStatement()->Argument();
+    }
+    return nullptr;
+}
+
+static void PropagateSourceRange(ir::AstNode *node, const lexer::SourceRange &range)
+{
+    // Transformer-created nodes have a default {0,0} range; propagate the
+    // original expression's range to the whole tree (re-setting the same
+    // range is a no-op).
+    node->SetRange(range);
+    node->Iterate([&range](ir::AstNode *child) { PropagateSourceRange(child, range); });
+}
+
+static bool TransformAndReplaceFunctionBody(es2panda_Context *ctx, ir::Expression *rawExpr)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    auto *checker = ctxPtr->GetChecker()->AsETSChecker();
+    evaluate::ExpressionASTTransformer transformer(checker);
+    ir::Statement *newBody = nullptr;
+
+    try {
+        newBody = transformer.Transform(rawExpr);
+    } catch (...) {
+        LOG(ERROR, ES2PANDA) << "Expression AST transformation failed";
+        return false;
+    }
+
+    auto *program = ctxPtr->parserProgram;
+    ir::ScriptFunction *evalFunc = nullptr;
+    for (auto *stmt : program->Ast()->Statements()) {
+        if (stmt->IsFunctionDeclaration()) {
+            evalFunc = stmt->AsFunctionDeclaration()->Function();
+            break;
+        }
+    }
+
+    ir::BlockStatement *newBlock = nullptr;
+    if (newBody->IsBlockStatement()) {
+        newBlock = newBody->AsBlockStatement();
+    } else {
+        ArenaVector<ir::Statement *> newStmts(checker->Allocator()->Adapter());
+        newStmts.push_back(newBody);
+        newBlock = checker->AllocNode<ir::BlockStatement>(checker->Allocator(), std::move(newStmts));
+    }
+    // AllocNode parents the block's children; the block itself needs SetParent.
+    newBlock->SetParent(evalFunc);
+    evalFunc->SetBody(newBlock);
+
+    PropagateSourceRange(newBlock, rawExpr->Range());
+
+    evalFunc->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
+    return true;
+}
+
+static bool RunCompilationPipeline(es2panda_Context *&ctx)
+{
+    static constexpr es2panda_ContextState kPipelineStages[] = {ES2PANDA_STATE_BOUND, ES2PANDA_STATE_CHECKED,
+                                                                ES2PANDA_STATE_LOWERED, ES2PANDA_STATE_ASM_GENERATED};
+
+    for (auto stage : kPipelineStages) {
+        ctx = ProceedToState(ctx, stage);
+        if (ContextState(ctx) == ES2PANDA_STATE_ERROR) {
+            // leak-avoidance: see CreateAndParseContext
+            FreeCompilerPartMemory(ctx);
+            DestroyContext(ctx);
+            return false;
+        }
+    }
+    return true;
+}
+
+static es2panda_Context *CreateAndParseContext(es2panda_Config *config, const std::string &wrapperSource)
+{
+    static std::atomic<uint64_t> evalCounter {0};
+    // Atomic with relaxed order reason: unique id generation only, no
+    // synchronization or ordering with other memory is required
+    uint64_t uniqueId = evalCounter.fetch_add(1, std::memory_order_relaxed);
+    // PID + counter: each process restarts the counter, so the PID keeps
+    // class names unique across restarts.
+    std::string fileName = "eval_E" + std::to_string(getpid()) + "_" + std::to_string(uniqueId) + "_eval.ets";
+    es2panda_Context *ctx = CreateContextFromString(config, wrapperSource.c_str(), fileName.c_str());
+    if (ctx == nullptr || ContextState(ctx) == ES2PANDA_STATE_ERROR) {
+        if (ctx != nullptr) {
+            // DestroyContext releases the arena/EHeap scope only when an emitter
+            // exists; otherwise it would leak and corrupt the global EHeap state.
+            FreeCompilerPartMemory(ctx);
+            DestroyContext(ctx);
+        }
+        return nullptr;
+    }
+
+    ctx = ProceedToState(ctx, ES2PANDA_STATE_PARSED);
+    if (ContextState(ctx) == ES2PANDA_STATE_ERROR) {
+        FreeCompilerPartMemory(ctx);
+        DestroyContext(ctx);
+        return nullptr;
+    }
+    return ctx;
+}
+
+// Phase 4 + 5: extract and transform the expression; on failure the context
+// is destroyed and false is returned.
+static bool ExtractAndTransformBody(es2panda_Context *&ctx)
+{
+    auto *rawExpr = ExtractExpressionFromAst(ctx);
+    if (rawExpr == nullptr) {
+        // leak-avoidance: see CreateAndParseContext
+        FreeCompilerPartMemory(ctx);
+        DestroyContext(ctx);
+        return false;
+    }
+
+    if (!TransformAndReplaceFunctionBody(ctx, rawExpr)) {
+        FreeCompilerPartMemory(ctx);
+        DestroyContext(ctx);
+        return false;
+    }
+    return true;
+}
+
+static char *SerializeAndEncode(es2panda_Context *ctx)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    if (ctxPtr->output.empty()) {
+        return nullptr;
+    }
+
+    auto &asmProgram = ctxPtr->output.begin()->second;
+    auto pandaFile = ark::pandasm::AsmEmitter::Emit(*asmProgram);
+    if (!pandaFile) {
+        return nullptr;
+    }
+
+    const uint8_t *rawBytes = pandaFile->GetBase();
+    size_t rawSize = pandaFile->GetHeader()->fileSize;
+    std::string rawAbcBytes(reinterpret_cast<const char *>(rawBytes), rawSize);
+
+    if (rawAbcBytes.empty()) {
+        return nullptr;
+    }
+
+    std::string base64Result = ark::es2panda::util::Base64Encode(rawAbcBytes);
+    if (base64Result.empty()) {
+        return nullptr;
+    }
+
+    return strdup(base64Result.c_str());
+}
+
+extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64Expression)
+{
+    if (config == nullptr || base64Expression == nullptr || *base64Expression == '\0') {
+        return nullptr;
+    }
+
+    // Evaluations share the config's diagnostic engine; stale error
+    // diagnostics would fail every later pipeline stage. Clear at entry.
+    reinterpret_cast<public_lib::ConfigImpl *>(config)->diagnosticEngine->ClearDiagnostics();
+
+    // Phase 1: Base64 decode
+    std::string expression = ark::es2panda::util::Base64Decode(std::string(base64Expression));
+    if (expression.empty() && std::strlen(base64Expression) > 0) {
+        return nullptr;
+    }
+
+    // Phase 2: Build wrapper source.  The 'return' keyword forces expression
+    // context, which disambiguates {x: 1} (object literal vs block statement).
+    std::stringstream wrapperSource;
+    wrapperSource << "function runtime_evaluate(thread: int, frame: int): Any {\n"
+                  << "  return " << expression << "\n"
+                  << "}";
+
+    // Phase 3: Create context + Parse
+    es2panda_Context *ctx = CreateAndParseContext(config, wrapperSource.str());
+    if (ctx == nullptr) {
+        return nullptr;
+    }
+
+    // Phase 4 + 5: locate, extract and transform the expression
+    if (!ExtractAndTransformBody(ctx)) {
+        return nullptr;  // ctx already destroyed
+    }
+
+    // Phase 6: Compilation pipeline
+    if (!RunCompilationPipeline(ctx)) {
+        return nullptr;  // ctx already destroyed
+    }
+
+    // Phase 7 + 8: Serialize and base64-encode
+    char *result = SerializeAndEncode(ctx);
+    DestroyContext(ctx);
+    return result;
+}
+
+extern "C" void FreeExpressionResult(char *result)
+{
+    free(result);
+}
+
 es2panda_Impl g_impl = {
     ES2PANDA_LIB_VERSION,
 
@@ -2043,6 +2279,8 @@ es2panda_Impl g_impl = {
 
 #include "generated/es2panda_lib/es2panda_lib_list.inc"
 
+    EvaluateExpression,
+    FreeExpressionResult,
 };
 
 }  // namespace ark::es2panda::public_lib
