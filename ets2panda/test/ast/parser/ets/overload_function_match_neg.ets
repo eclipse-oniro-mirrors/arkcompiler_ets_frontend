@@ -31,4 +31,4 @@ let props: DummyArray<A> = new DummyArray<A>()
         let s: string = /* @@ label3 */1
     }))
 
-/* @@? 30:5 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 31:40 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

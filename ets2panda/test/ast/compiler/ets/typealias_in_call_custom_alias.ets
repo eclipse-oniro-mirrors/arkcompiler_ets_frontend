@@ -13,22 +13,16 @@
  * limitations under the License.
  */
 
-class A {
-    constructor withName(name: string) {}
-    constructor withTask(name: string, task: ()=>void) {}
-    overload constructor {withName, withTask}
+// A user-declared type alias used as a value inside a template literal argument of a
+// multi-overload user function (not the builtin console.log).
+
+type MyAlias = int
+
+function f(a: int) {}
+function f(s: String) {}
+
+function main() {
+    f(`${(typeof 1) === MyAlias ? 'a' : 'b'}`)
 }
 
-class DummyArray<T> {
-    pushArray(...val: T[]): void {}
-    pushOne(value: T): void {}
-    overload push { pushOne, pushArray }
-}
-
-let props: DummyArray<A> = new DummyArray<A>()
-
-function main(): void {
-    props.push(new A('eaw1', () => { let s: string = 1; }));
-}
-
-/* @@? 31:54 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 25:25 Error Semantic error ESE0144: Type name 'MyAlias' used in the wrong context */

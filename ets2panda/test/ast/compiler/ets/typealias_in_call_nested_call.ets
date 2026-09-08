@@ -13,22 +13,14 @@
  * limitations under the License.
  */
 
-class A {
-    constructor withName(name: string) {}
-    constructor withTask(name: string, task: ()=>void) {}
-    overload constructor {withName, withTask}
+// A type name used as a value inside a nested call which is itself an argument.
+
+function g(s: String): String {
+    return s
 }
 
-class DummyArray<T> {
-    pushArray(...val: T[]): void {}
-    pushOne(value: T): void {}
-    overload push { pushOne, pushArray }
+function main() {
+    console.log(g(`${string}`))
 }
 
-let props: DummyArray<A> = new DummyArray<A>()
-
-function main(): void {
-    props.push(new A('eaw1', () => { let s: string = 1; }));
-}
-
-/* @@? 31:54 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 23:22 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

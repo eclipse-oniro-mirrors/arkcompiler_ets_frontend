@@ -442,4 +442,16 @@ std::string Identifier::ToString() const
 
     return AnnotatedExpression::ToString();
 }
+
+void Identifier::CleanCheckInformation()
+{
+    if (TsType() != nullptr && TsType()->IsTypeError()) {
+        SetVariable(nullptr);
+        SetPreferredType(nullptr);
+        SetTsType(nullptr);
+        return;
+    }
+
+    AnnotatedExpression::CleanCheckInformation();
+}
 }  // namespace ark::es2panda::ir

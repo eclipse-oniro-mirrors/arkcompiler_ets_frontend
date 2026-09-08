@@ -13,22 +13,14 @@
  * limitations under the License.
  */
 
-class A {
-    constructor withName(name: string) {}
-    constructor withTask(name: string, task: ()=>void) {}
-    overload constructor {withName, withTask}
+// A type name used as a value inside a conditional expression of a template literal
+// argument must be diagnosed. Previously the diagnostic was rolled back together with
+// a failed overload-matching attempt: ConditionalExpression cached a non-error type and
+// CleanCheckInformation did not recurse into its children, so the erroneous identifier
+// was never re-checked and the call was accepted without diagnostics.
+
+function main() {
+    console.log(`${((typeof 2) === string) ? '3' : '2'}`)
 }
 
-class DummyArray<T> {
-    pushArray(...val: T[]): void {}
-    pushOne(value: T): void {}
-    overload push { pushOne, pushArray }
-}
-
-let props: DummyArray<A> = new DummyArray<A>()
-
-function main(): void {
-    props.push(new A('eaw1', () => { let s: string = 1; }));
-}
-
-/* @@? 31:54 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 23:36 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

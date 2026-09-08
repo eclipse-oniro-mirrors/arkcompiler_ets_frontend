@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -187,4 +187,26 @@ bool CallExpression::IsExtensionAccessorCall()
     return (Signature() != nullptr) && (Signature()->Function()->IsExtensionAccessor());
 }
 
+void CallExpression::CleanCheckInformation()
+{
+    AstNode::CleanCheckInformation();
+
+    // The base implementation prunes the recursion when the call's own type is valid. An argument
+    // may still carry an error type that was not propagated to the call type (cached from an
+    // earlier speculative overload check). Invalidate the call as well in that case, so that
+    // re-checking redoes signature resolution, re-checks the arguments and re-raises the
+    // diagnostics that were rolled back together with a failed overload candidate.
+    if (TsType() == nullptr || ContainsTypeError(TsType())) {
+        return;
+    }
+
+    for (auto *const argument : VectorIterationGuard(arguments_)) {
+        if (ContainsTypeError(argument->TsType())) {
+            SetTsType(nullptr);
+            SetPreferredType(nullptr);
+            Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+            return;
+        }
+    }
+}
 }  // namespace ark::es2panda::ir
