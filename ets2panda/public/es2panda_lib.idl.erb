@@ -283,6 +283,8 @@ interface es2panda_Impl {
 % end
 
     String AstNodeName(ir.AstNode ast);
+    String EvaluateExpression(es2panda_Config config, String base64Expression);
+    void FreeExpressionResult(String result);
 };
 
 % Es2pandaLibApi::classes&.each do |namespaceName, namespaceClasses|

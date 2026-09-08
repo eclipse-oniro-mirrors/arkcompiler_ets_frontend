@@ -656,6 +656,8 @@ set(ES2PANDA_PUBLIC_SOURCES
     ${LIB_NAME}.cpp
     ../declgen_ets2ts/declgenEts2Ts.cpp
     ../declgen_ets2ts/isolatedDeclgenChecker.cpp
+    ../evaluate/expressionASTTransformer.cpp
+    ../util/base64.cpp
     ../util/generateBin.cpp
     ../util/options.cpp
     ../util/plugin.cpp

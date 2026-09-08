@@ -727,6 +727,7 @@ set(ES2PANDA_LIB_SRC
   checker/types/ts/unknownType.cpp
   checker/types/ts/voidType.cpp
   util/arktsconfig.cpp
+  util/base64.cpp
   util/bitset.cpp
   util/dtoa_helper.cpp
   util/diagnostic.cpp
@@ -757,6 +758,7 @@ set(ES2PANDA_LIB_SRC
   evaluate/scopedDebugInfoPlugin.cpp
   evaluate/entityDeclarator.cpp
   evaluate/evaluateContext.cpp
+  evaluate/expressionASTTransformer.cpp
 )
 
 # libes2panda does not include bytecode optimizer, because it is used in

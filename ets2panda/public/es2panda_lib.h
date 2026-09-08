@@ -313,6 +313,8 @@ struct CAPI_EXPORT es2panda_Impl {
 // COMPARE_MANUAL_CAPI_AND_IDL_END
 // CC-OFFNXT(G.INC.08) project code style
 #include "generated/es2panda_lib/es2panda_lib_decl.inc"
+    char *(*EvaluateExpression)(es2panda_Config *config, const char *base64Expression);
+    void (*FreeExpressionResult)(char *result);
 };
 
 CAPI_EXPORT struct es2panda_Impl const *es2panda_GetImpl(int version);
