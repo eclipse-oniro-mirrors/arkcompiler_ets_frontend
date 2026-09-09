@@ -798,10 +798,6 @@ panda_target_link_libraries(es2panda-lib
   PRIVATE arkassembler arkdisassembler arkfile arkbytecodeopt
 )
 
-if(PANDA_TARGET_LINUX)
-    panda_target_link_libraries(es2panda-lib PRIVATE -Wl,-z,undefs)
-endif()
-
 if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.1) OR
    (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0))
     panda_target_link_libraries(es2panda-lib

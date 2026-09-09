@@ -25,6 +25,7 @@
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsEnumMember.h"
 #include "ir/ts/tsQualifiedName.h"
+#include "ir/ts/tsThisType.h"
 #include "schemaMetadataGenerated.h"
 #include "compiler/lowering/ets/topLevelStmts/globalClassHandler.h"
 #include "util/es2pandaMacros.h"
@@ -1306,6 +1307,9 @@ ir::TypeNode *MetadataDeserializationPhase::CreateType(const void *type, const M
         case Metadata::Type_Partial: {
             return CreatePartialType(static_cast<const Metadata::PartialType *>(type));
         }
+        case Metadata::Type_This: {
+            return Context()->AllocNode<ir::TSThisType>(Context()->Allocator());
+        }
         case Metadata::Type_NONE:
             ES2PANDA_UNREACHABLE();  // Deserialization of other types is not supported yet
     }
@@ -1655,36 +1659,52 @@ ir::AnnotationDeclaration *MetadataDeserializationPhase::CreateAnnotationDecl(
     return annotationDecl;
 }
 
-ir::TSTypeAliasDeclaration *MetadataDeserializationPhase::CreateTypeDecl(const Metadata::TypeDecl *fbTypeDecl)
+void MetadataDeserializationPhase::MaterializeTypeDecl(const Metadata::TypeDecl *fbTypeDecl,
+                                                       ir::TSTypeAliasDeclaration *typeDecl)
 {
-    const auto ctx = Context();
-    const auto allocator = ctx->Allocator();
     ES2PANDA_ASSERT(fbTypeDecl->type() != nullptr);
     ES2PANDA_ASSERT(fbTypeDecl->type_type() != Metadata::Type_NONE);
-    const auto typeId = ctx->AllocNode<ir::Identifier>(fbTypeDecl->name()->string_view(), allocator);
     const auto typeParams = CreateTypeParams(fbTypeDecl->type_params());
     const auto type =
         WithScope<ir::TypeNode *>(typeParams != nullptr ? typeParams->Scope() : Scope(), [this, fbTypeDecl] {
             return CreateType(fbTypeDecl->type(), fbTypeDecl->type_type());
         });
-    const auto typeDecl = ctx->AllocNode<ir::TSTypeAliasDeclaration>(allocator, typeId, typeParams, type);
-    typeId->SetParent(typeDecl);
+    typeDecl->SetTypeParameters(typeParams);
     if (typeParams != nullptr) {
         typeParams->SetParent(typeDecl);
     }
     ES2PANDA_ASSERT(type != nullptr);
-    type->SetParent(typeDecl);
-    const auto binderDecl = EAllocator::New<varbinder::TypeAliasDecl>(typeId->Name());
-    binderDecl->BindNode(typeDecl);
-    auto *const variable = Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
-    ES2PANDA_ASSERT(variable != nullptr);
-    variable->AddFlag(varbinder::VariableFlags::TYPE_ALIAS);
-    typeId->SetVariable(variable);
+    typeDecl->SetTypeAnnotation(type);
     typeDecl->AddModifier(ir::ModifierFlags::EXPORT);
 
     LOG_METADATA("type " << fbTypeDecl->name()->string_view() << " = " << IrDeclToString(type));
+}
 
-    return typeDecl;
+std::vector<ir::TSTypeAliasDeclaration *> MetadataDeserializationPhase::CreateTypeDecls(
+    const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeDecl>> *fbTypeDecls)
+{
+    const auto ctx = Context();
+    const auto allocator = ctx->Allocator();
+    std::vector<ir::TSTypeAliasDeclaration *> typeDecls {};
+
+    for (const auto &fbTypeDecl : *fbTypeDecls) {
+        const auto name = fbTypeDecl->name()->string_view();
+        auto *const typeId = ctx->AllocNode<ir::Identifier>(name, allocator);
+        auto *const typeDecl = ctx->AllocNode<ir::TSTypeAliasDeclaration>(allocator, typeId);
+        typeId->SetParent(typeDecl);
+        auto *const binderDecl = EAllocator::New<varbinder::TypeAliasDecl>(name);
+        binderDecl->BindNode(typeDecl);
+        auto *const variable = Scope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS);
+        ES2PANDA_ASSERT(variable != nullptr);
+        variable->AddFlag(varbinder::VariableFlags::TYPE_ALIAS);
+        typeId->SetVariable(variable);
+        typeDecls.emplace_back(typeDecl);
+    }
+
+    for (size_t i = 0; i < fbTypeDecls->size(); i++) {
+        MaterializeTypeDecl(fbTypeDecls->Get(i), typeDecls[i]);
+    }
+    return typeDecls;
 }
 
 ir::TSInterfaceDeclaration *MetadataDeserializationPhase::CreateInterfaceDecl(
@@ -1732,7 +1752,12 @@ ir::TSInterfaceDeclaration *MetadataDeserializationPhase::CreateInterfaceDecl(
                                                ? ": " + IrDeclVectorToString(interfaceDecl->Extends())
                                                : ""));
 
-            lazyInterfaceMembers_[interfaceDecl] = {fbInterfaceDecl, curProgram};
+            // External-program ASTs are cached beyond this phase's lifetime.
+            if (Context()->isExternal) {
+                MaterializeMembers(interfaceDecl, fbInterfaceDecl);
+            } else {
+                lazyInterfaceMembers_[interfaceDecl] = {fbInterfaceDecl, curProgram};
+            }
 
             return interfaceDecl;
         });
@@ -1799,15 +1824,9 @@ void MetadataDeserializationPhase::PredeclareClasses(const Metadata::Decls *decl
     }
 }
 
-ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDecls(const Metadata::Decls *decls, bool isNested,
-                                                                     parser::Program *moduleProg,
-                                                                     varbinder::ExportFactStore *store)
+ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDependencyDecls(const Metadata::Decls *decls)
 {
-    ES2PANDA_ASSERT(isNested || moduleProg != nullptr);
-    ES2PANDA_ASSERT(isNested || store != nullptr);
-
     ArenaVector<ir::AstNode *> nodes;
-
     if (decls->imports()) {
         for (const auto &fbImportDecl : *decls->imports()) {
             auto *importDecl = CreateImportDecl(fbImportDecl);
@@ -1823,6 +1842,24 @@ ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDecls(const Metad
         }
     }
 
+    return nodes;
+}
+
+ArenaVector<ir::AstNode *> MetadataDeserializationPhase::CreateDecls(const Metadata::Decls *decls, bool isNested,
+                                                                     parser::Program *moduleProg,
+                                                                     varbinder::ExportFactStore *store,
+                                                                     varbinder::ETSBinder *etsBinder)
+{
+    ES2PANDA_ASSERT(isNested || moduleProg != nullptr);
+    ES2PANDA_ASSERT(isNested || store != nullptr);
+
+    ArenaVector<ir::AstNode *> nodes;
+    if (!isNested) {
+        nodes = CreateDependencyDecls(decls);
+        // Type annotations may refer to imported declarations, so imports must be bound before materializing.
+        BindMetadataImports(nodes, etsBinder, store);
+    }
+
     AddDeclarations(decls, isNested, moduleProg, store, nodes);
 
     return nodes;
@@ -1834,9 +1871,7 @@ void MetadataDeserializationPhase::AddDeclarations(const Metadata::Decls *decls,
                                                    ArenaVector<ir::AstNode *> &nodes)
 {
     if (decls->types()) {
-        for (const auto &fbTypeDecl : *decls->types()) {
-            auto *typeDecl = CreateTypeDecl(fbTypeDecl);
-            ES2PANDA_ASSERT(typeDecl != nullptr);
+        for (auto *typeDecl : CreateTypeDecls(decls->types())) {
             nodes.emplace_back(typeDecl);
             if (isNested) {
                 continue;
@@ -1862,8 +1897,9 @@ void MetadataDeserializationPhase::AddDeclarations(const Metadata::Decls *decls,
 
     if (decls->classes()) {
         for (const auto fbClassDecl : *decls->classes()) {
-            auto *const classDef = CreateClassDecl(fbClassDecl, fbClassDecl->type_params(), isNested, false,
-                                                    fbClassDecl->name()->str() == "ETSGLOBAL");
+            const bool materializeMembers = Context()->isExternal || fbClassDecl->name()->str() == "ETSGLOBAL";
+            auto *const classDef =
+                CreateClassDecl(fbClassDecl, fbClassDecl->type_params(), isNested, false, materializeMembers);
             nodes.emplace_back(isNested ? classDef->Parent() : classDef);
         }
     }
@@ -2214,13 +2250,11 @@ void MetadataDeserializationPhase::ProcessMetadataModule(parser::Program *module
         varbinder::GlobalScopeContext gsc(etsBinder, curProgram, curProgram->GlobalScope());
         varbinder::RecordTableContext rtc(etsBinder, curProgram);
 
-        auto nodes = WithScope<ArenaVector<ir::AstNode *>>(curProgram->Ast()->Scope(),
-                                                           [this, root, moduleProg, moduleStore] {
-                                                                return CreateDecls(root, false, moduleProg,
-                                                                                   moduleStore);
-                                                                });
+        auto const run = [this, root, moduleProg, moduleStore, etsBinder]()-> ArenaVector<ir::AstNode *> {
+            return CreateDecls(root, false, moduleProg, moduleStore, etsBinder);
+        };
 
-        BindMetadataImports(nodes, etsBinder, moduleStore);
+        auto nodes = WithScope<ArenaVector<ir::AstNode *>>(curProgram->Ast()->Scope(), run);
         RegisterMetadataReExports(nodes, moduleProg, store, etsBinder);
         RegisterMetadataLocalExports(nodes, moduleProg, moduleStore);
         RegisterMetadataLocalExportSpecifier(root->local_exports(), moduleProg, moduleStore);

@@ -1078,8 +1078,21 @@ std::pair<Metadata::Type, Offset<>> MetadataSerializationPhase::BuildAliasType(F
             return BuildType(builder, resolved);
         }
     }
+
+    std::vector<uint8_t> typeArgKinds;
+    std::vector<Offset<>> typeArgs;
+
+    for (const auto *typeArg : type->TypeArguments()) {
+        const auto [kind, offset] = BuildType(builder, typeArg);
+        typeArgKinds.emplace_back(kind);
+        typeArgs.emplace_back(offset);
+    }
+
     const auto typeName = type->GetDeclNode()->AsTSTypeAliasDeclaration()->Id()->Name().Utf8();
-    return {Metadata::Type::Type_Ref, Metadata::CreateTypeRef(builder, builder.CreateSharedString(typeName)).Union()};
+    return {Metadata::Type::Type_Ref,
+            Metadata::CreateTypeRef(builder, builder.CreateSharedString(typeName), builder.CreateVector(typeArgKinds),
+                                    builder.CreateVector(typeArgs))
+                .Union()};
 }
 
 Offset<> MetadataSerializationPhase::BuildPartialType(FlatBufferBuilder &builder, const checker::ETSObjectType *type)
@@ -1147,7 +1160,7 @@ Offset<Metadata::FunctionDecl> MetadataSerializationPhase::BuildFunctionDecl(
     const auto overloadGroupOff = overloadGroup.empty() ? 0 : builder.CreateSharedString(std::string(overloadGroup));
     const auto valueParams = BuildValueParams(builder, func->Signature());
     const auto typeParams = BuildTypeParams(builder, func->TypeParams());
-    const auto isVoidReturnType =
+    const auto isVoidType =
         (func->ReturnTypeAnnotation() && func->ReturnTypeAnnotation()->IsETSPrimitiveType() &&
          func->ReturnTypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::VOID) ||
         func->IsConstructor();
@@ -1157,11 +1170,14 @@ Offset<Metadata::FunctionDecl> MetadataSerializationPhase::BuildFunctionDecl(
         returnType = Context()->GetChecker()->AsETSChecker()->MaybeUnboxType(returnType);
     }
 
+    const auto isThisType = func->ReturnTypeAnnotation() != nullptr && func->ReturnTypeAnnotation()->IsTSThisType();
+
     // Temporary fix for the void return type because at the current stage, undefined type set instead as a return type
     const auto [returnTypeKind, returnTypeOff] =
-        isVoidReturnType ? std::make_pair(Metadata::Type::Type_Builtin,
-                                          Metadata::CreateBuiltinType(builder, Metadata::BuiltinTypeKind_void_).Union())
-                         : BuildType(builder, returnType);
+        isVoidType   ? std::make_pair(Metadata::Type::Type_Builtin,
+                                      Metadata::CreateBuiltinType(builder, Metadata::BuiltinTypeKind_void_).Union())
+        : isThisType ? std::make_pair(Metadata::Type::Type_This, Metadata::CreateThisType(builder).Union())
+                     : BuildType(builder, returnType);
 
     LOG_METADATA(func->Id()->ToString() << func->Signature()->ToString());
 

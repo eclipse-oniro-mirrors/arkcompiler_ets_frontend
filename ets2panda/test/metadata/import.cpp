@@ -54,6 +54,56 @@ TEST_F(MetadataTestImport, complex_calls)
     Compile(testDataDir + "/main.ets", workingDir + "main.abc");
 }
 
+TEST_F(MetadataTestImport, generic_alias_arguments)
+{
+    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
+    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+}
+
+TEST_F(MetadataTestImport, alias_to_imported_type)
+{
+    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
+    CompileLibToImport(testDataDir + "/widget.ets", workingDir + "widget.abc", "widget");
+    CompileLibToImport(testDataDir + "/alias.ets", workingDir + "alias.abc", "alias");
+    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+}
+
+TEST_F(MetadataTestImport, this_return_type)
+{
+    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
+    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
+    Compile(testDataDir + "/main.ets", workingDir + "main.abc");
+}
+
+TEST_F(MetadataTestImport, cached_program_materializes_members)
+{
+    const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
+    CompileLibToImport(testDataDir + "/lib.ets", workingDir + "lib.abc");
+
+    SetExternalContext();
+    ASSERT_NE(RunCheckerWithMetadata(testDataDir + "/main.ets"), nullptr);
+
+    bool classMaterialized = false;
+    bool interfaceMaterialized = false;
+    Program()->GetExternalPrograms()->Visit([&classMaterialized, &interfaceMaterialized](auto *program) {
+        program->Ast()->IterateRecursively([&classMaterialized, &interfaceMaterialized](ir::AstNode *node) {
+            if (node->IsClassDefinition() && node->AsClassDefinition()->Ident()->Name().Is("CachedClass")) {
+                classMaterialized = !node->AsClassDefinition()->Body().empty();
+                return;
+            }
+
+            if (node->IsTSInterfaceDeclaration() &&
+                node->AsTSInterfaceDeclaration()->Id()->Name().Is("CachedInterface")) {
+                interfaceMaterialized = !node->AsTSInterfaceDeclaration()->Body()->Body().empty();
+            }
+        });
+    });
+
+    EXPECT_TRUE(classMaterialized);
+    EXPECT_TRUE(interfaceMaterialized);
+}
+
 TEST_F(MetadataTestImport, from_stdlib)
 {
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();

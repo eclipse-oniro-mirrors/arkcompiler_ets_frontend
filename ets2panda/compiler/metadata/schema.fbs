@@ -44,7 +44,8 @@ union Type {
     Tuple:TupleType,
     Union:UnionType,
     StringLiteral:StringLiteralType,
-    Partial:PartialType
+    Partial:PartialType,
+    This:ThisType
 }
 
 // Class-like declarations
@@ -238,6 +239,9 @@ table StringLiteralType {
 
 table PartialType {
     inner_type:Type (required);
+}
+
+table ThisType {
 }
 
 

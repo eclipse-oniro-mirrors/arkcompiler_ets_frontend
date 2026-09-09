@@ -96,7 +96,7 @@ map.set("a", 1);
         SymbolDisplayPart {")", "punctuation"},
         SymbolDisplayPart {":", "punctuation"},
         SymbolDisplayPart {" ", "space"},
-        SymbolDisplayPart {"Map", "returnType"},
+        SymbolDisplayPart {"this", "returnType"},
     };
     ASSERT_EQ(displayParts, expectedDisplayParts);
     initializer.DestroyContext(ctx);

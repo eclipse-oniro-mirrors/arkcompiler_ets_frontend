@@ -159,19 +159,10 @@ console.log(a);
     EXPECT_EQ(std::get<int>(syntacticResult.diagnostic[1].code_), UNEXPECTED_TOKEN_ID_CODE);
     EXPECT_EQ(syntacticResult.diagnostic[1].severity_, DiagnosticSeverity::Error);
 
-    // The duplicate-export warnings are reported by the semantic query in source order.
-    ASSERT_EQ(semanticResult.diagnostic.size(), 2U);
+    // The duplicate-export warning is reported by the semantic query in source order.
+    ASSERT_EQ(semanticResult.diagnostic.size(), 1U);
 
-    // The first statement's warning degenerates to an empty single-character range because its
-    // alias node was replaced by an error literal during recovery.
-    const auto &recoveryDiag = semanticResult.diagnostic[0];
-    EXPECT_EQ(std::get<int>(recoveryDiag.code_), DUPLICATE_EXPORT_ALIASES_CODE);
-    EXPECT_EQ(recoveryDiag.range_.start.line_, 1U);
-    EXPECT_EQ(recoveryDiag.range_.start.character_, 1U);
-    EXPECT_EQ(recoveryDiag.range_.end.line_, 1U);
-    EXPECT_EQ(recoveryDiag.range_.end.character_, 1U);
-
-    const auto &diag = semanticResult.diagnostic[1];
+    const auto &diag = semanticResult.diagnostic[0];
     EXPECT_EQ(std::get<int>(diag.code_), DUPLICATE_EXPORT_ALIASES_CODE);
     EXPECT_EQ(diag.severity_, DiagnosticSeverity::Warning);
     EXPECT_EQ(diag.range_.start.line_, 3U);

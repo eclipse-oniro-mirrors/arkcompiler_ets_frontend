@@ -70,6 +70,11 @@ public:
         metadataReadingDisabled_ = true;
     }
 
+    void SetExternalContext()
+    {
+        publicContext_->isExternal = true;
+    }
+
     static void SetUpTestCase()
     {
         ark::es2panda::ScopedAllocatorsManager::Initialize();

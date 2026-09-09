@@ -86,6 +86,11 @@ public:
 
     Type *Substitute(TypeRelation *relation, const Substitution *substitution) override;
 
+    const ArenaVector<Type *> &TypeArguments() const
+    {
+        return typeArguments_;
+    }
+
     void SetTypeArguments(ArenaVector<Type *> typeArguments);
     void Iterate(const TypeTraverser &func) const override;
 

@@ -180,23 +180,6 @@ public:
         return reachable_.size() > lastToEmitSize_;
     }
 
-    // Preserved for interface compatibility; no longer called from EmitRecordsImpl.
-    void ProceedToEmitExternalDelta()
-    {
-        if (reachable_.size() == toEmit_.size()) {
-            toEmit_.clear();
-            return;
-        }
-
-        std::unordered_set<std::string> diff;
-
-        for (auto &e : reachable_) {
-            if (toEmit_.find(e) == toEmit_.end()) {
-                diff.insert(e);
-            }
-        }
-        std::swap(toEmit_, diff);
-    }
     ~EmitterDependencies() = default;
 
 private:

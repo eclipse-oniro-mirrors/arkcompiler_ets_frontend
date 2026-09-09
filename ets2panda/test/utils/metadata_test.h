@@ -84,10 +84,11 @@ protected:
             << "Generating program " << abcPath << " failed";
     }
 
-    static void CompileLibToImport(const std::string &sourceFilePath, const std::string &abcFilename)
+    static void CompileLibToImport(const std::string &sourceFilePath, const std::string &abcFilename,
+                                   const std::string &libName = "lib")
     {
         Compile(sourceFilePath, abcFilename);
-        AddDependencyToConfig("lib", abcFilename);
+        AddDependencyToConfig(libName, abcFilename);
     }
 
     std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath,

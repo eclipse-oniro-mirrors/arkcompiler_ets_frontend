@@ -104,7 +104,9 @@ private:
     ir::AnnotationDeclaration *CreateAnnotationDecl(const Metadata::AnnotationDecl *fbAnnotationDecl, bool isNested);
     ir::ETSImportDeclaration *CreateImportDecl(const Metadata::ImportDecl *fbImportDecl);
     ir::ETSReExportDeclaration *CreateReExportDecl(const Metadata::ReExportDecl *fbReExportDecl) const;
-    ir::TSTypeAliasDeclaration *CreateTypeDecl(const Metadata::TypeDecl *fbTypeDecl);
+    void MaterializeTypeDecl(const Metadata::TypeDecl *fbTypeDecl, ir::TSTypeAliasDeclaration *typeDecl);
+    std::vector<ir::TSTypeAliasDeclaration *> CreateTypeDecls(
+        const flatbuffers::Vector<flatbuffers::Offset<Metadata::TypeDecl>> *fbTypeDecls);
     ir::TSInterfaceDeclaration *CreateInterfaceDecl(const Metadata::InterfaceDecl *fbInterfaceDecl);
     ir::ClassDefinition *CreateClassDecl(
         const Metadata::ClassDecl *fbClassDecl,
@@ -113,9 +115,11 @@ private:
     ir::ETSModule *CreateModule() const;
 
     void PredeclareClasses(const Metadata::Decls *decls, bool isNested = false);
+    ArenaVector<ir::AstNode *> CreateDependencyDecls(const Metadata::Decls *decls);
     ArenaVector<ir::AstNode *> CreateDecls(const Metadata::Decls *decls, bool isNested = false,
                                            parser::Program *moduleProg = nullptr,
-                                           varbinder::ExportFactStore *store = nullptr);
+                                           varbinder::ExportFactStore *store = nullptr,
+                                           varbinder::ETSBinder *etsBinder = nullptr);
     void AddDeclarations(const Metadata::Decls *decls, bool isNested, parser::Program *moduleProg,
                          varbinder::ExportFactStore *store, ArenaVector<ir::AstNode *> &nodes);
     varbinder::Variable *FindMetadataLocalVariable(parser::Program *program, util::StringView localName) const;
