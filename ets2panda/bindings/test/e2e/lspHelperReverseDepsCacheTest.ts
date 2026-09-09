@@ -14,6 +14,7 @@
  */
 
 import { BuildConfig, ModuleInfo } from '../../src/common/types';
+import { global as Es2pandaGlobal } from '../../src/common/global';
 import { Lsp } from '../../src/lsp/lsp_helper';
 import path from 'path';
 
@@ -165,6 +166,88 @@ describe('Lsp reverse dependency cache', () => {
     lsp.moduleInfos = {};
     lsp.buildConfigs = {};
     expect(lsp.getMergedCompileFilesCrossModule('/project/missing.ets')).toEqual([]);
+  });
+
+
+  test('query miss creates one reusable file cache', () => {
+    const lsp = createLspForTest(new Map());
+    const fileName = path.resolve('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition1.ets');
+    const fileContext = {};
+    const fileCache = {
+      fileContent: 'source',
+      fileConfig: {},
+      fileContext,
+      fileHash: 'hash'
+    };
+    lsp.filesMap = new Map();
+    lsp.getFileSource = jest.fn(() => 'source');
+    lsp.computeContentHash = jest.fn(() => 'hash');
+    lsp.createFileCache = jest.fn(() => {
+      lsp.filesMap.set(fileName, fileCache);
+      return fileCache;
+    });
+
+    const first = lsp.ensureFileCacheForQuery(fileName);
+    const second = lsp.ensureFileCacheForQuery(fileName);
+
+    expect(first).toBe(fileCache);
+    expect(second).toBe(fileCache);
+    expect(lsp.createFileCache).toHaveBeenCalledTimes(1);
+    expect(lsp.createFileCache).toHaveBeenCalledWith(fileName, 'source', 'hash', true);
+  });
+
+  test('first semantic diagnostic query after initialization requests recompilation', () => {
+    const lsp = createLspForTest(new Map());
+    const fileName = '/project/Diagnostic.ets';
+    const diagnostics = { diagnostics: [{ message: 'expected diagnostic' }] };
+    lsp.enablePerfMetric = false;
+    lsp.pendingInitialDiagnosticFiles = new Set([fileName]);
+    lsp.withFileCacheForQuery = jest.fn(() => diagnostics);
+
+    expect(lsp.getSemanticDiagnostics(fileName)).toBe(diagnostics);
+    expect(lsp.withFileCacheForQuery.mock.calls[0][2]).toBe(true);
+    expect(lsp.pendingInitialDiagnosticFiles.has(fileName)).toBe(false);
+  });
+
+  test('unchanged file with diagnostics is recompiled when it becomes active again', () => {
+    const lsp = createLspForTest(new Map());
+    const activeFile = '/project/Active.ets';
+    const diagnosticFile = '/project/Diagnostic.ets';
+    const fileSource = 'const value: number = "error";';
+    const fileHash = 'same-hash';
+    const fileContext = {};
+    const activeCache = {
+      fileContent: 'let activeValue = 1;',
+      fileConfig: {},
+      fileContext,
+      fileHash: 'active-hash'
+    };
+    const incrementalPrepareProgram = jest.fn(() => 0);
+    const previousPublicApi = (Es2pandaGlobal as any)._es2pandaPublic;
+
+    lsp.filesMap = new Map([[activeFile, activeCache]]);
+    lsp.compiledFileHashes = new Map([[diagnosticFile, fileHash]]);
+    lsp.diagnosticFiles = new Set([diagnosticFile]);
+    lsp.shouldInvalidateDependantsOnSwitch = jest.fn(() => false);
+    lsp.proceedPreparedContext = jest.fn();
+    lsp.tryBuildSymbolReferenceIndex = jest.fn();
+    lsp.updateDiagnosticFilesForContext = jest.fn();
+    lsp.recordCompilationState = jest.fn();
+    (Es2pandaGlobal as any)._es2pandaPublic = {
+      _IncrementalPrepareProgram: incrementalPrepareProgram
+    };
+
+    try {
+      const result = lsp.prepareFileCacheFromActiveContext(diagnosticFile, fileSource, fileHash);
+
+      expect(incrementalPrepareProgram).toHaveBeenCalledWith(fileContext, diagnosticFile, fileSource, 1);
+      expect(lsp.proceedPreparedContext).toHaveBeenCalledWith(diagnosticFile, fileContext, true);
+      expect(lsp.updateDiagnosticFilesForContext).toHaveBeenCalledWith(diagnosticFile, fileContext);
+      expect(result?.fileContext).toBe(fileContext);
+      expect(Array.from(lsp.filesMap.keys())).toEqual([diagnosticFile]);
+    } finally {
+      (Es2pandaGlobal as any)._es2pandaPublic = previousPublicApi;
+    }
   });
 
 });
