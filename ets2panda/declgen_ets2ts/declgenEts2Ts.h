@@ -232,6 +232,7 @@ private:
     std::vector<ir::AstNode *> FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers);
     std::vector<ir::AstNode *> FilterValidExportSpecifiers(const ArenaVector<ir::ExportSpecifier *> &specifiers);
     std::vector<ir::AstNode *> FilterGlueCodeExportSpecifiers(const std::vector<ir::AstNode *> &specifiers);
+    bool IsBuiltInGlobalType(const checker::Type *checkerType) const;
     std::string ReplaceETSGLOBAL(const std::string &typeName);
     std::string GetIndent() const;
     std::string RemoveModuleExtensionName(const std::string &filepath);
@@ -431,8 +432,8 @@ private:
                                                                   "StorageProp",
                                                                   "LocalStorageProp"};
     const std::unordered_set<std::string_view> stdlibNamespaceList_ = {
-        "StdProcess", "taskpool", "functions",    "containers", "Intl",     "GC",
-        "jsonx",      "proxy",    "unsafeMemory", "reflect",    "StdDebug", "arktest"};
+        "StdProcess", "taskpool",     "functions", "containers", "Intl",    "GC",         "jsonx",
+        "proxy",      "unsafeMemory", "reflect",   "StdDebug",   "arktest", "concurrency"};
     // ArkTS supported utility types
     const std::unordered_set<std::string_view> utilityTypes_ = {"Record",   "Partial", "Readonly",
                                                                 "Required", "Awaited", "ReturnType"};

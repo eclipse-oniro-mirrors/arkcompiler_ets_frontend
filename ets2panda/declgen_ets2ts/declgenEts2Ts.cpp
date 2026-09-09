@@ -1199,6 +1199,7 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     const auto *sig = GetFuncSignature(etsFunctionType, methodDef);
     ES2PANDA_ASSERT(sig != nullptr);
+    paramDefaultMap_.clear();
     GenOptionalFlag(sig, methodDef);
     if (sig->HasFunction()) {
         GenTypeParameters(sig->Function()->TypeParams(), isStatic, sig->Owner()->AsETSObjectType());
@@ -1415,6 +1416,10 @@ void TSDeclGen::HandleTypeArgument(checker::Type *arg, const std::string &typeSt
 void TSDeclGen::GenObjectType(const checker::ETSObjectType *objectType)
 {
     if (HandleSpecificObjectTypes(objectType)) {
+        return;
+    }
+    if (IsBuiltInGlobalType(objectType)) {
+        OutDts("ESObject");
         return;
     }
     std::string typeStr = objectType->Name().Mutf8();
@@ -1893,6 +1898,23 @@ std::vector<ir::AstNode *> TSDeclGen::FilterGlueCodeExportSpecifiers(const std::
     return glueCodeExportSpecifiers;
 }
 
+bool TSDeclGen::IsBuiltInGlobalType(const checker::Type *checkerType) const
+{
+    if (checkerType == nullptr || !checkerType->IsETSObjectType()) {
+        return false;
+    }
+    const auto assembleName = checkerType->AsETSObjectType()->AssemblerName().Mutf8();
+    constexpr std::string_view stdPrefix = "std.";
+    if (assembleName.size() <= stdPrefix.size() ||
+        std::string_view(assembleName.data(), stdPrefix.size()) != stdPrefix) {
+        return false;
+    }
+    const auto nsStart = stdPrefix.size();
+    const auto nsEnd = assembleName.find('.', nsStart);
+    const auto nsName = assembleName.substr(nsStart, nsEnd - nsStart);
+    return stdlibNamespaceList_.count(nsName) != 0U;
+}
+
 std::vector<ir::AstNode *> TSDeclGen::FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers)
 {
     std::vector<ir::AstNode *> importSpecifiers;
@@ -2123,6 +2145,10 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
         return;
     }
     if (ShouldConvertSelfReference(typeReference, partName)) {
+        OutDts("ESObject");
+        return;
+    }
+    if (IsBuiltInGlobalType(checkerType)) {
         OutDts("ESObject");
         return;
     }
