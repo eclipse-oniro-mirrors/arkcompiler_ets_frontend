@@ -47,9 +47,10 @@ public:
     NO_COPY_SEMANTIC(ObfuscationNameCache);
     NO_MOVE_SEMANTIC(ObfuscationNameCache);
 
-    bool GenerateJsonFile(const std::string &outputPath);
+    bool GenerateJsonFile(const std::string &outputPath, std::string *resolvedFilePath = nullptr);
     std::string GetModuleName() const;
     void SetModuleName(const std::string &moduleName);
+    static std::string SanitizeFileBaseName(const std::string &moduleName);
 
     void RecordClass(const ClassDefinition *classDef);
     void RecordClassProperty(const ClassProperty *prop);
@@ -63,6 +64,8 @@ public:
     void RecordAnnotationDeclaration(const AnnotationDeclaration *annotationDecl);
 
 private:
+    friend class ObfuscationNameCacheFileTest;
+
     enum class NameCacheType { CLAZZ, CLAZZ_PROPERTY, CLAZZ_METHOD };
     class NameCacheValue {
         friend class ObfuscationNameCache;

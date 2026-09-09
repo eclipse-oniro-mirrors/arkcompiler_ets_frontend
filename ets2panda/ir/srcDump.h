@@ -155,7 +155,7 @@ public:
 
     void InitNameCache(const std::string &moduleName = "");
 
-    bool GenerateNameCacheJson(const std::string &outputPath);
+    bool GenerateNameCacheJson(const std::string &outputPath, std::string *resolvedFilePath = nullptr);
 
     void RecordNodeInNameCache(const FunctionDeclaration *node);
     void RecordNodeInNameCache(const ClassDefinition *node);
