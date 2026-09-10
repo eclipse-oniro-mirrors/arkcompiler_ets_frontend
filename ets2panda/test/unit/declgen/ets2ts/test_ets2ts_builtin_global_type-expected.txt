@@ -1,0 +1,44 @@
+import st from "@ohos.lang.interop";
+export declare const wl_const: ESObject;
+export declare const wl_nested: ESObject;
+export declare const ul_const: UserLocal<number>;
+export declare const ns_const: myns.WorkerLocal<number>;
+export declare const cf_const: ESObject;
+export declare function getWorkerLocal(wl: ESObject): ESObject;
+export declare function getUserLocal(ul: UserLocal<string>): UserLocal<string>;
+export declare function getConcurrentFoo(f: ESObject): ESObject;
+export declare class WorkerLocalHolder {
+    public get value(): ESObject;
+    public set value(value: ESObject);
+    public constructor(value: ESObject);
+    public getValue(): ESObject;
+    public setValue(value: ESObject): void;
+}
+export declare class UserLocal<T> {
+    public get value(): T;
+    public set value(value: T);
+    public constructor(value: T);
+}
+export declare class UserLocalHolder {
+    public get ul(): UserLocal<number>;
+    public set ul(value: UserLocal<number>);
+    public constructor(ul: UserLocal<number>);
+}
+export declare interface WorkerLocalUser {
+    wl: ESObject;
+    use(wl: ESObject): ESObject;
+}
+export declare namespace myns {
+    class WorkerLocal<T> {
+        public get value(): T;
+        public set value(value: T);
+        public constructor(value: T);
+    }
+}
+export declare namespace concurrency {
+    class Foo {
+        public get value(): number;
+        public set value(value: number);
+        public constructor(value: number);
+    }
+}
