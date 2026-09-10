@@ -6,7 +6,7 @@
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "Base",
+          "name": "Animal",
           "loc": {
             "start": {
               "line": 16,
@@ -15,6 +15,353 @@
             },
             "end": {
               "line": 16,
+              "column": 13,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 15,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                },
+                "end": {
+                  "line": 16,
+                  "column": 15,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 15,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 15,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 15,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 15,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 16,
+                    "column": 15,
+                    "program": "lambda-type-inference-overloaded-3.ets"
+                  },
+                  "end": {
+                    "line": 16,
+                    "column": 15,
+                    "program": "lambda-type-inference-overloaded-3.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 15,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                },
+                "end": {
+                  "line": 16,
+                  "column": 15,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 16,
+            "column": 14,
+            "program": "lambda-type-inference-overloaded-3.ets"
+          },
+          "end": {
+            "line": 17,
+            "column": 2,
+            "program": "lambda-type-inference-overloaded-3.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 1,
+          "program": "lambda-type-inference-overloaded-3.ets"
+        },
+        "end": {
+          "line": 17,
+          "column": 2,
+          "program": "lambda-type-inference-overloaded-3.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "Dog",
+          "loc": {
+            "start": {
+              "line": 19,
+              "column": 7,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            },
+            "end": {
+              "line": 19,
+              "column": 10,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            }
+          }
+        },
+        "superClass": {
+          "type": "ETSTypeReference",
+          "part": {
+            "type": "ETSTypeReferencePart",
+            "name": {
+              "type": "Identifier",
+              "name": "Animal",
+              "loc": {
+                "start": {
+                  "line": 19,
+                  "column": 19,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                },
+                "end": {
+                  "line": 19,
+                  "column": 25,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                }
+              }
+            },
+            "loc": {
+              "start": {
+                "line": 19,
+                "column": 19,
+                "program": "lambda-type-inference-overloaded-3.ets"
+              },
+              "end": {
+                "line": 19,
+                "column": 25,
+                "program": "lambda-type-inference-overloaded-3.ets"
+              }
+            }
+          },
+          "loc": {
+            "start": {
+              "line": 19,
+              "column": 19,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            },
+            "end": {
+              "line": 19,
+              "column": 25,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            }
+          }
+        },
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 19,
+                  "column": 27,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                },
+                "end": {
+                  "line": 19,
+                  "column": 27,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 27,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 27,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 27,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 27,
+                      "program": "lambda-type-inference-overloaded-3.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 19,
+                    "column": 27,
+                    "program": "lambda-type-inference-overloaded-3.ets"
+                  },
+                  "end": {
+                    "line": 19,
+                    "column": 27,
+                    "program": "lambda-type-inference-overloaded-3.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 19,
+                  "column": 27,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                },
+                "end": {
+                  "line": 19,
+                  "column": 27,
+                  "program": "lambda-type-inference-overloaded-3.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 19,
+            "column": 26,
+            "program": "lambda-type-inference-overloaded-3.ets"
+          },
+          "end": {
+            "line": 20,
+            "column": 2,
+            "program": "lambda-type-inference-overloaded-3.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 19,
+          "column": 1,
+          "program": "lambda-type-inference-overloaded-3.ets"
+        },
+        "end": {
+          "line": 20,
+          "column": 2,
+          "program": "lambda-type-inference-overloaded-3.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "Base",
+          "loc": {
+            "start": {
+              "line": 22,
+              "column": 7,
+              "program": "lambda-type-inference-overloaded-3.ets"
+            },
+            "end": {
+              "line": 22,
               "column": 11,
               "program": "lambda-type-inference-overloaded-3.ets"
             }
@@ -30,12 +377,12 @@
               "name": "foo",
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 23,
                   "column": 5,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 17,
+                  "line": 23,
                   "column": 8,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -55,12 +402,12 @@
                   "name": "foo",
                   "loc": {
                     "start": {
-                      "line": 17,
+                      "line": 23,
                       "column": 5,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 17,
+                      "line": 23,
                       "column": 8,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -84,42 +431,73 @@
                               "type": "Identifier",
                               "name": "x",
                               "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
+                                "type": "ETSTypeReference",
+                                "part": {
+                                  "type": "ETSTypeReferencePart",
+                                  "name": {
+                                    "type": "Identifier",
+                                    "name": "Animal",
+                                    "loc": {
+                                      "start": {
+                                        "line": 23,
+                                        "column": 23,
+                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                      },
+                                      "end": {
+                                        "line": 23,
+                                        "column": 29,
+                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 23,
+                                      "column": 23,
+                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                    },
+                                    "end": {
+                                      "line": 23,
+                                      "column": 29,
+                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                    }
+                                  }
+                                },
                                 "loc": {
                                   "start": {
-                                    "line": 17,
+                                    "line": 23,
                                     "column": 23,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   },
                                   "end": {
-                                    "line": 17,
-                                    "column": 26,
+                                    "line": 23,
+                                    "column": 29,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 17,
+                                  "line": 23,
                                   "column": 20,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 },
                                 "end": {
-                                  "line": 17,
-                                  "column": 26,
+                                  "line": 23,
+                                  "column": 29,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 17,
+                                "line": 23,
                                 "column": 20,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               },
                               "end": {
-                                "line": 17,
-                                "column": 26,
+                                "line": 23,
+                                "column": 29,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               }
                             }
@@ -129,52 +507,52 @@
                           "type": "ETSPrimitiveType",
                           "loc": {
                             "start": {
-                              "line": 17,
-                              "column": 31,
+                              "line": 23,
+                              "column": 34,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             },
                             "end": {
-                              "line": 17,
-                              "column": 35,
+                              "line": 23,
+                              "column": 38,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 17,
+                            "line": 23,
                             "column": 19,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           },
                           "end": {
-                            "line": 17,
-                            "column": 35,
+                            "line": 23,
+                            "column": 38,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 17,
+                          "line": 23,
                           "column": 9,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         },
                         "end": {
-                          "line": 17,
-                          "column": 35,
+                          "line": 23,
+                          "column": 38,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 17,
+                        "line": 23,
                         "column": 9,
                         "program": "lambda-type-inference-overloaded-3.ets"
                       },
                       "end": {
-                        "line": 17,
-                        "column": 35,
+                        "line": 23,
+                        "column": 38,
                         "program": "lambda-type-inference-overloaded-3.ets"
                       }
                     }
@@ -184,13 +562,13 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 17,
-                      "column": 38,
+                      "line": 23,
+                      "column": 41,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 17,
-                      "column": 42,
+                      "line": 23,
+                      "column": 45,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
                   }
@@ -200,12 +578,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 17,
-                      "column": 43,
+                      "line": 23,
+                      "column": 46,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 18,
+                      "line": 24,
                       "column": 6,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -213,12 +591,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 17,
+                    "line": 23,
                     "column": 8,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   },
                   "end": {
-                    "line": 18,
+                    "line": 24,
                     "column": 6,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   }
@@ -226,12 +604,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 17,
+                  "line": 23,
                   "column": 8,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 18,
+                  "line": 24,
                   "column": 6,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -240,12 +618,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 17,
+                "line": 23,
                 "column": 5,
                 "program": "lambda-type-inference-overloaded-3.ets"
               },
               "end": {
-                "line": 18,
+                "line": 24,
                 "column": 6,
                 "program": "lambda-type-inference-overloaded-3.ets"
               }
@@ -258,12 +636,12 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 16,
+                  "line": 22,
                   "column": 13,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 16,
+                  "line": 22,
                   "column": 13,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -282,12 +660,12 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 16,
+                      "line": 22,
                       "column": 13,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 16,
+                      "line": 22,
                       "column": 13,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -302,12 +680,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 16,
+                      "line": 22,
                       "column": 13,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 16,
+                      "line": 22,
                       "column": 13,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -315,12 +693,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 16,
+                    "line": 22,
                     "column": 13,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   },
                   "end": {
-                    "line": 16,
+                    "line": 22,
                     "column": 13,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   }
@@ -328,12 +706,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 16,
+                  "line": 22,
                   "column": 13,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 16,
+                  "line": 22,
                   "column": 13,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -356,12 +734,12 @@
         ],
         "loc": {
           "start": {
-            "line": 16,
+            "line": 22,
             "column": 12,
             "program": "lambda-type-inference-overloaded-3.ets"
           },
           "end": {
-            "line": 19,
+            "line": 25,
             "column": 2,
             "program": "lambda-type-inference-overloaded-3.ets"
           }
@@ -369,12 +747,12 @@
       },
       "loc": {
         "start": {
-          "line": 16,
+          "line": 22,
           "column": 1,
           "program": "lambda-type-inference-overloaded-3.ets"
         },
         "end": {
-          "line": 19,
+          "line": 25,
           "column": 2,
           "program": "lambda-type-inference-overloaded-3.ets"
         }
@@ -388,12 +766,12 @@
           "name": "Derived",
           "loc": {
             "start": {
-              "line": 21,
+              "line": 27,
               "column": 7,
               "program": "lambda-type-inference-overloaded-3.ets"
             },
             "end": {
-              "line": 21,
+              "line": 27,
               "column": 14,
               "program": "lambda-type-inference-overloaded-3.ets"
             }
@@ -408,12 +786,12 @@
               "name": "Base",
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 27,
                   "column": 23,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 21,
+                  "line": 27,
                   "column": 27,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -421,12 +799,12 @@
             },
             "loc": {
               "start": {
-                "line": 21,
+                "line": 27,
                 "column": 23,
                 "program": "lambda-type-inference-overloaded-3.ets"
               },
               "end": {
-                "line": 21,
+                "line": 27,
                 "column": 27,
                 "program": "lambda-type-inference-overloaded-3.ets"
               }
@@ -434,12 +812,12 @@
           },
           "loc": {
             "start": {
-              "line": 21,
+              "line": 27,
               "column": 23,
               "program": "lambda-type-inference-overloaded-3.ets"
             },
             "end": {
-              "line": 21,
+              "line": 27,
               "column": 27,
               "program": "lambda-type-inference-overloaded-3.ets"
             }
@@ -454,12 +832,12 @@
               "name": "foo",
               "loc": {
                 "start": {
-                  "line": 22,
+                  "line": 28,
                   "column": 5,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 22,
+                  "line": 28,
                   "column": 8,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -479,12 +857,12 @@
                   "name": "foo",
                   "loc": {
                     "start": {
-                      "line": 22,
+                      "line": 28,
                       "column": 5,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 22,
+                      "line": 28,
                       "column": 8,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -508,42 +886,73 @@
                               "type": "Identifier",
                               "name": "y",
                               "typeAnnotation": {
-                                "type": "ETSPrimitiveType",
+                                "type": "ETSTypeReference",
+                                "part": {
+                                  "type": "ETSTypeReferencePart",
+                                  "name": {
+                                    "type": "Identifier",
+                                    "name": "Dog",
+                                    "loc": {
+                                      "start": {
+                                        "line": 28,
+                                        "column": 23,
+                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                      },
+                                      "end": {
+                                        "line": 28,
+                                        "column": 26,
+                                        "program": "lambda-type-inference-overloaded-3.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 28,
+                                      "column": 23,
+                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                    },
+                                    "end": {
+                                      "line": 28,
+                                      "column": 26,
+                                      "program": "lambda-type-inference-overloaded-3.ets"
+                                    }
+                                  }
+                                },
                                 "loc": {
                                   "start": {
-                                    "line": 22,
+                                    "line": 28,
                                     "column": 23,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   },
                                   "end": {
-                                    "line": 22,
-                                    "column": 29,
+                                    "line": 28,
+                                    "column": 26,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   }
                                 }
                               },
                               "loc": {
                                 "start": {
-                                  "line": 22,
+                                  "line": 28,
                                   "column": 20,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 },
                                 "end": {
-                                  "line": 22,
-                                  "column": 29,
+                                  "line": 28,
+                                  "column": 26,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 22,
+                                "line": 28,
                                 "column": 20,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               },
                               "end": {
-                                "line": 22,
-                                "column": 29,
+                                "line": 28,
+                                "column": 26,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               }
                             }
@@ -553,52 +962,52 @@
                           "type": "ETSPrimitiveType",
                           "loc": {
                             "start": {
-                              "line": 22,
-                              "column": 34,
+                              "line": 28,
+                              "column": 31,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             },
                             "end": {
-                              "line": 22,
-                              "column": 38,
+                              "line": 28,
+                              "column": 35,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 22,
+                            "line": 28,
                             "column": 19,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           },
                           "end": {
-                            "line": 22,
-                            "column": 38,
+                            "line": 28,
+                            "column": 35,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 22,
+                          "line": 28,
                           "column": 9,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         },
                         "end": {
-                          "line": 22,
-                          "column": 38,
+                          "line": 28,
+                          "column": 35,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         }
                       }
                     },
                     "loc": {
                       "start": {
-                        "line": 22,
+                        "line": 28,
                         "column": 9,
                         "program": "lambda-type-inference-overloaded-3.ets"
                       },
                       "end": {
-                        "line": 22,
-                        "column": 38,
+                        "line": 28,
+                        "column": 35,
                         "program": "lambda-type-inference-overloaded-3.ets"
                       }
                     }
@@ -608,13 +1017,13 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 22,
-                      "column": 41,
+                      "line": 28,
+                      "column": 38,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 22,
-                      "column": 45,
+                      "line": 28,
+                      "column": 42,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
                   }
@@ -624,12 +1033,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 22,
-                      "column": 46,
+                      "line": 28,
+                      "column": 43,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 23,
+                      "line": 29,
                       "column": 6,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -637,12 +1046,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 22,
+                    "line": 28,
                     "column": 8,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   },
                   "end": {
-                    "line": 23,
+                    "line": 29,
                     "column": 6,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   }
@@ -650,12 +1059,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 22,
+                  "line": 28,
                   "column": 8,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 23,
+                  "line": 29,
                   "column": 6,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -664,12 +1073,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 22,
+                "line": 28,
                 "column": 5,
                 "program": "lambda-type-inference-overloaded-3.ets"
               },
               "end": {
-                "line": 23,
+                "line": 29,
                 "column": 6,
                 "program": "lambda-type-inference-overloaded-3.ets"
               }
@@ -682,12 +1091,12 @@
               "name": "test",
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 31,
                   "column": 5,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 25,
+                  "line": 31,
                   "column": 9,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -707,12 +1116,12 @@
                   "name": "test",
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 31,
                       "column": 5,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 31,
                       "column": 9,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -726,12 +1135,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 31,
                       "column": 13,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 31,
                       "column": 17,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -750,12 +1159,12 @@
                             "type": "ThisExpression",
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 32,
                                 "column": 9,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               },
                               "end": {
-                                "line": 26,
+                                "line": 32,
                                 "column": 13,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               }
@@ -766,12 +1175,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 32,
                                 "column": 14,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               },
                               "end": {
-                                "line": 26,
+                                "line": 32,
                                 "column": 17,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               }
@@ -781,12 +1190,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 26,
+                              "line": 32,
                               "column": 9,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             },
                             "end": {
-                              "line": 26,
+                              "line": 32,
                               "column": 17,
                               "program": "lambda-type-inference-overloaded-3.ets"
                             }
@@ -809,12 +1218,12 @@
                                     "name": "v",
                                     "loc": {
                                       "start": {
-                                        "line": 26,
+                                        "line": 32,
                                         "column": 19,
                                         "program": "lambda-type-inference-overloaded-3.ets"
                                       },
                                       "end": {
-                                        "line": 26,
+                                        "line": 32,
                                         "column": 20,
                                         "program": "lambda-type-inference-overloaded-3.ets"
                                       }
@@ -822,12 +1231,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 26,
+                                      "line": 32,
                                       "column": 19,
                                       "program": "lambda-type-inference-overloaded-3.ets"
                                     },
                                     "end": {
-                                      "line": 26,
+                                      "line": 32,
                                       "column": 20,
                                       "program": "lambda-type-inference-overloaded-3.ets"
                                     }
@@ -838,12 +1247,12 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 26,
+                                    "line": 32,
                                     "column": 23,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   },
                                   "end": {
-                                    "line": 26,
+                                    "line": 32,
                                     "column": 27,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   }
@@ -854,12 +1263,12 @@
                                 "statements": [],
                                 "loc": {
                                   "start": {
-                                    "line": 26,
+                                    "line": 32,
                                     "column": 31,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   },
                                   "end": {
-                                    "line": 27,
+                                    "line": 33,
                                     "column": 10,
                                     "program": "lambda-type-inference-overloaded-3.ets"
                                   }
@@ -867,12 +1276,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 26,
+                                  "line": 32,
                                   "column": 18,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 },
                                 "end": {
-                                  "line": 27,
+                                  "line": 33,
                                   "column": 10,
                                   "program": "lambda-type-inference-overloaded-3.ets"
                                 }
@@ -880,12 +1289,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 32,
                                 "column": 18,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               },
                               "end": {
-                                "line": 27,
+                                "line": 33,
                                 "column": 10,
                                 "program": "lambda-type-inference-overloaded-3.ets"
                               }
@@ -895,12 +1304,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 26,
+                            "line": 32,
                             "column": 9,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           },
                           "end": {
-                            "line": 27,
+                            "line": 33,
                             "column": 11,
                             "program": "lambda-type-inference-overloaded-3.ets"
                           }
@@ -908,12 +1317,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 26,
+                          "line": 32,
                           "column": 9,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         },
                         "end": {
-                          "line": 27,
+                          "line": 33,
                           "column": 12,
                           "program": "lambda-type-inference-overloaded-3.ets"
                         }
@@ -922,12 +1331,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 31,
                       "column": 18,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 28,
+                      "line": 34,
                       "column": 6,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -935,12 +1344,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 31,
                     "column": 9,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   },
                   "end": {
-                    "line": 28,
+                    "line": 34,
                     "column": 6,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   }
@@ -948,12 +1357,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 31,
                   "column": 9,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 28,
+                  "line": 34,
                   "column": 6,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -962,12 +1371,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 25,
+                "line": 31,
                 "column": 5,
                 "program": "lambda-type-inference-overloaded-3.ets"
               },
               "end": {
-                "line": 28,
+                "line": 34,
                 "column": 6,
                 "program": "lambda-type-inference-overloaded-3.ets"
               }
@@ -980,12 +1389,12 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 27,
                   "column": 29,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 21,
+                  "line": 27,
                   "column": 29,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -1004,12 +1413,12 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 27,
                       "column": 29,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 21,
+                      "line": 27,
                       "column": 29,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -1024,12 +1433,12 @@
                   "statements": [],
                   "loc": {
                     "start": {
-                      "line": 21,
+                      "line": 27,
                       "column": 29,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     },
                     "end": {
-                      "line": 21,
+                      "line": 27,
                       "column": 29,
                       "program": "lambda-type-inference-overloaded-3.ets"
                     }
@@ -1037,12 +1446,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 21,
+                    "line": 27,
                     "column": 29,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   },
                   "end": {
-                    "line": 21,
+                    "line": 27,
                     "column": 29,
                     "program": "lambda-type-inference-overloaded-3.ets"
                   }
@@ -1050,12 +1459,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 21,
+                  "line": 27,
                   "column": 29,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 },
                 "end": {
-                  "line": 21,
+                  "line": 27,
                   "column": 29,
                   "program": "lambda-type-inference-overloaded-3.ets"
                 }
@@ -1078,12 +1487,12 @@
         ],
         "loc": {
           "start": {
-            "line": 21,
+            "line": 27,
             "column": 28,
             "program": "lambda-type-inference-overloaded-3.ets"
           },
           "end": {
-            "line": 29,
+            "line": 35,
             "column": 2,
             "program": "lambda-type-inference-overloaded-3.ets"
           }
@@ -1091,12 +1500,12 @@
       },
       "loc": {
         "start": {
-          "line": 21,
+          "line": 27,
           "column": 1,
           "program": "lambda-type-inference-overloaded-3.ets"
         },
         "end": {
-          "line": 29,
+          "line": 35,
           "column": 2,
           "program": "lambda-type-inference-overloaded-3.ets"
         }
@@ -1262,7 +1671,7 @@
       "program": "lambda-type-inference-overloaded-3.ets"
     },
     "end": {
-      "line": 30,
+      "line": 36,
       "column": 1,
       "program": "lambda-type-inference-overloaded-3.ets"
     }
