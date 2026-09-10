@@ -57,33 +57,34 @@ describe('getReferencesAtPositionCrossModuleTest', () => {
     { name: 'entry', moduleType: 'har', srcPath: 'entry' },
     { name: 'har', moduleType: 'har', srcPath: 'har' }
   ];
-  const lsp = getMultiModuleLsp(projectName, modules, []);
   const entryFile1 = getRealPath(projectName, 'entry/EntryReferences1.ets');
   const entryFile2 = getRealPath(projectName, 'entry/EntryReferences2.ets');
   const harFile1 = getRealPath(projectName, 'har/Index.ets');
   const harFile2 = getRealPath(projectName, 'har/Symbols.ets');
-  lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8')});
-  lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8')});
-  lsp.modifyFilesMap(harFile1, { newDoc: fs.readFileSync(harFile1, 'utf8')});
-  lsp.modifyFilesMap(harFile2, { newDoc: fs.readFileSync(harFile2, 'utf8')});
+  const crossModuleTest = process.env.SKIP_UI_PLUGINS ? test.skip : test;
 
-  test('getReferencesAtPosition_cross_module_class', () => {
-    const offset = getMarkerOffset(entryFile1, '/*classTarget*/');
-    const res = lsp.getReferencesAtPosition(entryFile1, offset);
-    expect(res?.length).toBe(8);
-    const length = res ? res.length : 0;
-    for (let i = 0; i < length; i++) {
-      expectReferences(res ? res[i] : undefined, REFERENCES_001[i]);
+  crossModuleTest('getReferencesAtPosition_cross_module_class_and_const', () => {
+    const lsp = getMultiModuleLsp(projectName, modules, []);
+    lsp.initAstCache();
+    lsp.modifyFilesMap(entryFile2, { newDoc: fs.readFileSync(entryFile2, 'utf8') });
+    lsp.modifyFilesMap(entryFile1, { newDoc: fs.readFileSync(entryFile1, 'utf8') });
+    lsp.modifyFilesMap(harFile1, { newDoc: fs.readFileSync(harFile1, 'utf8') });
+    lsp.modifyFilesMap(harFile2, { newDoc: fs.readFileSync(harFile2, 'utf8') });
+
+    const classOffset = getMarkerOffset(entryFile1, '/*classTarget*/');
+    const classReferences = lsp.getReferencesAtPosition(entryFile1, classOffset);
+    expect(classReferences?.length).toBe(8);
+    const classReferenceCount = classReferences ? classReferences.length : 0;
+    for (let i = 0; i < classReferenceCount; i++) {
+      expectReferences(classReferences ? classReferences[i] : undefined, REFERENCES_001[i]);
     }
-  });
 
-  test('getReferencesAtPosition_cross_module_const', () => {
-    const offset = getMarkerOffset(entryFile1, '/*constTarget*/');
-    const res = lsp.getReferencesAtPosition(entryFile1, offset);
-    expect(res?.length).toBe(6);
-    const length = res ? res.length : 0;
-    for (let i = 0; i < length; i++) {
-      expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);
+    const constOffset = getMarkerOffset(entryFile1, '/*constTarget*/');
+    const constReferences = lsp.getReferencesAtPosition(entryFile1, constOffset);
+    expect(constReferences?.length).toBe(6);
+    const constReferenceCount = constReferences ? constReferences.length : 0;
+    for (let i = 0; i < constReferenceCount; i++) {
+      expectReferences(constReferences ? constReferences[i] : undefined, REFERENCES_002[i]);
     }
   });
 });

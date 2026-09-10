@@ -125,6 +125,8 @@ export class Lsp {
   private fileDependencies: string;
   private pendingInvalidationRoot?: string;
   private compiledFileHashes: Map<string, string> = new Map<string, string>();
+  private diagnosticFiles: Set<string> = new Set<string>();
+  private pendingInitialDiagnosticFiles: Set<string> = new Set<string>();
   private buildConfigs: Record<string, BuildConfig>; // Map<moduleName, build_config.json>
   private moduleInfos: Record<string, ModuleInfo>; // Map<fileName, ModuleInfo>
   private reverseModuleDeps: Map<string, Set<string>>;
@@ -198,6 +200,8 @@ export class Lsp {
       global.es2pandaPublic._DeleteProgramForFile(activeFileCache.fileContext, fileName);
       this.tryRemoveSymbolReferenceIndex(fileName);
       this.compiledFileHashes.delete(fileName);
+      this.diagnosticFiles.delete(fileName);
+      this.pendingInitialDiagnosticFiles.delete(fileName);
       if (this.pendingInvalidationRoot === fileName) {
         this.pendingInvalidationRoot = undefined;
       }
@@ -205,59 +209,157 @@ export class Lsp {
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
-    if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
+    this.prepareFileCache(fileName, fileContent);
+  }
+
+  private ensureFileCacheForQuery(fileName: string, forceRecompile: boolean = false): mainFileCache | undefined {
+    const fileCache = this.filesMap.get(fileName);
+    if (fileCache && !forceRecompile) {
+      return fileCache;
+    }
+
+    try {
+      return this.prepareFileCache(fileName, { newDoc: this.getFileSource(fileName) }, true, forceRecompile);
+    } catch (error) {
+      logger.error('failed to prepare file cache for query', error);
+      return undefined;
+    }
+  }
+
+  private restoreFileCacheForQuery(fileName: string, fileCache: mainFileCache): void {
+    const ret = global.es2pandaPublic._IncrementalPrepareProgram(
+      fileCache.fileContext,
+      fileName,
+      fileCache.fileContent,
+      0
+    );
+    if (ret !== 0 && ret !== 1) {
+      logger.error('restore file cache failed for ' + fileName + ', ret: ' + ret);
       return;
     }
-    const hash = this.computeContentHash(fileContent.newDoc);
-    if (this.filesMap.get(fileName)?.fileHash === hash) {
-      return;
+    if (ret === 0) {
+      this.proceedPreparedContext(fileName, fileCache.fileContext, true);
+      this.tryBuildSymbolReferenceIndex(fileName, fileCache.fileContext);
+    }
+    this.recordCompilationState(fileName, fileCache.fileHash, ret === 0);
+    this.filesMap.clear();
+    this.filesMap.set(fileName, fileCache);
+  }
+
+  private withFileCacheForQuery<T>(
+    filename: String | string,
+    query: (fileCache: mainFileCache) => T | undefined,
+    forceRecompile: boolean = false
+  ): T | undefined {
+    const fileName = filename.valueOf();
+    const activeFileEntry = Array.from(this.filesMap.entries())[0];
+    const shouldRestoreActiveFile = activeFileEntry !== undefined && activeFileEntry[0] !== fileName;
+
+    try {
+      const fileCache = this.ensureFileCacheForQuery(fileName, forceRecompile);
+      if (!fileCache) {
+        return undefined;
+      }
+      return query(fileCache);
+    } finally {
+      if (shouldRestoreActiveFile) {
+        this.restoreFileCacheForQuery(activeFileEntry[0], activeFileEntry[1]);
+      }
+    }
+  }
+
+  private prepareFileCache(
+    fileName: string,
+    fileContent: TextDocumentChangeInfo,
+    preferModuleArkTsConfig: boolean = false,
+    forceRecompile: boolean = false
+  ): mainFileCache | undefined {
+    if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
+      return undefined;
+    }
+
+    const fileSource = fileContent.newDoc;
+    const hash = this.computeContentHash(fileSource);
+    const cachedFile = this.filesMap.get(fileName);
+    if (cachedFile?.fileHash === hash && !forceRecompile) {
+      return cachedFile;
     }
 
     if (this.filesMap.size === 1) {
-      const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
-      if (activeFilePath !== fileName && this.shouldInvalidateDependantsOnSwitch(activeFilePath)) {
-        this.invalidatePendingDependants(activeFileCache.fileContext);
-      }
-      const previousCompiledHash = this.compiledFileHashes.get(fileName);
-      const diskHash = previousCompiledHash === undefined ? this.readDiskHash(fileName) : undefined;
-      const isChanged =
-        previousCompiledHash !== undefined ? previousCompiledHash !== hash : diskHash !== undefined ? diskHash !== hash : true;
-      const ret = global.es2pandaPublic._IncrementalPrepareProgram(
-        activeFileCache.fileContext,
-        fileName,
-        fileContent.newDoc,
-        isChanged ? 1 : 0
-      );
-      if (ret !== 0 && ret !== 1) {
-        logger.error('incremental update failed for ', fileName);
-        return;
-      }
-      if (ret !== 1) {
-        this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
-        this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
-      }
-      this.recordCompilationState(fileName, hash, ret !== 1);
-      this.filesMap.clear();
-      this.filesMap.set(fileName, {
-        fileContent: fileContent.newDoc,
-        fileConfig: activeFileCache.fileConfig,
-        fileContext: activeFileCache.fileContext,
-        fileHash: hash
-      });
-      return;
+      return this.prepareFileCacheFromActiveContext(fileName, fileSource, hash, forceRecompile);
     }
-    const [cfg, ctx] = this.createContext(fileName, true, fileContent.newDoc) ?? [];
+    return this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
+  }
+
+  private prepareFileCacheFromActiveContext(
+    fileName: string,
+    fileSource: string,
+    hash: string,
+    forceRecompile: boolean = false
+  ): mainFileCache | undefined {
+    const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
+    if (activeFilePath !== fileName && this.shouldInvalidateDependantsOnSwitch(activeFilePath)) {
+      this.invalidatePendingDependants(activeFileCache.fileContext);
+    }
+
+    const previousCompiledHash = this.compiledFileHashes.get(fileName);
+    const diskHash = previousCompiledHash === undefined ? this.readDiskHash(fileName) : undefined;
+    const isChanged = previousCompiledHash !== undefined
+      ? previousCompiledHash !== hash
+      : diskHash !== undefined ? diskHash !== hash : true;
+    const shouldRecompile = forceRecompile || isChanged || this.diagnosticFiles.has(fileName);
+    const ret = global.es2pandaPublic._IncrementalPrepareProgram(
+      activeFileCache.fileContext,
+      fileName,
+      fileSource,
+      shouldRecompile ? 1 : 0
+    );
+    if (ret !== 0 && ret !== 1) {
+      logger.error('incremental update failed for ' + fileName + ', ret: ' + ret);
+      return undefined;
+    }
+    if (ret === 0) {
+      this.proceedPreparedContext(fileName, activeFileCache.fileContext, true);
+      this.tryBuildSymbolReferenceIndex(fileName, activeFileCache.fileContext);
+      this.updateDiagnosticFilesForContext(fileName, activeFileCache.fileContext);
+    }
+
+    this.recordCompilationState(fileName, hash, ret === 0);
+    const updatedFileCache = {
+      fileContent: fileSource,
+      fileConfig: activeFileCache.fileConfig,
+      fileContext: activeFileCache.fileContext,
+      fileHash: hash
+    };
+    this.filesMap.clear();
+    this.filesMap.set(fileName, updatedFileCache);
+    return updatedFileCache;
+  }
+
+  private createFileCache(
+    fileName: string,
+    fileSource: string,
+    hash: string,
+    preferModuleArkTsConfig: boolean
+  ): mainFileCache | undefined {
+    // Query misses should use the target file's module config before any global ARKTSCONFIG.
+    const [cfg, ctx] = preferModuleArkTsConfig
+      ? this.createContextForCrossModule(fileName, true, fileSource) ?? []
+      : this.createContext(fileName, true, fileSource) ?? [];
     if (!cfg || !ctx) {
-      return;
+      return undefined;
     }
+
     this.tryBuildSymbolReferenceIndex(fileName, ctx);
     this.recordCompilationState(fileName, hash);
-    this.filesMap.set(fileName, {
-      fileContent: fileContent.newDoc,
+    const newFileCache = {
+      fileContent: fileSource,
       fileConfig: cfg,
       fileContext: ctx,
       fileHash: hash
-    });
+    };
+    this.filesMap.set(fileName, newFileCache);
+    return newFileCache;
   }
 
   deleteFromFilesMap(fileName: string): void {
@@ -265,6 +367,7 @@ export class Lsp {
     if (fileCache) {
       this.destroyContext(fileCache.fileConfig, fileCache.fileContext);
       this.filesMap.delete(fileName);
+      this.pendingInitialDiagnosticFiles.delete(fileName);
     }
   }
 
@@ -344,6 +447,25 @@ export class Lsp {
     const ret = global.es2pandaPublic._DeleteDependantProgramsForFiles(context, rootFilePath);
     if (ret !== 0) {
       logger.warn(`batch delete dependant programs failed, ret=${ret}`);
+    }
+  }
+
+  private markDiagnosticFile(fileName: string, diagnostics: LspDiagsNode): void {
+    if (fileName && diagnostics.diagnostics.length > 0) {
+      this.diagnosticFiles.add(fileName);
+    }
+  }
+
+  private updateDiagnosticFilesForContext(fileName: string, context: KNativePointer): void {
+    if (!fileName) {
+      return;
+    }
+
+    this.diagnosticFiles.delete(fileName);
+    const semanticDiagnostics = new LspDiagsNode(global.es2panda._getSemanticDiagnostics(context));
+    const syntacticDiagnostics = new LspDiagsNode(global.es2panda._getSyntacticDiagnostics(context));
+    if (semanticDiagnostics.diagnostics.length > 0 || syntacticDiagnostics.diagnostics.length > 0) {
+      this.diagnosticFiles.add(fileName);
     }
   }
 
@@ -501,40 +623,25 @@ export class Lsp {
 
   getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDefinitionAtPosition', this.perfMetricLogFilePath) : undefined;
-    let result: LspDefinitionData;
     if (nodeInfos) {
-      result = this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
+      const result = this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
       perfScope?.end();
       return result;
     }
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, offset);
+        const ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, offset);
+        const definition = new LspDefinitionData(ptr);
+        const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, definition.fileName, definition.start);
+        if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
+          definition.nodeInfos = nodeInfoTemp;
+        }
+        return definition;
       } catch (error) {
         logger.error('failed to getDefinitionAtPosition by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) {
-        return;
-      }
-      try {
-        ptr = global.es2panda._getDefinitionAtPosition(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getDefinitionAtPosition', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    result = new LspDefinitionData(ptr);
-    const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, result.fileName, result.start);
-    if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
-      result.nodeInfos = nodeInfoTemp;
-    }
+    });
     perfScope?.end();
     return result;
   }
@@ -729,83 +836,49 @@ export class Lsp {
 
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSemanticDiagnostics', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const fileName = filename.valueOf();
+    const shouldRefreshInitialDiagnostics = this.pendingInitialDiagnosticFiles.has(fileName);
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getSemanticDiagnostics(fileCache.fileContext);
+        const diagnostics = new LspDiagsNode(global.es2panda._getSemanticDiagnostics(fileCache.fileContext));
+        this.markDiagnosticFile(fileName, diagnostics);
+        return diagnostics;
       } catch (error) {
         logger.error('failed to getSemanticDiagnostics by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getSemanticDiagnostics(ctx);
-      } catch (error) {
-        logger.error('failed to getSemanticDiagnostics', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
+    }, shouldRefreshInitialDiagnostics);
+    if (result) {
+      this.pendingInitialDiagnosticFiles.delete(fileName);
     }
-    const result = new LspDiagsNode(ptr);
     perfScope?.end();
     return result;
   }
 
   getCurrentTokenValue(filename: String, offset: number): string | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCurrentTokenValue', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getCurrentTokenValue(fileCache.fileContext, offset);
+        return unpackString(global.es2panda._getCurrentTokenValue(fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getCurrentTokenValue by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getCurrentTokenValue(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getCurrentTokenValue', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
+    });
     perfScope?.end();
-    return unpackString(ptr);
+    return result;
   }
 
   getImplementationAtPosition(filename: String, offset: number): LspDefinitionData | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getImplementationAtPosition', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getImplementationAtPosition(fileCache.fileContext, offset);
+        return new LspDefinitionData(global.es2panda._getImplementationAtPosition(fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getImplementationAtPosition by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getImplementationAtPosition(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getImplementationAtPosition', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspDefinitionData(ptr);
+    });
     perfScope?.end();
     return result;
   }
@@ -863,9 +936,14 @@ export class Lsp {
     let ptr: KPointer;
     const isWindows = typeof process !== 'undefined' && process.platform === 'win32';
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
-    const fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
-      ptr = global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, offset);
+    if (this.filesMap.size > 0) {
+      const cachedPtr = this.withFileCacheForQuery(filename, (fileCache) =>
+        global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, offset)
+      );
+      if (cachedPtr === undefined) {
+        return;
+      }
+      ptr = cachedPtr;
     } else {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) {
@@ -1140,29 +1218,16 @@ export class Lsp {
 
   getAliasScriptElementKind(filename: String, offset: number): LspCompletionEntryKind | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getAliasScriptElementKind', this.perfMetricLogFilePath) : undefined;
-    let kind: KInt;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        kind = global.es2panda._getAliasScriptElementKind(fileCache.fileContext, offset);
+        return global.es2panda._getAliasScriptElementKind(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getAliasScriptElementKind by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        kind = global.es2panda._getAliasScriptElementKind(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getAliasScriptElementKind', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
+    });
     perfScope?.end();
-    return kind;
+    return result;
   }
 
   getClassHierarchies(filename: String, offset: number): LspClassHierarchies | undefined {
@@ -1239,32 +1304,17 @@ export class Lsp {
 
   getOrganizeImports(filename: String): LspFileTextChanges | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getOrganizeImports', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._organizeImports(fileCache.fileContext, filename);
+        const ptr = global.es2panda._organizeImports(fileCache.fileContext, filename);
         PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        return new LspFileTextChanges(ptr);
       } catch (error) {
         logger.error('failed to getOrganizeImports by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._organizeImports(ctx, filename);
-        PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-      } catch (error) {
-        logger.error('failed to getOrganizeImports', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspFileTextChanges(ptr);
+    });
     perfScope?.end();
-
     return result;
   }
 
@@ -1303,30 +1353,15 @@ export class Lsp {
 
   getCompletionEntryDetails(filename: String, offset: number, entryName: String): CompletionEntryDetails | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionEntryDetails', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, offset);
+        return new CompletionEntryDetails(global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getCompletionEntryDetails by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, ctx, offset);
-      } catch (error) {
-        logger.error('failed to getCompletionEntryDetails', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new CompletionEntryDetails(ptr);
+    });
     perfScope?.end();
-
     return result;
   }
 
@@ -1337,33 +1372,17 @@ export class Lsp {
     endPos: number
   ): ApplicableRefactorItemInfo[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getApplicableRefactors', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let result: ApplicableRefactorItemInfo[] = [];
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startPos, endPos);
+        const refs = new LspApplicableRefactorInfo(global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startPos, endPos));
+        return Array.from(new Set(refs.applicableRefactorInfo));
       } catch (error) {
         logger.error('failed to getApplicableRefactors by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getApplicableRefactors(ctx, kind, startPos, endPos);
-      } catch (error) {
-        logger.error('failed to getApplicableRefactors', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    let refs = new LspApplicableRefactorInfo(ptr);
-    result.push(...refs.applicableRefactorInfo);
-    const RefactorItemInfo = Array.from(new Set(result));
+    });
     perfScope?.end();
-    return RefactorItemInfo;
+    return result;
   }
 
   getEditsForRefactor(
@@ -1378,12 +1397,10 @@ export class Lsp {
     }
   ): LspRefactorEditInfo | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getEditsForRefactor', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
     let up = opts?.userPrefsPtr ?? BigInt(0);
     let fmt = opts?.FormattingSettings ?? BigInt(0);
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
-      ptr = global.es2panda._getEditsForRefactor(
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
+      return new LspRefactorEditInfo(global.es2panda._getEditsForRefactor(
         fileCache.fileContext,
         refactorName,
         actionName,
@@ -1391,50 +1408,22 @@ export class Lsp {
         end,
         up,
         fmt
-      );
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      ptr = global.es2panda._getEditsForRefactor(
-        ctx,
-        refactorName,
-        actionName,
-        start,
-        end,
-        up,
-        fmt
-      );
-      this.destroyContext(cfg, ctx);
-    }
-    const result = new LspRefactorEditInfo(ptr);
+      ));
+    });
     perfScope?.end();
     return result;
   }
 
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassConstructorInfo', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getClassConstructorInfo(fileCache.fileContext, offset, passStringArray(properties));
+        return new LspClassConstructorInfo(global.es2panda._getClassConstructorInfo(fileCache.fileContext, offset, passStringArray(properties)));
       } catch (error) {
         logger.error('failed to getClassConstructorInfo by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getClassConstructorInfo(ctx, offset, passStringArray(properties));
-      } catch (error) {
-        logger.error('failed to getClassConstructorInfo', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspClassConstructorInfo(ptr);
+    });
     perfScope?.end();
     return result;
   }
@@ -1463,62 +1452,35 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
+    this.markDiagnosticFile(filename.valueOf(), result);
     perfScope?.end();
     return result;
   }
 
   getSuggestionDiagnostics(filename: String): LspDiagsNode | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSuggestionDiagnostics', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getSuggestionDiagnostics(fileCache.fileContext);
+        return new LspDiagsNode(global.es2panda._getSuggestionDiagnostics(fileCache.fileContext));
       } catch (error) {
         logger.error('failed to getSuggestionDiagnostics by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getSuggestionDiagnostics(ctx);
-      } catch (error) {
-        logger.error('failed to getSuggestionDiagnostics', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspDiagsNode(ptr);
+    });
     perfScope?.end();
     return result;
   }
 
   getQuickInfoAtPosition(filename: String, offset: number): LspQuickInfo | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getQuickInfoAtPosition', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getQuickInfoAtPosition(filename, fileCache.fileContext, offset);
+        return new LspQuickInfo(global.es2panda._getQuickInfoAtPosition(filename, fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getQuickInfoAtPosition by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContextForCrossModule(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, offset);
-      } catch (error) {
-        logger.error('failed to getQuickInfoAtPosition', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspQuickInfo(ptr);
+    });
     perfScope?.end();
     return result;
   }
@@ -1556,130 +1518,62 @@ export class Lsp {
 
   getCompletionAtPosition(filename: String, offset: number): LspCompletionInfo | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionAtPosition', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getCompletionAtPosition(fileCache.fileContext, offset);
+        return new LspCompletionInfo(global.es2panda._getCompletionAtPosition(fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getCompletionAtPosition by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getCompletionAtPosition(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getCompletionAtPosition', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspCompletionInfo(ptr);
+    });
     perfScope?.end();
     return result;
   }
 
   toLineColumnOffset(filename: String, offset: number): LspLineAndCharacter | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('toLineColumnOffset', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._toLineColumnOffset(fileCache.fileContext, offset);
+        return new LspLineAndCharacter(global.es2panda._toLineColumnOffset(fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to toLineColumnOffset by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) {
-        return;
-      }
-      try {
-        ptr = global.es2panda._toLineColumnOffset(ctx, offset);
-      } catch (error) {
-        logger.error('failed to toLineColumnOffset', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspLineAndCharacter(ptr);
+    });
     perfScope?.end();
-
     return result;
   }
 
   getSafeDeleteInfo(filename: String, position: number): boolean | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSafeDeleteInfo', this.perfMetricLogFilePath) : undefined;
-    let result: boolean;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        result = global.es2panda._getSafeDeleteInfo(fileCache.fileContext, position);
+        return global.es2panda._getSafeDeleteInfo(fileCache.fileContext, position);
       } catch (error) {
         logger.error('failed to getSafeDeleteInfo by fileCache', error);
-        return;
+        return undefined;
       }
-      return result;
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        result = global.es2panda._getSafeDeleteInfo(ctx, position);
-      } catch (error) {
-        logger.error('failed to getSafeDeleteInfo', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
+    });
     perfScope?.end();
     return result;
   }
 
   getTokenNative(filename: String, position: number): LspTokenNativeInfo {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getTokenNative', this.perfMetricLogFilePath) : undefined;
-    let result = new LspTokenNativeInfo();
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        let ptr = global.es2panda._getTokenTypes(fileCache.fileContext, position);
-        let typeInfo = new LspTokenTypeInfo(ptr);
-        if (typeof typeInfo.type === "string" && typeInfo.type.includes("native")) {
+        const typeInfo = new LspTokenTypeInfo(global.es2panda._getTokenTypes(fileCache.fileContext, position));
+        if (typeof typeInfo.type === 'string' && typeInfo.type.includes('native')) {
           return new LspTokenNativeInfo(typeInfo.name, true);
         }
-        else {
-          result = new LspTokenNativeInfo(typeInfo.name, false);
-        }
+        return new LspTokenNativeInfo(typeInfo.name, false);
       } catch (error) {
         console.error(error);
         throw error;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return result; }
-      try {
-        let ptr = global.es2panda._getTokenTypes(ctx, position);
-        let typeInfo = new LspTokenTypeInfo(ptr);
-        if (typeof typeInfo.type === "string" && typeInfo.type.includes("native")) {
-          return new LspTokenNativeInfo(typeInfo.name, true);
-        }
-        else {
-          result = new LspTokenNativeInfo(typeInfo.name, false);
-        }
-      } catch (error) {
-        console.error(error);
-        throw error;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
+    });
     perfScope?.end();
-    return result;
+    return result ?? new LspTokenNativeInfo();
   }
 
   findRenameLocations(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspRenameLocation[] | undefined {
@@ -1727,64 +1621,34 @@ export class Lsp {
 
   getRenameInfo(filename: String, offset: number): LspRenameInfoType | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getRenameInfo', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let res: LspRenameInfoType;
-
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getRenameInfo(fileCache.fileContext, offset, this.pandaLibPath);
+        const ptr = global.es2panda._getRenameInfo(fileCache.fileContext, offset, this.pandaLibPath);
+        const success = global.es2panda._getRenameInfoIsSuccess(ptr);
+        return success
+          ? new LspRenameInfoSuccess(global.es2panda._getRenameInfoSuccess(ptr))
+          : new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
       } catch (error) {
         logger.error('failed to getRenameInfo by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getRenameInfo(ctx, offset, this.pandaLibPath);
-      } catch (error) {
-        logger.error('failed to getRenameInfo', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const success = global.es2panda._getRenameInfoIsSuccess(ptr);
-    if (success) {
-      res = new LspRenameInfoSuccess(global.es2panda._getRenameInfoSuccess(ptr));
-    } else {
-      res = new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
-    }
+    });
     perfScope?.end();
-    return res;
+    return result;
   }
 
   getSpanOfEnclosingComment(filename: String, offset: number, onlyMultiLine: boolean): LspTextSpan | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSpanOfEnclosingComment', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getSpanOfEnclosingComment(fileCache.fileContext, offset, onlyMultiLine);
+        return new LspTextSpan(global.es2panda._getSpanOfEnclosingComment(fileCache.fileContext, offset, onlyMultiLine));
       } catch (error) {
         logger.error('failed to getSpanOfEnclosingComment by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getSpanOfEnclosingComment(ctx, offset, onlyMultiLine);
-      } catch (error) {
-        logger.error('failed to getSpanOfEnclosingComment', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
+    });
     perfScope?.end();
-    return new LspTextSpan(ptr);
+    return result;
   }
 
   getCodeFixesAtPosition(
@@ -1794,90 +1658,51 @@ export class Lsp {
     errorCodes: number[]
   ): CodeFixActionInfo[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCodeFixesAtPosition', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getCodeFixesAtPosition(fileCache.fileContext, start, end, new Int32Array(errorCodes), errorCodes.length);
+        const codeFixActionInfoList = new CodeFixActionInfoList(
+          global.es2panda._getCodeFixesAtPosition(fileCache.fileContext, start, end, new Int32Array(errorCodes), errorCodes.length)
+        );
+        const codeFixActionInfos: CodeFixActionInfo[] = [];
+        codeFixActionInfos.push(...codeFixActionInfoList.codeFixActionInfos);
+        return codeFixActionInfos;
       } catch (error) {
         logger.error('failed to getCodeFixesAtPosition by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getCodeFixesAtPosition(ctx, start, end, new Int32Array(errorCodes), errorCodes.length);
-      } catch (error) {
-        logger.error('failed to getCodeFixesAtPosition', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const codeFixActionInfoList = new CodeFixActionInfoList(ptr);
-    const codeFixActionInfos: CodeFixActionInfo[] = [];
-    codeFixActionInfos.push(...codeFixActionInfoList.codeFixActionInfos);
+    });
     perfScope?.end();
-    return codeFixActionInfos;
+    return result;
   }
 
   provideInlayHints(filename: String, span: TextSpan): LspInlayHint[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('provideInlayHints', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
         const nativeSpan = global.es2panda._createTextSpan(span.start, span.length);
-        ptr = global.es2panda._getInlayHintList(fileCache.fileContext, nativeSpan);
+        const inlayHintList = new LspInlayHintList(global.es2panda._getInlayHintList(fileCache.fileContext, nativeSpan));
+        const inlayHints: LspInlayHint[] = [];
+        inlayHints.push(...inlayHintList.inlayHints);
+        return inlayHints;
       } catch (error) {
         logger.error('failed to provideInlayHints by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        const nativeSpan = global.es2panda._createTextSpan(span.start, span.length);
-        ptr = global.es2panda._getInlayHintList(ctx, nativeSpan);
-      } catch (error) {
-        logger.error('failed to provideInlayHints', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const inlayHintList = new LspInlayHintList(ptr);
-    const inlayHints: LspInlayHint[] = [];
-    inlayHints.push(...inlayHintList.inlayHints);
+    });
     perfScope?.end();
-    return inlayHints;
+    return result;
   }
 
   getSignatureHelpItems(filename: String, offset: number): LspSignatureHelpItems | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSignatureHelpItems', this.perfMetricLogFilePath) : undefined;
-    let ptr: KPointer;
-    let fileCache = this.filesMap.get(filename.valueOf());
-    if (fileCache) {
+    const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        ptr = global.es2panda._getSignatureHelpItems(fileCache.fileContext, offset);
+        return new LspSignatureHelpItems(global.es2panda._getSignatureHelpItems(fileCache.fileContext, offset));
       } catch (error) {
         logger.error('failed to getSignatureHelpItems by fileCache', error);
-        return;
+        return undefined;
       }
-    } else {
-      const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
-      try {
-        ptr = global.es2panda._getSignatureHelpItems(ctx, offset);
-      } catch (error) {
-        logger.error('failed to getSignatureHelpItems', error);
-        return;
-      } finally {
-        this.destroyContext(cfg, ctx);
-      }
-    }
-    const result = new LspSignatureHelpItems(ptr);
+    });
     perfScope?.end();
     return result;
   }
@@ -2236,12 +2061,15 @@ export class Lsp {
 
     global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
     this.compiledFileHashes.clear();
+    this.diagnosticFiles.clear();
+    this.pendingInitialDiagnosticFiles.clear();
     for (let i = 0; i < files.length; ++i) {
       if (!fs.existsSync(files[i]) || fs.statSync(files[i]).isDirectory()) {
         continue;
       }
       const normalizedContent = fs.readFileSync(files[i], 'utf8');
       this.compiledFileHashes.set(files[i], this.computeContentHash(normalizedContent));
+      this.pendingInitialDiagnosticFiles.add(files[i]);
     }
     const content = fs.readFileSync(files[0], 'utf8').replace(/\r\n/g, '\n');
     this.filesMap.set(files[0], {
@@ -2452,39 +2280,21 @@ export class Lsp {
     options?: FormatCodeSettingsOptions
   ): TextChange[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFormattingEditsForDocument', this.perfMetricLogFilePath) : undefined;
-    let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
 
     try {
-      let fileCache = this.filesMap.get(filename.valueOf());
-      if (fileCache) {
+      return this.withFileCacheForQuery(filename, (fileCache) => {
         try {
-          ptr = global.es2panda._getFormattingEditsForDocument(fileCache.fileContext, settingsPtr);
+          const result = new LspFormattingTextChanges(global.es2panda._getFormattingEditsForDocument(fileCache.fileContext, settingsPtr));
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+          const changes = result.textChanges;
+          result.dispose();
+          return changes;
         } catch (error) {
           logger.error('failed to getFormattingEditsForDocument by fileCache', error);
-          return;
+          return undefined;
         }
-      } else {
-        const [cfg, ctx] = this.createContext(filename) ?? [];
-        if (!cfg || !ctx) {
-          return;
-        }
-        try {
-          ptr = global.es2panda._getFormattingEditsForDocument(ctx, settingsPtr);
-          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-        } catch (error) {
-          logger.error('failed to getFormattingEditsForDocument', error);
-          return;
-        } finally {
-          this.destroyContext(cfg, ctx);
-        }
-      }
-
-      const result = new LspFormattingTextChanges(ptr);
-      const changes = result.textChanges;
-      result.dispose();
-      return changes;
+      });
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
       perfScope?.end();
@@ -2498,39 +2308,21 @@ export class Lsp {
     options?: FormatCodeSettingsOptions
   ): TextChange[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFormattingEditsForRange', this.perfMetricLogFilePath) : undefined;
-    let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
 
     try {
-      let fileCache = this.filesMap.get(filename.valueOf());
-      if (fileCache) {
+      return this.withFileCacheForQuery(filename, (fileCache) => {
         try {
-          ptr = global.es2panda._getFormattingEditsForRange(fileCache.fileContext, settingsPtr, start, length);
+          const result = new LspFormattingTextChanges(global.es2panda._getFormattingEditsForRange(fileCache.fileContext, settingsPtr, start, length));
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+          const changes = result.textChanges;
+          result.dispose();
+          return changes;
         } catch (error) {
           logger.error('failed to getFormattingEditsForRange by fileCache', error);
-          return;
+          return undefined;
         }
-      } else {
-        const [cfg, ctx] = this.createContext(filename) ?? [];
-        if (!cfg || !ctx) {
-          return;
-        }
-        try {
-          ptr = global.es2panda._getFormattingEditsForRange(ctx, settingsPtr, start, length);
-          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-        } catch (error) {
-          logger.error('failed to getFormattingEditsForRange', error);
-          return;
-        } finally {
-          this.destroyContext(cfg, ctx);
-        }
-      }
-
-      const result = new LspFormattingTextChanges(ptr);
-      const changes = result.textChanges;
-      result.dispose();
-      return changes;
+      });
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
       perfScope?.end();
@@ -2547,40 +2339,24 @@ export class Lsp {
     if (!key || key.length === 0) {
       return;
     }
-    let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
     const keyCode = key.charCodeAt(0);
 
     try {
-      let fileCache = this.filesMap.get(filename.valueOf());
-      if (fileCache) {
+      return this.withFileCacheForQuery(filename, (fileCache) => {
         try {
-          ptr = global.es2panda._getFormattingEditsAfterKeystroke(fileCache.fileContext, settingsPtr, position, 0, keyCode);
+          const result = new LspFormattingTextChanges(
+            global.es2panda._getFormattingEditsAfterKeystroke(fileCache.fileContext, settingsPtr, position, 0, keyCode)
+          );
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+          const changes = result.textChanges;
+          result.dispose();
+          return changes;
         } catch (error) {
           logger.error('failed to getFormattingEditsAfterKeystroke by fileCache', error);
-          return;
+          return undefined;
         }
-      } else {
-        const [cfg, ctx] = this.createContext(filename) ?? [];
-        if (!cfg || !ctx) {
-          return;
-        }
-        try {
-          ptr = global.es2panda._getFormattingEditsAfterKeystroke(ctx, settingsPtr, position, 0, keyCode);
-          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-        } catch (error) {
-          logger.error('failed to getFormattingEditsAfterKeystroke', error);
-          return;
-        } finally {
-          this.destroyContext(cfg, ctx);
-        }
-      }
-
-      const result = new LspFormattingTextChanges(ptr);
-      const changes = result.textChanges;
-      result.dispose();
-      return changes;
+      });
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
       perfScope?.end();
