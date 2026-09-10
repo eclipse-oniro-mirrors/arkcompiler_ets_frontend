@@ -1716,6 +1716,21 @@ static bool IsInitForSyntheticVariable(const ir::ArrayExpression *expr)
     return hasSyntheticId;
 }
 
+static bool HasObjectLikeConstituent(ETSChecker *checker, ETSUnionType *unionType)
+{
+    // Whether the union has a non-array/tuple constituent that accepts an arbitrary array literal, i.e. is
+    // 'Object' or one of its supertypes.
+    for (Type *constituent : unionType->ConstituentTypes()) {
+        if (constituent == nullptr || constituent->IsAnyETSArrayOrTupleType()) {
+            continue;
+        }
+        if (checker->Relation()->IsSupertypeOf(constituent, checker->GlobalETSObjectType())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static Type *ExtractArrayPreferredType(ETSChecker *checker, ir::ArrayExpression *expr)
 {
     Type *preferredType = GetPreferredTypeFromArraySupertypes(checker, expr->PreferredType());
@@ -1725,9 +1740,14 @@ static Type *ExtractArrayPreferredType(ETSChecker *checker, ir::ArrayExpression 
     }
 
     if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSUnionType()) {
-        if (auto *picked = SelectPreferredTypeForLiteral(checker, expr, expr->PreferredType()->AsETSUnionType())) {
-            preferredType = picked;
+        auto *const unionType = expr->PreferredType()->AsETSUnionType();
+        if (auto *const selected = SelectPreferredTypeForLiteral(checker, expr, unionType); selected != nullptr) {
+            preferredType = selected;
             expr->SetPreferredType(preferredType);
+        } else if (preferredType != nullptr && HasObjectLikeConstituent(checker, unionType)) {
+            // defer the typing to element inference so the surrounding assignment or
+            // invocation matches that constituent instead of forcing the misfitting array/tuple constituent.
+            preferredType = nullptr;
         }
     }
 

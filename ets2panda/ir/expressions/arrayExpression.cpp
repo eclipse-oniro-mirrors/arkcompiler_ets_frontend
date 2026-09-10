@@ -353,27 +353,6 @@ static std::optional<checker::Type *> ExtractPossiblePreferredType(checker::Type
     return std::nullopt;
 }
 
-static void TrySetPreferredTypeForEmptyArray(checker::ETSChecker *checker, ir::ArrayExpression *arrExpr,
-                                             checker::Type *param)
-{
-    checker::Type *matchedType = nullptr;
-    for (checker::Type *typeOfUnion : param->AsETSUnionType()->ConstituentTypes()) {
-        auto possibleType = ExtractPossiblePreferredType(typeOfUnion);
-        if (!possibleType.has_value()) {
-            continue;
-        }
-        if (matchedType != nullptr) {
-            checker->LogError(diagnostic::AMBIGUOUS_ARRAY_LITERAL_TYPE, {matchedType, possibleType.value()},
-                              arrExpr->Start());
-            return;
-        }
-        matchedType = possibleType.value();
-    }
-    if (matchedType != nullptr) {
-        arrExpr->SetPreferredType(matchedType);
-    }
-}
-
 void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
                                                   checker::TypeRelationFlag flags)
 {
@@ -428,16 +407,12 @@ void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *chec
     }
 
     if (param->IsETSUnionType()) {
-        if (elements_.empty()) {
-            TrySetPreferredTypeForEmptyArray(checker, this, param);
-            return;
-        }
-        for (checker::Type *typeOfUnion : param->AsETSUnionType()->ConstituentTypes()) {
-            SetPreferredTypeOnFuncParam(checker, typeOfUnion, flags);
-        }
-    } else {
-        SetPreferredTypeOnFuncParam(checker, param, flags);
+        // Defer the union disambiguation to the array literal check: ETSAnalyzer reports
+        // AMBIGUOUS_ARRAY_LITERAL_TYPE when the literal (empty or not) matches several union constituents.
+        SetPreferredType(param);
+        return;
     }
+    SetPreferredTypeOnFuncParam(checker, param, flags);
 }
 
 }  // namespace ark::es2panda::ir
