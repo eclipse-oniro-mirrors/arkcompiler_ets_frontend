@@ -50,6 +50,7 @@ set(ETS2TS_TESTS
     "./ets2ts/test_ets2ts_export_named_default_expr.ets"
     "./ets2ts/test_ets2ts_circular_type_alias.ets"
     "./ets2ts/test_ets2ts_builtin_global_type.ets"
+    "./ets2ts/test_ets2ts_ignored_list.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})

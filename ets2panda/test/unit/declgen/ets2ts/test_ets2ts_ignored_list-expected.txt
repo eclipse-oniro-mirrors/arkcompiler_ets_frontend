@@ -1,0 +1,115 @@
+import st from "@ohos.lang.interop";
+import { A1 } from "../ets/expected/export_directives_1.txt";
+export declare let pref: ESObject;
+export declare let val: ESObject;
+export declare let opts: ESObject;
+export declare let stor: ESObject;
+export declare let prefSimple: ESObject;
+export declare function getPref(key: string, defVal: ESObject): ESObject;
+export declare function getOpts(): ESObject;
+export declare function multiGet(...vals: Array<ESObject>): void;
+export declare function f4(opts?: ESObject): void;
+export declare let mixed: ESObject | string;
+export declare let prom: Promise<ESObject>;
+export declare let arr: st.Array<ESObject>;
+export declare let mp: st.Map<string, ESObject>;
+export declare let tup: [ESObject , string];
+export declare let fn: (x: ESObject) => void;
+export declare function f3<T extends ESObject>(t: T): T;
+export declare let nested: Promise<st.Map<string, ESObject>>;
+export declare let nestedArr: st.Array<st.Array<ESObject>>;
+export declare let multiUnion: ESObject | ESObject;
+export declare let allSdkTup: [ESObject , ESObject];
+export declare let sdkFn: (x: ESObject) => ESObject;
+export declare let local: LocalClass;
+export declare let localAlias: LocalAlias;
+export declare let toastOpts: ESObject;
+export declare let dialogOpts: ESObject;
+export declare let btn: ESObject;
+export declare let levelMode: ESObject;
+export declare let dialogCtrl: ESObject;
+export declare function showToast(opts: ESObject): ESObject;
+export declare function getButton(): ESObject;
+export declare let paPromise: Promise<ESObject>;
+export declare let paMultiUnion: ESObject | ESObject;
+export declare function genericFn<ValueType>(v: ValueType): ValueType;
+@Component
+export declare class C {
+    @Require(undefined)
+    @State
+    public field: string;
+    constructor();
+}
+export declare interface SceneService {
+    getScene3d(): ESObject | undefined | null;
+}
+export declare class PrefStore implements ESObject {
+    public put(key: string, val: ESObject): void;
+    public get(key: string, defVal: ESObject): ESObject;
+    public has(key: string): boolean;
+    public delete(key: string): void;
+    public clear(): void;
+    public flush(): void;
+    public getAll(): Object;
+    constructor();
+}
+export declare interface PrefOpts extends ESObject {
+    extra: string;
+}
+export declare class StorClass {
+    constructor();
+}
+export declare class MyLevelOrder {
+    constructor();
+}
+export declare class WithField {
+    public get field(): ESObject;
+    public set field(value: ESObject);
+    constructor();
+}
+export declare interface IMethod {
+    foo(opts: ESObject): ESObject;
+    bar(): ESObject;
+}
+export type PrefValue = ESObject;
+export declare class Accessor {
+    public get p(): ESObject;
+    public set p(value: ESObject);
+    constructor();
+}
+export declare class LocalClass {
+    public get val(): number;
+    public set val(value: number);
+    constructor();
+}
+export type LocalAlias = string;
+export declare class MyDialog implements ESObject {
+    public close(): void;
+    public getState(): ESObject;
+    constructor();
+}
+export type MyButtons = ESObject;
+export declare class GenericMethods {
+    public m<ValueType>(x: ValueType): ValueType;
+    constructor();
+}
+export declare interface IGenericMethod {
+    m<ValueType>(x: ValueType): ValueType;
+}
+export declare class Container<ValueType> {
+    public get v(): ValueType;
+    public set v(value: ValueType);
+    constructor();
+}
+export declare interface IContainer<ValueType> {
+    v: ValueType;
+}
+export type A = ESObject;
+export declare namespace ns {
+    const someVarWithConflictName: ValueType;
+    class ValueType {
+        public constructor();
+        public foo(): void;
+    }
+}
+export { A1 };
