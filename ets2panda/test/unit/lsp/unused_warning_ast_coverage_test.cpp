@@ -238,6 +238,19 @@ function useEnumBoundary(): number {
 useEnumBoundary()
 )";
 
+constexpr char ENUM_MEMBER_LEVEL_BOUNDARY_SOURCE[] = R"(
+enum MixedUsageEnum {
+    USED_MEMBER,
+    UNUSED_MEMBER,
+}
+
+function usePartialEnum(): number {
+    return MixedUsageEnum.USED_MEMBER
+}
+
+usePartialEnum()
+)";
+
 constexpr char SHADOWED_ENUM_BOUNDARY_SOURCE[] = R"(
 enum ShadowedEnumBoundary {
     VALUE,
@@ -959,6 +972,56 @@ function useVault(): number {
 useVault()
 )";
 
+constexpr char CONST_INITIALIZER_REFERENCE_BOUNDARY_SOURCE[] = R"(
+function constSpecialized(): number {
+    const unusedConst1: number = 1.0
+    const unusedConst2: string = "hello"
+    const unusedConst3: boolean = true
+    const usedConst: number = 42.0
+    const usedConstInExpression: number = usedConst + 1.0
+    return usedConstInExpression
+}
+
+constSpecialized()
+)";
+
+constexpr char TOP_LEVEL_CONST_BOUNDARY_SOURCE[] = R"(
+const unusedTopLevelConst: number = 1.0
+let unusedTopLevelLet: number = 2.0
+const usedTopLevelConst: number = 3.0
+
+function useTopLevelConst(): number {
+    return usedTopLevelConst
+}
+
+useTopLevelConst()
+)";
+
+constexpr char CONST_LET_MIXED_BOUNDARY_SOURCE[] = R"(
+function mixedConstLet(): number {
+    const unusedConst: number = 1.0
+    let unusedLet: number = 2.0
+    const usedConst: number = 3.0
+    let usedLet: number = 4.0
+    return usedConst + usedLet
+}
+
+mixedConstLet()
+)";
+
+constexpr char CONST_PASSED_AS_ARGUMENT_BOUNDARY_SOURCE[] = R"(
+function computeConstArgument(value: number): number {
+    return value + 1.0
+}
+
+function constPassedAsArgument(): number {
+    const passed: number = 1.0
+    return computeConstArgument(passed)
+}
+
+constPassedAsArgument()
+)";
+
 constexpr char NESTED_BLOCK_DECLARATION_BOUNDARY_SOURCE[] = R"(
 function useNestedBlockDeclarations(): number {
     let outerValue = 1.0
@@ -1152,6 +1215,19 @@ TEST_F(LSPUnusedWarningAstCoverageTests, CoversEnumMemberAccessBoundary)
                                          "'UsedEnumBoundary' is never used",
                                          "'useEnumBoundary' is never used",
                                          "'value' is never used",
+                                     });
+}
+
+TEST_F(LSPUnusedWarningAstCoverageTests, CoversEnumMemberLevelIsNotReportedBoundary)
+{
+    const auto diagnostics =
+        GetSemanticDiagnostics("unused_warning_enum_member_level_boundary.ets", ENUM_MEMBER_LEVEL_BOUNDARY_SOURCE);
+
+    ExpectNoDiagnostics(diagnostics, {
+                                         "'MixedUsageEnum' is never used",
+                                         "'USED_MEMBER' is never used",
+                                         "'UNUSED_MEMBER' is never used",
+                                         "'usePartialEnum' is never used",
                                      });
 }
 
@@ -1732,6 +1808,67 @@ TEST_F(LSPUnusedWarningAstCoverageTests, CoversPrivateMemberAccessThroughSameCla
                                          "'first' is never used",
                                          "'second' is never used",
                                          "'other' is never used",
+                                     });
+}
+
+TEST_F(LSPUnusedWarningAstCoverageTests, CoversConstInitializerReferenceAfterFoldingBoundary)
+{
+    const auto diagnostics = GetSemanticDiagnostics("unused_warning_const_initializer_reference_boundary.ets",
+                                                    CONST_INITIALIZER_REFERENCE_BOUNDARY_SOURCE);
+
+    ExpectDiagnostics(diagnostics, {
+                                       "'unusedConst1' is never used",
+                                       "'unusedConst2' is never used",
+                                       "'unusedConst3' is never used",
+                                   });
+    ExpectNoDiagnostics(diagnostics, {
+                                         "'constSpecialized' is never used",
+                                         "'usedConst' is never used",
+                                         "'usedConstInExpression' is never used",
+                                     });
+}
+
+TEST_F(LSPUnusedWarningAstCoverageTests, CoversTopLevelConstBoundary)
+{
+    const auto diagnostics =
+        GetSemanticDiagnostics("unused_warning_top_level_const_boundary.ets", TOP_LEVEL_CONST_BOUNDARY_SOURCE);
+
+    ExpectDiagnostics(diagnostics, {
+                                       "'unusedTopLevelConst' is never used",
+                                       "'unusedTopLevelLet' is never used",
+                                   });
+    ExpectNoDiagnostics(diagnostics, {
+                                         "'usedTopLevelConst' is never used",
+                                         "'useTopLevelConst' is never used",
+                                     });
+}
+
+TEST_F(LSPUnusedWarningAstCoverageTests, CoversConstLetMixedBoundary)
+{
+    const auto diagnostics =
+        GetSemanticDiagnostics("unused_warning_const_let_mixed_boundary.ets", CONST_LET_MIXED_BOUNDARY_SOURCE);
+
+    ExpectDiagnostics(diagnostics, {
+                                       "'unusedConst' is never used",
+                                       "'unusedLet' is never used",
+                                   });
+    ExpectNoDiagnostics(diagnostics, {
+                                         "'mixedConstLet' is never used",
+                                         "'usedConst' is never used",
+                                         "'usedLet' is never used",
+                                     });
+}
+
+TEST_F(LSPUnusedWarningAstCoverageTests, CoversConstPassedAsArgumentBoundary)
+{
+    const auto diagnostics = GetSemanticDiagnostics("unused_warning_const_passed_as_argument_boundary.ets",
+                                                    CONST_PASSED_AS_ARGUMENT_BOUNDARY_SOURCE);
+
+    ExpectNoDiagnostics(diagnostics, {
+                                         "'computeConstArgument' is never used",
+                                         "'value' is never used",
+                                         "'constPassedAsArgument' is never used",
+                                         "'passed' is never used",
                                      });
 }
 

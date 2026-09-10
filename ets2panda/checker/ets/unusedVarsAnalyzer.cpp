@@ -16,6 +16,7 @@
 #include "checker/ets/unusedVarsAnalyzer.h"
 
 #include "checker/types/ets/etsObjectType.h"
+#include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
 #include "generated/tokenType.h"
 #include "ir/base/catchClause.h"
@@ -29,6 +30,7 @@
 #include "ir/expressions/assignmentExpression.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/literal.h"
 #include "ir/expressions/memberExpression.h"
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importNamespaceSpecifier.h"
@@ -77,6 +79,32 @@ static bool SourcePositionMatchesName(const lexer::SourcePosition &position, con
     const auto nameText = std::string_view {name.Utf8()};
     return position.index + nameText.size() <= source.size() &&
            source.substr(position.index, nameText.size()) == nameText;
+}
+
+static bool ShouldTraverseOriginalReferenceNode(const ir::AstNode *const node)
+{
+    return node != nullptr && node->IsExpression() && node->AsExpression()->IsLiteral() &&
+           node->OriginalNode() != nullptr && node->OriginalNode() != node && node->OriginalNode()->IsExpression();
+}
+
+static const varbinder::Variable *ResolveReferenceVariable(const ir::Identifier *const ident)
+{
+    if (ident == nullptr) {
+        return nullptr;
+    }
+
+    if (ident->Variable() != nullptr) {
+        return ident->Variable();
+    }
+
+    auto *scope = compiler::NearestScope(ident);
+    if (scope == nullptr) {
+        return nullptr;
+    }
+
+    static constexpr auto OPTIONS =
+        varbinder::ResolveBindingOptions::ALL_DECLARATION | varbinder::ResolveBindingOptions::ALL_VARIABLES;
+    return scope->Find(ident->Name(), OPTIONS).variable;
 }
 
 static const ir::ETSImportDeclaration *GetOwnerImportDeclaration(const ir::AstNode *node)
@@ -734,7 +762,7 @@ void UnusedVarsAnalyzer::TryMarkReference(const ir::Identifier *const ident)
         return;
     }
 
-    const auto *const variable = ident->Variable();
+    const auto *const variable = ResolveReferenceVariable(ident);
     if (variable != nullptr && declarations_.find(variable) != declarations_.end()) {
         references_.insert(variable);
         return;
@@ -802,8 +830,13 @@ void UnusedVarsAnalyzer::TryMarkPrivateMemberReference(const ir::MemberExpressio
 
 void UnusedVarsAnalyzer::MarkReferences(const ir::AstNode *const node)
 {
-    if (node == nullptr) {
+    if (node == nullptr || visitedReferenceNodes_.find(node) != visitedReferenceNodes_.end()) {
         return;
+    }
+    visitedReferenceNodes_.insert(node);
+
+    if (ShouldTraverseOriginalReferenceNode(node)) {
+        MarkReferences(node->OriginalNode());
     }
 
     if (node->IsClassDeclaration() && GetOriginalEnumDeclaration(node->AsClassDeclaration()) != nullptr) {
