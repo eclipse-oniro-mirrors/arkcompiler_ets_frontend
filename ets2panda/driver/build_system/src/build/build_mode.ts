@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,16 @@
  * limitations under the License.
  */
 
+import * as path from 'path';
+
 import { BaseMode } from './base_mode';
 import {
     BuildConfig,
     ES2PANDA_MODE
 } from '../types';
 import { RecordEvent } from '../util/statsRecorder';
+import { ensurePathExists } from '../util/utils';
+import { SYMBOL_TABLE_FILE } from '../pre_define';
 
 export class BuildMode extends BaseMode {
     constructor(buildConfig: BuildConfig) {
@@ -48,6 +52,29 @@ export class BuildMode extends BaseMode {
             // Default fallback: same as RUN_PARALLEL
             await super.runParallel();
         }
+
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
+    }
+
+    public async runReload(): Promise<void> {
+        if (this.isFullBuildReload) {
+            // first reload invocation: full build lays down the cache for later reloads;
+            // the compiler dumps the symbol table into the reload intermediate dir,
+            // whose parent must exist first (the C++ emitter does not create dirs on fopen)
+            this.logger.printInfo('Run reload full build');
+            ensurePathExists(path.join(this.reloadIntermediateDir, SYMBOL_TABLE_FILE));
+            // full-build reload always compiles in simultaneous mode, regardless of es2pandaMode,
+            // so that the symbol table dump covers the whole program in one linker-ready abc
+            await super.runSimultaneous();
+            this.statsRecorder.record(RecordEvent.END);
+            this.statsRecorder.writeSumSingle();
+            return;
+        }
+        this.logger.printInfo('Run reload');
+        // Reload: recompile only the changed files, reuse the prior arktsconfig,
+        // and emit artifacts to reloadOutPath without touching the main output.
+        await super.runSimultaneousForReload();
 
         this.statsRecorder.record(RecordEvent.END);
         this.statsRecorder.writeSumSingle();

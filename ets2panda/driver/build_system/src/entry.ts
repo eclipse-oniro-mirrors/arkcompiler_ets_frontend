@@ -54,6 +54,10 @@ export async function runBuild(projectConfig: BuildConfig, loggerGetter?: Logger
             if (projectConfig.enableDeclgenEts2Ts === true) {
                 logger.printInfo('generate Declaration')
                 await buildMode.generateDeclarationV1Parallel();
+            } else if (projectConfig.buildType === BUILD_TYPE.HOT_RELOAD ||
+                projectConfig.buildType === BUILD_TYPE.COLD_RELOAD) {
+                logger.printInfo('reload build')
+                await buildMode.runReload();
             } else if (projectConfig.buildType === BUILD_TYPE.BUILD ||
                 buildConfig.isLocalTest || buildConfig.isOhosTest) {
                 logger.printInfo('just build')

@@ -28,7 +28,8 @@ import {
     ArkTS,
     KoalaModule,
     JobContentType,
-    BUILD_MODE
+    BUILD_MODE,
+    BUILD_TYPE
 } from '../types';
 import {
     Logger,
@@ -45,7 +46,9 @@ import {
 import {
     DECL_ETS_SUFFIX,
     ENABLE_DECLARATION_BARRIER,
-    MERGED_INTERMEDIATE_FILE
+    MERGED_INTERMEDIATE_FILE,
+    RELOAD_INTERMEDIATE_DIR,
+    SYMBOL_TABLE_FILE
 } from '../pre_define';
 import {
     PluginDriver,
@@ -145,6 +148,9 @@ export class Ets2panda {
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
     private readonly declgenV2OutDir: string;
     private readonly cacheDir: string;
+    private readonly isReload: boolean;
+    private readonly isFullBuildReload: boolean;
+    private readonly buildType: BUILD_TYPE;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
     private readonly projectRootPath: string;
     private readonly debugBuild: boolean = false;
@@ -163,6 +169,11 @@ export class Ets2panda {
         this.buildSdkPath = buildConfig.buildSdkPath;
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
+        this.buildType = buildConfig.buildType;
+        this.isFullBuildReload = buildConfig.reload?.isFullBuild === true;
+        // full-build reload outputs to the main cache like a normal build
+        this.isReload = (buildConfig.buildType === BUILD_TYPE.HOT_RELOAD ||
+            buildConfig.buildType === BUILD_TYPE.COLD_RELOAD) && !this.isFullBuildReload;
         this.declgenV2OutDir = buildConfig.declgenV2OutPath;
         this.pluginDriver.initPlugins(buildConfig);
         this.projectRootPath = buildConfig.projectRootPath;
@@ -253,9 +264,23 @@ export class Ets2panda {
             ets2pandaCmd.push('--output')
             ets2pandaCmd.push((job.content as FileInfo).output)
         } else if (job.contentType === JobContentType.CLUSTER && !incremental) {
-            // In case of simultaneous compilation and not incremental the output abc path is pre defined
+            // In case of simultaneous compilation and not incremental the output abc path is pre defined.
+            // Reload mode relocates intermediates into <cachePath>/reload/, keyed on the mode
+            // (not on field presence) because hvigor may also pass reloadOutPath in non-reload builds.
+            const outDir = this.isReload ? path.resolve(this.cacheDir, RELOAD_INTERMEDIATE_DIR) : this.cacheDir;
             ets2pandaCmd.push('--output')
-            ets2pandaCmd.push(path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE))
+            ets2pandaCmd.push(path.resolve(outDir, MERGED_INTERMEDIATE_FILE))
+        }
+
+        if (this.isReload || this.isFullBuildReload) {
+            const symbolTableFile = path.resolve(this.cacheDir, RELOAD_INTERMEDIATE_DIR, SYMBOL_TABLE_FILE);
+            if (this.isFullBuildReload) {
+                // first reload invocation: dump the symbol table that later reloads feed back
+                ets2pandaCmd.push(`--dump-symbol-table=${symbolTableFile}`);
+            } else {
+                ets2pandaCmd.push(this.buildType === BUILD_TYPE.HOT_RELOAD ? '--hot-reload' : '--cold-reload');
+                ets2pandaCmd.push(`--input-symbol-table=${symbolTableFile}`);
+            }
         }
 
         if (this.debugBuild) {
