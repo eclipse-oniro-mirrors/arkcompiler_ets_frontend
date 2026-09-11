@@ -115,6 +115,18 @@ std::string ComputeRelativeImportPath(const std::string &fromFile, const std::st
     return StripExtension(relative);
 }
 
+static bool IsBetterTouchingToken(const ir::AstNode *candidate, const ir::AstNode *current)
+{
+    if (candidate == nullptr) {
+        return false;
+    }
+    if (current == nullptr) {
+        return true;
+    }
+
+    return candidate->End().index - candidate->Start().index < current->End().index - current->Start().index;
+}
+
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 Initializer::Initializer(bool isLogAwaible)
 {
@@ -163,7 +175,7 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
     for (auto *stmt : ast->AsETSModule()->Statements()) {
         ir::AstNode *stmtMatch = stmt->FindChild(checkFunc);
         if (stmtMatch != nullptr && stmtMatch->Start().index <= pos && stmtMatch->End().index >= pos &&
-            !flagFindFirstMatch) {
+            !flagFindFirstMatch && IsBetterTouchingToken(stmtMatch, bestMatch)) {
             bestMatch = stmtMatch;
         }
     }
