@@ -27,18 +27,16 @@ import { BuildFrameworkMode } from './build/build_framework_mode';
 import { cleanKoalaModule } from './init/init_koala_modules';
 import { buildForMac } from './entry_mac';
 
+
 // NOTE: to be refactored
-function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): void {
+function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig): void {
     if (projectConfig.dependentModuleList) {
         projectConfig.dependencyModuleList = [...projectConfig.dependentModuleList]
     }
-
-    const hvigorLogger = projectConfig.getHvigorConsoleLogger as LoggerGetter
-    Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger), projectConfig.enableDebugOutput);
 }
 
-export async function runBuild(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
-    backwardCompatibleBuildConfigStub(projectConfig, loggerGetter)
+export async function runBuild(projectConfig: BuildConfig): Promise<void> {
+    backwardCompatibleBuildConfigStub(projectConfig)
 
     let logger: Logger = Logger.getInstance();
     logger.printDebug(`Project config: ${JSON.stringify(projectConfig, null, 1)}`)
@@ -81,14 +79,18 @@ function clean(): void {
 }
 
 export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
+    // init main process logger , print log to hvigor
+    const hvigorLogger = projectConfig.getHvigorConsoleLogger as LoggerGetter;
+    Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger), projectConfig.enableDebugOutput);
+
     // execute build in child process for mac platform
     // In mac platform with daemon mode , dlopen will success when first compiled in one process
     // In the following compiled step , dlopen will fail
     // So we make unique process with mac build
     if (isMac()) {
-        return buildForMac(projectConfig, loggerGetter);
+        return buildForMac(projectConfig);
     }
-    return runBuild(projectConfig, loggerGetter);
+    return runBuild(projectConfig);
 }
 
 function main(): void {

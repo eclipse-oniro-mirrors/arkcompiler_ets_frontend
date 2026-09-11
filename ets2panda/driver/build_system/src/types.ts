@@ -15,6 +15,7 @@
 
 import type { BytecodeObfuscationConfig } from './obfuscation/obfuscation_bytecode_config';
 import type { MergedConfig } from './obfuscation/obfuscation_merged_config';
+import type { LogData } from './logger';
 
 export enum RECORD_TYPE {
     DEFAULT_TYPE = 'OFF',
@@ -63,8 +64,67 @@ export enum WorkerMessageType {
     ERROR_OCCURED = 'ERROR_OCCURED',
     ASSIGN_TASK = 'ASSIGN_TASK',
     TASK_FINISHED = 'TASK_FINISHED',
-    LOG = 'LOG'
+    LOG = 'LOG',
+    BUILD = 'BUILD',
+    SUB_RESPONSE = 'SUB_RESPONSE'
 }
+
+export interface WorkerDeclGeneratedMessage {
+    type: WorkerMessageType.DECL_GENERATED;
+    data: { taskId: string };
+}
+
+export interface WorkerAbcDeclGeneratedMessage {
+    type: WorkerMessageType.ABC_DECL_GENERATED;
+    data: { taskId: string };
+}
+
+export interface WorkerAbcCompiledMessage {
+    type: WorkerMessageType.ABC_COMPILED;
+    data: { taskId: string };
+}
+
+export interface WorkerErrorMessage {
+    type: WorkerMessageType.ERROR_OCCURED;
+    data: { taskId: string; error: LogData | LogData[] };
+}
+
+export interface WorkerTaskFinishedMessage {
+    type: WorkerMessageType.TASK_FINISHED;
+}
+
+export interface WorkerTextLogMessage {
+    type: WorkerMessageType.LOG;
+    data: { level: LogLevel.INFO | LogLevel.WARN | LogLevel.DEBUG; message: string };
+}
+
+export interface WorkerErrorLogMessage {
+    type: WorkerMessageType.LOG;
+    data: { level: LogLevel.ERROR | LogLevel.ERROR_AND_EXIT; error: LogData };
+}
+
+export interface MainToWorkerMessage {
+    type: WorkerMessageType.BUILD;
+    config: BuildConfig;
+}
+
+export interface WorkerToMainMessage {
+    type: WorkerMessageType.SUB_RESPONSE;
+    success: boolean;
+    errMsg?: string;
+}
+
+export type WorkerLogMessage = WorkerTextLogMessage | WorkerErrorLogMessage;
+
+export type WorkerMessage =
+    | WorkerDeclGeneratedMessage
+    | WorkerAbcDeclGeneratedMessage
+    | WorkerAbcCompiledMessage
+    | WorkerErrorMessage
+    | WorkerTaskFinishedMessage
+    | WorkerLogMessage
+    | WorkerToMainMessage
+    | MainToWorkerMessage;
 
 export enum LogLevel {
     INFO = 'INFO',

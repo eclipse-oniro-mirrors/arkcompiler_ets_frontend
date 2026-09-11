@@ -57,6 +57,7 @@ build_system_sources = [
   "./src/util/statsRecorder.ts",
   "./src/util/utils.ts",
   "./src/util/worker_exit_handler.ts",
+  "./src/util/logger_util.ts",
 ]
 
 action("build_build_system") {
