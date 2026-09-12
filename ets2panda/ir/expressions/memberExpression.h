@@ -222,6 +222,10 @@ public:
 
     void AddComponentTypeMemberAccessor(checker::Type *t, MemberAccessor m);
     const ComponentTypeMemberAccessors &GetComponentTypeMemberAccessors() const;
+    bool HasComponentTypeMemberAccessors() const
+    {
+        return componentTypeMemberAccessors_.has_value();
+    }
 
     std::string ToString() const override;
 

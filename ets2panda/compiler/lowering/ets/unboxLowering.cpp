@@ -15,6 +15,8 @@
 
 #include "compiler/lowering/ets/unboxLowering.h"
 
+#include <variant>
+
 #include "checker/types/type.h"
 #include "generated/tokenType.h"
 #include "ir/visitor/IterateAstVisitor.h"
@@ -1025,10 +1027,37 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
         AdjustCallArgsForCallee(uctx_, func, call->Signature(), call->Arguments());
         NormalizeCallSigReturn(uctx_, call->Signature(), func);
 
+        HandleUnionCallConstituentSignatures(call);
+
         if (call->Signature()->HasSignatureFlag(checker::SignatureFlags::THIS_RETURN_TYPE)) {
             SetThisReturnCallType(uctx_, call);
         } else if (auto *returnType = call->Signature()->ReturnType(); returnType->IsETSPrimitiveType()) {
             call->SetTsType(returnType);
+        }
+    }
+
+    void HandleUnionCallConstituentSignatures(ir::CallExpression *call)
+    {
+        if (!call->Callee()->IsMemberExpression()) {
+            return;
+        }
+        auto *memberExpr = call->Callee()->AsMemberExpression();
+        if (memberExpr->Object() == nullptr || memberExpr->Object()->TsType() == nullptr ||
+            !memberExpr->HasComponentTypeMemberAccessors()) {
+            return;
+        }
+        auto *objType = uctx_->checker->GetApparentType(memberExpr->Object()->TsType());
+        if (objType == nullptr || !objType->IsETSUnionType()) {
+            return;
+        }
+        for (const auto &[constituentType, accessor] : memberExpr->GetComponentTypeMemberAccessors()) {
+            (void)constituentType;
+            if (std::holds_alternative<checker::Signature *>(accessor)) {
+                auto *sig = std::get<checker::Signature *>(accessor);
+                if (sig != nullptr && sig->HasFunction()) {
+                    HandleDeclarationNode(uctx_, sig->Function());
+                }
+            }
         }
     }
 
