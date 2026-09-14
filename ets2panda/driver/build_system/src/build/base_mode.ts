@@ -32,7 +32,8 @@ import {
     DECL_FILE_MAP_NAME,
     ETSCACHE_SUFFIX,
     DEP_ANALYZER_DIR,
-    DEP_ANALYZER_OUTPUT_FILE
+    DEP_ANALYZER_OUTPUT_FILE,
+    RELOAD_INTERMEDIATE_DIR
 } from '../pre_define';
 import {
     ensurePathExists,
@@ -48,6 +49,7 @@ import {
 import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BuildConfig,
+    BUILD_TYPE,
     DependencyModuleConfig,
     ModuleInfo,
     ProcessCompileTask,
@@ -435,6 +437,28 @@ export abstract class BaseMode {
         return this.buildConfig.cachePath;
     }
 
+    public get isReloadMode(): boolean {
+        // a full-build reload (first invocation) must run the whole processBuildConfig
+        // to lay down the cache that later reloads reuse
+        return (this.buildConfig.buildType === BUILD_TYPE.HOT_RELOAD ||
+            this.buildConfig.buildType === BUILD_TYPE.COLD_RELOAD) &&
+            this.buildConfig.reload?.isFullBuild !== true;
+    }
+
+    public get isFullBuildReload(): boolean {
+        return this.buildConfig.reload?.isFullBuild === true;
+    }
+
+    public get reloadOutPath(): string {
+        return this.buildConfig.reload!.patchAbcPath!;
+    }
+
+    // reload intermediates (intermediate abc, linker input, symbol table) live under
+    // the cache dir; only the arklink result is emitted into reloadOutPath
+    public get reloadIntermediateDir(): string {
+        return path.resolve(this.cacheDir, RELOAD_INTERMEDIATE_DIR);
+    }
+
     public get dependencyModuleList(): DependencyModuleConfig[] {
         return this.buildConfig.dependencyModuleList;
     }
@@ -616,18 +640,43 @@ export abstract class BaseMode {
 
     private mergeAbcFiles(outPuts: string[] = []): void {
         this.collectAbcFileFromByteCodeHar();
-        let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
-        let allFiles: string[] = outPuts.concat(Array.from(this.abcFiles));
+        const allFiles: string[] = outPuts.concat(Array.from(this.abcFiles));
+        this.runAbcLinker(allFiles, this.mergedAbcFile, this.cacheDir, true);
+    }
+
+    // reload mode: link only the reload intermediate abc, emitting the final merged
+    // abc into reloadOutPath while keeping every intermediate (linker input included)
+    // in the reload intermediate dir; bytecode-har abc files are not collected and
+    // --strip-unused is omitted: the patch abc must keep symbols still referenced
+    // by the unchanged part of the application
+    private mergeAbcFilesForReload(intermediateFile: string): void {
+        // arklink does not create the output dir itself (fopen semantics)
+        ensurePathExists(path.join(this.reloadOutPath, MERGED_ABC_FILE));
+        this.runAbcLinker(
+            [intermediateFile],
+            path.resolve(this.reloadOutPath, MERGED_ABC_FILE),
+            this.reloadIntermediateDir,
+            false
+        );
+    }
+
+    // shared linker invocation: writes the linker input file and runs ark_link
+    // (all params required, no defaults)
+    private runAbcLinker(allFiles: string[], mergedFile: string, workDir: string, stripUnused: boolean): void {
         if (allFiles.length === 0) {
-            // if a 1.1 har rely on a 1.2 bytecode har, there will be no output files to link
+            // if a dynamic har rely on a static bytecode har, there will be no output files to link
             return;
         }
-        let linkerInputContent: string = allFiles.join(os.EOL);
-        fs.writeFileSync(linkerInputFile, linkerInputContent);
-        let abcLinkerCmd = ['"' + this.abcLinkerPath + '"']
-        abcLinkerCmd.push('--strip-unused');
+        const linkerInputFile: string = path.join(workDir, LINKER_INPUT_FILE);
+        ensurePathExists(linkerInputFile);
+        fs.writeFileSync(linkerInputFile, allFiles.join(os.EOL));
+
+        const abcLinkerCmd: string[] = ['"' + this.abcLinkerPath + '"'];
+        if (stripUnused) {
+            abcLinkerCmd.push('--strip-unused');
+        }
         abcLinkerCmd.push('--output');
-        abcLinkerCmd.push('"' + this.mergedAbcFile + '"');
+        abcLinkerCmd.push('"' + mergedFile + '"');
         abcLinkerCmd.push('--');
         abcLinkerCmd.push('@' + '"' + linkerInputFile + '"');
 
@@ -637,7 +686,7 @@ export abstract class BaseMode {
             abcLinkerCmdStr = loadLibrary + ' ' + abcLinkerCmdStr;
         }
         this.logger.printDebug(abcLinkerCmdStr);
-        ensurePathExists(this.mergedAbcFile);
+        ensurePathExists(mergedFile);
         try {
             child_process.execSync(abcLinkerCmdStr).toString();
         } catch (error) {
@@ -936,6 +985,9 @@ export abstract class BaseMode {
     }
 
     protected processBuildConfig(): void {
+        if (this.isReloadMode) {
+            return;
+        }
         this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
         this.collectModuleFiles();
@@ -966,6 +1018,9 @@ export abstract class BaseMode {
     }
 
     protected backwardCompatibilityWorkaroundStub(): void {
+        if (this.isReloadMode) {
+            return;
+        }
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!
         // NOTE: workaround (just to add entryFile to mainModule)
         // NOTE: to be refactored
@@ -985,7 +1040,7 @@ export abstract class BaseMode {
         if (this.entryFiles.size === 0) {
             this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
             // if there is no entry files, just need to merge the abc files of har packages
-            // that may be relied on, e.g., a 1.1 hap relying on a 1.2 bytecode har
+            // that may be relied on, e.g., a dynamic hap relying on a static bytecode har
             this.mergeAbcFiles([]);
             return;
         }
@@ -1015,6 +1070,62 @@ export abstract class BaseMode {
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
         this.mergeAbcFiles([path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE)]);
+    }
+
+    private readChangeFileList(): Set<string> {
+        const listPath: string | undefined = this.buildConfig.reload?.changedFileList;
+        if (!listPath || !fs.existsSync(listPath)) {
+            return new Set<string>();
+        }
+
+        // changefilelist_static.json5 holds a JSON5 object with several fields;
+        // only modifiedStaticFiles (of { filePath } entries) describes the files to recompile
+        const content: { modifiedStaticFiles?: { filePath: string }[] } =
+            require('json5').parse(fs.readFileSync(listPath, 'utf-8'));
+        return new Set<string>((content.modifiedStaticFiles ?? []).map((item) => item.filePath));
+    }
+
+    public async runSimultaneousForReload(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SIMULTANEOUS));
+
+        this.entryFiles = this.readChangeFileList();
+        if (this.entryFiles.size === 0) {
+            this.logger.printInfo('No changed files for reload, skip.');
+            return;
+        }
+
+        ensurePathExists(path.join(this.reloadIntermediateDir, MERGED_INTERMEDIATE_FILE));
+
+        const arktsConfigFile: string = path.resolve(this.cacheDir, this.mainPackageName, ARKTSCONFIG_JSON_FILE);
+        const content: FileInfo[] = [];
+        this.entryFiles.forEach((file: string) => {
+            content.push({
+                input: file,
+                output: ''
+            }); 
+        });
+
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig);
+        const res = this.compile('ReloadBuildId', {
+            contentType: JobContentType.CLUSTER,
+            content: content,
+            arktsConfig: arktsConfigFile,
+            moduleName: this.mainPackageName,
+            moduleRoot: this.mainModuleRootPath,
+            declgenConfig: {
+                output: this.buildConfig.declgenV2OutPath!
+            },
+            jobType: CompileJobType.ABC
+        }, false);
+        Ets2panda.destroyInstance();
+
+        if (!res) {
+            throw new Error('Reload build failed.');
+        }
+
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFilesForReload(path.resolve(this.reloadIntermediateDir, MERGED_INTERMEDIATE_FILE));
     }
 
     public async runParallel(): Promise<void> {

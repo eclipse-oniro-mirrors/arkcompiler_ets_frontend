@@ -17,6 +17,11 @@ import { CLUSTERING_METHOD } from './types';
 
 export const ARKTSCONFIG_JSON_FILE: string = 'arktsconfig.json';
 export const MERGED_ABC_FILE: string = 'modules_static.abc';
+// symbol table dumped on the first (full-build) reload, fed back via --input-symbol-table on later reloads
+export const SYMBOL_TABLE_FILE: string = 'modules_static.st';
+// Subdirectory of cachePath holding reload intermediates (intermediate abc,
+// linker input, symbol table); only the arklink result goes to patchAbcPath.
+export const RELOAD_INTERMEDIATE_DIR: string = 'reload';
 export const MERGED_INTERMEDIATE_FILE: string = 'modules_intermediate.abc';
 export const LINKER_INPUT_FILE: string = 'fileInfo.txt';
 export const DEP_ANALYZER_INPUT_FILE: string = 'dependencyFileInfo.txt';

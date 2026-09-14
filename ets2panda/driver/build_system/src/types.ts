@@ -42,7 +42,9 @@ export enum COMPILE_MODE {
 
 export enum BUILD_TYPE {
     BUILD = 'build',
-    PREVIEW = 'preview'
+    PREVIEW = 'preview',
+    HOT_RELOAD = 'hotReload',
+    COLD_RELOAD = 'coldReload'
 }
 
 export enum OHOS_MODULE_TYPE {
@@ -278,6 +280,19 @@ export interface PathConfig {
     aceModuleJsonPath?: string;
     aceProfilePath?: string;
     aceModuleRoot?: string;
+    // Reload (hotReload/coldReload) mode configuration; absent in normal builds.
+    reload?: ReloadConfig;
+}
+
+export interface ReloadConfig {
+    // True on the first reload invocation: run a full build to lay down the cache
+    // (arktsconfig, module infos) that subsequent reloads reuse.
+    isFullBuild: boolean;
+    // Absolute path to changefilelist_static.json5 (JSON5 object, only modifiedStaticFiles is used);
+    // present when isFullBuild is false.
+    changedFileList?: string;
+    // Output directory of the reload patch abc and the dumped symbol table; always set in reload mode.
+    patchAbcPath: string;
 }
 
 /**
