@@ -137,6 +137,7 @@ export class Lsp {
   private enablePerfMetric: boolean = false;
   private perfMetricLogFilePath: string = '';
   private kitFiles: string[] = [];
+  private disposed: boolean = false;
 
   constructor(
     pathConfig: PathConfig,
@@ -2040,6 +2041,85 @@ export class Lsp {
     this.destroyContext(config, ctx);
   }
 
+  // SDK validation keeps one simultaneous context per diagnostic state and
+  // switches the active declaration file through the incremental API.
+  public initSdkValidatorCache(validationFiles: string[], targetState: Es2pandaContextState): void {
+    const files = Array.from(new Set(validationFiles.map((file) => path.resolve(file))));
+    if (files.length === 0) {
+      throw new Error('SDK validation files not found.');
+    }
+    if (
+      targetState !== Es2pandaContextState.ES2PANDA_STATE_PARSED &&
+      targetState !== Es2pandaContextState.ES2PANDA_STATE_CHECKED
+    ) {
+      throw new Error('SDK validator target state must be PARSED or CHECKED.');
+    }
+    if (this.filesMap.size !== 0) {
+      throw new Error('Cannot initialize SDK validator cache after another AST cache.');
+    }
+    const ets2pandaCmd = formEts2pandaCmd(this.defaultArkTsConfig, files[0], true);
+    const config = this.lspDriverHelper.createCfg(ets2pandaCmd, files[0]);
+    let ctx: KNativePointer | undefined;
+    try {
+      ctx = this.lspDriverHelper.createContextSimultaneousModeForLsp(config.peer, files.length, files, true);
+      const pluginContext = PluginDriver.getInstance().getPluginContext();
+      pluginContext.setCodingFilePath(files[0]);
+      pluginContext.setProjectConfig(config);
+      pluginContext.setContextPtr(ctx);
+      this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, ctx);
+      PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
+      if (targetState === Es2pandaContextState.ES2PANDA_STATE_CHECKED) {
+        this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, ctx);
+        PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
+      }
+      const content = this.getFileSource(files[0]);
+      const ret = global.es2pandaPublic._IncrementalPrepareProgram(ctx, files[0], content, 0);
+      if (ret !== 1) {
+        throw new Error(`Failed to select SDK declaration file: ${files[0]}`);
+      }
+      this.filesMap.set(files[0], {
+        fileContent: content,
+        fileConfig: config,
+        fileContext: ctx,
+        fileHash: this.computeContentHash(content)
+      });
+    } catch (error) {
+      if (ctx !== undefined) {
+        this.destroyContext(config, ctx);
+      } else {
+        this.lspDriverHelper.destroyConfig(config);
+      }
+      throw error;
+    }
+  }
+
+  public prepareSdkValidatorFile(fileName: string): void {
+    if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
+      throw new Error(`SDK declaration file not found: ${fileName}`);
+    }
+    if (this.filesMap.size !== 1) {
+      throw new Error('SDK validator cache is not initialized.');
+    }
+    const filePath = path.resolve(fileName);
+    const source = this.getFileSource(filePath);
+    const hash = this.computeContentHash(source);
+    const [activeFilePath, activeFileCache] = Array.from(this.filesMap.entries())[0];
+    if (activeFilePath === filePath && activeFileCache.fileHash === hash) {
+      return;
+    }
+    const ret = global.es2pandaPublic._IncrementalPrepareProgram(activeFileCache.fileContext, filePath, source, 0);
+    if (ret !== 1) {
+      throw new Error(`SDK declaration file was not compiled in the validator cache: ${filePath}`);
+    }
+    this.filesMap.clear();
+    this.filesMap.set(filePath, {
+      fileContent: source,
+      fileConfig: activeFileCache.fileConfig,
+      fileContext: activeFileCache.fileContext,
+      fileHash: hash
+    });
+  }
+
   // AST caching is not enabled by default.
   // Call `initAstCache` before invoking the language service interface to enable AST cache
   public initAstCache(): void {
@@ -2363,10 +2443,46 @@ export class Lsp {
     }
   }
 
+  private disposeCachedContexts(): void {
+    const contexts = new Set<KNativePointer>();
+    const configs = new Map<KNativePointer, Config>();
+    this.filesMap.forEach((fileCache) => {
+      contexts.add(fileCache.fileContext);
+      configs.set(fileCache.fileConfig.peer, fileCache.fileConfig);
+    });
+    this.filesMap.clear();
+
+    try {
+      if (contexts.size > 0) {
+        PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+      }
+    } finally {
+      contexts.forEach((context) => this.lspDriverHelper.destroyContext(context));
+      configs.forEach((config) => this.lspDriverHelper.destroyConfig(config));
+    }
+  }
+
+  private disposeGlobalContext(): void {
+    if (this.globalLspDriverHelper === undefined) {
+      return;
+    }
+    if (this.globalContextPtr !== undefined) {
+      this.globalLspDriverHelper.destroyGlobalContext(this.globalContextPtr);
+    }
+    if (this.globalConfig !== undefined) {
+      this.globalLspDriverHelper.destroyConfig(this.globalConfig);
+    }
+    this.globalLspDriverHelper.memFinalize();
+  }
+
   public dispose(): void {
-    this.globalLspDriverHelper!.destroyGlobalContext(this.globalContextPtr!);
-    this.globalLspDriverHelper!.destroyConfig(this.globalConfig!);
-    this.globalLspDriverHelper!.memFinalize();
+    if (this.disposed) {
+      return;
+    }
+    this.disposed = true;
+
+    this.disposeCachedContexts();
+    this.disposeGlobalContext();
   }
 }
 
