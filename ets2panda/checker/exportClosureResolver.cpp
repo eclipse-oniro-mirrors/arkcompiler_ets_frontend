@@ -640,6 +640,76 @@ ResolvedExportResult ExportClosureResolver::SelectMaterializedReExportResult(
     return result;
 }
 
+void ExportClosureResolver::CollectExportedNames(
+    const varbinder::ExportSurfaceId &surface, std::unordered_set<std::string> *exportedNames,
+    std::unordered_set<NameResolutionKey, NameResolutionKeyHash> *visitedSurfaces)
+{
+    if (surface.program == nullptr ||
+        !visitedSurfaces->insert(NameResolutionKey {surface.kind, surface.program, util::StringView {}}).second) {
+        return;
+    }
+
+    auto collectExplicit = [exportedNames](const auto &fact) {
+        if (!fact.isInvalid && !fact.exportedName.Empty() && !fact.exportedName.Is("default")) {
+            exportedNames->insert(std::string(fact.exportedName.Utf8()));
+        }
+    };
+    auto collectProgram = [this, exportedNames, visitedSurfaces, &collectExplicit](parser::Program *program) {
+        const auto *store = GetFactStore(program);
+        if (store == nullptr) {
+            return;
+        }
+
+        const auto &snapshot = store->GetExportFacts(program);
+        for (const auto &fact : snapshot.locals) {
+            collectExplicit(fact);
+        }
+        for (const auto &fact : snapshot.namedReExports) {
+            collectExplicit(fact);
+        }
+        for (const auto &fact : snapshot.namespaceExports) {
+            collectExplicit(fact);
+        }
+        for (const auto &fact : snapshot.starExports) {
+            if (fact.isInvalid) {
+                continue;
+            }
+            CollectExportedNames(GetImportedSurface(fact), exportedNames, visitedSurfaces);
+        }
+    };
+    if (!ForEachPackageFraction(surface, collectProgram)) {
+        collectProgram(surface.program);
+    }
+}
+
+std::vector<VisibleExportEntry> ExportClosureResolver::GetVisibleNamespaceExports(
+    const varbinder::ExportSurfaceId &surface)
+{
+    std::unordered_set<std::string> exportedNames;
+    std::unordered_set<NameResolutionKey, NameResolutionKeyHash> visitedSurfaces;
+    CollectExportedNames(surface, &exportedNames, &visitedSurfaces);
+
+    std::vector<std::string> sortedNames(exportedNames.begin(), exportedNames.end());
+    std::sort(sortedNames.begin(), sortedNames.end());
+
+    std::vector<VisibleExportEntry> result;
+    result.reserve(sortedNames.size());
+    for (const auto &name : sortedNames) {
+        auto exportedName = util::StringView(name);
+        const auto *resolved = ResolveExportNameWithoutAmbiguousDiagnostic(surface, exportedName);
+        if (resolved == nullptr || resolved->status != ExportResolutionStatus::RESOLVED) {
+            continue;
+        }
+        auto selected = SelectMaterializedSurfaceEntry(surface, exportedName, *resolved);
+        if (selected.status != ExportResolutionStatus::RESOLVED ||
+            (selected.entry.variable == nullptr && selected.entry.surface.program == nullptr)) {
+            continue;
+        }
+        result.push_back({name, selected.entry});
+    }
+    return result;
+}
+
 void ExportClosureResolver::Clear()
 {
     memo_.clear();

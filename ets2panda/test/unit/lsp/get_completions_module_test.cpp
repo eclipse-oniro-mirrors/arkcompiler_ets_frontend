@@ -17,12 +17,28 @@
 #include "lsp/include/completions.h"
 #include "lsp/include/internal_api.h"
 
+#include <algorithm>
+
 class LSPCompletionsModuleTests : public LSPAPITests {};
 
 using ark::es2panda::lsp::CompletionEntryKind;
 using ark::es2panda::lsp::Initializer;
 
 namespace {
+
+bool HasCompletion(const std::vector<ark::es2panda::lsp::CompletionEntry> &entries, const std::string &insertText)
+{
+    return std::any_of(entries.begin(), entries.end(),
+                       [&insertText](const auto &entry) { return entry.GetInsertText() == insertText; });
+}
+
+const ark::es2panda::lsp::CompletionEntry *FindCompletion(
+    const std::vector<ark::es2panda::lsp::CompletionEntry> &entries, const std::string &insertText)
+{
+    auto found = std::find_if(entries.begin(), entries.end(),
+                              [&insertText](const auto &entry) { return entry.GetInsertText() == insertText; });
+    return found == entries.end() ? nullptr : &*found;
+}
 
 TEST_F(LSPCompletionsModuleTests, ModuleCompletionsVariable)
 {
@@ -173,6 +189,115 @@ let a = MyModule.
         }
     }
     ASSERT_TRUE(found);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsModuleTests, NamespaceImportCompletesVisibleDirectExports)
+{
+    std::vector<std::string> files = {"namespace_direct_source.ets", "namespace_direct_user.ets"};
+    std::vector<std::string> texts = {R"(
+export const VALUE: number = 1;
+export function run(input: number): number { return input; }
+export class ExportedClass {}
+export interface ExportedInterface {}
+export type ExportedAlias = number;
+export enum ExportedEnum { VALUE }
+export @interface ExportedAnnotation {}
+export namespace Nested {}
+export default class HiddenDefault {}
+)",
+                                      R"(
+import * as M1 from './namespace_direct_source';
+M1.
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+
+    auto offset = texts[1].find("M1.") + 3;
+    auto entries = GetImpl()->getCompletionsAtPosition(ctx, offset).GetEntries();
+
+    const auto assertKind = [&entries](const std::string &insertText, CompletionEntryKind expectedKind) {
+        auto *entry = FindCompletion(entries, insertText);
+        ASSERT_NE(entry, nullptr) << insertText;
+        EXPECT_EQ(entry->GetCompletionKind(), expectedKind) << insertText;
+    };
+    assertKind("VALUE", CompletionEntryKind::PROPERTY);
+    assertKind("run()", CompletionEntryKind::METHOD);
+    assertKind("ExportedClass", CompletionEntryKind::CLASS);
+    assertKind("ExportedInterface", CompletionEntryKind::INTERFACE);
+    assertKind("ExportedAlias", CompletionEntryKind::ALIAS_TYPE);
+    assertKind("ExportedEnum", CompletionEntryKind::ENUM);
+    assertKind("ExportedAnnotation", CompletionEntryKind::ANNOTATION);
+    assertKind("Nested", CompletionEntryKind::MODULE);
+    EXPECT_FALSE(HasCompletion(entries, "HiddenDefault"));
+    EXPECT_FALSE(HasCompletion(entries, "default"));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsModuleTests, NamespaceImportUsesResolvedReExportClosure)
+{
+    std::vector<std::string> files = {"namespace_leaf_a.ets", "namespace_leaf_b.ets", "namespace_leaf_c.ets",
+                                      "namespace_barrel.ets", "namespace_reexport_user.ets"};
+    std::vector<std::string> texts = {R"(
+export const A: number = 1;
+)",
+                                      R"(
+export const B: number = 2;
+export const Shared: number = 3;
+)",
+                                      R"(
+export const Shared: number = 4;
+)",
+                                      R"(
+export { A as Renamed } from './namespace_leaf_a';
+export * from './namespace_leaf_b';
+export * from './namespace_leaf_c';
+export * as Nested from './namespace_leaf_a';
+)",
+                                      R"(
+import * as M1 from './namespace_barrel';
+M1.
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[4].c_str(), ES2PANDA_STATE_CHECKED);
+
+    auto offset = texts[4].find("M1.") + 3;
+    auto entries = GetImpl()->getCompletionsAtPosition(ctx, offset).GetEntries();
+
+    EXPECT_TRUE(HasCompletion(entries, "Renamed"));
+    EXPECT_TRUE(HasCompletion(entries, "B"));
+    EXPECT_TRUE(HasCompletion(entries, "Nested"));
+    EXPECT_FALSE(HasCompletion(entries, "A"));
+    EXPECT_FALSE(HasCompletion(entries, "Shared"));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsModuleTests, NamespaceImportCompletesCyclicStarExports)
+{
+    std::vector<std::string> files = {"namespace_cycle_a.ets", "namespace_cycle_b.ets", "namespace_cycle_user.ets"};
+    std::vector<std::string> texts = {R"(
+export const A: number = 1;
+export * from './namespace_cycle_b';
+)",
+                                      R"(
+export const B: number = 2;
+export * from './namespace_cycle_a';
+)",
+                                      R"(
+import * as M1 from './namespace_cycle_a';
+M1.
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+
+    auto offset = texts[2].find("M1.") + 3;
+    auto entries = GetImpl()->getCompletionsAtPosition(ctx, offset).GetEntries();
+
+    EXPECT_TRUE(HasCompletion(entries, "A"));
+    EXPECT_TRUE(HasCompletion(entries, "B"));
     initializer.DestroyContext(ctx);
 }
 

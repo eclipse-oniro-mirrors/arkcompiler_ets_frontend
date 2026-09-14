@@ -198,6 +198,7 @@ private:
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
+    void ParseFromKeywordImportSpecifier(ArenaVector<ir::AstNode *> *specifiers);
 
     void ParseSource(parser::Program *program);
     ir::ETSModule *ParseETSGlobalScript(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements);

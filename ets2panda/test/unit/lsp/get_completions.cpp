@@ -1558,6 +1558,294 @@ import {  } from './exportIndex2'
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsTests, getCompletionFromReExportClosure)
+{
+    std::vector<std::string> files = {"reexport_helper_m1.ets", "reexport_helper_m2.ets", "reexport_m1.ets",
+                                      "importReExportedMembers.ets"};
+    std::vector<std::string> texts = {R"(
+export function A(): string { return "A"; }
+export function B(): string { return "B"; }
+)",
+                                      R"(
+export function C(): number { return 1; }
+export function D(): number { return 2; }
+)",
+                                      R"(
+export * from "./reexport_helper_m1"
+export { C, D } from "./reexport_helper_m2"
+export function reexport_all(): void {
+    const a: string = A();
+    const c: number = C();
+}
+)",
+                                      R"(
+import {  } from "./reexport_m1"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "{  }";
+    auto markerPos = texts[3].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("{ ").size();
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[3].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = GetImpl()->getCompletionsAtPosition(ctx, offset).GetEntries();
+
+    const std::vector<std::string> expectedNames = {"A(): string", "B(): string", "C(): number", "D(): number",
+                                                    "reexport_all(): void"};
+    for (const auto &expectedName : expectedNames) {
+        auto it = std::find_if(entries.begin(), entries.end(),
+                               [&expectedName](const auto &entry) { return entry.GetName() == expectedName; });
+        ASSERT_NE(it, entries.end()) << "Expected completion '" << expectedName << "' not found";
+        EXPECT_EQ(it->GetInsertText(), expectedName.substr(0, expectedName.find('(')));
+    }
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, doNotSuggestAlreadyImportedReExportedFunctionAndVariable)
+{
+    std::vector<std::string> files = {"reexported_duplicate_source.ets", "reexported_duplicate_barrel.ets",
+                                      "importReExportedDuplicate.ets"};
+    std::vector<std::string> texts = {R"(
+export function A(): string { return "A"; }
+export function B(): string { return "B"; }
+export const VALUE: number = 1
+)",
+                                      R"(
+export * from "./reexported_duplicate_source"
+)",
+                                      R"(
+import { A, VALUE,  } from "./reexported_duplicate_barrel"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "VALUE,  }";
+    auto markerPos = texts[2].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("VALUE, ").size();
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = GetImpl()->getCompletionsAtPosition(ctx, offset).GetEntries();
+
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("B(): string", CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "B")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("A(): string", CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "A"),
+        CompletionEntry("VALUE: number", CompletionEntryKind::PROPERTY, std::string(GLOBALS_OR_KEYWORDS), "VALUE")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionFromDefaultClassAndExportedTypeAliases)
+{
+    std::vector<std::string> files = {"helper_m1.ets", "importExportedTypes.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {
+    log(msg: string): void {
+        console.log(msg)
+    }
+}
+export type UserId = string;
+export type OrderId = string;
+)",
+                                      R"(
+import {  } from "./helper_m1"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "{  }";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("{ ").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "default as Logger"),
+        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "UserId"),
+        CompletionEntry("OrderId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "OrderId")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionWithoutSelectiveImportBraces)
+{
+    std::vector<std::string> files = {"helper_m2.ets", "importExportedTypesWithoutBraces.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+export type UserId = string;
+export type OrderId = string;
+)",
+                                      R"(
+import  from "./helper_m2"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "import  from";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("import ").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger"),
+        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }"),
+        CompletionEntry("OrderId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ OrderId }")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionWithoutSelectiveImportBracesWithCommentedBrace)
+{
+    std::vector<std::string> files = {"commentedBraceHelper.ets", "importCommentedBrace.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+export type UserId = string;
+)",
+                                      R"(
+import /* { */ from "./commentedBraceHelper"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "/* { */ from";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("/* { */ ").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger"),
+        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "{ UserId }")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("UserId", CompletionEntryKind::ALIAS_TYPE, std::string(GLOBALS_OR_KEYWORDS), "UserId")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, parseImportFromAsDefaultImportName)
+{
+    std::vector<std::string> files = {"fromNameDefaultHelper.ets", "importFromAsName.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+)",
+                                      R"(
+import from from "./fromNameDefaultHelper"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_TRUE(GetImpl()->getSyntacticDiagnostics(ctx).diagnostic.empty());
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getDefaultCompletionWithoutSelectiveImportBracesWithPrefix)
+{
+    std::vector<std::string> files = {"defaultPrefixHelper.ets", "importDefaultWithPrefix.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+)",
+                                      R"(
+import Log from "./defaultPrefixHelper"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "Log from";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("Log").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, doNotSuggestAlreadyImportedDefaultClass)
+{
+    std::vector<std::string> files = {"defaultHelper.ets", "importDefaultOnce.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+)",
+                                      R"(
+import { default as Existing,  } from "./defaultHelper"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = ",  }";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string(", ").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    ASSERT_TRUE(entries.empty());
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, useNamedImportForSeparatelyExportedDefaultClass)
+{
+    std::vector<std::string> files = {"namedDefaultHelper.ets", "importNamedDefault.ets"};
+    std::vector<std::string> texts = {R"(
+export default class Logger {}
+export Logger
+)",
+                                      R"(
+import {  } from "./namedDefaultHelper"
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const std::string marker = "{  }";
+    auto markerPos = texts[1].find(marker);
+    ASSERT_NE(markerPos, std::string::npos);
+    size_t const offset = markerPos + std::string("{ ").size();
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto entries = lspApi->getCompletionsAtPosition(ctx, offset).GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Logger")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Logger", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "default as Logger")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionFromIndex3)
 {
     std::vector<std::string> files = {"exportIndex3.ets", "getCompletionFromIndex3.ets"};
@@ -2183,7 +2471,7 @@ foo
     auto expectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("foo1", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "foo1"),
         CompletionEntry("foo3", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "foo3"),
-        CompletionEntry("foo2", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "foo2")};
+        CompletionEntry("foo2", CompletionEntryKind::ENUM, std::string(GLOBALS_OR_KEYWORDS), "foo2")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(context);
 }

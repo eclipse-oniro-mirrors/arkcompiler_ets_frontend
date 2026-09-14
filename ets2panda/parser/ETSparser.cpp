@@ -1204,6 +1204,20 @@ ir::ETSImportDeclaration *ETSParser::BuildImportDeclaration(ir::ImportKinds impo
     return AllocNode<ir::ETSImportDeclaration>(pathToResolve, std::move(specifiers), importKind);
 }
 
+void ETSParser::ParseFromKeywordImportSpecifier(ArenaVector<ir::AstNode *> *specifiers)
+{
+    auto lexerState = Lexer()->Save();
+    Lexer()->NextToken();
+    bool const isModuleSpecifierNext = Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_STRING;
+    Lexer()->Rewind(lexerState);
+    if (!isModuleSpecifierNext) {
+        ParseImportDefaultSpecifier(specifiers);
+        return;
+    }
+    specifiers->push_back(AllocBrokenExpression(Lexer()->GetToken().Start()));
+    LogExpectedToken(lexer::TokenType::LITERAL_IDENT);
+}
+
 ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
 {
     std::vector<std::string> userPaths;
@@ -1229,6 +1243,8 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
                 specifiers.push_back(AllocBrokenExpression({saveLoc, specs.rightBackPos}));
                 LogError(diagnostic::EMPTY_IMPORT_SPECIFIER_LIST);
             }
+        } else if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
+            ParseFromKeywordImportSpecifier(&specifiers);
         } else {
             ParseImportDefaultSpecifier(&specifiers);
         }
