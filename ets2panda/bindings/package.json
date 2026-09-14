@@ -22,7 +22,7 @@
     "test:build": "npm run test:clean && npm run test:compile",
     "test:update": "npm run test:build && node dist-test/test/run_tests.js ./test --update",
     "compile": "tsc --build --verbose tsconfig.json",
-    "clean": "rimraf dist tsconfig.tsbuildinfo package-lock.json",
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
     "run": "npm run clean && npm run compile",
     "format": "npx prettier --write .",
     "ut_test": "npm run test:build && jest test/ut",
