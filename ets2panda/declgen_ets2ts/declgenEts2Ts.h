@@ -146,8 +146,10 @@ private:
 
     void GenImportDeclaration(const ir::ETSImportDeclaration *importDeclaration);
     void GenExportNamedDeclaration(const ir::ExportNamedDeclaration *exportDeclaration);
-    void GenNamespaceImport(const ir::AstNode *specifier, const std::string &source);
-    void GenDefaultImport(const ir::AstNode *specifier, const std::string &source, bool isTypeKind = false);
+    void GenNamespaceImport(const ir::AstNode *specifier, const std::string &source,
+                            const ir::ETSImportDeclaration *importDeclaration);
+    void GenDefaultImport(const ir::AstNode *specifier, const std::string &source,
+                          const ir::ETSImportDeclaration *importDeclaration, bool isTypeKind = false);
     void GenNamedImports(const ir::ETSImportDeclaration *importDeclaration,
                          const ArenaVector<ir::AstNode *> &specifiers, bool isTypeKind = false);
     void GenDtsImportStatement(std::vector<ir::AstNode *> &specifiers,
@@ -233,6 +235,14 @@ private:
     std::vector<ir::AstNode *> FilterValidExportSpecifiers(const ArenaVector<ir::ExportSpecifier *> &specifiers);
     std::vector<ir::AstNode *> FilterGlueCodeExportSpecifiers(const std::vector<ir::AstNode *> &specifiers);
     bool IsBuiltInGlobalType(const checker::Type *checkerType) const;
+    bool IsExportSpecifierFromIgnoredImport(ir::AstNode *specifier) const;
+    const ir::ETSImportDeclaration *FindImportByLocalName(const std::string &name) const;
+    void BuildImportByLocalNameCache();
+    bool IsSymbolNameFromIgnoredImport(const std::string &name) const;
+    bool IsIdentifierFromIgnoredImport(const ir::Identifier *ident) const;
+    bool IsShadowedByLocalDeclaration(const ir::Identifier *ident) const;
+    bool IsTypeReferenceFromIgnoredImport(const ir::ETSTypeReference *typeReference) const;
+    std::vector<ir::AstNode *> FilterNonIgnoredExportSpecifiers(const std::vector<ir::AstNode *> &specifiers);
     std::string ReplaceETSGLOBAL(const std::string &typeName);
     std::string GetIndent() const;
     std::string RemoveModuleExtensionName(const std::string &filepath);
@@ -306,6 +316,7 @@ private:
     bool IsDependency(const std::string &assemblerName);
 
     bool IsInteropImport(const ir::ETSImportDeclaration *importDeclaration);
+    bool IsIgnoredImport(const ir::ETSImportDeclaration *importDeclaration) const;
 
     void OutDts() {}
 
@@ -454,6 +465,7 @@ private:
     DeclgenOptions declgenOptions_ {};
     std::string globalDesc_;
     ArenaMap<util::StringView, util::StringView> paramDefaultMap_;
+    std::unordered_map<std::string, const ir::ETSImportDeclaration *> importByLocalNameCache_;
 
     // Per-method interop tag overrides; set and restored by GenMethodDeclaration.
     std::string interopRetOverride_;

@@ -14,6 +14,7 @@
  */
 
 #include "declgenEts2Ts.h"
+#include "declgenIgnoredList.h"
 #include <cstdint>
 
 #include "checker/ETSchecker.h"
@@ -45,6 +46,39 @@ namespace ark::es2panda::declgen_ets2ts {
 namespace {
 
 constexpr std::string_view TS_DECL_SUFFIX = ".d.ts";
+
+[[nodiscard]] bool TypeParamsDeclareName(const ir::TSTypeParameterDeclaration *typeParams, const util::StringView &name)
+{
+    if (typeParams == nullptr) {
+        return false;
+    }
+    for (const auto *param : typeParams->Params()) {
+        if (param->Name()->Name() == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+[[nodiscard]] bool NamespaceMemberDeclaresName(const ir::ClassDefinition *classDef, const util::StringView &name)
+{
+    for (const auto *member : classDef->Body()) {
+        const ir::Identifier *declaredName = nullptr;
+        if (member->IsClassDeclaration()) {
+            declaredName = member->AsClassDeclaration()->Definition()->Ident();
+        } else if (member->IsTSInterfaceDeclaration()) {
+            declaredName = member->AsTSInterfaceDeclaration()->Id();
+        } else if (member->IsTSTypeAliasDeclaration()) {
+            declaredName = member->AsTSTypeAliasDeclaration()->Id();
+        } else if (member->IsTSEnumDeclaration()) {
+            declaredName = member->AsTSEnumDeclaration()->Key();
+        }
+        if (declaredName != nullptr && declaredName->Name() == name) {
+            return true;
+        }
+    }
+    return false;
+}
 
 [[nodiscard]] bool IsExplicitVoidTypeNode(const ir::TypeNode *typeAnnotation)
 {
@@ -403,6 +437,7 @@ bool TSDeclGen::Generate()
         checker_->StartChecker(ctx->parserProgram->VarBinder(), *ctx->config->options);
         ctx->lazyCheck = true;
     }
+    BuildImportByLocalNameCache();
     if (!GenGlobalDescriptor()) {
         return false;
     }
@@ -750,6 +785,7 @@ void TSDeclGen::GenDeclarations()
 
 void TSDeclGen::GenExportNamedDeclarations()
 {
+    BuildImportByLocalNameCache();
     for (auto *globalStatement : program_->Ast()->Statements()) {
         if (globalStatement->IsExportNamedDeclaration()) {
             GenExportNamedDeclaration(globalStatement->AsExportNamedDeclaration());
@@ -779,6 +815,12 @@ bool TSDeclGen::IsInteropImport(const ir::ETSImportDeclaration *importDeclaratio
 {
     const auto source = importDeclaration->Source()->Str().Utf8();
     return source == RemoveModuleExtensionName(interopSdkName_);
+}
+
+bool TSDeclGen::IsIgnoredImport(const ir::ETSImportDeclaration *importDeclaration) const
+{
+    const auto source = importDeclaration->Source()->Str().Mutf8();
+    return DECLGEN_IGNORED_MODULES.find(source) != DECLGEN_IGNORED_MODULES.end();
 }
 
 void TSDeclGen::GenInteropImport()
@@ -1073,6 +1115,10 @@ void TSDeclGen::ProcessRestParameterTypeAnnotationType(const ir::TypeNode *typeA
     const auto *typeReference = typeAnnotation->AsETSTypeReference();
     const auto typePart = typeReference->Part();
     auto partName = typePart->GetIdent()->Name().Mutf8();
+    if (IsTypeReferenceFromIgnoredImport(typeReference)) {
+        OutDts("ESObject");
+        return;
+    }
     AddImport(partName);
     if (typePart->TypeParams() != nullptr && typePart->TypeParams()->IsTSTypeParameterInstantiation()) {
         if (partName == "ReadonlyArray" || partName == "FixedArray" ||
@@ -1422,6 +1468,10 @@ void TSDeclGen::GenObjectType(const checker::ETSObjectType *objectType)
         OutDts("ESObject");
         return;
     }
+    if (IsSymbolNameFromIgnoredImport(objectType->Name().Mutf8())) {
+        OutDts("ESObject");
+        return;
+    }
     std::string typeStr = objectType->Name().Mutf8();
     if (objectType->Name().Empty()) {
         LogWarning(diagnostic::EMPTY_TYPE_NAME);
@@ -1662,7 +1712,12 @@ void TSDeclGen::GenAnnotationPropertyValue(ir::Expression *propValue)
                      [this](ir::Expression *element) { GenAnnotationPropertyValue(element); });
         OutDts("]");
     } else if (propValue->IsIdentifier()) {
-        OutDts(propValue->AsIdentifier()->Name().Mutf8());
+        const auto *ident = propValue->AsIdentifier();
+        if (IsIdentifierFromIgnoredImport(ident)) {
+            OutDts("undefined");
+        } else {
+            OutDts(ident->Name().Mutf8());
+        }
     } else {
         GenType(propValue->Check(checker_));
     }
@@ -1695,9 +1750,9 @@ void TSDeclGen::GenImportDeclaration(const ir::ETSImportDeclaration *importDecla
     bool hasNamedImport = false;
     for (auto *specifier : specifiers) {
         if (specifier->IsImportNamespaceSpecifier()) {
-            GenNamespaceImport(specifier, source);
+            GenNamespaceImport(specifier, source, importDeclaration);
         } else if (specifier->IsImportDefaultSpecifier()) {
-            GenDefaultImport(specifier, source, isTypeKind);
+            GenDefaultImport(specifier, source, importDeclaration, isTypeKind);
         } else if (specifier->IsImportSpecifier()) {
             hasNamedImport = true;
         }
@@ -1707,7 +1762,8 @@ void TSDeclGen::GenImportDeclaration(const ir::ETSImportDeclaration *importDecla
     }
 }
 
-void TSDeclGen::GenNamespaceImport(const ir::AstNode *specifier, const std::string &source)
+void TSDeclGen::GenNamespaceImport(const ir::AstNode *specifier, const std::string &source,
+                                   const ir::ETSImportDeclaration *importDeclaration)
 {
     const auto local = specifier->AsImportNamespaceSpecifier()->Local()->Name().Mutf8();
     OutTs("import * as ", local, " from \"", source, "\";");
@@ -1715,11 +1771,15 @@ void TSDeclGen::GenNamespaceImport(const ir::AstNode *specifier, const std::stri
     if (!IsImport(local)) {
         return;
     }
+    if (IsIgnoredImport(importDeclaration)) {
+        return;
+    }
     OutDts("import * as ", local, " from \"", source, "\";");
     OutEndlDts();
 }
 
-void TSDeclGen::GenDefaultImport(const ir::AstNode *specifier, const std::string &source, bool isTypeKind)
+void TSDeclGen::GenDefaultImport(const ir::AstNode *specifier, const std::string &source,
+                                 const ir::ETSImportDeclaration *importDeclaration, bool isTypeKind)
 {
     auto importDefaultSpecifier = specifier->AsImportDefaultSpecifier();
     auto variable = importDefaultSpecifier->Local()->Variable();
@@ -1735,6 +1795,9 @@ void TSDeclGen::GenDefaultImport(const ir::AstNode *specifier, const std::string
     }
 
     if (!IsImport(local)) {
+        return;
+    }
+    if (IsIgnoredImport(importDeclaration)) {
         return;
     }
     OutDts(isTypeKind ? "import type " : "import ", local, " from \"", source, "\";");
@@ -1788,6 +1851,9 @@ void TSDeclGen::GenDtsImportStatement(std::vector<ir::AstNode *> &specifiers,
 
     auto source = importDeclaration->Source()->Str().Mutf8();
     source = RemoveModuleExtensionName(source);
+    if (IsIgnoredImport(importDeclaration)) {
+        return;
+    }
     OutDts(isTypeKind ? "import type" : "import", " { ");
 
     GenSeparated(
@@ -1808,9 +1874,11 @@ void TSDeclGen::GenNamedExports(const ir::ExportNamedDeclaration *exportDeclarat
     }
     if ((exportDeclaration->Modifiers() & (ir::ModifierFlags::DEFAULT_EXPORT)) != 0U) {
         const auto local = specifiers[0]->Local()->Name().Mutf8();
-        AddImport(local);
-        OutDts("export default ", local, ";");
-        OutEndlDts();
+        if (!IsExportSpecifierFromIgnoredImport(specifiers[0])) {
+            AddImport(local);
+            OutDts("export default ", local, ";");
+            OutEndlDts();
+        }
         if (glueCodeImportSet_.find(local) != glueCodeImportSet_.end()) {
             OutTs("export default ", local, ";");
             OutEndlTs();
@@ -1818,16 +1886,19 @@ void TSDeclGen::GenNamedExports(const ir::ExportNamedDeclaration *exportDeclarat
         return;
     }
 
-    if ((exportDeclaration->Modifiers() & (ir::ModifierFlags::EXPORT_TYPE)) != 0U) {
-        OutDts("export type { ");
-    } else {
-        OutDts("export { ");
-    }
+    auto dtsExportSpecifiers = FilterNonIgnoredExportSpecifiers(exportSpecifiers);
+    if (!dtsExportSpecifiers.empty()) {
+        if ((exportDeclaration->Modifiers() & (ir::ModifierFlags::EXPORT_TYPE)) != 0U) {
+            OutDts("export type { ");
+        } else {
+            OutDts("export { ");
+        }
 
-    GenSeparated(
-        exportSpecifiers, [this](ir::AstNode *specifier) { GenSingleNamedExport(specifier); }, ", ");
-    OutDts(" };");
-    OutEndlDts();
+        GenSeparated(
+            dtsExportSpecifiers, [this](ir::AstNode *specifier) { GenSingleNamedExport(specifier); }, ", ");
+        OutDts(" };");
+        OutEndlDts();
+    }
 
     if ((exportDeclaration->Modifiers() & (ir::ModifierFlags::EXPORT_TYPE)) != 0U) {
         return;
@@ -1915,6 +1986,113 @@ bool TSDeclGen::IsBuiltInGlobalType(const checker::Type *checkerType) const
     return stdlibNamespaceList_.count(nsName) != 0U;
 }
 
+bool TSDeclGen::IsExportSpecifierFromIgnoredImport(ir::AstNode *specifier) const
+{
+    return IsIdentifierFromIgnoredImport(specifier->AsExportSpecifier()->Exported());
+}
+
+const ir::ETSImportDeclaration *TSDeclGen::FindImportByLocalName(const std::string &name) const
+{
+    if (name.empty()) {
+        return nullptr;
+    }
+    auto it = importByLocalNameCache_.find(name);
+    return it != importByLocalNameCache_.end() ? it->second : nullptr;
+}
+
+void TSDeclGen::BuildImportByLocalNameCache()
+{
+    importByLocalNameCache_.clear();
+    for (const auto *stmt : program_->Ast()->Statements()) {
+        if (!stmt->IsETSImportDeclaration()) {
+            continue;
+        }
+        const auto *importDecl = stmt->AsETSImportDeclaration();
+        for (const auto *specifier : importDecl->Specifiers()) {
+            const ir::Identifier *local = nullptr;
+            if (specifier->IsImportSpecifier()) {
+                local = specifier->AsImportSpecifier()->Local();
+            } else if (specifier->IsImportDefaultSpecifier()) {
+                local = specifier->AsImportDefaultSpecifier()->Local();
+            } else if (specifier->IsImportNamespaceSpecifier()) {
+                local = specifier->AsImportNamespaceSpecifier()->Local();
+            }
+            if (local != nullptr) {
+                importByLocalNameCache_[local->Name().Mutf8()] = importDecl;
+            }
+        }
+    }
+}
+
+bool TSDeclGen::IsSymbolNameFromIgnoredImport(const std::string &name) const
+{
+    const auto baseName = name.substr(0, name.find('.'));
+    const auto *importDecl = FindImportByLocalName(baseName);
+    return importDecl != nullptr && IsIgnoredImport(importDecl);
+}
+
+bool TSDeclGen::IsIdentifierFromIgnoredImport(const ir::Identifier *ident) const
+{
+    if (ident == nullptr) {
+        return false;
+    }
+    if (IsShadowedByLocalDeclaration(ident)) {
+        return false;
+    }
+    return IsSymbolNameFromIgnoredImport(ident->Name().Mutf8());
+}
+
+bool TSDeclGen::IsShadowedByLocalDeclaration(const ir::Identifier *ident) const
+{
+    const auto name = ident->Name();
+    for (const auto *node = ident->Parent(); node != nullptr; node = node->Parent()) {
+        if (node->IsClassDefinition()) {
+            const auto *classDef = node->AsClassDefinition();
+            if (classDef->IsNamespaceTransformed() && NamespaceMemberDeclaresName(classDef, name)) {
+                return true;
+            }
+            if (TypeParamsDeclareName(classDef->TypeParams(), name)) {
+                return true;
+            }
+        } else if (node->IsTSInterfaceDeclaration() &&
+                   TypeParamsDeclareName(node->AsTSInterfaceDeclaration()->TypeParams(), name)) {
+            return true;
+        } else if (node->IsScriptFunction() && TypeParamsDeclareName(node->AsScriptFunction()->TypeParams(), name)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool TSDeclGen::IsTypeReferenceFromIgnoredImport(const ir::ETSTypeReference *typeReference) const
+{
+    const auto *part = typeReference->Part();
+    if (part == nullptr || part->Name() == nullptr) {
+        return false;
+    }
+    const auto *name = part->Name();
+    if (name->IsIdentifier()) {
+        return IsIdentifierFromIgnoredImport(name->AsIdentifier());
+    }
+    if (name->IsTSQualifiedName()) {
+        const auto *leftmost = name->AsTSQualifiedName()->ResolveLeftMostQualifiedName();
+        return leftmost->Left()->IsIdentifier() && IsIdentifierFromIgnoredImport(leftmost->Left()->AsIdentifier());
+    }
+    return false;
+}
+
+std::vector<ir::AstNode *> TSDeclGen::FilterNonIgnoredExportSpecifiers(const std::vector<ir::AstNode *> &specifiers)
+{
+    std::vector<ir::AstNode *> nonIgnoredSpecifiers;
+    for (auto *specifier : specifiers) {
+        if (IsExportSpecifierFromIgnoredImport(specifier)) {
+            continue;
+        }
+        nonIgnoredSpecifiers.push_back(specifier);
+    }
+    return nonIgnoredSpecifiers;
+}
+
 std::vector<ir::AstNode *> TSDeclGen::FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers)
 {
     std::vector<ir::AstNode *> importSpecifiers;
@@ -1966,8 +2144,10 @@ bool TSDeclGen::GenNamespaceReExportDeclaration(const ir::AstNode *specifier,
         if (local.Empty()) {
             auto source = importDeclaration->Source()->Str().Mutf8();
             source = RemoveModuleExtensionName(source);
-            OutDts("export * from \"", source, "\";");
-            OutEndlDts();
+            if (!IsIgnoredImport(importDeclaration)) {
+                OutDts("export * from \"", source, "\";");
+                OutEndlDts();
+            }
             OutTs("export * from \"", source, "\";");
             OutEndlTs();
             return true;
@@ -2045,6 +2225,9 @@ void TSDeclGen::GenDtsReExportStatement(const ArenaVector<ir::AstNode *> &specif
 
     auto source = importDeclaration->Source()->Str().Mutf8();
     source = RemoveModuleExtensionName(source);
+    if (IsIgnoredImport(importDeclaration)) {
+        return;
+    }
     OutDts(isTypeKind ? "export type" : "export", " { ");
 
     GenSeparated(
@@ -2123,6 +2306,10 @@ bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference
             OutDts("ESObject");
             return true;
         }
+        if (IsTypeReferenceFromIgnoredImport(typeReference)) {
+            OutDts("ESObject");
+            return true;
+        }
         OutDts(ConvertInteropTypeName(qualifiedName));
         auto typeParams = typeReference->Part()->TypeParams();
         if (typeParams != nullptr && typeParams->IsTSTypeParameterInstantiation()) {
@@ -2144,7 +2331,7 @@ void TSDeclGen::ProcessETSTypeReferenceType(const ir::ETSTypeReference *typeRefe
         OutDts("ESObject");
         return;
     }
-    if (ShouldConvertSelfReference(typeReference, partName)) {
+    if (ShouldConvertSelfReference(typeReference, partName) || IsTypeReferenceFromIgnoredImport(typeReference)) {
         OutDts("ESObject");
         return;
     }
@@ -2755,7 +2942,9 @@ void TSDeclGen::HandleClassDeclarationTypeInfo(const ir::ClassDefinition *classD
 
     const auto classTags = jsdoc::CollectInteropTagsFromNode(classDef->Parent());
     const auto *super = classDef->Super();
-    if (!classTags.breakExtends && super != nullptr && !classDef->IsEnumTransformed()) {
+    const bool superFromIgnoredImport = super != nullptr && super->IsETSTypeReference() &&
+                                        IsTypeReferenceFromIgnoredImport(super->AsETSTypeReference());
+    if (!classTags.breakExtends && super != nullptr && !classDef->IsEnumTransformed() && !superFromIgnoredImport) {
         OutDts(" extends ");
         HandleClassInherit(super);
     }
