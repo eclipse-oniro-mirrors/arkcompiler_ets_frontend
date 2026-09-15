@@ -15,6 +15,7 @@
 
 #include "checker/ETSchecker.h"
 
+#include "checker/ets/exportedOverloadResolver.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "generated/diagnostic.h"
 #include "ir/ets/etsFunctionType.h"
@@ -28,6 +29,7 @@
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importNamespaceSpecifier.h"
 #include "ir/module/importSpecifier.h"
+#include "ir/module/importSpecifierTypeOnly.h"
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/statements/annotationUsage.h"
 #include "parser/program/ImportCache.h"
@@ -480,7 +482,8 @@ static void ValidateResolvedImportSpecifier(ETSChecker *checker, ir::ImportDecla
     }
 
     if (IsAnnotationVariable(target)) {
-        if (st->IsTypeKind()) {
+        if (st->IsTypeKind() ||
+            (spec->IsImportSpecifier() && ir::ImportSpecifierTypeOnly::Is(spec->AsImportSpecifier()))) {
             checker->LogError(diagnostic::IMPORT_TYPE_NOT_ALLOWED, {}, spec->Start());
         }
         if (result.entry.isTypeOnlyUse) {
@@ -596,13 +599,6 @@ ResolvedImportResult ETSChecker::ResolveImportBinding(varbinder::LocalVariable *
     if (bindingInfo == nullptr) {
         return InvalidImportResult();
     }
-    if (bindingInfo->resolvedVariable != nullptr) {
-        ResolvedImportResult result {};
-        result.status = ImportResolutionStatus::RESOLVED_VARIABLE;
-        result.entry.variable = bindingInfo->resolvedVariable;
-        return result;
-    }
-
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     const auto resolved = exportClosureResolver_->ResolveImportBinding(bindingInfo, options);
     switch (resolved.status) {
@@ -653,8 +649,9 @@ static bool IsTypeReferenceTarget(varbinder::Variable *target)
 }
 
 static Type *ResolveResolvedImportBindingType(ETSChecker *checker, varbinder::LocalVariable *localVar,
-                                              varbinder::Variable *target, ir::Identifier *useSite)
+                                              const ResolvedExportEntry &entry, ir::Identifier *useSite)
 {
+    auto *target = entry.variable;
     if (target == nullptr) {
         localVar->SetTsType(checker->GlobalTypeError());
         return checker->GlobalTypeError();
@@ -662,7 +659,8 @@ static Type *ResolveResolvedImportBindingType(ETSChecker *checker, varbinder::Lo
 
     if (target->IsLocalVariable() && target->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return checker->ResolveImportBindingType(target->AsLocalVariable(), useSite);
+        auto *type = checker->ResolveImportBindingType(target->AsLocalVariable(), useSite);
+        return ets::ResolveExportedOverloadView(checker, type, localVar, entry.origin, entry.exportsWholeBinding).type;
     }
 
     auto *declNode = target->Declaration() == nullptr ? nullptr : target->Declaration()->Node();
@@ -681,7 +679,8 @@ static Type *ResolveResolvedImportBindingType(ETSChecker *checker, varbinder::Lo
         }
     }
 
-    return checker->GetTypeOfVariable(target);
+    auto *type = checker->GetTypeOfVariable(target);
+    return ets::ResolveExportedOverloadView(checker, type, localVar, entry.origin, entry.exportsWholeBinding).type;
 }
 
 Type *ETSChecker::ResolveImportBindingType(varbinder::LocalVariable *localVar, ir::Identifier *useSite)
@@ -715,7 +714,7 @@ Type *ETSChecker::ResolveImportBindingType(varbinder::LocalVariable *localVar, i
             return finish(GetImportSurfaceObjectType(result.surface, useSite, localVar));
         case ImportResolutionStatus::RESOLVED_VARIABLE: {
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            return finish(ResolveResolvedImportBindingType(this, localVar, result.entry.variable, useSite));
+            return finish(ResolveResolvedImportBindingType(this, localVar, result.entry, useSite));
         }
         case ImportResolutionStatus::AMBIGUOUS:
             [[fallthrough]];

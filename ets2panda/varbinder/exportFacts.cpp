@@ -241,6 +241,17 @@ void ExportFactStore::AddLocalExportAlias(parser::Program *program, util::String
     });
 }
 
+void ExportFactStore::MarkLocalExportWholeBinding(parser::Program *program, util::StringView exportedName,
+                                                  util::StringView localName)
+{
+    auto &snapshot = GetOrCreateSnapshot(program);
+    for (auto &fact : snapshot.locals) {
+        if (fact.exportedName == exportedName && fact.localName == localName) {
+            fact.exportsWholeBinding = true;
+        }
+    }
+}
+
 bool ExportFactStore::AddPendingLocalExportAlias(parser::Program *program, util::StringView exportedName,
                                                  util::StringView localName, const ir::AstNode *origin,
                                                  const ir::AstNode *exportDecl, const ir::AstNode *reportOrigin,

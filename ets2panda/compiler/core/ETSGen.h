@@ -369,6 +369,12 @@ public:
         CallArgStart<CallShort, Call, CallRange>(node, signature, arg0, arguments);
     }
 
+    void CallExactInstance(const ir::AstNode *const node, const checker::Signature *signature, const VReg arg0,
+                           const ArenaVector<ir::Expression *> &arguments)
+    {
+        CallArgStartDevirtual<CallShort, Call, CallRange>(node, signature, arg0, arguments);
+    }
+
     void CallExact(const ir::AstNode *const node, const util::StringView name)
     {
         Ra().Emit<CallShort, 0>(node, AssemblerSignatureReference(name), dummyReg_, dummyReg_);

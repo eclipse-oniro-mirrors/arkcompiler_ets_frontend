@@ -53,6 +53,9 @@ void ImportSpecifier::Dump(ir::AstDumper *dumper) const
 
 void ImportSpecifier::Dump(ir::SrcDumper *dumper) const
 {
+    if (isTypeOnly_) {
+        dumper->Add("type ");
+    }
     if (imported_->Name().Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY)) {
         dumper->Add("default");
     } else {

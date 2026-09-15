@@ -647,6 +647,7 @@ set(ES2PANDA_LIB_SRC
   checker/ets/typeCheckingHelpers.cpp
   checker/ets/helpers.cpp
   checker/ets/importBindingResolver.cpp
+  checker/ets/exportedOverloadResolver.cpp
   checker/ets/namespaceImportObject.cpp
   checker/ets/object.cpp
   checker/ets/typeConverter.cpp

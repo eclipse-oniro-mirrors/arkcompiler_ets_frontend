@@ -87,6 +87,8 @@ struct ResolvedExportEntry {
     // do not define types, so an annotation path becomes invalid when it crosses `export type` or `import type`.
     // When multiple paths resolve to the same declaration, this remains true only if every path is type-only.
     bool isTypeOnlyUse {};
+    // True when the terminal local export explicitly selected the entire binding (`export { name }`).
+    bool exportsWholeBinding {};
 };
 
 enum class ExportResolutionStatus {

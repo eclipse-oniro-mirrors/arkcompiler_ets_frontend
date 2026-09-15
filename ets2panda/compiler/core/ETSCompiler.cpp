@@ -601,7 +601,7 @@ void ETSCompiler::EmitCall(const ir::CallExpression *expr, compiler::VReg &calle
         auto obj = me->Object();
         const auto objApparentType = etsg->Checker()->GetApparentType(obj->TsType());
         if (obj->IsSuperExpression()) {
-            etsg->CallExact(expr, signature, calleeReg, expr->Arguments());
+            etsg->CallExactInstance(expr, signature, calleeReg, expr->Arguments());
         } else if (objApparentType->IsETSUnionType()) {
             const auto componentTypeSignatures = me->GetComponentTypeMemberAccessors();
             ES2PANDA_ASSERT(objApparentType->AsETSUnionType()->ConstituentTypes().size() ==

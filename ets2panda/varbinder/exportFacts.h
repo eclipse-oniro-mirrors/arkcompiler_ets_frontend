@@ -96,6 +96,8 @@ struct ExportFact {
     bool isExplicitTypeOnly {};
     bool isLocalAlias {};
     bool isInvalid {};
+    // An explicit local selective export exports the selected binding, including every accessible overload.
+    bool exportsWholeBinding {};
 };
 
 class ExportFactStore {
@@ -190,6 +192,8 @@ public:
     void AddLocalExportAlias(parser::Program *program, util::StringView exportedName, util::StringView localName,
                              Variable *variable, const ir::AstNode *origin, bool isExplicitTypeOnly = false,
                              bool isInvalid = false);
+    void MarkLocalExportWholeBinding(parser::Program *program, util::StringView exportedName,
+                                     util::StringView localName);
     bool AddPendingLocalExportAlias(parser::Program *program, util::StringView exportedName, util::StringView localName,
                                     const ir::AstNode *origin, const ir::AstNode *exportDecl,
                                     const ir::AstNode *reportOrigin, bool originDeclaresName, bool isExplicitTypeOnly,

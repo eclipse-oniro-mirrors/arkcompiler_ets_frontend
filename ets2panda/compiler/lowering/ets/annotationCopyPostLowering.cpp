@@ -15,6 +15,7 @@
 
 #include "annotationCopyPostLowering.h"
 
+#include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
@@ -31,15 +32,15 @@ static void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationU
         return;
     }
 
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *annoDecl = checker->MaterializeAnnotationUsage(st, checker::AnnotationUseKind::USER);
     ES2PANDA_ASSERT(st->GetBaseName()->Variable() != nullptr);
-    auto *annoDecl = st->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
 
     auto propertyExist = [&st](util::StringView name) {
         return std::any_of(st->Properties().begin(), st->Properties().end(),
                            [name](ir::AstNode *property) { return property->AsClassProperty()->Id()->Name() == name; });
     };
 
-    auto *checker = ctx->GetChecker()->AsETSChecker();
     for (auto *it : annoDecl->Properties()) {
         auto *field = it->AsClassProperty();
         if (propertyExist(field->Id()->Name())) {

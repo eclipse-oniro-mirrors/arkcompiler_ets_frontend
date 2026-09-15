@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,12 @@ class A {
     public func(): number {
         return 2;
     }
+    public static withArg(value: int): int {
+        return 100 + value;
+    }
+    public withArg(value: int): int {
+        return 10 + value;
+    }
 }
 
 class B {
@@ -31,6 +37,15 @@ class B {
     }
 }
 
+class C extends A {
+    public callBaseFunc(): number {
+        return super.func();
+    }
+    public callBaseWithArg(): int {
+        return super.withArg(3);
+    }
+}
+
 function main(){
     let a = new A();
     arktest.assertEQ(A.func(), 1);
@@ -38,4 +53,6 @@ function main(){
     let b = new B();
     arktest.assertEQ(b.func(), 1);
     arktest.assertEQ(B.func(), 2);
+    arktest.assertEQ(new C().callBaseFunc(), 2);
+    arktest.assertEQ(new C().callBaseWithArg(), 13);
 }
