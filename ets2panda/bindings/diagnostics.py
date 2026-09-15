@@ -36,7 +36,10 @@ DEFAULT_WHITELIST: tuple[str, ...] = (
     "api/@ohos.arkui.intelligence.imageGeneration.d.ets",
     "api/@ohos.arkui.theme.d.ets",
     "api/application/AccessibilityExtensionContext.d.ets",
-    "api/arkui/component/common.d.ets"
+    "api/arkui/component/common.d.ets",
+    "api/@ohos.file.photoAccessHelper.d.ets",
+    "api/@ohos.wallpaper.d.ets",
+    "api/arkui/component/distortionComponent.d.ets"
 )
 RESULT_MARKER = "__ETS_DIAGNOSTICS_RESULT__"
 
