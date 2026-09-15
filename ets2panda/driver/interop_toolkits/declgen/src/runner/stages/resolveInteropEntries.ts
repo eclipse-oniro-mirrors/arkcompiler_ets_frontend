@@ -39,7 +39,8 @@ async function resolveInteropEntryFiles(context: Context): Promise<InteropEntryF
     dynamicEntryFiles: new Set<string>(),
   };
   const moduleTable = createModuleTable(context.buildConfig);
-  const interopConfig = await common.interopConfig.resolveInteropConfig(moduleTable);
+  const host = createDeclgenInteropHost(context.fileManager);
+  const interopConfig = await common.interopConfig.resolveInteropConfig(moduleTable, host);
   for (const [packageName, target] of interopConfig) {
     if (target.kind === 'items') {
       addFiles(entryFiles, target.staticFiles, target.dynamicFiles);
@@ -61,6 +62,26 @@ function addFiles(entryFiles: InteropEntryFiles, staticFiles: Iterable<string>, 
   for (const file of dynamicFiles) {
     entryFiles.dynamicEntryFiles.add(common.fileUtils.normalizePath(file));
   }
+}
+
+/**
+ * Classifies interop entry files by the build configuration's compile lists,
+ * falling back to the source code's directive prologue for files the build
+ * configuration does not compile.
+ */
+function createDeclgenInteropHost(fileManager: common.fileManager.FileManager): common.interopConfig.InteropConfigHost {
+  const defaultHost = common.interopConfig.createDefaultInteropConfigHost();
+  return {
+    async getLanguageFromSourceCode(filePath): Promise<common.fileUtils.Language> {
+      if (fileManager.isStaticSourceFile(filePath)) {
+        return common.fileUtils.Language.STATIC;
+      }
+      if (fileManager.isDynamicSourceFile(filePath)) {
+        return common.fileUtils.Language.DYNAMIC;
+      }
+      return defaultHost.getLanguageFromSourceCode(filePath);
+    },
+  };
 }
 
 function createModuleTable(buildConfig: Context['buildConfig']): common.interopConfig.ModuleTable {

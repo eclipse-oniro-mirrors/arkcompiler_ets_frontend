@@ -152,10 +152,13 @@ describe('computeInteropClosure stage', () => {
   }
 
   function createDependencyGraph(
-    sentinels: readonly (readonly [string, dependencyResolver.NodeType])[],
+    sentinels: readonly (
+      | readonly [string, dependencyResolver.NodeType]
+      | readonly [string, dependencyResolver.NodeType, readonly string[]]
+    )[],
   ): dependencyResolver.DependencyGraph {
     const nodes = new Map<string, dependencyResolver.DependencyNode>(
-      sentinels.map(([fileName, type]) => [
+      sentinels.map(([fileName, type, dependants]) => [
         fileName,
         {
           fileName,
@@ -163,12 +166,77 @@ describe('computeInteropClosure stage', () => {
           isSentinel: true,
           isResolved: false,
           dependencies: [],
-          dependants: [],
+          dependants: [...(dependants ?? [])],
         },
       ]),
     );
     return new dependencyResolver.DependencyGraph(nodes);
   }
+
+  it('lists the importing files in the sentinel error more info', async () => {
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [dynamicFile, dependencyResolver.NodeType.DYNAMIC, [staticFile, secondStaticFile]],
+    ]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Dynamic file '${path.relative(modulePath, dynamicFile)}' of package ${PACKAGE_NAME} ` +
+        'is imported by some static files. ' +
+        'But it is not configured as an interop entry.',
+    );
+    expect(error.errors[0].errorMessage.moreInfo).toEqual({
+      'imported by': `\n      ${secondStaticFile}\n      ${staticFile}`,
+    });
+  });
+
+  it('lists only importers of the opposite language in more info', async () => {
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([
+      [staticFile, dependencyResolver.NodeType.STATIC, [dynamicFile, secondStaticFile]],
+    ]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors).toHaveLength(1);
+    expect(error.errors[0].errorMessage.cause).toBe(
+      `Static file '${path.relative(modulePath, staticFile)}' of package ${PACKAGE_NAME} ` +
+        'is imported by some dynamic files. ' +
+        'But it is not configured as an interop entry.',
+    );
+    expect(error.errors[0].errorMessage.moreInfo).toEqual({
+      'imported by': `\n      ${dynamicFile}`,
+    });
+  });
+
+  it('lists all importers in more info without truncation', async () => {
+    const staticImporters = Array.from({ length: 7 }, (_, index) =>
+      common.fileUtils.normalizePath(path.join(modulePath, 'src', `importer${index}.ets`)),
+    );
+    context = {
+      ...context,
+      fileManager: new common.fileManager.FileManagerBuilder()
+        .addModuleList([
+          {
+            packageName: PACKAGE_NAME,
+            modulePath,
+            staticFiles: staticImporters,
+            dynamicFiles: [dynamicFile],
+          },
+        ])
+        .build(),
+    };
+    const entryFiles = createEntryFiles();
+    const graph = createDependencyGraph([[dynamicFile, dependencyResolver.NodeType.DYNAMIC, staticImporters]]);
+
+    const error = await captureStageError(entryFiles, graph);
+
+    expect(error.errors[0].errorMessage.moreInfo).toEqual({
+      'imported by': `\n${staticImporters.map((importer) => `      ${importer}`).join('\n')}`,
+    });
+  });
 
   function createStageScope(
     entryFiles: InteropEntryFiles,

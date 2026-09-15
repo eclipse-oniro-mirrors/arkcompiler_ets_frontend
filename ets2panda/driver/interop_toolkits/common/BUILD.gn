@@ -40,6 +40,7 @@ common_sources = [
   "./src/arktsconfig/rules/moduleRule.ts",
   "./src/arktsconfig/rules/ruleOutput.ts",
   "./src/arktsconfig/rules/stdlibRule.ts",
+  "./src/directivePrologue.ts",
   "./src/errors.ts",
   "./src/fileManager.ts",
   "./src/fileUtils.ts",
@@ -51,8 +52,10 @@ common_sources = [
   "./src/hvigorLogger.ts",
   "./src/index.ts",
   "./src/interop-config/errors.ts",
+  "./src/interop-config/host.ts",
   "./src/interop-config/index.ts",
   "./src/interop-config/resolve.ts",
+  "./src/interop-config/schema.ts",
   "./src/interop-config/types.ts",
 ]
 

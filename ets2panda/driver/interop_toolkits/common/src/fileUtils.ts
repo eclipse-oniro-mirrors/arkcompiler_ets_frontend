@@ -14,6 +14,7 @@
  */
 
 import path from 'node:path';
+import { hasDirectivePrologue } from './directivePrologue';
 
 export enum Language {
   STATIC = '1.2',
@@ -44,4 +45,17 @@ export function normalizePath(fileName: string): string {
 /** Convert all path separators to the current operating system separator. */
 export function toPlatformPath(fileName: string): string {
   return fileName.replace(/[\\/]/g, path.sep);
+}
+
+/** Get language from the first directive of the source code prologue */
+export function getLanguageFromSourceCode(sourceCode: string): Language {
+  if (
+    hasDirectivePrologue(sourceCode, 'use static', {
+      parseShebang: false,
+      firstDirectiveOnly: true,
+    })
+  ) {
+    return Language.STATIC;
+  }
+  return Language.DYNAMIC;
 }
