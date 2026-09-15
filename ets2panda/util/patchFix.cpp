@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
 #include "compiler/core/codeGen.h"
@@ -33,6 +34,19 @@
 #include "util/importPathManager.h"
 
 namespace ark::es2panda::util {
+
+// Serialized per-class structural list stored under ':classinfolist': each class is
+// "name\x1fparent\x1fifaces" and classes are joined with '\x1e'. '-' is the sentinel
+// for an empty list.
+static constexpr std::string_view CLASS_INFO_FIELD_SEP = "\x1f";
+static constexpr std::string_view CLASS_INFO_ENTRY_SEP = "\x1e";
+static constexpr std::string_view CLASS_INFO_SENTINEL = "-";
+
+// Prefix of compiler-synthesized lambda entities (methods and classes). Their
+// per-file ordinal is assigned in traversal order, so inserting a lambda renumbers
+// the subsequent ones — semantically "delete + add", an allowed change — so they
+// are excluded from the structural checks; the runtime stays authoritative.
+static constexpr std::string_view LAMBDA_INVOKE_PREFIX = "lambda_invoke-";
 
 // ============================================================================
 // Constructor
@@ -68,12 +82,10 @@ std::string PatchFix::GetModuleKey(const parser::Program *program)
     return std::string(program->GetImportInfo().Key());
 }
 
-// Serialized per-class structural list stored under ':classinfolist': each class is
-// "name\x1fparent\x1fifaces" and classes are joined with '\x1e'. '-' is the sentinel
-// for an empty list.
-static constexpr std::string_view CLASS_INFO_FIELD_SEP = "\x1f";
-static constexpr std::string_view CLASS_INFO_ENTRY_SEP = "\x1e";
-static constexpr std::string_view CLASS_INFO_SENTINEL = "-";
+static bool IsSyntheticLambdaName(std::string_view name)
+{
+    return name.find(LAMBDA_INVOKE_PREFIX) != std::string_view::npos;
+}
 
 static std::string SerializeClassInfoList(
     const std::vector<std::tuple<std::string, std::string, std::string>> &classInfos)
@@ -95,6 +107,38 @@ static std::string SerializeClassInfoList(
         first = false;
     }
     return ss.str();
+}
+
+// The implemented-interface list is a set semantically: "implements IA, IB" and
+// "implements IB, IA" describe the same class structure (the runtime swap check
+// compares interfaces as an unordered set too). Compares the semicolon-joined
+// lists as a hash set of string_view tokens — no copies, no sorting.
+static bool IfaceListsEqual(const std::string &originJoined, const std::string &currentJoined)
+{
+    std::unordered_set<std::string_view> originIfaces;
+    for (size_t pos = 0; pos < originJoined.size();) {
+        auto end = originJoined.find(';', pos);
+        if (end == std::string::npos) {
+            end = originJoined.size();
+        }
+        auto item = std::string_view(originJoined).substr(pos, end - pos);
+        if (!item.empty()) {
+            originIfaces.insert(item);
+        }
+        pos = end + 1;
+    }
+    for (size_t pos = 0; pos < currentJoined.size();) {
+        auto end = currentJoined.find(';', pos);
+        if (end == std::string::npos) {
+            end = currentJoined.size();
+        }
+        auto item = std::string_view(currentJoined).substr(pos, end - pos);
+        if (!item.empty() && originIfaces.erase(item) == 0) {
+            return false;  // current implements an interface absent from the origin list
+        }
+        pos = end + 1;
+    }
+    return originIfaces.empty();  // every origin interface was matched
 }
 
 static bool ClassStructureChanged(const std::string &originSerialized,
@@ -128,7 +172,10 @@ static bool ClassStructureChanged(const std::string &originSerialized,
         if (it == originByName.end()) {
             continue;  // Newly added class — allowed.
         }
-        if (it->second.first != parent || it->second.second != ifaces) {
+        if (IsSyntheticLambdaName(name)) {
+            continue;  // Renumbered lambda class — old deleted + new added, allowed.
+        }
+        if (it->second.first != parent || !IfaceListsEqual(it->second.second, ifaces)) {
             return true;  // Existing class restructured — rejected.
         }
     }
@@ -259,6 +306,9 @@ void PatchFix::DetectSignatureChanges()
         }
         auto colonPos = key.find(':');
         std::string baseName = (colonPos != std::string::npos) ? key.substr(0, colonPos) : key;
+        if (IsSyntheticLambdaName(baseName)) {
+            continue;  // Renumbered lambda — old deleted + new added, allowed.
+        }
         if (newFunctionBaseNames_.find(baseName) != newFunctionBaseNames_.end()) {
             patchError_ = true;
             errMsg_ << "[Patch] Function '" << key << "' signature changed — not supported!\n";

@@ -417,6 +417,29 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     Program()->AddToFunctionTable(std::move(func));
 }
 
+// Emits the (name, parent, interfaces) tuple for one class and recurses into its
+// body: namespace members (a namespace is compiled as a class) and nested classes
+// are real records too and must take part in the reload structure check.
+static void CollectClassInfo(const ir::ClassDefinition *classDef,
+                             std::vector<std::tuple<std::string, std::string, std::string>> &classInfos)
+{
+    auto *objType = classDef->TsType()->AsETSObjectType();
+    std::string parent;
+    if (objType->SuperType() != nullptr) {
+        parent = ToAssemblerType(objType->SuperType()->GetDeclNode());
+    }
+    std::stringstream ifaces;
+    for (auto *it : objType->Interfaces()) {
+        ifaces << ToAssemblerType(it->GetDeclNode()->AsTSInterfaceDeclaration()) << ";";
+    }
+    classInfos.emplace_back(ToAssemblerType(classDef), parent, ifaces.str());
+    for (const auto *member : classDef->Body()) {
+        if (member->IsClassDeclaration()) {
+            CollectClassInfo(member->AsClassDeclaration()->Definition(), classInfos);
+        }
+    }
+}
+
 static std::vector<std::tuple<std::string, std::string, std::string>> CollectClassInfosForProgram(
     parser::Program *program)
 {
@@ -425,17 +448,7 @@ static std::vector<std::tuple<std::string, std::string, std::string>> CollectCla
         if (!stmt->IsClassDeclaration()) {
             continue;
         }
-        auto *classDef = stmt->AsClassDeclaration()->Definition();
-        auto *objType = classDef->TsType()->AsETSObjectType();
-        std::string parent;
-        if (objType->SuperType() != nullptr) {
-            parent = ToAssemblerType(objType->SuperType()->GetDeclNode());
-        }
-        std::stringstream ifaces;
-        for (auto *it : objType->Interfaces()) {
-            ifaces << ToAssemblerType(it->GetDeclNode()->AsTSInterfaceDeclaration()) << ";";
-        }
-        classInfos.emplace_back(ToAssemblerType(classDef), parent, ifaces.str());
+        CollectClassInfo(stmt->AsClassDeclaration()->Definition(), classInfos);
     }
     return classInfos;
 }
