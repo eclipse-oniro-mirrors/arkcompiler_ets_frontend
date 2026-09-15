@@ -164,9 +164,11 @@ void HandleGenerateDecl(public_lib::Context *context, const parser::Program *pro
 
     // Generate nameCache.json file if nameCachePath is set
     if (!nameCachePath.empty() && dg.GetNameCache() != nullptr) {
-        if (!dg.GenerateNameCacheJson(nameCachePath)) {
+        std::string resolvedNameCacheFile;
+        if (!dg.GenerateNameCacheJson(nameCachePath, &resolvedNameCacheFile)) {
+            const std::string &reportPath = resolvedNameCacheFile.empty() ? nameCachePath : resolvedNameCacheFile;
             context->diagnosticEngine->LogFatalError(
-                diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {nameCachePath}, lexer::SourcePosition());
+                diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {reportPath}, lexer::SourcePosition());
         }
     }
 }

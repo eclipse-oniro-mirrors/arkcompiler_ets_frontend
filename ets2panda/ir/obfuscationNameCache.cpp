@@ -35,6 +35,7 @@
 #include "public/public.h"
 #include "checker/ETSchecker.h"
 #include "generated/signatures.h"
+#include "libarkbase/os/file.h"
 
 #include "obfuscationNameCache.h"
 
@@ -198,16 +199,36 @@ void ObfuscationNameCache::SetModuleName(const std::string &moduleName)
     moduleName_ = moduleName;
 }
 
-bool ObfuscationNameCache::GenerateJsonFile(const std::string &outputPath)
+// OhmurlToMname keeps the first '/' in scoped names ("@hw-hmos/animatronix").
+// Replace path separators and Windows-illegal filename characters so the JSON
+// is a single file under outputPath on Windows, macOS and Linux.
+std::string ObfuscationNameCache::SanitizeFileBaseName(const std::string &moduleName)
+{
+    std::string name = StripEtsExtension(moduleName);
+    static constexpr std::string_view UNSAFE_FILE_NAME_CHARS = "/\\<>:\"|?*";
+    for (char &ch : name) {
+        if (UNSAFE_FILE_NAME_CHARS.find(ch) != std::string_view::npos) {
+            ch = '.';
+        }
+    }
+    return name;
+}
+
+bool ObfuscationNameCache::GenerateJsonFile(const std::string &outputPath, std::string *resolvedFilePath)
 {
     if (fileCache_.empty()) {
         return true;
     }
-    fs::path dir = outputPath;
-    std::string baseName = StripEtsExtension(moduleName_.empty() ? fileCache_.begin()->first : moduleName_);
-    fs::path file = baseName + ".json";
-    fs::path jsonPath = dir / file;
-    std::ofstream ofs(jsonPath.string());
+    std::string baseName = SanitizeFileBaseName(moduleName_.empty() ? fileCache_.begin()->first : moduleName_);
+    const std::string jsonPathStr = (fs::path(outputPath) / (baseName + ".json")).string();
+    if (resolvedFilePath != nullptr) {
+        *resolvedFilePath = jsonPathStr;
+    }
+#if defined(PANDA_TARGET_WINDOWS)
+    std::ofstream ofs {ark::os::file::File::GetExtendedFilePath(jsonPathStr)};
+#else
+    std::ofstream ofs(jsonPathStr);
+#endif
     if (!ofs.is_open()) {
         return false;
     }

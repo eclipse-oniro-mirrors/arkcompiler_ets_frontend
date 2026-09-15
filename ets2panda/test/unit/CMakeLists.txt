@@ -46,6 +46,10 @@ ets2panda_add_gtest(es2panda_name_mangling_tests
     CPP_SOURCES name_mangling_test.cpp
 )
 
+ets2panda_add_gtest(es2panda_obfuscation_namecache_tests
+    CPP_SOURCES obfuscation_namecache_test.cpp
+)
+
 ets2panda_add_gtest(es2panda_name_mangling_disasm_tests
     CPP_SOURCES name_mangling_disasm_test.cpp
 )

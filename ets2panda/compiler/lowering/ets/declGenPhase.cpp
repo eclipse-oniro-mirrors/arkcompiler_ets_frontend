@@ -96,8 +96,10 @@ static bool CallDeclgen(public_lib::Context *ctx, parser::Program *prog, const s
     GenerateAnnotation(ctx, prog->GlobalClass(), res);
 
     if (!nameCachePath.empty() && dg.GetNameCache() != nullptr) {
-        if (!dg.GenerateNameCacheJson(nameCachePath)) {
-            ctx->diagnosticEngine->LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {nameCachePath},
+        std::string resolvedNameCacheFile;
+        if (!dg.GenerateNameCacheJson(nameCachePath, &resolvedNameCacheFile)) {
+            const std::string &reportPath = resolvedNameCacheFile.empty() ? nameCachePath : resolvedNameCacheFile;
+            ctx->diagnosticEngine->LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {reportPath},
                                                  lexer::SourcePosition());
             return false;
         }

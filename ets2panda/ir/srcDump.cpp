@@ -409,12 +409,12 @@ void Declgen::InitNameCache(const std::string &moduleName)
     }
 }
 
-bool Declgen::GenerateNameCacheJson(const std::string &outputPath)
+bool Declgen::GenerateNameCacheJson(const std::string &outputPath, std::string *resolvedFilePath)
 {
     if (nameCache_ == nullptr) {
         return false;
     }
-    return nameCache_->GenerateJsonFile(outputPath);
+    return nameCache_->GenerateJsonFile(outputPath, resolvedFilePath);
 }
 
 void Declgen::RecordNodeInNameCache(const FunctionDeclaration *node)
