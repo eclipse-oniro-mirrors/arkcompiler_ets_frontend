@@ -48,12 +48,15 @@ bool ContainsString(const std::string &abcBytes, const std::string &target)
 // signature enters the pool only when referenced: presence == call emitted.
 namespace sig {
 constexpr char GET[] = "std.debug.DebuggerAPI.get:i32;i32;std.core.String;std.core.Object;";
+constexpr char DEFINE_VARIABLE[] =
+    "std.debug.DebuggerAPI.defineVariable:i32;i32;std.core.String;std.core.Object;u1;void;";
 constexpr char SET[] = "std.debug.DebuggerAPI.set:i32;i32;std.core.String;std.core.Object;void;";
 constexpr char SET_ELEMENT[] = "std.debug.DebuggerAPI.setElement:i32;i32;std.core.String;i32;std.core.Object;void;";
 constexpr char WRAP[] = "std.debug.DebuggerAPI.wrap:std.core.Object;std.debug.DebugProxy;";
 constexpr char GET_THIS[] = "std.debug.DebuggerAPI.getThis:i32;i32;std.core.Object;";
 constexpr char CALL_FUNCTION[] =
-    "std.debug.DebuggerAPI.callFunction:i32;i32;std.core.String;std.core.Object[];std.debug.DebugProxy;";
+    "std.debug.DebuggerAPI.callFunction:i32;i32;std.core.String;std.core.String;std.core.Object[];"
+    "std.debug.DebugProxy;";
 constexpr char CALL_SUPER[] =
     "std.debug.DebuggerAPI.callSuper:i32;i32;std.core.String;std.core.Object[];std.debug.DebugProxy;";
 constexpr char NEW_INSTANCE[] =
@@ -184,6 +187,39 @@ int RunUnsupportedCases(es2panda_Impl *impl, es2panda_Config *config)
         "new int[2][3]",
         // yield outside a generator function is a syntax error (ESY0227)
         "yield srcVal",
+        // compound-operator destructuring parses the LHS as an
+        // ArrayExpression and fails the parser (INVALID_LEFT_SIDE_IN_
+        // ASSIGNMENT) -> nullptr (only the plain '=' form is ETSDestructuring)
+        "[a, b] += srcArr",
+        // var is rejected by the parser (ESY0297) -> nullptr
+        "var c = 3",
+        // declaration without initializer: ESY0105 error recovery leaves
+        // diagnostics that fail the pipeline -> nullptr
+        "let a;",
+        // multi-statement declaration input: extraction requires exactly one
+        // declaration statement -> nullptr (no silent drop of the declaration)
+        "let a = 1; a + 1",
+        // constant literal casts keep the native `as` node: the standard
+        // checker applies the mainline rules (ESE1050320/ESE123811/ESE0326)
+        "256 as byte",
+        "3.99 as int",
+        "65 as char",
+        "1 as boolean",
+        // char literal in arithmetic/bitwise/shift: mainline ESE0107/ESE0108
+        "c'A' & 0x1F",
+        // char in string concatenation: mainline ESE4201 (implicit
+        // char->string conversion disallowed)
+        "\"\" + c'A'",
+        // negative bigint literal exponent: mainline ESE655064
+        "2n ** -1n",
+        // instantiated generic on instanceof RHS: mainline ESY18871
+        "box instanceof EvalBox<number>",
+        // ValueArray requires a primitive element type (ESE1547180)
+        "new ValueArray<Object>(3, o)",
+        // builtin array type reference without type arguments:
+        // FIXED_ARRAY_PARAM_ERROR, mainline-identical
+        "new FixedArray(10, 0)",
+        "x as FixedArray",
         nullptr,
     };
     int failed = 0;
@@ -295,6 +331,19 @@ const TestCase K_TEST_CASES[] = {
     {"a !== b", "equality_strict_neq", {sig::GET}, {sig::ADD, sig::LT, sig::PROXY_GET_FIELD}},
     // null equality check: native comparison on the get() result
     {"maybeNull == null", "null_equality", {sig::GET}, {sig::ADD, sig::LT, sig::PROXY_GET_FIELD}},
+    // Null/undefined equality keeps a REAL runtime comparison: the
+    // Object-typed producers (bare get / proxy $_get) can deliver null at
+    // runtime, and the `as Any` operand cast prevents the checker from
+    // folding the comparison to constant false (W65001).
+    {"null == x", "equality_null_lhs", {sig::GET}, {sig::ADD, sig::PROXY_GET_FIELD}},
+    {"x != null", "equality_null_neq", {sig::GET}, {sig::ADD, sig::PROXY_GET_FIELD}},
+    {"x === null", "equality_null_strict", {sig::GET}, {sig::ADD, sig::PROXY_GET_FIELD}},
+    {"maybeNull == undefined", "equality_null_undefined", {sig::GET}, {sig::ADD, sig::PROXY_GET_FIELD}},
+    {"arr[0] == null", "equality_null_subscript", {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE}, {sig::ADD}},
+    {"objAlpha.fieldOne == null",
+     "equality_null_member",
+     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE},
+     {sig::ADD, sig::SET}},
 
     // typeof.
     {"typeof a", "typeof_expr", {sig::GET, sig::TYPEOF}, {sig::ADD, sig::PROXY_GET_FIELD}},
@@ -328,7 +377,10 @@ const TestCase K_TEST_CASES[] = {
      {sig::GET_THIS, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::PROXY_GET_FIELD},
      {sig::GET}},
     // subscript on this: getThis + Array<Object> cast + $_get
-    {"this[0]", "this_subscript", {sig::GET_THIS, sig::ARRAY_GET}, {sig::GET, sig::TO_INT}},
+    {"this[0]",
+     "this_subscript",
+     {sig::GET_THIS, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::GET, sig::TO_INT}},
     // super call result chained into another member call
     {"super.foo().bar()",
      "super_call_chain",
@@ -346,34 +398,70 @@ const TestCase K_TEST_CASES[] = {
 
     // Subscript reads: literal / nested / member-base / string-key /
     // conditional-index forms.
-    {"arr[0]", "subscript_read_literal", {sig::GET, sig::ARRAY_GET}, {sig::TO_INT}},
+    {"arr[0]", "subscript_read_literal", {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE}, {sig::TO_INT}},
     {"a.b[0]",
      "member_then_subscript",
-     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::ARRAY_GET},
+     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::PROXY_CALL},
      {sig::TO_INT}},
-    {"a[b[i]]", "nested_subscript", {sig::GET, sig::TO_INT, sig::ARRAY_GET}},
+    {"a[b[i]]", "nested_subscript", {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE}},
     {"obj[\"x\"]", "string_subscript_read", {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE}},
-    {"arr[cond ? i : j]", "subscript_conditional_index", {sig::GET, sig::TO_INT, sig::ARRAY_GET}},
-    // 2D subscript chains: each dimension gets its own Array<Object> cast
+    {"arr[cond ? i : j]",
+     "subscript_conditional_index",
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE}},
+    // String indexing (spec_700 "String Indexing Expression"): literal
+    // receivers keep the native String.$_get lowering; Any-typed receivers
+    // (variables, members, call results) dispatch at runtime through
+    // DebugProxy.call reflection.
+    {"\"abc\"[1]", "string_literal_subscript", {sig::STRING_GET}, {sig::ARRAY_GET, sig::WRAP, sig::TO_INT}},
+    {"\"abc\"[idxVar]",
+     "string_literal_subscript_var_index",
+     {sig::GET, sig::TO_INT, sig::STRING_GET},
+     {sig::ARRAY_GET, sig::WRAP}},
+    {"strVar[2]",
+     "string_var_subscript",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::ARRAY_GET, sig::TO_INT}},
+    {"strVar[idxVar]",
+     "string_var_subscript_var_index",
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::ARRAY_GET}},
+    // 2D subscript chains: each dimension goes through its own runtime
+    // $_get dispatch
     {"matrixVar[rowIdx][colIdx]",
      "subscript_2d",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
      {sig::SET, sig::SET_ELEMENT}},
+    {"matrixVar[0][1]",
+     "subscript_2d_literal_index",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::TO_INT, sig::SET, sig::SET_ELEMENT}},
     // negative literal folds to a NumberLiteral at parse: direct index,
     // no toInt bridge
-    {"arrIndex[-1]", "subscript_negative_literal", {sig::GET, sig::ARRAY_GET}, {sig::TO_INT, sig::NEG, sig::SET}},
+    {"arrIndex[-1]",
+     "subscript_negative_literal",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::TO_INT, sig::NEG, sig::SET}},
     // cast operand in index position: toInt inside the toInt bridge
     {"arrIndex[x as int]",
      "cast_as_subscript_index",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
      {sig::SET, sig::PROXY_GET_FIELD}},
 
     // Calls.
     {"a.foo(b, c)", "method_call_multiarg", {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE}},
     {"foo(a)", "func_call_module", {sig::CALL_FUNCTION, sig::GET, sig::PROXY_VALUE}},
+    // Explicit generic instantiation: the 4th callFunction argument carries
+    // the comma-joined type-arg names ("" when absent) so the runtime can
+    // reproduce the compiler's instantiation-boundary conversions.
+    {"f<double>(x)", "generic_call_primitive", {sig::CALL_FUNCTION, sig::GET, sig::PROXY_VALUE, "double"}},
+    {"g<long,String>(a, b)", "generic_call_multi", {sig::CALL_FUNCTION, sig::GET, sig::PROXY_VALUE, "long,String"}},
+    // qualified type args are unencodable -> "?" placeholder literal
+    {"h<a.b.Foo>(x)", "generic_call_qualified_unknown", {sig::CALL_FUNCTION, sig::GET, sig::PROXY_VALUE, "?"}},
+    // nested generics keep the outer name only (inner params dropped)
+    {"h<Array<Int>>(x)", "generic_call_nested_outer_name", {sig::CALL_FUNCTION, sig::GET, sig::PROXY_VALUE, "Array"}},
     {"arr[i]()",
      "elem_callee_call",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::WRAP, sig::PROXY_INVOKE, sig::PROXY_VALUE}},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_INVOKE, sig::PROXY_VALUE}},
     // restArgsLowering expands the spread at the call site
     {"a.foo(...arr)", "spread_arg", {sig::GET, sig::WRAP, sig::PROXY_CALL, "%%get-length"}},
     {"foo(...arr)", "spread_func", {sig::CALL_FUNCTION, "%%get-length"}},
@@ -401,11 +489,11 @@ const TestCase K_TEST_CASES[] = {
     // subscript / new / array-literal operands in argument position
     {"takeFunc(arrIndex[idxVar])",
      "subscript_as_argument",
-     {sig::CALL_FUNCTION, sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::PROXY_VALUE},
-     {sig::PROXY_CALL, sig::NEW_INSTANCE}},
+     {sig::CALL_FUNCTION, sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE},
+     {sig::NEW_INSTANCE}},
     {"objAlpha.methodOne(arrIndex[idxVar])",
      "subscript_as_method_argument",
-     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::TO_INT, sig::ARRAY_GET}},
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::TO_INT}},
     {"takeFunc(new KlassOne())",
      "new_as_argument",
      {sig::CALL_FUNCTION, sig::NEW_INSTANCE, sig::PROXY_VALUE},
@@ -451,9 +539,11 @@ const TestCase K_TEST_CASES[] = {
     // member-value arrays keep the $_set path (setElement is name-based)
     {"a.b[i] = v",
      "assign_member_subscript",
-     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::TO_INT, sig::ARRAY_SET},
-     {sig::SET, sig::SET_ELEMENT}},
-    {"arr[i] = arr[j]", "subscript_read_write", {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::SET_ELEMENT}},
+     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::TO_INT, sig::PROXY_CALL},
+     {sig::SET, sig::SET_ELEMENT, sig::ARRAY_SET}},
+    {"arr[i] = arr[j]",
+     "subscript_read_write",
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::SET_ELEMENT}},
     {"arrIndex[0] = new KlassOne()",
      "new_as_subscript_rhs",
      {sig::NEW_INSTANCE, sig::SET_ELEMENT},
@@ -464,8 +554,10 @@ const TestCase K_TEST_CASES[] = {
     {"arr[i] = 42", "subscript_write_var", {sig::GET, sig::TO_INT, sig::SET_ELEMENT}, {sig::ARRAY_SET}},
 
     // Compound assignments / updates.
-    {"arr[i] += 1", "subscript_compound_var", {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::ADD, sig::SET_ELEMENT}},
-    {"arr[0] += 1", "subscript_compound", {sig::ARRAY_GET, sig::ADD, sig::SET_ELEMENT}},
+    {"arr[i] += 1",
+     "subscript_compound_var",
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD, sig::SET_ELEMENT}},
+    {"arr[0] += 1", "subscript_compound", {sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD, sig::SET_ELEMENT}},
     {"obj[\"x\"] = 5",
      "string_subscript_write",
      {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_SET_VALUE},
@@ -499,11 +591,11 @@ const TestCase K_TEST_CASES[] = {
     // subscript compound with the same array read on the RHS
     {"arrIndex[idxVar] += arrIndex[idxTwo]",
      "subscript_compound_self",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::ADD, sig::SET_ELEMENT},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD, sig::SET_ELEMENT},
      {sig::ARRAY_SET}},
     {"arrIndex[idxVar] + arrIndex[idxTwo]",
      "subscript_arith",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::ADD},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD},
      {sig::SET, sig::SET_ELEMENT}},
     // chained assignment: both writes settle; the identifier-LHS read of a
     // plain '=' is orphaned, so no get is emitted at all
@@ -517,7 +609,7 @@ const TestCase K_TEST_CASES[] = {
      {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::ADD, sig::PROXY_SET_VALUE}},
     {"arr[i]++",
      "update_subscript",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::ADD, sig::SET_ELEMENT},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD, sig::SET_ELEMENT},
      {sig::ARRAY_SET}},
     // prefix update on member / subscript operands
     {"++a.x",
@@ -525,7 +617,7 @@ const TestCase K_TEST_CASES[] = {
      {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::ADD, sig::PROXY_SET_VALUE}},
     {"++arr[i]",
      "update_prefix_subscript",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::ADD, sig::SET_ELEMENT},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ADD, sig::SET_ELEMENT},
      {sig::ARRAY_SET}},
     // update expression in argument position: writeback settles before the call
     {"foo(a++)", "update_as_argument", {sig::CALL_FUNCTION, sig::GET, sig::ADD, sig::SET, sig::PROXY_VALUE}},
@@ -560,6 +652,14 @@ const TestCase K_TEST_CASES[] = {
     {"x as void", "as_void_degrades", {}, {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
     // parenthesized type annotation: UnparenthesizeType strips to the primitive
     {"x as (int)", "as_paren_type", {sig::GET, sig::TO_INT}, {sig::CAST_AS}},
+    // constant literal casts keep the native `as` node (no toXxx dispatch):
+    // legal in-range forms compile and evaluate natively, identical result
+    {"5 as int", "as_literal_identity_native", {}, {sig::TO_INT, sig::CAST_AS}},
+    {"5 as byte", "as_literal_inrange_native", {}, {sig::TO_BYTE, sig::CAST_AS}},
+    // char relational is spec-legal and stays on the DebuggerAPI dispatch
+    {"c'A' < c'B'", "char_literal_relational_dispatch", {sig::LT}, {}},
+    // positive bigint exponent keeps the pow dispatch
+    {"2n ** 2n", "bigint_pow_positive_dispatch", {sig::POW}, {}},
     // generic Array<T> reference (ETSTypeReference) routes through castAs,
     // unlike the native path of the T[] form (as_array_boxed_elem_native)
     {"x as Array<Int>", "as_generic_array_ref", {sig::GET, sig::CAST_AS}, {sig::TO_INT}},
@@ -603,6 +703,18 @@ const TestCase K_TEST_CASES[] = {
     {"new Object()", "new_instance", {sig::NEW_INSTANCE}},
     {"new Array<Int>(5)", "newarray_class_ctor", {sig::NEW_INSTANCE}, {sig::ARRAY_CREATE}},
     {"new a.b.C()", "new_qualified_name", {sig::NEW_INSTANCE}},
+    // Builtin fixed/value array creation kept native: newarr intrinsic via
+    // FixedArrayLowering, zero DebuggerAPI calls for literal arguments
+    {"new FixedArray<int>(10, 0)", "new_fixedarray_native", {}, {sig::NEW_INSTANCE, sig::CAST_AS, sig::TO_INT}},
+    {"new FixedArray<int>(10)", "new_fixedarray_no_elem_native", {}, {sig::NEW_INSTANCE}},
+    {"new ValueArray<double>(3, 7.0)", "new_valuearray_native", {}, {sig::NEW_INSTANCE}},
+    {"new FixedArray<String>(3, \"a\")", "new_fixedarray_string_native", {}, {sig::NEW_INSTANCE}},
+    // variable arguments bridge: len via toInt, elem via the element-type
+    // bridge; still no newInstance dispatch
+    {"new FixedArray<int>(n, e)", "new_fixedarray_bridged", {sig::GET, sig::TO_INT}, {sig::NEW_INSTANCE}},
+    // builtin array type cast: native array-descriptor checkcast, no castAs
+    {"x as FixedArray<int>", "as_fixedarray_native", {sig::GET}, {sig::CAST_AS}},
+    {"x as ValueArray<double>", "as_valuearray_native", {sig::GET}, {sig::CAST_AS}},
     // constructor result chained into a method call
     {"new MyClass(a, b).method()",
      "new_then_method_call",
@@ -642,10 +754,10 @@ const TestCase K_TEST_CASES[] = {
     // subscript after the optional segment; element-access base before it
     {"a?.b[0]",
      "optional_then_subscript",
-     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::ARRAY_GET}},
+     {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::PROXY_CALL}},
     {"arr[i]?.foo",
      "subscript_then_optional",
-     {sig::GET, sig::TO_INT, sig::ARRAY_GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE}},
+     {sig::GET, sig::TO_INT, sig::WRAP, sig::PROXY_CALL, sig::PROXY_GET_FIELD, sig::PROXY_VALUE}},
     // consecutive optional segments (defensive navigation): one null
     // checked temp per optional link
     {"objAlpha?.fieldOne?.fieldTwo",
@@ -672,7 +784,9 @@ const TestCase K_TEST_CASES[] = {
      "spread_literal_member",
      {sig::GET, sig::WRAP, sig::PROXY_GET_FIELD, sig::PROXY_VALUE, sig::ARRAY_GET}},
     {"[...foo()]", "spread_literal_call", {sig::CALL_FUNCTION, sig::PROXY_VALUE, sig::ARRAY_GET}},
-    {"[...arr[0]]", "spread_literal_elemaccess", {sig::GET, sig::ARRAY_GET}},
+    {"[...arr[0]]",
+     "spread_literal_elemaccess",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::ARRAY_GET}},
     {"[...(x as Array<Int>)]", "spread_literal_castas_array", {sig::GET, sig::CAST_AS, sig::ARRAY_GET}},
     // native spread semantics must be preserved (wrongful bridging would
     // flip String.$_get to Array.$_get)
@@ -685,11 +799,41 @@ const TestCase K_TEST_CASES[] = {
     {"await p", "unsupported_await", {}, {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
     {"[]", "unsupported_empty_array", {}, {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
     {"({a:1})", "unsupported_object_literal", {}, {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
-    // destructuring assignment targets (array and object forms) degrade
+    // destructuring assignment (array form, identifier elements + holes):
+    // expands to a single RHS snapshot (get) plus per-element $_get reads and
+    // set writebacks; the value is the RHS. Presence-only signature checks
+    // (string-pool semantics); element multiplicity is covered by e2e tests.
     {"[xOne, yTwo] = srcArr",
-     "unsupported_destructuring_array",
+     "destructuring_identifiers",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::SET},
+     {sig::ADD}},
+    // hole: the skipped element contributes no read/writeback
+    {"[xOne, , yTwo] = srcArr",
+     "destructuring_hole",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::SET},
+     {sig::ADD}},
+    // complex RHS: member call snapshot precedes the element reads
+    {"[xOne, yTwo] = c.getArr()",
+     "destructuring_member_rhs",
+     {sig::GET, sig::WRAP, sig::PROXY_CALL, sig::PROXY_VALUE, sig::SET},
+     {}},
+    // empty pattern: value = RHS, zero writebacks
+    {"[] = srcArr", "destructuring_empty", {sig::GET}, {sig::SET, sig::PROXY_CALL}},
+    // rejected element forms degrade to null (valid ABC, no calls), matching
+    // the normal pipeline's REST/DEFAULT/NESTED destructuring diagnostics
+    {"[xOne, ...rest] = srcArr",
+     "unsupported_destructuring_rest",
      {},
      {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
+    {"[xOne = 1] = srcArr",
+     "unsupported_destructuring_default",
+     {},
+     {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
+    {"[xOne, [yTwo]] = srcArr",
+     "unsupported_destructuring_nested",
+     {},
+     {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
+    // object form remains unsupported (ObjectPattern LHS, no expansion)
     {"({xOne: tgtOne} = srcObj)",
      "unsupported_destructuring_object",
      {},
@@ -720,6 +864,9 @@ const TestCase K_TEST_CASES[] = {
     // user-defined element types: erased to Object (bytecode-identical
     // to the native lowering of either element type)
     {"new MyClass[3](o)", "newarray_user_elem_erased", {sig::GET, sig::ARRAY_CREATE}},
+    // null initializer on an erased element type: erasure targets Any so the
+    // null fill value stays assignable (Object would fail ESE0046)
+    {"new MyClass[3](null)", "newarray_user_elem_null_init", {sig::ARRAY_CREATE}, {sig::GET}},
     {"new MyClass[n](i)", "newarray_user_elem_dim_var", {sig::GET, sig::TO_INT, sig::ARRAY_CREATE}},
     {"new a.b.Foo[3](o)", "newarray_qualified_elem_erased", {sig::GET, sig::ARRAY_CREATE}},
     {"new int[3](i => i * 2)", "newarray_lambda_rejected", {}, {sig::ARRAY_CREATE}},
@@ -748,6 +895,34 @@ const TestCase K_TEST_CASES[] = {
     // statement, so earlier side effects are dropped (behavior snapshot:
     // "x = 1" emits no set at all).
     {"x = 1; x + 1", "multi_statement_last_wins", {sig::GET, sig::ADD}, {sig::SET}},
+
+    // let/const declarations: one defineVariable per declarator, the value
+    // argument is the raw temp (no Object cast: null must stay assignable),
+    // and the result is the last declarator's value.
+    {"let a = 1", "let_single", {sig::DEFINE_VARIABLE}, {sig::GET, sig::SET, sig::PROXY_GET_FIELD, "as Object"}},
+    {"const b = 2", "const_single", {sig::DEFINE_VARIABLE}, {sig::GET, sig::SET}},
+    // multi declarator: b's initializer references a via the temp (pendingDecls
+    // direct binding), so no get() for "a" -- only the add dispatch
+    {"let a = 1, b = a + 1", "let_multi_declarator", {sig::DEFINE_VARIABLE, sig::ADD}, {sig::GET, sig::SET}},
+    // null initializer passes the temp raw to the Any-typed parameter
+    {"let a = null", "let_null_init", {sig::DEFINE_VARIABLE}, {sig::GET, sig::SET, "as Object"}},
+    // type annotation ignored in v1 (runtime-typed store)
+    {"let x: int = 5", "let_typed", {sig::DEFINE_VARIABLE}, {sig::GET, sig::SET}},
+    // wrapper parameter names stay bindable: the declared name only ever
+    // becomes a string literal, never an eval-function local
+    {"let thread = 1", "let_param_name", {sig::DEFINE_VARIABLE}, {sig::GET, sig::SET}},
+    // destructuring DECLARATION parses, so the transformer must reject it
+    // (graceful degrade: valid ABC, no calls)
+    {"let [p, q] = [1, 2]", "let_destructuring_degrades", {}, {"std.debug.DebuggerAPI.", "std.debug.DebugProxy."}},
+    // Wrapper-injection snapshot (declaration flavor of the expression-mode
+    // wrapper_injection_snapshot below): '}' closes runtime_evaluate early,
+    // the rest parses as a top-level 'evil' function that lands in the
+    // artifact but is never invoked. The evaluation path itself stays clean
+    // (single declaration, defineVariable registration, literal return).
+    {"let a = 1 } function evil() { return 1",
+     "let_wrapper_injection_snapshot",
+     {sig::DEFINE_VARIABLE},
+     {sig::GET, sig::SET}},
     {"a; b", "multi_statement_plain", {sig::GET}, {sig::ADD, sig::SET}},
     // nullish guarded comparison (threshold-check idiom)
     {"(x ?? 0) < 5", "nullish_guarded_compare", {sig::GET, sig::LT}, {sig::ADD, sig::PROXY_GET_FIELD}},
