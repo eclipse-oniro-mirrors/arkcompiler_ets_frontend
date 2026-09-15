@@ -263,7 +263,7 @@ slot &bytecodehar1/bytecodehar1-file2&2.0.0_1725
     val: 0
 },
 ======> strings <======
-"&bytecodehar1/bytecodehar1-file2&2.0.0.#*#test"; "&bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A"; "@normalized:N&&&sourcehar/sourcehar-file2&2.0.0"; "bytecodehar1.file2.test"; "print"; "prototype"; 
+"@normalized:N&&&sourcehar/sourcehar-file2&2.0.0"; "bytecodehar1.file2.test"; "print"; "prototype"; 
 
 ======> literal array buffer <======
 ======> strings <======
@@ -1145,7 +1145,7 @@ slot &bytecodehar1/bytecodehar1-file2&2.0.0_1725
     val: 0
 },
 ======> strings <======
-"&bytecodehar1/bytecodehar1-file2&2.0.0.#*#test"; "&bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A"; "@normalized:N&&&sourcehar/sourcehar-file2&2.0.0"; "bytecodehar1.file2.test"; "print"; "prototype"; 
+"@normalized:N&&&sourcehar/sourcehar-file2&2.0.0"; "bytecodehar1.file2.test"; "print"; "prototype"; 
 
 ======> literal array buffer <======
 ======> strings <======

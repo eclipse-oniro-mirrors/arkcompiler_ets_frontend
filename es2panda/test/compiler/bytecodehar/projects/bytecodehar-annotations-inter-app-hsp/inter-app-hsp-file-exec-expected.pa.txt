@@ -156,7 +156,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164
     val: 0
 },
 ======> strings <======
-"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonConst"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonOhmurl"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWithAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWoAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1"; "prototype"; "test"; 
+"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "prototype"; "test"; 
 
 ======> literal array buffer <======
 ======> strings <======
@@ -461,7 +461,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305
     val: 0
 },
 ======> strings <======
-"a"; "b"; "c"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; "prototype"; 
+"a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; "prototype"; 
 
 ======> literal array buffer <======
 ======> strings <======
@@ -957,7 +957,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164
     val: 0
 },
 ======> strings <======
-"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonConst"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonOhmurl"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWithAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWoAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1"; "prototype"; "test"; 
+"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "prototype"; "test"; 
 
 ======> literal array buffer <======
 ======> strings <======
@@ -1262,7 +1262,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305
     val: 0
 },
 ======> strings <======
-"a"; "b"; "c"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; "prototype"; 
+"a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; "prototype"; 
 
 ======> literal array buffer <======
 ======> strings <======
