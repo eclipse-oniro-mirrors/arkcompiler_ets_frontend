@@ -892,6 +892,14 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
         ctx->output = std::move(res);
     }
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_ASM_GENERATED : ES2PANDA_STATE_ERROR;
+    if (ctx->patchFixHelper) {
+        std::string errorMsg;
+        if (!util::FinalizePatchFix(*ctx->patchFixHelper, &errorMsg)) {
+            ctx->state = ES2PANDA_STATE_ERROR;
+            ctx->errorMessage = errorMsg;
+        }
+        ctx->patchFixHelper.reset();
+    }
     return ctx;
 }
 
@@ -900,13 +908,6 @@ __attribute__((unused)) Context *GenerateBin(Context *ctx)
     if (ctx->state < ES2PANDA_STATE_ASM_GENERATED) {
         ctx = GenerateAsm(ctx);
     }
-
-    std::string errorMsg;
-    if (ctx->patchFixHelper && !util::FinalizePatchFix(*ctx->patchFixHelper, &errorMsg)) {
-        ctx->state = ES2PANDA_STATE_ERROR;
-        ctx->errorMessage = errorMsg;
-    }
-    ctx->patchFixHelper.reset();
 
     if (ctx->state == ES2PANDA_STATE_ERROR) {
         return ctx;

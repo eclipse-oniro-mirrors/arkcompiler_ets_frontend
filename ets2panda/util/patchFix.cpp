@@ -57,63 +57,92 @@ void PatchFix::ProcessFunction(compiler::CodeGen *cg, pandasm::Function *func)
         DumpFunctionInfo(cg, func);
         return;
     }
-
-    if (IsColdReload() || IsHotReload()) {
+    if (IsHotReload()) {
         HandleFunction(cg, func);
         return;
     }
 }
 
-void PatchFix::ProcessModule(const parser::Program *program)
+std::string PatchFix::GetModuleKey(const parser::Program *program)
 {
-    if (IsDumpSymbolTable()) {
-        DumpModuleInfo(program);
-        return;
-    }
-
-    if (IsColdReload()) {
-        ValidateModuleInfo(program);
-        return;
-    }
-
-    if (IsHotReload()) {
-        return;
-    }
+    return std::string(program->GetImportInfo().Key());
 }
 
-void PatchFix::ProcessExports(const parser::Program *program, const std::vector<std::string> &exportedNames)
+// Serialized per-class structural list stored under ':classinfolist': each class is
+// "name\x1fparent\x1fifaces" and classes are joined with '\x1e'. '-' is the sentinel
+// for an empty list.
+static constexpr std::string_view CLASS_INFO_FIELD_SEP = "\x1f";
+static constexpr std::string_view CLASS_INFO_ENTRY_SEP = "\x1e";
+static constexpr std::string_view CLASS_INFO_SENTINEL = "-";
+
+static std::string SerializeClassInfoList(
+    const std::vector<std::tuple<std::string, std::string, std::string>> &classInfos)
 {
-    std::stringstream info;
-    for (const auto &name : exportedNames) {
-        info << name << SymbolTable::SECOND_LEVEL_SEPERATOR;
+    if (classInfos.empty()) {
+        return std::string(CLASS_INFO_SENTINEL);
     }
-    std::string hash = Helpers::GetHashString(info.str());
-    std::string key = GetModuleKey(program) + ":exports";
-
-    if (IsDumpSymbolTable()) {
-        std::stringstream ss;
-        ss << key << SymbolTable::SECOND_LEVEL_SEPERATOR << hash << std::endl;
-        symbolTable_->FillSymbolTable(ss);
-        return;
-    }
-
-    if (IsColdReload()) {
-        auto it = originModuleInfo_->find(key);
-        if (it == originModuleInfo_->end() && exportedNames.empty()) {
-            return;  // No exports in either version.
+    // Sort by class name so the serialized form is order-stable.
+    auto sorted = classInfos;
+    std::sort(sorted.begin(), sorted.end(),
+              [](const auto &lhs, const auto &rhs) { return std::get<0>(lhs) < std::get<0>(rhs); });
+    std::stringstream ss;
+    bool first = true;
+    for (const auto &[name, parent, ifaces] : sorted) {
+        if (!first) {
+            ss << CLASS_INFO_ENTRY_SEP;
         }
-        if (it != originModuleInfo_->end() && it->second == hash) {
-            return;  // Export set unchanged.
-        }
-        patchError_ = true;
-        errMsg_ << "[Patch] Found export expression changed in " << key << ", not supported!" << std::endl;
-        return;
+        ss << name << CLASS_INFO_FIELD_SEP << parent << CLASS_INFO_FIELD_SEP << ifaces;
+        first = false;
     }
+    return ss.str();
+}
+
+static bool ClassStructureChanged(const std::string &originSerialized,
+                                  const std::vector<std::tuple<std::string, std::string, std::string>> &current)
+{
+    // Judge per class: an origin class whose parent/interfaces changed is rejected; newly added classes are allowed.
+    // Removed classes are allowed as the deletion counterpart: deleting a function is an allowed change and may drop
+    // its synthetic lambda classes; a non-exported class can only be referenced from within its own module, and the
+    // module is recompiled as a whole here.
+    std::unordered_map<std::string, std::pair<std::string, std::string>> originByName;
+    size_t lastPos = 0;
+    while (lastPos < originSerialized.size()) {
+        auto entryEnd = originSerialized.find(CLASS_INFO_ENTRY_SEP, lastPos);
+        if (entryEnd == std::string::npos) {
+            entryEnd = originSerialized.size();
+        }
+        auto entry = std::string_view(originSerialized).substr(lastPos, entryEnd - lastPos);
+        auto f1 = entry.find(CLASS_INFO_FIELD_SEP);
+        auto f2 = entry.find(CLASS_INFO_FIELD_SEP, f1 + 1);
+        if (f1 != std::string_view::npos && f2 != std::string_view::npos) {
+            originByName.emplace(
+                std::string(entry.substr(0, f1)),
+                std::make_pair(std::string(entry.substr(f1 + 1, f2 - f1 - 1)), std::string(entry.substr(f2 + 1))));
+        } else {
+            std::cerr << "[Patch] Warning: malformed class info entry skipped: " << entry << std::endl;
+        }
+        lastPos = entryEnd + 1;
+    }
+    for (const auto &[name, parent, ifaces] : current) {
+        auto it = originByName.find(name);
+        if (it == originByName.end()) {
+            continue;  // Newly added class — allowed.
+        }
+        if (it->second.first != parent || it->second.second != ifaces) {
+            return true;  // Existing class restructured — rejected.
+        }
+    }
+    return false;
 }
 
 void PatchFix::ProcessClassInfo(const parser::Program *program,
                                 const std::vector<std::tuple<std::string, std::string, std::string>> &classInfos)
 {
+    // Skip the synthetic '<simult>' shell.
+    if (program->Is<ModuleKind::SIMULT_MAIN>()) {
+        return;
+    }
+
     std::stringstream info;
     for (const auto &[name, parent, ifaces] : classInfos) {
         info << name << SymbolTable::SECOND_LEVEL_SEPERATOR << parent << SymbolTable::SECOND_LEVEL_SEPERATOR << ifaces
@@ -121,15 +150,33 @@ void PatchFix::ProcessClassInfo(const parser::Program *program,
     }
     std::string hash = Helpers::GetHashString(info.str());
     std::string key = GetModuleKey(program) + ":classinfo";
+    std::string listKey = GetModuleKey(program) + ":classinfolist";
 
     if (IsDumpSymbolTable()) {
         std::stringstream ss;
         ss << key << SymbolTable::SECOND_LEVEL_SEPERATOR << hash << std::endl;
         symbolTable_->FillSymbolTable(ss);
+        std::stringstream ss2;
+        ss2 << listKey << SymbolTable::SECOND_LEVEL_SEPERATOR << SerializeClassInfoList(classInfos) << std::endl;
+        symbolTable_->FillSymbolTable(ss2);
         return;
     }
 
-    if (IsColdReload()) {
+    if (IsHotReload()) {
+        auto listIt = originModuleInfo_->find(listKey);
+        if (listIt != originModuleInfo_->end()) {
+            // New-format symbol table: judge per class. Allowed: unchanged structures
+            // and newly added classes (e.g. lambda classes of an added function).
+            // Rejected: an existing class whose parent or implemented interfaces changed.
+            if (!ClassStructureChanged(listIt->second, classInfos)) {
+                return;
+            }
+            patchError_ = true;
+            errMsg_ << "[Patch] Found class inheritance or interface change in " << key << ", not supported!"
+                    << std::endl;
+            return;
+        }
+        // Old-format symbol table (hash only): strict comparison.
         auto it = originModuleInfo_->find(key);
         if (it == originModuleInfo_->end()) {
             return;  // Origin was dumped without class info support — skip.
@@ -169,14 +216,6 @@ void PatchFix::DumpFunctionInfo(compiler::CodeGen *cg, pandasm::Function *func)
     symbolTable_->FillSymbolTable(ss);
 }
 
-void PatchFix::DumpModuleInfo(const parser::Program *program)
-{
-    std::stringstream ss;
-    ss << GetModuleKey(program) << SymbolTable::SECOND_LEVEL_SEPERATOR;
-    ss << ComputeModuleHash(program) << std::endl;
-    symbolTable_->FillSymbolTable(ss);
-}
-
 // ============================================================================
 // ColdReload mode (Phase 2): validate against origin symbol table
 // ============================================================================
@@ -211,153 +250,6 @@ void PatchFix::HandleFunction(compiler::CodeGen *cg, pandasm::Function *func)
     }
 }
 
-void PatchFix::ValidateModuleInfo(const parser::Program *program)
-{
-    std::string key = GetModuleKey(program);
-    auto it = originModuleInfo_->find(key);
-    if (it == originModuleInfo_->end()) {
-        patchError_ = true;
-        errMsg_ << "[Patch] Found new import/export expression in " << key << ", not supported!" << std::endl;
-        return;
-    }
-
-    std::string currentHash = ComputeModuleHash(program);
-    if (currentHash != it->second) {
-        patchError_ = true;
-        errMsg_ << "[Patch] Found import/export expression changed in " << key << ", not supported!" << std::endl;
-    }
-}
-
-// ============================================================================
-// Module helpers
-// ============================================================================
-
-std::string PatchFix::GetModuleKey(const parser::Program *program)
-{
-    return std::string(program->GetImportInfo().Key());
-}
-
-static const ir::ImportDeclaration *GetImportDecl(const ir::Statement *stmt)
-{
-    return (stmt->Type() == ir::AstNodeType::ETS_IMPORT_DECLARATION)
-               ? static_cast<const ir::ImportDeclaration *>(stmt->AsETSImportDeclaration())
-               : stmt->AsImportDeclaration();
-}
-
-static void CollectImportSpecifiers(const ir::ImportDeclaration *importDecl, std::stringstream &info)
-{
-    if (importDecl->Source() != nullptr) {
-        info << "from:" << importDecl->Source()->Str() << ";";
-    }
-    for (const auto *spec : importDecl->Specifiers()) {
-        if (spec->IsImportSpecifier()) {
-            info << "i:" << spec->AsImportSpecifier()->Imported()->Name() << ":"
-                 << spec->AsImportSpecifier()->Local()->Name() << ";";
-        } else if (spec->IsImportDefaultSpecifier()) {
-            info << "id:" << spec->AsImportDefaultSpecifier()->Local()->Name() << ";";
-        } else if (spec->IsImportNamespaceSpecifier()) {
-            info << "ins:" << spec->AsImportNamespaceSpecifier()->Local()->Name() << ";";
-        }
-    }
-}
-
-static void CollectExportSpecifiers(const ir::ExportNamedDeclaration *exportDecl, std::stringstream &info)
-{
-    for (const auto *spec : exportDecl->Specifiers()) {
-        info << "e:" << spec->Local()->Name();
-        if (spec->Exported() != nullptr && spec->Exported()->Name() != spec->Local()->Name()) {
-            info << ":" << spec->Exported()->Name();
-        }
-        info << ";";
-    }
-    if (exportDecl->Decl() != nullptr && exportDecl->Decl()->IsFunctionDeclaration()) {
-        info << "ex:" << exportDecl->Decl()->AsFunctionDeclaration()->Function()->Id()->Name() << ";";
-    }
-}
-
-static void CollectExportAll(const ir::ExportAllDeclaration *exportAll, std::stringstream &info)
-{
-    if (exportAll->Source() != nullptr) {
-        info << "ea:" << exportAll->Source()->Str();
-        if (exportAll->Exported() != nullptr) {
-            info << ":" << exportAll->Exported()->Name();
-        }
-        info << ";";
-    }
-}
-
-static void CollectReExport(const ir::ETSReExportDeclaration *reExport, std::stringstream &info)
-{
-    auto *etsImport = reExport->GetETSImportDeclarations();
-    if (etsImport->Source() != nullptr) {
-        info << "refrom:" << etsImport->Source()->Str() << ";";
-    }
-    for (const auto *spec : etsImport->Specifiers()) {
-        if (spec->IsImportSpecifier()) {
-            auto *importSpec = spec->AsImportSpecifier();
-            info << "re:" << importSpec->Imported()->Name();
-            if (importSpec->Local()->Name() != importSpec->Imported()->Name()) {
-                info << ":" << importSpec->Local()->Name();
-            }
-            info << ";";
-        } else if (spec->IsImportNamespaceSpecifier()) {
-            info << "rens:" << spec->AsImportNamespaceSpecifier()->Local()->Name() << ";";
-        }
-    }
-}
-
-static void CollectStatementInfo(const ir::Statement *stmt, std::stringstream &info)
-{
-    switch (stmt->Type()) {
-        case ir::AstNodeType::ETS_IMPORT_DECLARATION:
-        case ir::AstNodeType::IMPORT_DECLARATION:
-            CollectImportSpecifiers(GetImportDecl(stmt), info);
-            break;
-        case ir::AstNodeType::EXPORT_NAMED_DECLARATION:
-            CollectExportSpecifiers(stmt->AsExportNamedDeclaration(), info);
-            break;
-        case ir::AstNodeType::EXPORT_ALL_DECLARATION:
-            CollectExportAll(stmt->AsExportAllDeclaration(), info);
-            break;
-        case ir::AstNodeType::REEXPORT_STATEMENT:
-            CollectReExport(stmt->AsETSReExportDeclaration(), info);
-            break;
-        default:
-            break;
-    }
-}
-
-static void CollectImportExportInfo(const parser::Program *program, std::stringstream &info)
-{
-    for (const auto *stmt : program->Ast()->Statements()) {
-        CollectStatementInfo(stmt, info);
-    }
-}
-
-std::string PatchFix::ComputeModuleHash(const parser::Program *program)
-{
-    std::stringstream info;
-    info << program->GetImportInfo().ModuleName() << ";";
-
-    const auto *externalDecls = program->GetExternalDecls();
-    if (externalDecls != nullptr) {
-        // Direct() returns an unordered_map whose iteration order is non-deterministic across
-        // processes. Sort the module names so the hash is stable regardless of iteration order.
-        std::vector<std::string> extModuleNames;
-        extModuleNames.reserve(externalDecls->Direct().size());
-        for (const auto &[key, extProg] : externalDecls->Direct()) {
-            extModuleNames.emplace_back(extProg->ModuleName());
-        }
-        std::sort(extModuleNames.begin(), extModuleNames.end());
-        for (const auto &name : extModuleNames) {
-            info << name << ";";
-        }
-    }
-
-    CollectImportExportInfo(program, info);
-    return Helpers::GetHashString(info.str());
-}
-
 void PatchFix::DetectSignatureChanges()
 {
     // Distinguish signature changes from deletions:
@@ -380,12 +272,8 @@ void PatchFix::Finalize(pandasm::Program ** /*prog*/)
         return;
     }
 
-    if (IsColdReload()) {
-        DetectSignatureChanges();
-        return;
-    }
-
     if (IsHotReload()) {
+        DetectSignatureChanges();
         return;
     }
 }

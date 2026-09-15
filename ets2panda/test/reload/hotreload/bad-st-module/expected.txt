@@ -1,0 +1,5 @@
+Failed to read the symbol table line: 'badkey' due to unrecognized format.
+Please verify the format of the symbol table.
+Failed to read the symbol file due to one or more malformed lines.
+Failed to read the symbol table file 'base.st'.
+[Error] Failed to initialize symbol table

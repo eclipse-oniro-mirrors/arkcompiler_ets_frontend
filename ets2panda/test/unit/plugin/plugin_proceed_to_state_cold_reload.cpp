@@ -21,6 +21,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <vector>
 #include <unistd.h>
@@ -253,6 +254,250 @@ static int RunTest(const TestCase &tc, int argc, char **argv)
     return 0;
 }
 
+// Class add/delete sources: both reload modes accept them (cold restarts, hot keeps
+// the old class live / lazy-loads the new one).
+static const char *CLS_ADD_BASE = R"ETS(
+class Foo { m(): int { return 1; } }
+function main(): void { let f: Foo = new Foo(); f.m(); }
+)ETS";
+
+static const char *CLS_ADD_NEW = R"ETS(
+class Foo { m(): int { return 1; } }
+class Bar { n(): int { return 2; } }
+function main(): void { let f: Foo = new Foo(); f.m(); }
+)ETS";
+
+static const char *CLS_DEL_BASE = R"ETS(
+class Foo { m(): int { return 1; } }
+class Bar { n(): int { return 2; } }
+function main(): void { let f: Foo = new Foo(); f.m(); }
+)ETS";
+
+static const char *CLS_DEL_MOD = R"ETS(
+class Foo { m(): int { return 1; } }
+function main(): void { let f: Foo = new Foo(); f.m(); }
+)ETS";
+
+// Enum member and top-level const changes: cold reload accepts (restart re-runs the
+// static initializer from the patch).
+static const char *ENUM_BASE = R"ETS(
+enum Color { RED, GREEN }
+function main(): void { let c: Color = Color.RED; }
+)ETS";
+
+static const char *ENUM_ADD = R"ETS(
+enum Color { RED, GREEN, BLUE }
+function main(): void { let c: Color = Color.RED; }
+)ETS";
+
+static const char *CONST_BASE = R"ETS(
+const K: int = 5;
+function main(): void { let x: int = K; }
+)ETS";
+
+static const char *CONST_CHANGE = R"ETS(
+const K: int = 6;
+function main(): void { let x: int = K; }
+)ETS";
+
+// Interface add/remove sources: cold reload accepts; hot reload rejects at classinfo.
+static const char *IFACE_BASE = R"ETS(
+interface IA { a(): int; }
+class Foo implements IA {
+    a(): int { return 1; }
+}
+function main(): void { let f: Foo = new Foo(); f.a(); }
+)ETS";
+
+static const char *IFACE_ADD = R"ETS(
+interface IA { a(): int; }
+interface IB { b(): int; }
+class Foo implements IA, IB {
+    a(): int { return 1; }
+    b(): int { return 2; }
+}
+function main(): void { let f: Foo = new Foo(); f.a(); }
+)ETS";
+
+static const char *IFACE_DEL = R"ETS(
+interface IA { a(): int; }
+class Foo {
+    a(): int { return 1; }
+}
+function main(): void { let f: Foo = new Foo(); f.a(); }
+)ETS";
+
+// Parent-class change source: cold reload accepts it; hot reload rejects it at
+// classinfo validation — the error source for the ASM-boundary probe below.
+static const char *PARENT_CHANGE_BASE = R"ETS(
+class BaseA { m(): int { return 1; } }
+class Foo extends BaseA { n(): int { return 2; } }
+function main(): void { let f: Foo = new Foo(); f.n(); }
+)ETS";
+
+static const char *PARENT_CHANGE_MOD = R"ETS(
+class BaseB { m(): int { return 1; } }
+class Foo extends BaseB { n(): int { return 2; } }
+function main(): void { let f: Foo = new Foo(); f.n(); }
+)ETS";
+
+// ========================================================================
+// ASM_GENERATED boundary tests (IDE / JS-binding-layer lifecycle)
+// ========================================================================
+// The embedder makes its decision at the ASM_GENERATED boundary: on error it
+// reads messages (GetAllErrorMessages) before any teardown happens; on success
+// it frees compiler memory and proceeds to BIN. Reload validation must
+// therefore be finalized by the end of the ASM stage, and the message APIs
+// must stay callable while the context is alive.
+
+// Proceed through the pipeline only up to ASM_GENERATED — the point where the
+// embedder decides — stopping early if the context enters the error state.
+static void ProceedToAsmBoundary(es2panda_Context *ctx)
+{
+    for (auto s = ES2PANDA_STATE_PARSED; s <= ES2PANDA_STATE_ASM_GENERATED;
+         s = static_cast<es2panda_ContextState>(s + 1)) {
+        if (s == ES2PANDA_STATE_NEW || s == ES2PANDA_STATE_ERROR)
+            continue;
+        impl->ProceedToState(ctx, s);
+        if (impl->ContextState(ctx) == ES2PANDA_STATE_ERROR)
+            break;
+    }
+}
+
+// Error-path expectations: the reload verdict must already be final at the
+// ASM_GENERATED boundary and the message must carry the [Patch] marker.
+static int CheckBoundaryError(const char *label, es2panda_ContextState state, const char *em)
+{
+    int rc = 0;
+    if (state != ES2PANDA_STATE_ERROR) {
+        std::cerr << "FAIL [" << label << "] reload error must be visible at ASM_GENERATED, got " << S(state)
+                  << std::endl;
+        rc = 1;
+    }
+    if (em == nullptr || strstr(em, "[Patch]") == nullptr) {
+        std::cerr << "FAIL [" << label << "] errorMessage missing [Patch]" << std::endl;
+        rc = 1;
+    }
+    return rc;
+}
+
+// Success-path expectations: the context must sit at ASM_GENERATED, and the
+// pipeline must still complete to BIN after probing the message APIs.
+static int CheckBoundaryOk(es2panda_Context *ctx, const char *label, es2panda_ContextState state)
+{
+    if (state != ES2PANDA_STATE_ASM_GENERATED) {
+        std::cerr << "FAIL [" << label << "] want ASM, got " << S(state) << std::endl;
+        return 1;
+    }
+    impl->ProceedToState(ctx, ES2PANDA_STATE_BIN_GENERATED);
+    if (impl->ContextState(ctx) != ES2PANDA_STATE_BIN_GENERATED) {
+        std::cerr << "FAIL [" << label << "] want BIN after ASM boundary" << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+static int RunAsmBoundaryPhase(int argc, char **argv, const char *extraFlag1, const char *extraFlag2,
+                               const char *source, const char *srcFile, bool expectError, const char *label)
+{
+    FILE *f = fopen(srcFile, "w");
+    if (f == nullptr || fputs(source, f) == EOF || fclose(f) == EOF) {
+        std::cerr << "FAIL [" << label << "] write failed" << std::endl;
+        return 1;
+    }
+
+    std::vector<const char *> a;
+    for (int i = 1; i < argc - 1; ++i)
+        a.push_back(argv[i]);
+    if (extraFlag1)
+        a.push_back(extraFlag1);
+    if (extraFlag2)
+        a.push_back(extraFlag2);
+    a.push_back(srcFile);
+
+    auto *config = impl->CreateConfig(a.size(), a.data());
+    if (!config) {
+        std::cerr << "FAIL [" << label << "] CreateConfig failed" << std::endl;
+        return 1;
+    }
+    auto *ctx = impl->CreateContextFromFile(config, srcFile);
+    if (!ctx) {
+        std::cerr << "FAIL [" << label << "] CreateContextFromFile failed" << std::endl;
+        impl->DestroyConfig(config);
+        return 1;
+    }
+
+    ProceedToAsmBoundary(ctx);
+
+    auto state = impl->ContextState(ctx);
+    // Message APIs are called while the context is alive, before any teardown:
+    // GetAllErrorMessages dereferences the context allocator, which is freed by
+    // FreeCompilerPartMemory — it must not have been torn down at this point.
+    const char *all = impl->GetAllErrorMessages(ctx);
+    const char *em = impl->ContextErrorMessage(ctx);
+
+    int rc = 0;
+    if (all == nullptr) {
+        std::cerr << "FAIL [" << label << "] GetAllErrorMessages returned nullptr" << std::endl;
+        rc = 1;
+    }
+    rc |= expectError ? CheckBoundaryError(label, state, em) : CheckBoundaryOk(ctx, label, state);
+
+    impl->DestroyContext(ctx);
+    impl->DestroyConfig(config);
+    if (rc == 0)
+        std::cout << "PASS [" << label << "]" << std::endl;
+    return rc;
+}
+
+// Hot-reload variant of the ASM-boundary probe: the remaining reload verdicts
+// (signature change, classinfo) are hot-reload-only, so the boundary probes run in
+// hot mode.
+static int RunAsmBoundaryHotCase(int argc, char **argv, const char *label, const char *baseSrc, const char *modSrc,
+                                 bool expectError)
+{
+    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_" + label + ".ets";
+    std::string stPath = std::string("/tmp/capi_st_") + std::to_string(getpid()) + "_" + label + ".st";
+    std::string da = "--dump-symbol-table=" + stPath;
+    std::string ia = "--input-symbol-table=" + stPath;
+
+    auto [state, msg] = RunPhase(argc, argv, da.c_str(), nullptr, baseSrc, srcPath.c_str());
+    if (state != ES2PANDA_STATE_BIN_GENERATED) {
+        std::cerr << "FAIL [" << label << "] dump: " << S(state) << msg << std::endl;
+        return 1;
+    }
+    return RunAsmBoundaryPhase(argc, argv, "--hot-reload", ia.c_str(), modSrc, srcPath.c_str(), expectError, label);
+}
+
+// Hot-reload suite: the five frontend rejections (two signature, three classinfo)
+// plus one representative acceptance, verifying the C API hot-reload pipeline
+// (HandleFunction -> DetectSignatureChanges, classinfo validation) end to end.
+static int RunHotTest(const TestCase &tc, int argc, char **argv)
+{
+    std::string srcPath = std::string("/tmp/capi_src_") + std::to_string(getpid()) + "_hot_" + tc.label + ".ets";
+    std::string stPath = std::string("/tmp/capi_st_") + std::to_string(getpid()) + "_hot_" + tc.label + ".st";
+    std::string da = "--dump-symbol-table=" + stPath;
+    std::string ia = "--input-symbol-table=" + stPath;
+
+    auto [dState, dMsg] = RunPhase(argc, argv, da.c_str(), nullptr, tc.baseSrc, srcPath.c_str());
+    if (dState != ES2PANDA_STATE_BIN_GENERATED) {
+        std::cerr << "FAIL [" << tc.label << "] dump: " << S(dState) << dMsg << std::endl;
+        return 1;
+    }
+    auto [state, msg] = RunPhase(argc, argv, "--hot-reload", ia.c_str(), tc.modSrc, srcPath.c_str());
+    if (!tc.expectError && state != ES2PANDA_STATE_BIN_GENERATED) {
+        std::cerr << "FAIL [" << tc.label << "] want BIN, got " << S(state) << " [" << msg << "]" << std::endl;
+        return 1;
+    }
+    if (tc.expectError && (state != ES2PANDA_STATE_ERROR || msg.find("[Patch]") == std::string::npos)) {
+        std::cerr << "FAIL [" << tc.label << "] want ERR with [Patch], got " << S(state) << " [" << msg << "]"
+                  << std::endl;
+        return 1;
+    }
+    std::cout << "PASS [" << tc.label << "]" << std::endl;
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     if (argc < MIN_ARGC)
@@ -265,23 +510,29 @@ int main(int argc, char **argv)
     const TestCase tests[] = {
         // --- function-level ---
         {"func-no-change", FUNC_BASE, FUNC_NO_CHANGE, false},
-        {"func-body-change", FUNC_BASE, FUNC_BODY_CHANGE, true},
-        {"func-sig-change", FUNC_BASE, FUNC_SIG_CHANGE, true},
-        {"func-string-change", FUNC_BASE, FUNC_STRING_CHANGE, true},
+        {"func-body-change", FUNC_BASE, FUNC_BODY_CHANGE, false},
+        {"func-sig-change", FUNC_BASE, FUNC_SIG_CHANGE, false},
+        {"func-string-change", FUNC_BASE, FUNC_STRING_CHANGE, false},
         {"func-add", FUNC_BASE, FUNC_ADD, false},
         {"func-delete", FUNC_DELETE_BASE, FUNC_DELETE, false},
 
         // --- class method-level ---
-        {"cls-body-change", CLS_BASE, CLS_BODY_CHANGE, true},
-        {"cls-sig-change", CLS_SIG_CHANGE_BASE, CLS_SIG_CHANGE, true},
+        {"cls-body-change", CLS_BASE, CLS_BODY_CHANGE, false},
+        {"cls-sig-change", CLS_SIG_CHANGE_BASE, CLS_SIG_CHANGE, false},
         {"cls-add-method", CLS_BASE, CLS_ADD, false},
         {"cls-delete-method", CLS_DELETE_BASE, CLS_DELETE, false},
 
         // --- field-level ---
-        {"fld-type-change", FLD_BASE, FLD_TYPE_CHANGE, true},
-        {"fld-init-change", FLD_BASE, FLD_INIT_CHANGE, true},
-        {"fld-add", FLD_BASE, FLD_ADD, true},
-        {"fld-delete", FLD_DELETE_BASE, FLD_DELETE, true},
+        {"fld-type-change", FLD_BASE, FLD_TYPE_CHANGE, false},
+        {"fld-init-change", FLD_BASE, FLD_INIT_CHANGE, false},
+        {"fld-add", FLD_BASE, FLD_ADD, false},
+        {"fld-delete", FLD_DELETE_BASE, FLD_DELETE, false},
+
+        // --- class-set / top-level ---
+        {"cls-add", CLS_ADD_BASE, CLS_ADD_NEW, false},
+        {"cls-del", CLS_DEL_BASE, CLS_DEL_MOD, false},
+        {"enum-add-member", ENUM_BASE, ENUM_ADD, false},
+        {"top-level-const-change", CONST_BASE, CONST_CHANGE, false},
     };
 
     int rc = 0;
@@ -289,6 +540,22 @@ int main(int argc, char **argv)
         rc |= RunTest(t, argc, argv);
     }
 
+    // --- hot-reload suite (frontend rejections + representative acceptance) ---
+    const TestCase hotTests[] = {
+        {"hot-func-body-change", FUNC_BASE, FUNC_BODY_CHANGE, false},
+        {"hot-func-sig-change", FUNC_BASE, FUNC_SIG_CHANGE, true},
+        {"hot-cls-method-sig-change", CLS_SIG_CHANGE_BASE, CLS_SIG_CHANGE, true},
+        {"hot-change-parent", PARENT_CHANGE_BASE, PARENT_CHANGE_MOD, true},
+        {"hot-add-interface", IFACE_BASE, IFACE_ADD, true},
+        {"hot-delete-interface", IFACE_BASE, IFACE_DEL, true},
+    };
+    for (const auto &t : hotTests) {
+        rc |= RunHotTest(t, argc, argv);
+    }
+
+    // --- ASM_GENERATED boundary (IDE lifecycle) ---
+    rc |= RunAsmBoundaryHotCase(argc, argv, "asm-boundary-error", PARENT_CHANGE_BASE, PARENT_CHANGE_MOD, true);
+    rc |= RunAsmBoundaryHotCase(argc, argv, "asm-boundary-ok", FUNC_BASE, FUNC_ADD, false);
     if (rc)
         return 1;
     std::cout << "ALL DONE" << std::endl;

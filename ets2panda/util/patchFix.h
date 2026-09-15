@@ -53,17 +53,6 @@ public:
     // HotReload:   same lookup, but allows hash mismatch (runtime handles hot-patching).
     void ProcessFunction(compiler::CodeGen *cg, pandasm::Function *func);
 
-    // Called from Emitter after module records are emitted.
-    // Dump mode: serializes module import/export info from parser::Program into symbol table.
-    // ColdReload mode: validates module import/export info against origin symbol table.
-    void ProcessModule(const parser::Program *program);
-
-    // Called from Emitter with the set of exported class/interface names.
-    // Detects changes in the export set (e.g. "export function" → "function").
-    // The program parameter is used to generate a per-module key (e.g. "dep.ets:exports")
-    // so that exports from different programs in simultaneous incremental mode don't collide.
-    void ProcessExports(const parser::Program *program, const std::vector<std::string> &exportedNames);
-
     // Called from Emitter with class inheritance/interface info.
     // Each entry: (className, parentName, semicolon-joined interface names).
     // Detects changes in class inheritance or implemented interfaces.
@@ -109,7 +98,6 @@ private:
     // HotReload:  funcHash mismatch → allowed (IsHotReload() early-return).
 
     void HandleFunction(compiler::CodeGen *cg, pandasm::Function *func);
-    void ValidateModuleInfo(const parser::Program *program);
 
     // ColdReload only: cross-reference originFunctionInfo_ against matchedFunctions_
     // and newFunctionBaseNames_ to detect signature changes (vs. pure deletions).
@@ -122,11 +110,8 @@ private:
     std::string GenerateFunctionHash(pandasm::Function *func);
 
     // Derives a stable module key from the parser::Program, consistent across
-    // dump and cold-reload phases (file stem, not full path).
+    // the dump and reload phases (used for the :classinfo entries).
     static std::string GetModuleKey(const parser::Program *program);
-
-    // Serializes import/export info from parser::Program into a hash string.
-    static std::string ComputeModuleHash(const parser::Program *program);
 
     // --- Members ---
 
