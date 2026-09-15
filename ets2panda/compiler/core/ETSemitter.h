@@ -111,6 +111,7 @@ private:
     detail::EmitterDependencies *GetOrCreateDependenciesForTheProgram(const parser::Program *prg);
     void EmitRecordsImpl(bool isIncrementalBuild = false);
     void CollectReloadInfo(parser::Program *program);
+    void CollectReloadInfoForPrograms();
     void EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
     void GenGlobalUnionRecord(util::StringView assemblerType);

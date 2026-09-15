@@ -1,0 +1,2 @@
+bad-st-module.ETSGLOBAL.<cctor>:void	bad-st-module.ETSGLOBAL.<cctor>:void	11111111
+badkey

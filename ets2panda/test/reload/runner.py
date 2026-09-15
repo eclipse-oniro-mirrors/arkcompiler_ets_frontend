@@ -114,6 +114,7 @@ def _reload_phase(es2panda, opt_level, mode_flag, tmpdir, st_file, out_abc, work
     output = '\n'.join(
         line for line in output.split('\n')
         if not line.startswith('[Warning] Reload mode forces --opt-level=0')
+                   and not line.startswith('Warning: duplicate function entry')
     ).strip()
     return (output, None)
 

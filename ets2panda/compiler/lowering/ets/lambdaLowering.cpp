@@ -111,6 +111,12 @@ static ir::AstNode const *FindIfNeedThis(const ir::ArrowFunctionExpression *lamb
 static size_t g_calleeCount = 0;
 static std::mutex g_calleeCountMutex {};
 
+static bool IsReloadFlow(public_lib::Context *ctx)
+{
+    const auto *options = ctx->config->options;
+    return options->IsColdReload() || options->IsHotReload() || !options->GetDumpSymbolTable().empty();
+}
+
 // Make calleeCount behaviour predictable
 static void ResetCalleeCount()
 {
@@ -1357,8 +1363,15 @@ static ir::ClassDeclaration *CreateEmptyLambdaClassDeclaration(public_lib::Conte
     auto *parser = ctx->parser->AsETSParser();
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
-    auto lambdaClassName = util::UString {
-        std::string_view {util::NameMangler::GetInstance()->CreateMangledNameForLambdaObject(info->name)}, allocator};
+    // Reload flow only: the per-program counter reset makes same-named lambda classes
+    // of different programs possible, so the class name is suffixed with the owning
+    // program's fingerprint.
+    std::string mangledClassName = util::NameMangler::GetInstance()->CreateMangledNameForLambdaObject(info->name);
+    if (IsReloadFlow(ctx)) {
+        auto *owningProgram = varBinder->GetRecordTable()->Program();
+        mangledClassName += "-" + std::to_string(std::hash<std::string_view> {}(owningProgram->AbsoluteName().Mutf8()));
+    }
+    auto lambdaClassName = util::UString {std::move(mangledClassName), allocator};
 
     ES2PANDA_ASSERT(lambdaProviderClass);
     auto providerTypeNode = allocator->New<ir::OpaqueTypeNode>(lambdaProviderClass, allocator);
@@ -2102,10 +2115,12 @@ bool LambdaConversionPhase::PerformForProgram(parser::Program *program)
     varbinder::RecordTableContext bctx {varBinder, program == Context()->parserProgram ? nullptr : program};
     parser::SavedFormattingFileName savedFormattingName(Context()->parser->AsETSParser(), "lambda-conversion");
 
-    // For reproducibility of results when several compilation sessions are executed during
-    // the same process's lifetime.
-    if (program == Context()->parserProgram &&
-        (Context()->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS)) {
+    // In the reload flow (dump + reload) the counter is reset per program so that a
+    // file's lambda numbering does not depend on which other files share the invocation
+    // (the two phases pass different file sets). Ordinary builds, including stdlib
+    // generation, keep the original continuous numbering.
+    if (IsReloadFlow(Context()) || (program == Context()->parserProgram &&
+                                    Context()->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS)) {
         ResetCalleeCount();
     }
 

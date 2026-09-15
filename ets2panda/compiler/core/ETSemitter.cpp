@@ -417,16 +417,6 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     Program()->AddToFunctionTable(std::move(func));
 }
 
-static std::vector<std::string> CollectExportsForProgram(parser::Program *program)
-{
-    std::vector<std::string> exportedNames;
-    auto &exportFacts = program->VarBinder()->AsETSBinder()->GetExportFactsStore().GetExportFacts(program);
-    for (const auto &fact : exportFacts.locals) {
-        exportedNames.push_back(std::string(fact.exportedName));
-    }
-    return exportedNames;
-}
-
 static std::vector<std::tuple<std::string, std::string, std::string>> CollectClassInfosForProgram(
     parser::Program *program)
 {
@@ -468,10 +458,6 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
     auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
         ctx->diagnosticEngine->LogDiagnostic(kind, params);
     };
-
-    if (Context()->patchFixHelper != nullptr) {
-        CollectReloadInfo(Context()->parserProgram);
-    }
 
     for (const auto &[path, prog] : programsHolder) {
         if (ctx->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
@@ -563,17 +549,33 @@ void ETSEmitter::EmitRecords()
     ES2PANDA_ASSERT(Context()->parserProgram->VarBinder()->AsETSBinder()->CheckRecordTablesConsistency());
     EmitRecordsImpl();
 
-    if (Context()->patchFixHelper != nullptr) {
-        CollectReloadInfo(Context()->parserProgram);
-    }
+    CollectReloadInfoForPrograms();
 }
 
 void ETSEmitter::CollectReloadInfo(parser::Program *program)
 {
     auto *pf = Context()->patchFixHelper.get();
-    pf->ProcessModule(program);
-    pf->ProcessExports(program, CollectExportsForProgram(program));
     pf->ProcessClassInfo(program, CollectClassInfosForProgram(program));
+}
+
+// Collects reload info for the global program plus, in simultaneous modes, for every
+// 'direct' program: the dump phase serializes classinfo entries for all compiled files,
+// the reload phase validates exactly the changed files. Single-file mode is covered by
+// the global program alone.
+void ETSEmitter::CollectReloadInfoForPrograms()
+{
+    if (Context()->patchFixHelper == nullptr) {
+        return;
+    }
+
+    CollectReloadInfo(Context()->parserProgram);
+    if (Context()->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS ||
+        Context()->diagnosticEngine->IsAnyError()) {
+        return;
+    }
+    for (const auto &[_, prog] : Context()->parserProgram->GetExternalDecls()->Direct()) {
+        CollectReloadInfo(prog);
+    }
 }
 
 void ETSEmitter::EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals)

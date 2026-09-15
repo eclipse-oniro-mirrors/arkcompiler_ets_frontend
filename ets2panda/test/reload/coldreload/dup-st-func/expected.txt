@@ -1,2 +1,0 @@
-Warning: duplicate function entry 'x.ETSGLOBAL.main:void' in symbol table, using first occurrence.
-[Patch] Found new import/export expression in dup-st-func.ets, not supported!
