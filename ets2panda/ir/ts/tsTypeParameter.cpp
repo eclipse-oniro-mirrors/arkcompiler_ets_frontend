@@ -139,13 +139,13 @@ void TSTypeParameter::Dump(ir::SrcDumper *dumper) const
 
     Name()->Dump(dumper);
 
-    if (DefaultType() != nullptr) {
-        dumper->Add(" = ");
-        DefaultType()->Dump(dumper);
-    }
     if (Constraint() != nullptr) {
         dumper->Add(" extends ");
         Constraint()->Dump(dumper);
+    }
+    if (DefaultType() != nullptr) {
+        dumper->Add(" = ");
+        DefaultType()->Dump(dumper);
     }
 }
 
