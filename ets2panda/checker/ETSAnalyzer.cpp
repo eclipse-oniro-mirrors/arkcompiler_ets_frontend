@@ -29,7 +29,9 @@
 #include "ir/base/methodDefinition.h"
 #include "ir/base/property.h"
 #include "ir/ets/etsDestructuring.h"
+#include "ir/module/importSpecifierTypeOnly.h"
 
+#include <algorithm>
 #include <sstream>
 
 namespace ark::es2panda::checker {
@@ -2837,6 +2839,17 @@ static Signature *CreateRelaxedAnySyntheticCallSignature(ETSChecker *checker)
     return checker->CreateSignature(info, checker->GlobalETSRelaxedAnyType(), ir::ScriptFunctionFlags::NONE, false);
 }
 
+static bool SignatureIsStatic(const checker::Signature *signature)
+{
+    return signature->HasSignatureFlag(checker::SignatureFlags::STATIC);
+}
+
+static bool IsSuperMemberCall(const ir::CallExpression *const expr)
+{
+    const auto *callee = expr->Callee();
+    return callee->IsMemberExpression() && callee->AsMemberExpression()->Object()->IsSuperExpression();
+}
+
 static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Type *calleeType)
 {
     if (calleeType->IsETSExtensionFuncHelperType()) {
@@ -2866,6 +2879,20 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
                        : calleeType->IsETSRelaxedAnyType()
                            ? noSignatures
                            : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
+
+    if (IsSuperMemberCall(expr)) {
+        // Statics are not reachable through `super`, so they must not win the overload. The set is copied only when it
+        // really contains a static candidate: the common case matches the original set without arena allocation.
+        if (!std::any_of(signatures.begin(), signatures.end(), SignatureIsStatic)) {
+            return FirstMatchSignatures(checker, signatures, expr);
+        }
+
+        auto instanceSignatures = ArenaVector<checker::Signature *> {checker->Allocator()->Adapter()};
+        instanceSignatures.reserve(signatures.size());
+        std::copy_if(signatures.begin(), signatures.end(), std::back_inserter(instanceSignatures),
+                     [](const checker::Signature *signature) { return !SignatureIsStatic(signature); });
+        return FirstMatchSignatures(checker, instanceSignatures, expr);
+    }
 
     return FirstMatchSignatures(checker, signatures, expr);
 }
@@ -4911,7 +4938,7 @@ static void ValidateImportTypeUsage(ETSChecker *checker, ir::ImportDeclaration *
         return;
     }
 
-    if (st->IsTypeKind() && spec->IsImportSpecifier()) {
+    if (spec->IsImportSpecifier() && (st->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(spec->AsImportSpecifier()))) {
         auto importSpec = spec->AsImportSpecifier();
         if (importSpec->Local()->IsIdentifier() && importSpec->Local()->AsIdentifier()->Variable() != nullptr) {
             auto var = importSpec->Local()->AsIdentifier()->Variable();

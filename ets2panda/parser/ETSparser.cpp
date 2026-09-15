@@ -42,6 +42,7 @@
 #include "ir/module/importDeclaration.h"
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importSpecifier.h"
+#include "ir/module/importSpecifierTypeOnly.h"
 #include "ir/module/exportSpecifier.h"
 #include "ir/module/exportNamedDeclaration.h"
 #include "ir/ets/etsPrimitiveType.h"
@@ -1400,7 +1401,7 @@ void ETSParser::ParseNamedSpecifiersDefaultExport(ArenaVector<ir::ImportSpecifie
 }
 
 bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
-                                          ArenaVector<ir::ExportSpecifier *> *resultExportDefault)
+                                          ArenaVector<ir::ExportSpecifier *> *resultExportDefault, bool isTypeOnly)
 {
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
         ir::Expression *constantExpression = ParseUnaryOrPrefixUpdateExpression();
@@ -1438,6 +1439,7 @@ bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *re
 
     auto *specifier = AllocNode<ir::ImportSpecifier>(imported, local);
     ES2PANDA_ASSERT(specifier != nullptr);
+    ir::ImportSpecifierTypeOnly::Set(specifier, isTypeOnly);
     specifier->SetRange({imported->Start(), local->End()});
 
     util::Helpers::CheckImportedName(*result, specifier, DiagnosticEngine());
@@ -1481,8 +1483,9 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers(const ir::ImportKinds importKind)
             }
 
             if (!IsDefaultImport()) {
+                const bool isTypeOnly = typeKeywordOnSpecifier;
                 typeKeywordOnSpecifier = false;
-                return ParseNamedSpecifiesImport(&result, &resultExportDefault);
+                return ParseNamedSpecifiesImport(&result, &resultExportDefault, isTypeOnly);
             }
             ParseNamedSpecifiesDefaultImport(&resultDefault, fileName);
             typeKeywordOnSpecifier = false;
@@ -1516,8 +1519,9 @@ SpecifiersInfo ETSParser::ParseExportNamedSpecifiers(const ir::ExportKinds expor
             }
 
             if (!IsDefaultExport()) {
+                const bool isTypeOnly = typeKeywordOnSpecifier;
                 typeKeywordOnSpecifier = false;
-                return ParseNamedSpecifiesImport(&result, &resultExportDefault);
+                return ParseNamedSpecifiesImport(&result, &resultExportDefault, isTypeOnly);
             }
             ParseNamedSpecifiersDefaultExport(&result, &resultDefault, fileName);
             typeKeywordOnSpecifier = false;

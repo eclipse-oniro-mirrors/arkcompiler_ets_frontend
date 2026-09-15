@@ -17,6 +17,7 @@
 
 #include "es2panda.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "ir/module/importSpecifierTypeOnly.h"
 #include "public/public.h"
 #include "compiler/lowering/util.h"
 #include "util/helpers.h"
@@ -360,10 +361,12 @@ static void CollectPendingLocalExportAliases(ExportFactStore *store, parser::Pro
         }
         if (!alias.isExplicitTypeOnly && alias.exportedName == alias.localName &&
             ShouldCollectLocalExportFact(program, variable)) {
+            store->MarkLocalExportWholeBinding(program, alias.exportedName, alias.localName);
             continue;
         }
         if (alias.kind == LocalExportKind::DECLARATION) {
             store->AddLocalExport(program, alias.exportedName, alias.localName, variable, alias.origin);
+            store->MarkLocalExportWholeBinding(program, alias.exportedName, alias.localName);
             continue;
         }
         store->AddLocalExportAlias(program, alias.exportedName, alias.localName, variable, alias.origin,
@@ -381,7 +384,8 @@ static void AddReExportFact(ExportFactStore *store, parser::Program *program, co
         if (exportedName.Is("default") && !importedName.Is("default")) {
             return;
         }
-        store->AddNamedReExport(program, import, exportedName, importedName, importSpecifier, import->IsTypeKind());
+        store->AddNamedReExport(program, import, exportedName, importedName, importSpecifier,
+                                import->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(importSpecifier));
         return;
     }
 
@@ -1217,7 +1221,8 @@ LocalVariable *ETSBinder::CreateNamedImportBinding(util::StringView importedName
     bindingInfo->localName = local->Name();
     bindingInfo->origin = local->Parent();
     bindingInfo->kind = kind;
-    bindingInfo->isTypeOnly = import->IsTypeKind();
+    auto *parentSpecifier = local->Parent()->IsImportSpecifier() ? local->Parent()->AsImportSpecifier() : nullptr;
+    bindingInfo->isTypeOnly = import->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(parentSpecifier);
     var->SetImportBinding(bindingInfo);
     if (kind == ImportBindingKind::NAMESPACE) {
         var->AddFlag(VariableFlags::NAMESPACE);
@@ -1248,7 +1253,7 @@ void ETSBinder::BindReExportSpecifierIdentifiers(ir::AstNode *specifier, const i
     bindingInfo->localName = local->Name();
     bindingInfo->origin = importSpecifier;
     bindingInfo->kind = ImportBindingKind::NAMED;
-    bindingInfo->isTypeOnly = import->IsTypeKind();
+    bindingInfo->isTypeOnly = import->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(importSpecifier);
     localVar->SetImportBinding(bindingInfo);
     localVar->SetScope(TopScope());
     local->SetVariable(localVar);
@@ -1267,7 +1272,7 @@ void ETSBinder::BindReExportSpecifierIdentifiers(ir::AstNode *specifier, const i
     importedBindingInfo->localName = local->Name();
     importedBindingInfo->origin = importSpecifier;
     importedBindingInfo->kind = ImportBindingKind::NAMED;
-    importedBindingInfo->isTypeOnly = import->IsTypeKind();
+    importedBindingInfo->isTypeOnly = import->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(importSpecifier);
     importedVar->SetImportBinding(importedBindingInfo);
     importedVar->SetScope(TopScope());
     importSpecifier->Imported()->SetVariable(importedVar);
@@ -1318,7 +1323,9 @@ void ETSBinder::AddImportSpecifiersToTopBindings(ir::ImportSpecifier *const impo
 
     if (previouslyImportedVariable != nullptr && previouslyImportedVariable->IsLocalVariable() &&
         previouslyImportedVariable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
-        const ImportBindingKey key {import, imported, localName, import->IsTypeKind(), ImportBindingKind::NAMED};
+        const ImportBindingKey key {import, imported, localName,
+                                    import->IsTypeKind() || ir::ImportSpecifierTypeOnly::Is(importSpecifier),
+                                    ImportBindingKind::NAMED};
         auto *bindingInfo = previouslyImportedVariable->AsLocalVariable()->ImportBinding();
         if (IsSameImportBinding(bindingInfo, key)) {
             if (bindingInfo->importDecl != import && bindingInfo->origin != nullptr &&

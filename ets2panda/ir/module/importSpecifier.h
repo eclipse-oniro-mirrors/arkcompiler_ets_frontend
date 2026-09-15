@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 
 namespace ark::es2panda::ir {
 class Identifier;
+class ImportSpecifierTypeOnly;
 
 class ImportSpecifier : public Statement {
 public:
@@ -73,9 +74,15 @@ public:
     }
 
 private:
+    // Kept private with a friend accessor: this header is in HEADERS_TO_BE_PARSED, so every new public method adds an
+    // entry in the middle of the positional es2panda_Impl table. Incremental builds then reuse libarkts objects made
+    // against the old copied headers (panda_sdk_run declares directory outputs), mixing two layouts => SIGSEGV.
+    friend class ImportSpecifierTypeOnly;
+
     Identifier *imported_;
     Identifier *local_;
     bool isRemovable_ {false};
+    bool isTypeOnly_ {false};
 };
 }  // namespace ark::es2panda::ir
 

@@ -98,6 +98,7 @@ libes2panda_sources = [
   "checker/ets/function.cpp",
   "checker/ets/helpers.cpp",
   "checker/ets/importBindingResolver.cpp",
+  "checker/ets/exportedOverloadResolver.cpp",
   "checker/ets/namespaceImportObject.cpp",
   "checker/ets/object.cpp",
   "checker/ets/typeCheckingHelpers.cpp",

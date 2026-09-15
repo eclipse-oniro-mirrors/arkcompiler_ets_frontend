@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2026 - Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2263,6 +2263,7 @@ static lexer::SourcePosition GetMultipleOverrideConflictPosition(ETSObjectType *
         return classType->GetDeclNode()->Start();
     }
     auto const pos = current->Function()->Start();
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     return pos.line == 0 && pos.index == 0 ? classType->GetDeclNode()->Start() : pos;
 }
 
@@ -3466,6 +3467,10 @@ PropertySearchFlags ETSChecker::GetSearchFlags(const ir::MemberExpression *const
 {
     auto searchFlag = GetInitialSearchFlags(memberExpr);
     searchFlag |= PropertySearchFlags::SEARCH_IN_BASE | PropertySearchFlags::SEARCH_IN_INTERFACES;
+    if (memberExpr->Object()->IsSuperExpression()) {
+        searchFlag &= ~PropertySearchFlags::SEARCH_STATIC;
+        return searchFlag;
+    }
     if (targetRef != nullptr && targetRef->HasFlag(varbinder::VariableFlags::NAMESPACE)) {
         return searchFlag;
     }

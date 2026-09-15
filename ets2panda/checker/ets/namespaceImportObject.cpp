@@ -16,6 +16,7 @@
 #include "checker/ETSchecker.h"
 
 #include "checker/checkerContext.h"
+#include "checker/ets/exportedOverloadResolver.h"
 #include "generated/diagnostic.h"
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importNamespaceSpecifier.h"
@@ -201,15 +202,17 @@ static void AddBindingModuleObjectProperty(ETSChecker *checker, checker::ETSObje
     }
 
     auto propNames = checker->FindPropNameForNamespaceImport(var->AsLocalVariable()->Name(), importPath);
+    auto *sourceType = ResolveNamespaceMemberType(checker, var);
+    auto view = ets::ResolveExportedOverloadView(checker, sourceType, nullptr, node, node->HasExportAlias());
     for (auto &propName : propNames) {
-        if (CanBindNamespaceMemberToExportedVariable(var) && propName == var->AsLocalVariable()->Name()) {
+        if (CanBindNamespaceMemberToExportedVariable(var) && !view.differsFromSource &&
+            propName == var->AsLocalVariable()->Name()) {
             moduleObjType->AddProperty<TYPE>(var->AsLocalVariable(), propName);
             continue;
         }
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *member =
-            CreateSyntheticNamespaceMember({checker, moduleObjType, propName, ResolveNamespaceMemberType(checker, var),
-                                            NamespaceMemberFlagsForExport(var), var});
+        auto *member = CreateSyntheticNamespaceMember(
+            {checker, moduleObjType, propName, view.type, NamespaceMemberFlagsForExport(var), var});
         moduleObjType->AddProperty<TYPE>(member, propName);
     }
 }
@@ -384,8 +387,9 @@ static bool MaterializeNestedNamespaceMember(ETSChecker *checker, checker::ETSOb
 }
 
 static bool MaterializeVariableNamespaceMember(ETSChecker *checker, checker::ETSObjectType *namespaceObject,
-                                               util::StringView memberName, varbinder::Variable *var)
+                                               util::StringView memberName, const checker::ResolvedExportEntry &entry)
 {
+    auto *var = entry.variable;
     if (var == nullptr || !var->IsLocalVariable()) {
         return false;
     }
@@ -400,7 +404,9 @@ static bool MaterializeVariableNamespaceMember(ETSChecker *checker, checker::ETS
     }
 
     const auto propertyType = PropertyTypeForNamespaceExport(var);
-    if (CanBindNamespaceMemberToExportedVariable(var)) {
+    auto *sourceType = ResolveNamespaceMemberType(checker, var);
+    auto view = ets::ResolveExportedOverloadView(checker, sourceType, nullptr, entry.origin, entry.exportsWholeBinding);
+    if (CanBindNamespaceMemberToExportedVariable(var) && !view.differsFromSource) {
         auto *member = var->AsLocalVariable();
         switch (propertyType) {
             case checker::PropertyType::STATIC_METHOD:
@@ -419,9 +425,8 @@ static bool MaterializeVariableNamespaceMember(ETSChecker *checker, checker::ETS
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *member =
-        CreateSyntheticNamespaceMember({checker, namespaceObject, memberName, ResolveNamespaceMemberType(checker, var),
-                                        NamespaceMemberFlagsForExport(var), var});
+    auto *member = CreateSyntheticNamespaceMember(
+        {checker, namespaceObject, memberName, view.type, NamespaceMemberFlagsForExport(var), var});
     switch (propertyType) {
         case checker::PropertyType::STATIC_METHOD:
             namespaceObject->AddProperty<checker::PropertyType::STATIC_METHOD>(member, memberName);
@@ -489,7 +494,7 @@ bool ETSChecker::MaterializeNamespaceMember(checker::ETSObjectType *namespaceObj
             }
 
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            return MaterializeVariableNamespaceMember(this, namespaceObject, memberName, resolved->entry.variable);
+            return MaterializeVariableNamespaceMember(this, namespaceObject, memberName, resolved->entry);
         }
         case ExportResolutionStatus::AMBIGUOUS:
             LogError(diagnostic::AMBIGUOUS_REFERENCE, {memberName}, pos);
