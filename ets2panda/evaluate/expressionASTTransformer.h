@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_EVALUATE_EXPRESSION_AST_TRANSFORMER_H
 #define ES2PANDA_EVALUATE_EXPRESSION_AST_TRANSFORMER_H
 
+#include <unordered_map>
+
 #include "util/ustring.h"
 #include "generated/tokenType.h"
 
@@ -42,6 +44,8 @@ class ArrayExpression;
 class TemplateLiteral;
 class ETSNewArrayInstanceExpression;
 class ETSNewClassInstanceExpression;
+class ETSDestructuring;
+class VariableDeclaration;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::checker {
@@ -64,12 +68,11 @@ public:
 
     ir::Statement *Transform(ir::Expression *expression);
 
+    ir::Statement *TransformDeclaration(ir::VariableDeclaration *node);
+
 private:
     ir::Expression *TransformExpression(ir::Expression *node, ArenaVector<ir::Statement *> *stmts = nullptr);
 
-    // Dispatch layers: values and operators (TransformExpression), accesses /
-    // calls and type operations (TransformCompoundExpression), aggregates and
-    // construction (TransformAggregateExpression).
     ir::Expression *TransformCompoundExpression(ir::Expression *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformAggregateExpression(ir::Expression *node, ArenaVector<ir::Statement *> *stmts);
 
@@ -85,6 +88,13 @@ private:
     ir::Expression *TransformNullishCoalescing(ir::BinaryExpression *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformInstanceof(ir::BinaryExpression *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformArithmeticBinary(lexer::TokenType op, ir::Expression *left, ir::Expression *right);
+    ir::Expression *TransformLogicalBinary(lexer::TokenType op, ir::Expression *left, ir::Expression *right,
+                                           bool rightIsNullish, bool leftIsNullish,
+                                           ArenaVector<ir::Statement *> &&rightStmts,
+                                           ArenaVector<ir::Statement *> *stmts);
+    ir::Expression *TransformSettleLeftBinary(lexer::TokenType op, ir::Expression *left, ir::Expression *right,
+                                              bool leftIsNullish, ArenaVector<ir::Statement *> &&rightStmts,
+                                              ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformUnary(ir::UnaryExpression *node, ArenaVector<ir::Statement *> *stmts = nullptr);
     ir::Expression *TransformUpdateExpression(ir::UpdateExpression *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformMember(ir::MemberExpression *node, ArenaVector<ir::Statement *> *stmts = nullptr);
@@ -106,6 +116,14 @@ private:
     ir::Expression *TransformCallArgument(ir::Expression *arg, ArenaVector<ir::Statement *> *stmts);
 
     checker::ETSChecker *checker_;
+
+    // Names declared by the variable-declaration statement currently being
+    // transformed, mapped to their temp identifiers: a later declarator's
+    // initializer referencing an earlier declarator binds the temp directly
+    // (lexical statement semantics) instead of a runtime frame lookup, which
+    // a same-named frame variable would shadow. Empty outside
+    // TransformDeclaration, so the expression path is unaffected.
+    std::unordered_map<util::StringView, util::StringView> pendingDecls_;
     ir::Expression *TransformConditional(ir::ConditionalExpression *node,
                                          ArenaVector<ir::Statement *> *stmts = nullptr);
     ir::Expression *LiftConditionalBranches(ir::Expression *test, ir::Expression *consequent,
@@ -116,21 +134,24 @@ private:
                                                ir::Expression *target);
     ir::Statement *TransformAssignment(ir::AssignmentExpression *node);
 
+    ir::Expression *BuildSubscriptReflectionRead(ir::Expression *base, ir::Expression *idx);
+    ir::Expression *BuildSubscriptReflectionWrite(ir::Expression *base, ir::Expression *idx, ir::Expression *value);
+    ir::Expression *MakeToResizableArrayCall(ir::Expression *arg);
+
+    ir::Statement *TransformDestructuringAssignment(ir::AssignmentExpression *node);
+    ir::Expression *BuildDestructuringElementRead(util::StringView baseName, uint32_t index);
+
     // Assignment helpers
     ir::Statement *HandleSubscriptAssignment(ir::MemberExpression *me, ir::AssignmentExpression *node,
                                              lexer::TokenType op, ArenaVector<ir::Statement *> &&stmts);
+    ir::Statement *HandleMemberCompoundAssignment(ir::MemberExpression *me, ir::AssignmentExpression *node,
+                                                  ArenaVector<ir::Statement *> &&stmts);
     ir::Statement *HandleSubscriptStringAssignment(ir::MemberExpression *me, ir::AssignmentExpression *node,
                                                    ir::Expression *arrExpr, ArenaVector<ir::Statement *> &&stmts);
     ir::Statement *EmitSubscriptWriteback(ir::Expression *arrExpr, ir::Expression *idxExpr,
                                           ir::AssignmentExpression *node, lexer::TokenType op,
                                           ArenaVector<ir::Statement *> &&stmts);
     ir::Expression *BuildSubscriptIndex(ir::Expression *idxExpr, ArenaVector<ir::Statement *> *stmts);
-    ir::Expression *BuildSubscriptNewValue(ir::Expression *arrProxy, ir::Expression *idxExpr,
-                                           ir::AssignmentExpression *node, lexer::TokenType op,
-                                           ir::Expression **idxForGet, ArenaVector<ir::Statement *> *stmts);
-    ir::Expression *BuildSubscriptSetCall(ir::Expression *arrExpr, ir::Expression *arrProxy, ir::Expression *idxForGet,
-                                          ir::Expression *idxExpr, ir::Identifier *valueIdent,
-                                          ArenaVector<ir::Statement *> *stmts);
     ir::Statement *BuildAssignWriteback(ir::Expression *lhsProxy, ir::Expression *rawForArith, ir::Expression *left,
                                         ir::AssignmentExpression *node, lexer::TokenType op,
                                         ArenaVector<ir::Statement *> &&stmts);
@@ -143,16 +164,21 @@ private:
     ir::Expression *BuildIdentifierLHS(ir::Identifier *ident);
     ir::Expression *BuildMemberLHS(ir::MemberExpression *memberExpr, ArenaVector<ir::Statement *> *stmts);
 
+    // Update (++/--) helpers
+    ir::Expression *HandleFieldTargetUpdate(ir::MemberExpression *me, ir::UpdateExpression *node,
+                                            ArenaVector<ir::Statement *> *stmts);
+    ir::Expression *HandleSubscriptTargetUpdate(ir::MemberExpression *me, ir::UpdateExpression *node,
+                                                ArenaVector<ir::Statement *> *stmts);
+
     // Aggregate / construction handlers
     ir::Expression *TransformArrayLiteral(ir::ArrayExpression *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformTemplateLiteral(ir::TemplateLiteral *node, ArenaVector<ir::Statement *> *stmts);
     ir::Expression *TransformAsExpression(ir::TSAsExpression *node, ArenaVector<ir::Statement *> *stmts);
-    // Returns the erased `as Array<Object>` form for a cast with an unbindable
-    // element type, or nullptr when the cast should keep the native path
-    // (bindable element) / be rejected (readonly + unbindable element).
     ir::Expression *EraseArrayCast(ir::TSAsExpression *node, ir::Expression *transformedExpr);
     ir::Expression *TransformNewArrayInstance(ir::ETSNewArrayInstanceExpression *node,
                                               ArenaVector<ir::Statement *> *stmts);
+    ir::Expression *TransformBuiltinArrayConstructor(ir::ETSNewClassInstanceExpression *node,
+                                                     ArenaVector<ir::Statement *> *stmts);
     ir::Expression *BridgeValueByElementType(ir::TypeNode *elemType, ir::Expression *value);
     ir::Expression *TransformNewClassInstance(ir::ETSNewClassInstanceExpression *node,
                                               ArenaVector<ir::Statement *> *stmts);

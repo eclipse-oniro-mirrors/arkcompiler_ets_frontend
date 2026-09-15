@@ -16,6 +16,7 @@
 #include "es2panda_lib.h"
 #include <cstddef>
 #include <cstring>
+#include <cctype>
 #include <cstdint>
 #include <atomic>
 #include <algorithm>
@@ -1989,6 +1990,36 @@ static ir::Expression *ExtractExpressionFromAst(es2panda_Context *ctx)
     return nullptr;
 }
 
+// Declaration path: the statement-mode wrapper's body must be exactly one
+// let/const VariableDeclaration. Anything else -- multi-statement input,
+// non-declaration statements, injection shapes closing the wrapper early --
+// is rejected here, so no side effects can be silently dropped (the
+// expression path keeps only the last statement, a known snapshot).
+static ir::VariableDeclaration *ExtractDeclarationFromAst(es2panda_Context *ctx)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    auto *program = ctxPtr->parserProgram;
+    auto &topStmts = program->Ast()->Statements();
+
+    ir::ScriptFunction *evalFunc = nullptr;
+    for (auto *stmt : topStmts) {
+        if (stmt->IsFunctionDeclaration()) {
+            evalFunc = stmt->AsFunctionDeclaration()->Function();
+            break;
+        }
+    }
+
+    if (evalFunc == nullptr) {
+        return nullptr;
+    }
+
+    auto &stmts = evalFunc->Body()->AsBlockStatement()->Statements();
+    if (stmts.size() != 1U || !stmts.front()->IsVariableDeclaration()) {
+        return nullptr;
+    }
+    return stmts.front()->AsVariableDeclaration();
+}
+
 static void PropagateSourceRange(ir::AstNode *node, const lexer::SourceRange &range)
 {
     // Transformer-created nodes have a default {0,0} range; propagate the
@@ -1996,6 +2027,43 @@ static void PropagateSourceRange(ir::AstNode *node, const lexer::SourceRange &ra
     // range is a no-op).
     node->SetRange(range);
     node->Iterate([&range](ir::AstNode *child) { PropagateSourceRange(child, range); });
+}
+
+// Replaces runtime_evaluate's body with the transformed statements, propagates
+// the original expression's range and marks the return.
+static bool ReplaceEvalFunctionBody(es2panda_Context *ctx, ir::Statement *newBody, const lexer::SourceRange &range)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    auto *checker = ctxPtr->GetChecker()->AsETSChecker();
+    auto *program = ctxPtr->parserProgram;
+    ir::ScriptFunction *evalFunc = nullptr;
+    for (auto *stmt : program->Ast()->Statements()) {
+        if (stmt->IsFunctionDeclaration()) {
+            evalFunc = stmt->AsFunctionDeclaration()->Function();
+            break;
+        }
+    }
+    if (evalFunc == nullptr) {
+        LOG(ERROR, ES2PANDA) << "runtime_evaluate function not found in the parsed wrapper";
+        return false;
+    }
+
+    ir::BlockStatement *newBlock = nullptr;
+    if (newBody->IsBlockStatement()) {
+        newBlock = newBody->AsBlockStatement();
+    } else {
+        ArenaVector<ir::Statement *> newStmts(checker->Allocator()->Adapter());
+        newStmts.push_back(newBody);
+        newBlock = checker->AllocNode<ir::BlockStatement>(checker->Allocator(), std::move(newStmts));
+    }
+    // AllocNode parents the block's children; the block itself needs SetParent.
+    newBlock->SetParent(evalFunc);
+    evalFunc->SetBody(newBlock);
+
+    PropagateSourceRange(newBlock, range);
+
+    evalFunc->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
+    return true;
 }
 
 static bool TransformAndReplaceFunctionBody(es2panda_Context *ctx, ir::Expression *rawExpr)
@@ -2012,31 +2080,24 @@ static bool TransformAndReplaceFunctionBody(es2panda_Context *ctx, ir::Expressio
         return false;
     }
 
-    auto *program = ctxPtr->parserProgram;
-    ir::ScriptFunction *evalFunc = nullptr;
-    for (auto *stmt : program->Ast()->Statements()) {
-        if (stmt->IsFunctionDeclaration()) {
-            evalFunc = stmt->AsFunctionDeclaration()->Function();
-            break;
-        }
+    return ReplaceEvalFunctionBody(ctx, newBody, rawExpr->Range());
+}
+
+static bool TransformAndReplaceWithDeclaration(es2panda_Context *ctx, ir::VariableDeclaration *decl)
+{
+    auto *ctxPtr = reinterpret_cast<public_lib::Context *>(ctx);
+    auto *checker = ctxPtr->GetChecker()->AsETSChecker();
+    evaluate::ExpressionASTTransformer transformer(checker);
+    ir::Statement *newBody = nullptr;
+
+    try {
+        newBody = transformer.TransformDeclaration(decl);
+    } catch (...) {
+        LOG(ERROR, ES2PANDA) << "Declaration AST transformation failed";
+        return false;
     }
 
-    ir::BlockStatement *newBlock = nullptr;
-    if (newBody->IsBlockStatement()) {
-        newBlock = newBody->AsBlockStatement();
-    } else {
-        ArenaVector<ir::Statement *> newStmts(checker->Allocator()->Adapter());
-        newStmts.push_back(newBody);
-        newBlock = checker->AllocNode<ir::BlockStatement>(checker->Allocator(), std::move(newStmts));
-    }
-    // AllocNode parents the block's children; the block itself needs SetParent.
-    newBlock->SetParent(evalFunc);
-    evalFunc->SetBody(newBlock);
-
-    PropagateSourceRange(newBlock, rawExpr->Range());
-
-    evalFunc->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
-    return true;
+    return ReplaceEvalFunctionBody(ctx, newBody, decl->Range());
 }
 
 static bool RunCompilationPipeline(es2panda_Context *&ctx)
@@ -2085,10 +2146,27 @@ static es2panda_Context *CreateAndParseContext(es2panda_Config *config, const st
     return ctx;
 }
 
-// Phase 4 + 5: extract and transform the expression; on failure the context
-// is destroyed and false is returned.
-static bool ExtractAndTransformBody(es2panda_Context *&ctx)
+// Phase 4 + 5: extract and transform the expression (or the declaration, for
+// let/const statement input); on failure the context is destroyed and false is
+// returned.
+static bool ExtractAndTransformBody(es2panda_Context *&ctx, bool expectDeclaration)
 {
+    if (expectDeclaration) {
+        auto *decl = ExtractDeclarationFromAst(ctx);
+        if (decl == nullptr) {
+            // leak-avoidance: see CreateAndParseContext
+            FreeCompilerPartMemory(ctx);
+            DestroyContext(ctx);
+            return false;
+        }
+        if (!TransformAndReplaceWithDeclaration(ctx, decl)) {
+            FreeCompilerPartMemory(ctx);
+            DestroyContext(ctx);
+            return false;
+        }
+        return true;
+    }
+
     auto *rawExpr = ExtractExpressionFromAst(ctx);
     if (rawExpr == nullptr) {
         // leak-avoidance: see CreateAndParseContext
@@ -2134,6 +2212,31 @@ static char *SerializeAndEncode(es2panda_Context *ctx)
     return strdup(base64Result.c_str());
 }
 
+// Whether the input is a variable-declaration statement: starts with the
+// let/const keyword at a word boundary after leading whitespace. Both are
+// keywords, so no valid expression input starts with them ('letVar' is an
+// identifier and excluded by the boundary check); the declaration wrapper is
+// therefore unreachable for every previously supported input.
+static bool IsDeclarationInput(const std::string &expression)
+{
+    size_t pos = 0;
+    while (pos < expression.size() && std::isspace(static_cast<unsigned char>(expression[pos])) != 0) {
+        pos++;
+    }
+    static constexpr const char *KEYWORDS[] = {"let", "const"};
+    for (auto *keyword : KEYWORDS) {
+        auto len = std::strlen(keyword);
+        if (expression.compare(pos, len, keyword) == 0) {
+            size_t next = pos + len;
+            // word boundary; '[' admits the destructuring declaration form,
+            // which parses and is rejected later in the transformer
+            return next >= expression.size() || std::isspace(static_cast<unsigned char>(expression[next])) != 0 ||
+                   expression[next] == '[';
+        }
+    }
+    return false;
+}
+
 extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64Expression)
 {
     if (config == nullptr || base64Expression == nullptr || *base64Expression == '\0') {
@@ -2150,11 +2253,14 @@ extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64E
         return nullptr;
     }
 
-    // Phase 2: Build wrapper source.  The 'return' keyword forces expression
+    // Phase 2: Build wrapper.  The 'return' keyword forces expression
     // context, which disambiguates {x: 1} (object literal vs block statement).
+    // let/const declarations are statements and get the statement-mode wrapper
+    // (no 'return'); extraction then requires exactly one declaration.
+    const bool isDeclaration = IsDeclarationInput(expression);
     std::stringstream wrapperSource;
     wrapperSource << "function runtime_evaluate(thread: int, frame: int): Any {\n"
-                  << "  return " << expression << "\n"
+                  << (isDeclaration ? "  " : "  return ") << expression << "\n"
                   << "}";
 
     // Phase 3: Create context + Parse
@@ -2164,7 +2270,7 @@ extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64E
     }
 
     // Phase 4 + 5: locate, extract and transform the expression
-    if (!ExtractAndTransformBody(ctx)) {
+    if (!ExtractAndTransformBody(ctx, isDeclaration)) {
         return nullptr;  // ctx already destroyed
     }
 
