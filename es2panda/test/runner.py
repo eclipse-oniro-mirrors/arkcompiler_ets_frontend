@@ -740,7 +740,8 @@ class CompilerRunner(Runner):
                 glob_expression = path.join(projects_path, project, "**/*.%s" % (extension))
                 files = glob(glob_expression, recursive=True)
                 files = fnmatch.filter(files, self.test_root + '**' + self.args.filter)
-                self.tests.append(CompilerProjectTest(projects_path, project, files, flags))
+                if files:
+                    self.tests.append(CompilerProjectTest(projects_path, project, files, flags))
         elif directory.endswith("protobin"):
             test_path = path.join(self.test_root, directory)
             for project in os.listdir(test_path):
@@ -820,7 +821,7 @@ class CompilerTest(Test):
                 if os.path.exists(test_abc_path):
                     os.remove(test_abc_path)
                 return self
-        if "--dump-debug-info" in self.flags or "--dump-size-stat" in self.flags:
+        if "--dump-debug-info" in self.flags or "--dump-size-stat" in self.flags or "--dump-asm-program" in self.flags:
             self.output = out.decode("utf-8", errors="ignore") + err.decode("utf-8", errors="ignore")
             try:
                 with open(self.get_path_to_expected(), 'r') as fp:
@@ -3481,6 +3482,8 @@ def add_directory_for_compiler(runners, args):
     compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/js", "js", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/ts", "ts", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/js", "js", ["--module", "--enable-callable-name"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/record_omit_esm", "js", ["--module", "--merge-abc", "--dump-asm-program"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/record_omit_cjs", "js", ["--commonjs", "--merge-abc", "--dump-asm-program"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/cases", "ts", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/projects", "ts", ["--module"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/projects", "ts", ["--module", "--merge-abc"]))

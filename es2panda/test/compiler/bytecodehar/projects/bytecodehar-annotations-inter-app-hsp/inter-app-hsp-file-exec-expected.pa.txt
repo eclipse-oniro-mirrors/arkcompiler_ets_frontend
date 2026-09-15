@@ -92,7 +92,7 @@ slotNum = 0x7
 	stmodulevar 0x0
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x4, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164, 0x0, v0
+	defineclasswithbuffer 0x4, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2082, 0x0, v0
 	ldobjbyname 0x5, prototype
 	returnundefined
 }
@@ -100,9 +100,9 @@ slotNum = 0x7
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2124
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2042
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2128
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2046
 {
   index: 0
     tag: 2
@@ -144,7 +144,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2128
     val: 0
 },
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2082
 {
   index: 0
     tag: 0
@@ -257,7 +257,7 @@ slotNum = 0x4
 	stlexvar 0x0, 0x9
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305, 0x0, v0
+	defineclasswithbuffer 0x1, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2223, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -265,9 +265,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2173
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2091
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2177
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2095
 {
   index: 0
     tag: 2
@@ -449,7 +449,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2177
     val: 0
 },
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2223
 {
   index: 0
     tag: 0
@@ -893,7 +893,7 @@ slotNum = 0x7
 	stmodulevar 0x0
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x4, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164, 0x0, v0
+	defineclasswithbuffer 0x4, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#~A1=#A1, com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2082, 0x0, v0
 	ldobjbyname 0x5, prototype
 	returnundefined
 }
@@ -901,9 +901,9 @@ slotNum = 0x7
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2124
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2042
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2128
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2046
 {
   index: 0
     tag: 2
@@ -945,7 +945,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2128
     val: 0
 },
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2164
+slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_2082
 {
   index: 0
     tag: 0
@@ -1058,7 +1058,7 @@ slotNum = 0x4
 	stlexvar 0x0, 0x9
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x1, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305, 0x0, v0
+	defineclasswithbuffer 0x1, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#~B=#B, com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2223, 0x0, v0
 	ldobjbyname 0x2, prototype
 	returnundefined
 }
@@ -1066,9 +1066,9 @@ slotNum = 0x4
 
 ======> literal array buffer <======
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2173
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2091
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2177
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2095
 {
   index: 0
     tag: 2
@@ -1250,7 +1250,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2177
     val: 0
 },
 ------------------------------------
-slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2305
+slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_2223
 {
   index: 0
     tag: 0

@@ -1,0 +1,89 @@
+# ====================
+# LITERALS
+
+test_compiler_record_omit_cjs_record-keep-cjs_0 
+
+test_compiler_record_omit_cjs_record-keep-cjs_1 { 4 [ tag_value:5, string:"a", tag_value:2, i32:1, ]}
+
+
+
+# ====================
+# RECORDS
+
+.language ECMAScript
+.record _ESConcurrentModuleRequestsAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record _ESExpectedPropertyCountAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record _ESSlotNumberAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record test_compiler_record_omit_cjs_record-keep-cjs {
+	u8 pkgName@ 0
+	u8 isCommonjs 1
+	u32 scopeNames test_compiler_record_omit_cjs_record-keep-cjs_0
+}
+.record.source_file 
+
+
+# ====================
+# METHODS
+
+.function_kind FunctionKind::FUNCTION
+ _ESSlotNumberAnnotation
+ SlotNumber 3
+.language ECMAScript
+.function any test_compiler_record_omit_cjs_record-keep-cjs.#*#(any a0, any a1, any a2, any a3, any a4, any a5, any a6, any a7) {
+	label_1:                                 # line: 15           # column: 0
+	label_0:                                 # line: 15           # column: 0
+	createobjectwithbuffer 0x0, test_compiler_record_omit_cjs_record-keep-cjs_1 # line: 15           # column: 0
+	stobjbyname 0x1, exports, a5             # line: 15           # column: 0
+	returnundefined                          # line: 15           # column: 0
+	label_2:                                 # line: 15           # column: 0
+}
+
+.function_kind FunctionKind::FUNCTION
+ _ESSlotNumberAnnotation
+ SlotNumber 17
+.language ECMAScript
+.function any test_compiler_record_omit_cjs_record-keep-cjs.func_main_0(any a0, any a1, any a2, any a3, any a4, any a5, any a6, any a7) {
+	label_1:                                 # line: 4294967295           # column: 0
+	label_0:                                 # line: 4294967295           # column: 0
+	tryldglobalbyname 0x0, Reflect           # line: 4294967295           # column: 0
+	sta v0                                   # line: 4294967295           # column: 0
+	ldobjbyname 0x1, apply                   # line: 4294967295           # column: 0
+	sta v1                                   # line: 4294967295           # column: 0
+	definefunc 0x3, test_compiler_record_omit_cjs_record-keep-cjs.#*#, 0x5 # line: 4294967295           # column: 0
+	sta v2                                   # line: 4294967295           # column: 0
+	createemptyarray 0x4                     # line: 4294967295           # column: 0
+	sta v3                                   # line: 4294967295           # column: 0
+	lda a3                                   # line: 4294967295           # column: 0
+	stownbyindex 0x5, v3, 0x0                # line: 4294967295           # column: 0
+	lda a4                                   # line: 4294967295           # column: 0
+	stownbyindex 0x7, v3, 0x1                # line: 4294967295           # column: 0
+	lda a5                                   # line: 4294967295           # column: 0
+	stownbyindex 0x9, v3, 0x2                # line: 4294967295           # column: 0
+	lda a6                                   # line: 4294967295           # column: 0
+	stownbyindex 0xb, v3, 0x3                # line: 4294967295           # column: 0
+	lda a7                                   # line: 4294967295           # column: 0
+	stownbyindex 0xd, v3, 0x4                # line: 4294967295           # column: 0
+	lda v1                                   # line: 4294967295           # column: 0
+	callthis3 0xf, v0, v2, a3, v3            # line: 4294967295           # column: 0
+	returnundefined                          # line: 4294967295           # column: 0
+	label_2:                                 # line: 4294967295           # column: 0
+}
+
+# ====================
+# STRING
+Reflect
+apply
+exports
+test_compiler_record_omit_cjs_record-keep-cjs.#*#

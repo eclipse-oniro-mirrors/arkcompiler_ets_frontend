@@ -1,7 +1,7 @@
 Panda file size statistic:
 annotation_item section: 52
 class_idx_item section: 16
-class_item section: 335
+class_item section: 323
 code_item section: 130
 debug_info_item section: 27
 foreign_item section: 0
@@ -11,7 +11,7 @@ line_number_program_idx_item section: 13
 line_number_program_item section: 22
 literal_array_item section: 26
 literalarray_idx section: 0
-string_item section: 195
+string_item section: 179
 instructions_number: 36
 codesize: 118
-total: 968
+total: 940
