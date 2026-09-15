@@ -1,0 +1,6 @@
+0
+42
+function function
+undefined function undefined
+7
+function function

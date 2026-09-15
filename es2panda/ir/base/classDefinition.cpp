@@ -268,7 +268,7 @@ int32_t ClassDefinition::CreateClassPrivateBuffer(compiler::PandaGen *pg) const
     return pg->AddLiteralBuffer(buf);
 }
 
-void ClassDefinition::CompileMissingProperties(compiler::PandaGen *pg, const util::BitSet &compiled,
+void ClassDefinition::CompileMissingProperties(compiler::PandaGen *pg, util::BitSet &compiled,
                                                compiler::VReg classReg) const
 {
     const auto &properties = body_;
@@ -309,7 +309,7 @@ void ClassDefinition::CompileMissingProperties(compiler::PandaGen *pg, const uti
             }
             case ir::MethodDefinitionKind::GET:
             case ir::MethodDefinitionKind::SET: {
-                CompileGetterOrSetter(pg, dest, prop);
+                CompileAccessorPairOrSingle(pg, compiled, prop, dest, i);
                 break;
             }
             default: {
@@ -688,6 +688,59 @@ void ClassDefinition::CompileSendableClass(compiler::PandaGen *pg) const
     if (NeedStaticInitializer()) {
         StaticInitialize(pg, classReg);
     }
+}
+
+void ClassDefinition::CompileAccessorPairOrSingle(compiler::PandaGen *pg, util::BitSet &compiled,
+                                                  const MethodDefinition *prop, compiler::VReg dest,
+                                                  size_t propIndex) const
+{
+    // When a getter and setter share the same non-computed key (and the same static flag), merge
+    // them into a single definegettersetterbyvalue; otherwise compile prop on its own.
+    auto oppositeKind = (prop->Kind() == ir::MethodDefinitionKind::GET) ? ir::MethodDefinitionKind::SET
+                                                                        : ir::MethodDefinitionKind::GET;
+    size_t partnerIdx = body_.size();
+    // LiteralToPropName cannot name every legal key (BigInt, private identifier): only scan
+    // from a key that has a static name.
+    if (!prop->Computed() && util::Helpers::IsConstantPropertyKey(prop->Key(), false)) {
+        util::StringView propName = util::Helpers::LiteralToPropName(pg->Allocator(), prop->Key());
+        // Non-method members (fields, index signatures) store nothing on dest inside the member
+        // loop, so they can be scanned past. A computed method cannot, and a key without a
+        // static name must stop the scan as well: its runtime name may equal the pair key
+        // (ToString(1n) === "1"), so it is an alias rather than a skip.
+        auto mayAliasKey = [](const ir::Statement *elem) {
+            if (!elem->IsMethodDefinition()) {
+                return false;
+            }
+            const auto *cand = elem->AsMethodDefinition();
+            return cand->Computed() || !util::Helpers::IsConstantPropertyKey(cand->Key(), false);
+        };
+        auto nameOf = [allocator = pg->Allocator()](const ir::Statement *elem) -> util::StringView {
+            return elem->IsMethodDefinition()
+                       ? util::Helpers::LiteralToPropName(allocator, elem->AsMethodDefinition()->Key())
+                       : util::StringView();
+        };
+        auto isEligiblePartner = [&compiled, oppositeKind, prop](const ir::Statement *elem, size_t j) {
+            // An empty StringView also names a non-method member, and "" is a valid property key,
+            // so a field can reach this check — never cast it.
+            if (!elem->IsMethodDefinition()) {
+                return false;
+            }
+            const ir::MethodDefinition *cand = elem->AsMethodDefinition();
+            return !compiled.Test(j) && cand->Kind() == oppositeKind && cand->IsStatic() == prop->IsStatic() &&
+                   !cand->IsPrivate() && !cand->IsAbstract() &&
+                   !(cand->IsOptional() && cand->Value()->Function()->IsOverload());
+        };
+        partnerIdx = util::FindAccessorPartner(body_, propIndex, propName, mayAliasKey, nameOf, isEligiblePartner);
+    }
+
+    if (partnerIdx == body_.size()) {
+        CompileGetterOrSetter(pg, dest, prop);
+        return;
+    }
+    const ir::MethodDefinition *partner = body_[partnerIdx]->AsMethodDefinition();
+    pg->DefineGetterSetterPair(prop->Key(), dest, prop->Value(),
+                               prop->Kind() == ir::MethodDefinitionKind::GET, partner->Value());
+    compiled.Set(partnerIdx);
 }
 
 void ClassDefinition::CompileGetterOrSetter(compiler::PandaGen *pg, compiler::VReg dest,

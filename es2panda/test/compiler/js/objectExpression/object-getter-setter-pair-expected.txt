@@ -1,0 +1,7 @@
+0
+42
+function function
+get foo set foo
+5
+99
+function function

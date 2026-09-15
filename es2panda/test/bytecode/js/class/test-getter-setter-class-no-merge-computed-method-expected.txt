@@ -1,0 +1,83 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0=#ComputedMethodBetween(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#foo(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#foo^1(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#k(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda.str c
+	return
+label_2: 
+}
+
+slotNum = 0xb
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda.str foo
+	stconsttoglobalrecord 0x0, k
+	ldhole
+	sta v0
+	tryldglobalbyname 0x1, k
+	callruntime.topropertykey
+	sta v1
+	defineclasswithbuffer 0x2, .#~@0=#ComputedMethodBetween, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x3, prototype
+	sta v2
+	lda.str foo
+	sta v3
+	ldundefined
+	sta v4
+	lda v2
+	definemethod 0x5, .#~@0>#foo, 0x0
+	sta v5
+	ldfalse
+	definegettersetterbyvalue v2, v3, v5, v4
+	lda v2
+	definemethod 0x6, .#~@0>#k, 0x0
+	stownbyvaluewithnameset 0x7, v2, v1
+	lda.str foo
+	sta v1
+	ldundefined
+	sta v3
+	lda v2
+	definemethod 0x9, .#~@0>#foo^1, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v2, v1, v3, v4
+	lda v0
+	sttoglobalrecord 0xa, ComputedMethodBetween
+	returnundefined
+label_2: 
+}
+
+

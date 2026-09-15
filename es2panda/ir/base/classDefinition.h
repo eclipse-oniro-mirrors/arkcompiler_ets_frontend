@@ -291,7 +291,7 @@ private:
     void InitializeClassName(compiler::PandaGen *pg) const;
     int32_t CreateClassPublicBuffer(compiler::PandaGen *pg, util::BitSet &compiled, int32_t fieldTypeBufIdx = 0) const;
     int32_t CreateClassPrivateBuffer(compiler::PandaGen *pg) const;
-    void CompileMissingProperties(compiler::PandaGen *pg, const util::BitSet &compiled, compiler::VReg classReg) const;
+    void CompileMissingProperties(compiler::PandaGen *pg, util::BitSet &compiled, compiler::VReg classReg) const;
     void StaticInitialize(compiler::PandaGen *pg, compiler::VReg classReg) const;
     void InstanceInitialize(compiler::PandaGen *pg, compiler::VReg classReg) const;
     void CompileComputedKeys(compiler::PandaGen *pg) const;
@@ -302,6 +302,8 @@ private:
     int32_t CreateFieldTypeBuffer(compiler::PandaGen *pg) const;
     void CompileSendableClass(compiler::PandaGen *pg) const;
     void CompileGetterOrSetter(compiler::PandaGen *pg, compiler::VReg dest, const MethodDefinition *prop) const;
+    void CompileAccessorPairOrSingle(compiler::PandaGen *pg, util::BitSet &compiled,
+                                      const MethodDefinition *prop, compiler::VReg dest, size_t propIndex) const;
 
     binder::ClassScope *scope_;
     Identifier *ident_;

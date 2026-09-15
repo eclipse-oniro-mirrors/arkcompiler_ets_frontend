@@ -1,0 +1,86 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0=#MultiPair(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#a(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x1
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#a^1(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#b(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#b^1(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x8
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#MultiPair, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	sta v1
+	lda.str a
+	sta v2
+	lda v1
+	definemethod 0x3, .#~@0>#a, 0x0
+	sta v3
+	lda v1
+	definemethod 0x4, .#~@0>#a^1, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
+	lda.str b
+	sta v2
+	lda v1
+	definemethod 0x5, .#~@0>#b, 0x0
+	sta v3
+	lda v1
+	definemethod 0x6, .#~@0>#b^1, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
+	lda v0
+	sttoglobalrecord 0x7, MultiPair
+	returnundefined
+label_2: 
+}
+
+

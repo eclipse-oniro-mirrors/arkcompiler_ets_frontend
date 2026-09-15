@@ -284,6 +284,33 @@ T Helpers::FileStream(const std::string &str, Args &&...args)
     return fileStream;
 }
 
+// Shared partner scan for the getter/setter pair merge (ClassDefinition::CompileMissingProperties
+// and ObjectExpression::CompileRemainingProperties). The safety rule exists only here: an element
+// whose key may equal the pair key at runtime (computed key, spread) stops the scan, and so does
+// the first element with the same name — it is a partner only if it is an eligible opposite-kind
+// accessor. Any other same-named element (data property, method, duplicate or mismatched accessor)
+// is defined between the two accessors in source order, and merging past it would move the second
+// accessor's definition before that element and change the override order.
+// Returns the partner index, or props.size() when there is no safe partner.
+template <typename Elem, typename MayAliasKey, typename NameOf, typename IsEligiblePartner>
+size_t FindAccessorPartner(const ArenaVector<Elem *> &props, size_t start, util::StringView propName,
+                           MayAliasKey mayAliasKey, NameOf nameOf, IsEligiblePartner isEligiblePartner)
+{
+    for (size_t j = start + 1; j < props.size(); j++) {
+        if (mayAliasKey(props[j])) {
+            return props.size();
+        }
+        if (nameOf(props[j]) != propName) {
+            continue;
+        }
+        if (isEligiblePartner(props[j], j)) {
+            return j;
+        }
+        return props.size();
+    }
+    return props.size();
+}
+
 }  // namespace panda::es2panda::util
 
 #endif
