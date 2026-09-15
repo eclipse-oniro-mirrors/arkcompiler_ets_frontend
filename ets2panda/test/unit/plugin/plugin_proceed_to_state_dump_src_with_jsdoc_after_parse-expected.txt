@@ -289,7 +289,7 @@ function jsDocFunc(/**
 * @param1 {} behindStr
 * @param2 preStr { p }
 */
-export type typeAlias<T = BusinessError extends Error> = ((err: T)=> void);
+export type typeAlias<T extends Error = BusinessError> = ((err: T)=> void);
 
 /**
  * ==== variable decl ====
