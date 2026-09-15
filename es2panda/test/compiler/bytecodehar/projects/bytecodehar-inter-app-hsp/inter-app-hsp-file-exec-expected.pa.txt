@@ -133,7 +133,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1822
     val: 0
 },
 ======> strings <======
-"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonConst"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonOhmurl"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWithAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWoAt"; "test"; 
+"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "test"; 
 slotNum = 0x18
 .language ECMAScript
 .function any com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo(any a0, any a1, any a2) {
@@ -411,7 +411,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1862
     val: 0
 },
 ======> strings <======
-"a"; "b"; "c"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; 
+"a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; 
 slotNum = 0x0
 .language ECMAScript
 .function any bundle&lib/importfile1&2.0.0.func_main_0(any a0, any a1, any a2) {
@@ -854,7 +854,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&_1822
     val: 0
 },
 ======> strings <======
-"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonConst"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonOhmurl"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWithAt"; "com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testReplacementWoAt"; "test"; 
+"@normalized:N&&com.inter_app.hsp&@ohos/lib2/importfile4&"; "@normalized:N&&com.inter_app.hsp&lib2/importfile3&"; "@normalized:N&lib&&@ohos/lib/importfile2&2.0.0"; "@normalized:N&module&bundle&lib/importfile1&2.0.0"; "aaa"; "test"; 
 slotNum = 0x18
 .language ECMAScript
 .function any com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo(any a0, any a1, any a2) {
@@ -1132,7 +1132,7 @@ slot com.inter_app.hsp&bytecodehar/bytecodehar-static-import&_1862
     val: 0
 },
 ======> strings <======
-"a"; "b"; "c"; "com.inter_app.hsp&bytecodehar/bytecodehar-static-import&.#*#foo"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; 
+"a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; 
 slotNum = 0x0
 .language ECMAScript
 .function any com.inter_app.hsp&lib2/importfile3&.func_main_0(any a0, any a1, any a2) {
