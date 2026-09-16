@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -109,5 +109,21 @@ ConditionalExpression *ConditionalExpression::Clone(ArenaAllocator *const alloca
 
     clone->SetRange(Range());
     return clone;
+}
+
+void ConditionalExpression::CleanCheckInformation()
+{
+    SetVariable(nullptr);
+    SetPreferredType(nullptr);
+    SetTsType(nullptr);
+    if (test_ != nullptr) {
+        test_->CleanCheckInformation();
+    }
+    if (consequent_ != nullptr) {
+        consequent_->CleanCheckInformation();
+    }
+    if (alternate_ != nullptr) {
+        alternate_->CleanCheckInformation();
+    }
 }
 }  // namespace ark::es2panda::ir

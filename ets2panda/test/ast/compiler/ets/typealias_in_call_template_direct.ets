@@ -13,22 +13,11 @@
  * limitations under the License.
  */
 
-class A {
-    constructor withName(name: string) {}
-    constructor withTask(name: string, task: ()=>void) {}
-    overload constructor {withName, withTask}
+// The type name is the only expression of the template literal: no intermediate
+// expression node below TemplateLiteral, only the erroneous identifier itself.
+
+function main() {
+    console.log(`${string}`)
 }
 
-class DummyArray<T> {
-    pushArray(...val: T[]): void {}
-    pushOne(value: T): void {}
-    overload push { pushOne, pushArray }
-}
-
-let props: DummyArray<A> = new DummyArray<A>()
-
-function main(): void {
-    props.push(new A('eaw1', () => { let s: string = 1; }));
-}
-
-/* @@? 31:54 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 20:20 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

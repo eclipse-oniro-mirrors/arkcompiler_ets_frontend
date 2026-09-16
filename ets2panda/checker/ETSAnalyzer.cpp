@@ -3085,6 +3085,13 @@ static checker::SavedCheckerContext ReconstructOwnerClassContext(ETSChecker *che
     return SavedCheckerContext(checker, status, owner);
 }
 
+static bool RaisedErrorsSince(ETSChecker *checker, util::DiagnosticCheckpoint const &checkpoint)
+{
+    auto const current = checker->DiagnosticEngine().Save();
+    return current[util::DiagnosticType::SYNTAX] > checkpoint[util::DiagnosticType::SYNTAX] ||
+           current[util::DiagnosticType::SEMANTIC] > checkpoint[util::DiagnosticType::SEMANTIC];
+}
+
 static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallExpression *expr,
                                                   checker::Type *calleeType)
 {
@@ -4567,6 +4574,8 @@ checker::Type *ETSAnalyzer::Check(ir::TemplateLiteral *expr) const
 {
     ETSChecker *checker = GetETSChecker();
 
+    auto const exprsDiagCheckpoint = checker->DiagnosticEngine().Save();
+
     for (auto *it : expr->Expressions()) {
         it->Check(checker);
     }
@@ -4582,6 +4591,10 @@ checker::Type *ETSAnalyzer::Check(ir::TemplateLiteral *expr) const
 
     for (auto *it : expr->Quasis()) {
         it->Check(checker);
+    }
+
+    if (RaisedErrorsSince(checker, exprsDiagCheckpoint)) {
+        return expr->SetTsType(checker->GlobalTypeError());
     }
 
     return expr->SetTsType(checker->CreateETSStringLiteralType(expr->GetMultilineString()));

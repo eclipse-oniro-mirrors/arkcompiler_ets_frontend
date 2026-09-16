@@ -588,7 +588,8 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
     newCall->SetTypeParams(originalCall->TypeParams());
     restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
 
-    SetSourceRangesRecursively(newCall, originalCall->Range());
+    newCall->SetRange(originalCall->Range());
+    RefineSourceRanges(newCall);
 
     auto *scope = NearestScope(newCall->Parent());
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
@@ -615,7 +616,8 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
     restArgsArray->SetParent(newCall);
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
-    SetSourceRangesRecursively(newCall, originalCall->Range());
+    newCall->SetRange(originalCall->Range());
+    RefineSourceRanges(newCall);
 
     auto *scope = NearestScope(newCall->Parent());
     auto bscope =

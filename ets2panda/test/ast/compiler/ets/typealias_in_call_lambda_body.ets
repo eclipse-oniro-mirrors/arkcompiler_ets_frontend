@@ -13,22 +13,15 @@
  * limitations under the License.
  */
 
-class A {
-    constructor withName(name: string) {}
-    constructor withTask(name: string, task: ()=>void) {}
-    overload constructor {withName, withTask}
+// A type name used as a value inside a lambda body passed as a call argument.
+
+function foo(cb: () => void) {}
+
+function main() {
+    let x: string = ''
+    foo(() => {
+        x = string
+    })
 }
 
-class DummyArray<T> {
-    pushArray(...val: T[]): void {}
-    pushOne(value: T): void {}
-    overload push { pushOne, pushArray }
-}
-
-let props: DummyArray<A> = new DummyArray<A>()
-
-function main(): void {
-    props.push(new A('eaw1', () => { let s: string = 1; }));
-}
-
-/* @@? 31:54 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 23:13 Error Semantic error ESE0144: Type name 'string' used in the wrong context */

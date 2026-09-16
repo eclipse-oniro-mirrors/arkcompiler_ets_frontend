@@ -176,6 +176,7 @@ public:
     void Dump(ir::SrcDumper *dumper) const override;
     void Compile(compiler::PandaGen *pg) const override;
     void Compile(compiler::ETSGen *etsg) const override;
+    void CleanCheckInformation() override;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
 
