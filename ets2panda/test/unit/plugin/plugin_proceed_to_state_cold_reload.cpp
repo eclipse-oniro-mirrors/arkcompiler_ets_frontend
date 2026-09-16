@@ -327,6 +327,28 @@ class Foo {
 function main(): void { let f: Foo = new Foo(); f.a(); }
 )ETS";
 
+// Interface-list order swap: the interface set is unchanged, so the runtime swap
+// check accepts it (set comparison) — the frontend must not reject it either.
+static const char *IFACE_ORDER_BASE = R"ETS(
+interface IA { a(): int; }
+interface IB { b(): int; }
+class Foo implements IA, IB {
+    a(): int { return 1; }
+    b(): int { return 2; }
+}
+function main(): void { let f: Foo = new Foo(); f.a(); }
+)ETS";
+
+static const char *IFACE_ORDER_SWAP = R"ETS(
+interface IA { a(): int; }
+interface IB { b(): int; }
+class Foo implements IB, IA {
+    a(): int { return 1; }
+    b(): int { return 2; }
+}
+function main(): void { let f: Foo = new Foo(); f.a(); }
+)ETS";
+
 // Parent-class change source: cold reload accepts it; hot reload rejects it at
 // classinfo validation — the error source for the ASM-boundary probe below.
 static const char *PARENT_CHANGE_BASE = R"ETS(
@@ -339,6 +361,23 @@ static const char *PARENT_CHANGE_MOD = R"ETS(
 class BaseB { m(): int { return 1; } }
 class Foo extends BaseB { n(): int { return 2; } }
 function main(): void { let f: Foo = new Foo(); f.n(); }
+)ETS";
+
+// Namespace-member class: a namespace is compiled as a class, so its member
+// classes live as nested ClassDeclarations — they must take part in the hot
+// reload classinfo check just like top-level classes.
+static const char *NS_PARENT_BASE = R"ETS(
+export class BaseA { m(): int { return 1; } }
+export class BaseB { m(): int { return 1; } }
+namespace NS { export class Foo extends BaseA { n(): int { return 2; } } }
+function main(): void { let f: NS.Foo = new NS.Foo(); f.n(); }
+)ETS";
+
+static const char *NS_PARENT_CHANGE = R"ETS(
+export class BaseA { m(): int { return 1; } }
+export class BaseB { m(): int { return 1; } }
+namespace NS { export class Foo extends BaseB { n(): int { return 2; } } }
+function main(): void { let f: NS.Foo = new NS.Foo(); f.n(); }
 )ETS";
 
 // ========================================================================
@@ -498,15 +537,10 @@ static int RunHotTest(const TestCase &tc, int argc, char **argv)
     return 0;
 }
 
-int main(int argc, char **argv)
+// Cold-reload suite: the IDE path must accept every change kind (cold reload does
+// no compile-time validation; the runtime restart model tolerates all changes).
+static int RunColdReloadTests(int argc, char **argv)
 {
-    if (argc < MIN_ARGC)
-        return INVALID_ARGC_ERROR_CODE;
-    if (GetImpl() == nullptr)
-        return NULLPTR_IMPL_ERROR_CODE;
-    impl = GetImpl();
-    std::cout << "LOAD SUCCESS" << std::endl;
-
     const TestCase tests[] = {
         // --- function-level ---
         {"func-no-change", FUNC_BASE, FUNC_NO_CHANGE, false},
@@ -539,23 +573,52 @@ int main(int argc, char **argv)
     for (const auto &t : tests) {
         rc |= RunTest(t, argc, argv);
     }
+    return rc;
+}
 
-    // --- hot-reload suite (frontend rejections + representative acceptance) ---
+// Hot-reload suite: the frontend rejections (two signature, four classinfo) plus
+// representative acceptances, verifying the C API hot-reload pipeline
+// (HandleFunction -> DetectSignatureChanges, classinfo validation) end to end.
+static int RunHotReloadTests(int argc, char **argv)
+{
     const TestCase hotTests[] = {
         {"hot-func-body-change", FUNC_BASE, FUNC_BODY_CHANGE, false},
         {"hot-func-sig-change", FUNC_BASE, FUNC_SIG_CHANGE, true},
         {"hot-cls-method-sig-change", CLS_SIG_CHANGE_BASE, CLS_SIG_CHANGE, true},
         {"hot-change-parent", PARENT_CHANGE_BASE, PARENT_CHANGE_MOD, true},
+        {"hot-ns-class-parent-change", NS_PARENT_BASE, NS_PARENT_CHANGE, true},
         {"hot-add-interface", IFACE_BASE, IFACE_ADD, true},
         {"hot-delete-interface", IFACE_BASE, IFACE_DEL, true},
+        {"hot-iface-order-swap", IFACE_ORDER_BASE, IFACE_ORDER_SWAP, false},
     };
+    int rc = 0;
     for (const auto &t : hotTests) {
         rc |= RunHotTest(t, argc, argv);
     }
+    return rc;
+}
 
-    // --- ASM_GENERATED boundary (IDE lifecycle) ---
-    rc |= RunAsmBoundaryHotCase(argc, argv, "asm-boundary-error", PARENT_CHANGE_BASE, PARENT_CHANGE_MOD, true);
+// ASM_GENERATED boundary (IDE lifecycle): the reload verdict must be final at the
+// boundary where the embedder reads messages and decides.
+static int RunAsmBoundaryTests(int argc, char **argv)
+{
+    int rc = RunAsmBoundaryHotCase(argc, argv, "asm-boundary-error", PARENT_CHANGE_BASE, PARENT_CHANGE_MOD, true);
     rc |= RunAsmBoundaryHotCase(argc, argv, "asm-boundary-ok", FUNC_BASE, FUNC_ADD, false);
+    return rc;
+}
+
+int main(int argc, char **argv)
+{
+    if (argc < MIN_ARGC)
+        return INVALID_ARGC_ERROR_CODE;
+    if (GetImpl() == nullptr)
+        return NULLPTR_IMPL_ERROR_CODE;
+    impl = GetImpl();
+    std::cout << "LOAD SUCCESS" << std::endl;
+
+    int rc = RunColdReloadTests(argc, argv);
+    rc |= RunHotReloadTests(argc, argv);
+    rc |= RunAsmBoundaryTests(argc, argv);
     if (rc)
         return 1;
     std::cout << "ALL DONE" << std::endl;
