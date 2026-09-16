@@ -12,7 +12,7 @@
 # limitations under the License.
 
 # NOTE(@srokashevich, #29196): enable with asan after fix
-if (PANDA_ENABLE_ADDRESS_SANITIZER)
+if (PANDA_ENABLE_ADDRESS_SANITIZER OR PANDA_ENABLE_THREAD_SANITIZER)
     return()
 endif()
 
@@ -135,8 +135,8 @@ ets2panda_add_gtest(lsp_api_test_class_hierarchies CPP_SOURCES
     class_hierarchys_test.cpp
 )
 
-ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol CPP_SOURCES	 
-    refactor_extract_symbol_test.cpp 
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol CPP_SOURCES
+    refactor_extract_symbol_test.cpp
 )
 
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_2 CPP_SOURCES

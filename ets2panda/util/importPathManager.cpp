@@ -97,13 +97,6 @@ ProgramAdapter<KIND> *Program::New(const util::ImportInfo &importInfo, public_li
 
 namespace ark::es2panda::util {
 
-namespace {
-
-bool ShouldUseMetadata(const public_lib::Context *ctx)
-{
-    return ctx->config->options->IsReadMetadata() && !ctx->config->options->IsGenStdlib();
-}
-
 bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata)
 {
     for (const auto &[moduleName, moduleMetadata] : metadata) {
@@ -119,6 +112,13 @@ bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata)
     }
 
     return true;
+}
+
+namespace {
+
+bool ShouldUseMetadata(const public_lib::Context *ctx)
+{
+    return ctx->config->options->IsReadMetadata() && !ctx->config->options->IsGenStdlib();
 }
 
 }  // namespace
@@ -1316,7 +1316,7 @@ public:
             (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
         ES2PANDA_ASSERT(!isPackageFraction);
         if (auto pointedProgram = SearchResolved(newProg->GetImportInfo()); pointedProgram == newProg) {
-            if (AlreadyInExternalSources(newProg, extDecls)) {
+            if (AlreadyInExternalSources(newProg, extPrograms)) {
                 return;
             }
             extPrograms->Add(newProg);
@@ -1338,7 +1338,7 @@ public:
             return;
         }
 
-        if (AlreadyInExternalSources(newProg, extDecls)) {
+        if (AlreadyInExternalSources(newProg, extPrograms)) {
             return;
         }
         extPrograms->Add(newProg);
@@ -1392,27 +1392,28 @@ public:
     }
 
 private:
-    static bool AlreadyInExternalSources(const parser::Program *newProg, const parser::Program::ExternalDecls *extDecls)
+    static bool AlreadyInExternalSources(const parser::Program *newProg,
+                                         const parser::Program::ExternalPrograms *extPrograms)
     {
         switch (newProg->GetModuleKind()) {
             case ModuleKind::MODULE: {
-                const auto &programs = extDecls->Get<ModuleKind::MODULE>();
+                const auto &programs = extPrograms->Get<ModuleKind::MODULE>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::SOURCE_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::SOURCE_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::PACKAGE: {
-                const auto &programs = extDecls->Get<ModuleKind::PACKAGE>();
+                const auto &programs = extPrograms->Get<ModuleKind::PACKAGE>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::ETSCACHE_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::ETSCACHE_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::ETSCACHE_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::METADATA_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::METADATA_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::METADATA_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             default:

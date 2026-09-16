@@ -58,6 +58,8 @@ class StringLiteral;
 
 namespace ark::es2panda::util {
 
+bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata);
+
 template <ModuleKind KIND>
 constexpr parser::CacheType SelectCacheType()
 {

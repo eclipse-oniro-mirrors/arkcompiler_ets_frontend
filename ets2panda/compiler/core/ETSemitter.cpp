@@ -579,7 +579,7 @@ void ETSEmitter::CollectReloadInfoForPrograms()
         Context()->diagnosticEngine->IsAnyError()) {
         return;
     }
-    for (const auto &[_, prog] : Context()->parserProgram->GetExternalDecls()->Direct()) {
+    for (const auto &[_, prog] : Context()->parserProgram->GetExternalPrograms()->Direct()) {
         CollectReloadInfo(prog);
     }
 }

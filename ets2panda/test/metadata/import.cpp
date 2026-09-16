@@ -14,6 +14,7 @@
  */
 
 #include <algorithm>
+#include <cstdint>
 #include <regex>
 #include <string>
 #include <vector>
@@ -22,6 +23,7 @@
 #include "test/utils/metadata_test.h"
 #include "flatbuffers/flatbuffers.h"
 #include "schemaMetadataGenerated.h"
+#include "util/importPathManager.h"
 #include "util/perfMetrics.h"
 #include "utils/assertions.h"
 
@@ -109,5 +111,20 @@ TEST_F(MetadataTestImport, from_stdlib)
     const auto testDataDir = std::string(TEST_DATA_PATH) + "import/" + test_info_->name();
     Compile(testDataDir + "/main.ets", workingDir + "main.abc");
     util::DumpPerfMetrics();
+}
+
+TEST_F(MetadataTestImport, invalid_flatbuffer_is_rejected)
+{
+    flatbuffers::FlatBufferBuilder builder;
+    FinishDeclsBuffer(builder, CreateDecls(builder));
+
+    panda_file::MetadataByModules metadata;
+    metadata["lib"].assign(builder.GetBufferPointer(), builder.GetBufferPointer() + builder.GetSize());
+    ASSERT_TRUE(util::VerifyMetadataModules(metadata));
+
+    auto &moduleMetadata = metadata.begin()->second;
+    ASSERT_GE(moduleMetadata.size(), sizeof(uint32_t));
+    std::fill_n(moduleMetadata.begin(), sizeof(uint32_t), static_cast<uint8_t>(0xFF));
+    ASSERT_FALSE(util::VerifyMetadataModules(metadata));
 }
 }  // namespace ark::es2panda::compiler::test
