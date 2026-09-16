@@ -39,7 +39,9 @@ import {
     isMac,
     checkDependencyModuleInfoCorrectness,
     buildDeclgenOutputPath,
-    traverseDirAndFindFilesWithRegExp
+    traverseDirAndFindFilesWithRegExp,
+    toUnixPath,
+    isSubPathOf
 } from '../util/utils';
 import {
     Logger,
@@ -49,6 +51,8 @@ import { ErrorCode, DriverError, DriverErrorList } from '../util/error';
 import {
     BuildConfig,
     DependencyModuleConfig,
+    DependencyItem,
+    InteropDynamicEntries,
     ModuleInfo,
     ProcessCompileTask,
     ProcessDeclgenV1Task,
@@ -84,6 +88,8 @@ import { DepAnalyzer } from '../dep_analyzer/dep_analyzer';
 import { IncreDepAnalyzer } from '../dep_analyzer/incre_dep_analyzer';
 import { FullDepAnalyzer } from '../dep_analyzer/full_dep_analyzer';
 import { MockConfigGenerator } from './generate_mockconfig';
+import { resolveInteropConfig, resolveProjectionInteropConfig, DEFAULT_INTEROP_BUILD_OPTION, UserError } from '../interop-config';
+import type { InteropTarget, InteropFileEntry, ResolvedInteropConfig, ModuleTable, InteropConfigModuleInfo, MainModuleInfo } from '../interop-config';
 
 enum BuildSystemEvent {
     COLLECT_MODULES = 'Collect module infos',
@@ -110,6 +116,10 @@ export abstract class BaseMode {
     private fileToModule: Map<string, ModuleInfo>;
     private moduleInfos: Map<string, ModuleInfo>;
     private abcFiles: Set<string>;
+    private interopConfig: ResolvedInteropConfig = {
+        buildOption: DEFAULT_INTEROP_BUILD_OPTION,
+        targets: new Map<string, InteropTarget>()
+    };
     protected mergedAbcFile: string;
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
@@ -741,6 +751,48 @@ export abstract class BaseMode {
         this.generateDependencyOhmUrlMap(arktsConfig);
     }
 
+    private resolveInteropConfigs(): void {
+        try {
+            const projectionInteropConfig = resolveProjectionInteropConfig(this.buildConfig.interopConfigPath);
+            const hasModuleInteropConfig = [...this.moduleInfos.values()].some(
+                (moduleInfo: ModuleInfo) => moduleInfo.interopConfigPath !== undefined
+            );
+            const targets = hasModuleInteropConfig
+                ? resolveInteropConfig(this.buildInteropModuleTable(), {})
+                : new Map<string, InteropTarget>();
+            this.interopConfig = { buildOption: projectionInteropConfig.interopBuildOption, targets };
+        } catch (error) {
+            if (error instanceof UserError) {
+                throw new DriverError(error.logData(ErrorCode.BUILDSYSTEM_INTEROP_CONFIG_RESOLVE_FAIL));
+            }
+            throw error;
+        }
+    }
+
+    private buildInteropModuleTable(): ModuleTable {
+        const byPackage = new Map<string, InteropConfigModuleInfo>();
+        this.moduleInfos.forEach((moduleInfo: ModuleInfo) => {
+            byPackage.set(moduleInfo.packageName, {
+                packageName: moduleInfo.packageName,
+                modulePath: moduleInfo.moduleRootPath,
+                dependencies: moduleInfo.dependencies ?? [],
+                interopConfigPath: moduleInfo.interopConfigPath
+            });
+        });
+        const mainModuleInfo = this.moduleInfos.get(this.mainPackageName);
+        const mainModule: MainModuleInfo = {
+            packageName: this.mainPackageName,
+            modulePath: mainModuleInfo?.moduleRootPath ?? this.buildConfig.moduleRootPath,
+            dependencies: mainModuleInfo?.dependencies ?? [],
+            interopConfigPath: mainModuleInfo?.interopConfigPath,
+            projectRootPath: this.buildConfig.projectRootPath,
+            cachePath: this.buildConfig.cachePath,
+            outputRootPath: this.buildConfig.loaderOutPath
+        };
+        byPackage.set(mainModule.packageName, mainModule);
+        return { modules: [...byPackage.values()], byPackage, mainModule };
+    }
+
     private generateDependencyOhmUrlMap(arktsConfig: ArkTSConfig): void {
         // Only when: not declgen ets2ts mode, main module is hybrid (hap or feature)
         if (!this.enableDeclgenEts2Ts && this.isHybridEntryOrFeature) {
@@ -754,14 +806,21 @@ export abstract class BaseMode {
                 `map_abc.set("${CONTEXT_DATA_STORAGE_BUNDLE}${mainModuleName}/ets/${MERGED_ABC_FILE}", "${CONTEXT_DATA_STORAGE_BUNDLE}${mainModuleName}/ets/${DYNAMIC_ABC_FILE}");`
             ];
             const dynamicLines: string[] = [];
+            // The project-level stripInteropMapping option decides whether the map only
+            // contains the entries configured in module-level interop-config.json5;
+            // dynamic/ SDK entries are never stripped.
+            const interopEntries = this.interopConfig.buildOption.stripInteropMapping
+                ? this.collectInteropDynamicEntries()
+                : undefined;
             for (const [key, item] of Object.entries(deps)) {
                 if (key.startsWith('dynamic/')) {
+                    // SDK API entries (dynamic/...) are never filtered by interop-config.json5.
                     if (item.ohmUrl) {
                         dynamicLines.push(`map_ohmurl.set("${key.slice('dynamic/'.length)}", "${item.ohmUrl}");`);
                     }
                     continue;
                 }
-                if (item.ohmUrl) {
+                if (item.ohmUrl && this.shouldIncludeInOhmUrlMap(item, interopEntries)) {
                     lines.push(`map_ohmurl.set("${key}", "${item.ohmUrl}");`);
                 }
             }
@@ -773,6 +832,41 @@ export abstract class BaseMode {
             ensurePathExists(dynamicDepMapEtsPath);
             fs.writeFileSync(dynamicDepMapEtsPath, dynamicLines.join('\n') + '\n');
         }
+    }
+
+    private collectInteropDynamicEntries(): InteropDynamicEntries {
+        const dynamicFiles = new Set<string>();
+        const packageRoots: string[] = [];
+        this.interopConfig.targets.forEach((target: InteropTarget) => {
+            if (target.kind === 'items') {
+                target.dynamicFiles.forEach((file: InteropFileEntry) => {
+                    dynamicFiles.add(toUnixPath(path.resolve(file.filePath)));
+                });
+            } else {
+                packageRoots.push(toUnixPath(path.resolve(target.moduleInfo.modulePath)));
+            }
+        });
+        return { dynamicFiles, packageRoots };
+    }
+
+    /**
+     * Decides whether a dependency item participates in the ohmurl map.
+     * Without an index (strip disabled) every item passes. With an index, an item is
+     * kept only if its source file is a configured dynamic entry, or lives inside a
+     * package referenced as a whole; items without a source file are dropped.
+     */
+    private shouldIncludeInOhmUrlMap(item: DependencyItem, interopEntries?: InteropDynamicEntries): boolean {
+        if (interopEntries === undefined) {
+            return true;
+        }
+        if (!item.sourceFilePath) {
+            return false;
+        }
+        const filePath = toUnixPath(path.resolve(item.sourceFilePath));
+        if (interopEntries.dynamicFiles.has(filePath)) {
+            return true;
+        }
+        return interopEntries.packageRoots.some((root: string) => isSubPathOf(filePath, root));
     }
 
     private collectModuleDependencies(): void {
@@ -862,7 +956,8 @@ export abstract class BaseMode {
                 abcPath: dependency.abcPath,
                 staticFiles: [],
                 packageVersion: dependency.packageVersion,
-                originalPackageNameMap: dependency.originalPackageNameMap
+                originalPackageNameMap: dependency.originalPackageNameMap,
+                interopConfigPath: dependency.interopConfigPath
             };
             moduleInfo.dependencies = dependency.dependencies?.map(dep => this.resolvePackageName(dep, moduleInfo.originalPackageNameMap)) ?? [];
             this.moduleInfos.set(dependency.packageName, moduleInfo);
@@ -898,7 +993,8 @@ export abstract class BaseMode {
             dependencies: [],
             staticFiles: [],
             packageVersion: mainModuleInfo?.packageVersion,
-            originalPackageNameMap: mainModuleInfo?.originalPackageNameMap
+            originalPackageNameMap: mainModuleInfo?.originalPackageNameMap,
+            interopConfigPath: mainModuleInfo?.interopConfigPath
         };
         moduleInfo.dependencies = mainModuleInfo?.dependencies?.map(dep => this.resolvePackageName(dep, moduleInfo.originalPackageNameMap)) ?? [];
         return moduleInfo;
@@ -938,6 +1034,7 @@ export abstract class BaseMode {
     protected processBuildConfig(): void {
         this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
+        this.resolveInteropConfigs();
         this.collectModuleFiles();
         // called here, since processing of entryFiles goes further in processEntryFiles
         this.extractDeclarationsFromAbcFile();

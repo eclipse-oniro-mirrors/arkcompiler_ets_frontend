@@ -335,6 +335,7 @@ export interface DependencyModuleConfig {
     bundleName?: string;
     packageVersion?: string;
     originalPackageNameMap?: Map<string, string>;
+    interopConfigPath?: string;
 }
 
 export interface ModuleFile {
@@ -437,6 +438,7 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
     moduleFiles: ModuleFile[];
     declFileNameCacheConfig?: DeclFileNameCacheConfig;
     compatibleSdkVersion?: number;
+    interopConfigPath?: string;
 }
 // ProjectConfig ends
 
@@ -466,6 +468,7 @@ export interface ModuleInfo {
     bundleName?: string;
     packageVersion?: string;
     originalPackageNameMap?: Map<string, string>;
+    interopConfigPath?: string;
 }
 
 export type SetupClusterOptions = {
@@ -533,6 +536,11 @@ export interface DependencyItem {
     sourceFilePath?: string,
     alias?: string[],
     mainFile?: string,
+}
+
+export interface InteropDynamicEntries {
+    dynamicFiles: Set<string>;
+    packageRoots: string[];
 }
 
 export interface CompilerOptions {
