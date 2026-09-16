@@ -21,3 +21,4 @@ export * as arktsconfig from './arktsconfig';
 export * as interopConfig from './interop-config';
 export * as errors from './errors';
 export * as framework from './framework';
+export * as directivePrologue from './directivePrologue';

@@ -15,7 +15,7 @@
 
 import path from 'node:path';
 
-import { INTERNAL_PREFIX, normalizePath, toPlatformPath } from '../../src/fileUtils';
+import { getLanguageFromSourceCode, INTERNAL_PREFIX, Language, normalizePath, toPlatformPath } from '../../src/fileUtils';
 
 describe('fileUtils', () => {
   it('normalizes file paths to absolute paths with forward slashes', () => {
@@ -30,5 +30,33 @@ describe('fileUtils', () => {
 
   it('converts path separators to the platform separator', () => {
     expect(toPlatformPath('src\\feature/Index.ets')).toBe(['src', 'feature', 'Index.ets'].join(path.sep));
+  });
+});
+
+describe('getLanguageFromSourceCode', () => {
+  it('returns STATIC when "use static" is the first directive', () => {
+    expect(getLanguageFromSourceCode('"use static";\nlet x = 1;\n')).toBe(Language.STATIC);
+  });
+
+  it('returns STATIC for a duplicated "use static" directive', () => {
+    expect(getLanguageFromSourceCode("'use static';\n'use static';\n")).toBe(Language.STATIC);
+  });
+
+  it('returns DYNAMIC when "use static" is not the first directive of the prologue', () => {
+    expect(getLanguageFromSourceCode('"one";\n"use static";\n')).toBe(Language.DYNAMIC);
+  });
+
+  it('returns DYNAMIC when "use static" appears after the prologue ends', () => {
+    expect(getLanguageFromSourceCode('"one";\nlet x;\n"use static";\n')).toBe(Language.DYNAMIC);
+  });
+
+  it('returns DYNAMIC when "use static" is not a standalone directive', () => {
+    expect(getLanguageFromSourceCode('"use static" + value;\n')).toBe(Language.DYNAMIC);
+  });
+
+  it('returns DYNAMIC for other or absent directives', () => {
+    expect(getLanguageFromSourceCode('"use strict";\n')).toBe(Language.DYNAMIC);
+    expect(getLanguageFromSourceCode('let x = 1;\n')).toBe(Language.DYNAMIC);
+    expect(getLanguageFromSourceCode('')).toBe(Language.DYNAMIC);
   });
 });

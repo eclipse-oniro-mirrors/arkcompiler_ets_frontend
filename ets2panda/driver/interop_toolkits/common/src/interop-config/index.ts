@@ -14,5 +14,7 @@
  */
 
 export * from './types';
+export * from './host';
+export * from './schema';
 export * from './resolve';
 export * from './errors';

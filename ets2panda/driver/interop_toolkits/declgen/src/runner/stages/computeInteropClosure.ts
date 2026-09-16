@@ -83,6 +83,7 @@ function validateSentinels(
     const language = fileMeta.language === common.fileUtils.Language.DYNAMIC ? 'Dynamic' : 'Static';
     const importerLanguage = language === 'Dynamic' ? 'static' : 'dynamic';
     const relativePath = path.relative(moduleInfo.modulePath, sentinel.fileName);
+    const importers = collectImporters(context, sentinel, importerLanguage);
     unconfiguredEntries.push({
       fileName: sentinel.fileName,
       error: new SentinelNotConfiguredError({
@@ -92,6 +93,7 @@ function validateSentinels(
           `is imported by some ${importerLanguage} files. ` +
           'But it is not configured as an interop entry.',
         solutions: [`Add it into the interop configuration.`],
+        ...(importers.length > 0 ? { moreInfo: { 'imported by': formatImporters(importers) } } : {}),
       }),
     });
   }
@@ -99,6 +101,31 @@ function validateSentinels(
     unconfiguredEntries.sort((left, right) => comparePath(left.fileName, right.fileName));
     throw new common.errors.AggregateUserError(unconfiguredEntries.map((entry) => entry.error));
   }
+}
+
+/**
+ * Collects the importers of the opposite language that reference the sentinel.
+ */
+function collectImporters(
+  context: Context,
+  sentinel: dependencyResolver.DependencyNode,
+  importerLanguage: 'static' | 'dynamic',
+): string[] {
+  return sentinel.dependants.filter((dependant) => isOfLanguage(context, dependant, importerLanguage)).sort();
+}
+
+/**
+ * Formats the importing files for the error's more-info field: one absolute
+ * path per line, indented under the key. The value starts with a line break
+ * because the logger prints the key and the value on the same line.
+ */
+function formatImporters(importers: readonly string[]): string {
+  return `\n${importers.map((importer) => `      ${importer}`).join('\n')}`;
+}
+
+function isOfLanguage(context: Context, fileName: string, language: 'static' | 'dynamic'): boolean {
+  const isDynamic = context.fileManager.queryFileMeta(fileName)?.language === common.fileUtils.Language.DYNAMIC;
+  return language === 'dynamic' ? isDynamic : !isDynamic;
 }
 
 function comparePath(left: string, right: string): number {
