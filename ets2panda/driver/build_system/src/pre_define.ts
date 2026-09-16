@@ -37,6 +37,7 @@ export const DECL_ETS_SUFFIX: string = '.d.ets';
 export const DECL_TS_SUFFIX: string = '.d.ts';
 export const ETS_SUFFIX: string = '.ets';
 export const TS_SUFFIX: string = '.ts';
+export const JS_SUFFIX: string = '.js';
 export const ABC_SUFFIX: string = '.abc';
 export const ETSCACHE_SUFFIX: string = '.etscache';
 
