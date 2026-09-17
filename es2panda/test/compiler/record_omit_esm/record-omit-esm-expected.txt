@@ -1,0 +1,53 @@
+# ====================
+# LITERALS
+
+test_compiler_record_omit_esm_record-omit-esm_0 
+
+test_compiler_record_omit_esm_record-omit-esm_1 { 6 [ i32:0, i32:0, i32:0, i32:0, i32:0, i32:0, ]}
+
+
+
+# ====================
+# RECORDS
+
+.language ECMAScript
+.record _ESConcurrentModuleRequestsAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record _ESExpectedPropertyCountAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record _ESSlotNumberAnnotation {
+}
+.record.source_file 
+
+.language ECMAScript
+.record test_compiler_record_omit_esm_record-omit-esm {
+	u8 pkgName@ 0
+	u8 isCommonjs 0
+	u32 scopeNames test_compiler_record_omit_esm_record-omit-esm_0
+	u32 moduleRecordIdx test_compiler_record_omit_esm_record-omit-esm_1
+}
+.record.source_file 
+
+
+# ====================
+# METHODS
+
+.function_kind FunctionKind::FUNCTION
+ _ESSlotNumberAnnotation
+ SlotNumber 0
+.language ECMAScript
+.function any test_compiler_record_omit_esm_record-omit-esm.func_main_0(any a0, any a1, any a2) {
+	label_1:                                 # line: 4294967295           # column: 0
+	label_0:                                 # line: 4294967295           # column: 0
+	returnundefined                          # line: 4294967295           # column: 0
+	label_2:                                 # line: 4294967295           # column: 0
+}
+
+# ====================
+# STRING

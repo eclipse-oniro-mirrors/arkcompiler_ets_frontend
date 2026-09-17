@@ -1107,6 +1107,9 @@ void Emitter::AddModuleRequestPhaseRecord(ModuleRecordEmitter *module, CompilerC
 
 void Emitter::AddHasTopLevelAwaitRecord(bool hasTLA, const CompilerContext *context)
 {
+    if (!hasTLA) {
+        return;
+    }
     if (context->IsMergeAbc()) {
         auto hasTLAField = panda::pandasm::Field(source_lang_);
         hasTLAField.name = "hasTopLevelAwait";
@@ -1114,7 +1117,7 @@ void Emitter::AddHasTopLevelAwaitRecord(bool hasTLA, const CompilerContext *cont
         hasTLAField.metadata->SetValue(
             panda::pandasm::ScalarValue::Create<panda::pandasm::Value::Type::U8>(static_cast<uint8_t>(hasTLA)));
         rec_->field_list.emplace_back(std::move(hasTLAField));
-    } else if (hasTLA) {
+    } else {
         auto hasTLARecord = panda::pandasm::Record("_HasTopLevelAwait", source_lang_);
         hasTLARecord.metadata->SetAccessFlags(panda::ACC_PUBLIC);
         auto hasTLAField = panda::pandasm::Field(source_lang_);
@@ -1131,6 +1134,9 @@ void Emitter::AddHasTopLevelAwaitRecord(bool hasTLA, const CompilerContext *cont
 void Emitter::AddSharedModuleRecord(const CompilerContext *context)
 {
     bool isShared = context->Binder()->Program()->IsShared();
+    if (!isShared) {
+        return;
+    }
 
     auto sharedModuleField = panda::pandasm::Field(source_lang_);
     sharedModuleField.name = "isSharedModule";
@@ -1140,7 +1146,7 @@ void Emitter::AddSharedModuleRecord(const CompilerContext *context)
 
     if (context->IsMergeAbc()) {
         rec_->field_list.emplace_back(std::move(sharedModuleField));
-    } else if (isShared) {
+    } else {
         auto sharedModuleRecord = panda::pandasm::Record("_SharedModuleRecord",
                                                          source_lang_);
         sharedModuleRecord.metadata->SetAccessFlags(panda::ACC_PUBLIC);
