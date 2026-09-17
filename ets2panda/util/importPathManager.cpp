@@ -364,6 +364,65 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolveEtscacheRelativePat
     return {"", false, true};
 }
 
+ImportPathManager::ResolvedPathRes ImportPathManager::ResolveDynamicRelativePath(parser::Program *importer,
+                                                                                 std::string_view importPath) const
+{
+    if (!isDynamic_ || !importer->Is<ModuleKind::SOURCE_DECL>()) {
+        return {};
+    }
+
+    const auto &dependencies = ArkTSConfig().Dependencies();
+    auto dependency = dependencies.find(importer->GetImportInfo().ResolvedSource());
+    if (dependency == dependencies.end() || dependency->second.SourceFilePath().empty()) {
+        return {};
+    }
+
+    // A package entry key need not contain the entry file's location. Resolve relative to its original source,
+    // including when that source is a dynamic declaration, rather than the generated static declaration.
+    auto sourcePath = dependency->second.SourceFilePath();
+    auto pos = sourcePath.find_last_of("/\\");
+    if (pos == std::string::npos) {
+        return {};
+    }
+    std::string sourcePathPrototype {sourcePath.substr(0, pos)};
+    sourcePathPrototype += pathDelimiter_;
+    sourcePathPrototype += importPath;
+    // A miss is silent so configurations without available sources can use the existing logical-key fallback.
+    auto result = ProbeExtensionOrIndexFile(std::move(sourcePathPrototype));
+    // The shared probe also accepts directories without an index file; they are not source-file matches here.
+    if (!result.hasError && !result.resolvedPath.empty() && !result.resolvedIsExternalModule &&
+        fsQueryCache_->IsDirectory(result.resolvedPath)) {
+        return {};
+    }
+    return result;
+}
+
+ImportPathManager::ResolvedPathRes ImportPathManager::ResolveRelativePath(parser::Program *importer,
+                                                                          std::string_view curModulePath,
+                                                                          std::string_view importPath) const
+{
+    auto result = ResolveDynamicRelativePath(importer, importPath);
+    if (result.resolvedPath.empty() && !result.hasError) {
+        size_t pos = curModulePath.find_last_of("/\\");
+        auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : curModulePath;
+        std::string resolvedPathPrototype {currentDir};
+        resolvedPathPrototype += pathDelimiter_;
+        resolvedPathPrototype += importPath;
+        result = importer->Is<ModuleKind::ETSCACHE_DECL>()
+                     ? ResolveEtscacheRelativePath(std::move(resolvedPathPrototype))
+                     : AppendExtensionOrIndexFileIfOmitted(std::move(resolvedPathPrototype));
+    }
+    if (result.hasError) {
+        return result;
+    }
+    if (result.resolvedIsExternalModule) {
+        TryMatchStaticResolvedPath(&result);
+    } else {
+        TryMatchDynamicResolvedPath(&result, importPath);
+    }
+    return result;
+}
+
 ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string_view importPath) const
 {
     if (importPath.empty()) {
@@ -384,25 +443,7 @@ ImportInfo ImportPathManager::ResolvePath(parser::Program *importer, std::string
     }
 
     if (IsRelativePath(importPath)) {
-        size_t pos = curModulePath.find_last_of("/\\");
-        auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : curModulePath;
-        std::string resolvedPathPrototype {currentDir};
-        resolvedPathPrototype += pathDelimiter_;
-        resolvedPathPrototype += importPath;
-        result = importer->Is<ModuleKind::ETSCACHE_DECL>()
-                     ? ResolveEtscacheRelativePath(std::move(resolvedPathPrototype))
-                     : AppendExtensionOrIndexFileIfOmitted(std::move(resolvedPathPrototype));
-        if (result.hasError) {
-            return {};
-        }
-        if (result.resolvedIsExternalModule) {
-            TryMatchStaticResolvedPath(&result);
-        } else {
-            TryMatchDynamicResolvedPath(&result, importPath);
-        }
-        if (result.hasError) {
-            return {};
-        }
+        result = ResolveRelativePath(importer, curModulePath, importPath);
     } else {
         result = ResolveAbsolutePath(importPath);
     }
