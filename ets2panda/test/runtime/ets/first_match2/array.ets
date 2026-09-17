@@ -25,5 +25,5 @@ class Test<T> {
 function main() {
     let s: Test<string> = new Test<string>();
     arktest.assertEQ(s.foo(["abc", "abc", "abc"]), "invoke1");
-    arktest.assertEQ(s.foo(new FixedArray<string>(5)), "invoke1");
+    arktest.assertEQ(s.foo(new FixedArray<string>(5, "")), "invoke1");
 }

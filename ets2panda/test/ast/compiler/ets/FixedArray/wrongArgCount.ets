@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,16 +13,10 @@
  * limitations under the License.
  */
 
-class A {
-    public static fun(): FixedArray<int> {
-        return new FixedArray<int>(10, 0);
-    }
+function main(): void {
+    let a: FixedArray<string> = /* @@ label1 */new FixedArray<string>(3)
+    let b: FixedArray<string> = /* @@ label2 */new FixedArray<string>(3, 'x', 'y')
 }
 
-function main(): int {
-    let obj = new A./* @@ label */fun();
-    return 0;
-}
-
-
-/* @@@ label Error Semantic error ESE0070: 'fun' type does not exist. */
+/* @@@ label1 Error Semantic error ESE0124: Expected 2 arguments, got 1. */
+/* @@@ label2 Error Semantic error ESE0124: Expected 2 arguments, got 3. */

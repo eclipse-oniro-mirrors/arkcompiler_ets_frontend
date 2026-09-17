@@ -16,7 +16,7 @@
 class A<T> {
     x: FixedArray<Any>
     constructor(x: T) {
-        this.x = new FixedArray<Any>(1)
+        this.x = new FixedArray<Any>(1, undefined)
         this.x[0] = x as Any
     }
 

@@ -20,23 +20,72 @@
 
 namespace ark::es2panda::compiler {
 
-static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::ETSNewClassInstanceExpression *arrayInstance,
-                                           int argsSize)
+// Skip fill loop for zero-value initializers: newarr already zero-inits, and boxed literal
+// stores into ValueArray trip optimizer bug #30675.
+static bool IsZeroValueInitializer(ir::Expression *arg)
 {
-    auto *allocator = ctx->GetChecker()->Allocator();
-    auto checker = ctx->GetChecker()->AsETSChecker();
-    auto *parser = ctx->parser->AsETSParser();
-
-    if (argsSize == 1) {
-        return parser->CreateFormattedExpression(
-            "new @@T1()", checker->AllocNode<ir::OpaqueTypeNode>(arrayInstance->Signature()->Owner(), allocator));
+    if (arg == nullptr) {
+        return true;
     }
+    if (arg->IsNumberLiteral()) {
+        return arg->AsNumberLiteral()->Number().IsZero();
+    }
+    if (arg->IsBooleanLiteral()) {
+        return !arg->AsBooleanLiteral()->Value();
+    }
+    if (arg->IsCharLiteral()) {
+        return arg->AsCharLiteral()->Char() == 0;
+    }
+    return arg->IsUndefinedLiteral();
+}
+
+static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::ETSNewClassInstanceExpression *arrayInstance)
+{
     auto *arg = arrayInstance->GetArguments()[1];
     if (arg->IsArrowFunctionExpression()) {
         ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::LAMBDA_NOT_SUPPORTED, {}, arg->Start());
     }
     return arg;
 }
+
+struct LoweringOutput {
+    std::stringstream &sourceCode;
+    std::vector<ir::AstNode *> &newStmts;
+};
+
+static void AppendFillOrSkip(public_lib::Context *ctx, ir::ETSNewClassInstanceExpression *arrayInstance,
+                             ir::Expression *convertedSize, ir::Expression *genSymArray, LoweringOutput &out)
+{
+    auto *allocator = ctx->GetChecker()->Allocator();
+    ir::Expression *idx = Gensym(allocator);
+    auto argSize = arrayInstance->GetArguments().size();
+    bool isPrimitiveType = arrayInstance->TsType()->AsETSArrayType()->IsValueArray();
+    // NOTE(klimentievamaria): an attempt to initialize with zeros for primitive types causes an optimizer bug, see
+    // #30675
+    auto *elemInit = argSize > 1 ? arrayInstance->GetArguments()[1] : nullptr;
+    // undefined on reference types is equivalent to newarr's null zero-init — skip.
+    bool skipFill =
+        (argSize == 1 && (isPrimitiveType || arrayInstance->Signature() == nullptr)) ||
+        (argSize > 1 && IsZeroValueInitializer(elemInit) && (isPrimitiveType || elemInit->IsUndefinedLiteral()));
+    if (skipFill) {
+        out.sourceCode << "@@I5;";
+        out.newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
+    } else {
+        ir::Expression *initializer = EvaluateInitializer(ctx, arrayInstance);
+        out.sourceCode << "for (let @@I5: int = 0; @@I6 < @@E7; ++@@I8) { @@I9[@@I10] = @@E11}";
+        out.sourceCode << "@@I12;";
+
+        out.newStmts.emplace_back(idx);
+        out.newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        out.newStmts.emplace_back(convertedSize->Clone(allocator, nullptr));
+        out.newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        out.newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
+        out.newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        out.newStmts.emplace_back(initializer);
+        out.newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
+    }
+}
+
 ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstNode *node)
 {
     auto *allocator = ctx->GetChecker()->Allocator();
@@ -45,13 +94,9 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
     auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
     auto *arrayInstance = node->AsETSNewClassInstanceExpression();
     auto *size = arrayInstance->GetArguments()[0];
-    auto argSize = arrayInstance->GetArguments().size();
-    ir::Expression *initializer = nullptr;
     ir::Expression *convertedSize = Gensym(allocator);
     auto nodeParent = node->Parent();
     auto *genSymArray = Gensym(allocator);
-    ir::Expression *idx = Gensym(allocator);
-    bool isPrimitiveType = arrayInstance->TsType()->AsETSArrayType()->IsValueArray();
 
     std::vector<ir::AstNode *> newStmts;
     std::stringstream sourceCode;
@@ -62,25 +107,8 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
     newStmts.emplace_back(genSymArray);
     newStmts.emplace_back(CreateUninitializedFixedArray(ctx, convertedSize->Clone(allocator, nullptr)->AsIdentifier(),
                                                         arrayInstance->TsType()));
-    // NOTE(klimentievamaria): an attempt to initialize with zeros for primitive types causes an optimizer bug, see
-    // #30675
-    if (argSize == 1 && (isPrimitiveType || arrayInstance->Signature() == nullptr)) {
-        sourceCode << "@@I5;";
-        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
-    } else {
-        initializer = EvaluateInitializer(ctx, arrayInstance, argSize);
-        sourceCode << "for (let @@I5: int = 0; @@I6 < @@E7; ++@@I8) { @@I9[@@I10] = @@E11}";
-        sourceCode << "@@I12;";
-
-        newStmts.emplace_back(idx);
-        newStmts.emplace_back(idx->Clone(allocator, nullptr));
-        newStmts.emplace_back(convertedSize->Clone(allocator, nullptr));
-        newStmts.emplace_back(idx->Clone(allocator, nullptr));
-        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
-        newStmts.emplace_back(idx->Clone(allocator, nullptr));
-        newStmts.emplace_back(initializer);
-        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
-    }
+    LoweringOutput out {sourceCode, newStmts};
+    AppendFillOrSkip(ctx, arrayInstance, convertedSize, genSymArray, out);
 
     auto *loweringResult = parser->CreateFormattedExpression(sourceCode.str(), newStmts);
     ES2PANDA_ASSERT(loweringResult != nullptr);

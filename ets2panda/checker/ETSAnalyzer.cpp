@@ -1102,7 +1102,7 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
                 checker->ValidateSignatureAccessibility(calleeObj, newArrayInstanceExpr->Signature(),
                                                         newArrayInstanceExpr->Start());
             }
-        } else {
+        } else if (needsParamlessCtor) {
             checker->LogError(diagnostic::ABSTRACT_CLASS_AS_ARRAY_ELEMENT_TYPE, {}, newArrayInstanceExpr->Start());
             return false;
         }
@@ -1191,6 +1191,50 @@ static void CheckObjectLiteralArguments(ETSChecker *checker, Signature *signatur
     }
 }
 
+//  Extracted from 'ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr)' to reduce its size
+static checker::Type *CheckArrayConstructor(ETSChecker *checker, ir::ETSNewClassInstanceExpression *expr,
+                                            checker::Type *type)
+{
+    if (expr->GetArguments().empty()) {
+        checker->LogError(diagnostic::MISSING_ARRAY_SIZE, {type->ToString()}, expr->Start());
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
+    auto *arrayType = type->AsETSArrayType();
+    if (!CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), arrayType->ElementType(), false)) {
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
+    auto *sig = checker->CreateBuiltinArraySignature(arrayType, 1);
+    if (expr->GetArguments().size() != sig->ArgCount()) {
+        checker->LogError(diagnostic::PARAM_COUNT_MISMATCH, {sig->MinArgCount(), expr->GetArguments().size()},
+                          expr->Start());
+        return expr->SetTsType(checker->GlobalTypeError());
+    }
+    expr->SetSignature(sig);
+    if (expr->GetArguments().size() > 1) {
+        auto *arg = expr->GetArguments()[1];
+        if (!arg->IsArrowFunctionExpression()) {
+            arg->SetPreferredType(sig->Params()[1]->TsType());
+        }
+    }
+    for (auto arg : expr->GetArguments()) {
+        arg->Check(checker);
+    }
+    if (expr->GetArguments().size() > 1) {
+        auto *arg = expr->GetArguments()[1];
+        auto *argType = arg->TsType();
+        auto *paramType = sig->Params()[1]->TsType();
+        const auto assignCtx =
+            AssignmentContext(checker->Relation(), arg, argType, paramType, arg->Start(),
+                              util::DiagnosticWithParams {diagnostic::TYPE_MISMATCH_AT_IDX, {argType, paramType, 1U}});
+        if (!assignCtx.IsAssignable()) {
+            return expr->SetTsType(checker->GlobalTypeError());
+        }
+    }
+    checker->ValidateArrayIndex(expr->GetArguments()[0], true);
+    expr->SetTsType(type);
+    return type;
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -1203,26 +1247,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
     auto *type = expr->GetTypeRef()->TsType();
 
     if (type != nullptr && type->IsETSArrayType()) {
-        if (expr->GetArguments().empty()) {
-            checker->LogError(diagnostic::MISSING_ARRAY_SIZE, {type->ToString()}, expr->Start());
-            return expr->SetTsType(checker->GlobalTypeError());
-        }
-        constexpr size_t ARRAY_CTOR_MIN_ARGS_WITH_INIT = 2U;
-        if (expr->GetArguments().size() > 1) {
-            auto *arg = expr->GetArguments()[1];
-            if (!arg->IsArrowFunctionExpression()) {
-                arg->SetPreferredType(type->AsETSArrayType()->ElementType());
-            }
-        }
-        for (auto arg : expr->GetArguments()) {
-            arg->Check(checker);
-        }
-        checker->ValidateArrayIndex(expr->GetArguments()[0], true);
-        CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), type->AsETSArrayType()->ElementType(),
-                              expr->GetArguments().size() < ARRAY_CTOR_MIN_ARGS_WITH_INIT);
-        expr->SetTsType(type);
-        checker->CreateBuiltinArraySignature(expr->TsType()->AsETSArrayType(), 1);
-        return type;
+        return CheckArrayConstructor(checker, expr, type);
     }
     auto *calleeType = CheckInstantiatedNewType(checker, expr);
     FORWARD_TYPE_ERROR(checker, calleeType, expr);

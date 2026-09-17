@@ -20,7 +20,7 @@ class B {
     }
 }
 type A = B | undefined
-let a = new FixedArray<A>(6)
+let a = new FixedArray<A>(6, undefined)
 for (let i = 0; i < a.length; i++) {
     arktest.assertEQ(a[i], undefined)
 }

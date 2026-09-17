@@ -27,7 +27,7 @@ function main(): int {
       arktest.assertTrue(y[i] instanceof undefined, "y[i] value has to be undefined.")
     }
 
-    let m : FixedArray<int> = new FixedArray<int>(33)
+    let m : FixedArray<int> = new FixedArray<int>(33, 0)
     for (let i = 0; i < 33; i++) {
       arktest.assertEQ(m[i], 0, "m[i] value has to be 0.")
     }

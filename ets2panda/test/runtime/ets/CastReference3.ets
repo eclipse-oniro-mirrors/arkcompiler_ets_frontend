@@ -29,7 +29,7 @@ function clear_accumlator_type(As: FixedArray<A>): FixedArray<A> {
 
 function main() {
   {
-    let As: FixedArray<A> = new FixedArray<C>(1);
+    let As: FixedArray<A> = new FixedArray<C>(1, new C());
     As[0] = new C();
 
     As = clear_accumlator_type(As); // workaround for:
@@ -43,7 +43,7 @@ function main() {
   {
     let caught = false;
     try {
-      let As: FixedArray<A> = new FixedArray<A>(1);
+      let As: FixedArray<A> = new FixedArray<A>(1, new A());
       let Bs = As as FixedArray<B>;
     } catch (e) {
       if (e instanceof ClassCastError) {

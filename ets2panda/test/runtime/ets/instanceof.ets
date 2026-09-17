@@ -42,7 +42,7 @@ function main(): void {
   arktest.assertTrue((intArr instanceof FixedArray<Int | undefined>))
   arktest.assertTrue(!(intArr instanceof Int))
 
-  let integerArr: FixedArray<Int> = new FixedArray<Int>(10);
+  let integerArr: FixedArray<Int> = new FixedArray<Int>(10, 0);
 
   arktest.assertTrue(integerArr instanceof FixedArray<Int | undefined>)
   arktest.assertTrue(integerArr instanceof Object)

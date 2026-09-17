@@ -17,7 +17,7 @@ function baz(): number {
     return 5.1
 }
 function main(): void {
-  let a:FixedArray<int> = new FixedArray<int>(/* @@ label */baz())
+  let a:FixedArray<int> = new FixedArray<int>(/* @@ label */baz(), 0)
 }
 
 /* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
