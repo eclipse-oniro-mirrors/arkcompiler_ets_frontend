@@ -128,7 +128,7 @@ export function createArkTSConfigContext(source: ArkTSConfigSourceContext): ArkT
     bundleName: source.bundleName,
     ...(source.moduleType === undefined ? {} : { moduleType: source.moduleType }),
     mainModule,
-    modules: reachableModulesOf(mainModule, modulesByPackage),
+    modules: source.modules,
     byPackage: modulesByPackage,
     interopContexts: source.interopContexts,
     externalApiPaths: source.externalApiPaths,
@@ -159,29 +159,6 @@ function normalizeModule(module: ModuleInput, projectRootPath: string): ModuleIn
     ...(module.packageVersion === undefined ? {} : { packageVersion: module.packageVersion }),
     originalPackageNameMap,
   };
-}
-
-function reachableModulesOf(
-  root: ModuleInfo,
-  modulesByPackage: ReadonlyMap<string, ModuleInfo>,
-): readonly ModuleInfo[] {
-  const modules: ModuleInfo[] = [];
-  const visited = new Set<string>();
-  const visit = (module: ModuleInfo): void => {
-    if (visited.has(module.packageName)) {
-      return;
-    }
-    visited.add(module.packageName);
-    modules.push(module);
-    for (const dependencyName of module.dependencies) {
-      const dependency = modulesByPackage.get(dependencyName);
-      if (dependency !== undefined) {
-        visit(dependency);
-      }
-    }
-  };
-  visit(root);
-  return modules;
 }
 
 function normalizePath(fileName: string): string {

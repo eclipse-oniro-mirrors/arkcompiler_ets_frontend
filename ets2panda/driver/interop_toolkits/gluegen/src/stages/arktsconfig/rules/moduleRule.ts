@@ -18,7 +18,7 @@ import * as path from 'node:path';
 
 import type { BuildConfig } from '../../../contracts';
 import { hasEtsSourceExtension, hasUseStaticDirectiveInFile } from '../../../utils/staticSource';
-import { dependencyModulesOf, reachableModulesOf, type ModuleInfo, type ModuleTable } from '../../configuration';
+import { dependencyModulesOf, type ModuleInfo, type ModuleTable } from '../../configuration';
 import type { DependencyItem } from '../arktsconfig';
 import { collectFiles, pathExists } from '../../../utils/fileTree';
 import type { ArkTSConfigRule, GenerationContext } from './arktsconfigRule';
@@ -58,7 +58,7 @@ interface DeclDependencyState {
 
 export class ModuleRule implements ArkTSConfigRule {
   async generate(context: GenerationContext): Promise<RuleOutput> {
-    const modules = reachableModulesOf(context.moduleTable);
+    const modules = context.moduleTable.modules;
     const fragments = new Map<string, RuleOutput>();
     for (const module of modules) {
       fragments.set(module.packageName, await this.generateLocalFragment(module, context));
