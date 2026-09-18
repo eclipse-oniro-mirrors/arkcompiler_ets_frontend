@@ -640,6 +640,37 @@ const second: Array<number> = [];)";
     initializer->DestroyContext(refactorContext->context);
 }
 
+TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceUsesOuterAndInnerTypeParameters)
+{
+    const std::string code = R"(class Box<T> {
+    wrap<U>(value: { left: T; right: U }): void {}
+})";
+    const std::string targetType = "{ left: T; right: U }";
+    const size_t spanStart = code.find(targetType);
+    ASSERT_NE(spanStart, std::string::npos);
+
+    auto *initializer = new Initializer();
+    auto *refactorContext = CreateExtractContext(initializer, code, spanStart, spanStart + targetType.size());
+    auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
+    const bool found =
+        std::any_of(applicable.begin(), applicable.end(),
+                    [&](const ark::es2panda::lsp::ApplicableRefactorInfo &info) { return info.action.name == target; });
+    ASSERT_TRUE(found);
+
+    const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_TYPE_NAME;
+    auto edits =
+        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
+    ASSERT_NE(edits, nullptr);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 1);
+    const auto &fileEdit = edits->GetFileTextChanges().at(0);
+    ASSERT_EQ(fileEdit.textChanges.size(), 2U);
+    EXPECT_EQ(fileEdit.textChanges.at(0).newText, "interface NewType<T, U> { left: T; right: U }\n\n");
+    EXPECT_EQ(fileEdit.textChanges.at(1).newText, "NewType<T, U>");
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForMethodReturnType)
 {
     const std::string code =

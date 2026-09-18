@@ -112,6 +112,22 @@ public:
             *outRenameLoc = edits->GetRenameLocation();
         }
     }
+
+    void ExpectActionResult(const std::string &code, const std::string &target, const std::string &actionName,
+                            const std::string &expected)
+    {
+        const size_t spanStart = code.find(target);
+        ASSERT_NE(spanStart, std::string::npos);
+
+        auto initializer = std::make_unique<Initializer>();
+        auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+
+        std::vector<::TextChange> changes;
+        ExpectSingleFileEdits(refactorContext, actionName, 2U, changes);
+        EXPECT_EQ(ApplyEditsExactly(code, changes), expected);
+
+        initializer->DestroyContext(refactorContext->context);
+    }
 };
 
 // --- Suite 1: value/constant extraction, inline insertion, availability rules
@@ -149,10 +165,8 @@ TEST_F(LspExtractSymbolInlineInsertionTests, ConstantEncloseMergesIntoSecondDecl
 
 TEST_F(LspExtractSymbolInlineInsertionTests, ConstantGlobalTopLevelSecondDeclaratorPlacement)
 {
-    // Characterization of current behavior: for a top-level multi-declarator statement the global
-    // constant extraction prepends the inline insertion at the statement start. The resulting text
-    // is not compilable ArkTS (`newLocal = 4 * 5, let ...`); pinned so the regression becomes
-    // visible once production adjusts the insertion anchor.
+    // A global extraction from a top-level multi-declarator statement keeps the inserted constant
+    // in the same declaration list instead of placing it before `let`.
     const std::string code = "\nlet a = 1, b = 4 * 5, c = a;\n";
     const std::string target = "4 * 5";
     const size_t spanStart = code.find(target);
@@ -164,7 +178,7 @@ TEST_F(LspExtractSymbolInlineInsertionTests, ConstantGlobalTopLevelSecondDeclara
     std::vector<::TextChange> changes;
     ExpectSingleFileEdits(refactorContext, std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name), 2U,
                           changes);
-    EXPECT_EQ(ApplyEditsExactly(code, changes), "\nnewLocal = 4 * 5, let a = 1, b = newLocal, c = a;\n");
+    EXPECT_EQ(ApplyEditsExactly(code, changes), "\nlet a = 1, newLocal = 4 * 5, b = newLocal, c = a;\n");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -229,6 +243,24 @@ TEST_F(LspExtractSymbolInlineInsertionTests, ComparisonBinaryYieldsBooleanAnnota
               "    const ok: boolean = newLocal;\n}\n");
 
     initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtractSymbolInlineInsertionTests, ExplicitIntInitializerConstantKeepsSourceType)
+{
+    const std::string code = "\nfunction main(): void {\n    let value: int = 1;\n}\n";
+    const std::string expected =
+        "\nfunction main(): void {\n    const newLocal: int = 1;\n"
+        "    let value: int = newLocal;\n}\n";
+    ExpectActionResult(code, "1", std::string(ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_ENCLOSE.name), expected);
+}
+
+TEST_F(LspExtractSymbolInlineInsertionTests, ExplicitIntInitializerVariableKeepsSourceType)
+{
+    const std::string code = "\nfunction main(): void {\n    let value: int = 1;\n}\n";
+    const std::string expected =
+        "\nfunction main(): void {\n    let newLocal: int = 1;\n"
+        "    let value: int = newLocal;\n}\n";
+    ExpectActionResult(code, "1", std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name), expected);
 }
 
 TEST_F(LspExtractSymbolInlineInsertionTests, TypeAnnotationSelectionRemovesValueActions)
@@ -502,6 +534,34 @@ TEST_F(LspExtractSymbolInlineInsertionTests, UnknownActionNameYieldsNullEdits)
 
 class LspExtractSymbolFunctionExtractionTests : public LspExtractSymbolTestsBase {};
 
+TEST_F(LspExtractSymbolFunctionExtractionTests, ExplicitIntInitializerFunctionKeepsSourceType)
+{
+    const std::string code = "\nfunction main(): void {\n    let value: int = 1;\n}\n";
+    const std::string expected =
+        "\nfunction newFunction(): int {\n  return 1;\n}\n\n"
+        "function main(): void {\n    let value: int = newFunction();\n}\n";
+    ExpectActionResult(code, "1", FunctionGlobalAction(), expected);
+}
+
+TEST_F(LspExtractSymbolFunctionExtractionTests, IndentedExpressionStatementSelectionStaysStatement)
+{
+    const std::string code = "\nfunction main(): void {\n    doWork();\n}\n";
+    const std::string target = "    doWork();";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+
+    std::vector<::TextChange> changes;
+    ExpectSingleFileEdits(refactorContext, FunctionGlobalAction(), 2U, changes);
+    EXPECT_EQ(ApplyEditsExactly(code, changes),
+              "\nfunction newFunction() {\n  doWork();\n}\n\n"
+              "function main(): void {\n    newFunction()\n}\n");
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 TEST_F(LspExtractSymbolFunctionExtractionTests, ExtractReturnIntStatementAnnotatesHelper)
 {
     const std::string code = "\nfunction answer(): Int {\n    return 42;\n}\n";
@@ -554,13 +614,60 @@ TEST_F(LspExtractSymbolFunctionExtractionTests, OuterWriteBecomesCapturedParamAn
 
     std::vector<::TextChange> changes;
     ExpectSingleFileEdits(refactorContext, FunctionGlobalAction(), 2U, changes);
-    // Current behavior: the outer variable read becomes the captured parameter `total: int`,
-    // forwarded at the call site. The assignment stays verbatim as the returned expression, so the
-    // outer write is currently dropped at the call site; pinned until production decides whether
-    // the write must be preserved.
     EXPECT_EQ(ApplyEditsExactly(code, changes),
-              "\nfunction newFunction(total: int): Int {\n  return total = total + 41 + 1;\n}\n\n"
-              "function accumulate(): void {\n    let total = 0;\n    newFunction(total);\n}\n");
+              "\nfunction newFunction(total: int): int {\n  return total + 41 + 1;\n}\n\n"
+              "function accumulate(): void {\n    let total = 0;\n    total = newFunction(total);\n}\n");
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtractSymbolFunctionExtractionTests, CompoundAssignmentDoesNotUseReturnValueWriteBack)
+{
+    const std::string code = R"(
+function accumulate(): void {
+    let total = 0;
+    total += 41;
+}
+)";
+    const std::string target = "total += 41;";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+
+    std::vector<::TextChange> changes;
+    ExpectSingleFileEdits(refactorContext, FunctionGlobalAction(), 2U, changes);
+    const std::string result = ApplyEditsExactly(code, changes);
+    EXPECT_EQ(result.find("return 41;"), std::string::npos);
+    EXPECT_EQ(result.find("total = newFunction(total);"), std::string::npos);
+    EXPECT_NE(result.find("total += 41"), std::string::npos);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtractSymbolFunctionExtractionTests, ChainAssignmentDoesNotUseReturnValueWriteBack)
+{
+    const std::string code = R"(
+function assign(): void {
+    let a = 0;
+    let b = 0;
+    a = b = 1;
+}
+)";
+    const std::string target = "a = b = 1;";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+
+    std::vector<::TextChange> changes;
+    ExpectSingleFileEdits(refactorContext, FunctionGlobalAction(), 2U, changes);
+    const std::string result = ApplyEditsExactly(code, changes);
+    EXPECT_EQ(result.find("return b = 1;"), std::string::npos);
+    EXPECT_EQ(result.find("a = newFunction"), std::string::npos);
+    EXPECT_NE(result.find("a = b = 1"), std::string::npos);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -652,10 +759,10 @@ TEST_F(LspExtractSymbolFunctionExtractionTests, NamespaceEncloseInsertsIndentedH
     ExpectSingleFileEdits(refactorContext, std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_ENCLOSE.name), 2U,
                           changes);
     // The enclosing-namespace action keeps the helper inside `namespace M`, indented to match the
-    // surrounding members and forwarding the namespace-typed parameter.
+    // surrounding members and preserving the namespace-local type alias.
     EXPECT_EQ(ApplyEditsExactly(code, changes),
               "\nnamespace M {\n    export type Q = number;\n"
-              "    function newFunction(v: Q): Double {\n      return v + v;\n    }\n\n"
+              "    function newFunction(v: Q): Q {\n      return v + v;\n    }\n\n"
               "    function worker(v: Q): Q {\n        const doubled = newFunction(v);\n"
               "        return doubled;\n    }\n}\n");
 
@@ -684,6 +791,34 @@ TEST_F(LspExtractSymbolFunctionExtractionTests, ClassScopeConstantBecomesPrivate
     EXPECT_NE(applied.find("private readonly newProperty"), std::string::npos);
     EXPECT_NE(applied.find("= base * 3;"), std::string::npos);
     EXPECT_NE(applied.find("const k = this.newProperty;"), std::string::npos);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtractSymbolFunctionExtractionTests, ClassInitializerCalleeValueBecomesAstCollectedParam)
+{
+    const std::string code = R"(
+class Holder {
+    compute(seed: int): void {
+        const localFactory = () => seed;
+        const value = localFactory();
+    }
+}
+)";
+    const std::string target = "localFactory()";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanStart + target.size());
+
+    std::vector<::TextChange> changes;
+    ExpectSingleFileEdits(refactorContext, std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_CLASS.name), 2U,
+                          changes);
+    const std::string applied = ApplyEditsExactly(code, changes);
+    EXPECT_NE(applied.find("private newMethod(localFactory"), std::string::npos);
+    EXPECT_NE(applied.find("return localFactory();"), std::string::npos);
+    EXPECT_NE(applied.find("const value = this.newMethod(localFactory);"), std::string::npos);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -750,7 +885,7 @@ TEST_F(LspExtractSymbolFunctionExtractionTests, MultilineExpressionIsRewrittenAs
     // Current behavior: the multiline selection becomes a `return <expr>;` body and the generated
     // helper lands directly after the replaced statement line inside the source function.
     EXPECT_EQ(ApplyEditsExactly(code, changes),
-              "\nfunction calc(): Int {\n    const sum = newFunction();\n\n"
+              "\nfunction calc(): Int {\n    const sum = newFunction();\n"
               "function newFunction(): Int {\n  return 111 +\n        222;\n}\n\n    return sum;\n}\n");
 
     initializer->DestroyContext(refactorContext->context);

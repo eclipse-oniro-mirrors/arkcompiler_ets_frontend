@@ -109,6 +109,47 @@ void ExpectExtractionApplies(const std::string &source, ark::es2panda::lsp::Refa
     EXPECT_EQ(actual, expected);
 }
 
+TEST_F(LspExtrInterfaceGetEditsTests, ExtractInterfaceForInlineObjectVariable000)
+{
+    const std::string code = R"(
+class Box<T> {
+  a: { item: T, timestamp: number };
+}
+)";
+    const std::string expected = R"(
+interface NewType<T> {
+  item: T;
+  timestamp: number;
+}
+
+class Box<T> {
+  a: NewType<T>;
+}
+)";
+    const std::string target = R"({ item: T, timestamp: number })";
+    const size_t spanStart = code.find(target);
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + target.size();
+
+    auto *initializer = new Initializer();
+    auto *refactorContext = CreateExtractContext(initializer, code, spanStart, spanEnd);
+
+    auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    ASSERT_FALSE(applicable.empty());
+
+    const std::string_view actionName = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
+    const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_TYPE_NAME;
+    const bool found =
+        std::any_of(applicable.begin(), applicable.end(), [&](const ark::es2panda::lsp::ApplicableRefactorInfo &info) {
+            return info.action.name == actionName;
+        });
+    ASSERT_TRUE(found);
+
+    ExpectExtractionApplies(code, refactorContext, std::string(refactorName), std::string(actionName), expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 TEST_F(LspExtrInterfaceGetEditsTests, ExtractInterfaceForInlineObjectVariable)
 {
     const std::string code = R"(
@@ -745,6 +786,32 @@ let i: I = /*start*/{ a: 1 }/*end*/;
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
     ASSERT_TRUE(applicable.empty());
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrInterfaceGetEditsTests, ExtractInterface13)
+{
+    const std::string code = R"(
+'use static'
+function processItems(items: /*start*/{ id: number, value: string }[]/*end*/): void {
+}
+)";
+    const std::string target = R"({ id: number, value: string }[])";
+    const size_t spanStart = code.find(target);
+    ASSERT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + target.size();
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+
+    const std::string_view actionName = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
+    const bool found =
+        std::any_of(applicable.begin(), applicable.end(), [&](const ark::es2panda::lsp::ApplicableRefactorInfo &info) {
+            return info.action.name == actionName;
+        });
+    ASSERT_FALSE(found);
 
     initializer->DestroyContext(refactorContext->context);
 }

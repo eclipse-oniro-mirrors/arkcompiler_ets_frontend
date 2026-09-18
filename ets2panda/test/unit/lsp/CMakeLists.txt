@@ -143,6 +143,14 @@ ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_2 CPP_SOURCES
     refactor_extract_symbol_test_2.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_3 CPP_SOURCES
+    refactor_extract_symbol_test_3.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_4 CPP_SOURCES
+    refactor_extract_symbol_test_4.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_variable CPP_SOURCES 
     refactor_extract_symbol_test_variable.cpp 
 )
