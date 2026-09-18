@@ -201,6 +201,18 @@ static bool IsNegativeOddInteger(const lexer::Number &number)
     return intValue < 0 && (intValue & 1) != 0;
 }
 
+static bool HasIntegralValue(const lexer::Number &number)
+{
+    if (number.IsInteger()) {
+        return true;
+    }
+    if (!number.IsReal()) {
+        return false;
+    }
+    const auto value = number.GetDouble();
+    return std::trunc(value) == value;
+}
+
 static std::optional<ParsedBigInt> ParseBigIntLiteral(util::StringView token)
 {
     std::string src {token.Utf8()};
@@ -633,7 +645,7 @@ private:
                     return CreateNumberLiteral(-std::numeric_limits<double>::infinity());
                 }
 
-                if (leftNum < 0 && !rightNumber.IsInteger()) {
+                if (leftNum < 0 && !HasIntegralValue(rightNumber)) {
                     resNum = std::numeric_limits<TargetType>::quiet_NaN();
                     break;
                 }
