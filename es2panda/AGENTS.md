@@ -18,7 +18,7 @@
 
 ## 路径说明
 
-**本文档所有路径均为从 OpenHarmony 源码根目录的相对路径**
+**路径默认相对于 OpenHarmony 源码根目录；命令块中有 `cd` 时，以切换后的目录为准。测试流程使用绝对路径变量，避免切换目录后路径失效。**
 
 - 源码根目录：OpenHarmony 仓库根目录（包含 `arkcompiler/`、`build/` 等目录）
 - es2panda 源码路径：`arkcompiler/ets_frontend/es2panda`
@@ -39,8 +39,8 @@
 ### 构建项目
 
 ```bash
-# 使用GN构建（需在源码根目录执行）
-./build.sh --product-name rk3568 --build-target ets_frontend_build
+# 使用GN构建（需在源码根目录执行，默认使用 Release）
+./build.sh --product-name rk3568 --build-target ark_js_host_linux_tools_packages --build-target ets_frontend_build --no-prebuilt-sdk
 
 # 构建产物位置
 out/rk3568/clang_x64/arkcompiler/ets_frontend/es2abc
@@ -50,7 +50,9 @@ out/rk3568/clang_x64/arkcompiler/ets_frontend/es2abc --help
 ```
 
 **构建目标说明**：
+- `ark_js_host_linux_tools_packages` - 测试所需的 JS 运行时宿主工具
 - `ets_frontend_build` - 完整构建，包含es2abc
+- `--no-prebuilt-sdk` - 跳过 ohos-sdk 预编译；宿主工具与测试构建不依赖 SDK，可加快构建速度
 - 产品名可选：`rk3568` (默认)、`hi3516` 等
 
 ### 编译示例
@@ -144,10 +146,11 @@ es2panda/                           # 源码目录（构建产物名为es2abc）
 vim compiler/templates/isa.h.erb
 
 # 2. 重新构建（GN会自动重新生成头文件，需在源码根执行）
-./build.sh --product-name rk3568 --build-target ets_frontend_build
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
 
 # 3. 验证生成的文件
 ls out/rk3568/clang_x64/arkcompiler/ets_frontend/gen/isa.h
+```
 
 ### ScriptExtension模式
 
@@ -174,14 +177,50 @@ enum class
 
 ## 测试指南
 
-### 单元测试（C++）
+本流程适用于 `es2panda` / `es2abc` 动态编译路线。代码改动后，先编译构建成功，再按以下顺序执行单元测试、集成测试、Test262、runtime_core UT、Verifier、反汇编工具构建、Fuzz 编译和版本自检。定向测试用于定位问题，不能替代完整测试；Test262 全量与混合编译两项均必跑。
+
+通常使用 **Release**，无需添加 `--gn-args is_debug=true`，测试速度更快，尤其是 Test262。仅在需要调试时选用 Debug。
+
+### 1. 路径准备与编译构建
+
+以下命令在同一个 Bash 会话中依次执行。将 `<path_to_openharmony>` 替换为实际源码根目录。示例为 Linux x64 宿主、`rk3568` 产品；其他产品需同步修改构建命令中的 `--product-name`、Test262 的 `--product-name` 和产物路径。
 
 ```bash
-# 通过GN构建并运行单元测试（需在源码根执行）
-./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests
+OH_ROOT="<path_to_openharmony>"
+OUT_DIR="$OH_ROOT/out/rk3568/clang_x64"
+BUILD_DIR="$OUT_DIR/arkcompiler/ets_frontend"
+RUNTIME_DIR="$OUT_DIR/arkcompiler/ets_runtime"
+TEST_LD_LIBRARY_PATH="$RUNTIME_DIR:$OUT_DIR/thirdparty/icu:$OUT_DIR/thirdparty/zlib:$OH_ROOT/prebuilts/clang/ohos/linux-x86_64/llvm/lib"
 
-# 运行特定测试（在构建产物目录）
-cd out/rk3568/clang_x64/tests/unittest/arkcompiler/ets_frontend
+cd "$OH_ROOT"
+
+# Release（默认选择）
+./build.sh --product-name rk3568 --build-target ark_js_host_linux_tools_packages --build-target ets_frontend_build --no-prebuilt-sdk
+
+# 构建 runtime_core 工具
+./build.sh --product-name rk3568 --build-target arkcompiler/runtime_core:ark_packages --build-target arkcompiler/runtime_core:ark_host_linux_tools_packages --no-prebuilt-sdk
+
+# 验证 es2abc 产物
+"$BUILD_DIR/es2abc" --help
+```
+
+需要 Debug 时，用下面的命令替代上面的 Release 构建：
+
+```bash
+cd "$OH_ROOT"
+./build.sh --product-name rk3568 --build-target ark_js_host_linux_tools_packages --build-target ets_frontend_build --gn-args is_debug=true --no-prebuilt-sdk
+```
+
+### 2. 单元测试（C++）
+
+```bash
+cd "$OH_ROOT"
+
+# 通过 GN 构建并运行单元测试
+./build.sh --product-name rk3568 --build-target arkcompiler/ets_frontend/es2panda:es2abc_tests --no-prebuilt-sdk
+
+# 单独运行测试，用于定位问题
+cd "$OUT_DIR/tests/unittest/arkcompiler/ets_frontend"
 ./lexer_test
 ./parser_test
 
@@ -189,48 +228,108 @@ cd out/rk3568/clang_x64/tests/unittest/arkcompiler/ets_frontend
 ./lexer_test --gtest_filter="LexerTest.Keywords"
 ```
 
-**测试位置**：`unittest/` 目录（源码）
+**测试位置**：`es2panda/unittest/`（相对于 `ets_frontend`）
 **测试命名**：`${module}_test.cpp`
 **框架**：gtest
-**构建产物**：`out/rk3568/clang_x64/tests/unittest/arkcompiler/ets_frontend/`
+**构建产物**：`$OUT_DIR/tests/unittest/arkcompiler/ets_frontend/`
 
-### 集成测试（Python）
+### 3. 集成测试（Python）
 
 ```bash
-# 安装依赖
-pip install tqdm
+cd "$OH_ROOT/arkcompiler/ets_frontend/es2panda"
 
-# 回归测试
-python3 test/runner.py --regression $BUILD_DIR
+# 安装依赖（环境尚未安装时执行）
+python3 -m pip install tqdm
 
-# 编译器测试
-python3 test/runner.py --compiler $BUILD_DIR
+# parser 用例
+python3 test/runner.py --regression "$BUILD_DIR"
 
-# base64测试
-python3 test/runner.py --base64 $BUILD_DIR
+# compiler 用例（需要 JS 运行时和动态库路径）
+python3 test/runner.py --no-progress --compiler --js-runtime "$RUNTIME_DIR" --LD_LIBRARY_PATH "$TEST_LD_LIBRARY_PATH" "$BUILD_DIR"
 
-# TypeScript测试（需单独设置）
-python3 test/runner.py --tsc $BUILD_DIR
+# TypeScript 测试（需准备 third_party/typescript）
+python3 test/runner.py --tsc "$BUILD_DIR" --tsc-path "$OH_ROOT/third_party/typescript"
 
-# 热补丁热重载冷补丁冷重载能力测试
-python3 test/runner.py --hotfix --hotreload --coldfix --coldreload $BUILD_DIR
+# 热补丁、热重载、冷补丁、冷重载能力测试
+python3 test/runner.py --hotfix --hotreload --coldfix --coldreload "$BUILD_DIR"
+
+# base64 测试
+python3 test/runner.py --base64 "$BUILD_DIR"
 
 # 字节码测试
-python3 test/runner.py --bytecode $BUILD_DIR
+python3 test/runner.py --bytecode "$BUILD_DIR"
 
-# debugger测试
-python3 test/runner.py --debugger $BUILD_DIR
+# debugger 测试
+python3 test/runner.py --debugger "$BUILD_DIR"
 
 # 版本控制测试
-python3 test/runner.py --no-progress --version-control $BUILD_DIR
-
-# Test262（ECMAScript标准测试）
-cd ../
-python3 test262/run_test262.py --es2022 all --ark-frontend-binary=out/rk3568/clang_x64/arkcompiler/ets_frontend/es2abc --ark-frontend=es2panda --product-name=rk3568 --timeout=3000000
-
-# 查看详细错误输出
-python3 test/runner.py --regression $BUILD_DIR --error
+python3 test/runner.py --version-control --no-progress "$BUILD_DIR"
 ```
+
+需要查看 parser 用例的详细错误输出时，在同一目录执行：
+
+```bash
+python3 test/runner.py --regression "$BUILD_DIR" --error
+```
+
+### 4. Test262 测试套（两项均必跑）
+
+在 `ets_frontend` 目录执行，使用 `es2abc` 的绝对路径，避免将产物路径误解析为 `ets_frontend/out/`。
+
+```bash
+cd "$OH_ROOT/arkcompiler/ets_frontend"
+
+# 全量测试（必跑）
+python3 test262/run_test262.py --es2022 all --ark-frontend-binary="$BUILD_DIR/es2abc" --ark-frontend=es2panda --product-name=rk3568 --timeout=3000000
+
+# 混合编译测试（必跑）
+python3 test262/run_test262.py --es2022 all --ark-frontend-binary="$BUILD_DIR/es2abc" --ark-frontend=es2panda --product-name=rk3568 --timeout=3000000 --abc2program
+```
+
+### 5. runtime_core UT
+
+```bash
+cd "$OH_ROOT"
+./build.sh --product-name rk3568 --build-target runtime_core_host_unittest --no-prebuilt-sdk
+```
+
+### 6. Verifier 测试
+
+```bash
+cd "$OH_ROOT"
+./build.sh --product-name rk3568 --build-target arkcompiler/runtime_core:verifier_host_unittest --no-prebuilt-sdk
+```
+
+### 7. 反汇编工具构建检查
+
+以下目标构建包含 `ark_disasm` 的宿主工具包；构建成功本身不等于反汇编行为测试通过，结果记录中应区分构建与实际运行的测试。
+
+```bash
+cd "$OH_ROOT"
+./build.sh --product-name rk3568 --build-target arkcompiler/runtime_core:ark_host_linux_tools_packages --no-prebuilt-sdk
+```
+
+### 8. Fuzz 编译测试
+
+```bash
+cd "$OH_ROOT"
+./build.sh --product-name rk3568 --build-target arkcompiler/runtime_core/tests/fuzztest:fuzztest --no-prebuilt-sdk
+```
+
+### 9. 指令 / abc 格式修改自检
+
+```bash
+cd "$OH_ROOT"
+python3 arkcompiler/runtime_core/isa/check_version.py
+```
+
+- 输出 `No change in version!`：在 checklist 对应自检项中附上截图。
+- 输出 `[IMPORTANT] Version change detected (xxx -> xxx), please contact the relevant domain.`：联系相关领域负责人，并在 checklist 和最终报告中重点提示涉及指令 / abc 的修改及兼容性影响。
+- 脚本报错时应记录并处理，不得视为自检通过。该脚本只检查版本号是否变化，不能替代字节码兼容性回归。
+
+### 测试结果记录
+
+逐项记录构建模式、执行命令、通过 / 失败结果和日志位置；版本自检按要求附截图。失败项应说明原因和处理结果；未执行或因环境缺失无法执行的项目必须明确列出原因及剩余风险，不得将部分测试通过表述为完整测试通过。
 
 ---
 
@@ -344,7 +443,7 @@ gn --version
 rm -rf out/
 
 # 重新构建
-./build.sh --product-name rk3568 --build-target ets_frontend_build
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk
 ```
 
 ---
