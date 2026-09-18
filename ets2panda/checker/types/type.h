@@ -102,6 +102,7 @@ public:
     bool IsETSResizableArrayType() const;
     bool IsETSReadonlyArrayType() const;
     bool IsETSStringType() const;
+    static bool IsReadonlyArrayOrTupleMismatch(const Type *target, const Type *source);
     bool IsETSCharType() const;
     bool IsETSBigIntType() const;
     bool IsETSArrowType() const;

@@ -142,6 +142,16 @@ public:
         return ignoreConstAssign_;
     }
 
+    void SetIsTopLevelDeclInit()
+    {
+        isTopLevelDeclInit_ = true;
+    }
+
+    [[nodiscard]] bool IsTopLevelDeclInit() const
+    {
+        return isTopLevelDeclInit_;
+    }
+
     [[nodiscard]] AssignmentExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     [[nodiscard]] bool ConvertibleToAssignmentPatternLeft(bool mustBePattern);
@@ -179,6 +189,7 @@ protected:
         target_ = other.target_;
         operationType_ = other.operationType_;
         ignoreConstAssign_ = other.ignoreConstAssign_;
+        isTopLevelDeclInit_ = other.isTopLevelDeclInit_;
     }
 
 private:
@@ -189,6 +200,7 @@ private:
     EPtr<checker::Type> operationType_ {};
     lexer::TokenType operator_;
     bool ignoreConstAssign_ = false;
+    bool isTopLevelDeclInit_ = false;
 };
 }  // namespace ark::es2panda::ir
 

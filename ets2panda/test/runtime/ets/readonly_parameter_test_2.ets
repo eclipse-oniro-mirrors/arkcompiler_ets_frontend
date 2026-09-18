@@ -25,17 +25,14 @@ function foo2 (px: readonly int[], py: readonly [string, float]) {
     let y2 : readonly [string, float] = py
 }
 
-function foo3 (x: readonly int[], x2: int[]) {
-    x = [1, 2]
-    x = new int[10] (0)
-    let y: int[] = []
+function foo3 (x: readonly int[], x2: readonly int[]) {
+    let y: readonly int[] = []
     x = y
     x = x2
 }
 
-function foo4 (x: readonly [int, string], x2: [int, string]) {
-    x = [1, "abc"]
-    let y : [int, string] = [1, "abc"]
+function foo4 (x: readonly [int, string], x2: readonly [int, string]) {
+    let y : readonly [int, string] = [1, "abc"]
     x = y
     x = x2
 }
@@ -48,9 +45,7 @@ function main() : void {
     foo2(x2, y2)
 
     let x : readonly int[] = []
-    x = [1, 2]
     let y : readonly [int, string] = [1, "abc"]
-    y = [10, "cde"]
     foo3([1, 2], [1, 2])
     foo4([1, "xx"], [1, "xx"])
 }

@@ -43,29 +43,47 @@ static void MaybeAllowConstAssign(checker::Type *targetType, ArenaVector<ir::Sta
 
 static constexpr std::string_view NESTED_BLOCK_EXPRESSION = "_$NESTED_BLOCK_EXPRESSION$_";
 
-static void RestoreNestedBlockExpression(const ArenaVector<ir::Statement *> &statements,
-                                         std::deque<ir::BlockExpression *> &nestedBlckExprs, varbinder::Scope *scope)
+//  The stored node is either a bare block expression or a readonly cast wrapping one.
+static ir::BlockExpression *GetInnerBlockExpression(ir::Expression *expr)
 {
-    if (!nestedBlckExprs.empty()) {
-        for (auto stmt : statements) {
-            if (!stmt->IsExpressionStatement() ||
-                !stmt->AsExpressionStatement()->GetExpression()->IsAssignmentExpression()) {
-                continue;
-            }
-
-            auto *assign = stmt->AsExpressionStatement()->GetExpression()->AsAssignmentExpression();
-
-            if (assign->Right()->IsStringLiteral() &&
-                assign->Right()->AsStringLiteral()->Str().Is(NESTED_BLOCK_EXPRESSION)) {
-                auto nestedBlckExpr = nestedBlckExprs.front();
-                nestedBlckExprs.pop_front();
-                nestedBlckExpr->Scope()->SetParent(scope);
-                assign->SetRight(nestedBlckExpr);
-            }
-        }
-        // All nested block expressions should be restored
-        ES2PANDA_ASSERT(nestedBlckExprs.empty());
+    if (expr->IsBlockExpression()) {
+        return expr->AsBlockExpression();
     }
+    if (expr->IsTSAsExpression() && expr->AsTSAsExpression()->Expr()->IsBlockExpression()) {
+        return expr->AsTSAsExpression()->Expr()->AsBlockExpression();
+    }
+    return nullptr;
+}
+
+static void RestoreNestedBlockExpression(const ArenaVector<ir::Statement *> &statements,
+                                         std::deque<ir::Expression *> &nestedBlckExprs, varbinder::Scope *scope)
+{
+    if (nestedBlckExprs.empty()) {
+        return;
+    }
+
+    for (auto stmt : statements) {
+        if (!stmt->IsExpressionStatement() ||
+            !stmt->AsExpressionStatement()->GetExpression()->IsAssignmentExpression()) {
+            continue;
+        }
+
+        auto *assign = stmt->AsExpressionStatement()->GetExpression()->AsAssignmentExpression();
+        if (!assign->Right()->IsStringLiteral() ||
+            !assign->Right()->AsStringLiteral()->Str().Is(NESTED_BLOCK_EXPRESSION)) {
+            continue;
+        }
+
+        auto *nestedBlckExpr = nestedBlckExprs.front();
+        nestedBlckExprs.pop_front();
+        if (auto *blockExpr = GetInnerBlockExpression(nestedBlckExpr); blockExpr != nullptr) {
+            blockExpr->Scope()->SetParent(scope);
+        }
+        assign->SetRight(nestedBlckExpr);
+    }
+
+    // All nested block expressions should be restored
+    ES2PANDA_ASSERT(nestedBlckExprs.empty());
 }
 
 static void AllowRequiredTypeInstantiation(const ir::Expression *const loweringResult)
@@ -176,13 +194,81 @@ static void GenerateArgsForAnonymousClassType(const checker::ETSObjectType *clas
     }
 }
 
+static ir::Expression *CastToReadonlyArrayType(public_lib::Context *ctx, ir::Expression *value,
+                                               checker::Type *targetType)
+{
+    auto *typeNode = ctx->AllocNode<ir::OpaqueTypeNode>(targetType, ctx->Allocator());
+    auto *asExpr = ctx->AllocNode<ir::TSAsExpression>(value, typeNode, false);
+    value->SetParent(asExpr);
+    typeNode->SetParent(asExpr);
+    return asExpr;
+}
+
+static ir::Expression *PrepareValueForAssignment(public_lib::Context *ctx, ir::Expression *value,
+                                                 checker::Type *targetType, bool *isBlockValue)
+{
+    *isBlockValue = value->IsBlockExpression();
+    if (targetType != nullptr && value->TsType() != nullptr &&
+        checker::Type::IsReadonlyArrayOrTupleMismatch(targetType, value->TsType())) {
+        return CastToReadonlyArrayType(ctx, value, targetType);
+    }
+    return value;
+}
+
+struct PropertyAssignmentContext {
+    public_lib::Context *ctx;
+    ir::Identifier *genSymIdent;
+    std::stringstream &ss;
+    std::vector<ir::AstNode *> &newStmts;
+    std::deque<ir::Expression *> &nestedBlckExprs;
+    bool isAnonymous;
+    std::map<util::StringView, ir::Expression *> &ctorArgumentsMap;
+};
+
+static void GeneratePropertyAssignment(PropertyAssignmentContext &gen, ir::Expression *propExpr)
+{
+    auto *prop = propExpr->AsProperty();
+    ir::Expression *key = prop->Key();
+
+    bool isBlockValue = false;
+    ir::Expression *value = PrepareValueForAssignment(gen.ctx, prop->Value(), prop->TsType(), &isBlockValue);
+
+    //  Processing of possible invalid property key
+    ir::Identifier *keyIdent;
+    if (key->IsStringLiteral()) {
+        keyIdent = gen.ctx->AllocNode<ir::Identifier>(key->AsStringLiteral()->Str(), gen.ctx->Allocator());
+    } else if (key->IsIdentifier()) {
+        keyIdent = key->AsIdentifier();
+    } else {
+        return;
+    }
+
+    if (gen.isAnonymous && CheckReadonlyAndUpdateCtorArgs(keyIdent, value, gen.ctorArgumentsMap)) {
+        return;
+    }
+
+    auto addNode = [&gen](ir::AstNode *node) -> int {
+        gen.newStmts.emplace_back(node);
+        return gen.newStmts.size();
+    };
+    gen.ss << "@@I" << addNode(gen.genSymIdent->Clone(gen.ctx->Allocator(), nullptr)) << ".@@I" << addNode(keyIdent);
+    if (isBlockValue) {
+        // Case of nested object literal (all nested object literals has already been processed)
+        // Corresponding nested block expressions should be stored somewhere and restored after ScopesPhase
+        // Because it has already processed them
+        // Predefined String Literal acts as placeholder
+        gen.ss << " = \"" << NESTED_BLOCK_EXPRESSION << "\";" << std::endl;
+        gen.nestedBlckExprs.emplace_back(value);
+    } else {
+        gen.ss << " = @@E" << addNode(value) << ";" << std::endl;
+    }
+}
+
 static void GenerateNewStatements(public_lib::Context *ctx, ir::ObjectExpression *objExpr, std::stringstream &ss,
-                                  std::vector<ir::AstNode *> &newStmts,
-                                  std::deque<ir::BlockExpression *> &nestedBlckExprs,
+                                  std::vector<ir::AstNode *> &newStmts, std::deque<ir::Expression *> &nestedBlckExprs,
                                   ArenaVector<ir::Expression *> &ctorArguments)
 {
     auto *const allocator = ctx->Allocator();
-
     auto *const classType = objExpr->TsType()->AsETSObjectType();
 
     auto addNode = [&newStmts](ir::AstNode *node) -> int {
@@ -199,50 +285,20 @@ static void GenerateNewStatements(public_lib::Context *ctx, ir::ObjectExpression
 
     // Generating: <genSym>.key_i = value_i      ( i <= [0, object_literal.properties.size) )
     bool isAnonymous = IsAnonymousClassType(classType);
-
     std::map<util::StringView, ir::Expression *> ctorArgumentsMap;
     GenerateArgsForAnonymousClassType(classType, isAnonymous, ctorArgumentsMap);
 
+    PropertyAssignmentContext genCtx {ctx, genSymIdent, ss, newStmts, nestedBlckExprs, isAnonymous, ctorArgumentsMap};
     for (auto *propExpr : objExpr->Properties()) {
         //  Skip possibly invalid properties:
         if (!propExpr->IsProperty()) {
             ES2PANDA_ASSERT(ctx->GetChecker()->AsETSChecker()->IsAnyError());
             continue;
         }
-
-        auto *prop = propExpr->AsProperty();
-        ir::Expression *key = prop->Key();
-        ir::Expression *value = prop->Value();
-
-        //  Processing of possible invalid property key
-        ir::Identifier *keyIdent;
-        if (key->IsStringLiteral()) {
-            keyIdent = ctx->AllocNode<ir::Identifier>(key->AsStringLiteral()->Str(), allocator);
-        } else if (key->IsIdentifier()) {
-            keyIdent = key->AsIdentifier();
-        } else {
-            continue;
-        }
-
-        if (isAnonymous && CheckReadonlyAndUpdateCtorArgs(keyIdent, value, ctorArgumentsMap)) {
-            continue;
-        }
-        ss << "@@I" << addNode(genSymIdent->Clone(allocator, nullptr)) << ".@@I" << addNode(keyIdent);
-
-        if (value->IsBlockExpression()) {
-            // Case of nested object literal (all nested object literals has already been processed)
-            // Corresponding nested block expressions should be stored somewhere and restored after ScopesPhase
-            // Because it has already processed them
-            // Predefined String Literal acts as placeholder
-            ss << " = \"" << NESTED_BLOCK_EXPRESSION << "\";" << std::endl;
-            nestedBlckExprs.emplace_back(value->AsBlockExpression());
-        } else {
-            ss << " = @@E" << addNode(value) << ";" << std::endl;
-        }
+        GeneratePropertyAssignment(genCtx, propExpr);
     }
 
     PopulateCtorArgumentsFromMap(ctx, objExpr, ctorArguments, ctorArgumentsMap);
-
     ss << "(@@I" << addNode(genSymIdent->Clone(allocator, nullptr)) << ");" << std::endl;
 }
 
@@ -268,7 +324,7 @@ static ir::AstNode *HandleObjectLiteralLowering(public_lib::Context *ctx, ir::Ob
 
     std::stringstream ss;
     // Double-ended queue for storing nested block expressions that have already been processed earlier
-    std::deque<ir::BlockExpression *> nestedBlckExprs;
+    std::deque<ir::Expression *> nestedBlckExprs;
     std::vector<ir::AstNode *> newStmts;
     ArenaVector<ir::Expression *> ctorArguments(checker->Allocator()->Adapter());
 
