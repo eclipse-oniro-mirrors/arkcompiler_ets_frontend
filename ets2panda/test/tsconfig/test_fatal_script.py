@@ -30,11 +30,12 @@ def ensure_exists(path):
         raise RuntimeError(f'The file {path} cannot be found')
 
 
-def es2panda_command(es2panda_path, stdlib_path, config_path, file_path):
+def es2panda_command(es2panda_path, stdlib_path, config_path, file_path, extra_args=''):
     return [
         *str(es2panda_path).split(),
         '--stdlib', stdlib_path,
         '--arktsconfig', config_path,
+        *(str(extra_args).split() if extra_args else []),
         file_path
     ]
 
@@ -85,6 +86,26 @@ def compare_test_output(lhs, rhs, ignore_parts):
         if normalized_stderr != rhs["stderr"]:
             raise RuntimeError(f"Stderr mismatch\nExpected: {rhs['stderr']}\nGot: {normalized_stderr}")
 
+    if "stdout_contains" in rhs:
+        expected_substrings = rhs["stdout_contains"]
+        if isinstance(expected_substrings, str):
+            expected_substrings = [expected_substrings]
+        for expected_substring in expected_substrings:
+            if expected_substring not in lhs.stdout:
+                raise RuntimeError(
+                    f"Stdout does not contain expected substring: {expected_substring!r}\n"
+                    f"Actual stdout: {lhs.stdout!r}")
+
+    if "stderr_contains" in rhs:
+        expected_substrings = rhs["stderr_contains"]
+        if isinstance(expected_substrings, str):
+            expected_substrings = [expected_substrings]
+        for expected_substring in expected_substrings:
+            if expected_substring not in lhs.stderr:
+                raise RuntimeError(
+                    f"Stderr does not contain expected substring: {expected_substring!r}\n"
+                    f"Actual stderr: {lhs.stderr!r}")
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--es2panda', required=True,
@@ -92,6 +113,7 @@ parser.add_argument('--es2panda', required=True,
 parser.add_argument('--config', required=True, help='Path to project config')
 parser.add_argument('--stdlib', required=True, help='Path to es2panda stdlib')
 parser.add_argument('--filepath', required=True, help='Path to ets file')
+parser.add_argument('--extra-args', default='', help='Additional es2panda command line arguments')
 
 args = parser.parse_args()
 
@@ -101,7 +123,7 @@ expected_path = os.path.join(project_dir, 'expected.json')
 [ensure_exists(f) for f in [
     str(args.es2panda).split()[-1], args.config, expected_path]]
 
-cmd = es2panda_command(args.es2panda, args.stdlib, args.config, args.filepath)
+cmd = es2panda_command(args.es2panda, args.stdlib, args.config, args.filepath, args.extra_args)
 
 actual = subprocess.run(cmd,
                         stdout=subprocess.PIPE,
