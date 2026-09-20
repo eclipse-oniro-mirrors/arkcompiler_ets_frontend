@@ -29,6 +29,19 @@ bool Type::IsETSReadonlyArrayType() const
     return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_READONLY_ARRAY);
 }
 
+bool Type::IsReadonlyArrayOrTupleMismatch(const Type *target, const Type *source)
+{
+    if (target->IsETSReadonlyArrayType() && source->IsETSResizableArrayType() &&
+        !source->HasTypeFlag(TypeFlag::READONLY)) {
+        return true;
+    }
+    if (target->IsETSTupleType() && target->HasTypeFlag(TypeFlag::READONLY) && source->IsETSTupleType() &&
+        !source->HasTypeFlag(TypeFlag::READONLY)) {
+        return true;
+    }
+    return false;
+}
+
 bool Type::IsETSStringType() const
 {
     return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::STRING);

@@ -2234,6 +2234,12 @@ checker::Type *ETSAnalyzer::GetSmartTypeForAssignment(ir::AssignmentExpression *
     }
 
     ETSChecker *checker = GetETSChecker();
+
+    if (!expr->IsTopLevelDeclInit() && checker::Type::IsReadonlyArrayOrTupleMismatch(leftType, rightType)) {
+        checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}, expr->Right()->Start());
+        return rightType;
+    }
+
     if (const auto ctx =
             checker::AssignmentContext(checker->Relation(), relationNode, rightType, leftType, expr->Right()->Start(),
                                        {{diagnostic::INVALID_ASSIGNMNENT, {rightType, leftType}}});

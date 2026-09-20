@@ -195,6 +195,9 @@ ir::ExpressionStatement *GlobalDeclTransformer::CreateAssignmentStatement(ir::Cl
     auto expressionStatement = util::NodeAllocator::Alloc<ir::ExpressionStatement>(allocator_, assignmentExpression);
     ES2PANDA_ASSERT(expressionStatement != nullptr);
     expressionStatement->SetRange(classProperty->Range());
+    //  This assignment is a compiler-generated declaration initializer, not a user-written simple assignment, so
+    //  readonly reassignment rules must not apply to it.
+    assignmentExpression->SetIsTopLevelDeclInit();
     if ((classProperty->Modifiers() & ir::ModifierFlags::CONST) != 0) {
         assignmentExpression->SetIgnoreConstAssign();
     }
