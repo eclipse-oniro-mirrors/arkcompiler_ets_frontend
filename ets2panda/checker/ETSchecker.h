@@ -1033,6 +1033,9 @@ private:
                                          std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
     bool CheckTypeParamsRecursion(ir::TSTypeParameterInstantiation *typeParams,
                                   std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
+    bool CheckOmittedTypeArgsRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
+                                       const ir::TSTypeParameterInstantiation *typeParams,
+                                       std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
     bool CheckTypeNodeRecursion(const ir::TypeNode *typeNode,
                                 std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases);
 

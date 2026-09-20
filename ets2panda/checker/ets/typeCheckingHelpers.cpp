@@ -790,6 +790,29 @@ bool ETSChecker::CheckTypeParamsRecursion(ir::TSTypeParameterInstantiation *type
     return allowed;
 }
 
+bool ETSChecker::CheckOmittedTypeArgsRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
+                                               const ir::TSTypeParameterInstantiation *typeParams,
+                                               std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
+{
+    if (typeAliasNode->TypeParams() == nullptr) {
+        return true;
+    }
+
+    auto const &params = typeAliasNode->TypeParams()->Params();
+    bool allowed = true;
+    for (std::size_t idx = 0U; idx < params.size(); ++idx) {
+        if (typeParams != nullptr && typeParams->Params().size() > idx) {
+            continue;
+        }
+        auto *const defaultType = params.at(idx)->DefaultType();
+        if (defaultType != nullptr) {
+            allowed &= CheckTypeNodeRecursion(defaultType, typeAliases);
+        }
+    }
+
+    return allowed;
+}
+
 bool ETSChecker::CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
                                                  std::unordered_set<const ir::TSTypeAliasDeclaration *> &typeAliases)
 {
@@ -804,9 +827,13 @@ bool ETSChecker::CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
 
     auto const *const decl = var->Declaration();
     if (auto const *const node = decl->Node(); node != nullptr && node->IsTSTypeAliasDeclaration()) {
-        bool allowed = IsAllowedTypeAliasRecursion(node->AsTSTypeAliasDeclaration(), typeAliases);
+        auto *const aliasDecl = node->AsTSTypeAliasDeclaration();
+        bool allowed = IsAllowedTypeAliasRecursion(aliasDecl, typeAliases);
         if (allowed && part->TypeParams() != nullptr) {
             allowed &= CheckTypeParamsRecursion(part->TypeParams(), typeAliases);
+        }
+        if (allowed) {
+            allowed &= CheckOmittedTypeArgsRecursion(aliasDecl, part->TypeParams(), typeAliases);
         }
 
         return allowed;
