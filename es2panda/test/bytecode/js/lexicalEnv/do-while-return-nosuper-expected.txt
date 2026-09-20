@@ -1,25 +1,17 @@
-slotNum = 0x2
+slotNum = 0x1
 .language ECMAScript
 .function any .#*#F0(any a0, any a1, any a2) {
-label_6: 
+label_3: 
 label_0: 
 	lda a1
 	callruntime.istrue 0x0
 	jnez label_1
 label_2: 
-	ldtrue
-	jmp label_3
-label_1: 
-	ldfalse
-label_3: 
-	callruntime.isfalse 0x1
-	jnez label_4
-label_5: 
 	lda.str must be called with new
 	throw
-label_4: 
+label_1: 
 	returnundefined
-label_7: 
+label_4: 
 }
 
 slotNum = 0x3

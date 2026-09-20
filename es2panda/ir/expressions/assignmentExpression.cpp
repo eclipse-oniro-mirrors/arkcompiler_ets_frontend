@@ -125,11 +125,9 @@ void AssignmentExpression::Compile(compiler::PandaGen *pg) const
             pg->BranchIfTrue(left_, skipRight);
         } else {
             ASSERT(operator_ == lexer::TokenType::PUNCTUATOR_LOGICAL_NULLISH_EQUAL);
-            auto *nullish = pg->AllocLabel();
-            pg->BranchIfStrictNull(left_, nullish);
-            pg->LoadAccumulator(left_, lhsReg);
-            pg->BranchIfStrictNotUndefined(this, skipRight);
-            pg->SetLabel(left_, nullish);
+            // a non-nullish lhs (loose != null) keeps the left value, a nullish
+            // lhs falls through to evaluate and store the right operand.
+            pg->BranchIfNotNullish(left_, lhsReg, skipRight);
         }
         // left = right
         right_->Compile(pg);

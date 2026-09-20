@@ -15,31 +15,27 @@ label_3:
 label_5: 
 }
 
-slotNum = 0x4
+slotNum = 0x3
 expectedProperty = 0x1
 .language ECMAScript
 .function any .#~@0=#Cat(any a0, any a1, any a2, any a3) {
-label_5: 
+label_4: 
 label_0: 
 	ldnull
-	stricteq 0x0, a3
-	jnez label_1
+	noteq 0x0, a3
+	jnez label_3
 label_2: 
-	ldundefined
-	stricteq 0x1, a3
-	jeqz label_4
-label_1: 
 	lda.str Mi
 	sta a3
-label_4: 
+label_3: 
 	lda a3
-	stobjbyname 0x2, name, a2
+	stobjbyname 0x1, name, a2
 	lda a2
 	return
-label_6: 
+label_5: 
 }
 
-slotNum = 0x7
+slotNum = 0x5
 .language ECMAScript
 .function any .#~@0>#greet2(any a0, any a1, any a2, any a3) {
 label_4: 
@@ -53,15 +49,9 @@ label_2:
 	lda a3
 	add2 0x1, v0
 	sta v0
-	lda.str 
-	add2 0x2, v0
-	sta v0
 	lda a2
-	ldobjbyname 0x3, name
-	add2 0x5, v0
-	sta v0
-	lda.str 
-	add2 0x6, v0
+	ldobjbyname 0x2, name
+	add2 0x4, v0
 	jmp label_3
 label_1: 
 	lda.str hello Mi

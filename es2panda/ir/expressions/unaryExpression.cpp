@@ -103,6 +103,14 @@ void UnaryExpression::Compile(compiler::PandaGen *pg) const
             pg->LoadConst(this, compiler::Constant::JS_UNDEFINED);
             break;
         }
+        case lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK: {
+            // ISFALSE is exactly the negation operation; emitting it directly
+            // avoids the dead operand store and the branch-based boolean
+            // materialization of the generic unary path.
+            argument_->Compile(pg);
+            pg->IsFalse(this);
+            break;
+        }
         default: {
             argument_->Compile(pg);
 

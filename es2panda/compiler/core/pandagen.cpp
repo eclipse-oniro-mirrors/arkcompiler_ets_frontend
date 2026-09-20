@@ -895,6 +895,11 @@ void PandaGen::ControlFlowChangeReturn()
 
 void PandaGen::Condition(const ir::AstNode *node, lexer::TokenType op, VReg lhs, Label *ifFalse)
 {
+    ConditionBranch(node, op, lhs, ifFalse, false);
+}
+
+void PandaGen::ConditionBranch(const ir::AstNode *node, lexer::TokenType op, VReg lhs, Label *target, bool branchOnTrue)
+{
     switch (op) {
         case lexer::TokenType::PUNCTUATOR_EQUAL: {
             Equal(node, lhs);
@@ -928,12 +933,20 @@ void PandaGen::Condition(const ir::AstNode *node, lexer::TokenType op, VReg lhs,
             GreaterEqual(node, lhs);
             break;
         }
+        case lexer::TokenType::KEYW_IN: {
+            ra_.Emit<Isin>(node, 0, lhs);
+            break;
+        }
         default: {
             UNREACHABLE();
         }
     }
 
-    ra_.Emit<Jeqz>(node, ifFalse);
+    if (branchOnTrue) {
+        ra_.Emit<Jnez>(node, target);
+    } else {
+        ra_.Emit<Jeqz>(node, target);
+    }
 }
 
 void PandaGen::Unary(const ir::AstNode *node, lexer::TokenType op, VReg operand)
@@ -951,10 +964,6 @@ void PandaGen::Unary(const ir::AstNode *node, lexer::TokenType op, VReg operand)
         case lexer::TokenType::PUNCTUATOR_TILDE: {
             LoadAccumulator(node, operand);
             ra_.Emit<Not>(node, 0);
-            break;
-        }
-        case lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK: {
-            Negate(node);
             break;
         }
         case lexer::TokenType::PUNCTUATOR_PLUS_PLUS: {
@@ -1138,6 +1147,17 @@ void PandaGen::IsTrue(const ir::AstNode *node)
     ra_.Emit<CallruntimeIstrue>(node, 0);
 }
 
+void PandaGen::IsFalse(const ir::AstNode *node)
+{
+    if (util::Helpers::IsDefaultApiVersion(Binder()->Program()->TargetApiVersion(),
+                                           Binder()->Program()->GetTargetApiSubVersion())) {
+        ra_.Emit<Isfalse>(node);
+        return;
+    }
+
+    ra_.Emit<CallruntimeIsfalse>(node, 0);
+}
+
 void PandaGen::BranchIfUndefined(const ir::AstNode *node, Label *target)
 {
     RegScope rs(this);
@@ -1184,12 +1204,6 @@ void PandaGen::BranchIfTrue(const ir::AstNode *node, Label *target)
     ra_.Emit<Jnez>(node, target);
 }
 
-void PandaGen::BranchIfNotTrue(const ir::AstNode *node, Label *target)
-{
-    IsTrue(node);
-    BranchIfFalse(node, target);
-}
-
 void PandaGen::BranchIfFalse(const ir::AstNode *node, Label *target)
 {
     if (util::Helpers::IsDefaultApiVersion(Binder()->Program()->TargetApiVersion(),
@@ -1211,6 +1225,20 @@ void PandaGen::BranchIfStrictNull(const ir::AstNode *node, class Label *target)
     LoadConst(node, Constant::JS_NULL);
     ra_.Emit<Stricteq>(node, 0, tmp);
     ra_.Emit<Jnez>(node, target);
+}
+
+void PandaGen::BranchIfNullish(const ir::AstNode *node, VReg obj, Label *nullish)
+{
+    // In ArkRuntime, `obj != null` is false only for null and undefined.
+    LoadConst(node, Constant::JS_NULL);
+    Condition(node, lexer::TokenType::PUNCTUATOR_NOT_EQUAL, obj, nullish);
+}
+
+void PandaGen::BranchIfNotNullish(const ir::AstNode *node, VReg obj, Label *notNullish)
+{
+    LoadConst(node, Constant::JS_NULL);
+    NotEqual(node, obj);
+    ra_.Emit<Jnez>(node, notNullish);
 }
 
 void PandaGen::EmitThrow(const ir::AstNode *node)
@@ -1556,18 +1584,6 @@ void PandaGen::NewObjSpread(const ir::AstNode *node, VReg obj)
 void PandaGen::GetUnmappedArgs(const ir::AstNode *node)
 {
     ra_.Emit<Getunmappedargs>(node);
-}
-
-void PandaGen::Negate(const ir::AstNode *node)
-{
-    auto *falseLabel = AllocLabel();
-    auto *endLabel = AllocLabel();
-    BranchIfTrue(node, falseLabel);
-    LoadConst(node, Constant::JS_TRUE);
-    Branch(node, endLabel);
-    SetLabel(node, falseLabel);
-    LoadConst(node, Constant::JS_FALSE);
-    SetLabel(node, endLabel);
 }
 
 void PandaGen::ToNumber(const ir::AstNode *node, VReg arg)

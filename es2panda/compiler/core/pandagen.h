@@ -317,6 +317,8 @@ public:
     void ControlFlowChangeReturn();
 
     void Condition(const ir::AstNode *node, lexer::TokenType op, VReg lhs, class Label *ifFalse);
+    void ConditionBranch(const ir::AstNode *node, lexer::TokenType op, VReg lhs, class Label *target,
+                         bool branchOnTrue);
     void Unary(const ir::AstNode *node, lexer::TokenType op, VReg operand);
     void Binary(const ir::AstNode *node, lexer::TokenType op, VReg lhs);
     void Equal(const ir::AstNode *node, VReg lhs);
@@ -328,6 +330,7 @@ public:
     void GreaterThan(const ir::AstNode *node, VReg lhs);
     void GreaterEqual(const ir::AstNode *node, VReg lhs);
     void IsTrue(const ir::AstNode *node);
+    void IsFalse(const ir::AstNode *node);
 
     void BranchIfUndefined(const ir::AstNode *node, class Label *target);
     void BranchIfStrictUndefined(const ir::AstNode *node, class Label *target);
@@ -335,10 +338,10 @@ public:
     void BranchIfNotUndefined(const ir::AstNode *node, class Label *target);
     void BranchIfHole(const ir::AstNode *node, class Label *target);
     void BranchIfTrue(const ir::AstNode *node, class Label *target);
-    void BranchIfNotTrue(const ir::AstNode *node, class Label *target);
     void BranchIfFalse(const ir::AstNode *node, class Label *target);
-    void BranchIfNotFalse(const ir::AstNode *node, class Label *target);
     void BranchIfStrictNull(const ir::AstNode *node, class Label *target);
+    void BranchIfNullish(const ir::AstNode *node, VReg obj, Label *nullish);
+    void BranchIfNotNullish(const ir::AstNode *node, VReg obj, Label *notNullish);
 
     void EmitThrow(const ir::AstNode *node);
     void EmitRethrow(const ir::AstNode *node);
@@ -368,7 +371,6 @@ public:
     void NewObjSpread(const ir::AstNode *node, VReg obj);
     void GetUnmappedArgs(const ir::AstNode *node);
 
-    void Negate(const ir::AstNode *node);
     void ToNumber(const ir::AstNode *node, VReg arg);
     void ToNumeric(const ir::AstNode *node, VReg arg);
 

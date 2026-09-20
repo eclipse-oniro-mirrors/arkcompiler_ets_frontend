@@ -1,7 +1,7 @@
 slotNum = 0x6
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
-label_8: 
+label_5: 
 label_0: 
 	ldtrue
 	sta v0
@@ -18,16 +18,8 @@ label_2:
 label_1: 
 	lda v0
 	istrue
-	jnez label_4
-label_5: 
-	ldtrue
-	jmp label_6
-label_4: 
-	ldfalse
-label_6: 
-	isfalse
 	jnez label_3
-label_7: 
+label_4: 
 	tryldglobalbyname 0x3, print
 	sta v0
 	lda.str false
@@ -36,7 +28,7 @@ label_7:
 	callarg1 0x4, v1
 label_3: 
 	returnundefined
-label_9: 
+label_6: 
 }
 
 

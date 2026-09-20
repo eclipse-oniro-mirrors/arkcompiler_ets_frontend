@@ -1,7 +1,7 @@
-slotNum = 0x9
+slotNum = 0x8
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
-label_8: 
+label_5: 
 label_0: 
 	ldtrue
 	sta v0
@@ -18,25 +18,17 @@ label_2:
 label_1: 
 	lda v0
 	callruntime.istrue 0x4
-	jnez label_4
-label_5: 
-	ldtrue
-	jmp label_6
-label_4: 
-	ldfalse
-label_6: 
-	callruntime.isfalse 0x5
 	jnez label_3
-label_7: 
-	tryldglobalbyname 0x6, print
+label_4: 
+	tryldglobalbyname 0x5, print
 	sta v0
 	lda.str false
 	sta v1
 	lda v0
-	callarg1 0x7, v1
+	callarg1 0x6, v1
 label_3: 
 	returnundefined
-label_9: 
+label_6: 
 }
 
 

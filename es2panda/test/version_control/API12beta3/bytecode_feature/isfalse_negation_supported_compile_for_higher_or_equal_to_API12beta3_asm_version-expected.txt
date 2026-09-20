@@ -1,0 +1,15 @@
+slotNum = 0x4
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldtrue
+	callruntime.isfalse 0x0
+	sta v0
+	tryldglobalbyname 0x1, print
+	callarg1 0x2, v0
+	returnundefined
+label_2: 
+}
+
+
