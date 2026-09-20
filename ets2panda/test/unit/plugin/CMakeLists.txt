@@ -147,6 +147,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_check_this_bar_line compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_reset_counters compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_get_annotation_decl_properties compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_annotation_decl_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload_simult compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )

@@ -117,9 +117,8 @@ ir::AnnotationDeclaration *ETSParser::ParseAnnotationDeclaration(ir::ModifierFla
     ir::Expression *expr = ParseAnnotationName<false>();
 
     ExpectToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE, false);
-    auto properties = ParseAnnotationProperties(flags);
-
-    lexer::SourcePosition endLoc = Lexer()->GetToken().End();
+    lexer::SourcePosition endLoc;
+    auto properties = ParseAnnotationProperties(flags, &endLoc);
 
     auto *annotationDecl = AllocNode<ir::AnnotationDeclaration>(expr, std::move(properties), Allocator());
     ES2PANDA_ASSERT(annotationDecl != nullptr);
@@ -138,7 +137,8 @@ static bool IsMemberAccessModifiers(lexer::TokenType type)
            type == lexer::TokenType::KEYW_NATIVE;
 }
 
-ArenaVector<ir::AstNode *> ETSParser::ParseAnnotationProperties(ir::ModifierFlags memberModifiers)
+ArenaVector<ir::AstNode *> ETSParser::ParseAnnotationProperties(ir::ModifierFlags memberModifiers,
+                                                                lexer::SourcePosition *endLoc)
 {
     Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);
     ArenaVector<ir::AstNode *> properties(Allocator()->Adapter());
@@ -181,6 +181,9 @@ ArenaVector<ir::AstNode *> ETSParser::ParseAnnotationProperties(ir::ModifierFlag
         }
     }
 
+    if (endLoc != nullptr) {
+        *endLoc = Lexer()->GetToken().End();
+    }
     Lexer()->NextToken();  // eat "}"
     return properties;
 }

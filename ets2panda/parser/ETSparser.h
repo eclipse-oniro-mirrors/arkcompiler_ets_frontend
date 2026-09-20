@@ -367,7 +367,8 @@ private:
     ir::AstNode *ParseAnnotationProperty(ir::Identifier *fieldName,
                                          ir::ModifierFlags memberModifiers = ir::ModifierFlags::NONE,
                                          bool needTypeAnnotation = true);
-    ArenaVector<ir::AstNode *> ParseAnnotationProperties(ir::ModifierFlags memberModifiers = ir::ModifierFlags::NONE);
+    ArenaVector<ir::AstNode *> ParseAnnotationProperties(ir::ModifierFlags memberModifiers = ir::ModifierFlags::NONE,
+                                                         lexer::SourcePosition *endLoc = nullptr);
     ir::AnnotationUsage *ParseAnnotationUsage();
     bool TryParseAnnotations();
     void TryParseAnnotationsParams();
