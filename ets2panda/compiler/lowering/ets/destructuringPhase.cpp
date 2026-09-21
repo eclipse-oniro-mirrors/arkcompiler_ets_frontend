@@ -51,7 +51,7 @@ static ir::AstNode *ProcessAssignmentExpression(public_lib::Context *ctx, ir::As
             i++;
             continue;
         }
-        const std::string copyStr = "@@I1 = @@I2[" + std::to_string(i++) + "];";
+        const std::string copyStr = "@@E1 = @@I2[" + std::to_string(i++) + "];";
         blockStmt.push_back(parser->CreateFormattedStatement(copyStr, e->Clone(allocator, nullptr),
                                                              rhsArrayExp->Clone(allocator, nullptr)));
     }

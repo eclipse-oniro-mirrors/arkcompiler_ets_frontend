@@ -821,7 +821,7 @@ bool ETSChecker::CheckTypeReferencePartRecursion(ir::ETSTypeReferencePart *part,
     }
     auto *var = part->Name()->IsIdentifier() ? part->Name()->Variable()
                                              : part->Name()->AsTSQualifiedName()->Right()->Variable();
-    if (part->Name()->Variable() == nullptr) {
+    if (var == nullptr) {
         return true;
     }
 
