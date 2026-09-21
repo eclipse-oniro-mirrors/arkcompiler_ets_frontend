@@ -98,6 +98,7 @@ table ClassDecl {
     implemented_interfaces:[Type];
     is_final:bool;
     is_abstract:bool;
+    internal_name:string;
 }
 
 table InterfaceDecl {
@@ -107,6 +108,7 @@ table InterfaceDecl {
     type_params:[TypeParamDecl];
     implemented_interfaces:[Type];
     properties:[PropertyDecl];
+    internal_name:string;
 }
 
 table AnnotationDecl {

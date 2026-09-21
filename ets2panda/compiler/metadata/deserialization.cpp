@@ -564,6 +564,12 @@ public:
     void SetupClassDecl(ir::ClassDefinition *classDef)
     {
         const auto isSyntheticGlobalClass = fbClassDecl_->name()->string_view() == "ETSGLOBAL";
+
+        if (const auto *internalName = fbClassDecl_->internal_name();
+            internalName != nullptr && !internalName->string_view().empty()) {
+            classDef->SetInternalName(internalName->string_view());
+        }
+
         if (!isSyntheticGlobalClass && !isNested_ && classDef->Variable() != nullptr) {
             classDef->Variable()->AddFlag(varbinder::VariableFlags::CLASS);
         }
@@ -1728,6 +1734,10 @@ ir::TSInterfaceDeclaration *MetadataDeserializationPhase::CreateInterfaceDecl(
             const auto interfaceDecl =
                 ctx->GetChecker()->AsETSChecker()->CreateInterfaceProto(interfaceName, curProgram, interfaceDeclProto);
 
+            if (const auto *internalName = fbInterfaceDecl->internal_name();
+                internalName != nullptr && !internalName->string_view().empty()) {
+                interfaceDecl->SetInternalName(internalName->string_view());
+            }
             interfaceDecl->Scope()->BindNode(interfaceDecl);
             interfaceDecl->AddModifier(ir::ModifierFlags::DECLARE);
             interfaceDecl->AddModifier(ir::ModifierFlags::EXPORT);

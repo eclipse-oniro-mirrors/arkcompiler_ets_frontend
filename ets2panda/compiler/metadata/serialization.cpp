@@ -663,6 +663,7 @@ Offset<Metadata::ClassDecl> MetadataSerializationPhase::BuildClassDecl(FlatBuffe
                                                                        const ClassDefinition *astDecl)
 {
     const auto className = builder.CreateSharedString(astDecl->Ident()->ToString());
+    const auto internalName = builder.CreateSharedString(astDecl->InternalName().Utf8());
     const auto typeParams = BuildTypeParams(builder, astDecl->TypeParams());
     const auto [extendedClassKind, extendedClassOff] = astDecl->Super() != nullptr
                                                            ? BuildType(builder, astDecl->Super()->TsType())
@@ -695,7 +696,7 @@ Offset<Metadata::ClassDecl> MetadataSerializationPhase::BuildClassDecl(FlatBuffe
         builder, className, astDecl->IsNamespaceTransformed(), isBuiltin, enumKind, builder.CreateVector(enumValues),
         enumTypeKind, enumTypeOff, methods, properties, decls, typeParams, extendedClassKind, extendedClassOff,
         builder.CreateVector<uint8_t>(implementedInterfaceKinds), builder.CreateVector<Offset<>>(implementedInterfaces),
-        astDecl->IsFinal(), astDecl->IsAbstract());
+        astDecl->IsFinal(), astDecl->IsAbstract(), internalName);
 }
 
 std::pair<std::vector<Offset<>>, std::vector<uint8_t>> MetadataSerializationPhase::BuildExtends(
@@ -715,6 +716,7 @@ Offset<Metadata::InterfaceDecl> MetadataSerializationPhase::BuildInterfaceDecl(
     FlatBufferBuilder &builder, const ir::TSInterfaceDeclaration *interfaceDecl)
 {
     const auto interfaceName = builder.CreateSharedString(interfaceDecl->Id()->ToString());
+    const auto internalName = builder.CreateSharedString(interfaceDecl->InternalName().Utf8());
     const auto typeParams = BuildTypeParams(builder, interfaceDecl->TypeParams());
     const auto [extendTypes, extendTypeKinds] = BuildExtends(builder, interfaceDecl->Extends());
 
@@ -733,7 +735,7 @@ Offset<Metadata::InterfaceDecl> MetadataSerializationPhase::BuildInterfaceDecl(
 
     return Metadata::CreateInterfaceDecl(builder, interfaceName, isBuiltin, methods, typeParams,
                                          builder.CreateVector<uint8_t>(extendTypeKinds),
-                                         builder.CreateVector<Offset<>>(extendTypes), properties);
+                                         builder.CreateVector<Offset<>>(extendTypes), properties, internalName);
 }
 
 Offset<Metadata::AnnotationDecl> MetadataSerializationPhase::BuildAnnotationDecl(
