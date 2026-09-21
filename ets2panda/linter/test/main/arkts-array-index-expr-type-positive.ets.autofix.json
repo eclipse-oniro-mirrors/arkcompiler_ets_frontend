@@ -92,9 +92,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1540,
-                    "end": 1543,
-                    "replacementText": "~-1 as int",
+                    "start": 1545,
+                    "end": 1548,
+                    "replacementText": "(~-1).toInt()",
                     "line": 59,
                     "column": 37,
                     "endLine": 59,
@@ -123,9 +123,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1664,
-                    "end": 1667,
-                    "replacementText": "++j as int",
+                    "start": 1669,
+                    "end": 1672,
+                    "replacementText": "(++j).toInt()",
                     "line": 65,
                     "column": 37,
                     "endLine": 65,
@@ -154,9 +154,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1836,
-                    "end": 1839,
-                    "replacementText": "k-- as int",
+                    "start": 1841,
+                    "end": 1844,
+                    "replacementText": "(k--).toInt()",
                     "line": 71,
                     "column": 37,
                     "endLine": 71,
@@ -185,9 +185,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1962,
-                    "end": 1971,
-                    "replacementText": "(1000 >> 8) as int",
+                    "start": 1967,
+                    "end": 1976,
+                    "replacementText": "(1000 >> 8).toInt()",
                     "line": 76,
                     "column": 37,
                     "endLine": 76,
@@ -216,9 +216,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 2075,
-                    "end": 2080,
-                    "replacementText": "(4 | 1) as int",
+                    "start": 2080,
+                    "end": 2085,
+                    "replacementText": "(4 | 1).toInt()",
                     "line": 81,
                     "column": 37,
                     "endLine": 81,
@@ -247,9 +247,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 2185,
-                    "end": 2190,
-                    "replacementText": "(7 & 6) as int",
+                    "start": 2190,
+                    "end": 2195,
+                    "replacementText": "(7 & 6).toInt()",
                     "line": 86,
                     "column": 37,
                     "endLine": 86,

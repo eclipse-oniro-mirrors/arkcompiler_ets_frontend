@@ -73,6 +73,19 @@ export function getHomeCheckConfigInfo(cmdOptions: CommandLineOptions): {
   return { ruleConfigInfo, projectConfigInfo };
 }
 
+function buildAutofixEntries(
+  fix: RuleFix,
+  additionalFixes?: RuleFix[]
+): { replacementText: string; start: number; end: number }[] {
+  const entries = [{ replacementText: fix.text, start: fix.range[0], end: fix.range[1] }];
+  if (additionalFixes) {
+    for (const af of additionalFixes) {
+      entries.push({ replacementText: af.text, start: af.range[0], end: af.range[1] });
+    }
+  }
+  return entries;
+}
+
 export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<string, ProblemInfo[]> {
   const result = new Map<string, ProblemInfo[]>();
   fileIssuesArray.forEach((fileIssues) => {
@@ -97,10 +110,7 @@ export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<s
       };
       if (problemInfo.autofixable) {
         const fix = issueReport.fix as RuleFix;
-        const replacementText = fix.text;
-        const start = fix.range[0];
-        const end = fix.range[1];
-        problemInfo.autofix = [{ replacementText, start, end }];
+        problemInfo.autofix = buildAutofixEntries(fix, issueReport.additionalFixes);
         problemInfo.autofixTitle = defect.ruleId;
       }
       const filePath = path.normalize(defect.mergeKey.split('%')[0]);

@@ -24,7 +24,7 @@
                 {
                     "start": 4567,
                     "end": 4568,
-                    "replacementText": "i as int",
+                    "replacementText": "i.toInt()",
                     "line": 145,
                     "column": 12,
                     "endLine": 145,
@@ -45,7 +45,7 @@
                 {
                     "start": 6962,
                     "end": 6970,
-                    "replacementText": "idx6_3-- as int",
+                    "replacementText": "(idx6_3--).toInt()",
                     "line": 223,
                     "column": 12,
                     "endLine": 223,
@@ -66,7 +66,7 @@
                 {
                     "start": 7168,
                     "end": 7176,
-                    "replacementText": "--idx6_4 as int",
+                    "replacementText": "(--idx6_4).toInt()",
                     "line": 230,
                     "column": 12,
                     "endLine": 230,
@@ -87,7 +87,7 @@
                 {
                     "start": 8918,
                     "end": 8928,
-                    "replacementText": "enumIdx9_2 as int",
+                    "replacementText": "enumIdx9_2.toInt()",
                     "line": 287,
                     "column": 12,
                     "endLine": 287,
@@ -108,7 +108,7 @@
                 {
                     "start": 9133,
                     "end": 9141,
-                    "replacementText": "idx9_3++ as int",
+                    "replacementText": "(idx9_3++).toInt()",
                     "line": 294,
                     "column": 26,
                     "endLine": 294,
@@ -129,7 +129,7 @@
                 {
                     "start": 9384,
                     "end": 9392,
-                    "replacementText": "idx9_4-- as int",
+                    "replacementText": "(idx9_4--).toInt()",
                     "line": 301,
                     "column": 26,
                     "endLine": 301,

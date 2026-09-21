@@ -42,6 +42,12 @@ import { NumericTypeAnnotationText } from '../../core/NumericTypeAnnotationText'
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'NumericAutofixBuilder');
 
+interface ConflictCheckContext {
+    currentStart: number;
+    currentEnd: number;
+    paramIndex: number;
+}
+
 interface NumericAutofixBuilderOptions {
     scene: Scene;
     getSourceFile(field?: ArkField, issueStmt?: Stmt): ts.SourceFile | null;
@@ -414,7 +420,7 @@ export class NumericAutofixBuilder {
                 return null;
             }
             if (localString.includes(COLON)) {
-                return this.generateRuleFixForTypedText(ruleFix.range, localString, numberCategory);
+                return this.generateRuleFixForTypedText(sourceFile, ruleFix.range, localString, numberCategory);
             }
             ruleFix.text = isOptional ? `${localString}: ${numberCategory}${UNDEFINED_PART}` : `${localString}: ${numberCategory}`;
             if (restString.trimStart().startsWith(ENDS_WITH_EQUALS)) {
@@ -448,25 +454,95 @@ export class NumericAutofixBuilder {
             logger.error('Failed to getting text of the fix range info when generating auto fix info.');
             return null;
         }
-        return this.generateRuleFixForTypedText(ruleFix.range, localString, numberCategory);
+        return this.generateRuleFixForTypedText(sourceFile, ruleFix.range, localString, numberCategory);
     }
 
-    private generateRuleFixForTypedText(range: [number, number], localString: string, numberCategory: NumberCategory): RuleFix | null {
-        const parts = localString.split(':');
-        if (parts.length !== 2) {
+    private generateRuleFixForTypedText(
+        sourceFile: ts.SourceFile,
+        range: [number, number],
+        localString: string,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const declNode = this.findDeclarationNodeAtRange(sourceFile, range);
+        if (declNode && declNode.type) {
+            return this.generateTypeNodeReplaceFix(sourceFile, declNode.type, numberCategory);
+        }
+        const colonIndex = localString.indexOf(':');
+        if (colonIndex === -1) {
             logger.error('Failed to getting text of the fix range info when generating auto fix info.');
             return null;
         }
-        if (NumericTypeAnnotationText.containsTypeToken(parts[1], numberCategory)) {
+        const namePart = localString.substring(0, colonIndex);
+        const typePart = localString.substring(colonIndex + 1);
+        if (NumericTypeAnnotationText.containsTypeToken(typePart, numberCategory)) {
             return null;
         }
-        if (!NumericTypeAnnotationText.containsTypeToken(parts[1], NumberCategory.number)) {
-            // 原码含有类型注解但是其类型中不含number，无法进行替换
+        if (!NumericTypeAnnotationText.containsTypeToken(typePart, NumberCategory.number)) {
             return null;
         }
         const ruleFix = new RuleFix();
         ruleFix.range = range;
-        ruleFix.text = `${parts[0].trimEnd()}: ${NumericTypeAnnotationText.replaceTypeToken(parts[1].trimStart(), NumberCategory.number, numberCategory)}`;
+        ruleFix.text = `${namePart.trimEnd()}: ${NumericTypeAnnotationText.replaceTypeToken(typePart.trimStart(), NumberCategory.number, numberCategory)}`;
+        return ruleFix;
+    }
+
+    private findDeclarationNodeAtRange(
+        sourceFile: ts.SourceFile,
+        range: [number, number]
+    ): ts.ParameterDeclaration | ts.VariableDeclaration | null {
+        let result: ts.ParameterDeclaration | ts.VariableDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (end < range[0] || start > range[1]) {
+                return;
+            }
+            if (this.isDeclarationAtRange(node, sourceFile, range)) {
+                result = node as ts.ParameterDeclaration | ts.VariableDeclaration;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private isDeclarationAtRange(
+        node: ts.Node,
+        sourceFile: ts.SourceFile,
+        range: [number, number]
+    ): boolean {
+        if (!ts.isParameter(node) && !ts.isVariableDeclaration(node)) {
+            return false;
+        }
+        if (!node.name) {
+            return false;
+        }
+        return node.name.getStart(sourceFile) === range[0];
+    }
+
+    private generateTypeNodeReplaceFix(
+        sourceFile: ts.SourceFile,
+        typeNode: ts.TypeNode,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const typeRange: [number, number] = [typeNode.getStart(sourceFile), typeNode.getEnd()];
+        const originalText = FixUtils.getSourceWithRange(sourceFile, typeRange);
+        if (!originalText) {
+            return null;
+        }
+        if (NumericTypeAnnotationText.containsTypeToken(originalText, numberCategory)) {
+            return null;
+        }
+        if (!NumericTypeAnnotationText.containsTypeToken(originalText, NumberCategory.number)) {
+            return null;
+        }
+        const ruleFix = new RuleFix();
+        ruleFix.range = typeRange;
+        ruleFix.text = NumericTypeAnnotationText.replaceTypeToken(originalText, NumberCategory.number, numberCategory);
         return ruleFix;
     }
 
@@ -511,20 +587,20 @@ export class NumericAutofixBuilder {
             logger.error('Failed to getting text of the fix range info when generating auto fix info.');
             return null;
         }
-        const parts = localString.split(':');
-        if (parts.length !== 2) {
+        const colonIndex = localString.indexOf(':');
+        if (colonIndex === -1) {
             logger.error('Failed to getting text of the fix range info when generating auto fix info.');
             return null;
         }
-        if (NumericTypeAnnotationText.containsTypeToken(parts[1], numberCategory)) {
-            // 判断field是否已经有正确的类型注解
+        const namePart = localString.substring(0, colonIndex);
+        const typePart = localString.substring(colonIndex + 1);
+        if (NumericTypeAnnotationText.containsTypeToken(typePart, numberCategory)) {
             return null;
         }
-        if (!NumericTypeAnnotationText.containsTypeToken(parts[1], NumberCategory.number)) {
-            // 原码含有类型注解但是其类型中不含number，无法进行替换
+        if (!NumericTypeAnnotationText.containsTypeToken(typePart, NumberCategory.number)) {
             return null;
         }
-        ruleFix.text = `${parts[0].trimEnd()}: ${NumericTypeAnnotationText.replaceTypeToken(parts[1].trimStart(), NumberCategory.number, numberCategory)}`;
+        ruleFix.text = `${namePart.trimEnd()}: ${NumericTypeAnnotationText.replaceTypeToken(typePart.trimStart(), NumberCategory.number, numberCategory)}`;
         return ruleFix;
     }
 
@@ -684,5 +760,975 @@ export class NumericAutofixBuilder {
         }
         ruleFix.text = NumericLiteralUtils.createFixTextForEnumValue(valueStr);
         return ruleFix;
+    }
+
+    public generateCompanionTypeAnnotationFixes(
+        warnInfo: WarnInfo,
+        numberCategory: NumberCategory,
+        issueStmt?: Stmt
+    ): RuleFix[] | null {
+        const sourceFile = this.options.getSourceFile(undefined, issueStmt);
+        if (!sourceFile) {
+            return [];
+        }
+        const paramRange = FixUtils.getRangeWithAst(sourceFile, {
+            startLine: warnInfo.line,
+            startCol: warnInfo.startCol,
+            endLine: warnInfo.line,
+            endCol: warnInfo.endCol,
+        });
+        if (!paramRange) {
+            return [];
+        }
+        return this.findCompanionTypeAnnotationFixes(sourceFile, paramRange, numberCategory);
+    }
+
+    private findCompanionTypeAnnotationFixes(
+        sourceFile: ts.SourceFile,
+        paramRange: [number, number],
+        numberCategory: NumberCategory
+    ): RuleFix[] | null {
+        const arrowFunc = this.findEnclosingArrowFunction(sourceFile, paramRange);
+        if (!arrowFunc) {
+            return [];
+        }
+        const paramDecl = this.findDeclarationNodeAtRange(sourceFile, paramRange);
+        if (!paramDecl || !ts.isParameter(paramDecl)) {
+            return [];
+        }
+        const paramIndex = arrowFunc.parameters.indexOf(paramDecl);
+        if (paramIndex < 0) {
+            return [];
+        }
+
+        const varDecl = this.findAssignedVariableDeclaration(sourceFile, arrowFunc);
+
+        if (this.hasSharedDeclarationConflict(sourceFile, arrowFunc, paramIndex, varDecl)) {
+            return null;
+        }
+
+        const fixes: RuleFix[] = [];
+
+        if (varDecl && varDecl.type) {
+            const fix = this.createCompanionFixFromTypeReference(sourceFile, varDecl.type, paramIndex, numberCategory);
+            if (fix) {
+                this.addUniqueFix(fixes, fix);
+            }
+        }
+
+        const returnFix = this.findReturnStatementCompanionFix(sourceFile, arrowFunc, paramIndex, numberCategory);
+        if (returnFix) {
+            this.addUniqueFix(fixes, returnFix);
+        }
+
+        const propertyFix = this.findObjectPropertyCompanionFix(sourceFile, arrowFunc, paramIndex, numberCategory);
+        if (propertyFix) {
+            this.addUniqueFix(fixes, propertyFix);
+        }
+
+        const classFieldFix = this.findClassFieldCompanionFix(sourceFile, arrowFunc, paramIndex, numberCategory);
+        if (classFieldFix) {
+            this.addUniqueFix(fixes, classFieldFix);
+        }
+
+        const outerArrowReturnFix = this.findOuterArrowReturnCompanionFix(sourceFile, arrowFunc, paramIndex, numberCategory);
+        if (outerArrowReturnFix) {
+            this.addUniqueFix(fixes, outerArrowReturnFix);
+        }
+
+        return fixes;
+    }
+
+    private addUniqueFix(fixes: RuleFix[], fix: RuleFix): void {
+        const exists = fixes.some(f => f.range[0] === fix.range[0] && f.range[1] === fix.range[1]);
+        if (!exists) {
+            fixes.push(fix);
+        }
+    }
+
+    private createCompanionFixFromTypeNode(
+        sourceFile: ts.SourceFile,
+        typeNode: ts.TypeNode,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        if (!ts.isFunctionTypeNode(typeNode)) {
+            return null;
+        }
+        const correspondingParam = typeNode.parameters[paramIndex];
+        if (!correspondingParam || !correspondingParam.type) {
+            return null;
+        }
+        return this.generateTypeNodeReplaceFix(sourceFile, correspondingParam.type, numberCategory);
+    }
+
+    private createCompanionFixFromTypeReference(
+        sourceFile: ts.SourceFile,
+        typeNode: ts.TypeNode,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        if (ts.isFunctionTypeNode(typeNode)) {
+            return this.createCompanionFixFromTypeNode(sourceFile, typeNode, paramIndex, numberCategory);
+        }
+        if (ts.isTypeReferenceNode(typeNode)) {
+            const typeName = typeNode.typeName.getText(sourceFile);
+            const typeAlias = this.findTypeAliasDeclaration(sourceFile, typeName);
+            if (typeAlias && typeAlias.type) {
+                return this.createCompanionFixFromTypeNode(sourceFile, typeAlias.type, paramIndex, numberCategory);
+            }
+        }
+        return null;
+    }
+
+    private findReturnStatementCompanionFix(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const funcDecl = this.findEnclosingFunctionDeclaration(sourceFile, arrowFunc);
+        if (!funcDecl || !funcDecl.type) {
+            return null;
+        }
+        if (ts.isFunctionTypeNode(funcDecl.type)) {
+            return this.createCompanionFixFromTypeNode(sourceFile, funcDecl.type, paramIndex, numberCategory);
+        }
+        if (ts.isTypeReferenceNode(funcDecl.type)) {
+            const typeName = funcDecl.type.typeName.getText(sourceFile);
+            const typeAlias = this.findTypeAliasDeclaration(sourceFile, typeName);
+            if (typeAlias && typeAlias.type) {
+                return this.createCompanionFixFromTypeNode(sourceFile, typeAlias.type, paramIndex, numberCategory);
+            }
+        }
+        return null;
+    }
+
+    private findObjectPropertyCompanionFix(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const propAssignment = this.findEnclosingPropertyAssignment(sourceFile, arrowFunc);
+        if (!propAssignment) {
+            return null;
+        }
+        const propName = propAssignment.name.getText(sourceFile);
+        const objLiteral = this.findEnclosingObjectLiteral(sourceFile, propAssignment);
+        if (!objLiteral) {
+            return null;
+        }
+        const varDecl = this.findVariableDeclarationForObjectLiteral(sourceFile, objLiteral);
+        if (!varDecl || !varDecl.type) {
+            return null;
+        }
+        if (ts.isTypeReferenceNode(varDecl.type)) {
+            const typeName = varDecl.type.typeName.getText(sourceFile);
+            return this.findPropertyFixInTypeReference(sourceFile, typeName, propName, paramIndex, numberCategory);
+        }
+        if (ts.isTypeLiteralNode(varDecl.type)) {
+            return this.findPropertyFixInMembers(sourceFile, varDecl.type.members, propName, paramIndex, numberCategory);
+        }
+        return null;
+    }
+
+    private findPropertyFixInTypeReference(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        propName: string,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const interfaceDecl = this.findInterfaceDeclaration(sourceFile, typeName);
+        if (interfaceDecl) {
+            const fix = this.findPropertyFixInMembers(sourceFile, interfaceDecl.members, propName, paramIndex, numberCategory);
+            if (fix) {
+                return fix;
+            }
+        }
+        const classDecl = this.findClassDeclaration(sourceFile, typeName);
+        if (classDecl) {
+            return this.findPropertyFixInMembers(sourceFile, classDecl.members, propName, paramIndex, numberCategory);
+        }
+        return null;
+    }
+
+    private findPropertyFixInMembers(
+        sourceFile: ts.SourceFile,
+        members: ts.NodeArray<ts.ObjectLiteralElementLike | ts.TypeElement | ts.ClassElement>,
+        propName: string,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        for (const member of members) {
+            const typeNode = this.getMemberTypeNode(member, sourceFile, propName);
+            if (typeNode) {
+                const fix = this.createCompanionFixFromTypeNode(sourceFile, typeNode, paramIndex, numberCategory);
+                if (fix) {
+                    return fix;
+                }
+            }
+        }
+        return null;
+    }
+
+    private getMemberTypeNode(
+        member: ts.Node,
+        sourceFile: ts.SourceFile,
+        propName: string
+    ): ts.TypeNode | null {
+        let name: ts.Node | undefined;
+        let type: ts.TypeNode | undefined;
+        if (ts.isPropertySignature(member)) {
+            name = member.name;
+            type = member.type;
+        } else if (ts.isPropertyDeclaration(member)) {
+            name = member.name;
+            type = member.type;
+        }
+        if (!name || !type || name.getText(sourceFile) !== propName) {
+            return null;
+        }
+        return type;
+    }
+
+    private findEnclosingFunctionDeclaration(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction
+    ): ts.FunctionDeclaration | ts.MethodDeclaration | null {
+        let result: ts.FunctionDeclaration | ts.MethodDeclaration | null = null;
+        const arrowStart = arrowFunc.getStart(sourceFile);
+        const arrowEnd = arrowFunc.getEnd();
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > arrowStart || end < arrowEnd) {
+                return;
+            }
+            if (ts.isFunctionDeclaration(node) || ts.isMethodDeclaration(node)) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findTypeAliasDeclaration(
+        sourceFile: ts.SourceFile,
+        name: string
+    ): ts.TypeAliasDeclaration | null {
+        let result: ts.TypeAliasDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isTypeAliasDeclaration(node) && node.name.text === name) {
+                result = node;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findEnclosingPropertyAssignment(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction
+    ): ts.PropertyAssignment | null {
+        let result: ts.PropertyAssignment | null = null;
+        const arrowStart = arrowFunc.getStart(sourceFile);
+        const arrowEnd = arrowFunc.getEnd();
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > arrowStart || end < arrowEnd) {
+                return;
+            }
+            if (ts.isPropertyAssignment(node)) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findEnclosingObjectLiteral(
+        sourceFile: ts.SourceFile,
+        propertyAssignment: ts.PropertyAssignment
+    ): ts.ObjectLiteralExpression | null {
+        let result: ts.ObjectLiteralExpression | null = null;
+        const paStart = propertyAssignment.getStart(sourceFile);
+        const paEnd = propertyAssignment.getEnd();
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > paStart || end < paEnd) {
+                return;
+            }
+            if (ts.isObjectLiteralExpression(node)) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findVariableDeclarationForObjectLiteral(
+        sourceFile: ts.SourceFile,
+        objectLiteral: ts.ObjectLiteralExpression
+    ): ts.VariableDeclaration | null {
+        let result: ts.VariableDeclaration | null = null;
+        const olStart = objectLiteral.getStart(sourceFile);
+        const olEnd = objectLiteral.getEnd();
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isVariableDeclaration(node) && node.initializer) {
+                const initStart = node.initializer.getStart(sourceFile);
+                const initEnd = node.initializer.getEnd();
+                if (initStart === olStart && initEnd === olEnd) {
+                    result = node;
+                    return;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findInterfaceDeclaration(
+        sourceFile: ts.SourceFile,
+        name: string
+    ): ts.InterfaceDeclaration | null {
+        let result: ts.InterfaceDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isInterfaceDeclaration(node) && node.name.text === name) {
+                result = node;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findEnclosingArrowFunction(
+        sourceFile: ts.SourceFile,
+        range: [number, number]
+    ): ts.ArrowFunction | null {
+        let result: ts.ArrowFunction | null = null;
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > range[0] || end < range[1]) {
+                return;
+            }
+            if (ts.isArrowFunction(node) && start <= range[0] && end >= range[1]) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findAssignedVariableName(sourceFile: ts.SourceFile, funcNode: ts.ArrowFunction): string | null {
+        let varName: string | null = null;
+        const funcStart = funcNode.getStart(sourceFile);
+        const funcEnd = funcNode.getEnd();
+        const visit = (node: ts.Node): void => {
+            if (varName) {
+                return;
+            }
+            const name = this.getAssignedVarName(node, sourceFile, funcStart, funcEnd);
+            if (name) {
+                varName = name;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return varName;
+    }
+
+    private findAssignedVariableDeclaration(
+        sourceFile: ts.SourceFile,
+        funcNode: ts.ArrowFunction
+    ): ts.VariableDeclaration | null {
+        const funcStart = funcNode.getStart(sourceFile);
+        const funcEnd = funcNode.getEnd();
+        let result: ts.VariableDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isVariableDeclaration(node) && node.initializer) {
+                const initStart = node.initializer.getStart(sourceFile);
+                const initEnd = node.initializer.getEnd();
+                if (initStart === funcStart && initEnd === funcEnd) {
+                    result = node;
+                    return;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        if (result) {
+            return result;
+        }
+        const varName = this.findAssignedVariableName(sourceFile, funcNode);
+        if (varName) {
+            return this.findVariableDeclarationByName(sourceFile, varName);
+        }
+        return null;
+    }
+
+    private getAssignedVarName(
+        node: ts.Node,
+        sourceFile: ts.SourceFile,
+        funcStart: number,
+        funcEnd: number
+    ): string | null {
+        if (ts.isVariableDeclaration(node) && node.initializer) {
+            const initStart = node.initializer.getStart(sourceFile);
+            const initEnd = node.initializer.getEnd();
+            if (initStart <= funcStart && initEnd >= funcEnd && ts.isIdentifier(node.name)) {
+                return node.name.getText(sourceFile);
+            }
+        }
+        if (!ts.isBinaryExpression(node) || node.operatorToken.kind !== ts.SyntaxKind.EqualsToken) {
+            return null;
+        }
+        if (!ts.isIdentifier(node.left)) {
+            return null;
+        }
+        const rightStart = node.right.getStart(sourceFile);
+        const rightEnd = node.right.getEnd();
+        if (rightStart <= funcStart && rightEnd >= funcEnd) {
+            return node.left.getText(sourceFile);
+        }
+        return null;
+    }
+
+    private findVariableDeclarationByName(
+        sourceFile: ts.SourceFile,
+        name: string
+    ): ts.VariableDeclaration | null {
+        let result: ts.VariableDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isVariableDeclaration(node) &&
+                node.name && ts.isIdentifier(node.name) &&
+                node.name.getText(sourceFile) === name) {
+                result = node;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private hasSharedDeclarationConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction,
+        paramIndex: number,
+        varDecl: ts.VariableDeclaration | null
+    ): boolean {
+        const ctx: ConflictCheckContext = {
+            currentStart: currentArrowFunc.getStart(sourceFile),
+            currentEnd: currentArrowFunc.getEnd(),
+            paramIndex,
+        };
+
+        if (this.hasExportConflict(sourceFile, currentArrowFunc)) {
+            return true;
+        }
+        if (this.hasVariableAssignmentConflict(sourceFile, currentArrowFunc, ctx, varDecl)) {
+            return true;
+        }
+        if (this.hasVariableTypeAliasConflict(sourceFile, currentArrowFunc, ctx, varDecl)) {
+            return true;
+        }
+        if (this.hasTypeAliasConflict(sourceFile, currentArrowFunc, ctx)) {
+            return true;
+        }
+        if (this.hasOuterArrowTypeAliasConflict(sourceFile, currentArrowFunc, ctx)) {
+            return true;
+        }
+        if (this.hasInterfaceOrClassConflict(sourceFile, currentArrowFunc, ctx)) {
+            return true;
+        }
+        return false;
+    }
+
+    private hasExportConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction
+    ): boolean {
+        const enclosingClass = this.findEnclosingClassDeclaration(sourceFile, currentArrowFunc);
+        if (enclosingClass && this.isExportedDeclaration(enclosingClass)) {
+            return true;
+        }
+        const enclosingFunc = this.findEnclosingFunctionDeclaration(sourceFile, currentArrowFunc);
+        return !!enclosingFunc && this.isExportedDeclaration(enclosingFunc);
+    }
+
+    private hasVariableAssignmentConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction,
+        ctx: ConflictCheckContext,
+        varDecl: ts.VariableDeclaration | null
+    ): boolean {
+        if (!varDecl || !ts.isIdentifier(varDecl.name)) {
+            return false;
+        }
+        if (this.isVariableExported(varDecl)) {
+            return true;
+        }
+        return this.hasOtherAssignmentWithDivision(sourceFile, varDecl.name.getText(sourceFile), ctx);
+    }
+
+    private hasVariableTypeAliasConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction,
+        ctx: ConflictCheckContext,
+        varDecl: ts.VariableDeclaration | null
+    ): boolean {
+        if (!varDecl || !varDecl.type || !ts.isTypeReferenceNode(varDecl.type)) {
+            return false;
+        }
+        const typeName = varDecl.type.typeName.getText(sourceFile);
+        return this.checkTypeAliasConflict(sourceFile, typeName, ctx);
+    }
+
+    private isVariableExported(varDecl: ts.VariableDeclaration): boolean {
+        const declList = varDecl.parent;
+        if (!ts.isVariableDeclarationList(declList)) {
+            return false;
+        }
+        const varStmt = declList.parent;
+        if (!ts.isVariableStatement(varStmt)) {
+            return false;
+        }
+        return this.isExportedDeclaration(varStmt);
+    }
+
+    private hasTypeAliasConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const funcDecl = this.findEnclosingFunctionDeclaration(sourceFile, currentArrowFunc);
+        if (!funcDecl || !funcDecl.type || !ts.isTypeReferenceNode(funcDecl.type)) {
+            return false;
+        }
+        const typeName = funcDecl.type.typeName.getText(sourceFile);
+        return this.checkTypeAliasConflict(sourceFile, typeName, ctx);
+    }
+
+    private hasOuterArrowTypeAliasConflict(
+        sourceFile: ts.SourceFile,
+        innerArrow: ts.ArrowFunction,
+        ctx: ConflictCheckContext
+    ): boolean {
+        let parent: ts.Node | undefined = innerArrow.parent;
+        while (parent) {
+            if (ts.isArrowFunction(parent) && parent.type && ts.isTypeReferenceNode(parent.type)) {
+                const typeName = parent.type.typeName.getText(sourceFile);
+                if (this.checkTypeAliasConflict(sourceFile, typeName, ctx)) {
+                    return true;
+                }
+            }
+            parent = parent.parent;
+        }
+        return false;
+    }
+
+    private checkTypeAliasConflict(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const typeAlias = this.findTypeAliasDeclaration(sourceFile, typeName);
+        if (!typeAlias || !typeAlias.type || !ts.isFunctionTypeNode(typeAlias.type)) {
+            return false;
+        }
+        if (this.isExportedDeclaration(typeAlias)) {
+            return true;
+        }
+        return this.hasOtherReturnWithDivision(sourceFile, typeName, ctx);
+    }
+
+    private hasInterfaceOrClassConflict(
+        sourceFile: ts.SourceFile,
+        currentArrowFunc: ts.ArrowFunction,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const propAssignment = this.findEnclosingPropertyAssignment(sourceFile, currentArrowFunc);
+        if (!propAssignment) {
+            return false;
+        }
+        const propName = propAssignment.name.getText(sourceFile);
+        const objLiteral = this.findEnclosingObjectLiteral(sourceFile, propAssignment);
+        if (!objLiteral) {
+            return false;
+        }
+        const varDecl = this.findVariableDeclarationForObjectLiteral(sourceFile, objLiteral);
+        if (!varDecl || !varDecl.type || !ts.isTypeReferenceNode(varDecl.type)) {
+            return false;
+        }
+        const typeName = varDecl.type.typeName.getText(sourceFile);
+        return this.checkInterfaceConflict(sourceFile, typeName, propName, ctx) ||
+            this.checkClassConflict(sourceFile, typeName, propName, ctx);
+    }
+
+    private checkInterfaceConflict(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        propName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const interfaceDecl = this.findInterfaceDeclaration(sourceFile, typeName);
+        if (!interfaceDecl) {
+            return false;
+        }
+        if (this.isExportedDeclaration(interfaceDecl)) {
+            return true;
+        }
+        return this.hasOtherPropertyWithDivision(sourceFile, typeName, propName, ctx);
+    }
+
+    private checkClassConflict(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        propName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const classDecl = this.findClassDeclaration(sourceFile, typeName);
+        if (!classDecl) {
+            return false;
+        }
+        if (this.isExportedDeclaration(classDecl)) {
+            return true;
+        }
+        return this.hasOtherPropertyWithDivision(sourceFile, typeName, propName, ctx);
+    }
+
+    private isExportedDeclaration(node: ts.Node): boolean {
+        if (!node.modifiers) {
+            return false;
+        }
+        return node.modifiers.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+    }
+
+    private checkArrowForDivision(
+        sourceFile: ts.SourceFile,
+        arrow: ts.ArrowFunction,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const arrowStart = arrow.getStart(sourceFile);
+        const arrowEnd = arrow.getEnd();
+        if (arrowStart === ctx.currentStart && arrowEnd === ctx.currentEnd) {
+            return false;
+        }
+        return this.isParamUsedInDivision(sourceFile, arrow, ctx.paramIndex);
+    }
+
+    private hasOtherAssignmentWithDivision(
+        sourceFile: ts.SourceFile,
+        varName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        let found = false;
+        const visit = (node: ts.Node): void => {
+            if (found) {
+                return;
+            }
+            if (this.isAssignmentToVar(node, sourceFile, varName)) {
+                found = this.checkArrowForDivision(sourceFile, (node as ts.BinaryExpression).right as ts.ArrowFunction, ctx);
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return found;
+    }
+
+    private isAssignmentToVar(node: ts.Node, sourceFile: ts.SourceFile, varName: string): node is ts.BinaryExpression {
+        return ts.isBinaryExpression(node) &&
+            node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+            ts.isIdentifier(node.left) &&
+            node.left.getText(sourceFile) === varName &&
+            ts.isArrowFunction(node.right);
+    }
+
+    private hasOtherReturnWithDivision(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        let found = false;
+        const visit = (node: ts.Node): void => {
+            if (found) {
+                return;
+            }
+            if (this.isFunctionReturningType(node, sourceFile, typeName)) {
+                found = this.hasReturnWithDivision(sourceFile, node as ts.FunctionDeclaration | ts.MethodDeclaration, ctx);
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return found;
+    }
+
+    private hasReturnWithDivision(
+        sourceFile: ts.SourceFile,
+        funcDecl: ts.FunctionDeclaration | ts.MethodDeclaration,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const returnStmts = this.findAllReturnStatements(sourceFile, funcDecl);
+        for (const returnStmt of returnStmts) {
+            if (returnStmt.expression && ts.isArrowFunction(returnStmt.expression) &&
+                this.checkArrowForDivision(sourceFile, returnStmt.expression, ctx)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private isFunctionReturningType(node: ts.Node, sourceFile: ts.SourceFile, typeName: string): boolean {
+        return (ts.isFunctionDeclaration(node) || ts.isMethodDeclaration(node)) &&
+            !!node.type && ts.isTypeReferenceNode(node.type) &&
+            node.type.typeName.getText(sourceFile) === typeName;
+    }
+
+    private hasOtherPropertyWithDivision(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        propName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        return this.scanObjectLiteralsForDivision(sourceFile, typeName, propName, ctx);
+    }
+
+    private scanObjectLiteralsForDivision(
+        sourceFile: ts.SourceFile,
+        typeName: string,
+        propName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        let found = false;
+        const visit = (node: ts.Node): void => {
+            if (found) {
+                return;
+            }
+            if (this.isTypedObjectLiteral(node, sourceFile, typeName)) {
+                found = this.checkPropertiesForDivision(sourceFile, node as ts.VariableDeclaration, propName, ctx);
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return found;
+    }
+
+    private isTypedObjectLiteral(node: ts.Node, sourceFile: ts.SourceFile, typeName: string): node is ts.VariableDeclaration {
+        return ts.isVariableDeclaration(node) &&
+            !!node.initializer && ts.isObjectLiteralExpression(node.initializer) &&
+            !!node.type && ts.isTypeReferenceNode(node.type) &&
+            node.type.typeName.getText(sourceFile) === typeName;
+    }
+
+    private checkPropertiesForDivision(
+        sourceFile: ts.SourceFile,
+        varDecl: ts.VariableDeclaration,
+        propName: string,
+        ctx: ConflictCheckContext
+    ): boolean {
+        const objLiteral = varDecl.initializer as ts.ObjectLiteralExpression;
+        for (const prop of objLiteral.properties) {
+            if (!this.isMatchingPropertyAssignment(prop, sourceFile, propName)) {
+                continue;
+            }
+            const arrow = (prop as ts.PropertyAssignment).initializer as ts.ArrowFunction;
+            if (this.checkArrowForDivision(sourceFile, arrow, ctx)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private isMatchingPropertyAssignment(prop: ts.ObjectLiteralElementLike, sourceFile: ts.SourceFile, propName: string): prop is ts.PropertyAssignment {
+        return ts.isPropertyAssignment(prop) &&
+            prop.name.getText(sourceFile) === propName &&
+            ts.isArrowFunction(prop.initializer);
+    }
+
+    private findAllReturnStatements(
+        sourceFile: ts.SourceFile,
+        funcDecl: ts.FunctionDeclaration | ts.MethodDeclaration
+    ): ts.ReturnStatement[] {
+        const results: ts.ReturnStatement[] = [];
+        const visit = (node: ts.Node): void => {
+            if (ts.isReturnStatement(node)) {
+                results.push(node);
+            }
+            ts.forEachChild(node, visit);
+        };
+        funcDecl.body?.forEachChild(visit);
+        return results;
+    }
+
+    private isParamUsedInDivision(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction,
+        paramIndex: number
+    ): boolean {
+        const param = arrowFunc.parameters[paramIndex];
+        if (!param || !ts.isIdentifier(param.name)) {
+            return false;
+        }
+        const paramName = param.name.getText(sourceFile);
+        let found = false;
+        const visit = (node: ts.Node): void => {
+            if (found) {
+                return;
+            }
+            if (ts.isBinaryExpression(node) &&
+                (node.operatorToken.kind === ts.SyntaxKind.SlashToken ||
+                 node.operatorToken.kind === ts.SyntaxKind.SlashEqualsToken)) {
+                if (this.isIdentifierNamed(node.left, paramName) ||
+                    this.isIdentifierNamed(node.right, paramName)) {
+                    found = true;
+                    return;
+                }
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(arrowFunc.body);
+        return found;
+    }
+
+    private isIdentifierNamed(expr: ts.Node, name: string): boolean {
+        return ts.isIdentifier(expr) && expr.text === name;
+    }
+
+    private findClassDeclaration(
+        sourceFile: ts.SourceFile,
+        name: string
+    ): ts.ClassDeclaration | null {
+        let result: ts.ClassDeclaration | null = null;
+        const visit = (node: ts.Node): void => {
+            if (result) {
+                return;
+            }
+            if (ts.isClassDeclaration(node) && node.name && node.name.text === name) {
+                result = node;
+                return;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findEnclosingClassDeclaration(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction
+    ): ts.ClassDeclaration | null {
+        let result: ts.ClassDeclaration | null = null;
+        const arrowStart = arrowFunc.getStart(sourceFile);
+        const arrowEnd = arrowFunc.getEnd();
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > arrowStart || end < arrowEnd) {
+                return;
+            }
+            if (ts.isClassDeclaration(node)) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findClassFieldCompanionFix(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        const propDecl = this.findEnclosingPropertyDeclaration(sourceFile, arrowFunc);
+        if (!propDecl || !propDecl.type) {
+            return null;
+        }
+        return this.createCompanionFixFromTypeReference(sourceFile, propDecl.type, paramIndex, numberCategory);
+    }
+
+    private findEnclosingPropertyDeclaration(
+        sourceFile: ts.SourceFile,
+        arrowFunc: ts.ArrowFunction
+    ): ts.PropertyDeclaration | null {
+        let result: ts.PropertyDeclaration | null = null;
+        const arrowStart = arrowFunc.getStart(sourceFile);
+        const arrowEnd = arrowFunc.getEnd();
+        const visit = (node: ts.Node): void => {
+            const start = node.getStart(sourceFile);
+            const end = node.getEnd();
+            if (start > arrowStart || end < arrowEnd) {
+                return;
+            }
+            if (ts.isPropertyDeclaration(node)) {
+                result = node;
+            }
+            ts.forEachChild(node, visit);
+        };
+        visit(sourceFile);
+        return result;
+    }
+
+    private findOuterArrowReturnCompanionFix(
+        sourceFile: ts.SourceFile,
+        innerArrow: ts.ArrowFunction,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        let parent: ts.Node | undefined = innerArrow.parent;
+        while (parent) {
+            if (ts.isArrowFunction(parent) && parent.type) {
+                const fix = this.tryCreateCompanionFixFromArrowType(sourceFile, parent.type, paramIndex, numberCategory);
+                if (fix) {
+                    return fix;
+                }
+            }
+            parent = parent.parent;
+        }
+        return null;
+    }
+
+    private tryCreateCompanionFixFromArrowType(
+        sourceFile: ts.SourceFile,
+        typeNode: ts.TypeNode,
+        paramIndex: number,
+        numberCategory: NumberCategory
+    ): RuleFix | null {
+        let unwrapped: ts.TypeNode = typeNode;
+        while (ts.isParenthesizedTypeNode(unwrapped)) {
+            unwrapped = unwrapped.type;
+        }
+        return this.createCompanionFixFromTypeReference(sourceFile, unwrapped, paramIndex, numberCategory);
     }
 }

@@ -72,9 +72,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1374,
-                    "end": 1377,
-                    "replacementText": "++x as int",
+                    "start": 1379,
+                    "end": 1382,
+                    "replacementText": "(++x).toInt()",
                     "line": 50,
                     "column": 44,
                     "endLine": 50,
@@ -103,9 +103,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1502,
-                    "end": 1505,
-                    "replacementText": "y-- as int",
+                    "start": 1507,
+                    "end": 1510,
+                    "replacementText": "(y--).toInt()",
                     "line": 56,
                     "column": 44,
                     "endLine": 56,
@@ -134,9 +134,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1601,
-                    "end": 1607,
-                    "replacementText": "(1 & -1) as int",
+                    "start": 1606,
+                    "end": 1612,
+                    "replacementText": "(1 & -1).toInt()",
                     "line": 61,
                     "column": 44,
                     "endLine": 61,
@@ -165,9 +165,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 1817,
-                    "end": 1829,
-                    "replacementText": "true ? 1 : x as int",
+                    "start": 1822,
+                    "end": 1834,
+                    "replacementText": "(true ? 1 : x).toInt()",
                     "line": 73,
                     "column": 40,
                     "endLine": 73,

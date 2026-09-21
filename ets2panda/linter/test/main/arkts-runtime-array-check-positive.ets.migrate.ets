@@ -142,7 +142,7 @@ for (let i = 1; i < arr3_3.length; i++) {
 // 3.4 for (let i = arr.length - 1; i >= 0; i--) { arr[i]; } - safe
 let arr3_4: number[] = [1, 2, 3, 4, 5];
 for (let i = arr3_4.length - 1; i >= 0; i--) {
-    arr3_4[i as int]; // safe:
+    arr3_4[i.toInt()]; // safe:
 }
 
 // 3.5 for (const item of arr) - safe
@@ -220,14 +220,14 @@ if (idx6_2 < arr6_2.length) {
 let arr6_3: number[] = [1, 2, 3, 4, 5, 6];
 let idx6_3: number = 5;
 if (idx6_3 < arr6_3.length) {
-    arr6_3[idx6_3-- as int]; // safe:
+    arr6_3[(idx6_3--).toInt()]; // safe:
 }
 
 // 6.4 if (idx < arr.length) { arr[--idx]; } - safe (uses decreased value)
 let arr6_4: number[] = [1, 2, 3, 4, 5, 6];
 let idx6_4: number = 5;
 if (idx6_4 < arr6_4.length) {
-    arr6_4[--idx6_4 as int]; // safe:
+    arr6_4[(--idx6_4).toInt()]; // safe:
 }
 
 // ============================================================================
@@ -284,21 +284,21 @@ enum E1 { A = 0, B = 1, C = 2 }
 let arr9_2: number[] = [1, 2, 3];
 let enumIdx9_2: E1 = E1.B;
 if (enumIdx9_2 < arr9_2.length) {
-    arr9_2[enumIdx9_2 as int]; // safe:
+    arr9_2[enumIdx9_2.toInt()]; // safe:
 }
 
 // 9.3 postfix increment in bound check - safe (uses original value then increments)
 let arr9_3: object[] = [1, 2, 3];
 let idx9_3 = 1;
 if (idx9_3 < arr9_3.length) {
-    const value = arr9_3[idx9_3++ as int]; // safe: postfix increment uses original value
+    const value = arr9_3[(idx9_3++).toInt()]; // safe: postfix increment uses original value
 }
 
 // 9.4 postfix decrement in bound check - safe (uses original value then decrements)
 let arr9_4: object[] = [1, 2, 3];
 let idx9_4 = 1;
 if (idx9_4 < arr9_4.length) {
-    const value = arr9_4[idx9_4-- as int]; // safe: postfix decrement uses original value
+    const value = arr9_4[(idx9_4--).toInt()]; // safe: postfix decrement uses original value
 }
 
 // ============================================================================

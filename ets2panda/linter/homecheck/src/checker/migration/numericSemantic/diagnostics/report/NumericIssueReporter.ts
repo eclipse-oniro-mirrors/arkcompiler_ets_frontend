@@ -257,27 +257,31 @@ export class NumericIssueReporter {
     private addFixableNumericIssue(
         defects: Defects,
         ruleCategory: RuleCategory,
-        _numberCategory: NumberCategory,
+        numberCategory: NumberCategory,
         reason: IssueReason,
         warnInfo: WarnInfo,
         issueStmt?: Stmt,
         value?: Value,
         field?: ArkField
     ): void {
+        const builder = this.options.getAutofixBuilder();
         if (ruleCategory === RuleCategory.NumericLiteral) {
-            const autofix = this.options.getAutofixBuilder().generateNumericLiteralRuleFix(warnInfo, reason, issueStmt, value, field);
+            const autofix = builder.generateNumericLiteralRuleFix(warnInfo, reason, issueStmt, value, field);
             if (autofix === null) {
-                // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
                 return;
             }
-            this.setIssue(defects, autofix);
+            const companionFixes = builder.generateCompanionTypeAnnotationFixes(warnInfo, numberCategory, issueStmt);
+            if (companionFixes === null) {
+                return;
+            }
+            this.setIssue(defects, autofix, companionFixes.length > 0 ? companionFixes : undefined);
             return;
         }
         if (ruleCategory !== RuleCategory.ArrayIndex) {
             return;
         }
         if (reason === IssueReason.ActuallyIntConstant && issueStmt && value instanceof NumberConstant) {
-            const autofix = this.options.getAutofixBuilder().generateIntConstantIndexRuleFix(warnInfo, issueStmt, value);
+            const autofix = builder.generateIntConstantIndexRuleFix(warnInfo, issueStmt, value);
             if (autofix === null) {
                 defects.fixable = false;
                 this.setIssue(defects, undefined);
@@ -286,12 +290,15 @@ export class NumericIssueReporter {
             this.setIssue(defects, autofix);
             return;
         }
-        const autofix = this.options.getAutofixBuilder().generateNumericLiteralRuleFix(warnInfo, reason, issueStmt, value, field);
+        const autofix = builder.generateNumericLiteralRuleFix(warnInfo, reason, issueStmt, value, field);
         if (autofix === null) {
-            // 此规则必须修复，若autofix为null，则表示无需修复，不添加issue
             return;
         }
-        this.setIssue(defects, autofix);
+        const companionFixes = builder.generateCompanionTypeAnnotationFixes(warnInfo, numberCategory, issueStmt);
+        if (companionFixes === null) {
+            return;
+        }
+        this.setIssue(defects, autofix, companionFixes.length > 0 ? companionFixes : undefined);
     }
 
     private getWarnInfo(field?: ArkField, issueStmt?: Stmt, value?: Value): WarnInfo | null {
@@ -535,8 +542,8 @@ export class NumericIssueReporter {
         return false;
     }
 
-    private setIssue(defects: Defects, fix?: RuleFix): void {
-        this.options.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, fix));
+    private setIssue(defects: Defects, fix?: RuleFix, additionalFixes?: RuleFix[]): void {
+        this.options.issuesMap.set(this.getIssuesMapKey(defects.mergeKey), new IssueReport(defects, fix, additionalFixes));
     }
 
     private deleteIssueFromMap(issue: IssueReport): void {

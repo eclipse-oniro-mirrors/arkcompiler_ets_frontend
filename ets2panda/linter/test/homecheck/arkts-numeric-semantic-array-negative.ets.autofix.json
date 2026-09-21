@@ -1,0 +1,273 @@
+{
+    "copyright": [
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 20,
+            "column": 9,
+            "endLine": 20,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 754,
+                    "end": 760
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 30,
+            "column": 9,
+            "endLine": 30,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1027,
+                    "end": 1033
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 53,
+            "column": 9,
+            "endLine": 53,
+            "endColumn": 9,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1630,
+                    "end": 1636
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 61,
+            "column": 9,
+            "endLine": 61,
+            "endColumn": 9,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1875,
+                    "end": 1881
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 68,
+            "column": 9,
+            "endLine": 68,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2080,
+                    "end": 2086
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 75,
+            "column": 9,
+            "endLine": 75,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2363,
+                    "end": 2369
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 80,
+            "column": 9,
+            "endLine": 80,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2512,
+                    "end": 2518
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 85,
+            "column": 9,
+            "endLine": 85,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2651,
+                    "end": 2657
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 90,
+            "column": 9,
+            "endLine": 90,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2802,
+                    "end": 2808
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 91,
+            "column": 9,
+            "endLine": 91,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2855,
+                    "end": 2861
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 107,
+            "column": 9,
+            "endLine": 107,
+            "endColumn": 9,
+            "problem": "NumericLiteral-related-with-non-ets2",
+            "autofix": [
+                {
+                    "replacementText": "index: number",
+                    "start": 3374,
+                    "end": 3379
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 112,
+            "column": 9,
+            "endLine": 112,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3507,
+                    "end": 3513
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 118,
+            "column": 9,
+            "endLine": 118,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3682,
+                    "end": 3688
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 145,
+            "column": 9,
+            "endLine": 145,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 4555,
+                    "end": 4561
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 146,
+            "column": 9,
+            "endLine": 146,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 4613,
+                    "end": 4619
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        }
+    ]
+}

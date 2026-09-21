@@ -55,10 +55,12 @@ export class Defects {
 export class IssueReport {
     defect: Defects;
     fix: RuleFix | FunctionFix | AIFix | undefined;
+    additionalFixes?: RuleFix[];
 
-    constructor(defect: Defects, fix: RuleFix | FunctionFix | AIFix | undefined) {
+    constructor(defect: Defects, fix: RuleFix | FunctionFix | AIFix | undefined, additionalFixes?: RuleFix[]) {
         this.defect = defect;
         this.fix = fix;
+        this.additionalFixes = additionalFixes;
     }
 }
 

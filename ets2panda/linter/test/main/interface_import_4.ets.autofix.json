@@ -42,9 +42,9 @@
             "problem": "ArrayIndexExprType",
             "autofix": [
                 {
-                    "start": 988,
-                    "end": 993,
-                    "replacementText": "index as int",
+                    "start": 993,
+                    "end": 998,
+                    "replacementText": "index.toInt()",
                     "line": 27,
                     "column": 58,
                     "endLine": 27,
@@ -63,8 +63,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -84,8 +84,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -105,8 +105,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -126,8 +126,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -147,8 +147,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -168,8 +168,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -189,8 +189,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -210,8 +210,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -231,8 +231,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -252,8 +252,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -273,8 +273,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -294,8 +294,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
@@ -315,8 +315,8 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
+                    "start": 608,
+                    "end": 608,
                     "replacementText": "\n\nimport {\n  Entry,\n  ComponentV2,\n  Local,\n  Scroller,\n  Column,\n  List,\n  Repeat,\n  RepeatItem,\n  ListItem,\n  Row,\n  Text,\n  Button,\n} from '@kit.ArkUI';",
                     "line": 40,
                     "column": 7,
