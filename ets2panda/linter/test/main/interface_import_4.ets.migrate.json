@@ -33,6 +33,16 @@
             "suggest": "",
             "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 58,
+            "endLine": 42,
+            "endColumn": 71,
+            "problem": "ArrayIndexExprType",
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
         }
     ]
 }

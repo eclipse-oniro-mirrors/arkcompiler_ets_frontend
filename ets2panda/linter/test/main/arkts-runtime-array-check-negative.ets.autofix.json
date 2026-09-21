@@ -254,7 +254,7 @@
                 {
                     "start": 6371,
                     "end": 6380,
-                    "replacementText": "++idx17_1 as int",
+                    "replacementText": "(++idx17_1).toInt()",
                     "line": 198,
                     "column": 13,
                     "endLine": 198,
@@ -285,7 +285,7 @@
                 {
                     "start": 6564,
                     "end": 6573,
-                    "replacementText": "idx17_2-- as int",
+                    "replacementText": "(idx17_2--).toInt()",
                     "line": 205,
                     "column": 13,
                     "endLine": 205,
@@ -316,7 +316,7 @@
                 {
                     "start": 6763,
                     "end": 6772,
-                    "replacementText": "--idx17_3 as int",
+                    "replacementText": "(--idx17_3).toInt()",
                     "line": 212,
                     "column": 13,
                     "endLine": 212,
@@ -377,7 +377,7 @@
                 {
                     "start": 7438,
                     "end": 7448,
-                    "replacementText": "getIndex() as int",
+                    "replacementText": "getIndex().toInt()",
                     "line": 237,
                     "column": 9,
                     "endLine": 237,
@@ -458,7 +458,7 @@
                 {
                     "start": 9192,
                     "end": 9203,
-                    "replacementText": "(idx22_1 + 1) as int",
+                    "replacementText": "(idx22_1 + 1).toInt()",
                     "line": 292,
                     "column": 13,
                     "endLine": 292,
@@ -489,7 +489,7 @@
                 {
                     "start": 9355,
                     "end": 9367,
-                    "replacementText": "(idx22_2 << 1) as int",
+                    "replacementText": "(idx22_2 << 1).toInt()",
                     "line": 299,
                     "column": 13,
                     "endLine": 299,
@@ -520,7 +520,7 @@
                 {
                     "start": 9521,
                     "end": 9535,
-                    "replacementText": "(idx22_3 & 0xFF) as int",
+                    "replacementText": "(idx22_3 & 0xFF).toInt()",
                     "line": 306,
                     "column": 13,
                     "endLine": 306,
@@ -551,7 +551,7 @@
                 {
                     "start": 9651,
                     "end": 9663,
-                    "replacementText": "(idx22_4 || 0) as int",
+                    "replacementText": "(idx22_4 || 0).toInt()",
                     "line": 312,
                     "column": 9,
                     "endLine": 312,
@@ -582,7 +582,7 @@
                 {
                     "start": 9777,
                     "end": 9789,
-                    "replacementText": "(idx22_5 ?? 0) as int",
+                    "replacementText": "(idx22_5 ?? 0).toInt()",
                     "line": 317,
                     "column": 9,
                     "endLine": 317,
@@ -623,7 +623,7 @@
                 {
                     "start": 10304,
                     "end": 10330,
-                    "replacementText": "arr23_nested[idx23_nested] as int",
+                    "replacementText": "arr23_nested[idx23_nested].toInt()",
                     "line": 332,
                     "column": 14,
                     "endLine": 332,
@@ -704,7 +704,7 @@
                 {
                     "start": 11068,
                     "end": 11084,
-                    "replacementText": "Number.MAX_VALUE as int",
+                    "replacementText": "Number.MAX_VALUE.toInt()",
                     "line": 361,
                     "column": 9,
                     "endLine": 361,
@@ -745,7 +745,7 @@
                 {
                     "start": 11168,
                     "end": 11171,
-                    "replacementText": "NaN as int",
+                    "replacementText": "NaN.toInt()",
                     "line": 365,
                     "column": 9,
                     "endLine": 365,

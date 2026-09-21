@@ -195,21 +195,21 @@ if (idx17_4 < arr17_4.length) {
 let arr17_1: number[] = [1, 2, 3, 4, 5];
 let idx17_1: number = 4;
 if (idx17_1 < arr17_1.length) {
-    arr17_1[++idx17_1 as int]; // unsafe:
+    arr17_1[(++idx17_1).toInt()]; // unsafe:
 }
 
 // 17.2 if (idx >= 0) { arr[idx--]; } - unsafe (missing upper bound check)
 let arr17_2: number[] = [1, 2, 3];
 let idx17_2: number = 0;
 if (idx17_2 >= 0) {
-    arr17_2[idx17_2-- as int]; // unsafe:
+    arr17_2[(idx17_2--).toInt()]; // unsafe:
 }
 
 // 17.3 if (idx >= 1) { arr[--idx]; } - unsafe (missing upper bound check)
 let arr17_3: number[] = [1, 2, 3, 4, 5];
 let idx17_3: number = 3;
 if (idx17_3 >= 1) {
-    arr17_3[--idx17_3 as int]; // unsafe:
+    arr17_3[(--idx17_3).toInt()]; // unsafe:
 }
 
 // ============================================================================
@@ -234,7 +234,7 @@ let arr19_4: number[] = [1, 2, 3];
 function getIndex(): number {
     return 10;
 }
-arr19_4[getIndex() as int]; // unsafe:
+arr19_4[getIndex().toInt()]; // unsafe:
 
 // ============================================================================
 // Table 19: Access Outside Loop (Negative)
@@ -289,32 +289,32 @@ if (arr21_C.length > 10) {
 let arr22_1: number[] = [1, 2, 3];
 let idx22_1: number = 2;
 if (idx22_1 < arr22_1.length) {
-    arr22_1[(idx22_1 + 1) as int]; // unsafe:
+    arr22_1[(idx22_1 + 1).toInt()]; // unsafe:
 }
 
 // 21.2 arr[idx << 1] - unsafe
 let arr22_2: number[] = [1, 2, 3];
 let idx22_2: number = 2;
 if (idx22_2 < arr22_2.length) {
-    arr22_2[(idx22_2 << 1) as int]; // unsafe:
+    arr22_2[(idx22_2 << 1).toInt()]; // unsafe:
 }
 
 // 21.3 arr[idx & 0xFF] - unsafe
 let arr22_3: number[] = [1, 2, 3];
 let idx22_3: number = 2;
 if (idx22_3 < arr22_3.length) {
-    arr22_3[(idx22_3 & 0xFF) as int]; // unsafe:
+    arr22_3[(idx22_3 & 0xFF).toInt()]; // unsafe:
 }
 
 // 21.4 arr[idx || 0] - unsafe
 let arr22_4: number[] = [1, 2, 3];
 let idx22_4: number = 2;
-arr22_4[(idx22_4 || 0) as int]; // unsafe:
+arr22_4[(idx22_4 || 0).toInt()]; // unsafe:
 
 // 21.5 arr[idx ?? 0] - unsafe
 let arr22_5: number[] = [1, 2, 3];
 let idx22_5: number = 2;
-arr22_5[(idx22_5 ?? 0) as int]; // unsafe:
+arr22_5[(idx22_5 ?? 0).toInt()]; // unsafe:
 
 // ============================================================================
 // Table 22: Complex Scenarios (Negative)
@@ -329,7 +329,7 @@ arr23_2D[m23_1][n23_1]; // unsafe:
 // 22.2 Nested arr[arr[idx]] - unsafe
 let arr23_nested: number[] = [1, 2, 3];
 let idx23_nested: number = 0;
-arr23_nested[arr23_nested[idx23_nested] as int]; // unsafe:
+arr23_nested[arr23_nested[idx23_nested].toInt()]; // unsafe:
 
 // 22.3 Class method this.arr[10] - unsafe
 class Class23_3 {
@@ -358,11 +358,11 @@ arr24_1[-1]; // unsafe:
 
 // 23.2 arr[Number.MAX_VALUE] - unsafe
 let arr24_2: number[] = [1, 2, 3];
-arr24_2[Number.MAX_VALUE as int]; // unsafe:
+arr24_2[Number.MAX_VALUE.toInt()]; // unsafe:
 
 // 23.3 arr[NaN] - unsafe
 let arr24_3: number[] = [1, 2, 3];
-arr24_3[NaN as int]; // unsafe:
+arr24_3[NaN.toInt()]; // unsafe:
 
 // ============================================================================
 // Table 24: Empty Array (Negative)

@@ -4659,20 +4659,34 @@ export class Autofixer {
     void this;
     if (ts.isAsExpression(argExpr)) {
       const innerExpr = argExpr.expression;
-      return [
-        {
-          start: argExpr.getStart(),
-          end: argExpr.getEnd(),
-          replacementText: `${innerExpr ? innerExpr.getText() : ''} as int`
-        }
-      ];
+      const innerText = innerExpr ? innerExpr.getText() : '';
+      if (Autofixer.needsParensForToInt(innerExpr)) {
+        return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `(${innerText}).toInt()` }];
+      }
+      return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `${innerText}.toInt()` }];
     }
 
-    if (ts.isBinaryExpression(argExpr)) {
-      return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `(${argExpr.getText()}) as int` }];
+    if (Autofixer.needsParensForToInt(argExpr)) {
+      return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `(${argExpr.getText()}).toInt()` }];
     }
 
-    return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `${argExpr.getText()} as int` }];
+    return [{ start: argExpr.getStart(), end: argExpr.getEnd(), replacementText: `${argExpr.getText()}.toInt()` }];
+  }
+
+  private static needsParensForToInt(expr: ts.Expression | undefined): boolean {
+    if (!expr) {
+      return false;
+    }
+    if (
+      ts.isIdentifier(expr) ||
+      ts.isPropertyAccessExpression(expr) ||
+      ts.isCallExpression(expr) ||
+      ts.isElementAccessExpression(expr) ||
+      ts.isParenthesizedExpression(expr)
+    ) {
+      return false;
+    }
+    return true;
   }
 
   fixNoTsLikeFunctionCall(callExpr: ts.CallExpression): Autofix[] {
