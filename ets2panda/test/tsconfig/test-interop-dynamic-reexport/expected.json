@@ -1,0 +1,12 @@
+{
+    "returncode": 0,
+    "stdout_contains": [
+        "main-%%lazy_import-0--cctor--void-0",
+        "ststatic.obj main.%%lazy_import-0.value",
+        "JSRuntime.loadModule",
+        "any.call.this.0 jsFunc",
+        "any.call.this.range jsFunc2",
+        "JsCls, 0x",
+        "any.call.this.0 default"
+    ]
+}

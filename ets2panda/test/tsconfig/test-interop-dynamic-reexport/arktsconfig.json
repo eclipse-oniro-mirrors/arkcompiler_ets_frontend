@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "staticlib": ["./staticlib.ets"]
+        },
+        "dependencies": {
+            "js": {
+                "language": "js",
+                "path": "./js/index.ets",
+                "ohmUrl": "js/index"
+            }
+        }
+    }
+}

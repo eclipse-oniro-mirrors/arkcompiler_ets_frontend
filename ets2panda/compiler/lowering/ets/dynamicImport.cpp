@@ -649,10 +649,16 @@ static void AddDynamicReExportImportBinding(DynamicReExportContext &context, con
 }
 
 static void TryBuildLazyImportObjectForDynamicReExport(DynamicReExportContext &context, checker::ETSChecker *checker,
-                                                       varbinder::ETSBinder *varBinder, ir::AstNode *specifier)
+                                                       varbinder::ETSBinder *varBinder, ir::AstNode *specifier,
+                                                       parser::Program *importTargetProgram)
 {
     auto *var = util::Helpers::ImportSpecifierLocalVariable(specifier);
     if (var == nullptr || !var->IsLocalVariable() || !var->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return;
+    }
+
+    const auto *bindingInfo = var->AsLocalVariable()->ImportBinding();
+    if (bindingInfo == nullptr) {
         return;
     }
 
@@ -662,11 +668,24 @@ static void TryBuildLazyImportObjectForDynamicReExport(DynamicReExportContext &c
         return;
     }
 
-    const auto *bindingInfo = var->AsLocalVariable()->ImportBinding();
     const auto exportedName = bindingInfo->kind == varbinder::ImportBindingKind::DEFAULT ? util::StringView {"default"}
                                                                                          : bindingInfo->importedName;
     const auto &facts = varBinder->GetExportFacts(result.entry.originProgram).namedReExports;
     for (const auto &fact : facts) {
+        if (fact.exportedName == exportedName) {
+            AddDynamicReExportImportBinding(context, fact, var->AsLocalVariable(), result.entry.variable);
+        }
+    }
+
+    // NOTE: a named re-export fact is registered on the re-exporting module, while 'originProgram' holds only its
+    // local exports. Wire a consumer import whose static import target re-exports an interop entity. Chained static
+    // re-exports, star re-exports and namespace imports are not handled here.
+    if (importTargetProgram == nullptr || importTargetProgram == result.entry.originProgram ||
+        context.varMap.count(var->AsLocalVariable()) != 0U) {
+        return;
+    }
+    const auto &intermediateFacts = varBinder->GetExportFacts(importTargetProgram).namedReExports;
+    for (const auto &fact : intermediateFacts) {
         if (fact.exportedName == exportedName) {
             AddDynamicReExportImportBinding(context, fact, var->AsLocalVariable(), result.entry.variable);
         }
@@ -696,7 +715,7 @@ static void BuildLazyImportObjectsForDynamicReExports(
             if (!specifier->IsImportSpecifier() && !specifier->IsImportDefaultSpecifier()) {
                 continue;
             }
-            TryBuildLazyImportObjectForDynamicReExport(context, checker, varBinder, specifier);
+            TryBuildLazyImportObjectForDynamicReExport(context, checker, varBinder, specifier, targetProgram);
         }
     });
 }
