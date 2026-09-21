@@ -234,7 +234,8 @@ describe('ArkTS config builder', () => {
     expect(config.compilerOptions.paths.ignored).toBeUndefined();
     expect(config.compilerOptions.paths.library).toEqual([path.join(libraryPath, 'src'), libraryPath]);
     expect(config.compilerOptions.paths.transitive).toEqual([path.join(transitivePath, 'src'), transitivePath]);
-    expect(config.compilerOptions.paths.unused).toBeUndefined();
+    expect(config.compilerOptions.paths.unused).toEqual([unusedPath]);
+    expect(config.compilerOptions.paths['unused/Index']).toEqual([path.join(unusedPath, 'Index.ets')]);
     expect(config.compilerOptions.dependencies.library).toEqual({
       language: 'ets',
       path: path.join(libraryPath, 'library.abc'),

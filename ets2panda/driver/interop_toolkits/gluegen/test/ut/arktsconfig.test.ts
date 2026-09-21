@@ -218,7 +218,10 @@ describe('arktsconfig stage', () => {
     expect(config.compilerOptions.paths['transitive/src/Types']).toEqual([
       path.join(projectRootPath, 'transitive', 'src', 'Types.d.ets'),
     ]);
-    expect(config.compilerOptions.paths.unused).toBeUndefined();
+    expect(config.compilerOptions.paths.unused).toEqual([path.join(projectRootPath, 'unused')]);
+    expect(config.compilerOptions.paths['unused/Index']).toEqual([
+      path.join(projectRootPath, 'unused', 'Index.ets'),
+    ]);
     expect(config.compilerOptions.paths.hybrid).toBeUndefined();
     expect(config.compilerOptions.paths['hybrid/Index']).toBeUndefined();
     expect(config.compilerOptions.paths['hybrid/src/StaticPart']).toEqual([
