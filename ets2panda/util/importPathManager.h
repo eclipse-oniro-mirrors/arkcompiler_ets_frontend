@@ -400,6 +400,9 @@ private:
     };
 
     ImportInfo ResolvePath(parser::Program *importer, std::string_view importPath) const;
+    ResolvedPathRes ResolveRelativePath(parser::Program *importer, std::string_view curModulePath,
+                                        std::string_view importPath) const;
+    ResolvedPathRes ResolveDynamicRelativePath(parser::Program *importer, std::string_view importPath) const;
     ResolvedPathRes ResolveEtscacheRelativePath(std::string physicalPathPrototype) const;
     ResolvedPathRes ResolveAbsolutePath(std::string_view importPathNode) const;
     std::string DirOrDirWithIndexFile(std::string resolvedPathPrototype) const;
