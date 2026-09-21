@@ -400,6 +400,8 @@ public:
     void CopyDataProperties(const ir::AstNode *node, VReg dst);
     void DefineGetterSetterByValue(const ir::AstNode *node, VReg obj, VReg name, VReg getter, VReg setter,
                                    bool setName);
+    void DefineGetterSetterPair(const ir::Expression *key, VReg objReg, const ir::Expression *firstValue,
+                                bool firstIsGetter, const ir::Expression *secondValue);
     void CreateEmptyArray(const ir::AstNode *node);
     void CreateArray(const ir::AstNode *node, const ArenaVector<ir::Expression *> &elements, VReg obj);
     void CreateArrayWithBuffer(const ir::AstNode *node, uint32_t idx);

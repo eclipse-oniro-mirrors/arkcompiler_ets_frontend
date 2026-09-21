@@ -349,6 +349,51 @@ void ObjectExpression::CompilePropertyOfGetterOrSetter(compiler::PandaGen *pg, c
     pg->DefineGetterSetterByValue(this, objReg, key, getter, setter, prop->IsComputed());
 }
 
+void ObjectExpression::CompilePropertyOfAccessorPairOrSingle(compiler::PandaGen *pg, util::BitSet *compiled,
+                                                             const ir::Property *prop, compiler::VReg objReg,
+                                                             size_t propIndex) const
+{
+    // When a getter and setter share the same non-computed key, merge them into a single
+    // definegettersetterbyvalue; otherwise compile prop on its own. The partner scan
+    // (util::FindAccessorPartner) stops at a spread or computed property and at the first
+    // same-named property, which is a partner only if it is an eligible opposite-kind accessor.
+    auto oppositeKind = (prop->Kind() == ir::PropertyKind::GET) ? ir::PropertyKind::SET : ir::PropertyKind::GET;
+    size_t partnerIdx = properties_.size();
+    // LiteralToPropName cannot name every legal key: only scan from one that has a static name.
+    if (!prop->IsComputed() && util::Helpers::IsConstantPropertyKey(prop->Key(), false)) {
+        util::StringView propName = util::Helpers::LiteralToPropName(pg->Allocator(), prop->Key());
+        auto mayAliasKey = [](const ir::Expression *elem) {
+            if (elem->IsSpreadElement()) {
+                return true;
+            }
+            if (!elem->IsProperty()) {
+                return false;
+            }
+            const auto *cand = elem->AsProperty();
+            // A key without a static name may alias the pair key at runtime
+            // (ToString(1n) === "1"): stop instead of skipping.
+            return cand->IsComputed() || !util::Helpers::IsConstantPropertyKey(cand->Key(), false);
+        };
+        auto nameOf = [allocator = pg->Allocator()](const ir::Expression *elem) -> util::StringView {
+            return util::Helpers::LiteralToPropName(allocator, elem->AsProperty()->Key());
+        };
+        auto isEligiblePartner = [compiled, oppositeKind](const ir::Expression *elem, size_t j) {
+            return elem->AsProperty()->Kind() == oppositeKind && !compiled->Test(j);
+        };
+        partnerIdx = util::FindAccessorPartner(properties_, propIndex, propName, mayAliasKey, nameOf,
+                                               isEligiblePartner);
+    }
+
+    if (partnerIdx == properties_.size()) {
+        CompilePropertyOfGetterOrSetter(pg, prop, objReg);
+        return;
+    }
+    const ir::Property *partner = properties_[partnerIdx]->AsProperty();
+    pg->DefineGetterSetterPair(prop->Key(), objReg, prop->Value(),
+                               prop->Kind() == ir::PropertyKind::GET, partner->Value());
+    compiled->Set(partnerIdx);
+}
+
 void ObjectExpression::CompilePropertyWithInit(compiler::PandaGen *pg, const ir::Property *prop,
     compiler::VReg objReg) const
 {
@@ -386,7 +431,7 @@ void ObjectExpression::CompilePropertyWithInit(compiler::PandaGen *pg, const ir:
     pg->SetSourceLocationFlag(lexer::SourceLocationFlag::VALID_SOURCE_LOCATION);
 }
 
-void ObjectExpression::CompileRemainingProperties(compiler::PandaGen *pg, const util::BitSet *compiled,
+void ObjectExpression::CompileRemainingProperties(compiler::PandaGen *pg, util::BitSet *compiled,
                                                   compiler::VReg objReg) const
 {
     for (size_t i = 0; i < properties_.size(); i++) {
@@ -410,7 +455,7 @@ void ObjectExpression::CompileRemainingProperties(compiler::PandaGen *pg, const 
         switch (prop->Kind()) {
             case ir::PropertyKind::GET:
             case ir::PropertyKind::SET: {
-                CompilePropertyOfGetterOrSetter(pg, prop, objReg);
+                CompilePropertyOfAccessorPairOrSingle(pg, compiled, prop, objReg, i);
                 break;
             }
             case ir::PropertyKind::INIT: {

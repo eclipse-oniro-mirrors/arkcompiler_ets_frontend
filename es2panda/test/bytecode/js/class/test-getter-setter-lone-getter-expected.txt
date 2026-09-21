@@ -1,0 +1,47 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0=#LoneGetter(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#only(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x5
+	return
+label_2: 
+}
+
+slotNum = 0x5
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#LoneGetter, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	sta v1
+	lda.str only
+	sta v2
+	ldundefined
+	sta v3
+	lda v1
+	definemethod 0x3, .#~@0>#only, 0x0
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v4, v3
+	lda v0
+	sttoglobalrecord 0x4, LoneGetter
+	returnundefined
+label_2: 
+}
+
+

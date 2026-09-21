@@ -1700,6 +1700,35 @@ void PandaGen::DefineGetterSetterByValue(const ir::AstNode *node, VReg obj, VReg
     ra_.Emit<Definegettersetterbyvalue>(node, obj, name, getter, setter);
 }
 
+// definemethod reads the home object from the accumulator, and compiling the accessor clobbers
+// it, so objReg must be reloaded before each accessor is compiled into its slot. The key
+// expression doubles as the source-position node.
+static void CompileAccessorIntoSlot(compiler::PandaGen *pg, const ir::Expression *key, compiler::VReg objReg,
+                                    const ir::Expression *value, compiler::VReg slot)
+{
+    pg->LoadAccumulator(key, objReg);
+    value->Compile(pg);
+    pg->StoreAccumulator(value, slot);
+}
+
+// Shared emission of a merged getter/setter pair: both accessors are carried by one
+// definegettersetterbyvalue. The key is shared and non-computed (guaranteed by
+// util::FindAccessorPartner), so it is loaded once and both slots are real functions (no
+// undefined placeholder).
+void PandaGen::DefineGetterSetterPair(const ir::Expression *key, VReg objReg, const ir::Expression *firstValue,
+                                      bool firstIsGetter, const ir::Expression *secondValue)
+{
+    VReg keyReg = LoadPropertyKey(key, false);
+    VReg getter = AllocReg();
+    VReg setter = AllocReg();
+
+    CompileAccessorIntoSlot(this, key, objReg, firstValue, firstIsGetter ? getter : setter);
+    CompileAccessorIntoSlot(this, key, objReg, secondValue, firstIsGetter ? setter : getter);
+
+    // setName is false: the key is non-computed, so definemethod has already named both functions.
+    DefineGetterSetterByValue(key, objReg, keyReg, getter, setter, false);
+}
+
 void PandaGen::CreateEmptyArray(const ir::AstNode *node)
 {
     ra_.Emit<Createemptyarray>(node, 0);

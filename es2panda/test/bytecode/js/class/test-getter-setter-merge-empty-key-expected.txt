@@ -1,0 +1,43 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#*#(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#*#^1(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	createobjectwithbuffer 0x0, _1
+	sta v0
+	lda.str 
+	sta v1
+	lda v0
+	definemethod 0x1, .#*#, 0x0
+	sta v2
+	lda v0
+	definemethod 0x2, .#*#^1, 0x1
+	sta v3
+	ldfalse
+	definegettersetterbyvalue v0, v1, v2, v3
+	lda v0
+	stconsttoglobalrecord 0x3, EmptyKeyLiteral
+	returnundefined
+label_2: 
+}
+
+

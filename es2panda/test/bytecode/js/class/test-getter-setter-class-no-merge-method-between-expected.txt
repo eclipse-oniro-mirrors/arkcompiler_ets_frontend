@@ -1,0 +1,78 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0=#MethodBetween(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#foo(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x1
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#foo^1(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda.str m
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#foo^2(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x9
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#MethodBetween, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	sta v1
+	lda.str foo
+	sta v2
+	ldundefined
+	sta v3
+	lda v1
+	definemethod 0x3, .#~@0>#foo, 0x0
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v4, v3
+	lda v1
+	definemethod 0x4, .#~@0>#foo^1, 0x0
+	stownbyname 0x5, foo, v1
+	lda.str foo
+	sta v2
+	ldundefined
+	sta v3
+	lda v1
+	definemethod 0x7, .#~@0>#foo^2, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
+	lda v0
+	sttoglobalrecord 0x8, MethodBetween
+	returnundefined
+label_2: 
+}
+
+

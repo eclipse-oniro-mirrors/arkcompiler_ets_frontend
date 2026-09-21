@@ -702,6 +702,7 @@ group("es2abc_tests") {
       "unittest:parserContext_test_action(${toolchain_linux})",
       "unittest:resolveDepsRelation_test_action(${toolchain_linux})",
       "unittest:compilerImpl_test_action(${toolchain_linux})",
+      "unittest:findAccessorPartner_test_action(${toolchain_linux})",
       "../merge_abc:merge_abc_tests(${toolchain_linux})"
     ]
   }

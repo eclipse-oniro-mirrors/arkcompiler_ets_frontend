@@ -1,0 +1,75 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0=#SetSetGet(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#z(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#z^1(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any .#~@0>#z^2(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldai 0x2a
+	return
+label_2: 
+}
+
+slotNum = 0x7
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#SetSetGet, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	sta v1
+	lda.str z
+	sta v2
+	ldundefined
+	sta v3
+	lda v1
+	definemethod 0x3, .#~@0>#z, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
+	lda.str z
+	sta v2
+	lda v1
+	definemethod 0x4, .#~@0>#z^1, 0x1
+	sta v3
+	lda v1
+	definemethod 0x5, .#~@0>#z^2, 0x0
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v4, v3
+	lda v0
+	sttoglobalrecord 0x6, SetSetGet
+	returnundefined
+label_2: 
+}
+
+
