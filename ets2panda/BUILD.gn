@@ -1175,6 +1175,25 @@ config("libes2panda_config") {
       "-flto=thin",
       "-O3",
     ]
+
+    # Keep ldflags here as well: in standalone ark builds the
+    # ohos_source_set template demotes public_configs to private configs,
+    # so the ldflags below would not propagate to targets (e.g. the
+    # ets2panda executable) that apply this config directly.
+    ldflags = [
+      "-flto=thin",
+      "-O3",
+    ]
+  }
+}
+
+# Public config that propagates LTO ldflags to targets that link against
+# libes2panda_frontend_static. The source_set compiles its sources with
+# -flto=thin (producing LLVM IR bitcode), so any executable/shared_library
+# that links those objects must also pass -flto=thin to the linker to enable
+# the LTO plugin; otherwise linking fails with "file format not recognized".
+config("libes2panda_lto_public_config") {
+  if (!is_debug && !is_mac) {
     ldflags = [
       "-flto=thin",
       "-O3",
@@ -1262,6 +1281,7 @@ action("gen_es2panda_flatbuffers_schema") {
 ohos_source_set("libes2panda_frontend_static") {
   sources = libes2panda_sources
   configs = libes2panda_configs
+  public_configs = [ ":libes2panda_lto_public_config" ]
 
   deps = [
     ":es2panda_diagnostic_gen_diagnostic_h",
@@ -1360,6 +1380,7 @@ action("generate_ets2panda_info") {
 ohos_source_set("libes2panda_public_frontend_static") {
   sources = libes2panda_public_sources
   configs = libes2panda_public_configs
+  public_configs = [ ":libes2panda_lto_public_config" ]
   deps = [ ":libes2panda_frontend_static" ]
   if (target_os != "win" && target_os != "mingw" && target_os != "winuwp") {
     deps += [ ":generate_ets2panda_info" ]
