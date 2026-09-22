@@ -27,7 +27,7 @@
 /ets2panda/lexer ^akmaevaleksey ^csabaosztrogonac ^igelhaus ^zelentsovdmitry ^Prof @xingshunxiang @wang-zhengjij
 /ets2panda/lsp ^igelhaus ^Prof ^Nojpg @jokerxd-liu @H_awson @zmw1 ^blue_gym ^m0_59467138 @huyunhui1
 /ets2panda/public ^mbolshov ^zhelyapovaleksey ^igelhaus ^Prof @xingshunxiang @anjiaqi257
-/ets2panda/test ^akmaevaleksey ^igelhaus ^Prof @XuMoheng
+/ets2panda/test ^akmaevaleksey ^igelhaus ^Prof
 /legacy_bin/ @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /merge_abc/  @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
 /test/ @jokerxd-liu @huyunhui1 @zmw1 ^ElevenDuan
@@ -51,7 +51,7 @@
 /ets2panda/test/depanalyzer @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/test/srcdump @xingshunxiang ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/test-lists @xingshunxiang
-/ets2panda/test/utils @XuMoheng ^igelhaus ^Prof
+/ets2panda/test/utils ^igelhaus ^Prof
 /ets2panda/util/ ^shimenkovmikhail ^dkofanov ^igelhaus ^Prof @wang-zhengjij @dddzzzhhh
 /ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin ^trubachevilya ^shimenkovmikhail ^igelhaus ^Prof @luchenxu @Ascnbio @Wchlove_ ^Wangyuzhong11 ^wang-zhengjij ^dddzzzhhh
 /ets2panda/util/diagnostic* ^shimenkovmikhail ^igelhaus ^Prof @fanglou
@@ -77,7 +77,7 @@
 /ets2panda/compiler/lowering/plugin_phase.* ^pimenovdmitry ^mbolshov ^igelhaus ^Prof @dddzzzhhh
 /ets2panda/compiler/lowering/util.* ^pimenovdmitry ^mbolshov ^igelhaus ^Prof @fanglou
 /ets2panda/compiler/metadata/ ^victor_petukhov ^lirismankarina ^igelhaus ^Prof @dddzzzhhh
-/ets2panda/ir/ets/ ^igelhaus ^Prof ^fanglou @XuMoheng
+/ets2panda/ir/ets/ ^igelhaus ^Prof ^fanglou
 /ets2panda/ir/expressions/ ^igelhaus ^Prof @dddzzzhhh
 /ets2panda/ir/statements/ ^akmaevaleksey ^igelhaus ^Prof @wang-zhengjij
 /ets2panda/scripts/check_ets_warning/ @xingshunxiang
