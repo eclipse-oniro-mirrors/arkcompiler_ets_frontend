@@ -102,6 +102,9 @@ shared_library("ts_bindings") {
       "-Wno-unused-variable",
       "-fPIC",
     ]
+    if (current_cpu == "arm64") {
+      cflags_cc += [ "--target=aarch64-linux-gnu" ]
+    }
 
     ldflags = [
       "-Wl,--allow-shlib-undefined",
@@ -117,6 +120,9 @@ shared_library("ts_bindings") {
       "-Wl,--color-diagnostics",
       "-m64",
     ]
+    if (current_cpu == "arm64") {
+      ldflags += [ "--target=aarch64-linux-gnu" ]
+    }
     output_extension = "node"
     output_prefix_override = true
   } else if (is_mingw) {
@@ -280,6 +286,9 @@ shared_library("public") {
       "-Wno-unused-variable",
       "-fPIC",
     ]
+    if (current_cpu == "arm64") {
+      cflags_cc += [ "--target=aarch64-linux-gnu" ]
+    }
 
     ldflags = [
       "-Wl,--allow-shlib-undefined",
@@ -295,6 +304,9 @@ shared_library("public") {
       "-Wl,--color-diagnostics",
       "-m64",
     ]
+    if (current_cpu == "arm64") {
+      ldflags += [ "--target=aarch64-linux-gnu" ]
+    }
     output_extension = "node"
     output_prefix_override = true
   } else if (is_mingw) {
