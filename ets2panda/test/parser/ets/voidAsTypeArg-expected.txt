@@ -494,7 +494,23 @@
                         "optional": false,
                         "typeParameters": {
                           "type": "TSTypeParameterInstantiation",
-                          "params": [],
+                          "params": [
+                            {
+                              "type": "ETSPrimitiveType",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 10,
+                                  "program": "voidAsTypeArg.ets"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 14,
+                                  "program": "voidAsTypeArg.ets"
+                                }
+                              }
+                            }
+                          ],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -503,7 +519,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 11,
+                              "column": 15,
                               "program": "voidAsTypeArg.ets"
                             }
                           }
@@ -516,7 +532,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 13,
+                            "column": 17,
                             "program": "voidAsTypeArg.ets"
                           }
                         }
@@ -529,7 +545,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 13,
+                          "column": 17,
                           "program": "voidAsTypeArg.ets"
                         }
                       }

@@ -891,6 +891,12 @@ std::tuple<ir::Expression *, ir::TSTypeParameterInstantiation *> ETSParser::Pars
         *options |= TypeAnnotationParsingOptions::ALLOW_WILDCARD;
         typeParamInst = ParseTypeParameterInstantiation(options);
         *options &= ~(TypeAnnotationParsingOptions::ALLOW_WILDCARD);
+        if (typeParamInst != nullptr && typeParamInst->Params().empty() &&
+            (*options & TypeAnnotationParsingOptions::REPORT_ERROR) != 0) {
+            // Grammar requires type arguments to be a non-empty list; an empty "<>" is not
+            // a valid type reference. Report at the opening '<' token position.
+            LogError(diagnostic::TYPE_ARGUMENT_LIST_EMPTY, {}, typeParamInst->Start());
+        }
     }
 
     return {typeName, typeParamInst};
@@ -2049,6 +2055,12 @@ bool ETSParser::ParsePotentialGenericFunctionCall(ir::Expression *primaryExpr, i
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD) {
         Lexer()->Rewind(savedPos);
         return true;
+    }
+
+    if (typeParams->Params().empty()) {
+        // Grammar requires type arguments to be a non-empty list; an empty "<>" is not
+        // a valid generic instantiation or generic call.
+        LogError(diagnostic::TYPE_ARGUMENT_LIST_EMPTY, {}, typeParams->Start());
     }
 
     // unexpected_token_49,ets, 50, 51
