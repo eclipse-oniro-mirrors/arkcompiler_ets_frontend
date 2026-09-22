@@ -109,6 +109,7 @@ interface mainFileCache {
   fileConfig: Config;
   fileContext: KNativePointer;
   fileHash: string;
+  arktsConfigPath: string;
 }
 
 export class Lsp {
@@ -210,7 +211,73 @@ export class Lsp {
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
-    this.prepareFileCache(fileName, fileContent);
+    this.prepareFileCache(fileName, fileContent, true);
+  }
+
+  private normalizePathForComparison(fileName: string): string {
+    const normalizedPath = path.normalize(path.resolve(fileName));
+    return process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
+  }
+
+  private getModuleInfo(fileName: string): ModuleInfo | undefined {
+    const filePath = path.resolve(fileName);
+    const moduleInfo = this.moduleInfos[filePath];
+    if (moduleInfo || process.platform !== 'win32') {
+      return moduleInfo;
+    }
+
+    const normalizedFilePath = this.normalizePathForComparison(filePath);
+    const moduleFilePath = Object.keys(this.moduleInfos).find(
+      (candidate) => this.normalizePathForComparison(candidate) === normalizedFilePath
+    );
+    return moduleFilePath === undefined ? undefined : this.moduleInfos[moduleFilePath];
+  }
+
+  private getArkTsConfigPath(fileName: string, preferModuleArkTsConfig: boolean): string {
+    const moduleArkTsConfig = this.getModuleInfo(fileName)?.arktsConfigFile;
+    const arkTsConfig = preferModuleArkTsConfig
+      ? moduleArkTsConfig || process.env.ARKTSCONFIG || this.defaultArkTsConfig
+      : process.env.ARKTSCONFIG || moduleArkTsConfig || this.defaultArkTsConfig;
+    if (!arkTsConfig) {
+      logger.error('Missing arktsconfig for ', path.resolve(fileName));
+    }
+    return arkTsConfig;
+  }
+
+  private hasSameArkTsConfig(left: string, right: string): boolean {
+    return this.normalizePathForComparison(left) === this.normalizePathForComparison(right);
+  }
+
+  private withTemporaryFileCacheForQuery<T>(
+    fileName: string,
+    query: (fileCache: mainFileCache) => T | undefined
+  ): T | undefined {
+    let fileSource: string;
+    try {
+      fileSource = this.getFileSource(fileName);
+    } catch (error) {
+      logger.error('failed to read file for query context', error);
+      return undefined;
+    }
+
+    const [cfg, ctx] = this.createContextForCrossModule(fileName, true, fileSource) ?? [];
+    if (!cfg || !ctx) {
+      return undefined;
+    }
+
+    const fileCache: mainFileCache = {
+      fileContent: fileSource,
+      fileConfig: cfg,
+      fileContext: ctx,
+      fileHash: this.computeContentHash(fileSource),
+      arktsConfigPath: this.getArkTsConfigPath(fileName, true)
+    };
+    this.tryBuildSymbolReferenceIndex(fileName, ctx);
+    try {
+      return query(fileCache);
+    } finally {
+      this.destroyContext(cfg, ctx);
+    }
   }
 
   private ensureFileCacheForQuery(fileName: string, forceRecompile: boolean = false): mainFileCache | undefined {
@@ -256,6 +323,16 @@ export class Lsp {
     const activeFileEntry = Array.from(this.filesMap.entries())[0];
     const shouldRestoreActiveFile = activeFileEntry !== undefined && activeFileEntry[0] !== fileName;
 
+    const targetModuleArkTsConfig = this.getModuleInfo(fileName)?.arktsConfigFile;
+    if (
+      activeFileEntry !== undefined &&
+      targetModuleArkTsConfig !== undefined &&
+      !this.hasSameArkTsConfig(activeFileEntry[1].arktsConfigPath, targetModuleArkTsConfig)
+    ) {
+      // A context keeps the ArkTSConfig it was created with; isolate cross-module queries from the active cache.
+      return this.withTemporaryFileCacheForQuery(fileName, query);
+    }
+
     try {
       const fileCache = this.ensureFileCacheForQuery(fileName, forceRecompile);
       if (!fileCache) {
@@ -282,11 +359,28 @@ export class Lsp {
     const fileSource = fileContent.newDoc;
     const hash = this.computeContentHash(fileSource);
     const cachedFile = this.filesMap.get(fileName);
-    if (cachedFile?.fileHash === hash && !forceRecompile) {
+    const targetModuleArkTsConfig = this.getModuleInfo(fileName)?.arktsConfigFile;
+    const targetArkTsConfig = this.getArkTsConfigPath(fileName, preferModuleArkTsConfig);
+    if (
+      cachedFile !== undefined &&
+      cachedFile.fileHash === hash &&
+      (targetModuleArkTsConfig === undefined ||
+        this.hasSameArkTsConfig(cachedFile.arktsConfigPath, targetArkTsConfig)) &&
+      !forceRecompile
+    ) {
       return cachedFile;
     }
 
     if (this.filesMap.size === 1) {
+      const [, activeFileCache] = Array.from(this.filesMap.entries())[0];
+      const activeConfigMatches =
+        targetModuleArkTsConfig === undefined ||
+        this.hasSameArkTsConfig(activeFileCache.arktsConfigPath, targetArkTsConfig);
+      if (!activeConfigMatches) {
+        this.destroyContext(activeFileCache.fileConfig, activeFileCache.fileContext);
+        this.filesMap.clear();
+        return this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
+      }
       return this.prepareFileCacheFromActiveContext(fileName, fileSource, hash, forceRecompile);
     }
     return this.createFileCache(fileName, fileSource, hash, preferModuleArkTsConfig);
@@ -330,7 +424,8 @@ export class Lsp {
       fileContent: fileSource,
       fileConfig: activeFileCache.fileConfig,
       fileContext: activeFileCache.fileContext,
-      fileHash: hash
+      fileHash: hash,
+      arktsConfigPath: activeFileCache.arktsConfigPath
     };
     this.filesMap.clear();
     this.filesMap.set(fileName, updatedFileCache);
@@ -357,7 +452,8 @@ export class Lsp {
       fileContent: fileSource,
       fileConfig: cfg,
       fileContext: ctx,
-      fileHash: hash
+      fileHash: hash,
+      arktsConfigPath: this.getArkTsConfigPath(fileName, preferModuleArkTsConfig)
     };
     this.filesMap.set(fileName, newFileCache);
     return newFileCache;
@@ -519,15 +615,7 @@ export class Lsp {
     preferModuleArkTsConfig: boolean
   ): [Config, KNativePointer] | undefined {
     const filePath = path.resolve(filename.valueOf());
-    const moduleArktsconfig = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
-      ? this.moduleInfos[filePath].arktsConfigFile
-      : undefined;
-    const arktsconfig = preferModuleArkTsConfig
-      ? moduleArktsconfig || process.env.ARKTSCONFIG || this.defaultArkTsConfig
-      : process.env.ARKTSCONFIG || moduleArktsconfig || this.defaultArkTsConfig;
-    if (!arktsconfig) {
-      logger.error('Missing arktsconfig for ', filePath);
-    }
+    const arktsconfig = this.getArkTsConfigPath(filePath, preferModuleArkTsConfig);
 
     const ets2pandaCmd = [...ets2pandaCmdPrefix, arktsconfig, ...LSP_OPTIONS];
     const localCfg = this.lspDriverHelper.createCfg(ets2pandaCmd, filePath, this.pandaLibPath);
@@ -622,29 +710,169 @@ export class Lsp {
     return new LspSourceLocation(global.es2panda._getColAndLineByOffset(sourceCode, offset));
   }
 
-  getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData | undefined {
-    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDefinitionAtPosition', this.perfMetricLogFilePath) : undefined;
-    if (nodeInfos) {
-      const result = this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
-      perfScope?.end();
-      return result;
+  private convertTextSpanToUtf16(source: string, span: TextSpan): void {
+    const start = TextPositionUtils.codePointOffsetToUtf16Offset(source, span.start);
+    const end = TextPositionUtils.codePointOffsetToUtf16Offset(source, span.start + span.length);
+    if (start === undefined || end === undefined) {
+      throw new Error('Failed to convert text span to UTF-16 offsets');
     }
-    const result = this.withFileCacheForQuery(filename, (fileCache) => {
-      try {
-        const ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, offset);
-        const definition = new LspDefinitionData(ptr);
-        const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, definition.fileName, definition.start);
-        if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
-          definition.nodeInfos = nodeInfoTemp;
-        }
-        return definition;
-      } catch (error) {
-        logger.error('failed to getDefinitionAtPosition by fileCache', error);
+    span.start = start;
+    span.length = end - start;
+  }
+
+  private getDefinitionFromFileCache(filename: String, offset: number): LspDefinitionData | undefined {
+    return this.withFileCacheForQuery(filename, (fileCache) => {
+      const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+      if (codePointOffset === undefined) {
         return undefined;
       }
+      const ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, codePointOffset);
+      const result = new LspDefinitionData(ptr);
+      const nodeInfo = this.getNodeInfos(filename, result.fileName, result.start);
+      if (nodeInfo !== undefined && nodeInfo.length > 0) {
+        result.nodeInfos = nodeInfo;
+      }
+      return result;
     });
-    perfScope?.end();
-    return result;
+  }
+
+  private prepareReferenceResult(filename: String, reference: LspReferenceData): void {
+    const nodeInfo = this.getNodeInfos(filename, reference.fileName, reference.start);
+    if (nodeInfo !== undefined && nodeInfo.length > 0) {
+      reference.nodeInfos = nodeInfo;
+    }
+    this.convertTextSpanToUtf16(this.getFileSource(reference.fileName.valueOf()), reference);
+  }
+
+  private convertRenameLocationToUtf16(location: LspRenameLocation): void {
+    const source = this.getFileSource(location.fileName);
+    const start = TextPositionUtils.codePointOffsetToUtf16Offset(source, location.start);
+    const end = TextPositionUtils.codePointOffsetToUtf16Offset(source, location.end);
+    if (start === undefined || end === undefined) {
+      throw new Error('Failed to convert rename location to UTF-16 offsets');
+    }
+    location.start = start;
+    location.end = end;
+  }
+
+  private convertCodeFixActionsToUtf16(actions: CodeFixActionInfo[]): void {
+    actions.forEach((action) => {
+      action.changes.forEach((change) => {
+        this.convertTextChangesToUtf16(change.fileName, change.textChanges);
+      });
+    });
+  }
+
+  private getTextChangeSource(filePath: string): string | undefined {
+    const cachedSource = this.filesMap.get(filePath)?.fileContent;
+    if (cachedSource !== undefined) {
+      return cachedSource.replace(/\r\n/g, '\n');
+    }
+    try {
+      const providedSource = this.getFileContent(filePath);
+      if (providedSource !== undefined) {
+        return providedSource.replace(/\r\n/g, '\n');
+      }
+    } catch (error) {
+      logger.debug(`Failed to get in-memory content for ${filePath}: ${String(error)}`);
+    }
+    if (fs.existsSync(filePath)) {
+      return fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
+    }
+    return undefined;
+  }
+
+  private convertTextChangesToUtf16(fileName: String, textChanges: TextChange[]): string {
+    const filePath = fileName.valueOf();
+    const source = this.getTextChangeSource(filePath);
+    if (source === undefined) {
+      if (textChanges.some((change) => change.span.start !== 0 || change.span.length !== 0)) {
+        throw new Error('Cannot convert non-empty text span for a new file');
+      }
+      return '';
+    }
+    textChanges.forEach((change) => this.convertTextSpanToUtf16(source, change.span));
+    return source;
+  }
+
+  private applyTextChanges(source: string, textChanges: TextChange[]): string {
+    const ordered = textChanges
+      .map((change, index) => ({ change, index }))
+      .sort((left, right) => left.change.span.start - right.change.span.start || left.index - right.index);
+    let result = '';
+    let cursor = 0;
+    ordered.forEach(({ change }) => {
+      if (change.span.start > source.length) {
+        return;
+      }
+      const originalStart = change.span.start;
+      const start = Math.max(originalStart, cursor);
+      const end = originalStart + Math.min(change.span.length, source.length - originalStart);
+      if (cursor < start) {
+        result += source.slice(cursor, start);
+      }
+      result += change.newText.valueOf();
+      cursor = Math.max(cursor, end);
+    });
+    return result + source.slice(cursor);
+  }
+
+  private convertDiagnosticsToUtf16(source: string, diagnostics: LspDiagsNode): void {
+    diagnostics.diagnostics.forEach((diagnostic) => {
+      if (diagnostic.range.start.line === 0 || diagnostic.range.end.line === 0) {
+        return;
+      }
+
+      const start = TextPositionUtils.codePointColumnToUtf16Column(
+        source,
+        diagnostic.range.start.line,
+        diagnostic.range.start.character
+      );
+      const end = TextPositionUtils.codePointColumnToUtf16Column(
+        source,
+        diagnostic.range.end.line,
+        diagnostic.range.end.character
+      );
+      if (start === undefined || end === undefined) {
+        throw new Error('Failed to convert diagnostic range to UTF-16 columns');
+      }
+      diagnostic.range.start.character = start;
+      diagnostic.range.end.character = end;
+    });
+  }
+
+  getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDefinitionAtPosition', this.perfMetricLogFilePath) : undefined;
+    try {
+      const definition = nodeInfos
+        ? (this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData | undefined)
+        : this.getDefinitionFromFileCache(filename, offset);
+
+      if (definition === undefined) {
+        return undefined;
+      }
+
+      const definitionFileName = definition.fileName.valueOf();
+      if (definitionFileName.length === 0) {
+        return definition;
+      }
+
+      const source = this.getFileSource(definitionFileName);
+      const start = TextPositionUtils.codePointOffsetToUtf16Offset(source, definition.start);
+      const end = TextPositionUtils.codePointOffsetToUtf16Offset(source, definition.start + definition.length);
+      if (start === undefined || end === undefined) {
+        return undefined;
+      }
+
+      definition.start = start;
+      definition.length = end - start;
+      return definition;
+    } catch (error) {
+      logger.error('failed to getDefinitionAtPosition', error);
+      return undefined;
+    } finally {
+      perfScope?.end();
+    }
   }
 
   private getMergedCompileFiles(filename: String): string[] {
@@ -842,6 +1070,7 @@ export class Lsp {
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
         const diagnostics = new LspDiagsNode(global.es2panda._getSemanticDiagnostics(fileCache.fileContext));
+        this.convertDiagnosticsToUtf16(fileCache.fileContent, diagnostics);
         this.markDiagnosticFile(fileName, diagnostics);
         return diagnostics;
       } catch (error) {
@@ -874,7 +1103,22 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getImplementationAtPosition', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        return new LspDefinitionData(global.es2panda._getImplementationAtPosition(fileCache.fileContext, offset));
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
+        const definition = new LspDefinitionData(
+          global.es2panda._getImplementationAtPosition(fileCache.fileContext, codePointOffset)
+        );
+        const definitionFileName = definition.fileName.valueOf();
+        if (definitionFileName.length > 0) {
+          const source = this.getFileSource(definitionFileName);
+          const span = { start: definition.start, length: definition.length };
+          this.convertTextSpanToUtf16(source, span);
+          definition.start = span.start;
+          definition.length = span.length;
+        }
+        return definition;
       } catch (error) {
         logger.error('failed to getImplementationAtPosition by fileCache', error);
         return undefined;
@@ -927,9 +1171,18 @@ export class Lsp {
 
   getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getReferencesAtPosition', this.perfMetricLogFilePath) : undefined;
+    const source = this.getFileSource(filename.valueOf());
+    const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
+    if (codePointOffset === undefined) {
+      perfScope?.end();
+      return undefined;
+    }
     let result: LspDefinitionData[] = [];
     if (nodeInfos) {
       result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
+      result.forEach((ref) => {
+        this.convertTextSpanToUtf16(this.getFileSource(ref.fileName.valueOf()), ref);
+      });
       perfScope?.end();
       return result;
     }
@@ -939,7 +1192,7 @@ export class Lsp {
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
     if (this.filesMap.size > 0) {
       const cachedPtr = this.withFileCacheForQuery(filename, (fileCache) =>
-        global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, offset)
+        global.es2panda._getReferencesAtPositionFromIndex(fileCache.fileContext, codePointOffset)
       );
       if (cachedPtr === undefined) {
         return;
@@ -952,7 +1205,7 @@ export class Lsp {
       }
       try {
         global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
-        ptr = global.es2panda._getReferencesAtPositionFromIndex(ctx, offset);
+        ptr = global.es2panda._getReferencesAtPositionFromIndex(ctx, codePointOffset);
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -960,10 +1213,7 @@ export class Lsp {
 
     const refs = new LspReferences(ptr);
     refs.referenceInfos.forEach((ref) => {
-      const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
-      if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
-        ref.nodeInfos = nodeInfoTemp;
-      }
+      this.prepareReferenceResult(filename, ref);
       result.push(ref);
     });
 
@@ -1356,7 +1606,13 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionEntryDetails', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        return new CompletionEntryDetails(global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, offset));
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
+        return new CompletionEntryDetails(
+          global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, codePointOffset)
+        );
       } catch (error) {
         logger.error('failed to getCompletionEntryDetails by fileCache', error);
         return undefined;
@@ -1375,7 +1631,12 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getApplicableRefactors', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        const refs = new LspApplicableRefactorInfo(global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startPos, endPos));
+        const startCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, startPos);
+        const endCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, endPos);
+        if (startCodePoint === undefined || endCodePoint === undefined) {
+          return undefined;
+        }
+        const refs = new LspApplicableRefactorInfo(global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startCodePoint, endCodePoint));
         return Array.from(new Set(refs.applicableRefactorInfo));
       } catch (error) {
         logger.error('failed to getApplicableRefactors by fileCache', error);
@@ -1401,15 +1662,38 @@ export class Lsp {
     let up = opts?.userPrefsPtr ?? BigInt(0);
     let fmt = opts?.FormattingSettings ?? BigInt(0);
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
-      return new LspRefactorEditInfo(global.es2panda._getEditsForRefactor(
-        fileCache.fileContext,
-        refactorName,
-        actionName,
-        start,
-        end,
-        up,
-        fmt
-      ));
+      const startCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, start);
+      const endCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, end);
+      if (startCodePoint === undefined || endCodePoint === undefined) {
+        return undefined;
+      }
+      const refactor = new LspRefactorEditInfo(
+        global.es2panda._getEditsForRefactor(
+          fileCache.fileContext,
+          refactorName,
+          actionName,
+          startCodePoint,
+          endCodePoint,
+          up,
+          fmt
+        )
+      );
+      let refactoredRenameSource: string | undefined;
+      refactor.fileTextChanges.forEach((change) => {
+        const source = this.convertTextChangesToUtf16(change.fileName, change.textChanges);
+        if (change.fileName.valueOf() === refactor.renameFileName) {
+          refactoredRenameSource = this.applyTextChanges(source, change.textChanges);
+        }
+      });
+      if (refactor.renameFileName.length > 0 && refactor.renameLocation > 0) {
+        const source = refactoredRenameSource ?? this.getFileSource(refactor.renameFileName);
+        const renameLocation = TextPositionUtils.codePointOffsetToUtf16Offset(source, refactor.renameLocation);
+        if (renameLocation === undefined) {
+          return undefined;
+        }
+        refactor.renameLocation = renameLocation;
+      }
+      return refactor;
     });
     perfScope?.end();
     return result;
@@ -1419,7 +1703,27 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassConstructorInfo', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        return new LspClassConstructorInfo(global.es2panda._getClassConstructorInfo(fileCache.fileContext, offset, passStringArray(properties)));
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
+        const constructorInfo = new LspClassConstructorInfo(
+          global.es2panda._getClassConstructorInfo(
+            fileCache.fileContext,
+            codePointOffset,
+            passStringArray(properties)
+          )
+        );
+        constructorInfo.constructorInfoFileTextChanges.forEach((change) => {
+          const changeFileName = change.fileName.valueOf();
+          const source = this.normalizePathForComparison(changeFileName) ===
+            this.normalizePathForComparison(filename.valueOf())
+            ? fileCache.fileContent
+            : this.getFileSource(changeFileName);
+          change.constructorInfoTextChanges.forEach((textChange) =>
+            this.convertTextSpanToUtf16(source, textChange.span_));
+        });
+        return constructorInfo;
       } catch (error) {
         logger.error('failed to getClassConstructorInfo by fileCache', error);
         return undefined;
@@ -1453,6 +1757,7 @@ export class Lsp {
       }
     }
     const result = new LspDiagsNode(ptr);
+    this.convertDiagnosticsToUtf16(this.getFileSource(filename.valueOf()), result);
     this.markDiagnosticFile(filename.valueOf(), result);
     perfScope?.end();
     return result;
@@ -1462,7 +1767,9 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSuggestionDiagnostics', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        return new LspDiagsNode(global.es2panda._getSuggestionDiagnostics(fileCache.fileContext));
+        const diagnostics = new LspDiagsNode(global.es2panda._getSuggestionDiagnostics(fileCache.fileContext));
+        this.convertDiagnosticsToUtf16(fileCache.fileContent, diagnostics);
+        return diagnostics;
       } catch (error) {
         logger.error('failed to getSuggestionDiagnostics by fileCache', error);
         return undefined;
@@ -1488,11 +1795,16 @@ export class Lsp {
 
   getDocumentHighlights(filename: String, offset: number): LspDocumentHighlightsReferences | undefined {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDocumentHighlights', this.perfMetricLogFilePath) : undefined;
+    const source = this.getFileSource(filename.valueOf());
+    const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
+    if (codePointOffset === undefined) {
+      return undefined;
+    }
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
       try {
-        ptr = global.es2panda._getDocumentHighlights(fileCache.fileContext, offset);
+        ptr = global.es2panda._getDocumentHighlights(fileCache.fileContext, codePointOffset);
       } catch (error) {
         logger.error('failed to getDocumentHighlights by fileCache', error);
         return;
@@ -1504,7 +1816,7 @@ export class Lsp {
       }
       try {
         global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
-        ptr = global.es2panda._getDocumentHighlights(ctx, offset);
+        ptr = global.es2panda._getDocumentHighlights(ctx, codePointOffset);
       } catch (error) {
         logger.error('failed to getDocumentHighlights', error);
         return;
@@ -1513,6 +1825,13 @@ export class Lsp {
       }
     }
     const result = new LspDocumentHighlightsReferences(ptr);
+    result.documentHighlights.forEach((documentHighlight) => {
+      documentHighlight.highlightSpans.forEach((highlight) => {
+        const highlightSource = this.getFileSource(highlight.fileName.valueOf());
+        this.convertTextSpanToUtf16(highlightSource, highlight.textSpan);
+        this.convertTextSpanToUtf16(highlightSource, highlight.contextSpan);
+      });
+    });
     perfScope?.end();
     return result;
   }
@@ -1521,7 +1840,13 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionAtPosition', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        return new LspCompletionInfo(global.es2panda._getCompletionAtPosition(fileCache.fileContext, offset));
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
+        return new LspCompletionInfo(
+          global.es2panda._getCompletionAtPosition(fileCache.fileContext, codePointOffset)
+        );
       } catch (error) {
         logger.error('failed to getCompletionAtPosition by fileCache', error);
         return undefined;
@@ -1581,6 +1906,7 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('findRenameLocations', this.perfMetricLogFilePath) : undefined;
     if (nodeInfos) {
       const result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
+      result.forEach((ref) => this.convertRenameLocationToUtf16(ref));
       perfScope?.end();
       return result;
     }
@@ -1590,15 +1916,24 @@ export class Lsp {
     filename = isWindows ? filename.replace(/\//g, '\\') : filename;
     const fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
-      ptr = global.es2panda._findRenameLocationsFromIndex(fileCache.fileContext, offset);
+      const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+      if (codePointOffset === undefined) {
+        return undefined;
+      }
+      ptr = global.es2panda._findRenameLocationsFromIndex(fileCache.fileContext, codePointOffset);
     } else {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) {
         return;
       }
       try {
+        const source = this.getFileSource(filename.valueOf());
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(source, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
         global.es2panda._buildSymbolReferenceIndexForContextWithExternal(ctx);
-        ptr = global.es2panda._findRenameLocationsFromIndex(ctx, offset);
+        ptr = global.es2panda._findRenameLocationsFromIndex(ctx, codePointOffset);
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -1613,6 +1948,7 @@ export class Lsp {
       if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
         ref.nodeInfos = nodeInfoTemp;
       }
+      this.convertRenameLocationToUtf16(ref);
     });
 
     const uniqueResult = Array.from(new Set(result));
@@ -1624,11 +1960,18 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getRenameInfo', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
-        const ptr = global.es2panda._getRenameInfo(fileCache.fileContext, offset, this.pandaLibPath);
+        const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, offset);
+        if (codePointOffset === undefined) {
+          return undefined;
+        }
+        const ptr = global.es2panda._getRenameInfo(fileCache.fileContext, codePointOffset, this.pandaLibPath);
         const success = global.es2panda._getRenameInfoIsSuccess(ptr);
-        return success
-          ? new LspRenameInfoSuccess(global.es2panda._getRenameInfoSuccess(ptr))
-          : new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
+        if (!success) {
+          return new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
+        }
+        const renameInfo = new LspRenameInfoSuccess(global.es2panda._getRenameInfoSuccess(ptr));
+        this.convertTextSpanToUtf16(fileCache.fileContent, renameInfo.triggerSpan);
+        return renameInfo;
       } catch (error) {
         logger.error('failed to getRenameInfo by fileCache', error);
         return undefined;
@@ -1661,11 +2004,23 @@ export class Lsp {
     const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCodeFixesAtPosition', this.perfMetricLogFilePath) : undefined;
     const result = this.withFileCacheForQuery(filename, (fileCache) => {
       try {
+        const startCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, start);
+        const endCodePoint = TextPositionUtils.utf16OffsetToCodePointOffset(fileCache.fileContent, end);
+        if (startCodePoint === undefined || endCodePoint === undefined) {
+          return undefined;
+        }
         const codeFixActionInfoList = new CodeFixActionInfoList(
-          global.es2panda._getCodeFixesAtPosition(fileCache.fileContext, start, end, new Int32Array(errorCodes), errorCodes.length)
+          global.es2panda._getCodeFixesAtPosition(
+            fileCache.fileContext,
+            startCodePoint,
+            endCodePoint,
+            new Int32Array(errorCodes),
+            errorCodes.length
+          )
         );
         const codeFixActionInfos: CodeFixActionInfo[] = [];
         codeFixActionInfos.push(...codeFixActionInfoList.codeFixActionInfos);
+        this.convertCodeFixActionsToUtf16(codeFixActionInfos);
         return codeFixActionInfos;
       } catch (error) {
         logger.error('failed to getCodeFixesAtPosition by fileCache', error);
@@ -2081,7 +2436,8 @@ export class Lsp {
         fileContent: content,
         fileConfig: config,
         fileContext: ctx,
-        fileHash: this.computeContentHash(content)
+        fileHash: this.computeContentHash(content),
+        arktsConfigPath: this.defaultArkTsConfig
       });
     } catch (error) {
       if (ctx !== undefined) {
@@ -2116,7 +2472,8 @@ export class Lsp {
       fileContent: source,
       fileConfig: activeFileCache.fileConfig,
       fileContext: activeFileCache.fileContext,
-      fileHash: hash
+      fileHash: hash,
+      arktsConfigPath: activeFileCache.arktsConfigPath
     });
   }
 
@@ -2156,7 +2513,8 @@ export class Lsp {
       fileContent: content,
       fileConfig: config,
       fileContext: ctx,
-      fileHash: this.computeContentHash(content)
+      fileHash: this.computeContentHash(content),
+      arktsConfigPath: this.defaultArkTsConfig
     });
   }
 

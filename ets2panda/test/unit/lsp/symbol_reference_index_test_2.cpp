@@ -464,4 +464,103 @@ console.log(rrValue);)"};
     initializer.DestroyContext(baseCtx);
     initializer.DestroyContext(userCtx);
 }
+
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, RebuildingReExportFilePreservesReference)
+{
+    std::vector<std::string> files = {"sri_reexport_origin.ets", "sri_reexport_barrel.ets",
+                                      "sri_reexport_consumer.ets"};
+    std::vector<std::string> texts = {R"(export class Foo {})", R"(export { Foo } from './sri_reexport_origin';)",
+                                      R"(import { Foo } from './sri_reexport_barrel';
+let value = new Foo();)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *consumerCtx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(consumerCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(consumerCtx));
+
+    const auto usePos = texts[2].find("new Foo") + std::string("new ").size();
+    auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    EXPECT_EQ(CountReferencesInFile(before, filePaths[1]), 1U);
+
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto after = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    const auto barrelPos = texts[1].find("Foo");
+    auto fromBarrel = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(barrelCtx, barrelPos);
+    initializer.DestroyContext(barrelCtx);
+    initializer.DestroyContext(consumerCtx);
+
+    EXPECT_EQ(CountReferencesInFile(after, filePaths[1]), 1U);
+    EXPECT_EQ(fromBarrel.definitionInfo.fileName, filePaths[0]);
+    EXPECT_EQ(CountReferencesInFile(fromBarrel, filePaths[1]), 1U);
+}
+
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, RebuildingDefaultReExportPreservesReference)
+{
+    std::vector<std::string> files = {"sri_default_origin.ets", "sri_default_barrel.ets", "sri_default_consumer.ets"};
+    std::vector<std::string> texts = {R"(export default class Foo {})",
+                                      R"(export { default as PublicFoo } from './sri_default_origin';)",
+                                      R"(import { PublicFoo } from './sri_default_barrel';
+let value = new PublicFoo();)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *consumerCtx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(consumerCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(consumerCtx));
+
+    const auto usePos = texts[2].find("new PublicFoo") + std::string("new ").size();
+    auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    const auto beforeBarrelReferences = CountReferencesInFile(before, filePaths[1]);
+    ASSERT_GT(beforeBarrelReferences, 0U);
+
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto after = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    initializer.DestroyContext(barrelCtx);
+    initializer.DestroyContext(consumerCtx);
+
+    EXPECT_EQ(CountReferencesInFile(after, filePaths[1]), beforeBarrelReferences);
+}
+
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, RebuildingChainedReExportPreservesReference)
+{
+    constexpr size_t BARREL_FILE_INDEX = 2;
+    constexpr size_t CONSUMER_FILE_INDEX = 3;
+    std::vector<std::string> files = {"sri_chain_origin.ets", "sri_chain_middle.ets", "sri_chain_barrel.ets",
+                                      "sri_chain_consumer.ets"};
+    std::vector<std::string> texts = {R"(export class Foo {})", R"(export { Foo } from './sri_chain_origin';)",
+                                      R"(export { Foo } from './sri_chain_middle';)",
+                                      R"(import { Foo } from './sri_chain_barrel';
+let value = new Foo();)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *consumerCtx = initializer.CreateContext(filePaths[CONSUMER_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(consumerCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContextWithExternal(consumerCtx));
+
+    const auto usePos = texts[CONSUMER_FILE_INDEX].find("new Foo") + std::string("new ").size();
+    auto before = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    const auto beforeBarrelReferences = CountReferencesInFile(before, filePaths[BARREL_FILE_INDEX]);
+    ASSERT_GT(beforeBarrelReferences, 0U);
+
+    auto *barrelCtx = initializer.CreateContext(filePaths[BARREL_FILE_INDEX].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto after = ark::es2panda::lsp::GetReferencesAtPositionFromIndex(consumerCtx, usePos);
+    initializer.DestroyContext(barrelCtx);
+    initializer.DestroyContext(consumerCtx);
+
+    EXPECT_EQ(CountReferencesInFile(after, filePaths[BARREL_FILE_INDEX]), beforeBarrelReferences);
+}
 }  // namespace

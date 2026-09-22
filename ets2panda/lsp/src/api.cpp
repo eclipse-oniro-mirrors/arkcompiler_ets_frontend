@@ -78,18 +78,7 @@ DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t positio
 
 DefinitionInfo GetImplementationAtPosition(es2panda_Context *context, size_t position)
 {
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    std::string source = std::string(ctx->parserProgram->SourceCode());
-
-    size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
-
-    DefinitionInfo result = GetDefinitionAtPosition(context, byteOffset);
-
-    size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, result.start);
-    size_t lengthChar =
-        ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, result.start + result.length) - startCharOffset;
-
-    return {result.fileName, startCharOffset, lengthChar};
+    return GetDefinitionAtPosition(context, position);
 }
 
 bool IsPackageModule(es2panda_Context *context)
@@ -1057,13 +1046,11 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
 
     if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
         ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
-        if (identifierNode != nullptr) {
-            result = {"", identifierNode->Start().index, identifierNode->End().index,
-                      identifierNode->End().index - identifierNode->Start().index};
-        } else {
-            result = {"", lastFoundNode->Start().index, lastFoundNode->End().index,
-                      lastFoundNode->End().index - lastFoundNode->Start().index};
-        }
+        ir::AstNode *target = identifierNode != nullptr ? identifierNode : lastFoundNode;
+        size_t startCharOffset = 0;
+        size_t lengthChar = 0;
+        GetNodeCharOffsets(target, ctx, startCharOffset, lengthChar);
+        result = {"", startCharOffset, startCharOffset + lengthChar, lengthChar};
     }
 
     return result;

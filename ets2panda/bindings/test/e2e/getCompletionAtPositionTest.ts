@@ -551,6 +551,23 @@ describe('getCompletionAtPositionTest', () => {
       const res = lsp.getCompletionAtPosition(getRealPath(moduleName, 'getCompletionsAtPosition18.ets'), 868);
       expectEntriesContainUnordered(res, EXPECT_017);
     });
+    test('getCompletionAtPosition_021_uses_utf16_offset', () => {
+      const fileName = getRealPath(moduleName, 'getCompletionsAtPosition22.ets');
+      const source = fs.readFileSync(fileName, 'utf8');
+      const statement = 'let value = values.my';
+      const offset = source.lastIndexOf(statement) + statement.length;
+
+      expect(offset).toBeGreaterThan(statement.length);
+
+      const res = lsp.getCompletionAtPosition(fileName, offset);
+      const names = res?.entries.map((entry) => entry.name.valueOf()) ?? [];
+      const detailsOffset = source.indexOf('values.myProp') + 'values.'.length;
+      const details = lsp.getCompletionEntryDetails(fileName, detailsOffset, 'myProp');
+
+      expect(names).toContain('myProp: number');
+      expect(detailsOffset).toBeGreaterThan('values.'.length);
+      expect(details?.name.valueOf()).toBe('myProp');
+    });
   });
 
   describe('With UI Plugins', () => {

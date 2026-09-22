@@ -44,6 +44,7 @@ describe('getReferencesAtPositionTest', () => {
     lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), 'utf8') });
     lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition5.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition5.ets'), 'utf8') });
     lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition6.ets'), 'utf8') });
+    lsp.modifyFilesMap(getRealPath(moduleName, 'getReferencesAtPosition9.ets'), { newDoc: fs.readFileSync(getRealPath(moduleName, 'getReferencesAtPosition9.ets'), 'utf8') });
     test('getReferencesAtPosition_000', () => {
       const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition1.ets'), 613);
       expect(res?.length).toBe(0);
@@ -63,6 +64,18 @@ describe('getReferencesAtPositionTest', () => {
       for (let i = 0; i < length; i++) {
         expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);
       }
+    });
+    test('getReferencesAtPosition_004_uses_utf16_offsets', () => {
+      const fileName = getRealPath(moduleName, 'getReferencesAtPosition9.ets');
+      const source = fs.readFileSync(fileName, 'utf8');
+      const firstUse = source.indexOf('target++');
+      const secondUse = source.lastIndexOf('target;');
+
+      const res = lsp.getReferencesAtPosition(fileName, firstUse);
+
+      expect(res?.map((reference) => reference.start).sort((left, right) => left - right))
+        .toEqual([firstUse, secondUse]);
+      expect(res?.every((reference) => reference.length === 'target'.length)).toBe(true);
     });
   });
 

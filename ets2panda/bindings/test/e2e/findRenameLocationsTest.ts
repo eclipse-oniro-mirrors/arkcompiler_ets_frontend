@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import fs from 'fs';
 import { getLsp, getRealPath } from '../utils';
 
 describe('findRenameLocationsTest', () => {
@@ -258,5 +259,18 @@ describe('findRenameLocationsTest', () => {
   test('findRenameLocations_007', () => {
     const res = lsp.findRenameLocations(getRealPath(moduleName, 'findRenameLocations3.ets'), 627);
     expect(res).toMatchObject(EXPECT_007);
+  });
+  test('findRenameLocations_008_uses_utf16_offsets', () => {
+    const fileName = getRealPath(moduleName, 'findRenameLocations6.ets');
+    const source = fs.readFileSync(fileName, 'utf8');
+    const declaration = source.indexOf('target: number');
+    const firstUse = source.indexOf('target++');
+    const secondUse = source.lastIndexOf('target;');
+
+    const res = lsp.findRenameLocations(fileName, firstUse);
+
+    expect(res?.map((location) => location.start).sort((left, right) => left - right))
+      .toEqual([declaration, firstUse, secondUse]);
+    expect(res?.every((location) => location.end - location.start === 'target'.length)).toBe(true);
   });
 });

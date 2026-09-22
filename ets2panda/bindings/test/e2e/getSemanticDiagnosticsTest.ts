@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import fs from 'fs';
 import { LspDiagnosticNode } from '../../src/lsp';
 import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
@@ -119,6 +120,46 @@ describe('getSemanticDiagnosticsTest', () => {
       USED_SYMBOL_MESSAGES.forEach((message) => {
         expect(messages).not.toContain(message);
       });
+    });
+
+    test('getSemanticDiagnostics_003_uses_utf16_columns', () => {
+      const fileName = getRealPath(moduleName, 'getSemanticDiagnostics4.ets');
+      const source = fs.readFileSync(fileName, 'utf8');
+      const literal = '"hello"';
+      const literalStart = source.indexOf(literal);
+      const lineStart = source.lastIndexOf('\n', literalStart) + 1;
+      const expectedLine = source.slice(0, literalStart).split('\n').length;
+      const expectedCharacter = literalStart - lineStart + 1;
+
+      const diagnostic = lsp.getSemanticDiagnostics(fileName)?.diagnostics.find(
+        (item) => item.message === `Type '"hello"' cannot be assigned to type 'Double'`
+      );
+
+      expect(diagnostic).toBeDefined();
+      expect(diagnostic?.range.start).toMatchObject({ line: expectedLine, character: expectedCharacter });
+      expect(diagnostic?.range.end).toMatchObject({
+        line: expectedLine,
+        character: expectedCharacter + literal.length
+      });
+    });
+
+    test.each([
+      ['CR', '\r'],
+      ['LINE SEPARATOR', '\u2028'],
+      ['PARAGRAPH SEPARATOR', '\u2029']
+    ])('getSemanticDiagnostics_004_handles_native_%s_line_break', (_name, lineBreak) => {
+      const fileName = getRealPath(moduleName, 'getSemanticDiagnostics4.ets');
+      const source = `const faces: string = "😀";${lineBreak}const value: number = "hello";`;
+      const incrementalLsp = getLsp(moduleName);
+      incrementalLsp.modifyFilesMap(fileName, { newDoc: source });
+
+      const diagnostic = incrementalLsp.getSemanticDiagnostics(fileName)?.diagnostics.find(
+        (item) => item.message === `Type '"hello"' cannot be assigned to type 'Double'`
+      );
+
+      expect(diagnostic).toBeDefined();
+      expect(diagnostic?.range.start).toMatchObject({ line: 2, character: 23 });
+      expect(diagnostic?.range.end).toMatchObject({ line: 2, character: 30 });
     });
   });
 

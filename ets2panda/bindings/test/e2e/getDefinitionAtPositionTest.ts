@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 import { getLsp, getRealPath } from '../utils';
+import fs from 'fs';
 import path from 'path';
 
 describe('getDefinitionAtPositionTest', () => {
@@ -83,5 +84,50 @@ describe('getDefinitionAtPositionTest', () => {
     expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('getDefinitionAtPosition1.ets');
     expect(res?.start).toBe(0);
     expect(res?.length).toBe(0);
+  });
+  test('getDefinitionAtPosition_011_uses_utf16_offsets', () => {
+    const fileName = getRealPath(moduleName, 'getDefinitionAtPosition44.ets');
+    const source = fs.readFileSync(fileName, 'utf8');
+    const targetUse = source.lastIndexOf('target + other');
+    const expectedDefinition = source.indexOf('target: number');
+
+    expect(targetUse).not.toBe(-1);
+    expect(expectedDefinition).not.toBe(-1);
+
+    const res = lsp.getDefinitionAtPosition(fileName, targetUse);
+
+    expect(res?.start).toBe(expectedDefinition);
+    expect(res?.length).toBe('target'.length);
+    expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('getDefinitionAtPosition44.ets');
+  });
+  test('getDefinitionAtPosition_012_uses_matching_offsets_without_emoji', () => {
+    const fileName = getRealPath(moduleName, 'getDefinitionAtPosition45.ets');
+    const source = fs.readFileSync(fileName, 'utf8');
+    const targetUse = source.lastIndexOf('target + other');
+    const expectedDefinition = source.indexOf('target: number');
+
+    expect(targetUse).not.toBe(-1);
+    expect(expectedDefinition).not.toBe(-1);
+
+    const res = lsp.getDefinitionAtPosition(fileName, targetUse);
+
+    expect(res?.start).toBe(expectedDefinition);
+    expect(res?.length).toBe('target'.length);
+    expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('getDefinitionAtPosition45.ets');
+  });
+  test('getImplementationAtPosition_013_uses_utf16_offsets', () => {
+    const fileName = getRealPath(moduleName, 'getDefinitionAtPosition44.ets');
+    const source = fs.readFileSync(fileName, 'utf8');
+    const targetUse = source.lastIndexOf('target + other');
+    const expectedDefinition = source.indexOf('target: number');
+
+    expect(targetUse).not.toBe(-1);
+    expect(expectedDefinition).not.toBe(-1);
+
+    const res = lsp.getImplementationAtPosition(fileName, targetUse);
+
+    expect(res?.start).toBe(expectedDefinition);
+    expect(res?.length).toBe('target'.length);
+    expect(res ? path.basename(res.fileName.valueOf()) : undefined).toBe('getDefinitionAtPosition44.ets');
   });
 });

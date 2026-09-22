@@ -14,9 +14,11 @@
  */
 
 #include "lsp/include/symbol_reference_index.h"
+#include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/ets/etsImportDeclaration.h"
+#include "ir/ets/etsReExportDeclaration.h"
 #include "ir/module/exportSpecifier.h"
 #include "ir/module/importDefaultSpecifier.h"
 #include "ir/module/importNamespaceSpecifier.h"
@@ -25,6 +27,7 @@
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "checker/types/ets/etsObjectType.h"
+#include "varbinder/ETSBinder.h"
 #include "varbinder/variable.h"
 
 #include <algorithm>
@@ -460,6 +463,22 @@ bool IsExportedDefinition(const ir::Identifier *identifier, const ir::AstNode *o
            (parent->IsExported() || parent->IsExportNamedDeclaration() || parent->IsExportDefaultDeclaration());
 }
 
+bool IsDefaultExportDefinition(const ir::Identifier *identifier, const ir::AstNode *owner)
+{
+    if (identifier == nullptr || owner == nullptr) {
+        return false;
+    }
+    if (identifier->IsDefaultExported() || owner->IsDefaultExported()) {
+        return true;
+    }
+    for (auto *parent = owner->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsDefaultExported() || parent->IsExportDefaultDeclaration()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::AstNode *targetNode,
                          const ir::Identifier *identifier, ir::AstNode *owner)
 {
@@ -596,9 +615,14 @@ void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *tar
 }
 
 void ProcessNodeForSymbolIndex(const public_lib::Context *ctx, ir::AstNode *node,
+                               const std::unordered_set<const ir::AstNode *> &handledReExportIdentifiers,
                                std::unordered_set<std::string> &localDedup, FileIndexData &fileIndex)
 {
     auto *targetNode = node->OriginalNode() != nullptr ? node->OriginalNode() : node;
+    if (handledReExportIdentifiers.find(node) != handledReExportIdentifiers.end() ||
+        handledReExportIdentifiers.find(targetNode) != handledReExportIdentifiers.end()) {
+        return;
+    }
     if (targetNode == nullptr) {
         return;
     }
@@ -666,6 +690,152 @@ void BuildImportFileReferencesForProgram(const public_lib::Context *ctx, parser:
     }
 }
 
+parser::Program *FindExternalProgram(parser::Program *program, const std::string &sourcePath)
+{
+    auto *externalPrograms = program->GetExternalPrograms();
+    if (externalPrograms == nullptr) {
+        return nullptr;
+    }
+    parser::Program *result = nullptr;
+    auto findMatchingProgram = [&result, &sourcePath](parser::Program *candidate) {
+        if (result == nullptr && candidate != nullptr &&
+            (candidate->SourceFilePath().Is(sourcePath) || candidate->AbsoluteName().Is(sourcePath))) {
+            result = candidate;
+        }
+    };
+    for (const auto &[_, candidate] : externalPrograms->Direct()) {
+        findMatchingProgram(candidate);
+    }
+    externalPrograms->template Visit<false>(
+        [&findMatchingProgram](auto *candidate) { findMatchingProgram(candidate); });
+    return result;
+}
+
+std::unordered_map<std::string, ir::AstNode *> CollectExportedSymbolOwners(parser::Program *program)
+{
+    std::unordered_map<std::string, ir::AstNode *> result {};
+    if (program == nullptr || program->Ast() == nullptr) {
+        return result;
+    }
+    program->Ast()->IterateRecursively([&result](ir::AstNode *node) {
+        auto *targetNode = node->OriginalNode() != nullptr ? node->OriginalNode() : node;
+        if (targetNode == nullptr || !targetNode->IsIdentifier()) {
+            return;
+        }
+        auto *identifier = targetNode->AsIdentifier();
+        auto *owner = ark::es2panda::lsp::GetOwner(targetNode);
+        const bool isDefaultExport = IsDefaultExportDefinition(identifier, owner);
+        if (!IsDefinitionNode(targetNode, owner) || (!IsExportedDefinition(identifier, owner) && !isDefaultExport)) {
+            return;
+        }
+        const std::string exportedName = isDefaultExport ? "default" : std::string(identifier->Name());
+        result.emplace(exportedName, owner);
+    });
+    return result;
+}
+
+struct ReExportIndexState {
+    const public_lib::Context *ctx;
+    parser::Program *program;
+    std::unordered_set<const ir::AstNode *> &handledIdentifiers;
+    std::unordered_set<std::string> &localDedup;
+    FileIndexData &fileIndex;
+};
+
+void AddReExportReference(const ReExportIndexState &state, const ir::Identifier *identifier, SymbolId symbolId)
+{
+    if (identifier == nullptr || symbolId == 0) {
+        return;
+    }
+    auto refInfo = BuildReferenceInfo(state.ctx, identifier, identifier);
+    if (!refInfo.has_value()) {
+        return;
+    }
+    auto &[ref, end] = refInfo.value();
+    RegisterReference(symbolId, ref, end, state.localDedup, state.fileIndex);
+}
+
+ir::AstNode *ResolveReExportOwnerFromBinding(const public_lib::Context *ctx, const ir::ImportSpecifier *specifier)
+{
+    if (ctx == nullptr || specifier == nullptr || specifier->Local() == nullptr ||
+        specifier->Local()->Variable() == nullptr || ctx->GetChecker() == nullptr) {
+        return nullptr;
+    }
+    auto *resolver = ctx->GetChecker()->AsETSChecker()->GetNavigationExportClosureResolver();
+    if (resolver == nullptr) {
+        return nullptr;
+    }
+    auto *variable = resolver->ResolveEffectiveImportVariable(specifier->Local()->Variable(),
+                                                              checker::ImportBindingResolveOptions {false, false});
+    if (variable == nullptr || variable->Declaration() == nullptr) {
+        return nullptr;
+    }
+    auto *identifier = ark::es2panda::lsp::GetIdentifier(variable->Declaration()->Node());
+    return identifier != nullptr && identifier->IsIdentifier() ? identifier : nullptr;
+}
+
+ir::AstNode *ResolveReExportOwnerFromSource(parser::Program *program, const ir::ETSImportDeclaration *importDecl,
+                                            util::StringView importedName)
+{
+    std::string sourcePath = std::string(importDecl->ResolvedSource());
+    if (sourcePath.empty() && importDecl->ImportInfo().HasSpecifiedDeclPath()) {
+        sourcePath = std::string(importDecl->DeclPath());
+    }
+    const auto exportedSymbols = CollectExportedSymbolOwners(FindExternalProgram(program, sourcePath));
+    const auto symbolIt = exportedSymbols.find(std::string(importedName));
+    return symbolIt == exportedSymbols.end() ? nullptr : symbolIt->second;
+}
+
+void BuildReExportReferenceForSpecifier(const ReExportIndexState &state, const ir::ETSImportDeclaration *importDecl,
+                                        ir::AstNode *specifier)
+{
+    if (specifier == nullptr || !specifier->IsImportSpecifier()) {
+        return;
+    }
+    auto *importSpecifier = specifier->AsImportSpecifier();
+    const auto *imported = importSpecifier->Imported();
+    if (imported == nullptr) {
+        return;
+    }
+    const auto importedName = varbinder::NormalizeReExportName(imported->Name());
+    auto *symbolOwner = ResolveReExportOwnerFromBinding(state.ctx, importSpecifier);
+    if (symbolOwner == nullptr) {
+        symbolOwner = ResolveReExportOwnerFromSource(state.program, importDecl, importedName);
+    }
+    if (symbolOwner == nullptr) {
+        return;
+    }
+    const auto *local = importSpecifier->Local();
+    const auto symbolId = BuildSymbolId(symbolOwner, local == nullptr ? imported : local, state.ctx);
+    state.handledIdentifiers.insert(imported);
+    if (local != nullptr) {
+        state.handledIdentifiers.insert(local);
+    }
+    if (imported->Name() == importedName) {
+        AddReExportReference(state, imported, symbolId);
+    }
+    AddReExportReference(state, local, symbolId);
+}
+
+void BuildReExportReferencesForProgram(const ReExportIndexState &state)
+{
+    if (state.program == nullptr || state.program->Ast() == nullptr || !state.program->Ast()->IsETSModule()) {
+        return;
+    }
+    for (auto *statement : state.program->Ast()->AsETSModule()->Statements()) {
+        if (statement == nullptr || !statement->IsETSReExportDeclaration()) {
+            continue;
+        }
+        auto *importDecl = statement->AsETSReExportDeclaration()->GetETSImportDeclarations();
+        if (importDecl == nullptr) {
+            continue;
+        }
+        for (auto *specifier : importDecl->Specifiers()) {
+            BuildReExportReferenceForSpecifier(state, importDecl, specifier);
+        }
+    }
+}
+
 bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser::Program *program)
 {
     const std::string fileName = std::string(program->SourceFilePath());
@@ -675,10 +845,13 @@ bool BuildSymbolReferenceIndexForProgram(const public_lib::Context *ctx, parser:
     fileIndex.source = std::string(program->SourceCode());
 
     std::unordered_set<std::string> localDedup {};
+    std::unordered_set<const ir::AstNode *> handledReExportIdentifiers {};
     BuildImportFileReferencesForProgram(ctx, program, localDedup, fileIndex);
+    ReExportIndexState reExportState {ctx, program, handledReExportIdentifiers, localDedup, fileIndex};
+    BuildReExportReferencesForProgram(reExportState);
     auto *astRoot = reinterpret_cast<ir::AstNode *>(program->Ast());
-    astRoot->IterateRecursively([ctx, &localDedup, &fileIndex](ir::AstNode *node) {
-        ProcessNodeForSymbolIndex(ctx, node, localDedup, fileIndex);
+    astRoot->IterateRecursively([ctx, &handledReExportIdentifiers, &localDedup, &fileIndex](ir::AstNode *node) {
+        ProcessNodeForSymbolIndex(ctx, node, handledReExportIdentifiers, localDedup, fileIndex);
     });
 
     std::sort(fileIndex.symbolOccurrences.begin(), fileIndex.symbolOccurrences.end(),
