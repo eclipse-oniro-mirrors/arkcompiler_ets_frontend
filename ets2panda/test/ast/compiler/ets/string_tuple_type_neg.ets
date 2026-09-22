@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,8 @@ type A = [n1:string, n2:string]
 
 
 /* @@? 16:11 Error Semantic error ESE0371: Cannot find type 'n1'. */
-/* @@? 16:13 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 16:13 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 16:13 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 16:14 Error Syntax error ESY0227: Unexpected token 'string'. */
 /* @@? 16:14 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
 /* @@? 16:20 Error Syntax error ESY0227: Unexpected token ','. */

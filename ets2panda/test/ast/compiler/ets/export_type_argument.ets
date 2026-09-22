@@ -20,4 +20,4 @@ export class B<T> { x: T }
 export function bar(): B<C> { return new B<C>() };
 
 
-/* @@@ label Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */
+/* @@? 16:24 Error Semantic error ESE1236581: Type 'C' used in export declaration(s) is not exported. */

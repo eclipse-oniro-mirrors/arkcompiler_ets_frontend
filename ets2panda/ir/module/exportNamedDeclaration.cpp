@@ -90,7 +90,7 @@ void ExportNamedDeclaration::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
-    dumper->Add("export { ");
+    dumper->Add(IsExportedType() ? "export type { " : "export { ");
     for (const auto *spec : specifiers_) {
         if (spec->IsDefaultExport() && dumper->HasDefaultExport()) {
             continue;

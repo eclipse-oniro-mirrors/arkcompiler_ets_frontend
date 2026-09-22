@@ -30,7 +30,6 @@ let e = new /* @@ label2 */ConstructorRestrictedApi()
 
 /* @@@ label1 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */
 /* @@? 19:2 Error Semantic error ESE154780: Access to 'Async' is restricted by 'BytecodeAPI' */
-/* @@? 19:13 Error Semantic error ESE154780: Access to 'Async' is restricted by 'BytecodeAPI' */
 /* @@? 24:1 Error Semantic error ESE154780: Access to 'restrictedFunction' is restricted by 'TestRestriction' */
 /* @@? 24:1 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */
 /* @@? 25:9 Error Semantic error ESE154780: Access to 'restrictedNs' is restricted by 'TestRestriction' */

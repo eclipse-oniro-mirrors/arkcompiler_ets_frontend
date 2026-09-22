@@ -180,20 +180,20 @@ static std::string ResolveConfigLocation(const std::string &relPath, const std::
     return resolvedPath;
 }
 
-std::optional<ArkTsConfig> ArkTsConfig::ParseExtends(const std::string &configPath, const std::string &extends,
-                                                     const std::string &configDir)
+std::optional<ArkTsConfig> ArkTsConfig::ParseExtends(const std::string &extends, const std::string &configDir,
+                                                     std::unordered_set<std::string> &visitedConfigs)
 {
     auto basePath = ResolveConfigLocation(extends, configDir);
     if (!Check(!basePath.empty(), diagnostic::UNRESOLVABLE_CONFIG_PATH, {extends})) {
         return {};
     }
 
-    if (!Check(basePath != configPath, diagnostic::CYCLIC_IMPORT, {})) {
+    if (!Check(visitedConfigs.count(ark::os::GetAbsolutePath(basePath)) == 0, diagnostic::CYCLIC_IMPORT, {})) {
         return {};
     }
 
     auto base = ArkTsConfig(basePath, diagnosticEngine_);
-    if (!Check(base.Parse(), diagnostic::WRONG_BASE_CONFIG, {extends})) {
+    if (!Check(base.Parse(visitedConfigs), diagnostic::WRONG_BASE_CONFIG, {extends})) {
         return {};
     }
 
@@ -532,11 +532,18 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     return true;
 }
 
-// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
 bool ArkTsConfig::Parse()
+{
+    std::unordered_set<std::string> visitedConfigs;
+    return Parse(visitedConfigs);
+}
+
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP, G.FUD.05) solid logic
+bool ArkTsConfig::Parse(std::unordered_set<std::string> &visitedConfigs)
 {
     ES2PANDA_ASSERT(!isParsed_);
     isParsed_ = true;
+    visitedConfigs.insert(ark::os::GetAbsolutePath(configPath_));
     auto arktsConfigDir = ParentPath(ark::os::GetAbsolutePath(configPath_));
 
     // Read input
@@ -558,7 +565,7 @@ bool ArkTsConfig::Parse()
         if (!Check(extends != nullptr, diagnostic::INVALID_JSON_TYPE, {EXTENDS, "string"})) {
             return false;
         }
-        const auto &base = ParseExtends(configPath_, *extends, arktsConfigDir);
+        const auto &base = ParseExtends(*extends, arktsConfigDir, visitedConfigs);
         if (!base.has_value()) {
             return false;
         }

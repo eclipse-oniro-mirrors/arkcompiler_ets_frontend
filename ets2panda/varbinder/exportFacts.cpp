@@ -289,7 +289,8 @@ void ExportFactStore::MarkPendingLocalExportAliasInvalid(parser::Program *progra
     }
 }
 
-const ArenaVector<PendingLocalExportAlias> &ExportFactStore::PendingLocalExportAliases(parser::Program *program) const
+const ArenaVector<PendingLocalExportAlias> &ExportFactStore::PendingLocalExportAliases(
+    const parser::Program *program) const
 {
     if (auto it = pendingLocalExportAliases_.find(program); it != pendingLocalExportAliases_.end()) {
         return it->second;

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,6 +50,16 @@ public:
 
     void SetPart(ETSTypeReferencePart *part);
 
+    void SetForceAllowUnsafeVariance(bool value)
+    {
+        forceAllowUnsafeVariance_ = value;
+    }
+
+    [[nodiscard]] bool IsForceAllowUnsafeVariance() const
+    {
+        return forceAllowUnsafeVariance_;
+    }
+
     ir::Identifier *BaseName() const;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -77,6 +87,7 @@ private:
     friend class SizeOfNodeTest;
 
     ir::ETSTypeReferencePart *part_;
+    bool forceAllowUnsafeVariance_ {false};
 };
 }  // namespace ark::es2panda::ir
 

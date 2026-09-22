@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_PUBLIC_PUBLIC_H
 #define ES2PANDA_PUBLIC_PUBLIC_H
 
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include "public/es2panda_lib.h"
@@ -51,7 +52,7 @@ struct ConfigImpl {
     std::list<diagnostic::DiagnosticKind> diagnosticKindStorage;
 };
 
-using ArenaExternalSources = parser::Program::ExternalDecls;
+using ArenaExternalSources = parser::Program::ExternalPrograms;
 using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;
@@ -145,7 +146,8 @@ struct Context {
     bool isLspUsage = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
-    std::vector<uint8_t> metadata;
+    panda_file::MetadataByPackages metadata;
+    std::function<void(ir::AstNode *)> materializeMembers;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:

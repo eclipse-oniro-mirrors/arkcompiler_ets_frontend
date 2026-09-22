@@ -115,6 +115,7 @@ public:
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
         parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
+        parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
         auto phaseManager = new compiler::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
         publicContext_->phaseManager = phaseManager;
 

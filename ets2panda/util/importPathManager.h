@@ -23,10 +23,10 @@
 
 #include "util/ustring.h"
 #include "util/enumbitops.h"
-#include "util/path.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include "parser/program/ImportCache.h"
+#include "libarkfile/metadata_accessor.h"
 
 #include <unordered_set>
 #include <functional>
@@ -57,6 +57,8 @@ class StringLiteral;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::util {
+
+bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata);
 
 template <ModuleKind KIND>
 constexpr parser::CacheType SelectCacheType()
@@ -137,11 +139,7 @@ public:
 
     std::string_view OhmUrl() const;
 
-    bool PointsToPackage() const
-    {
-        // External-library check is intended to avoid interpreting dynamic-path as directory.
-        return !ResolvedPathIsVirtual() && ark::os::file::File::IsDirectory(std::string(resolvedSource_));
-    }
+    bool PointsToPackage() const;
 
     bool ReferencesABC() const
     {
@@ -193,15 +191,6 @@ private:
         SetData<KIND, SHOULD_CACHE>(file, std::move(text));
     }
 
-    template <bool SHOULD_CACHE = true>
-    void SetBinFile(const panda_file::File &pf)
-    {
-        auto metadataSpan = GetMetadata(pf);
-        std::vector<uint8_t> metadata;
-        metadata.insert(metadata.begin(), metadataSpan.begin(), metadataSpan.end());
-        SetData<ModuleKind::METADATA_DECL, SHOULD_CACHE>(AbcPath(), std::move(metadata));
-    }
-
     template <ModuleKind KIND, bool SHOULD_CACHE = true>
     void SetData(std::string textSource, parser::SelectCacheDataType<SelectCacheType<KIND>(), true> contents)
     {
@@ -218,11 +207,10 @@ private:
         return !IsAbsolute(std::string(resolvedSource_));
     }
 
-    inline static Span<const uint8_t> GetMetadata(const panda_file::File &pf);
-
 private:
     ArenaString resolvedSource_ {ERROR_LITERAL};
     ArenaString moduleName_ {};
+    const ImportPathManager *importPathManager_ {};
 
     // NOTE(dkofanov): #32416 These fields should be refactored:
     const ArkTsConfig::ExternalModuleData *extModuleData_ {};
@@ -428,8 +416,10 @@ private:
     parser::Program *LookupProgramCaches(const ImportInfo &importInfo);
     void LookupMemCache(ImportInfo *importInfo);
     void LookupDiskData(ImportInfo *importInfo);
-    void LookupEtscacheFile(ImportInfo *importInfo);
+    void LookupEtscacheFile(ImportInfo *importInfo) const;
+    bool LookupMetadata(ImportInfo *importInfo) const;
 
+    void SetEtsTextFileByExtension(ImportInfo *importInfo, const std::string &sourcePath) const;
     void LookupSourceFile(ImportInfo *importInfo);
     void RegisterSourceFile(const ImportInfo &importInfo);
 
@@ -463,7 +453,7 @@ private:
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
-    std::unordered_set<std::string> processedAbcFiles_;
+    std::unordered_map<std::string, std::unique_ptr<panda_file::MetadataAccessor>> processedAbcFiles_;
 
     FileDependenciesMap fileDependencies_;
     FileDependenciesMap reverseFileDependencies_;

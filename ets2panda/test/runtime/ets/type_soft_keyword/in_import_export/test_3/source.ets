@@ -19,4 +19,4 @@ tags: [not-a-test]
 
 export {type as a}
 
-let type: int = 0
+export let type: int = 0

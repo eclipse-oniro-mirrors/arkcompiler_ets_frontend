@@ -23,6 +23,7 @@ Class MyClass {
 /* @@? 16:15 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 17:3 Error Semantic error ESE0143: Unresolved reference compare */
 /* @@? 17:17 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 17:19 Error Syntax error ESY0227: Unexpected token 'number'. */
 /* @@? 17:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:19 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 17:25 Error Syntax error ESY0227: Unexpected token ','. */

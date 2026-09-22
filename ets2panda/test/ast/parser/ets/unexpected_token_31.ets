@@ -28,5 +28,5 @@ function foo(...^number: int[]): int {
 /* @@? 16:34 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 16:38 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 17:5 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 17:12 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 17:12 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 17:12 Error Semantic error ESE0144: Type name 'number' used in the wrong context */

@@ -296,6 +296,35 @@ bool MethodDefinition::FilterForDeclGen() const
         return true;
     }
 
+    return IsAccessorOfDumpedProperty();
+}
+
+bool MethodDefinition::IsAccessorOfDumpedProperty() const
+{
+    if (!IsGetter() && !IsSetter()) {
+        return false;
+    }
+    if (Parent() == nullptr || !Parent()->IsClassDefinition()) {
+        return false;
+    }
+    if (OriginalNode() == nullptr || !OriginalNode()->IsClassProperty()) {
+        return false;
+    }
+
+    auto const *const property = OriginalNode()->AsClassProperty();
+    auto const inNamespace = Parent()->AsClassDefinition()->IsNamespaceTransformed();
+    auto const propertyIsDumped =
+        property->IsExported() || property->IsDefaultExported() || (!inNamespace && !property->IsPrivate());
+    if (!propertyIsDumped) {
+        return false;
+    }
+
+    auto const name = Id()->Name();
+    for (auto const *member : Parent()->AsClassDefinition()->Body()) {
+        if (member == property && property->Id() != nullptr && property->Id()->Name() == name) {
+            return true;
+        }
+    }
     return false;
 }
 

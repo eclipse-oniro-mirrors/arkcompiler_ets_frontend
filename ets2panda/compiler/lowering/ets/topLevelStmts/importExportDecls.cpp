@@ -152,10 +152,12 @@ void ImportExportDecls::PopulateAliasMap(parser::Program *program, const ir::Exp
     const bool isExplicitTypeOnly = (decl->Modifiers() & ir::ModifierFlags::EXPORT_TYPE) != 0U;
     for (auto spec : decl->Specifiers()) {
         const ir::AstNode *origin = spec->Local();
-        if (auto field = fieldMap_.find(spec->Exported()->Name()); field != fieldMap_.end()) {
+        const auto exportedName = isDefault ? util::StringView {"default"} : spec->Local()->Name();
+        if (auto field = fieldMap_.find(spec->Exported()->Name());
+            field != fieldMap_.end() && field->second != nullptr) {
+            AddExportFlags(field->second, exportedName != spec->Exported()->Name());
             origin = field->second;
         }
-        const auto exportedName = isDefault ? util::StringView {"default"} : spec->Local()->Name();
         const varbinder::SelectiveExportAlias alias {program, exportedName,  spec->Exported(),  origin,
                                                      decl,    spec->Local(), isExplicitTypeOnly};
         if (!varbinder_->AddSelectiveExportAlias(alias)) {
@@ -617,7 +619,7 @@ void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program
     std::set<util::StringView> unresolvedAliases;
     std::set<util::StringView> warnedUnresolvedAliases;
     const auto &exportFacts = varbinder_->GetExportFactsStore();
-    for (const auto &alias : exportFacts.PendingLocalExportAliases(const_cast<parser::Program *>(program))) {
+    for (const auto &alias : exportFacts.PendingLocalExportAliases(program)) {
         VerifyCollectedExportAlias(program, alias, unresolvedAliases, warnedUnresolvedAliases);
     }
 }

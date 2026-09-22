@@ -14,6 +14,7 @@
  */
 
 #include "checker/checker.h"
+#include "public/public.h"
 #include "checker/checkerContext.h"
 #include "checker/ets/wideningConverter.h"
 #include "checker/types/globalTypesHolder.h"
@@ -562,6 +563,7 @@ static Type *GetTypeFromVarLikeVariableDeclaration(ETSChecker *checker, varbinde
     return var->SetTsType(declNode->Check(checker));
 }
 
+// CC-OFFNXT(huge_method,huge_cyclomatic_complexity,G.FUN.01-CPP) big switch-case, solid logic
 Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
 {
     Type *variableType = nullptr;
@@ -586,6 +588,19 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
             break;
         }
 
+        case varbinder::DeclType::METHOD:
+            [[fallthrough]];
+        case varbinder::DeclType::PROPERTY: {
+            const auto declNode = var->Declaration()->Node();
+            if ((declNode->IsMethodDefinition() || declNode->IsClassProperty()) && declNode->Parent() &&
+                declNode->Parent()->IsClassDefinition()) {
+                if (const auto lazyCtx = VarBinder()->GetContext(); lazyCtx != nullptr && lazyCtx->materializeMembers) {
+                    lazyCtx->materializeMembers(declNode->Parent()->AsClassDefinition());
+                }
+            }
+            variableType = declNode->Check(this);
+            break;
+        }
         case varbinder::DeclType::FUNC:
             [[fallthrough]];
         case varbinder::DeclType::IMPORT:

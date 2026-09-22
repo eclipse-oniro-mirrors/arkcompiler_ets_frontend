@@ -55,7 +55,7 @@ static void MarkStatementsNoCleanup(parser::Program *program)
 
 bool CheckerPhase::Perform()
 {
-    Context()->parserProgram->GetExternalDecls()->Visit([](auto *extProg) {
+    Context()->parserProgram->GetExternalPrograms()->Visit([](auto *extProg) {
         if (!extProg->IsASTLowered()) {
             MarkStatementsNoCleanup(extProg);
         }

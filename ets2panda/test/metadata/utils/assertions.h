@@ -26,7 +26,7 @@ class MetadataAssertions {
 public:
     static void AssertClassPresented(const parser::MetadataCacheType &metadata, const std::string &expectedClassName)
     {
-        const auto root = GetRoot(metadata->data());
+        const auto root = GetDecls(metadata);
 
         ASSERT_NE(root, nullptr);
 
@@ -41,7 +41,8 @@ public:
 
     static void AssertClassPresented(const pandasm::Program *program, const std::string &expectedClassName)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
 
@@ -57,7 +58,8 @@ public:
     static void AssertMethodPresented(const pandasm::Program *program, const std::string &className,
                                       const std::string &expectedMethodName)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
         for (const auto classDecl : *root->classes()) {
@@ -78,7 +80,8 @@ public:
                                                  const std::string &methodName,
                                                  const BuiltinTypeKind expectedReturnType)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
         for (const auto classDecl : *root->classes()) {
@@ -89,7 +92,8 @@ public:
                 if (method->name()->str() != methodName) {
                     continue;
                 }
-                if (method->return_type_as_Builtin()->kind() == expectedReturnType) {
+                const auto builtin = method->return_type_as_Builtin();
+                if (builtin != nullptr && builtin->kind() == expectedReturnType) {
                     return;
                 }
             }
@@ -102,7 +106,8 @@ public:
     static void AssertRefReturnTypeForMethod(const pandasm::Program *program, const std::string &className,
                                              const std::string &methodName, const std::string &fqname)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
         for (const auto classDecl : *root->classes()) {
@@ -113,7 +118,8 @@ public:
                 if (method->name()->str() != methodName) {
                     continue;
                 }
-                if (method->return_type_as_Ref()->fqname()->string_view() == fqname) {
+                const auto ref = method->return_type_as_Ref();
+                if (ref != nullptr && ref->fqname()->string_view() == fqname) {
                     return;
                 }
             }
@@ -137,7 +143,8 @@ public:
     static void AssertTypeParamPresented(const pandasm::Program *program, const std::string &className,
                                          const std::string &methodName, const std::string &expectedTypeParamName)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
         for (const auto classDecl : *root->classes()) {
@@ -159,7 +166,8 @@ public:
 
     static void AssertAnnotationPresented(const pandasm::Program *program, const std::string &expectedAnnotationName)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
 
@@ -178,7 +186,8 @@ public:
 
     static void AssertAnnotationNotPresented(const pandasm::Program *program, const std::string &annotationName)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
 
@@ -195,7 +204,8 @@ public:
 
     static void AssertAnnotationsCount(const pandasm::Program *program, size_t expectedCount)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
 
@@ -212,7 +222,8 @@ public:
                                                     const std::string &methodName,
                                                     const std::string &expectedStringValue)
     {
-        const auto root = GetRoot(program->metadata.data());
+        ASSERT_FALSE(program->metadata.empty()) << "No metadata was emitted for the program";
+        const auto root = GetDecls(program->metadata.begin()->second.begin()->second.data());
 
         ASSERT_NE(root, nullptr);
         for (const auto classDecl : *root->classes()) {

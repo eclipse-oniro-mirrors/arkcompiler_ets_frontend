@@ -46,9 +46,10 @@ static bool CheckSourceConsistency(parser::Program *program)
 static bool CheckProgramSourcesConsistency(parser::Program *globalProgram)
 {
     bool success = true;
-    globalProgram->GetExternalDecls()->Visit([&success](auto *extProg) { success &= CheckSourceConsistency(extProg); });
+    globalProgram->GetExternalPrograms()->Visit(
+        [&success](auto *extProg) { success &= CheckSourceConsistency(extProg); });
     // NOTE(dkofanov): direct to be removed.
-    for (auto const &[_, program] : globalProgram->GetExternalDecls()->Direct()) {
+    for (auto const &[_, program] : globalProgram->GetExternalPrograms()->Direct()) {
         (void)_;
         success &= CheckSourceConsistency(program);
     }
@@ -109,7 +110,7 @@ bool TopLevelStatements::Perform()
 
     GlobalClassHandler globalClassIntroducer(ctx);
     // NOTE(dkofanov): Change 'Visit<false>' to 'Visit' when packages are merged:
-    globalProgram->GetExternalDecls()->Visit<false>([&importsHandler, &globalClassIntroducer](auto *extProgram) {
+    globalProgram->GetExternalPrograms()->Visit<false>([&importsHandler, &globalClassIntroducer](auto *extProgram) {
         if (extProgram->IsASTLowered()) {
             return;
         }

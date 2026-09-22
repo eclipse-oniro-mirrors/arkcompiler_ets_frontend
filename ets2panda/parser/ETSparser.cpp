@@ -16,7 +16,6 @@
 #include "ETSparser.h"
 #include <string_view>
 #include "ETSNolintParser.h"
-#include "compiler/metadata/deserialization.h"
 #include "program/program.h"
 #include "program/ImportCache.h"
 #include "public/public.h"
@@ -113,7 +112,7 @@ static void DoSomethingSpecificToMainProgram(ETSParser *parser)
 
         directImportsFromMainSource.emplace_back(directImport.program);
     }
-    parser->AddDirectImportsToDirectExternalDecls(directImportsFromMainSource);
+    parser->AddDirectImportsToDirectExternalPrograms(directImportsFromMainSource);
 #endif
 
     auto mainProg = parser->Context()->parserProgram;
@@ -235,12 +234,12 @@ parser::Program *ETSParser::IntroduceStdlibImportProgram(std::string &&importSrc
     return stdlibImportProgram;
 }
 
-void ETSParser::AddDirectImportsToDirectExternalDecls(
+void ETSParser::AddDirectImportsToDirectExternalPrograms(
     const std::vector<parser::Program *> &directImportsFromMainSource) const
 {
     // NOTE(dkofanov): For some reason, "directExternalPrograms" are populated only for main program.
     ES2PANDA_ASSERT(GetProgram() == GetGlobalProgram());
-    auto &directExtSourcesHolder = GetGlobalProgram()->GetExternalDecls()->Direct();
+    auto &directExtSourcesHolder = GetGlobalProgram()->GetExternalPrograms()->Direct();
     for (auto *prog : directImportsFromMainSource) {
         auto key = prog->GetImportInfo().ResolvedSource();
         directExtSourcesHolder.insert({ArenaString {key}, prog});
@@ -287,7 +286,7 @@ void ETSParser::ParseInSimultMode()
         directImportsFromMainSource.emplace_back(directImport.program);
     }
     ParseSources();
-    AddDirectImportsToDirectExternalDecls(directImportsFromMainSource);
+    AddDirectImportsToDirectExternalPrograms(directImportsFromMainSource);
 }
 
 void ETSParser::ParseSources()

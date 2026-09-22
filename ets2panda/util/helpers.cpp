@@ -879,7 +879,7 @@ bool Helpers::IsStdLib(const parser::Program *program)
     }
 
     // NOTE(rsipka): early check: if program is not in a package then it is not part of the stdlib either
-    if (!program->Is<util::ModuleKind::PACKAGE>()) {
+    if (!program->Is<ModuleKind::PACKAGE>() && !program->Is<ModuleKind::METADATA_DECL>()) {
         return false;
     }
 

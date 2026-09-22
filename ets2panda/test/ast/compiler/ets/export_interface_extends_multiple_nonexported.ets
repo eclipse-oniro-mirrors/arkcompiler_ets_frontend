@@ -18,5 +18,5 @@ interface /* @@ label2 */ I2 {}
 
 export interface B extends I1, I2 {}
 
-/* @@@ label1 Error Semantic error ESE1236581: Type 'I1' used in export declaration(s) is not exported. */
-/* @@@ label2 Error Semantic error ESE1236581: Type 'I2' used in export declaration(s) is not exported. */
+/* @@? 16:1 Error Semantic error ESE1236581: Type 'I1' used in export declaration(s) is not exported. */
+/* @@? 17:1 Error Semantic error ESE1236581: Type 'I2' used in export declaration(s) is not exported. */

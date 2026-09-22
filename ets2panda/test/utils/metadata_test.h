@@ -68,6 +68,7 @@ protected:
         if constexpr (METADATA_READING_ENABLED) {
             args.emplace_back("--read-metadata");
         }
+        args.emplace_back("--dump-perf-metrics");
         EXPECT_EQ(options->Parse(Span(&(*args.cbegin()), args.size())), true)
             << "Compilation options are failed to parse";
 
@@ -78,22 +79,28 @@ protected:
             diagnosticEngine.LogDiagnostic(kind, params);
         };
 
+        ASSERT_NE(programs[abcPath], nullptr) << "Compilation produced no program for " << abcPath;
         EXPECT_EQ(util::GenerateBinaryFile(programs[abcPath].get(), abcPath, *options, report), 0)
             << "Generating program " << abcPath << " failed";
     }
 
-    static void CompileLibToImport(const std::string &sourceFilePath, const std::string &abcFilename)
+    static void CompileLibToImport(const std::string &sourceFilePath, const std::string &abcFilename,
+                                   const std::string &libName = "lib")
     {
         Compile(sourceFilePath, abcFilename);
-        AddDependencyToConfig("lib", abcFilename);
+        AddDependencyToConfig(libName, abcFilename);
     }
 
-    std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath)
+    std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath,
+                                                             bool readMetadata = true)
     {
         const auto fileIfStream = std::ifstream(sourceFilePath);
         EXPECT_EQ(fileIfStream.good(), true) << "Source file " << sourceFilePath << " not found.";
         std::ostringstream sourceFileStream;
         sourceFileStream << fileIfStream.rdbuf();
+        if (!readMetadata) {
+            DisableMetadataReading();
+        }
         parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
         auto program = RunCheckerWithCustomFunc(fs::path(sourceFilePath).filename().string(), sourceFileStream.str(),
                                                 []([[maybe_unused]] ir::AstNode *ast) {});

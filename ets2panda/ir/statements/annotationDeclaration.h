@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,13 +70,16 @@ struct enumbitops::IsAllowedType<ark::es2panda::ir::AnnotationTargets> : std::tr
 };
 
 namespace ark::es2panda::ir {
+using MetadataAccessRestrictionModuleList = ArenaVector<util::StringView>;
+
 class AnnotationDeclaration : public AnnotationAllowed<Statement> {
 public:
     explicit AnnotationDeclaration(Expression *expr, ArenaAllocator *allocator)
         : AnnotationAllowed<Statement>(AstNodeType::ANNOTATION_DECLARATION, allocator),
           expr_(expr),
           properties_(allocator->Adapter()),
-          targets_(allocator->Adapter())
+          targets_(allocator->Adapter()),
+          metadataAccessRestrictionModules_(allocator->Adapter())
     {
         InitHistory();
     }
@@ -84,7 +87,8 @@ public:
         : AnnotationAllowed<Statement>(AstNodeType::ANNOTATION_DECLARATION, allocator),
           expr_(expr),
           properties_(std::move(properties)),
-          targets_(allocator->Adapter())
+          targets_(allocator->Adapter()),
+          metadataAccessRestrictionModules_(allocator->Adapter())
     {
         InitHistory();
     }
@@ -166,6 +170,28 @@ public:
         newNode->targets_ = std::move(targets);
     }
 
+    [[nodiscard]] const MetadataAccessRestrictionModuleList &MetadataAccessRestrictionModules() const noexcept
+    {
+        return GetHistoryNodeAs<AnnotationDeclaration>()->metadataAccessRestrictionModules_;
+    }
+
+    void SetMetadataAccessRestrictionModules(MetadataAccessRestrictionModuleList &&modules)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+        newNode->metadataAccessRestrictionModules_ = std::move(modules);
+    }
+
+    [[nodiscard]] const util::StringView &MetadataAccessRestrictionAnnotationName() const noexcept
+    {
+        return GetHistoryNodeAs<AnnotationDeclaration>()->metadataAccessRestrictionAnnotationName_;
+    }
+
+    void SetMetadataAccessRestrictionAnnotationName(util::StringView name)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<AnnotationDeclaration>();
+        newNode->metadataAccessRestrictionAnnotationName_ = name;
+    }
+
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -225,6 +251,8 @@ private:
     ArenaVector<AstNode *> properties_;
     ArenaVector<AnnotationTargets> targets_;
     RetentionPolicy policy_ = RetentionPolicy::BYTECODE;
+    MetadataAccessRestrictionModuleList metadataAccessRestrictionModules_;
+    util::StringView metadataAccessRestrictionAnnotationName_ {};
 };
 }  // namespace ark::es2panda::ir
 

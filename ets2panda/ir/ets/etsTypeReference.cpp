@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -148,14 +148,22 @@ static checker::Type *HandleUnsafeVarianceModifier(checker::ETSChecker *checker,
 
 checker::Type *ETSTypeReference::HandleTypeRefAnnotations(checker::ETSChecker *checker, checker::Type *originalType)
 {
-    if (!HasAnnotations()) {
-        return originalType;
-    }
-
     auto *annotatedType = originalType;
 
+    if (forceAllowUnsafeVariance_ && annotatedType->IsETSTypeParameter()) {
+        auto *const instantiated =
+            annotatedType->Instantiate(checker->Allocator(), checker->Relation(), checker->GetGlobalTypesHolder())
+                ->AsETSTypeParameter();
+        instantiated->SetAllowUnsafeVariance(true);
+        annotatedType = instantiated;
+    }
+
+    if (!HasAnnotations()) {
+        return annotatedType;
+    }
+
     for (auto *anno : Annotations()) {
-        annotatedType = HandleUnsafeVarianceModifier(checker, originalType, anno);
+        annotatedType = HandleUnsafeVarianceModifier(checker, annotatedType, anno);
     }
 
     return annotatedType;
@@ -193,6 +201,7 @@ ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNo
     }
 
     clone->AddModifier(Modifiers());
+    clone->SetForceAllowUnsafeVariance(forceAllowUnsafeVariance_);
 
     if (parent != nullptr) {
         clone->SetParent(parent);
@@ -215,6 +224,7 @@ void ETSTypeReference::CopyTo(AstNode *other) const
     auto otherImpl = other->AsETSTypeReference();
 
     otherImpl->part_ = part_;
+    otherImpl->forceAllowUnsafeVariance_ = forceAllowUnsafeVariance_;
 
     TypeNode::CopyTo(other);
 }

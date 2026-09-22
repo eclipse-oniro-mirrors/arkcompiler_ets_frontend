@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,47 +16,47 @@
 #include "common.h"
 #include "util/arktsconfig.h"
 #include "util/diagnosticEngine.h"
+
+#include <fstream>
 namespace {
 
-// NOTE(morlovsky): change to non-sideeffect ones (without opening the file)
-// This will help with this nonsense of file opening on every parse
+constexpr char EMPTY_INCLUDE_CONFIG[] = "arktsconfig_include_empty.json";
+constexpr char STRING_INCLUDE_CONFIG[] = "arktsconfig_include_string.json";
+constexpr char NULL_INCLUDE_CONFIG[] = "arktsconfig_include_something.json";
+constexpr char CORRECT_INCLUDE_CONFIG[] = "arktsconfig_include_correct.json";
 common::Params EmptyIncludeNeg()
 {
-    return common::Params {
-        R"({
+    return common::Params {R"({
         "include": []
         })",
-        ark::es2panda::JoinPaths(common::CurrentSourceFileDir(), "arktsconfig_include_empty.json"), false};
+                           EMPTY_INCLUDE_CONFIG, false};
 }
 
 common::Params IncludeStringNeg()
 {
-    return common::Params {
-        R"({
+    return common::Params {R"({
         "include": "abc"
         })",
-        ark::es2panda::JoinPaths(common::CurrentSourceFileDir(), "arktsconfig_include_string.json"), false};
+                           STRING_INCLUDE_CONFIG, false};
 }
 
 common::Params IncludeSomethingNeg()
 {
-    return common::Params {
-        R"({
+    return common::Params {R"({
         "include": null
         })",
-        ark::es2panda::JoinPaths(common::CurrentSourceFileDir(), "arktsconfig_include_something.json"), false};
+                           NULL_INCLUDE_CONFIG, false};
 }
 
 common::Params IncludeCorrect()
 {
-    return common::Params {
-        R"({
+    return common::Params {R"({
         "include": [
                 "foo",
                 "bar"
             ]
         })",
-        ark::es2panda::JoinPaths(common::CurrentSourceFileDir(), "arktsconfig_include_correct.json"), true};
+                           CORRECT_INCLUDE_CONFIG, true};
 }
 
 class ArkTsConfigInclude : public ::testing::TestWithParam<common::Params> {};
@@ -64,8 +64,15 @@ class ArkTsConfigInclude : public ::testing::TestWithParam<common::Params> {};
 TEST_P(ArkTsConfigInclude, CheckInclude)
 {
     auto param = GetParam();
+    const auto configPath = ark::es2panda::JoinPaths(::testing::TempDir(), param.fileName);
+    std::ofstream configFile {configPath};
+    ASSERT_TRUE(configFile.is_open());
+    configFile << param.config;
+    ASSERT_FALSE(configFile.fail());
+    configFile.close();
+
     ark::es2panda::util::DiagnosticEngine de;
-    auto config = ark::es2panda::ArkTsConfig {*param.path, de};
+    auto config = ark::es2panda::ArkTsConfig {configPath, de};
     ASSERT_EQ(config.Parse(), param.expected);
 }
 

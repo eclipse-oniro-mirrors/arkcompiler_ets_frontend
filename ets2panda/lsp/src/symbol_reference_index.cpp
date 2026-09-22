@@ -24,6 +24,8 @@
 #include "lsp/include/internal_api.h"
 #include "parser/program/program.h"
 #include "public/public.h"
+#include "checker/types/ets/etsObjectType.h"
+#include "varbinder/variable.h"
 
 #include <algorithm>
 #include <cmath>
@@ -324,7 +326,7 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
         auto start = declNode->Start().index;
         auto end = declNode->End().index;
         // For "ETSGLOBAL" and the "main" function within it, there is no need to add them to the symbol table.
-        if (start == 0 && end == 0) {
+        if (start == 0 && end == 0 && !declFileName.empty()) {
             return 0;
         }
         key = declFileName + ":" + std::to_string(start) + ":" + std::to_string(end) + ":" +
@@ -337,6 +339,39 @@ SymbolId BuildSymbolId(const ir::AstNode *declNode, const ir::Identifier *identi
 SymbolId BuildFileReferenceSymbolId(const std::string &targetPath)
 {
     return static_cast<SymbolId>(std::hash<std::string> {}("file_ref:" + targetPath));
+}
+
+const checker::Type *GetTypeReferenceType(const ir::AstNode *targetNode)
+{
+    return targetNode != nullptr && targetNode->IsTyped() ? targetNode->AsTyped()->TsType() : nullptr;
+}
+
+bool HasBuiltinTypeVariable(const checker::Type *type)
+{
+    auto *const variable = type != nullptr ? type->Variable() : nullptr;
+    return variable != nullptr && variable->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE);
+}
+
+bool IsIntrinsicTypeReference(const public_lib::Context *ctx, const ir::AstNode *targetNode)
+{
+    auto *const type = GetTypeReferenceType(targetNode);
+    if (type == nullptr) {
+        return false;
+    }
+    if (type->IsETSAnyType() || HasBuiltinTypeVariable(type)) {
+        return true;
+    }
+    if (ctx != nullptr && ctx->GetChecker() != nullptr &&
+        type == ctx->GetChecker()->AsETSChecker()->GlobalETSObjectType()) {
+        return true;
+    }
+    return type->IsETSObjectType() && type->AsETSObjectType()->BuiltInKind() != checker::ETSObjectFlags::NO_OPTS;
+}
+
+SymbolId BuildIntrinsicTypeReferenceSymbolId(util::StringView name)
+{
+    constexpr SymbolId INTRINSIC_TYPE_REFERENCE_SYMBOL_SALT = 0x9E3779B97F4A7C15ULL;
+    return static_cast<SymbolId>(std::hash<std::string_view> {}(name.Utf8())) ^ INTRINSIC_TYPE_REFERENCE_SYMBOL_SALT;
 }
 
 bool IsDefinitionNode(const ir::AstNode *node, const ir::AstNode *owner)
@@ -425,21 +460,17 @@ bool IsExportedDefinition(const ir::Identifier *identifier, const ir::AstNode *o
            (parent->IsExported() || parent->IsExportNamedDeclaration() || parent->IsExportDefaultDeclaration());
 }
 
-SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::Identifier *identifier, ir::AstNode *owner,
-                         bool isTypeReferenceNode)
+SymbolId ResolveSymbolId(const public_lib::Context *ctx, const ir::AstNode *targetNode,
+                         const ir::Identifier *identifier, ir::AstNode *owner)
 {
     if (identifier == nullptr) {
         return 0;
     }
+    if (targetNode != nullptr && targetNode->IsETSTypeReference() && IsIntrinsicTypeReference(ctx, targetNode)) {
+        return BuildIntrinsicTypeReferenceSymbolId(identifier->Name());
+    }
     if (owner == nullptr) {
-        if (!isTypeReferenceNode) {
-            return 0;
-        }
-        const auto identifierName = std::string(identifier->Name());
-        if (identifierName != "Any" && identifierName != "Object") {
-            return 0;
-        }
-        return static_cast<SymbolId>(std::hash<std::string> {}("intrinsic_typeref:" + identifierName));
+        return 0;
     }
     return BuildSymbolId(owner, identifier, ctx);
 }
@@ -452,7 +483,7 @@ std::optional<std::pair<ReferenceInfo, size_t>> BuildReferenceInfo(const public_
         return std::nullopt;
     }
 
-    const size_t start = targetNode->Start().index;
+    const size_t start = targetNode->IsETSTypeReference() ? identifier->Start().index : targetNode->Start().index;
     const std::string identifierName = std::string(identifier->Name());
     const size_t refLength = identifierName.length();
     if (refLength == 0) {
@@ -543,7 +574,7 @@ void AddReferenceFromNode(const public_lib::Context *ctx, const ir::AstNode *tar
     ir::AstNode *owner = nullptr;
     GetReferenceIdentifierAndOwner(targetNode, &identifier, &owner);
 
-    const SymbolId symbolId = ResolveSymbolId(ctx, identifier, owner, targetNode->IsETSTypeReference());
+    const SymbolId symbolId = ResolveSymbolId(ctx, targetNode, identifier, owner);
     if (symbolId == 0) {
         return;
     }
@@ -711,7 +742,7 @@ bool BuildSymbolReferenceIndexForContextWithExternal(es2panda_Context *context)
 
     buildIfNeeded(ctx->parserProgram);
 
-    auto *externalSources = ctx->parserProgram->GetExternalDecls();
+    auto *externalSources = ctx->parserProgram->GetExternalPrograms();
     if (externalSources == nullptr) {
         return buildSuccess;
     }

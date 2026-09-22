@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,6 @@ let var6: [a0: , a1: ];
 /* @@? 24:12 Error Syntax error ESY0138: Invalid Type. */
 /* @@? 24:12 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 24:12 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
-/* @@? 24:12 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 24:15 Error Syntax error ESY0227: Unexpected token 'number'. */
 /* @@? 24:23 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 24:25 Error Syntax error ESY0227: Unexpected token '...'. */
@@ -59,19 +58,19 @@ let var6: [a0: , a1: ];
 /* @@? 28:18 Error Syntax error ESY0227: Unexpected token '?'. */
 /* @@? 28:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 28:19 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 30:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 30:18 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 30:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 30:20 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 30:23 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 30:26 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 32:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 32:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 32:25 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 35:21 Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
 /* @@? 38:12 Error Semantic error ESE0371: Cannot find type 'a0'. */
-/* @@? 38:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 38:14 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 38:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 38:16 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 38:18 Error Syntax error ESY0227: Unexpected token 'a1'. */
 /* @@? 38:22 Error Syntax error ESY0038: Label must be followed by a loop statement. */

@@ -212,10 +212,19 @@ public:
         // pool thread: `AssignCacheFileName` mutates `manifest_`, which every `Enqueue` call
         // shares, so doing it up front keeps that mutation off the background threads (only the
         // actual disk I/O -- and `RecordError` -- happens there).
-        auto cacheFileName = AssignCacheFileName(cache->sourceFile, cache->sourceMTime);
-        auto outputPath = fs::path(cacheDir_).append("intermediates").append(cacheFileName);
+        auto cacheFileName = ClaimCacheFileName(cache->sourceFile, cache->sourceMTime);
+        if (!cacheFileName.has_value()) {
+            return;
+        }
+        auto outputPath = fs::path(cacheDir_).append("intermediates").append(*cacheFileName);
         WritingTask task {std::move(cache), std::move(outputPath)};
-        pool_.Post([this, task = std::move(task)]() { WriteToDisk(task); });
+        pool_.Post([this, task = std::move(task)]() {
+            try {
+                WriteToDisk(task);
+            } catch (const std::exception &e) {
+                RecordError("Failed to write intermediate cache file: " + task.outputPath.string(), e.what());
+            }
+        });
     }
 
     std::vector<std::string> Wait()
@@ -282,7 +291,15 @@ private:
     // Storing every cache file under a flat `intermediates/` directory (derived from a hash of
     // `sourceFile` rather than mirroring its on-disk path) sidesteps both the
     // `..`-escaping-`cacheDir_` problem and Windows' MAX_PATH limit.
-    std::string AssignCacheFileName(const std::string &sourceFile, const std::string &sourceMTime)
+    // Returns `std::nullopt` when a write for `sourceFile` has already been scheduled during this
+    // run. The same source really does reach Enqueue() more than once -- a dependency imported by
+    // several programs (etsstdlib.abc, most visibly) yields one Gluec result per importing program
+    // -- and every one of those maps to the *same* cache file name. Scheduling a write per call
+    // would put several pool threads on one path at once, each truncating and streaming into it,
+    // which leaves an interleaved/short file behind; the next run then fails to parse it. Claiming
+    // the name once per run keeps exactly one writer per path (the content is identical anyway,
+    // and it skips redundant serialization of the same tree).
+    std::optional<std::string> ClaimCacheFileName(const std::string &sourceFile, const std::string &sourceMTime)
     {
         std::ostringstream hashHex;
         constexpr std::size_t kHexDigitsPerByte = 2;
@@ -291,11 +308,13 @@ private:
         const auto baseName = fs::path(sourceFile).filename().string();
 
         std::lock_guard<std::mutex> lock(manifestMutex_);
-        // A previous Enqueue() for the same sourceFile (should not normally happen -- each
-        // sourceFile is only ever passed to Gluec once -- but is harmless/idempotent to handle)
-        // simply reuses/refreshes its existing entry instead of assigning a new name.
+        // An existing entry is either one seeded from a previous run's manifest (claim it and
+        // refresh its mtime) or one this run already scheduled (claim fails -- skip the write).
         if (auto it = manifest_.find(sourceFile); it != manifest_.end()) {
             it->second.sourceMTime = sourceMTime;
+            if (!scheduledWrites_.insert(it->second.cacheFile).second) {
+                return std::nullopt;
+            }
             return it->second.cacheFile;
         }
 
@@ -308,6 +327,7 @@ private:
         }
 
         usedCacheFiles_.insert(candidate);
+        scheduledWrites_.insert(candidate);
         manifest_[sourceFile] = CacheManifestEntry {candidate, sourceMTime};
         return candidate;
     }
@@ -356,6 +376,13 @@ private:
         }
     }
 
+    // Writes the serialized cache via a temp-file-then-rename, for the same reason `WriteManifest`
+    // does: a `DiskCacheStore` keeps a reader and a writer over one cache directory alive at the
+    // same time, and both derive a cache file's name from its source file -- so within a single
+    // warm run the reader pool can be loading the very path this writer is refreshing. Writing
+    // straight to `outputPath` let a reader observe a truncated/partly-rewritten file and fail to
+    // parse it; renaming into place means a reader always sees either the whole previous file or
+    // the whole new one.
     void WriteToDisk(const WritingTask &task)
     {
         std::error_code ec;
@@ -366,15 +393,27 @@ private:
             return;
         }
 
-        std::ofstream out(ToLongPathIfNeeded(task.outputPath), std::ios::binary | std::ios::trunc);
-        if (!out.is_open()) {
-            RecordError("Failed to open intermediate cache file for writing: " + task.outputPath.string());
-            return;
+        auto tmpPath = task.outputPath;
+        tmpPath += ".tmp";
+        {
+            std::ofstream out(ToLongPathIfNeeded(tmpPath), std::ios::binary | std::ios::trunc);
+            if (!out.is_open()) {
+                RecordError("Failed to open intermediate cache file for writing: " + tmpPath.string());
+                return;
+            }
+
+            out << IntermediateCache::serialize(*task.cache);
+            if (!out) {
+                RecordError("Failed to write intermediate cache file: " + tmpPath.string());
+                return;
+            }
         }
 
-        out << IntermediateCache::serialize(*task.cache);
-        if (!out) {
-            RecordError("Failed to write intermediate cache file: " + task.outputPath.string());
+        fs::rename(ToLongPathIfNeeded(tmpPath), ToLongPathIfNeeded(task.outputPath), ec);
+        if (ec) {
+            RecordError("Failed to finalize intermediate cache file: " + task.outputPath.string(), ec.message());
+            std::error_code removeEc;
+            fs::remove(ToLongPathIfNeeded(tmpPath), removeEc);
         }
     }
 
@@ -386,6 +425,7 @@ private:
     std::mutex manifestMutex_;
     std::unordered_map<std::string, CacheManifestEntry> manifest_;  // sourceFile -> cache file entry
     std::unordered_set<std::string> usedCacheFiles_;                // cache file names already assigned
+    std::unordered_set<std::string> scheduledWrites_;               // cache file names written this run
 
     std::mutex errorsMutex_;
     std::vector<std::string> errors_;
@@ -447,7 +487,19 @@ public:
         }
         auto cachePath = fs::path(cacheDir_) / "intermediates" / it->second.cacheFile;
         pool_.Post([this, cachePath = std::move(cachePath), onLoaded = std::move(onLoaded)]() {
-            onLoaded(ReadFromDisk(cachePath, context_));
+            std::shared_ptr<IntermediateCache> cache;
+            try {
+                cache = ReadFromDisk(cachePath, context_);
+            } catch (const std::exception &e) {
+                // ReadFromDisk already turns a corrupt/unreadable cache file into a null result;
+                // this covers anything else it may throw (std::bad_alloc, a filesystem error).
+                // Reporting and handing back nullptr degrades to a cache miss -- Gluegen::Parse()
+                // then falls back to a fresh Gluec parse -- instead of killing the worker thread.
+                context_.diagnosticEngine.Warning(DiagnosticCode::CACHE_IO_ERROR,
+                                                  "Failed to load intermediate cache file: " + cachePath.string(),
+                                                  e.what());
+            }
+            onLoaded(std::move(cache));
         });
     }
 

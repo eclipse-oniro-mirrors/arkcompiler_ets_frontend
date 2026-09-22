@@ -618,6 +618,11 @@ protected:
         return recursiveCtx_;
     }
 
+    RecursiveContext &TypeRecursiveCtx()
+    {
+        return typeRecursiveCtx_;
+    }
+
 private:
     bool GetCanBeForInOf(ir::Expression *leftNode, ir::AstNode *initNode);
     Program *program_ {nullptr};
@@ -629,6 +634,7 @@ private:
     public_lib::Context *ctx_ {nullptr};
     std::unique_ptr<util::ImportPathManager> importPathManager_;
     RecursiveContext recursiveCtx_;
+    RecursiveContext typeRecursiveCtx_;
 };
 }  // namespace ark::es2panda::parser
 

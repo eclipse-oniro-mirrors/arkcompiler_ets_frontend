@@ -539,7 +539,8 @@ public:
     ir::MethodDefinition *CreateMethod(const util::StringView &name, ir::ModifierFlags modifiers,
                                        ir::ScriptFunctionFlags flags, ArenaVector<ir::Expression *> &&params,
                                        varbinder::FunctionParamScope *paramScope, ir::TypeNode *returnType,
-                                       ir::AstNode *body);
+                                       ir::AstNode *body,
+                                       ir::MethodDefinitionKind kind = ir::MethodDefinitionKind::METHOD);
     varbinder::FunctionParamScope *CopyParams(
         const ArenaVector<ir::Expression *> &params, ArenaVector<ir::Expression *> &outParams,
         ArenaUnorderedMap<varbinder::Variable *, varbinder::Variable *> *paramVarMap);
@@ -646,6 +647,8 @@ public:
     checker::Type *FixOptionalVariableType(varbinder::Variable *const bindingVar, ir::ModifierFlags flags);
     void CheckEnumType(ir::Expression *init, checker::Type *initType, const util::StringView &varName);
     void CheckRecordType(ir::Expression *init, checker::Type *recordType);
+    bool IsValidObjectLiteralTargetType(const checker::Type *type) const;
+    checker::Type *PreferredObjectLiteralTargetType(checker::Type *annotationType) const;
     checker::Type *CheckVariableDeclaration(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                                             ir::ModifierFlags flags);
     void CheckTruthinessOfType(ir::Expression *expr);
@@ -763,6 +766,9 @@ public:
                                          const ir::Identifier *const ident);
     // Partial
     Type *CreatePartialType(Type *typeToBePartial);
+    Type *CreatePartialObjectType(ETSObjectType *const objectType);
+    Type *CreatePartialNonObjectType(Type *const typeToBePartial);
+
     Type *HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDecl, ETSObjectType *typeToBePartial);
 
     ir::MethodDefinition *CreateNullishAccessor(ir::MethodDefinition *const accessor,

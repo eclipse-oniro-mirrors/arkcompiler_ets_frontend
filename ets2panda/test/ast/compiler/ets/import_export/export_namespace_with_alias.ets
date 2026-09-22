@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-namespace ns2{
+export namespace ns2{
     export let num: int = 1
 }
 

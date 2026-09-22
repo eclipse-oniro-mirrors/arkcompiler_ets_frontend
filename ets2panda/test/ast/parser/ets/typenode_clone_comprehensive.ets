@@ -82,7 +82,7 @@ const test3: ComplexType<'b'>;
 /* @@? 38:35 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 38:35 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 38:37 Error Syntax error ESY0227: Unexpected token 'number'. */
-/* @@? 38:37 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 38:37 Error Semantic error ESE0330: Identifier 'number' is used in wrong context. */
 /* @@? 38:43 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 38:45 Error Syntax error ESY0227: Unexpected token 'b'. */
 /* @@? 38:48 Error Syntax error ESY0038: Label must be followed by a loop statement. */

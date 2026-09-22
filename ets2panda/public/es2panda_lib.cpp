@@ -416,7 +416,7 @@ static void UpdateProgramTextForIncremental(Context *ctx, parser::Program *progr
 static void AddDirectDependenciesToExternalSourcesForIncremental(Context *ctx, parser::Program *targetProgram)
 {
     auto *importPathManager = ctx->parser->GetImportPathManager();
-    auto &externalSources = *targetProgram->GetExternalDecls();
+    auto &externalSources = *targetProgram->GetExternalPrograms();
     externalSources.Direct().clear();
     externalSources.Get<util::ModuleKind::MODULE>().clear();
     externalSources.Get<util::ModuleKind::SOURCE_DECL>().clear();
@@ -468,6 +468,7 @@ extern "C" __attribute__((unused)) int IncrementalPrepareProgram(es2panda_Contex
 static void InitializeContext(Context *res)
 {
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
+    parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
@@ -728,7 +729,7 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     cacheMap[ctx->sourceFileName] = ctx->parserProgram;
 
     // cycle dependencies
-    ctx->parserProgram->GetExternalDecls()->Visit([&cacheMap](auto *extProgram) {
+    ctx->parserProgram->GetExternalPrograms()->Visit([&cacheMap](auto *extProgram) {
         auto absPath = std::string {extProgram->AbsoluteName()};
         if (cacheMap.count(absPath) == 1 && cacheMap[absPath] == nullptr) {
             cacheMap[absPath] = extProgram;
@@ -749,7 +750,7 @@ __attribute__((unused)) static void MarkAsLowered(Context *ctx)
 
     markAsLowered(ctx->parserProgram);
     ctx->parserProgram->SetProgramModified(true);
-    ctx->parserProgram->GetExternalDecls()->Visit<false>([&markAsLowered](auto *extProgram) {
+    ctx->parserProgram->GetExternalPrograms()->Visit<false>([&markAsLowered](auto *extProgram) {
         markAsLowered(extProgram);
         extProgram->MaybeIteratePackage(
             [&markAsLowered](parser::Program *fractionOrSelf) { markAsLowered(fractionOrSelf); });
@@ -827,7 +828,7 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
         }
     }
 
-    ctx->parserProgram->GetExternalDecls()->Visit([](auto *extProgram) {
+    ctx->parserProgram->GetExternalPrograms()->Visit([](auto *extProgram) {
         if (!extProgram->IsASTLowered()) {
             extProgram->MarkASTAsLowered();
         }
@@ -1022,7 +1023,7 @@ extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramExternalSour
 
     // NOTE(dkofanov): only ctx->parserProgram has non-empty externalSources.
     auto programE2p = reinterpret_cast<parser::Program *>(program);
-    programE2p->GetExternalDecls()->Visit([vec, allocator](auto *extProgram) {
+    programE2p->GetExternalPrograms()->Visit([vec, allocator](auto *extProgram) {
         auto key = StringViewToCString(allocator, extProgram->GetImportInfo().ModuleName());
         vec->emplace_back(allocator->New<ExternalSourceEntry>(key, extProgram));
     });
@@ -1041,7 +1042,7 @@ extern "C" __attribute__((unused)) es2panda_ExternalSource **ProgramDirectExtern
 
     auto programE2p = reinterpret_cast<parser::Program *>(program);
     // NOTE(dkofanov): only ctx->parserProgram has non-empty externalSources.
-    for (auto &[name, extProgram] : programE2p->GetExternalDecls()->Direct()) {
+    for (auto &[name, extProgram] : programE2p->GetExternalPrograms()->Direct()) {
         auto key = StringViewToCString(allocator, name);
         vec->emplace_back(allocator->New<ExternalSourceEntry>(key, extProgram));
     }
@@ -1614,7 +1615,7 @@ extern "C" es2panda_AstNode *FirstDeclarationByNameFromProgram([[maybe_unused]] 
     // NOTE(dkofanov): broken logic.
     // "direct" external sources are filled only for main program.
     // packages are not supported since order of their fractions is not determined.
-    for (const auto &ext_source : programE2p->GetExternalDecls()->Direct()) {
+    for (const auto &ext_source : programE2p->GetExternalPrograms()->Direct()) {
         const auto *ext_program = ext_source.second;
         if (ext_program != nullptr) {
             ES2PANDA_ASSERT(!ext_program->Is<util::ModuleKind::PACKAGE>());
@@ -1685,7 +1686,7 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     ArenaSet<ir::AstNode *> res = AllDeclarationsByNameFromNodeHelper(allocator, programE2p->Ast(), nameE2p);
     result.insert(res.begin(), res.end());
 
-    for (auto &[_, ext_program] : programE2p->GetExternalDecls()->Direct()) {
+    for (auto &[_, ext_program] : programE2p->GetExternalPrograms()->Direct()) {
         if (ext_program != nullptr) {
             res = AllDeclarationsByNameFromNodeHelper(allocator, ext_program->Ast(), nameE2p);
             result.insert(res.begin(), res.end());
@@ -1775,7 +1776,7 @@ inline static parser::Program *FindProgramInContextByPath(Context *ctxImpl, cons
         return ctxImpl->parserProgram;
     }
 
-    for (const auto &[_, prog] : ctxImpl->parserProgram->GetExternalDecls()->Direct()) {
+    for (const auto &[_, prog] : ctxImpl->parserProgram->GetExternalPrograms()->Direct()) {
         if (prog && prog->IsBuiltSimultaneously() && prog->AbsoluteName().Mutf8() == inputPathStr) {
             return prog;
         }
@@ -1810,7 +1811,7 @@ static bool HandleMultiFileModeTemplate(
         return false;
     }
 
-    for (auto [_, prog] : ctxImpl->parserProgram->GetExternalDecls()->Direct()) {
+    for (auto [_, prog] : ctxImpl->parserProgram->GetExternalPrograms()->Direct()) {
         if (prog == nullptr || !prog->IsBuiltSimultaneously()) {
             continue;
         }
@@ -1943,7 +1944,7 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
                        reinterpret_cast<es2panda_AstNode *>(reinterpret_cast<Context *>(ctx)->parserProgram->Ast()));
         ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_LOWERED);
     }
-    globalContext->stdLibAstCache = reinterpret_cast<Context *>(ctx)->parserProgram->GetExternalDecls();
+    globalContext->stdLibAstCache = reinterpret_cast<Context *>(ctx)->parserProgram->GetExternalPrograms();
     DestroyContext(ctx);
 }
 

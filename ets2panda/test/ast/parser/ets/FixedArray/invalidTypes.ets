@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,6 @@ let var6: [a0: , a1: ];
 /* @@? 24:23 Error Syntax error ESY0227: Unexpected token '>'. */
 /* @@? 24:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 24:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 24:23 Error Syntax error ESY0227: Unexpected token '>'. */
 /* @@? 24:26 Error Syntax error ESY0227: Unexpected token 'number'. */
 /* @@? 24:26 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 24:33 Error Syntax error ESY0227: Unexpected token ','. */
@@ -55,10 +54,10 @@ let var6: [a0: , a1: ];
 /* @@? 24:49 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
 /* @@? 24:56 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 26:12 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 26:23 Error Syntax error ESY0138: Invalid Type. */
 /* @@? 26:23 Error Syntax error ESY0227: Unexpected token '>'. */
 /* @@? 26:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 26:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 26:23 Error Syntax error ESY0138: Invalid Type. */
 /* @@? 26:26 Error Syntax error ESY0227: Unexpected token 'number'. */
 /* @@? 26:26 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 26:33 Error Syntax error ESY0227: Unexpected token ','. */
@@ -70,12 +69,11 @@ let var6: [a0: , a1: ];
 /* @@? 28:19 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 30:18 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 30:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
-/* @@? 30:18 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 30:20 Error Syntax error ESY0227: Unexpected token '...'. */
 /* @@? 30:23 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 30:26 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 32:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 32:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 32:19 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 32:25 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 35:21 Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */

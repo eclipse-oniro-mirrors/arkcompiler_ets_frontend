@@ -29,7 +29,7 @@ namespace ark::es2panda::compiler::test {
 using namespace Metadata;
 using namespace metadata_test;
 
-using Metadata::GetRoot, Metadata::BuiltinTypeKind, Metadata::TypeParamDecl;
+using Metadata::GetDecls, Metadata::BuiltinTypeKind, Metadata::TypeParamDecl;
 
 class MetadataTestSerialization : public ::test::utils::MetadataTest {
 public:
@@ -77,9 +77,9 @@ TEST_F(MetadataTestSerialization, method_return_type_builtin)
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hahaha", BuiltinTypeKind_undefined);
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "foo", BuiltinTypeKind_any);
     MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "fee", BuiltinTypeKind_never);
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "faa", "std.core.String");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lol", "std.core.BigInt");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lel", "std.core.Object");
+    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "faa", "String");
+    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lol", "BigInt");
+    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lel", "Object");
 }
 
 TEST_F(MetadataTestSerialization, method_return_type_primitive)
@@ -87,14 +87,14 @@ TEST_F(MetadataTestSerialization, method_return_type_primitive)
     const auto program =
         RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
 
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hehehe", "std.core.Int");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hohoho", "std.core.Long");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "hahaha", "std.core.Double");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "foo", "std.core.Boolean");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "fee", "std.core.Byte");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "faa", "std.core.Short");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lol", "std.core.Char");
-    MetadataAssertions::AssertRefReturnTypeForMethod(program.get(), "MyClass", "lel", "std.core.Float");
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hehehe", BuiltinTypeKind_int_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hohoho", BuiltinTypeKind_long_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "hahaha", BuiltinTypeKind_double_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "foo", BuiltinTypeKind_boolean);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "fee", BuiltinTypeKind_byte_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "faa", BuiltinTypeKind_short_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "lol", BuiltinTypeKind_char_);
+    MetadataAssertions::AssertBuiltinReturnTypeForMethod(program.get(), "MyClass", "lel", BuiltinTypeKind_float_);
 }
 
 TEST_F(MetadataTestSerialization, method_return_type_string_literal)
@@ -150,31 +150,6 @@ TEST_F(MetadataTestSerialization, annotation_not_exported)
     MetadataAssertions::AssertAnnotationNotPresented(program.get(), "InternalAnnotation");
     MetadataAssertions::AssertClassPresented(program.get(), "MyClass");
     MetadataAssertions::AssertAnnotationsCount(program.get(), 0);
-}
-
-TEST_F(MetadataTestSerialization, enums)
-{
-    const auto program =
-        RunCheckerWithMetadata(std::string(TEST_DATA_PATH) + "serialization/" + test_info_->name() + ".ets");
-
-    const auto root = GetRoot(program->metadata.data());
-    ASSERT_NE(root, nullptr);
-    ASSERT_NE(root->enums(), nullptr);
-
-    const auto enumDecl = root->enums()->Get(0);
-    ASSERT_NE(enumDecl, nullptr);
-    ASSERT_EQ(enumDecl->name()->str(), "MyEnum");
-    constexpr auto numberOfEnums = 3;
-    ASSERT_EQ(enumDecl->entries()->size(), numberOfEnums);
-
-    std::set<std::string> entries;
-    for (const auto entry : *enumDecl->entries()) {
-        entries.insert(entry->str());
-    }
-
-    ASSERT_EQ(entries.count("FIRST"), 1);
-    ASSERT_EQ(entries.count("SECOND"), 1);
-    ASSERT_EQ(entries.count("THIRD"), 1);
 }
 
 }  // namespace ark::es2panda::compiler::test

@@ -112,7 +112,7 @@ struct ProgramsByKindSelector {
         bool result = true;
 
         // 1. external declarations:
-        context->parserProgram->GetExternalDecls()->template Visit<true, false, PROGRAM_KINDS_TO_VISIT...>(
+        context->parserProgram->GetExternalPrograms()->template Visit<true, PROGRAM_KINDS_TO_VISIT...>(
             [&cb, &result](auto *extProg) {
                 bool precondition = extProg->IsASTLowered();
                 if constexpr ((sizeof...(PROGRAM_KINDS_TO_VISIT) != 1) &&
@@ -143,21 +143,21 @@ struct ProgramsToBeEmittedSelector {
         parser::Program *program = context->parserProgram;
 
         if (mode == CompilationMode::GEN_STD_LIB) {
-            program->GetExternalDecls()->Visit([&cb](auto *extProg) {
+            program->GetExternalPrograms()->Visit([&cb](auto *extProg) {
                 if (extProg->IsASTLowered()) {
                     return;
                 }
                 cb(extProg);
             });
         } else if (mode == CompilationMode::SIMULTANEOUS) {
-            program->GetExternalDecls()->Visit([&cb](auto *extProg) {
+            program->GetExternalPrograms()->Visit([&cb](auto *extProg) {
                 if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
                     return;
                 }
                 cb(extProg);
             });
         } else if (mode == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
-            program->GetExternalDecls()->Visit([&cb, context](auto *extProg) {
+            program->GetExternalPrograms()->Visit([&cb, context](auto *extProg) {
                 if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
                     return;
                 }

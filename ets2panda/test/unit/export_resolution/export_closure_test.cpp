@@ -822,7 +822,7 @@ TEST_F(ExportResolutionTest, ImportedSyntaxErrorStillAllowsRequestedNameError)
 TEST_F(ExportResolutionTest, StarExportPropagatesLocalSelectiveExportAlias)
 {
     WriteFile("source.ets", R"ETS(
-        class LocalA {
+        export class LocalA {
             value: int = 1;
         }
         export { LocalA as A };

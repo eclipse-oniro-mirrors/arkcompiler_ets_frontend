@@ -75,9 +75,16 @@ bool ETSBinder::IsSpecialName(const util::StringView &name)
            std::find(UTILITY_TYPES.begin(), UTILITY_TYPES.end(), name.Utf8()) != UTILITY_TYPES.end();
 }
 
-static util::StringView NormalizeReExportName(util::StringView name)
+util::StringView NormalizeReExportName(util::StringView name)
 {
-    return name.Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) ? util::StringView {"default"} : name;
+    return name.Is(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY)
+               ? util::StringView {compiler::Signatures::DEFAULT}
+               : name;
+}
+
+bool IsDefaultExportName(util::StringView name)
+{
+    return name.Is(compiler::Signatures::DEFAULT);
 }
 
 static bool MatchesName(const ir::Identifier *id, util::StringView localName)
@@ -300,7 +307,7 @@ static void CollectLocalExportFacts(ExportFactStore *store, parser::Program *pro
             store->AddLocalExport(program, name, variable, node);
         }
         if (node->IsDefaultExported()) {
-            store->AddLocalExport(program, util::StringView {"default"}, variable, node);
+            store->AddLocalExport(program, util::StringView {compiler::Signatures::DEFAULT}, variable, node);
         }
     }
 }
@@ -353,7 +360,7 @@ static void CollectPendingLocalExportAliases(ExportFactStore *store, parser::Pro
         if (variable == nullptr) {
             continue;
         }
-        if (alias.exportedName.Is("default") && variable->Declaration() != nullptr &&
+        if (IsDefaultExportName(alias.exportedName) && variable->Declaration() != nullptr &&
             variable->Declaration()->Node() != nullptr) {
             auto *node = variable->Declaration()->Node();
             auto *modifierNode = node->IsClassDefinition() && node->Parent() != nullptr ? node->Parent() : node;
@@ -381,7 +388,7 @@ static void AddReExportFact(ExportFactStore *store, parser::Program *program, co
         auto *importSpecifier = specifier->AsImportSpecifier();
         auto exportedName = NormalizeReExportName(importSpecifier->Local()->Name());
         auto importedName = NormalizeReExportName(importSpecifier->Imported()->Name());
-        if (exportedName.Is("default") && !importedName.Is("default")) {
+        if (IsDefaultExportName(exportedName) && !IsDefaultExportName(importedName)) {
             return;
         }
         store->AddNamedReExport(program, import, exportedName, importedName, importSpecifier,
@@ -419,6 +426,7 @@ void ETSBinder::CollectExportFactsForCurrentProgram()
     CollectLocalExportFacts(exportFactStore_, program, program->GlobalClassScope()->StaticMethodScope()->Bindings());
     CollectLocalExportFacts(exportFactStore_, program, program->GlobalClassScope()->StaticFieldScope()->Bindings());
     CollectLocalExportFacts(exportFactStore_, program, program->GlobalClassScope()->StaticDeclScope()->Bindings());
+    CollectLocalExportFacts(exportFactStore_, program, program->GlobalClassScope()->TypeAliasScope()->Bindings());
     CollectDeclareNamespaceExportFacts(exportFactStore_, program);
     CollectPendingLocalExportAliases(exportFactStore_, program);
 
@@ -623,7 +631,7 @@ bool ETSBinder::AddSelectiveExportAlias(const SelectiveExportAlias &alias) noexc
     const auto normalizedExportedName = NormalizeReExportName(alias.exportedName);
     const auto originDeclaresName = OriginDeclaresName(alias.decl, localName);
     const auto kind = originDeclaresName && !alias.isExplicitTypeOnly && normalizedExportedName == localName &&
-                              !normalizedExportedName.Is("default")
+                              !IsDefaultExportName(normalizedExportedName)
                           ? LocalExportKind::DECLARATION
                           : LocalExportKind::ALIAS;
     return exportFactStore_->AddPendingLocalExportAlias(alias.program, normalizedExportedName, localName, alias.decl,
@@ -761,7 +769,7 @@ void ETSBinder::ResolveInterfaceDeclaration(ir::TSInterfaceDeclaration *decl)
 
 void ETSBinder::BuildInterfaceDeclaration(ir::TSInterfaceDeclaration *decl)
 {
-    if (decl->TypeParams() != nullptr) {
+    if (decl->TypeParams() != nullptr && !decl->TypeParams()->Params().empty()) {
         auto typeParamScopeCtx = LexicalScope<LocalScope>::Enter(this, decl->TypeParams()->Scope());
         ResolveReferences(decl->TypeParams());
         ResolveInterfaceDeclaration(decl);
@@ -1123,17 +1131,25 @@ void ETSBinder::HandleExportedGlobalBinding(util::StringView bindingName, Variab
         return;
     }
 
-    // It will be a redeclaration error, but the imported element has not been placed among the bindings yet
+    // ImportAllForeignBindings propagates implicit foreign bindings.
+    // It must not overwrite or redeclare an already-present local
+    // declaration. Explicit imports are handled by AddImport* methods
+    // and still report duplicate declarations per the language spec.
+    if (!var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE) &&
+        variable->Declaration()->Type() == var->Declaration()->Type()) {
+        return;
+    }
+
+    // It will be a redeclaration error, but the imported element has not been placed among the bindings yet.
     if (TopScope()->FindLocal(bindingName, ResolveBindingOptions::ALL) == nullptr) {
         InsertForeignBinding(bindingName, var);
     }
 
-    // redeclaration for builtin type,
-    // need to erase the redeclaration one and make sure the builtin types initialized successfully.
+    // Redeclaration for builtin type: erase the redeclared binding and
+    // make sure builtin types are initialized successfully.
     if (var->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) {
         TopScope()->CorrectForeignBinding(bindingName, var, variable);
     }
-
     ThrowRedeclarationError(variable->Declaration()->Node()->Start(), var, variable, bindingName);
 }
 
@@ -1359,15 +1375,15 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(ir::ImportDefaultSpecifi
     // reuse it rather than reporting a redeclaration error.
     if (previouslyImportedVariable != nullptr && previouslyImportedVariable->IsLocalVariable() &&
         previouslyImportedVariable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
-        const ImportBindingKey key {import, util::StringView {"default"}, localName, import->IsTypeKind(),
-                                    ImportBindingKind::DEFAULT};
+        const ImportBindingKey key {import, util::StringView {compiler::Signatures::DEFAULT}, localName,
+                                    import->IsTypeKind(), ImportBindingKind::DEFAULT};
         if (IsSameImportBinding(previouslyImportedVariable->AsLocalVariable()->ImportBinding(), key)) {
             local->SetVariable(previouslyImportedVariable);
             return;
         }
     }
 
-    auto *var = CreateNamedImportBinding("default", local, import, ImportBindingKind::DEFAULT);
+    auto *var = CreateNamedImportBinding(compiler::Signatures::DEFAULT, local, import, ImportBindingKind::DEFAULT);
     if (varInGlobalClassScope != nullptr || previouslyImportedVariable != nullptr) {
         var->ImportBinding()->conflictingLocalVariable =
             varInGlobalClassScope != nullptr ? varInGlobalClassScope : previouslyImportedVariable;
@@ -1632,12 +1648,12 @@ void ETSBinder::BuildProgram()
     Program()->SetRecordTable(globalRecordTable_);
     // A tmp solution caused by #23877, needs to check stdlib first to avoid a bug in std/math/math.ets
     // After the bug fixed, we can merge these 2 loop.
-    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
+    Program()->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (extProg->ModuleName().substr(0, STD_PREFIX.length()) == STD_PREFIX) {
             BuildExternalProgram(extProg);
         }
     });
-    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
+    Program()->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (extProg->ModuleName().substr(0, STD_PREFIX.length()) != STD_PREFIX) {
             BuildExternalProgram(extProg);
         }
@@ -1699,7 +1715,7 @@ bool ETSBinder::CheckRecordTablesConsistency(parser::Program *program /* = nullp
     ok &= (mainProg->GetRecordTable() == GetGlobalRecordTable());
 
     if (program == nullptr) {
-        mainProg->GetExternalDecls()->Visit([this, &ok](auto *extProgram) {
+        mainProg->GetExternalPrograms()->Visit([this, &ok](auto *extProgram) {
             ok &= (extProgram->GetRecordTable() == GetExternalRecordTable().find(extProgram)->second);
             ok &= (extProgram->GetRecordTable() != GetGlobalRecordTable());
         });

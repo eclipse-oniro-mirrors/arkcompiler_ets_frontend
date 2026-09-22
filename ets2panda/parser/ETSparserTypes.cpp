@@ -603,6 +603,16 @@ static bool IsReadonlyApplicableType(ir::TypeNode *typeNode)
 
 ir::TypeNode *ETSParser::ParseTypeAnnotation(TypeAnnotationParsingOptions *options)
 {
+    // Bound type-annotation recursion to report MAX_TYPE_NESTING_DEPTH instead of running into SOF crach
+    TrackRecursive trackRecursive(TypeRecursiveCtx(), MAX_TYPE_NESTING_DEPTH);
+    if (!trackRecursive) {
+        LogError(diagnostic::DEEP_NESTING);
+        while (Lexer()->GetToken().Type() != lexer::TokenType::EOS) {
+            Lexer()->NextToken();
+        }
+        return AllocBrokenType(Lexer()->GetToken().Loc());
+    }
+
     const auto startPos = Lexer()->GetToken().Start();
     if ((*options &
          (TypeAnnotationParsingOptions::DISALLOW_UNION | TypeAnnotationParsingOptions::ANNOTATION_NOT_ALLOW)) == 0 &&

@@ -422,7 +422,7 @@ bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
         return false;
     }
 
-    if (IsExported() || IsDefaultExported()) {
+    if (IsExported() || IsDefaultExported() || IsExportedType() || HasExportAlias()) {
         return false;
     }
 
@@ -446,6 +446,10 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
     }
 
     ES2PANDA_ASSERT(ident_ != nullptr);
+
+    if (dumper->IsDeclgen() && dumper->GetDeclgen()->ShouldSkipClassDeclaration(ident->Name())) {
+        return;
+    }
 
     if (dumper->IsDeclgen() && !IsNamespaceTransformed() && RegisterUnexportedForDeclGen(dumper)) {
         return;

@@ -20,7 +20,7 @@ export interface EnumOrderStatus {
     Pending: string
 }
 
-const OrderStatus: EnumOrderStatus = {
+export const OrderStatus: EnumOrderStatus = {
     Pending: 'PENDING'
 }
 

@@ -873,6 +873,18 @@ if (NOT CROSS_VALUES_CONFIG)
 
     panda_target_include_directories(es2panda-lib SYSTEM PRIVATE ${FLATBUFFERS_DIR}/include/ PRIVATE ${FLATBUFFERS_GEN_DIR})
 
-    # Add a target to re-generate schema sources manually
-    add_custom_target(${METADATA_TARGET_NAME} ${METADATA_SCHEMA_GEN_COMMAND})
+    # Generate schema sources whenever the FBS file changes
+    add_custom_command(
+        OUTPUT ${FLATBUFFERS_GEN_DIR}/schemaMetadataGenerated.h
+        COMMAND ${METADATA_SCHEMA_GEN_COMMAND}
+        DEPENDS ${METADATA_SCHEMA}
+        COMMENT "Regenerating metadata schema from ${METADATA_SCHEMA}"
+    )
+    add_custom_target(${METADATA_TARGET_NAME}
+        DEPENDS ${FLATBUFFERS_GEN_DIR}/schemaMetadataGenerated.h
+    )
+
+    # Make es2panda-lib depend on the generated header; ninja will re-run
+    # flatc whenever schema.fbs changes, before recompiling affected sources.
+    add_dependencies(es2panda-lib ${METADATA_TARGET_NAME})
 endif()

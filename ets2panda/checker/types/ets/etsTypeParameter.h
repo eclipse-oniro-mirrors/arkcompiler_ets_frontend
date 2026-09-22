@@ -68,7 +68,7 @@ public:
         allowUnsafeVariance_ = value;
     }
 
-    [[nodiscard]] bool DoAllowUnsafeVariance()
+    [[nodiscard]] bool DoAllowUnsafeVariance() const
     {
         return allowUnsafeVariance_;
     }

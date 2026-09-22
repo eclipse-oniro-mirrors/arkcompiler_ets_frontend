@@ -29,6 +29,7 @@
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/signature.h"
 #include "compiler/lowering/phase.h"
+#include "public/public.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classElement.h"
 #include "ir/base/classProperty.h"
@@ -1319,6 +1320,11 @@ void ETSChecker::ResolveDeclaredMembersOfObject(const Type *type)
         return;
     }
 
+    // NB: lazy members materialization (AST building on-demand) is used together metadata only
+    if (auto *lazyCtx = VarBinder()->GetContext(); lazyCtx && lazyCtx->materializeMembers) {
+        lazyCtx->materializeMembers(declNode);
+    }
+
     if (objectType->IsGeneric() && objectType != objectType->GetOriginalBaseType()) {
         const auto *baseType = objectType->GetOriginalBaseType();
         auto *baseDeclNode = baseType->GetDeclNode();
@@ -2362,7 +2368,9 @@ void ETSChecker::AddOptionalProps(std::vector<ETSFunctionType *> *optionalProps,
     }
     auto functionType = function->TsType()->AsETSFunctionType();
     for (auto signature : functionType->CallSignatures()) {
-        if (signature->Function()->IsAbstract() || signature->Function()->IsStatic()) {
+        auto const isAbstract = signature->Function()->IsAbstract() ||
+                                (!signature->Function()->HasBody() && !signature->Function()->IsNative());
+        if (isAbstract || signature->Function()->IsStatic()) {
             continue;
         }
 

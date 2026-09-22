@@ -31,6 +31,7 @@
 #include "libarkfile/class_data_accessor-inl.h"
 #include "libarkfile/file-inl.h"
 #include "libarkbase/utils/logger.h"
+#include "schemaMetadataGenerated.h"
 
 #include "util/es2pandaMacros.h"
 #include "util/language.h"
@@ -96,6 +97,32 @@ ProgramAdapter<KIND> *Program::New(const util::ImportInfo &importInfo, public_li
 
 namespace ark::es2panda::util {
 
+bool VerifyMetadataModules(const panda_file::MetadataByModules &metadata)
+{
+    for (const auto &[moduleName, moduleMetadata] : metadata) {
+        if (moduleMetadata.empty()) {
+            continue;
+        }
+
+        flatbuffers::Verifier verifier(moduleMetadata.data(), moduleMetadata.size());
+        if (!Metadata::VerifyDeclsBuffer(verifier)) {
+            LOG(WARNING, ES2PANDA) << "Rejected malformed metadata blob for module '" << moduleName << "'";
+            return false;
+        }
+    }
+
+    return true;
+}
+
+namespace {
+
+bool ShouldUseMetadata(const public_lib::Context *ctx)
+{
+    return ctx->config->options->IsReadMetadata() && !ctx->config->options->IsGenStdlib();
+}
+
+}  // namespace
+
 size_t HandleSpecialSymbols(const std::string &input, std::string &output, const size_t &i)
 {
     switch (input[i + 1]) {
@@ -140,19 +167,21 @@ static std::string DeleteEscapeSymbols(const std::string &input)
     return output;
 }
 
-static std::string ExtractMnameFromPandafile(const panda_file::File &pf, const panda_file::File::EntityId &classId)
+static std::optional<std::string> TryExtractMnameFromEtsGlobal(const panda_file::File &pf,
+                                                               const panda_file::File::EntityId &classId)
 {
     // processing name to get ohmUrl
-    std::string name = utf::Mutf8AsCString(pf.GetStringData(classId).data);
-    auto type = pandasm::Type::FromDescriptor(name);
-    type = pandasm::Type(type.GetNameWithoutRank(), type.GetRank());
-    auto recordName = type.GetPandasmName();
+    const std::string name = utf::Mutf8AsCString(pf.GetStringData(classId).data);
+    const auto descriptorType = pandasm::Type::FromDescriptor(name);
+    const auto type = pandasm::Type(descriptorType.GetNameWithoutRank(), descriptorType.GetRank());
+    const auto recordName = type.GetPandasmName();
 
     // rely on the following mangling: <moduleName>.ETSGLOBAL
-    auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
-    ES2PANDA_ASSERT(Helpers::EndsWith(recordName, etsGlobalSuffix));
-    auto mname = recordName.substr(0, recordName.size() - etsGlobalSuffix.size());
-    return mname;
+    const auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
+    if (!Helpers::EndsWith(recordName, etsGlobalSuffix)) {
+        return std::nullopt;
+    }
+    return recordName.substr(0, recordName.size() - etsGlobalSuffix.size());
 }
 
 const ArkTsConfig &ImportPathManager::ArkTSConfig() const
@@ -186,7 +215,7 @@ parser::Program *ImportPathManager::GatherImportInfo(parser::Program *importer, 
     LOG(DEBUG, ES2PANDA) << "[" << importer->ModuleInfo().moduleName << "] "
                          << "Import " << importPath->ToString() << " resolved to " << importInfo.ResolvedSource();
     auto *importedProgram = LookupImportDataAndIntroduceProgram(&importInfo);
-    if ((importedProgram == importer) && !importer->IsStdLib()) {
+    if ((importedProgram == importer) && !importer->IsStdLib() && !importer->Is<ModuleKind::METADATA_DECL>()) {
         DE()->LogDiagnostic(diagnostic::IMPORT_ITSELF, util::DiagnosticMessageParams {importInfo.ResolvedSource()},
                             srcPos_);
     }
@@ -607,7 +636,7 @@ parser::Program *ImportPathManager::SetupProgramForDebugInfoPlugin(std::string_v
     auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
                                                     emptyIdent, ir::ModuleFlag::ETSSCRIPT, importInfo.Lang(), program);
     program->SetAst(etsModule);
-    Context()->parserProgram->GetExternalDecls()->Add(program);
+    Context()->parserProgram->GetExternalPrograms()->Add(program);
     return program;
 }
 
@@ -807,11 +836,6 @@ void ImportInfo::LinkFractionInfoToPackage(const parser::PackageProgram &package
     moduleName_ = package.ModuleName();
 }
 
-inline Span<const uint8_t> ImportInfo::GetMetadata(const panda_file::File &pf)
-{
-    return pf.GetMetadata();
-}
-
 void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package, ImportInfo *importInfo)
 {
     auto *fraction = SearchResolved(*importInfo);
@@ -829,7 +853,7 @@ void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package,
         fraction = IntroduceProgram<ModuleKind::MODULE>(*importInfo);
     } else {
         // remove a package-fraction that was mistakenly added as a module without enclosing package:
-        auto &modules = GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
+        auto &modules = GetGlobalProgram()->GetExternalPrograms()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modules.begin(), modules.end(), fraction);
         modules.erase(newEndIt, modules.end());
     }
@@ -1161,19 +1185,27 @@ private:
 void ImportPathManager::ExtractEtscacheToFile(const panda_file::File &pf, const std::string &abcPath,
                                               const std::string &cacheDir)
 {
-    for (auto id : pf.GetExported()) {
+    for (auto id : pf.GetClasses()) {
         panda_file::File::EntityId classId(id);
-        auto mname = ExtractMnameFromPandafile(pf, classId);
-        std::string dstPath {ImportPathManager::FormEtscacheFilePath(mname, cacheDir)};
+        if (pf.IsExternal(classId)) {
+            continue;
+        }
+
+        const auto mname = TryExtractMnameFromEtsGlobal(pf, classId);
+        if (!mname.has_value()) {
+            continue;
+        }
+
+        const std::string dstPath {ImportPathManager::FormEtscacheFilePath(*mname, cacheDir)};
         if (EtscacheFileLock lock {dstPath, abcPath}; lock.ShouldWriteDeclfile()) {
             std::stringstream ss;
             panda_file::ClassDataAccessor {pf, classId}.EnumerateAnnotation(
                 ImportPathManager::ANNOTATION_MODULE_DECLARATION.data(),
                 [&pf, &ss](panda_file::AnnotationDataAccessor &annotationAccessor) {
-                    auto elemDeclaration = annotationAccessor.GetElement(0);
-                    auto valueDeclaration = elemDeclaration.GetScalarValue();
+                    const auto elemDeclaration = annotationAccessor.GetElement(0);
+                    const auto valueDeclaration = elemDeclaration.GetScalarValue();
                     const auto idAnnoDeclaration = valueDeclaration.Get<panda_file::File::EntityId>();
-                    ss << panda_file::StringDataToString(pf.GetStringData(idAnnoDeclaration));
+                    ss << pf.GetStringData(idAnnoDeclaration).ToString();
                     return true;
                 });
             std::string declText = ss.str();
@@ -1198,14 +1230,15 @@ parser::Program *ImportPathManager::IntroduceProgram(const ImportInfo &importInf
             return IntroduceProgram<ModuleKind::DECLLESS_DYNAMIC>(importInfo);
         case ModuleKind::PACKAGE:
             return IntroduceProgram<ModuleKind::PACKAGE>(importInfo);
-        case ModuleKind::METADATA_DECL:
-            if (!ctx_.config->options->IsReadMetadata()) {
+        case ModuleKind::METADATA_DECL: {
+            if (!ShouldUseMetadata(&ctx_)) {
                 DE()->LogDiagnostic(diagnostic::UNSUPPORTED_IMPORT_WITH_METADATA,
                                     DiagnosticMessageParams {importInfo.AbcPath()});
                 return nullptr;
             }
             ES2PANDA_ASSERT(importInfo.ReferencesABC());
             return IntroduceProgram<ModuleKind::METADATA_DECL>(importInfo);
+        }
         default: {
             ES2PANDA_ASSERT(DE()->IsAnyError());
             return nullptr;
@@ -1274,7 +1307,7 @@ public:
         }
         modulePrograms.implProg = program;
         if (ipm_->GetGlobalProgram() != nullptr) {
-            // Replace effective source lookup, but keep exact declaration programs in ExternalDecls so their export
+            // Replace effective source lookup, but keep exact declaration programs in ExternalPrograms so their export
             // surfaces are still prepared for checking. The emitter skips replaced exact declarations.
             for (auto *declProg : modulePrograms.declProgs) {
                 progsByResolvedPath_.at(ArenaString {declProg->GetImportInfo().Key()}) = program;
@@ -1313,7 +1346,7 @@ public:
                effectiveIt != progsByResolvedPath_.end() && effectiveIt->second != program;
     }
 
-    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
+    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalPrograms *extPrograms)
     {
         auto *globalProgram = ipm_->GetGlobalProgram();
         if (newProg == globalProgram) {
@@ -1324,10 +1357,10 @@ public:
             (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
         ES2PANDA_ASSERT(!isPackageFraction);
         if (auto pointedProgram = SearchResolved(newProg->GetImportInfo()); pointedProgram == newProg) {
-            if (AlreadyInExternalSources(newProg, extDecls)) {
+            if (AlreadyInExternalSources(newProg, extPrograms)) {
                 return;
             }
-            extDecls->Add(newProg);
+            extPrograms->Add(newProg);
         } else {
             [[maybe_unused]] const auto &imd = newProg->GetImportInfo();
             ES2PANDA_ASSERT((imd.Kind() == ModuleKind::SOURCE_DECL) || (imd.Kind() == ModuleKind::ETSCACHE_DECL));
@@ -1335,21 +1368,21 @@ public:
         }
     }
 
-    void MaybeAddExactToExternalSources(parser::Program *newProg, parser::Program::ExternalDecls *extDecls)
+    void MaybeAddExactToExternalSources(parser::Program *newProg, parser::Program::ExternalPrograms *extPrograms)
     {
         auto *globalProgram = ipm_->GetGlobalProgram();
         if (newProg == nullptr || newProg == globalProgram) {
             return;
         }
         if (!IsReplacedExactSource(newProg)) {
-            MaybeAddToExternalSources(newProg, extDecls);
+            MaybeAddToExternalSources(newProg, extPrograms);
             return;
         }
 
-        if (AlreadyInExternalSources(newProg, extDecls)) {
+        if (AlreadyInExternalSources(newProg, extPrograms)) {
             return;
         }
-        extDecls->Add(newProg);
+        extPrograms->Add(newProg);
     }
 
     parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, const ArenaString &packageName)
@@ -1368,19 +1401,19 @@ public:
 
         const_cast<ImportInfo *>(&fractionBeingParsed->GetImportInfo())->moduleName_ = packageName;
         fractionBeingParsed->SetPackageInfo(packageName, util::ModuleKind::PACKAGE);
-        ImportInfo pkgMetadata {};
-        pkgMetadata.resolvedSource_ = packageName;
-        pkgMetadata.moduleName_ = packageName;
-        pkgMetadata.SetData<ModuleKind::PACKAGE, false>(std::string(packageName), "");
-        auto newPkg = ipm_->NewEmptyPackage(pkgMetadata);
+        ImportInfo pkgImportInfo {};
+        pkgImportInfo.resolvedSource_ = packageName;
+        pkgImportInfo.moduleName_ = packageName;
+        pkgImportInfo.SetData<ModuleKind::PACKAGE, false>(std::string(packageName), "");
+        auto newPkg = ipm_->NewEmptyPackage(pkgImportInfo);
         newPkg->AppendFraction(fractionBeingParsed->As<ModuleKind::MODULE>());
 
         // fixup externalSources:
-        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalDecls()->Get<ModuleKind::MODULE>();
+        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalPrograms()->Get<ModuleKind::MODULE>();
         auto newEndIt = std::remove(modulePrograms.begin(), modulePrograms.end(), fractionBeingParsed);
         if (newEndIt != modulePrograms.end()) {
             modulePrograms.erase(newEndIt, modulePrograms.end());
-            ipm_->GetGlobalProgram()->GetExternalDecls()->Add(newPkg);
+            ipm_->GetGlobalProgram()->GetExternalPrograms()->Add(newPkg);
         } else {
             ES2PANDA_ASSERT(ipm_->GetGlobalProgram() == fractionBeingParsed);
         }
@@ -1400,27 +1433,28 @@ public:
     }
 
 private:
-    static bool AlreadyInExternalSources(const parser::Program *newProg, const parser::Program::ExternalDecls *extDecls)
+    static bool AlreadyInExternalSources(const parser::Program *newProg,
+                                         const parser::Program::ExternalPrograms *extPrograms)
     {
         switch (newProg->GetModuleKind()) {
             case ModuleKind::MODULE: {
-                const auto &programs = extDecls->Get<ModuleKind::MODULE>();
+                const auto &programs = extPrograms->Get<ModuleKind::MODULE>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::SOURCE_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::SOURCE_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::SOURCE_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::PACKAGE: {
-                const auto &programs = extDecls->Get<ModuleKind::PACKAGE>();
+                const auto &programs = extPrograms->Get<ModuleKind::PACKAGE>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::ETSCACHE_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::ETSCACHE_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::ETSCACHE_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             case ModuleKind::METADATA_DECL: {
-                const auto &programs = extDecls->Get<ModuleKind::METADATA_DECL>();
+                const auto &programs = extPrograms->Get<ModuleKind::METADATA_DECL>();
                 return std::find(programs.begin(), programs.end(), newProg) != programs.end();
             }
             default:
@@ -1449,10 +1483,11 @@ void ImportPathManager::InitParseQueueForSimult()
     ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
     for (auto &sourceName : Context()->sourceFileNames) {
         // Build of `importInfo` should be refined.
-        util::ImportInfo importInfo {*this, sourceName};
-        importInfo.SetTextFile<ModuleKind::MODULE>(std::string(sourceName), DE());
+        const std::string sourcePath {sourceName};
+        util::ImportInfo importInfo {*this, sourcePath};
+        SetEtsTextFileByExtension(&importInfo, sourcePath);
         auto *program = IntroduceProgram(importInfo);
-        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalPrograms());
         program->SetIsBuiltSimultaneously();
     }
 }
@@ -1539,10 +1574,10 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     if (auto resolved = SearchResolved(*importInfo); resolved != nullptr) {
         // #32418.
         if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
-            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalDecls());
+            resolvedSources_.MaybeAddToExternalSources(resolved, GetGlobalProgram()->GetExternalPrograms());
             auto *exact = SearchResolvedExact(*importInfo);
             if (exact != nullptr && exact != resolved) {
-                resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalDecls());
+                resolvedSources_.MaybeAddExactToExternalSources(exact, GetGlobalProgram()->GetExternalPrograms());
             }
         }
         return resolved;
@@ -1570,9 +1605,9 @@ parser::Program *ImportPathManager::LookupImportDataAndIntroduceProgram(ImportIn
     if constexpr (ATTACH_TO_GLOBAL_EXTERNAL_SOURCES) {
         if (program != nullptr) {
             auto *resolvedProgram = SearchResolved(*importInfo);
-            resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalDecls());
+            resolvedSources_.MaybeAddToExternalSources(resolvedProgram, GetGlobalProgram()->GetExternalPrograms());
             if (program != resolvedProgram) {
-                resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalDecls());
+                resolvedSources_.MaybeAddExactToExternalSources(program, GetGlobalProgram()->GetExternalPrograms());
             }
         }
     }
@@ -1597,12 +1632,27 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
     }
     ES2PANDA_ASSERT(importInfo->ResolvedPathIsVirtual());
 
-    auto abcPath = importInfo->AbcPath();
-    if (processedAbcFiles_.count(abcPath) != 0) {
+    const auto abcPath = importInfo->AbcPath();
+    auto extractEtscache = [this, &abcPath]() {
+        const auto pf = panda_file::OpenPandaFile(abcPath);
+        if (pf == nullptr) {
+            DE()->LogDiagnostic(diagnostic::OPEN_FAILED, DiagnosticMessageParams {abcPath});
+            return;
+        }
+        ExtractEtscacheToFile(*pf, abcPath, ArkTSConfig().CacheDir());
+    };
+    const auto shouldReadMetadata = ShouldUseMetadata(&ctx_);
+
+    if (const auto processedAbc = processedAbcFiles_.find(abcPath); processedAbc != processedAbcFiles_.end()) {
+        if (shouldReadMetadata && processedAbc->second != nullptr && LookupMetadata(importInfo)) {
+            return;
+        }
+        if (processedAbc->second != nullptr) {
+            extractEtscache();
+        }
         LookupEtscacheFile(importInfo);
         return;
     }
-    processedAbcFiles_.insert(abcPath);
 
     const auto pf = panda_file::OpenPandaFile(abcPath);
     if (pf == nullptr) {
@@ -1611,8 +1661,12 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
         return;
     }
 
-    if (pf->IsMetadataUsed()) {
-        importInfo->SetBinFile(*pf);
+    const auto isMetadataEnabled = pf->IsMetadataEnabled();
+    processedAbcFiles_.insert({abcPath, shouldReadMetadata && isMetadataEnabled
+                                            ? std::make_unique<panda_file::MetadataAccessor>(*pf)
+                                            : nullptr});
+
+    if (shouldReadMetadata && isMetadataEnabled && LookupMetadata(importInfo)) {
         return;
     }
 
@@ -1621,7 +1675,26 @@ void ImportPathManager::LookupDiskData(ImportInfo *importInfo)
     LookupEtscacheFile(importInfo);
 }
 
-void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo)
+bool ImportPathManager::LookupMetadata(ImportInfo *importInfo) const
+{
+    const auto metadataAccessor = processedAbcFiles_.at(importInfo->AbcPath()).get();
+    std::string pkgName(importInfo->ModuleName());
+    if (!pkgName.empty() && pkgName.back() == '.') {
+        pkgName.pop_back();
+    }
+    auto metadata = metadataAccessor->ExtractMetadataForPackage(pkgName);
+    if (metadata.empty() || !VerifyMetadataModules(metadata)) {
+        return false;
+    }
+    auto sourceFilePath = std::string(importInfo->extModuleData_->SourceFilePath());
+    if (sourceFilePath.empty()) {
+        sourceFilePath = importInfo->AbcPath();
+    }
+    importInfo->SetData<ModuleKind::METADATA_DECL, true>(std::move(sourceFilePath), std::move(metadata));
+    return true;
+}
+
+void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo) const
 {
     if (ArkTSConfig().CacheDir().empty()) {
         return;
@@ -1635,6 +1708,19 @@ void ImportPathManager::LookupEtscacheFile(ImportInfo *importInfo)
     importInfo->SetTextFile<ModuleKind::ETSCACHE_DECL>(cachefile, DE());
 }
 
+void ImportPathManager::SetEtsTextFileByExtension(ImportInfo *importInfo, const std::string &sourcePath) const
+{
+    ES2PANDA_ASSERT(importInfo != nullptr);
+    ES2PANDA_ASSERT(!sourcePath.empty());
+
+    if (Helpers::EndsWith(sourcePath, D_ETS_SUFFIX)) {
+        importInfo->SetTextFile<ModuleKind::SOURCE_DECL>(sourcePath, DE());
+        return;
+    }
+
+    importInfo->SetTextFile<ModuleKind::MODULE>(sourcePath, DE());
+}
+
 void ImportPathManager::LookupSourceFile(ImportInfo *importInfo)
 {
     if (IsDepAnalyzerMode() && Language(importInfo->Lang()).IsDynamic()) {
@@ -1643,12 +1729,10 @@ void ImportPathManager::LookupSourceFile(ImportInfo *importInfo)
     }
     if (importInfo->HasSpecifiedDeclPath() && !importInfo->ReferencesABC()) {
         importInfo->SetTextFile<ModuleKind::SOURCE_DECL>(std::string(importInfo->DeclPath()), DE());
-    } else if (Helpers::EndsWith(importInfo->ResolvedSource(), D_ETS_SUFFIX)) {
-        importInfo->SetTextFile<ModuleKind::SOURCE_DECL>(std::string(importInfo->ResolvedSource()), DE());
     } else if (importInfo->Lang() != Language::Id::ETS) {
         importInfo->SetData<ModuleKind::DECLLESS_DYNAMIC, false>(std::string(importInfo->ResolvedSource()), "");
     } else {
-        importInfo->SetTextFile<ModuleKind::MODULE>(std::string(importInfo->ResolvedSource()), DE());
+        SetEtsTextFileByExtension(importInfo, std::string(importInfo->ResolvedSource()));
     }
 }
 
@@ -1942,9 +2026,22 @@ static void CheckModuleName(const ImportPathManager &ipm, const ImportInfo &imd)
     }
 }
 
+bool ImportInfo::PointsToPackage() const
+{
+    if (ResolvedPathIsVirtual()) {
+        return false;
+    }
+    if (ark::os::file::File::IsDirectory(std::string(resolvedSource_))) {
+        return true;
+    }
+
+    const auto *program = importPathManager_->SearchResolvedExact(*this);
+    return program != nullptr && program->IsBuiltSimultaneously();
+}
+
 ImportInfo::ImportInfo(const ImportPathManager &ipm, std::string_view resolvedSource, Language::Id lang,
                        bool isExternalModule)
-    : resolvedSource_ {resolvedSource}
+    : resolvedSource_ {resolvedSource}, importPathManager_ {&ipm}
 {
     SetKey(resolvedSource_);
     if (isExternalModule) {
@@ -1972,6 +2069,7 @@ const ImportInfo &ImportInfo::operator=(const ImportInfo &other)
     parser::CacheReference<>::operator=(other);
     resolvedSource_ = other.resolvedSource_;
     moduleName_ = other.moduleName_;
+    importPathManager_ = other.importPathManager_;
     extModuleData_ = other.extModuleData_;
     lang_ = other.lang_;
 

@@ -15,15 +15,15 @@
 
 namespace Metadata;
 
-table Root {
+table Decls {
+    imports:[ImportDecl];
+    re_exports:[ReExportDecl];
+    local_exports:[LocalExportDecl];
     classes:[ClassDecl];
     interfaces:[InterfaceDecl];
-    enums:[EnumDecl];
     annotations:[AnnotationDecl];
     types:[TypeDecl];
-    functions:[FunctionDecl];
-    properties:[PropertyDecl];
-    variables:[VarDecl];
+    package_name:string;
 }
 
 // Common entities
@@ -31,7 +31,6 @@ table Root {
 union RefType {
     class:ClassDecl,
     interface:InterfaceDecl,
-    enum_:EnumDecl,
     annotation:AnnotationDecl,
     type:TypeDecl,
     typeParam:TypeParamDecl
@@ -39,44 +38,91 @@ union RefType {
 
 union Type {
     Builtin:BuiltinType,
+    Array:ArrayType,
     Ref:TypeRef,
     Function:FunctionType,
     Tuple:TupleType,
     Union:UnionType,
-    StringLiteral:StringLiteralType
+    StringLiteral:StringLiteralType,
+    Partial:PartialType,
+    This:ThisType
 }
 
 // Class-like declarations
 
+table ImportDecl {
+    from:string (required);
+    module_name:string (required);
+    decl_names:[string];
+}
+
+enum ReExportKind : byte {
+    Star,
+    Named,
+    Namespace
+}
+
+table ReExportDecl {
+    from:string (required);
+    module_name:string (required);
+    kind:ReExportKind;
+    exported_name:string;
+    imported_name:string;
+    is_type:bool;
+}
+
+table LocalExportDecl {
+    exported_name:string (required);
+    local_name:string (required);
+    is_type:bool;
+}
+
+enum EnumKind : byte {
+    NONE = 0,
+    NUMERIC = 1,
+    STRING = 2
+}
+
 table ClassDecl {
     name:string (required);
+    is_namespace:bool;
+    is_builtin:bool;
+    enum_kind:EnumKind;
+    enum_values:[string];
+    enum_underlying_type:Type;
     methods:[FunctionDecl];
-    fields:[VarDecl];
     properties:[PropertyDecl];
+    decls:Decls;
     type_params:[TypeParamDecl];
     extended_class:Type;
     implemented_interfaces:[Type];
+    is_final:bool;
+    is_abstract:bool;
+    internal_name:string;
 }
 
 table InterfaceDecl {
     name:string (required);
+    is_builtin:bool;
     methods:[FunctionDecl];
-    properties:[PropertyDecl];
     type_params:[TypeParamDecl];
     implemented_interfaces:[Type];
-}
-
-table EnumDecl {
-    name:string (required);
-    entries:[string];
+    properties:[PropertyDecl];
+    internal_name:string;
 }
 
 table AnnotationDecl {
     name:string (required);
+    internal_name:string (required);
+    properties:[PropertyDecl];
+    access_restriction_modules:[string];
+    access_restriction_annotation_name:string;
 }
 
 table TypeDecl {
+    name:string (required);
     type:Type (required);
+    type_params:[TypeParamDecl];
 }
 
 // Callable declarations
@@ -88,17 +134,23 @@ table FunctionDecl {
     value_params:[ValueParamDecl];
     type_params:[TypeParamDecl];
     overloads:[FunctionDecl];
-}
-
-table VarDecl {
-    name:string (required);
-    return_type:Type (required);
-    is_static:bool;
+    is_protected:bool;
+    is_getter:bool;
+    is_setter:bool;
+    overload_group:string;
+    overload_group_index:int32;
+    is_final:bool;
+    is_native:bool;
+    is_abstract:bool;
 }
 
 table PropertyDecl {
-    getter:FunctionDecl;
-    setter:FunctionDecl;
+    name:string (required);
+    return_type:Type (required);
+    is_static:bool;
+    is_const:bool;
+    is_protected:bool;
+    is_readonly:bool;
 }
 
 // Parameter declarations
@@ -107,6 +159,8 @@ table ValueParamDecl {
     name:string (required);
     type:Type (required);
     is_readonly:bool;
+    is_optional:bool;
+    is_rest:bool;
 }
 
 enum TypeParamVariance : byte {
@@ -142,26 +196,35 @@ enum BuiltinTypeKind : byte {
     void = 14,
     undefined = 15,
     null = 16,
-    array = 17, // element type is the first type argument, the size (if fixed) is the second one (as a string literal type)
 }
 
 table BuiltinType {
     kind:BuiltinTypeKind;
-    type_args:[Type];
+}
+
+table ArrayType {
+    element_type:Type;
+    is_readonly: bool;
+    is_value_array: bool;
 }
 
 table TypeRef {
     fqname:string (required);
+    type_args:[Type];
+    allow_unsafe_variance:bool;
 }
 
 table FunctionTypeParam {
     name:string;
     type:Type (required);
+    is_optional:bool;
+    is_rest:bool;
 }
 
 table FunctionType {
     params:[FunctionTypeParam];
     return_type:Type (required);
+    has_receiver:bool;
 }
 
 table TupleType {
@@ -176,5 +239,12 @@ table StringLiteralType {
     value:string (required);
 }
 
+table PartialType {
+    inner_type:Type (required);
+}
 
-root_type Root;
+table ThisType {
+}
+
+
+root_type Decls;

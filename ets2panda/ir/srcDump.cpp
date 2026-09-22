@@ -16,7 +16,9 @@
 #include "srcDump.h"
 #include "public/public.h"
 
+#include "checker/types/ets/etsObjectType.h"
 #include "util/helpers.h"
+#include "parser/program/program.h"
 #include "varbinder/ETSBinder.h"
 #include "ir/obfuscationNameCache.h"
 #include "ir/statements/functionDeclaration.h"
@@ -186,30 +188,47 @@ bool SrcDumper::HasDefaultExport() const noexcept
     return IsDeclgen() && hasDefaultExport_;
 }
 
-void SrcDumper::DumpExports()
+void SrcDumper::DumpExplicitExportDirectives(const parser::Program *program)
 {
-    if (dg_ == nullptr) {
-        return;
-    }
+    ES2PANDA_ASSERT(dg_ != nullptr);
+    ES2PANDA_ASSERT(program != nullptr);
     auto *varbinder = dg_->GetCtx()->GetChecker()->VarBinder();
-    if (!varbinder->IsETSBinder()) {
-        return;
-    }
-    auto *program = dg_->GetCtx()->parserProgram;
-    if (program == nullptr) {
-        return;
-    }
+    ES2PANDA_ASSERT(varbinder->IsETSBinder());
 
     auto const &aliases = varbinder->AsETSBinder()->PendingLocalExportAliases(program);
     std::unordered_set<const ir::AstNode *> dumpedExports;
     for (auto const &alias : aliases) {
-        if (alias.kind == varbinder::LocalExportKind::ALIAS && alias.exportDecl != nullptr &&
-            alias.exportDecl->IsExportNamedDeclaration() && dumpedExports.insert(alias.exportDecl).second &&
-            alias.exportDecl->AsExportNamedDeclaration()->HasDumpData(HasDefaultExport())) {
-            ss_ << '\n';
-            alias.exportDecl->Dump(this);
-            ss_ << ';';
+        auto *exportDecl = alias.exportDecl;
+        if (exportDecl == nullptr || !exportDecl->IsExportNamedDeclaration() ||
+            !dumpedExports.insert(exportDecl).second) {
+            continue;
         }
+
+        auto *namedExport = exportDecl->AsExportNamedDeclaration();
+        if (!namedExport->HasDumpData(HasDefaultExport())) {
+            continue;
+        }
+
+        ss_ << '\n';
+        namedExport->Dump(this);
+        ss_ << ';';
+    }
+}
+
+void SrcDumper::DumpExports(const parser::Program *program)
+{
+    ES2PANDA_ASSERT(dg_ != nullptr);
+    ES2PANDA_ASSERT(program != nullptr);
+    if (!program->Is<util::ModuleKind::PACKAGE>()) {
+        DumpExplicitExportDirectives(program);
+        return;
+    }
+
+    auto const &fractions = program->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms();
+    ES2PANDA_ASSERT(!fractions.empty());
+    for (auto *fraction : fractions) {
+        ES2PANDA_ASSERT(fraction != nullptr);
+        DumpExplicitExportDirectives(fraction);
     }
 }
 
@@ -277,6 +296,11 @@ void Declgen::CollectImport(const ir::ImportDeclaration *import)
     imports_.push_back(import);
 }
 
+bool Declgen::ShouldSkipClassDeclaration(util::StringView className) const
+{
+    return className.StartsWith(checker::PARTIAL_CLASS_PREFIX);
+}
+
 static auto AstFromType(Declgen *dg, const checker::Type *type)
 {
     ES2PANDA_ASSERT(type != nullptr);
@@ -330,6 +354,25 @@ static std::string DumpImplicitImportsOfSpecifier(Declgen *dg, ImportSpecifier *
     return res;
 }
 
+static std::string PackageQualifiedImportSource(const ir::ImportDeclaration *import)
+{
+    const std::string source {import->Source()->Str().Utf8()};
+    if (!import->IsETSImportDeclaration() || (source.rfind("./", 0) != 0 && source.rfind("../", 0) != 0)) {
+        return source;
+    }
+
+    if (!import->AsETSImportDeclaration()->ImportInfo().PointsToPackage()) {
+        return source;
+    }
+    const std::string moduleName {import->AsETSImportDeclaration()->ImportInfo().ModuleName()};
+    const auto separator = moduleName.rfind('.');
+    if (separator == std::string::npos || separator == 0 || separator + 1 == moduleName.size()) {
+        return source;
+    }
+
+    return moduleName.substr(0, separator) + '/' + moduleName.substr(separator + 1);
+}
+
 void Declgen::DumpImports(std::string &res)
 {
     if (imports_.empty()) {
@@ -341,7 +384,7 @@ void Declgen::DumpImports(std::string &res)
     auto *allocator = GetCtx()->Allocator();
     for (auto const *import : imports_) {
         ArenaVector<ir::AstNode *> specifiers(allocator->Adapter());
-        const std::string source {import->Source()->Str().Utf8()};
+        const std::string source = PackageQualifiedImportSource(import);
         for (auto *specifier : import->Specifiers()) {
             auto key = source + '\0' + (import->IsTypeKind() ? '1' : '0') + '\0' +
                        std::to_string(static_cast<int>(specifier->Type())) + '\0' + specifier->DumpEtsSrc();
@@ -352,14 +395,20 @@ void Declgen::DumpImports(std::string &res)
         if (specifiers.empty()) {
             continue;
         }
-        if (specifiers.size() == import->Specifiers().size()) {
+        const bool sourceRewritten = source != import->Source()->Str().Utf8();
+        if (!sourceRewritten && specifiers.size() == import->Specifiers().size()) {
             res += import->DumpEtsSrc();
             continue;
         }
 
         auto *filteredImport =
             static_cast<ir::ImportDeclaration *>(const_cast<ir::ImportDeclaration *>(import)->ShallowClone(allocator));
-        filteredImport->SpecifiersForUpdate() = std::move(specifiers);
+        if (specifiers.size() != import->Specifiers().size()) {
+            filteredImport->SpecifiersForUpdate() = std::move(specifiers);
+        }
+        if (sourceRewritten) {
+            filteredImport->SetSource(allocator->New<ir::StringLiteral>(util::UString {source, allocator}.View()));
+        }
         res += filteredImport->DumpEtsSrc();
     }
 }

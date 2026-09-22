@@ -89,7 +89,7 @@ void ETSChecker::ReputCheckerData()
 {
     readdedChecker_.insert(this);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    Program()->GetExternalDecls()->Visit([this](auto *extProg) {
+    Program()->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (!extProg->IsProgramModified() && !extProg->template Is<util::ModuleKind::METADATA_DECL>()) {
             ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
@@ -435,13 +435,16 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     auto *savedProgram = Program();
     SetProgram(program);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    program->GetExternalDecls()->Visit([this](auto *extProg) {
+    program->GetExternalPrograms()->Visit([this](auto *extProg) {
         if (extProg->template Is<util::ModuleKind::PACKAGE>() &&
             extProg->template As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms().empty()) {
             return;
         }
         if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
             return;
+        }
+        if (extProg->template Is<util::ModuleKind::METADATA_DECL>()) {
+            extProg->SetProgramModified(false);
         }
         extProg->PushChecker(this);
         auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
@@ -451,8 +454,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
         checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
         AddStatus(checker::CheckerStatus::IN_EXTERNAL);
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsBuiltSimultaneously() ||
-                                  extProg->template Is<util::ModuleKind::METADATA_DECL>());
+        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsBuiltSimultaneously());
         VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
         VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
         extProg->SetProgramModified(false);

@@ -22,6 +22,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "libarkfile/metadata_accessor.h"
 #include "util/es2pandaMacros.h"
 
 namespace ark::es2panda::parser {
@@ -51,8 +52,8 @@ namespace ark::es2panda::parser {
 
 using SourceDeclType = std::string &&;
 using SourceDeclCacheType = std::string_view;
-using MetadataType = std::vector<uint8_t>;
-using MetadataCacheType = std::vector<uint8_t> *;
+using MetadataType = panda_file::MetadataByModules;
+using MetadataCacheType = MetadataType *;
 using AnyCacheType = std::variant<SourceDeclCacheType, MetadataCacheType>;
 
 template <CacheType TYPE, bool IS_INITIAL_TYPE = false>

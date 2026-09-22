@@ -17,4 +17,4 @@ interface /* @@ label */ I {}
 
 export class A implements I {}
 
-/* @@@ label Error Semantic error ESE1236581: Type 'I' used in export declaration(s) is not exported. */
+/* @@? 16:1 Error Semantic error ESE1236581: Type 'I' used in export declaration(s) is not exported. */

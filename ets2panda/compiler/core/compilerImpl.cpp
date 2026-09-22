@@ -146,7 +146,7 @@ void HandleGenerateDecl(public_lib::Context *context, const parser::Program *pro
     ir::SrcDumper dumper {&dg};
     program->Ast()->Dump(&dumper);
     dumper.GetDeclgen()->Run();
-    dumper.DumpExports();
+    dumper.DumpExports(program);
 
     std::string res = "'use static'\n";
     dg.DumpImports(res);
@@ -192,7 +192,7 @@ static bool CheckOptionsAfterPhase(const public_lib::Context &context, const std
 static void GenDeclsForStdlib(public_lib::Context *context)
 {
     ES2PANDA_ASSERT(context->config->options->IsGenStdlib());
-    context->parserProgram->GetExternalDecls()->Visit([context](parser::PackageProgram *extProgram) {
+    context->parserProgram->GetExternalPrograms()->Visit([context](parser::PackageProgram *extProgram) {
         ir::Declgen dg {context};
         ir::SrcDumper dumper {&dg};
         ES2PANDA_ASSERT(!extProgram->GetUnmergedPackagePrograms().empty());
@@ -201,7 +201,7 @@ static void GenDeclsForStdlib(public_lib::Context *context)
             fraction->Ast()->Dump(&dumper);
         }
         dumper.GetDeclgen()->Run();
-        dumper.DumpExports();
+        dumper.DumpExports(extProgram);
 
         // NOTE(dkofanov): #32416 'ImportPathManager::FormEtscacheFilePath' should be used instead.
         std::string path = std::string(extProgram->ModuleName()) + std::string(util::ImportPathManager::CACHE_SUFFIX);
@@ -311,7 +311,7 @@ using PhaseListGetter = std::function<std::vector<compiler::Phase *>(ScriptExten
 
 static void MarkAsLowered(public_lib::Context *ctx)
 {
-    ctx->parserProgram->GetExternalDecls()->Visit([](auto *extProg) {
+    ctx->parserProgram->GetExternalPrograms()->Visit([](auto *extProg) {
         if (!extProg->IsASTLowered()) {
             extProg->MarkASTAsLowered();
         }
@@ -392,7 +392,7 @@ static void ResetLineIndexCaches(public_lib::Context *context)
     }
 
     context->parserProgram->ResetLineIndexCache();
-    context->parserProgram->GetExternalDecls()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
+    context->parserProgram->GetExternalPrograms()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
 }
 
 static void ClearContext(public_lib::Context *context)
@@ -426,6 +426,7 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compil
 {
     ir::DisableContextHistory();
     parser::ImportCache<parser::CacheType::SOURCES>::ActivateCache();
+    parser::ImportCache<parser::CacheType::METADATA>::ActivateCache();
 
     auto config = public_lib::ConfigImpl {};
     context->config = &config;

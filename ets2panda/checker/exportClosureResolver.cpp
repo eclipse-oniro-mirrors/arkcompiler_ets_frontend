@@ -71,11 +71,53 @@ bool IsProgramLocalVariable(parser::Program *program, const varbinder::Variable 
            var->Declaration()->Node()->Program() == program;
 }
 
+varbinder::Variable *FindProgramLocalVariable(parser::Program *program, util::StringView localName,
+                                              const varbinder::Scope::VariableMap &bindings)
+{
+    auto iter = bindings.find(localName);
+    return iter != bindings.end() && IsProgramLocalVariable(program, iter->second) ? iter->second : nullptr;
+}
+
+varbinder::Variable *FindProgramLocalVariable(parser::Program *program, util::StringView localName)
+{
+    auto *ast = program == nullptr ? nullptr : program->Ast();
+    auto *scope = ast == nullptr ? nullptr : ast->Scope();
+    if (scope == nullptr || (!scope->IsGlobalScope() && !scope->IsModuleScope())) {
+        return nullptr;
+    }
+
+    auto *globalClass = ast->IsETSModule() ? ast->AsETSModule()->GlobalClass() : nullptr;
+    auto *globalClassScope =
+        globalClass != nullptr && globalClass->Scope() != nullptr ? globalClass->Scope()->AsClassScope() : nullptr;
+    if (globalClassScope == nullptr) {
+        return FindProgramLocalVariable(program, localName, static_cast<varbinder::GlobalScope *>(scope)->Bindings());
+    }
+
+    if (auto *variable = FindProgramLocalVariable(program, localName, globalClassScope->StaticDeclScope()->Bindings());
+        variable != nullptr) {
+        return variable;
+    }
+    if (auto *variable =
+            FindProgramLocalVariable(program, localName, globalClassScope->StaticMethodScope()->Bindings());
+        variable != nullptr) {
+        return variable;
+    }
+    if (auto *variable =
+            FindProgramLocalVariable(program, localName, static_cast<varbinder::GlobalScope *>(scope)->Bindings());
+        variable != nullptr) {
+        return variable;
+    }
+    if (auto *variable = FindProgramLocalVariable(program, localName, globalClassScope->StaticFieldScope()->Bindings());
+        variable != nullptr) {
+        return variable;
+    }
+    return FindProgramLocalVariable(program, localName, globalClassScope->TypeAliasScope()->Bindings());
+}
+
 bool HasProgramLocalDeclaration(parser::Program *program, util::StringView localName,
                                 const varbinder::Scope::VariableMap &bindings)
 {
-    auto iter = bindings.find(localName);
-    return iter != bindings.end() && IsProgramLocalVariable(program, iter->second);
+    return FindProgramLocalVariable(program, localName, bindings) != nullptr;
 }
 
 bool HasProgramLocalDeclaration(parser::Program *program, util::StringView localName)
@@ -93,11 +135,7 @@ bool HasProgramLocalDeclaration(parser::Program *program, util::StringView local
         return HasProgramLocalDeclaration(program, localName, static_cast<varbinder::GlobalScope *>(scope)->Bindings());
     }
 
-    return HasProgramLocalDeclaration(program, localName, static_cast<varbinder::GlobalScope *>(scope)->Bindings()) ||
-           HasProgramLocalDeclaration(program, localName, globalClassScope->StaticFieldScope()->Bindings()) ||
-           HasProgramLocalDeclaration(program, localName, globalClassScope->StaticMethodScope()->Bindings()) ||
-           HasProgramLocalDeclaration(program, localName, globalClassScope->StaticDeclScope()->Bindings()) ||
-           HasProgramLocalDeclaration(program, localName, globalClassScope->TypeAliasScope()->Bindings());
+    return FindProgramLocalVariable(program, localName) != nullptr;
 }
 
 ResolvedExportResult MakeResult(ExportResolutionStatus status, const ir::AstNode *reportOrigin = nullptr)
@@ -531,6 +569,7 @@ void ExportClosureResolver::ValidateExportSurface(const varbinder::ExportSurface
 
     VisitingSet visiting;
     ValidateExplicitExportConflicts(surface, &visiting);
+    ValidateLocalExportAliasTargets(surface);
     ValidateExportedDeclarations(surface, &visiting);
     validatingSurfaces_.erase(key);
     validatedSurfaces_.insert(key);
@@ -1256,6 +1295,45 @@ void ExportClosureResolver::ValidateExplicitExportConflicts(const varbinder::Exp
     }
 }
 
+void ExportClosureResolver::ValidateLocalExportAliasTargets(const varbinder::ExportSurfaceId &surface)
+{
+    if (checker_ == nullptr || surface.program == nullptr) {
+        return;
+    }
+
+    auto *etsBinder = FindAvailableETSBinder(surface.program);
+    if (etsBinder == nullptr) {
+        return;
+    }
+
+    for (const auto &alias : etsBinder->PendingLocalExportAliases(surface.program)) {
+        if (alias.isInvalid || alias.kind != varbinder::LocalExportKind::ALIAS || alias.exportedName.Is("default")) {
+            continue;
+        }
+
+        auto *variable = FindProgramLocalVariable(surface.program, alias.localName);
+        if (variable == nullptr) {
+            continue;
+        }
+        ES2PANDA_ASSERT(variable->Declaration() != nullptr);
+        ES2PANDA_ASSERT(variable->Declaration()->Node() != nullptr);
+
+        if (IsImportBindingVariable(variable)) {
+            continue;
+        }
+        const auto *node = variable->Declaration()->Node();
+        if (node->IsDeclare()) {
+            continue;
+        }
+        // `export { Local as Alias }` makes `Local` exported under `Alias` and marks the node with EXPORT_WITH_ALIAS.
+        if (!node->IsExported() && !node->IsDefaultExported() && !node->HasExportAlias()) {
+            const auto *origin = alias.reportOrigin != nullptr ? alias.reportOrigin : alias.origin;
+            checker_->LogError(diagnostic::USED_ENTITY_IS_NOT_EXPORTED, {alias.localName},
+                               origin != nullptr ? origin->Start() : lexer::SourcePosition {});
+        }
+    }
+}
+
 void ExportClosureResolver::ValidateExplicitExportFact(ExplicitExportConflictState *state,
                                                        const varbinder::ExportFact &fact,
                                                        ResolvedExportResult candidate)
@@ -1327,7 +1405,7 @@ void ExportClosureResolver::ValidateExplicitExportNameConflict(ExplicitExportCon
             return;
         }
         if (state->warnedAliases.insert(name).second && checker_ != nullptr && fact.origin != nullptr &&
-            !fact.origin->IsOverloadDeclaration()) {
+            !fact.origin->IsOverloadDeclaration() && !fact.origin->HasExportAlias()) {
             checker_->LogDiagnostic(diagnostic::DUPLICATE_EXPORT_ALIASES, {fact.exportedName}, fact.origin->Start());
         }
         return;
@@ -1427,7 +1505,8 @@ ResolvedExportResult ExportClosureResolver::ResolveStarExport(const varbinder::E
 
     auto resolved = MakeResult(ExportResolutionStatus::NOT_FOUND);
     auto cycleResult = MakeResult(ExportResolutionStatus::NOT_FOUND);
-    for (const auto &fact : GetSnapshot(surface.program).starExports) {
+    const auto &snapshot = GetSnapshot(surface.program);
+    for (const auto &fact : snapshot.starExports) {
         const auto exactSurface = GetImportedSurface(fact);
         const auto *entry = ResolveSurfaceName(exactSurface, exportedName, visiting);
         auto candidate = RebindResultOrNotFound(entry, fact.origin);

@@ -18,5 +18,5 @@ interface /* @@ label2 */ I {}
 
 export class A extends J implements I {}
 
-/* @@@ label1 Error Semantic error ESE1236581: Type 'J' used in export declaration(s) is not exported. */
-/* @@@ label2 Error Semantic error ESE1236581: Type 'I' used in export declaration(s) is not exported. */
+/* @@? 16:25 Error Semantic error ESE1236581: Type 'J' used in export declaration(s) is not exported. */
+/* @@? 17:1 Error Semantic error ESE1236581: Type 'I' used in export declaration(s) is not exported. */

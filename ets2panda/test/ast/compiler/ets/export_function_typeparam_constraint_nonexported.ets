@@ -18,4 +18,4 @@ class /* @@ label */ Arg {}
 export function foo<T extends Arg>(): void {}
 
 
-/* @@@ label Error Semantic error ESE1236581: Type 'Arg' used in export declaration(s) is not exported. */
+/* @@? 16:26 Error Semantic error ESE1236581: Type 'Arg' used in export declaration(s) is not exported. */

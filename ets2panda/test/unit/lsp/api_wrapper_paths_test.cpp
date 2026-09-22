@@ -110,7 +110,7 @@ d.run();)"};
     // The import must really be registered as a SOURCE_DECL external program.
     auto *parserProgram = reinterpret_cast<ark::es2panda::public_lib::Context *>(context)->parserProgram;
     const auto &externalSources =
-        parserProgram->GetExternalDecls()->Get<ark::es2panda::util::ModuleKind::SOURCE_DECL>();
+        parserProgram->GetExternalPrograms()->Get<ark::es2panda::util::ModuleKind::SOURCE_DECL>();
     ASSERT_EQ(externalSources.size(), 1U);
 
     LSPAPI const *lspApi = GetImpl();

@@ -54,7 +54,7 @@ public:
     {
         if (publicContext_->parserProgram != nullptr) {
             publicContext_->parserProgram->ResetLineIndexCache();
-            publicContext_->parserProgram->GetExternalDecls()->Visit(
+            publicContext_->parserProgram->GetExternalPrograms()->Visit(
                 [](auto *program) { program->ResetLineIndexCache(); });
         }
         delete publicContext_->phaseManager;
@@ -63,6 +63,16 @@ public:
     void EnableMetadataEmitting()
     {
         metadataEnabled_ = true;
+    }
+
+    void DisableMetadataReading()
+    {
+        metadataReadingDisabled_ = true;
+    }
+
+    void SetExternalContext()
+    {
+        publicContext_->isExternal = true;
     }
 
     static void SetUpTestCase()
@@ -184,6 +194,7 @@ public:
         publicContext_->emitter = &emitter;
         publicContext_->diagnosticEngine = &diagnosticEngine_;
         parser_alias::ImportCache<parser_alias::CacheType::SOURCES>::ActivateCache();
+        parser_alias::ImportCache<parser_alias::CacheType::METADATA>::ActivateCache();
         auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
         publicContext_->phaseManager = phaseManager;
 
@@ -210,6 +221,9 @@ public:
         if (metadataEnabled_) {
             options->SetEmitMetadata(true);
         }
+        if (metadataReadingDisabled_) {
+            options->SetReadMetadata(false);
+        }
 
         ark::Logger::ComponentMask mask {};
         mask.set(ark::Logger::Component::ES2PANDA);
@@ -233,6 +247,8 @@ public:
         publicContext_->PushChecker(checker);
         auto analyzer = Analyzer(checker);
         checker->SetAnalyzer(&analyzer);
+        parser_alias::ImportCache<parser_alias::CacheType::SOURCES>::ActivateCache();
+        parser_alias::ImportCache<parser_alias::CacheType::METADATA>::ActivateCache();
         auto phaseManager = new compiler_alias::PhaseManager(publicContext_.get(), unit.ext, allocator_.get());
         publicContext_->phaseManager = phaseManager;
         publicContext_->PushAnalyzer(publicContext_->GetChecker()->GetAnalyzer());
@@ -270,6 +286,7 @@ private:
     util_alias::DiagnosticEngine diagnosticEngine_;
     checker_alias::ETSChecker checker_;
     bool metadataEnabled_ = false;
+    bool metadataReadingDisabled_ = false;
 };
 
 }  // namespace test::utils

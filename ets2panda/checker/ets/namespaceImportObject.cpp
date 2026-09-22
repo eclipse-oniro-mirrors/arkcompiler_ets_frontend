@@ -365,7 +365,8 @@ static checker::PropertyType PropertyTypeForNamespaceExport(const varbinder::Var
     }
 
     auto *node = var->Declaration()->Node();
-    if (node != nullptr && node->IsClassProperty() && node->AsClassProperty()->IsTopLevelLexicalDecl()) {
+
+    if (node != nullptr && node->IsClassProperty()) {
         return checker::PropertyType::STATIC_FIELD;
     }
 

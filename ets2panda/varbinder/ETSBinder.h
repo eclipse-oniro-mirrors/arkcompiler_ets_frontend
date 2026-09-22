@@ -65,6 +65,9 @@ struct SelectiveExportAlias {
     bool isExplicitTypeOnly;
 };
 
+[[nodiscard]] util::StringView NormalizeReExportName(util::StringView name);
+[[nodiscard]] bool IsDefaultExportName(util::StringView name);
+
 class ETSBinder : public TypedBinder {
 public:
     explicit ETSBinder(public_lib::Context *context)
@@ -288,7 +291,8 @@ public:
         return *exportFactStore_;
     }
 
-    [[nodiscard]] const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(parser::Program *program) const
+    [[nodiscard]] const ArenaVector<PendingLocalExportAlias> &PendingLocalExportAliases(
+        const parser::Program *program) const
     {
         return exportFactStore_->PendingLocalExportAliases(program);
     }

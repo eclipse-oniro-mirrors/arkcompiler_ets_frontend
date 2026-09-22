@@ -69,7 +69,7 @@ public:
     }
 
     [[nodiscard]] bool IsValidIdentifierName(const lexer::Token &token) const noexcept override;
-    void AddDirectImportsToDirectExternalDecls(const std::vector<Program *> &directImportsFromMainSource) const;
+    void AddDirectImportsToDirectExternalPrograms(const std::vector<Program *> &directImportsFromMainSource) const;
     Program *IntroduceStdlibImportProgram(std::string &&importSrc);
 
 public:

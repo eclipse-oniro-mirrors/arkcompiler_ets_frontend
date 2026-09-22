@@ -108,16 +108,6 @@ void ExpectDefinitionForToken(const LSPAPI *lspApi, es2panda_Context *ctx, size_
     }
 }
 
-void ExpectNoDefinitionForToken(const LSPAPI *lspApi, es2panda_Context *ctx, size_t position, std::string_view name)
-{
-    for (size_t current = position; current <= position + name.size(); current++) {
-        auto result = lspApi->getDefinitionAtPosition(ctx, current);
-        EXPECT_TRUE(result.fileName.empty()) << "name=" << name << ", position=" << current;
-        EXPECT_EQ(result.start, 0U) << "name=" << name << ", position=" << current;
-        EXPECT_EQ(result.length, 0U) << "name=" << name << ", position=" << current;
-    }
-}
-
 std::string MakeDependencyConfig(const std::filesystem::path &tempDir, const std::vector<std::string> &files)
 {
     const auto dynamicDependencyPath = (tempDir / files[DYNAMIC_DEPENDENCY_INDEX]).string();
@@ -485,10 +475,8 @@ TEST_F(LspGetDefTests, GetDefinitionAtPositionForStdLibraryTaskPool)
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
     initializer.DestroyContext(ctx);
-    std::string expectedFileName = "std/concurrency.etscache";
-    size_t const expectedLength = 8;
-    ASSERT_TRUE(result.fileName.find(expectedFileName) != std::string::npos);
-    ASSERT_EQ(result.length, expectedLength);
+    ASSERT_NE(result.fileName.find(".abc"), std::string::npos);
+    ASSERT_EQ(result.length, 0U);
 }
 
 TEST_F(LspGetDefTests, DisableLoweringTest1)
@@ -1090,12 +1078,19 @@ TEST_F(LspGetDefTests, GetDefinitionAtPosition_InvalidTypeOnlyFunctionAndAnnotat
     const auto annotationUse = texts[1].rfind("AnnotationType");
     ASSERT_NE(functionUse, std::string::npos);
     ASSERT_NE(annotationUse, std::string::npos);
+    const auto functionDeclaration = texts[0].find("invalidFunction");
+    ASSERT_NE(functionDeclaration, std::string::npos);
+    const auto annotationDeclaration = texts[0].find("InvalidAnnotation");
+    ASSERT_NE(annotationDeclaration, std::string::npos);
 
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer;
     auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
-    ExpectNoDefinitionForToken(lspApi, ctx, functionUse, "FunctionType");
-    ExpectNoDefinitionForToken(lspApi, ctx, annotationUse, "AnnotationType");
+    ExpectDefinitionForToken(lspApi, ctx, functionUse,
+                             {"FunctionType", filePaths[0], functionDeclaration, "invalidFunction"});
+    ExpectDefinitionForToken(lspApi, ctx, annotationUse,
+                             {"AnnotationType", filePaths[0], annotationDeclaration, "InvalidAnnotation"});
+
     initializer.DestroyContext(ctx);
 }
 
@@ -1166,6 +1161,8 @@ TEST_F(LspGetDefTests, GetDefinitionAtPosition_InvalidTypeOnlyValueExportTypeUse
 
     const auto typeUseOffset = texts[1].rfind("t_type_var_int");
     ASSERT_NE(typeUseOffset, std::string::npos);
+    const auto declarationOffset = texts[0U].find("type_var_int: int = 1");
+    ASSERT_NE(declarationOffset, std::string::npos);
 
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer;
@@ -1173,9 +1170,9 @@ TEST_F(LspGetDefTests, GetDefinitionAtPosition_InvalidTypeOnlyValueExportTypeUse
     for (size_t position = typeUseOffset; position <= typeUseOffset + std::string_view("t_type_var_int").size();
          position++) {
         auto result = lspApi->getDefinitionAtPosition(ctx, position);
-        EXPECT_TRUE(result.fileName.empty()) << "position=" << position;
-        EXPECT_EQ(result.start, 0U) << "position=" << position;
-        EXPECT_EQ(result.length, 0U) << "position=" << position;
+        EXPECT_EQ(result.fileName, filePaths[0U]) << "name=" << result.fileName << ", position=" << position;
+        EXPECT_EQ(result.start, declarationOffset) << "position=" << position;
+        EXPECT_EQ(result.length, std::string_view("type_var_int").size()) << "position=" << position;
     }
     initializer.DestroyContext(ctx);
 }
@@ -1190,6 +1187,8 @@ TEST_F(LspGetDefTests, GetDefinitionAtPosition_InvalidTypeOnlyValueExportAmbiguo
                                       "import { type_var_int } from './ambiguous_export';"};
     auto filePaths = CreateTempFile(files, texts);
     ASSERT_EQ(filePaths.size(), files.size());
+    const auto declarationOffset = texts[2U].find("type_var_int: int = 0");
+    ASSERT_NE(declarationOffset, std::string::npos);
 
     LSPAPI const *lspApi = GetImpl();
     for (size_t fileIndex : {3U, 4U}) {
@@ -1199,9 +1198,8 @@ TEST_F(LspGetDefTests, GetDefinitionAtPosition_InvalidTypeOnlyValueExportAmbiguo
         Initializer initializer;
         auto ctx = initializer.CreateContext(filePaths[fileIndex].c_str(), ES2PANDA_STATE_CHECKED);
         auto result = lspApi->getDefinitionAtPosition(ctx, importOffset);
-        EXPECT_TRUE(result.fileName.empty()) << "fileIndex=" << fileIndex;
-        EXPECT_EQ(result.start, 0U) << "fileIndex=" << fileIndex;
-        EXPECT_EQ(result.length, 0U) << "fileIndex=" << fileIndex;
+        ExpectDefinitionForToken(lspApi, ctx, importOffset,
+                                 {"type_var_int", filePaths[2U], declarationOffset, "type_var_int"});
         initializer.DestroyContext(ctx);
     }
 }

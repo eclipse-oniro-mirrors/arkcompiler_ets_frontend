@@ -177,6 +177,8 @@ void AnnotationDeclaration::CopyTo(AstNode *other) const
     otherImpl->properties_ = properties_;
     otherImpl->policy_ = policy_;
     otherImpl->targets_ = targets_;
+    otherImpl->metadataAccessRestrictionModules_ = metadataAccessRestrictionModules_;
+    otherImpl->metadataAccessRestrictionAnnotationName_ = metadataAccessRestrictionAnnotationName_;
 
     AnnotationAllowed<Statement>::CopyTo(other);
 }

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace ns2{
+export namespace ns2{
     export let num: number = 2
 }
 
