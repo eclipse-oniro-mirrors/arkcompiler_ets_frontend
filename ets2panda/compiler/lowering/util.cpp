@@ -234,6 +234,9 @@ ArenaSet<varbinder::Variable *> FindCaptured(ArenaAllocator *allocator, ir::AstN
             if (var == nullptr || !var->HasFlag(varbinder::VariableFlags::LOCAL)) {
                 return;
             }
+            if (var->Declaration() != nullptr && var->Declaration()->IsLabelDecl()) {
+                return;
+            }
             auto *sc = var->GetScope();
             if (sc != nullptr && !sc->IsClassScope() && !sc->IsGlobalScope() && scopes.count(var->GetScope()) == 0) {
                 result.insert(var);
