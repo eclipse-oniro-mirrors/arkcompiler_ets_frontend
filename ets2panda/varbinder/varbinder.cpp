@@ -490,6 +490,15 @@ std::vector<FunctionScope *> VarBinder::GetAllCompilableFunctionScopes() const
 
 void VarBinder::VisitScriptFunction(ir::ScriptFunction *func)
 {
+    if (func->HasAnnotations()) {
+        for (auto *anno : func->Annotations()) {
+            auto *base = anno->GetBaseName();
+            if (base != nullptr && base->Variable() == nullptr) {
+                ResolveReference(anno);
+            }
+        }
+    }
+
     auto *funcScope = func->Scope();
     {
         if (funcScope == nullptr) {

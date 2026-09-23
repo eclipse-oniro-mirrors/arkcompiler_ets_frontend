@@ -17,6 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
+#include "util/diagnostic.h"
 
 namespace ark::es2panda::compiler {
 
@@ -27,14 +28,23 @@ std::string_view AnnotationCopyPostLowering::Name() const
 
 static void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *st)
 {
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *annoDecl = checker->MaterializeAnnotationUsage(st, checker::AnnotationUseKind::USER);
+    if (annoDecl == nullptr) {
+        auto *baseName = st->GetBaseName();
+        if (baseName != nullptr) {
+            checker->LogError(diagnostic::ANNOTATION_RESOLUTION_FAILED, {baseName->Name()}, baseName->Start());
+        } else {
+            checker->LogError(diagnostic::ANNOTATION_USAGE_WITHOUT_NAME, {}, st->Start());
+        }
+        return;
+    }
+    ES2PANDA_ASSERT(st->GetBaseName()->Variable() != nullptr);
+
     if (st->Properties().size() == 1 &&
         st->Properties().front()->AsClassProperty()->Id()->Name() == compiler::Signatures::ANNOTATION_KEY_VALUE) {
         return;
     }
-
-    auto *checker = ctx->GetChecker()->AsETSChecker();
-    auto *annoDecl = checker->MaterializeAnnotationUsage(st, checker::AnnotationUseKind::USER);
-    ES2PANDA_ASSERT(st->GetBaseName()->Variable() != nullptr);
 
     auto propertyExist = [&st](util::StringView name) {
         return std::any_of(st->Properties().begin(), st->Properties().end(),

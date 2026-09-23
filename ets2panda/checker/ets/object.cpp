@@ -1107,8 +1107,6 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         CheckInheritedExplicitOverloadRedeclarationRequirement(interfaceType);
     }
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CheckInterfaceAnnotations(interfaceDecl);
 
     return interfaceType;
 }
