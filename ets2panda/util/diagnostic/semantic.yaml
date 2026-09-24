@@ -142,6 +142,10 @@ semantic:
   id: 4
   message: "Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'BYTECODE', or 'RUNTIME'."
 
+- name: ANNOTATION_RESOLUTION_FAILED
+  id: 880937
+  message: "Annotation '{}' does not resolve to an annotation declaration."
+
 - name: ANNOTATION_TARGET_DUPLICATE
   id: 263981
   message: "Annotation target '{}' is duplicated."
@@ -153,6 +157,10 @@ semantic:
 - name: ANNOTATION_UNUSED_GENERIC_ALIAS
   id: 71
   message: "Type alias generic parameter '{}' is not used in type annotation"
+
+- name: ANNOTATION_USAGE_WITHOUT_NAME
+  id: 478166
+  message: "Cannot resolve an annotation without a name."
 
 - name: ANNOT_DUPLICATE
   id: 41

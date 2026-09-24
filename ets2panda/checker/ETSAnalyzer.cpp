@@ -5299,6 +5299,15 @@ static void ProcessRequiredFields(ArenaUnorderedMap<util::StringView, ir::ClassP
     }
 }
 
+static void ReportUnmaterializedAnnotation(ETSChecker *checker, ir::AnnotationUsage *st, ir::Identifier *baseName)
+{
+    if (baseName == nullptr) {
+        checker->LogError(diagnostic::ANNOTATION_USAGE_WITHOUT_NAME, {}, st->Start());
+    } else if (!baseName->IsErrorPlaceHolder()) {
+        checker->LogError(diagnostic::NOT_AN_ANNOTATION, {baseName->Name()}, baseName->Start());
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
 {
     ETSChecker *checker = GetETSChecker();
@@ -5312,9 +5321,7 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *annoDecl = checker->MaterializeAnnotationUsage(st, kind);
     if (annoDecl == nullptr) {
-        if (!baseName->IsErrorPlaceHolder()) {
-            checker->LogError(diagnostic::NOT_AN_ANNOTATION, {baseName->Name()}, baseName->Start());
-        }
+        ReportUnmaterializedAnnotation(checker, st, baseName);
 
         ES2PANDA_ASSERT(checker->IsAnyError());
         return ReturnTypeForStatement(st);

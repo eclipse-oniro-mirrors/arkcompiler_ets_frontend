@@ -62,7 +62,6 @@
 #include "ir/ets/etsFunctionType.h"
 #include "ir/statements/ifStatement.h"
 #include "ir/statements/classDeclaration.h"
-#include "ir/statements/functionDeclaration.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/ets/etsGenericInstantiatedNode.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
@@ -1479,19 +1478,61 @@ extern "C" es2panda_Scope *AstNodeFindNearestScope([[maybe_unused]] es2panda_Con
     return reinterpret_cast<es2panda_Scope *>(compiler::NearestScope(E2pNode));
 }
 
+static ir::AstNode *OwningProgramNode(ir::AstNode *node)
+{
+    while (node != nullptr && node->Parent() != nullptr) {
+        node = node->Parent();
+    }
+    if (node == nullptr || !node->IsETSModule() || node->AsETSModule()->Program() == nullptr) {
+        return nullptr;
+    }
+    return node;
+}
+
+static void ReportDetachedNode(Context *context, std::string_view api)
+{
+    context->diagnosticEngine->LogSemanticError(std::string(api) + " requires a node attached to a program");
+    context->state = ES2PANDA_STATE_ERROR;
+}
+
+template <typename Body>
+static void RunContained(Context *context, const Body &body)
+{
+    try {
+        body();
+    } catch (util::ThrowableDiagnostic &e) {
+        context->diagnosticEngine->EnsureLocations();
+        e.EnsureLocation();
+        context->diagnosticEngine->InsertLog(std::make_shared<util::ThrowableDiagnostic>(e));
+    }
+}
+
 extern "C" es2panda_Scope *AstNodeRebind(es2panda_Context *ctx, es2panda_AstNode *node)
 {
     auto E2pNode = reinterpret_cast<ir::AstNode *>(node);
     auto context = reinterpret_cast<Context *>(ctx);
+    auto *programNode = OwningProgramNode(E2pNode);
+    if (programNode == nullptr) {
+        ReportDetachedNode(context, "AstNodeRebind");
+        return nullptr;
+    }
+
+    auto *rebindNode = E2pNode;
+    if (rebindNode->IsScriptFunction() ||
+        rebindNode->FindChild([](ir::AstNode *n) { return n->IsScriptFunction(); }) != nullptr) {
+        rebindNode = programNode;
+    }
+
     auto varbinder = context->parserProgram->VarBinder()->AsETSBinder();
     auto phaseManager = context->phaseManager;
-    if (E2pNode->IsScriptFunction() ||
-        E2pNode->FindChild([](ir::AstNode *n) { return n->IsScriptFunction(); }) != nullptr) {
-        while (!E2pNode->IsProgram()) {
-            E2pNode = E2pNode->Parent();
-        }
+    es2panda_Scope *scope = nullptr;
+    RunContained(context, [&scope, phaseManager, varbinder, rebindNode]() {
+        scope = reinterpret_cast<es2panda_Scope *>(compiler::Rebind(phaseManager, varbinder, rebindNode));
+    });
+    if (context->diagnosticEngine->IsAnyError()) {
+        context->state = ES2PANDA_STATE_ERROR;
     }
-    return reinterpret_cast<es2panda_Scope *>(compiler::Rebind(phaseManager, varbinder, E2pNode));
+    return scope;
 }
 
 extern "C" void AstNodeRecheck(es2panda_Context *ctx, es2panda_AstNode *node)
@@ -1499,16 +1540,18 @@ extern "C" void AstNodeRecheck(es2panda_Context *ctx, es2panda_AstNode *node)
     ES2PANDA_PERF_SCOPE("@Recheck");
     auto E2pNode = reinterpret_cast<ir::AstNode *>(node);
     auto context = reinterpret_cast<Context *>(ctx);
+    auto *programNode = OwningProgramNode(E2pNode);
+    if (programNode == nullptr) {
+        ReportDetachedNode(context, "AstNodeRecheck");
+        return;
+    }
+
     auto varbinder = context->parserProgram->VarBinder()->AsETSBinder();
     auto checker = context->GetChecker()->AsETSChecker();
     auto phaseManager = context->phaseManager;
-    if (E2pNode->IsScriptFunction() ||
-        E2pNode->FindChild([](ir::AstNode *n) { return n->IsScriptFunction(); }) != nullptr) {
-        while (!E2pNode->IsProgram()) {
-            E2pNode = E2pNode->Parent();
-        }
-    }
-    compiler::Recheck(phaseManager, varbinder, checker, E2pNode);
+    RunContained(context, [phaseManager, varbinder, checker, programNode]() {
+        compiler::Recheck(phaseManager, varbinder, checker, programNode);
+    });
     context->state = !context->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_CHECKED : ES2PANDA_STATE_ERROR;
     return;
 }

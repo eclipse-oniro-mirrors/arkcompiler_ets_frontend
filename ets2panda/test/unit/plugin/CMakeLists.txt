@@ -148,6 +148,9 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_reset_counters compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_get_annotation_decl_properties compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_annotation_decl_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "annotation_synthesized_usage_binding_test annotation_synthesized_usage_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "annotation_unmaterialized_usage_stop_test annotation_unmaterialized_usage_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_recheck_rebind_invalid_node_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload_simult compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
