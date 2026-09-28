@@ -19,3 +19,23 @@ export type RecordThroughTuple = Record<string, [RecordThroughTuple , number]>;
 export type RecordThroughFunc = Record<string, () => RecordThroughFunc>;
 export type MixedDeferred = Record<string, Holder<MixedDeferred> | [MixedDeferred] | (() => MixedDeferred)>;
 export type ArrayShorthand = st.Array<ArrayShorthand>;
+export type ParenRecord = Record<string, ESObject>;
+export type UnionInRecord = Record<string, string | ESObject>;
+export type MultiDepth = Record<string, ESObject> | Record<string, Record<number, ESObject>>;
+export type SwapGeneric<T, U> = Record<string, ESObject>;
+export type MixedRecordArray = string | Record<string, ESObject> | st.Array<MixedRecordArray>;
+export type ArrayGeneric = st.Array<ArrayGeneric>;
+export type ArrayUnion = string | st.Array<ArrayUnion>;
+export type RecordThroughArray = Record<string, st.Array<RecordThroughArray>>;
+export type ArrayWrappingRecord = st.Array<Record<string, ArrayWrappingRecord>>;
+export type IndirectA = IndirectB;
+export type IndirectB = Record<string, IndirectA>;
+export type MutA = Record<string, MutB>;
+export type MutB = Record<string, MutA>;
+export type SameName = Record<string, Outer.SameName>;
+declare namespace NS {
+    type QualifiedRecord = Record<string, ESObject>;
+}
+declare namespace Outer {
+    type SameName = Record<string, number>;
+}

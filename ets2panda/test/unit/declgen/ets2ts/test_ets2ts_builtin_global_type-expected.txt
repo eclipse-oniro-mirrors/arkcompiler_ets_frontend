@@ -3,16 +3,30 @@ export declare const wl_const: ESObject;
 export declare const wl_nested: ESObject;
 export declare const ul_const: UserLocal<number>;
 export declare const ns_const: myns.WorkerLocal<number>;
+export declare const ns_eaw_const: myns.EAWorker;
 export declare const cf_const: ESObject;
+export declare const eaw_const: ESObject;
+export declare const arr_const: st.Array<number>;
+export declare const map_const: st.Map<string, number>;
 export declare function getWorkerLocal(wl: ESObject): ESObject;
 export declare function getUserLocal(ul: UserLocal<string>): UserLocal<string>;
 export declare function getConcurrentFoo(f: ESObject): ESObject;
+export declare function getEAWorker(w: ESObject): ESObject;
+export declare const weakMap1: ESObject;
+export declare let weakMap2: ESObject;
+export declare const weakSet3: ESObject;
+export declare let weakSet4: ESObject;
 export declare class WorkerLocalHolder {
     public get value(): ESObject;
     public set value(value: ESObject);
     public constructor(value: ESObject);
     public getValue(): ESObject;
     public setValue(value: ESObject): void;
+}
+export declare class EAWorkerHolder {
+    public get worker(): ESObject;
+    public set worker(value: ESObject);
+    public constructor(worker: ESObject);
 }
 export declare class UserLocal<T> {
     public get value(): T;
@@ -33,6 +47,11 @@ export declare namespace myns {
         public get value(): T;
         public set value(value: T);
         public constructor(value: T);
+    }
+    class EAWorker {
+        public get id(): number;
+        public set id(value: number);
+        public constructor(id: number);
     }
 }
 export declare namespace concurrency {

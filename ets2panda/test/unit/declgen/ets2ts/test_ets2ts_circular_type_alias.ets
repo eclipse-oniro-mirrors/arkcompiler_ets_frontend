@@ -50,3 +50,36 @@ export type RecordThroughFunc = Record<string, () => RecordThroughFunc>;
 export type MixedDeferred = Record<string, Holder<MixedDeferred> | [MixedDeferred] | (() => MixedDeferred)>;
 
 export type ArrayShorthand = ArrayShorthand[];
+
+export type ParenRecord = (Record<string, ParenRecord>);
+
+export type UnionInRecord = Record<string, string | UnionInRecord>;
+
+export type MultiDepth = Record<string, MultiDepth> | Record<string, Record<number, MultiDepth>>;
+
+export type SwapGeneric<T,U>  = Record<string, SwapGeneric<U, T>>;
+
+export type MixedRecordArray = string | Record<string, MixedRecordArray> | Array<MixedRecordArray>;
+
+namespace NS {
+    export type QualifiedRecord = Record<String,NS.QualifiedRecord>;
+}
+
+export type ArrayGeneric = Array<ArrayGeneric>
+
+export type ArrayUnion = string | Array<ArrayUnion>;
+
+export type RecordThroughArray = Record<string, Array<RecordThroughArray>>;
+
+export type ArrayWrappingRecord = Array<Record<string, ArrayWrappingRecord>>;
+
+export type IndirectA = IndirectB;
+export type IndirectB = Record<string,IndirectA>;
+
+export type MutA = Record<string, MutB>;
+export type MutB = Record<string, MutA>;
+
+namespace Outer {
+    export type SameName = Record<string, number>;
+}
+export type SameName = Record<string, Outer.SameName>;
