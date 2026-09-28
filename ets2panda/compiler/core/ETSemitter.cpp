@@ -303,6 +303,9 @@ ETSEmitter::~ETSEmitter()
     for (auto [_, dep] : depMaps_) {
         delete dep;
     }
+    for (auto [_, prog] : prgMaps_) {
+        delete prog;
+    }
 }
 
 std::string const &ETSEmitter::AddDependence(std::string const &str)
@@ -394,13 +397,15 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
     }
 
     auto func = GenScriptFunction(scriptFunc, this, external || scriptFunc->IsDeclare());  // #28197
-    if (scriptFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::STATIC) &&
-        Program()->functionStaticTable.find(name) != Program()->functionStaticTable.cend()) {
-        return;
-    }
-    if (!scriptFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::STATIC) &&
-        Program()->functionInstanceTable.find(name) != Program()->functionInstanceTable.cend()) {
-        return;
+    auto &table = scriptFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::STATIC)
+                      ? Program()->functionStaticTable
+                      : Program()->functionInstanceTable;
+    if (auto it = table.find(name); it != table.cend()) {
+        if (external && !it->second.metadata->IsForeign()) {
+            table.erase(it);
+        } else {
+            return;
+        }
     }
 
     Program()->AddToFunctionTable(std::move(func));
@@ -467,8 +472,8 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
         }
         ES2PANDA_ASSERT(prog->IsBuiltSimultaneously());
 
-        auto pandasmProg = std::unique_ptr<pandasm::Program>(GetOrCreatePandasmProgram(prog));
-        SetProgram(pandasmProg.get());
+        auto *pandasmProg = GetOrCreatePandasmProgram(prog);
+        SetProgram(pandasmProg);
 
         /* Main thread can also be used instead of idling */
         const auto &functions = prog->CompilableFunctionScopes();
@@ -491,7 +496,7 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 
         auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo());
         // Error (if any) is already reported via reporter, so just stop processing remaining files on failure.
-        if (util::GenerateBinaryFile(pandasmProg.get(), abcPath, *ctx->config->options, reporter) != 0) {
+        if (util::GenerateBinaryFile(pandasmProg, abcPath, *ctx->config->options, reporter) != 0) {
             return;
         }
     }
@@ -797,12 +802,34 @@ void ETSEmitter::GenMethodDefinition(ir::MethodDefinition const *method, bool ex
     }
 }
 
+void ETSEmitter::AddPartialAccessorDependencies(const ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    for (const auto *prop : interfaceDecl->Body()->Body()) {
+        if (!prop->IsMethodDefinition()) {
+            continue;
+        }
+        auto *methodDef = prop->AsMethodDefinition();
+        dependencies_->AddDependence(ToAssemblerSignature(methodDef->Function()));
+        for (const auto *overload : methodDef->Overloads()) {
+            dependencies_->AddDependence(ToAssemblerSignature(overload->Function()));
+        }
+    }
+}
+
 void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceDecl, bool external)
 {
-    if (dependencies_->IsNotRequired(ToAssemblerType(interfaceDecl), external)) {
+    auto recName = ToAssemblerType(interfaceDecl);
+    if (dependencies_->IsNotRequired(recName, external)) {
         return;
     }
-    auto interfaceRecord = pandasm::Record(ToAssemblerType(interfaceDecl), Program()->lang);
+    // %%partial-* interfaces have non-abstract accessors with bodies (CreateNullishAccessor).
+    // When emitted as external, setter signatures (stored as getter overloads) may be absent
+    // from toEmit_ if codegen didn't call them, so GenFunction skips them and leaves
+    // non-foreign functions bound to a foreign record.
+    if (external && recName.find(checker::PARTIAL_CLASS_PREFIX) != std::string::npos) {
+        AddPartialAccessorDependencies(interfaceDecl);
+    }
+    auto interfaceRecord = pandasm::Record(recName, Program()->lang);
 
     interfaceRecord.metadata->SetAccessFlags(ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE);
     interfaceRecord.sourceFile = GetNormalizedSourceFilePath(Context());
@@ -1461,7 +1488,7 @@ pandasm::Program *ETSEmitter::GetOrCreatePandasmProgram(const parser::Program *p
         return it->second;
     }
 
-    // NOTE(mshimenkov): Newly created pandasm::Program are freed by the caller
+    // Owned by prgMaps_, freed in ~ETSEmitter()
     return prgMaps_.emplace(k, new pandasm::Program {}).first->second;
 }
 

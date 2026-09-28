@@ -144,9 +144,15 @@ int GenerateBinaryFile(ark::pandasm::Program *prog, const std::string &output, c
 {
     ES2PANDA_PERF_SCOPE("@GenerateBinaryFile");
 
+    auto extendedPath = ark::os::file::File::GetExtendedFilePath(output);
 #if !defined(PANDA_TARGET_MOBILE)
-    auto progParentDir = ark::os::GetParentDir(output);
-    fs::create_directories(progParentDir);
+    auto progParentDir = ark::os::GetParentDir(extendedPath);
+    std::error_code ec;
+    fs::create_directories(progParentDir, ec);
+    if (ec) {
+        reporter(diagnostic::EMIT_FAILED, {ec.message() + ": '" + progParentDir + "'"});
+        return 1;
+    }
 #endif
 
 #ifdef PANDA_WITH_BYTECODE_OPTIMIZER
@@ -155,12 +161,12 @@ int GenerateBinaryFile(ark::pandasm::Program *prog, const std::string &output, c
         if ((options.GetOptLevel() != 0)) {
             // Bytecode optimizer may fail
             // Ignore the result
-            OptimizeBytecode(prog, output, options, reporter);
+            OptimizeBytecode(prog, extendedPath, options, reporter);
         }
     }
 #endif
 
-    return EmitBytecodeToBinaryFile(prog, output, options, reporter);
+    return EmitBytecodeToBinaryFile(prog, extendedPath, options, reporter);
 }
 }  // namespace ark::es2panda::util
 //

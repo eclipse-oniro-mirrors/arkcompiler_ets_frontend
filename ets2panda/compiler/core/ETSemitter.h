@@ -130,6 +130,7 @@ private:
                                  bool external);
     void GenCustomAnnotationRecord(const ir::AnnotationDeclaration *annoDecl, std::string &baseName, bool external);
     void GenEnumRecord(const ir::TSEnumDeclaration *enumDecl, bool external);
+    void AddPartialAccessorDependencies(const ir::TSInterfaceDeclaration *interfaceDecl);
     void GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceDecl, bool external);
     void EmitDefaultFieldValue(pandasm::Field &classField, const ir::Expression *init);
     void GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external);
@@ -151,7 +152,7 @@ private:
 
     // NOTE(mshimenkov): Is used in simultaneous mode after code gen stage to add functions functions from different
     // modules to the corresponding pandasm::Programs
-    // The created pandasm::Programs are then passed outside and the caller is responsible for the memory free
+    // Owned by prgMaps_, freed in ~ETSEmitter()
     std::unordered_map<std::string_view, pandasm::Program *> prgMaps_;
 
     // NOTE(mshimenkov): Is used in simultaneous mode during code gen stage to collect info which records should be
