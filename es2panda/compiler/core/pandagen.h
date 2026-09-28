@@ -42,6 +42,7 @@ class ScriptFunction;
 class Statement;
 class Expression;
 class Identifier;
+class CallExpression;
 }  // namespace panda::es2panda::ir
 
 DEFINE_BITOPS(panda::panda_file::FunctionKind);
@@ -534,6 +535,20 @@ public:
         checkSuperLabelPool_.push_back(&labelSet);
     }
 
+    void SetEntrySuperCall(const ir::CallExpression *call)
+    {
+        entrySuperCall_ = call;
+    }
+
+    void CompleteEntrySuperCall(const ir::CallExpression *call)
+    {
+        if (call == entrySuperCall_) {
+            entrySuperCompleted_ = true;
+        }
+    }
+
+    bool CanSkipInitializedSuperCheck();
+
     bool IsDerivedConstructor();
     void AddCatchBlockForImplicitSuperCallChecks();
 private:
@@ -553,6 +568,7 @@ private:
     OptionalChain *optionalChain_ {};
     InlineCache ic_;
     ArenaVector<const TryLabelSet *> checkSuperLabelPool_;
+    const ir::CallExpression *entrySuperCall_ {nullptr};
     RegAllocator ra_;
     IcSizeType currentSlot_ {0};
 
@@ -572,6 +588,7 @@ private:
     panda::panda_file::FunctionKind funcKind_ {panda::panda_file::FunctionKind::NONE};
     bool icOverFlow_ {false};
     bool inSendable_ {false};
+    bool entrySuperCompleted_ {false};
 };
 }  // namespace panda::es2panda::compiler
 

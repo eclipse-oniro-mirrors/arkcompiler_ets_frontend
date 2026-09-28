@@ -1,0 +1,80 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Base(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	stobjbyname 0x0, v, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x5
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@1=#Conditional(any a0, any a1, any a2, any a3) {
+	nop
+label_8: 
+label_0: 
+	ldai 0x1
+	sta v0
+	lda a3
+	callruntime.isfalse 0x0
+	jnez label_1
+label_2: 
+	mov v2, v0
+	supercallthisrange 0x1, 0x1, v2
+	sta v1
+	lda a2
+	throw.ifsupernotcorrectcall 0x1
+	mov a2, v1
+label_1: 
+	lda a2
+	throw.ifsupernotcorrectcall 0x0
+	lda v0
+	stobjbyname 0x3, x, a2
+label_3: 
+label_5: 
+	lda a2
+	throw.ifsupernotcorrectcall 0x0
+label_4: 
+end_label_4: 
+label_6: 
+	lda a2
+	return
+label_10: 
+	sta v0
+label_7: 
+	lda v0
+	throw
+label_9: 
+}
+
+.catchall label_3, end_label_4, label_10
+
+slotNum = 0x9
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Base, _1, 0x1, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, Base
+	tryldglobalbyname 0x4, Base
+	sta v0
+	defineclasswithbuffer 0x5, .#~@1=#Conditional, _2, 0x1, v0
+	sta v0
+	ldobjbyname 0x6, prototype
+	lda v0
+	sttoglobalrecord 0x8, Conditional
+	returnundefined
+label_2: 
+}
+
+

@@ -11,8 +11,7 @@ label_2:
 slotNum = 0x2
 .language ECMAScript
 .function any .B(any a0, any a1, any a2, any a3) {
-	nop
-label_6: 
+label_1: 
 label_0: 
 	copyrestargs 0x0
 	sta v0
@@ -21,24 +20,10 @@ label_0:
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
-label_1: 
-label_3: 
-	lda v0
-	throw.ifsupernotcorrectcall 0x0
-label_2: 
-end_label_2: 
-label_4: 
 	lda v0
 	return
-label_8: 
-	sta v1
-label_5: 
-	lda v1
-	throw
-label_7: 
+label_2: 
 }
-
-.catchall label_1, end_label_2, label_8
 
 slotNum = 0xc
 .language ECMAScript
