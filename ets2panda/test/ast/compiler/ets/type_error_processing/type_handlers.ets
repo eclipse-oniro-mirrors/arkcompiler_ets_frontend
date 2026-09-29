@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +38,15 @@ type T14 = Required<A, int>
 type T15 = Required<int>
 
 
+/* @@? 22:18 Error Syntax error ESY31671: Type argument list cannot be empty. */
 /* @@? 22:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
 /* @@? 24:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
 /* @@? 25:18 Error Semantic error ESE0223: Invalid number of type parameters for Partial type, should be 1. */
+/* @@? 28:19 Error Syntax error ESY31671: Type argument list cannot be empty. */
 /* @@? 28:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
 /* @@? 30:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
 /* @@? 31:19 Error Semantic error ESE0223: Invalid number of type parameters for Readonly type, should be 1. */
+/* @@? 34:20 Error Syntax error ESY31671: Type argument list cannot be empty. */
 /* @@? 34:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */
 /* @@? 36:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */
 /* @@? 37:20 Error Semantic error ESE0223: Invalid number of type parameters for Required type, should be 1. */

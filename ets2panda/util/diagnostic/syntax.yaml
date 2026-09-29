@@ -1231,6 +1231,10 @@ syntax:
   id: 140
   message: "Type annotation isn't allowed for constructor."
 
+- name: TYPE_ARGUMENT_LIST_EMPTY
+  id: 31671
+  message: "Type argument list cannot be empty."
+
 - name: TYPE_EXPECTED
   id: 188
   message: "Type expected."
