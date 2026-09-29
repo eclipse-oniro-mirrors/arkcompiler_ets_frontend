@@ -57,7 +57,6 @@ optional_field.ets
 #24214
 Object-type-in-binary-logical-expression.ets
 trailing-lambda.ets
-BitwiseOperationsOnFloat.ets
 conversionFloatIntLong.ets
 inallyCatchExecutedNormally.ets
 

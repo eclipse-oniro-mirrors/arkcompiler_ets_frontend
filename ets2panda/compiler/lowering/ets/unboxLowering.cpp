@@ -24,6 +24,7 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/typeFlag.h"
 #include "checker/types/globalTypesHolder.h"
+#include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 #include "util/es2pandaMacros.h"
 #include "generated/signatures.h"
@@ -947,6 +948,100 @@ static checker::Type *EffectiveTypeOfNumericOrEqualsOp(checker::ETSChecker *chec
     return checker->GlobalIntType();
 }
 
+// Lowers: operand -----> operand - operand * 0.0 (exact for finite values, NaN otherwise).
+static ir::Expression *WrapPureOperand(UnboxContext *uctx, ir::Expression *operand, checker::Type *operandType,
+                                       lexer::SourceRange const &range, ir::AstNode *parent)
+{
+    auto *allocator = uctx->allocator;
+    auto *zeroLiteral =
+        allocator->New<ir::NumberLiteral>(operandType->IsFloatType() ? lexer::Number(0.0F) : lexer::Number(0.0));
+    zeroLiteral->SetTsType(operandType);
+    auto *operandClone = operand->Clone(allocator, nullptr)->AsExpression();
+    operandClone->SetTsType(operandType);
+    auto *multiplication = util::NodeAllocator::ForceSetParent<ir::BinaryExpression>(
+        allocator, operandClone, zeroLiteral, lexer::TokenType::PUNCTUATOR_MULTIPLY);
+    multiplication->SetTsType(operandType);
+    multiplication->SetOperationType(operandType);
+    auto *subtraction = util::NodeAllocator::ForceSetParent<ir::BinaryExpression>(allocator, operand, multiplication,
+                                                                                  lexer::TokenType::PUNCTUATOR_MINUS);
+    subtraction->SetTsType(operandType);
+    subtraction->SetOperationType(operandType);
+    SetSourceRangesRecursively(subtraction, range);
+    subtraction->SetParent(parent);
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(uctx->varbinder, NearestScope(parent));
+    InitScopesPhaseETS::RunExternalNode(subtraction, uctx->varbinder);
+    uctx->varbinder->ResolveReferencesForScope(subtraction, NearestScope(subtraction));
+    return subtraction;
+}
+
+// Lowers: nextInf() -----> { let tmp = nextInf(); tmp - tmp * 0.0 }. The operand is impure, so it is
+// hoisted into a temporary to guarantee that it is evaluated exactly once.
+static ir::Expression *WrapImpureOperand(UnboxContext *uctx, ir::Expression *operand, checker::Type *operandType,
+                                         lexer::SourceRange const &range, ir::AstNode *parent)
+{
+    auto *allocator = uctx->allocator;
+    auto *zeroLiteral =
+        allocator->New<ir::NumberLiteral>(operandType->IsFloatType() ? lexer::Number(0.0F) : lexer::Number(0.0));
+    zeroLiteral->SetTsType(operandType);
+    auto *temp = Gensym(allocator);
+    temp->SetTsType(operandType);
+    auto *multiplication = util::NodeAllocator::ForceSetParent<ir::BinaryExpression>(
+        allocator, temp->Clone(allocator, nullptr), zeroLiteral, lexer::TokenType::PUNCTUATOR_MULTIPLY);
+    multiplication->SetTsType(operandType);
+    multiplication->SetOperationType(operandType);
+    auto *subtraction = util::NodeAllocator::ForceSetParent<ir::BinaryExpression>(
+        allocator, temp->Clone(allocator, nullptr), multiplication, lexer::TokenType::PUNCTUATOR_MINUS);
+    subtraction->SetTsType(operandType);
+    subtraction->SetOperationType(operandType);
+
+    auto *declarator = util::NodeAllocator::ForceSetParent<ir::VariableDeclarator>(
+        allocator, ir::VariableDeclaratorFlag::LET, temp, operand);
+    auto declarators = ArenaVector<ir::VariableDeclarator *>(allocator->Adapter());
+    declarators.push_back(declarator);
+    auto *declaration = util::NodeAllocator::ForceSetParent<ir::VariableDeclaration>(
+        allocator, ir::VariableDeclaration::VariableDeclarationKind::LET, allocator, std::move(declarators));
+
+    auto statements = ArenaVector<ir::Statement *>(allocator->Adapter());
+    statements.push_back(declaration);
+    statements.push_back(util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(allocator, subtraction));
+    auto *wrapped = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(statements));
+
+    wrapped->SetTsType(operandType);
+    wrapped->SetParent(parent);
+    SetSourceRangesRecursively(wrapped, range);
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(uctx->varbinder, NearestScope(parent));
+    InitScopesPhaseETS::RunExternalNode(wrapped, uctx->varbinder);
+    uctx->varbinder->ResolveReferencesForScope(wrapped, NearestScope(wrapped));
+    if (temp->Variable() != nullptr) {
+        temp->Variable()->SetTsType(operandType);
+    }
+    return wrapped;
+}
+
+static ir::Expression *WrapNonFiniteToNaN(UnboxContext *uctx, ir::Expression *operand)
+{
+    auto *operandType = operand->TsType();
+    if (operandType == nullptr) {
+        return operand;
+    }
+    if (TypeIsBoxedPrimitive(operandType)) {
+        auto *unboxedType = uctx->checker->MaybeUnboxType(operandType);
+        if (!unboxedType->IsDoubleType() && !unboxedType->IsFloatType()) {
+            return operand;
+        }
+        operand = InsertUnboxing(uctx, operand);
+        operandType = operand->TsType();
+    }
+    if (!operandType->IsDoubleType() && !operandType->IsFloatType()) {
+        return operand;
+    }
+
+    if (operand->IsIdentifier() || operand->IsNumberLiteral()) {
+        return WrapPureOperand(uctx, operand, operandType, operand->Range(), operand->Parent());
+    }
+    return WrapImpureOperand(uctx, operand, operandType, operand->Range(), operand->Parent());
+}
+
 static void ReplaceInParent(ir::AstNode *from, ir::AstNode *to)
 {
     // clang-format off
@@ -1231,7 +1326,7 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
     void VisitUnaryExpression(ir::UnaryExpression *uexpr) override
     {
         if (uexpr->OperatorType() == lexer::TokenType::PUNCTUATOR_TILDE) {
-            uexpr->SetArgument(AdjustType(uctx_, uexpr->Argument(), uexpr->TsType()));
+            uexpr->SetArgument(AdjustType(uctx_, WrapNonFiniteToNaN(uctx_, uexpr->Argument()), uexpr->TsType()));
         }
 
         uexpr->SetTsType(uctx_->checker->MaybeUnboxType(uexpr->TsType()));
