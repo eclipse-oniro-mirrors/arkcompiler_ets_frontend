@@ -190,7 +190,10 @@ export class ArkTSConfig {
         processed.add(dependency);
 
         let dependencydependencies: Set<string> = dependenciesSets.get(dependency)!;
-        let arktsConfig = generator.getArktsConfigByPackageName(dependency)!;
+        let arktsConfig = generator.getArktsConfigByPackageName(dependency);
+        if (!arktsConfig) {
+            return;
+        }
 
         if (dependencydependencies.size !== 0) {
             // Recursively process dependencies first

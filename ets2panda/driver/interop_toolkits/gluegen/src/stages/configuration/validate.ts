@@ -56,7 +56,6 @@ function validateBuildConfig(buildConfig: BuildConfig): void {
   modules.forEach(validateModule);
 
   const byPackage = buildDependencyViews(modules);
-  validateDependencyReferences(byPackage);
   detectCyclicDependencies(byPackage);
   requireMainPackage(byPackage, buildConfig.packageName);
 }
@@ -93,16 +92,6 @@ function buildDependencyViews(modules: readonly ModuleConfig[]): ReadonlyMap<str
     byPackage.set(module.packageName, { dependencies });
   }
   return byPackage;
-}
-
-function validateDependencyReferences(byPackage: ReadonlyMap<string, ModuleDependencyView>): void {
-  for (const [packageName, view] of byPackage) {
-    for (const dependency of view.dependencies) {
-      if (!byPackage.has(dependency)) {
-        throw invalidBuildConfig(`Package "${packageName}" declares unknown dependency "${dependency}".`);
-      }
-    }
-  }
 }
 
 function requireMainPackage(byPackage: ReadonlyMap<string, ModuleDependencyView>, mainPackageName: string): void {
