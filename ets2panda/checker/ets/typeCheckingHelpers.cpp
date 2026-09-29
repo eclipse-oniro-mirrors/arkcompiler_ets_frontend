@@ -194,8 +194,16 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
     }
 
     if (type->IsETSTypeParameter()) {
-        return {GetGlobalTypesHolder()->GlobalETSUnionUndefinedNull(),
-                ProgramAllocator()->New<ETSNonNullishType>(type->AsETSTypeParameter())};
+        std::vector<Type *> nullishTypes;
+        if (type->PossiblyETSNull()) {
+            nullishTypes.push_back(GlobalETSNullType());
+        }
+        if (type->PossiblyETSUndefined()) {
+            nullishTypes.push_back(GlobalETSUndefinedType());
+        }
+        auto *nullishType = nullishTypes.empty() ? GetGlobalTypesHolder()->GlobalETSNeverType()
+                                                 : CreateETSUnionType(std::move(nullishTypes));
+        return {nullishType, ProgramAllocator()->New<ETSNonNullishType>(type->AsETSTypeParameter())};
     }
 
     if (type->IsETSUndefinedType() || type->IsETSNullType()) {
@@ -592,7 +600,7 @@ Type *ETSChecker::GetTypeFromVariableDeclaration(varbinder::Variable *const var)
             [[fallthrough]];
         case varbinder::DeclType::PROPERTY: {
             const auto declNode = var->Declaration()->Node();
-            if ((declNode->IsMethodDefinition() || declNode->IsClassProperty()) && declNode->Parent() &&
+            if ((declNode->IsMethodDefinition() || declNode->IsClassProperty()) && declNode->Parent() != nullptr &&
                 declNode->Parent()->IsClassDefinition()) {
                 if (const auto lazyCtx = VarBinder()->GetContext(); lazyCtx != nullptr && lazyCtx->materializeMembers) {
                     lazyCtx->materializeMembers(declNode->Parent()->AsClassDefinition());
