@@ -53,7 +53,7 @@ enum class CompletionEntryKind {
     EVENT = 23,
     OPERATOR = 24,
     TYPE_PARAMETER = 25,
-    ALIAS_TYPE = 26,
+    ALIAS_TYPE = 26,  // Non-standard LSP kind; type aliases are mapped to INTERFACE (8) for LSP clients
     ANNOTATION = 27
 };
 

@@ -248,15 +248,15 @@ export const pa16AnonUsed: number = 1;
             EXPECT_EQ(entry->GetCompletionKind(), kind) << "indexed kind mismatch: " << name;
             EXPECT_EQ(entry->GetInsertText(), insertText) << "indexed insert text mismatch: " << name;
         };
-        expectIndexed("PaIdxAlias", CompletionEntryKind::ALIAS_TYPE, "PaIdxAlias");
+        expectIndexed("PaIdxAlias", CompletionEntryKind::INTERFACE, "PaIdxAlias");
         expectIndexed("PaIdxGear", CompletionEntryKind::CLASS, "PaIdxGear");
         expectIndexed("PaIdxStyle", CompletionEntryKind::INTERFACE, "PaIdxStyle");
         expectIndexed("paIdxRun(): number", CompletionEntryKind::METHOD, "paIdxRun()");
-        // CURRENT BEHAVIOR: at BOUND state the identifier's declaration type resolves to
-        // a class-like declaration for enum/namespace/variable exports, so those indexed
-        // suggestions report CLASS instead of ENUM/MODULE/VARIABLE.
-        expectIndexed("PaIdxColor", CompletionEntryKind::CLASS, "PaIdxColor");
-        expectIndexed("PaIdxSpace", CompletionEntryKind::CLASS, "PaIdxSpace");
+        // At BOUND state, CollectCompletionExportSymbols uses NavigationExportClosureResolver
+        // to correctly classify ENUM and MODULE exports. Top-level variables at BOUND state
+        // remain class-like.
+        expectIndexed("PaIdxColor", CompletionEntryKind::ENUM, "PaIdxColor");
+        expectIndexed("PaIdxSpace", CompletionEntryKind::MODULE, "PaIdxSpace");
         expectIndexed("paIdxVar", CompletionEntryKind::CLASS, "paIdxVar");
 
         // The local class already supplies a "PaIdxMachine" scope completion, so the

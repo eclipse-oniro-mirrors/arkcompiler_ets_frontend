@@ -16,6 +16,7 @@
 #include "lsp_api_test.h"
 #include "lsp/include/completions.h"
 #include "lsp/include/internal_api.h"
+#include "lsp/include/symbol_reference_index.h"
 
 #include <algorithm>
 
@@ -226,7 +227,7 @@ M1.
     assertKind("run()", CompletionEntryKind::METHOD);
     assertKind("ExportedClass", CompletionEntryKind::CLASS);
     assertKind("ExportedInterface", CompletionEntryKind::INTERFACE);
-    assertKind("ExportedAlias", CompletionEntryKind::ALIAS_TYPE);
+    assertKind("ExportedAlias", CompletionEntryKind::INTERFACE);
     assertKind("ExportedEnum", CompletionEntryKind::ENUM);
     assertKind("ExportedAnnotation", CompletionEntryKind::ANNOTATION);
     assertKind("Nested", CompletionEntryKind::MODULE);
@@ -299,6 +300,94 @@ M1.
     EXPECT_TRUE(HasCompletion(entries, "A"));
     EXPECT_TRUE(HasCompletion(entries, "B"));
     initializer.DestroyContext(ctx);
+}
+
+// Auto-import completion for re-exported enum and namespace must have ENUM and MODULE kinds.
+TEST_F(LSPCompletionsModuleTests, AutoImportReexportedEnumAndNamespaceKind)
+{
+    std::vector<std::string> files = {"ai_origin.ets", "ai_barrel.ets", "ai_user.ets"};
+    std::vector<std::string> texts = {R"(
+export enum Color { Red, Green, Blue }
+export namespace MyNs { export const V = 1; }
+)",
+                                      R"(
+export { Color as PublicColor, MyNs as PublicNs } from './ai_origin';
+)",
+                                      R"(
+Pub
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *originCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(originCtx, nullptr);
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(originCtx));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto *userCtx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(userCtx, nullptr);
+
+    auto offset = texts[2].find("Pub") + 3;
+    auto entries = GetImpl()->getCompletionsAtPosition(userCtx, offset).GetEntries();
+
+    auto *colorEntry = FindCompletion(entries, "PublicColor");
+    ASSERT_NE(colorEntry, nullptr);
+    EXPECT_EQ(colorEntry->GetCompletionKind(), CompletionEntryKind::ENUM);
+
+    auto *nsEntry = FindCompletion(entries, "PublicNs");
+    ASSERT_NE(nsEntry, nullptr);
+    EXPECT_EQ(nsEntry->GetCompletionKind(), CompletionEntryKind::MODULE);
+
+    initializer.DestroyContext(originCtx);
+    initializer.DestroyContext(barrelCtx);
+    initializer.DestroyContext(userCtx);
+}
+
+// Auto-import completion should not suggest re-exported symbols when origin index is removed.
+TEST_F(LSPCompletionsModuleTests, AutoImportReexportInvalidatedOnOriginRemoval)
+{
+    std::vector<std::string> files = {"c_origin.ets", "b_barrel.ets", "a_user.ets"};
+    std::vector<std::string> texts = {R"(
+export type MyUserId = string;
+)",
+                                      R"(
+export * from './c_origin';
+)",
+                                      R"(
+MyU
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *originCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(originCtx, nullptr);
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(originCtx));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto *userCtx = initializer.CreateContext(filePaths[2].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(userCtx, nullptr);
+
+    auto offset = texts[2].find("MyU") + 3;
+    auto entriesBefore = GetImpl()->getCompletionsAtPosition(userCtx, offset).GetEntries();
+    EXPECT_TRUE(HasCompletion(entriesBefore, "MyUserId"));
+
+    // Remove c_origin.ets index
+    ASSERT_TRUE(ark::es2panda::lsp::RemoveSymbolReferenceIndexForFile(filePaths[0]));
+
+    auto entriesAfter = GetImpl()->getCompletionsAtPosition(userCtx, offset).GetEntries();
+    EXPECT_FALSE(HasCompletion(entriesAfter, "MyUserId"));
+
+    initializer.DestroyContext(originCtx);
+    initializer.DestroyContext(barrelCtx);
+    initializer.DestroyContext(userCtx);
 }
 
 }  // namespace

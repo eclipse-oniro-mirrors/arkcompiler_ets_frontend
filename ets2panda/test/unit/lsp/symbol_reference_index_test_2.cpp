@@ -14,6 +14,7 @@
  */
 
 #include <cstddef>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "lsp_api_test.h"
@@ -562,5 +563,132 @@ let value = new Foo();)"};
     initializer.DestroyContext(consumerCtx);
 
     EXPECT_EQ(CountReferencesInFile(after, filePaths[BARREL_FILE_INDEX]), beforeBarrelReferences);
+}
+
+// Re-exported enum and namespace under CHECKED lowering must preserve ENUM and MODULE declTypes.
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, ReexportedEnumAndNamespaceClassifiedCorrectly)
+{
+    std::vector<std::string> files = {"reexport_decl_origin.ets", "reexport_decl_barrel.ets"};
+    std::vector<std::string> texts = {R"(
+export enum Color {
+    Red,
+    Green,
+    Blue
+}
+export namespace MathUtils {
+    export const PI = 3.14;
+}
+)",
+                                      R"(
+export { Color as PublicColor, MathUtils as PublicMath } from './reexport_decl_origin';
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *originCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(originCtx, nullptr);
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(originCtx));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto colorDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("PublicColor", "");
+    ASSERT_FALSE(colorDefs.empty());
+    EXPECT_EQ(colorDefs[0].symbolName, "PublicColor");
+    EXPECT_EQ(colorDefs[0].declType, ark::es2panda::ir::AstNodeType::TS_ENUM_DECLARATION);
+
+    auto mathDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("PublicMath", "");
+    ASSERT_FALSE(mathDefs.empty());
+    EXPECT_EQ(mathDefs[0].symbolName, "PublicMath");
+    EXPECT_EQ(mathDefs[0].declType, ark::es2panda::ir::AstNodeType::TS_MODULE_DECLARATION);
+
+    initializer.DestroyContext(originCtx);
+    initializer.DestroyContext(barrelCtx);
+}
+
+// Deleting/removing the export origin file must invalidate re-exported completion snapshots in dependent files.
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, ReexportedCompletionSnapshotInvalidatedOnSourceRemoval)
+{
+    std::vector<std::string> files = {"source_c.ets", "barrel_b.ets"};
+    std::vector<std::string> texts = {R"(
+export type MyUserId = string;
+)",
+                                      R"(
+export * from './source_c';
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *originCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(originCtx, nullptr);
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(originCtx));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto initialDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("MyUserId", "");
+    ASSERT_FALSE(initialDefs.empty());
+
+    // Removing source_c must prune MyUserId from barrel_b's completion snapshot as well.
+    ASSERT_TRUE(ark::es2panda::lsp::RemoveSymbolReferenceIndexForFile(filePaths[0]));
+    auto afterRemoveDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("MyUserId", "");
+    EXPECT_TRUE(afterRemoveDefs.empty());
+
+    initializer.DestroyContext(originCtx);
+    initializer.DestroyContext(barrelCtx);
+}
+
+// Updating/renaming exports in origin file must invalidate stale re-exports in dependent files.
+TEST_F(LSPSymbolReferenceIndexModuleKeyTests, ReexportedCompletionSnapshotInvalidatedOnSourceUpdate)
+{
+    std::vector<std::string> files = {"source_c_update.ets", "barrel_b_update.ets"};
+    std::vector<std::string> texts = {R"(
+export type MyUserId = string;
+)",
+                                      R"(
+export * from './source_c_update';
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *originCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(originCtx, nullptr);
+    auto *barrelCtx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(barrelCtx, nullptr);
+
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(originCtx));
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(barrelCtx));
+
+    auto initialDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("MyUserId", "");
+    ASSERT_FALSE(initialDefs.empty());
+
+    initializer.DestroyContext(originCtx);
+
+    // Update source file content: rename MyUserId to RenamedUserId
+    std::ofstream out {filePaths[0], std::ios::trunc};
+    ASSERT_TRUE(out.is_open());
+    out << "export type RenamedUserId = string;\n";
+    out.close();
+
+    auto *updatedOriginCtx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(updatedOriginCtx, nullptr);
+    ASSERT_TRUE(ark::es2panda::lsp::BuildSymbolReferenceIndexForContext(updatedOriginCtx));
+
+    // Stale MyUserId should be gone from all completion snapshots including barrel_b
+    auto staleDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("MyUserId", "");
+    EXPECT_TRUE(staleDefs.empty());
+
+    // New RenamedUserId should be discoverable
+    auto newDefs = ark::es2panda::lsp::FindCompletionExportSymbolsByPrefix("RenamedUserId", "");
+    ASSERT_FALSE(newDefs.empty());
+    EXPECT_EQ(newDefs[0].symbolName, "RenamedUserId");
+
+    initializer.DestroyContext(updatedOriginCtx);
+    initializer.DestroyContext(barrelCtx);
 }
 }  // namespace
