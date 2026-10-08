@@ -385,7 +385,7 @@ void PatchFix::AddHeadAndTailInsForPatchFuncMain0(std::vector<panda::pandasm::In
         return;
     }
 
-    auto newLexenv = new pandasm::Newlexenv(long(ins.size() / 2));  // each new function has 2 ins: define and stor
+    auto newLexenv = pandasm::Create_NEWLEXENV(long(ins.size() / 2));  // each new function has 2 ins: define and stor
     ins.emplace(ins.begin(), newLexenv);
     ins.emplace_back(returnUndefined);
 }

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,25 @@
 
 namespace panda::es2panda::util {
 
+namespace {
+
+// Extracted from DumpLiterals to keep its nesting depth within the code-check limit.
+void PrintLiteralValue(panda::pandasm::LiteralArray::Literal literal)
+{
+    auto printer = [](auto&& element) {
+        if constexpr (std::is_same_v<decltype(element), unsigned char &>) {
+            std::cout << "    val: " << unsigned(element) << std::endl;
+        } else if constexpr (std::is_same_v<decltype(element), unsigned int &>) {
+            std::cout << "    val: " << signed(element) << std::endl;
+        } else {
+            std::cout << "    val: " << element << std::endl;
+        }
+    };
+    std::visit(printer, literal.value_);
+}
+
+}  // namespace
+
 void Dumper::DumpLiterals(std::map<std::string, panda::pandasm::LiteralArray> const &literalTable)
 {
     std::cout << "======> literal array buffer <======" << std::endl;
@@ -29,15 +48,7 @@ void Dumper::DumpLiterals(std::map<std::string, panda::pandasm::LiteralArray> co
             std::cout << "    tag: " <<
                 unsigned(static_cast<std::underlying_type<panda::panda_file::LiteralTag>::type>(literal.tag_)) <<
                 std::endl;
-            std::visit([](auto&& element) {
-                if constexpr (std::is_same_v<decltype(element), unsigned char &>) {
-                    std::cout << "    val: " << unsigned(element) << std::endl;
-                } else if constexpr (std::is_same_v<decltype(element), unsigned int &>) {
-                    std::cout << "    val: " << signed(element) << std::endl;
-                } else {
-                    std::cout << "    val: " << element << std::endl;
-                }
-            }, literal.value_);
+            PrintLiteralValue(literal);
             std::cout << "}," << std::endl;
         }
     }
