@@ -373,8 +373,9 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
     }
     auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
 
-    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) &&
-        (enumNode->EnumAnnotedType() == nullptr || IsInsideAnnotationContext(node))) {
+    // Enum member values are read at runtime via valueOf() instead of being inlined
+    // as literals: inlined immediates get stale in incremental reload flows.
+    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) && IsInsideAnnotationContext(node)) {
         return InlineValueOf(node->AsMemberExpression(), Context()->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(Context(), node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
