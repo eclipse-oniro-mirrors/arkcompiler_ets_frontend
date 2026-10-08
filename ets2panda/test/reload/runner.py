@@ -138,6 +138,32 @@ def _check_result(output, expected_path, name, work_name, out_abc):
     return (passed, output, expected)
 
 
+def _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir):
+    """Optional bytecode assertion: if the case directory contains check-asm.txt,
+    compile the mod content with --dump-assembly and require every non-comment
+    line of that file to appear in the assembly output (substring match). This
+    guards codegen shape (e.g. enum member reads must be runtime valueOf() calls,
+    not folded immediates), which stderr/abc checks cannot observe."""
+    check_file = os.path.join(case_dir, 'check-asm.txt')
+    if not os.path.isfile(check_file):
+        return None
+    with open(check_file) as f:
+        patterns = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+    if not patterns:
+        return None
+
+    shutil.copy(mod, os.path.join(tmpdir, work_name))
+    asm_abc = os.path.join(tmpdir, 'asm_check.abc')
+    cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
+           '--dump-assembly', '--output=' + asm_abc, work_name]
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=tmpdir)
+    asm = result.stdout
+    missing = [p for p in patterns if p not in asm]
+    if missing:
+        return f"ASM CHECK FAILED, missing patterns: {missing}"
+    return None
+
+
 def run_test(es2panda, opt_level, mode, case_dir, base, mod, expected_path):
     name = os.path.basename(case_dir)
     mode_flag = '--cold-reload' if mode == 'coldreload' else '--hot-reload'
@@ -162,6 +188,10 @@ def run_test(es2panda, opt_level, mode, case_dir, base, mod, expected_path):
             return (name, False, output, reload_err)
 
         passed, output, expected = _check_result(output, expected_path, name, work_name, out_abc)
+        if passed:
+            asm_err = _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir)
+            if asm_err is not None:
+                return (name, False, output + '\n' + asm_err, 'ASM CHECK')
         return (name, passed, output, expected)
 
 

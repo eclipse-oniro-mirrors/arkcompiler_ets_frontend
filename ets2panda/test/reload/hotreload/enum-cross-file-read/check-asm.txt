@@ -1,0 +1,5 @@
+# Every non-comment line must appear in the importer's generated assembly.
+# The enum member read in an int context must be a runtime valueOf() call on
+# the imported enum class — never a folded immediate (ldai), which would go
+# stale when only dep.ets is recompiled in an incremental reload.
+dep.Color.valueOf
