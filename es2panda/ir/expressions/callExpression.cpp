@@ -119,6 +119,7 @@ void CallExpression::CompileSuperCall(compiler::PandaGen *pg, bool containsSprea
 
     pg->LoadAccumulator(this, newThis);
     pg->SetThis(this);
+    pg->CompleteEntrySuperCall(this);
 
     const auto *classDef = util::Helpers::GetClassDefiniton(util::Helpers::GetContainingConstructor(this));
     if (classDef->NeedInstanceInitializer()) {

@@ -1,0 +1,88 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Base(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	stobjbyname 0x0, v, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x7
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@1=#Loop(any a0, any a1, any a2, any a3) {
+	nop
+label_9: 
+label_0: 
+	ldai 0x0
+	sta v0
+label_3: 
+	lda a3
+	less 0x0, v0
+	jeqz label_1
+label_2: 
+	ldundefined
+	sta v1
+	mov v2, v1
+	supercallthisrange 0x1, 0x0, v2
+	sta v1
+	lda a2
+	throw.ifsupernotcorrectcall 0x1
+	lda v0
+	tonumeric 0x3
+	inc 0x4
+	sta v0
+	mov a2, v1
+	jmp label_3
+label_1: 
+	lda a2
+	throw.ifsupernotcorrectcall 0x0
+	ldai 0x1
+	stobjbyname 0x5, x, a2
+label_4: 
+label_6: 
+	lda a2
+	throw.ifsupernotcorrectcall 0x0
+label_5: 
+end_label_5: 
+label_7: 
+	lda a2
+	return
+label_11: 
+	sta v0
+label_8: 
+	lda v0
+	throw
+label_10: 
+}
+
+.catchall label_4, end_label_5, label_11
+
+slotNum = 0x9
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Base, _1, 0x1, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, Base
+	tryldglobalbyname 0x4, Base
+	sta v0
+	defineclasswithbuffer 0x5, .#~@1=#Loop, _2, 0x1, v0
+	sta v0
+	ldobjbyname 0x6, prototype
+	lda v0
+	sttoglobalrecord 0x8, Loop
+	returnundefined
+label_2: 
+}
+
+

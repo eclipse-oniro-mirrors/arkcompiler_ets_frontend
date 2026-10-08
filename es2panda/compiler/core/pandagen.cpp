@@ -1268,6 +1268,9 @@ void PandaGen::ExplicitReturn(const ir::AstNode *node)
 // 10.2.2.11 Else, ReturnIfAbrupt(result).
 void PandaGen::CheckIfSuperCorrectCallBeforeReturn(const ir::AstNode *node)
 {
+    if (CanSkipInitializedSuperCheck()) {
+        return;
+    }
     TryContext tryCtx(this);
     const auto &labelSet = tryCtx.LabelSet();
 
@@ -1275,6 +1278,11 @@ void PandaGen::CheckIfSuperCorrectCallBeforeReturn(const ir::AstNode *node)
     ThrowIfSuperNotCorrectCall(node, 0);
     SetLabel(node, labelSet.TryEnd());
     AddCheckSuperLabelSet(labelSet);
+}
+
+bool PandaGen::CanSkipInitializedSuperCheck()
+{
+    return IsDerivedConstructor() && entrySuperCompleted_;
 }
 
 bool PandaGen::IsDerivedConstructor()
@@ -1285,7 +1293,7 @@ bool PandaGen::IsDerivedConstructor()
 
 void PandaGen::AddCatchBlockForImplicitSuperCallChecks()
 {
-    if (!IsDerivedConstructor()) {
+    if (!IsDerivedConstructor() || checkSuperLabelPool_.empty()) {
         return;
     }
     for (const auto &labelSet : checkSuperLabelPool_) {
@@ -2132,6 +2140,11 @@ void PandaGen::StoreLexicalVar(const ir::AstNode *node, uint32_t level, uint32_t
 
 void PandaGen::ThrowIfSuperNotCorrectCall(const ir::AstNode *node, int64_t num)
 {
+    // The initialized (0x0) check is constant-passing after the entry super() of the
+    // constructor has returned normally; the repeated-call (0x1) check is never skipped.
+    if (num == 0 && CanSkipInitializedSuperCheck()) {
+        return;
+    }
     ra_.Emit<ThrowIfsupernotcorrectcall>(node, num);
 }
 

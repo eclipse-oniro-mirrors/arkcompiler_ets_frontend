@@ -1,0 +1,84 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Base(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	stobjbyname 0x0, v, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0xc
+.language ECMAScript
+.function any .#~@1=#UserTryCatch(any a0, any a1, any a2, any a3) {
+	nop
+label_9: 
+label_0: 
+	ldundefined
+	sta v0
+	mov v4, v0
+	supercallthisrange 0x0, 0x0, v4
+	sta v0
+	lda a2
+	throw.ifsupernotcorrectcall 0x1
+label_4: 
+label_6: 
+	lda a3
+	callruntime.isfalse 0x2
+	jnez label_1
+label_2: 
+	tryldglobalbyname 0x3, Error
+	sta v2
+	lda.str body-failed
+	sta v3
+	mov v4, v2
+	mov v5, v3
+	newobjrange 0x4, 0x2, v4
+	throw
+label_1: 
+	ldai 0x1
+	stobjbyname 0x6, x, v0
+label_5: 
+end_label_5: 
+	jmp label_3
+label_11: 
+	sta v1
+label_8: 
+	lda v1
+	ldobjbyname 0x8, message
+	stobjbyname 0xa, x, v0
+label_3: 
+	lda v0
+	return
+label_10: 
+}
+
+.catchall label_4, end_label_5, label_11
+
+slotNum = 0x9
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Base, _1, 0x1, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, Base
+	tryldglobalbyname 0x4, Base
+	sta v0
+	defineclasswithbuffer 0x5, .#~@1=#UserTryCatch, _2, 0x1, v0
+	sta v0
+	ldobjbyname 0x6, prototype
+	lda v0
+	sttoglobalrecord 0x8, UserTryCatch
+	returnundefined
+label_2: 
+}
+
+

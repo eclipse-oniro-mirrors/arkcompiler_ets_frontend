@@ -21,7 +21,9 @@
 #include <ir/base/classStaticBlock.h>
 #include <ir/base/scriptFunction.h>
 #include <ir/expressions/assignmentExpression.h>
+#include <ir/expressions/callExpression.h>
 #include <ir/statements/blockStatement.h>
+#include <ir/statements/expressionStatement.h>
 #include <ir/ts/tsParameterProperty.h>
 
 namespace panda::es2panda::compiler {
@@ -62,6 +64,29 @@ static void CompileSourceBlock(PandaGen *pg, const ir::BlockStatement *block)
         FindLastStatement(associatedNode, statements.back());
     }
     pg->ImplicitReturn(associatedNode);
+}
+
+// Returns the entry super() call only when it is the first unconditionally executed
+// statement of a derived constructor body, so later this/super accesses dominated by
+// its normal return can skip the constant-passing initialized check.
+static const ir::CallExpression *GetEntrySuperCall(const ir::ScriptFunction *func)
+{
+    if (!func->IsConstructor() || func->Body() == nullptr || !func->Body()->IsBlockStatement()) {
+        return nullptr;
+    }
+    const auto &statements = func->Body()->AsBlockStatement()->Statements();
+    if (statements.empty() || !statements.front()->IsExpressionStatement()) {
+        return nullptr;
+    }
+    const auto *expr = statements.front()->AsExpressionStatement()->GetExpression();
+    if (expr == nullptr || !expr->IsCallExpression()) {
+        return nullptr;
+    }
+    const auto *call = expr->AsCallExpression();
+    if (call->Callee() == nullptr || !call->Callee()->IsSuperExpression()) {
+        return nullptr;
+    }
+    return call;
 }
 
 static void CompileFunctionParameterDeclaration(PandaGen *pg, const ir::ScriptFunction *func)
@@ -253,6 +278,8 @@ static void CompileFunction(PandaGen *pg)
     if (pg->IsAsyncFunction()) {
         CompileFunctionParameterDeclaration(pg, decl);
     }
+
+    pg->SetEntrySuperCall(GetEntrySuperCall(decl));
 
     const ir::AstNode *body = decl->Body();
 

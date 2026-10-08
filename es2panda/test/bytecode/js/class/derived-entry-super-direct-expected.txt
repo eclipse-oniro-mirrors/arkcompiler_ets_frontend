@@ -1,0 +1,60 @@
+slotNum = 0x2
+expectedProperty = 0x1
+.language ECMAScript
+.function any .#~@0=#Base(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	stobjbyname 0x0, v, a2
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0xa
+expectedProperty = 0x3
+.language ECMAScript
+.function any .#~@1=#Direct(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	mov v1, a3
+	supercallthisrange 0x0, 0x1, v1
+	sta v0
+	lda a2
+	throw.ifsupernotcorrectcall 0x1
+	lda a3
+	stobjbyname 0x2, x, v0
+	lda a3
+	stobjbyname 0x4, y, v0
+	lda v0
+	ldsuperbyname 0x6, n
+	stobjbyname 0x8, z, v0
+	lda v0
+	return
+label_2: 
+}
+
+slotNum = 0x9
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Base, _1, 0x1, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, Base
+	tryldglobalbyname 0x4, Base
+	sta v0
+	defineclasswithbuffer 0x5, .#~@1=#Direct, _2, 0x1, v0
+	sta v0
+	ldobjbyname 0x6, prototype
+	lda v0
+	sttoglobalrecord 0x8, Direct
+	returnundefined
+label_2: 
+}
+
+
