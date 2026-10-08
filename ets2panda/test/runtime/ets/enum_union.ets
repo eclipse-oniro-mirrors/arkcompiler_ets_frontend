@@ -37,7 +37,7 @@ function foo1(b : boolean) : int | Color | string | ColorInt {
 }
 
 function testOptional(b ?: ColorInt | int | string) : int {
-    const v1 : int = b ? b as ColorInt : 0;
+    const v1 : int = b ? (b as ColorInt).valueOf() : 0;
     return v1;
 }
 

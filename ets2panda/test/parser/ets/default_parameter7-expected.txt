@@ -912,12 +912,155 @@
                                   }
                                 },
                                 "alternate": {
-                                  "type": "NumberLiteral",
-                                  "value": 30,
+                                  "type": "BlockExpression",
+                                  "statements": [
+                                    {
+                                      "type": "VariableDeclaration",
+                                      "declarations": [
+                                        {
+                                          "type": "VariableDeclarator",
+                                          "id": {
+                                            "type": "Identifier",
+                                            "name": "gensym%%_2",
+                                            "typeAnnotation": {
+                                              "type": "ETSTypeReference",
+                                              "part": {
+                                                "type": "ETSTypeReferencePart",
+                                                "name": {
+                                                  "type": "Identifier",
+                                                  "name": "Int",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 21,
+                                                      "column": 40,
+                                                      "program": "default_parameter7.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 21,
+                                                      "column": 43,
+                                                      "program": "default_parameter7.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 21,
+                                                    "column": 40,
+                                                    "program": "default_parameter7.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 21,
+                                                    "column": 43,
+                                                    "program": "default_parameter7.ets"
+                                                  }
+                                                }
+                                              },
+                                              "loc": {
+                                                "start": {
+                                                  "line": 21,
+                                                  "column": 40,
+                                                  "program": "default_parameter7.ets"
+                                                },
+                                                "end": {
+                                                  "line": 21,
+                                                  "column": 43,
+                                                  "program": "default_parameter7.ets"
+                                                }
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": {
+                                                "line": 21,
+                                                "column": 36,
+                                                "program": "default_parameter7.ets"
+                                              },
+                                              "end": {
+                                                "line": 21,
+                                                "column": 48,
+                                                "program": "default_parameter7.ets"
+                                              }
+                                            }
+                                          },
+                                          "init": {
+                                            "type": "NumberLiteral",
+                                            "value": 30,
+                                            "loc": {
+                                              "start": {
+                                                "line": 21,
+                                                "column": 46,
+                                                "program": "default_parameter7.ets"
+                                              },
+                                              "end": {
+                                                "line": 21,
+                                                "column": 48,
+                                                "program": "default_parameter7.ets"
+                                              }
+                                            }
+                                          },
+                                          "loc": {
+                                            "start": {
+                                              "line": 21,
+                                              "column": 36,
+                                              "program": "default_parameter7.ets"
+                                            },
+                                            "end": {
+                                              "line": 21,
+                                              "column": 48,
+                                              "program": "default_parameter7.ets"
+                                            }
+                                          }
+                                        }
+                                      ],
+                                      "kind": "let",
+                                      "loc": {
+                                        "start": {
+                                          "line": 21,
+                                          "column": 36,
+                                          "program": "default_parameter7.ets"
+                                        },
+                                        "end": {
+                                          "line": 21,
+                                          "column": 48,
+                                          "program": "default_parameter7.ets"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "ExpressionStatement",
+                                      "expression": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_2",
+                                        "loc": {
+                                          "start": {
+                                            "line": 21,
+                                            "column": 36,
+                                            "program": "default_parameter7.ets"
+                                          },
+                                          "end": {
+                                            "line": 21,
+                                            "column": 48,
+                                            "program": "default_parameter7.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 21,
+                                          "column": 36,
+                                          "program": "default_parameter7.ets"
+                                        },
+                                        "end": {
+                                          "line": 21,
+                                          "column": 48,
+                                          "program": "default_parameter7.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
                                   "loc": {
                                     "start": {
                                       "line": 21,
-                                      "column": 46,
+                                      "column": 36,
                                       "program": "default_parameter7.ets"
                                     },
                                     "end": {
