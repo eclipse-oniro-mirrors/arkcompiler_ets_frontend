@@ -154,6 +154,24 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             expect(mainConfig.dependencies['@ohos.system']).toBeDefined();
         });
+
+        test('should skip dependencies without a resolvable arktsconfig', () => {
+            const dep1 = createMockArkTSConfig('dep1', {
+                '@test/dep1': ['/path/to/dep1']
+            });
+
+            mockGeneratorInstance.registerConfig('dep1', dep1);
+
+            const dependencies: Set<string> = new Set(['dep1', 'missingDep']);
+            const dependenciesSets: Map<string, Set<string>> = new Map([
+                ['dep1', new Set(['missingDep'])],
+                ['entry', new Set(['dep1', 'missingDep'])]
+            ]);
+
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
+
+            expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
+        });
     });
 
     describe('Deep Dependency Trees', () => {
@@ -341,10 +359,12 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['nonexistent', new Set()]
             ]);
 
-            // This will throw when trying to get the config
+            // Unregistered dependencies are skipped instead of throwing
             expect(() => {
                 mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
-            }).toThrow();
+            }).not.toThrow();
+
+            expect(Object.keys(mainConfig.pathSection).length).toBe(0);
         });
 
         test('should handle dependency with no sub-dependencies', () => {

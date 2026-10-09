@@ -176,25 +176,28 @@ describe('module dependency table', () => {
     expect(reachableModulesOf(table, library).map((m) => m.packageName)).toEqual(['library', 'transitive']);
   });
 
-  it('rejects dependency references that are not part of the module table', async () => {
-    const buildConfig = baseBuildConfig({
-      dependentModuleList: [
-        entryModule(),
-        {
-          packageName: 'library',
-          moduleType: 'har',
-          modulePath: '/workspace/project/library',
-          sourceRoots: ['src'],
-          entryFile: 'Index.ets',
-          dependencies: ['missing-package'],
-          interopConfigPath: '',
-        },
-      ],
-    });
-
-    await expect(runConfiguration(buildConfig)).rejects.toThrow(
-      'Package "library" declares unknown dependency "missing-package".',
+  it('skips dependency references that are not part of the module table', async () => {
+    const { moduleTable: table } = await runConfiguration(
+      baseBuildConfig({
+        dependentModuleList: [
+          entryModule({ dependencies: ['library'] }),
+          {
+            packageName: 'library',
+            moduleType: 'har',
+            modulePath: '/workspace/project/library',
+            sourceRoots: ['src'],
+            entryFile: 'Index.ets',
+            dependencies: ['missing-package'],
+            interopConfigPath: '',
+          },
+        ],
+      }),
     );
+
+    const library = table.byPackage.get('library') as ModuleInfo;
+    expect(library.dependencies).toEqual(['missing-package']);
+    expect(dependencyModulesOf(table, library)).toEqual([]);
+    expect(reachableModulesOf(table).map((m) => m.packageName)).toEqual(['entry', 'library']);
   });
 
   it('rejects cyclic module dependencies', async () => {

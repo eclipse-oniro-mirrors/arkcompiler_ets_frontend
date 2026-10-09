@@ -399,7 +399,7 @@ describe('BaseMode', () => {
         execSpy.mockRestore();
     });
 
-    test('getDependencyModules classifies dependencies by language and throws when missing', () => {
+    test('getDependencyModules classifies dependencies by language', () => {
         const { LANGUAGE_VERSION } = require('../../../src/pre_define');
 
         // prepare moduleInfos with three dependency modules
@@ -437,13 +437,14 @@ describe('BaseMode', () => {
         expect(dynamicDeps.has('hybridMod')).toBe(true);
     });
 
-    test('getDependencyModules throws DriverError when dependency missing', () => {
+    test('getDependencyModules skips missing dependency without throwing', () => {
         const mainModule = createMockModuleInfo({ packageName: 'mainMissing', dependencies: ['noSuchPkg'] });
         (testMode as any).moduleInfos = new Map<string, any>([['mainMissing', mainModule]]);
 
-        expect(() => {
-            (testMode as any).getDependencyModules(mainModule)
-        }).toThrow();
+        const [dynamicDeps, staticDeps] = (testMode as any).getDependencyModules(mainModule) as [Map<string, any>, Map<string, any>];
+
+        expect(dynamicDeps.has('noSuchPkg')).toBe(false);
+        expect(staticDeps.has('noSuchPkg')).toBe(false);
     });
 
     test('processDependencyModule sets maps correctly for each language', () => {

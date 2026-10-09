@@ -728,12 +728,7 @@ export abstract class BaseMode {
             moduleInfo.dependencies.forEach((packageName: string) => {
                 let dependency: ModuleInfo | undefined = this.moduleInfos.get(packageName);
                 if (!dependency) {
-                    throw new DriverError(
-                        LogDataFactory.newInstance(
-                            ErrorCode.BUILDSYSTEM_DEPENDENT_MODULE_INFO_NOT_FOUND,
-                            `Module ${packageName} is not found in dependencyModuleList`
-                        )
-                    );
+                    return;
                 }
                 this.processDependencyModule(packageName, dependency, dynamicDependencyModules, staticDependencyModules);
             });
