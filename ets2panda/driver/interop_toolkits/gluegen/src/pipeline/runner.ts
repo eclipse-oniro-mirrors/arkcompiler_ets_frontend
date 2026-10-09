@@ -17,7 +17,7 @@ import { promises as fs } from 'node:fs';
 import * as path from 'node:path';
 
 import type { BuildConfig } from '../contracts';
-import { GlueGenError, GlueGenErrorCode, GlueGenErrorList, GlueGenInternalError, errorMessage } from '../errors';
+import { GlueGenError, GlueGenErrorCode, GlueGenErrorList, errorMessage } from '../errors';
 import { createRunLogger, LogData } from '../logger';
 import { createArkTSConfigStage } from '../stages/arktsconfig';
 import { createConfigurationStage } from '../stages/configuration';
@@ -57,11 +57,9 @@ export class GlueGenRunner {
     } catch (error) {
       if (error instanceof GlueGenErrorList) {
         error.errors.forEach((item) => this.context.logger.printError(item.logData));
-        throw error;
       }
       if (error instanceof GlueGenError) {
         this.context.logger.printError(error.logData);
-        throw error;
       }
       const data = new LogData({
         code: GlueGenErrorCode.INTERNAL_FAILURE,
@@ -69,7 +67,7 @@ export class GlueGenRunner {
         cause: errorMessage(error, 'unknown gluegen failure'),
       });
       this.context.logger.printError(data);
-      throw new GlueGenInternalError(data);
+      throw new Error('GlueGen Error');
     }
   }
 

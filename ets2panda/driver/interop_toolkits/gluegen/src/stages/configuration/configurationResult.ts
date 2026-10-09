@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 
-import type { InteropTarget } from './interopTarget';
+import type * as common from '@interop-toolkits/common';
+
 import type { ModuleTable } from './moduleTable';
 
 /** The normalized configuration published to later pipeline stages. */
 export interface ConfigurationResult {
   readonly moduleTable: ModuleTable;
-  readonly interopTargets: ReadonlyMap<string, InteropTarget>;
+  readonly interopTargets: ReadonlyMap<string, common.interopConfig.InteropTarget>;
 }

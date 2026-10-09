@@ -47,7 +47,11 @@ action("interop_toolkits_init_workspace") {
   ]
 }
 
-# Copy gluegen node_modules into packages that have no node_modules
+# Copy gluegen node_modules into packages that have no node_modules.
+# @interop-toolkits/common is excluded: each package installs it from the
+# tarball built by common:build_common_pkg (see install_pkg.py), and a copy
+# from gluegen's development node_modules would drag in the npm "file:"
+# dependency symlink instead of the built package.
 action("interop_toolkits_init_node_modules") {
   script = "ci-build/init_node_modules.py"
   inputs = [ "ci-build/init_node_modules.py" ]
@@ -67,6 +71,8 @@ action("interop_toolkits_init_node_modules") {
     "common",
     "declgen",
     "dependency-resolver",
+    "--exclude",
+    "@interop-toolkits/common",
   ]
 }
 

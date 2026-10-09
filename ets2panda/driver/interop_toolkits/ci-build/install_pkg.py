@@ -53,13 +53,28 @@ def read_package_name(pkg_path):
         return json.load(extracted)["name"]
 
 
+def remove_previous_install(path):
+    """Removes a previous install, whatever state it is in.
+
+    ``shutil.rmtree`` cannot delete a symlink and silently ignores it with
+    ``ignore_errors=True``; a leftover npm ``file:`` dependency symlink would
+    then make the following ``shutil.move`` resolve through it and fail with
+    "Destination path ... already exists". Remove links and plain files
+    explicitly, and let real directory errors surface.
+    """
+    if os.path.islink(path) or os.path.isfile(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+
+
 def install(source_path, pkg_path):
     package_name = read_package_name(pkg_path)
     install_dir = os.path.join(
         source_path, "node_modules", *package_name.split("/")
     )
     os.makedirs(os.path.dirname(install_dir), exist_ok=True)
-    shutil.rmtree(install_dir, ignore_errors=True)
+    remove_previous_install(install_dir)
 
     staging = install_dir + ".staging"
     shutil.rmtree(staging, ignore_errors=True)

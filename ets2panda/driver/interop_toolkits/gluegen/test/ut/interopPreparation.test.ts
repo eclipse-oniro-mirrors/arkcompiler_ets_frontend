@@ -18,12 +18,13 @@ import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 
 import type { BuildConfig } from '../../src/contracts';
-import { GlueGenDiagnosticError } from '../../src/errors';
+import { GlueGenDiagnosticError, GlueGenErrorList } from '../../src/errors';
 import type { ILogger } from '../../src/logger';
 import { Pipeline } from '../../src/pipeline';
 import type { GlueGenContext } from '../../src/pipeline/context';
 import { createConfigurationStage, reachableModulesOf } from '../../src/stages/configuration';
 import { createPrepareStage } from '../../src/stages/prepare';
+import { runConfiguration } from '../helpers/runConfiguration';
 
 const SILENT_LOGGER: ILogger = {
   printInfo: () => undefined,
@@ -32,6 +33,42 @@ const SILENT_LOGGER: ILogger = {
   printError: () => undefined,
   printErrorAndExit: () => undefined,
 };
+
+/** A minimal build configuration whose single entry module declares interop.json5. */
+function interopErrorBuildConfig(projectRoot: string, entryRoot: string): BuildConfig {
+  return {
+    plugins: [],
+    buildMode: 'Debug',
+    buildType: 'BUILD',
+    projectRootPath: projectRoot,
+    cachePath: 'cache',
+    compileSdkVersion: 10,
+    compatibleSdkVersion: 10,
+    bundleName: 'com.example.app',
+    moduleType: 'entry',
+    moduleName: 'entry',
+    packageName: 'entry',
+    buildSdkPath: 'sdk/build',
+    dependentModuleList: [
+      {
+        packageName: 'entry',
+        moduleType: 'entry',
+        modulePath: entryRoot,
+        sourceRoots: ['.'],
+        entryFile: 'Index.ets',
+        dependencies: [],
+        interopConfigPath: 'interop.json5',
+      },
+    ],
+    hasMainModule: true,
+    modulePath: entryRoot,
+    externalApiPaths: [],
+    byteCodeHar: false,
+    interopApiPaths: [],
+    declgenBridgeConfigPath: path.join(projectRoot, 'declgen-bridge.json'),
+    interopConfigPath: '',
+  };
+}
 
 describe('interop preparation', () => {
   it('resolves static targets, skips missing and module-root source roots, and rebuilds the file list', async () => {
@@ -52,6 +89,8 @@ describe('interop preparation', () => {
       const generatedFile = path.join(libraryRoot, 'build', 'Generated.ets');
       const selectedLeafFile = path.join(leafSource, 'Selected.ets');
       const ownLeafFile = path.join(leafSource, 'Own.ets');
+      const entryDynamicFile = path.join(entryRoot, 'Dyn.ets');
+      const leafDynamicFile = path.join(leafSource, 'Dyn.ets');
       await fs.mkdir(entryRoot, { recursive: true });
       await fs.mkdir(librarySource, { recursive: true });
       await fs.mkdir(dynamicLibraryRoot, { recursive: true });
@@ -67,6 +106,8 @@ describe('interop preparation', () => {
         fs.writeFile(generatedFile, "'use static'\n", 'utf8'),
         fs.writeFile(selectedLeafFile, '', 'utf8'),
         fs.writeFile(ownLeafFile, '', 'utf8'),
+        fs.writeFile(entryDynamicFile, '', 'utf8'),
+        fs.writeFile(leafDynamicFile, '', 'utf8'),
         fs.writeFile(path.join(leafSource, 'Unselected.ets'), "'use static'\n", 'utf8'),
         fs.writeFile(path.join(librarySource, 'Ignored.ETS'), '', 'utf8'),
         fs.writeFile(path.join(librarySource, 'Ignored.ts'), '', 'utf8'),
@@ -74,16 +115,16 @@ describe('interop preparation', () => {
       await fs.writeFile(
         path.join(entryRoot, 'interop.json5'),
         `{
-                    // Dynamic paths belong to another consumer.
+                    // Dynamic entries are validated but not collected into gluegen's file list.
                     interopEntries: {
                         static: ['Index.ets', './Index.ets'],
-                        dynamic: ['Missing.ets'],
+                        dynamic: ['Dyn.ets'],
                         dependency: {
                             package: ['library', 'dynamic-library'],
                             source: {
                                 leaf: {
                                     static: ['src/Selected.ets'],
-                                    dynamic: ['src/Missing.ets'],
+                                    dynamic: ['src/Dyn.ets'],
                                 },
                             },
                         },
@@ -176,6 +217,8 @@ describe('interop preparation', () => {
       );
       expect(files).not.toContain(dynamicLibraryEntryFile);
       expect(files).not.toContain(generatedFile);
+      expect(files).not.toContain(entryDynamicFile);
+      expect(files).not.toContain(leafDynamicFile);
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
     }
@@ -258,6 +301,72 @@ describe('interop preparation', () => {
         },
       });
       expect(logger.printError).not.toHaveBeenCalled();
+    } finally {
+      await fs.rm(projectRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('reports an invalid dynamic interop entry', async () => {
+    const projectRoot = await fs.mkdtemp(path.join(tmpdir(), 'gluegen-dynamic-error-'));
+    try {
+      const entryRoot = path.join(projectRoot, 'entry');
+      const interopConfigPath = path.join(entryRoot, 'interop.json5');
+      await fs.mkdir(entryRoot, { recursive: true });
+      await Promise.all([
+        fs.writeFile(path.join(entryRoot, 'Index.ets'), '', 'utf8'),
+        fs.writeFile(interopConfigPath, `{ interopEntries: { dynamic: ['Missing.ets'] } }`, 'utf8'),
+      ]);
+      const buildConfig = interopErrorBuildConfig(projectRoot, entryRoot);
+
+      const error = await runConfiguration(buildConfig).then(
+        (): undefined => undefined,
+        (failure: unknown) => failure,
+      );
+
+      expect(error).toBeInstanceOf(GlueGenDiagnosticError);
+      const diagnostic = (error as GlueGenDiagnosticError).logData;
+      expect(diagnostic).toMatchObject({
+        code: '11420002',
+        description: 'A dynamic interop file declared by package "entry" cannot be accessed.',
+        position: interopConfigPath,
+        moreInfo: { packageName: 'entry' },
+      });
+    } finally {
+      await fs.rm(projectRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('aggregates invalid static and dynamic entries into one report', async () => {
+    const projectRoot = await fs.mkdtemp(path.join(tmpdir(), 'gluegen-aggregate-error-'));
+    try {
+      const entryRoot = path.join(projectRoot, 'entry');
+      const interopConfigPath = path.join(entryRoot, 'interop.json5');
+      await fs.mkdir(entryRoot, { recursive: true });
+      await Promise.all([
+        fs.writeFile(path.join(entryRoot, 'Index.ets'), '', 'utf8'),
+        fs.writeFile(
+          interopConfigPath,
+          `{ interopEntries: { static: ['Missing1.ets'], dynamic: ['Missing2.ets'] } }`,
+          'utf8',
+        ),
+      ]);
+      const buildConfig = interopErrorBuildConfig(projectRoot, entryRoot);
+
+      const error = await runConfiguration(buildConfig).then(
+        (): undefined => undefined,
+        (failure: unknown) => failure,
+      );
+
+      expect(error).toBeInstanceOf(GlueGenErrorList);
+      const errors = (error as GlueGenErrorList).errors;
+      expect(errors).toHaveLength(2);
+      const descriptions = errors.map((item) => item.logData.description);
+      expect(descriptions).toContain('A static interop file declared by package "entry" cannot be accessed.');
+      expect(descriptions).toContain('A dynamic interop file declared by package "entry" cannot be accessed.');
+      for (const item of errors) {
+        expect(item).toBeInstanceOf(GlueGenDiagnosticError);
+        expect(item.logData.code).toBe('11420002');
+      }
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
     }

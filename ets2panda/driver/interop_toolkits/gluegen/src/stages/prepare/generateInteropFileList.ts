@@ -27,7 +27,7 @@ import { LogData } from '../../logger';
 import type { GlueGenContext } from '../../pipeline/context';
 import type { StageScope } from '../../pipeline';
 import { hasEtsSourceExtension, hasUseStaticDirectiveInFile } from '../../utils/staticSource';
-import type { InteropTarget, MainModuleInfo, ModuleInfo } from '../configuration';
+import type { InteropTarget, MainModuleInfo, ModuleInfo, ModuleTable } from '../configuration';
 import { CONFIGURATION_ARTIFACT } from '../stageArtifacts';
 
 type PrepareRequirements = readonly [typeof CONFIGURATION_ARTIFACT];
@@ -42,7 +42,7 @@ export async function generateInteropFileList(
 ): Promise<InteropFileListPath> {
   const configuration = scope.get(CONFIGURATION_ARTIFACT);
   try {
-    const files = await collectInteropFiles(configuration.interopTargets);
+    const files = await collectInteropFiles(configuration.interopTargets, configuration.moduleTable);
     return await writeInteropFileList(configuration.moduleTable.mainModule, files);
   } catch (error) {
     if (error instanceof GlueGenError) {
@@ -57,18 +57,36 @@ export async function generateInteropFileList(
   }
 }
 
-async function collectInteropFiles(targets: ReadonlyMap<string, InteropTarget>): Promise<ReadonlySet<string>> {
+async function collectInteropFiles(
+  targets: ReadonlyMap<string, InteropTarget>,
+  moduleTable: ModuleTable,
+): Promise<ReadonlySet<string>> {
   const files = new Set<string>();
-  for (const target of targets.values()) {
+  for (const [packageName, target] of targets) {
     if (target.kind === 'items') {
-      target.files.forEach((filePath) => files.add(filePath));
+      target.staticFiles.forEach((filePath) => files.add(filePath));
       continue;
     }
-    for (const filePath of await scanPackage(target.moduleInfo)) {
+    for (const filePath of await scanPackage(requirePackageModule(moduleTable, packageName))) {
       files.add(filePath);
     }
   }
   return files;
+}
+
+/** A package target always names a table module; the resolver rejected unknown packages. */
+function requirePackageModule(moduleTable: ModuleTable, packageName: string): ModuleInfo {
+  const module = moduleTable.byPackage.get(packageName);
+  if (module === undefined) {
+    throw new GlueGenInternalError(
+      new LogData({
+        code: GlueGenErrorCode.INTERNAL_FAILURE,
+        description: 'An interop package target is missing from the module table.',
+        cause: `Package: ${packageName}`,
+      }),
+    );
+  }
+  return module;
 }
 
 async function scanPackage(module: ModuleInfo): Promise<readonly string[]> {
