@@ -1,0 +1,6 @@
+{
+    "description": "re-exports from a virtual-path static module backed by an etscache decl (binary ABC dependency scenario)",
+    "inputFiles": [
+        "input/entry.ets"
+    ]
+}

@@ -88,9 +88,15 @@ void Gluel::ApplyStaticExternal(const ExternalLinks &ext, const ExportedSymbols 
     for (const auto &binding : ext.bindings) {
         auto it = otherExports.find(binding.importedName);
         if (it == otherExports.end()) {
-            context_.diagnosticEngine.Warning(DiagnosticCode::MISSING_EXPORT_BINDING,
-                                              "Named re-export binding '" + binding.importedName + "' not found in '" +
-                                                  ext.sourceFile + "' (re-exported as '" + binding.exportedName + "')");
+            // Only this one binding is affected and the run's output stays valid, so this is a
+            // log warning rather than a structured diagnostic. A missing binding is expected
+            // when it names an interface or a type alias: those are type-only declarations
+            // with no runtime symbol, so they never appear in the target module's exports.
+            GLUEGEN_LOG_WARN(context_.logger)
+                << "Named re-export binding '" << binding.importedName << "' not found in '" << ext.sourceFile
+                << "' (re-exported as '" << binding.exportedName
+                << "'; this is normal when the binding names an interface or a type alias, which has no runtime "
+                   "symbol)";
             continue;
         }
         SymbolNode *node = it->second;

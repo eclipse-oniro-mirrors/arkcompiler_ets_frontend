@@ -100,7 +100,7 @@ export interface ArkTSConfigContext {
 }
 
 export function createArkTSConfigSourceContext(input: ArkTSConfigSourceInput): ArkTSConfigSourceContext {
-  const projectRootPath = normalizePath(input.projectRootPath);
+  const projectRootPath = toAbsolutePlatformPath(input.projectRootPath);
   return {
     projectRootPath,
     cachePath: resolveFrom(projectRootPath, input.cachePath),
@@ -161,12 +161,13 @@ function normalizeModule(module: ModuleInput, projectRootPath: string): ModuleIn
   };
 }
 
-function normalizePath(fileName: string): string {
-  return path.resolve(fileName).replace(/\\/g, '/');
+/** Resolve to an absolute path and use the system-specific path separator */
+function toAbsolutePlatformPath(fileName: string): string {
+  return path.resolve(fileName).replace(/\\/g, path.sep);
 }
 
 function resolveFrom(basePath: string, candidate: string): string {
-  return normalizePath(path.isAbsolute(candidate) ? candidate : path.resolve(basePath, candidate));
+  return toAbsolutePlatformPath(path.isAbsolute(candidate) ? candidate : path.resolve(basePath, candidate));
 }
 
 function normalizeOptionalPath(basePath: string, candidate: string | undefined): string | undefined {

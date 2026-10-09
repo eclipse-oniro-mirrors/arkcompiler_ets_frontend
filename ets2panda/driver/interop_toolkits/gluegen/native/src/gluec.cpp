@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <utility>
 #include "gluec.h"
+#include "parser/program/ImportCache.h"
 #include "utils.h"
 #include "checker/ETSchecker.h"
 #include "ir/ets/etsReExportDeclaration.h"
@@ -625,8 +626,14 @@ void Gluec::CollectSpecifiersFromImport(const ir::AstNode *importStatement,
     // to point at, so keep the original raw import specifier instead: that is what the downstream
     // consumer needs to regenerate the dynamic re-export.
     const bool isDynamic = importDeclaration->IsPureDynamic();
-    const auto source =
-        isDynamic ? importDeclaration->Source()->Str().Mutf8() : std::string(importDeclaration->ResolvedSource());
+    std::string source {};
+    if (isDynamic) {
+        source = importDeclaration->Source()->Str().Mutf8();
+    } else if (importDeclaration->ImportInfo().Data().Kind() == util::ModuleKind::ETSCACHE_DECL) {
+        source = std::string(importDeclaration->ImportInfo().TextSource());
+    } else {
+        source = std::string(importDeclaration->ResolvedSource());
+    }
     const auto specifierFirst = specifiers[0];
     if (specifierFirst->IsImportDefaultSpecifier()) {
         CollectDefaultImport(specifierFirst, source, isDynamic, target);
