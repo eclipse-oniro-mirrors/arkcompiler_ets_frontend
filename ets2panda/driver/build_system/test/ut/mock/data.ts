@@ -82,7 +82,8 @@ export function getMockedBuildConfig(): BuildConfig {
         aliasConfig: {},
         dependentModuleList: [],
         hasMainModule: false,
-        moduleFiles: []
+        moduleFiles: [],
+        compatibleSdkVersion: 26
     };
 }
 

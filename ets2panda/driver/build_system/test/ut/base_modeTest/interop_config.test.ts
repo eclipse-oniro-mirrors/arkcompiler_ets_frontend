@@ -79,6 +79,7 @@ function createOhmUrlMapCtx(): any {
         bundleName: 'bundle',
         packageName: 'entry',
         moduleType: 'entry',
+        compatibleSdkVersion: 26,
         enableDeclgenEts2Ts: false
     };
     ctx.interopConfig = { buildOption: { stripInteropMapping: false }, targets: new Map() };
@@ -90,6 +91,26 @@ function getWrittenMapContent(namePart: string): string {
         typeof c[0] === 'string' && (c[0] as string).includes(namePart));
     expect(call).toBeDefined();
     return call![1] as string;
+}
+
+function expectNoWrittenMap(namePart: string): void {
+    const call = (fs.writeFileSync as jest.Mock).mock.calls.find((c: unknown[]) =>
+        typeof c[0] === 'string' && (c[0] as string).includes(namePart));
+    expect(call).toBeUndefined();
+}
+
+function expectLegacyMapsWritten(): { bundleMap: string, dynamicMap: string } {
+    const bundleMap = getWrittenMapContent('bundle_dependency_ohmurl_map.ets');
+    const dynamicMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+    expectNoWrittenMap('entryname_dependency_ohmurl_map.ets');
+    return { bundleMap, dynamicMap };
+}
+
+function expectSingleModuleNameMapWritten(): string {
+    const dependencyMap = getWrittenMapContent('entryname_dependency_ohmurl_map.ets');
+    expectNoWrittenMap('bundle_dependency_ohmurl_map.ets');
+    expectNoWrittenMap('/_dependency_ohmurl_map.ets');
+    return dependencyMap;
 }
 
 describe('BaseMode interop-config', () => {
@@ -114,14 +135,15 @@ describe('BaseMode interop-config', () => {
 
         fn.call(ctx, arktsConfig);
 
-        const bundleMap = getWrittenMapContent('bundle_dependency_ohmurl_map.ets');
+        const { bundleMap, dynamicMap } = expectLegacyMapsWritten();
         expect(bundleMap).toContain('map_abc.set(');
         expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
         expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/sub", "dynsub&bundle&mod&1.0.0");');
         expect(bundleMap).not.toContain('@ohos.hilog');
 
-        const dynamicMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+        expect(dynamicMap).toContain('map_abc.set(');
         expect(dynamicMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+        expect(dynamicMap).toContain('map_ohmurl.set("dynamic_har/sub", "dynsub&bundle&mod&1.0.0");');
         expect(dynamicMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
     });
 
@@ -152,15 +174,15 @@ describe('BaseMode interop-config', () => {
 
         fn.call(ctx, arktsConfig);
 
-        const bundleMap = getWrittenMapContent('bundle_dependency_ohmurl_map.ets');
+        const { bundleMap, dynamicMap } = expectLegacyMapsWritten();
         expect(bundleMap).toContain('map_abc.set(');
         expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
-        expect(bundleMap).not.toContain('dynamic_har/sub');
+        expect(bundleMap).not.toContain('map_ohmurl.set("dynamic_har/sub"');
         expect(bundleMap).not.toContain('@ohos.hilog');
 
-        const dynamicMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+        expect(dynamicMap).toContain('map_abc.set(');
         expect(dynamicMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
-        expect(dynamicMap).not.toContain('dynamic_har/sub');
+        expect(dynamicMap).not.toContain('map_ohmurl.set("dynamic_har/sub"');
         expect(dynamicMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
     });
 
@@ -186,12 +208,15 @@ describe('BaseMode interop-config', () => {
 
         fn.call(ctx, arktsConfig);
 
-        const bundleMap = getWrittenMapContent('bundle_dependency_ohmurl_map.ets');
+        const { bundleMap, dynamicMap } = expectLegacyMapsWritten();
+        expect(bundleMap).toContain('map_abc.set(');
         expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
         expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/sub", "dynsub&bundle&mod&1.0.0");');
         expect(bundleMap).not.toContain('@ohos.hilog');
 
-        const dynamicMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+        expect(dynamicMap).toContain('map_abc.set(');
+        expect(dynamicMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+        expect(dynamicMap).toContain('map_ohmurl.set("dynamic_har/sub", "dynsub&bundle&mod&1.0.0");');
         expect(dynamicMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
     });
 
@@ -209,16 +234,127 @@ describe('BaseMode interop-config', () => {
 
         fn.call(ctx, arktsConfig);
 
-        const bundleMap = getWrittenMapContent('bundle_dependency_ohmurl_map.ets');
+        const { bundleMap, dynamicMap } = expectLegacyMapsWritten();
         expect(bundleMap).toContain('map_abc.set(');
         expect(bundleMap).toContain('let map_ohmurl = new Map<string, string>();');
         expect(bundleMap).not.toContain('map_ohmurl.set("dynamic_har');
         expect(bundleMap).not.toContain('@ohos.hilog');
 
         // dynamic/ SDK entries are never stripped
-        const dynamicMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+        expect(dynamicMap).toContain('map_abc.set(');
         expect(dynamicMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
         expect(dynamicMap).not.toContain('map_ohmurl.set("dynamic_har');
+    });
+
+    test('generateDependencyOhmUrlMap generates only the module-name-prefixed map when the main module is hsp', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'shared';
+
+        fn.call(ctx, arktsConfig);
+
+        const dependencyMap = expectSingleModuleNameMapWritten();
+        expect(dependencyMap).toContain('map_abc.set(');
+        expect(dependencyMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+        expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
+    });
+
+    test('generateDependencyOhmUrlMap generates only the module-name-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.compatibleSdkVersion = 27;
+
+        fn.call(ctx, arktsConfig);
+
+        const dependencyMap = expectSingleModuleNameMapWritten();
+        expect(dependencyMap).toContain('map_abc.set(');
+        expect(dependencyMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+        expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
+    });
+
+    test('generateDependencyOhmUrlMap does not generate the map when the main module is har', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'har';
+
+        fn.call(ctx, arktsConfig);
+
+        expectNoWrittenMap('dependency_ohmurl_map.ets');
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers both legacy maps for the main module', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', 'bundle_dependency_ohmurl_map.ets'),
+            path.join('/mock/cache', '_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(2);
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers only the module-name-prefixed map when the main module is hsp', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'shared';
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', 'entryname_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(1);
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers only the module-name-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.compatibleSdkVersion = 27;
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', 'entryname_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(1);
     });
 
     test('resolveInteropConfigs defaults the project-level build option when no interopConfigPath is passed', () => {

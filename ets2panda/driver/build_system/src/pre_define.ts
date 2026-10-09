@@ -80,6 +80,9 @@ export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plug
 
 // Build control constants
 export const MAX_PATH_LENGTH: number = 260;
+// The maximum compatible SDK version that keeps the legacy dual-file dependency
+// ohmurl map strategy; higher versions generate a single module-name-prefixed map
+export const LEGACY_OHMURL_MAP_MAX_SDK_VERSION: number = 26;
 export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
 export const CLUSTER_FILES_THRESHOLD: number = 460;
