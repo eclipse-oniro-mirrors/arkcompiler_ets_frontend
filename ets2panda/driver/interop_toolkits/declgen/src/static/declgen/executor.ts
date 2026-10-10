@@ -45,6 +45,7 @@ export class Executor {
   }
 
   execute(inputFiles: string[], arktsconfigPath: string): void {
+    inputFiles = inputFiles.map((file) => common.fileUtils.toPlatformPath(file));
     const { arkts, arktsGlobal } = this.libarkts;
     // Initialize the ArkTS memory management system
     arkts.memInitialize();

@@ -1,0 +1,46 @@
+{
+  "files": {
+    "<CASE_DIR>/input/entry.ets": {
+      "globalClassDescriptor": "Lentry/ETSGLOBAL;",
+      "root": {
+        "AliasedFunction": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "function",
+          "localName": "staticFunctionA",
+          "name": "AliasedFunction",
+          "runtimeName": "Lpkg/src/foo/ETSGLOBAL;",
+          "source": null
+        },
+        "StaticClassA": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "class",
+          "localName": "StaticClassA",
+          "name": "StaticClassA",
+          "runtimeName": "Lpkg/src/foo/StaticClassA;",
+          "source": null
+        },
+        "staticFunctionA": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "function",
+          "localName": "staticFunctionA",
+          "name": "staticFunctionA",
+          "runtimeName": "Lpkg/src/foo/ETSGLOBAL;",
+          "source": null
+        },
+        "staticPropertyA": {
+          "children": {},
+          "initModuleParam": null,
+          "kind": "property",
+          "localName": "staticPropertyA",
+          "name": "staticPropertyA",
+          "runtimeName": "Lpkg/src/foo/ETSGLOBAL;",
+          "source": null
+        }
+      }
+    }
+  },
+  "status": "success"
+}
