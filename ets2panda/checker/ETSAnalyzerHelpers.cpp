@@ -618,7 +618,11 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
                 break;
             }
             auto exprType = expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
-            if (!expr->Argument()->TsType()->IsETSNumericEnumType()) {
+            // Keep the original type of a floating-point operand: the lowering needs it for the
+            // spec-defined NaN/infinity handling before the conversion to the integer result type.
+            auto const isFloatingPoint =
+                operandType->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_FLOATING_POINT);
+            if (!isFloatingPoint && !expr->Argument()->TsType()->IsETSNumericEnumType()) {
                 expr->Argument()->SetTsType(exprType);
             }
             break;

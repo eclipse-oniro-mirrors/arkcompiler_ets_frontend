@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,17 @@ function UnsignedRightShift(a: double, b: double): long {
  
 function Inversion(a: double): long {
     return ~a;
+}
+
+function FloatInversion(a: float): int {
+    return ~a;
+}
+
+let tildeCallCount: int = 0
+
+function nextInfinity(): number {
+    tildeCallCount++
+    return Infinity
 }
 
 function main(): void {
@@ -137,14 +148,24 @@ function main(): void {
     arktest.assertEQ(~0.000034, -1)
     arktest.assertEQ(~39530.93, -39531)
     arktest.assertEQ(~93718001.5424230894, -93718002)
-    arktest.assertEQ(~Infinity, -9223372036854775808)
-    arktest.assertEQ(~-Infinity, 9223372036854775807)
+    arktest.assertEQ(~Infinity, -1)
+    arktest.assertEQ(~-Infinity, -1)
     arktest.assertEQ(~NaN, -1   )
     arktest.assertEQ(~-NaN, -1)
-    arktest.assertEQ(~1E210, -9223372036854775808)
+    arktest.assertEQ(~(Infinity + 0.0), -1)
+    arktest.assertEQ(~(1E210), -9223372036854775808)
     arktest.assertEQ(~-1E210,  9223372036854775807)
     arktest.assertEQ(~56E5, -5600001)
     arktest.assertEQ(~-56E5, 5599999)
+
+    // Non-finite values produced by constant folding of arithmetic
+    arktest.assertEQ(~(1.0 / 0.0), -1)
+    arktest.assertEQ(~(-1.0 / 0.0), -1)
+    arktest.assertEQ(~(0.0 / 0.0), -1)
+    arktest.assertEQ(~((-0.0) ** -1), -1)
+    arktest.assertEQ(~(1e200 * 1e200), -1)
+    arktest.assertEQ(~(1e200 * 1e10), -9223372036854775808)
+    arktest.assertEQ((1.0 / 0.0) & 56, 56)
 
     /* ---- Run time tests ---- */
 
@@ -241,12 +262,22 @@ function main(): void {
     arktest.assertEQ(Inversion(0.000034), -1)
     arktest.assertEQ(Inversion(39530.93), -39531)
     arktest.assertEQ(Inversion(93718001.5424230894), -93718002)
-    arktest.assertEQ(Inversion(Infinity), -9223372036854775808)
-    arktest.assertEQ(Inversion(-Infinity), 9223372036854775807)
+    arktest.assertEQ(Inversion(Infinity), -1)
+    arktest.assertEQ(Inversion(-Infinity), -1)
     arktest.assertEQ(Inversion(NaN), -1   )
     arktest.assertEQ(Inversion(-NaN), -1)
     arktest.assertEQ(Inversion(1E210), -9223372036854775808)
     arktest.assertEQ(Inversion(-1E210),  9223372036854775807)
     arktest.assertEQ(Inversion(56E5), -5600001)
     arktest.assertEQ(Inversion(-56E5), 5599999)
+
+    // Testing "bitwise complement" on float operands and impure operands
+    arktest.assertEQ(FloatInversion(Float.POSITIVE_INFINITY), -1)
+    arktest.assertEQ(FloatInversion(Float.NEGATIVE_INFINITY), -1)
+    arktest.assertEQ(FloatInversion(2.0f), -3)
+    // The counter delta (not its absolute value) is asserted, because the JIT warmup runner
+    // executes the test body multiple times.
+    let countBefore: int = tildeCallCount
+    arktest.assertEQ(~nextInfinity(), -1)
+    arktest.assertEQ(tildeCallCount - countBefore, 1)
 }

@@ -450,12 +450,22 @@ private:
         }
 
         using Limits = std::numeric_limits<To>;
-        // Since bitwise operations are allowed on FP, handle truncation here:
+        // Bitwise operations are allowed on FP: mirror the runtime conversion semantics (ark::CastFloatToInt),
+        // where NaN converts to 0 and +/-infinity or out-of-range finite values saturate to the type limits.
         if ((lit->Number().Is<double>() || lit->Number().Is<float>()) && std::is_integral_v<To>) {
-            auto fp = lit->Number().GetValue<double>();
-            if (((static_cast<double>(Limits::min()) <= fp)) && (fp <= static_cast<double>(Limits::max()))) {
-                return static_cast<To>(fp);
+            auto const fp = lit->Number().GetValue<double>();
+            auto const minLimit = static_cast<double>(Limits::min());
+            auto const maxLimit = static_cast<double>(Limits::max());
+            if (fp > minLimit) {
+                if (fp < maxLimit) {
+                    return static_cast<To>(fp);
+                }
+                return Limits::max();
             }
+            if (std::isnan(fp)) {
+                return {};
+            }
+            return Limits::min();
         }
 
         return {};
@@ -523,16 +533,23 @@ private:
 
     lexer::Number HandleBitwiseNegate(const ir::NumberLiteral *node, TypeRank rank)
     {
+        // Spec (Bitwise Complement): the result is -1 for NaN and +/-infinity. Non-finite literals
+        // appear here only via folded arithmetic (e.g. division by zero), as the lexer rejects them.
+        auto const nonFinite = (node->Number().IsDouble() || node->Number().IsFloat()) &&
+                               !std::isfinite(node->Number().GetValue<double>());
+
         switch (rank) {
             case TypeRank::DOUBLE:
             case TypeRank::INT64: {
-                return lexer::Number(~static_cast<uint64_t>(ExtractFromLiteral<int64_t>(node)));
+                return nonFinite ? lexer::Number(static_cast<int64_t>(-1))
+                                 : lexer::Number(~static_cast<uint64_t>(ExtractFromLiteral<int64_t>(node)));
             }
             case TypeRank::FLOAT:
             case TypeRank::INT32:
             case TypeRank::INT16:
             case TypeRank::INT8: {
-                return lexer::Number(~static_cast<uint32_t>(ExtractFromLiteral<int32_t>(node)));
+                return nonFinite ? lexer::Number(static_cast<int32_t>(-1))
+                                 : lexer::Number(~static_cast<uint32_t>(ExtractFromLiteral<int32_t>(node)));
             }
             default: {
                 ES2PANDA_UNREACHABLE();
