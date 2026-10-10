@@ -33,6 +33,9 @@ export interface ModuleDescriptor {
   arktsversion?: string;
   aceModuleJsonPath?: string;
   sdkAliasConfigPath?: string;
+  permissions?: string[];
+  deviceTypes?: string[];
+  compatibleVersion?: string;
 }
 
 interface Json5Object {
@@ -223,7 +226,10 @@ export function generateBuildConfigs(
           ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static')
           : undefined,
       dependencies: processDependencies(module.name, dependencies, definedModules),
-      sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined
+      sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined,
+      permissions: module.permissions,
+      deviceTypes: module.deviceTypes,
+      compatibleVersion: module.compatibleVersion
     };
     addPluginPathConfigs(allBuildConfigs[module.name], module);
   }

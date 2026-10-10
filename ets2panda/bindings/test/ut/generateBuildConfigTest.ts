@@ -36,6 +36,29 @@ describe('generateBuildConfigs test', () => {
     const buildConfigs = generateBuildConfigs(pathConfig, [{ name: 'entry', moduleType: 'har', srcPath: filePath }]);
     expect(buildConfigs['entry'].compileFiles).toStrictEqual([]);
   });
+
+  test('test module properties pass-through', () => {
+    const buildConfigs = generateBuildConfigs(pathConfig, [
+      {
+        name: 'entry',
+        moduleType: 'har',
+        srcPath: path.resolve('./test/ut/mock_hap/test_without_dependency/entry'),
+        permissions: ['ohos.permission.INTERNET', 'ohos.permission.ABILITY_BACKGROUND'],
+        deviceTypes: ['phone', 'tablet', '2in1'],
+        compatibleVersion: '5.0.5(17)'
+      }
+    ]);
+    expect(buildConfigs['entry'].permissions).toStrictEqual(['ohos.permission.INTERNET', 'ohos.permission.ABILITY_BACKGROUND']);
+    expect(buildConfigs['entry'].deviceTypes).toStrictEqual(['phone', 'tablet', '2in1']);
+    expect(buildConfigs['entry'].compatibleVersion).toStrictEqual('5.0.5(17)');
+  });
+
+  test('test module properties default to undefined when absent', () => {
+    const buildConfigs = generateBuildConfigs(pathConfig, modules);
+    expect(buildConfigs['entry'].permissions).toBeUndefined();
+    expect(buildConfigs['entry'].deviceTypes).toBeUndefined();
+    expect(buildConfigs['entry'].compatibleVersion).toBeUndefined();
+  });
 });
 
 describe('generateBuildConfigs test', () => {
