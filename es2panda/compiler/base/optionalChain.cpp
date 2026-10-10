@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,10 +47,7 @@ void OptionalChain::CheckNullish(bool optional, compiler::VReg obj)
     auto *notNullish = pg_->AllocLabel();
     auto *nullish = pg_->AllocLabel();
 
-    pg_->LoadConst(node_, Constant::JS_NULL);
-    pg_->Condition(node_, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, obj, nullish);
-    pg_->LoadConst(node_, Constant::JS_UNDEFINED);
-    pg_->Condition(node_, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, obj, nullish);
+    pg_->BranchIfNullish(node_, obj, nullish);
     pg_->Branch(node_, notNullish);
     pg_->SetLabel(node_, nullish);
 

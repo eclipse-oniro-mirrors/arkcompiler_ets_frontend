@@ -56,13 +56,9 @@ void BinaryExpression::CompileLogical(compiler::PandaGen *pg) const
         pg->BranchIfTrue(this, skipRight);
     } else {
         ASSERT(operator_ == lexer::TokenType::PUNCTUATOR_NULLISH_COALESCING);
-        auto *nullish = pg->AllocLabel();
-        // if lhs === null
-        pg->BranchIfStrictNull(this, nullish);
-        pg->LoadAccumulator(this, lhs);
-        // if lhs === undefined
-        pg->BranchIfStrictNotUndefined(this, skipRight);
-        pg->SetLabel(this, nullish);
+        // non-nullish lhs (loose != null; no [[IsHTMLDDA]] on ArkRuntime) keeps the left
+        // value, a nullish lhs falls through to the right operand.
+        pg->BranchIfNotNullish(this, lhs, skipRight);
     }
 
     // left is true/false(and/or) then right -> acc

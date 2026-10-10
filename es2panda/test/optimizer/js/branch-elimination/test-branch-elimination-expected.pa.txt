@@ -13,251 +13,207 @@ label_1:
 label_19: 
 }
 
-slotNum = 0x13
+slotNum = 0xd
 .language ECMAScript
 .function any .#*#testBool(any a0, any a1, any a2) {
-label_19: 
-label_17: 
-	tryldglobalbyname 0x10, print
+label_11: 
+label_9: 
+	tryldglobalbyname 0xa, print
 	sta v0
 	lda.str good
 	sta v1
 	lda v0
-	callarg1 0x11, v1
+	callarg1 0xb, v1
 	returnundefined
-label_20: 
+label_12: 
 }
 
-slotNum = 0x17
+slotNum = 0xf
 .language ECMAScript
 .function any .#*#testFloatNumber(any a0, any a1, any a2) {
-label_25: 
-label_23: 
-	tryldglobalbyname 0x14, print
+label_13: 
+label_11: 
+	tryldglobalbyname 0xc, print
 	sta v0
 	lda.str good
 	sta v1
 	lda v0
-	callarg1 0x15, v1
+	callarg1 0xd, v1
 	returnundefined
-label_26: 
+label_14: 
 }
 
-slotNum = 0x17
+slotNum = 0xf
 .language ECMAScript
 .function any .#*#testIntNumber(any a0, any a1, any a2) {
-label_25: 
-label_23: 
-	tryldglobalbyname 0x14, print
+label_13: 
+label_11: 
+	tryldglobalbyname 0xc, print
 	sta v0
 	lda.str good
 	sta v1
 	lda v0
-	callarg1 0x15, v1
+	callarg1 0xd, v1
 	returnundefined
-label_26: 
+label_14: 
 }
 
-slotNum = 0x1d
+slotNum = 0x15
 .language ECMAScript
 .function any .#*#testString(any a0, any a1, any a2) {
-label_23: 
+label_15: 
 label_0: 
 	lda.str 0
 	sta v0
-	tryldglobalbyname 0xc, print
+	tryldglobalbyname 0x8, print
 	sta v1
 	lda.str good
 	sta v2
 	lda v1
-	callarg1 0xd, v2
+	callarg1 0x9, v2
 	lda.str 0
-	lesseq 0xf, v0
-	sta v1
-	callruntime.istrue 0x10
-	jnez label_15
-label_14: 
+	lesseq 0xb, v0
+	jnez label_9
+label_10: 
 	lda.str 1
-	greatereq 0x11, v0
-	sta v1
-label_15: 
-	lda v1
-	callruntime.istrue 0x12
-	jnez label_18
-label_17: 
+	greatereq 0xc, v0
+	jnez label_9
+label_11: 
 	lda.str 0
-	less 0x13, v0
-	sta v1
-label_18: 
-	lda v1
-	callruntime.istrue 0x14
-	jnez label_19
-label_20: 
+	less 0xd, v0
+	jnez label_9
+label_12: 
 	lda.str 1
-	greater 0x15, v0
-	callruntime.isfalse 0x16
-	jnez label_21
-label_19: 
-	tryldglobalbyname 0x17, print
+	greater 0xe, v0
+	jeqz label_13
+label_9: 
+	tryldglobalbyname 0xf, print
 	sta v0
 	lda.str good2
 	sta v1
 	lda v0
-	callarg1 0x18, v1
-	jmp label_22
-label_21: 
-	tryldglobalbyname 0x1a, print
+	callarg1 0x10, v1
+	jmp label_14
+label_13: 
+	tryldglobalbyname 0x12, print
 	sta v0
 	lda.str good3
 	sta v1
 	lda v0
-	callarg1 0x1b, v1
-label_22: 
+	callarg1 0x13, v1
+label_14: 
 	returnundefined
-label_24: 
+label_16: 
 }
 
-slotNum = 0x34
+slotNum = 0x26
 .language ECMAScript
 .function any .#*#testTypeConvert(any a0, any a1, any a2) {
-label_35: 
+label_23: 
 label_3: 
 	ldai 0x0
 	sta v0
-	tryldglobalbyname 0x4, print
+	tryldglobalbyname 0x2, print
 	sta v1
 	lda.str good
 	sta v2
 	lda v1
-	callarg1 0x5, v2
+	callarg1 0x3, v2
 	lda.str 0
-	eq 0xa, v0
-	sta v1
-	callruntime.istrue 0xb
-	jnez label_7
+	eq 0x8, v0
+	jnez label_5
 label_6: 
 	lda.str 0
-	stricteq 0xc, v0
-	sta v1
+	stricteq 0x9, v0
+	jnez label_5
 label_7: 
-	lda v1
-	callruntime.istrue 0xd
-	jnez label_10
-label_9: 
 	ldfalse
-	eq 0xe, v0
-	sta v1
-label_10: 
-	lda v1
-	callruntime.istrue 0xf
-	jnez label_11
-label_12: 
+	eq 0xa, v0
+	jnez label_5
+label_8: 
 	ldfalse
-	stricteq 0x10, v0
-	callruntime.isfalse 0x11
-	jnez label_13
-label_11: 
-	tryldglobalbyname 0x12, print
+	stricteq 0xb, v0
+	jeqz label_9
+label_5: 
+	tryldglobalbyname 0xc, print
 	sta v1
 	lda.str good1
 	sta v2
 	lda v1
-	callarg1 0x13, v2
-	jmp label_14
-label_13: 
-	tryldglobalbyname 0x15, print
+	callarg1 0xd, v2
+	jmp label_10
+label_9: 
+	tryldglobalbyname 0xf, print
 	sta v1
 	lda.str good2
 	sta v2
 	lda v1
-	callarg1 0x16, v2
+	callarg1 0x10, v2
+label_10: 
+	lda.str 0
+	lesseq 0x12, v0
+	jnez label_11
+label_12: 
+	lda.str 0
+	greatereq 0x13, v0
+	jnez label_11
+label_13: 
+	ldfalse
+	lesseq 0x14, v0
+	jnez label_11
 label_14: 
-	lda.str 0
-	lesseq 0x18, v0
-	sta v1
-	callruntime.istrue 0x19
-	jnez label_17
-label_16: 
-	lda.str 0
-	greatereq 0x1a, v0
-	sta v1
-label_17: 
-	lda v1
-	callruntime.istrue 0x1b
-	jnez label_20
-label_19: 
 	ldfalse
-	lesseq 0x1c, v0
-	sta v1
-label_20: 
-	lda v1
-	callruntime.istrue 0x1d
-	jnez label_21
-label_22: 
-	ldfalse
-	greatereq 0x1e, v0
-	callruntime.isfalse 0x1f
-	jnez label_23
-label_21: 
-	tryldglobalbyname 0x20, print
+	greatereq 0x15, v0
+	jeqz label_15
+label_11: 
+	tryldglobalbyname 0x16, print
 	sta v1
 	lda.str good3
 	sta v2
 	lda v1
-	callarg1 0x21, v2
-	jmp label_24
-label_23: 
-	tryldglobalbyname 0x23, print
+	callarg1 0x17, v2
+	jmp label_16
+label_15: 
+	tryldglobalbyname 0x19, print
 	sta v1
 	lda.str good4
 	sta v2
 	lda v1
-	callarg1 0x24, v2
-label_24: 
+	callarg1 0x1a, v2
+label_16: 
 	lda.str 0
-	less 0x26, v0
-	sta v1
-	callruntime.istrue 0x27
-	jnez label_27
-label_26: 
+	less 0x1c, v0
+	jnez label_17
+label_18: 
 	lda.str 0
-	greater 0x28, v0
-	sta v1
-label_27: 
-	lda v1
-	callruntime.istrue 0x29
-	jnez label_30
-label_29: 
+	greater 0x1d, v0
+	jnez label_17
+label_19: 
 	ldfalse
-	less 0x2a, v0
-	sta v1
-label_30: 
-	lda v1
-	callruntime.istrue 0x2b
-	jnez label_31
-label_32: 
+	less 0x1e, v0
+	jnez label_17
+label_20: 
 	ldfalse
-	greater 0x2c, v0
-	callruntime.isfalse 0x2d
-	jnez label_33
-label_31: 
-	tryldglobalbyname 0x2e, print
+	greater 0x1f, v0
+	jeqz label_21
+label_17: 
+	tryldglobalbyname 0x20, print
 	sta v0
 	lda.str good5
 	sta v1
 	lda v0
-	callarg1 0x2f, v1
-	jmp label_34
-label_33: 
-	tryldglobalbyname 0x31, print
+	callarg1 0x21, v1
+	jmp label_22
+label_21: 
+	tryldglobalbyname 0x23, print
 	sta v0
 	lda.str good6
 	sta v1
 	lda v0
-	callarg1 0x32, v1
-label_34: 
+	callarg1 0x24, v1
+label_22: 
 	returnundefined
-label_36: 
+label_24: 
 }
 
 slotNum = 0x12

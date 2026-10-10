@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -216,10 +216,7 @@ static void GenObject(PandaGen *pg, const ir::ObjectExpression *object, VReg rhs
         auto *notNullish = pg->AllocLabel();
         auto *nullish = pg->AllocLabel();
 
-        pg->LoadConst(object, Constant::JS_NULL);
-        pg->Condition(object, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, rhs, nullish);
-        pg->LoadConst(object, Constant::JS_UNDEFINED);
-        pg->Condition(object, lexer::TokenType::PUNCTUATOR_NOT_STRICT_EQUAL, rhs, nullish);
+        pg->BranchIfNullish(object, rhs, nullish);
         pg->Branch(object, notNullish);
 
         pg->SetLabel(object, nullish);

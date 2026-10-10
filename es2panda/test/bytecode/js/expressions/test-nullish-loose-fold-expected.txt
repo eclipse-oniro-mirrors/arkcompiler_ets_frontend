@@ -1,0 +1,239 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#*#(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	lda a3
+	return
+label_2: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#coal(any a0, any a1, any a2, any a3) {
+label_4: 
+label_0: 
+	ldai 0x0
+	sta v0
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_2: 
+	mov a3, v0
+label_3: 
+	lda a3
+	return
+label_5: 
+}
+
+slotNum = 0x7
+.language ECMAScript
+.function any .#*#coalAssign(any a0, any a1, any a2, any a3) {
+label_4: 
+label_0: 
+	lda a3
+	ldobjbyname 0x0, p
+	sta v0
+	ldnull
+	noteq 0x2, v0
+	jnez label_3
+label_2: 
+	ldai 0x1
+	stobjbyname 0x3, p, a3
+label_3: 
+	lda a3
+	ldobjbyname 0x5, p
+	return
+label_5: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#coalAssignVariable(any a0, any a1, any a2, any a3, any a4) {
+label_4: 
+label_0: 
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_2: 
+	mov a3, a4
+label_3: 
+	lda a3
+	return
+label_5: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#*#opt(any a0, any a1, any a2, any a3) {
+label_5: 
+label_0: 
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_1: 
+	ldundefined
+	jmp label_4
+label_3: 
+	lda a3
+	ldobjbyname 0x1, x
+label_4: 
+	return
+label_6: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#*#optCall(any a0, any a1, any a2, any a3) {
+label_5: 
+label_0: 
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_1: 
+	ldundefined
+	jmp label_4
+label_3: 
+	ldai 0x1
+	sta v0
+	lda a3
+	callarg1 0x1, v0
+label_4: 
+	return
+label_6: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#rest(any a0, any a1, any a2, any a3) {
+label_4: 
+label_0: 
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_1: 
+	throw.patternnoncoercible
+label_3: 
+	ldundefined
+	sta v0
+	mov v1, a3
+	mov v2, v0
+	createobjectwithexcludedkeys 0x0, v1, v2
+	return
+label_5: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#restAssign(any a0, any a1, any a2, any a3) {
+label_4: 
+label_0: 
+	ldnull
+	noteq 0x0, a3
+	jnez label_3
+label_1: 
+	throw.patternnoncoercible
+label_3: 
+	ldundefined
+	sta v0
+	mov v1, a3
+	mov v2, v0
+	createobjectwithexcludedkeys 0x0, v1, v2
+	return
+label_5: 
+}
+
+slotNum = 0x37
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, .#*#coal, 0x1
+	stglobalvar 0x1, coal
+	definefunc 0x2, .#*#coalAssign, 0x1
+	stglobalvar 0x3, coalAssign
+	definefunc 0x4, .#*#coalAssignVariable, 0x2
+	stglobalvar 0x5, coalAssignVariable
+	definefunc 0x6, .#*#opt, 0x1
+	stglobalvar 0x7, opt
+	definefunc 0x8, .#*#optCall, 0x1
+	stglobalvar 0x9, optCall
+	definefunc 0xa, .#*#rest, 0x1
+	stglobalvar 0xb, rest
+	definefunc 0xc, .#*#restAssign, 0x1
+	stglobalvar 0xd, restAssign
+	ldglobalvar 0xe, opt
+	sta v0
+	ldnull
+	sta v1
+	lda v0
+	callarg1 0xf, v1
+	ldglobalvar 0x11, opt
+	sta v0
+	createobjectwithbuffer 0x12, _1
+	sta v1
+	lda v0
+	callarg1 0x13, v1
+	ldglobalvar 0x15, optCall
+	sta v0
+	ldnull
+	sta v1
+	lda v0
+	callarg1 0x16, v1
+	ldglobalvar 0x18, optCall
+	sta v0
+	definefunc 0x19, .#*#, 0x1
+	sta v1
+	lda v0
+	callarg1 0x1a, v1
+	ldglobalvar 0x1c, coal
+	sta v0
+	ldnull
+	sta v1
+	lda v0
+	callarg1 0x1d, v1
+	ldglobalvar 0x1f, coal
+	sta v0
+	ldai 0x0
+	sta v1
+	lda v0
+	callarg1 0x20, v1
+	ldglobalvar 0x22, coalAssign
+	sta v0
+	createemptyobject
+	sta v2
+	lda v0
+	callarg1 0x23, v2
+	ldglobalvar 0x25, coalAssign
+	sta v0
+	createobjectwithbuffer 0x26, _2
+	sta v2
+	lda v0
+	callarg1 0x27, v2
+	ldglobalvar 0x29, rest
+	sta v0
+	createobjectwithbuffer 0x2a, _3
+	sta v2
+	lda v0
+	callarg1 0x2b, v2
+	ldglobalvar 0x2d, coalAssignVariable
+	sta v0
+	ldnull
+	sta v2
+	ldai 0x1
+	sta v3
+	lda v0
+	callargs2 0x2e, v2, v3
+	ldglobalvar 0x30, coalAssignVariable
+	callargs2 0x31, v1, v3
+	ldglobalvar 0x33, restAssign
+	sta v0
+	createobjectwithbuffer 0x34, _4
+	sta v1
+	lda v0
+	callarg1 0x35, v1
+	returnundefined
+label_2: 
+}
+
+

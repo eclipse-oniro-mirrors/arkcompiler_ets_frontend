@@ -1,0 +1,169 @@
+slotNum = 0x2
+.language ECMAScript
+.function any .#*#comparisonAnd(any a0, any a1, any a2, any a3, any a4, any a5, any a6) {
+label_4: 
+label_0: 
+	lda a4
+	less 0x0, a3
+	jeqz label_1
+label_2: 
+	lda a6
+	less 0x1, a5
+	jeqz label_1
+label_3: 
+	ldai 0x1
+	return
+label_1: 
+	ldai 0x0
+	return
+label_5: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#doubleNot(any a0, any a1, any a2, any a3) {
+label_3: 
+label_0: 
+	lda a3
+	callruntime.isfalse 0x0
+	jnez label_1
+label_2: 
+	ldai 0x1
+	return
+label_1: 
+	ldai 0x0
+	return
+label_4: 
+}
+
+slotNum = 0x1
+.language ECMAScript
+.function any .#*#negatedComparison(any a0, any a1, any a2, any a3, any a4) {
+label_3: 
+label_0: 
+	lda a4
+	less 0x0, a3
+	jnez label_1
+label_2: 
+	ldai 0x1
+	return
+label_1: 
+	ldai 0x0
+	return
+label_4: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#*#nested(any a0, any a1, any a2, any a3, any a4, any a5) {
+label_5: 
+label_0: 
+	lda a4
+	less 0x0, a3
+	jeqz label_1
+label_2: 
+	lda a5
+	callruntime.isfalse 0x1
+	jnez label_3
+label_1: 
+	lda a4
+	stricteq 0x2, a3
+	jeqz label_3
+label_4: 
+	ldai 0x1
+	return
+label_3: 
+	ldai 0x0
+	return
+label_6: 
+}
+
+slotNum = 0xa
+.language ECMAScript
+.function any .#*#values(any a0, any a1, any a2, any a3, any a4) {
+label_7: 
+label_0: 
+	createemptyarray 0x0
+	sta v0
+	lda a3
+	callruntime.isfalse 0x1
+	jnez label_9
+label_2: 
+	mov v1, a4
+	jmp label_3
+label_9: 
+	mov v1, a3
+label_3: 
+	lda v1
+	stownbyindex 0x2, v0, 0x0
+	lda a3
+	callruntime.istrue 0x4
+	jnez label_10
+label_5: 
+	mov v1, a4
+	jmp label_6
+label_10: 
+	mov v1, a3
+label_6: 
+	lda v1
+	stownbyindex 0x5, v0, 0x1
+	lda a3
+	callruntime.isfalse 0x7
+	stownbyindex 0x8, v0, 0x2
+	lda v0
+	return
+label_8: 
+}
+
+slotNum = 0x19
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, .#*#comparisonAnd, 0x4
+	stglobalvar 0x1, comparisonAnd
+	definefunc 0x2, .#*#doubleNot, 0x1
+	stglobalvar 0x3, doubleNot
+	definefunc 0x4, .#*#negatedComparison, 0x2
+	stglobalvar 0x5, negatedComparison
+	definefunc 0x6, .#*#nested, 0x3
+	stglobalvar 0x7, nested
+	definefunc 0x8, .#*#values, 0x2
+	stglobalvar 0x9, values
+	ldglobalvar 0xa, comparisonAnd
+	sta v0
+	ldai 0x1
+	sta v1
+	ldai 0x2
+	sta v2
+	ldai 0x3
+	sta v3
+	ldai 0x4
+	sta v4
+	mov v5, v1
+	mov v6, v2
+	mov v7, v3
+	mov v8, v4
+	lda v0
+	callrange 0xb, 0x4, v5
+	ldglobalvar 0xd, negatedComparison
+	callargs2 0xe, v1, v2
+	ldglobalvar 0x10, doubleNot
+	callarg1 0x11, v1
+	ldglobalvar 0x13, nested
+	sta v0
+	ldai 0x0
+	sta v3
+	lda v0
+	callargs3 0x14, v1, v2, v3
+	ldglobalvar 0x16, values
+	sta v0
+	lda.str x
+	sta v1
+	lda v0
+	callargs2 0x17, v3, v1
+	returnundefined
+label_2: 
+}
+
+

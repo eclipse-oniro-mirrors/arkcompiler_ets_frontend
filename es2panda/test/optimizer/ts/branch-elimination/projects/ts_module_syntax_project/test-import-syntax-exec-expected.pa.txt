@@ -97,10 +97,10 @@ label_2:
 }
 
 
-slotNum = 0x2f
+slotNum = 0x2a
 .language ECMAScript
 .function any &myapp/test-import-syntax-exec&.func_main_0(any a0, any a1, any a2) {
-label_29: 
+label_23: 
 label_0: 
 	ldai 0x1
 	sta v0
@@ -118,116 +118,116 @@ label_0:
 	sta v1
 	throw.undefinedifholewithname v1
 	lda v0
-	strictnoteq 0xf, v1
-	jeqz label_13
-label_14: 
-	tryldglobalbyname 0x10, print
+	strictnoteq 0xa, v1
+	jeqz label_7
+label_8: 
+	tryldglobalbyname 0xb, print
 	sta v1
 	lda.str good1
 	sta v2
 	lda v1
-	callarg1 0x11, v2
-label_13: 
+	callarg1 0xc, v2
+label_7: 
 	ldexternalmodulevar 0x5
 	sta v1
 	throw.undefinedifholewithname v2
 	lda v0
-	strictnoteq 0x13, v1
-	jeqz label_15
-label_16: 
-	tryldglobalbyname 0x14, print
+	strictnoteq 0xe, v1
+	jeqz label_9
+label_10: 
+	tryldglobalbyname 0xf, print
 	sta v1
 	lda.str good2
 	sta v2
 	lda v1
-	callarg1 0x15, v2
-label_15: 
+	callarg1 0x10, v2
+label_9: 
 	ldexternalmodulevar 0x6
 	sta v1
 	throw.undefinedifholewithname v3
 	ldai 0x2
-	strictnoteq 0x17, v1
-	jeqz label_17
-label_18: 
-	tryldglobalbyname 0x18, print
+	strictnoteq 0x12, v1
+	jeqz label_11
+label_12: 
+	tryldglobalbyname 0x13, print
 	sta v1
 	lda.str good3
 	sta v2
 	lda v1
-	callarg1 0x19, v2
-label_17: 
+	callarg1 0x14, v2
+label_11: 
 	ldexternalmodulevar 0x9
 	sta v1
 	throw.undefinedifholewithname v6
 	ldai 0x6
-	strictnoteq 0x1b, v1
-	jeqz label_19
-label_20: 
-	tryldglobalbyname 0x1c, print
+	strictnoteq 0x16, v1
+	jeqz label_13
+label_14: 
+	tryldglobalbyname 0x17, print
 	sta v1
 	lda.str good4
 	sta v2
 	lda v1
-	callarg1 0x1d, v2
-label_19: 
+	callarg1 0x18, v2
+label_13: 
 	ldexternalmodulevar 0xc
 	sta v1
 	throw.undefinedifholewithname v9
 	ldai 0x64
-	strictnoteq 0x1f, v1
-	jeqz label_21
-label_22: 
-	tryldglobalbyname 0x20, print
+	strictnoteq 0x1a, v1
+	jeqz label_15
+label_16: 
+	tryldglobalbyname 0x1b, print
 	sta v1
 	lda.str good5
 	sta v2
 	lda v1
-	callarg1 0x21, v2
-label_21: 
+	callarg1 0x1c, v2
+label_15: 
 	ldexternalmodulevar 0x3
 	sta v1
 	throw.undefinedifholewithname v10
 	lda v0
-	strictnoteq 0x23, v1
-	jeqz label_23
-label_24: 
-	tryldglobalbyname 0x24, print
+	strictnoteq 0x1e, v1
+	jeqz label_17
+label_18: 
+	tryldglobalbyname 0x1f, print
 	sta v1
 	lda.str good6
 	sta v2
 	lda v1
-	callarg1 0x25, v2
-label_23: 
+	callarg1 0x20, v2
+label_17: 
 	ldexternalmodulevar 0x4
 	sta v1
 	throw.undefinedifholewithname v11
 	lda v0
-	strictnoteq 0x27, v1
-	jeqz label_25
-label_26: 
-	tryldglobalbyname 0x28, print
+	strictnoteq 0x22, v1
+	jeqz label_19
+label_20: 
+	tryldglobalbyname 0x23, print
 	sta v1
 	lda.str good7
 	sta v2
 	lda v1
-	callarg1 0x29, v2
-label_25: 
+	callarg1 0x24, v2
+label_19: 
 	ldexternalmodulevar 0x1
 	sta v1
 	throw.undefinedifholewithname v0099
 	lda v0
-	strictnoteq 0x2b, v1
-	jeqz label_27
-label_28: 
-	tryldglobalbyname 0x2c, print
+	strictnoteq 0x26, v1
+	jeqz label_21
+label_22: 
+	tryldglobalbyname 0x27, print
 	sta v0
 	lda.str good8
 	sta v1
 	lda v0
-	callarg1 0x2d, v1
-label_27: 
+	callarg1 0x28, v1
+label_21: 
 	returnundefined
-label_30: 
+label_24: 
 }
 
 

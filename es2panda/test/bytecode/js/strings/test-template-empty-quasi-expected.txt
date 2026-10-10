@@ -1,0 +1,152 @@
+slotNum = 0x2
+.language ECMAScript
+.function any .#*#tag(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	ldai 0x0
+	ldobjbyvalue 0x0, a3
+	return
+label_2: 
+}
+
+slotNum = 0x49
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldundefined
+	stglobalvar 0x0, a
+	ldundefined
+	stglobalvar 0x1, b
+	ldundefined
+	stglobalvar 0x2, c
+	ldundefined
+	stglobalvar 0x3, name
+	ldundefined
+	stglobalvar 0x4, t1
+	ldundefined
+	stglobalvar 0x5, t2
+	ldundefined
+	stglobalvar 0x6, t3
+	ldundefined
+	stglobalvar 0x7, t4
+	ldundefined
+	stglobalvar 0x8, t5
+	ldundefined
+	stglobalvar 0x9, t6
+	ldundefined
+	stglobalvar 0xa, t7
+	ldundefined
+	stglobalvar 0xb, t8
+	definefunc 0xc, .#*#tag, 0x1
+	stglobalvar 0xd, tag
+	ldundefined
+	stglobalvar 0xe, x
+	ldundefined
+	stglobalvar 0xf, y
+	lda.str world
+	stglobalvar 0x10, name
+	lda.str a
+	stglobalvar 0x11, a
+	lda.str b
+	stglobalvar 0x12, b
+	lda.str c
+	stglobalvar 0x13, c
+	lda.str x
+	stglobalvar 0x14, x
+	lda.str y
+	stglobalvar 0x15, y
+	lda.str Hello 
+	sta v0
+	ldglobalvar 0x16, name
+	add2 0x17, v0
+	stglobalvar 0x18, t1
+	lda.str 
+	sta v0
+	ldglobalvar 0x19, name
+	add2 0x1a, v0
+	stglobalvar 0x1b, t2
+	lda.str 
+	sta v0
+	ldglobalvar 0x1c, a
+	add2 0x1d, v0
+	sta v0
+	ldglobalvar 0x1e, b
+	add2 0x1f, v0
+	stglobalvar 0x20, t3
+	lda.str 
+	sta v0
+	ldglobalvar 0x21, a
+	add2 0x22, v0
+	sta v0
+	ldglobalvar 0x23, b
+	add2 0x24, v0
+	sta v0
+	ldglobalvar 0x25, c
+	add2 0x26, v0
+	stglobalvar 0x27, t4
+	lda.str 
+	sta v0
+	ldglobalvar 0x28, x
+	add2 0x29, v0
+	sta v0
+	lda.str c
+	add2 0x2a, v0
+	stglobalvar 0x2b, t5
+	lda.str Hello
+	stglobalvar 0x2c, t6
+	lda.str a
+	sta v0
+	ldglobalvar 0x2d, x
+	add2 0x2e, v0
+	sta v0
+	lda.str b
+	add2 0x2f, v0
+	sta v0
+	ldglobalvar 0x30, y
+	add2 0x31, v0
+	sta v0
+	lda.str c
+	add2 0x32, v0
+	stglobalvar 0x33, t7
+	ldglobalvar 0x34, tag
+	sta v0
+	createemptyarray 0x35
+	sta v1
+	createemptyarray 0x36
+	sta v2
+	lda.str x
+	sta v3
+	ldai 0x0
+	sta v4
+	lda v3
+	callruntime.definefieldbyvalue 0x37, v4, v1
+	lda.str x
+	callruntime.definefieldbyvalue 0x39, v4, v2
+	lda.str 
+	sta v3
+	ldai 0x1
+	sta v5
+	lda v3
+	callruntime.definefieldbyvalue 0x3b, v5, v1
+	lda.str 
+	callruntime.definefieldbyvalue 0x3d, v5, v2
+	createemptyarray 0x3f
+	sta v3
+	lda v1
+	callruntime.definefieldbyvalue 0x40, v4, v3
+	lda v2
+	callruntime.definefieldbyvalue 0x42, v5, v3
+	lda v3
+	gettemplateobject 0x44
+	sta v1
+	ldglobalvar 0x45, y
+	sta v2
+	lda v0
+	callargs2 0x46, v1, v2
+	stglobalvar 0x48, t8
+	returnundefined
+label_2: 
+}
+
+

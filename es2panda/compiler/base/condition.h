@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,10 @@ class Condition {
 public:
     Condition() = delete;
 
-    static void Compile(PandaGen *pg, const ir::Expression *expr, Label *falseLabel);
+    // Branches to target when expr evaluates falsy (default) or truthy
+    // (branchOnTrue); merges comparison/`!`/logical subexpressions to avoid
+    // identity ToBoolean conversions on boolean values.
+    static void Compile(PandaGen *pg, const ir::Expression *expr, Label *target, bool branchOnTrue = false);
 };
 
 }  // namespace panda::es2panda::compiler

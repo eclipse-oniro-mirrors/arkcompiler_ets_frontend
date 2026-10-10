@@ -55,6 +55,15 @@ void TemplateLiteral::Compile(compiler::PandaGen *pg) const
         const ir::AstNode *node = nullptr;
 
         if (isQuais) {
+            // Empty quasi: acc is already a string (loaded by the first quasi, then kept a
+            // string by every `string + expr` round), so `string + ""` is an identity no-op
+            // with no side effects — skip this entire sta/lda.str/add2 round.
+            if ((*quasisIt)->Cooked().Empty()) {
+                quasisIt++;
+                isQuais = !isQuais;
+                total--;
+                continue;
+            }
             pg->StoreAccumulator(*quasisIt, lhs);
             pg->LoadAccumulatorString(this, (*quasisIt)->Cooked());
 

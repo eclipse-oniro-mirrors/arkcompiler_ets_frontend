@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,38 @@
 
 namespace panda::es2panda::compiler {
 
-void Condition::Compile(PandaGen *pg, const ir::Expression *expr, Label *falseLabel)
+static void CompileComparison(PandaGen *pg, const ir::BinaryExpression *binExpr, Label *target, bool branchOnTrue)
+{
+    RegScope rs(pg);
+    VReg lhs = pg->AllocReg();
+
+    binExpr->Left()->Compile(pg);
+    pg->StoreAccumulator(binExpr, lhs);
+    binExpr->Right()->Compile(pg);
+    pg->ConditionBranch(binExpr, binExpr->OperatorType(), lhs, target, branchOnTrue);
+}
+
+static void CompileLogical(PandaGen *pg, const ir::BinaryExpression *binExpr, Label *target, bool branchOnTrue)
+{
+    // Compile each operand as a condition so nested negations
+    // and comparisons merge instead of materializing booleans.
+    // When either operand alone decides (`&&` on false, `||` on
+    // true), both share the target; otherwise the first operand
+    // branches with the inverted polarity to a local exit and
+    // only the second operand can reach the target.
+    const bool isAnd = binExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_LOGICAL_AND;
+    if (branchOnTrue != isAnd) {
+        Condition::Compile(pg, binExpr->Left(), target, branchOnTrue);
+        Condition::Compile(pg, binExpr->Right(), target, branchOnTrue);
+    } else {
+        auto *exitLabel = pg->AllocLabel();
+        Condition::Compile(pg, binExpr->Left(), exitLabel, !branchOnTrue);
+        Condition::Compile(pg, binExpr->Right(), target, branchOnTrue);
+        pg->SetLabel(binExpr, exitLabel);
+    }
+}
+
+void Condition::Compile(PandaGen *pg, const ir::Expression *expr, Label *target, bool branchOnTrue)
 {
     if (expr->IsBinaryExpression()) {
         const auto *binExpr = expr->AsBinaryExpression();
@@ -35,37 +66,25 @@ void Condition::Compile(PandaGen *pg, const ir::Expression *expr, Label *falseLa
             case lexer::TokenType::PUNCTUATOR_LESS_THAN_EQUAL:
             case lexer::TokenType::PUNCTUATOR_GREATER_THAN:
             case lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL: {
-                // This is a special case
-                // These operators are expressed via cmp instructions and the following
-                // if-else branches. Condition also expressed via cmp instruction and
-                // the following if-else.
-                // the goal of this method is to merge these two sequences of instructions.
-                RegScope rs(pg);
-                VReg lhs = pg->AllocReg();
-
-                binExpr->Left()->Compile(pg);
-                pg->StoreAccumulator(binExpr, lhs);
-                binExpr->Right()->Compile(pg);
-                pg->Condition(binExpr, binExpr->OperatorType(), lhs, falseLabel);
+                // Comparison instructions yield exactly true/false, so the
+                // branch can test them directly (jeqz) instead of running an
+                // identity istrue/isfalse first.
+                CompileComparison(pg, binExpr, target, branchOnTrue);
                 return;
             }
-            case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
-                binExpr->Left()->Compile(pg);
-                pg->BranchIfFalse(binExpr, falseLabel);
-
-                binExpr->Right()->Compile(pg);
-                pg->BranchIfFalse(binExpr, falseLabel);
+            case lexer::TokenType::KEYW_IN: {
+                // `a in b` yields exactly true/false, so it can branch
+                // directly; private-name `in` has its own emission forms and
+                // keeps the generic path.
+                if (binExpr->Left()->IsPrivateIdentifier()) {
+                    break;
+                }
+                CompileComparison(pg, binExpr, target, branchOnTrue);
                 return;
             }
+            case lexer::TokenType::PUNCTUATOR_LOGICAL_AND:
             case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-                auto *endLabel = pg->AllocLabel();
-
-                binExpr->Left()->Compile(pg);
-                pg->BranchIfTrue(binExpr, endLabel);
-
-                binExpr->Right()->Compile(pg);
-                pg->BranchIfFalse(binExpr, falseLabel);
-                pg->SetLabel(binExpr, endLabel);
+                CompileLogical(pg, binExpr, target, branchOnTrue);
                 return;
             }
             default: {
@@ -74,16 +93,17 @@ void Condition::Compile(PandaGen *pg, const ir::Expression *expr, Label *falseLa
         }
     } else if (expr->IsUnaryExpression() &&
                expr->AsUnaryExpression()->OperatorType() == lexer::TokenType::PUNCTUATOR_EXCLAMATION_MARK) {
-        expr->AsUnaryExpression()->Argument()->Compile(pg);
-
-        pg->Negate(expr);
-        pg->BranchIfFalse(expr, falseLabel);
+        Compile(pg, expr->AsUnaryExpression()->Argument(), target, !branchOnTrue);
         return;
     }
 
     // General case including some binExpr i.E.(a+b)
     expr->Compile(pg);
-    pg->BranchIfFalse(expr, falseLabel);
+    if (branchOnTrue) {
+        pg->BranchIfTrue(expr, target);
+    } else {
+        pg->BranchIfFalse(expr, target);
+    }
 }
 
 }  // namespace panda::es2panda::compiler

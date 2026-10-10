@@ -29,7 +29,7 @@ label_0:
 label_2: 
 }
 
-slotNum = 0xd
+slotNum = 0xc
 expectedProperty = 0x2
 .language ECMAScript
 .function any .#~D2=#D2(any a0, any a1, any a2) {
@@ -61,18 +61,15 @@ label_0:
 	lda v1
 	add2 0x6, v0
 	sta v0
-	lda.str 
-	add2 0x7, v0
-	sta v0
 	lda.str str6
-	stobjbyvalue 0x8, a2, v0
+	stobjbyvalue 0x7, a2, v0
 	ldai 0x1
 	sta v0
 	ldai 0x2
-	add2 0xa, v0
+	add2 0x9, v0
 	sta v0
 	lda.str str7
-	stobjbyvalue 0xb, a2, v0
+	stobjbyvalue 0xa, a2, v0
 	lda a2
 	return
 label_2: 

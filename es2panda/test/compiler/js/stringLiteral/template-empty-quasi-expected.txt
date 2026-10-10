@@ -1,0 +1,15 @@
+FG
+f,g
+OBJ
+1
+oiZ
+Hello world
+world
+ab
+abc
+ac
+plain
+aXbYc
+42
+123
+aXb
