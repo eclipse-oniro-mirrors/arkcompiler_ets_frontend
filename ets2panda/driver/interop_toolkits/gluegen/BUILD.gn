@@ -39,6 +39,8 @@ if (is_mingw) {
 }
 _gluegen_workspace_dir = "$interop_toolkits_workspace_dir/gluegen"
 _gluegen_workspace_native = "$_gluegen_workspace_dir/bin/$gluegen_native_name"
+_common_label = "$_interop_toolkits_label/common"
+_common_tgz = "$interop_toolkits_pack_dir/common.tgz"
 
 gluegen_sources = [
   "./src/cli.ts",
@@ -70,7 +72,6 @@ gluegen_sources = [
   "./src/stages/arktsconfig/rules/stdlibRule.ts",
   "./src/stages/configuration/configurationResult.ts",
   "./src/stages/configuration/index.ts",
-  "./src/stages/configuration/interopTarget.ts",
   "./src/stages/configuration/moduleConfig.ts",
   "./src/stages/configuration/moduleTable.ts",
   "./src/stages/configuration/resolveInteropConfig.ts",
@@ -174,12 +175,39 @@ action("copy_gluegen_native_to_workspace") {
   ]
 }
 
+# Install the prebuilt common tarball into gluegen's node_modules.
+# Depends on interop_toolkits_init_node_modules because it (and the workspace
+# copy it depends on) is the last step that populates and reads gluegen's
+# node_modules before the package build.
+action("install_common_pkg") {
+  script = "../ci-build/install_pkg.py"
+  inputs = [
+    "../ci-build/install_pkg.py",
+    "$_common_tgz",
+  ]
+  deps = [
+    "$_interop_toolkits_label:interop_toolkits_init_node_modules",
+    "$_common_label:build_common_pkg",
+  ]
+  outputs = [ "$_gluegen_workspace_dir/node_modules/@interop-toolkits/common" ]
+
+  args = [
+    "--source-path",
+    rebase_path(_gluegen_workspace_dir),
+    "--pkg",
+    rebase_path(_common_tgz),
+  ]
+}
+
 # Build the gluegen package inside the workspace and pack it into a tarball.
 action("build_gluegen_pkg") {
   script = "../ci-build/build_pkg.py"
   inputs = [ "../ci-build/build_pkg.py" ]
   sources = gluegen_sources
-  deps = [ ":copy_gluegen_native_to_workspace" ]
+  deps = [
+    ":copy_gluegen_native_to_workspace",
+    ":install_common_pkg",
+  ]
   outputs = [ "$interop_toolkits_pack_dir/gluegen.tgz" ]
 
   args = [

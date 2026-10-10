@@ -17,7 +17,7 @@ import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 
-import { GlueGenDiagnosticError, GlueGenErrorList, GlueGenInternalError } from '../../src/errors';
+import { GlueGenError } from '../../src/errors';
 import type { ILogger } from '../../src/logger';
 import { NativeProcessError, type NativeProcessInvocation } from '../../src/native';
 import { GlueGenInvocation } from '../../src/native/invocation';
@@ -75,7 +75,7 @@ describe('GlueGenRunner data flow', () => {
     await fs.rm(testRoot, { recursive: true, force: true });
   });
 
-  it('logs and preserves an expected configuration diagnostic', async () => {
+  it('logs an expected configuration diagnostic and rejects with a generic gluegen error', async () => {
     const logger = fakeLogger();
     const getLogger = jest.fn((_subsystemCode: string): ILogger => logger);
     const config: BuildConfig = {
@@ -104,8 +104,11 @@ describe('GlueGenRunner data flow', () => {
     const runner = new GlueGenRunner(config);
 
     expect(getLogger).toHaveBeenCalledWith('114');
-    await expect(runner.run()).rejects.toBeInstanceOf(GlueGenDiagnosticError);
-    expect(logger.printError).toHaveBeenCalledWith(
+    const failure = runner.run();
+    await expect(failure).rejects.toThrow('GlueGen Error');
+    await expect(failure).rejects.not.toBeInstanceOf(GlueGenError);
+    expect(logger.printError).toHaveBeenNthCalledWith(
+      1,
       expect.objectContaining({
         code: '11420001',
         description: 'Build configuration field "projectRootPath" must be an absolute path.',
@@ -114,7 +117,15 @@ describe('GlueGenRunner data flow', () => {
         solutions: [],
       }),
     );
-    expect(logger.printError).toHaveBeenCalledTimes(1);
+    expect(logger.printError).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        code: '11420007',
+        description: 'Gluegen stopped because of an unexpected wrapper failure.',
+        cause: 'Build configuration field "projectRootPath" must be an absolute path.',
+      }),
+    );
+    expect(logger.printError).toHaveBeenCalledTimes(2);
     expect(logger.printErrorAndExit).not.toHaveBeenCalled();
   });
 
@@ -173,13 +184,18 @@ describe('GlueGenRunner data flow', () => {
   it('maps an exit-code-1 report to the injected logger before rejecting', async () => {
     const fixture = await createFixture(testRoot, 'diagnostic', 'diagnostic-error');
 
-    await expect(fixture.runner.run()).rejects.toBeInstanceOf(GlueGenErrorList);
+    await expect(fixture.runner.run()).rejects.toThrow('GlueGen Error');
 
     expect(fixture.logger.printWarn).toHaveBeenCalledWith('Native analysis warning.');
     expect(fixture.logger.printError).toHaveBeenCalledWith(
       expect.objectContaining({
         code: '11420050',
         description: 'Native generation failed.',
+      }),
+    );
+    expect(fixture.logger.printError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: '11420007',
       }),
     );
     expect(fixture.logger.printWarn.mock.invocationCallOrder[0]).toBeLessThan(
@@ -190,7 +206,7 @@ describe('GlueGenRunner data flow', () => {
   it('reads report warnings before classifying exit-code-2 as internal', async () => {
     const fixture = await createFixture(testRoot, 'internal', 'internal-error');
 
-    await expect(fixture.runner.run()).rejects.toBeInstanceOf(GlueGenInternalError);
+    await expect(fixture.runner.run()).rejects.toThrow('GlueGen Error');
 
     expect(fixture.logger.printWarn).toHaveBeenCalledWith('Before internal failure.');
     expect(fixture.logger.printError).toHaveBeenCalledWith(
@@ -222,7 +238,7 @@ describe('GlueGenRunner data flow', () => {
   ])('classifies %s as an internal error', async (_description, mode, expectedDescription, expectedWarning) => {
     const fixture = await createFixture(testRoot, mode, mode);
 
-    await expect(fixture.runner.run()).rejects.toBeInstanceOf(GlueGenInternalError);
+    await expect(fixture.runner.run()).rejects.toThrow('GlueGen Error');
     if (expectedDescription !== undefined) {
       expect(fixture.logger.printError).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -238,7 +254,7 @@ describe('GlueGenRunner data flow', () => {
   it('rejects exit-code-0 when the final output JSON is missing', async () => {
     const fixture = await createFixture(testRoot, 'missing-output', 'missing-output');
 
-    await expect(fixture.runner.run()).rejects.toBeInstanceOf(GlueGenInternalError);
+    await expect(fixture.runner.run()).rejects.toThrow('GlueGen Error');
     expect(fixture.logger.printError).toHaveBeenCalledWith(
       expect.objectContaining({
         description: 'Native gluegen did not produce its output JSON file.',
@@ -252,7 +268,7 @@ describe('GlueGenRunner data flow', () => {
     await fs.mkdir(path.dirname(reportPath), { recursive: true });
     await fs.writeFile(reportPath, JSON.stringify({ diagnostics: { errors: [], warnings: [] } }), 'utf8');
 
-    await expect(fixture.runner.run()).rejects.toBeInstanceOf(GlueGenInternalError);
+    await expect(fixture.runner.run()).rejects.toThrow('GlueGen Error');
     await expect(fs.access(reportPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 

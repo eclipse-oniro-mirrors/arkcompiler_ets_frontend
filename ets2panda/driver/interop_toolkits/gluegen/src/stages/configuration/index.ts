@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import type * as common from '@interop-toolkits/common';
 import type { GlueGenContext } from '../../pipeline/context';
 import { Stage } from '../../pipeline';
 import type { ProvidedStage } from '../../pipeline/stage';
@@ -46,5 +47,5 @@ export function createConfigurationStage(): ProvidedStage<GlueGenContext, readon
 
 export { dependencyModulesOf, reachableModulesOf } from './moduleTable';
 export type { ConfigurationResult } from './configurationResult';
-export type { InteropTarget } from './interopTarget';
+export type InteropTarget = common.interopConfig.InteropTarget;
 export type { MainModuleInfo, ModuleInfo, ModuleTable } from './moduleTable';

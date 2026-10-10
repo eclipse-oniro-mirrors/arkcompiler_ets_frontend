@@ -13,14 +13,17 @@
  * limitations under the License.
  */
 
-export interface ModuleInfo {
-  readonly packageName: string;
+import type * as common from '@interop-toolkits/common';
+
+/**
+ * Gluegen's module view: the shared interop-config contract plus the
+ * build-tool fields consumed by the later pipeline stages.
+ */
+export interface ModuleInfo extends common.interopConfig.InteropConfigModuleInfo {
   readonly moduleName?: string;
   readonly moduleType?: string;
-  readonly modulePath: string;
   readonly sourceRoots: readonly string[];
   readonly entryFile: string;
-  readonly dependencies: readonly string[];
   readonly abcPath?: string;
   readonly declFilesPath?: string;
   readonly language?: string;
@@ -28,7 +31,6 @@ export interface ModuleInfo {
   readonly bundleName?: string;
   readonly packageVersion?: string;
   readonly originalPackageNameMap: Readonly<Record<string, string>>;
-  readonly interopConfigPath?: string;
 }
 
 export interface MainModuleInfo extends ModuleInfo {
@@ -45,7 +47,7 @@ export interface MainModuleInfo extends ModuleInfo {
  * consumers traverse real `ModuleInfo` references without rebuilding an index. Cycles are
  * rejected by the configuration hooks before this artifact is published.
  */
-export interface ModuleTable {
+export interface ModuleTable extends common.interopConfig.ModuleTable {
   readonly modules: readonly ModuleInfo[];
   readonly byPackage: ReadonlyMap<string, ModuleInfo>;
   readonly mainModule: MainModuleInfo;
