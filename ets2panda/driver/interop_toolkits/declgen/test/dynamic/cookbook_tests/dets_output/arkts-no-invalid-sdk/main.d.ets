@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Callback } from "./@ohos.base";
-export declare function testFunc2(a: Callback<string>): Callback<Any>;
+export declare function testFunc2(a: Any): Any;
 export declare class TestClass {
     v1: Any;
     v2: Any;
-    v3: Callback<string>;
+    v3: Any;
 }
