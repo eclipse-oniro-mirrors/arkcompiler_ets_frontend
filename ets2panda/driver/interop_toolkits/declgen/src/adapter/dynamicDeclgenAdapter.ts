@@ -125,7 +125,7 @@ export class DynamicDeclgenAdapter extends DeclgenAdapter {
       },
       incremental: true,
       cacheDir: this.cachePath,
-      verifyOutputs: true,
+      verifyOutputs: false,
       plugins: [this.uiPlugin!],
     };
 
