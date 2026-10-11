@@ -35,6 +35,10 @@ add_custom_target(es2panda_tests COMMENT "Running es2panda test suites")
 add_custom_target(es2panda_gtests COMMENT "Running es2panda gtest suites")
 set(DEFAULT_TEST_GROUP ets_tests)
 
+if(TARGET gluegen_e2e_tests)
+    add_dependencies(es2panda_tests gluegen_e2e_tests)
+endif()
+
 # NOTE: These URunner targets are for local developer workflows only.
 # Do not add them under umbrella `tests` or CI-oriented target chains.
 add_urunner_target(ur_ets_runtime panda-int ets-runtime)
