@@ -1,0 +1,6 @@
+'use static'
+
+import { foo } from "./Foo";
+
+export declare function bar(): void;
+

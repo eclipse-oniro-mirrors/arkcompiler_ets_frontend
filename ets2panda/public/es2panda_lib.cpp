@@ -1863,7 +1863,7 @@ static bool HandleMultiFileModeTemplate(
         std::string inputRelativeDir = prog->ModuleName().data();
         std::replace(inputRelativeDir.begin(), inputRelativeDir.end(), '.', '/');
         if (compare(inputRelativeDir, pair.second)) {
-            compiler::HandleGenerateDecl(ctxImpl, prog, outputPath);
+            compiler::HandleGenerateDecl(ctxImpl, prog, outputPath, true);
             return !ctxImpl->diagnosticEngine->IsAnyError();
         }
     }
@@ -1941,7 +1941,7 @@ extern "C" __attribute__((unused)) int GenerateStaticDeclarationsFromContext(es2
     }
 
     // Single file mode
-    compiler::HandleGenerateDecl(ctxImpl, ctxImpl->parserProgram, outputPath);
+    compiler::HandleGenerateDecl(ctxImpl, ctxImpl->parserProgram, outputPath, true);
     return ctxImpl->diagnosticEngine->IsAnyError() ? 1 : 0;
 }
 

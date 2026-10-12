@@ -58,6 +58,11 @@ public:
 
     bool ShouldSkipClassDeclaration(util::StringView className) const;
 
+    void PreserveRelativeImports()
+    {
+        preserveRelativeImports_ = true;
+    }
+
     class Lock {
     private:
         class Releaser {
@@ -173,6 +178,8 @@ public:
     void RecordNodeInNameCache(const TSEnumMember *node);
 
 private:
+    std::string PackageQualifiedImportSource(const ir::ImportDeclaration *import) const;
+
     public_lib::Context *ctx_;
     std::unique_ptr<ObfuscationNameCache> nameCache_;
 
@@ -186,6 +193,8 @@ private:
     // a dictionary with "hidden" nodes that may be dumped at post-dump.
     // NOTE(dkofanov): it should be aware of names collision, 'string' is to be changed to 'Variable *'.
     std::unordered_map<std::string, NodeVariant> unExportNode_ {};
+
+    bool preserveRelativeImports_ {false};
 };
 
 class SrcDumper {

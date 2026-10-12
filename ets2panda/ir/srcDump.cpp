@@ -354,10 +354,14 @@ static std::string DumpImplicitImportsOfSpecifier(Declgen *dg, ImportSpecifier *
     return res;
 }
 
-static std::string PackageQualifiedImportSource(const ir::ImportDeclaration *import)
+std::string Declgen::PackageQualifiedImportSource(const ir::ImportDeclaration *import) const
 {
     const std::string source {import->Source()->Str().Utf8()};
     if (!import->IsETSImportDeclaration() || (source.rfind("./", 0) != 0 && source.rfind("../", 0) != 0)) {
+        return source;
+    }
+
+    if (preserveRelativeImports_) {
         return source;
     }
 
