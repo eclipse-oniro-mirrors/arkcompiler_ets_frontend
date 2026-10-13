@@ -508,19 +508,15 @@ slotNum = 0x8
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x2
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname A
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	ldlexvar 0x0, 0x0
 	sta v0
 	throw.undefinedifholewithname ns
-	lda v0
 	ldobjbyname 0x4, test
 	callthis0 0x6, v0
 	returnundefined
@@ -1366,19 +1362,15 @@ slotNum = 0x8
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x2
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname A
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	ldlexvar 0x0, 0x0
 	sta v0
 	throw.undefinedifholewithname ns
-	lda v0
 	ldobjbyname 0x4, test
 	callthis0 0x6, v0
 	returnundefined

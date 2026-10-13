@@ -590,15 +590,12 @@ slotNum = 0x4
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x2
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x1
 	sta v0
 	throw.undefinedifholewithname B
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }
@@ -1127,15 +1124,12 @@ slotNum = 0x4
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x2
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x1
 	sta v0
 	throw.undefinedifholewithname B
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }

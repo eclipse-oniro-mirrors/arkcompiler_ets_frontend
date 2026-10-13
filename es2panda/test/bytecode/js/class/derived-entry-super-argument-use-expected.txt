@@ -21,8 +21,7 @@ label_0:
 	lda a2
 	ldobjbyname 0x0, x
 	sta v0
-	mov v1, v0
-	supercallthisrange 0x2, 0x1, v1
+	supercallthisrange 0x2, 0x1, v0
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1

@@ -87,163 +87,158 @@ label_0:
 label_32: 
 label_34: 
 	ldai 0x14
-	sta v1
+	sta v0
 	ldai 0x15
-	sta v2
+	sta v1
 	ldai 0xa
-	sta v3
+	sta v2
 	ldai 0x0
-	sta v4
-	mov v5, v4
+	sta v3
+	mov v4, v3
 label_20: 
-	lda v5
+	lda v4
 	tonumeric 0x0
-	sta v5
+	sta v4
 	inc 0x1
-	sta v6
-	lda v3
-	less 0x2, v5
+	sta v5
+	lda v2
+	less 0x2, v4
 	jeqz label_21
 label_2: 
-	lda v2
+	lda v1
 	stlexvar 0x0, 0x0
 	definefunc 0x3, .#**f6*@0*#v37, 0x0
 	ldundefined
-	sta v5
+	sta v4
 label_28: 
 label_29: 
 end_label_29: 
 label_3: 
 	ldhole
-	sta v10
-	mov v9, v10
+	sta v9
+	mov v8, v9
 	jmp label_4
 label_47: 
-	sta v9
-	mov v6, v7
-	mov v5, v8
+	sta v8
+	mov v5, v6
+	mov v4, v7
 label_4: 
 	ldundefined
-	eq 0x4, v5
+	eq 0x4, v4
 	jeqz label_5
 label_6: 
 	ldlexvar 0x2, 0x1
-	sta v5
+	sta v4
 	ldlexvar 0x1, 0x0
-	sta v7
+	sta v6
 	throw.undefinedifholewithname v31
-	lda v1
-	stricteq 0x5, v7
-	sta v7
-	lda v5
-	callarg1 0x6, v7
+	lda v0
+	stricteq 0x5, v6
+	sta v6
+	lda v4
+	callarg1 0x6, v6
 label_5: 
 	ldhole
-	sta v5
-	lda v9
-	noteq 0x8, v5
+	sta v4
+	lda v8
+	noteq 0x8, v4
 	jeqz label_7
 label_8: 
-	lda v9
+	lda v8
 	throw
 label_7: 
 	newlexenv 0x1
 label_30: 
 label_36: 
-	mov v7, v4
+	mov v4, v5
+	mov v5, v3
 label_18: 
-	lda v7
+	lda v5
 	tonumeric 0x9
-	sta v7
+	sta v5
 	inc 0xa
-	sta v8
-	lda v3
-	less 0xb, v7
+	sta v6
+	lda v2
+	less 0xb, v5
 	jeqz label_19
 	jmp label_10
 label_52: 
-	mov v7, v8
+	mov v5, v6
 	jmp label_18
 label_10: 
-	lda v2
+	lda v1
 	stlexvar 0x0, 0x0
 	definefunc 0xc, .#**f6*@0*#v39, 0x0
 	ldundefined
-	sta v7
+	sta v5
 label_26: 
 label_27: 
 end_label_27: 
 label_11: 
 	ldhole
-	sta v13
-	mov v12, v13
+	sta v11
+	mov v10, v11
 	jmp label_12
 label_49: 
-	sta v12
-	mov v6, v9
-	mov v8, v10
-	mov v7, v11
+	sta v10
+	mov v4, v7
+	mov v6, v8
+	mov v5, v9
 label_12: 
 	ldundefined
-	eq 0xd, v7
+	eq 0xd, v5
 	jeqz label_13
 label_14: 
 	ldlexvar 0x3, 0x1
-	sta v7
+	sta v5
 	ldlexvar 0x2, 0x0
-	sta v8
+	sta v6
 	throw.undefinedifholewithname v31
-	lda v1
-	stricteq 0xe, v8
-	sta v8
-	lda v7
-	callarg1 0xf, v8
+	lda v0
+	stricteq 0xe, v6
+	sta v6
+	lda v5
+	callarg1 0xf, v6
 	poplexenv
-	mov v5, v6
 	jmp label_15
 label_13: 
 	ldhole
-	sta v7
-	lda v12
-	noteq 0x11, v7
+	sta v5
+	lda v10
+	noteq 0x11, v5
 	jeqz label_16
 label_17: 
-	lda v12
+	lda v10
 	throw
 label_16: 
 	ldlexvar 0x0, 0x0
-	sta v7
+	sta v5
 	poplexenv
 	newlexenv 0x1
-	lda v7
+	lda v5
 	stlexvar 0x0, 0x0
 label_31: 
 end_label_31: 
 	jmp label_52
 label_50: 
-	sta v5
 label_42: 
 	poplexenv
-	lda v5
 	throw
 label_19: 
 	poplexenv
-	mov v5, v6
 label_15: 
 	ldlexvar 0x0, 0x0
-	sta v6
+	sta v5
 	poplexenv
 	newlexenv 0x1
-	lda v6
+	lda v5
 	stlexvar 0x0, 0x0
 label_33: 
 end_label_33: 
 	jmp label_20
 label_51: 
-	sta v0
 label_43: 
 	poplexenv
-	lda v0
 	throw
 label_21: 
 	poplexenv
@@ -265,9 +260,7 @@ slotNum = 0x0
 label_1: 
 label_0: 
 	ldlexvar 0x0, 0x0
-	sta v0
 	throw.undefinedifholewithname v36
-	lda v0
 	return
 label_2: 
 }
@@ -278,9 +271,7 @@ slotNum = 0x0
 label_1: 
 label_0: 
 	ldlexvar 0x0, 0x0
-	sta v0
 	throw.undefinedifholewithname v38
-	lda v0
 	return
 label_2: 
 }

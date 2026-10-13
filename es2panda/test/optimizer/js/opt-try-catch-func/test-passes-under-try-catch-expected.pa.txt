@@ -6,9 +6,7 @@ label_9:
 label_5: 
 label_7: 
 	ldlexvar 0x0, 0x0
-	sta v1
 	throw.undefinedifholewithname globalCond
-	lda v1
 	callruntime.isfalse 0x0
 	jnez label_1
 label_2: 

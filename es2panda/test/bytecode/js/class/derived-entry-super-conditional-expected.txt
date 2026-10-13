@@ -24,8 +24,7 @@ label_0:
 	callruntime.isfalse 0x0
 	jnez label_1
 label_2: 
-	mov v2, v0
-	supercallthisrange 0x1, 0x1, v2
+	supercallthisrange 0x1, 0x1, v0
 	sta v1
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
@@ -45,9 +44,7 @@ label_6:
 	lda a2
 	return
 label_10: 
-	sta v0
 label_7: 
-	lda v0
 	throw
 label_9: 
 }

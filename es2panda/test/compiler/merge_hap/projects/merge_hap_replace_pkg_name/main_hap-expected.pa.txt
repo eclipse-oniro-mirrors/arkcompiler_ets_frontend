@@ -2,9 +2,7 @@ slotNum = 0x2
 .language ECMAScript
 .function any &main_hap/main_hap&.#*#main(any a0, any a1, any a2) {
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname mainHapAddTest
-	lda v0
 	callarg0 0x0
 	returnundefined
 }
@@ -155,9 +153,7 @@ slotNum = 0x2
 .language ECMAScript
 .function any &main_hap/sdk_hap&.#*#main(any a0, any a1, any a2) {
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname sdkHapAddTest
-	lda v0
 	callarg0 0x0
 	returnundefined
 }

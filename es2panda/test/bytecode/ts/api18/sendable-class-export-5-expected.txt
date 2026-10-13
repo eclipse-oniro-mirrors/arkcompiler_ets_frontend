@@ -29,8 +29,7 @@ label_0:
 	callruntime.ldsendablelocalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname B
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }
@@ -74,8 +73,7 @@ label_0:
 	ldobjbyname 0x5, prototype
 	lda v1
 	stmodulevar 0x0
-	mov v2, v0
-	newobjrange 0x7, 0x1, v2
+	newobjrange 0x7, 0x1, v0
 	stmodulevar 0x1
 	ldhole
 	sta v0

@@ -143,15 +143,13 @@ label_20:
 label_14: 
 label_26: 
 	ldai 0x5
-	sta v3
-	lda v3
+	sta v2
+	lda v2
 	throw
 label_15: 
 end_label_15: 
 label_38: 
-	sta v2
 label_31: 
-	lda v2
 	throw
 label_21: 
 end_label_21: 
@@ -159,14 +157,14 @@ label_39:
 	sta v1
 label_3: 
 	ldai 0x7
-	sta v2
+	sta v3
 	ldundefined
 	eq 0x9, v0
 	jeqz label_4
 label_5: 
 	tryldglobalbyname 0xa, print
-	callarg1 0xb, v3
-	mov v3, v2
+	callarg1 0xb, v2
+	mov v2, v3
 label_4: 
 	ldhole
 	sta v0
@@ -180,7 +178,7 @@ label_6:
 	ldai 0xa
 	sta v0
 	tryldglobalbyname 0xe, print
-	callarg1 0xf, v3
+	callarg1 0xf, v2
 	ldundefined
 	sta v1
 label_22: 
@@ -285,11 +283,9 @@ label_15:
 end_label_15: 
 	jmp label_2
 label_38: 
-	sta v7
 label_31: 
 	mov v2, v5
 	mov v3, v6
-	lda v7
 	throw
 label_21: 
 end_label_21: 
@@ -341,14 +337,8 @@ label_33:
 	mov v3, v6
 	mov v4, v7
 	tryldglobalbyname 0x11, print
-	mov v3, v6
-	mov v4, v7
 	callarg1 0x12, v8
-	mov v3, v6
-	mov v4, v7
 	tryldglobalbyname 0x14, print
-	mov v3, v6
-	mov v4, v7
 	callarg1 0x15, v6
 label_23: 
 end_label_23: 

@@ -73,29 +73,29 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x0, .#~@0=#PrivateBetween, _1, 0x0, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#PrivateBetween, _1, 0x0, v0
+	sta v0
 	ldobjbyname 0x1, prototype
+	sta v1
+	lda.str x
 	sta v2
-	lda.str x
-	sta v3
 	ldundefined
-	sta v4
-	lda v2
+	sta v3
+	lda v1
 	definemethod 0x3, .#~@0>#x, 0x0
-	sta v5
-	ldfalse
-	definegettersetterbyvalue v2, v3, v5, v4
-	lda.str x
-	sta v3
-	ldundefined
 	sta v4
-	lda v2
-	definemethod 0x4, .#~@0>#x^1, 0x1
-	sta v5
 	ldfalse
-	definegettersetterbyvalue v2, v3, v4, v5
+	definegettersetterbyvalue v1, v2, v4, v3
+	lda.str x
+	sta v2
+	ldundefined
+	sta v3
+	lda v1
+	definemethod 0x4, .#~@0>#x^1, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
 	definemethod 0x5, .#~@0>#instance_initializer, 0x0
 	stlexvar 0x0, 0x3
 	callruntime.createprivateproperty 0x0, _2
@@ -103,14 +103,12 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
-	lda v1
+	lda v0
 	sttoglobalrecord 0x6, PrivateBetween
 	returnundefined
 label_8: 

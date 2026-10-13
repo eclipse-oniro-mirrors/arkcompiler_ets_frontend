@@ -267,10 +267,6 @@ label_0:
 	callruntime.isfalse 0x7d
 	ldfalse
 	callruntime.isfalse 0x7e
-	ldai 0x5
-	sta v0
-	ldai 0x0
-	stricteq 0x7f, v0
 	returnundefined
 label_129: 
 }

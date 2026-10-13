@@ -17,8 +17,7 @@ expectedProperty = 0x3
 .function any .#~@1=#Direct(any a0, any a1, any a2, any a3) {
 label_1: 
 label_0: 
-	mov v1, a3
-	supercallthisrange 0x0, 0x1, v1
+	supercallthisrange 0x0, 0x1, a3
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
