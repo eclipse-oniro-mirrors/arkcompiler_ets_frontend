@@ -18,9 +18,9 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x7, .#~C=C~^1=#, _3, 0x0, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x7, .#~C=C~^1=#, _3, 0x0, v0
+	sta v0
 	ldobjbyname 0x8, prototype
 	definemethod 0xa, .#~C=C~^1>#instance_initializer, 0x0
 	stlexvar 0x0, 0x1
@@ -29,14 +29,12 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
-	lda v1
+	lda v0
 	stobjbyname 0xb, B_withPrivateField, a2
 	lda a2
 	return
@@ -122,8 +120,8 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x0, .#~C=#C, _5, 0x0, v1
+	sta v0
+	defineclasswithbuffer 0x0, .#~C=#C, _5, 0x0, v0
 	ldobjbyname 0x1, prototype
 	definemethod 0x3, .#~C>#instance_initializer, 0x0
 	stlexvar 0x0, 0x1
@@ -132,10 +130,8 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv

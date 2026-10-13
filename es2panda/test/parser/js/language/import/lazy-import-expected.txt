@@ -4,19 +4,13 @@ slotNum = 0x6
 label_1: 
 label_0: 
 	callruntime.ldlazysendablemodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname a
-	lda v0
 	stobjbyname 0x0, u, a2
 	callruntime.ldsendableexternalmodulevar 0x2
-	sta v0
 	throw.undefinedifholewithname c
-	lda v0
 	stobjbyname 0x2, v, a2
 	callruntime.ldlazysendablemodulevar 0x3
-	sta v0
 	throw.undefinedifholewithname d
-	lda v0
 	stobjbyname 0x4, w, a2
 	lda a2
 	return

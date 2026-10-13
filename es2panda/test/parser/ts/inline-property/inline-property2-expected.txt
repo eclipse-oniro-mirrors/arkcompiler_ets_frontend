@@ -29,9 +29,7 @@ label_3:
 label_2: 
 end_label_2: 
 label_7: 
-	sta v1
 label_4: 
-	lda v1
 	asyncfunctionreject v0
 	return
 label_6: 

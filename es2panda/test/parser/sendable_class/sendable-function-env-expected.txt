@@ -46,8 +46,7 @@ label_0:
 	sta v0
 	callruntime.definesendableclass 0x1, .#~A=#A, _3, 0x0, v0
 	sta v0
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	sta v0
 	ldobjbyname 0x4, fooA
 	callthis0 0x6, v0

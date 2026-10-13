@@ -4,9 +4,7 @@ slotNum = 0x0
 label_1: 
 label_0: 
 	callruntime.ldsendablevar 0x0, 0x1
-	sta v0
 	throw.undefinedifholewithname A
-	lda v0
 	return
 label_2: 
 }
@@ -41,8 +39,7 @@ label_1:
 label_0: 
 	callruntime.ldsendableclass 0x0
 	sta v0
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	return
 label_2: 
 }
