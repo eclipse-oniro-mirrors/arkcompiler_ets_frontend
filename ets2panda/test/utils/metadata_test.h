@@ -91,6 +91,20 @@ protected:
         AddDependencyToConfig(libName, abcFilename);
     }
 
+    static void AddPathToConfig(const std::string &name, const std::string &path)
+    {
+        std::fstream configFile(workingDir + configName, std::ios::in | std::ios::out);
+        std::ostringstream rawConfig;
+        rawConfig << configFile.rdbuf();
+
+        auto regex = std::regex(R"("paths": \{)");
+        auto replacement = R"("paths": {")" + name + R"(": [")" + path + R"("],)";
+        auto config = std::regex_replace(rawConfig.str(), regex, replacement);
+        configFile.seekp(0, std::ios::beg);
+        configFile << config << std::endl;
+        configFile.close();
+    }
+
     std::unique_ptr<pandasm::Program> RunCheckerWithMetadata(const std::string &sourceFilePath,
                                                              bool readMetadata = true)
     {
