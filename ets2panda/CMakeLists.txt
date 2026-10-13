@@ -830,6 +830,7 @@ add_subdirectory(${ES2PANDA_LIB_DIR})
 
 add_subdirectory(aot)
 add_subdirectory(declgen_ets2ts)
+add_subdirectory(staexpr2abc)
 add_subdirectory(driver/dependency_analyzer)
 add_subdirectory(driver/interop_toolkits/gluegen)
 

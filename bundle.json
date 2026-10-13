@@ -43,6 +43,9 @@
                     "name": "//arkcompiler/ets_frontend/ets2panda/aot:ets2panda"
                 },
                 {
+                    "name": "//arkcompiler/ets_frontend/ets2panda/staexpr2abc:ark_staexpr2abc"
+                },
+                {
                     "name": "//arkcompiler/ets_frontend/es2panda:es2panda"
                 },
                 {
