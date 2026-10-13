@@ -3583,7 +3583,8 @@ def add_directory_for_bytecode(runners, args):
     runner.add_directory("bytecode/commonjs", "js", ["--commonjs", "--dump-assembly"])
     runner.add_directory("bytecode/js", "js", ["--dump-assembly"])
     runner.add_directory("bytecode/ts/cases", "ts", ["--dump-assembly"])
-    runner.add_directory("bytecode/ts/ic", "ts", ["--dump-assembly"])
+    # Check frontend slot allocation before optimization can remove slot-using instructions.
+    runner.add_directory("bytecode/ts/ic", "ts", ["--dump-assembly", "--opt-level=0"])
     runner.add_directory("bytecode/ts/api11", "ts", ["--dump-assembly", "--module", "--target-api-version=11"])
     runner.add_directory("bytecode/ts/api12", "ts", ["--dump-assembly", "--module", "--target-api-version=12"])
     runner.add_directory("bytecode/ts/api18", "ts", ["--dump-assembly", "--module", "--target-api-version=18"])
