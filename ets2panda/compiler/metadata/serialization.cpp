@@ -1354,6 +1354,13 @@ bool MetadataSerializationPhase::PerformForProgram(parser::Program *program)
         return true;
     }
 
+    // Metadata is emitted for the module being compiled only(lazy-emit)
+    // the behavior should keep the same with lazy-check;
+    if (program != ctx->parserProgram && !program->IsBuiltSimultaneously() &&
+        !ctx->parserProgram->VarBinder()->IsGenStdLib()) {
+        return true;
+    }
+
     // Metadata should not be serialized from a semantically broken program.
     if (ctx->diagnosticEngine != nullptr && ctx->diagnosticEngine->IsAnyError()) {
         return true;
