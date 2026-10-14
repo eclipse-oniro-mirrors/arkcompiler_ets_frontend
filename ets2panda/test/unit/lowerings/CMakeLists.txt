@@ -32,6 +32,10 @@ if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
     ets2panda_add_gtest(top_level_statements_test
         CPP_SOURCES top_level_statements.cpp
     )
+
+    ets2panda_add_gtest(enum_decl_module_inlining_test
+        CPP_SOURCES enum_decl_module_inlining.cpp
+    )
 endif()
 
 ets2panda_add_gtest(node_history_test

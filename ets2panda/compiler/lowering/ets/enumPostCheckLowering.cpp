@@ -26,6 +26,7 @@
 #include "ir/ts/tsAsExpression.h"
 #include "libarkbase/macros.h"
 #include "parser/ETSparser.h"
+#include "parser/program/program.h"
 #include "util.h"
 #include "util/ustring.h"
 #include "varbinder/ETSBinder.h"
@@ -355,6 +356,30 @@ static auto *InlineValueOf(ir::MemberExpression *enumMemberRef, ArenaAllocator *
     return literal;
 }
 
+static bool EnumIsCompiledInCurrentBuild(checker::ETSEnumType const *enumType)
+{
+    auto const *origEnumDecl = enumType->GetDeclNode()->AsClassDefinition()->OrigEnumDecl();
+    if (origEnumDecl == nullptr || origEnumDecl->IsDeclare()) {
+        return false;
+    }
+    auto const *program = origEnumDecl->Program();
+    return program != nullptr && program->Is<util::ModuleKind::MODULE>();
+}
+
+static bool ShouldInlineEnumValue(ir::AstNode *node, checker::ETSEnumType const *enumType)
+{
+    if (!enumType->NodeIsEnumLiteral(node->AsExpression())) {
+        return false;
+    }
+    if (IsInsideAnnotationContext(node)) {
+        return true;
+    }
+    if (enumType->EnumAnnotedType() != nullptr) {
+        return false;
+    }
+    return !EnumIsCompiledInCurrentBuild(enumType);
+}
+
 ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const node)
 {
     node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
@@ -373,9 +398,7 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
     }
     auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
 
-    // Enum member values are read at runtime via valueOf() instead of being inlined
-    // as literals: inlined immediates get stale in incremental reload flows.
-    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) && IsInsideAnnotationContext(node)) {
+    if (ShouldInlineEnumValue(node, enumNode)) {
         return InlineValueOf(node->AsMemberExpression(), Context()->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(Context(), node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
