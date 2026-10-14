@@ -130,9 +130,13 @@ static void WriteStringToFile(public_lib::Context *context, const std::string &o
     outFile.close();
 }
 
-void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath)
+void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath,
+                        bool preserveRelativeImports)
 {
     ir::Declgen dg {context};
+    if (preserveRelativeImports) {
+        dg.PreserveRelativeImports();
+    }
 
     // Initialize name cache if nameCachePath is set in options
     const auto &options = *context->config->options;

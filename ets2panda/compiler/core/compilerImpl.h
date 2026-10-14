@@ -24,7 +24,8 @@ struct Program;
 
 namespace ark::es2panda::compiler {
 
-void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath);
+void HandleGenerateDecl(public_lib::Context *context, const parser::Program *program, const std::string &outputPath,
+                        bool preserveRelativeImports = false);
 
 class CompilationUnit {
 public:

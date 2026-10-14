@@ -32,6 +32,10 @@ set(COMMON_SOURCE_FILES
 set(ETS_CONFIG_WITH_CACHE ${CMAKE_CURRENT_BINARY_DIR}/arktsconfig.json)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/arktsconfig.in.json ${ETS_CONFIG_WITH_CACHE})
 
+# Custom arktsconfig for the simultaneous declgen test (includes "package": "har2")
+set(SIMULT_DECLGEN_CONFIG ${CMAKE_CURRENT_BINARY_DIR}/simult_declgen_arktsconfig.json)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simult_declgen/arktsconfig.in.json ${SIMULT_DECLGEN_CONFIG})
+
 set(PLUGIN_TESTS
     #"test_name test_sts_file how_to_test_mode plugin_file_extension(c|cpp) how_to_compile_mode"
     "e2p_test_plugin_dump_json compile.ets ${RUNTIME_MODE} c ${LIBRARY_PLUGIN}"
@@ -154,6 +158,7 @@ set(PLUGIN_TESTS
     "plugin_recheck_rebind_invalid_node_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload_simult compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_simult_declgen_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN} ${SIMULT_DECLGEN_CONFIG}"
 )
 
 set(RUNTIME_ARGUMENTS
