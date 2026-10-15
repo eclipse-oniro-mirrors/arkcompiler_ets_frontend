@@ -20,6 +20,7 @@
 
 #include "lsp_api_test.h"
 #include "lsp/include/internal_api.h"
+#include "lsp/include/lsp_utils.h"
 
 using ark::es2panda::lsp::Initializer;
 
@@ -166,6 +167,33 @@ c.increment();)"};
     // Implementation should point to the class method in the same file
     ASSERT_EQ(result.fileName, filePaths[0]);
     EXPECT_GT(result.length, 0U);
+}
+
+TEST_F(LspGetDefTests1, ImplementationAtPositionUsesCodePointOffsets)
+{
+    std::vector<std::string> files = {"impl_at_pos_utf16.ets"};
+    std::vector<std::string> texts = {R"(let faces: string = "😀😀😀";
+let target: number = 1;
+target;)"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    const auto useByteOffset = texts[0].rfind("target;");
+    const auto definitionByteOffset = texts[0].find("target: number");
+    ASSERT_NE(useByteOffset, std::string::npos);
+    ASSERT_NE(definitionByteOffset, std::string::npos);
+    const auto useCodePointOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(texts[0], useByteOffset);
+    const auto expectedDefinition = ark::es2panda::lsp::ByteOffsetToCodePointOffset(texts[0], definitionByteOffset);
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+    auto result = GetImpl()->getImplementationAtPosition(context, useCodePointOffset);
+    initializer.DestroyContext(context);
+
+    EXPECT_EQ(result.fileName, filePaths[0]);
+    EXPECT_EQ(result.start, expectedDefinition);
+    EXPECT_EQ(result.length, std::string_view("target").size());
 }
 
 // Test: definition at non-identifier position returns empty fileName

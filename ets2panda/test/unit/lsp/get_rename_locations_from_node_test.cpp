@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 #include "lsp/include/api.h"
+#include "lsp/include/lsp_utils.h"
 #include "lsp_api_test.h"
 #include "public/es2panda_lib.h"
 #include <gtest/gtest.h>
@@ -107,4 +108,34 @@ TEST_F(LspGetRenameLocationsFromNodeTest, GetRenameLocationsFromNode_Test2)
     ASSERT_EQ(res.start, expectedStart);
     ASSERT_EQ(res.line, expectedLength);
     ASSERT_EQ(res.end, expectedEnd);
+}
+
+TEST_F(LspGetRenameLocationsFromNodeTest, GetRenameLocationsFromNodeUsesCodePointOffsets)
+{
+    std::vector<std::string> files = {"GetRenameLocationsFromNodeUtf16.ets"};
+    std::vector<std::string> texts = {R"(let faces: string = "😀😀😀";
+class Foo {
+    Foo = 1;
+})"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_PARSED);
+    ASSERT_NE(context, nullptr);
+
+    const std::string nodeName = "Foo";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CLASS_PROPERTY});
+    std::vector<NodeInfo *> nodeInfoPtrs = {&nodeInfos[0]};
+
+    auto res = GetImpl()->findRenameLocationsFromNode(context, nodeInfoPtrs);
+    initializer.DestroyContext(context);
+
+    const auto byteStart = texts[0].rfind("Foo = 1");
+    ASSERT_NE(byteStart, std::string::npos);
+    const auto expectedStart = ark::es2panda::lsp::ByteOffsetToCodePointOffset(texts[0], byteStart);
+    ASSERT_NE(expectedStart, byteStart);
+    EXPECT_EQ(res.start, expectedStart);
+    EXPECT_EQ(res.end, expectedStart + nodeName.size());
 }

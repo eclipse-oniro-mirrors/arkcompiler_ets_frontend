@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import fs from 'fs';
 import { getLsp, getLspWithUi, getRealPath } from '../utils';
 
 describe('getDocumentHighlightsTest', () => {
@@ -455,6 +456,26 @@ describe('getDocumentHighlightsTest', () => {
       const res = lsp.getDocumentHighlights(getRealPath(moduleName, 'getDocumentHighlights7.ets'), 733);
       expect(res?.documentHighlights.length).toBe(1);
       expect(res).toMatchObject(EXPECT_006);
+    });
+    test('getDocumentHighlights_010_uses_utf16_offsets', () => {
+      const fileName = getRealPath(moduleName, 'getDocumentHighlights11.ets');
+      const source = fs.readFileSync(fileName, 'utf8');
+      const queryOffset = source.lastIndexOf('target = other');
+      const expectedStarts: number[] = [];
+      let offset = source.indexOf('target');
+      while (offset !== -1) {
+        expectedStarts.push(offset);
+        offset = source.indexOf('target', offset + 1);
+      }
+
+      const res = lsp.getDocumentHighlights(fileName, queryOffset);
+      const actualStarts = res?.documentHighlights
+        .flatMap((highlight) => highlight.highlightSpans)
+        .map((highlight) => highlight.textSpan.start)
+        .sort((left, right) => left - right);
+
+      expect(queryOffset).not.toBe(-1);
+      expect(actualStarts).toEqual(expectedStarts);
     });
   });
 

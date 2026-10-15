@@ -66,7 +66,7 @@ export abstract class LspNode {
 
 export class LspPosition extends LspNode {
   readonly line: number;
-  readonly character: number;
+  character: number;
   constructor(peer: KNativePointer) {
     super(peer);
     this.line = global.es2panda._getPosLine(peer);
@@ -859,7 +859,7 @@ export class LspRefactorEditInfo extends LspNode {
     this.renameLocation = global.es2panda._getRenameLocation(peer);
   }
   readonly renameFileName: string;
-  readonly renameLocation: number;
+  renameLocation: number;
 }
 
 export class LspTypeHierarchies extends LspNode {
@@ -1057,8 +1057,8 @@ export class LspRenameLocation extends LspNode {
       : undefined;
   }
   readonly fileName: string;
-  readonly start: number;
-  readonly end: number;
+  start: number;
+  end: number;
   readonly line: number;
   readonly prefixText?: string;
   readonly suffixText?: string;

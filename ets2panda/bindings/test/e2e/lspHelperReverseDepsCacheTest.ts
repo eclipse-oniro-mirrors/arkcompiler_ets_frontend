@@ -22,6 +22,8 @@ function createLspForTest(graph: Map<string, Set<string>>): any {
   const lsp = Object.create(Lsp.prototype) as any;
   lsp.reverseModuleDeps = graph;
   lsp.reverseClosureCache = new Map<string, Set<string>>();
+  lsp.moduleInfos = {};
+  lsp.defaultArkTsConfig = path.resolve('/project/arktsconfig.json');
   return lsp;
 }
 
@@ -177,7 +179,8 @@ describe('Lsp reverse dependency cache', () => {
       fileContent: 'source',
       fileConfig: {},
       fileContext,
-      fileHash: 'hash'
+      fileHash: 'hash',
+      arktsConfigPath: path.resolve('/project/arktsconfig.json')
     };
     lsp.filesMap = new Map();
     lsp.getFileSource = jest.fn(() => 'source');
@@ -220,7 +223,8 @@ describe('Lsp reverse dependency cache', () => {
       fileContent: 'let activeValue = 1;',
       fileConfig: {},
       fileContext,
-      fileHash: 'active-hash'
+      fileHash: 'active-hash',
+      arktsConfigPath: path.resolve('/project/arktsconfig.json')
     };
     const incrementalPrepareProgram = jest.fn(() => 0);
     const previousPublicApi = (Es2pandaGlobal as any)._es2pandaPublic;

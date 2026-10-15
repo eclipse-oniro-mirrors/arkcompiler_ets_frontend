@@ -66,5 +66,26 @@ describe('getCodeFixesAtPositionTest', () => {
 
       expect(res).toMatchObject(EXPECT_000);
     });
+
+    (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getCodeFixesAtPosition_001_uses_utf16_offsets', () => {
+      const file = getRealPath(moduleName, 'getCodeFixesAtPosition1.ets');
+      const originalSource = fs.readFileSync(file, 'utf8');
+      const duplicateEntry = originalSource.lastIndexOf('@Entry');
+      const emojiComment = '// 😀😀😀😀😀😀😀😀😀\n';
+      const source = originalSource.slice(0, duplicateEntry) + emojiComment + originalSource.slice(duplicateEntry);
+      const entryStart = source.lastIndexOf('@Entry');
+      const lsp = getUiLsp();
+      lsp.initAstCache();
+      lsp.modifyFilesMap(file, { newDoc: source });
+
+      const res = lsp.getCodeFixesAtPosition(file, entryStart + 3, entryStart + 4, [4000]);
+      const removal = res?.flatMap((action) => action.changes)
+        .flatMap((change) => change.textChanges)
+        .find((change) => change.newText.length === 0);
+
+      expect(duplicateEntry).not.toBe(-1);
+      expect(removal?.span.start).toBe(entryStart);
+      expect(removal?.span.length).toBe('@Entry'.length);
+    });
   });
 });
