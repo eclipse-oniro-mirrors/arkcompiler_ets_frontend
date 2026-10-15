@@ -757,7 +757,8 @@ export abstract class BaseMode {
             if (this.buildConfig.mockParams?.mockConfigPath &&
                 fs.existsSync(this.buildConfig.mockParams.mockConfigPath)) {
                 this.isMockEnabled = true;
-                this.mockConfigGenerator = new MockConfigGenerator(this.buildConfig);
+                this.mockConfigGenerator = new MockConfigGenerator(
+                    this.buildConfig, this.arktsConfigGenerator.systemApiPathSection);
                 this.mockConfigGenerator.collectMockConfigInfo();
             }
         }

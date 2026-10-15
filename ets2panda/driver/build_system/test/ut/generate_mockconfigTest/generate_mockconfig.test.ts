@@ -18,34 +18,25 @@ import os from 'os';
 import path from 'path';
 import { MockConfigGenerator } from '../../../src/build/generate_mockconfig';
 import { BuildConfig, DependencyModuleConfig } from '../../../src/types';
-
-// The mocked logger replaces the `Logger` class with an instance-like object at runtime;
-// reach it via `require` (untyped) so we can assert on its methods.
-const MockLogger: any = require('../../../src/logger').Logger;
+import { DriverError } from '../../../src/util/error';
 
 /**
- * Only the logger is mocked so that `printErrorAndExit` does not really call `process.exit`.
  * `fs` / `path` / `json5` are real — the generator operates on a real temp fixture tree,
  * which also exercises the low-level `readFirstLineSync` (openSync/readSync/closeSync) path.
  */
-jest.mock('../../../src/logger', () => {
-    const mLogger = {
-        printError: jest.fn(),
-        printInfo: jest.fn(),
-        printErrorAndExit: jest.fn(),
-        getInstance: jest.fn((): any => mLogger)
-    } as any;
-    return {
-        Logger: mLogger,
-        LogDataFactory: {
-            newInstance: jest.fn((code: string, description: string) => ({ code, description }))
-        }
-    };
-});
 
 const USE_STATIC_SINGLE = `'use static'\nexport function foo() {}\n`;
 const USE_STATIC_DOUBLE = `"use static";\nexport function bar() {}\n`;
 const NO_USE_STATIC = `export function baz() {}\n`;
+
+// Mirrors the `systemApiPathSection` the ArkTSConfigGenerator builds from the SDK
+// (api / arkts / kits declaration files): the keys are import specifiers.
+const SYSTEM_API_SECTION: Record<string, string[]> = {
+    '@ohos.foo': ['/sdk/api/@ohos.foo.d.ets'],
+    '@ohos.api': ['/sdk/api/@ohos.api.d.ets'],
+    '@arkts.api': ['/sdk/arkts/@arkts.api.d.ets'],
+    '@kit.api': ['/sdk/kits/@kit.api.d.ets']
+};
 
 let tmpDir: string;
 let moduleRootPath: string;
@@ -81,6 +72,25 @@ function makeBuildConfig(configJson5: string, overrides: Partial<BuildConfig> = 
     } as BuildConfig;
 }
 
+/**
+ * Collects mock config info and asserts that the given configuration is rejected
+ * with the mock-specific error code, the fixed short description, and a detailed
+ * cause (the "Error Message" line) containing `causePart`.
+ */
+function expectMockConfigError(configJson5: string, causePart: string, overrides: Partial<BuildConfig> = {}): void {
+    let thrown: unknown;
+    try {
+        new MockConfigGenerator(makeBuildConfig(configJson5, overrides), SYSTEM_API_SECTION).collectMockConfigInfo();
+    } catch (error) {
+        thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(DriverError);
+    const logData = (thrown as DriverError).logData;
+    expect(logData.code).toBe('11410040');
+    expect(logData.description).toBe('Incorrect mock configuration.');
+    expect(logData.cause).toContain(causePart);
+}
+
 beforeEach(() => {
     jest.clearAllMocks();
     setupFixtures();
@@ -93,8 +103,8 @@ afterEach(() => {
 describe('MockConfigGenerator construction', () => {
     test('each construction creates an independent instance (not shared)', () => {
         const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/ohos_mock.ets" } }`);
-        const a = new MockConfigGenerator(bc);
-        const b = new MockConfigGenerator(bc);
+        const a = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
+        const b = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
         expect(a).not.toBe(b);
         // mutating one must not affect the other
         expect(a.getMockConfigInfo()).not.toBe(b.getMockConfigInfo());
@@ -104,7 +114,7 @@ describe('MockConfigGenerator construction', () => {
 describe('MockConfigGenerator mockParams getter', () => {
     test('exposes the buildConfig mockParams', () => {
         const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/ohos_mock.ets" } }`);
-        const gen = new MockConfigGenerator(bc);
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
         expect(gen.mockParams.mockConfigPath).toBe(bc.mockParams!.mockConfigPath);
     });
 });
@@ -113,7 +123,7 @@ describe('MockConfigGenerator collectMockConfigInfo - valid', () => {
     test('system API key (@ohos/@arkts/@kit) is kept as-is with an absolute mock source', () => {
         for (const prefix of ['@ohos', '@arkts', '@kit']) {
             const bc = makeBuildConfig(`{ "${prefix}.api": { source: "mocks/ohos_mock.ets" } }`);
-            const gen = new MockConfigGenerator(bc);
+            const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
             gen.collectMockConfigInfo();
             const info = gen.getMockConfigInfo();
             expect(info[`${prefix}.api`]).toBeDefined();
@@ -123,7 +133,7 @@ describe('MockConfigGenerator collectMockConfigInfo - valid', () => {
 
     test('relative key is resolved to an absolute key', () => {
         const bc = makeBuildConfig(`{ "./bar": { source: "mocks/rel_mock.ets" } }`);
-        const gen = new MockConfigGenerator(bc);
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
         gen.collectMockConfigInfo();
         const info = gen.getMockConfigInfo();
 
@@ -135,7 +145,7 @@ describe('MockConfigGenerator collectMockConfigInfo - valid', () => {
 
     test('source-file key (no prefix) resolves to src/main/ets', () => {
         const bc = makeBuildConfig(`{ "util": { source: "mocks/util_mock.ets" } }`);
-        const gen = new MockConfigGenerator(bc);
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
         gen.collectMockConfigInfo();
         const info = gen.getMockConfigInfo();
 
@@ -146,48 +156,46 @@ describe('MockConfigGenerator collectMockConfigInfo - valid', () => {
     });
 
     test('double-quoted "use static" first line is rejected (only single-quote \'use static\' accepted)', () => {
-        const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/dq_mock.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "@ohos.foo": { source: "mocks/dq_mock.ets" } }`,
+            `The mock file for "mocks/dq_mock.ets" is invalid`);
     });
 });
 
 describe('MockConfigGenerator collectMockConfigInfo - invalid', () => {
     test('entry missing a string source field reports an error', () => {
-        const bc = makeBuildConfig(`{ "@ohos.foo": {} }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "@ohos.foo": {} }`,
+            'Each entry must be an object with a "source" string field');
     });
 
     test('mock source without a use-static first line reports an error', () => {
-        const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/bad_mock.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "@ohos.foo": { source: "mocks/bad_mock.ets" } }`,
+            `The mock file for "mocks/bad_mock.ets" is invalid`);
     });
 
     test('key file without a use-static first line reports an error', () => {
         writeUseStaticFile(path.join(moduleRootPath, 'src', 'main', 'ets', 'nostatic.ets'), NO_USE_STATIC);
-        const bc = makeBuildConfig(`{ "nostatic": { source: "mocks/ohos_mock.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "nostatic": { source: "mocks/ohos_mock.ets" } }`,
+            `The key file for "nostatic" is invalid`);
     });
 
     test('non-existent mock source reports an error', () => {
-        const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/nonexistent.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "@ohos.foo": { source: "mocks/nonexistent.ets" } }`,
+            'Source file not found under');
     });
 
     test('key that is not a system API / relative / dependency / source file reports an error', () => {
-        const bc = makeBuildConfig(`{ "no_such_key": { source: "mocks/ohos_mock.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "no_such_key": { source: "mocks/ohos_mock.ets" } }`,
+            'Key must be a system API');
     });
 
     test('relative key whose target file does not exist reports an error', () => {
-        const bc = makeBuildConfig(`{ "./missing": { source: "mocks/ohos_mock.ets" } }`);
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "./missing": { source: "mocks/ohos_mock.ets" } }`,
+            `The key file for "./missing" is invalid`);
+    });
+
+    test.each(['@ohos', '@arkts', '@kit'])('non-existent system API key (%s.nonexist) reports an error', (prefix) => {
+        expectMockConfigError(`{ "${prefix}.nonexist": { source: "mocks/ohos_mock.ets" } }`,
+            `System API "${prefix}.nonexist" does not exist`);
     });
 });
 
@@ -210,10 +218,9 @@ describe('MockConfigGenerator validateKeyFile - dependency branch', () => {
         const bc = makeBuildConfig(`{ "@lib/har": { source: "mocks/ohos_mock.ets" } }`, {
             dependencyModuleList: [makeDep(depPath)]
         });
-        const gen = new MockConfigGenerator(bc);
-        gen.collectMockConfigInfo();
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
+        expect(() => gen.collectMockConfigInfo()).not.toThrow();
         const info = gen.getMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).not.toHaveBeenCalled();
         expect(info['@lib/har']).toBeDefined();
         expect(info['@lib/har'].source).toBe(path.join(moduleRootPath, 'mocks', 'ohos_mock.ets'));
     });
@@ -224,8 +231,8 @@ describe('MockConfigGenerator validateKeyFile - dependency branch', () => {
         const bc = makeBuildConfig(`{ "@lib/har/sub": { source: "mocks/ohos_mock.ets" } }`, {
             dependencyModuleList: [makeDep(depPath)]
         });
-        const gen = new MockConfigGenerator(bc);
-        gen.collectMockConfigInfo();
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
+        expect(() => gen.collectMockConfigInfo()).not.toThrow();
         const info = gen.getMockConfigInfo();
 
         const expectedSource = path.join(moduleRootPath, 'mocks', 'ohos_mock.ets');
@@ -233,24 +240,22 @@ describe('MockConfigGenerator validateKeyFile - dependency branch', () => {
         const absKey = path.join(depPath, 'sub.ets');
         expect(info[absKey]).toBeDefined();
         expect(info[absKey].source).toBe(expectedSource);
-        expect(MockLogger.printErrorAndExit).not.toHaveBeenCalled();
     });
 
     test('dependency sub-path that does not exist reports an error', () => {
         const depPath = path.join(tmpDir, 'dep');
         // dep/sub.ets intentionally NOT created
-        const bc = makeBuildConfig(`{ "@lib/har/sub": { source: "mocks/ohos_mock.ets" } }`, {
-            dependencyModuleList: [makeDep(depPath)]
-        });
-        new MockConfigGenerator(bc).collectMockConfigInfo();
-        expect(MockLogger.printErrorAndExit).toHaveBeenCalled();
+        expectMockConfigError(`{ "@lib/har/sub": { source: "mocks/ohos_mock.ets" } }`,
+            'File not found under', {
+                dependencyModuleList: [makeDep(depPath)]
+            });
     });
 });
 
 describe('MockConfigGenerator getMockConfigInfo', () => {
     test('returns an empty map before collectMockConfigInfo and a populated map after', () => {
         const bc = makeBuildConfig(`{ "@ohos.foo": { source: "mocks/ohos_mock.ets" } }`);
-        const gen = new MockConfigGenerator(bc);
+        const gen = new MockConfigGenerator(bc, SYSTEM_API_SECTION);
         expect(Object.keys(gen.getMockConfigInfo())).toHaveLength(0);
 
         gen.collectMockConfigInfo();
