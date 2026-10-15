@@ -465,10 +465,38 @@ private:
     return s << ss.rdbuf();
 }
 
-bool ShouldSkipBridgeCreation([[maybe_unused]] Locator const &locator, ir::ClassDefinition const *classDefinition,
+// UnboxPhase, running later, rewrites an `undefined` signature return to `void` and rebuilds the internal
+// name; apply the same normalization when comparing returns.
+checker::Type const *UnboxNormalizedReturnType(Locator const &locator, checker::Type const *type)
+{
+    return type != nullptr && type->IsETSUndefinedType() ? locator.Checker()->GlobalVoidType() : type;
+}
+
+bool EmitsSameAssemblerSignature(Locator const &locator, ir::ScriptFunction const *func,
+                                 checker::Signature const *superSign)
+{
+    if (!ETSChecker::HasSameAssemblySignature(func->Signature(), superSign, false)) {
+        return false;
+    }
+    auto const *funcReturn = UnboxNormalizedReturnType(locator, func->Signature()->ReturnType());
+    auto const *superReturn = UnboxNormalizedReturnType(locator, superSign->ReturnType());
+    return funcReturn->ToAssemblerTypeWithRank() == superReturn->ToAssemblerTypeWithRank();
+}
+
+bool ShouldSkipBridgeCreation(Locator const &locator, ir::ClassDefinition const *classDefinition,
                               ir::MethodDefinition const *originalMethod, checker::Signature const *superSign)
 {
     auto const &methodName = superSign->Function()->Id()->Name();
+
+    if (EmitsSameAssemblerSignature(locator, originalMethod->Function(), superSign)) {
+        return true;
+    }
+    for (auto const *overload : originalMethod->Overloads()) {
+        if (EmitsSameAssemblerSignature(locator, overload->Function(), superSign)) {
+            return true;
+        }
+    }
+
     for (auto const *member : classDefinition->Body()) {
         if (!member->IsMethodDefinition()) {
             continue;
