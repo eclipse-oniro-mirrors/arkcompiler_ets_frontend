@@ -500,4 +500,187 @@ TEST_F(LSPCompletionsEntryDetailsTests, CreateDisplayForTypeAliasTypeParameter)
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForParameter)
+{
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_param.ets";
+    std::string sourceText = "function stmtGreet(stmtName: string): string {\n    return stmtName;\n}\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "stmtName";
+    // Position inside the parameter usage; the details entry is resolved from
+    // the identifier declaration chain, not from the touching token itself.
+    size_t offset = sourceText.find("return stmtName") + std::string("return ").size();
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, fileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "parameter";
+    const std::string kindModifiers;
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("stmtName", "functionParameter");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("string", "typeName");
+    auto expectedCompletionEntryDetails =
+        CompletionEntryDetails(entryName, kind, kindModifiers, expected, document, source, sourceDisplay, fileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForEnumMember)
+{
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_enum_member.ets";
+    std::string sourceText = "enum StmtColor { Red = 1 }\nlet c1: StmtColor = StmtColor.Red;\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "Red";
+    size_t offset = sourceText.find("StmtColor.Red") + std::string("StmtColor.").size();
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, fileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "enum member";
+    const std::string kindModifiers = "static public readonly";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("StmtColor", "enumName");
+    expected.emplace_back(".", "punctuation");
+    expected.emplace_back("Red", "enumMember");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("=", "operator");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("1", "text");
+    auto expectedCompletionEntryDetails =
+        CompletionEntryDetails(entryName, kind, kindModifiers, expected, document, source, sourceDisplay, fileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForTypeAliasDeclaration)
+{
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_alias.ets";
+    std::string sourceText = "type StmtAlias = string;\nlet a1: StmtAlias = \"x\";\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "StmtAlias";
+    size_t offset = sourceText.find("let a1") + 4;
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, fileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "type alias";
+    const std::string kindModifiers = "static public";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("type", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("StmtAlias", "className");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("=", "operator");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("string", "typeName");
+    auto expectedCompletionEntryDetails =
+        CompletionEntryDetails(entryName, kind, kindModifiers, expected, document, source, sourceDisplay, fileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForEnumName)
+{
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_enum_name.ets";
+    std::string sourceText = "enum StmtWeek { Mon = 1, Tue = 2 }\nlet d1: StmtWeek = StmtWeek.Tue;\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "StmtWeek";
+    size_t offset = sourceText.find("StmtWeek.Tue") + std::string("StmtWeek.").size();
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, fileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "enum";
+    const std::string kindModifiers = "final";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("enum", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("StmtWeek", "enumName");
+    auto expectedCompletionEntryDetails =
+        CompletionEntryDetails(entryName, kind, kindModifiers, expected, document, source, sourceDisplay, fileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForTypeParameter)
+{
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_type_param.ets";
+    std::string sourceText = "class StmtBox<StmtT> {\n    items: StmtT[] = [];\n}\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "StmtT";
+    size_t offset = sourceText.find("items") + 1;
+    auto completionEntryDetails = lspApi->getCompletionEntryDetails(entryName, fileName.c_str(), ctx, offset);
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "type parameter";
+    const std::string kindModifiers;
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("StmtT", "typeParameter");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("in", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("StmtBox", "className");
+    expected.emplace_back("<", "punctuation");
+    expected.emplace_back("StmtT", "typeParameter");
+    expected.emplace_back(">", "punctuation");
+    auto expectedCompletionEntryDetails =
+        CompletionEntryDetails(entryName, kind, kindModifiers, expected, document, source, sourceDisplay, fileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsNegativeFallbacks)
+{
+    // Null context must yield the exact empty details value.
+    auto nullCtxDetails = ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl(
+        nullptr, 0, "completion_entry_details_neg.ets", "StmtNope");
+    ASSERT_EQ(nullCtxDetails, CompletionEntryDetails());
+
+    Initializer initializer = Initializer();
+    std::string fileName = "completion_entry_details_neg.ets";
+    std::string sourceText = "class StmtNegHost {\n    negValue: number = 1;\n}\nlet negUse = 1;\n";
+    es2panda_Context *ctx = initializer.CreateContext(fileName.c_str(), ES2PANDA_STATE_CHECKED, sourceText.c_str());
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    // Position past the end of the source touches no token.
+    auto noTokenDetails = lspApi->getCompletionEntryDetails("negValue", fileName.c_str(), ctx, sourceText.size());
+    ASSERT_EQ(noTokenDetails, CompletionEntryDetails());
+
+    // An entry name that does not appear in the source resolves to nothing.
+    auto noNameDetails = lspApi->getCompletionEntryDetails("StmtGhostName", fileName.c_str(), ctx, 4);
+    ASSERT_EQ(noNameDetails, CompletionEntryDetails());
+    initializer.DestroyContext(ctx);
+
+    // An identifier without a resolvable declaration cannot produce details.
+    Initializer errInitializer = Initializer();
+    std::string errFile = "completion_entry_details_unresolved.ets";
+    std::string errSourceText = "class StmtNegHost2 {\n    negValue2: number = 1;\n}\nlet negVal = negGhostIdent;\n";
+    es2panda_Context *errCtx =
+        errInitializer.CreateContext(errFile.c_str(), ES2PANDA_STATE_CHECKED, errSourceText.c_str());
+    LSPAPI const *errLspApi = GetImpl();
+    size_t ghostOffset = errSourceText.find("negGhostIdent") + 2;
+    auto unresolvedDetails =
+        errLspApi->getCompletionEntryDetails("negGhostIdent", errFile.c_str(), errCtx, ghostOffset);
+    ASSERT_EQ(unresolvedDetails, CompletionEntryDetails());
+    errInitializer.DestroyContext(errCtx);
+}
+
 }  // namespace

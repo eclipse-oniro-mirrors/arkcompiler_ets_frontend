@@ -130,4 +130,42 @@ TEST_F(LspDocumentHighlights2, NonIdentifierPositionsReturnEmptyHighlights)
     }
 }
 
+// PF-007 (public contract) — document highlights on a class property across its WRITE and
+// READ uses: highlighting exactly on the declaration identifier yields the WRITTEN_REFERENCE
+// definition span (decl start == node start), while the assignment write target in `c.v = 1`
+// and the read in `let r = c.v` both surface as REFERENCE spans of length 1. Three queries on
+// one CHECKED context must return the identical sorted span set.
+TEST_F(LspDocumentHighlights2, WrittenAndReadReferenceSpansOnPropertyAssignment)
+{
+    std::vector<std::string> files = {"WrittenAndReadReferenceSpans.ets"};
+    std::vector<std::string> texts = {"class C {\n    v: number = 0;\n}\nlet c = new C();\nc.v = 1;\nlet r = c.v;\n"};
+    auto filePaths = CreateTempFile(files, texts);
+    ASSERT_EQ(filePaths.size(), files.size());
+
+    Initializer initializer;
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ASSERT_NE(context, nullptr);
+    LSPAPI const *lspApi = GetImpl();
+    ASSERT_TRUE(lspApi->buildSymbolReferenceIndexForContext(context));
+
+    const std::string &source = texts[0];
+    const size_t declPos = source.find("v:");
+    const size_t writeUsePos = source.find("c.v") + 2U;
+    const size_t readUsePos = source.rfind("c.v") + 2U;
+    ASSERT_NE(declPos, std::string::npos);
+
+    const std::vector<SpanExpectation> expectedSpans {{declPos, 1U, HighlightSpanKind::WRITTEN_REFERENCE},
+                                                      {writeUsePos, 1U, HighlightSpanKind::REFERENCE},
+                                                      {readUsePos, 1U, HighlightSpanKind::REFERENCE}};
+
+    auto declResult = lspApi->getDocumentHighlights(context, declPos);
+    auto writeResult = lspApi->getDocumentHighlights(context, writeUsePos);
+    auto readResult = lspApi->getDocumentHighlights(context, readUsePos);
+    initializer.DestroyContext(context);
+
+    AssertHighlightSpans(declResult, filePaths[0], expectedSpans);
+    AssertHighlightSpans(writeResult, filePaths[0], expectedSpans);
+    AssertHighlightSpans(readResult, filePaths[0], expectedSpans);
+}
+
 }  // namespace

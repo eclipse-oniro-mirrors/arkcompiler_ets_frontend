@@ -40,6 +40,18 @@ void AssertDiagnosticRange(const Diagnostic &diagnostic, const ExpectedDiagnosti
     ASSERT_EQ(diagnostic.range_.end.line_, expected.endLine);
     ASSERT_EQ(diagnostic.range_.end.character_, expected.endCharacter);
 }
+
+// Fails only the current test (instead of aborting the whole binary via
+// std::bad_variant_access) when the diagnostic code variant stops holding an int.
+int GetDiagnosticCode(const Diagnostic &diagnostic)
+{
+    const auto *code = std::get_if<int>(&diagnostic.code_);
+    if (code == nullptr) {
+        ADD_FAILURE() << "diagnostic code_ does not hold an int variant";
+        return -1;
+    }
+    return *code;
+}
 }  // namespace
 
 TEST_F(LspDiagnosticsTests, GetSemanticDiagnostics1)
@@ -84,7 +96,7 @@ add("1", 2);)");
     ASSERT_EQ(result.diagnostic[firstIndex].range_.end.line_, expectedFirstEndLine);
     ASSERT_EQ(result.diagnostic[firstIndex].range_.end.character_, expectedFirstEndCharacter);
     ASSERT_EQ(result.diagnostic[firstIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[firstIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[firstIndex]), 0);
     ASSERT_EQ(result.diagnostic[firstIndex].message_, R"(Type '"hello"' cannot be assigned to type 'Double')");
     ASSERT_EQ(result.diagnostic[firstIndex].codeDescription_.href_, "test code description");
     auto const expectedSecondStartLine = 5;
@@ -96,7 +108,7 @@ add("1", 2);)");
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.end.line_, expectedSecondEndLine);
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.end.character_, expectedSecondEndCharacter);
     ASSERT_EQ(result.diagnostic[thirdIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[thirdIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[thirdIndex]), 0);
     ASSERT_EQ(result.diagnostic[thirdIndex].message_, R"(Type '"1"' is not compatible with type 'Double' at index 1)");
     ASSERT_EQ(result.diagnostic[thirdIndex].codeDescription_.href_, "test code description");
 }
@@ -128,6 +140,70 @@ let arr2: any[] = arr)");
     ASSERT_EQ(result.diagnostic.size(), expectedErrorCount);
     AssertDiagnosticRange(result.diagnostic[firstErrorIndex], firstAnyRange);
     AssertDiagnosticRange(result.diagnostic[secondErrorIndex], secondAnyRange);
+}
+
+// PF-001..PF-005 — forbidden-any array-context fallback chain via the public
+// getSemanticDiagnostics API. On `interface I { p: any[] }` the checker emits two
+// 'any' type annotation is forbidden diagnostics and the first one is recorded on a
+// lowering-cloned identifier whose offset maps back to the property name, so
+// FindAnyAtPosition (internal_api.cpp:1228) misses at that offset and the fallback
+// chain GetOriginalArrayElementType -> FindOriginalArrayElementTypeAround ->
+// FindOriginalArrayElementTypeInSubtree -> IsArrayTypeSearchBoundary -> GetTypeRangeNode
+// (internal_api.cpp:1142-1226) reconstructs the real `any` token range for both entries.
+TEST_F(LspDiagnosticsTests, GetSemanticDiagnosticsAnyInterfacePropertyRunsArrayFallback)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx =
+        initializer.CreateContext("GetSemanticDiagnosticsAnyInterfaceProperty.ets", ES2PANDA_STATE_CHECKED,
+                                  R"(interface I {
+    p: any[]
+})");
+    LSPAPI const *lspApi = GetImpl();
+    DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
+    initializer.DestroyContext(ctx);
+
+    constexpr size_t expectedErrorCount = 2;
+    constexpr int expectedErrorCode = 155545;
+    constexpr size_t anyLine = 2;
+    constexpr size_t anyStartCharacter = 8;
+    constexpr size_t anyEndCharacter = 11;
+    constexpr ExpectedDiagnosticRange anyRange {anyLine, anyStartCharacter, anyLine, anyEndCharacter};
+
+    ASSERT_EQ(result.diagnostic.size(), expectedErrorCount);
+    for (const auto &diagnostic : result.diagnostic) {
+        AssertDiagnosticRange(diagnostic, anyRange);
+        ASSERT_EQ(diagnostic.severity_, DiagnosticSeverity::Error);
+        ASSERT_EQ(GetDiagnosticCode(diagnostic), expectedErrorCode);
+        ASSERT_EQ(diagnostic.source_, "any");
+    }
+}
+
+// PF-005 negative contract: `interface I { p: FixedArray<any> }` has no array-lowering
+// original element node, so the fallback breaks on the CLASS_PROPERTY search boundary
+// (IsArrayTypeSearchBoundary, internal_api.cpp:1195-1212) and returns nullopt; the
+// diagnostic degrades to the touching-token span and text, i.e. the property name `p`.
+TEST_F(LspDiagnosticsTests, GetSemanticDiagnosticsForbiddenAnyWithoutArrayElementDegradesToTouchingToken)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("GetSemanticDiagnosticsFixedArrayAny.ets", ES2PANDA_STATE_CHECKED,
+                                                      R"(interface I { p: FixedArray<any> })");
+    LSPAPI const *lspApi = GetImpl();
+    DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
+    initializer.DestroyContext(ctx);
+
+    constexpr size_t expectedErrorCount = 1;
+    constexpr int expectedErrorCode = 155545;
+    constexpr size_t propertyNameLine = 1;
+    constexpr size_t propertyNameStartCharacter = 15;
+    constexpr size_t propertyNameEndCharacter = 16;
+    constexpr ExpectedDiagnosticRange propertyNameRange {propertyNameLine, propertyNameStartCharacter, propertyNameLine,
+                                                         propertyNameEndCharacter};
+
+    ASSERT_EQ(result.diagnostic.size(), expectedErrorCount);
+    AssertDiagnosticRange(result.diagnostic[0], propertyNameRange);
+    ASSERT_EQ(result.diagnostic[0].severity_, DiagnosticSeverity::Error);
+    ASSERT_EQ(GetDiagnosticCode(result.diagnostic[0]), expectedErrorCode);
+    ASSERT_EQ(result.diagnostic[0].source_, "p");
 }
 
 TEST_F(LspDiagnosticsTests, GetSyntacticDiagnostics1)
@@ -168,7 +244,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[0].range_.end.line_, expectedFirstEndLine);
     ASSERT_EQ(result.diagnostic[0].range_.end.character_, expectedFirstEndCharacter);
     ASSERT_EQ(result.diagnostic[0].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[0].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[0]), 0);
     auto const expectedSecondStartLine = 1;
     auto const expectedSecondStartCharacter = 9;
     auto const expectedSecondEndLine = 1;
@@ -178,7 +254,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[1].range_.end.line_, expectedSecondEndLine);
     ASSERT_EQ(result.diagnostic[1].range_.end.character_, expectedSecondEndCharacter);
     ASSERT_EQ(result.diagnostic[1].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[1].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[1]), 0);
     auto const thirdIndex = 2;
     auto const expectedThirdStartLine = 1;
     auto const expectedThirdStartCharacter = 9;
@@ -189,7 +265,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.end.line_, expectedThirdEndLine);
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.end.character_, expectedThirdEndCharacter);
     ASSERT_EQ(result.diagnostic[thirdIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[thirdIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[thirdIndex]), 0);
     ASSERT_EQ(result.diagnostic[thirdIndex].message_, R"(Unexpected token, expected ',' or ')'.)");
 }
 
@@ -215,7 +291,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[forthIndex].range_.end.line_, expectedForthEndLine);
     ASSERT_EQ(result.diagnostic[forthIndex].range_.end.character_, expectedForthEndCharacter);
     ASSERT_EQ(result.diagnostic[forthIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[forthIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[forthIndex]), 0);
     ASSERT_EQ(result.diagnostic[forthIndex].message_, R"(Unexpected token ','.)");
     ASSERT_EQ(result.diagnostic[forthIndex].codeDescription_.href_, "test code description");
     auto const fifthIndex = 6;
@@ -228,7 +304,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[fifthIndex].range_.end.line_, expectedFifthEndLine);
     ASSERT_EQ(result.diagnostic[fifthIndex].range_.end.character_, expectedFifthEndCharacter);
     ASSERT_EQ(result.diagnostic[fifthIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[fifthIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[fifthIndex]), 0);
     ASSERT_EQ(result.diagnostic[fifthIndex].message_, R"(Label must be followed by a loop statement.)");
     ASSERT_EQ(result.diagnostic[fifthIndex].codeDescription_.href_, "test code description");
 }
@@ -255,7 +331,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[sixthIndex].range_.end.line_, expectedSixthEndLine);
     ASSERT_EQ(result.diagnostic[sixthIndex].range_.end.character_, expectedSixthEndCharacter);
     ASSERT_EQ(result.diagnostic[sixthIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[sixthIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[sixthIndex]), 0);
     ASSERT_EQ(result.diagnostic[sixthIndex].message_, R"(Unexpected token ')'.)");
     ASSERT_EQ(result.diagnostic[sixthIndex].codeDescription_.href_, "test code description");
     auto const sevenIndex = 9;
@@ -268,7 +344,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[sevenIndex].range_.end.line_, expectedSeventhEndLine);
     ASSERT_EQ(result.diagnostic[sevenIndex].range_.end.character_, expectedSeventhEndCharacter);
     ASSERT_EQ(result.diagnostic[sevenIndex].severity_, DiagnosticSeverity::Error);
-    ASSERT_NE(std::get<int>(result.diagnostic[sevenIndex].code_), 0);
+    ASSERT_NE(GetDiagnosticCode(result.diagnostic[sevenIndex]), 0);
     ASSERT_EQ(result.diagnostic[sevenIndex].message_, R"(return keyword should be used in function body.)");
     ASSERT_EQ(result.diagnostic[sevenIndex].codeDescription_.href_, "test code description");
 }
