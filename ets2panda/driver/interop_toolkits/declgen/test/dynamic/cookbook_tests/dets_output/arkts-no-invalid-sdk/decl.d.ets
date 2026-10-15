@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Callback as A } from "./@ohos.base";
-import { A as A2 } from "./bridge2";
 import { LocalStorage } from './@ohos.arkui.stateManagement';
 export declare const task: Any;
 export declare const task2: Any;
-export declare const a: A<string>;
-export declare const a2: A2<Any>;
-export declare function testFoo(a: A<string>): A2<Any>;
+export declare const a: Any;
+export declare const a2: Any;
+export declare function testFoo(a: Any): Any;
 export declare class TestClass {
     v1: Any;
-    v2: A<number>;
-    v3: A2<Any>;
+    v2: Any;
+    v3: Any;
 }

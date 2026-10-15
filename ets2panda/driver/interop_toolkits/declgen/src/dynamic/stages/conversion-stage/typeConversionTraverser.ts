@@ -87,6 +87,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
           this[FaultID.RemoveLimitDecorator].bind(this),
           this[FaultID.NoOptionalMemberMethod].bind(this),
           this[FaultID.ErrorTypeAlias].bind(this),
+          this[FaultID.NoInvalidSDKHeritage].bind(this),
         ],
       ],
       [
@@ -95,6 +96,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
           this[FaultID.NoReservedKeywordAsIdentifier].bind(this),
           this[FaultID.NoETSKeyword].bind(this),
           this[FaultID.NoOptionalMemberMethod].bind(this),
+          this[FaultID.NoInvalidSDKHeritage].bind(this),
         ],
       ],
       [
@@ -278,10 +280,46 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
   }
 
   /**
+   * Rule: `arkts-convert-invalid-sdk-heritage-to-any`
+   *
+   * When a class/interface `extends`/`implements` a type declared in an
+   * incompatible SDK, the heritage cannot be expressed in ArkTS (it would
+   * degrade to `extends Any`). Collapse the whole declaration into a
+   * `type X = Any` alias, mirroring `ErrorTypeAlias`.
+   */
+  private [FaultID.NoInvalidSDKHeritage](node: ts.Node): ts.VisitResult<ts.Node> {
+    if (!ts.isClassDeclaration(node) && !ts.isInterfaceDeclaration(node)) {
+      return node;
+    }
+
+    if (!node.name) {
+      return node;
+    }
+
+    if (!isInheritingFromInvalidSDK(node, this.typeChecker)) {
+      return node;
+    }
+
+    const filteredModifiers = node.modifiers?.filter(
+      (mod) => ts.isModifier(mod) && mod.kind !== ts.SyntaxKind.DeclareKeyword,
+    );
+
+    return this.context.factory.createTypeAliasDeclaration(
+      filteredModifiers as ts.NodeArray<ts.Modifier> | undefined,
+      node.name,
+      node.typeParameters,
+      typeUtils.createJSValueTypeNode(this.context),
+    );
+  }
+
+  /**
    * Rule: `arkts-convert-incompatible-sdk-types-to-any`
    */
   private [FaultID.NoInvalidSDKType](node: ts.Node): ts.VisitResult<ts.Node> {
     if (ts.isTypeReferenceNode(node)) {
+      if (isQualifiedNameFromInvalidSDK(node, this.typeChecker)) {
+        return typeUtils.createJSValueTypeNode(this.context);
+      }
       const type = this.typeChecker.getTypeAtLocation(node);
       const symbol = type.getSymbol();
       if (!symbol) {
@@ -2054,6 +2092,80 @@ function filterExportAssignmentFromInvalidSDK(
   return stmt;
 }
 
+function isQualifiedNameFromInvalidSDK(
+  node: ts.TypeReferenceNode,
+  checker: ts.TypeChecker
+): boolean {
+  const typeName = node.typeName;
+  if (!ts.isQualifiedName(typeName)) {
+    return false;
+  }
+  const sourceFile = ts.getOriginalNode(node).getSourceFile();
+  const importBindings = collectImportBindings(sourceFile, checker);
+  const leftMostIdent = getLeftMostIdentifier(typeName);
+  if (!leftMostIdent) {
+    return false;
+  }
+  const bindingSym = importBindings.get(leftMostIdent.text);
+  if (bindingSym) {
+    const real = checker.getAliasedSymbol(bindingSym);
+    if (isSymbolFromInvalidSDK(real, sourceFile)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getLeftMostIdentifier(entityName: ts.EntityName): ts.Identifier | undefined {
+  let current: ts.EntityName = entityName;
+  while (ts.isQualifiedName(current)) {
+    current = current.left;
+  }
+  return ts.isIdentifier(current) ? current : undefined;
+}
+
+function collectImportBindings(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<string, ts.Symbol> {
+  const bindings = new Map<string, ts.Symbol>();
+  for (const stmt of sourceFile.statements) {
+    if (!ts.isImportDeclaration(stmt)) {
+      continue;
+    }
+    const clause = stmt.importClause;
+    if (!clause) {
+      continue;
+    }
+    collectClauseBindings(clause, checker, bindings);
+  }
+  return bindings;
+}
+
+function collectClauseBindings(
+  clause: ts.ImportClause,
+  checker: ts.TypeChecker,
+  bindings: Map<string, ts.Symbol>,
+): void {
+  if (clause.name) {
+    addImportBinding(clause.name, checker, bindings);
+  }
+  if (!clause.namedBindings) {
+    return;
+  }
+  if (ts.isNamedImports(clause.namedBindings)) {
+    for (const el of clause.namedBindings.elements) {
+      addImportBinding(el.name, checker, bindings);
+    }
+  } else if (ts.isNamespaceImport(clause.namedBindings)) {
+    addImportBinding(clause.namedBindings.name, checker, bindings);
+  }
+}
+
+function addImportBinding(name: ts.Identifier, checker: ts.TypeChecker, bindings: Map<string, ts.Symbol>): void {
+  const sym = checker.getSymbolAtLocation(name);
+  if (sym) {
+    bindings.set(name.text, sym);
+  }
+}
+
 function isSymbolFromInvalidSDK(symbol: ts.Symbol, currentFile: ts.SourceFile): boolean {
   const declarations = symbol.getDeclarations();
   if (declarations) {
@@ -2254,4 +2366,41 @@ function implementsTypeError(
     return true;
   }
   return hasErrorInBaseTypes(typeChecker.getDeclaredTypeOfSymbol(resolved), typeChecker, visited);
+}
+
+/**
+ * Whether a class/interface heritage clause references a type declared in an
+ * incompatible SDK. Such a heritage cannot be represented in ArkTS, so the
+ * declaration is collapsed to a `type X = Any` alias.
+ */
+function isInheritingFromInvalidSDK(
+  node: ts.ClassDeclaration | ts.InterfaceDeclaration,
+  typeChecker: ts.TypeChecker,
+): boolean {
+  const heritageClauses = node.heritageClauses;
+  if (!heritageClauses) {
+    return false;
+  }
+  const currentFile = ts.getOriginalNode(node).getSourceFile();
+  for (const clause of heritageClauses) {
+    for (const typeExpr of clause.types) {
+      if (isHeritageTypeFromInvalidSDK(typeExpr, typeChecker, currentFile)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function isHeritageTypeFromInvalidSDK(
+  typeExpr: ts.ExpressionWithTypeArguments,
+  typeChecker: ts.TypeChecker,
+  currentFile: ts.SourceFile | undefined,
+): boolean {
+  const symbol = typeChecker.getSymbolAtLocation(typeExpr.expression);
+  if (!symbol || !currentFile) {
+    return false;
+  }
+  const resolved = symbol.flags & ts.SymbolFlags.Alias ? typeChecker.getAliasedSymbol(symbol) : symbol;
+  return isSymbolFromInvalidSDK(resolved, currentFile);
 }

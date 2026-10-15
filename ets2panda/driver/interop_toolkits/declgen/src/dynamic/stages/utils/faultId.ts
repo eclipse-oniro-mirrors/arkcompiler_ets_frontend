@@ -173,6 +173,7 @@ export enum FaultID {
   FixRestParamArrayConflict,
   InteropTags,
   ErrorTypeAlias,
+  NoInvalidSDKHeritage,
   // this should always be last enum
   LAST_ID,
 }
