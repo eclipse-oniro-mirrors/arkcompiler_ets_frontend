@@ -56,8 +56,11 @@ function parseContent(content: string, packageName: string, configPath: string):
     return JSON5.parse(content);
   } catch (error) {
     throw new InteropConfigError({
-      description: `The interop configuration for package "${packageName}" could not be parsed.`,
-      cause: errorMessage(error, 'unknown interop configuration failure'),
+      description: 'Invalid interop configuration.',
+      cause: `Package "${packageName}" configuration parse error: ${errorMessage(
+        error,
+        'unknown interop configuration failure',
+      )}`,
       position: configPath,
       solutions: ['Check that the file contains valid JSON5.'],
       moreInfo: { packageName },
@@ -132,7 +135,7 @@ function validateStringArrayField(
 function formatError(packageName: string, configPath: string, cause: string): InteropConfigError {
   return new InteropConfigError({
     description: 'Invalid interop configuration.',
-    cause,
+    cause: `Package "${packageName}" configuration format error: ${cause}`,
     position: configPath,
     solutions: ['Correct the field so that it matches the interop configuration format.'],
     moreInfo: { packageName },

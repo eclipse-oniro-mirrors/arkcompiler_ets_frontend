@@ -117,15 +117,12 @@ describe('GlueGenRunner data flow', () => {
         solutions: [],
       }),
     );
-    expect(logger.printError).toHaveBeenNthCalledWith(
-      2,
+    expect(logger.printError).toHaveBeenCalledTimes(1);
+    expect(logger.printError).not.toHaveBeenCalledWith(
       expect.objectContaining({
         code: '11420007',
-        description: 'Gluegen stopped because of an unexpected wrapper failure.',
-        cause: 'Build configuration field "projectRootPath" must be an absolute path.',
       }),
     );
-    expect(logger.printError).toHaveBeenCalledTimes(2);
     expect(logger.printErrorAndExit).not.toHaveBeenCalled();
   });
 
@@ -193,13 +190,56 @@ describe('GlueGenRunner data flow', () => {
         description: 'Native generation failed.',
       }),
     );
-    expect(fixture.logger.printError).toHaveBeenCalledWith(
+    expect(fixture.logger.printError).toHaveBeenCalledTimes(1);
+    expect(fixture.logger.printError).not.toHaveBeenCalledWith(
       expect.objectContaining({
         code: '11420007',
       }),
     );
     expect(fixture.logger.printWarn.mock.invocationCallOrder[0]).toBeLessThan(
       fixture.logger.printError.mock.invocationCallOrder[0] as number,
+    );
+  });
+
+  it('prints a single internal failure for an unexpected wrapper error', async () => {
+    const logger = fakeLogger();
+    const getLogger = jest.fn((_subsystemCode: string): ILogger => logger);
+    const blockerPath = path.join(testRoot, 'blocker');
+    await fs.writeFile(blockerPath, 'not a directory', 'utf8');
+    const config: BuildConfig = {
+      plugins: [],
+      buildMode: 'Debug',
+      buildType: 'BUILD',
+      projectRootPath: testRoot,
+      cachePath: path.join(blockerPath, 'cache'),
+      compileSdkVersion: 10,
+      compatibleSdkVersion: 10,
+      bundleName: 'com.example.app',
+      moduleType: 'entry',
+      moduleName: 'entry',
+      packageName: 'entry',
+      buildSdkPath: 'sdk/build',
+      hasMainModule: true,
+      modulePath: 'entry',
+      externalApiPaths: [],
+      byteCodeHar: false,
+      interopApiPaths: [],
+      declgenBridgeConfigPath: 'declgen-bridge.json',
+      interopConfigPath: '',
+      dependentModuleList: [],
+      getHvigorConsoleLogger: getLogger,
+    };
+    const runner = new GlueGenRunner(config);
+
+    await expect(runner.run()).rejects.toThrow('GlueGen Error');
+
+    expect(logger.printError).toHaveBeenCalledTimes(1);
+    expect(logger.printError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: '11420007',
+        description: 'Gluegen stopped because of an unexpected wrapper failure.',
+        cause: expect.any(String),
+      }),
     );
   });
 

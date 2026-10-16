@@ -22,7 +22,6 @@ export function errorMessage(error: unknown, fallback: string): string {
 
 export enum GlueGenErrorCode {
   INVALID_BUILD_CONFIG = '11420001',
-  INVALID_INTEROP_CONFIG = '11420002',
   GENERATE_INTEROP_FILE_LIST_FAIL = '11420003',
   GENERATE_ARKTS_CONFIG_FAIL = '11420004',
   NATIVE_PROCESS_FAIL = '11420005',

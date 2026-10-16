@@ -54,14 +54,16 @@ describe('reportDeclgenError', () => {
       description: 'The interop configuration for package "pkg" could not be read or parsed.',
       cause: 'unknown interop configuration failure',
       solutions: ['Check that the file exists and contains valid JSON5.'],
+      moreInfo: { packageName: 'pkg' },
     });
 
     reportDeclgenError(new common.errors.AggregateUserError([interopConfigError, sentinelError('a.ts')]));
 
     expect(printErrorSpy).toHaveBeenCalledTimes(2);
     const [firstData, secondData] = printErrorSpy.mock.calls.map((call) => call[0]);
-    expect(firstData.code).toBe(ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG);
+    expect(firstData.code).toBe(common.interopConfig.INTEROP_CONFIG_ERROR_CODE);
     expect(firstData.cause).toContain('unknown interop configuration failure');
+    expect(firstData.moreInfo).toEqual({ cn: '', en: '' });
     expect(secondData.code).toBe(ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG);
     expect(secondData.cause).toContain('a.ts');
   });
