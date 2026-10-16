@@ -14,12 +14,14 @@
  */
 
 #include <chrono>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <functional>
 #include <string>
 #include <thread>
 
+#include "ir/expressions/literals/numberLiteral.h"
 #include "lowering_test.h"
 
 namespace ark::es2panda {
@@ -71,6 +73,41 @@ TEST_F(LoweringTest, TestEnumMemberFromDeclarationModuleIsInlined)
 
         EXPECT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) {
             return node->IsStringLiteral() && node->AsStringLiteral()->Str().Is("local_asset_size");
+        }));
+    }
+
+    std::error_code error;
+    std::filesystem::remove_all(dir, error);
+}
+
+TEST_F(LoweringTest, TestEnumMemberFromNotEmittedModuleSourceIsInlined)
+{
+    // A per-file compilation parses an imported regular module (dep.ets) only for
+    // checking: its bytecode is not part of the produced file. A member read must
+    // therefore be inlined as a compile-time literal — a runtime valueOf() call
+    // would reference an enum class missing from the output.
+    const auto dir =
+        std::filesystem::temp_directory_path() /
+        ("enum_module_source_" + std::to_string(std::hash<std::thread::id> {}(std::this_thread::get_id())) + "_" +
+         std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    std::filesystem::create_directory(dir);
+    {
+        std::ofstream {dir / "dep.ets"} << "export enum Color { RED = 1, GREEN = 2 }\n";
+        std::ofstream {dir / "main.ets"} << "import { Color } from './dep';\n"
+                                            "function read(): int { return Color.RED; }\n";
+    }
+
+    const auto mainPath = (dir / "main.ets").string();
+
+    CONTEXT_FROM_FILE(ES2PANDA_STATE_LOWERED, mainPath.c_str())
+    {
+        const auto *const ast = GetAst();
+
+        // The inlined literal is the only way the member value can appear in the
+        // importer's AST: a runtime valueOf() read leaves no NumberLiteral.
+        EXPECT_TRUE(ast->IsAnyChild([](ir::AstNode *const node) {
+            return node->IsNumberLiteral() && node->AsNumberLiteral()->Number().CanGetValue<int32_t>() &&
+                   node->AsNumberLiteral()->Number().GetValue<int32_t>() == 1;
         }));
     }
 

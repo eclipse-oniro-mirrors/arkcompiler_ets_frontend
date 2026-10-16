@@ -1,5 +1,9 @@
-# Every non-comment line must appear in the importer's generated assembly.
-# The enum member read in an int context must be a runtime valueOf() call on
-# the imported enum class — never a folded immediate (ldai), which would go
-# stale when only dep.ets is recompiled in an incremental reload.
-dep.Color.valueOf
+# Every non-comment line must appear in the assembly of a simultaneous build of
+# this case's sources (importer + dep.ets), which models the original build the
+# reload flow patches: there the enum-defining file is compiled together with
+# the importer, and the enum member read in an int context must be a runtime
+# valueOf() call on the enum class — never a folded immediate (ldai), which
+# would go stale when only dep.ets is recompiled in an incremental reload.
+# The pattern targets the call site: the simultaneous dump also contains the
+# generated valueOf method definition, which must not satisfy the check.
+call.short dep.Color.valueOf

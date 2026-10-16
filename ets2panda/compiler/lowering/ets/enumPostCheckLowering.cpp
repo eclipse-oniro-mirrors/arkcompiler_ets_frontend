@@ -356,17 +356,32 @@ static auto *InlineValueOf(ir::MemberExpression *enumMemberRef, ArenaAllocator *
     return literal;
 }
 
-static bool EnumIsCompiledInCurrentBuild(checker::ETSEnumType const *enumType)
+static bool EnumIsCompiledInCurrentBuild(checker::ETSEnumType const *enumType, public_lib::Context const *context)
 {
     auto const *origEnumDecl = enumType->GetDeclNode()->AsClassDefinition()->OrigEnumDecl();
     if (origEnumDecl == nullptr || origEnumDecl->IsDeclare()) {
         return false;
     }
     auto const *program = origEnumDecl->Program();
-    return program != nullptr && program->Is<util::ModuleKind::MODULE>();
+    if (program == nullptr) {
+        return false;
+    }
+    if (program == context->parserProgram) {
+        return true;
+    }
+    switch (context->config->options->GetCompilationMode()) {
+        case CompilationMode::GEN_STD_LIB:
+            return true;
+        case CompilationMode::SIMULTANEOUS:
+        case CompilationMode::SIMULTANEOUS_INCREMENTAL:
+            return program->IsBuiltSimultaneously();
+        default:
+            return false;
+    }
 }
 
-static bool ShouldInlineEnumValue(ir::AstNode *node, checker::ETSEnumType const *enumType)
+static bool ShouldInlineEnumValue(ir::AstNode *node, checker::ETSEnumType const *enumType,
+                                  public_lib::Context const *context)
 {
     if (!enumType->NodeIsEnumLiteral(node->AsExpression())) {
         return false;
@@ -377,7 +392,7 @@ static bool ShouldInlineEnumValue(ir::AstNode *node, checker::ETSEnumType const 
     if (enumType->EnumAnnotedType() != nullptr) {
         return false;
     }
-    return !EnumIsCompiledInCurrentBuild(enumType);
+    return !EnumIsCompiledInCurrentBuild(enumType, context);
 }
 
 ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const node)
@@ -398,7 +413,7 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
     }
     auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
 
-    if (ShouldInlineEnumValue(node, enumNode)) {
+    if (ShouldInlineEnumValue(node, enumNode, Context())) {
         return InlineValueOf(node->AsMemberExpression(), Context()->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(Context(), node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
