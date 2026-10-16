@@ -75,6 +75,7 @@
 
 #include <atomic>
 #include <securec.h>
+#include <stdexcept>
 
 namespace ark::es2panda::evaluate {
 
@@ -298,11 +299,14 @@ static bool IsBuiltinCompositeType(ir::TypeNode *typeNode)
     }
 }
 
-// Graceful degrade: NullLiteral + LOG(ERROR).
-static ir::Expression *ReportUnsupported(util::StringView message, checker::ETSChecker *checker)
+// Unsupported construct: abort evaluation by throwing. The exception is
+// caught by TransformAndReplaceFunctionBody and reported as a single-line
+// failure (nullptr result). [[noreturn]] makes the never-returns contract
+// compile-time enforced: reintroducing a return path here must not compile.
+[[noreturn]] static ir::Expression *ReportUnsupported(util::StringView message,
+                                                      [[maybe_unused]] checker::ETSChecker *checker)
 {
-    LOG(ERROR, ES2PANDA) << "Debugger evaluation: " << message;
-    return checker->AllocNode<ir::NullLiteral>();
+    throw std::runtime_error(std::string(message.Utf8()));
 }
 
 // Rejection message for unsupported destructuring element forms, aligned with
@@ -906,7 +910,7 @@ ir::Expression *ExpressionASTTransformer::TransformAggregateExpression(ir::Expre
         default:
             LOG(WARNING, ES2PANDA) << "Unhandled expression type in debugger evaluation: "
                                    << static_cast<int>(node->Type());
-            return checker_->AllocNode<ir::NullLiteral>();
+            throw std::runtime_error("Unhandled expression type in debugger evaluation");
     }
 }
 
@@ -2098,9 +2102,7 @@ ir::Statement *ExpressionASTTransformer::TransformAssignment(ir::AssignmentExpre
             return HandleSubscriptAssignment(me, node, op, std::move(stmts));
         }
     } else {
-        LOG(ERROR, ES2PANDA) << "Debugger evaluation: Unsupported assignment target";
-        stmts.push_back(checker_->AllocNode<ir::ReturnStatement>(checker_->AllocNode<ir::NullLiteral>()));
-        return BuildAssignReturnBlock(std::move(stmts));
+        throw std::runtime_error("Unsupported assignment target in debugger evaluation");
     }
 
     return BuildAssignWriteback(lhsProxy, rawForArith, left, node, op, std::move(stmts));

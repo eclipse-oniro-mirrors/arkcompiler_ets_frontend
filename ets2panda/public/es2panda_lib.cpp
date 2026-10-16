@@ -21,6 +21,7 @@
 #include <atomic>
 #include <algorithm>
 #include <cstdio>
+#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
@@ -2119,8 +2120,13 @@ static bool TransformAndReplaceFunctionBody(es2panda_Context *ctx, ir::Expressio
 
     try {
         newBody = transformer.Transform(rawExpr);
+    } catch (const std::exception &e) {
+        // Single-line contract: the exception message IS the failure reason.
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
     } catch (...) {
-        LOG(ERROR, ES2PANDA) << "Expression AST transformation failed";
+        // Non-std exceptions must not escape the extern "C" boundary.
+        std::cerr << "Error: expression evaluation failed" << std::endl;
         return false;
     }
 
@@ -2256,6 +2262,80 @@ static char *SerializeAndEncode(es2panda_Context *ctx)
     return strdup(base64Result.c_str());
 }
 
+namespace {
+// Suppresses the pipeline's own per-stage FlushDiagnostic output (printed to
+// std::cout by the default CLIDiagnosticPrinter); the evaluation contract
+// emits a single error line via FlushEvaluationDiagnostics instead.
+class SilentDiagnosticPrinter final : public util::DiagnosticPrinter {
+public:
+    SilentDiagnosticPrinter() = default;
+    NO_COPY_SEMANTIC(SilentDiagnosticPrinter);
+    NO_MOVE_SEMANTIC(SilentDiagnosticPrinter);
+    ~SilentDiagnosticPrinter() override = default;
+
+    // Immediate per-stage printing (FlushDiagnostic) goes through this
+    // overload -- swallow it.
+    void Print(const util::DiagnosticBase &, const std::string &) const override {}
+    // Rendering into a caller-provided stream (PrintAndFlushErrorDiagnostic,
+    // GetAllErrorMessages) goes through this overload. Unlike the CLI
+    // printer it omits the "[file:line:col] " prefix: the evaluation
+    // contract exposes only the message core (type + code + message).
+    void Print(const util::DiagnosticBase &diagnostic, std::ostream &out,
+               [[maybe_unused]] const std::string &basePath) const override
+    {
+        out << util::DiagnosticTypeToString(diagnostic.Type()) << " " << diagnostic.ToStringUniqueNumber() << ": "
+            << diagnostic.Message() << std::endl;
+    }
+};
+
+// Restores the default printer on scope exit: the config is shared between
+// evaluations and must keep its default behaviour for later users.
+class PrinterGuard {
+public:
+    explicit PrinterGuard(util::DiagnosticEngine *engine) : engine_(engine) {}
+    NO_COPY_SEMANTIC(PrinterGuard);
+    NO_MOVE_SEMANTIC(PrinterGuard);
+    ~PrinterGuard()
+    {
+        engine_->SetPrinter(std::make_unique<util::CLIDiagnosticPrinter>());
+    }
+
+private:
+    util::DiagnosticEngine *engine_;
+};
+}  // namespace
+
+// Evaluation failure diagnostics must be visible to the caller (IDE logs
+// stderr of the tool process); the C API contract only returns nullptr.
+// Single-line contract: only the first error-level diagnostic is printed
+// (warnings and follow-up cascaded errors are dropped); when nothing is
+// recorded, the fallback message is printed so a failure never stays silent.
+static void FlushEvaluationDiagnostics(es2panda_Config *config, const char *fallback = nullptr)
+{
+    auto *cfg = reinterpret_cast<public_lib::ConfigImpl *>(config);
+    if (cfg == nullptr || cfg->diagnosticEngine == nullptr) {
+        return;
+    }
+    auto messages = cfg->diagnosticEngine->PrintAndFlushErrorDiagnostic();
+    std::string_view lines(messages);
+    while (!lines.empty()) {
+        auto end = lines.find('\n');
+        auto line = lines.substr(0, end == std::string_view::npos ? lines.size() : end);
+        lines.remove_prefix(end == std::string_view::npos ? lines.size() : end + 1);
+        while (!line.empty() && (line.back() == ' ' || line.back() == '\r')) {
+            line.remove_suffix(1);
+        }
+        if (line.empty() || line.find("Warning") != std::string_view::npos) {
+            continue;
+        }
+        std::cerr << line << std::endl;
+        return;
+    }
+    if (fallback != nullptr) {
+        std::cerr << fallback << std::endl;
+    }
+}
+
 // Whether the input is a variable-declaration statement: starts with the
 // let/const keyword at a word boundary after leading whitespace. Both are
 // keywords, so no valid expression input starts with them ('letVar' is an
@@ -2294,8 +2374,28 @@ extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64E
     // Phase 1: Base64 decode
     std::string expression = ark::es2panda::util::Base64Decode(std::string(base64Expression));
     if (expression.empty() && std::strlen(base64Expression) > 0) {
+        FlushEvaluationDiagnostics(config, "Error: expression evaluation failed");
         return nullptr;
     }
+
+    // Phase 1.5: the stdlib prefix must be resolvable before the pipeline
+    // starts; without it the checker dereferences uninitialized stdlib
+    // signatures deep inside ETSBinder/ETSChecker and crashes (SIGSEGV)
+    // instead of reporting a diagnostic.
+    auto *cfgImpl = reinterpret_cast<public_lib::ConfigImpl *>(config);
+    if (!cfgImpl->options->ArkTSConfig().ResolvePath("std/core", false, nullptr).has_value()) {
+        std::cerr << "Error: standard library is not resolved; pass --stdlib=<dir> "
+                     "or configure 'compilerOptions.paths' (std/escompat) in arktsconfig.json"
+                  << std::endl;
+        return nullptr;
+    }
+
+    // From here on the pipeline must not print diagnostics by itself: the
+    // single-line failure reason is emitted solely by the flush helper or
+    // the transformer catch handler. Guarded so the shared config gets its
+    // default printer back on every exit path.
+    cfgImpl->diagnosticEngine->SetPrinter(std::make_unique<SilentDiagnosticPrinter>());
+    PrinterGuard printerGuard(cfgImpl->diagnosticEngine);
 
     // Phase 2: Build wrapper.  The 'return' keyword forces expression
     // context, which disambiguates {x: 1} (object literal vs block statement).
@@ -2310,22 +2410,30 @@ extern "C" char *EvaluateExpression(es2panda_Config *config, const char *base64E
     // Phase 3: Create context + Parse
     es2panda_Context *ctx = CreateAndParseContext(config, wrapperSource.str());
     if (ctx == nullptr) {
+        FlushEvaluationDiagnostics(config, "Error: expression evaluation failed");
         return nullptr;
     }
 
     // Phase 4 + 5: locate, extract and transform the expression
     if (!ExtractAndTransformBody(ctx, isDeclaration)) {
+        // Reason already printed by the transformer catch handler (or the
+        // extractor); no fallback to avoid a duplicated generic line.
+        FlushEvaluationDiagnostics(config, nullptr);
         return nullptr;  // ctx already destroyed
     }
 
     // Phase 6: Compilation pipeline
     if (!RunCompilationPipeline(ctx)) {
+        FlushEvaluationDiagnostics(config, "Error: expression evaluation failed");
         return nullptr;  // ctx already destroyed
     }
 
     // Phase 7 + 8: Serialize and base64-encode
     char *result = SerializeAndEncode(ctx);
     DestroyContext(ctx);
+    if (result == nullptr) {
+        FlushEvaluationDiagnostics(config, "Error: expression evaluation failed");
+    }
     return result;
 }
 
