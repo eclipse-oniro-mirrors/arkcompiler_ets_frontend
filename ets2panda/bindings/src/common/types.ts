@@ -182,6 +182,9 @@ export interface ModuleConfig {
   language: string;
   declFilesPath?: string;
   dependencies?: string[];
+  permissions?: string[];
+  deviceTypes?: string[];
+  compatibleVersion?: string;
 }
 
 export interface PathConfig {
