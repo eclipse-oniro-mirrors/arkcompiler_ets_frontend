@@ -42,7 +42,7 @@ export type FunctionTransformer<Input, Output, NewInput, NewOutput> = (fn: (inpu
 export type FunctionComposer<Input, Middle, Output> = (f: (input: Input) => Middle, g: (middle: Middle) => Output) => (input: Input) => Output;
 export type ObjectPropertyMapper<T, U> = Any;
 export type Fox<T> = Any;
-declare class MyClass<T> {
+export declare class MyClass<T> {
     value: T;
     constructor(value: T);
 }

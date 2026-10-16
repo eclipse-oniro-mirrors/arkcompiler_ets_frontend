@@ -15,11 +15,11 @@
  */
 // ==================== Assembly Type Cases ====================
 // Case 38: Type alias — assembly type is the original type, so they merge
-type MyString = string;
+export type MyString = string;
 // Case 39: Type alias + original — merged param keeps both as X | Xa union
-type NumAlias = number;
+export type NumAlias = number;
 // Case 49: Return type merge — type alias kept distinct from original
-type RetAlias = string;
+export type RetAlias = string;
 // Case 1: Original — different arity overloads (NOT merged)
 export declare class MathUtils2 {
     add(num: number): number;

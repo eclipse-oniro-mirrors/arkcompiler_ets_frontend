@@ -432,6 +432,7 @@ function buildCompilerOptions(
   // Prevent the noemit of the passed compilerOptions from being true
   options.noEmit = false;
   options.experimentalDecorators = true;
+  options.etsAnnotationsEnable = true;
   return options;
 }
 

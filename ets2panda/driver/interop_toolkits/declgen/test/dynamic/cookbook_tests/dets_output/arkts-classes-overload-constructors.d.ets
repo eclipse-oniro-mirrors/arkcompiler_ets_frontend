@@ -15,7 +15,7 @@
  */
 // ==================== Assembly Type Constructor Cases ====================
 // Case 14: Type alias param merge — assembly types match
-type CtorAlias = string;
+export type CtorAlias = string;
 // Case 1: Basic constructor overload merge — same param types
 export declare class BasicMerge {
     constructor(a: string);

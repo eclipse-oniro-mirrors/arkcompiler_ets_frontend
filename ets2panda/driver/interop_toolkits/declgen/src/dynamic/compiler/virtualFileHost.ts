@@ -178,7 +178,7 @@ export class VirtualFileHost {
       if (cached && cached.content === content) {
         return cached.sourceFile;
       }
-      const sf = ts.createSourceFile(fileName, content, languageVersion);
+      const sf = ts.createSourceFile(fileName, content, languageVersion, false, undefined, this.compilerOptions);
       // Builder programs (incremental mode) require every SourceFile to
       // carry a `version`. ts.createSourceFile does not set one, so we
       // derive it from the content hash here.
