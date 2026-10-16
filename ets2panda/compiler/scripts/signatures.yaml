@@ -113,11 +113,11 @@ defines:
     ref: ARKRUNTIME_ANNOTATION_ASYNC
   - name: std.annotations.InterfaceObjectLiteral
     ref: ARKRUNTIME_ANNOTATION_INTERFACE_OBJECT_LITERAL
-  - name: arkruntime.annotation.OptionalParametersAnnotation
+  - name: std.annotations.functions.OptionalParametersAnnotation
     ref: ARKRUNTIME_ANNOTATION_OPTIONAL_PARAMETERS
-  - name: arkruntime.annotation.NamedFunctionObject
+  - name: std.core.NamedFunctionObject
     ref: ARKRUNTIME_ANNOTATION_NAMED_FUNCTION_OBJECT
-  - name: arkruntime.annotation.AsyncFunctionObject
+  - name: std.core.AsyncFunctionObject
     ref: ARKRUNTIME_ANNOTATION_ASYNC_FUNCTION_OBJECT
   - name: 'L'
     ref: CLASS_REF_BEGIN
@@ -225,6 +225,8 @@ defines:
     ref: FROM
   - name: 'Numeric'
     ref: NUMERIC
+  - name: 'functions'
+    ref: DEFAULT_ANNO_QUALIFIED_LEFT
   - name: 'OptionalParametersAnnotation'
     ref: DEFAULT_ANNO_FOR_FUNC
   - name: 'SkipVarianceCheckDontUseItWillBeRemoved'
