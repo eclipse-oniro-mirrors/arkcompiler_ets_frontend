@@ -35,6 +35,7 @@ The runner:
 
 import argparse
 import glob
+import json
 import os
 import shutil
 import subprocess
@@ -138,12 +139,35 @@ def _check_result(output, expected_path, name, work_name, out_abc):
     return (passed, output, expected)
 
 
+def _simult_asm_arktsconfig(es2panda, tmpdir):
+    """Build an arktsconfig for a simultaneous multi-file compile of the sources
+    currently placed in tmpdir.
+
+    It is derived from the default arktsconfig shipped next to the es2panda
+    binary (the '--arktsconfig' option default '$ORIGIN/arktsconfig.json'), so
+    stdlib dependencies resolve exactly as in the runner's single-file compiles.
+    Returns the config path, or None when the default config cannot be found.
+    """
+    default_cfg = os.path.join(os.path.dirname(os.path.abspath(es2panda)), 'arktsconfig.json')
+    if not os.path.isfile(default_cfg):
+        return None
+    with open(default_cfg) as f:
+        cfg = json.load(f)
+    opts = cfg.setdefault('compilerOptions', {})
+    origin = os.path.dirname(default_cfg)
+    abs_base = os.path.normpath(os.path.join(origin, opts.get('baseUrl', '.')))
+    opts['baseUrl'] = tmpdir
+    for dep in opts.get('dependencies', {}).values():
+        if isinstance(dep, dict) and 'path' in dep and not os.path.isabs(dep['path']):
+            dep['path'] = os.path.normpath(os.path.join(abs_base, dep['path']))
+    cfg['files'] = sorted(glob.glob(os.path.join(tmpdir, '*.ets')))
+    cfg_path = os.path.join(tmpdir, 'arktsconfig.json')
+    with open(cfg_path, 'w') as f:
+        json.dump(cfg, f, indent=1)
+    return cfg_path
+
+
 def _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir):
-    """Optional bytecode assertion: if the case directory contains check-asm.txt,
-    compile the mod content with --dump-assembly and require every non-comment
-    line of that file to appear in the assembly output (substring match). This
-    guards codegen shape (e.g. enum member reads must be runtime valueOf() calls,
-    not folded immediates), which stderr/abc checks cannot observe."""
     check_file = os.path.join(case_dir, 'check-asm.txt')
     if not os.path.isfile(check_file):
         return None
@@ -154,10 +178,19 @@ def _asm_check(es2panda, opt_level, tmpdir, work_name, mod, case_dir):
 
     shutil.copy(mod, os.path.join(tmpdir, work_name))
     asm_abc = os.path.join(tmpdir, 'asm_check.abc')
-    cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
-           '--dump-assembly', '--output=' + asm_abc, work_name]
+    sources = sorted(glob.glob(os.path.join(tmpdir, '*.ets')))
+    if len(sources) > 1:
+        cfg = _simult_asm_arktsconfig(es2panda, tmpdir)
+        if cfg is None:
+            return "ASM CHECK FAILED: default arktsconfig.json not found next to es2panda"
+        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
+               '--simultaneous=true', '--arktsconfig=' + cfg,
+               '--dump-assembly', '--output=' + asm_abc]
+    else:
+        cmd = [es2panda, f'--opt-level={opt_level}', '--extension=ets',
+               '--dump-assembly', '--output=' + asm_abc, work_name]
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=60, cwd=tmpdir)
-    asm = result.stdout
+    asm = result.stdout + result.stderr
     missing = [p for p in patterns if p not in asm]
     if missing:
         return f"ASM CHECK FAILED, missing patterns: {missing}"
