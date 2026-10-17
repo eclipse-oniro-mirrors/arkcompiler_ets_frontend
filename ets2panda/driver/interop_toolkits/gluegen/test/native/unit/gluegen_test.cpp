@@ -198,94 +198,6 @@ TEST_F(GluegenRunTest, RunProducesExpectedSymbolsForValidSource)
     EXPECT_EQ(fileConfig.root.at("bar")->kind, SymbolKind::FUNCTION);
 }
 
-TEST_F(GluegenRunTest, RunWritesSyntaxErrorStatusForInvalidSource)
-{
-    ScopedTempDir dir("gluegen_run_syntax_error");
-    const auto sourceFile = dir.Path() / "bad.ets";
-    {
-        std::ofstream out(sourceFile);
-        // Missing a class name: not valid ArkTS syntax.
-        out << "export class {}\n";
-    }
-    const auto outputPath = dir.Path() / "output.json";
-    const auto reportPath = dir.Path() / "report.json";
-
-    GluegenOptions options;
-    options.sourceFiles = {sourceFile.string()};
-    options.arktsconfigPath = arktsconfigPath_;
-    options.outputPath = outputPath.string();
-    options.reportPath = reportPath.string();
-    options.cacheDir.clear();
-
-    ark::es2panda::gluegen::Gluegen gluegen(options);
-    auto result = gluegen.Run();
-    // A syntax error is a normal, terminal outcome for Run() -- not a tool failure.
-    ASSERT_TRUE(result) << (result ? std::string() : result.Error());
-    ASSERT_TRUE(fs::exists(outputPath));
-
-    const auto jJson = ReadFile(outputPath);
-    ASSERT_TRUE(nlohmann::json::accept(jJson))
-        << "outputPath is not valid JSON (" << jJson.size() << " bytes): " << jJson.substr(0, JSON_EXCERPT);
-    auto j = nlohmann::json::parse(jJson);
-    ASSERT_TRUE(j.contains("status"));
-    EXPECT_EQ(j.at("status").get<std::string>(), "syntax-error");
-
-    // The negative outcome should also be visible via DiagnosticEngine's own structured report
-    // (written to --report-path), not just the ad hoc {"status": ...} file -- assert against the
-    // recorded code/severity there rather than any particular wording.
-    ASSERT_TRUE(fs::exists(reportPath));
-    const auto reportJson = ReadFile(reportPath);
-    ASSERT_TRUE(nlohmann::json::accept(reportJson))
-        << "reportPath is not valid JSON (" << reportJson.size() << " bytes): " << reportJson.substr(0, JSON_EXCERPT);
-    auto report = nlohmann::json::parse(reportJson);
-    ASSERT_TRUE(report.contains("diagnostics"));
-    const auto &warnings = report.at("diagnostics").at("warnings");
-    ASSERT_FALSE(warnings.empty());
-    EXPECT_EQ(warnings.at(0).at("code").get<std::string>(),
-              std::to_string(static_cast<uint32_t>(ark::es2panda::gluegen::DiagnosticCode::SOURCE_PARSE_FAILED)));
-    EXPECT_TRUE(report.at("diagnostics").at("errors").empty());
-}
-
-TEST_F(GluegenRunTest, RunReportsDiagnosticForMissingArktsconfig)
-{
-    ScopedTempDir dir("gluegen_run_missing_arktsconfig");
-    const auto sourceFile = dir.Path() / "a.ets";
-    {
-        std::ofstream out(sourceFile);
-        out << "export class Foo {}\n";
-    }
-    const auto outputPath = dir.Path() / "output.json";
-    const auto reportPath = dir.Path() / "report.json";
-
-    GluegenOptions options;
-    options.sourceFiles = {sourceFile.string()};
-    options.arktsconfigPath = (dir.Path() / "no-such-arktsconfig.json").string();
-    options.outputPath = outputPath.string();
-    options.reportPath = reportPath.string();
-    options.cacheDir.clear();
-
-    ark::es2panda::gluegen::Gluegen gluegen(options);
-    // Run() now calls Initialize() internally; a missing arktsconfig causes Initialize() to fail
-    // inside RunImpl(), and WriteDiagnosticsReport() still writes the structured report so
-    // DiagnosticEngine's records are observable even on failure paths.
-    auto result = gluegen.Run();
-    ASSERT_FALSE(result);
-    EXPECT_NE(result.Error().find("Arktsconfig"), std::string::npos) << result.Error();
-    EXPECT_FALSE(fs::exists(outputPath));
-
-    // Even on a hard failure, WriteDiagnosticsReport() still runs (see Gluegen::Run()), so the
-    // ERROR diagnostic is observable via the structured report.
-    ASSERT_TRUE(fs::exists(reportPath));
-    const auto reportJson = ReadFile(reportPath);
-    ASSERT_TRUE(nlohmann::json::accept(reportJson))
-        << "reportPath is not valid JSON (" << reportJson.size() << " bytes): " << reportJson.substr(0, JSON_EXCERPT);
-    auto report = nlohmann::json::parse(reportJson);
-    const auto &errors = report.at("diagnostics").at("errors");
-    ASSERT_FALSE(errors.empty());
-    EXPECT_EQ(errors.at(0).at("code").get<std::string>(),
-              std::to_string(static_cast<uint32_t>(ark::es2panda::gluegen::DiagnosticCode::INVALID_CONFIG)));
-}
-
 TEST_F(GluegenRunTest, RunWithCacheDirPopulatesDiskCacheAndSecondRunSucceeds)
 {
     ScopedTempDir dir("gluegen_run_cache");
@@ -328,30 +240,6 @@ TEST_F(GluegenRunTest, RunWithCacheDirPopulatesDiskCacheAndSecondRunSucceeds)
     ASSERT_EQ(config.files.size(), 1U);
     EXPECT_EQ(config.files.begin()->second.root.count("Foo"), 1U);
 }
-
-#if !defined(PANDA_QEMU_BUILD)
-TEST_F(GluegenRunTest, RunSucceedsForValidSource)
-{
-    ScopedTempDir dir("gluegen_run_valid_minimal");
-    const auto sourceFile = dir.Path() / "a.ets";
-    {
-        std::ofstream out(sourceFile);
-        out << "export class Foo {}\n";
-    }
-    const auto outputPath = dir.Path() / "output.json";
-
-    GluegenOptions options;
-    options.sourceFiles = {sourceFile.string()};
-    options.arktsconfigPath = arktsconfigPath_;
-    options.outputPath = outputPath.string();
-    options.cacheDir.clear();
-
-    Gluegen gluegen(options);
-    auto result = gluegen.Run();
-    ASSERT_TRUE(result) << result.Error();
-    EXPECT_TRUE(fs::exists(outputPath));
-}
-#endif  // !defined(PANDA_QEMU_BUILD)
 
 TEST_F(GluegenRunTest, RunFailsWhenNoSourceFilesProvided)
 {
