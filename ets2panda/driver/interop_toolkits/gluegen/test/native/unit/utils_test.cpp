@@ -14,17 +14,23 @@
  */
 
 #include <atomic>
+#include <chrono>
 #include <cstdint>
 #include <fstream>
 #include <random>
-#include <regex>
 #include <gtest/gtest.h>
+
+#if !defined(_WIN32)
+#include <cerrno>
+#include <cstring>
+#include <fcntl.h>
+#include <sys/stat.h>
+#endif
 
 #include "utils.h"
 
 using ark::es2panda::gluegen::AbsolutePath;
-using ark::es2panda::gluegen::FileTimeToString;
-using ark::es2panda::gluegen::GetLastModifiedTime;
+using ark::es2panda::gluegen::GetLastModifiedTimeStamp;
 using ark::es2panda::gluegen::NormalizePath;
 using ark::es2panda::gluegen::RelativePath;
 using ark::es2panda::gluegen::ToLongPathIfNeeded;
@@ -139,22 +145,14 @@ TEST(GluegenUtilsTest, ToLongPathIfNeededIsNoOpOnNonWindows)
 }
 #endif
 
-TEST(GluegenUtilsTest, FileTimeToStringMatchesIso8601Format)
-{
-    auto formatted = FileTimeToString(fs::file_time_type::clock::now());
-    // e.g. "2026-07-20T15:30:45.123Z"
-    static const std::regex kIso8601Millis(R"(^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$)");
-    EXPECT_TRUE(std::regex_match(formatted, kIso8601Millis)) << "got: " << formatted;
-}
-
-TEST(GluegenUtilsTest, GetLastModifiedTimeReturnsNulloptForMissingFile)
+TEST(GluegenUtilsTest, GetLastModifiedTimeStampReturnsNulloptForMissingFile)
 {
     ScopedTempDir dir("gluegen_unit_test_missing");
     auto missing = dir.Path() / "does_not_exist.ets";
-    EXPECT_EQ(GetLastModifiedTime(missing), std::nullopt);
+    EXPECT_EQ(GetLastModifiedTimeStamp(missing), std::nullopt);
 }
 
-TEST(GluegenUtilsTest, GetLastModifiedTimeReturnsValueForExistingFile)
+TEST(GluegenUtilsTest, GetLastModifiedTimeStampReturnsValueForExistingFile)
 {
     ScopedTempDir dir("gluegen_unit_test_existing");
     auto path = dir.Path() / "existing_file.ets";
@@ -163,8 +161,89 @@ TEST(GluegenUtilsTest, GetLastModifiedTimeReturnsValueForExistingFile)
         out << "class Existing {}";
     }
 
-    EXPECT_NE(GetLastModifiedTime(path), std::nullopt);
+    EXPECT_NE(GetLastModifiedTimeStamp(path), std::nullopt);
 }
+
+// The stamp backs cache hit/miss decisions, so repeated queries of an unmodified file must
+// return the identical string -- even when the stored mtime sits exactly on a whole-second
+// (hence millisecond) boundary, the worst case for the previous wall-clock formatting, whose
+// two-`now()` clock rebasing could flip the millisecond digit between calls.
+TEST(GluegenUtilsTest, GetLastModifiedTimeStampIsDeterministicAcrossRepeatedCalls)
+{
+    ScopedTempDir dir("gluegen_unit_test_mtime_stable");
+    auto path = dir.Path() / "file.ets";
+    {
+        std::ofstream out(path);
+        out << "class Stable {}";
+    }
+
+    const auto boundary = std::chrono::time_point_cast<std::chrono::seconds>(fs::file_time_type::clock::now());
+    std::error_code ec;
+    fs::last_write_time(path, boundary, ec);
+    ASSERT_FALSE(ec) << "failed to set mtime: " << ec.message();
+
+    const auto stamp = GetLastModifiedTimeStamp(path);
+    ASSERT_NE(stamp, std::nullopt);
+    constexpr int kRepetitions = 100;
+    for (int i = 0; i < kRepetitions; ++i) {
+        EXPECT_EQ(GetLastModifiedTimeStamp(path), stamp);
+    }
+}
+
+TEST(GluegenUtilsTest, GetLastModifiedTimeStampChangesWhenMTimeChanges)
+{
+    ScopedTempDir dir("gluegen_unit_test_mtime_change");
+    auto path = dir.Path() / "file.ets";
+    {
+        std::ofstream out(path);
+        out << "class Changing {}";
+    }
+
+    const auto first = std::chrono::time_point_cast<std::chrono::seconds>(fs::file_time_type::clock::now());
+    std::error_code ec;
+    fs::last_write_time(path, first, ec);
+    ASSERT_FALSE(ec) << "failed to set mtime: " << ec.message();
+    const auto stampBefore = GetLastModifiedTimeStamp(path);
+    ASSERT_NE(stampBefore, std::nullopt);
+
+    // Move the mtime well past any filesystem timestamp granularity.
+    constexpr auto kMTimeStep = std::chrono::seconds(10);
+    fs::last_write_time(path, first + kMTimeStep, ec);
+    ASSERT_FALSE(ec) << "failed to set mtime: " << ec.message();
+    const auto stampAfter = GetLastModifiedTimeStamp(path);
+    ASSERT_NE(stampAfter, std::nullopt);
+
+    EXPECT_NE(*stampBefore, *stampAfter);
+}
+
+#if !defined(_WIN32)
+// The stamp must be the OS-reported mtime in Unix-epoch nanoseconds, independent of any
+// C++ library clock conventions. Uses the exact mtime from the cache-invalidation bug
+// report -- the SDK stdlib placeholder 2000-12-31T16:00:00.000Z (978278400 seconds) --
+// which the previous wall-clock formatting kept flipping between ".000Z" and ".001Z".
+TEST(GluegenUtilsTest, GetLastModifiedTimeStampUsesUnixEpochNanoseconds)
+{
+    ScopedTempDir dir("gluegen_unit_test_mtime_epoch");
+    auto path = dir.Path() / "file.ets";
+    {
+        std::ofstream out(path);
+        out << "class Epoch {}";
+    }
+
+    constexpr int64_t kPlaceholderSec = 978278400;  // 2000-12-31T16:00:00.000Z
+    constexpr int64_t kNanosecondsPerSecond = 1000000000LL;
+    struct timespec times[2];
+    times[0] = {kPlaceholderSec, 0};
+    times[1] = {kPlaceholderSec, 0};
+    ASSERT_EQ(utimensat(AT_FDCWD, path.c_str(), times, 0), 0) << "utimensat failed: " << strerror(errno);
+
+    const std::string expected = std::to_string(kPlaceholderSec * kNanosecondsPerSecond);
+    constexpr int kRepetitions = 10;
+    for (int i = 0; i < kRepetitions; ++i) {
+        EXPECT_EQ(GetLastModifiedTimeStamp(path), expected);
+    }
+}
+#endif
 
 }  // namespace
 
