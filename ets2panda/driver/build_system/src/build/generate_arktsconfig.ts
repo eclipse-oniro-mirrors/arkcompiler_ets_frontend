@@ -246,6 +246,10 @@ export class ArkTSConfigGenerator {
         return this.buildConfig.externalApiPaths;
     }
 
+    public get systemApiPathSection(): Record<string, string[]> {
+        return this.systemPathSection;
+    }
+
 
     private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {
         function traverse(currentDir: string, relativePath: string = '', isExcludedDir: boolean = false, allowedExtensions: string[] = ['.d.ets']): void {

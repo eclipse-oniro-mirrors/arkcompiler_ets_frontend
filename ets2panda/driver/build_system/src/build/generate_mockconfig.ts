@@ -17,10 +17,10 @@ import fs from 'fs';
 import path from 'path';
 import { BuildConfig, DependencyModuleConfig, MockParams } from '../types';
 import {
-    Logger,
     LogDataFactory
 } from '../logger';
 import {
+    DriverError,
     ErrorCode
 } from '../util/error';
 import {
@@ -35,13 +35,13 @@ interface MockConfigInfo {
 }
 
 export class MockConfigGenerator {
-    private logger: Logger;
     private buildConfig: BuildConfig;
+    private readonly systemApiPathSection: Record<string, string[]>;
     private mockConfigInfo: MockConfigInfo = {};
 
-    public constructor(buildConfig: BuildConfig) {
+    public constructor(buildConfig: BuildConfig, systemApiPathSection: Record<string, string[]>) {
         this.buildConfig = buildConfig;
-        this.logger = Logger.getInstance();
+        this.systemApiPathSection = systemApiPathSection;
     }
 
     public get mockParams(): MockParams {
@@ -63,11 +63,13 @@ export class MockConfigGenerator {
 
     private validateEntry(key: string, entry: unknown): void {
         if (!entry || typeof entry !== 'object' || typeof (entry as { source?: unknown }).source !== 'string') {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `Mock config entry for "${key}" is invalid. Each entry must be an object with a "source" string field.`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `Mock config entry for "${key}" is invalid. Each entry must be an object with a "source" string field.`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
         }
     }
 
@@ -78,30 +80,33 @@ export class MockConfigGenerator {
 
         const mockFullPath = this.resolveAndVerifyPath(sourceBasePath, source);
         if (!mockFullPath) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The source file for "${source}" is invalid. ` +
-                `Source file not found under ${sourceBasePath}.`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The source file for "${source}" is invalid. ` +
+                    `Source file not found under ${sourceBasePath}.`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
-            return source;
         }
 
         if (!isFirstLineUseStatic(mockFullPath)) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The mock file for "${source}" is invalid. ` +
-                `The first line of the file must be 'use static'. ` +
-                `File path: ${mockFullPath}`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The mock file for "${source}" is invalid. ` +
+                    `The first line of the file must be 'use static'. ` +
+                    `File path: ${mockFullPath}`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
         }
         return mockFullPath;
     }
 
     private validateKeyFile(key: string, sourceBasePath: string): string {
         if (key.startsWith('@ohos') || key.startsWith('@arkts') || key.startsWith('@kit')) {
-            return key;
+            return this.validateSystemApi(key);
         }
 
         const dep = this.buildConfig.dependencyModuleList?.find(d =>
@@ -118,6 +123,19 @@ export class MockConfigGenerator {
         return this.validateSourceKey(key, sourceBasePath);
     }
 
+    private validateSystemApi(key: string): string {
+        if (!this.systemApiPathSection[key]) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `System API "${key}" does not exist`
+                )
+            );
+        }
+        return key;
+    }
+
     private validateDependencyKey(key: string, dep: DependencyModuleConfig): string {
         if (dep.packageName === key) {
             return key;
@@ -125,13 +143,14 @@ export class MockConfigGenerator {
         const relativePath = key.substring(dep.packageName.length + 1);
         const keyFullPath = this.resolveAndVerifyPath(dep.modulePath, relativePath);
         if (!keyFullPath) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The key file for "${key}" is invalid. ` +
-                `File not found under ${dep.modulePath}.`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The key file for "${key}" is invalid. ` +
+                    `File not found under ${dep.modulePath}.`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
-            return key;
         }
         this.ensureUseStatic(key, keyFullPath);
         return keyFullPath;
@@ -141,13 +160,14 @@ export class MockConfigGenerator {
         const mockConfigDir = path.dirname(this.mockParams.mockConfigPath);
         const keyFullPath = this.resolveAndVerifyPath(mockConfigDir, key);
         if (!keyFullPath) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The key file for "${key}" is invalid. ` +
-                `File not found.`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The key file for "${key}" is invalid. ` +
+                    `File not found.`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
-            return key;
         }
         this.ensureUseStatic(key, keyFullPath);
         return keyFullPath;
@@ -157,15 +177,16 @@ export class MockConfigGenerator {
         const sourceEtsPath = path.resolve(sourceBasePath, 'src', 'main', 'ets');
         const keyFullPath = this.resolveAndVerifyPath(sourceEtsPath, key);
         if (!keyFullPath) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The key file for "${key}" is invalid. ` +
-                `Key must be a system API (starting with @ohos, @arkts, @kit), ` +
-                `a dependency package name, ` +
-                `or a source file.`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The key file for "${key}" is invalid. ` +
+                    `Key must be a system API (starting with @ohos, @arkts, @kit), ` +
+                    `a dependency package name, ` +
+                    `or a source file.`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
-            return key;
         }
         this.ensureUseStatic(key, keyFullPath);
         return keyFullPath;
@@ -173,13 +194,15 @@ export class MockConfigGenerator {
 
     private ensureUseStatic(key: string, filePath: string): void {
         if (!isFirstLineUseStatic(filePath)) {
-            const errInfo = LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
-                `The key file for "${key}" is invalid. ` +
-                `The first line of the file must be 'use static'. ` +
-                `File path: ${filePath}`
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_INCORRECT_MOCK_CONFIG,
+                    'Incorrect mock configuration.',
+                    `The key file for "${key}" is invalid. ` +
+                    `The first line of the file must be 'use static'. ` +
+                    `File path: ${filePath}`
+                )
             );
-            this.logger.printErrorAndExit(errInfo);
         }
     }
 
