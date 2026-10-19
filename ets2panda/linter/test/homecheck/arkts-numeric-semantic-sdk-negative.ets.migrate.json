@@ -15,6 +15,16 @@
     ],
     "result": [
         {
+            "line": 19,
+            "column": 7,
+            "endLine": 19,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
             "line": 24,
             "column": 7,
             "endLine": 24,
@@ -29,9 +39,9 @@
             "column": 7,
             "endLine": 25,
             "endColumn": 7,
-            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "problem": "NumericLiteral-only-used-as-int-or-long",
             "suggest": "",
-            "rule": "It is used as number (arkts-numeric-semantic)",
+            "rule": "It is used as int (arkts-numeric-semantic)",
             "severity": "WARNING"
         },
         {
@@ -39,9 +49,19 @@
             "column": 7,
             "endLine": 30,
             "endColumn": 7,
-            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "problem": "NumericLiteral-only-used-as-int-or-long",
             "suggest": "",
-            "rule": "It is used as number (arkts-numeric-semantic)",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 40,
+            "column": 7,
+            "endLine": 40,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
             "severity": "WARNING"
         },
         {

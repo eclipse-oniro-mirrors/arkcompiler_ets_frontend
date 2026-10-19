@@ -1,0 +1,68 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 36,
+            "column": 28,
+            "endLine": 36,
+            "endColumn": 28,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 73,
+            "column": 9,
+            "endLine": 73,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 77,
+            "column": 9,
+            "endLine": 77,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 91,
+            "column": 21,
+            "endLine": 91,
+            "endColumn": 21,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 91,
+            "column": 33,
+            "endLine": 91,
+            "endColumn": 33,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        }
+    ]
+}

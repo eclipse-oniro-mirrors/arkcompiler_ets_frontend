@@ -495,16 +495,16 @@
             "column": 7,
             "endLine": 360,
             "endColumn": 7,
-            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "problem": "NumericLiteral-only-used-as-int-or-long",
             "autofix": [
                 {
-                    "replacementText": "local3: number",
+                    "replacementText": "local3: int",
                     "start": 10958,
                     "end": 10964
                 }
             ],
             "suggest": "",
-            "rule": "It is used as number (arkts-numeric-semantic)",
+            "rule": "It is used as int (arkts-numeric-semantic)",
             "severity": "WARNING"
         },
         {

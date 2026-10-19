@@ -167,14 +167,14 @@ function dateAllMethodsRepresentative(): void {
   let num: number = 100.0; // arkts-builtin-api-num2int
   
   let valueNum: number = date.valueOf(); // arkts-builtin-api-num2int
-  let dateNum: number = date.getDate(); // arkts-builtin-api-num2int
-  let setTimeNum: number = date.setTime(num); // arkts-builtin-api-num2int
-  let utcDateNum: number = date.getUTCDate(); // arkts-builtin-api-num2int
+  let dateNum: int = date.getDate(); // arkts-builtin-api-num2int
+  let setTimeNum: long = date.setTime(num.toLong()); // arkts-builtin-api-num2int
+  let utcDateNum: int = date.getUTCDate(); // arkts-builtin-api-num2int
   date.setUTCDate(valueNum); // arkts-builtin-api-num2int
-  let dayNum: number = date.getDay(); // arkts-builtin-api-num2int
-  let utcDayNum: number = date.getUTCDay(); // arkts-builtin-api-num2int
-  let fullYearNum: number = date.getFullYear(); // arkts-builtin-api-num2int
-  let utcFullYearNum: number = date.getUTCFullYear(); // arkts-builtin-api-num2int
+  let dayNum: int = date.getDay(); // arkts-builtin-api-num2int
+  let utcDayNum: int = date.getUTCDay(); // arkts-builtin-api-num2int
+  let fullYearNum: int = date.getFullYear(); // arkts-builtin-api-num2int
+  let utcFullYearNum: int = date.getUTCFullYear(); // arkts-builtin-api-num2int
   
   date.setFullYear(dateNum); // arkts-builtin-api-num2int
   date.setFullYear(dateNum, 12); // arkts-builtin-api-num2int
