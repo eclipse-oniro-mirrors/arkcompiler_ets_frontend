@@ -16,10 +16,16 @@
 #include "utils.h"
 #include "public/public.h"
 
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-#include <sstream>
+#include <cstdint>
+
+#if defined(PANDA_TARGET_WINDOWS)
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#include <windows.h>
+#else
+#include <sys/stat.h>
+#endif
 
 namespace ark::es2panda::gluegen {
 
@@ -114,52 +120,51 @@ fs::path ToLongPathIfNeeded(const fs::path &path)
 #endif
 }
 
-std::optional<fs::file_time_type> GetLastModifiedTime(const fs::path &path)
+#if defined(PANDA_TARGET_WINDOWS)
+std::optional<std::string> GetLastModifiedTimeStamp(const fs::path &path)
 {
-    auto queryPath = ToLongPathIfNeeded(path);
-    std::error_code ec;
-    if (!fs::exists(queryPath, ec) || ec) {
-        return std::nullopt;
-    }
+    // FILETIME is unsigned 100-ns ticks since 1601-01-01 UTC; its high DWORD holds bits 32..63
+    // of the 64-bit tick count.
+    constexpr uint64_t kFiletimeHighDwordShift = 32U;
+    constexpr uint64_t kNanosecondsPerFiletimeTick = 100ULL;
+    constexpr int64_t kFiletimeEpochToUnixEpoch100Ns = 116444736000000000LL;
 
-    auto time = fs::last_write_time(queryPath, ec);
-    if (ec) {
+    // GetFileAttributesExW reads metadata only and does not open a file handle, so it cannot
+    // conflict with any concurrent reader/writer of the file itself. Note: unlike `stat`, it
+    // does not follow symlinks -- callers always pass NormalizePath() output, whose
+    // weakly-canonical step has already resolved any links.
+    WIN32_FILE_ATTRIBUTE_DATA data;
+    if (GetFileAttributesExW(ToLongPathIfNeeded(path).wstring().c_str(), GetFileExInfoStandard, &data) == 0) {
         return std::nullopt;
     }
-    return time;
+    const uint64_t ticks = (static_cast<uint64_t>(data.ftLastWriteTime.dwHighDateTime) << kFiletimeHighDwordShift) |
+                           data.ftLastWriteTime.dwLowDateTime;
+    const int64_t unix100Ns = static_cast<int64_t>(ticks) - kFiletimeEpochToUnixEpoch100Ns;
+    // Unsigned arithmetic keeps even absurd (pre-1970 / far-future) values well-defined;
+    // every run computes the identical wrapped value, which is all a cache key needs.
+    const int64_t ns = static_cast<int64_t>(static_cast<uint64_t>(unix100Ns) * kNanosecondsPerFiletimeTick);
+    return std::to_string(ns);
 }
-
-std::string FileTimeToString(const fs::file_time_type &fileTime)
-{
-    using namespace std::chrono;
-
-    // fs::file_time_type uses an unspecified clock, so it must be
-    // rebased against system_clock before it can be formatted as calendar time.
-    const auto systemTime =
-        time_point_cast<system_clock::duration>(fileTime - fs::file_time_type::clock::now() + system_clock::now());
-
-    const auto timeT = system_clock::to_time_t(systemTime);
-    const auto ms = duration_cast<milliseconds>(systemTime.time_since_epoch()) % 1000;
-
-    std::tm tmUtc {};
-    bool ok = false;
-#if defined(_WIN32)
-    // gmtime_s returns errno_t: 0 on success, nonzero on failure (e.g. timeT out of representable range).
-    ok = gmtime_s(&tmUtc, &timeT) == 0;
 #else
-    // gmtime_r writes into the caller-provided struct and returns a pointer to it, or nullptr on failure.
-    ok = gmtime_r(&timeT, &tmUtc) != nullptr;
-#endif
-    if (!ok) {
-        return {};  // unrepresentable time point -- signal failure with an empty string rather than garbage
+std::optional<std::string> GetLastModifiedTimeStamp(const fs::path &path)
+{
+    constexpr uint64_t kNanosecondsPerSecond = 1000000000ULL;
+    struct stat st;
+    if (::stat(path.c_str(), &st) != 0) {
+        return std::nullopt;
     }
-    constexpr int setwWidth = 3;
-    std::ostringstream oss;
-    oss << std::put_time(&tmUtc, "%Y-%m-%dT%H:%M:%S");
-    oss << '.' << std::setfill('0') << std::setw(setwWidth) << ms.count();
-    oss << 'Z';
-    return oss.str();
+    const int64_t sec = static_cast<int64_t>(st.st_mtime);
+#if defined(__APPLE__)
+    const int64_t nsec = static_cast<int64_t>(st.st_mtimespec.tv_nsec);
+#else
+    const int64_t nsec = static_cast<int64_t>(st.st_mtim.tv_nsec);
+#endif
+    // See the Windows branch for why the arithmetic is done unsigned.
+    const int64_t ns =
+        static_cast<int64_t>(static_cast<uint64_t>(sec) * kNanosecondsPerSecond + static_cast<uint64_t>(nsec));
+    return std::to_string(ns);
 }
+#endif
 
 ThreadPool::ThreadPool(std::size_t threadCount)
 {
