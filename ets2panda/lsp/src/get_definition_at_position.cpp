@@ -140,6 +140,28 @@ static const varbinder::ImportBindingInfo *GetClickedNamedImportBinding(es2panda
     return bindingInfo;
 }
 
+static const varbinder::ImportBindingInfo *GetNamedImportBindingAtPosition(es2panda_Context *context, size_t position)
+{
+    if (auto *fromClause = GetClickedNamedImportBinding(context, position); fromClause != nullptr) {
+        return fromClause;
+    }
+
+    auto *node = GetTouchingTokenRightMatch(context, position);
+    if (node == nullptr || !node->IsIdentifier()) {
+        return nullptr;
+    }
+    auto *variable = node->AsIdentifier()->Variable();
+    if (variable == nullptr || !variable->IsLocalVariable() ||
+        !variable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return nullptr;
+    }
+    auto *bindingInfo = variable->AsLocalVariable()->ImportBinding();
+    if (bindingInfo == nullptr || bindingInfo->kind != varbinder::ImportBindingKind::NAMED) {
+        return nullptr;
+    }
+    return bindingInfo;
+}
+
 static ir::Identifier *GetInvalidTypeOnlyExportTarget(const varbinder::ExportFact &fact, parser::Program *targetProgram,
                                                       util::StringView importedName)
 {
@@ -166,7 +188,7 @@ static ir::Identifier *GetInvalidTypeOnlyExportTarget(const varbinder::ExportFac
 static ir::Identifier *FindInvalidTypeOnlyImportDefinition(es2panda_Context *context, size_t position,
                                                            checker::ExportClosureResolver *resolver)
 {
-    auto *bindingInfo = GetClickedNamedImportBinding(context, position);
+    auto *bindingInfo = GetNamedImportBindingAtPosition(context, position);
     auto *ctx = reinterpret_cast<public_lib::Context *>(context);
     auto *program = ctx->parserProgram;
     auto *varBinder = program == nullptr ? nullptr : program->VarBinder();
@@ -175,7 +197,8 @@ static ir::Identifier *FindInvalidTypeOnlyImportDefinition(es2panda_Context *con
     }
 
     auto resolved = resolver->ResolveImportBinding(bindingInfo, {false, false});
-    if (resolved.status != checker::ImportBindingResolutionStatus::NOT_FOUND) {
+    if (resolved.status == checker::ImportBindingResolutionStatus::RESOLVED_VARIABLE ||
+        resolved.status == checker::ImportBindingResolutionStatus::RESOLVED_SURFACE) {
         return nullptr;
     }
 

@@ -155,7 +155,9 @@ void ImportExportDecls::PopulateAliasMap(parser::Program *program, const ir::Exp
         const auto exportedName = isDefault ? util::StringView {"default"} : spec->Local()->Name();
         if (auto field = fieldMap_.find(spec->Exported()->Name());
             field != fieldMap_.end() && field->second != nullptr) {
-            AddExportFlags(field->second, exportedName != spec->Exported()->Name());
+            if (!isExplicitTypeOnly) {
+                AddExportFlags(field->second, exportedName != spec->Exported()->Name());
+            }
             origin = field->second;
         }
         const varbinder::SelectiveExportAlias alias {program, exportedName,  spec->Exported(),  origin,
