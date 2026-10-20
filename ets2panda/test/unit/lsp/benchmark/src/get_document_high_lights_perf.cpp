@@ -14,6 +14,7 @@
  */
 
 #include <benchmark/benchmark.h>
+#include <filesystem>
 #include "lsp/include/internal_api.h"
 #include "include/lsp_benchmark_utils.h"
 #include "include/lspMemoryManager.h"
@@ -49,6 +50,38 @@ bool CheckDocumentHighlightsResult(const DocumentHighlights &docHighlight, size_
     return true;
 }
 
+static bool ResolveCaseFilePath(const DocumentHighlightsTestCase &testCase, std::string &filePath,
+                                benchmark::State &state)
+{
+    std::error_code pathError;
+    const auto canonicalPath = std::filesystem::canonical(MakeCasePath(testCase.fileName), pathError);
+    if (pathError) {
+        state.SkipWithError("Resolve case file path failed");
+        return false;
+    }
+    filePath = canonicalPath.string();
+    return true;
+}
+
+static bool ResolveQueryOffset(const DocumentHighlightsTestCase &testCase, const std::string &filePath,
+                               size_t &queryOffset, benchmark::State &state)
+{
+    queryOffset = testCase.offset;
+    if (testCase.anchorText.empty()) {
+        return true;
+    }
+    const std::string fileContent = ReadCaseFile(filePath);
+    if (fileContent.empty()) {
+        state.SkipWithError("Read case file failed");
+        return false;
+    }
+    if (!TryResolveAnchorOffset(fileContent, testCase.anchorText, testCase.anchorOffset, queryOffset)) {
+        state.SkipWithError("Anchor text not found");
+        return false;
+    }
+    return true;
+}
+
 static const DocumentHighlightsTestCase K_TEST_CASES[] = {
     {"project/bench_l1.ets", 0, "BENCH_CHAIN_SYMBOL_L1", 2, 1},
     {"project/bench_l2.ets", 0, "BENCH_CHAIN_SYMBOL_L2", 2, 1},
@@ -63,7 +96,10 @@ static void BM_GetDocumentHighlights(benchmark::State &state)
 {
     LspBenchmarkMemoryCountersScope memCountersScope(state);
     const auto &testCase = K_TEST_CASES[state.range(0)];
-    std::string filePath = MakeCasePath(testCase.fileName);
+    std::string filePath;
+    if (!ResolveCaseFilePath(testCase, filePath, state)) {
+        return;
+    }
 
     Initializer initializer;
     auto ctx = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
@@ -72,22 +108,16 @@ static void BM_GetDocumentHighlights(benchmark::State &state)
         return;
     }
     LSPAPI const *lspApi = GetImpl();
+    if (!lspApi->buildSymbolReferenceIndexForContext(ctx)) {
+        state.SkipWithError("Build symbol reference index failed");
+        initializer.DestroyContext(ctx);
+        return;
+    }
 
-    size_t queryOffset = testCase.offset;
-    if (!testCase.anchorText.empty()) {
-        const std::string fileContent = ReadCaseFile(filePath);
-        if (fileContent.empty()) {
-            state.SkipWithError("Read case file failed");
-            initializer.DestroyContext(ctx);
-            return;
-        }
-        const size_t anchorPos = fileContent.find(testCase.anchorText);
-        if (anchorPos == std::string::npos) {
-            state.SkipWithError("Anchor text not found");
-            initializer.DestroyContext(ctx);
-            return;
-        }
-        queryOffset = anchorPos + testCase.anchorOffset;
+    size_t queryOffset;
+    if (!ResolveQueryOffset(testCase, filePath, queryOffset, state)) {
+        initializer.DestroyContext(ctx);
+        return;
     }
 
     auto result = lspApi->getDocumentHighlights(ctx, queryOffset);
