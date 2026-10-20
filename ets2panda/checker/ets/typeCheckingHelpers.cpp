@@ -450,12 +450,53 @@ Type *ETSChecker::GetNonConstantType(Type *type)
     return clone;
 }
 
+SavedCheckerContext ETSChecker::ReconstructOwnerClassContext(ETSObjectType *owner)
+{
+    if (owner == nullptr) {
+        return SavedCheckerContext(this, CheckerStatus::NO_OPTS, nullptr);
+    }
+    ES2PANDA_ASSERT(!owner->HasObjectFlag(ETSObjectFlags::ENUM));
+    CheckerStatus const status =
+        (owner->HasObjectFlag(ETSObjectFlags::CLASS) ? CheckerStatus::IN_CLASS : CheckerStatus::IN_INTERFACE) |
+        (owner->HasObjectFlag(ETSObjectFlags::ABSTRACT) ? CheckerStatus::IN_ABSTRACT : CheckerStatus::NO_OPTS) |
+        (owner->HasObjectFlag(ETSObjectFlags::INNER) ? CheckerStatus::INNER_CLASS : CheckerStatus::NO_OPTS) |
+        (owner->GetDeclNode()->IsClassDefinition() && owner->GetDeclNode()->AsClassDefinition()->IsLocal()
+             ? CheckerStatus::IN_LOCAL_CLASS
+             : CheckerStatus::NO_OPTS);
+
+    return SavedCheckerContext(this, status, owner);
+}
+
+void ETSChecker::CheckPendingReturnTypeInference(Signature *signature)
+{
+    if (!signature->HasSignatureFlag(SignatureFlags::NEED_RETURN_TYPE) || !signature->HasFunction()) {
+        return;
+    }
+
+    TypeStackElement tse(this, signature, {{diagnostic::CYCLIC_CALLEE, {}}}, signature->Function()->Start());
+    if (tse.HasTypeError()) {
+        return;
+    }
+
+    auto *owner = const_cast<ETSObjectType *>(util::Helpers::GetContainingObjectType(signature->Function()));
+    SavedCheckerContext savedCtx(ReconstructOwnerClassContext(owner));
+
+    ir::AstNode *methodDef = signature->Function();
+    while (!methodDef->IsMethodDefinition()) {
+        methodDef = methodDef->Parent();
+        ES2PANDA_ASSERT(methodDef != nullptr);
+    }
+    ES2PANDA_ASSERT(methodDef->IsMethodDefinition());
+    methodDef->Check(this);
+}
+
 Type *ETSChecker::GetTypeOfSetterGetter(varbinder::Variable *const var)
 {
     auto *propType = var->TsType()->AsETSFunctionType();
     if (propType->HasTypeFlag(checker::TypeFlag::GETTER)) {
         auto *getter = propType->FindGetter();
         ES2PANDA_ASSERT(getter != nullptr);
+        CheckPendingReturnTypeInference(getter);
         return getter->ReturnType();
     }
 

@@ -42,6 +42,10 @@ ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp
 )
 
+ets2panda_add_gtest(es2panda_line_number_overflow_tests
+    CPP_SOURCES line_number_overflow_test.cpp
+)
+
 ets2panda_add_gtest(es2panda_name_mangling_tests
     CPP_SOURCES name_mangling_test.cpp
 )

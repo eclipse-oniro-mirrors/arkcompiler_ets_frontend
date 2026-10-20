@@ -3096,24 +3096,6 @@ static void CheckCallee(ETSChecker *checker, ir::CallExpression *expr)
     }
 }
 
-// Restore CheckerContext of the owner class if we want to perform checking
-static checker::SavedCheckerContext ReconstructOwnerClassContext(ETSChecker *checker, ETSObjectType *owner)
-{
-    if (owner == nullptr) {
-        return SavedCheckerContext(checker, CheckerStatus::NO_OPTS, nullptr);
-    }
-    ES2PANDA_ASSERT(!owner->HasObjectFlag(ETSObjectFlags::ENUM));
-    CheckerStatus const status =
-        (owner->HasObjectFlag(ETSObjectFlags::CLASS) ? CheckerStatus::IN_CLASS : CheckerStatus::IN_INTERFACE) |
-        (owner->HasObjectFlag(ETSObjectFlags::ABSTRACT) ? CheckerStatus::IN_ABSTRACT : CheckerStatus::NO_OPTS) |
-        (owner->HasObjectFlag(ETSObjectFlags::INNER) ? CheckerStatus::INNER_CLASS : CheckerStatus::NO_OPTS) |
-        (owner->GetDeclNode()->IsClassDefinition() && owner->GetDeclNode()->AsClassDefinition()->IsLocal()
-             ? CheckerStatus::IN_LOCAL_CLASS
-             : CheckerStatus::NO_OPTS);
-
-    return SavedCheckerContext(checker, status, owner);
-}
-
 static bool RaisedErrorsSince(ETSChecker *checker, util::DiagnosticCheckpoint const &checkpoint)
 {
     auto const current = checker->DiagnosticEngine().Save();
@@ -3149,7 +3131,7 @@ static checker::Type *GetCallExpressionReturnType(ETSChecker *checker, ir::CallE
     }
 
     auto owner = const_cast<ETSObjectType *>(util::Helpers::GetContainingObjectType(signature->Function()));
-    SavedCheckerContext savedCtx(ReconstructOwnerClassContext(checker, owner));
+    SavedCheckerContext savedCtx(checker->ReconstructOwnerClassContext(owner));
 
     ir::AstNode *methodDef = signature->Function();
     while (!methodDef->IsMethodDefinition()) {
@@ -3481,8 +3463,13 @@ static Type *HandleNonMethodAndCallSite(ETSChecker *checker, ir::Expression *use
     const auto *funcType = type->AsETSFunctionType();
     for (auto *sig : funcType->CallSignatures()) {
         if (sig->Function() != nullptr && sig->Function()->IsGetter()) {
+            checker->CheckPendingReturnTypeInference(sig);
             return sig->ReturnType();
         }
+    }
+
+    for (auto *sig : funcType->CallSignatures()) {
+        checker->CheckPendingReturnTypeInference(sig);
     }
 
     return nullptr;
@@ -6341,7 +6328,10 @@ checker::Type *ETSAnalyzer::Check(ir::TSInterfaceDeclaration *st) const
     FORWARD_TYPE_ERROR(checker, stmtType, st);
 
     auto *interfaceType = stmtType->AsETSObjectType();
-    checker->CheckInterfaceAnnotations(st);
+    {
+        checker::ScopeContext scopeCtx(checker, st->Scope());
+        checker->CheckInterfaceAnnotations(st);
+    }
 
     if (!interfaceType->IsGradual()) {
         interfaceType->SetSuperType(checker->GlobalETSObjectType());

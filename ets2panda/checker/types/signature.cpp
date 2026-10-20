@@ -27,44 +27,79 @@ util::StringView Signature::InternalName() const
     return internalName_.Empty() && func_ != nullptr ? func_->Scope()->InternalName() : internalName_;
 }
 
-static Type *SubstituteDirectTypeParameter(Type *type, TypeRelation *relation, const Substitution *substitution)
-{
-    if (type == nullptr || !type->IsETSTypeParameter()) {
-        return nullptr;
-    }
+struct ParamPlan {
+    Type *result {};                // wholesale-replaced or polymorphically substituted entry
+    ETSTypeParameter *original {};  // type parameter that stays generic in the copy
+    ETSTypeParameter *clone {};     // clone of 'original', if it was re-parameterized
+};
 
-    auto *const substitutedType = type->Substitute(relation, substitution);
-    return substitutedType != type && substitutedType->IsETSReferenceType() ? substitutedType : nullptr;
+static void FinalizeClonedParameters(TypeRelation *relation, const ArenaVector<ParamPlan> *plans,
+                                     const Substitution *combinedSubstitution, bool substituteDefault)
+{
+    for (auto &plan : *plans) {
+        if (plan.clone == nullptr) {
+            continue;
+        }
+        auto *const constraint = plan.original->GetConstraintType();
+        if (constraint != nullptr) {
+            plan.clone->SetConstraintType(constraint->Substitute(relation, combinedSubstitution));
+        }
+        auto *const defaultType = substituteDefault ? plan.original->GetDefaultType() : nullptr;
+        if (defaultType != nullptr) {
+            plan.clone->SetDefaultType(defaultType->Substitute(relation, combinedSubstitution));
+        }
+    }
 }
 
-static std::pair<Type *, Type *> GetSubstitutedTypeParameterProperties(SignatureInfo *signatureInfo, Type *returnType,
-                                                                       TypeRelation *relation,
-                                                                       const Substitution *substitution)
+static bool CloneDependentTypeParameters(TypeRelation *relation, ArenaVector<ParamPlan> *plans,
+                                         const Substitution *substitution, Substitution *combinedSubstitution,
+                                         bool substituteDefault)
 {
-    if (signatureInfo->typeParams.size() != 1U || signatureInfo->restVar != nullptr) {
-        return {nullptr, nullptr};
+    auto *const checker = relation->GetChecker()->AsETSChecker();
+    auto propertiesChanged = [relation, substituteDefault](ETSTypeParameter *tpar, const Substitution *subst) {
+        auto *const constraint = tpar->GetConstraintType();
+        if (constraint != nullptr && constraint->Substitute(relation, subst) != constraint) {
+            return true;
+        }
+        if (!substituteDefault) {
+            return false;
+        }
+        auto *const defaultType = tpar->GetDefaultType();
+        return defaultType != nullptr && defaultType->IsETSTypeParameter() &&
+               defaultType->Substitute(relation, subst) != defaultType;
+    };
+
+    bool clonedAny = false;
+    bool newClone = true;
+    while (newClone) {
+        newClone = false;
+        for (auto &plan : *plans) {
+            if (plan.original == nullptr || plan.clone != nullptr) {
+                continue;
+            }
+            auto *const defaultType = plan.original->GetDefaultType();
+            auto *const constraint = defaultType != nullptr ? plan.original->GetConstraintType() : nullptr;
+            if (defaultType != nullptr &&
+                (!substituteDefault ||
+                 (constraint != nullptr && constraint->Substitute(relation, substitution) != constraint))) {
+                continue;
+            }
+            const auto *const subst = clonedAny ? combinedSubstitution : substitution;
+            if (!propertiesChanged(plan.original, subst)) {
+                continue;
+            }
+            if (!clonedAny) {
+                *combinedSubstitution = *substitution;
+            }
+            plan.clone = plan.original->Clone(checker)->AsETSTypeParameter();
+            checker->EmplaceSubstituted(combinedSubstitution, plan.original->GetOriginal(), plan.clone);
+            clonedAny = true;
+            newClone = true;
+        }
     }
 
-    auto *const type = signatureInfo->typeParams.front();
-    if (!type->IsETSTypeParameter() || returnType != type || type->Substitute(relation, substitution) != type) {
-        return {nullptr, nullptr};
-    }
-
-    auto *const typeParam = type->AsETSTypeParameter();
-    auto *const newDefaultType = SubstituteDirectTypeParameter(typeParam->GetDefaultType(), relation, substitution);
-    if (signatureInfo->params.empty() && newDefaultType != nullptr &&
-        typeParam->GetConstraintType()->Substitute(relation, substitution) == typeParam->GetConstraintType()) {
-        return {newDefaultType, nullptr};
-    }
-
-    auto *const newConstraintType =
-        SubstituteDirectTypeParameter(typeParam->GetConstraintType(), relation, substitution);
-    if (signatureInfo->params.size() == 1U && signatureInfo->params.front()->TsType() == type &&
-        typeParam->GetDefaultType() == nullptr && newConstraintType != nullptr) {
-        return {nullptr, newConstraintType};
-    }
-
-    return {nullptr, nullptr};
+    FinalizeClonedParameters(relation, plans, combinedSubstitution, substituteDefault);
+    return clonedAny;
 }
 
 static std::pair<SignatureInfo *, bool> SubstituteTypeParameters(Signature *signature, TypeRelation *relation,
@@ -76,29 +111,43 @@ static std::pair<SignatureInfo *, bool> SubstituteTypeParameters(Signature *sign
     auto *const newSigInfo = checker->ProgramAllocator()->New<SignatureInfo>(checker->ProgramAllocator());
     ES2PANDA_ASSERT(newSigInfo != nullptr);
     bool anyChange = false;
-    auto [newDefaultType, newConstraintType] =
-        GetSubstitutedTypeParameterProperties(signatureInfo, signature->ReturnType(), relation, substitution);
-    if (newDefaultType == nullptr && newConstraintType == nullptr) {
-        for (auto *typeParam : signatureInfo->typeParams) {
-            auto *newTypeParam = typeParam->Substitute(relation, substitution);
-            newSigInfo->typeParams.push_back(newTypeParam);
-            anyChange |= (newTypeParam != typeParam);
+
+    auto plans = ArenaVector<ParamPlan> {checker->ProgramAllocator()->Adapter()};
+
+    for (auto *typeParam : signatureInfo->typeParams) {
+        // A previously substituted signature may hold non-type-parameter entries here;
+        // substitute them polymorphically, as before.
+        if (!typeParam->IsETSTypeParameter()) {
+            auto *substitutedEntry = typeParam->Substitute(relation, substitution);
+            anyChange |= (substitutedEntry != typeParam);
+            plans.push_back(ParamPlan {substitutedEntry, nullptr, nullptr});
+            continue;
         }
-        return {newSigInfo, anyChange};
+
+        auto *const tpar = typeParam->AsETSTypeParameter();
+        auto *const substitutedParam = tpar->Substitute(relation, substitution);
+
+        if (substitutedParam != typeParam) {
+            plans.push_back(ParamPlan {substitutedParam, nullptr, nullptr});
+            anyChange = true;
+            continue;
+        }
+
+        plans.push_back(ParamPlan {nullptr, tpar, nullptr});
     }
 
-    *combinedSubstitution = *substitution;
-    auto *const oldTypeParam = signatureInfo->typeParams.front()->AsETSTypeParameter();
-    auto *const newTypeParam = oldTypeParam->Clone(checker)->AsETSTypeParameter();
-    newTypeParam->SetUnderInference();
-    checker->EmplaceSubstituted(combinedSubstitution, oldTypeParam->GetOriginal(), newTypeParam);
-    if (newDefaultType != nullptr) {
-        newTypeParam->SetDefaultType(newDefaultType);
-    } else {
-        newTypeParam->SetConstraintType(newConstraintType);
+    const bool substituteDefault = signatureInfo->typeParams.size() == 1U && signatureInfo->restVar == nullptr &&
+                                   signatureInfo->params.empty() &&
+                                   signature->ReturnType() == signatureInfo->typeParams.front();
+
+    anyChange |= CloneDependentTypeParameters(relation, &plans, substitution, combinedSubstitution, substituteDefault);
+
+    for (auto &plan : plans) {
+        newSigInfo->typeParams.push_back(
+            plan.clone != nullptr ? plan.clone : (plan.original != nullptr ? plan.original : plan.result));
     }
-    newSigInfo->typeParams.push_back(newTypeParam);
-    return {newSigInfo, true};
+
+    return {newSigInfo, anyChange};
 }
 
 Signature *Signature::Substitute(TypeRelation *relation, const Substitution *substitution)
@@ -126,7 +175,7 @@ Signature *Signature::Substitute(TypeRelation *relation, const Substitution *sub
 
     if (signatureInfo_->restVar != nullptr) {
         auto *newRestVar = &*signatureInfo_->restVar;
-        auto *newRestType = signatureInfo_->restVar->TsType()->Substitute(relation, substitution);
+        auto *newRestType = signatureInfo_->restVar->TsType()->Substitute(relation, effectiveSubstitution);
         if (newRestType != signatureInfo_->restVar->TsType()) {
             anyChange = true;
             newRestVar = signatureInfo_->restVar->Copy(allocator, signatureInfo_->restVar->Declaration());

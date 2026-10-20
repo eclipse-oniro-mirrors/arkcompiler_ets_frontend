@@ -882,6 +882,9 @@ public:
     void CacheFunctionalInterface(ir::ETSFunctionType *type, ETSObjectType *ifaceType);
     void CollectReturnStatements(ir::AstNode *parent);
 
+    void CheckPendingReturnTypeInference(Signature *signature);
+    SavedCheckerContext ReconstructOwnerClassContext(ETSObjectType *owner);
+
     evaluate::ScopedDebugInfoPlugin *GetDebugInfoPlugin();
     const evaluate::ScopedDebugInfoPlugin *GetDebugInfoPlugin() const;
 

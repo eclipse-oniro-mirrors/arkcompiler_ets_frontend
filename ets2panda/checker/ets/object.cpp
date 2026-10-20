@@ -1145,21 +1145,16 @@ void ETSChecker::CheckDynamicInheritanceAndImplement(ETSObjectType *const interf
     }
 }
 
-Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
+static checker::ETSObjectType *ResolveClassObjectType(ETSChecker *checker, ir::ClassDefinition *classDef)
 {
-    if (classDef->IsFinal() && classDef->IsAbstract()) {
-        LogError(diagnostic::ABSTRACT_IS_FINAL, {}, classDef->Start());
-    }
-
     auto *var = classDef->Ident()->Variable();
     if (var == nullptr) {
-        ES2PANDA_ASSERT(IsAnyError());
-        return GlobalTypeError();
+        ES2PANDA_ASSERT(checker->IsAnyError());
+        return nullptr;
     }
 
-    checker::ETSObjectType *classType {};
     if (var->TsType() == nullptr) {
-        classType = CreateETSObjectTypeOrBuiltin(classDef, checker::ETSObjectFlags::CLASS);
+        auto *classType = checker->CreateETSObjectTypeOrBuiltin(classDef, checker::ETSObjectFlags::CLASS);
         classType->SetVariable(var);
         var->SetTsType(classType);
         if (classDef->IsAbstract()) {
@@ -1168,10 +1163,25 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         if (IsInInteropDeclProgram(classDef)) {
             classType->AddObjectFlag(checker::ETSObjectFlags::GRADUAL);
         }
-    } else if (var->TsType()->IsETSObjectType()) {
-        classType = var->TsType()->AsETSObjectType();
-    } else {
-        ES2PANDA_ASSERT(IsAnyError());
+        return classType;
+    }
+
+    if (var->TsType()->IsETSObjectType()) {
+        return var->TsType()->AsETSObjectType();
+    }
+
+    ES2PANDA_ASSERT(checker->IsAnyError());
+    return nullptr;
+}
+
+Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
+{
+    if (classDef->IsFinal() && classDef->IsAbstract()) {
+        LogError(diagnostic::ABSTRACT_IS_FINAL, {}, classDef->Start());
+    }
+
+    auto *classType = ResolveClassObjectType(this, classDef);
+    if (classType == nullptr) {
         return GlobalTypeError();
     }
 
@@ -1199,8 +1209,11 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         GetInterfaces(classType);
     }
     ctScope.TryCheckConstraints();
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    CheckClassAnnotations(classDef);
+    {
+        checker::ScopeContext scopeCtx(this, classDef->Scope());
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        CheckClassAnnotations(classDef);
+    }
     return classType;
 }
 

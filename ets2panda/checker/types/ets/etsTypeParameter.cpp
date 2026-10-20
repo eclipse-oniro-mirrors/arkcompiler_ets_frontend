@@ -173,6 +173,10 @@ Type *ETSTypeParameter::Substitute([[maybe_unused]] TypeRelation *relation, cons
         ES2PANDA_ASSERT(repl->second->IsETSReferenceType());
         return repl->second;
     }
+    if (auto repl = substitution->find(this); repl != substitution->end()) {
+        ES2PANDA_ASSERT(repl->second->IsETSReferenceType());
+        return repl->second;
+    }
     return this;
 }
 

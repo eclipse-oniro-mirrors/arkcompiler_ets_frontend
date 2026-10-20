@@ -81,6 +81,12 @@ SourceLocation LineIndex::GetLocation(SourcePosition pos) const noexcept
         return SourceLocation(line + 1, col + 1, pos.Program());
     }
 
+    constexpr auto saturatedLine = static_cast<size_t>(std::numeric_limits<uint16_t>::max());
+    if (line == saturatedLine && !entries_.empty()) {
+        auto [resolvedLine, resolvedCol] = GetLocation(pos.index);
+        return SourceLocation(resolvedLine, resolvedCol, pos.Program());
+    }
+
     if (line == entries_.size()) {
         --line;
     }

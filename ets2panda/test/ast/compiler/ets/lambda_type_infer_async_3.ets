@@ -20,4 +20,5 @@ p.then(obj => {
 });
 
 /* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => PromiseLike<T>|T)) */
+/* @@? 18:15 Error Semantic error ESE0091: Type 'undefined' is not compatible with the enclosing method's return type 'PromiseLike<T>|T' */
 /* @@? 19:27 Error Semantic error ESE0010: Value is possibly nullish. */
