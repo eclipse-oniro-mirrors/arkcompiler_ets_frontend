@@ -1467,14 +1467,10 @@ bool ConstantExpressionLoweringImpl::CalculateAndCheck(DAGNode *user)
     // A generated enum member initializer (the auto-incremented `prev + 1`) must wrap on overflow
     // to match the runtime semantics of the enum's integer base type, instead of being rejected as
     // an out-of-range constant. Handle this before CheckCastLiteral, which would otherwise log the
-    // range error.
+    // range error. Only integer base types use this path; other types still need the regular check.
     if (IsGeneratedEnumMemberInit(initParent) && constr != nullptr && res->IsNumberLiteral()) {
         auto &number = res->AsNumberLiteral()->Number();
-        if (number.IsInteger()) {
-            auto dst = TryExtractPrimitiveType(constr);
-            if (dst != ir::PrimitiveType::VOID && !TryCastNumber<false>(number, dst)) {
-                WrapCastInteger(number, dst);
-            }
+        if (number.IsInteger() && WrapCastInteger(number, TryExtractPrimitiveType(constr))) {
             RegisterReplacement(user, res);
             return true;
         }
