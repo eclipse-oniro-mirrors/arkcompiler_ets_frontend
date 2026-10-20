@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -19,6 +19,20 @@ endif()
 ets2panda_add_gtest(ast_builder_test
     CPP_SOURCES ast_builder_test.cpp
 )
+
+ets2panda_add_gtest(es2panda_api_result_tests
+    CPP_SOURCES api_result_storage_test.cpp
+)
+
+ets2panda_add_gtest(es2panda_api_lifecycle_tests
+    CPP_SOURCES api_result_lifecycle_test.cpp
+)
+
+if (PANDA_TARGET_LINUX AND NOT PANDA_TARGET_MOBILE)
+    ets2panda_add_gtest(es2panda_api_storage_properties_tests
+        CPP_SOURCES api_result_storage_properties_test.cpp
+    )
+endif()
 
 # NOTE(@srokashevich, #30057): enable with asan after fix
 if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)

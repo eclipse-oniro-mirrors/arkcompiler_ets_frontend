@@ -16,9 +16,11 @@
 #ifndef ES2PANDA_PUBLIC_PUBLIC_H
 #define ES2PANDA_PUBLIC_PUBLIC_H
 
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <unordered_map>
+#include <string_view>
 #include "public/es2panda_lib.h"
 
 #include "assembler/assembly-program.h"
@@ -46,6 +48,53 @@ class DepAnalyzer;
 
 namespace ark::es2panda::public_lib {
 
+// Stable content-addressed copies of borrowed CAPI getter results; append-only, so earlier
+// snapshots stay readable after edits. Implementation lives in public.cpp (es2panda-lib).
+class ApiResultStorage {
+public:
+    using StringHashFn = size_t (*)(std::string_view);
+    using PointerHashFn = size_t (*)(size_t hash);
+
+    template <typename T>
+    using PointerReader = T (*)(const void *, size_t);
+
+    // Hash overrides exist for tests that need deterministic collisions.
+    explicit ApiResultStorage(StringHashFn stringHash = nullptr, PointerHashFn pointerHash = nullptr);
+    ~ApiResultStorage();
+    ApiResultStorage(const ApiResultStorage &) = delete;
+    ApiResultStorage &operator=(const ApiResultStorage &) = delete;
+
+    char *String(std::string_view value);
+    // Stable typed buffer with the reader's values; an empty result still
+    // provides a valid address for [result, result + 0) readers.
+    char **Pointers(size_t count, const void *source, PointerReader<char *> read);
+    es2panda_AstNode **Pointers(size_t count, const void *source, PointerReader<es2panda_AstNode *> read);
+    es2panda_Type **Pointers(size_t count, const void *source, PointerReader<es2panda_Type *> read);
+    es2panda_Signature **Pointers(size_t count, const void *source, PointerReader<es2panda_Signature *> read);
+    es2panda_Variable **Pointers(size_t count, const void *source, PointerReader<es2panda_Variable *> read);
+    es2panda_Declaration **Pointers(size_t count, const void *source, PointerReader<es2panda_Declaration *> read);
+    es2panda_Scope **Pointers(size_t count, const void *source, PointerReader<es2panda_Scope *> read);
+    void Clear();
+
+private:
+    struct Impl;
+    Impl &GetImpl();
+
+    StringHashFn stringHash_;
+    PointerHashFn pointerHash_;
+    std::unique_ptr<Impl> impl_;
+};
+
+// Shared by generated getter copies and tests. The stack-local reader is
+// consumed synchronously, without materializing a temporary input vector.
+template <typename T, typename Read>
+T *CopyApiPointerResult(ApiResultStorage &storage, size_t count, Read read)
+{
+    return storage.Pointers(count, &read, [](const void *source, size_t index) -> T {
+        return (*static_cast<const Read *>(source))(index);
+    });
+}
+
 struct ConfigImpl {
     const util::Options *options = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
@@ -66,7 +115,10 @@ struct GlobalContext {
 };
 
 struct Context {
-    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
+    // NOLINTBEGIN(misc-non-private-member-variables-in-class)
+    Context();
+    ~Context();
+
     using CodeGenCb =
         std::function<void(public_lib::Context *context, varbinder::FunctionScope *, compiler::ProgramElement *)>;
 
@@ -116,6 +168,7 @@ struct Context {
     std::string input;
     SourceFile const *sourceFile = nullptr;
     ArenaAllocator *allocator = nullptr;
+    ApiResultStorage apiResults;
     compiler::CompileQueue *queue = nullptr;
     std::vector<util::Plugin> const *plugins = nullptr;
     std::vector<compiler::LiteralBuffer> contextLiterals;
