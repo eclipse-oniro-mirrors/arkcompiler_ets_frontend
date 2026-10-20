@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -413,7 +413,7 @@ TEST_F(PluginConversionRuleUnitTest, BoundContextPtrMethodCall)
     extern "C"  char *BoundContextFormRecordNameConst([[maybe_unused]] es2panda_Context *context,
 es2panda_BoundContext *classInstance/*return_args:*/)
     {
-        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context)->allocator,
+        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context),
     ((reinterpret_cast<const varbinder::BoundContext *>(classInstance))->FormRecordName()));
 	    return apiRes;
     }

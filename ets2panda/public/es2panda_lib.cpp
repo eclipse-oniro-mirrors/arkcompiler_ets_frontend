@@ -156,6 +156,50 @@ __attribute__((unused)) char *UStringToCString(ArenaAllocator *allocator, util::
     return StringViewToCString(allocator, sv.View());
 }
 
+static char *StringViewToCString(Context *ctx, std::string_view utf8)
+{
+    if (ctx->isExternal) {
+        return StringViewToCString(ctx->allocator, utf8);
+    }
+    if (!utf8.empty() && utf8.back() == '\0') {
+        return const_cast<char *>(utf8.data());
+    }
+    return ctx->apiResults.String(utf8);
+}
+
+[[maybe_unused]] static char *StringViewToCString(Context *ctx, util::StringView sv)
+{
+    return StringViewToCString(ctx, sv.Utf8());
+}
+
+[[maybe_unused]] static char *StdStringToCString(Context *ctx, const std::string &str)
+{
+    if (ctx->isExternal) {
+        return StdStringToCString(ctx->allocator, str);
+    }
+    return ctx->apiResults.String(str);
+}
+
+[[maybe_unused]] static char *UStringToCString(Context *ctx, util::UString sv)
+{
+    return StringViewToCString(ctx, sv.View());
+}
+
+template <typename T, typename Read>
+static T *CopyApiResult(Context *ctx, size_t count, Read read)
+{
+    if constexpr (std::is_pointer_v<T>) {
+        if (!ctx->isExternal) {
+            return CopyApiPointerResult<T>(ctx->apiResults, count, read);
+        }
+    }
+    auto *result = ctx->allocator->New<T[]>(count);
+    for (size_t i = 0; i < count; ++i) {
+        result[i] = read(i);
+    }
+    return result;
+}
+
 __attribute__((unused)) es2panda_variantDoubleCharArrayBool EnumMemberResultToEs2pandaVariant(
     ArenaAllocator *allocator, varbinder::EnumMemberResult variant)
 {
@@ -796,6 +840,7 @@ extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
     ctx->sourceFile = nullptr;
     delete ctx->phaseManager;
     if (!ctx->isExternal) {
+        ctx->apiResults.Clear();
         delete ctx->allocator;
         ctx->allocator = nullptr;
         delete ctx->eheapScope;

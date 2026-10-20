@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -91,16 +91,14 @@ TEST_F(PluginConversionRuleUnitTest, ArenaVectorPtrReturnValue)
     extern "C" es2panda_AstNode **BlockStatementStatementsConst([[maybe_unused]] es2panda_Context *context,
 es2panda_AstNode *classInstance/*return_args:*/, size_t *returnTypeLen)
     {
- 	    auto *ctx = reinterpret_cast<Context *>(context);
- 	    auto *ctxAllocator = ctx->allocator;
- 	    decltype(auto) resultVector = ((reinterpret_cast<const ir::BlockStatement *>(classInstance))->Statements());
- 	    *returnTypeLen = resultVector.size();
- 	    auto apiRes = ctxAllocator->New<es2panda_AstNode *[]>(*returnTypeLen);
- 	    for (size_t i = 0; i < *returnTypeLen; ++i) {
- 	        auto toPush = reinterpret_cast<es2panda_AstNode *>(resultVector.at(i));
- 		    apiRes[i] = reinterpret_cast<es2panda_AstNode *>(toPush);
- 	    };
-	    return apiRes;
+        auto *ctx = reinterpret_cast<Context *>(context);
+        decltype(auto) resultVector = ((reinterpret_cast<const ir::BlockStatement *>(classInstance))->Statements());
+        *returnTypeLen = resultVector.size();
+        auto apiRes = CopyApiResult<es2panda_AstNode *>(ctx, *returnTypeLen, [&](size_t i) {
+            auto toPush = reinterpret_cast<es2panda_AstNode *>(resultVector.at(i));
+            return reinterpret_cast<es2panda_AstNode *>(toPush);
+        });
+        return apiRes;
     }
     )"};
 
@@ -255,7 +253,7 @@ es2panda_Type *classInstance/*return_args:*/, es2panda_Variable ***arenaMapValue
  	    *arenaMapValueArray = ctxAllocator->New<es2panda_Variable *[]>(*returnTypeLen);
  	    size_t i = 0;
  	    for (auto [key, value] : resultMap) {
- 		    apiRes[i] = StringViewToCString(reinterpret_cast<Context *>(context)->allocator, (key));
+            apiRes[i] = StringViewToCString(reinterpret_cast<Context *>(context), (key));
  		    (*arenaMapValueArray)[i] = reinterpret_cast< es2panda_Variable *>(value);
  		    ++i;
  	    };

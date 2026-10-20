@@ -47,15 +47,13 @@ change_types:
         reverse_cast:
           start: "\n
             \tauto *ctx = reinterpret_cast<Context *>(context);\n
-            \tauto *ctxAllocator = ctx->allocator;\n
             \tdecltype(auto) resultVector = "
           end: ";\n
             \t*|return_args.0.name| = resultVector|accessor|size();\n
-            \tauto apiRes = ctxAllocator->New<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|[]>(*|return_args.0.name|);\n
-            \tfor (size_t i = 0; i < *|return_args.0.name|; ++i) {\n
+            \tauto apiRes = CopyApiResult<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(ctx, *|return_args.0.name|, [&](size_t i) {\n
             \t\tauto toPush = |reverse_template_nested_expression_1_start|(resultVector|accessor|at(i))|reverse_template_nested_expression_1_end|;\n
-            \t\tapiRes[i] = reinterpret_cast<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(toPush);\n
-            \t}"
+            \t\treturn reinterpret_cast<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(toPush);\n
+            \t})"
 
   - es2panda_arg:
       name: '|arg_name|'
@@ -93,15 +91,13 @@ change_types:
         reverse_cast:
           start: "\n
             \tauto *ctx = reinterpret_cast<Context *>(context);\n
-            \tauto *ctxAllocator = ctx->allocator;\n
             \tdecltype(auto) resultVector = "
           end: ";\n
             \t*|return_args.0.name| = resultVector|accessor|size();\n
-            \tauto apiRes = ctxAllocator->New<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|[]>(*|return_args.0.name|);\n
-            \tfor (size_t i = 0; i < *|return_args.0.name|; ++i) {\n
+            \tauto apiRes = CopyApiResult<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(ctx, *|return_args.0.name|, [&](size_t i) {\n
             \t\tauto toPush = |reverse_template_nested_expression_1_start|(resultVector|accessor|at(i))|reverse_template_nested_expression_1_end|;\n
-            \t\tapiRes[i] = reinterpret_cast<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(toPush);\n
-            \t}"
+            \t\treturn reinterpret_cast<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|>(toPush);\n
+            \t})"
 
   - es2panda_arg:
       name: '|arg_name|'
@@ -3135,7 +3131,7 @@ change_types:
       expression: util::StringView |arg_name|E2p {|arg_name|};
       var_name: '|arg_name|E2p'
       reverse_cast:
-          start: StringViewToCString(reinterpret_cast<Context *>(context)->allocator,
+          start: StringViewToCString(reinterpret_cast<Context *>(context),
           end: )
 
   - es2panda_arg:
@@ -3155,7 +3151,7 @@ change_types:
       expression: util::UString |arg_name|E2p {std::string(|arg_name|), reinterpret_cast<Context *>(context)->allocator};
       var_name: '|arg_name|E2p'
       reverse_cast:
-          start: UStringToCString(reinterpret_cast<Context *>(context)->allocator,
+          start: UStringToCString(reinterpret_cast<Context *>(context),
           end: )
 
   - es2panda_arg:
@@ -3173,7 +3169,7 @@ change_types:
       expression: std::string_view |arg_name|E2p {|arg_name|};
       var_name: '|arg_name|E2p'
       reverse_cast:
-          start: StringViewToCString(reinterpret_cast<Context *>(context)->allocator,
+          start: StringViewToCString(reinterpret_cast<Context *>(context),
           end: )
 
   - es2panda_arg:
@@ -3191,7 +3187,7 @@ change_types:
     cast:
       expression: std::string |arg_name|E2p {|arg_name|};
       reverse_cast:
-        start: 'StdStringToCString(reinterpret_cast<Context *>(context)->allocator, '
+        start: 'StdStringToCString(reinterpret_cast<Context *>(context), '
         end: ')'
       var_name: '|arg_name|E2p'
 

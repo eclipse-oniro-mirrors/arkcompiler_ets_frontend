@@ -167,7 +167,7 @@ TEST_F(PluginConversionRuleUnitTest, UtilStringViewReturnValue)
     extern "C" const char *FunctionScopeNameConst([[maybe_unused]] es2panda_Context *context,
     es2panda_Scope *classInstance/*return_args:*/)
     {
-        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context)->allocator,
+        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context),
                    ((reinterpret_cast<const varbinder::FunctionScope *>(classInstance))->Name()));
     	return apiRes;
     })"};
@@ -201,7 +201,7 @@ TEST_F(PluginConversionRuleUnitTest, StringViewReturnValue)
     extern "C" const char *IdentifierNameConst([[maybe_unused]] es2panda_Context *context,
     es2panda_AstNode *classInstance/*return_args:*/)
     {
-        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context)->allocator,
+        auto apiRes = StringViewToCString(reinterpret_cast<Context *>(context),
                    ((reinterpret_cast<const ir::Identifier *>(classInstance))->Name()));
     	return apiRes;
     })"};
@@ -232,7 +232,7 @@ TEST_F(PluginConversionRuleUnitTest, StringReturnValue)
     extern "C"  char *SrcDumperStrConst([[maybe_unused]] es2panda_Context *context,
     es2panda_SrcDumper *classInstance/*return_args:*/)
     {
-     auto apiRes = StdStringToCString(reinterpret_cast<Context *>(context)->allocator,
+     auto apiRes = StdStringToCString(reinterpret_cast<Context *>(context),
                 ((reinterpret_cast<const ir::SrcDumper *>(classInstance))->Str()));
 	 return apiRes;
     })"};

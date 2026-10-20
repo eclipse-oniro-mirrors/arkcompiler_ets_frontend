@@ -192,6 +192,26 @@ endforeach()
 
 add_custom_target(es2panda-plugin-test)
 
+# Each resource contract runs in a fresh process so RSS deltas do not depend
+# on allocator history from a preceding case. The tests observe only CAPI.
+if (PANDA_TARGET_LINUX AND NOT PANDA_TARGET_MOBILE)
+    panda_frontend_add_executable(api_result_blackbox api_result_blackbox.cpp
+        OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    panda_target_include_directories(api_result_blackbox
+        PRIVATE ${ES2PANDA_PATH} ${OUTPUT_DIR})
+    panda_target_link_libraries(api_result_blackbox es2panda-public)
+    add_custom_target(es2panda-api-blackbox-test)
+    foreach(CASE_ID BB01 BB02 BB03 BB04 BB05 BB06 BB07 BB08 BB09)
+        add_custom_target(es2panda-api-blackbox-${CASE_ID}
+            COMMAND ${CMAKE_COMMAND} -E env
+                LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
+                $<TARGET_FILE:api_result_blackbox> $<TARGET_FILE:es2panda> ${CASE_ID})
+        add_dependencies(es2panda-api-blackbox-${CASE_ID} api_result_blackbox es2panda)
+        add_dependencies(es2panda-api-blackbox-test es2panda-api-blackbox-${CASE_ID})
+    endforeach()
+    add_dependencies(es2panda-plugin-test es2panda-api-blackbox-test)
+endif()
+
 foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
     string(REPLACE " " ";" TEST_DATA_ELEM "${TEST_DATA}")
     list(GET TEST_DATA_ELEM 0 TEST_NAME)
