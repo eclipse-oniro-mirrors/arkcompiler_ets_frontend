@@ -25,7 +25,28 @@ enum ShortEnum: short {
     THIRD,
 }
 
+enum IntEnum: int {
+    ZERO,
+    ONE,
+    MAX = 2147483647,
+    MIN,
+}
+
+enum LongEnum: long {
+    ZERO,
+    ONE,
+    MAX = 9223372036854775807,
+    MIN,
+}
+
 function main(): void {
+    arktest.assertEQ(IntEnum.ZERO.valueOf(), 0);
+    arktest.assertEQ(IntEnum.ONE.valueOf(), 1);
+    arktest.assertEQ(IntEnum.MIN.valueOf(), -2147483648);
+    arktest.assertEQ(LongEnum.ZERO.valueOf(), 0 as long);
+    arktest.assertEQ(LongEnum.ONE.valueOf(), 1 as long);
+    arktest.assertEQ(LongEnum.MIN.valueOf(), -9223372036854775808);
+
     let firstByte = ByteEnum.FIRST;
     let secondByte = ByteEnum.SECOND;
     let thirdByte = ByteEnum.THIRD;
