@@ -820,14 +820,14 @@ Expected<std::unique_ptr<IntermediateCache>, std::string> Gluec::Run()
 {
     auto cache = std::make_unique<IntermediateCache>();
     auto sourceFilePath = NormalizePath(program_->SourceFilePath().Mutf8());
-    auto mtime = GetLastModifiedTime(sourceFilePath);
-    if (!mtime) {
+    auto mtimeStamp = GetLastModifiedTimeStamp(sourceFilePath);
+    if (!mtimeStamp) {
         const std::string message = "Failed to get last modified time for source file: " + sourceFilePath;
         context_.diagnosticEngine.Error(DiagnosticCode::IO_ERROR, message);
         return Unexpected(message);
     }
     cache->sourceFile = sourceFilePath;
-    cache->sourceMTime = FileTimeToString(*mtime);
+    cache->sourceMTime = *mtimeStamp;
     cache->globalClassDescriptor = GlobalClassDescriptor();
     CollectTopLevelSymbols();
     BuildExternals(*cache);

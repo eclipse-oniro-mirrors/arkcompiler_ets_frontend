@@ -831,9 +831,9 @@ static void ProcessProgramsWithCache(const std::vector<parser::Program *> &progr
     for (std::size_t i = 0; i < programs.size(); ++i) {
         auto *prog = programs[i];
         auto sourceFilePath = NormalizePath(prog->SourceFilePath().Mutf8());
-        auto mtime = GetLastModifiedTime(sourceFilePath);
+        auto mtimeStamp = GetLastModifiedTimeStamp(sourceFilePath);
         auto cachedMTime = cacheStore.CachedMTime(sourceFilePath);
-        if (mtime && cachedMTime && FileTimeToString(*mtime) == *cachedMTime) {
+        if (mtimeStamp && cachedMTime && *mtimeStamp == *cachedMTime) {
             GLUEGEN_LOG_DEBUG(logger) << "Cache hit for " << sourceFilePath;
             isCacheHit[i] = true;
             cacheStore.EnqueueRead(sourceFilePath, [&cacheHits, i](std::shared_ptr<IntermediateCache> cache) {
@@ -842,7 +842,7 @@ static void ProcessProgramsWithCache(const std::vector<parser::Program *> &progr
             continue;
         }
         GLUEGEN_LOG_DEBUG(logger) << "Cache miss for " << sourceFilePath
-                                  << (mtime ? " (mtime=" + FileTimeToString(*mtime) + ")" : " (no mtime)")
+                                  << (mtimeStamp ? " (mtime=" + *mtimeStamp + ")" : " (no mtime)")
                                   << (cachedMTime ? " cache[" + *cachedMTime + "]" : " cache[none]");
         RunGluecOnProgram(prog, context, cacheStore, gluecErrors, intermediateCaches);
     }

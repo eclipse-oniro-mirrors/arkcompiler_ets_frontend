@@ -134,18 +134,25 @@ std::string ToForwardSlashPath(const PathLike &pathLike)
 fs::path ToLongPathIfNeeded(const fs::path &path);
 
 /**
- * @brief get the last modified time of a file.
- * @return the file's last write time, or `std::nullopt` if the file does not
- * exist or its modification time could not be queried.
+ * @brief get a deterministic stamp of the file's last modified time, for use
+ * as a cache key: it changes if and only if the file's stored mtime changes.
+ *
+ * The stamp is the file mtime in nanoseconds since the Unix epoch
+ * (1970-01-01T00:00:00Z), read straight from the OS (`stat` on POSIX,
+ * `GetFileAttributesExW` on Windows) rather than through
+ * `std::filesystem::file_time_type` -- whose clock epoch and tick period are
+ * implementation-defined (e.g. 2174-01-01 on libstdc++, 1601-01-01 on MSVC's
+ * C++20 `file_clock`), so any value derived from `file_time_type` silently
+ * changes meaning across C++ standards and standard libraries. Reading the OS
+ * timestamp directly keeps the stamp stable for a given filesystem no matter
+ * which toolchain or C++ standard builds this tool. Only equality against a
+ * previously persisted stamp is meaningful; the stamp may still differ across
+ * OSes/filesystems, which is fine because caches are host-local.
+ *
+ * @return the stamp, or `std::nullopt` if the file does not exist or its
+ * modification time could not be queried.
  */
-std::optional<fs::file_time_type> GetLastModifiedTime(const fs::path &path);
-
-/**
- * @brief convert a `fs::file_time_type` (e.g. from
- * `GetLastModifiedTime`) into an ISO-8601 UTC string with millisecond
- * precision, e.g. "2026-07-20T15:30:45.123Z".
- */
-std::string FileTimeToString(const fs::file_time_type &fileTime);
+std::optional<std::string> GetLastModifiedTimeStamp(const fs::path &path);
 
 // Non-owning view letting an entire container be streamed straight into a single log statement
 // (e.g. `GLUEGEN_LOG_INFO(logger) << "files: " << Joined(files);`), so printing N items costs one
