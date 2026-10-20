@@ -83,7 +83,7 @@ namespace ark::es2panda::parser {
 
 bool ParserImpl::IsTokenOnDifferentLineThanExpressionEnd(const lexer::Token &token, const ir::Expression *expression)
 {
-    return expression != nullptr && token.Start().line != expression->End().line;
+    return expression != nullptr && token.NewLine();
 }
 
 static ir::ValidationInfo ValidateExpression(ir::ArrayExpression *arrExpr);
