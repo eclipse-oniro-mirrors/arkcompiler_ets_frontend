@@ -115,7 +115,7 @@ struct GlobalContext {
 };
 
 struct Context {
-    // NOLINTBEGIN(misc-non-private-member-variables-in-class)
+    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     Context();
     ~Context();
 
