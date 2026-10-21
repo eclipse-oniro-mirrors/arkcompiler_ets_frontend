@@ -702,12 +702,32 @@ export class Lsp {
 
   getOffsetByColAndLine(filename: String, line: number, column: number): number {
     const sourceCode = this.getFileSource(filename.valueOf());
-    return global.es2panda._getOffsetByColAndLine(sourceCode, line, column);
+    const utf16Offset = TextPositionUtils.lineAndColumnToUtf16Offset(sourceCode, line, column);
+    if (utf16Offset === undefined) {
+      throw new Error('Failed to convert line and column to UTF-16 offset');
+    }
+    return utf16Offset;
   }
 
   getColAndLineByOffset(filename: String, offset: number): LspSourceLocation {
     const sourceCode = this.getFileSource(filename.valueOf());
-    return new LspSourceLocation(global.es2panda._getColAndLineByOffset(sourceCode, offset));
+    const codePointOffset = TextPositionUtils.utf16OffsetToCodePointOffset(sourceCode, offset);
+    if (codePointOffset === undefined) {
+      throw new Error('Failed to convert UTF-16 offset to code point offset');
+    }
+    const location = new LspSourceLocation(
+      global.es2panda._getColAndLineByOffset(sourceCode, codePointOffset)
+    );
+    const utf16Column = TextPositionUtils.codePointColumnToUtf16Column(
+      sourceCode,
+      location.line,
+      location.column
+    );
+    if (utf16Column === undefined) {
+      throw new Error('Failed to convert code point column to UTF-16 column');
+    }
+    location.column = utf16Column;
+    return location;
   }
 
   private convertTextSpanToUtf16(source: string, span: TextSpan): void {

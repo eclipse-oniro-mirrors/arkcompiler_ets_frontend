@@ -18,6 +18,30 @@ import { logger } from './logger';
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder('utf-8', { fatal: false });
 
+function utf16ColumnToOffsetInLine(
+  content: string,
+  lineStart: number,
+  lineEnd: number,
+  column: number
+): number | undefined {
+  const offset = lineStart + column - 1;
+  if (offset > lineEnd) {
+    return lineEnd;
+  }
+  if (
+    offset > lineStart &&
+    offset < lineEnd &&
+    content.charCodeAt(offset - 1) >= 0xd800 &&
+    content.charCodeAt(offset - 1) <= 0xdbff &&
+    content.charCodeAt(offset) >= 0xdc00 &&
+    content.charCodeAt(offset) <= 0xdfff
+  ) {
+    logger.error('UTF-16 position splits a surrogate pair');
+    return undefined;
+  }
+  return offset;
+}
+
 export const TextPositionUtils = {
   utf16OffsetToCodePointOffset(content: string, utf16Offset: number): number | undefined {
     if (!Number.isInteger(utf16Offset) || utf16Offset < 0 || utf16Offset > content.length) {
@@ -80,6 +104,30 @@ export const TextPositionUtils = {
       return undefined;
     }
     return utf16Column + 1;
+  },
+
+  lineAndColumnToUtf16Offset(content: string, line: number, column: number): number | undefined {
+    if (!Number.isInteger(line) || !Number.isInteger(column) || line < 1 || column < 1) {
+      logger.error('UTF-16 position out of bounds');
+      return undefined;
+    }
+
+    let currentLine = 1;
+    let lineStart = 0;
+    const lineBreakPattern = /\r\n|[\n\r\u2028\u2029]/g;
+    for (const match of content.matchAll(lineBreakPattern)) {
+      if (currentLine === line) {
+        return utf16ColumnToOffsetInLine(content, lineStart, match.index!, column);
+      }
+      currentLine++;
+      lineStart = match.index! + match[0].length;
+    }
+
+    if (currentLine === line) {
+      return utf16ColumnToOffsetInLine(content, lineStart, content.length, column);
+    }
+
+    return 0;
   },
 
   // char offset -> byte offset

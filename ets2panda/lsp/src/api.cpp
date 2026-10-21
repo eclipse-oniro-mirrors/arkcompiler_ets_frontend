@@ -802,9 +802,8 @@ SignatureHelpItems GetSignatureHelpItems(es2panda_Context *context, size_t posit
 }
 size_t GetOffsetByColAndLine(const std::string &sourceCode, size_t line, size_t column)
 {
-    size_t byteColumn = ark::es2panda::lsp::CodePointOffsetToByteOffset(sourceCode, column);
     auto index = lexer::LineIndex(util::StringView(sourceCode));
-    size_t byteOffset = index.GetOffset(lexer::SourceLocation(line, byteColumn, nullptr));
+    size_t byteOffset = index.GetOffset(lexer::SourceLocation(line, column, nullptr));
     return ark::es2panda::lsp::ByteOffsetToCodePointOffset(sourceCode, byteOffset);
 }
 
@@ -813,11 +812,7 @@ std::pair<size_t, size_t> GetColAndLineByOffset(const std::string &sourceCode, s
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(sourceCode, offset);
 
     auto index = lexer::LineIndex(util::StringView(sourceCode));
-    auto [line, byteColumn] = index.GetLocation(byteOffset);
-
-    size_t charColumn = ark::es2panda::lsp::ByteOffsetToCodePointOffset(sourceCode, byteColumn);
-
-    return {line, charColumn};
+    return index.GetLocation(byteOffset);
 }
 
 std::vector<CodeFixActionInfo> GetCodeFixesAtPosition(es2panda_Context *context, size_t startPosition,

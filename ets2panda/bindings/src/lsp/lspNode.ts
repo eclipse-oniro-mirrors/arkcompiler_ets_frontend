@@ -241,7 +241,7 @@ export class LspSourceLocation extends LspNode {
     this.column = global.es2panda._getSourceLocationColumn(peer);
   }
   readonly line: number;
-  readonly column: number;
+  column: number;
 }
 
 export interface TextSpan {

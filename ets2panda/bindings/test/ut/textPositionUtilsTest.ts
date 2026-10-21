@@ -41,4 +41,17 @@ describe('TextPositionUtils UTF-16 and code point offsets', () => {
     expect(TextPositionUtils.codePointColumnToUtf16Column(multilineSource, 2, 3)).toBe(4);
     expect(TextPositionUtils.codePointColumnToUtf16Column(multilineSource, 2, 5)).toBe(6);
   });
+
+  test('converts one-based line and UTF-16 column to UTF-16 offset', () => {
+    const multilineSource = 'plain\r\na😀中b\u2028last';
+
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 1, 1)).toBe(0);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 2, 1)).toBe(7);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 2, 4)).toBe(10);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 2, 6)).toBe(12);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 2, 10)).toBe(12);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 3, 1)).toBe(13);
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 2, 3)).toBeUndefined();
+    expect(TextPositionUtils.lineAndColumnToUtf16Offset(multilineSource, 10, 1)).toBe(0);
+  });
 });

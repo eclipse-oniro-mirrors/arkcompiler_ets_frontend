@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,9 @@ describe('getOffsetByColAndLineTest', () => {
   const moduleName: string = 'getOffsetByColAndLine';
   const lsp = getLsp(moduleName);
   test('getOffsetByColAndLine_000', () => {
-    const res = lsp.getOffsetByColAndLine(getRealPath(moduleName, 'getOffsetByColAndLine1.ets'), 51, 14);
+    const fileName = getRealPath(moduleName, 'getOffsetByColAndLine1.ets');
+    const res = lsp.getOffsetByColAndLine(fileName, 51, 14);
     expect(res).toBe(1373);
+    expect(lsp.getOffsetByColAndLine(fileName, 1000, 1)).toBe(0);
   });
 });
