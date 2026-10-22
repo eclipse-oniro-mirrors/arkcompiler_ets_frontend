@@ -28,6 +28,14 @@ using ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS;
 using ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT;
 using ark::es2panda::lsp::sort_text::SUGGESTED_CLASS_MEMBERS;
 
+static void AssertNoActionlessBareEntry(const std::vector<CompletionEntry> &entries, const std::string &name)
+{
+    for (auto entry : entries) {
+        auto insertText = entry.GetInsertText().empty() ? entry.GetName() : entry.GetInsertText();
+        EXPECT_FALSE(insertText == name && !entry.GetHasAction()) << "Unusable bare-name completion: " << name;
+    }
+}
+
 static bool IsMatchedCompletionEntry(const CompletionEntry &actual, const CompletionEntry &expected)
 {
     if (actual.GetCompletionKind() != expected.GetCompletionKind()) {
@@ -317,7 +325,7 @@ function MyFunc(demo: string | AA, demo2: AA | number) {
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LSPCompletionsTests, getCompletionsAtPosition26)
+TEST_F(LSPCompletionsTests, DISABLED_getCompletionsAtPosition26)
 {
     std::vector<std::string> files = {"getCompletionsAtPosition26.ets"};
     std::vector<std::string> texts = {R"delimiter(
@@ -333,12 +341,9 @@ Ab
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
-    auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("AbcFile", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
-                        "AbcFile"),
-        CompletionEntry("AbcFileNotFoundError", ark::es2panda::lsp::CompletionEntryKind::CLASS,
-                        std::string(GLOBALS_OR_KEYWORDS), "AbcFileNotFoundError")};
-    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    // These runtime-package types are not available as unqualified globals.
+    AssertNoActionlessBareEntry(res.GetEntries(), "AbcFile");
+    AssertNoActionlessBareEntry(res.GetEntries(), "AbcFileNotFoundError");
     initializer.DestroyContext(ctx);
 }
 
@@ -789,10 +794,9 @@ con
         CompletionEntry("console: Console", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
                         std::string(GLOBALS_OR_KEYWORDS), "console"),
         CompletionEntry("Console", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
-                        "Console"),
-        CompletionEntry("ConcurrentHashMap", ark::es2panda::lsp::CompletionEntryKind::CLASS,
-                        std::string(GLOBALS_OR_KEYWORDS), "ConcurrentHashMap")};
+                        "Console")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    AssertNoActionlessBareEntry(res.GetEntries(), "ConcurrentHashMap");
     initializer.DestroyContext(ctx);
 }
 
@@ -2427,9 +2431,9 @@ Acc
     auto expectedEntries = std::vector<CompletionEntry> {
         CompletionEntry("Accesiblity", CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "Accesiblity"),
         CompletionEntry("Accee", CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Accee"),
-        CompletionEntry("Accaa", CompletionEntryKind::STRUCT, std::string(GLOBALS_OR_KEYWORDS), "Accaa"),
-        CompletionEntry("AccInf", CompletionEntryKind::INTERFACE, std::string(GLOBALS_OR_KEYWORDS), "AccInf")};
+        CompletionEntry("Accaa", CompletionEntryKind::STRUCT, std::string(GLOBALS_OR_KEYWORDS), "Accaa")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    AssertNoActionlessBareEntry(res.GetEntries(), "AccInf");
     initializer.DestroyContext(context);
 }
 

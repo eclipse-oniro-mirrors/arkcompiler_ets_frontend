@@ -1492,9 +1492,9 @@ foo
     size_t const offset = 42;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto expectedEntries = std::vector<CompletionEntry> {
-        CompletionEntry("foo1(): void", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+        CompletionEntry("foo1(): void", ark::es2panda::lsp::CompletionEntryKind::FUNCTION,
                         std::string(GLOBALS_OR_KEYWORDS), "foo1()"),
-        CompletionEntry("foo2(): undifined", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+        CompletionEntry("foo2(): undifined", ark::es2panda::lsp::CompletionEntryKind::FUNCTION,
                         std::string(GLOBALS_OR_KEYWORDS), "foo2()")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
     initializer.DestroyContext(ctx);

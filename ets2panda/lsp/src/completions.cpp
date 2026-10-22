@@ -25,10 +25,12 @@
 #include "ir/ets/etsUnionType.h"
 #include "public/public.h"
 #include <algorithm>
+#include <iterator>
 #include <regex>
 #include <cstddef>
 #include <optional>
 #include <string>
+#include <unordered_set>
 #include "generated/tokenType.h"
 #include <cstdio>
 #include "public/es2panda_lib.h"
@@ -851,11 +853,13 @@ static void MaterializeLazyMembers(ir::ClassDefinition *classDef)
 }
 
 static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries,
-                               const std::string &fileName = "", bool isInImportStatement = false)
+                               const std::string &fileName = "", bool isInImportStatement = false,
+                               bool includeNamespaceMembers = true)
 {
     MaterializeLazyMembers(classDef);
     for (auto &prop : classDef->Body()) {
-        if (prop->IsClassDeclaration() && prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
+        if (includeNamespaceMembers && prop->IsClassDeclaration() &&
+            prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
             GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName, isInImportStatement);
         }
         if (prop->IsExported()) {
@@ -869,14 +873,15 @@ static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<Comple
 }
 
 std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, const std::string &fileName = "",
-                                                   bool isInImportStatement = false)
+                                                   bool isInImportStatement = false,
+                                                   bool includeNamespaceMembers = true)
 {
     std::vector<CompletionEntry> exportEntries;
     for (auto &stmt : program->Ast()->Statements()) {
         if (stmt->IsClassDeclaration()) {
             auto classDef = stmt->AsClassDeclaration()->Definition();
-            if (classDef->IsGlobal() || classDef->IsNamespaceTransformed()) {
-                GetExportFromClass(classDef, exportEntries, fileName, isInImportStatement);
+            if (classDef->IsGlobal() || (includeNamespaceMembers && classDef->IsNamespaceTransformed())) {
+                GetExportFromClass(classDef, exportEntries, fileName, isInImportStatement, includeNamespaceMembers);
             }
         }
         if (stmt->IsExported() || (isInImportStatement && stmt->IsDefaultExported())) {
@@ -891,24 +896,56 @@ std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, con
     return exportEntries;
 }
 
-std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &input, parser::Program *program)
+static std::string GetCompletionSymbolName(CompletionEntry *entry);
+
+static varbinder::Variable *FindGlobalVariable(parser::Program *program, const std::string &symbolName)
 {
-    std::vector<CompletionEntry> allExternalSourceExports;
-    std::vector<CompletionEntry> completions;
-    std::string lowerInput = ToLowerCase(input);
+    if (program == nullptr || program->Ast() == nullptr) {
+        return nullptr;
+    }
 
-    program->GetExternalPrograms()->Visit([&allExternalSourceExports](auto *extProg) {
-        auto exports = GetExportsFromProgram(extProg);
-        if (!exports.empty()) {
-            allExternalSourceExports.insert(allExternalSourceExports.end(), exports.begin(), exports.end());
-        }
-    });
-
-    for (const auto &entry : allExternalSourceExports) {
-        if (ToLowerCase(entry.GetName()).find(lowerInput) != std::string::npos) {
-            completions.emplace_back(entry);
+    auto name = util::StringView(std::string_view(symbolName));
+    auto *globalClass = program->GlobalClass();
+    if (globalClass != nullptr && globalClass->Scope() != nullptr) {
+        auto *variable = globalClass->Scope()->AsClassScope()->FindLocal(name, varbinder::ResolveBindingOptions::ALL);
+        if (variable != nullptr) {
+            return variable;
         }
     }
+
+    auto *scope = program->Ast()->Scope();
+    if (scope == nullptr || (!scope->IsGlobalScope() && !scope->IsModuleScope())) {
+        return nullptr;
+    }
+    return program->GlobalScope()->FindLocal(name, varbinder::ResolveBindingOptions::ALL);
+}
+
+struct SystemCompletionCandidate {
+    CompletionEntry entry;
+    varbinder::Variable *variable {};
+};
+
+static std::vector<SystemCompletionCandidate> GetSystemInterfaceCompletions(const std::string &input,
+                                                                            parser::Program *program)
+{
+    std::vector<SystemCompletionCandidate> completions;
+    std::string lowerInput = ToLowerCase(input);
+
+    program->GetExternalPrograms()->Visit([&completions, &lowerInput](auto *extProg) {
+        if (!extProg->IsDeclarationModule() && !extProg->template Is<util::ModuleKind::METADATA_DECL>()) {
+            return;
+        }
+        // Namespace members need a qualifier and are handled by member completion.
+        auto exports = GetExportsFromProgram(extProg, "", false, false);
+        for (auto &entry : exports) {
+            if (ToLowerCase(entry.GetName()).find(lowerInput) == std::string::npos) {
+                continue;
+            }
+            auto symbolName = GetCompletionSymbolName(&entry);
+            auto *variable = FindGlobalVariable(extProg, symbolName);
+            completions.push_back({std::move(entry), variable});
+        }
+    });
     return completions;
 }
 
@@ -2851,6 +2888,81 @@ static void AppendAutoImportCompletions(const std::string &prefix, const char *f
     completions->insert(completions->end(), indexedApiCompletions.begin(), indexedApiCompletions.end());
 }
 
+static std::string GetCompletionSymbolName(CompletionEntry *entry)
+{
+    ES2PANDA_ASSERT(entry != nullptr);
+    if (auto data = entry->GetCompletionEntryData(); data.has_value() && !data->GetNamedExport().empty()) {
+        return data->GetNamedExport();
+    }
+
+    auto insertText = entry->GetInsertText();
+    static constexpr std::string_view CALL_SUFFIX = "()";
+    if (insertText.size() >= CALL_SUFFIX.size() &&
+        insertText.compare(insertText.size() - CALL_SUFFIX.size(), CALL_SUFFIX.size(), CALL_SUFFIX) == 0) {
+        insertText.resize(insertText.size() - CALL_SUFFIX.size());
+    }
+    return insertText.empty() ? entry->GetName() : insertText;
+}
+
+static varbinder::Variable *ResolveVisibleVariable(varbinder::Variable *variable,
+                                                   checker::ExportClosureResolver *resolver)
+{
+    if (variable == nullptr) {
+        return nullptr;
+    }
+
+    auto *resolved = resolver->ResolveEffectiveImportVariable(variable, {false, false});
+    if (resolved != nullptr || !variable->IsLocalVariable() ||
+        !variable->HasFlag(varbinder::VariableFlags::IMPORT_BINDING)) {
+        return resolved;
+    }
+    return checker::ExportClosureResolver::ResolveEffectiveImportVariableForDeclaration(
+        variable->AsLocalVariable()->ImportBinding(), resolver);
+}
+
+static bool IsVisibleSystemCompletion(varbinder::Scope *scope, checker::ExportClosureResolver *resolver,
+                                      const std::string &symbolName, const SystemCompletionCandidate &candidate)
+{
+    if (scope == nullptr || candidate.variable == nullptr) {
+        return false;
+    }
+    auto name = util::StringView(std::string_view(symbolName));
+    auto *visibleVariable = scope->Find(name, varbinder::ResolveBindingOptions::ALL).variable;
+    auto *resolvedVariable = ResolveVisibleVariable(visibleVariable, resolver);
+    return resolvedVariable != nullptr && resolvedVariable == ResolveVisibleVariable(candidate.variable, resolver);
+}
+
+static void MergeSystemAndAutoImportCompletions(std::vector<SystemCompletionCandidate> systemCompletions,
+                                                parser::Program *queryProgram, varbinder::Scope *scope,
+                                                std::vector<CompletionEntry> *completions)
+{
+    ES2PANDA_ASSERT(queryProgram != nullptr);
+    ES2PANDA_ASSERT(completions != nullptr);
+    checker::ExportClosureResolver resolver(queryProgram->Allocator(), nullptr);
+    std::unordered_set<std::string> autoImportsToRemove;
+    std::vector<CompletionEntry> systemEntriesToAppend;
+    for (auto &candidate : systemCompletions) {
+        auto symbolName = GetCompletionSymbolName(&candidate.entry);
+        if (!IsVisibleSystemCompletion(scope, &resolver, symbolName, candidate)) {
+            continue;
+        }
+
+        // The exact visible binding shadows imports using this local name, even
+        // from other modules. An invisible same-named export cannot do so.
+        autoImportsToRemove.insert(std::move(symbolName));
+        systemEntriesToAppend.emplace_back(std::move(candidate.entry));
+    }
+
+    auto shouldRemoveAutoImport = [&autoImportsToRemove](auto &entry) {
+        return entry.GetHasAction() && entry.GetSortText() == sort_text::AUTO_IMPORT_SUGGESTIONS &&
+               autoImportsToRemove.find(GetCompletionSymbolName(&entry)) != autoImportsToRemove.end();
+    };
+    auto newEnd = std::remove_if(completions->begin(), completions->end(), shouldRemoveAutoImport);
+    completions->erase(newEnd, completions->end());
+    completions->insert(completions->end(), std::make_move_iterator(systemEntriesToAppend.begin()),
+                        std::make_move_iterator(systemEntriesToAppend.end()));
+}
+
 // Support: global variables, local variables, functions, keywords
 std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, size_t position)
 {
@@ -2880,10 +2992,12 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
 
     auto keywordCompletions = GetKeywordCompletions(prefix);
     completions.insert(completions.end(), keywordCompletions.begin(), keywordCompletions.end());
-    auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
-    completions.insert(completions.end(), systemInterfaceCompletions.begin(), systemInterfaceCompletions.end());
 
     AppendAutoImportCompletions(prefix, ctx->sourceFileName.c_str(), &completions);
+
+    auto systemInterfaceCompletions = GetSystemInterfaceCompletions(prefix, ctx->parserProgram);
+    MergeSystemAndAutoImportCompletions(std::move(systemInterfaceCompletions), ctx->parserProgram,
+                                        compiler::NearestScope(precedingToken), &completions);
     return SortCompletionEntries(completions, prefix);
 }
 
