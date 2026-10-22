@@ -19,9 +19,12 @@ import {
     ArkIfStmt,
     ArkInstanceInvokeExpr,
     ArkInvokeStmt,
+    ArkMethod,
     ArkNormalBinopExpr,
     ArkReturnStmt,
     BooleanType,
+    ClosureFieldRef,
+    LexicalEnvType,
     Local,
     NormalBinaryOperator,
     Scene,
@@ -32,6 +35,7 @@ import {
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 import {
     ArkArrayRef,
+    ArkClass,
     EnumValueType,
     UnclearReferenceType,
 } from 'arkanalyzer';
@@ -260,7 +264,70 @@ export class NumericLocalUsageAnalyzer {
                 }
                 checkStmts.push(s);
             });
+        const declaringMethod = declaringStmt.getCfg().getDeclaringMethod();
+        this.collectClosureReassignmentStmts(local, declaringMethod).forEach(s => checkStmts.push(s));
         return checkStmts;
+    }
+
+    private collectClosureReassignmentStmts(local: Local, declaringMethod: ArkMethod): Stmt[] {
+        const result: Stmt[] = [];
+        const localName = local.getName();
+        const arkFile = declaringMethod.getDeclaringArkFile();
+        for (const clazz of arkFile.getClasses()) {
+            this.collectClosureReassignmentStmtsFromClass(clazz, localName, declaringMethod, result);
+        }
+        return result;
+    }
+
+    private collectClosureReassignmentStmtsFromClass(
+        clazz: ArkClass,
+        localName: string,
+        declaringMethod: ArkMethod,
+        result: Stmt[]
+    ): void {
+        for (const method of clazz.getMethods()) {
+            if (method === declaringMethod || !this.isNestedWithinMethod(method, declaringMethod)) {
+                continue;
+            }
+            this.collectClosureReassignmentStmtsFromMethod(method, localName, result);
+        }
+    }
+
+    private collectClosureReassignmentStmtsFromMethod(
+        method: ArkMethod,
+        localName: string,
+        result: Stmt[]
+    ): void {
+        const body = method.getBody();
+        if (!body) {
+            return;
+        }
+        const cfg = body.getCfg();
+        if (!cfg) {
+            return;
+        }
+        for (const s of cfg.getStmts()) {
+            if (!(s instanceof ArkAssignStmt)) {
+                continue;
+            }
+            const leftOp = s.getLeftOp();
+            if (leftOp instanceof Local && leftOp.getName() === localName) {
+                result.push(s);
+            } else if (leftOp instanceof ClosureFieldRef && leftOp.getFieldName() === localName) {
+                result.push(s);
+            }
+        }
+    }
+
+    private isNestedWithinMethod(method: ArkMethod, ancestor: ArkMethod): boolean {
+        let current: ArkMethod | null = method;
+        while (current !== null) {
+            if (current === ancestor) {
+                return true;
+            }
+            current = current.getOuterMethod() ?? null;
+        }
+        return false;
     }
 
     private checkRelatedStmtForLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
@@ -281,10 +348,42 @@ export class NumericLocalUsageAnalyzer {
     }
 
     private checkRelatedAssignStmtForLocal(stmt: ArkAssignStmt, local: Local, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
-        if (stmt.getLeftOp() === local) {
+        const leftOp = stmt.getLeftOp();
+        if (leftOp === local || this.isClosureFieldRefForLocal(leftOp, local) ||
+            this.isClosureReassignmentForLocal(stmt, leftOp, local)) {
             return this.checkLocalReassignmentStmt(stmt, hasChecked, numberCategory);
         }
         return this.checkLocalUsedInAssignRight(stmt, local, hasChecked, numberCategory);
+    }
+
+    private isClosureReassignmentForLocal(stmt: ArkAssignStmt, leftOp: Value, local: Local): boolean {
+        if (!(leftOp instanceof Local)) {
+            return false;
+        }
+        if (leftOp === local) {
+            return false;
+        }
+        if (leftOp.getName() !== local.getName()) {
+            return false;
+        }
+        const stmtMethod = stmt.getCfg().getDeclaringMethod();
+        const declaringStmt = local.getDeclaringStmt();
+        if (declaringStmt === null) {
+            return false;
+        }
+        return stmtMethod !== declaringStmt.getCfg().getDeclaringMethod();
+    }
+
+    private isClosureFieldRefForLocal(value: Value, local: Local): boolean {
+        if (!(value instanceof ClosureFieldRef)) {
+            return false;
+        }
+        const base = value.getBase();
+        const baseType = base.getType();
+        if (!(baseType instanceof LexicalEnvType)) {
+            return false;
+        }
+        return baseType.getClosures().some(c => c.getName() === local.getName());
     }
 
     private checkLocalReassignmentStmt(stmt: ArkAssignStmt, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
@@ -338,6 +437,9 @@ export class NumericLocalUsageAnalyzer {
 
     private checkLocalUsedAsUnchangedInvokeArg(expr: AbstractInvokeExpr, local: Local, numberCategory: NumberCategory): IssueInfo {
         if (expr.getArgs().includes(local)) {
+            if (numberCategory === NumberCategory.int || numberCategory === NumberCategory.long) {
+                return this.createOnlyUsedIssueInfo(numberCategory);
+            }
             return this.createNumberUsedIssueInfo(IssueReason.UsedWithOtherType);
         }
         return this.createOnlyUsedIssueInfo(numberCategory);

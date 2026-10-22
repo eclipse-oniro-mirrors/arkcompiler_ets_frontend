@@ -265,12 +265,20 @@ export class BuiltinApiChangeDetector {
 
     private isBuiltinFileSignature(fileSignature: FileSignature): boolean {
         const projectName = fileSignature.getProjectName();
-        if (projectName === ArkAnalyzerSdkUtils.BUILT_IN_NAME) {
+        const normalizedProjectName = projectName.startsWith('@') ? projectName.substring(1) : projectName;
+        if (normalizedProjectName === ArkAnalyzerSdkUtils.BUILT_IN_NAME) {
             return true;
         }
-        const normalizedProjectName = projectName.startsWith('@') ? projectName.substring(1) : projectName;
-        return normalizedProjectName === INTERNAL_SDK_PROJECT_NAME &&
-            fileSignature.getFileName().startsWith(INTERNAL_BUILTIN_DECLARATION_PREFIX);
+        const fileName = fileSignature.getFileName();
+        if (normalizedProjectName === INTERNAL_SDK_PROJECT_NAME &&
+            fileName.startsWith(INTERNAL_BUILTIN_DECLARATION_PREFIX)) {
+            return true;
+        }
+        return BuiltinApiChangeDetector.isDynBuiltinDeclarationFile(fileName);
+    }
+
+    private static isDynBuiltinDeclarationFile(fileName: string): boolean {
+        return fileName.startsWith('lib.') && fileName.endsWith('.d.ts');
     }
 
     private collectReturnAccesses(value: Value, visitedLocals: Set<Local>): BuiltinReturnAccess[] {

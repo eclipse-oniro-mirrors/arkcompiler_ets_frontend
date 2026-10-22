@@ -1,0 +1,468 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 25,
+            "column": 22,
+            "endLine": 25,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 40,
+            "column": 7,
+            "endLine": 40,
+            "endColumn": 7,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 52,
+            "column": 16,
+            "endLine": 52,
+            "endColumn": 16,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 66,
+            "column": 14,
+            "endLine": 66,
+            "endColumn": 14,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 81,
+            "column": 7,
+            "endLine": 81,
+            "endColumn": 7,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 83,
+            "column": 22,
+            "endLine": 83,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 99,
+            "column": 30,
+            "endLine": 99,
+            "endColumn": 30,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 116,
+            "column": 15,
+            "endLine": 116,
+            "endColumn": 15,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 118,
+            "column": 15,
+            "endLine": 118,
+            "endColumn": 15,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 131,
+            "column": 13,
+            "endLine": 131,
+            "endColumn": 13,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 133,
+            "column": 15,
+            "endLine": 133,
+            "endColumn": 15,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 145,
+            "column": 26,
+            "endLine": 145,
+            "endColumn": 26,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 153,
+            "column": 27,
+            "endLine": 153,
+            "endColumn": 27,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 158,
+            "column": 18,
+            "endLine": 158,
+            "endColumn": 18,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 173,
+            "column": 13,
+            "endLine": 173,
+            "endColumn": 13,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 178,
+            "column": 13,
+            "endLine": 178,
+            "endColumn": 13,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 179,
+            "column": 14,
+            "endLine": 179,
+            "endColumn": 14,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 181,
+            "column": 14,
+            "endLine": 181,
+            "endColumn": 14,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 197,
+            "column": 25,
+            "endLine": 197,
+            "endColumn": 25,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 219,
+            "column": 30,
+            "endLine": 219,
+            "endColumn": 30,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 244,
+            "column": 18,
+            "endLine": 244,
+            "endColumn": 18,
+            "problem": "BuilderParamContextChanged",
+            "suggest": "",
+            "rule": "The execution context of the function annotated with @Builder is determined at the time of declaration. Please check the code carefully to ensure the correct function context (arkui-buildparam-passing)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 274,
+            "column": 18,
+            "endLine": 274,
+            "endColumn": 18,
+            "problem": "BuilderParamContextChanged",
+            "suggest": "",
+            "rule": "The @LocalBuilder decorator is not supported, it will be transformed to @Builder decorator. The execution context of the function annotated with @Builder is determined at the time of declaration. Please check the code carefully to ensure the correct function context (arkui-buildparam-passing)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 302,
+            "column": 14,
+            "endLine": 302,
+            "endColumn": 14,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 327,
+            "column": 11,
+            "endLine": 327,
+            "endColumn": 11,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 329,
+            "column": 13,
+            "endLine": 329,
+            "endColumn": 13,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 348,
+            "column": 18,
+            "endLine": 348,
+            "endColumn": 18,
+            "problem": "BuilderParamContextChanged",
+            "suggest": "",
+            "rule": "The execution context of the function annotated with @Builder is determined at the time of declaration. Please check the code carefully to ensure the correct function context (arkui-buildparam-passing)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 389,
+            "column": 15,
+            "endLine": 389,
+            "endColumn": 15,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 391,
+            "column": 15,
+            "endLine": 391,
+            "endColumn": 15,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 410,
+            "column": 22,
+            "endLine": 410,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 418,
+            "column": 23,
+            "endLine": 418,
+            "endColumn": 23,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 423,
+            "column": 14,
+            "endLine": 423,
+            "endColumn": 14,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 435,
+            "column": 9,
+            "endLine": 435,
+            "endColumn": 9,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 440,
+            "column": 9,
+            "endLine": 440,
+            "endColumn": 9,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 441,
+            "column": 10,
+            "endLine": 441,
+            "endColumn": 10,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 443,
+            "column": 10,
+            "endLine": 443,
+            "endColumn": 10,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 466,
+            "column": 22,
+            "endLine": 466,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 478,
+            "column": 21,
+            "endLine": 478,
+            "endColumn": 21,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 488,
+            "column": 21,
+            "endLine": 488,
+            "endColumn": 21,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 498,
+            "column": 21,
+            "endLine": 498,
+            "endColumn": 21,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 511,
+            "column": 21,
+            "endLine": 511,
+            "endColumn": 21,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 525,
+            "column": 8,
+            "endLine": 525,
+            "endColumn": 8,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 543,
+            "column": 16,
+            "endLine": 543,
+            "endColumn": 16,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 562,
+            "column": 22,
+            "endLine": 562,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 583,
+            "column": 7,
+            "endLine": 583,
+            "endColumn": 7,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 585,
+            "column": 22,
+            "endLine": 585,
+            "endColumn": 22,
+            "problem": "DefaultBindThis",
+            "suggest": "",
+            "rule": "Instance method shall bind the 'this' by default (arkts-instance-method-bind-this)",
+            "severity": "WARNING"
+        }
+    ]
+}

@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-import { AbstractInvokeExpr, ArkAssignStmt, Local, MethodSignature, Type, Value } from 'arkanalyzer/lib';
+import { AbstractInvokeExpr, ArkAssignStmt, CONSTRUCTOR_NAME, Local, MethodSignature, Type, Value } from 'arkanalyzer/lib';
 import { NumberConstant } from 'arkanalyzer/lib/core/base/Constant';
 import {
     BuiltinApiRule,
+    BUILTIN_CONSTRUCT_SIGNATURE_METHOD_NAME,
     INTERNAL_BUILTIN_DECLARATION_PREFIX,
     INTERNAL_SDK_PROJECT_NAME,
     NumberCategory,
@@ -92,7 +93,7 @@ export class BuiltinApiRuleMatcher {
 
     private getCandidates(methodSignature: MethodSignature, argCount: number): BuiltinApiRule[] {
         const className = methodSignature.getDeclaringClassSignature().getClassName();
-        const methodName = methodSignature.getMethodSubSignature().getMethodName();
+        const methodName = this.normalizeMethodName(methodSignature.getMethodSubSignature().getMethodName());
         const paramCount = methodSignature.getMethodSubSignature().getParameters().length;
         const firstFilterCandidates = this.options.rules.filter(rule =>
             this.isClassNameMatched(rule.className, className) &&
@@ -191,6 +192,13 @@ export class BuiltinApiRuleMatcher {
             return null;
         }
         return NumberCategory.int;
+    }
+
+    private normalizeMethodName(methodName: string): string {
+        if (methodName === BUILTIN_CONSTRUCT_SIGNATURE_METHOD_NAME) {
+            return CONSTRUCTOR_NAME;
+        }
+        return methodName;
     }
 
     private isClassNameMatched(configuredClassName: string | string[], actualClassName: string): boolean {

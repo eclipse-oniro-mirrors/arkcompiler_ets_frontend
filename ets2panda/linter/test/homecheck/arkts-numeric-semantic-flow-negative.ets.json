@@ -299,9 +299,9 @@
             "column": 7,
             "endLine": 360,
             "endColumn": 7,
-            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "problem": "NumericLiteral-only-used-as-int-or-long",
             "suggest": "",
-            "rule": "It is used as number (arkts-numeric-semantic)",
+            "rule": "It is used as int (arkts-numeric-semantic)",
             "severity": "WARNING"
         },
         {

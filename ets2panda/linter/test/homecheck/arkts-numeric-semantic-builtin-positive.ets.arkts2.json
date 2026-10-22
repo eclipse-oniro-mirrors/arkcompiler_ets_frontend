@@ -13,5 +13,126 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 56,
+            "column": 42,
+            "endLine": 56,
+            "endColumn": 42,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback return type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 61,
+            "column": 40,
+            "endLine": 61,
+            "endColumn": 40,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 62,
+            "column": 37,
+            "endLine": 62,
+            "endColumn": 37,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 63,
+            "column": 35,
+            "endLine": 63,
+            "endColumn": 35,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 64,
+            "column": 36,
+            "endLine": 64,
+            "endColumn": 36,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 65,
+            "column": 35,
+            "endLine": 65,
+            "endColumn": 35,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 67,
+            "column": 67,
+            "endLine": 67,
+            "endColumn": 67,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 68,
+            "column": 75,
+            "endLine": 68,
+            "endColumn": 75,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 69,
+            "column": 80,
+            "endLine": 69,
+            "endColumn": 80,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 70,
+            "column": 49,
+            "endLine": 70,
+            "endColumn": 49,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 71,
+            "column": 72,
+            "endLine": 71,
+            "endColumn": 72,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 73,
+            "column": 7,
+            "endLine": 73,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 73 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        }
+    ]
 }

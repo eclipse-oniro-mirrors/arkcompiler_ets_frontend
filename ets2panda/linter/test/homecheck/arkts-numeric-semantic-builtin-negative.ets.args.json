@@ -24,6 +24,20 @@
         ],
         "languageTags": {
             "arkts-numeric-semantic-builtin-negative.ets": 2
+        },
+        "ohosSdkPath": "sdks/ohosSdk",
+        "ruleOptions": {
+            "@migration/arkts-numeric-semantic": [
+                {
+                    "ets2Sdks": [
+                        {
+                            "name": "ohosSdk",
+                            "path": "sdks/ohosSdk/ets/static",
+                            "moduleName": ""
+                        }
+                    ]
+                }
+            ]
         }
     }
 }

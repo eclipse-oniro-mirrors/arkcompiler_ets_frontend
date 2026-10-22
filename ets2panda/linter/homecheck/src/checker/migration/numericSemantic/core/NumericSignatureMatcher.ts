@@ -14,6 +14,7 @@
  */
 
 import {
+    AliasType,
     AnyType,
     ArrayType,
     BigIntType,
@@ -86,6 +87,9 @@ export class NumericSignatureMatcher {
     public isEts1NumberEts2IntLongSignatureMatched(ets1Sig: MethodSignature, ets2Sig: MethodSignature, options: SignatureMatchOptions = {}): boolean {
         const ets1Params = ets1Sig.getMethodSubSignature().getParameters();
         const ets2Params = ets2Sig.getMethodSubSignature().getParameters();
+        if (ets1Params.length === 0) {
+            return true;
+        }
         const countMatched = options.allowTrailingOptionalParams ?
             this.isSignatureParameterCountMatched(ets1Params, ets2Params) :
             ets2Params.length === ets1Params.length;
@@ -367,6 +371,9 @@ export class NumericSignatureMatcher {
         if (type instanceof ClassType) {
             return this.getClassTypeName(type);
         }
+        if (type instanceof AliasType) {
+            return type.getName();
+        }
         if (type instanceof UnclearReferenceType) {
             return type.getName();
         }
@@ -399,10 +406,20 @@ export class NumericSignatureMatcher {
     }
 
     private getEts1NumberEts2IntLongChangedCategory(ets1Type: Type, ets2Type: Type): NumberCategory | null {
-        if (!(ets1Type instanceof NumberType)) {
-            return null;
+        let actualEts1Type = ets1Type;
+        if (actualEts1Type instanceof AliasType) {
+            actualEts1Type = actualEts1Type.getOriginalType();
         }
-        return this.getIntLongCategoryFromType(ets2Type) ?? this.getSingleIntLongCategoryFromUnionType(ets2Type);
+        if (actualEts1Type instanceof NumberType) {
+            return this.getIntLongCategoryFromType(ets2Type) ?? this.getSingleIntLongCategoryFromUnionType(ets2Type);
+        }
+        if (this.options.isLongType(ets1Type)) {
+            const ets2Category = this.getIntLongCategoryFromType(ets2Type) ?? this.getSingleIntLongCategoryFromUnionType(ets2Type);
+            if (ets2Category === NumberCategory.int) {
+                return NumberCategory.int;
+            }
+        }
+        return null;
     }
 
     private getSingleIntLongCategoryFromUnionType(type: Type): NumberCategory.int | NumberCategory.long | null {

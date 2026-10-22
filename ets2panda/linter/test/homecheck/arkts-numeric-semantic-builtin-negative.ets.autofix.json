@@ -30,6 +30,1886 @@
             "suggest": "",
             "rule": "It is used as int (arkts-numeric-semantic)",
             "severity": "WARNING"
+        },
+        {
+            "line": 20,
+            "column": 7,
+            "endLine": 20,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 774,
+                    "end": 780
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 20 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 27,
+            "column": 7,
+            "endLine": 27,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1011,
+                    "end": 1017
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 28,
+            "column": 7,
+            "endLine": 28,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1036,
+                    "end": 1042
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 29,
+            "column": 7,
+            "endLine": 29,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1059,
+                    "end": 1065
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 34,
+            "column": 7,
+            "endLine": 34,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1185,
+                    "end": 1191
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 34 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 36,
+            "column": 7,
+            "endLine": 36,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1353,
+                    "end": 1359
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 36 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 37,
+            "column": 7,
+            "endLine": 37,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1430,
+                    "end": 1436
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 37 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 43,
+            "column": 7,
+            "endLine": 43,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1646,
+                    "end": 1652
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 45,
+            "column": 53,
+            "endLine": 45,
+            "endColumn": 53,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1743,
+                    "end": 1749
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback return type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 46,
+            "column": 7,
+            "endLine": 46,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1823,
+                    "end": 1829
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 46 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 47,
+            "column": 34,
+            "endLine": 47,
+            "endColumn": 34,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(1.1).toInt()",
+                    "start": 1910,
+                    "end": 1913
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 48,
+            "column": 7,
+            "endLine": 48,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1973,
+                    "end": 1979
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 48 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 50,
+            "column": 7,
+            "endLine": 50,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2049,
+                    "end": 2055
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 50 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 50,
+            "column": 67,
+            "endLine": 50,
+            "endColumn": 67,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2095,
+                    "end": 2101
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 51,
+            "column": 52,
+            "endLine": 51,
+            "endColumn": 52,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2241,
+                    "end": 2247
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 52,
+            "column": 50,
+            "endLine": 52,
+            "endColumn": 50,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2385,
+                    "end": 2391
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 53,
+            "column": 54,
+            "endLine": 53,
+            "endColumn": 54,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2533,
+                    "end": 2539
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 54,
+            "column": 52,
+            "endLine": 54,
+            "endColumn": 52,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2679,
+                    "end": 2685
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 56,
+            "column": 84,
+            "endLine": 56,
+            "endColumn": 84,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2860,
+                    "end": 2866
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 57,
+            "column": 100,
+            "endLine": 57,
+            "endColumn": 100,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3045,
+                    "end": 3051
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 58,
+            "column": 110,
+            "endLine": 58,
+            "endColumn": 110,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3246,
+                    "end": 3252
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 59,
+            "column": 62,
+            "endLine": 59,
+            "endColumn": 62,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3399,
+                    "end": 3405
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 60,
+            "column": 94,
+            "endLine": 60,
+            "endColumn": 94,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3584,
+                    "end": 3590
+                }
+            ],
+            "suggest": "",
+            "rule": "The callback parameter type of builtin API arg should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 62,
+            "column": 7,
+            "endLine": 62,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3687,
+                    "end": 3693
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 62 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 68,
+            "column": 7,
+            "endLine": 68,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3927,
+                    "end": 3933
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 69,
+            "column": 7,
+            "endLine": 69,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 3981,
+                    "end": 3987
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 70,
+            "column": 7,
+            "endLine": 70,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 4033,
+                    "end": 4039
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 75,
+            "column": 7,
+            "endLine": 75,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 4188,
+                    "end": 4194
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 75 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 76,
+            "column": 7,
+            "endLine": 76,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 4276,
+                    "end": 4282
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 76 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 95,
+            "column": 22,
+            "endLine": 95,
+            "endColumn": 22,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 4937,
+                    "end": 4941
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 95,
+            "column": 28,
+            "endLine": 95,
+            "endColumn": 28,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num2.toInt()",
+                    "start": 4943,
+                    "end": 4947
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 96,
+            "column": 18,
+            "endLine": 96,
+            "endColumn": 18,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 4996,
+                    "end": 5000
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 97,
+            "column": 20,
+            "endLine": 97,
+            "endColumn": 20,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 5051,
+                    "end": 5055
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 98,
+            "column": 26,
+            "endLine": 98,
+            "endColumn": 26,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 5112,
+                    "end": 5116
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 98,
+            "column": 32,
+            "endLine": 98,
+            "endColumn": 32,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num2.toInt()",
+                    "start": 5118,
+                    "end": 5122
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 101,
+            "column": 21,
+            "endLine": 101,
+            "endColumn": 21,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 5292,
+                    "end": 5296
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 101,
+            "column": 27,
+            "endLine": 101,
+            "endColumn": 27,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num2.toInt()",
+                    "start": 5298,
+                    "end": 5302
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 103,
+            "column": 21,
+            "endLine": 103,
+            "endColumn": 21,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 5403,
+                    "end": 5407
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 104,
+            "column": 30,
+            "endLine": 104,
+            "endColumn": 30,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 5468,
+                    "end": 5472
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 104,
+            "column": 36,
+            "endLine": 104,
+            "endColumn": 36,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num2.toInt()",
+                    "start": 5474,
+                    "end": 5478
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 115,
+            "column": 7,
+            "endLine": 115,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 5811,
+                    "end": 5817
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 116,
+            "column": 7,
+            "endLine": 116,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 5863,
+                    "end": 5869
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 125,
+            "column": 7,
+            "endLine": 125,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 6129,
+                    "end": 6135
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 125 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 133,
+            "column": 7,
+            "endLine": 133,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 6440,
+                    "end": 6446
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 133 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 134,
+            "column": 24,
+            "endLine": 134,
+            "endColumn": 24,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6525,
+                    "end": 6529
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 135,
+            "column": 22,
+            "endLine": 135,
+            "endColumn": 22,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6582,
+                    "end": 6586
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 136,
+            "column": 17,
+            "endLine": 136,
+            "endColumn": 17,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6634,
+                    "end": 6638
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 137,
+            "column": 19,
+            "endLine": 137,
+            "endColumn": 19,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6688,
+                    "end": 6692
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 138,
+            "column": 38,
+            "endLine": 138,
+            "endColumn": 38,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6761,
+                    "end": 6765
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 139,
+            "column": 18,
+            "endLine": 139,
+            "endColumn": 18,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6814,
+                    "end": 6818
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 140,
+            "column": 23,
+            "endLine": 140,
+            "endColumn": 23,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6872,
+                    "end": 6876
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 141,
+            "column": 23,
+            "endLine": 141,
+            "endColumn": 23,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6930,
+                    "end": 6934
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 142,
+            "column": 27,
+            "endLine": 142,
+            "endColumn": 27,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 6998,
+                    "end": 7002
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 143,
+            "column": 14,
+            "endLine": 143,
+            "endColumn": 14,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 7047,
+                    "end": 7051
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 144,
+            "column": 14,
+            "endLine": 144,
+            "endColumn": 14,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 7096,
+                    "end": 7100
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 145,
+            "column": 16,
+            "endLine": 145,
+            "endColumn": 16,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 7152,
+                    "end": 7156
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 146,
+            "column": 7,
+            "endLine": 146,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 7213,
+                    "end": 7219
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 146 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 147,
+            "column": 24,
+            "endLine": 147,
+            "endColumn": 24,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 7294,
+                    "end": 7298
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 148,
+            "column": 24,
+            "endLine": 148,
+            "endColumn": 24,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num1.toInt()",
+                    "start": 7353,
+                    "end": 7357
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 154,
+            "column": 7,
+            "endLine": 154,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 7524,
+                    "end": 7530
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 155,
+            "column": 7,
+            "endLine": 155,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 7581,
+                    "end": 7587
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 156,
+            "column": 7,
+            "endLine": 156,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 7633,
+                    "end": 7639
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 160,
+            "column": 7,
+            "endLine": 160,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 7765,
+                    "end": 7771
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 160 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 169,
+            "column": 7,
+            "endLine": 169,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8049,
+                    "end": 8055
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the arg of builtin API in line 173 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 170,
+            "column": 7,
+            "endLine": 170,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8118,
+                    "end": 8124
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the arg of builtin API in line 181 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 171,
+            "column": 7,
+            "endLine": 171,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "long",
+                    "start": 8190,
+                    "end": 8196
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 171 and only used as long, should be defined as long (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 171,
+            "column": 41,
+            "endLine": 171,
+            "endColumn": 41,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toLong()",
+                    "start": 8212,
+                    "end": 8215
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be long here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 172,
+            "column": 7,
+            "endLine": 172,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8265,
+                    "end": 8271
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 172 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 174,
+            "column": 7,
+            "endLine": 174,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8394,
+                    "end": 8400
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 174 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 175,
+            "column": 7,
+            "endLine": 175,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8464,
+                    "end": 8470
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 175 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 176,
+            "column": 7,
+            "endLine": 176,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8539,
+                    "end": 8545
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 176 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 177,
+            "column": 7,
+            "endLine": 177,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 8619,
+                    "end": 8625
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 177 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 181,
+            "column": 29,
+            "endLine": 181,
+            "endColumn": 29,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(12.1).toInt()",
+                    "start": 8831,
+                    "end": 8835
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 182,
+            "column": 23,
+            "endLine": 182,
+            "endColumn": 23,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(2026.1).toInt()",
+                    "start": 8889,
+                    "end": 8895
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 183,
+            "column": 29,
+            "endLine": 183,
+            "endColumn": 29,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(5.0).toInt()",
+                    "start": 8955,
+                    "end": 8958
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 184,
+            "column": 32,
+            "endLine": 184,
+            "endColumn": 32,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(25.5).toInt()",
+                    "start": 9021,
+                    "end": 9025
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 186,
+            "column": 7,
+            "endLine": 186,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 9076,
+                    "end": 9082
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 186 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 187,
+            "column": 7,
+            "endLine": 187,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 9150,
+                    "end": 9156
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 187 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 188,
+            "column": 17,
+            "endLine": 188,
+            "endColumn": 17,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "(22.1).toInt()",
+                    "start": 9224,
+                    "end": 9228
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 189,
+            "column": 17,
+            "endLine": 189,
+            "endColumn": 17,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9276,
+                    "end": 9279
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 190,
+            "column": 20,
+            "endLine": 190,
+            "endColumn": 20,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9335,
+                    "end": 9338
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 191,
+            "column": 20,
+            "endLine": 191,
+            "endColumn": 20,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9399,
+                    "end": 9402
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 193,
+            "column": 7,
+            "endLine": 193,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 9475,
+                    "end": 9481
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 193 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 194,
+            "column": 12,
+            "endLine": 194,
+            "endColumn": 12,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9548,
+                    "end": 9551
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 195,
+            "column": 12,
+            "endLine": 195,
+            "endColumn": 12,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9599,
+                    "end": 9602
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 196,
+            "column": 12,
+            "endLine": 196,
+            "endColumn": 12,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9655,
+                    "end": 9658
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 197,
+            "column": 7,
+            "endLine": 197,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 9746,
+                    "end": 9752
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 197 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 198,
+            "column": 24,
+            "endLine": 198,
+            "endColumn": 24,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9834,
+                    "end": 9837
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 199,
+            "column": 27,
+            "endLine": 199,
+            "endColumn": 27,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 9895,
+                    "end": 9898
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 201,
+            "column": 7,
+            "endLine": 201,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 9951,
+                    "end": 9957
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 201 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 202,
+            "column": 7,
+            "endLine": 202,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 10029,
+                    "end": 10035
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 202 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 203,
+            "column": 19,
+            "endLine": 203,
+            "endColumn": 19,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10107,
+                    "end": 10110
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 204,
+            "column": 19,
+            "endLine": 204,
+            "endColumn": 19,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10160,
+                    "end": 10163
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 205,
+            "column": 22,
+            "endLine": 205,
+            "endColumn": 22,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10221,
+                    "end": 10224
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 207,
+            "column": 7,
+            "endLine": 207,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 10282,
+                    "end": 10288
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 207 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 208,
+            "column": 22,
+            "endLine": 208,
+            "endColumn": 22,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10360,
+                    "end": 10363
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 209,
+            "column": 7,
+            "endLine": 209,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 10426,
+                    "end": 10432
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 209 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 210,
+            "column": 19,
+            "endLine": 210,
+            "endColumn": 19,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10504,
+                    "end": 10507
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 212,
+            "column": 7,
+            "endLine": 212,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 10568,
+                    "end": 10574
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 212 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 213,
+            "column": 7,
+            "endLine": 213,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 10642,
+                    "end": 10648
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 213 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 214,
+            "column": 17,
+            "endLine": 214,
+            "endColumn": 17,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10716,
+                    "end": 10719
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 215,
+            "column": 20,
+            "endLine": 215,
+            "endColumn": 20,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toInt()",
+                    "start": 10775,
+                    "end": 10778
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be int here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 217,
+            "column": 7,
+            "endLine": 217,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "long",
+                    "start": 10833,
+                    "end": 10839
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 217 and only used as long, should be defined as long (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 218,
+            "column": 16,
+            "endLine": 218,
+            "endColumn": 16,
+            "problem": "BuiltinIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "num.toLong()",
+                    "start": 10902,
+                    "end": 10905
+                }
+            ],
+            "suggest": "",
+            "rule": "The arg of builtin API should be long here (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 219,
+            "column": 7,
+            "endLine": 219,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "long",
+                    "start": 10962,
+                    "end": 10968
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 219 and only used as long, should be defined as long (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 226,
+            "column": 7,
+            "endLine": 226,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 11407,
+                    "end": 11413
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 227,
+            "column": 7,
+            "endLine": 227,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "absoluteValue: int",
+                    "start": 11426,
+                    "end": 11439
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 227 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 227,
+            "column": 32,
+            "endLine": 227,
+            "endColumn": 32,
+            "problem": "BuiltinIntType-ambiguous-int-long",
+            "suggest": "",
+            "rule": "The arg of builtin API should be int or long here, please check it manually (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 232,
+            "column": 7,
+            "endLine": 232,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 11622,
+                    "end": 11628
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 232 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 238,
+            "column": 7,
+            "endLine": 238,
+            "endColumn": 7,
+            "problem": "BuiltinIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 11836,
+                    "end": 11842
+                }
+            ],
+            "suggest": "",
+            "rule": "It has relationship with the builtin API in line 238 and only used as int, should be defined as int (arkts-builtin-api-num2int)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 244,
+            "column": 7,
+            "endLine": 244,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 12023,
+                    "end": 12029
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
         }
     ]
 }

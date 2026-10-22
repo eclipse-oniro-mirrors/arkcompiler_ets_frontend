@@ -1,0 +1,1117 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 18,
+            "column": 12,
+            "endLine": 18,
+            "endColumn": 12,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "export1IndexInt: number",
+                    "start": 713,
+                    "end": 728
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 22,
+            "column": 11,
+            "endLine": 22,
+            "endColumn": 11,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 838,
+                    "end": 839
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 31,
+            "column": 9,
+            "endLine": 31,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "d: int",
+                    "start": 979,
+                    "end": 980
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 50,
+            "column": 9,
+            "endLine": 50,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 1225,
+                    "end": 1226
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 56,
+            "column": 12,
+            "endLine": 56,
+            "endColumn": 12,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "export2IndexInt: number",
+                    "start": 1353,
+                    "end": 1368
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 59,
+            "column": 36,
+            "endLine": 59,
+            "endColumn": 36,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 1450,
+                    "end": 1456
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 60,
+            "column": 11,
+            "endLine": 60,
+            "endColumn": 11,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 1478,
+                    "end": 1479
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 69,
+            "column": 9,
+            "endLine": 69,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "d: int",
+                    "start": 1619,
+                    "end": 1620
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 78,
+            "column": 9,
+            "endLine": 78,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 1740,
+                    "end": 1741
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 88,
+            "column": 11,
+            "endLine": 88,
+            "endColumn": 11,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 2172,
+                    "end": 2178
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 92,
+            "column": 11,
+            "endLine": 92,
+            "endColumn": 11,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 2300,
+                    "end": 2301
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 93,
+            "column": 11,
+            "endLine": 93,
+            "endColumn": 11,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: int",
+                    "start": 2388,
+                    "end": 2389
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 96,
+            "column": 9,
+            "endLine": 96,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "c: int",
+                    "start": 2494,
+                    "end": 2495
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 99,
+            "column": 9,
+            "endLine": 99,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "d: int",
+                    "start": 2603,
+                    "end": 2604
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 105,
+            "column": 20,
+            "endLine": 105,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 106,
+            "column": 11,
+            "endLine": 106,
+            "endColumn": 11,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: number",
+                    "start": 2883,
+                    "end": 2884
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 107,
+            "column": 11,
+            "endLine": 107,
+            "endColumn": 11,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: number",
+                    "start": 2979,
+                    "end": 2980
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 108,
+            "column": 16,
+            "endLine": 108,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 110,
+            "column": 9,
+            "endLine": 110,
+            "endColumn": 9,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "c: number",
+                    "start": 3165,
+                    "end": 3166
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 111,
+            "column": 9,
+            "endLine": 111,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 116,
+            "column": 9,
+            "endLine": 116,
+            "endColumn": 9,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: number",
+                    "start": 3403,
+                    "end": 3404
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 117,
+            "column": 9,
+            "endLine": 117,
+            "endColumn": 9,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: number",
+                    "start": 3526,
+                    "end": 3527
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 119,
+            "column": 20,
+            "endLine": 119,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 124,
+            "column": 20,
+            "endLine": 124,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 127,
+            "column": 16,
+            "endLine": 127,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 130,
+            "column": 7,
+            "endLine": 130,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "globalIndexInt: int",
+                    "start": 4026,
+                    "end": 4040
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 131,
+            "column": 7,
+            "endLine": 131,
+            "endColumn": 7,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "globalIndexNumber: number",
+                    "start": 4115,
+                    "end": 4132
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 135,
+            "column": 16,
+            "endLine": 135,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 140,
+            "column": 20,
+            "endLine": 140,
+            "endColumn": 20,
+            "problem": "IndexIntType-cannot-find-all",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 145,
+            "column": 5,
+            "endLine": 145,
+            "endColumn": 5,
+            "problem": "NumericLiteral-cannot-find-all",
+            "autofix": [
+                {
+                    "replacementText": "static c: number",
+                    "start": 4672,
+                    "end": 4680
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 150,
+            "column": 20,
+            "endLine": 150,
+            "endColumn": 20,
+            "problem": "IndexIntType-cannot-find-all",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 151,
+            "column": 20,
+            "endLine": 151,
+            "endColumn": 20,
+            "problem": "IndexIntType-cannot-find-all",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 170,
+            "column": 17,
+            "endLine": 170,
+            "endColumn": 17,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 5545,
+                    "end": 5551
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 178,
+            "column": 24,
+            "endLine": 178,
+            "endColumn": 24,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 187,
+            "column": 9,
+            "endLine": 187,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 6011,
+                    "end": 6012
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 190,
+            "column": 9,
+            "endLine": 190,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: number",
+                    "start": 6142,
+                    "end": 6143
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 191,
+            "column": 9,
+            "endLine": 191,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 194,
+            "column": 14,
+            "endLine": 194,
+            "endColumn": 14,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 6374,
+                    "end": 6380
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 199,
+            "column": 9,
+            "endLine": 199,
+            "endColumn": 9,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 6557,
+                    "end": 6558
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 201,
+            "column": 9,
+            "endLine": 201,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: number",
+                    "start": 6685,
+                    "end": 6686
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 202,
+            "column": 16,
+            "endLine": 202,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 211,
+            "column": 9,
+            "endLine": 211,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "index: number",
+                    "start": 7015,
+                    "end": 7020
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 212,
+            "column": 20,
+            "endLine": 212,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 214,
+            "column": 16,
+            "endLine": 214,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 217,
+            "column": 16,
+            "endLine": 217,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 219,
+            "column": 16,
+            "endLine": 219,
+            "endColumn": 16,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 223,
+            "column": 9,
+            "endLine": 223,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 225,
+            "column": 9,
+            "endLine": 225,
+            "endColumn": 9,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 238,
+            "column": 9,
+            "endLine": 238,
+            "endColumn": 9,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "autofix": [
+                {
+                    "replacementText": "index: number",
+                    "start": 8499,
+                    "end": 8504
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 239,
+            "column": 20,
+            "endLine": 239,
+            "endColumn": 20,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 240,
+            "column": 9,
+            "endLine": 240,
+            "endColumn": 9,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "autofix": [
+                {
+                    "replacementText": "len: number",
+                    "start": 8742,
+                    "end": 8745
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 241,
+            "column": 16,
+            "endLine": 241,
+            "endColumn": 16,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 242,
+            "column": 16,
+            "endLine": 242,
+            "endColumn": 16,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 246,
+            "column": 7,
+            "endLine": 246,
+            "endColumn": 7,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "INDEX: int",
+                    "start": 9200,
+                    "end": 9205
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 252,
+            "column": 13,
+            "endLine": 252,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "i: number",
+                    "start": 9445,
+                    "end": 9446
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 253,
+            "column": 20,
+            "endLine": 253,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 272,
+            "column": 18,
+            "endLine": 272,
+            "endColumn": 18,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "i: int",
+                    "start": 9968,
+                    "end": 9969
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 284,
+            "column": 13,
+            "endLine": 284,
+            "endColumn": 13,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "index: int",
+                    "start": 10370,
+                    "end": 10375
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 286,
+            "column": 29,
+            "endLine": 286,
+            "endColumn": 29,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 296,
+            "column": 13,
+            "endLine": 296,
+            "endColumn": 13,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "index: int",
+                    "start": 10748,
+                    "end": 10753
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 305,
+            "column": 15,
+            "endLine": 305,
+            "endColumn": 15,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: int",
+                    "start": 10988,
+                    "end": 10989
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 307,
+            "column": 13,
+            "endLine": 307,
+            "endColumn": 13,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "b: int",
+                    "start": 11111,
+                    "end": 11112
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 309,
+            "column": 13,
+            "endLine": 309,
+            "endColumn": 13,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "c: int",
+                    "start": 11238,
+                    "end": 11239
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 316,
+            "column": 24,
+            "endLine": 316,
+            "endColumn": 24,
+            "problem": "IndexIntType-actually-int-constant",
+            "autofix": [
+                {
+                    "replacementText": "1",
+                    "start": 11431,
+                    "end": 11434
+                }
+            ],
+            "suggest": "",
+            "rule": "The number constant could be changed to int constant (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 317,
+            "column": 13,
+            "endLine": 317,
+            "endColumn": 13,
+            "problem": "IndexIntType-actually-int-constant",
+            "autofix": [
+                {
+                    "replacementText": "2",
+                    "start": 11516,
+                    "end": 11520
+                }
+            ],
+            "suggest": "",
+            "rule": "The number constant could be changed to int constant (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 318,
+            "column": 13,
+            "endLine": 318,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "a: number",
+                    "start": 11612,
+                    "end": 11613
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 319,
+            "column": 20,
+            "endLine": 319,
+            "endColumn": 20,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 320,
+            "column": 13,
+            "endLine": 320,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 321,
+            "column": 13,
+            "endLine": 321,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 327,
+            "column": 13,
+            "endLine": 327,
+            "endColumn": 13,
+            "problem": "IndexIntType-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "int",
+                    "start": 12076,
+                    "end": 12082
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 328,
+            "column": 13,
+            "endLine": 328,
+            "endColumn": 13,
+            "problem": "NumericLiteral-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "numberB: int",
+                    "start": 12164,
+                    "end": 12171
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as int (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 329,
+            "column": 13,
+            "endLine": 329,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "numberC: number",
+                    "start": 12261,
+                    "end": 12268
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 332,
+            "column": 13,
+            "endLine": 332,
+            "endColumn": 13,
+            "problem": "IndexIntType-not-only-used-as-int-or-long",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 370,
+            "column": 17,
+            "endLine": 370,
+            "endColumn": 17,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "i: number",
+                    "start": 13336,
+                    "end": 13337
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 371,
+            "column": 28,
+            "endLine": 371,
+            "endColumn": 28,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 374,
+            "column": 17,
+            "endLine": 374,
+            "endColumn": 17,
+            "problem": "NumericLiteral-not-only-used-as-int-or-long",
+            "autofix": [
+                {
+                    "replacementText": "i: number",
+                    "start": 13468,
+                    "end": 13469
+                }
+            ],
+            "suggest": "",
+            "rule": "It is used as number (arkts-numeric-semantic)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 375,
+            "column": 31,
+            "endLine": 375,
+            "endColumn": 31,
+            "problem": "IndexIntType-related-with-non-ets2",
+            "suggest": "",
+            "rule": "The array index is used as number, please check if it's ok (arkts-array-index-expr-type)",
+            "severity": "WARNING"
+        }
+    ]
+}
