@@ -1,11 +1,11 @@
 slotNum = 0x0
 .language ECMAScript
 .function any .#~A=#A(any a0, any a1, any a2) {
-	mov v0, a0
-	mov v1, a1
-	mov v2, a2
-	lda v2
+label_1: 
+label_0: 
+	lda a2
 	return
+label_2: 
 }
 
 slotNum = 0x10001
@@ -131095,21 +131095,17 @@ slotNum = 0x10001
 slotNum = 0x4
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
-	mov v0, a0
-	mov v1, a1
-	mov v2, a2
+label_1: 
+label_0: 
 	ldhole
-	sta v7
-	defineclasswithbuffer 0x0, .#~A=#A, _1, 0x0, v7
-	sta v5
-	sta v6
-	lda v5
+	sta v0
+	defineclasswithbuffer 0x0, .#~A=#A, _1, 0x0, v0
+	sta v0
 	ldobjbyname 0x1, prototype
-	sta v8
-	lda v5
+	lda v0
 	sttoglobalrecord 0x3, A
-	ldundefined
 	returnundefined
+label_2: 
 }
 
 

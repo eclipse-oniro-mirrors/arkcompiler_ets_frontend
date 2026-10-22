@@ -1,561 +1,298 @@
 slotNum = 0x0
 .language ECMAScript
 .function any .#~A=#A(any a0, any a1, any a2) {
-	mov v0, a0
-	mov v1, a1
-	mov v2, a2
-	lda v2
+label_1: 
+label_0: 
+	lda a2
 	return
+label_2: 
 }
 
 slotNum = 0x83
 .language ECMAScript
 .function any .#~A>#foo(any a0, any a1, any a2) {
-	mov v0, a0
-	mov v1, a1
-	mov v2, a2
+label_130: 
+label_0: 
 	ldai 0x0
 	trystglobalbyname 0x0, a0
 	ldai 0x1
 	trystglobalbyname 0x1, a1
 	ldfalse
 	callruntime.isfalse 0x2
-	jnez LABEL_0
-LABEL_0: 
 	ldfalse
 	callruntime.isfalse 0x3
-	jnez LABEL_1
-LABEL_1: 
 	ldfalse
 	callruntime.isfalse 0x4
-	jnez LABEL_2
-LABEL_2: 
 	ldfalse
 	callruntime.isfalse 0x5
-	jnez LABEL_3
-LABEL_3: 
 	ldfalse
 	callruntime.isfalse 0x6
-	jnez LABEL_4
-LABEL_4: 
 	ldfalse
 	callruntime.isfalse 0x7
-	jnez LABEL_5
-LABEL_5: 
 	ldfalse
 	callruntime.isfalse 0x8
-	jnez LABEL_6
-LABEL_6: 
 	ldfalse
 	callruntime.isfalse 0x9
-	jnez LABEL_7
-LABEL_7: 
 	ldfalse
 	callruntime.isfalse 0xa
-	jnez LABEL_8
-LABEL_8: 
 	ldfalse
 	callruntime.isfalse 0xb
-	jnez LABEL_9
-LABEL_9: 
 	ldfalse
 	callruntime.isfalse 0xc
-	jnez LABEL_10
-LABEL_10: 
 	ldfalse
 	callruntime.isfalse 0xd
-	jnez LABEL_11
-LABEL_11: 
 	ldfalse
 	callruntime.isfalse 0xe
-	jnez LABEL_12
-LABEL_12: 
 	ldfalse
 	callruntime.isfalse 0xf
-	jnez LABEL_13
-LABEL_13: 
 	ldfalse
 	callruntime.isfalse 0x10
-	jnez LABEL_14
-LABEL_14: 
 	ldfalse
 	callruntime.isfalse 0x11
-	jnez LABEL_15
-LABEL_15: 
 	ldfalse
 	callruntime.isfalse 0x12
-	jnez LABEL_16
-LABEL_16: 
 	ldfalse
 	callruntime.isfalse 0x13
-	jnez LABEL_17
-LABEL_17: 
 	ldfalse
 	callruntime.isfalse 0x14
-	jnez LABEL_18
-LABEL_18: 
 	ldfalse
 	callruntime.isfalse 0x15
-	jnez LABEL_19
-LABEL_19: 
 	ldfalse
 	callruntime.isfalse 0x16
-	jnez LABEL_20
-LABEL_20: 
 	ldfalse
 	callruntime.isfalse 0x17
-	jnez LABEL_21
-LABEL_21: 
 	ldfalse
 	callruntime.isfalse 0x18
-	jnez LABEL_22
-LABEL_22: 
 	ldfalse
 	callruntime.isfalse 0x19
-	jnez LABEL_23
-LABEL_23: 
 	ldfalse
 	callruntime.isfalse 0x1a
-	jnez LABEL_24
-LABEL_24: 
 	ldfalse
 	callruntime.isfalse 0x1b
-	jnez LABEL_25
-LABEL_25: 
 	ldfalse
 	callruntime.isfalse 0x1c
-	jnez LABEL_26
-LABEL_26: 
 	ldfalse
 	callruntime.isfalse 0x1d
-	jnez LABEL_27
-LABEL_27: 
 	ldfalse
 	callruntime.isfalse 0x1e
-	jnez LABEL_28
-LABEL_28: 
 	ldfalse
 	callruntime.isfalse 0x1f
-	jnez LABEL_29
-LABEL_29: 
 	ldfalse
 	callruntime.isfalse 0x20
-	jnez LABEL_30
-LABEL_30: 
 	ldfalse
 	callruntime.isfalse 0x21
-	jnez LABEL_31
-LABEL_31: 
 	ldfalse
 	callruntime.isfalse 0x22
-	jnez LABEL_32
-LABEL_32: 
 	ldfalse
 	callruntime.isfalse 0x23
-	jnez LABEL_33
-LABEL_33: 
 	ldfalse
 	callruntime.isfalse 0x24
-	jnez LABEL_34
-LABEL_34: 
 	ldfalse
 	callruntime.isfalse 0x25
-	jnez LABEL_35
-LABEL_35: 
 	ldfalse
 	callruntime.isfalse 0x26
-	jnez LABEL_36
-LABEL_36: 
 	ldfalse
 	callruntime.isfalse 0x27
-	jnez LABEL_37
-LABEL_37: 
 	ldfalse
 	callruntime.isfalse 0x28
-	jnez LABEL_38
-LABEL_38: 
 	ldfalse
 	callruntime.isfalse 0x29
-	jnez LABEL_39
-LABEL_39: 
 	ldfalse
 	callruntime.isfalse 0x2a
-	jnez LABEL_40
-LABEL_40: 
 	ldfalse
 	callruntime.isfalse 0x2b
-	jnez LABEL_41
-LABEL_41: 
 	ldfalse
 	callruntime.isfalse 0x2c
-	jnez LABEL_42
-LABEL_42: 
 	ldfalse
 	callruntime.isfalse 0x2d
-	jnez LABEL_43
-LABEL_43: 
 	ldfalse
 	callruntime.isfalse 0x2e
-	jnez LABEL_44
-LABEL_44: 
 	ldfalse
 	callruntime.isfalse 0x2f
-	jnez LABEL_45
-LABEL_45: 
 	ldfalse
 	callruntime.isfalse 0x30
-	jnez LABEL_46
-LABEL_46: 
 	ldfalse
 	callruntime.isfalse 0x31
-	jnez LABEL_47
-LABEL_47: 
 	ldfalse
 	callruntime.isfalse 0x32
-	jnez LABEL_48
-LABEL_48: 
 	ldfalse
 	callruntime.isfalse 0x33
-	jnez LABEL_49
-LABEL_49: 
 	ldfalse
 	callruntime.isfalse 0x34
-	jnez LABEL_50
-LABEL_50: 
 	ldfalse
 	callruntime.isfalse 0x35
-	jnez LABEL_51
-LABEL_51: 
 	ldfalse
 	callruntime.isfalse 0x36
-	jnez LABEL_52
-LABEL_52: 
 	ldfalse
 	callruntime.isfalse 0x37
-	jnez LABEL_53
-LABEL_53: 
 	ldfalse
 	callruntime.isfalse 0x38
-	jnez LABEL_54
-LABEL_54: 
 	ldfalse
 	callruntime.isfalse 0x39
-	jnez LABEL_55
-LABEL_55: 
 	ldfalse
 	callruntime.isfalse 0x3a
-	jnez LABEL_56
-LABEL_56: 
 	ldfalse
 	callruntime.isfalse 0x3b
-	jnez LABEL_57
-LABEL_57: 
 	ldfalse
 	callruntime.isfalse 0x3c
-	jnez LABEL_58
-LABEL_58: 
 	ldfalse
 	callruntime.isfalse 0x3d
-	jnez LABEL_59
-LABEL_59: 
 	ldfalse
 	callruntime.isfalse 0x3e
-	jnez LABEL_60
-LABEL_60: 
 	ldfalse
 	callruntime.isfalse 0x3f
-	jnez LABEL_61
-LABEL_61: 
 	ldfalse
 	callruntime.isfalse 0x40
-	jnez LABEL_62
-LABEL_62: 
 	ldfalse
 	callruntime.isfalse 0x41
-	jnez LABEL_63
-LABEL_63: 
 	ldfalse
 	callruntime.isfalse 0x42
-	jnez LABEL_64
-LABEL_64: 
 	ldfalse
 	callruntime.isfalse 0x43
-	jnez LABEL_65
-LABEL_65: 
 	ldfalse
 	callruntime.isfalse 0x44
-	jnez LABEL_66
-LABEL_66: 
 	ldfalse
 	callruntime.isfalse 0x45
-	jnez LABEL_67
-LABEL_67: 
 	ldfalse
 	callruntime.isfalse 0x46
-	jnez LABEL_68
-LABEL_68: 
 	ldfalse
 	callruntime.isfalse 0x47
-	jnez LABEL_69
-LABEL_69: 
 	ldfalse
 	callruntime.isfalse 0x48
-	jnez LABEL_70
-LABEL_70: 
 	ldfalse
 	callruntime.isfalse 0x49
-	jnez LABEL_71
-LABEL_71: 
 	ldfalse
 	callruntime.isfalse 0x4a
-	jnez LABEL_72
-LABEL_72: 
 	ldfalse
 	callruntime.isfalse 0x4b
-	jnez LABEL_73
-LABEL_73: 
 	ldfalse
 	callruntime.isfalse 0x4c
-	jnez LABEL_74
-LABEL_74: 
 	ldfalse
 	callruntime.isfalse 0x4d
-	jnez LABEL_75
-LABEL_75: 
 	ldfalse
 	callruntime.isfalse 0x4e
-	jnez LABEL_76
-LABEL_76: 
 	ldfalse
 	callruntime.isfalse 0x4f
-	jnez LABEL_77
-LABEL_77: 
 	ldfalse
 	callruntime.isfalse 0x50
-	jnez LABEL_78
-LABEL_78: 
 	ldfalse
 	callruntime.isfalse 0x51
-	jnez LABEL_79
-LABEL_79: 
 	ldfalse
 	callruntime.isfalse 0x52
-	jnez LABEL_80
-LABEL_80: 
 	ldfalse
 	callruntime.isfalse 0x53
-	jnez LABEL_81
-LABEL_81: 
 	ldfalse
 	callruntime.isfalse 0x54
-	jnez LABEL_82
-LABEL_82: 
 	ldfalse
 	callruntime.isfalse 0x55
-	jnez LABEL_83
-LABEL_83: 
 	ldfalse
 	callruntime.isfalse 0x56
-	jnez LABEL_84
-LABEL_84: 
 	ldfalse
 	callruntime.isfalse 0x57
-	jnez LABEL_85
-LABEL_85: 
 	ldfalse
 	callruntime.isfalse 0x58
-	jnez LABEL_86
-LABEL_86: 
 	ldfalse
 	callruntime.isfalse 0x59
-	jnez LABEL_87
-LABEL_87: 
 	ldfalse
 	callruntime.isfalse 0x5a
-	jnez LABEL_88
-LABEL_88: 
 	ldfalse
 	callruntime.isfalse 0x5b
-	jnez LABEL_89
-LABEL_89: 
 	ldfalse
 	callruntime.isfalse 0x5c
-	jnez LABEL_90
-LABEL_90: 
 	ldfalse
 	callruntime.isfalse 0x5d
-	jnez LABEL_91
-LABEL_91: 
 	ldfalse
 	callruntime.isfalse 0x5e
-	jnez LABEL_92
-LABEL_92: 
 	ldfalse
 	callruntime.isfalse 0x5f
-	jnez LABEL_93
-LABEL_93: 
 	ldfalse
 	callruntime.isfalse 0x60
-	jnez LABEL_94
-LABEL_94: 
 	ldfalse
 	callruntime.isfalse 0x61
-	jnez LABEL_95
-LABEL_95: 
 	ldfalse
 	callruntime.isfalse 0x62
-	jnez LABEL_96
-LABEL_96: 
 	ldfalse
 	callruntime.isfalse 0x63
-	jnez LABEL_97
-LABEL_97: 
 	ldfalse
 	callruntime.isfalse 0x64
-	jnez LABEL_98
-LABEL_98: 
 	ldfalse
 	callruntime.isfalse 0x65
-	jnez LABEL_99
-LABEL_99: 
 	ldfalse
 	callruntime.isfalse 0x66
-	jnez LABEL_100
-LABEL_100: 
 	ldfalse
 	callruntime.isfalse 0x67
-	jnez LABEL_101
-LABEL_101: 
 	ldfalse
 	callruntime.isfalse 0x68
-	jnez LABEL_102
-LABEL_102: 
 	ldfalse
 	callruntime.isfalse 0x69
-	jnez LABEL_103
-LABEL_103: 
 	ldfalse
 	callruntime.isfalse 0x6a
-	jnez LABEL_104
-LABEL_104: 
 	ldfalse
 	callruntime.isfalse 0x6b
-	jnez LABEL_105
-LABEL_105: 
 	ldfalse
 	callruntime.isfalse 0x6c
-	jnez LABEL_106
-LABEL_106: 
 	ldfalse
 	callruntime.isfalse 0x6d
-	jnez LABEL_107
-LABEL_107: 
 	ldfalse
 	callruntime.isfalse 0x6e
-	jnez LABEL_108
-LABEL_108: 
 	ldfalse
 	callruntime.isfalse 0x6f
-	jnez LABEL_109
-LABEL_109: 
 	ldfalse
 	callruntime.isfalse 0x70
-	jnez LABEL_110
-LABEL_110: 
 	ldfalse
 	callruntime.isfalse 0x71
-	jnez LABEL_111
-LABEL_111: 
 	ldfalse
 	callruntime.isfalse 0x72
-	jnez LABEL_112
-LABEL_112: 
 	ldfalse
 	callruntime.isfalse 0x73
-	jnez LABEL_113
-LABEL_113: 
 	ldfalse
 	callruntime.isfalse 0x74
-	jnez LABEL_114
-LABEL_114: 
 	ldfalse
 	callruntime.isfalse 0x75
-	jnez LABEL_115
-LABEL_115: 
 	ldfalse
 	callruntime.isfalse 0x76
-	jnez LABEL_116
-LABEL_116: 
 	ldfalse
 	callruntime.isfalse 0x77
-	jnez LABEL_117
-LABEL_117: 
 	ldfalse
 	callruntime.isfalse 0x78
-	jnez LABEL_118
-LABEL_118: 
 	ldfalse
 	callruntime.isfalse 0x79
-	jnez LABEL_119
-LABEL_119: 
 	ldfalse
 	callruntime.isfalse 0x7a
-	jnez LABEL_120
-LABEL_120: 
 	ldfalse
 	callruntime.isfalse 0x7b
-	jnez LABEL_121
-LABEL_121: 
 	ldfalse
 	callruntime.isfalse 0x7c
-	jnez LABEL_122
-LABEL_122: 
 	ldfalse
 	callruntime.isfalse 0x7d
-	jnez LABEL_123
-LABEL_123: 
 	ldfalse
 	callruntime.isfalse 0x7e
-	jnez LABEL_124
-LABEL_124: 
 	ldfalse
 	callruntime.isfalse 0x7f
-	jnez LABEL_125
-LABEL_125: 
 	ldfalse
 	callruntime.isfalse 0x80
-	jnez LABEL_126
-LABEL_126: 
 	ldfalse
 	callruntime.isfalse 0x81
-	jnez LABEL_127
-LABEL_127: 
 	ldfalse
 	callruntime.isfalse 0x82
-	jnez LABEL_128
-LABEL_128: 
-	ldundefined
 	returnundefined
+label_131: 
 }
 
 slotNum = 0x4
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
-	mov v0, a0
-	mov v1, a1
-	mov v2, a2
+label_1: 
+label_0: 
 	ldhole
-	sta v7
-	defineclasswithbuffer 0x0, .#~A=#A, _1, 0x0, v7
-	sta v5
-	sta v6
-	lda v5
+	sta v0
+	defineclasswithbuffer 0x0, .#~A=#A, _1, 0x0, v0
+	sta v0
 	ldobjbyname 0x1, prototype
-	sta v8
-	lda v5
+	lda v0
 	sttoglobalrecord 0x3, A
-	ldundefined
 	returnundefined
+label_2: 
 }
 
 
