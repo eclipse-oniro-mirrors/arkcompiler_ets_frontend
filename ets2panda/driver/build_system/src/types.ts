@@ -453,6 +453,8 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
     moduleFiles: ModuleFile[];
     declFileNameCacheConfig?: DeclFileNameCacheConfig;
     compatibleSdkVersion: number;
+    minMinorAPIVersion: number;
+    minPatchAPIVersion: number;
     interopConfigPath?: string;
 }
 // ProjectConfig ends

@@ -83,7 +83,9 @@ export function getMockedBuildConfig(): BuildConfig {
         dependentModuleList: [],
         hasMainModule: false,
         moduleFiles: [],
-        compatibleSdkVersion: 26
+        compatibleSdkVersion: 26,
+        minMinorAPIVersion: 0,
+        minPatchAPIVersion: 0
     };
 }
 

@@ -496,11 +496,20 @@ export abstract class BaseMode {
         return false;
     }
 
-    private get useModuleNamePrefixedSingleMap(): boolean {
-        // hsp main module, or compatibleSdkVersion > 26: generate a single
-        // module-name-prefixed dependency ohmurl map file
+    private get useSingleOhmUrlMap(): boolean {
+        // hsp main module, or API version newer than 26.0.0: generate a single
+        // dependency ohmurl map file
         return this.mainModuleType === OHOS_MODULE_TYPE.SHARED ||
-            this.buildConfig.compatibleSdkVersion > LEGACY_OHMURL_MAP_MAX_SDK_VERSION;
+            this.isNewerThanLegacyOhmUrlMapVersion;
+    }
+
+    private get isNewerThanLegacyOhmUrlMapVersion(): boolean {
+        const major = this.buildConfig.compatibleSdkVersion;
+        if (major !== LEGACY_OHMURL_MAP_MAX_SDK_VERSION) {
+            return major > LEGACY_OHMURL_MAP_MAX_SDK_VERSION;
+        }
+        // 26.x.y with a non-zero minor/patch is newer than 26.0.0
+        return this.buildConfig.minMinorAPIVersion !== 0 || this.buildConfig.minPatchAPIVersion !== 0;
     }
 
     public get isBuildConfigModified(): boolean | undefined {
@@ -879,36 +888,47 @@ export abstract class BaseMode {
                 }
             }
             dynamicLines.unshift(...lines);
-            if (this.useModuleNamePrefixedSingleMap) {
-                // hsp main module or compatibleSdkVersion > 26:
-                // single module-name-prefixed map containing all entries
-                const depMapEtsPath = this.getDependencyOhmUrlMapEtsPath();
+            if (this.useSingleOhmUrlMap) {
+                // single map containing all entries:
+                // module-name-prefixed for hsp, un-prefixed for entry/feature
+                const depMapEtsPath = this.getSingleOhmUrlMapEtsPath();
                 ensurePathExists(depMapEtsPath);
                 fs.writeFileSync(depMapEtsPath, dynamicLines.join('\n') + '\n');
             } else {
-                // compatibleSdkVersion <= 26: legacy dual-file strategy,
+                // API version 26.0.0 or older: legacy dual-file strategy,
                 // the bundle-name-prefixed map only contains non-dynamic entries
-                const depMapEtsPath = this.getLegacyDependencyOhmUrlMapEtsPath();
+                const depMapEtsPath = this.getBundleNamePrefixedOhmUrlMapEtsPath();
                 ensurePathExists(depMapEtsPath);
                 fs.writeFileSync(depMapEtsPath, lines.join('\n') + '\n');
-                const dynamicDepMapEtsPath = this.getDynamicDependencyOhmUrlMapEtsPath();
+                const dynamicDepMapEtsPath = this.getUnprefixedOhmUrlMapEtsPath();
                 ensurePathExists(dynamicDepMapEtsPath);
                 fs.writeFileSync(dynamicDepMapEtsPath, dynamicLines.join('\n') + '\n');
             }
         }
     }
 
-    private getDependencyOhmUrlMapEtsPath(): string {
+    // <moduleName>_dependency_ohmurl_map.ets
+    private getModuleNamePrefixedOhmUrlMapEtsPath(): string {
         const mainModuleName = this.moduleInfos.get(this.mainPackageName)?.moduleName ?? '';
         return path.join(this.buildConfig.cachePath, `${mainModuleName}_dependency_ohmurl_map.ets`);
     }
 
-    private getLegacyDependencyOhmUrlMapEtsPath(): string {
+    // <bundleName>_dependency_ohmurl_map.ets
+    private getBundleNamePrefixedOhmUrlMapEtsPath(): string {
         return path.join(this.buildConfig.cachePath, `${this.buildConfig.bundleName}_dependency_ohmurl_map.ets`);
     }
 
-    private getDynamicDependencyOhmUrlMapEtsPath(): string {
+    // _dependency_ohmurl_map.ets
+    private getUnprefixedOhmUrlMapEtsPath(): string {
         return path.join(this.buildConfig.cachePath, '_dependency_ohmurl_map.ets');
+    }
+
+    private getSingleOhmUrlMapEtsPath(): string {
+        // hsp main module: module-name-prefixed map;
+        // entry/feature with API version newer than 26.0.0: un-prefixed map
+        return this.mainModuleType === OHOS_MODULE_TYPE.SHARED
+            ? this.getModuleNamePrefixedOhmUrlMapEtsPath()
+            : this.getUnprefixedOhmUrlMapEtsPath();
     }
 
     private collectInteropDynamicEntries(): InteropDynamicEntries {
@@ -1133,9 +1153,9 @@ export abstract class BaseMode {
     private registerDependencyOhmUrlMapEntryFiles(): void {
         // Only when: not declgen ets2ts mode, main module is hybrid (hap, feature or hsp)
         if (!this.buildConfig.enableDeclgenEts2Ts && this.isHybridMainModule) {
-            const depMapEtsPaths: string[] = this.useModuleNamePrefixedSingleMap
-                ? [this.getDependencyOhmUrlMapEtsPath()]
-                : [this.getLegacyDependencyOhmUrlMapEtsPath(), this.getDynamicDependencyOhmUrlMapEtsPath()];
+            const depMapEtsPaths: string[] = this.useSingleOhmUrlMap
+                ? [this.getSingleOhmUrlMapEtsPath()]
+                : [this.getBundleNamePrefixedOhmUrlMapEtsPath(), this.getUnprefixedOhmUrlMapEtsPath()];
             depMapEtsPaths.forEach((depMapEtsPath: string) => {
                 this.entryFiles.add(depMapEtsPath);
                 this.fileToModule.set(depMapEtsPath, this.moduleInfos.get(this.mainPackageName)!);
