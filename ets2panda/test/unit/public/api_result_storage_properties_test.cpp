@@ -14,12 +14,144 @@
  */
 #include "public/public.h"
 #include <gtest/gtest.h>
+#include <gtest/gtest-spi.h>
 #include <array>
 #include <cstring>
-#include <malloc.h>
+#include <cstdlib>
+#include <new>
 #include <random>
 #include <string>
 #include <vector>
+class AllocationTracker;
+static thread_local AllocationTracker *g_activeTracker = nullptr;
+
+struct AllocationState {
+    size_t liveCount = 0;
+    size_t liveBytes = 0;
+    size_t allocations = 0;
+    size_t deallocations = 0;
+    bool overflow = false;
+};
+constexpr size_t NON_SSO_STRING_LENGTH = 4096;
+constexpr size_t TRACKER_SAMPLE_BYTES = 64;
+constexpr size_t ALLOCATION_TRACKER_CAPACITY = 1024;
+
+class AllocationTracker {
+    struct Entry {
+        void *address;
+        size_t bytes;
+    };
+    std::array<Entry, ALLOCATION_TRACKER_CAPACITY> entries_ {};
+    AllocationState state_;
+    bool recording_ = false;
+
+public:
+    const AllocationState &State() const
+    {
+        return state_;
+    }
+    void SetRecording(bool enabled)
+    {
+        recording_ = enabled;
+    }
+    AllocationTracker()
+    {
+        if (g_activeTracker != nullptr) {
+            ADD_FAILURE() << "Nested allocation tracking is not supported";
+            return;
+        }
+        g_activeTracker = this;
+    }
+    ~AllocationTracker()
+    {
+        if (g_activeTracker == this) {
+            g_activeTracker = nullptr;
+        }
+    }
+    AllocationTracker(const AllocationTracker &) = delete;
+    AllocationTracker &operator=(const AllocationTracker &) = delete;
+    AllocationTracker(AllocationTracker &&) = delete;
+    AllocationTracker &operator=(AllocationTracker &&) = delete;
+
+    bool Contains(const void *address) const
+    {
+        for (size_t i = 0; i < state_.liveCount; ++i) {
+            if (entries_[i].address == address) {
+                return true;
+            }
+        }
+        return false;
+    }
+    void OnAllocate(void *address, size_t bytes)
+    {
+        if (!recording_) {
+            return;
+        }
+        if (state_.liveCount == entries_.size()) {
+            state_.overflow = true;
+            return;
+        }
+        entries_[state_.liveCount++] = {address, bytes};
+        state_.liveBytes += bytes;
+        ++state_.allocations;
+    }
+    void OnDeallocate(void *address)
+    {
+        for (size_t i = 0; i < state_.liveCount; ++i) {
+            if (entries_[i].address == address) {
+                state_.liveBytes -= entries_[i].bytes;
+                entries_[i] = entries_[--state_.liveCount];
+                ++state_.deallocations;
+                return;
+            }
+        }
+    }
+};
+
+void *operator new(std::size_t size)
+{
+    // Allocator replacement must not recurse through a container or smart pointer.
+    // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+    auto *result = std::malloc(size == 0 ? 1 : size);
+    if (result == nullptr) {
+        // Match the throwing allocation contract used by this gtest target.
+        throw std::bad_alloc();
+    }
+    if (g_activeTracker != nullptr) {
+        g_activeTracker->OnAllocate(result, size);
+    }
+    return result;
+}
+
+void *operator new[](std::size_t size)
+{
+    return ::operator new(size);
+}
+
+void operator delete(void *address) noexcept
+{
+    if (g_activeTracker != nullptr) {
+        g_activeTracker->OnDeallocate(address);
+    }
+    // NOLINTNEXTLINE(cppcoreguidelines-no-malloc)
+    std::free(address);
+}
+
+void operator delete[](void *address) noexcept
+{
+    ::operator delete(address);
+}
+
+void operator delete(void *address, [[maybe_unused]] std::size_t size) noexcept
+{
+    ::operator delete(address);
+}
+
+void operator delete[](void *address, [[maybe_unused]] std::size_t size) noexcept
+{
+    ::operator delete(address);
+}
+
 using ark::es2panda::public_lib::ApiResultStorage;
 using ark::es2panda::public_lib::CopyApiPointerResult;
 
@@ -132,37 +264,80 @@ TEST(ApiResultProperties, WB04_TableGrowthPreservesOldBuffers)
 
 TEST(ApiResultProperties, WB05_ClearReleasesOwnedCopies)
 {
-#if defined(__has_feature)
-#if __has_feature(address_sanitizer)
-    GTEST_SKIP() << "glibc allocation accounting does not observe ASan allocator; native test and LSan cover release";
-#endif
-#endif
+    // Source buffers and assertion allocations are outside the recording window.
+    std::string value(NON_SSO_STRING_LENGTH, 'x');
+    std::array<char *, 3> values {};
     ApiResultStorage store;
-    store.Clear();
-    auto used = [] {
-#if __GLIBC_PREREQ(2, 33)
-        auto s = mallinfo2();
-#else
-        auto s = mallinfo();
-#endif
-        return static_cast<size_t>(s.uordblks) + static_cast<size_t>(s.hblkhd);
+    AllocationTracker tracker;
+    tracker.SetRecording(true);
+    auto *name = store.String(value);
+    auto *array = CopyPointers(store, values.size(), values.data());
+    tracker.SetRecording(false);
+    ASSERT_TRUE(tracker.Contains(name));
+    ASSERT_TRUE(tracker.Contains(array));
+    ASSERT_FALSE(tracker.State().overflow);
+    ASSERT_GT(tracker.State().liveCount, 0U);
+    ASSERT_GT(tracker.State().liveBytes, value.size());
+    auto addArray = [&store, &tracker](auto element) {
+        using Element = decltype(element);
+        std::array<Element, 3> elements {};
+        tracker.SetRecording(true);
+        auto *copy = CopyPointers(store, elements.size(), elements.data());
+        auto *empty = CopyPointers(store, 0, elements.data());
+        tracker.SetRecording(false);
+        ASSERT_TRUE(tracker.Contains(copy));
+        ASSERT_TRUE(tracker.Contains(empty));
     };
-    auto before = used();
-    const size_t bigStringLength = size_t {256U} * 1024U;
-    for (size_t i = 0; i < 32; ++i) {
-        std::string value(bigStringLength, 'x');
-        value[0] = static_cast<char>('A' + i);
-        store.String(value);
-    }
-    char node = 0;
-    std::vector<char *> many(100000, &node);
-    CopyPointers(store, many.size(), many.data());
-    auto occupied = used();
-    EXPECT_GT(occupied - before, 8U * 1024U * 1024U);
+    addArray(static_cast<char *>(nullptr));
+    addArray(static_cast<es2panda_AstNode *>(nullptr));
+    addArray(static_cast<es2panda_Type *>(nullptr));
+    addArray(static_cast<es2panda_Signature *>(nullptr));
+    addArray(static_cast<es2panda_Variable *>(nullptr));
+    addArray(static_cast<es2panda_Declaration *>(nullptr));
+    addArray(static_cast<es2panda_Scope *>(nullptr));
+    ASSERT_FALSE(tracker.State().overflow);
     store.Clear();
-    EXPECT_GT(occupied - used(), 8U * 1024U * 1024U);
+    EXPECT_EQ(tracker.State().liveCount, 0U);
+    EXPECT_EQ(tracker.State().liveBytes, 0U);
+    EXPECT_EQ(tracker.State().allocations, tracker.State().deallocations);
+    auto released = tracker.State().deallocations;
     store.Clear();
+    EXPECT_EQ(tracker.State().deallocations, released);
     EXPECT_STREQ(store.String("new"), "new");
+}
+
+TEST(ApiResultProperties, DestructorReleasesOwnedCopies)
+{
+    std::string value(NON_SSO_STRING_LENGTH, 'x');
+    AllocationTracker tracker;
+    {
+        ApiResultStorage store;
+        tracker.SetRecording(true);
+        auto *name = store.String(value);
+        tracker.SetRecording(false);
+        ASSERT_TRUE(tracker.Contains(name));
+        ASSERT_GT(tracker.State().liveCount, 0U);
+    }
+    EXPECT_FALSE(tracker.State().overflow);
+    EXPECT_EQ(tracker.State().liveCount, 0U);
+    EXPECT_EQ(tracker.State().liveBytes, 0U);
+    EXPECT_EQ(tracker.State().allocations, tracker.State().deallocations);
+}
+
+TEST(ApiResultProperties, AllocationTrackerDetectsOutstandingAllocation)
+{
+    AllocationTracker tracker;
+    EXPECT_NONFATAL_FAILURE(AllocationTracker {}, "Nested allocation tracking is not supported");
+    EXPECT_EQ(g_activeTracker, &tracker);
+    tracker.SetRecording(true);
+    auto *allocation = ::operator new(TRACKER_SAMPLE_BYTES);
+    tracker.SetRecording(false);
+    EXPECT_EQ(tracker.State().liveCount, 1U);
+    EXPECT_EQ(tracker.State().liveBytes, TRACKER_SAMPLE_BYTES);
+    ::operator delete(allocation);
+    EXPECT_EQ(tracker.State().liveCount, 0U);
+    EXPECT_EQ(tracker.State().liveBytes, 0U);
+    EXPECT_EQ(tracker.State().deallocations, 1U);
 }
 
 TEST(ApiResultProperties, WB06_DeterministicModelAndHistory)

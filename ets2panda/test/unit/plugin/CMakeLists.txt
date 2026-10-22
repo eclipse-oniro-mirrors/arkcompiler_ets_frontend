@@ -196,6 +196,7 @@ add_custom_target(es2panda-plugin-test)
 # on allocator history from a preceding case. The tests observe only CAPI.
 if (PANDA_TARGET_LINUX AND NOT PANDA_TARGET_MOBILE)
     panda_frontend_add_executable(api_result_blackbox api_result_blackbox.cpp
+        FORCE_REBUILD
         OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     panda_target_include_directories(api_result_blackbox
         PRIVATE ${ES2PANDA_PATH} ${OUTPUT_DIR})
