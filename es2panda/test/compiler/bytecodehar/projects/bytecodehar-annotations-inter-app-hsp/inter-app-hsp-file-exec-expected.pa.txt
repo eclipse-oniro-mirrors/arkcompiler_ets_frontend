@@ -823,6 +823,18 @@ slot com.inter_app.hsp&myapp/inter-app-hsp-file-exec&_2
 },
 ======> strings <======
 "com.inter_app.hsp&myapp/inter-app-hsp-file-exec&.#~A=#A"; "print"; "prototype"; "test"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x0
 .language ECMAScript
 .function any com.inter_app.hsp&bytecodehar/bytecodehar-dynamic-import&.#*#testNonConst(any a0, any a1, any a2) {

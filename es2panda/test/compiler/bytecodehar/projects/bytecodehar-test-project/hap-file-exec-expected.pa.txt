@@ -770,6 +770,18 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1415
 },
 ======> strings <======
 "&bytecodehar1/bytecodehar1-file1&2.0.0.#*#A"; "&bytecodehar1/bytecodehar1-file1&2.0.0.#*#test"; "@normalized:N&&&sourcehar/sourcehar-file1&2.0.0"; "a"; "b"; "bytecodehar1.file1.test"; "c"; "print"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x3
 .language ECMAScript
 .function any &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test(any a0, any a1, any a2) {
@@ -838,6 +850,18 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_981
 },
 ======> strings <======
 "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test"; "bytecodehar2.file1.test"; "print"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x2
 .language ECMAScript
 .function any &myapp/hap-file-exec&.#*#main(any a0, any a1, any a2) {

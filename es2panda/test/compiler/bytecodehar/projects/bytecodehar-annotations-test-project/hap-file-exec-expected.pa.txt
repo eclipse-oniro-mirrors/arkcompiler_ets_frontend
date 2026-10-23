@@ -1016,6 +1016,18 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1771
 ======> literal array buffer <======
 ======> strings <======
 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x3
 .language ECMAScript
 .function any &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test(any a0, any a1, any a2) {
@@ -1117,6 +1129,18 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1353
 },
 ======> strings <======
 "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test"; "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#~A=#A"; "bytecodehar2.file1.test"; "print"; "prototype"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 
 ======> literal array buffer <======
 ======> strings <======

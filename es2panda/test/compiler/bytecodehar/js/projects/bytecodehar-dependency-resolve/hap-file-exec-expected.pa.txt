@@ -1147,6 +1147,18 @@ slot &bundlehar/bundlehar-file&1.0.0_1244
 ======> literal array buffer <======
 ======> strings <======
 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x3
 .language ECMAScript
 .function any &bytecodehar1/bytecodehar1-file1&2.0.0.#*#test(any a0, any a1, any a2) {
@@ -1237,6 +1249,18 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1204
 },
 ======> strings <======
 "&bytecodehar1/bytecodehar1-file1&2.0.0.#*#test"; "@normalized:N&&&sourcehar/sourcehar-file1&2.0.0"; "bytecodehar1.file1.test"; "print"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x3
 .language ECMAScript
 .function any &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test(any a0, any a1, any a2) {
@@ -1305,6 +1329,18 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_993
 },
 ======> strings <======
 "&@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test"; "bytecodehar2.file1.test"; "print"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0x7
 .language ECMAScript
 .function any &commonjs/commonjs-say&1.0.0.#*#(any a0, any a1, any a2, any a3, any a4, any a5, any a6, any a7) {
