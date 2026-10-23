@@ -341,6 +341,7 @@ void ClassProperty::CopyTo(AstNode *other) const
     otherImpl->basePropertyVar_ = basePropertyVar_;
     otherImpl->isDefault_ = isDefault_;
     otherImpl->initMode_ = initMode_;
+    otherImpl->metadataAccessRestriction_ = metadataAccessRestriction_;
 
     AnnotationAllowed<ClassElement>::CopyTo(other);
 }

@@ -17,6 +17,7 @@
 #define ES2PANDA_PARSER_INCLUDE_AST_CLASS_PROPERTY_H
 
 #include "ir/base/classElement.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/annotationAllowed.h"
 
@@ -137,6 +138,16 @@ public:
         initMode_ |= InitMode::TOP_LEVEL_LEXICAL_DECL;
     }
 
+    [[nodiscard]] const MetadataAccessRestriction *GetMetadataAccessRestriction() const noexcept
+    {
+        return metadataAccessRestriction_;
+    }
+
+    void SetMetadataAccessRestriction(ir::MetadataAccessRestriction *restriction)
+    {
+        metadataAccessRestriction_ = restriction;
+    }
+
 protected:
     ClassProperty *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
@@ -153,6 +164,7 @@ private:
     varbinder::Variable *basePropertyVar_;
     bool isDefault_ = false;
     InitMode initMode_ = InitMode::NONE;
+    EPtr<ir::MetadataAccessRestriction> metadataAccessRestriction_ {nullptr};
 };
 }  // namespace ark::es2panda::ir
 

@@ -18,6 +18,7 @@
 
 #include "checker/types/signature.h"
 #include "ir/annotationAllowed.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/returnStatement.h"
 #include "ir/astNode.h"
@@ -424,6 +425,16 @@ public:
     void SetValueParams(Expression *params, size_t index);
     ArenaVector<Expression *> &ParamsForUpdate();
 
+    [[nodiscard]] const MetadataAccessRestriction *GetMetadataAccessRestriction() const noexcept
+    {
+        return metadataAccessRestriction_;
+    }
+
+    void SetMetadataAccessRestriction(ir::MetadataAccessRestriction *restriction)
+    {
+        metadataAccessRestriction_ = restriction;
+    }
+
 protected:
     ScriptFunction *Construct(ArenaAllocator *allocator) override;
     void CopyTo(AstNode *other) const override;
@@ -442,6 +453,7 @@ private:
     es2panda::Language lang_;
     ArenaVector<ReturnStatement *> returnStatements_;
     EPtr<ScriptFunction> asyncPairFunction_;
+    EPtr<ir::MetadataAccessRestriction> metadataAccessRestriction_ {nullptr};
 
     bool wasChecked_ {false};
 };

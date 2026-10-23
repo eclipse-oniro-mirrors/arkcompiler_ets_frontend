@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 
 #include "varbinder/scope.h"
 #include "ir/annotationAllowed.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/statement.h"
 #include "ir/statements/annotationUsage.h"
 
@@ -206,6 +207,16 @@ public:
     void SetValueExtends(TSInterfaceHeritage *extends, size_t index);
     void SetExtends(ArenaVector<TSInterfaceHeritage *> &&extendsList);
 
+    [[nodiscard]] const MetadataAccessRestriction *GetMetadataAccessRestriction() const noexcept
+    {
+        return metadataAccessRestriction_;
+    }
+
+    void SetMetadataAccessRestriction(ir::MetadataAccessRestriction *restriction)
+    {
+        metadataAccessRestriction_ = restriction;
+    }
+
 private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
@@ -220,6 +231,7 @@ private:
     bool isExternal_;
     es2panda::Language lang_;
     ClassDeclaration *anonClass_ {nullptr};
+    EPtr<ir::MetadataAccessRestriction> metadataAccessRestriction_ {nullptr};
 };
 }  // namespace ark::es2panda::ir
 

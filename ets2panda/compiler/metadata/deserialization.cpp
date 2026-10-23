@@ -22,6 +22,7 @@
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/literals/numberLiteral.h"
 #include "ir/expressions/literals/stringLiteral.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsEnumMember.h"
 #include "ir/ts/tsQualifiedName.h"
@@ -60,6 +61,81 @@ const std::map<Metadata::BuiltinTypeKind, ir::PrimitiveType> MetadataDeserializa
     {Metadata::BuiltinTypeKind::BuiltinTypeKind_void_, ir::PrimitiveType::VOID}};
 
 namespace {
+
+template <typename FbDeclT>
+ir::MetadataAccessRestriction *CreateMetadataAccessRestriction(const FbDeclT *fbDecl, ArenaAllocator *allocator)
+{
+    const auto *fbModules = fbDecl->access_restriction_modules();
+    if (fbModules == nullptr || fbModules->size() == 0) {
+        return nullptr;
+    }
+
+    auto *restriction = allocator->New<ir::MetadataAccessRestriction>(allocator);
+    for (const auto *fbModule : *fbModules) {
+        if (fbModule != nullptr) {
+            restriction->modules.emplace_back(fbModule->string_view());
+        }
+    }
+    if (const auto *fbName = fbDecl->access_restriction_annotation_name(); fbName != nullptr) {
+        restriction->annotationName = fbName->string_view();
+    }
+    return restriction;
+}
+
+template <typename NodeT, typename FbDeclT>
+void ApplyMetadataAccessRestriction(NodeT *node, const FbDeclT *fbDecl, ArenaAllocator *allocator)
+{
+    if (auto *restriction = CreateMetadataAccessRestriction(fbDecl, allocator); restriction != nullptr) {
+        node->SetMetadataAccessRestriction(restriction);
+    }
+}
+
+template <typename NodeT>
+void SetupTypeParamsForDecl(NodeT *node, ir::TSTypeParameterDeclaration *typeParams, public_lib::Context *ctx)
+{
+    if (typeParams == nullptr) {
+        return;
+    }
+    node->SetTypeParams(typeParams);
+    node->TypeParams()->SetParent(node);
+    if (auto *type = node->Variable() != nullptr ? node->Variable()->TsType() : nullptr;
+        type != nullptr && type->IsETSObjectType()) {
+        ctx->GetChecker()->AsETSChecker()->CreateTypeForClassOrInterfaceTypeParameters(type->AsETSObjectType());
+    }
+}
+
+void MarkBuiltinIfNeeded(varbinder::Variable *var, bool isBuiltin, public_lib::Context *ctx)
+{
+    if (var == nullptr) {
+        return;
+    }
+
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    const auto hasGlobalBuiltinId = checker->GetGlobalTypesHolder()->NameToId(var->Name()).has_value();
+    if (!isBuiltin && !hasGlobalBuiltinId) {
+        return;
+    }
+
+    var->AddFlag(varbinder::VariableFlags::BUILTIN_TYPE);
+    if (hasGlobalBuiltinId && var->TsType() != nullptr) {
+        checker->GetGlobalTypesHolder()->InitializeBuiltin(var->Name(), var->TsType());
+    }
+}
+
+void SetupInterfaceDecl(ir::TSInterfaceDeclaration *interfaceDecl, const Metadata::InterfaceDecl *fbInterfaceDecl,
+                        ir::TSTypeParameterDeclaration *typeParams, public_lib::Context *ctx)
+{
+    if (const auto *internalName = fbInterfaceDecl->internal_name();
+        internalName != nullptr && !internalName->string_view().empty()) {
+        interfaceDecl->SetInternalName(internalName->string_view());
+    }
+    interfaceDecl->Scope()->BindNode(interfaceDecl);
+    interfaceDecl->AddModifier(ir::ModifierFlags::DECLARE);
+    interfaceDecl->AddModifier(ir::ModifierFlags::EXPORT);
+    MarkBuiltinIfNeeded(interfaceDecl->Variable(), fbInterfaceDecl->is_builtin(), ctx);
+    ApplyMetadataAccessRestriction(interfaceDecl, fbInterfaceDecl, ctx->Allocator());
+    SetupTypeParamsForDecl(interfaceDecl, typeParams, ctx);
+}
 
 bool MetadataTypeIncludesUndefined(const void *type, Metadata::Type kind)
 {
@@ -317,24 +393,6 @@ void MetadataDeserializationPhase::SetupGlobalClass() const
         curProgram->GlobalScope()->AddDecl(allocator, binderDecl, ScriptExtension::ETS));
 }
 
-void MetadataDeserializationPhase::MarkBuiltinIfNeeded(varbinder::Variable *var, bool isBuiltin) const
-{
-    if (var == nullptr) {
-        return;
-    }
-
-    auto *checker = Context()->GetChecker()->AsETSChecker();
-    const auto hasGlobalBuiltinId = checker->GetGlobalTypesHolder()->NameToId(var->Name()).has_value();
-    if (!isBuiltin && !hasGlobalBuiltinId) {
-        return;
-    }
-
-    var->AddFlag(varbinder::VariableFlags::BUILTIN_TYPE);
-    if (hasGlobalBuiltinId && var->TsType() != nullptr) {
-        checker->GetGlobalTypesHolder()->InitializeBuiltin(var->Name(), var->TsType());
-    }
-}
-
 void MetadataDeserializationPhase::AddExtends(const Metadata::InterfaceDecl *fbInterfaceDecl,
                                               ir::TSInterfaceDeclaration *interfaceDecl) const
 {
@@ -585,7 +643,7 @@ public:
         if (!isSyntheticGlobalClass) {
             classDef->Parent()->AddModifier(ir::ModifierFlags::EXPORT);
         }
-        phase_.MarkBuiltinIfNeeded(classDef->Variable(), fbClassDecl_->is_builtin());
+        MarkBuiltinIfNeeded(classDef->Variable(), fbClassDecl_->is_builtin(), Context());
 
         if (fbClassDecl_->is_namespace()) {
             classDef->SetNamespaceTransformed();
@@ -594,15 +652,8 @@ public:
             }
         }
 
-        if (typeParams_) {
-            classDef->SetTypeParams(typeParams_);
-            classDef->TypeParams()->SetParent(classDef);
-            if (auto *type = classDef->Variable() != nullptr ? classDef->Variable()->TsType() : nullptr;
-                type != nullptr && type->IsETSObjectType()) {
-                Context()->GetChecker()->AsETSChecker()->CreateTypeForClassOrInterfaceTypeParameters(
-                    type->AsETSObjectType());
-            }
-        }
+        SetupTypeParamsForDecl(classDef, typeParams_, Context());
+        ApplyMetadataAccessRestriction(classDef, fbClassDecl_, Context()->Allocator());
     }
 
     void AddClassHeritage(ir::ClassDefinition *classDef) const
@@ -1388,6 +1439,8 @@ ir::MethodDefinition *MetadataDeserializationPhase::CreateMethodDecl(const Metad
         methodDef->Function()->SetTypeParams(typeParams);
     }
 
+    ApplyMetadataAccessRestriction(methodDef->Function(), fbMethodDecl, ctx->Allocator());
+
     return RegisterMethodInScope(methodDef, isConstructor || fbMethodDecl->is_static());
 }
 
@@ -1427,6 +1480,8 @@ ir::ClassProperty *MetadataDeserializationPhase::CreatePropertyDecl(const Metada
         var->AddFlag(varbinder::VariableFlags::STATIC);
     }
     propDecl->Id()->SetVariable(var);
+
+    ApplyMetadataAccessRestriction(propDecl, fbPropDecl, ctx->Allocator());
 
     return propDecl;
 }
@@ -1734,25 +1789,7 @@ ir::TSInterfaceDeclaration *MetadataDeserializationPhase::CreateInterfaceDecl(
             const auto interfaceDecl =
                 ctx->GetChecker()->AsETSChecker()->CreateInterfaceProto(interfaceName, curProgram, interfaceDeclProto);
 
-            if (const auto *internalName = fbInterfaceDecl->internal_name();
-                internalName != nullptr && !internalName->string_view().empty()) {
-                interfaceDecl->SetInternalName(internalName->string_view());
-            }
-            interfaceDecl->Scope()->BindNode(interfaceDecl);
-            interfaceDecl->AddModifier(ir::ModifierFlags::DECLARE);
-            interfaceDecl->AddModifier(ir::ModifierFlags::EXPORT);
-            MarkBuiltinIfNeeded(interfaceDecl->Variable(), fbInterfaceDecl->is_builtin());
-
-            if (typeParams) {
-                interfaceDecl->SetTypeParams(typeParams);
-                interfaceDecl->TypeParams()->SetParent(interfaceDecl);
-                if (auto *type = interfaceDecl->Variable() != nullptr ? interfaceDecl->Variable()->TsType() : nullptr;
-                    type != nullptr && type->IsETSObjectType()) {
-                    ctx->GetChecker()->AsETSChecker()->CreateTypeForClassOrInterfaceTypeParameters(
-                        type->AsETSObjectType());
-                }
-            }
-
+            SetupInterfaceDecl(interfaceDecl, fbInterfaceDecl, typeParams, ctx);
             AddExtends(fbInterfaceDecl, interfaceDecl);
 
             LOG_METADATA(interfaceName << (interfaceDecl->TypeParams()

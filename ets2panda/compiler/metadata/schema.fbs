@@ -99,6 +99,8 @@ table ClassDecl {
     is_final:bool;
     is_abstract:bool;
     internal_name:string;
+    access_restriction_modules:[string];
+    access_restriction_annotation_name:string;
 }
 
 table InterfaceDecl {
@@ -109,6 +111,8 @@ table InterfaceDecl {
     implemented_interfaces:[Type];
     properties:[PropertyDecl];
     internal_name:string;
+    access_restriction_modules:[string];
+    access_restriction_annotation_name:string;
 }
 
 table AnnotationDecl {
@@ -142,6 +146,8 @@ table FunctionDecl {
     is_final:bool;
     is_native:bool;
     is_abstract:bool;
+    access_restriction_modules:[string];
+    access_restriction_annotation_name:string;
 }
 
 table PropertyDecl {
@@ -151,6 +157,8 @@ table PropertyDecl {
     is_const:bool;
     is_protected:bool;
     is_readonly:bool;
+    access_restriction_modules:[string];
+    access_restriction_annotation_name:string;
 }
 
 // Parameter declarations
