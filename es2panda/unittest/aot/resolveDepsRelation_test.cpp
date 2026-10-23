@@ -15,10 +15,12 @@
 
 #include <aot/resolveDepsRelation.h>
 #include <aot/options.h>
+#include <abc2program/common/abc_file_utils.h>
 #include <es2panda.h>
 #include <gtest/gtest.h>
 #include <mem/pool_manager.h>
 #include <util/commonUtil.h>
+#include <util/helpers.h>
 #include <util/programCache.h>
 
 #include <memory>
@@ -30,6 +32,10 @@ namespace panda::es2panda::aot {
 using mem::MemConfig;
 using util::JSON_FilE_CONTENT;
 using util::IS_COMMONJS;
+
+using panda::abc2program::CONCURRENT_MODULE_REQUEST_RECORD_NAME;
+using panda::abc2program::SLOT_NUMBER_RECORD_NAME;
+using panda::abc2program::EXPECTED_PROPERTY_COUNT_RECORD_NAME;
 
 class MemManager {
 public:
@@ -341,6 +347,86 @@ TEST_F(ResolveDepsRelationTest, TestNpmEntriesCollected)
     auto it = resolvedDepsRelation_.find("abc1|npmEntries.txt");
     ASSERT_NE(it, resolvedDepsRelation_.end());
     EXPECT_NE(it->second.find("npm/module/entry"), it->second.end());
+}
+
+// Test: Default annotation records with empty field_list are not removed by
+// RemoveProgramsRedundantData even though they are absent from resolvedDepsRelation.
+TEST_F(ResolveDepsRelationTest, TestDefaultAnnotationRecordNotRemoved)
+{
+    auto program = MakeProgram();
+    auto slotRecord = MakeRecord(std::string(SLOT_NUMBER_RECORD_NAME));
+    slotRecord.metadata->SetAccessFlags(panda::ACC_ANNOTATION);
+    program.record_table.emplace(std::string(SLOT_NUMBER_RECORD_NAME), std::move(slotRecord));
+    AddProgram("abc1|test.abc", std::move(program));
+
+    resolvedDepsRelation_["abc1|test.abc"] = {};
+
+    util::Helpers::RemoveProgramsRedundantData(progsInfo_, resolvedDepsRelation_);
+
+    EXPECT_NE(progsInfo_.find("abc1|test.abc"), progsInfo_.end());
+}
+
+// Test: Non-annotation record with empty field_list that is not in
+// resolvedDepsRelation is removed by RemoveProgramsRedundantData.
+TEST_F(ResolveDepsRelationTest, TestNonAnnotationRecordRemoved)
+{
+    auto program = MakeProgram();
+    auto record = MakeRecord("some/random/record");
+    program.record_table.emplace("some/random/record", std::move(record));
+    AddProgram("abc1|random.abc", std::move(program));
+
+    util::Helpers::RemoveProgramsRedundantData(progsInfo_, resolvedDepsRelation_);
+
+    EXPECT_EQ(progsInfo_.find("abc1|random.abc"), progsInfo_.end());
+}
+
+// Test: All three default annotation records are preserved.
+TEST_F(ResolveDepsRelationTest, TestAllDefaultAnnotationRecordsPreserved)
+{
+    auto prog1 = MakeProgram();
+    auto slotRecord = MakeRecord(std::string(SLOT_NUMBER_RECORD_NAME));
+    slotRecord.metadata->SetAccessFlags(panda::ACC_ANNOTATION);
+    prog1.record_table.emplace(std::string(SLOT_NUMBER_RECORD_NAME), std::move(slotRecord));
+    AddProgram("abc1|slot.abc", std::move(prog1));
+
+    auto prog2 = MakeProgram();
+    auto countRecord = MakeRecord(std::string(EXPECTED_PROPERTY_COUNT_RECORD_NAME));
+    countRecord.metadata->SetAccessFlags(panda::ACC_ANNOTATION);
+    prog2.record_table.emplace(std::string(EXPECTED_PROPERTY_COUNT_RECORD_NAME), std::move(countRecord));
+    AddProgram("abc2|count.abc", std::move(prog2));
+
+    auto prog3 = MakeProgram();
+    auto cmrRecord = MakeRecord(std::string(CONCURRENT_MODULE_REQUEST_RECORD_NAME));
+    cmrRecord.metadata->SetAccessFlags(panda::ACC_ANNOTATION);
+    prog3.record_table.emplace(std::string(CONCURRENT_MODULE_REQUEST_RECORD_NAME), std::move(cmrRecord));
+    AddProgram("abc3|cmr.abc", std::move(prog3));
+
+    util::Helpers::RemoveProgramsRedundantData(progsInfo_, resolvedDepsRelation_);
+
+    EXPECT_NE(progsInfo_.find("abc1|slot.abc"), progsInfo_.end());
+    EXPECT_NE(progsInfo_.find("abc2|count.abc"), progsInfo_.end());
+    EXPECT_NE(progsInfo_.find("abc3|cmr.abc"), progsInfo_.end());
+}
+
+// Test: Default annotation records are preserved while non-annotation
+// records in the same compilation are removed.
+TEST_F(ResolveDepsRelationTest, TestAnnotationPreservedAndNonAnnotationRemoved)
+{
+    auto prog1 = MakeProgram();
+    auto slotRecord = MakeRecord(std::string(SLOT_NUMBER_RECORD_NAME));
+    slotRecord.metadata->SetAccessFlags(panda::ACC_ANNOTATION);
+    prog1.record_table.emplace(std::string(SLOT_NUMBER_RECORD_NAME), std::move(slotRecord));
+    AddProgram("abc1|slot.abc", std::move(prog1));
+
+    auto prog2 = MakeProgram();
+    auto record = MakeRecord("some/unused/record");
+    prog2.record_table.emplace("some/unused/record", std::move(record));
+    AddProgram("abc2|unused.abc", std::move(prog2));
+
+    util::Helpers::RemoveProgramsRedundantData(progsInfo_, resolvedDepsRelation_);
+
+    EXPECT_NE(progsInfo_.find("abc1|slot.abc"), progsInfo_.end());
+    EXPECT_EQ(progsInfo_.find("abc2|unused.abc"), progsInfo_.end());
 }
 
 }  // namespace panda::es2panda::aot

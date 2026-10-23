@@ -1137,6 +1137,18 @@ slot &bytecodehar/bytecodehar-static-import&_1707
 },
 ======> strings <======
 "a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"; "print"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
 slotNum = 0xa
 .language ECMAScript
 .function any &myapp/hap-file-exec&.func_main_0(any a0, any a1, any a2) {
