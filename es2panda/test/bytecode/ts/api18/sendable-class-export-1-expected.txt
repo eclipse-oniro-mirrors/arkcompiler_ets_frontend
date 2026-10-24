@@ -1756,13 +1756,11 @@ label_0:
 	callruntime.ldsendablelocalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname a1
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	callruntime.wideldsendablelocalmodulevar 0xaf
 	sta v0
 	throw.undefinedifholewithname a257
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }

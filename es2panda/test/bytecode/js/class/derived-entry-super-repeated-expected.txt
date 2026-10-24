@@ -18,15 +18,13 @@ label_1:
 label_0: 
 	ldai 0x1
 	sta v0
-	mov v2, v0
-	supercallthisrange 0x0, 0x1, v2
+	supercallthisrange 0x0, 0x1, v0
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
 	ldai 0x2
 	sta v1
-	mov v2, v1
-	supercallthisrange 0x2, 0x1, v2
+	supercallthisrange 0x2, 0x1, v1
 	sta v1
 	lda v0
 	throw.ifsupernotcorrectcall 0x1

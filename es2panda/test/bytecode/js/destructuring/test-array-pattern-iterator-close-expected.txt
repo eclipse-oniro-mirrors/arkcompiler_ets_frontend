@@ -59,12 +59,10 @@ label_44:
 	lda v7
 	throw
 label_5: 
-	mov v4, v3
 	lda v8
 	sttoglobalrecord 0xd, a
 label_27: 
 label_38: 
-	mov v6, v3
 	lda v3
 	callruntime.istrue 0xe
 	jnez label_6
@@ -106,7 +104,6 @@ label_45:
 	lda v7
 	throw
 label_10: 
-	mov v4, v3
 	lda v1
 	sttoglobalrecord 0x16, b
 label_34: 

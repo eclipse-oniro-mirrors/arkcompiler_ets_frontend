@@ -61,40 +61,38 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x0, .#~@0=#Intervening, _1, 0x0, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#Intervening, _1, 0x0, v0
+	sta v0
 	ldobjbyname 0x1, prototype
-	sta v2
+	sta v1
 	lda.str a
-	sta v3
-	lda v2
+	sta v2
+	lda v1
 	definemethod 0x3, .#~@0>#a, 0x0
-	sta v4
-	lda v2
-	definemethod 0x4, .#~@0>#a^1, 0x1
-	sta v5
-	ldfalse
-	definegettersetterbyvalue v2, v3, v4, v5
-	lda v2
-	definemethod 0x5, .#~@0>#m, 0x0
 	sta v3
-	stownbyname 0x6, m, v2
-	lda v3
+	lda v1
+	definemethod 0x4, .#~@0>#a^1, 0x1
+	sta v4
+	ldfalse
+	definegettersetterbyvalue v1, v2, v3, v4
+	lda v1
+	definemethod 0x5, .#~@0>#m, 0x0
+	sta v2
+	stownbyname 0x6, m, v1
+	lda v2
 	definemethod 0x8, .#~@0>#instance_initializer, 0x0
 	stlexvar 0x0, 0x0
 label_3: 
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
-	lda v1
+	lda v0
 	sttoglobalrecord 0x9, Intervening
 	returnundefined
 label_8: 

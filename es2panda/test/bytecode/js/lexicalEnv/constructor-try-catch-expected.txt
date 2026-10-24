@@ -18,12 +18,12 @@ label_0:
 label_13: 
 label_17: 
 	ldai 0x19
-	sta v1
+	sta v0
 	ldai 0x7
-	sta v2
+	sta v1
 label_7: 
-	lda v1
-	less 0x0, v2
+	lda v0
+	less 0x0, v1
 	jeqz label_8
 label_11: 
 label_2: 
@@ -31,11 +31,11 @@ label_2:
 	stlexvar 0x0, 0x0
 	definefunc 0x2, .#~@1=@1*#f46, 0x2
 	ldundefined
-	sta v3
+	sta v2
 	poplexenv
 	ldundefined
-	stricteq 0x3, v3
-	jeqz label_32
+	stricteq 0x3, v2
+	jeqz label_5
 label_9: 
 label_19: 
 	lda a2
@@ -43,46 +43,40 @@ label_19:
 label_10: 
 end_label_10: 
 label_31: 
-	mov v4, a2
-	jmp label_5
-label_32: 
-	mov v4, v3
+	mov v2, a2
 label_5: 
-	lda v4
+	lda v2
 	return
 label_12: 
 end_label_12: 
 label_28: 
 label_23: 
 	lda.str 123
-	sta v4
+	sta v2
 	tryldglobalbyname 0x4, print
-	callarg1 0x5, v4
+	callarg1 0x5, v2
 	ldlexvar 0x0, 0x0
-	sta v4
+	sta v2
 	poplexenv
 	newlexenv 0x1
-	lda v4
-	stlexvar 0x0, 0x0
 	lda v2
+	stlexvar 0x0, 0x0
+	lda v1
 	tonumeric 0x7
 	inc 0x8
-	sta v2
+	sta v1
 label_14: 
 end_label_14: 
 	jmp label_7
 label_29: 
-	sta v0
 label_24: 
 	poplexenv
-	lda v0
 	throw
 label_8: 
 	poplexenv
 	ldundefined
 	sta v0
-	mov v5, v0
-	supercallthisrange 0x9, 0x0, v5
+	supercallthisrange 0x9, 0x0, v0
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
@@ -96,9 +90,7 @@ label_22:
 	lda v0
 	return
 label_30: 
-	sta v3
 label_25: 
-	lda v3
 	throw
 label_27: 
 }
@@ -127,9 +119,7 @@ slotNum = 0x0
 label_1: 
 label_0: 
 	ldlexvar 0x1, 0x0
-	sta v0
 	throw.undefinedifholewithname C35
-	lda v0
 	return
 label_2: 
 }
@@ -151,29 +141,26 @@ label_0:
 label_2: 
 label_4: 
 	tryldglobalbyname 0x4, C34
-	sta v1
-	defineclasswithbuffer 0x5, .#~@1=#C35, _2, 0x3, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x5, .#~@1=#C35, _2, 0x3, v0
+	sta v0
 	stlexvar 0x0, 0x0
-	lda v1
+	lda v0
 	ldobjbyname 0x6, prototype
 label_3: 
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
-	lda v1
+	lda v0
 	sttoglobalrecord 0x8, C35
 	tryldglobalbyname 0x9, C35
 	sta v0
-	mov v2, v0
-	newobjrange 0xa, 0x1, v2
+	newobjrange 0xa, 0x1, v0
 	returnundefined
 label_8: 
 }

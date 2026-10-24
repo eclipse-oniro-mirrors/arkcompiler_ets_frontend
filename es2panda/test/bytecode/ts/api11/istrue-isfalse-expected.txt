@@ -2,9 +2,7 @@ slotNum = 0x0
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 label_2: 
-label_0: 
-	ldtrue
-	istrue
+label_1: 
 	returnundefined
 label_3: 
 }

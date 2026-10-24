@@ -93,9 +93,7 @@ label_22:
 end_label_22: 
 	jmp label_7
 label_40: 
-	sta v1
 label_34: 
-	lda v1
 	throw
 label_7: 
 	lda v0
@@ -159,9 +157,7 @@ end_label_26:
 label_33: 
 	jmp label_16
 label_43: 
-	sta v1
 label_37: 
-	lda v1
 	throw
 label_16: 
 	getnextpropname v0

@@ -57,8 +57,7 @@ label_0:
 	callruntime.ldsendablelocalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname A
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	callruntime.ldsendablelocalmodulevar 0x1
 	callarg0 0x2
 	returnundefined

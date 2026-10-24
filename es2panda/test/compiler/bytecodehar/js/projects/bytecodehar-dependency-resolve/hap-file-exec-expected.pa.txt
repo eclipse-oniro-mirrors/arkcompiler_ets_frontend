@@ -700,14 +700,10 @@ slotNum = 0x4
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x1
-	sta v0
 	throw.undefinedifholewithname testRequire
-	lda v0
 	callarg0 0x2
 	returnundefined
 label_2: 
@@ -1497,14 +1493,10 @@ slotNum = 0x4
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	ldexternalmodulevar 0x1
-	sta v0
 	throw.undefinedifholewithname testRequire
-	lda v0
 	callarg0 0x2
 	returnundefined
 label_2: 

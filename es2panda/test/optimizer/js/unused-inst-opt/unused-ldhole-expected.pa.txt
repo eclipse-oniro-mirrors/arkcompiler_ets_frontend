@@ -60,8 +60,6 @@ label_44:
 	throw
 label_27: 
 label_38: 
-	mov v6, v3
-	mov v4, v3
 	lda v3
 	callruntime.istrue 0xd
 	jnez label_28
@@ -77,7 +75,6 @@ label_7:
 	callruntime.isfalse 0x12
 	jnez label_8
 label_9: 
-	mov v4, v3
 	ldtrue
 	sta v3
 	jmp label_28

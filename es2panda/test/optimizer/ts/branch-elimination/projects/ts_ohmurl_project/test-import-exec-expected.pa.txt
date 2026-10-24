@@ -236,9 +236,7 @@ slotNum = 0x6
 label_3: 
 label_0: 
 	ldlexvar 0x0, 0x0
-	sta v0
 	throw.undefinedifholewithname NORMALIZED_LEXVAR
-	lda v0
 	ldobjbyname 0x0, FILE_TYPE
 	sta v0
 	lda.str normalized
@@ -362,9 +360,7 @@ label_16:
 	callarg1 0x2f, v1
 label_15: 
 	ldlexvar 0x0, 0x0
-	sta v0
 	throw.undefinedifholewithname NORMALIZED_LEXVAR
-	lda v0
 	ldobjbyname 0x31, FILE_TYPE
 	sta v0
 	lda.str normalized

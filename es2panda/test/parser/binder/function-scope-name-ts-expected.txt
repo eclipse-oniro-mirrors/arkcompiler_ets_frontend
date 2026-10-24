@@ -32,9 +32,7 @@ label_3:
 label_2: 
 end_label_2: 
 label_7: 
-	sta v1
 label_4: 
-	lda v1
 	asyncfunctionreject v0
 	return
 label_6: 
@@ -87,27 +85,27 @@ label_8:
 label_5: 
 label_0: 
 	creategeneratorobj a0
-	sta v1
+	sta v0
 	ldundefined
-	suspendgenerator v1
-	lda v1
+	suspendgenerator v0
+	lda v0
 	resumegenerator
-	sta v2
-	lda v1
-	getresumemode
 	sta v1
+	lda v0
+	getresumemode
+	sta v0
 	ldai 0x0
-	eq 0x0, v1
+	eq 0x0, v0
 	jeqz label_1
 label_2: 
-	lda v2
+	lda v1
 	return
 label_1: 
 	ldai 0x1
-	eq 0x1, v1
+	eq 0x1, v0
 	jeqz label_3
 label_4: 
-	lda v2
+	lda v1
 	throw
 label_3: 
 	ldundefined
@@ -115,9 +113,7 @@ label_3:
 label_6: 
 end_label_6: 
 label_10: 
-	sta v0
 label_7: 
-	lda v0
 	throw
 label_9: 
 }

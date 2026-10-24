@@ -47,18 +47,14 @@ label_0:
 	lda.str 
 	sta v0
 	ldlexvar 0x0, 0x3
-	sta v1
 	throw.undefinedifholewithname part1
-	lda v1
 	add2 0x4, v0
 	sta v0
 	lda.str _
 	add2 0x5, v0
 	sta v0
 	ldlexvar 0x0, 0x4
-	sta v1
 	throw.undefinedifholewithname part2
-	lda v1
 	add2 0x6, v0
 	sta v0
 	lda.str str6

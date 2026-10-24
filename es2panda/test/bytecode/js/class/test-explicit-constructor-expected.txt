@@ -15,8 +15,7 @@ label_1:
 label_0: 
 	ldundefined
 	sta v0
-	mov v1, v0
-	supercallthisrange 0x0, 0x0, v1
+	supercallthisrange 0x0, 0x0, v0
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1

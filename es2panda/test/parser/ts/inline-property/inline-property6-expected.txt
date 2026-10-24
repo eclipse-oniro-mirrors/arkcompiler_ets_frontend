@@ -115,8 +115,8 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x9, .#~@3=#Example4, _5, 0x0, v1
+	sta v0
+	defineclasswithbuffer 0x9, .#~@3=#Example4, _5, 0x0, v0
 	ldobjbyname 0xa, prototype
 	definemethod 0xc, .#~@3>#instance_initializer, 0x0
 	stlexvar 0x0, 0x1
@@ -125,10 +125,8 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv

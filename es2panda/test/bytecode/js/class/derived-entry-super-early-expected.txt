@@ -24,8 +24,7 @@ label_0:
 	stobjbyname 0x0, x, a2
 	ldundefined
 	sta v0
-	mov v2, v0
-	supercallthisrange 0x2, 0x0, v2
+	supercallthisrange 0x2, 0x0, v0
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
@@ -39,9 +38,7 @@ label_4:
 	lda v0
 	return
 label_8: 
-	sta v1
 label_5: 
-	lda v1
 	throw
 label_7: 
 }

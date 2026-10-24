@@ -356,9 +356,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	returnundefined
 label_2: 
@@ -788,9 +786,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	returnundefined
 label_2: 

@@ -1,0 +1,32 @@
+slotNum = 0x2
+.language ECMAScript
+.function any .#*#unusedComparisons(any a0, any a1, any a2, any a3) {
+	mov v0, a0
+	mov v1, a1
+	mov v2, a2
+	mov v3, a3
+	lda v3
+	sta v5
+	ldai 0xfe
+	stricteq 0x0, v5
+	lda v3
+	sta v5
+	ldai 0xff
+	stricteq 0x1, v5
+	ldundefined
+	returnundefined
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+	mov v0, a0
+	mov v1, a1
+	mov v2, a2
+	definefunc 0x0, .#*#unusedComparisons, 0x1
+	stglobalvar 0x1, unusedComparisons
+	ldundefined
+	returnundefined
+}
+
+

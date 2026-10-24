@@ -364,9 +364,7 @@ label_0:
 	lda.str @normalized:N&&&myapp/hap-add-file&
 	dynamicimport
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	returnundefined
 label_2: 
@@ -1017,9 +1015,7 @@ label_0:
 	lda.str @normalized:N&&&myapp/hap-add-file&
 	dynamicimport
 	ldexternalmodulevar 0x0
-	sta v0
 	throw.undefinedifholewithname test
-	lda v0
 	callarg0 0x0
 	returnundefined
 label_2: 

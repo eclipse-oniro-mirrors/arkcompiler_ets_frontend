@@ -1,0 +1,1057 @@
+slotNum = 0x104
+.language ECMAScript
+.function any .#*#mixedWidthOverflow(any a0, any a1, any a2, any a3, any a4) {
+	mov v0, a0
+	mov v1, a1
+	mov v2, a2
+	mov v3, a3
+	mov v4, a4
+	lda v4
+	sta v6
+	lda v3
+	stobjbyname 0x100, before, v6
+	lda v3
+	sta v6
+	ldai 0x0
+	stricteq 0x0, v6
+	lda v3
+	sta v6
+	ldai 0x1
+	stricteq 0x1, v6
+	lda v3
+	sta v6
+	ldai 0x2
+	stricteq 0x2, v6
+	lda v3
+	sta v6
+	ldai 0x3
+	stricteq 0x3, v6
+	lda v3
+	sta v6
+	ldai 0x4
+	stricteq 0x4, v6
+	lda v3
+	sta v6
+	ldai 0x5
+	stricteq 0x5, v6
+	lda v3
+	sta v6
+	ldai 0x6
+	stricteq 0x6, v6
+	lda v3
+	sta v6
+	ldai 0x7
+	stricteq 0x7, v6
+	lda v3
+	sta v6
+	ldai 0x8
+	stricteq 0x8, v6
+	lda v3
+	sta v6
+	ldai 0x9
+	stricteq 0x9, v6
+	lda v3
+	sta v6
+	ldai 0xa
+	stricteq 0xa, v6
+	lda v3
+	sta v6
+	ldai 0xb
+	stricteq 0xb, v6
+	lda v3
+	sta v6
+	ldai 0xc
+	stricteq 0xc, v6
+	lda v3
+	sta v6
+	ldai 0xd
+	stricteq 0xd, v6
+	lda v3
+	sta v6
+	ldai 0xe
+	stricteq 0xe, v6
+	lda v3
+	sta v6
+	ldai 0xf
+	stricteq 0xf, v6
+	lda v3
+	sta v6
+	ldai 0x10
+	stricteq 0x10, v6
+	lda v3
+	sta v6
+	ldai 0x11
+	stricteq 0x11, v6
+	lda v3
+	sta v6
+	ldai 0x12
+	stricteq 0x12, v6
+	lda v3
+	sta v6
+	ldai 0x13
+	stricteq 0x13, v6
+	lda v3
+	sta v6
+	ldai 0x14
+	stricteq 0x14, v6
+	lda v3
+	sta v6
+	ldai 0x15
+	stricteq 0x15, v6
+	lda v3
+	sta v6
+	ldai 0x16
+	stricteq 0x16, v6
+	lda v3
+	sta v6
+	ldai 0x17
+	stricteq 0x17, v6
+	lda v3
+	sta v6
+	ldai 0x18
+	stricteq 0x18, v6
+	lda v3
+	sta v6
+	ldai 0x19
+	stricteq 0x19, v6
+	lda v3
+	sta v6
+	ldai 0x1a
+	stricteq 0x1a, v6
+	lda v3
+	sta v6
+	ldai 0x1b
+	stricteq 0x1b, v6
+	lda v3
+	sta v6
+	ldai 0x1c
+	stricteq 0x1c, v6
+	lda v3
+	sta v6
+	ldai 0x1d
+	stricteq 0x1d, v6
+	lda v3
+	sta v6
+	ldai 0x1e
+	stricteq 0x1e, v6
+	lda v3
+	sta v6
+	ldai 0x1f
+	stricteq 0x1f, v6
+	lda v3
+	sta v6
+	ldai 0x20
+	stricteq 0x20, v6
+	lda v3
+	sta v6
+	ldai 0x21
+	stricteq 0x21, v6
+	lda v3
+	sta v6
+	ldai 0x22
+	stricteq 0x22, v6
+	lda v3
+	sta v6
+	ldai 0x23
+	stricteq 0x23, v6
+	lda v3
+	sta v6
+	ldai 0x24
+	stricteq 0x24, v6
+	lda v3
+	sta v6
+	ldai 0x25
+	stricteq 0x25, v6
+	lda v3
+	sta v6
+	ldai 0x26
+	stricteq 0x26, v6
+	lda v3
+	sta v6
+	ldai 0x27
+	stricteq 0x27, v6
+	lda v3
+	sta v6
+	ldai 0x28
+	stricteq 0x28, v6
+	lda v3
+	sta v6
+	ldai 0x29
+	stricteq 0x29, v6
+	lda v3
+	sta v6
+	ldai 0x2a
+	stricteq 0x2a, v6
+	lda v3
+	sta v6
+	ldai 0x2b
+	stricteq 0x2b, v6
+	lda v3
+	sta v6
+	ldai 0x2c
+	stricteq 0x2c, v6
+	lda v3
+	sta v6
+	ldai 0x2d
+	stricteq 0x2d, v6
+	lda v3
+	sta v6
+	ldai 0x2e
+	stricteq 0x2e, v6
+	lda v3
+	sta v6
+	ldai 0x2f
+	stricteq 0x2f, v6
+	lda v3
+	sta v6
+	ldai 0x30
+	stricteq 0x30, v6
+	lda v3
+	sta v6
+	ldai 0x31
+	stricteq 0x31, v6
+	lda v3
+	sta v6
+	ldai 0x32
+	stricteq 0x32, v6
+	lda v3
+	sta v6
+	ldai 0x33
+	stricteq 0x33, v6
+	lda v3
+	sta v6
+	ldai 0x34
+	stricteq 0x34, v6
+	lda v3
+	sta v6
+	ldai 0x35
+	stricteq 0x35, v6
+	lda v3
+	sta v6
+	ldai 0x36
+	stricteq 0x36, v6
+	lda v3
+	sta v6
+	ldai 0x37
+	stricteq 0x37, v6
+	lda v3
+	sta v6
+	ldai 0x38
+	stricteq 0x38, v6
+	lda v3
+	sta v6
+	ldai 0x39
+	stricteq 0x39, v6
+	lda v3
+	sta v6
+	ldai 0x3a
+	stricteq 0x3a, v6
+	lda v3
+	sta v6
+	ldai 0x3b
+	stricteq 0x3b, v6
+	lda v3
+	sta v6
+	ldai 0x3c
+	stricteq 0x3c, v6
+	lda v3
+	sta v6
+	ldai 0x3d
+	stricteq 0x3d, v6
+	lda v3
+	sta v6
+	ldai 0x3e
+	stricteq 0x3e, v6
+	lda v3
+	sta v6
+	ldai 0x3f
+	stricteq 0x3f, v6
+	lda v3
+	sta v6
+	ldai 0x40
+	stricteq 0x40, v6
+	lda v3
+	sta v6
+	ldai 0x41
+	stricteq 0x41, v6
+	lda v3
+	sta v6
+	ldai 0x42
+	stricteq 0x42, v6
+	lda v3
+	sta v6
+	ldai 0x43
+	stricteq 0x43, v6
+	lda v3
+	sta v6
+	ldai 0x44
+	stricteq 0x44, v6
+	lda v3
+	sta v6
+	ldai 0x45
+	stricteq 0x45, v6
+	lda v3
+	sta v6
+	ldai 0x46
+	stricteq 0x46, v6
+	lda v3
+	sta v6
+	ldai 0x47
+	stricteq 0x47, v6
+	lda v3
+	sta v6
+	ldai 0x48
+	stricteq 0x48, v6
+	lda v3
+	sta v6
+	ldai 0x49
+	stricteq 0x49, v6
+	lda v3
+	sta v6
+	ldai 0x4a
+	stricteq 0x4a, v6
+	lda v3
+	sta v6
+	ldai 0x4b
+	stricteq 0x4b, v6
+	lda v3
+	sta v6
+	ldai 0x4c
+	stricteq 0x4c, v6
+	lda v3
+	sta v6
+	ldai 0x4d
+	stricteq 0x4d, v6
+	lda v3
+	sta v6
+	ldai 0x4e
+	stricteq 0x4e, v6
+	lda v3
+	sta v6
+	ldai 0x4f
+	stricteq 0x4f, v6
+	lda v3
+	sta v6
+	ldai 0x50
+	stricteq 0x50, v6
+	lda v3
+	sta v6
+	ldai 0x51
+	stricteq 0x51, v6
+	lda v3
+	sta v6
+	ldai 0x52
+	stricteq 0x52, v6
+	lda v3
+	sta v6
+	ldai 0x53
+	stricteq 0x53, v6
+	lda v3
+	sta v6
+	ldai 0x54
+	stricteq 0x54, v6
+	lda v3
+	sta v6
+	ldai 0x55
+	stricteq 0x55, v6
+	lda v3
+	sta v6
+	ldai 0x56
+	stricteq 0x56, v6
+	lda v3
+	sta v6
+	ldai 0x57
+	stricteq 0x57, v6
+	lda v3
+	sta v6
+	ldai 0x58
+	stricteq 0x58, v6
+	lda v3
+	sta v6
+	ldai 0x59
+	stricteq 0x59, v6
+	lda v3
+	sta v6
+	ldai 0x5a
+	stricteq 0x5a, v6
+	lda v3
+	sta v6
+	ldai 0x5b
+	stricteq 0x5b, v6
+	lda v3
+	sta v6
+	ldai 0x5c
+	stricteq 0x5c, v6
+	lda v3
+	sta v6
+	ldai 0x5d
+	stricteq 0x5d, v6
+	lda v3
+	sta v6
+	ldai 0x5e
+	stricteq 0x5e, v6
+	lda v3
+	sta v6
+	ldai 0x5f
+	stricteq 0x5f, v6
+	lda v3
+	sta v6
+	ldai 0x60
+	stricteq 0x60, v6
+	lda v3
+	sta v6
+	ldai 0x61
+	stricteq 0x61, v6
+	lda v3
+	sta v6
+	ldai 0x62
+	stricteq 0x62, v6
+	lda v3
+	sta v6
+	ldai 0x63
+	stricteq 0x63, v6
+	lda v3
+	sta v6
+	ldai 0x64
+	stricteq 0x64, v6
+	lda v3
+	sta v6
+	ldai 0x65
+	stricteq 0x65, v6
+	lda v3
+	sta v6
+	ldai 0x66
+	stricteq 0x66, v6
+	lda v3
+	sta v6
+	ldai 0x67
+	stricteq 0x67, v6
+	lda v3
+	sta v6
+	ldai 0x68
+	stricteq 0x68, v6
+	lda v3
+	sta v6
+	ldai 0x69
+	stricteq 0x69, v6
+	lda v3
+	sta v6
+	ldai 0x6a
+	stricteq 0x6a, v6
+	lda v3
+	sta v6
+	ldai 0x6b
+	stricteq 0x6b, v6
+	lda v3
+	sta v6
+	ldai 0x6c
+	stricteq 0x6c, v6
+	lda v3
+	sta v6
+	ldai 0x6d
+	stricteq 0x6d, v6
+	lda v3
+	sta v6
+	ldai 0x6e
+	stricteq 0x6e, v6
+	lda v3
+	sta v6
+	ldai 0x6f
+	stricteq 0x6f, v6
+	lda v3
+	sta v6
+	ldai 0x70
+	stricteq 0x70, v6
+	lda v3
+	sta v6
+	ldai 0x71
+	stricteq 0x71, v6
+	lda v3
+	sta v6
+	ldai 0x72
+	stricteq 0x72, v6
+	lda v3
+	sta v6
+	ldai 0x73
+	stricteq 0x73, v6
+	lda v3
+	sta v6
+	ldai 0x74
+	stricteq 0x74, v6
+	lda v3
+	sta v6
+	ldai 0x75
+	stricteq 0x75, v6
+	lda v3
+	sta v6
+	ldai 0x76
+	stricteq 0x76, v6
+	lda v3
+	sta v6
+	ldai 0x77
+	stricteq 0x77, v6
+	lda v3
+	sta v6
+	ldai 0x78
+	stricteq 0x78, v6
+	lda v3
+	sta v6
+	ldai 0x79
+	stricteq 0x79, v6
+	lda v3
+	sta v6
+	ldai 0x7a
+	stricteq 0x7a, v6
+	lda v3
+	sta v6
+	ldai 0x7b
+	stricteq 0x7b, v6
+	lda v3
+	sta v6
+	ldai 0x7c
+	stricteq 0x7c, v6
+	lda v3
+	sta v6
+	ldai 0x7d
+	stricteq 0x7d, v6
+	lda v3
+	sta v6
+	ldai 0x7e
+	stricteq 0x7e, v6
+	lda v3
+	sta v6
+	ldai 0x7f
+	stricteq 0x7f, v6
+	lda v3
+	sta v6
+	ldai 0x80
+	stricteq 0x80, v6
+	lda v3
+	sta v6
+	ldai 0x81
+	stricteq 0x81, v6
+	lda v3
+	sta v6
+	ldai 0x82
+	stricteq 0x82, v6
+	lda v3
+	sta v6
+	ldai 0x83
+	stricteq 0x83, v6
+	lda v3
+	sta v6
+	ldai 0x84
+	stricteq 0x84, v6
+	lda v3
+	sta v6
+	ldai 0x85
+	stricteq 0x85, v6
+	lda v3
+	sta v6
+	ldai 0x86
+	stricteq 0x86, v6
+	lda v3
+	sta v6
+	ldai 0x87
+	stricteq 0x87, v6
+	lda v3
+	sta v6
+	ldai 0x88
+	stricteq 0x88, v6
+	lda v3
+	sta v6
+	ldai 0x89
+	stricteq 0x89, v6
+	lda v3
+	sta v6
+	ldai 0x8a
+	stricteq 0x8a, v6
+	lda v3
+	sta v6
+	ldai 0x8b
+	stricteq 0x8b, v6
+	lda v3
+	sta v6
+	ldai 0x8c
+	stricteq 0x8c, v6
+	lda v3
+	sta v6
+	ldai 0x8d
+	stricteq 0x8d, v6
+	lda v3
+	sta v6
+	ldai 0x8e
+	stricteq 0x8e, v6
+	lda v3
+	sta v6
+	ldai 0x8f
+	stricteq 0x8f, v6
+	lda v3
+	sta v6
+	ldai 0x90
+	stricteq 0x90, v6
+	lda v3
+	sta v6
+	ldai 0x91
+	stricteq 0x91, v6
+	lda v3
+	sta v6
+	ldai 0x92
+	stricteq 0x92, v6
+	lda v3
+	sta v6
+	ldai 0x93
+	stricteq 0x93, v6
+	lda v3
+	sta v6
+	ldai 0x94
+	stricteq 0x94, v6
+	lda v3
+	sta v6
+	ldai 0x95
+	stricteq 0x95, v6
+	lda v3
+	sta v6
+	ldai 0x96
+	stricteq 0x96, v6
+	lda v3
+	sta v6
+	ldai 0x97
+	stricteq 0x97, v6
+	lda v3
+	sta v6
+	ldai 0x98
+	stricteq 0x98, v6
+	lda v3
+	sta v6
+	ldai 0x99
+	stricteq 0x99, v6
+	lda v3
+	sta v6
+	ldai 0x9a
+	stricteq 0x9a, v6
+	lda v3
+	sta v6
+	ldai 0x9b
+	stricteq 0x9b, v6
+	lda v3
+	sta v6
+	ldai 0x9c
+	stricteq 0x9c, v6
+	lda v3
+	sta v6
+	ldai 0x9d
+	stricteq 0x9d, v6
+	lda v3
+	sta v6
+	ldai 0x9e
+	stricteq 0x9e, v6
+	lda v3
+	sta v6
+	ldai 0x9f
+	stricteq 0x9f, v6
+	lda v3
+	sta v6
+	ldai 0xa0
+	stricteq 0xa0, v6
+	lda v3
+	sta v6
+	ldai 0xa1
+	stricteq 0xa1, v6
+	lda v3
+	sta v6
+	ldai 0xa2
+	stricteq 0xa2, v6
+	lda v3
+	sta v6
+	ldai 0xa3
+	stricteq 0xa3, v6
+	lda v3
+	sta v6
+	ldai 0xa4
+	stricteq 0xa4, v6
+	lda v3
+	sta v6
+	ldai 0xa5
+	stricteq 0xa5, v6
+	lda v3
+	sta v6
+	ldai 0xa6
+	stricteq 0xa6, v6
+	lda v3
+	sta v6
+	ldai 0xa7
+	stricteq 0xa7, v6
+	lda v3
+	sta v6
+	ldai 0xa8
+	stricteq 0xa8, v6
+	lda v3
+	sta v6
+	ldai 0xa9
+	stricteq 0xa9, v6
+	lda v3
+	sta v6
+	ldai 0xaa
+	stricteq 0xaa, v6
+	lda v3
+	sta v6
+	ldai 0xab
+	stricteq 0xab, v6
+	lda v3
+	sta v6
+	ldai 0xac
+	stricteq 0xac, v6
+	lda v3
+	sta v6
+	ldai 0xad
+	stricteq 0xad, v6
+	lda v3
+	sta v6
+	ldai 0xae
+	stricteq 0xae, v6
+	lda v3
+	sta v6
+	ldai 0xaf
+	stricteq 0xaf, v6
+	lda v3
+	sta v6
+	ldai 0xb0
+	stricteq 0xb0, v6
+	lda v3
+	sta v6
+	ldai 0xb1
+	stricteq 0xb1, v6
+	lda v3
+	sta v6
+	ldai 0xb2
+	stricteq 0xb2, v6
+	lda v3
+	sta v6
+	ldai 0xb3
+	stricteq 0xb3, v6
+	lda v3
+	sta v6
+	ldai 0xb4
+	stricteq 0xb4, v6
+	lda v3
+	sta v6
+	ldai 0xb5
+	stricteq 0xb5, v6
+	lda v3
+	sta v6
+	ldai 0xb6
+	stricteq 0xb6, v6
+	lda v3
+	sta v6
+	ldai 0xb7
+	stricteq 0xb7, v6
+	lda v3
+	sta v6
+	ldai 0xb8
+	stricteq 0xb8, v6
+	lda v3
+	sta v6
+	ldai 0xb9
+	stricteq 0xb9, v6
+	lda v3
+	sta v6
+	ldai 0xba
+	stricteq 0xba, v6
+	lda v3
+	sta v6
+	ldai 0xbb
+	stricteq 0xbb, v6
+	lda v3
+	sta v6
+	ldai 0xbc
+	stricteq 0xbc, v6
+	lda v3
+	sta v6
+	ldai 0xbd
+	stricteq 0xbd, v6
+	lda v3
+	sta v6
+	ldai 0xbe
+	stricteq 0xbe, v6
+	lda v3
+	sta v6
+	ldai 0xbf
+	stricteq 0xbf, v6
+	lda v3
+	sta v6
+	ldai 0xc0
+	stricteq 0xc0, v6
+	lda v3
+	sta v6
+	ldai 0xc1
+	stricteq 0xc1, v6
+	lda v3
+	sta v6
+	ldai 0xc2
+	stricteq 0xc2, v6
+	lda v3
+	sta v6
+	ldai 0xc3
+	stricteq 0xc3, v6
+	lda v3
+	sta v6
+	ldai 0xc4
+	stricteq 0xc4, v6
+	lda v3
+	sta v6
+	ldai 0xc5
+	stricteq 0xc5, v6
+	lda v3
+	sta v6
+	ldai 0xc6
+	stricteq 0xc6, v6
+	lda v3
+	sta v6
+	ldai 0xc7
+	stricteq 0xc7, v6
+	lda v3
+	sta v6
+	ldai 0xc8
+	stricteq 0xc8, v6
+	lda v3
+	sta v6
+	ldai 0xc9
+	stricteq 0xc9, v6
+	lda v3
+	sta v6
+	ldai 0xca
+	stricteq 0xca, v6
+	lda v3
+	sta v6
+	ldai 0xcb
+	stricteq 0xcb, v6
+	lda v3
+	sta v6
+	ldai 0xcc
+	stricteq 0xcc, v6
+	lda v3
+	sta v6
+	ldai 0xcd
+	stricteq 0xcd, v6
+	lda v3
+	sta v6
+	ldai 0xce
+	stricteq 0xce, v6
+	lda v3
+	sta v6
+	ldai 0xcf
+	stricteq 0xcf, v6
+	lda v3
+	sta v6
+	ldai 0xd0
+	stricteq 0xd0, v6
+	lda v3
+	sta v6
+	ldai 0xd1
+	stricteq 0xd1, v6
+	lda v3
+	sta v6
+	ldai 0xd2
+	stricteq 0xd2, v6
+	lda v3
+	sta v6
+	ldai 0xd3
+	stricteq 0xd3, v6
+	lda v3
+	sta v6
+	ldai 0xd4
+	stricteq 0xd4, v6
+	lda v3
+	sta v6
+	ldai 0xd5
+	stricteq 0xd5, v6
+	lda v3
+	sta v6
+	ldai 0xd6
+	stricteq 0xd6, v6
+	lda v3
+	sta v6
+	ldai 0xd7
+	stricteq 0xd7, v6
+	lda v3
+	sta v6
+	ldai 0xd8
+	stricteq 0xd8, v6
+	lda v3
+	sta v6
+	ldai 0xd9
+	stricteq 0xd9, v6
+	lda v3
+	sta v6
+	ldai 0xda
+	stricteq 0xda, v6
+	lda v3
+	sta v6
+	ldai 0xdb
+	stricteq 0xdb, v6
+	lda v3
+	sta v6
+	ldai 0xdc
+	stricteq 0xdc, v6
+	lda v3
+	sta v6
+	ldai 0xdd
+	stricteq 0xdd, v6
+	lda v3
+	sta v6
+	ldai 0xde
+	stricteq 0xde, v6
+	lda v3
+	sta v6
+	ldai 0xdf
+	stricteq 0xdf, v6
+	lda v3
+	sta v6
+	ldai 0xe0
+	stricteq 0xe0, v6
+	lda v3
+	sta v6
+	ldai 0xe1
+	stricteq 0xe1, v6
+	lda v3
+	sta v6
+	ldai 0xe2
+	stricteq 0xe2, v6
+	lda v3
+	sta v6
+	ldai 0xe3
+	stricteq 0xe3, v6
+	lda v3
+	sta v6
+	ldai 0xe4
+	stricteq 0xe4, v6
+	lda v3
+	sta v6
+	ldai 0xe5
+	stricteq 0xe5, v6
+	lda v3
+	sta v6
+	ldai 0xe6
+	stricteq 0xe6, v6
+	lda v3
+	sta v6
+	ldai 0xe7
+	stricteq 0xe7, v6
+	lda v3
+	sta v6
+	ldai 0xe8
+	stricteq 0xe8, v6
+	lda v3
+	sta v6
+	ldai 0xe9
+	stricteq 0xe9, v6
+	lda v3
+	sta v6
+	ldai 0xea
+	stricteq 0xea, v6
+	lda v3
+	sta v6
+	ldai 0xeb
+	stricteq 0xeb, v6
+	lda v3
+	sta v6
+	ldai 0xec
+	stricteq 0xec, v6
+	lda v3
+	sta v6
+	ldai 0xed
+	stricteq 0xed, v6
+	lda v3
+	sta v6
+	ldai 0xee
+	stricteq 0xee, v6
+	lda v3
+	sta v6
+	ldai 0xef
+	stricteq 0xef, v6
+	lda v3
+	sta v6
+	ldai 0xf0
+	stricteq 0xf0, v6
+	lda v3
+	sta v6
+	ldai 0xf1
+	stricteq 0xf1, v6
+	lda v3
+	sta v6
+	ldai 0xf2
+	stricteq 0xf2, v6
+	lda v3
+	sta v6
+	ldai 0xf3
+	stricteq 0xf3, v6
+	lda v3
+	sta v6
+	ldai 0xf4
+	stricteq 0xf4, v6
+	lda v3
+	sta v6
+	ldai 0xf5
+	stricteq 0xf5, v6
+	lda v3
+	sta v6
+	ldai 0xf6
+	stricteq 0xf6, v6
+	lda v3
+	sta v6
+	ldai 0xf7
+	stricteq 0xf7, v6
+	lda v3
+	sta v6
+	ldai 0xf8
+	stricteq 0xf8, v6
+	lda v3
+	sta v6
+	ldai 0xf9
+	stricteq 0xf9, v6
+	lda v3
+	sta v6
+	ldai 0xfa
+	stricteq 0xfa, v6
+	lda v3
+	sta v6
+	ldai 0xfb
+	stricteq 0xfb, v6
+	lda v3
+	sta v6
+	ldai 0xfc
+	stricteq 0xfc, v6
+	lda v3
+	sta v6
+	ldai 0xfd
+	stricteq 0xfd, v6
+	lda v3
+	sta v6
+	ldai 0xfe
+	stricteq 0xfe, v6
+	lda v3
+	sta v6
+	ldai 0xff
+	stricteq 0xff, v6
+	lda v4
+	sta v6
+	lda v3
+	stobjbyname 0x102, after, v6
+	ldundefined
+	returnundefined
+}
+
+slotNum = 0x2
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+	mov v0, a0
+	mov v1, a1
+	mov v2, a2
+	definefunc 0x0, .#*#mixedWidthOverflow, 0x2
+	stglobalvar 0x1, mixedWidthOverflow
+	ldundefined
+	returnundefined
+}
+
+
