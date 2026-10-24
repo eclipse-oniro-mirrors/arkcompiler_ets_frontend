@@ -232,7 +232,7 @@ public:
 class ImportPathManager {
 public:
     static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
-        "Larkruntime/annotation/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
+        "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
     static constexpr std::string_view ABC_SUFFIX = ImportInfo::ABC_SUFFIX;
     static constexpr std::string_view ETS_SUFFIX = ".ets";
     static constexpr std::string_view D_ETS_SUFFIX = ".d.ets";

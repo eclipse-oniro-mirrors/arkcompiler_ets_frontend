@@ -852,7 +852,7 @@
                               "type": "TSQualifiedName",
                               "left": {
                                 "type": "Identifier",
-                                "name": "__es2panda_internal__arkruntime_import_alias_annotation",
+                                "name": "functions",
                                 "loc": {
                                   "start": {
                                     "line": 20,
