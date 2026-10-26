@@ -1,0 +1,421 @@
+{
+    "copyright": [
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 23,
+            "column": 3,
+            "endLine": 23,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 61,
+            "column": 1,
+            "endLine": 61,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass GrandParent {}",
+                    "start": 1308,
+                    "end": 1328
+                }
+            ],
+            "suggest": "",
+            "rule": "Class GrandParent is used by state property in [69, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 62,
+            "column": 1,
+            "endLine": 62,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass Parent extends GrandParent {}",
+                    "start": 1329,
+                    "end": 1364
+                }
+            ],
+            "suggest": "",
+            "rule": "Class Parent is used by state property in [69, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 63,
+            "column": 1,
+            "endLine": 63,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass Child extends Parent {}",
+                    "start": 1365,
+                    "end": 1394
+                }
+            ],
+            "suggest": "",
+            "rule": "Class Child is used by state property in [69, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 64,
+            "column": 1,
+            "endLine": 64,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass GrandChild extends Child {}",
+                    "start": 1395,
+                    "end": 1428
+                }
+            ],
+            "suggest": "",
+            "rule": "Class GrandChild is used by state property in [69, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 94,
+            "column": 3,
+            "endLine": 94,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 105,
+            "column": 1,
+            "endLine": 105,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass ObservedClass {}",
+                    "start": 2018,
+                    "end": 2040
+                }
+            ],
+            "suggest": "",
+            "rule": "Class ObservedClass is used by state property in [123, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 105,
+            "column": 1,
+            "endLine": 105,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass ObservedClass {}",
+                    "start": 2018,
+                    "end": 2040
+                }
+            ],
+            "suggest": "",
+            "rule": "Class ObservedClass is used by state property in [138, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 116,
+            "column": 1,
+            "endLine": 116,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass GrandA {}",
+                    "start": 2179,
+                    "end": 2194
+                }
+            ],
+            "suggest": "",
+            "rule": "Class GrandA is used by state property in [131, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 117,
+            "column": 1,
+            "endLine": 117,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass GrandB extends GrandA {}",
+                    "start": 2195,
+                    "end": 2225
+                }
+            ],
+            "suggest": "",
+            "rule": "Class GrandB is used by state property in [131, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 118,
+            "column": 1,
+            "endLine": 118,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass GrandC extends GrandB {}",
+                    "start": 2226,
+                    "end": 2256
+                }
+            ],
+            "suggest": "",
+            "rule": "Class GrandC is used by state property in [131, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 161,
+            "column": 1,
+            "endLine": 161,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass MissingMethod {}",
+                    "start": 3245,
+                    "end": 3267
+                }
+            ],
+            "suggest": "",
+            "rule": "Class MissingMethod is used by state property in [166, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 181,
+            "column": 1,
+            "endLine": 181,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass NoSuper {}",
+                    "start": 3722,
+                    "end": 3738
+                }
+            ],
+            "suggest": "",
+            "rule": "Class NoSuper is used by state property in [185, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 198,
+            "column": 1,
+            "endLine": 198,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass PartialObj {",
+                    "start": 3996,
+                    "end": 4014
+                }
+            ],
+            "suggest": "",
+            "rule": "Class PartialObj is used by state property in [205, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 213,
+            "column": 3,
+            "endLine": 213,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 220,
+            "column": 1,
+            "endLine": 220,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass CircA { ref: CircA = this; }",
+                    "start": 4353,
+                    "end": 4387
+                }
+            ],
+            "suggest": "",
+            "rule": "Class CircA is used by state property in [224, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 237,
+            "column": 3,
+            "endLine": 237,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 245,
+            "column": 3,
+            "endLine": 245,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 250,
+            "column": 1,
+            "endLine": 250,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass Standalone {}",
+                    "start": 4904,
+                    "end": 4923
+                }
+            ],
+            "suggest": "",
+            "rule": "Class Standalone is used by state property in [254, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 276,
+            "column": 1,
+            "endLine": 276,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass CastTarget {}",
+                    "start": 5382,
+                    "end": 5401
+                }
+            ],
+            "suggest": "",
+            "rule": "Class CastTarget is used by state property in [280, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 297,
+            "column": 3,
+            "endLine": 297,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 308,
+            "column": 3,
+            "endLine": 308,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 322,
+            "column": 1,
+            "endLine": 322,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass ImplClass2 implements IFace2 {}",
+                    "start": 6254,
+                    "end": 6291
+                }
+            ],
+            "suggest": "",
+            "rule": "Class ImplClass2 is used by state property in [326, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 331,
+            "column": 1,
+            "endLine": 331,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass CastClass {}",
+                    "start": 6455,
+                    "end": 6473
+                }
+            ],
+            "suggest": "",
+            "rule": "Class CastClass is used by state property in [335, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 343,
+            "column": 3,
+            "endLine": 343,
+            "endColumn": 3,
+            "problem": "DataObservationNeedObserved",
+            "suggest": "",
+            "rule": "can not find all classes, please check this field manually (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 348,
+            "column": 1,
+            "endLine": 348,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass UnknownReturn {}",
+                    "start": 6774,
+                    "end": 6796
+                }
+            ],
+            "suggest": "",
+            "rule": "Class UnknownReturn is used by state property in [355, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 372,
+            "column": 1,
+            "endLine": 372,
+            "endColumn": 1,
+            "problem": "DataObservationNeedObserved",
+            "autofix": [
+                {
+                    "replacementText": "@Observed\nclass SelfRef {",
+                    "start": 7294,
+                    "end": 7309
+                }
+            ],
+            "suggest": "",
+            "rule": "Class SelfRef is used by state property in [378, 3], but it's not be annotated by @Observed (arkui-data-observation)",
+            "severity": "WARNING"
+        }
+    ]
+}

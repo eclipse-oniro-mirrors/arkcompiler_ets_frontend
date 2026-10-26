@@ -587,3 +587,35 @@ takeRelabelSonC(relabelLiteralSource as RelabelSonC); // arkts-no-ts-like-as
 takeRelabelSonC1(relabelLiteralSource as RelabelSonC1); // arkts-no-ts-like-as
 takeRelabelSonC2(relabelLiteralSource as RelabelSonC2); // arkts-no-ts-like-as
 takeRelabelSonC3(relabelLiteralSource as RelabelSonC3); // arkts-no-ts-like-as
+
+// Additional cases for branch coverage
+
+// Cast on left side of assignment
+class CastLeft { val: number = 0; }
+let castLeftSource: CastLeft = new CastLeft();
+(castLeftSource as CastLeft) = new CastLeft();
+
+// Cast with LogicalOr - shouldBe=false path
+class OrBaseA {}
+class OrBaseB {}
+let orSource: OrBaseA = new OrBaseB();
+let orResult = !(orSource as OrBaseB || orSource as OrBaseA);
+
+// Cast with array container method (not 'pop' or 'get')
+class ArrayItem { val: string = ''; }
+let arrCast: ArrayItem[] = [new ArrayItem()];
+let shifted = arrCast.shift() as ArrayItem;
+
+// Cast with map container method
+class MapItem { val: number = 0; }
+let mapCast = new Map<string, MapItem>();
+mapCast.set('key', new MapItem());
+let mapVal = mapCast.get('key') as MapItem;
+
+// Cast involving circular field reference
+class CircularA { ref: CircularA = this; }
+let circSource: CircularA = new CircularA();
+let circResult = circSource.ref as CircularA;
+
+// Cast where origin class is null (anonymous class)
+let anonResult = ({} as CastLeft);

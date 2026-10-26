@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -233,3 +233,46 @@ const test21:Record<string, string | number | boolean> = {
         field7: true,
         field8: false
     };
+
+// Test: object literal as function argument
+function acceptObject(param: { name: string, value: number }): void {
+  console.log(param.name, param.value);
+}
+acceptObject({ name: "test", value: 42 });
+
+// Test: object literal as function argument with extra args
+function multiParams(a: number, b: { x: string }): void {
+  console.log(a, b.x);
+}
+multiParams(1, { x: "hello" }, { y: "extra" });
+
+// Test: object literal in return statement
+function returnObject(): { name: string, value: number } {
+  return { name: "result", value: 100 };
+}
+
+// Test: nested object literal assignment
+interface Inner { x: number; }
+interface Outer { inner: Inner; }
+const nested: Outer = { inner: { x: 1 } };
+
+// Test: object literal without type annotation
+const noType = { a: 1, b: "hello" };
+
+// Test: object literal with nested property as function call arg
+function acceptOuter(param: Outer): void {
+  console.log(param.inner.x);
+}
+acceptOuter({ inner: { x: 2 } });
+
+// Test: object literal in arrow function return
+const arrowReturn = (): { x: number } => {
+  return { x: 5 };
+};
+
+// Test: object literal in method return
+class ObjHandler {
+  getData(): { name: string, value: number } {
+    return { name: "method", value: 200 };
+  }
+}

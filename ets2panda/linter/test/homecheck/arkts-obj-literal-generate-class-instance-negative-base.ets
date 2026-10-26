@@ -45,3 +45,29 @@ struct Index2 {
   build() {
   }
 }
+
+// Additional cases for branch coverage
+
+// Import with null exportInfo / arkExport not Local
+import { obj as someValue } from './fixtures/homecheck-object-literal/ets/object';
+
+// Top-level var with 'this' name pattern
+class ClassC {
+  this: number = 1;
+  val: string = '';
+}
+
+// Object literal where class field lookup returns null
+class StaleSig {
+  old: number = 0;
+}
+let staleObj: StaleSig = { old: 1, missing: 2 };
+
+// Object literal with non-assign stmt in initializer
+class NoInit {
+  val: number;
+  constructor() {
+    this.val = 42;
+  }
+}
+let noInitObj: NoInit = { val: 1 };

@@ -1,17 +1,17 @@
 {
     "copyright": [
-      "Copyright (c) 2025 Huawei Device Co., Ltd.",
-      "Licensed under the Apache License, Version 2.0 (the 'License');",
-      "you may not use this file except in compliance with the License.",
-      "You may obtain a copy of the License at",
-      "",
-      "http://www.apache.org/licenses/LICENSE-2.0",
-      "",
-      "Unless required by applicable law or agreed to in writing, software",
-      "distributed under the License is distributed on an 'AS IS' BASIS,",
-      "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-      "See the License for the specific language governing permissions and",
-      "limitations under the License."
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
     ],
     "result": [
         {
@@ -413,6 +413,100 @@
                     "column": 3,
                     "endLine": 87,
                     "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 107,
+            "column": 1,
+            "endLine": 107,
+            "endColumn": 24,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 2622,
+                    "end": 2645,
+                    "replacementText": "",
+                    "line": 107,
+                    "column": 1,
+                    "endLine": 107,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 108,
+            "column": 1,
+            "endLine": 108,
+            "endColumn": 33,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 2656,
+                    "end": 2688,
+                    "replacementText": "",
+                    "line": 108,
+                    "column": 1,
+                    "endLine": 108,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 109,
+            "column": 1,
+            "endLine": 109,
+            "endColumn": 36,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 113,
+            "column": 3,
+            "endLine": 113,
+            "endColumn": 16,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 2818,
+                    "end": 2831,
+                    "replacementText": "",
+                    "line": 113,
+                    "column": 3,
+                    "endLine": 113,
+                    "endColumn": 16
+                }
+            ],
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 114,
+            "column": 3,
+            "endLine": 114,
+            "endColumn": 25,
+            "problem": "TsOverload",
+            "autofix": [
+                {
+                    "start": 2844,
+                    "end": 2866,
+                    "replacementText": "",
+                    "line": 114,
+                    "column": 3,
+                    "endLine": 114,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",

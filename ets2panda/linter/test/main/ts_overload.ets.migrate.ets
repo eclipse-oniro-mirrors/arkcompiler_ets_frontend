@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,4 +87,42 @@ class D{
   constructor() {  //error
   }
     //error
+}
+
+// Test: ambient class with method overloads - should NOT report (ambient context)
+declare class AmbientClass {
+  foo(): void;
+  foo(x: string): void;
+}
+
+// Test: ambient namespace with function overloads - should NOT report (ambient context)
+declare namespace AmbientNS {
+  function bar(): void;
+  function bar(x: number): void;
+}
+
+// Test: internal function with 2 declarations - should NOT report (needs >2 for internal)
+function animateTo(): void {}
+function animateTo(x: number): void {}
+
+// Test: internal function with 3 declarations - should report (>=3 for internal)
+  //error
+  //error
+function vp2px(x?: number): void {}
+
+// Test: struct with constructor without text (empty body)
+struct StructE {
+    //error
+    //error
+}
+
+// Test: function with name but single declaration - should NOT report
+function singleFunc(x: string): void {}
+
+// Test: method overload in ambient class with declare keyword
+declare class AmbientDecl {
+  methodA(): void;
+  methodA(x: string): void;
+  constructor();
+  constructor(x: number);
 }

@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2024 Huawei Device Co., Ltd.",
+        "Copyright (c) 2024-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -24,12 +24,20 @@
                 {
                     "start": 610,
                     "end": 610,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n}\n",
+                    "line": 16,
+                    "column": 15,
+                    "endLine": 16,
+                    "endColumn": 16
                 },
                 {
                     "start": 621,
                     "end": 621,
-                    "replacementText": ": GeneratedObjectLiteralInterface_1"
+                    "replacementText": ": GeneratedObjectLiteralInterface_1",
+                    "line": 16,
+                    "column": 15,
+                    "endLine": 16,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -46,12 +54,20 @@
                 {
                     "start": 628,
                     "end": 628,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    hello: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    hello: string;\n}\n",
+                    "line": 18,
+                    "column": 15,
+                    "endLine": 18,
+                    "endColumn": 16
                 },
                 {
                     "start": 639,
                     "end": 639,
-                    "replacementText": ": GeneratedObjectLiteralInterface_2"
+                    "replacementText": ": GeneratedObjectLiteralInterface_2",
+                    "line": 18,
+                    "column": 15,
+                    "endLine": 18,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -68,12 +84,20 @@
                 {
                     "start": 663,
                     "end": 663,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n}\n",
+                    "line": 20,
+                    "column": 11,
+                    "endLine": 20,
+                    "endColumn": 12
                 },
                 {
                     "start": 673,
                     "end": 675,
-                    "replacementText": "GeneratedTypeLiteralInterface_1"
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 20,
+                    "column": 11,
+                    "endLine": 20,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -100,12 +124,20 @@
                 {
                     "start": 683,
                     "end": 683,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    field: string;\n    field1: string;\n    field2: string;\n    field3: string;\n    field4: string;\n    field5: string;\n    field6: string;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    field: string;\n    field1: string;\n    field2: string;\n    field3: string;\n    field4: string;\n    field5: string;\n    field6: string;\n}\n",
+                    "line": 22,
+                    "column": 15,
+                    "endLine": 22,
+                    "endColumn": 16
                 },
                 {
                     "start": 694,
                     "end": 694,
-                    "replacementText": ": GeneratedObjectLiteralInterface_3"
+                    "replacementText": ": GeneratedObjectLiteralInterface_3",
+                    "line": 22,
+                    "column": 15,
+                    "endLine": 22,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -122,12 +154,20 @@
                 {
                     "start": 888,
                     "end": 888,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_4 {\n    field: number;\n    field1: number;\n    field2: number;\n    field3: number;\n    field4: number;\n    field5: number;\n    field6: number;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_4 {\n    field: number;\n    field1: number;\n    field2: number;\n    field3: number;\n    field4: number;\n    field5: number;\n    field6: number;\n}\n",
+                    "line": 32,
+                    "column": 15,
+                    "endLine": 32,
+                    "endColumn": 16
                 },
                 {
                     "start": 899,
                     "end": 899,
-                    "replacementText": ": GeneratedObjectLiteralInterface_4"
+                    "replacementText": ": GeneratedObjectLiteralInterface_4",
+                    "line": 32,
+                    "column": 15,
+                    "endLine": 32,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -144,12 +184,20 @@
                 {
                     "start": 1045,
                     "end": 1045,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    field: string;\n    field1: number;\n    field2: string;\n    field3: number;\n    field4: string;\n    field5: number;\n    field6: string;\n    field7: boolean;\n    field8: boolean;\n}\n"
+                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    field: string;\n    field1: number;\n    field2: string;\n    field3: number;\n    field4: string;\n    field5: number;\n    field6: string;\n    field7: boolean;\n    field8: boolean;\n}\n",
+                    "line": 42,
+                    "column": 15,
+                    "endLine": 42,
+                    "endColumn": 16
                 },
                 {
                     "start": 1056,
                     "end": 1056,
-                    "replacementText": ": GeneratedObjectLiteralInterface_5"
+                    "replacementText": ": GeneratedObjectLiteralInterface_5",
+                    "line": 42,
+                    "column": 15,
+                    "endLine": 42,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -226,12 +274,20 @@
                 {
                     "start": 3096,
                     "end": 3096,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    field: String;\n    field1: String;\n    field2: String;\n    field3: String;\n    field4: String;\n    field5: String;\n    field6: String;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_2 {\n    field: String;\n    field1: String;\n    field2: String;\n    field3: String;\n    field4: String;\n    field5: String;\n    field6: String;\n}\n",
+                    "line": 150,
+                    "column": 12,
+                    "endLine": 150,
+                    "endColumn": 13
                 },
                 {
                     "start": 3107,
                     "end": 3240,
-                    "replacementText": "GeneratedTypeLiteralInterface_2"
+                    "replacementText": "GeneratedTypeLiteralInterface_2",
+                    "line": 150,
+                    "column": 12,
+                    "endLine": 150,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -258,12 +314,20 @@
                 {
                     "start": 3434,
                     "end": 3434,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    field: number;\n    field1: number;\n    field2: number;\n    field3: number;\n    field4: number;\n    field5: number;\n    field6: number;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_3 {\n    field: number;\n    field1: number;\n    field2: number;\n    field3: number;\n    field4: number;\n    field5: number;\n    field6: number;\n}\n",
+                    "line": 167,
+                    "column": 12,
+                    "endLine": 167,
+                    "endColumn": 13
                 },
                 {
                     "start": 3445,
                     "end": 3578,
-                    "replacementText": "GeneratedTypeLiteralInterface_3"
+                    "replacementText": "GeneratedTypeLiteralInterface_3",
+                    "line": 167,
+                    "column": 12,
+                    "endLine": 167,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -290,12 +354,20 @@
                 {
                     "start": 3724,
                     "end": 3724,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    field: String;\n    field1: number;\n    field2: String;\n    field3: number;\n    field4: String;\n    field5: number;\n    field6: String;\n    field7: boolean;\n    field8: boolean;\n}\n"
+                    "replacementText": "interface GeneratedTypeLiteralInterface_4 {\n    field: String;\n    field1: number;\n    field2: String;\n    field3: number;\n    field4: String;\n    field5: number;\n    field6: String;\n    field7: boolean;\n    field8: boolean;\n}\n",
+                    "line": 184,
+                    "column": 12,
+                    "endLine": 184,
+                    "endColumn": 13
                 },
                 {
                     "start": 3735,
                     "end": 3908,
-                    "replacementText": "GeneratedTypeLiteralInterface_4"
+                    "replacementText": "GeneratedTypeLiteralInterface_4",
+                    "line": 184,
+                    "column": 12,
+                    "endLine": 184,
+                    "endColumn": 13
                 }
             ],
             "suggest": "",
@@ -322,37 +394,65 @@
                 {
                     "start": 4174,
                     "end": 4179,
-                    "replacementText": "\"field\""
+                    "replacementText": "\"field\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4198,
                     "end": 4204,
-                    "replacementText": "\"field1\""
+                    "replacementText": "\"field1\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4224,
                     "end": 4230,
-                    "replacementText": "\"field2\""
+                    "replacementText": "\"field2\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4250,
                     "end": 4256,
-                    "replacementText": "\"field3\""
+                    "replacementText": "\"field3\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4276,
                     "end": 4282,
-                    "replacementText": "\"field4\""
+                    "replacementText": "\"field4\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4302,
                     "end": 4308,
-                    "replacementText": "\"field5\""
+                    "replacementText": "\"field5\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 },
                 {
                     "start": 4328,
                     "end": 4334,
-                    "replacementText": "\"field6\""
+                    "replacementText": "\"field6\"",
+                    "line": 205,
+                    "column": 39,
+                    "endLine": 205,
+                    "endColumn": 40
                 }
             ],
             "suggest": "",
@@ -369,37 +469,65 @@
                 {
                     "start": 4403,
                     "end": 4408,
-                    "replacementText": "\"field\""
+                    "replacementText": "\"field\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4421,
                     "end": 4427,
-                    "replacementText": "\"field1\""
+                    "replacementText": "\"field1\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4440,
                     "end": 4446,
-                    "replacementText": "\"field2\""
+                    "replacementText": "\"field2\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4459,
                     "end": 4465,
-                    "replacementText": "\"field3\""
+                    "replacementText": "\"field3\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4478,
                     "end": 4484,
-                    "replacementText": "\"field4\""
+                    "replacementText": "\"field4\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4497,
                     "end": 4503,
-                    "replacementText": "\"field5\""
+                    "replacementText": "\"field5\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 },
                 {
                     "start": 4516,
                     "end": 4522,
-                    "replacementText": "\"field6\""
+                    "replacementText": "\"field6\"",
+                    "line": 215,
+                    "column": 39,
+                    "endLine": 215,
+                    "endColumn": 40
                 }
             ],
             "suggest": "",
@@ -416,49 +544,315 @@
                 {
                     "start": 4602,
                     "end": 4607,
-                    "replacementText": "\"field\""
+                    "replacementText": "\"field\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4626,
                     "end": 4632,
-                    "replacementText": "\"field1\""
+                    "replacementText": "\"field1\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4645,
                     "end": 4651,
-                    "replacementText": "\"field2\""
+                    "replacementText": "\"field2\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4671,
                     "end": 4677,
-                    "replacementText": "\"field3\""
+                    "replacementText": "\"field3\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4690,
                     "end": 4696,
-                    "replacementText": "\"field4\""
+                    "replacementText": "\"field4\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4716,
                     "end": 4722,
-                    "replacementText": "\"field5\""
+                    "replacementText": "\"field5\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4735,
                     "end": 4741,
-                    "replacementText": "\"field6\""
+                    "replacementText": "\"field6\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4761,
                     "end": 4767,
-                    "replacementText": "\"field7\""
+                    "replacementText": "\"field7\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 },
                 {
                     "start": 4783,
                     "end": 4789,
-                    "replacementText": "\"field8\""
+                    "replacementText": "\"field8\"",
+                    "line": 225,
+                    "column": 58,
+                    "endLine": 225,
+                    "endColumn": 59
                 }
             ],
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 238,
+            "column": 30,
+            "endLine": 238,
+            "endColumn": 31,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 4850,
+                    "end": 4850,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_5 {\n    name: string;\n    value: number;\n}\n",
+                    "line": 238,
+                    "column": 30,
+                    "endLine": 238,
+                    "endColumn": 31
+                },
+                {
+                    "start": 4879,
+                    "end": 4910,
+                    "replacementText": "GeneratedTypeLiteralInterface_5",
+                    "line": 238,
+                    "column": 30,
+                    "endLine": 238,
+                    "endColumn": 31
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 241,
+            "column": 14,
+            "endLine": 241,
+            "endColumn": 15,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 244,
+            "column": 36,
+            "endLine": 244,
+            "endColumn": 37,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 5067,
+                    "end": 5067,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_6 {\n    x: string;\n}\n",
+                    "line": 244,
+                    "column": 36,
+                    "endLine": 244,
+                    "endColumn": 37
+                },
+                {
+                    "start": 5102,
+                    "end": 5115,
+                    "replacementText": "GeneratedTypeLiteralInterface_6",
+                    "line": 244,
+                    "column": 36,
+                    "endLine": 244,
+                    "endColumn": 37
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 247,
+            "column": 16,
+            "endLine": 247,
+            "endColumn": 17,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 250,
+            "column": 26,
+            "endLine": 250,
+            "endColumn": 27,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 5243,
+                    "end": 5243,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_7 {\n    name: string;\n    value: number;\n}\n",
+                    "line": 250,
+                    "column": 26,
+                    "endLine": 250,
+                    "endColumn": 27
+                },
+                {
+                    "start": 5268,
+                    "end": 5299,
+                    "replacementText": "GeneratedTypeLiteralInterface_7",
+                    "line": 250,
+                    "column": 26,
+                    "endLine": 250,
+                    "endColumn": 27
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 251,
+            "column": 10,
+            "endLine": 251,
+            "endColumn": 11,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 260,
+            "column": 16,
+            "endLine": 260,
+            "endColumn": 17,
+            "problem": "ObjectLiteralNoContextType",
+            "autofix": [
+                {
+                    "start": 5545,
+                    "end": 5545,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n    a: number;\n    b: string;\n}\n",
+                    "line": 260,
+                    "column": 16,
+                    "endLine": 260,
+                    "endColumn": 17
+                },
+                {
+                    "start": 5557,
+                    "end": 5557,
+                    "replacementText": ": GeneratedObjectLiteralInterface_6",
+                    "line": 260,
+                    "column": 16,
+                    "endLine": 260,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 269,
+            "column": 25,
+            "endLine": 269,
+            "endColumn": 26,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 5808,
+                    "end": 5808,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_8 {\n    x: number;\n}\n",
+                    "line": 269,
+                    "column": 25,
+                    "endLine": 269,
+                    "endColumn": 26
+                },
+                {
+                    "start": 5832,
+                    "end": 5845,
+                    "replacementText": "GeneratedTypeLiteralInterface_8",
+                    "line": 269,
+                    "column": 25,
+                    "endLine": 269,
+                    "endColumn": 26
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 270,
+            "column": 10,
+            "endLine": 270,
+            "endColumn": 11,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 275,
+            "column": 14,
+            "endLine": 275,
+            "endColumn": 15,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 5915,
+                    "end": 5915,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_9 {\n    name: string;\n    value: number;\n}\n",
+                    "line": 275,
+                    "column": 14,
+                    "endLine": 275,
+                    "endColumn": 15
+                },
+                {
+                    "start": 5947,
+                    "end": 5978,
+                    "replacementText": "GeneratedTypeLiteralInterface_9",
+                    "line": 275,
+                    "column": 14,
+                    "endLine": 275,
+                    "endColumn": 15
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 276,
+            "column": 12,
+            "endLine": 276,
+            "endColumn": 13,
+            "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
             "severity": "ERROR"

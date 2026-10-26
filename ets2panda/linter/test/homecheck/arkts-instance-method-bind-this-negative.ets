@@ -586,3 +586,95 @@ function test_13() {
   unboundFoo()
   if (unboundFoo !== null) {}
 }
+
+// Additional cases for branch coverage
+
+// Unbound method that is never used after assignment
+class A_14 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+function test_14() {
+  let a = new A_14()
+  const unusedFoo = a.foo
+}
+
+// Unbound method used in throw statement
+class A_15 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+function test_15() {
+  let a = new A_15()
+  const throwFoo = a.foo
+  throw throwFoo
+}
+
+// Non-function field access (number type)
+class A_17 {
+  count: number = 42
+}
+function test_17() {
+  let a = new A_17()
+  const numRef = a.count
+}
+
+// Assignment outside of instInit
+class A_18 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+class Container_18 {
+  method() {
+    let a = new A_18()
+    const unbound = a.foo
+    unbound()
+  }
+}
+
+// Unbound method used in if condition (not as op1/op2)
+class A_19 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+function test_19() {
+  let a = new A_19()
+  const ref = a.foo
+  if (someOtherVar !== null) {
+    ref()
+  }
+}
+
+// Unbound method used in invoke expression
+class A_20 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+function test_20() {
+  let a = new A_20()
+  const ref = a.foo
+  someFunction(ref)
+}
+
+// Unbound method returned from function
+class A_21 {
+  n: string = 'a'
+  foo() {
+    console.log(this.n)
+  }
+}
+function test_21(): void {
+  let a = new A_21()
+  const ref = a.foo
+  return ref
+}

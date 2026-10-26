@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,4 +76,63 @@ class C {
 function foo_test_11() {
   let c = new C();
   c.m();
+}
+
+// Test: arguments in arrow function - Error
+const arrowFn = () => {
+  console.log(arguments[0]); // Error
+};
+
+// Test: arguments in function expression - Error
+const funcExpr = function() {
+  console.log(arguments.length); // Error
+};
+
+// Test: arguments in async function - Error
+async function asyncFn() {
+  console.log(arguments); // Error
+}
+
+// Test: arguments in generator function - Error
+function* genFn() {
+  console.log(arguments[0]); // Error
+}
+
+// Test: arguments in nested function - Error
+function outerFunc() {
+  function innerFunc() {
+    console.log(arguments); // Error
+  }
+  innerFunc();
+}
+
+// Test: arguments used in property access chain - Error
+function chainFunc() {
+  const val = arguments[0].toString(); // Error
+  return val;
+}
+
+// Test: arguments in class static method - Error
+class StaticMethod {
+  static sm() {
+    console.log(arguments); // Error
+  }
+}
+
+// Test: arguments in getter - Error
+class GetterClass {
+  _val: number = 0;
+  get val() {
+    console.log(arguments); // Error
+    return this._val;
+  }
+}
+
+// Test: arguments in setter - Error
+class SetterClass {
+  _val: number = 0;
+  set val(v: number) {
+    console.log(arguments); // Error
+    this._val = v;
+  }
 }
