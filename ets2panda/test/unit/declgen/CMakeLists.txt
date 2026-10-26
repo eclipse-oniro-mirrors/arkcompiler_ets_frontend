@@ -171,6 +171,7 @@ set(ETS_TESTS
     protected_field
     selective_export_directives
     test
+    unexported_const_foreign_type
 )
 
 set(WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/ets)

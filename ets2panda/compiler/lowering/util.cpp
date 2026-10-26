@@ -96,7 +96,8 @@ std::vector<varbinder::ClassScope *> DiffClassScopes(varbinder::Scope *base, var
     }
 
     for (varbinder::Scope *currentScope = findFrom;
-         baseScopes.find(currentScope) == baseScopes.end() && !currentScope->IsGlobalScope();
+         currentScope != nullptr && baseScopes.find(currentScope) == baseScopes.end() &&
+         !currentScope->IsGlobalScope() && !currentScope->IsModuleScope();
          currentScope = currentScope->Parent()) {
         if (currentScope->IsClassScope() && currentScope->AsClassScope()->Node() != nullptr &&
             currentScope->AsClassScope()->Node()->IsClassDefinition() &&

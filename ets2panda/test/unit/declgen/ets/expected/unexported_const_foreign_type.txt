@@ -1,0 +1,8 @@
+'use static'
+
+export declare class Holder {
+  public static FOO: number;
+
+}
+
+declare const FOO: Int;
