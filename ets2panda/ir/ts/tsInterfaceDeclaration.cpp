@@ -295,6 +295,7 @@ void TSInterfaceDeclaration::CopyTo(AstNode *other) const
     otherImpl->isExternal_ = isExternal_;
     otherImpl->lang_ = lang_;
     otherImpl->anonClass_ = anonClass_;
+    otherImpl->metadataAccessRestriction_ = metadataAccessRestriction_;
 
     AnnotationAllowed<TypedStatement>::CopyTo(other);
 }

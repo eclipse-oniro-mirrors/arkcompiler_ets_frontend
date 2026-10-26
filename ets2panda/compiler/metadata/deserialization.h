@@ -46,7 +46,6 @@ private:
     friend class MetadataClassBuilder;
     void SetupGlobalClassStaticBlock(ir::ClassStaticBlock *staticBlock) const;
     void SetupGlobalClass() const;
-    void MarkBuiltinIfNeeded(varbinder::Variable *var, bool isBuiltin) const;
 
     void AddClassMembers(const Metadata::ClassDecl *fbClassDecl, ir::ClassDefinition *classDef);
     void EnsureConstructorExists(ir::ClassDefinition *classDef);

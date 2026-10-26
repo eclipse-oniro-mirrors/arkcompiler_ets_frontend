@@ -112,6 +112,13 @@ static std::vector<std::string> CollectEffectiveRestrictionModules(public_lib::C
         return modules;
     }
 
+    if (!decl->MetadataAccessRestrictionModules().empty()) {
+        for (auto const &module : decl->MetadataAccessRestrictionModules()) {
+            modules.emplace_back(module.Mutf8());
+        }
+        return modules;
+    }
+
     for (auto *anno : decl->Annotations()) {
         auto *annoDecl = ResolveAnnotationDeclaration(ctx, anno);
         if (annoDecl == nullptr) {
@@ -165,6 +172,39 @@ static bool HasRestrictionMetadata(public_lib::Context *ctx, const ir::Annotatio
 
     visiting->erase(internalName);
     return false;
+}
+
+struct AccessRestrictionOffsets {
+    flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<flatbuffers::String>>> modules {0};
+    flatbuffers::Offset<flatbuffers::String> annotationName {0};
+};
+
+static AccessRestrictionOffsets BuildAccessRestrictionOffsets(FlatBufferBuilder &builder, public_lib::Context *ctx,
+                                                              const ArenaVector<ir::AnnotationUsage *> &annotations)
+{
+    AccessRestrictionOffsets result;
+    for (const auto *anno : annotations) {
+        if (anno == nullptr) {
+            continue;
+        }
+        auto *annoDecl = ResolveAnnotationDeclaration(ctx, anno);
+        if (annoDecl == nullptr) {
+            continue;
+        }
+        auto modules = CollectEffectiveRestrictionModules(ctx, annoDecl);
+        if (modules.empty()) {
+            continue;
+        }
+        std::vector<flatbuffers::Offset<flatbuffers::String>> moduleOffsets;
+        moduleOffsets.reserve(modules.size());
+        for (const auto &module : modules) {
+            moduleOffsets.emplace_back(builder.CreateSharedString(module));
+        }
+        result.modules = builder.CreateVector(moduleOffsets);
+        result.annotationName = builder.CreateSharedString(annoDecl->GetBaseName()->Name().Utf8());
+        break;
+    }
+    return result;
 }
 
 static bool IsBuiltinErrorAliasDecl(const ir::ClassDefinition *classDef)
@@ -691,12 +731,13 @@ Offset<Metadata::ClassDecl> MetadataSerializationPhase::BuildClassDecl(FlatBuffe
     const auto isBuiltin =
         (astDecl->Variable() != nullptr && astDecl->Variable()->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE)) ||
         IsBuiltinErrorAliasDecl(astDecl);
+    const auto restriction = BuildAccessRestrictionOffsets(builder, Context(), astDecl->Annotations());
 
     return Metadata::CreateClassDecl(
         builder, className, astDecl->IsNamespaceTransformed(), isBuiltin, enumKind, builder.CreateVector(enumValues),
         enumTypeKind, enumTypeOff, methods, properties, decls, typeParams, extendedClassKind, extendedClassOff,
         builder.CreateVector<uint8_t>(implementedInterfaceKinds), builder.CreateVector<Offset<>>(implementedInterfaces),
-        astDecl->IsFinal(), astDecl->IsAbstract(), internalName);
+        astDecl->IsFinal(), astDecl->IsAbstract(), internalName, restriction.modules, restriction.annotationName);
 }
 
 std::pair<std::vector<Offset<>>, std::vector<uint8_t>> MetadataSerializationPhase::BuildExtends(
@@ -732,10 +773,12 @@ Offset<Metadata::InterfaceDecl> MetadataSerializationPhase::BuildInterfaceDecl(
     LOG_METADATA_NESTING_DEC();
     const auto isBuiltin = interfaceDecl->Variable() != nullptr &&
                            interfaceDecl->Variable()->HasFlag(varbinder::VariableFlags::BUILTIN_TYPE);
+    const auto restriction = BuildAccessRestrictionOffsets(builder, Context(), interfaceDecl->Annotations());
 
     return Metadata::CreateInterfaceDecl(builder, interfaceName, isBuiltin, methods, typeParams,
                                          builder.CreateVector<uint8_t>(extendTypeKinds),
-                                         builder.CreateVector<Offset<>>(extendTypes), properties, internalName);
+                                         builder.CreateVector<Offset<>>(extendTypes), properties, internalName,
+                                         restriction.modules, restriction.annotationName);
 }
 
 Offset<Metadata::AnnotationDecl> MetadataSerializationPhase::BuildAnnotationDecl(
@@ -820,9 +863,10 @@ Offset<Vector<Offset<Metadata::PropertyDecl>>> MetadataSerializationPhase::Build
 
         const auto varName = builder.CreateSharedString(propertyName);
         const auto [returnTypeKind, returnTypeOff] = BuildPropertyType(builder, property);
-        properties.emplace_back(Metadata::CreatePropertyDecl(builder, varName, returnTypeKind, returnTypeOff,
-                                                             property->IsStatic(), property->IsConst(),
-                                                             property->IsProtected(), property->IsReadonly()));
+        const auto restriction = BuildAccessRestrictionOffsets(builder, Context(), property->Annotations());
+        properties.emplace_back(Metadata::CreatePropertyDecl(
+            builder, varName, returnTypeKind, returnTypeOff, property->IsStatic(), property->IsConst(),
+            property->IsProtected(), property->IsReadonly(), restriction.modules, restriction.annotationName));
     };
 
     for (const auto &elem : body) {
@@ -1183,9 +1227,12 @@ Offset<Metadata::FunctionDecl> MetadataSerializationPhase::BuildFunctionDecl(
 
     LOG_METADATA(func->Id()->ToString() << func->Signature()->ToString());
 
+    const auto restriction = BuildAccessRestrictionOffsets(builder, Context(), func->Annotations());
+
     return Metadata::CreateFunctionDecl(builder, methodName, returnTypeKind, returnTypeOff, func->IsStatic(),
                                         valueParams, typeParams, 0, isProtected, isGetter, isSetter, overloadGroupOff,
-                                        overloadGroupIndex, isFinal, isNative, isAbstract);
+                                        overloadGroupIndex, isFinal, isNative, isAbstract, restriction.modules,
+                                        restriction.annotationName);
 }
 
 Offset<Metadata::PropertyDecl> MetadataSerializationPhase::BuildPropertyDecl(FlatBufferBuilder &builder,
@@ -1194,8 +1241,10 @@ Offset<Metadata::PropertyDecl> MetadataSerializationPhase::BuildPropertyDecl(Fla
     LOG_METADATA(var->Id()->ToString() << ": " << GetMetadataPropertyType(var)->ToString());
     const auto varName = builder.CreateSharedString(var->Id()->ToString());
     const auto [returnTypeKind, returnTypeOff] = BuildPropertyType(builder, var);
+    const auto restriction = BuildAccessRestrictionOffsets(builder, Context(), var->Annotations());
     return Metadata::CreatePropertyDecl(builder, varName, returnTypeKind, returnTypeOff, var->IsStatic(),
-                                        var->IsConst(), var->IsProtected(), var->IsReadonly());
+                                        var->IsConst(), var->IsProtected(), var->IsReadonly(), restriction.modules,
+                                        restriction.annotationName);
 }
 
 Offset<Metadata::ImportDecl> MetadataSerializationPhase::BuildImportDecl(FlatBufferBuilder &builder,

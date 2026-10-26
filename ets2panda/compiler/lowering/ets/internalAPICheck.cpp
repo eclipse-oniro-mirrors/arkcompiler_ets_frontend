@@ -21,6 +21,7 @@
 #include "ir/base/classProperty.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/expressions/identifier.h"
 #include "ir/expressions/memberExpression.h"
 #include "ir/ets/etsTypeReference.h"
@@ -42,7 +43,7 @@ struct RestrictionInfo {
     std::vector<std::string> modules;
 };
 
-using RestrictionCache = std::unordered_map<ir::AnnotationDeclaration const *, std::optional<RestrictionInfo>>;
+using RestrictionCache = std::unordered_map<ir::AstNode const *, std::optional<RestrictionInfo>>;
 
 static RestrictionInfo const *GetRestrictionInfo(ir::AnnotationDeclaration const *annoDecl, RestrictionCache &cache);
 
@@ -195,6 +196,35 @@ static RestrictionInfo const *GetRestrictionInfo(ir::AnnotationDeclaration const
     return it->second.has_value() ? &it->second.value() : nullptr;
 }
 
+static RestrictionInfo const *GetMetadataRestrictionInfo(ir::AstNode const *declNode, RestrictionCache &cache)
+{
+    ir::MetadataAccessRestriction const *restriction = nullptr;
+    if (declNode->IsScriptFunction()) {
+        restriction = declNode->AsScriptFunction()->GetMetadataAccessRestriction();
+    } else if (declNode->IsClassDefinition()) {
+        restriction = declNode->AsClassDefinition()->GetMetadataAccessRestriction();
+    } else if (declNode->IsTSInterfaceDeclaration()) {
+        restriction = declNode->AsTSInterfaceDeclaration()->GetMetadataAccessRestriction();
+    } else if (declNode->IsClassProperty()) {
+        restriction = declNode->AsClassProperty()->GetMetadataAccessRestriction();
+    }
+
+    if (restriction == nullptr || restriction->modules.empty()) {
+        return nullptr;
+    }
+
+    auto const [it, inserted] = cache.emplace(declNode, std::nullopt);
+    if (inserted) {
+        RestrictionInfo info {};
+        info.annotationName = restriction->annotationName.Mutf8();
+        for (auto const &module : restriction->modules) {
+            info.modules.emplace_back(module.Mutf8());
+        }
+        it->second = std::move(info);
+    }
+    return it->second.has_value() ? &it->second.value() : nullptr;
+}
+
 static RestrictionInfo const *GetRestrictionInfo(ir::AstNode const *declNode, RestrictionCache &cache)
 {
     auto const *annotations = GetAnnotations(declNode);
@@ -214,7 +244,7 @@ static RestrictionInfo const *GetRestrictionInfo(ir::AstNode const *declNode, Re
         }
     }
 
-    return nullptr;
+    return GetMetadataRestrictionInfo(declNode, cache);
 }
 
 static bool IsAccessibleFromModule(RestrictionInfo const &info, std::string_view moduleName)

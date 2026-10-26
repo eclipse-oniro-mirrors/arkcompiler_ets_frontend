@@ -134,7 +134,8 @@ size_t SizeOfNodeTest::SizeOf<ClassDefinition>()
         Align(sizeof(node->localIndex_)) +
         sizeof(node->localPrefix_) +
         sizeof(node->functionalReferenceReferencedMethod_) +
-        sizeof(node->exportedClasses_);
+        sizeof(node->exportedClasses_) +
+        sizeof(node->metadataAccessRestriction_);
     // clang-format on
 }
 
@@ -208,7 +209,8 @@ size_t SizeOfNodeTest::SizeOf<ClassProperty>()
         sizeof(node->typeAnnotation_) +
         sizeof(node->basePropertyVar_) +
         Align(sizeof(node->isDefault_) +
-            sizeof(node->initMode_));
+            sizeof(node->initMode_)) +
+        sizeof(node->metadataAccessRestriction_);
     // clang-format on
 }
 
@@ -255,7 +257,8 @@ size_t SizeOfNodeTest::SizeOf<ScriptFunction>()
         sizeof(node->preferredReturnType_) +
         sizeof(node->asyncPairFunction_) +
         Align(sizeof(node->lang_)) +
-        sizeof(node->returnStatements_);
+        sizeof(node->returnStatements_) +
+        sizeof(node->metadataAccessRestriction_);
     // clang-format on
 }
 
@@ -339,7 +342,8 @@ size_t SizeOfNodeTest::SizeOf<TSInterfaceDeclaration>()
         Align(sizeof(node->isStatic_) +
             sizeof(node->isExternal_) +
             sizeof(node->lang_)) +
-        sizeof(node->anonClass_);
+        sizeof(node->anonClass_) +
+        sizeof(node->metadataAccessRestriction_);
     // clang-format on
 }
 

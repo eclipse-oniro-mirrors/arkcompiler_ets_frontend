@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@
 #include "ir/astNode.h"
 #include "ir/astNodeHistory.h"
 #include "ir/expressions/identifier.h"
+#include "ir/metadataAccessRestriction.h"
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/classDeclaration.h"
 #include "util/language.h"
@@ -542,6 +543,16 @@ public:
     void SetAnonClass(ClassDeclaration *anonClass);
     void SetInternalName(util::StringView internalName);
 
+    [[nodiscard]] const MetadataAccessRestriction *GetMetadataAccessRestriction() const noexcept
+    {
+        return metadataAccessRestriction_;
+    }
+
+    void SetMetadataAccessRestriction(ir::MetadataAccessRestriction *restriction)
+    {
+        metadataAccessRestriction_ = restriction;
+    }
+
 protected:
     ClassDefinition *Construct(ArenaAllocator *allocator) override;
 
@@ -599,6 +610,7 @@ private:
     ArenaSet<varbinder::Variable *> localVariableIsNeeded_;
     EPtr<TSEnumDeclaration> origEnumDecl_ {};
     EPtr<ClassDeclaration> anonClass_ {nullptr};
+    EPtr<ir::MetadataAccessRestriction> metadataAccessRestriction_ {nullptr};
     static std::atomic<int> classCounter_;
     int localIndex_ {};
     std::string localPrefix_ {};

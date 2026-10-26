@@ -452,6 +452,7 @@ void ScriptFunction::CopyTo(AstNode *other) const
     otherImpl->preferredReturnType_ = preferredReturnType_;
     otherImpl->lang_ = lang_;
     otherImpl->returnStatements_ = returnStatements_;
+    otherImpl->metadataAccessRestriction_ = metadataAccessRestriction_;
 
     AnnotationAllowed<AstNode>::CopyTo(other);
 }

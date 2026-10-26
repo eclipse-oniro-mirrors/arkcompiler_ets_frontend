@@ -536,6 +536,7 @@ void ClassDefinition::CopyTo(AstNode *other) const
     otherImpl->localVariableIsNeeded_ = localVariableIsNeeded_;
     otherImpl->origEnumDecl_ = origEnumDecl_;
     otherImpl->anonClass_ = anonClass_;
+    otherImpl->metadataAccessRestriction_ = metadataAccessRestriction_;
     otherImpl->localIndex_ = localIndex_;
     otherImpl->localPrefix_ = localPrefix_;
     otherImpl->functionalReferenceReferencedMethod_ = functionalReferenceReferencedMethod_;
