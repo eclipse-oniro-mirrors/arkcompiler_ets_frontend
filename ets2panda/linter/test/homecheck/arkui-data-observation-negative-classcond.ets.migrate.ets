@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+interface InterfaceA {}
+class ClassA implements InterfaceA {}
+class ClassB extends ClassA {}
+class ClassC extends ClassB {}
+class ClassD extends ClassC {}
+
+let cond = true
+
+@Entry
+@Component
+struct MyComponent {
+  @State obj: ClassA = cond ? new ClassC() : new ClassA();      // @Observed ClassA, ClassB, ClassC
+  @Link obj1: ClassA = cond ? new ClassA() : new ClassB();      // @Observed ClassA, ClassB
+  @State obj2: ClassB = cond ? new ClassC() : new ClassB();      // @Observed ClassA, ClassB, ClassC
+  @State obj3 = cond ? {} : new ClassB();      // @Observed ClassA, ClassB
+  @State obj4 = cond ? new ClassB() : {};      // @Observed ClassA, ClassB
+  @State positive = cond ? 123 : 456;      // nothing to do
+
+  build() {
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -106,3 +106,29 @@ function createPerson2(
 
 const person1 = createPerson1(Person, "John", 30);
 const person2 = createPerson2(Person, "John", 30);
+
+// Test: property access not in new expression - should NOT trigger sdk-constructor-funcs
+class Util {
+  static factory(): Person {
+    return new Person("name", 1);
+  }
+}
+const ref = Util.factory;
+
+// Test: qualified name not in new expression
+const propRef = Person.prototype;
+
+// Test: new expression with property access from class
+const created = new Util.factory();
+
+// Test: property access in new expression context
+class Container {
+  inner: Person;
+  constructor() {
+    this.inner = new Person("inner", 0);
+  }
+  static create(): Person {
+    return new Person("static", 99);
+  }
+}
+const fromStatic = new Container.create();

@@ -1,0 +1,178 @@
+{
+    "copyright": [
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 24,
+            "column": 5,
+            "endLine": 24,
+            "endColumn": 5,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 5,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 28,
+            "column": 5,
+            "endLine": 28,
+            "endColumn": 5,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 30,
+            "column": 17,
+            "endLine": 30,
+            "endColumn": 17,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 32,
+            "column": 5,
+            "endLine": 32,
+            "endColumn": 5,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 33,
+            "column": 5,
+            "endLine": 33,
+            "endColumn": 5,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 38,
+            "column": 28,
+            "endLine": 38,
+            "endColumn": 28,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 41,
+            "column": 17,
+            "endLine": 41,
+            "endColumn": 17,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 42,
+            "column": 17,
+            "endLine": 42,
+            "endColumn": 17,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 44,
+            "column": 29,
+            "endLine": 44,
+            "endColumn": 29,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 46,
+            "column": 17,
+            "endLine": 46,
+            "endColumn": 17,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 48,
+            "column": 17,
+            "endLine": 48,
+            "endColumn": 17,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 56,
+            "column": 20,
+            "endLine": 56,
+            "endColumn": 20,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 57,
+            "column": 28,
+            "endLine": 57,
+            "endColumn": 28,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 61,
+            "column": 20,
+            "endLine": 61,
+            "endColumn": 20,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 62,
+            "column": 28,
+            "endLine": 62,
+            "endColumn": 28,
+            "problem": "builtin-api",
+            "suggest": "",
+            "rule": "Builtin API is not support in ArkTS1.2 (arkts-interop-s2d-dynamic-call-builtin-api-not-in-static)",
+            "severity": "WARNING"
+        }
+    ]
+}

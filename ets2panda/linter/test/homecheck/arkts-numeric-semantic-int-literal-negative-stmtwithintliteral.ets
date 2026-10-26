@@ -417,3 +417,40 @@ async function foo(){
         })
     })
 }
+
+// Additional cases for branch coverage
+
+// Return statement with int literal (no invoke)
+function returnIntLiteral(): number {
+  return 42;
+}
+
+// If statement with int literal (no invoke)
+function ifWithIntLiteral(x: number): void {
+  if (x === 42) {
+    console.log('found');
+  }
+}
+
+// Assignment to array element with int literal
+function arrayElementAssign(): void {
+  let arr: number[] = [0, 0, 0];
+  arr[0] = 42;
+}
+
+// Right side is array access with int literal as index
+function arrayAccessWithIntIndex(): number {
+  let arr: number[] = [10, 20, 30];
+  return arr[1];
+}
+
+// Int literal in condition expression (ternary)
+function ternaryWithIntLiteral(): number {
+  return true ? 1 : 2;
+}
+
+// Int literal in cast expression
+function castWithIntLiteral(): number {
+  let x = (42 as number);
+  return x;
+}

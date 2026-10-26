@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// 1.0
+
+import { X } from './fixtures/homecheck-interop-backward-dfa/1.1ObjectAPI_1.2obj/1.1import1.2type/ets/file2'
+
+function foo_wrapper(obj: Object) {
+  foo(obj)
+}
+
+function foo(obj: Object) {
+  Object.getOwnPropertyDescriptor(obj, "a");
+  Object.getOwnPropertyDescriptors(obj);
+  Object.getOwnPropertyNames(obj);
+  Object.isExtensible(obj);
+  Object.isFrozen(obj);
+  Object.isSealed(obj);
+  Object.keys(obj);
+  Object.setPrototypeOf(obj, {});
+  Object.values(obj);
+}
+// 如果 api 是 1.0 的，就默认 s2d；除非发现 problemStmt 所在的文件 lang 不是 1.0，就是 d2s
+foo(new X())  // 在此报错
+
+foo_wrapper(new X()) // 在此报错
+
+function goo() {
+  Object.getOwnPropertyDescriptor(new X(), "a");  // 在此报错
+}
+
+function hoo() {
+  const obj2 = new X()
+  Object.getOwnPropertyDescriptor(obj2, "a"); // 在此报错
+}
+
+const obj3 = new X()
+function joo() {
+  Object.getOwnPropertyDescriptor(obj3, "a"); // 在此报错
+}
+
+const obj4 = new X()
+function koo() {
+  let obj5 = obj4
+  Object.getOwnPropertyDescriptor(obj5, "a"); // 在此报错
+}

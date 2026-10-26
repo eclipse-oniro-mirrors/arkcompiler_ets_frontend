@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -275,3 +275,68 @@ const test21:Record<string, string | number | boolean> = {
         "field7": true,
         "field8": false
     };
+
+// Test: object literal as function argument
+interface GeneratedTypeLiteralInterface_5 {
+    name: string;
+    value: number;
+}
+function acceptObject(param: GeneratedTypeLiteralInterface_5): void {
+  console.log(param.name, param.value);
+}
+acceptObject({ name: "test", value: 42 });
+
+// Test: object literal as function argument with extra args
+interface GeneratedTypeLiteralInterface_6 {
+    x: string;
+}
+function multiParams(a: number, b: GeneratedTypeLiteralInterface_6): void {
+  console.log(a, b.x);
+}
+multiParams(1, { x: "hello" }, { y: "extra" });
+
+// Test: object literal in return statement
+interface GeneratedTypeLiteralInterface_7 {
+    name: string;
+    value: number;
+}
+function returnObject(): GeneratedTypeLiteralInterface_7 {
+  return { name: "result", value: 100 };
+}
+
+// Test: nested object literal assignment
+interface Inner { x: number; }
+interface Outer { inner: Inner; }
+const nested: Outer = { inner: { x: 1 } };
+
+// Test: object literal without type annotation
+interface GeneratedObjectLiteralInterface_6 {
+    a: number;
+    b: string;
+}
+const noType: GeneratedObjectLiteralInterface_6 = { a: 1, b: "hello" };
+
+// Test: object literal with nested property as function call arg
+function acceptOuter(param: Outer): void {
+  console.log(param.inner.x);
+}
+acceptOuter({ inner: { x: 2 } });
+
+// Test: object literal in arrow function return
+interface GeneratedTypeLiteralInterface_8 {
+    x: number;
+}
+const arrowReturn = (): GeneratedTypeLiteralInterface_8 => {
+  return { x: 5 };
+};
+
+// Test: object literal in method return
+interface GeneratedTypeLiteralInterface_9 {
+    name: string;
+    value: number;
+}
+class ObjHandler {
+  getData(): GeneratedTypeLiteralInterface_9 {
+    return { name: "method", value: 200 };
+  }
+}

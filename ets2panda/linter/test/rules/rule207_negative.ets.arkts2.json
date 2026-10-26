@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -288,6 +288,176 @@
             "line": 72,
             "column": 17,
             "endLine": 72,
+            "endColumn": 26,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 18,
+            "endLine": 89,
+            "endColumn": 2,
+            "problem": "FunctionExpression",
+            "suggest": "",
+            "rule": "Use arrow functions instead of function expressions (arkts-no-func-expressions)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 25,
+            "endLine": 88,
+            "endColumn": 31,
+            "problem": "BuiltinDisableApi",
+            "suggest": "",
+            "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 15,
+            "endLine": 88,
+            "endColumn": 24,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 15,
+            "endLine": 93,
+            "endColumn": 24,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 11,
+            "endLine": 97,
+            "endColumn": 16,
+            "problem": "LimitedReturnTypeInference",
+            "suggest": "",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 1,
+            "endLine": 99,
+            "endColumn": 2,
+            "problem": "GeneratorFunction",
+            "suggest": "",
+            "rule": "Generator functions are not supported (arkts-no-generators)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 15,
+            "endLine": 98,
+            "endColumn": 27,
+            "problem": "PropertyAccessByIndex",
+            "suggest": "",
+            "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 15,
+            "endLine": 98,
+            "endColumn": 24,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 103,
+            "column": 3,
+            "endLine": 103,
+            "endColumn": 11,
+            "problem": "LocalFunction",
+            "suggest": "",
+            "rule": "Nested functions are not supported (arkts-no-nested-funcs)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 104,
+            "column": 17,
+            "endLine": 104,
+            "endColumn": 26,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 110,
+            "column": 10,
+            "endLine": 110,
+            "endColumn": 19,
+            "problem": "LimitedReturnTypeInference",
+            "suggest": "",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 111,
+            "column": 9,
+            "endLine": 111,
+            "endColumn": 38,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 111,
+            "column": 15,
+            "endLine": 111,
+            "endColumn": 27,
+            "problem": "PropertyAccessByIndex",
+            "suggest": "",
+            "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 111,
+            "column": 15,
+            "endLine": 111,
+            "endColumn": 24,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 118,
+            "column": 17,
+            "endLine": 118,
+            "endColumn": 26,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 126,
+            "column": 17,
+            "endLine": 126,
+            "endColumn": 26,
+            "problem": "ArgumentsObject",
+            "suggest": "",
+            "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 135,
+            "column": 17,
+            "endLine": 135,
             "endColumn": 26,
             "problem": "ArgumentsObject",
             "suggest": "",

@@ -17,11 +17,11 @@
 
 import { calledByEts2 } from './SdkArgWithInt';
 
-export let export2IndexInt = 2;         // 告警1，定义为number，export变量无法确认使用范围，arkts-numeric-semantic
+export let export2IndexInt = 2;         // warning1, defined as number, export variable scope unknown, arkts-numeric-semantic
 export let export2IndexNumber = 2.2;
 
-export function export2FunctionInt(d: number): number { // 告警2，d定义为int，sdk-api-num2int
-    const a = 2;                        // 告警3，定义为int，arkts-numeric-semantic
+export function export2FunctionInt(d: number): number { // warning2, d defined as int, sdk-api-num2int
+    const a = 2;                        // warning3, defined as int, arkts-numeric-semantic
     if (a > 0) {
         return d;
     } else {
@@ -30,7 +30,7 @@ export function export2FunctionInt(d: number): number { // 告警2，d定义为i
 }
 
 export function export2FunctionNumber(): number {
-    let d = 1;                          // 告警4，定义为int，sdk-api-num2int
+    let d = 1;                          // warning4, defined as int, sdk-api-num2int
     if (d > 0) {
         return d;
     } else {
@@ -39,6 +39,6 @@ export function export2FunctionNumber(): number {
 }
 
 function foo(): void {
-    let a = 1;                          // 告警5，定义为int，sdk-api-num2int
+    let a = 1;                          // warning5, defined as int, sdk-api-num2int
     calledByEts2(a);
 }
