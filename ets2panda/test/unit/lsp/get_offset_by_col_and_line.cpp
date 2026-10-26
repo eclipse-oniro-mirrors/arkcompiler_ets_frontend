@@ -106,4 +106,18 @@ TEST_F(LSPOffsetTests, getOffsetByColAndLineForCRLF)
     ASSERT_EQ(res, expectedOffset);
 }
 
+TEST_F(LSPOffsetTests, getOffsetAndLocationForEmoji)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const std::string source = "😀x\nα😀z";
+    const size_t line = 2;
+    const size_t column = 3;
+    const size_t expectedOffset = 5;
+
+    ASSERT_EQ(lspApi->getOffsetByColAndLine(source, line, column), expectedOffset);
+    auto location = lspApi->getColAndLineByOffset(source, expectedOffset);
+    ASSERT_EQ(location.first, line);
+    ASSERT_EQ(location.second, column);
+}
+
 }  // namespace
