@@ -53,6 +53,10 @@ es2panda_frontend_unittest("compilerImpl_test") {
   sources = [ "compiler/compilerImpl_test.cpp" ]
 }
 
+es2panda_frontend_unittest("holeCheckVarId_test") {
+  sources = [ "compiler/holeCheckVarId_test.cpp" ]
+}
+
 es2panda_frontend_unittest("findAccessorPartner_test") {
   sources = [ "util/findAccessorPartner_test.cpp" ]
 }

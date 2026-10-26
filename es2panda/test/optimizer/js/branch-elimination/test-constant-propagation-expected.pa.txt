@@ -11,7 +11,6 @@ label_5:
 	stlexvar 0x0, 0x0
 	ldlexvar 0x0, 0x0
 	sta v1
-	throw.undefinedifholewithname lexVar
 	lda v0
 	greater 0x9, v1
 	jeqz label_7
@@ -37,7 +36,6 @@ label_9:
 	stmodulevar 0x0
 	ldlocalmodulevar 0x0
 	sta v1
-	throw.undefinedifholewithname moduleVar
 	lda v0
 	greater 0x10, v1
 	jeqz label_10

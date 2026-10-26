@@ -73,12 +73,9 @@ label_0:
 label_2: 
 	callruntime.ldsendablevar 0x0, 0x1
 	sta v0
-	throw.undefinedifholewithname A
 label_3: 
 	lda v0
 	callruntime.stsendablevar 0x0, 0x0
-	callruntime.ldsendablevar 0x0, 0x1
-	throw.undefinedifholewithname A
 	lda v0
 	callruntime.stsendablevar 0x0, 0x1
 	returnundefined

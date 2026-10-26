@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,6 +65,14 @@ public:
     {
         auto *ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins);
+    }
+
+    template <typename T, typename... Args>
+    T *EmitAndGet(const ir::AstNode *node, Args &&... args)
+    {
+        auto *ins = Alloc<T>(node, std::forward<Args>(args)...);
+        Run(ins);
+        return ins;
     }
 
     template <typename T, typename... Args>
