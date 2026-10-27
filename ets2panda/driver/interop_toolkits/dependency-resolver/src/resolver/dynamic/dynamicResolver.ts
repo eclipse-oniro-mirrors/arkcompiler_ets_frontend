@@ -296,6 +296,15 @@ export class DynamicResolver extends PartialResolver {
 }
 
 /**
+ * ohos-typescript@4.9.5-r9 exports `isExpression` at runtime but omits it from
+ * the public type declarations. Delegate to the TS runtime's own expression
+ * classification so custom SyntaxKinds (e.g. `EtsComponentExpression`) stay in
+ * sync with the shipped compiler instead of a hard-coded local copy.
+ */
+const isExpressionNode = (node: ts.Node): node is ts.Expression =>
+  (ts as unknown as { isExpression: (node: ts.Node) => boolean }).isExpression(node);
+
+/**
  * Collect the module specifiers referenced by a source file: static imports,
  * re-exports, `import =` external references and dynamic `import()` calls.
  */
@@ -317,6 +326,20 @@ function collectModuleSpecifiers(sourceFile: ts.SourceFile): string[] {
       addLiteral(node.moduleReference.expression);
     } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
       addLiteral(node.arguments[0]);
+    }
+    // Prevents stack overflow caused by overly long expressions that produce
+    // deeply nested expression trees during recursive traversal (e.g.
+    // testString = '1' + '2' + ... + '2555' generates a left-leaning
+    // BinaryExpression chain of depth 2555).
+    //
+    // Known limitation: this early return also causes incomplete specifier
+    // collection when an import reference is nested inside an expression.
+    // For example:
+    //   const points: string = a + b + c as import('./pages/DetailPage');
+    // The import('./pages/DetailPage') is embedded in the expression and will
+    // not be collected because traversal stops here.
+    if (isExpressionNode(node)) {
+      return;
     }
     ts.forEachChild(node, visit);
   };

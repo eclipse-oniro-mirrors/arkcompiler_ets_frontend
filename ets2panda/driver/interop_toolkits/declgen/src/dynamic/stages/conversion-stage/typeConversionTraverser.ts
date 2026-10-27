@@ -317,7 +317,7 @@ export class TypeConversionTraverser extends VisitorTraverser<PrevState, LocalSt
    */
   private [FaultID.NoInvalidSDKType](node: ts.Node): ts.VisitResult<ts.Node> {
     if (ts.isTypeReferenceNode(node)) {
-      if (isQualifiedNameFromInvalidSDK(node, this.typeChecker)) {
+      if (isQualifiedNameFromInvalidSDK(node, this.typeChecker, this.state.localState.importBindings)) {
         return typeUtils.createJSValueTypeNode(this.context);
       }
       const type = this.typeChecker.getTypeAtLocation(node);
@@ -2094,14 +2094,14 @@ function filterExportAssignmentFromInvalidSDK(
 
 function isQualifiedNameFromInvalidSDK(
   node: ts.TypeReferenceNode,
-  checker: ts.TypeChecker
+  checker: ts.TypeChecker,
+  importBindings: Map<string, ts.Symbol>
 ): boolean {
   const typeName = node.typeName;
   if (!ts.isQualifiedName(typeName)) {
     return false;
   }
   const sourceFile = ts.getOriginalNode(node).getSourceFile();
-  const importBindings = collectImportBindings(sourceFile, checker);
   const leftMostIdent = getLeftMostIdentifier(typeName);
   if (!leftMostIdent) {
     return false;
@@ -2122,48 +2122,6 @@ function getLeftMostIdentifier(entityName: ts.EntityName): ts.Identifier | undef
     current = current.left;
   }
   return ts.isIdentifier(current) ? current : undefined;
-}
-
-function collectImportBindings(sourceFile: ts.SourceFile, checker: ts.TypeChecker): Map<string, ts.Symbol> {
-  const bindings = new Map<string, ts.Symbol>();
-  for (const stmt of sourceFile.statements) {
-    if (!ts.isImportDeclaration(stmt)) {
-      continue;
-    }
-    const clause = stmt.importClause;
-    if (!clause) {
-      continue;
-    }
-    collectClauseBindings(clause, checker, bindings);
-  }
-  return bindings;
-}
-
-function collectClauseBindings(
-  clause: ts.ImportClause,
-  checker: ts.TypeChecker,
-  bindings: Map<string, ts.Symbol>,
-): void {
-  if (clause.name) {
-    addImportBinding(clause.name, checker, bindings);
-  }
-  if (!clause.namedBindings) {
-    return;
-  }
-  if (ts.isNamedImports(clause.namedBindings)) {
-    for (const el of clause.namedBindings.elements) {
-      addImportBinding(el.name, checker, bindings);
-    }
-  } else if (ts.isNamespaceImport(clause.namedBindings)) {
-    addImportBinding(clause.namedBindings.name, checker, bindings);
-  }
-}
-
-function addImportBinding(name: ts.Identifier, checker: ts.TypeChecker, bindings: Map<string, ts.Symbol>): void {
-  const sym = checker.getSymbolAtLocation(name);
-  if (sym) {
-    bindings.set(name.text, sym);
-  }
 }
 
 function isSymbolFromInvalidSDK(symbol: ts.Symbol, currentFile: ts.SourceFile): boolean {

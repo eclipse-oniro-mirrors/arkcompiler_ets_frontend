@@ -20,6 +20,7 @@ export type ConversionLocalState = {
   existingTypeNames: Set<string>;
   pendingDefaultImports: Map<string, string>;
   defaultAccessMap: Map<string, string>;
+  importBindings: Map<string, ts.Symbol>;
 };
 
 type PrevState = undefined;
@@ -40,9 +41,19 @@ export class PreScan extends VisitorTraverser<PrevState, LocalState> {
     }
   }
 
+  private addImportBinding(name: ts.Identifier): void {
+    this.addName(name.text);
+    const sym = this.typeChecker.getSymbolAtLocation(name);
+    if (sym) {
+      this.state.localState.importBindings.set(name.text, sym);
+    }
+  }
+
   private collectImportNames(clause: ts.ImportClause): void {
     // default import: import Foo from '...'
-    this.addName(clause.name?.text);
+    if (clause.name) {
+      this.addImportBinding(clause.name);
+    }
 
     const bindings = clause.namedBindings;
     if (!bindings) {
@@ -50,13 +61,13 @@ export class PreScan extends VisitorTraverser<PrevState, LocalState> {
     }
     // namespace import: import * as ns from '...'
     if (ts.isNamespaceImport(bindings)) {
-      this.addName(bindings.name.text);
+      this.addImportBinding(bindings.name);
       return;
     }
     // named imports: import { A, B as C } from '...'
     if (ts.isNamedImports(bindings)) {
       for (const spec of bindings.elements) {
-        this.addName(spec.name.text);
+        this.addImportBinding(spec.name);
       }
     }
   }
