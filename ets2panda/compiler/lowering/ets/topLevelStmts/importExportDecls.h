@@ -46,7 +46,7 @@ public:
     void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements);
     void VerifyTypeExports(parser::Program *programs);
     void VerifyType(ir::Statement *stmt, std::set<util::StringView> &exportedStatements,
-                    std::map<util::StringView, ir::AstNode *> &typesMap);
+                    std::map<util::StringView, ir::AstNode *> &typesMap, parser::Program *prog);
     void HandleSimpleType(std::set<util::StringView> &exportedStatements, ir::Statement *stmt, util::StringView name);
 
     void VerifySingleExportDefault(parser::Program *programs);
