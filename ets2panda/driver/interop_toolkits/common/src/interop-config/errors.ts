@@ -14,14 +14,29 @@
  */
 
 import { ErrorMessage, UserError } from '../errors';
+import { LogData } from '../hvigorLogger';
 
 /** Returns an Error message while preserving a caller-specific fallback for non-Error throws. */
 export function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
 }
 
+export const INTEROP_CONFIG_ERROR_CODE = '11420002';
+
+/**
+ * Adapts an error message for hvigor's logger: its `moreInfo` contract is the localized
+ * `{ cn, en }` shape, so structured entries are replaced with empty localized slots.
+ */
+export function toHvigorErrorMessage(errorMessage: ErrorMessage): ErrorMessage {
+  return { ...errorMessage, moreInfo: { cn: '', en: '' } };
+}
+
 export class InteropConfigError extends UserError {
   public constructor(errorMessage: ErrorMessage) {
     super(errorMessage);
+  }
+
+  public override logData(code: string): LogData {
+    return new LogData({ ...toHvigorErrorMessage(this.errorMessage), code });
   }
 }

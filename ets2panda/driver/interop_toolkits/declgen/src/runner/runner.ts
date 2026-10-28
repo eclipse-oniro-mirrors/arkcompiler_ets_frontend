@@ -83,7 +83,7 @@ export function reportDeclgenError(error: unknown): void {
 /** Error codes are subsystem-scoped: this tool maps each user error type to its declgen code. */
 function userErrorCode(error: common.errors.UserError): string | undefined {
   if (error instanceof common.interopConfig.InteropConfigError) {
-    return errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG;
+    return common.interopConfig.INTEROP_CONFIG_ERROR_CODE;
   }
   if (error instanceof errors.SentinelNotConfiguredError) {
     return errors.ErrorCode.DECLGEN_INVALID_INTEROP_CONFIG;

@@ -60,7 +60,10 @@ function toGlueGenError(error: unknown): GlueGenError | GlueGenErrorList {
   }
   if (error instanceof common.errors.UserError) {
     return new GlueGenDiagnosticError(
-      new LogData({ ...error.errorMessage, code: GlueGenErrorCode.INVALID_INTEROP_CONFIG }),
+      new LogData({
+        ...common.interopConfig.toHvigorErrorMessage(error.errorMessage),
+        code: common.interopConfig.INTEROP_CONFIG_ERROR_CODE,
+      }),
     );
   }
   return new GlueGenInternalError(

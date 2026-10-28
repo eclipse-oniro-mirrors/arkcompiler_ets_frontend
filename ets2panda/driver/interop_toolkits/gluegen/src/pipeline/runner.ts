@@ -57,16 +57,16 @@ export class GlueGenRunner {
     } catch (error) {
       if (error instanceof GlueGenErrorList) {
         error.errors.forEach((item) => this.context.logger.printError(item.logData));
-      }
-      if (error instanceof GlueGenError) {
+      } else if (error instanceof GlueGenError) {
         this.context.logger.printError(error.logData);
+      } else {
+        const data = new LogData({
+          code: GlueGenErrorCode.INTERNAL_FAILURE,
+          description: 'Gluegen stopped because of an unexpected wrapper failure.',
+          cause: errorMessage(error, 'unknown gluegen failure'),
+        });
+        this.context.logger.printError(data);
       }
-      const data = new LogData({
-        code: GlueGenErrorCode.INTERNAL_FAILURE,
-        description: 'Gluegen stopped because of an unexpected wrapper failure.',
-        cause: errorMessage(error, 'unknown gluegen failure'),
-      });
-      this.context.logger.printError(data);
       throw new Error('GlueGen Error');
     }
   }

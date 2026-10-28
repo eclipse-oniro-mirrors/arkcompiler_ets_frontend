@@ -291,15 +291,12 @@ describe('interop preparation', () => {
       const diagnostic = (error as GlueGenDiagnosticError).logData;
       expect(diagnostic).toMatchObject({
         code: '11420002',
-        description: 'Package "entry" does not have a dependency named "stalib".',
+        description: 'Invalid interop configuration.',
         cause: 'No package named "stalib" exists in the dependent module list.',
         position: interopConfigPath,
         solutions: ['Add "stalib" to the oh-package.json5, or remove the interop reference.'],
-        moreInfo: {
-          packageName: 'entry',
-          dependencyName: 'stalib',
-        },
       });
+      expect(diagnostic.moreInfo).toEqual({ cn: '', en: '' });
       expect(logger.printError).not.toHaveBeenCalled();
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
@@ -327,9 +324,10 @@ describe('interop preparation', () => {
       const diagnostic = (error as GlueGenDiagnosticError).logData;
       expect(diagnostic).toMatchObject({
         code: '11420002',
-        description: 'A dynamic interop file declared by package "entry" cannot be accessed.',
+        description: 'Invalid interop configuration.',
+        cause: expect.any(String),
         position: interopConfigPath,
-        moreInfo: { packageName: 'entry' },
+        moreInfo: { cn: expect.any(String), en: expect.any(String) },
       });
     } finally {
       await fs.rm(projectRoot, { recursive: true, force: true });
@@ -360,11 +358,11 @@ describe('interop preparation', () => {
       expect(error).toBeInstanceOf(GlueGenErrorList);
       const errors = (error as GlueGenErrorList).errors;
       expect(errors).toHaveLength(2);
-      const descriptions = errors.map((item) => item.logData.description);
-      expect(descriptions).toContain('A static interop file declared by package "entry" cannot be accessed.');
-      expect(descriptions).toContain('A dynamic interop file declared by package "entry" cannot be accessed.');
+      const causes = errors.map((item) => item.logData.cause);
+      expect(causes).toEqual(['unknown interop configuration failure', 'unknown interop configuration failure']);
       for (const item of errors) {
         expect(item).toBeInstanceOf(GlueGenDiagnosticError);
+        expect(item.logData.description).toBe('Invalid interop configuration.');
         expect(item.logData.code).toBe('11420002');
       }
     } finally {

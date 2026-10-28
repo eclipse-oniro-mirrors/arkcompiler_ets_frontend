@@ -122,7 +122,8 @@ describe('resolve interop configuration', () => {
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'unsupported extension',
+      description: 'Invalid interop configuration',
+      cause: 'Static interop files must use a lowercase .ets or .d.ets extension.',
       position: configPath,
     });
   });
@@ -132,7 +133,8 @@ describe('resolve interop configuration', () => {
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'cannot be accessed',
+      description: 'Invalid interop configuration',
+      cause: 'unknown interop configuration failure',
       position: configPath,
     });
   });
@@ -143,7 +145,8 @@ describe('resolve interop configuration', () => {
     fs.mkdirSync(path.join(mainModule.modulePath, 'src', 'directory.ets'), { recursive: true });
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'is not a regular file',
+      description: 'Invalid interop configuration',
+      cause: 'A static interop path declared by package "main-package" is not a regular file',
       position: configPath,
     });
   });
@@ -154,17 +157,19 @@ describe('resolve interop configuration', () => {
     fs.writeFileSync(path.join(projectRootPath, 'outside.ets'), '', 'utf8');
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'outside its module root',
+      description: 'Invalid interop configuration',
+      cause: 'Module root: ',
       position: configPath,
     });
   });
 
   it('reports the interop config path when a dynamic file has an unsupported extension', async () => {
-    const configPath = writeConfig('main-package', `{ interopEntries: { dynamic: ['src/main.js'] } }`);
+    const configPath = writeConfig('main-package', `{ interopEntries: { dynamic: ['src/main.txt'] } }`);
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'unsupported extension',
+      description: 'Invalid interop configuration',
+      cause: 'Dynamic interop files must use a lowercase .ts, .d.ts, .ets, .d.ets, or .js extension.',
       position: configPath,
     });
   });
@@ -174,7 +179,8 @@ describe('resolve interop configuration', () => {
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'cannot be accessed',
+      description: 'Invalid interop configuration',
+      cause: 'unknown interop configuration failure',
       position: configPath,
     });
   });
@@ -190,7 +196,8 @@ describe('resolve interop configuration', () => {
     createFile(targetModule, 'src/ok.ets');
 
     await expectConfigError(createModuleTable(mainModule, targetModule), {
-      description: 'cannot be accessed',
+      description: 'Invalid interop configuration',
+      cause: 'unknown interop configuration failure',
       position: mainConfigPath,
     });
   });
@@ -292,6 +299,15 @@ describe('resolve interop configuration', () => {
     );
   });
 
+  it('adapts moreInfo to hvigor localized shape when converting to log data', () => {
+    const error = new InteropConfigError({
+      description: 'Invalid interop configuration.',
+      cause: 'The "interopEntries" field must be an object.',
+      moreInfo: { packageName: 'pkg' },
+    });
+    expect(error.logData('11420002').moreInfo).toEqual({ cn: '', en: '' });
+  });
+
   it('accepts a static entry whose source code carries the static directive via the default host', async () => {
     const configPath = writeConfig('main-package', `{ interopEntries: { static: ['src/main.ets'] } }`);
     const mainModule = createMainModule('main-package', [], configPath);
@@ -364,7 +380,7 @@ describe('resolve interop configuration', () => {
     const errors = (aggregate as AggregateUserError).errors;
     expect(errors).toHaveLength(2);
     expect(errors[0]).toBeInstanceOf(InteropConfigError);
-    expect((errors[0] as InteropConfigError).errorMessage.description).toContain('cannot be accessed');
+    expect((errors[0] as InteropConfigError).errorMessage.cause).toBe('unknown interop configuration failure');
     expect((errors[1] as InteropConfigError).errorMessage.cause).toBe(
       'src/conflict.ets is a dynamic source file, but is configured as a static interop entry.',
     );
@@ -391,7 +407,8 @@ describe('resolve interop configuration', () => {
     const causes = errors.map((error) => (error as InteropConfigError).errorMessage.cause);
     expect(causes).toContain('src/own.ets is a dynamic source file, but is configured as a static interop entry.');
     expect(causes).toContain(
-      'src/dep.ets in dependency package-target is a dynamic source file, but is configured as a static interop entry.',
+      'src/dep.ets in dependency package-target is a dynamic source file, ' +
+        'but is configured as a static interop entry.',
     );
   });
 
@@ -400,7 +417,8 @@ describe('resolve interop configuration', () => {
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'could not be read',
+      description: 'Invalid interop configuration',
+      cause: 'Package "main-package" configuration read error',
       position: configPath,
     });
   });
@@ -410,7 +428,8 @@ describe('resolve interop configuration', () => {
     const mainModule = createMainModule('main-package', [], configPath);
 
     await expectConfigError(createModuleTable(mainModule), {
-      description: 'could not be parsed',
+      description: 'Invalid interop configuration',
+      cause: 'Package "main-package" configuration parse error',
       position: configPath,
     });
   });
@@ -421,7 +440,7 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The interop configuration must be a JSON5 object.',
+      cause: 'Package "main-package" configuration format error: The interop configuration must be a JSON5 object.',
       position: configPath,
     });
   });
@@ -432,7 +451,7 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries" field must be an object.',
+      cause: 'Package "main-package" configuration format error: The "interopEntries" field must be an object.',
       position: configPath,
     });
   });
@@ -443,7 +462,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.static" field must be an array of strings.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.static" field must be an array of strings.',
       position: configPath,
     });
   });
@@ -454,7 +474,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.static" field must be an array of strings.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.static" field must be an array of strings.',
       position: configPath,
     });
   });
@@ -465,7 +486,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dynamic" field must be an array of strings.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dynamic" field must be an array of strings.',
       position: configPath,
     });
   });
@@ -476,7 +498,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dependency" field must be an object.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dependency" field must be an object.',
       position: configPath,
     });
   });
@@ -487,7 +510,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dependency.package" field must be an array of strings.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dependency.package" field must be an array of strings.',
       position: configPath,
     });
   });
@@ -498,7 +522,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dependency.source" field must be an object.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dependency.source" field must be an object.',
       position: configPath,
     });
   });
@@ -509,7 +534,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dependency.source.libFoo" field must be an object.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dependency.source.libFoo" field must be an object.',
       position: configPath,
     });
   });
@@ -523,7 +549,8 @@ describe('resolve interop configuration', () => {
 
     await expectConfigError(createModuleTable(mainModule), {
       description: 'Invalid interop configuration',
-      cause: 'The "interopEntries.dependency.source.libFoo.static" field must be an array of strings.',
+      cause:
+        'Package "main-package" configuration format error: The "interopEntries.dependency.source.libFoo.static" field must be an array of strings.',
       position: configPath,
     });
   });

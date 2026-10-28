@@ -220,8 +220,11 @@ async function readInteropConfig(packageName: string, configPath: string): Promi
     content = await fs.readFile(configPath, 'utf8');
   } catch (error) {
     throw new InteropConfigError({
-      description: `The interop configuration for package "${packageName}" could not be read.`,
-      cause: errorMessage(error, 'unknown interop configuration failure'),
+      description: 'Invalid interop configuration.',
+      cause: `Package "${packageName}" configuration read error: ${errorMessage(
+        error,
+        'unknown interop configuration failure',
+      )}`,
       position: configPath,
       solutions: ['Check that the file exists and is readable.'],
       moreInfo: { packageName },
@@ -368,8 +371,7 @@ async function validateEntryLanguage(
   const declaredIn =
     context.dependencyPackageName === undefined ? '' : ` in dependency ${context.dependencyPackageName}`;
   return entryError(module, context, {
-    description: 'Invalid interop configuration.',
-    cause:
+    description:
       `${configuredValue}${declaredIn} is a ${languageName(actualLanguage)} source file, ` +
       `but is configured as a ${languageName(kind.language)} interop entry.`,
     solutions: [`Move the entry to the "${languageName(actualLanguage)}" interop entries.`],
@@ -387,6 +389,8 @@ function entryError(
 ): InteropConfigError {
   return new InteropConfigError({
     ...init,
+    description: 'Invalid interop configuration.',
+    cause: init.cause ?? init.description,
     position: context.configPath,
     moreInfo: { packageName: module.packageName, ...init.moreInfo },
   });
