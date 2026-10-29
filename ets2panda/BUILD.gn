@@ -48,8 +48,16 @@ config("libes2panda_public_config") {
 
 action("check_build_system_consistency") {
   script = "./scripts/check_build_system_consistency.py"
-  args = [ rebase_path(".", root_build_dir) ]
+  inputs = [
+    "BUILD.gn",
+    "CMakeLists.txt",
+    "public/CMakeLists.txt",
+  ]
   outputs = [ "$target_gen_dir/consistency_check.stamp" ]
+  args = [
+    rebase_path(".", root_build_dir),
+    rebase_path(outputs[0], root_build_dir),
+  ]
 }
 
 libes2panda_sources = [
