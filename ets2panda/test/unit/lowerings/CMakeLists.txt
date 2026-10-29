@@ -33,6 +33,10 @@ if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
         CPP_SOURCES top_level_statements.cpp
     )
 
+    panda_target_compile_definitions(top_level_statements_test PRIVATE
+        DECL_MOD_EXPORT_TEST_DATA_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/test_data/decl_mod_export\"
+    )
+
     ets2panda_add_gtest(enum_decl_module_inlining_test
         CPP_SOURCES enum_decl_module_inlining.cpp
     )

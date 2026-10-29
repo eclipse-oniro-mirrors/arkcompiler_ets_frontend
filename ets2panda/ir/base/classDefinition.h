@@ -595,6 +595,7 @@ private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
 
     friend class SizeOfNodeTest;
+    friend class ClassDefinitionLanguageTest;
     EPtr<varbinder::LocalScope> scope_ {nullptr};
     util::StringView internalName_ {};
     EPtr<Identifier> ident_ {};

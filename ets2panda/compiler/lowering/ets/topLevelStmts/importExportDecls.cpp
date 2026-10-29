@@ -465,16 +465,17 @@ void ImportExportDecls::VerifyTypeExports(parser::Program *program)
 
     program->MaybeIteratePackage([this, &exportedStatements, &typesMap](parser::Program *prog) {
         for (auto stmt : prog->Ast()->Statements()) {
-            VerifyType(stmt, exportedStatements, typesMap);
+            VerifyType(stmt, exportedStatements, typesMap, prog);
         }
     });
 }
 
 void ImportExportDecls::VerifyType(ir::Statement *stmt, std::set<util::StringView> &exportedStatements,
-                                   std::map<util::StringView, ir::AstNode *> &typesMap)
+                                   std::map<util::StringView, ir::AstNode *> &typesMap, parser::Program *prog)
 {
+    bool notDeclareStmtInDeclareModule = prog != nullptr && prog->IsDeclarationModule() && !stmt->IsDeclare();
     if (stmt->IsClassDeclaration()) {
-        if (!stmt->IsDeclare() && stmt->AsClassDeclaration()->Definition()->Language().IsDynamic()) {
+        if (notDeclareStmtInDeclareModule && stmt->AsClassDeclaration()->Definition()->Language().IsDynamic()) {
             parser_->LogError(diagnostic::EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE, {}, stmt->Start());
         }
         typesMap.insert({stmt->AsClassDeclaration()->Definition()->Ident()->Name(), stmt});
@@ -482,7 +483,7 @@ void ImportExportDecls::VerifyType(ir::Statement *stmt, std::set<util::StringVie
     }
 
     if (stmt->IsTSInterfaceDeclaration()) {
-        if (!stmt->IsDeclare() && stmt->AsTSInterfaceDeclaration()->Language().IsDynamic()) {
+        if (notDeclareStmtInDeclareModule && stmt->AsTSInterfaceDeclaration()->Language().IsDynamic()) {
             parser_->LogError(diagnostic::EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE, {}, stmt->Start());
         }
         typesMap.insert({stmt->AsTSInterfaceDeclaration()->Id()->Name(), stmt});

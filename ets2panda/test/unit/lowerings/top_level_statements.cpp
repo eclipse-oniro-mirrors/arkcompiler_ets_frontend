@@ -12,11 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string>
 
 #include "lowering_test.h"
 #include "compiler/lowering/ets/topLevelStmts/topLevelStmts.h"
-
+#include "ir/base/classDefinition.h"
+#include "ir/statements/classDeclaration.h"
+#include "ir/ets/etsModule.h"
+#include "util/language.h"
 namespace ark::es2panda {
+
+namespace ir {
+
+// Test-only accessor befriended by ClassDefinition, follows the SizeOfNodeTest pattern
+class ClassDefinitionLanguageTest {
+public:
+    static void SetLanguage(ClassDefinition *classDefinition, Language lang)
+    {
+        classDefinition->lang_ = lang;
+    }
+};
+
+}  // namespace ir
 
 TEST_F(LoweringTest, TestTopLevelStmtsSyntheticModuleGlobalClass)
 {
@@ -176,6 +193,39 @@ TEST_F(LoweringTest, TestTrailingLambdaSourceRange)
         ASSERT(callExpr != nullptr);
         ASSERT_EQ(callExpr->Start().line, EXPECTED_STARTLINE);
         ASSERT_EQ(callExpr->End().line, EXPECTED_ENDLINE);
+    }
+}
+
+TEST_F(LoweringTest, TestExportedClassInDeclarationModuleDoseNotError)
+{
+    const auto mainPath = std::string(DECL_MOD_EXPORT_TEST_DATA_DIR) + "/main.ets";
+    CONTEXT_FROM_FILE(ES2PANDA_STATE_LOWERED, mainPath.c_str())
+    {
+        const auto *const ast = GetAst();
+        ASSERT_NE(ast, nullptr);
+    }
+}
+
+TEST_F(LoweringTest, TestDynamicClassInNonDeclarationModuleDoseNotError)
+{
+    char const *text = R"(
+        export class A {}
+    )";
+
+    CONTEXT(ES2PANDA_STATE_PARSED, text)
+    {
+        const auto *const ast = GetAst();
+        ASSERT_NE(ast, nullptr);
+
+        auto *classDef = ast->FindChild([](ir::AstNode *child) {
+            return child->IsClassDefinition() && child->AsClassDefinition()->Ident()->Name() == "A";
+        });
+        ASSERT_NE(classDef, nullptr);
+        ir::ClassDefinitionLanguageTest::SetLanguage(classDef->AsClassDefinition(), Language(Language::Id::JS));
+
+        GetImpl()->ProceedToState(GetContext(), ES2PANDA_STATE_LOWERED);
+        EXPECT_EQ(GetImpl()->ContextState(GetContext()), ES2PANDA_STATE_LOWERED)
+            << "EXPORT_WITHOUT_DECLARE_IN_DECL_MODULE falsely fired " << GetImpl()->ContextErrorMessage(GetContext());
     }
 }
 
