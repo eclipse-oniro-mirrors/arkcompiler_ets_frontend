@@ -294,6 +294,7 @@ private:
     bool IsSelfReference(const ir::ETSTypeReference *typeReference);
     bool ShouldConvertSelfReference(const ir::ETSTypeReference *typeReference, const std::string &partName);
     bool IsReadonlyArrayType(const std::string &partName, const ir::ETSTypeReference *typeReference);
+    void GenTypeArguments(const ir::ETSTypeReference *typeReference);
     void GenTypeReferenceWithParams(const std::string &partName, const ir::ETSTypeReference *typeReference);
 
     void ProcessInterfaceBody(const ir::TSInterfaceBody *body);
@@ -445,6 +446,7 @@ private:
     const std::unordered_set<std::string_view> stdlibNamespaceList_ = {
         "StdProcess", "taskpool",     "functions", "containers", "Intl",    "GC",         "jsonx",
         "proxy",      "unsafeMemory", "reflect",   "StdDebug",   "arktest", "concurrency"};
+    const std::unordered_set<std::string_view> stdlibGlobalTypeList_ = {"std.core.EAWorker"};
     // ArkTS supported utility types
     const std::unordered_set<std::string_view> utilityTypes_ = {"Record",   "Partial", "Readonly",
                                                                 "Required", "Awaited", "ReturnType"};

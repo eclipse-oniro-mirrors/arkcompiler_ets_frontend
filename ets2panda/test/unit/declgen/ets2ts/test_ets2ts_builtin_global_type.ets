@@ -18,7 +18,11 @@ export declare const wl_const: WorkerLocal<number>;
 export declare const wl_nested: WorkerLocal<WorkerLocal<string>>;
 export declare const ul_const: UserLocal<number>;
 export declare const ns_const: myns.WorkerLocal<number>;
+export declare const ns_eaw_const: myns.EAWorker;
 export declare const cf_const: concurrency.Foo;
+export declare const eaw_const: EAWorker;
+export declare const arr_const: Array<number>;
+export declare const map_const: Map<string, number>;
 
 export function getWorkerLocal(wl: WorkerLocal<number>): WorkerLocal<number> {
     return wl;
@@ -30,6 +34,10 @@ export function getUserLocal(ul: UserLocal<string>): UserLocal<string> {
 
 export function getConcurrentFoo(f: concurrency.Foo): concurrency.Foo {
     return f;
+}
+
+export function getEAWorker(w: EAWorker): EAWorker {
+    return w;
 }
 
 export class WorkerLocalHolder {
@@ -44,6 +52,14 @@ export class WorkerLocalHolder {
     }
 
     public setValue(value: WorkerLocal<number>): void {
+    }
+}
+
+export class EAWorkerHolder {
+    public worker: EAWorker;
+
+    constructor(worker: EAWorker) {
+        this.worker = worker;
     }
 }
 
@@ -76,6 +92,14 @@ export namespace myns {
             this.value = value;
         }
     }
+
+    export class EAWorker {
+        public id: number;
+
+        constructor(id: number) {
+            this.id = id;
+        }
+    }
 }
 
 export namespace concurrency {
@@ -87,3 +111,11 @@ export namespace concurrency {
         }
     }
 }
+
+export const weakMap1:WeakMap<number,string>  = new WeakMap<number, string>();
+
+export let weakMap2:WeakMap<number,string>  = new WeakMap<number, string>();
+
+export const weakSet3:WeakSet<number> = new WeakSet<number>();
+
+export let weakSet4:WeakSet<number> = new WeakSet<number>();

@@ -1976,6 +1976,9 @@ bool TSDeclGen::IsBuiltInGlobalType(const checker::Type *checkerType) const
         return false;
     }
     const auto assembleName = checkerType->AsETSObjectType()->AssemblerName().Mutf8();
+    if (stdlibGlobalTypeList_.count(assembleName) != 0U) {
+        return true;
+    }
     constexpr std::string_view stdPrefix = "std.";
     if (assembleName.size() <= stdPrefix.size() ||
         std::string_view(assembleName.data(), stdPrefix.size()) != stdPrefix) {
@@ -2299,6 +2302,10 @@ bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference
 {
     if (typeReference->Part()->Name()->IsTSQualifiedName() &&
         typeReference->Part()->Name()->AsTSQualifiedName()->Name() != nullptr) {
+        if (ShouldConvertSelfReference(typeReference, typeReference->Part()->GetIdent()->Name().Mutf8())) {
+            OutDts("ESObject");
+            return true;
+        }
         const auto qualifiedName = typeReference->Part()->Name()->AsTSQualifiedName()->Name().Mutf8();
         AddImport(qualifiedName);
         std::istringstream stream(qualifiedName);
@@ -2315,8 +2322,7 @@ bool TSDeclGen::ProcessTSQualifiedName(const ir::ETSTypeReference *typeReference
         auto typeParams = typeReference->Part()->TypeParams();
         if (typeParams != nullptr && typeParams->IsTSTypeParameterInstantiation()) {
             OutDts("<");
-            GenSeparated(typeParams->Params(),
-                         [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
+            GenTypeArguments(typeReference);
             OutDts(">");
         }
         return true;
@@ -2380,10 +2386,24 @@ bool TSDeclGen::IsReadonlyArrayType(const std::string &partName, const ir::ETSTy
     return typeAnnotation != nullptr && typeAnnotation->IsReadonlyType();
 }
 
-void TSDeclGen::GenTypeReferenceWithParams(const std::string &partName, const ir::ETSTypeReference *typeReference)
+static varbinder::Variable *GetTypeReferenceVariable(const ir::ETSTypeReference *typeReference)
 {
-    OutDts(ConvertInteropTypeName(partName));
-    OutDts("<");
+    auto *part = typeReference->Part();
+    auto *name = part->Name();
+    if (name->IsTSQualifiedName()) {
+        auto *nsVariable = name->AsTSQualifiedName()->Left()->Variable();
+        if (nsVariable == nullptr || nsVariable->TsType() == nullptr || !nsVariable->TsType()->IsETSObjectType()) {
+            return nullptr;
+        }
+        return nsVariable->TsType()->AsETSObjectType()->GetProperty(part->GetIdent()->Name(),
+                                                                    checker::PropertySearchFlags::SEARCH_DECL);
+    }
+    auto *ident = part->GetIdent();
+    return ident != nullptr ? ident->Variable() : nullptr;
+}
+
+void TSDeclGen::GenTypeArguments(const ir::ETSTypeReference *typeReference)
+{
     bool savedPassedDeferred = state_.typeAliasCtx.passedDeferredBoundary;
     bool savedInConstruct = state_.typeAliasCtx.inConstruct;
     if (!IsTypeAliasReference(typeReference)) {
@@ -2394,6 +2414,13 @@ void TSDeclGen::GenTypeReferenceWithParams(const std::string &partName, const ir
                  [this](ir::TypeNode *param) { ProcessTypeAnnotationType(param, param->GetType(checker_)); });
     state_.typeAliasCtx.passedDeferredBoundary = savedPassedDeferred;
     state_.typeAliasCtx.inConstruct = savedInConstruct;
+}
+
+void TSDeclGen::GenTypeReferenceWithParams(const std::string &partName, const ir::ETSTypeReference *typeReference)
+{
+    OutDts(ConvertInteropTypeName(partName));
+    OutDts("<");
+    GenTypeArguments(typeReference);
     OutDts(">");
 }
 
@@ -2407,7 +2434,7 @@ bool TSDeclGen::IsTypeAliasReference(const ir::ETSTypeReference *typeReference)
     if (utilityTypes_.count(partName) != 0U) {
         return true;
     }
-    auto *variable = ident->Variable();
+    auto *variable = GetTypeReferenceVariable(typeReference);
     if (variable == nullptr || variable->Declaration() == nullptr || variable->Declaration()->Node() == nullptr) {
         return false;
     }
@@ -2416,11 +2443,7 @@ bool TSDeclGen::IsTypeAliasReference(const ir::ETSTypeReference *typeReference)
 
 bool TSDeclGen::IsSelfReference(const ir::ETSTypeReference *typeReference)
 {
-    auto *ident = typeReference->Part()->GetIdent();
-    if (ident == nullptr) {
-        return false;
-    }
-    auto *variable = ident->Variable();
+    auto *variable = GetTypeReferenceVariable(typeReference);
     if (variable == nullptr || variable->Declaration() == nullptr || variable->Declaration()->Node() == nullptr) {
         return false;
     }
@@ -3243,7 +3266,6 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
         if (!ShouldEmitDeclaration(methodDef)) {
             return true;
         }
-        GenAnnotations(methodDef->Function());
         if (methodDef->IsDefaultExported()) {
             OutDts("declare function ");
         } else {
@@ -3251,11 +3273,14 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
             OutDts("export declare function ");
         }
     } else {
-        if (state_.inNamespace && !state_.isClassInNamespace && !state_.isInterfaceInNamespace &&
-            !ShouldEmitDeclaration(methodDef) && !methodDef->IsConstructor()) {
+        const bool isNamespaceLevelFunction =
+            state_.inNamespace && !state_.isClassInNamespace && !state_.isInterfaceInNamespace;
+        if (isNamespaceLevelFunction && !ShouldEmitDeclaration(methodDef) && !methodDef->IsConstructor()) {
             return true;
         }
-        GenAnnotations(methodDef->Function());
+        if (!isNamespaceLevelFunction) {
+            GenAnnotations(methodDef->Function());
+        }
         ProcessIndent();
         GenModifier(methodDef);
     }
@@ -3343,7 +3368,8 @@ void TSDeclGen::ProcessClassPropertyType(const ir::ClassProperty *classProp)
         value->AsETSNewClassInstanceExpression()->GetTypeRef() != nullptr &&
         value->AsETSNewClassInstanceExpression()->GetTypeRef()->IsETSTypeReference()) {
         auto typeReference = classProp->Value()->AsETSNewClassInstanceExpression()->GetTypeRef()->AsETSTypeReference();
-        ProcessETSTypeReferenceType(typeReference);
+        auto *checkerType = typeReference->GetType(checker_);
+        ProcessETSTypeReferenceType(typeReference, checkerType);
         return;
     }
     if (classProp->TypeAnnotation() != nullptr) {

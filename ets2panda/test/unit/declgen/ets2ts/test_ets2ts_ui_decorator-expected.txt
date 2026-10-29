@@ -1,5 +1,4 @@
 import st from "@ohos.lang.interop";
-@Builder
 export declare function customBuilder(): void;
 @Component
 export declare class UIComponent {
@@ -29,4 +28,14 @@ export declare class UIComponent1 {
     @Prop
     public userName1: string;
     constructor();
+}
+export declare class UIComponent2 {
+    @Builder
+    public itemBuilder(): void;
+    @LocalBuilder
+    public localBuilder(): void;
+    constructor();
+}
+export declare namespace UIUtil {
+    function nsBuilder(): void;
 }

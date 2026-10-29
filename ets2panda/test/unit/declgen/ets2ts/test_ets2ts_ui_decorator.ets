@@ -46,3 +46,19 @@ export declare class UIComponent1 {
 @Builder
 export function customBuilder(): void {
 }
+
+export namespace UIUtil {
+    @Builder
+    export function nsBuilder(): void {
+    }
+}
+
+export class UIComponent2 {
+    @Builder
+    itemBuilder(): void {
+    }
+
+    @LocalBuilder
+    localBuilder(): void {
+    }
+}
