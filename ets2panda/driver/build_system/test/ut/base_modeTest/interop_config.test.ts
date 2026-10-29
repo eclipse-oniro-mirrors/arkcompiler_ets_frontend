@@ -80,6 +80,8 @@ function createOhmUrlMapCtx(): any {
         packageName: 'entry',
         moduleType: 'entry',
         compatibleSdkVersion: 26,
+        minMinorAPIVersion: 0,
+        minPatchAPIVersion: 0,
         enableDeclgenEts2Ts: false
     };
     ctx.interopConfig = { buildOption: { stripInteropMapping: false }, targets: new Map() };
@@ -110,6 +112,13 @@ function expectSingleModuleNameMapWritten(): string {
     const dependencyMap = getWrittenMapContent('entryname_dependency_ohmurl_map.ets');
     expectNoWrittenMap('bundle_dependency_ohmurl_map.ets');
     expectNoWrittenMap('/_dependency_ohmurl_map.ets');
+    return dependencyMap;
+}
+
+function expectSingleUnprefixedMapWritten(): string {
+    const dependencyMap = getWrittenMapContent('/_dependency_ohmurl_map.ets');
+    expectNoWrittenMap('entryname_dependency_ohmurl_map.ets');
+    expectNoWrittenMap('bundle_dependency_ohmurl_map.ets');
     return dependencyMap;
 }
 
@@ -265,7 +274,7 @@ describe('BaseMode interop-config', () => {
         expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
     });
 
-    test('generateDependencyOhmUrlMap generates only the module-name-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
+    test('generateDependencyOhmUrlMap generates only the un-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
         const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
         const arktsConfig = {
             dependencies: {
@@ -278,10 +287,93 @@ describe('BaseMode interop-config', () => {
 
         fn.call(ctx, arktsConfig);
 
+        const dependencyMap = expectSingleUnprefixedMapWritten();
+        expect(dependencyMap).toContain('map_abc.set(');
+        expect(dependencyMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+        expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
+    });
+
+    test('generateDependencyOhmUrlMap generates only the module-name-prefixed map when the main module is hsp with compatibleSdkVersion exceeding the threshold', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'shared';
+        ctx.buildConfig.compatibleSdkVersion = 27;
+
+        fn.call(ctx, arktsConfig);
+
         const dependencyMap = expectSingleModuleNameMapWritten();
         expect(dependencyMap).toContain('map_abc.set(');
         expect(dependencyMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
         expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
+    });
+
+    test.each([[1, 0], [0, 1], [2, 3]])(
+        'generateDependencyOhmUrlMap generates only the un-prefixed map when compatibleSdkVersion is 26 with minor %s and patch %s',
+        (minMinorAPIVersion: number, minPatchAPIVersion: number) => {
+            const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+            const arktsConfig = {
+                dependencies: {
+                    'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                    'dynamic/@ohos.hilog': SDK_HILOG
+                }
+            };
+            const ctx = createOhmUrlMapCtx();
+            ctx.buildConfig.compatibleSdkVersion = 26;
+            ctx.buildConfig.minMinorAPIVersion = minMinorAPIVersion;
+            ctx.buildConfig.minPatchAPIVersion = minPatchAPIVersion;
+
+            fn.call(ctx, arktsConfig);
+
+            const dependencyMap = expectSingleUnprefixedMapWritten();
+            expect(dependencyMap).toContain('map_abc.set(');
+            expect(dependencyMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+            expect(dependencyMap).toContain('map_ohmurl.set("@ohos.hilog", "@ohos:hilog");');
+        });
+
+    test('generateDependencyOhmUrlMap generates the legacy dual maps when the API version is exactly 26.0.0', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.compatibleSdkVersion = 26;
+        ctx.buildConfig.minMinorAPIVersion = 0;
+        ctx.buildConfig.minPatchAPIVersion = 0;
+
+        fn.call(ctx, arktsConfig);
+
+        const { bundleMap } = expectLegacyMapsWritten();
+        expect(bundleMap).toContain('map_abc.set(');
+        expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
+    });
+
+    test('generateDependencyOhmUrlMap generates the legacy dual maps when compatibleSdkVersion is below the threshold regardless of minor/patch', () => {
+        const fn = (BaseMode as any).prototype.generateDependencyOhmUrlMap;
+        const arktsConfig = {
+            dependencies: {
+                'dynamic_har/index': DYNAMIC_HAR_INDEX,
+                'dynamic/@ohos.hilog': SDK_HILOG
+            }
+        };
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.compatibleSdkVersion = 25;
+        ctx.buildConfig.minMinorAPIVersion = 1;
+        ctx.buildConfig.minPatchAPIVersion = 1;
+
+        fn.call(ctx, arktsConfig);
+
+        const { bundleMap } = expectLegacyMapsWritten();
+        expect(bundleMap).toContain('map_abc.set(');
+        expect(bundleMap).toContain('map_ohmurl.set("dynamic_har/index", "dyn&bundle&mod&1.0.0");');
     });
 
     test('generateDependencyOhmUrlMap does not generate the map when the main module is har', () => {
@@ -338,10 +430,73 @@ describe('BaseMode interop-config', () => {
         expect(ctx.entryFiles.size).toBe(1);
     });
 
-    test('registerDependencyOhmUrlMapEntryFiles registers only the module-name-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
+    test('registerDependencyOhmUrlMapEntryFiles registers only the un-prefixed map when compatibleSdkVersion exceeds the threshold', () => {
         const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
         const ctx = createOhmUrlMapCtx();
         ctx.buildConfig.compatibleSdkVersion = 27;
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', '_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(1);
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers only the module-name-prefixed map when the main module is hsp with compatibleSdkVersion exceeding the threshold', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'shared';
+        ctx.buildConfig.compatibleSdkVersion = 27;
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', 'entryname_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(1);
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers only the un-prefixed map when compatibleSdkVersion is 26 with a non-zero minor version', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.compatibleSdkVersion = 26;
+        ctx.buildConfig.minMinorAPIVersion = 1;
+        ctx.buildConfig.minPatchAPIVersion = 0;
+        ctx.entryFiles = new Set<string>();
+        ctx.fileToModule = new Map();
+
+        fn.call(ctx);
+
+        const expectedPaths = [
+            path.join('/mock/cache', '_dependency_ohmurl_map.ets')
+        ];
+        expectedPaths.forEach((expectedPath: string) => {
+            expect(ctx.entryFiles.has(expectedPath)).toBe(true);
+            expect(ctx.fileToModule.get(expectedPath)).toBe(ctx.moduleInfos.get('entry'));
+        });
+        expect(ctx.entryFiles.size).toBe(1);
+    });
+
+    test('registerDependencyOhmUrlMapEntryFiles registers only the module-name-prefixed map when the main module is hsp with compatibleSdkVersion 26 and a non-zero minor version', () => {
+        const fn = (BaseMode as any).prototype.registerDependencyOhmUrlMapEntryFiles;
+        const ctx = createOhmUrlMapCtx();
+        ctx.buildConfig.moduleType = 'shared';
+        ctx.buildConfig.compatibleSdkVersion = 26;
+        ctx.buildConfig.minMinorAPIVersion = 1;
+        ctx.buildConfig.minPatchAPIVersion = 0;
         ctx.entryFiles = new Set<string>();
         ctx.fileToModule = new Map();
 
