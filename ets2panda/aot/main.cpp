@@ -52,7 +52,17 @@ public:
 static int CompileFromSource(es2panda::Compiler &compiler, es2panda::SourceFile &input, const util::Options &options,
                              util::DiagnosticEngine &diagnosticEngine)
 {
-    auto programs = compiler.Compile(input, options, diagnosticEngine);
+    // In SIMULTANEOUS_INCREMENTAL mode the compiler hands every produced program to this
+    // sink, which writes the binary file (the aot executable links util::GenerateBinaryFile).
+    es2panda::ProgramSink programSink = [&options, &diagnosticEngine](pandasm::Program *program,
+                                                                      std::string_view abcPath) {
+        auto reporter = [&diagnosticEngine](const diagnostic::DiagnosticKind &kind,
+                                            const util::DiagnosticMessageParams &params) {
+            diagnosticEngine.LogDiagnostic(kind, params);
+        };
+        return util::GenerateBinaryFile(program, std::string(abcPath), options, reporter) == 0;
+    };
+    auto programs = compiler.Compile(input, options, diagnosticEngine, 0, programSink);
     if (programs.size() == 0) {
         const auto &err = compiler.GetError();
 

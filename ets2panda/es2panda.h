@@ -48,6 +48,8 @@ namespace parser {
 class ParserImpl;
 }  // namespace parser
 
+using ProgramSink = std::function<bool(pandasm::Program *program, std::string_view abcPath)>;
+
 namespace compiler {
 class CompilerImpl;
 }  // namespace compiler
@@ -114,10 +116,9 @@ public:
     NO_COPY_SEMANTIC(Compiler);
     NO_MOVE_SEMANTIC(Compiler);
 
-    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compile(const SourceFile &input,
-                                                                               const util::Options &options,
-                                                                               util::DiagnosticEngine &diagnosticEngine,
-                                                                               uint32_t parseStatus = 0);
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compile(
+        const SourceFile &input, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
+        uint32_t parseStatus = 0, const ProgramSink &programSink = nullptr);
 
     static void DumpAsm(const pandasm::Program *prog);
 

@@ -886,6 +886,42 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
     return ctx;
 }
 
+// Emits pandasm programs for the requested compilation mode: in SIMULTANEOUS_INCREMENTAL
+// mode binaries are written by the emitter through the program sink;
+// in all other modes a single pandasm::Program is collected into ctx->output.
+static void EmitPrograms(Context *ctx)
+{
+    if (ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+        ES2PANDA_ASSERT(ctx->output.empty());
+        // The emitter hands each produced program to this sink; writing the binary
+        // file belongs to the public layer.
+        ctx->programSink = [ctx](pandasm::Program *program, std::string_view abcPath) {
+            auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
+                ctx->diagnosticEngine->LogDiagnostic(kind, params);
+            };
+            return util::GenerateBinaryFile(program, std::string(abcPath), *ctx->config->options, reporter) == 0;
+        };
+        ctx->emitter->AsETSEmitter()->EmitBinariesInSimultIncMode(ctx);
+        ctx->programSink = nullptr;
+        return;
+    }
+
+    auto *emitter = ctx->emitter;
+    auto functions = ctx->parserProgram->VarBinder()->GetAllCompilableFunctionScopes();
+    /* Main thread can also be used instead of idling */
+    ctx->queue->Schedule(ctx, Span<varbinder::FunctionScope *const>(functions.data(), functions.size()));
+    emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
+    ctx->queue->Consume();
+    ctx->queue->Wait([emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
+
+    emitter->EmitRecords();
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
+    auto &imd = ctx->parserProgram->GetImportInfo();
+    res.emplace(ctx->parser->GetImportPathManager()->FormAbcFilePath(imd),
+                std::unique_ptr<pandasm::Program>(emitter->DumpDebugInfo()));
+    ctx->output = std::move(res);
+}
+
 __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 {
     if (ctx->state < ES2PANDA_STATE_LOWERED) {
@@ -919,25 +955,8 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 
     emitter->LiteralBufferIndex() += ctx->contextLiterals.size();
 
-    if (ctx->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
-        ES2PANDA_ASSERT(ctx->output.empty());
-        emitter->AsETSEmitter()->EmitBinariesInSimultIncMode(ctx);
-    } else {
-        auto functions = ctx->parserProgram->VarBinder()->GetAllCompilableFunctionScopes();
-        /* Main thread can also be used instead of idling */
-        ctx->queue->Schedule(ctx, Span<varbinder::FunctionScope *const>(functions.data(), functions.size()));
-        emitter->AsETSEmitter()->SetupDependenciesForTheProgram(ctx->parserProgram);
-        ctx->queue->Consume();
-        ctx->queue->Wait(
-            [emitter](compiler::CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
+    EmitPrograms(ctx);
 
-        emitter->EmitRecords();
-        std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> res;
-        auto &imd = ctx->parserProgram->GetImportInfo();
-        res.emplace(ctx->parser->GetImportPathManager()->FormAbcFilePath(imd),
-                    std::unique_ptr<pandasm::Program>(emitter->DumpDebugInfo()));
-        ctx->output = std::move(res);
-    }
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_ASM_GENERATED : ES2PANDA_STATE_ERROR;
     if (ctx->patchFixHelper) {
         std::string errorMsg;

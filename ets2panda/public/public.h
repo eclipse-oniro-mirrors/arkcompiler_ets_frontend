@@ -114,6 +114,10 @@ struct GlobalContext {
     std::unordered_set<varbinder::ETSBinder *> allocatedVarbinders;
 };
 
+// In SIMULTANEOUS_INCREMENTAL mode the emitter hands every produced program to this
+// sink instead of writing the binary file itself..
+using ProgramSink = std::function<bool(pandasm::Program *program, std::string_view abcPath)>;
+
 struct Context {
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     Context();
@@ -187,6 +191,9 @@ struct Context {
     // NOTE(mshimenkov): In case of using ETSEmitter and building in simultaneous incremental mode
     // This map will contain more than one entry
     std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> output = {};
+
+    // Set by the embedding layer before the ASM_GENERATED stage in SIMULTANEOUS_INCREMENTAL mode.
+    ProgramSink programSink = nullptr;
 
     DepAnalyzer *depAnalyzer = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;

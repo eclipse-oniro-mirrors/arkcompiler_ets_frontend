@@ -152,7 +152,8 @@ private:
 
     // NOTE(mshimenkov): Is used in simultaneous mode after code gen stage to add functions functions from different
     // modules to the corresponding pandasm::Programs
-    // Owned by prgMaps_, freed in ~ETSEmitter()
+    // Owned by prgMaps_; in simultaneous incremental mode each program is freed right after
+    // its binary file is written, the rest is freed in ~ETSEmitter()
     std::unordered_map<std::string_view, pandasm::Program *> prgMaps_;
 
     // NOTE(mshimenkov): Is used in simultaneous mode during code gen stage to collect info which records should be

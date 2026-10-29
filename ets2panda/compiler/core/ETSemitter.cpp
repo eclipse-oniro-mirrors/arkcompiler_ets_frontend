@@ -47,7 +47,6 @@
 #include "checker/types/type.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "public/public.h"
-#include "util/generateBin.h"
 #include "util/importPathManager.h"
 #include "util/nameMangler.h"
 #include "util/patchFix.h"
@@ -462,10 +461,6 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
 
     auto emitter = this;
 
-    auto reporter = [ctx](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
-        ctx->diagnosticEngine->LogDiagnostic(kind, params);
-    };
-
     for (const auto &[path, prog] : programsHolder) {
         if (ctx->parser->GetImportPathManager()->IsReplacedExactSource(prog)) {
             continue;
@@ -495,10 +490,19 @@ void ETSEmitter::EmitBinariesInSimultIncMode(public_lib::Context *ctx)
         }
 
         auto abcPath = Context()->parser->GetImportPathManager()->FormAbcFilePath(prog->GetImportInfo());
-        // Error (if any) is already reported via reporter, so just stop processing remaining files on failure.
-        if (util::GenerateBinaryFile(pandasmProg, abcPath, *ctx->config->options, reporter) != 0) {
+        // The embedding layer owns writing the binary file; it reports errors through
+        // the diagnostic engine and returns 'false' to stop processing the remaining files.
+        if (Context()->programSink && !Context()->programSink(pandasmProg, abcPath)) {
             return;
         }
+
+        // The program has been written to its abc file and nothing refers to it anymore:
+        // free it right away so that the peak RSS stays bounded by the largest single file.
+        auto key = prog->GetImportInfo().Key();
+        ES2PANDA_ASSERT(prgMaps_.find(key) != prgMaps_.end());
+        ES2PANDA_ASSERT(prgMaps_.at(key) == pandasmProg);
+        prgMaps_.erase(key);
+        delete pandasmProg;
     }
 }
 
@@ -1488,7 +1492,8 @@ pandasm::Program *ETSEmitter::GetOrCreatePandasmProgram(const parser::Program *p
         return it->second;
     }
 
-    // Owned by prgMaps_, freed in ~ETSEmitter()
+    // Owned by prgMaps_; freed right after its binary is written in simultaneous
+    // incremental mode (see EmitBinariesInSimultIncMode), otherwise in ~ETSEmitter()
     return prgMaps_.emplace(k, new pandasm::Program {}).first->second;
 }
 
