@@ -22,6 +22,7 @@
 #include <compiler/core/regAllocator.h>
 #include <compiler/core/regScope.h>
 #include <ir/irnode.h>
+#include <hole_check_target.h>
 #include <lexer/token/tokenType.h>
 #include <libpandafile/file_items.h>
 #include <macros.h>
@@ -148,6 +149,12 @@ public:
     {
         insns_.assign(newInsns.begin(), newInsns.end());
     }
+
+    uint32_t AssignVarId(const binder::Variable *var);
+    void RecordStoreVarId(IRNode *insn, panda::pandasm::HoleCheckTarget::Kind kind);
+    bool IsStoreVar(const IRNode *insn) const;
+    bool HasHoleCheckVar(const IRNode *insn) const { return holeCheckVars_.find(insn) != holeCheckVars_.end(); }
+    const panda::pandasm::HoleCheckTarget &GetHoleCheckVar(const IRNode *insn) const { return holeCheckVars_.at(insn); }
 
     VReg AllocReg()
     {
@@ -452,6 +459,7 @@ public:
 
     void ThrowIfSuperNotCorrectCall(const ir::AstNode *node, int64_t num);
     void ThrowUndefinedIfHole(const ir::AstNode *node, const util::StringView &name);
+    void ThrowUndefinedIfHole(const ir::AstNode *node, const binder::Variable *var);
     void ThrowConstAssignment(const ir::AstNode *node, const util::StringView &name);
 
     uint32_t TryDepth() const;
@@ -575,6 +583,9 @@ private:
     IcSizeType currentSlot_ {0};
 
     uint32_t usedRegs_ {0};
+    std::unordered_map<const IRNode *, panda::pandasm::HoleCheckTarget> holeCheckVars_;
+    std::unordered_set<const IRNode *> storeIns_;
+    uint32_t pendingStoreVarId_ {0U};
     uint32_t totalRegs_ {0};
     friend class ScopeContext;
     friend class RegScope;

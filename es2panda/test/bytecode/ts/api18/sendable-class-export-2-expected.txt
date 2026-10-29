@@ -64,14 +64,12 @@ label_1:
 label_0: 
 	ldlocalmodulevar 0x0
 	sta v0
-	throw.undefinedifholewithname A
 	newobjrange 0x0, 0x1, v0
 	definepropertybyname 0x2, a1, a2
 	ldlocalmodulevar 0x1
 	callarg0 0x4
 	ldlocalmodulevar 0x0
 	sta v0
-	throw.undefinedifholewithname A
 	newobjrange 0x6, 0x1, v0
 	returnundefined
 label_2: 

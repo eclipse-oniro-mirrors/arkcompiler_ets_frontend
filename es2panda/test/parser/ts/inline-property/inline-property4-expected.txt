@@ -37,7 +37,6 @@ label_1:
 label_0: 
 	ldlexvar 0x0, 0x2
 	sta v0
-	throw.undefinedifholewithname computed1
 	lda.str str4
 	stobjbyvalue 0x0, a2, v0
 	lda.str computed2
@@ -47,14 +46,12 @@ label_0:
 	lda.str 
 	sta v0
 	ldlexvar 0x0, 0x3
-	throw.undefinedifholewithname part1
 	add2 0x4, v0
 	sta v0
 	lda.str _
 	add2 0x5, v0
 	sta v0
 	ldlexvar 0x0, 0x4
-	throw.undefinedifholewithname part2
 	add2 0x6, v0
 	sta v0
 	lda.str str6

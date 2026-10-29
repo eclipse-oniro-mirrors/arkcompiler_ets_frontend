@@ -372,10 +372,19 @@ void PandaGen::LoadVar(const ir::Identifier *node, const binder::ScopeFindResult
     }
 
     if (var->IsModuleVariable()) {
-        var->HasFlag(binder::VariableFlags::LOCAL_EXPORT) ? LoadLocalModuleVariable(node, var->AsModuleVariable()) :
-                                                            LoadExternalModuleVariable(node, var->AsModuleVariable());
+        bool isLocalExport = var->HasFlag(binder::VariableFlags::LOCAL_EXPORT);
+        isLocalExport ? LoadLocalModuleVariable(node, var->AsModuleVariable()) :
+                       LoadExternalModuleVariable(node, var->AsModuleVariable());
         if (var->Declaration()->IsLetOrConstOrClassDecl()) {
-            ThrowUndefinedIfHole(node, var->Name());
+            // Local export: its defining stmodulevar lives in func_main_0 of this
+            // module — record the var_id so the optimizer can match & eliminate.
+            // External module var: its store is in another module, no id recorded
+            // (the cross-module pass / optimizer keeps this throw).
+            if (isLocalExport) {
+                ThrowUndefinedIfHole(node, var);
+            } else {
+                ThrowUndefinedIfHole(node, var->Name());
+            }
         }
         return;
     }
@@ -416,7 +425,7 @@ void PandaGen::StoreVar(const ir::AstNode *node, const binder::ScopeFindResult &
             VReg valueReg = AllocReg();
             StoreAccumulator(node, valueReg);
             LoadLocalModuleVariable(node, var->AsModuleVariable());
-            ThrowUndefinedIfHole(node, var->Name());
+            ThrowUndefinedIfHole(node, var);
             LoadAccumulator(node, valueReg);
         }
 
@@ -1992,8 +2001,14 @@ void PandaGen::LoadExternalModuleVariable(const ir::AstNode *node, const binder:
 void PandaGen::StoreModuleVariable(const ir::AstNode *node, const binder::ModuleVariable *variable)
 {
     auto index = variable->Index();
-    index <= util::Helpers::MAX_INT8 ? ra_.Emit<Stmodulevar>(node, index) :
-                                       ra_.Emit<WideStmodulevar>(node, index);
+    pendingStoreVarId_ = AssignVarId(variable);
+    IRNode *insn = nullptr;
+    if (index <= util::Helpers::MAX_INT8) {
+        insn = ra_.EmitAndGet<Stmodulevar>(node, index);
+    } else {
+        insn = ra_.EmitAndGet<WideStmodulevar>(node, index);
+    }
+    RecordStoreVarId(insn, panda::pandasm::HoleCheckTarget::MODULE_LOCAL);
 }
 
 void PandaGen::GetModuleNamespace(const ir::AstNode *node, uint32_t index)
@@ -2111,23 +2126,25 @@ void PandaGen::LoadLexicalVar(const ir::AstNode *node, uint32_t level, uint32_t 
 
 void PandaGen::StoreLexicalVar(const ir::AstNode *node, uint32_t level, uint32_t slot)
 {
+    IRNode *insn;
     if ((level > util::Helpers::MAX_INT8) || (slot > util::Helpers::MAX_INT8)) {
-        ra_.Emit<WideStlexvar>(node, level, slot);
-        return;
+        insn = ra_.EmitAndGet<WideStlexvar>(node, level, slot);
+    } else {
+        insn = ra_.EmitAndGet<Stlexvar>(node, level, slot);
     }
-
-    ra_.Emit<Stlexvar>(node, level, slot);
+    RecordStoreVarId(insn, panda::pandasm::HoleCheckTarget::LEXICAL);
 }
 
 void PandaGen::StoreLexicalVar(const ir::AstNode *node, uint32_t level, uint32_t slot, VReg value)
 {
     LoadAccumulator(node, value);
+    IRNode *insn;
     if ((level > util::Helpers::MAX_INT8) || (slot > util::Helpers::MAX_INT8)) {
-        ra_.Emit<WideStlexvar>(node, level, slot);
-        return;
+        insn = ra_.EmitAndGet<WideStlexvar>(node, level, slot);
+    } else {
+        insn = ra_.EmitAndGet<Stlexvar>(node, level, slot);
     }
-
-    ra_.Emit<Stlexvar>(node, level, slot);
+    RecordStoreVarId(insn, panda::pandasm::HoleCheckTarget::LEXICAL);
 }
 
 void PandaGen::StoreSendableVar(const ir::AstNode *node, uint32_t level, uint32_t slot)
@@ -2148,6 +2165,7 @@ void PandaGen::StoreLexicalVar(const ir::AstNode *node, uint32_t level, uint32_t
         ra_.Emit<WideStpatchvar>(node, patchSlot);
         return;
     }
+    pendingStoreVarId_ = AssignVarId(local);
     RegScope rs(this);
     VReg value = AllocReg();
     StoreAccumulator(node, value);
@@ -2168,6 +2186,36 @@ void PandaGen::ThrowUndefinedIfHole(const ir::AstNode *node, const util::StringV
 {
     ra_.Emit<ThrowUndefinedifholewithname>(node, name);
     strings_.insert(name);
+}
+
+void PandaGen::ThrowUndefinedIfHole(const ir::AstNode *node, const binder::Variable *var)
+{
+    const auto &name = var->Name();
+    auto *insn = ra_.EmitAndGet<ThrowUndefinedifholewithname>(node, name);
+    strings_.insert(name);
+    auto id = AssignVarId(var);
+    auto kind = var->IsModuleVariable() ? panda::pandasm::HoleCheckTarget::MODULE_LOCAL
+                                         : panda::pandasm::HoleCheckTarget::LEXICAL;
+    holeCheckVars_[insn] = panda::pandasm::HoleCheckTarget::ForId(kind, id);
+}
+
+void PandaGen::RecordStoreVarId(IRNode *insn, panda::pandasm::HoleCheckTarget::Kind kind)
+{
+    if (pendingStoreVarId_ != 0U) {
+        holeCheckVars_[insn] = panda::pandasm::HoleCheckTarget::ForId(kind, pendingStoreVarId_);
+        storeIns_.insert(insn);
+        pendingStoreVarId_ = 0U;
+    }
+}
+
+bool PandaGen::IsStoreVar(const IRNode *insn) const
+{
+    return storeIns_.find(insn) != storeIns_.end();
+}
+
+uint32_t PandaGen::AssignVarId(const binder::Variable *var)
+{
+    return context_->AssignVarId(var);
 }
 
 void PandaGen::ThrowConstAssignment(const ir::AstNode *node, const util::StringView &name)

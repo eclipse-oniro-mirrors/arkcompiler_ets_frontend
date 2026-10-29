@@ -483,6 +483,18 @@ void FunctionEmitter::GenFunctionInstructions()
         auto *pandaIns = ins->Transform();
         func_->ins.emplace_back(pandaIns);
         GenInstructionDebugInfo(ins, pandaIns);
+        // Propagate the frontend-recorded hole-check variable identity into the
+        // per-method tables the bytecode optimizer reads (keyed by pandasm::Ins*,
+        // non-serialized). Throws -> holeCheckVarTable; stores -> storeVarTable.
+        if (pg_->HasHoleCheckVar(ins)) {
+            auto *pandaInsPtr = func_->ins.back().get();
+            const auto &target = pg_->GetHoleCheckVar(ins);
+            if (pg_->IsStoreVar(ins)) {
+                func_->storeVarTable[pandaInsPtr] = target;
+            } else {
+                func_->holeCheckVarTable[pandaInsPtr] = target;
+            }
+        }
     }
 }
 

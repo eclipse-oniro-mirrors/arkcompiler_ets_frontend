@@ -26,6 +26,7 @@
 
 #include <cstdint>
 #include <mutex>
+#include <unordered_map>
 
 namespace panda::es2panda::binder {
 class Binder;
@@ -134,6 +135,22 @@ public:
         return isRecordDebugSource_;
     }
 
+    // Module-level var_id assignment: the same binder::Variable (e.g. a top-level
+    // `let`) gets the same id across ALL functions in the module, so the bytecode
+    // optimizer can match a throw to the variable's defining store by var_id
+    // — no (level, slot) needed for the cross-function case.
+    uint32_t AssignVarId(const binder::Variable *var)
+    {
+        std::lock_guard lock(m_);
+        auto it = varIds_.find(var);
+        if (it != varIds_.end()) {
+            return it->second;
+        }
+        auto id = static_cast<uint32_t>(varIds_.size() + 1U);  // 0 reserved for "absent"
+        varIds_.emplace(var, id);
+        return id;
+    }
+
 private:
     binder::Binder *binder_;
     int32_t literalBufferIdx_ {0};
@@ -151,6 +168,7 @@ private:
     std::unique_ptr<Emitter> emitter_;
     bool enableColumn_ {false};
     bool enableCallableName_ {false};
+    std::unordered_map<const binder::Variable *, uint32_t> varIds_;
 };
 
 }  // namespace panda::es2panda::compiler
