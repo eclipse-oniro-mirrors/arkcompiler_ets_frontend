@@ -228,7 +228,7 @@
                     "type": "ETSParameterExpression",
                     "name": {
                       "type": "Identifier",
-                      "name": "gensym%%_2",
+                      "name": "gensym%%_3",
                       "typeAnnotation": {
                         "type": "ETSTypeReference",
                         "part": {
@@ -439,12 +439,155 @@
                               }
                             },
                             "alternate": {
-                              "type": "StringLiteral",
-                              "value": "default",
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_2",
+                                        "typeAnnotation": {
+                                          "type": "ETSTypeReference",
+                                          "part": {
+                                            "type": "ETSTypeReferencePart",
+                                            "name": {
+                                              "type": "Identifier",
+                                              "name": "string",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 16,
+                                                  "column": 29,
+                                                  "program": "default_parameter_implicitly_typed_return_void.ets"
+                                                },
+                                                "end": {
+                                                  "line": 16,
+                                                  "column": 35,
+                                                  "program": "default_parameter_implicitly_typed_return_void.ets"
+                                                }
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": {
+                                                "line": 16,
+                                                "column": 29,
+                                                "program": "default_parameter_implicitly_typed_return_void.ets"
+                                              },
+                                              "end": {
+                                                "line": 16,
+                                                "column": 35,
+                                                "program": "default_parameter_implicitly_typed_return_void.ets"
+                                              }
+                                            }
+                                          },
+                                          "loc": {
+                                            "start": {
+                                              "line": 16,
+                                              "column": 29,
+                                              "program": "default_parameter_implicitly_typed_return_void.ets"
+                                            },
+                                            "end": {
+                                              "line": 16,
+                                              "column": 35,
+                                              "program": "default_parameter_implicitly_typed_return_void.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 16,
+                                            "column": 25,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          },
+                                          "end": {
+                                            "line": 16,
+                                            "column": 47,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "StringLiteral",
+                                        "value": "default",
+                                        "loc": {
+                                          "start": {
+                                            "line": 16,
+                                            "column": 38,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          },
+                                          "end": {
+                                            "line": 16,
+                                            "column": 47,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 16,
+                                          "column": 25,
+                                          "program": "default_parameter_implicitly_typed_return_void.ets"
+                                        },
+                                        "end": {
+                                          "line": 16,
+                                          "column": 47,
+                                          "program": "default_parameter_implicitly_typed_return_void.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 25,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 47,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_2",
+                                    "loc": {
+                                      "start": {
+                                        "line": 16,
+                                        "column": 25,
+                                        "program": "default_parameter_implicitly_typed_return_void.ets"
+                                      },
+                                      "end": {
+                                        "line": 16,
+                                        "column": 47,
+                                        "program": "default_parameter_implicitly_typed_return_void.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 25,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 47,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 16,
-                                  "column": 38,
+                                  "column": 25,
                                   "program": "default_parameter_implicitly_typed_return_void.ets"
                                 },
                                 "end": {
@@ -569,7 +712,7 @@
                               "operator": "!==",
                               "left": {
                                 "type": "Identifier",
-                                "name": "gensym%%_2",
+                                "name": "gensym%%_3",
                                 "loc": {
                                   "start": {
                                     "line": 16,
@@ -614,7 +757,7 @@
                             },
                             "consequent": {
                               "type": "Identifier",
-                              "name": "gensym%%_2",
+                              "name": "gensym%%_3",
                               "loc": {
                                 "start": {
                                   "line": 16,
@@ -629,12 +772,155 @@
                               }
                             },
                             "alternate": {
-                              "type": "StringLiteral",
-                              "value": "another",
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_4",
+                                        "typeAnnotation": {
+                                          "type": "ETSTypeReference",
+                                          "part": {
+                                            "type": "ETSTypeReferencePart",
+                                            "name": {
+                                              "type": "Identifier",
+                                              "name": "string",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 16,
+                                                  "column": 52,
+                                                  "program": "default_parameter_implicitly_typed_return_void.ets"
+                                                },
+                                                "end": {
+                                                  "line": 16,
+                                                  "column": 58,
+                                                  "program": "default_parameter_implicitly_typed_return_void.ets"
+                                                }
+                                              }
+                                            },
+                                            "loc": {
+                                              "start": {
+                                                "line": 16,
+                                                "column": 52,
+                                                "program": "default_parameter_implicitly_typed_return_void.ets"
+                                              },
+                                              "end": {
+                                                "line": 16,
+                                                "column": 58,
+                                                "program": "default_parameter_implicitly_typed_return_void.ets"
+                                              }
+                                            }
+                                          },
+                                          "loc": {
+                                            "start": {
+                                              "line": 16,
+                                              "column": 52,
+                                              "program": "default_parameter_implicitly_typed_return_void.ets"
+                                            },
+                                            "end": {
+                                              "line": 16,
+                                              "column": 58,
+                                              "program": "default_parameter_implicitly_typed_return_void.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 16,
+                                            "column": 49,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          },
+                                          "end": {
+                                            "line": 16,
+                                            "column": 70,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "StringLiteral",
+                                        "value": "another",
+                                        "loc": {
+                                          "start": {
+                                            "line": 16,
+                                            "column": 61,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          },
+                                          "end": {
+                                            "line": 16,
+                                            "column": 70,
+                                            "program": "default_parameter_implicitly_typed_return_void.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 16,
+                                          "column": 49,
+                                          "program": "default_parameter_implicitly_typed_return_void.ets"
+                                        },
+                                        "end": {
+                                          "line": 16,
+                                          "column": 70,
+                                          "program": "default_parameter_implicitly_typed_return_void.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 49,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 70,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_4",
+                                    "loc": {
+                                      "start": {
+                                        "line": 16,
+                                        "column": 49,
+                                        "program": "default_parameter_implicitly_typed_return_void.ets"
+                                      },
+                                      "end": {
+                                        "line": 16,
+                                        "column": 70,
+                                        "program": "default_parameter_implicitly_typed_return_void.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 16,
+                                      "column": 49,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    },
+                                    "end": {
+                                      "line": 16,
+                                      "column": 70,
+                                      "program": "default_parameter_implicitly_typed_return_void.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 16,
-                                  "column": 61,
+                                  "column": 49,
                                   "program": "default_parameter_implicitly_typed_return_void.ets"
                                 },
                                 "end": {

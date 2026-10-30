@@ -276,12 +276,124 @@
                               }
                             },
                             "alternate": {
-                              "type": "NumberLiteral",
-                              "value": 101,
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_2",
+                                        "typeAnnotation": {
+                                          "type": "ETSPrimitiveType",
+                                          "loc": {
+                                            "start": {
+                                              "line": 18,
+                                              "column": 24,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 18,
+                                              "column": 27,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 18,
+                                            "column": 17,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 18,
+                                            "column": 31,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "NumberLiteral",
+                                        "value": 101,
+                                        "loc": {
+                                          "start": {
+                                            "line": 18,
+                                            "column": 28,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 18,
+                                            "column": 31,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 18,
+                                          "column": 17,
+                                          "program": "default_parameter8.ets"
+                                        },
+                                        "end": {
+                                          "line": 18,
+                                          "column": 31,
+                                          "program": "default_parameter8.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 18,
+                                      "column": 17,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 18,
+                                      "column": 31,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_2",
+                                    "loc": {
+                                      "start": {
+                                        "line": 18,
+                                        "column": 17,
+                                        "program": "default_parameter8.ets"
+                                      },
+                                      "end": {
+                                        "line": 18,
+                                        "column": 31,
+                                        "program": "default_parameter8.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 18,
+                                      "column": 17,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 18,
+                                      "column": 31,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 18,
-                                  "column": 28,
+                                  "column": 17,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
@@ -532,7 +644,7 @@
                     "type": "ETSParameterExpression",
                     "name": {
                       "type": "Identifier",
-                      "name": "gensym%%_2",
+                      "name": "gensym%%_3",
                       "typeAnnotation": {
                         "type": "ETSPrimitiveType",
                         "loc": {
@@ -621,7 +733,7 @@
                               "operator": "!==",
                               "left": {
                                 "type": "Identifier",
-                                "name": "gensym%%_2",
+                                "name": "gensym%%_3",
                                 "loc": {
                                   "start": {
                                     "line": 21,
@@ -666,7 +778,7 @@
                             },
                             "consequent": {
                               "type": "Identifier",
-                              "name": "gensym%%_2",
+                              "name": "gensym%%_3",
                               "loc": {
                                 "start": {
                                   "line": 21,
@@ -681,12 +793,124 @@
                               }
                             },
                             "alternate": {
-                              "type": "NumberLiteral",
-                              "value": 99,
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_4",
+                                        "typeAnnotation": {
+                                          "type": "ETSPrimitiveType",
+                                          "loc": {
+                                            "start": {
+                                              "line": 21,
+                                              "column": 24,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 21,
+                                              "column": 27,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 21,
+                                            "column": 17,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 21,
+                                            "column": 32,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "NumberLiteral",
+                                        "value": 99,
+                                        "loc": {
+                                          "start": {
+                                            "line": 21,
+                                            "column": 30,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 21,
+                                            "column": 32,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 21,
+                                          "column": 17,
+                                          "program": "default_parameter8.ets"
+                                        },
+                                        "end": {
+                                          "line": 21,
+                                          "column": 32,
+                                          "program": "default_parameter8.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 21,
+                                      "column": 17,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 21,
+                                      "column": 32,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_4",
+                                    "loc": {
+                                      "start": {
+                                        "line": 21,
+                                        "column": 17,
+                                        "program": "default_parameter8.ets"
+                                      },
+                                      "end": {
+                                        "line": 21,
+                                        "column": 32,
+                                        "program": "default_parameter8.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 21,
+                                      "column": 17,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 21,
+                                      "column": 32,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                }
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 21,
-                                  "column": 30,
+                                  "column": 17,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
@@ -1370,7 +1594,7 @@
                     "type": "ETSParameterExpression",
                     "name": {
                       "type": "Identifier",
-                      "name": "gensym%%_3",
+                      "name": "gensym%%_5",
                       "typeAnnotation": {
                         "type": "ETSPrimitiveType",
                         "loc": {
@@ -1474,7 +1698,7 @@
                               "operator": "!==",
                               "left": {
                                 "type": "Identifier",
-                                "name": "gensym%%_3",
+                                "name": "gensym%%_5",
                                 "loc": {
                                   "start": {
                                     "line": 30,
@@ -1519,7 +1743,7 @@
                             },
                             "consequent": {
                               "type": "Identifier",
-                              "name": "gensym%%_3",
+                              "name": "gensym%%_5",
                               "loc": {
                                 "start": {
                                   "line": 30,
@@ -1534,44 +1758,156 @@
                               }
                             },
                             "alternate": {
-                              "type": "MemberExpression",
-                              "object": {
-                                "type": "ThisExpression",
-                                "loc": {
-                                  "start": {
-                                    "line": 30,
-                                    "column": 28,
-                                    "program": "default_parameter8.ets"
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_6",
+                                        "typeAnnotation": {
+                                          "type": "ETSPrimitiveType",
+                                          "loc": {
+                                            "start": {
+                                              "line": 30,
+                                              "column": 24,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 30,
+                                              "column": 27,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 30,
+                                            "column": 18,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 30,
+                                            "column": 35,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "MemberExpression",
+                                        "object": {
+                                          "type": "ThisExpression",
+                                          "loc": {
+                                            "start": {
+                                              "line": 30,
+                                              "column": 28,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 30,
+                                              "column": 32,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "fc",
+                                          "loc": {
+                                            "start": {
+                                              "line": 30,
+                                              "column": 33,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 30,
+                                              "column": 35,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "computed": false,
+                                        "optional": false,
+                                        "loc": {
+                                          "start": {
+                                            "line": 30,
+                                            "column": 28,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 30,
+                                            "column": 35,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 30,
+                                          "column": 18,
+                                          "program": "default_parameter8.ets"
+                                        },
+                                        "end": {
+                                          "line": 30,
+                                          "column": 35,
+                                          "program": "default_parameter8.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 30,
+                                      "column": 18,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 30,
+                                      "column": 35,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_6",
+                                    "loc": {
+                                      "start": {
+                                        "line": 30,
+                                        "column": 18,
+                                        "program": "default_parameter8.ets"
+                                      },
+                                      "end": {
+                                        "line": 30,
+                                        "column": 35,
+                                        "program": "default_parameter8.ets"
+                                      }
+                                    }
                                   },
-                                  "end": {
-                                    "line": 30,
-                                    "column": 32,
-                                    "program": "default_parameter8.ets"
+                                  "loc": {
+                                    "start": {
+                                      "line": 30,
+                                      "column": 18,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 30,
+                                      "column": 35,
+                                      "program": "default_parameter8.ets"
+                                    }
                                   }
                                 }
-                              },
-                              "property": {
-                                "type": "Identifier",
-                                "name": "fc",
-                                "loc": {
-                                  "start": {
-                                    "line": 30,
-                                    "column": 33,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 30,
-                                    "column": 35,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
-                              "computed": false,
-                              "optional": false,
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 30,
-                                  "column": 28,
+                                  "column": 18,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {
@@ -2152,7 +2488,7 @@
                     "type": "ETSParameterExpression",
                     "name": {
                       "type": "Identifier",
-                      "name": "gensym%%_4",
+                      "name": "gensym%%_7",
                       "typeAnnotation": {
                         "type": "ETSPrimitiveType",
                         "loc": {
@@ -2256,7 +2592,7 @@
                               "operator": "!==",
                               "left": {
                                 "type": "Identifier",
-                                "name": "gensym%%_4",
+                                "name": "gensym%%_7",
                                 "loc": {
                                   "start": {
                                     "line": 36,
@@ -2301,7 +2637,7 @@
                             },
                             "consequent": {
                               "type": "Identifier",
-                              "name": "gensym%%_4",
+                              "name": "gensym%%_7",
                               "loc": {
                                 "start": {
                                   "line": 36,
@@ -2316,45 +2652,157 @@
                               }
                             },
                             "alternate": {
-                              "type": "MemberExpression",
-                              "object": {
-                                "type": "Identifier",
-                                "name": "C",
-                                "loc": {
-                                  "start": {
-                                    "line": 36,
-                                    "column": 27,
-                                    "program": "default_parameter8.ets"
+                              "type": "BlockExpression",
+                              "statements": [
+                                {
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_8",
+                                        "typeAnnotation": {
+                                          "type": "ETSPrimitiveType",
+                                          "loc": {
+                                            "start": {
+                                              "line": 36,
+                                              "column": 23,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 36,
+                                              "column": 26,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 36,
+                                            "column": 16,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 36,
+                                            "column": 31,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "MemberExpression",
+                                        "object": {
+                                          "type": "Identifier",
+                                          "name": "C",
+                                          "loc": {
+                                            "start": {
+                                              "line": 36,
+                                              "column": 27,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 36,
+                                              "column": 28,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "property": {
+                                          "type": "Identifier",
+                                          "name": "fs",
+                                          "loc": {
+                                            "start": {
+                                              "line": 36,
+                                              "column": 29,
+                                              "program": "default_parameter8.ets"
+                                            },
+                                            "end": {
+                                              "line": 36,
+                                              "column": 31,
+                                              "program": "default_parameter8.ets"
+                                            }
+                                          }
+                                        },
+                                        "computed": false,
+                                        "optional": false,
+                                        "loc": {
+                                          "start": {
+                                            "line": 36,
+                                            "column": 27,
+                                            "program": "default_parameter8.ets"
+                                          },
+                                          "end": {
+                                            "line": 36,
+                                            "column": 31,
+                                            "program": "default_parameter8.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 36,
+                                          "column": 16,
+                                          "program": "default_parameter8.ets"
+                                        },
+                                        "end": {
+                                          "line": 36,
+                                          "column": 31,
+                                          "program": "default_parameter8.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
+                                  "loc": {
+                                    "start": {
+                                      "line": 36,
+                                      "column": 16,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 36,
+                                      "column": 31,
+                                      "program": "default_parameter8.ets"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_8",
+                                    "loc": {
+                                      "start": {
+                                        "line": 36,
+                                        "column": 16,
+                                        "program": "default_parameter8.ets"
+                                      },
+                                      "end": {
+                                        "line": 36,
+                                        "column": 31,
+                                        "program": "default_parameter8.ets"
+                                      }
+                                    }
                                   },
-                                  "end": {
-                                    "line": 36,
-                                    "column": 28,
-                                    "program": "default_parameter8.ets"
+                                  "loc": {
+                                    "start": {
+                                      "line": 36,
+                                      "column": 16,
+                                      "program": "default_parameter8.ets"
+                                    },
+                                    "end": {
+                                      "line": 36,
+                                      "column": 31,
+                                      "program": "default_parameter8.ets"
+                                    }
                                   }
                                 }
-                              },
-                              "property": {
-                                "type": "Identifier",
-                                "name": "fs",
-                                "loc": {
-                                  "start": {
-                                    "line": 36,
-                                    "column": 29,
-                                    "program": "default_parameter8.ets"
-                                  },
-                                  "end": {
-                                    "line": 36,
-                                    "column": 31,
-                                    "program": "default_parameter8.ets"
-                                  }
-                                }
-                              },
-                              "computed": false,
-                              "optional": false,
+                              ],
                               "loc": {
                                 "start": {
                                   "line": 36,
-                                  "column": 27,
+                                  "column": 16,
                                   "program": "default_parameter8.ets"
                                 },
                                 "end": {

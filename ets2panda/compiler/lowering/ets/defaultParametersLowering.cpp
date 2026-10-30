@@ -15,12 +15,15 @@
 
 #include "defaultParametersLowering.h"
 #include "compiler/lowering/util.h"
+#include "ir/expressions/blockExpression.h"
 
 namespace ark::es2panda::compiler {
 
-static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ETSParser *parser,
-                                           ir::ETSParameterExpression *param)
+static ir::Statement *TransformInitializer(public_lib::Context *ctx, ir::ETSParameterExpression *param)
 {
+    auto *const allocator = ctx->allocator;
+    auto *const parser = ctx->parser->AsETSParser();
+
     //  NOTE (DZ): temporary solution until node history starts working properly
     auto *oldParam = param->Clone(allocator, param);
     param->SetOriginalNode(oldParam);
@@ -36,9 +39,18 @@ static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ET
     param->SetInitializer(nullptr);
     ES2PANDA_ASSERT(param->IsOptional());
 
+    auto *const temporary = Gensym(allocator);
+    ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
+    blockStatements.emplace_back(parser->CreateFormattedStatement("let @@I1: @@T2 = @@E3;",
+                                                                  temporary->Clone(allocator, nullptr),
+                                                                  typeAnnotation->Clone(allocator, nullptr), init));
+    blockStatements.emplace_back(
+        parser->CreateFormattedStatement("@@I1;", temporary->CloneReference(allocator, nullptr)));
+    auto *const defaultBlock = ctx->AllocNode<ir::BlockExpression>(std::move(blockStatements));
+
     return parser->CreateFormattedStatement("let @@I1: @@T2 = (@@I3 !== undefined) ? @@I4 : @@E5", ident,
                                             typeAnnotation->Clone(allocator, nullptr), param->Ident()->Name(),
-                                            param->Ident()->Name(), init);
+                                            param->Ident()->Name(), defaultBlock);
 }
 
 static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunction *function,
@@ -60,15 +72,13 @@ static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunct
     }
 
     auto const body = function->Body()->AsBlockStatement();
-    auto const allocator = ctx->allocator;
-    auto const parser = ctx->parser->AsETSParser();
     auto &bodyStmt = body->StatementsForUpdates();
 
     bodyStmt.insert(bodyStmt.begin(), params.size(), nullptr);
 
     for (std::size_t dfltIdx = 0U; dfltIdx < params.size(); ++dfltIdx) {
         auto *const param = params[dfltIdx];
-        auto stmt = TransformInitializer(allocator, parser, param);
+        auto stmt = TransformInitializer(ctx, param);
         stmt->SetAstNodeFlags(ir::AstNodeFlags::DEFAULT_PARAM);
         bodyStmt[dfltIdx] = stmt;
         // From a developer's perspective, this locational information is more intuitive.

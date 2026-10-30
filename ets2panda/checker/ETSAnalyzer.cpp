@@ -3241,47 +3241,6 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
     return expr->TsType();
 }
 
-static bool IsNumericType(ETSChecker *checker, Type *type)
-{
-    ES2PANDA_ASSERT(!type->IsETSNeverType());
-    return !type->IsETSTypeParameter() &&
-           checker->Relation()->IsSupertypeOf(checker->GetGlobalTypesHolder()->GlobalNumericBuiltinType(), type);
-}
-
-static Type *BiggerNumericType(ETSChecker *checker, Type *t1, Type *t2)
-{
-    ES2PANDA_ASSERT(IsNumericType(checker, t1));
-    ES2PANDA_ASSERT(IsNumericType(checker, t2));
-
-    auto *rel = checker->Relation();
-
-    if (rel->IsSupertypeOf(checker->GlobalDoubleBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalDoubleBuiltinType(), t2)) {
-        return checker->GlobalDoubleBuiltinType();
-    }
-    if (rel->IsSupertypeOf(checker->GlobalFloatBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalFloatBuiltinType(), t2)) {
-        return checker->GlobalFloatBuiltinType();
-    }
-    if (rel->IsSupertypeOf(checker->GlobalLongBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalLongBuiltinType(), t2)) {
-        return checker->GlobalLongBuiltinType();
-    }
-    if (rel->IsSupertypeOf(checker->GlobalIntBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalIntBuiltinType(), t2)) {
-        return checker->GlobalIntBuiltinType();
-    }
-    if (rel->IsSupertypeOf(checker->GlobalShortBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalShortBuiltinType(), t2)) {
-        return checker->GlobalShortBuiltinType();
-    }
-    if (rel->IsSupertypeOf(checker->GlobalByteBuiltinType(), t1) ||
-        rel->IsSupertypeOf(checker->GlobalByteBuiltinType(), t2)) {
-        return checker->GlobalByteBuiltinType();
-    }
-    ES2PANDA_UNREACHABLE();
-}
-
 static void ApplyTestedSmartCasts(ETSChecker *const checker, const SmartCastTypes &testedTypes,
                                   bool const consequentBranch)
 {
@@ -3357,22 +3316,7 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     } else if (checker->IsTypeIdenticalTo(consequentType, alternateType)) {
         expr->SetTsType(consequentType);
     } else {
-        Type *consequentTypeUnderly =
-            consequentType->IsETSNumericEnumType() ? consequentType->AsETSEnumType()->Underlying() : consequentType;
-        Type *alternateTypeUnderly =
-            alternateType->IsETSNumericEnumType() ? alternateType->AsETSEnumType()->Underlying() : alternateType;
-        if (IsNumericType(GetETSChecker(), consequentTypeUnderly) &&
-            IsNumericType(GetETSChecker(), alternateTypeUnderly)) {
-            if (consequentType->IsETSNumericEnumType()) {
-                expr->Consequent()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-            }
-            if (alternateType->IsETSNumericEnumType()) {
-                expr->Alternate()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-            }
-            expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentTypeUnderly, alternateTypeUnderly));
-        } else {
-            expr->SetTsType(checker->CreateETSUnionType({consequentType, alternateType}));
-        }
+        expr->SetTsType(checker->CreateETSUnionType({consequentType, alternateType}));
     }
 
     // Restore smart casts to initial state.

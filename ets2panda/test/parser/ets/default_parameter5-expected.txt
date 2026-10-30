@@ -530,62 +530,174 @@
                               }
                             },
                             "alternate": {
-                              "type": "CallExpression",
-                              "callee": {
-                                "type": "Identifier",
-                                "name": "boo2",
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 46,
-                                    "program": "default_parameter5.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 50,
-                                    "program": "default_parameter5.ets"
-                                  }
-                                }
-                              },
-                              "arguments": [
+                              "type": "BlockExpression",
+                              "statements": [
                                 {
-                                  "type": "NumberLiteral",
-                                  "value": 1,
+                                  "type": "VariableDeclaration",
+                                  "declarations": [
+                                    {
+                                      "type": "VariableDeclarator",
+                                      "id": {
+                                        "type": "Identifier",
+                                        "name": "gensym%%_2",
+                                        "typeAnnotation": {
+                                          "type": "ETSPrimitiveType",
+                                          "loc": {
+                                            "start": {
+                                              "line": 21,
+                                              "column": 40,
+                                              "program": "default_parameter5.ets"
+                                            },
+                                            "end": {
+                                              "line": 21,
+                                              "column": 43,
+                                              "program": "default_parameter5.ets"
+                                            }
+                                          }
+                                        },
+                                        "loc": {
+                                          "start": {
+                                            "line": 21,
+                                            "column": 35,
+                                            "program": "default_parameter5.ets"
+                                          },
+                                          "end": {
+                                            "line": 21,
+                                            "column": 55,
+                                            "program": "default_parameter5.ets"
+                                          }
+                                        }
+                                      },
+                                      "init": {
+                                        "type": "CallExpression",
+                                        "callee": {
+                                          "type": "Identifier",
+                                          "name": "boo2",
+                                          "loc": {
+                                            "start": {
+                                              "line": 21,
+                                              "column": 46,
+                                              "program": "default_parameter5.ets"
+                                            },
+                                            "end": {
+                                              "line": 21,
+                                              "column": 50,
+                                              "program": "default_parameter5.ets"
+                                            }
+                                          }
+                                        },
+                                        "arguments": [
+                                          {
+                                            "type": "NumberLiteral",
+                                            "value": 1,
+                                            "loc": {
+                                              "start": {
+                                                "line": 21,
+                                                "column": 51,
+                                                "program": "default_parameter5.ets"
+                                              },
+                                              "end": {
+                                                "line": 21,
+                                                "column": 52,
+                                                "program": "default_parameter5.ets"
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "type": "NumberLiteral",
+                                            "value": 2,
+                                            "loc": {
+                                              "start": {
+                                                "line": 21,
+                                                "column": 53,
+                                                "program": "default_parameter5.ets"
+                                              },
+                                              "end": {
+                                                "line": 21,
+                                                "column": 54,
+                                                "program": "default_parameter5.ets"
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "optional": false,
+                                        "loc": {
+                                          "start": {
+                                            "line": 21,
+                                            "column": 46,
+                                            "program": "default_parameter5.ets"
+                                          },
+                                          "end": {
+                                            "line": 21,
+                                            "column": 55,
+                                            "program": "default_parameter5.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 21,
+                                          "column": 35,
+                                          "program": "default_parameter5.ets"
+                                        },
+                                        "end": {
+                                          "line": 21,
+                                          "column": 55,
+                                          "program": "default_parameter5.ets"
+                                        }
+                                      }
+                                    }
+                                  ],
+                                  "kind": "let",
                                   "loc": {
                                     "start": {
                                       "line": 21,
-                                      "column": 51,
+                                      "column": 35,
                                       "program": "default_parameter5.ets"
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 52,
+                                      "column": 55,
                                       "program": "default_parameter5.ets"
                                     }
                                   }
                                 },
                                 {
-                                  "type": "NumberLiteral",
-                                  "value": 2,
+                                  "type": "ExpressionStatement",
+                                  "expression": {
+                                    "type": "Identifier",
+                                    "name": "gensym%%_2",
+                                    "loc": {
+                                      "start": {
+                                        "line": 21,
+                                        "column": 35,
+                                        "program": "default_parameter5.ets"
+                                      },
+                                      "end": {
+                                        "line": 21,
+                                        "column": 55,
+                                        "program": "default_parameter5.ets"
+                                      }
+                                    }
+                                  },
                                   "loc": {
                                     "start": {
                                       "line": 21,
-                                      "column": 53,
+                                      "column": 35,
                                       "program": "default_parameter5.ets"
                                     },
                                     "end": {
                                       "line": 21,
-                                      "column": 54,
+                                      "column": 55,
                                       "program": "default_parameter5.ets"
                                     }
                                   }
                                 }
                               ],
-                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 21,
-                                  "column": 46,
+                                  "column": 35,
                                   "program": "default_parameter5.ets"
                                 },
                                 "end": {
