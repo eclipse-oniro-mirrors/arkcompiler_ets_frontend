@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,19 @@
  * limitations under the License.
  */
 
+class Animal {
+}
+
+class Dog extends Animal {
+}
+
 class Base {
-    foo(callback: (x: int) => void): void {
+    foo(callback: (x: Animal) => void): void {
     }
 }
 
 class Derived extends Base {
-    foo(callback: (y: double) => void): void {
+    foo(callback: (y: Dog) => void): void {
     }
 
     test(): void {

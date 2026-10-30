@@ -2064,6 +2064,79 @@ static bool IsOverrideTargetInvalid(varbinder::LocalVariable *target)
     return target == nullptr || target->TsType() == nullptr || target->TsType()->IsTypeError();
 }
 
+static bool AreOverrideParamsSubtypeRelated(ETSChecker *checker, Signature const *base, Signature const *derived)
+{
+    if (base->Params().size() != derived->Params().size()) {
+        return false;
+    }
+    SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK |
+                                                                         TypeRelationFlag::OVERRIDING_CONTEXT);
+    for (size_t i = 0; i < base->Params().size(); ++i) {
+        auto *bp = base->Params()[i]->TsType();
+        auto *dp = derived->Params()[i]->TsType();
+        if (bp == nullptr || dp == nullptr) {
+            continue;
+        }
+        if (!checker->Relation()->IsSupertypeOf(dp, bp)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool IsErasureIncompatibleNullishOverride(ETSChecker *checker, Signature const *base, Signature const *derived)
+{
+    if (base->Params().size() != derived->Params().size()) {
+        return false;
+    }
+    SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::NO_RETURN_TYPE_CHECK |
+                                                                         TypeRelationFlag::OVERRIDING_CONTEXT);
+    for (size_t i = 0; i < base->Params().size(); ++i) {
+        auto *bp = base->Params()[i]->TsType();
+        auto *dp = derived->Params()[i]->TsType();
+        if (bp == nullptr || dp == nullptr) {
+            continue;
+        }
+        auto *nnbp = checker->RemoveUndefinedType(bp);
+        if (nnbp == bp) {
+            continue;
+        }
+        if (checker->RemoveUndefinedType(dp) != dp) {
+            continue;
+        }
+        if (!checker->Relation()->IsSupertypeOf(dp, nnbp)) {
+            continue;
+        }
+        if (checker->Relation()->IsSupertypeOf(nnbp, dp)) {
+            continue;
+        }
+        return true;
+    }
+    return false;
+}
+
+static void CheckErasureIncorrectOverride(ETSChecker *checker, Signature *signature, Signature *baseSig)
+{
+    if (!IsOverridableIn(baseSig) || baseSig->HasSignatureFlag(SignatureFlags::STATIC) ||
+        signature->HasSignatureFlag(SignatureFlags::STATIC) ||
+        baseSig->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER) ||
+        signature->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER)) {
+        return;
+    }
+    if (!baseSig->Params().empty() && checker->HasSameAssemblySignature(signature, baseSig, true) &&
+        !AreOverrideParamsSubtypeRelated(checker, baseSig, signature)) {
+        checker->LogError(diagnostic::FUNCTION_REDECL_BY_ASM_SIG, {signature->Function()->Id()->Name()},
+                          signature->Function()->Start());
+        return;
+    }
+    if (IsErasureIncompatibleNullishOverride(checker, baseSig, signature)) {
+        checker->LogError(diagnostic::CANNOT_OVERRIDE_INCOMPATIBLE_NULLISH_PARAM,
+                          {signature->Function()->Id()->Name(), signature->Owner(), baseSig->Function()->Id()->Name(),
+                           baseSig->Owner()},
+                          signature->Function()->Start());
+    }
+}
+
 static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectType *site)
 {
     PropertySearchFlags flags =
@@ -2100,6 +2173,7 @@ static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectTy
                 IsPartialOverrideCompatible(checker, itSubst, signature)) {
                 partialOverrideCandidate = it;
             }
+            CheckErasureIncorrectOverride(checker, signature, itSubst);
             continue;
         }
 
