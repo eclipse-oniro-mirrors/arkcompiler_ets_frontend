@@ -330,8 +330,8 @@ static std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> EmitPr
 
     if (context->emitter->IsETSEmitter() &&
         (context->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL)) {
-        // EmitBinariesInSimultIncMode() schedules compilation per file and writes binaries directly by itself,
-        // hence no CompileFunctions() and no pandasm::Program map here.
+        // EmitBinariesInSimultIncMode() schedules compilation per file and hands every produced
+        // program to public_lib::Context::programSink.
         context->emitter->AsETSEmitter()->EmitBinariesInSimultIncMode(context);
         return {};
     }

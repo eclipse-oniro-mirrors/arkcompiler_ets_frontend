@@ -158,6 +158,7 @@ set(PLUGIN_TESTS
     "plugin_recheck_rebind_invalid_node_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_cold_reload_simult compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_program_sink compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_simult_declgen_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN} ${SIMULT_DECLGEN_CONFIG}"
 )
 
@@ -185,8 +186,12 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
         PRIVATE ${OUTPUT_DIR}
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
         PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+        PRIVATE ${PANDA_ROOT}
+        PRIVATE ${PANDA_BINARY_ROOT}/assembler
+        PRIVATE ${PANDA_ROOT}/assembler
         ${CMAKE_BINARY_DIR}
     )
+    panda_target_compile_options(${TEST_NAME} PRIVATE -Wno-invalid-offsetof)
     panda_target_link_libraries(${TEST_NAME} es2panda-public)
 endforeach()
 

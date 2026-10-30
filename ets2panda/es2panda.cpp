@@ -87,13 +87,17 @@ Compiler::~Compiler()
 
 std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> Compiler::Compile(
     const SourceFile &input, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
-    uint32_t parseStatus)
+    uint32_t parseStatus, const ProgramSink &programSink)
 {
+    static_assert(std::is_same_v<ProgramSink, public_lib::ProgramSink>,
+                  "es2panda::ProgramSink must stay equivalent to public_lib::ProgramSink");
+
     public_lib::Context context;
 
     EHeap::Scope eHeapScope;
     auto allocator = EHeap::CreateAllocator();
     context.allocator = &allocator;
+    context.programSink = programSink;
 
     try {
         return compiler_->Compile(compiler::CompilationUnit {input, options, parseStatus, ext_, diagnosticEngine},
