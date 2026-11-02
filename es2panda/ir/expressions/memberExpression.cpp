@@ -15,12 +15,14 @@
 
 #include "memberExpression.h"
 
+#include <binder/binder.h>
 #include <compiler/core/pandagen.h>
 #include <ir/astDump.h>
 #include <ir/expressions/identifier.h>
 #include <ir/expressions/privateIdentifier.h>
 #include <ir/expressions/literals/numberLiteral.h>
 #include <ir/expressions/literals/stringLiteral.h>
+#include <util/helpers.h>
 
 namespace panda::es2panda::ir {
 
@@ -51,8 +53,53 @@ compiler::Operand MemberExpression::CompileKey(compiler::PandaGen *pg) const
     return pg->ToPropertyKey(property_, computed_);
 }
 
+bool MemberExpression::IsThisByNameOptimizable(compiler::PandaGen *pg) const
+{
+    // Phase 1 folds only by-name access on the current frame `this` into ldthisbyname/
+    // stthisbyname (whose receiver is GetThis(sp), implicit). Enabled from target API
+    // 26.0.1 on; below that the generic ldlexvar + ldobjbyname/stobjbyname path is kept.
+    // Exclude:
+    //  - computed (by-value) access and optional chaining (this?.x short-circuit);
+    //  - private members (independent AccessPrivateProperty opcode family);
+    //  - super (super.x is a SuperExpression, not ThisExpression — naturally excluded);
+    //  - derived constructors: `this` is rebound by super() and only the lexical-env slot
+    //    (read by ldlexvar) is updated; GetThis(sp) (frame header thisObj) stays stale, so the
+    //    optimization would read the wrong `this` there.
+    if (!util::Helpers::IsSupportThisAndIteratorCloseOpt(pg->Binder()->Program()->TargetApiVersion(),
+        pg->Binder()->Program()->TargetApiMinorVersion(),
+        pg->Binder()->Program()->TargetApiPatchVersion())) {
+        return false;
+    }
+    if (computed_ || optional_ || AccessPrivateProperty()) {
+        return false;
+    }
+    if (!object_->IsThisExpression()) {
+        return false;
+    }
+    if (pg->IsDerivedConstructor()) {
+        return false;
+    }
+    if (pg->isDebuggerEvaluateExpressionMode()) {
+        return false;
+    }
+    binder::ScopeFindResult res = pg->Scope()->Find(binder::Binder::MANDATORY_PARAM_THIS);
+    // level == 0 ⇒ `this` is bound in the current frame, not an arrow's captured outer this.
+    return res.variable != nullptr && res.level == 0;
+}
+
 void MemberExpression::Compile(compiler::PandaGen *pg) const
 {
+    if (IsThisByNameOptimizable(pg)) {
+        compiler::Operand prop = CompileKey(pg);
+        // Non-computed access ⇒ key is a string literal; emit the single ldthisbyname and skip
+        // both the explicit `this` load (ldlexvar 0x0,0x0) and the objReg allocation.
+        if (std::holds_alternative<util::StringView>(prop)) {
+            pg->LdThisByName(this, std::get<util::StringView>(prop));
+            return;
+        }
+        // Rare non-string non-computed key: fall through to the generic path below.
+    }
+
     compiler::RegScope rs(pg);
     compiler::VReg objReg = pg->AllocReg();
     Compile(pg, objReg);

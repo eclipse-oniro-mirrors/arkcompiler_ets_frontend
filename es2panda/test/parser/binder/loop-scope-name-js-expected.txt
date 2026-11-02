@@ -54,11 +54,11 @@ label_0:
 label_2: 
 }
 
-slotNum = 0x21
+slotNum = 0x1e
 .language ECMAScript
 .function any .func_main_0(any a0, any a1, any a2) {
 	nop
-label_38: 
+label_36: 
 label_0: 
 label_3: 
 	definefunc 0x0, .#*#, 0x0
@@ -88,12 +88,12 @@ label_5:
 label_4: 
 	createemptyarray 0xc
 	sta v0
-label_21: 
-label_22: 
-end_label_22: 
+label_19: 
+label_20: 
+end_label_20: 
 	jmp label_7
-label_40: 
-label_34: 
+label_38: 
+label_32: 
 	throw
 label_7: 
 	lda v0
@@ -103,83 +103,72 @@ label_7:
 	sta v2
 	ldfalse
 	sta v3
-label_15: 
+label_13: 
 	lda v2
 	callthis0 0x11, v1
 	sta v4
 	throw.ifnotobject v4
 	ldobjbyname 0x13, done
 	callruntime.istrue 0x15
-	jnez label_25
+	jnez label_23
 label_9: 
 	lda v4
 	ldobjbyname 0x16, value
-label_23: 
-label_29: 
+label_21: 
+label_27: 
 	definefunc 0x18, .#*#foo2, 0x0
-label_24: 
-end_label_24: 
-	jmp label_15
-label_41: 
+label_22: 
+end_label_22: 
+	jmp label_13
+label_39: 
 	sta v4
-label_35: 
+label_33: 
 	lda v3
 	callruntime.istrue 0x19
 	jnez label_11
-label_19: 
-label_31: 
-	lda v1
-	ldobjbyname 0x1a, return
-	sta v0
-	ldundefined
-	eq 0x1c, v0
-	jnez label_11
-label_13: 
-	lda v0
-	callthis0 0x1d, v1
-label_20: 
-end_label_20: 
-	jmp label_14
-label_42: 
-label_14: 
-	lda v4
-	throw
+label_17: 
+label_29: 
+	closeiterator 0x1a, v1
+label_18: 
+end_label_18: 
+	jmp label_11
+label_40: 
 label_11: 
 	lda v4
 	throw
-label_25: 
+label_23: 
 label_8: 
 	lda v0
 	getpropiterator
 	sta v0
-label_26: 
-end_label_26: 
-label_33: 
-	jmp label_16
-label_43: 
-label_37: 
+label_24: 
+end_label_24: 
+label_31: 
+	jmp label_14
+label_41: 
+label_35: 
 	throw
-label_16: 
+label_14: 
 	getnextpropname v0
 	sta v1
 	ldundefined
-	eq 0x1f, v1
-	jnez label_17
-label_18: 
-	definefunc 0x20, .#*#foo3, 0x0
-	jmp label_16
-label_17: 
+	eq 0x1c, v1
+	jnez label_15
+label_16: 
+	definefunc 0x1d, .#*#foo3, 0x0
+	jmp label_14
+label_15: 
 	returnundefined
-label_39: 
+label_37: 
 }
 
-.catchall label_19, end_label_20, label_42
+.catchall label_17, end_label_18, label_40
 
-.catchall label_21, end_label_22, label_40
+.catchall label_19, end_label_20, label_38
+
+.catchall label_21, end_label_22, label_39
 
 .catchall label_23, end_label_24, label_41
-
-.catchall label_25, end_label_26, label_43
 
 
 ======> literal array buffer <======

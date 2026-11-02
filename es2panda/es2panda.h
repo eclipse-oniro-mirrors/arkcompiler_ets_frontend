@@ -139,6 +139,8 @@ struct CompilerOptions {
      */
     bool enableColumn {false};
     bool dumpPerfMetrics {false};
+    int targetApiMinorVersion {0};
+    int targetApiPatchVersion {0};
 };
 
 enum class ErrorType {

@@ -25,9 +25,7 @@ label_1:
 label_0: 
 	ldlocalmodulevar 0x0
 	sta v0
-	throw.undefinedifholewithname A
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	returnundefined
 label_2: 
 }

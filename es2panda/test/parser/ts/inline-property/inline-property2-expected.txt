@@ -5,7 +5,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, b, a2
+	stthisbyname 0x0, b
 	returnundefined
 label_2: 
 }
@@ -22,7 +22,7 @@ label_0:
 label_1: 
 label_3: 
 	lda a3
-	stobjbyname 0x0, c, a2
+	stthisbyname 0x0, c
 	ldundefined
 	asyncfunctionresolve v0
 	return

@@ -70,10 +70,8 @@ expectedProperty = 0x1
 	mov v1, a1
 	mov v2, a2
 	lda.str use sendable
-	lda v2
-	sta v4
 	lda.str a
-	stobjbyname 0x0, propA, v4
+	stthisbyname 0x0, propA
 	lda v2
 	return
 }
@@ -100,10 +98,8 @@ expectedProperty = 0x1
 	mov v1, a1
 	mov v2, a2
 	lda.str use sendable
-	lda v2
-	sta v4
 	lda.str b
-	stobjbyname 0x0, propA, v4
+	stthisbyname 0x0, propA
 	lda v2
 	return
 }

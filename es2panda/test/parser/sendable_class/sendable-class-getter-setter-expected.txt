@@ -14,8 +14,7 @@ slotNum = 0x2
 .function any .#~A>#Prop(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	lda a2
-	ldobjbyname 0x0, prop
+	ldthisbyname 0x0, prop
 	return
 label_2: 
 }
@@ -26,7 +25,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, prop, a2
+	stthisbyname 0x0, prop
 	returnundefined
 label_2: 
 }

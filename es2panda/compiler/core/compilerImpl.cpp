@@ -34,9 +34,8 @@ panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const e
     const std::string &debugInfoSourceFile, const std::string &pkgName)
 {
     CompilerContext context(program->Binder(), options.isDebug, options.isDebuggerEvaluateExpressionMode,
-                            options.mergeAbc, false, options.recordDebugSource,
-                            debugInfoSourceFile, pkgName, program->RecordName(), patchFixHelper_,
-                            options.enableColumn, options.enableCallableName);
+                            options.mergeAbc, false, options.recordDebugSource, debugInfoSourceFile, pkgName,
+                            program->RecordName(), patchFixHelper_, options.enableColumn, options.enableCallableName);
 
     ArenaAllocator localAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
 

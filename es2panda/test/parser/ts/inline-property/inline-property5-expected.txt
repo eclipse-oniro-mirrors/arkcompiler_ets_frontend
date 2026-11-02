@@ -48,13 +48,13 @@ label_0:
 	ldlexvar 0x0, 0x1
 	callruntime.callinit 0x0, a2
 	ldai 0x0
-	stobjbyname 0x2, age, a2
+	stthisbyname 0x2, age
 	lda.str hello
-	stobjbyname 0x4, name, a2
+	stthisbyname 0x4, name
 	ldai 0x1
-	stobjbyname 0x6, b, a2
+	stthisbyname 0x6, b
 	ldai 0x2
-	stobjbyname 0x8, z, a2
+	stthisbyname 0x8, z
 	lda a2
 	return
 label_2: 
@@ -66,9 +66,9 @@ slotNum = 0x4
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, d, a2
+	stthisbyname 0x0, d
 	ldai 0x1
-	stobjbyname 0x2, e, a2
+	stthisbyname 0x2, e
 	returnundefined
 label_2: 
 }

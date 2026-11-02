@@ -10,14 +10,14 @@ label_0:
 	sta v0
 	ldobjbyname 0x1, prototype
 	lda v0
-	stobjbyname 0x3, D, a2
+	stthisbyname 0x3, D
 	ldhole
 	sta v0
 	defineclasswithbuffer 0x5, .#~A=A~^1=#, _3, 0x0, v0
 	sta v0
 	ldobjbyname 0x6, prototype
 	lda v0
-	stobjbyname 0x8, D, a2
+	stthisbyname 0x8, D
 	lda a2
 	return
 label_2: 
@@ -88,7 +88,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	definefunc 0x0, .#~C=C*#, 0x0
-	stobjbyname 0x1, c, a2
+	stthisbyname 0x1, c
 	lda a2
 	return
 label_2: 

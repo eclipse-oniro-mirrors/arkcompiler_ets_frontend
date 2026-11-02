@@ -117,6 +117,8 @@ Program ParserImpl::Parse(const SourceFile &sourceFile, const CompilerOptions &o
     program_.SetRecordName(sourceFile.recordName);
     program_.SetDebug(options.isDebug);
     program_.SetTargetApiVersion(options.targetApiVersion);
+    program_.SetTargetApiMinorVersion(options.targetApiMinorVersion);
+    program_.SetTargetApiPatchVersion(options.targetApiPatchVersion);
     program_.SetTargetApiSubVersion(options.targetApiSubVersion);
     if (util::Helpers::IsSupportAnnotationVersion(program_.TargetApiVersion())) {
         program_.SetEnableAnnotations(options.enableAnnotations);

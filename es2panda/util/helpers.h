@@ -200,6 +200,7 @@ public:
     static bool IsSupportEtsImplementsVersion(int apiVersion);
     static bool IsEnableExpectedPropertyCountApiVersion(int apiVersion);
     static bool IsSupportAnnotationVersion(int apiVersion);
+    static bool IsSupportThisAndIteratorCloseOpt(int apiVersion, int apiMinorVersion, int apiPatchVersion);
 
     static const uint32_t MAX_DOUBLE_DIGIT = 310;
     static const uint32_t MAX_DOUBLE_PRECISION_DIGIT = 17;
@@ -242,6 +243,14 @@ public:
     static const int8_t ENABLE_EXPECTED_PROPERTY_COUNT_MIN_SUPPORTED_API_VERSION = 18;
     static const int8_t ANNOTATION_SUPPORTED_API_VERSION = 20;
     static const int8_t SET_SOURCE_FILE_MIN_SUPPORTED_API_VERSION = 26;
+    // Unified gate for the this-fold (ldthis / ldthisbyname / stthisbyname) and
+    // closeiterator opcode emission: enabled for 26.1.0 and every later target,
+    // disabled for 26, 25, 26.0.0 and everything below. Must
+    // stay in sync with the [26.1.0, ...] entry of api_version_map in
+    // runtime_core isa/isa.yaml.
+    static const int32_t THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_VERSION = 26;
+    static const int32_t THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_MINOR_VERSION = 1;
+    static const int32_t THIS_AND_ITERATOR_CLOSE_MIN_SUPPORTED_API_PATCH_VERSION = 0;
     static constexpr std::string_view SUB_API_VERSION_1 = "beta1";
     static constexpr std::string_view SUB_API_VERSION_2 = "beta2";
     static constexpr std::string_view DEFAULT_SUB_API_VERSION = SUB_API_VERSION_1;

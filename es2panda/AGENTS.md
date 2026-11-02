@@ -53,7 +53,14 @@ out/rk3568/clang_x64/arkcompiler/ets_frontend/es2abc --help
 - `ark_js_host_linux_tools_packages` - 测试所需的 JS 运行时宿主工具
 - `ets_frontend_build` - 完整构建，包含es2abc
 - `--no-prebuilt-sdk` - 跳过 ohos-sdk 预编译；宿主工具与测试构建不依赖 SDK，可加快构建速度
+- `--fast-rebuild` - 小改动（如单文件修改）的快速增量重编，跳过不必要的构建前置步骤，命令末尾追加即可
 - 产品名可选：`rk3568` (默认)、`hi3516` 等
+
+快速增量重编示例（改动少量文件时优先使用）：
+
+```bash
+./build.sh --product-name rk3568 --build-target ets_frontend_build --no-prebuilt-sdk --fast-rebuild
+```
 
 ### 编译示例
 

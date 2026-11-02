@@ -5,7 +5,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	ldai 0x0
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	lda a2
 	return
 label_2: 
@@ -17,7 +17,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	returnundefined
 label_2: 
 }
@@ -29,9 +29,9 @@ expectedProperty = 0x2
 label_1: 
 label_0: 
 	ldai 0x1
-	stobjbyname 0x0, a, a2
+	stthisbyname 0x0, a
 	ldai 0x2
-	stobjbyname 0x2, b, a2
+	stthisbyname 0x2, b
 	lda a2
 	return
 label_2: 
@@ -43,7 +43,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	ldai 0x1
-	stobjbyname 0x0, d, a2
+	stthisbyname 0x0, d
 	returnundefined
 label_2: 
 }
@@ -55,11 +55,11 @@ expectedProperty = 0x3
 label_1: 
 label_0: 
 	ldai 0xa
-	stobjbyname 0x0, x, a2
+	stthisbyname 0x0, x
 	lda.str hello
-	stobjbyname 0x2, y, a2
+	stthisbyname 0x2, y
 	ldtrue
-	stobjbyname 0x4, z, a2
+	stthisbyname 0x4, z
 	lda a2
 	return
 label_2: 
@@ -76,7 +76,7 @@ label_0:
 	ldai 0xa
 	stprivateproperty 0x2, 0x0, 0x0, a2
 	lda.str hello
-	stobjbyname 0x4, x, a2
+	stthisbyname 0x4, x
 	lda a2
 	return
 label_2: 

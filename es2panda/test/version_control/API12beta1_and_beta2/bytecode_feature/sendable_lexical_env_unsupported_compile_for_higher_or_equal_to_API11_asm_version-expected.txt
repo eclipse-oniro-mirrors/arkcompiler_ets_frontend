@@ -6,8 +6,7 @@ label_0:
 	ldlexvar 0x0, 0x0
 	sta v0
 	throw.undefinedifholewithname TopLevelSendableClass1
-	mov v1, v0
-	newobjrange 0x0, 0x1, v1
+	newobjrange 0x0, 0x1, v0
 	stobjbyname 0x2, a1, a2
 	lda a2
 	ldobjbyname 0x4, a1
@@ -44,8 +43,7 @@ label_0:
 	sta v0
 	callruntime.definesendableclass 0x1, .SendableTestClass1, _4, 0x0, v0
 	sta v0
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	returnundefined
 label_2: 
 }

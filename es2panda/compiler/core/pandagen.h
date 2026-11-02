@@ -288,6 +288,8 @@ public:
     void LoadObjProperty(const ir::AstNode *node, VReg obj, const Operand &prop);
 
     void LoadObjByName(const ir::AstNode *node, VReg obj, const util::StringView &prop);
+    void LdThisByName(const ir::AstNode *node, const util::StringView &prop);
+    void LdThis(const ir::AstNode *node);
 
     void StoreObjProperty(const ir::AstNode *node, VReg obj, const Operand &prop);
     void DefineOwnProperty(const ir::AstNode *node, VReg obj, const Operand &prop);
@@ -470,6 +472,7 @@ public:
     void LoadObjByValue(const ir::AstNode *node, VReg obj);
 
     void StoreObjByName(const ir::AstNode *node, VReg obj, const util::StringView &prop);
+    void StThisByName(const ir::AstNode *node, const util::StringView &prop);
     void StoreObjByIndex(const ir::AstNode *node, VReg obj, int64_t index);
     void StoreObjByValue(const ir::AstNode *node, VReg obj, VReg prop);
 
@@ -560,6 +563,7 @@ public:
     bool CanSkipInitializedSuperCheck();
 
     bool IsDerivedConstructor();
+    bool IsFrameThisStable();
     void AddCatchBlockForImplicitSuperCallChecks();
 private:
     ArenaAllocator *allocator_;

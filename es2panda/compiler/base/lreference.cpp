@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,11 +38,23 @@ LReference::LReference(const ir::AstNode *node, PandaGen *pg, bool isDeclaration
     : node_(node), pg_(pg), refKind_(refKind), res_(res), isDeclaration_(isDeclaration)
 {
     if (refKind == ReferenceKind::MEMBER) {
+        const auto *memberExpr = node_->AsMemberExpression();
+        if (memberExpr->IsThisByNameOptimizable(pg_)) {
+            // this.name read/written via an lref: receiver is GetThis(sp), so no obj_ vreg is
+            // needed and the explicit `this` load (CompileObject) is skipped.
+            compiler::Operand prop = memberExpr->CompileKey(pg_);
+            if (std::holds_alternative<util::StringView>(prop)) {
+                isThisByName_ = true;
+                prop_ = prop;
+                return;
+            }
+            // Rare non-string non-computed key: fall through to the generic path below.
+        }
         obj_ = pg_->AllocReg();
 
-        node_->AsMemberExpression()->CompileObject(pg_, obj_);
-        if (!node_->AsMemberExpression()->AccessPrivateProperty()) {
-            prop_ = node->AsMemberExpression()->CompileKey(pg_);
+        memberExpr->CompileObject(pg_, obj_);
+        if (!memberExpr->AccessPrivateProperty()) {
+            prop_ = memberExpr->CompileKey(pg_);
         }
     }
 }
@@ -55,6 +67,11 @@ void LReference::GetValue()
             break;
         }
         case ReferenceKind::MEMBER: {
+            if (isThisByName_) {
+                ASSERT(std::holds_alternative<util::StringView>(prop_));
+                pg_->LdThisByName(node_, std::get<util::StringView>(prop_));
+                break;
+            }
             if (node_->AsMemberExpression()->AccessPrivateProperty()) {
                 auto name = node_->AsMemberExpression()->Property()->AsPrivateIdentifier()->Name();
                 auto result = pg_->Scope()->FindPrivateName(name);
@@ -100,6 +117,11 @@ void LReference::SetValue()
             break;
         }
         case ReferenceKind::MEMBER: {
+            if (isThisByName_) {
+                ASSERT(std::holds_alternative<util::StringView>(prop_));
+                pg_->StThisByName(node_, std::get<util::StringView>(prop_));
+                break;
+            }
             if (node_->AsMemberExpression()->Object()->IsSuperExpression()) {
                 pg_->StoreSuperProperty(node_, obj_, prop_);
             } else if (node_->AsMemberExpression()->AccessPrivateProperty()) {

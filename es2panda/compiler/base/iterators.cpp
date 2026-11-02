@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,9 @@
 
 #include <compiler/core/pandagen.h>
 #include <compiler/base/catchTable.h>
+#include <compiler/core/compilerContext.h>
 #include <compiler/function/functionBuilder.h>
+#include <util/helpers.h>
 
 namespace panda::es2panda::compiler {
 
@@ -77,8 +79,30 @@ void Iterator::Value() const
     pg_->LoadObjByName(node_, nextResult_, "value");
 }
 
+bool Iterator::UseCloseSyncOpcode(bool abruptCompletion) const
+{
+    // Only the abrupt (exception) close path folds into the closeiterator opcode:
+    // the original-exception-wins rule (7.4.6 step 6) is enforced by the
+    // bytecode-level handler that discards the opcode outcome and rethrows, so
+    // this path is observably identical to the inlined sequence regardless of
+    // whether the runtime executes accessor 'return' getters per GetV. The
+    // non-abrupt (break/continue/return) close stays inlined: its GetMethod runs
+    // via ldobjbyname and honors full GetV semantics there. Enabled from target
+    // API 26.1.0 on; below that - and for ASYNC iterators - the inlined
+    // Iterator::Close sequence is kept.
+    return abruptCompletion && type_ == IteratorType::SYNC &&
+           util::Helpers::IsSupportThisAndIteratorCloseOpt(pg_->Binder()->Program()->TargetApiVersion(),
+               pg_->Binder()->Program()->TargetApiMinorVersion(),
+               pg_->Binder()->Program()->TargetApiPatchVersion());
+}
+
 void Iterator::Close(bool abruptCompletion) const
 {
+    if (UseCloseSyncOpcode(abruptCompletion)) {
+        CloseSyncOpcode(abruptCompletion);
+        return;
+    }
+
     RegScope rs(pg_);
     VReg completion = pg_->AllocReg();
     VReg innerResult = pg_->AllocReg();
@@ -141,6 +165,59 @@ void Iterator::Close(bool abruptCompletion) const
     if (abruptCompletion) {
         pg_->EmitThrow(node_);
     }
+}
+
+// ES 7.4.6 IteratorClose via the dedicated closeiterator opcode.
+// acc is preserved across the sequence: on the abort path (break/continue/
+// return) it carries the value of an enclosing 'return expr', on the abrupt
+// path the pending exception, which the EH dispatch has already moved into acc
+// and cleared from the thread.
+void Iterator::CloseSyncOpcode(bool abruptCompletion) const
+{
+    RegScope rs(pg_);
+    VReg completion = pg_->AllocReg();
+    Label *skip = pg_->AllocLabel();
+
+    pg_->StoreAccumulator(node_, completion);
+    pg_->LoadAccumulator(node_, closed_);
+    pg_->BranchIfTrue(node_, skip);
+
+    pg_->StoreConst(node_, closed_, Constant::JS_TRUE);
+
+    if (abruptCompletion) {
+        // A throw completion wins over any error of the close attempt itself
+        // (7.4.6: the completion check precedes the innerResult check), so
+        // closeiterator runs under a handler that discards its outcome and
+        // rethrows the original exception. Every path (close ok, close
+        // failed, already closed) converges on the rethrow.
+        //
+        // The try range must end on a branch and the handler must contain a
+        // real instruction: bytecodeopt's IrBuilder suppresses fall-through
+        // edges into catch entries, so a try block whose last instruction
+        // falls straight into its own handler ends up without successors and
+        // crashes ConnectTryCodeBlock.
+        TryContext tryCtx(pg_);
+        const auto &labelSet = tryCtx.LabelSet();
+
+        pg_->SetLabel(node_, labelSet.TryBegin());
+        pg_->CloseIterator(node_, iterator_);
+        pg_->SetLabel(node_, labelSet.TryEnd());
+        pg_->Branch(node_, skip);
+
+        pg_->SetLabel(node_, labelSet.CatchBegin());
+        pg_->Branch(node_, skip);
+        pg_->SetLabel(node_, labelSet.CatchEnd());
+
+        pg_->SetLabel(node_, skip);
+        pg_->LoadAccumulator(node_, completion);
+        pg_->EmitThrow(node_);
+        return;
+    }
+
+    // A failing close attempt propagates its own error (7.4.6 step 6).
+    pg_->CloseIterator(node_, iterator_);
+    pg_->SetLabel(node_, skip);
+    pg_->LoadAccumulator(node_, completion);
 }
 
 DestructuringIterator::DestructuringIterator(PandaGen *pg, const ir::AstNode *node)

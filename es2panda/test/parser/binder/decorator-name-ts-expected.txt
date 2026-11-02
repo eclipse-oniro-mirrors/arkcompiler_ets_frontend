@@ -50,7 +50,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, greeting, a2
+	stthisbyname 0x0, greeting
 	lda a2
 	return
 label_2: 
@@ -63,8 +63,7 @@ label_1:
 label_0: 
 	lda.str Hello, 
 	sta v0
-	lda a2
-	ldobjbyname 0x0, greeting
+	ldthisbyname 0x0, greeting
 	add2 0x2, v0
 	return
 label_2: 

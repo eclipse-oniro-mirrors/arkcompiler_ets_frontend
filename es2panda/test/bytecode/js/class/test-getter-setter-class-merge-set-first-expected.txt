@@ -14,7 +14,7 @@ slotNum = 0x2
 label_1: 
 label_0: 
 	lda a3
-	stobjbyname 0x0, _x, a2
+	stthisbyname 0x0, _x
 	returnundefined
 label_2: 
 }

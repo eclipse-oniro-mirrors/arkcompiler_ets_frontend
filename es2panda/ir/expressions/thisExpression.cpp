@@ -35,6 +35,12 @@ void ThisExpression::Compile(compiler::PandaGen *pg) const
     ASSERT(res.variable && res.variable->IsLocalVariable());
     if (pg->isDebuggerEvaluateExpressionMode()) {
         pg->LoadObjByNameViaDebugger(this, binder::Binder::MANDATORY_PARAM_THIS, true);
+    } else if (pg->IsFrameThisStable()) {
+        // acc = GetThis(sp): value-identical to the lexical `this` slot (ldlexvar 0x0,0x0)
+        // under the same gate that guards ldthisbyname, one byte shorter. Covers the `this`
+        // materializations that the by-name folding cannot take: call receivers (this.m()),
+        // `this` as an argument, computed keys, optional-chain objects, bare `this`.
+        pg->LdThis(this);
     } else {
         pg->LoadAccFromLexEnv(this, res);
     }

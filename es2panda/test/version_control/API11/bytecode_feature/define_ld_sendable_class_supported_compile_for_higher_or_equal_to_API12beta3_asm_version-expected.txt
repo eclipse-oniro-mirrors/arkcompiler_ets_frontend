@@ -21,8 +21,7 @@ label_0:
 	stobjbyname 0x0, name, a2
 	callruntime.ldsendableclass 0x0
 	sta v0
-	mov v1, v0
-	newobjrange 0x2, 0x1, v1
+	newobjrange 0x2, 0x1, v0
 	stobjbyname 0x4, test, a2
 	lda a2
 	return

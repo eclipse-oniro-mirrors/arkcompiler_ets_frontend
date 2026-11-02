@@ -5,7 +5,7 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda.str HelloWorld
-	stobjbyname 0x0, str, a2
+	stthisbyname 0x0, str
 	lda a2
 	return
 label_2: 
@@ -18,9 +18,9 @@ expectedProperty = 0x1
 label_1: 
 label_0: 
 	lda.str 1
-	stobjbyname 0x0, str2, a2
+	stthisbyname 0x0, str2
 	lda.str HelloWorld2
-	stobjbyname 0x2, str2, a2
+	stthisbyname 0x2, str2
 	lda a2
 	return
 label_2: 
@@ -38,21 +38,21 @@ label_0:
 	sta v0
 	ldobjbyname 0x1, prototype
 	lda v0
-	stobjbyname 0x3, BBB, a2
+	stthisbyname 0x3, BBB
 	ldhole
 	sta v0
 	defineclasswithbuffer 0x5, .#~@2=@2~^1=#, _3, 0x0, v0
 	sta v0
 	ldobjbyname 0x6, prototype
 	lda v0
-	stobjbyname 0x8, CCC, a2
+	stthisbyname 0x8, CCC
 	ldhole
 	sta v0
 	defineclasswithbuffer 0xa, .#~@2=@2~^2=#, _4, 0x0, v0
 	sta v0
 	ldobjbyname 0xb, prototype
 	lda v0
-	stobjbyname 0xd, DDD, a2
+	stthisbyname 0xd, DDD
 	lda a2
 	return
 label_2: 

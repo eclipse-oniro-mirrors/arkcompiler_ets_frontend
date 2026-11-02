@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +46,8 @@ Program::Program(Program &&other)
       hasTLA_(other.hasTLA_),
       isDebug_(other.isDebug_),
       targetApiVersion_(other.targetApiVersion_),
+      targetApiMinorVersion_(other.targetApiMinorVersion_),
+      targetApiPatchVersion_(other.targetApiPatchVersion_),
       useDefineSemantic_(other.useDefineSemantic_),
       isShared_(other.isShared_),
       enableAnnotations_(other.enableAnnotations_),
@@ -78,6 +80,8 @@ Program &Program::operator=(Program &&other)
     hasTLA_ = other.hasTLA_;
     isDebug_ = other.isDebug_;
     targetApiVersion_ = other.targetApiVersion_;
+    targetApiMinorVersion_ = other.targetApiMinorVersion_;
+    targetApiPatchVersion_ = other.targetApiPatchVersion_;
     useDefineSemantic_ = other.useDefineSemantic_;
     isShared_ = other.isShared_;
     enableAnnotations_ = other.enableAnnotations_;

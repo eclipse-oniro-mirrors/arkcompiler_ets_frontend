@@ -56,9 +56,9 @@ label_0:
 label_2: 
 label_4: 
 	ldhole
-	sta v1
-	defineclasswithbuffer 0x0, .#~@0=#TestPrivateProperty, _2, 0x1, v1
-	sta v1
+	sta v0
+	defineclasswithbuffer 0x0, .#~@0=#TestPrivateProperty, _2, 0x1, v0
+	sta v0
 	ldobjbyname 0x1, prototype
 	definemethod 0x3, .#~@0>#instance_initializer, 0x0
 	stlexvar 0x0, 0x1
@@ -67,18 +67,14 @@ label_3:
 end_label_3: 
 	jmp label_1
 label_9: 
-	sta v0
 label_6: 
 	poplexenv
-	lda v0
 	throw
 label_1: 
 	poplexenv
 	ldai 0xa
-	sta v0
-	mov v3, v1
-	mov v4, v0
-	newobjrange 0x4, 0x2, v3
+	sta v1
+	newobjrange 0x4, 0x2, v0
 	sta v0
 	ldobjbyname 0x6, setPrivateField
 	sta v1

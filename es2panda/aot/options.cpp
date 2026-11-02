@@ -17,9 +17,14 @@
 
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "compiler_options.h"
+#include "file_format_version.h"
 #include "utils/timers.h"
 
 #include "mergeProgram.h"
+
+#include <cctype>
+#include <cstdlib>
+#include <vector>
 
 namespace panda::es2panda::aot {
 constexpr char PROCESS_AS_LIST_MARK = '@';
@@ -28,8 +33,59 @@ constexpr size_t ITEM_COUNT_MERGE = 7;
 // item list: [filePath; recordName; moduleKind; sourceFile; outputfile; isSharedModule; sourceLang]
 constexpr size_t ITEM_COUNT_NOT_MERGE = 7;
 constexpr size_t FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION = 24;
+constexpr size_t MAX_API_VERSION_COMPONENT = 255;
+constexpr size_t MAX_API_VERSION_COMPONENT_COUNT = 3;
+constexpr size_t MAX_API_VERSION_COMPONENT_LENGTH = 3;
+constexpr size_t API_VERSION_COMPONENT_MAJOR = 0;
+constexpr size_t API_VERSION_COMPONENT_MINOR = 1;
+constexpr size_t API_VERSION_COMPONENT_PATCH = 2;
 const std::string LIST_ITEM_SEPERATOR = ";";
 const std::set<std::string> VALID_EXTENSIONS = { "js", "ts", "as", "abc" };
+
+// Parse a target api version in the legacy integer form ("26") or in the dotted
+// form ("26.0.0", "26.0.1"). Missing minor/patch components default to 0.
+static bool ParseTargetApiVersion(const std::string &input, int &major, int &minor, int &patch)
+{
+    major = 0;
+    minor = 0;
+    patch = 0;
+
+    std::vector<std::string> components;
+    std::string current;
+    for (char c : input) {
+        if (c == '.') {
+            components.push_back(current);
+            current.clear();
+            continue;
+        }
+        if (std::isdigit(static_cast<unsigned char>(c)) == 0) {
+            return false;
+        }
+        current.push_back(c);
+    }
+    components.push_back(current);
+
+    if (components.empty() || components.size() > MAX_API_VERSION_COMPONENT_COUNT ||
+        components[API_VERSION_COMPONENT_MAJOR].empty()) {
+        return false;
+    }
+    for (const auto &component : components) {
+        if (component.empty() || component.size() > MAX_API_VERSION_COMPONENT_LENGTH) {
+            return false;
+        }
+    }
+
+    major = std::atoi(components[API_VERSION_COMPONENT_MAJOR].c_str());
+    if (components.size() > API_VERSION_COMPONENT_MINOR) {
+        minor = std::atoi(components[API_VERSION_COMPONENT_MINOR].c_str());
+    }
+    if (components.size() > API_VERSION_COMPONENT_PATCH) {
+        patch = std::atoi(components[API_VERSION_COMPONENT_PATCH].c_str());
+    }
+    return major >= 0 && major <= static_cast<int>(MAX_API_VERSION_COMPONENT) &&
+           minor >= 0 && minor <= static_cast<int>(MAX_API_VERSION_COMPONENT) &&
+           patch >= 0 && patch <= static_cast<int>(MAX_API_VERSION_COMPONENT);
+}
 
 template <class T>
 T RemoveExtension(T const &filename)
@@ -568,10 +624,13 @@ bool Options::Parse(int argc, const char **argv)
     panda::PandArg<bool> bcVersion("bc-version", false, "Print ark bytecode version. If both bc-version and"\
         "bc-min-version are enabled, only bc-version will take effects");
     panda::PandArg<bool> bcMinVersion("bc-min-version", false, "Print ark bytecode minimum supported version");
-    // todo(huyunhui): change default api verion to 0 after refactoring
-    // Current api version is 24
-    panda::PandArg<int> targetApiVersion("target-api-version", 24,
-        "Specify the targeting api version for es2abc to generated the corresponding version of bytecode");
+    // The default pins the toolchain's current bytecode generation; bump it
+    // together with 'version' in runtime_core isa/isa.yaml.
+    panda::PandArg<std::string> targetApiVersion("target-api-version", "26.1.0",
+        "Specify the target api version for es2abc to generate the corresponding version of bytecode. "
+        "Accepted forms are an integer api level (e.g. 26) or a dotted version (e.g. 26.0.0, 26.1.0). "
+        "A version between two known ones falls back to the nearest lower known "
+        "version; a version above the newest known one is treated as the latest");
     panda::PandArg<bool> targetBcVersion("target-bc-version", false, "Print the corresponding ark bytecode version"\
         "for target api version. If both target-bc-version and bc-version are enabled, only target-bc-version"\
         "will take effects");
@@ -691,7 +750,17 @@ bool Options::Parse(int argc, const char **argv)
 
     bool parseStatus = argparser_->Parse(argc, argv);
 
-    compilerOptions_.targetApiVersion = targetApiVersion.GetValue();
+    int targetApiMajor = 0;
+    int targetApiMinor = 0;
+    int targetApiPatch = 0;
+    if (!ParseTargetApiVersion(targetApiVersion.GetValue(), targetApiMajor, targetApiMinor, targetApiPatch)) {
+        errorMsg_ = "Invalid value '" + targetApiVersion.GetValue() + "' for --target-api-version. Accepted forms"
+            " are an integer api level (e.g. 26) or a dotted version (e.g. 26.0.0, 26.1.0).";
+        return false;
+    }
+    compilerOptions_.targetApiVersion = targetApiMajor;
+    compilerOptions_.targetApiMinorVersion = targetApiMinor;
+    compilerOptions_.targetApiPatchVersion = targetApiPatch;
     compilerOptions_.targetApiSubVersion = targetApiSubVersion.GetValue();
     if (parseStatus && targetBcVersion.GetValue()) {
         compilerOptions_.targetBcVersion = targetBcVersion.GetValue();
@@ -891,7 +960,8 @@ bool Options::Parse(int argc, const char **argv)
         !compilerOptions_.compileContextInfo.updateVersionInfo.empty());
     compilerOptions_.removeRedundantFile = opRemoveRedundantFile.GetValue();
     compilerOptions_.dumpString = opDumpString.GetValue();
-    compilerOptions_.enableCallableName = targetApiVersion.GetValue() >= FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION &&
+    compilerOptions_.enableCallableName = compilerOptions_.targetApiVersion >=
+                                          FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION &&
                                           opEnableCallableName.GetValue();
     compilerOptions_.moduleRecordFieldName = moduleRecordFieldName.GetValue();
     compilerOptions_.dumpPerfMetrics = opDumpPerfMetrics.GetValue();
