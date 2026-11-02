@@ -29,7 +29,6 @@ label_0:
 	tryldglobalbyname 0x6, print
 	sta v1
 	ldlexvar 0x0, 0x0
-	throw.undefinedifholewithname a
 	ldobjbyvalue 0x7, v0
 	sta v0
 	lda v1
