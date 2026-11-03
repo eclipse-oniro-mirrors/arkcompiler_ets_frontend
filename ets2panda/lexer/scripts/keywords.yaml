@@ -374,8 +374,8 @@ keywords:
 
   - name: 'never'
     token: KEYW_NEVER
-    keyword_like: [ts]
-    flags: [reserved_type_name]
+    keyword_like: [ets, ts]
+    flags: [reserved_type_name, predefined_type]
 
   - name: 'new'
     token: KEYW_NEW
