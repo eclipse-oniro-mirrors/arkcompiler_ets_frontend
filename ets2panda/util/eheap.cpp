@@ -19,6 +19,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/mman.h>
 #endif
 
 namespace ark::es2panda {
@@ -61,10 +63,25 @@ void EHeap::InitializeEHeapSpace()
     [[maybe_unused]] void *unused = Alloc(1);
 }
 
+// #32069 - there should be a single scope created within the single es2panda context
+static int64_t g_eheapScopeCount = 0;
+
 void EHeap::FinalizeEHeapSpace()
 {
     delete gEHeapSpace_;
     gEHeapSpace_ = nullptr;
+}
+
+void EHeap::ResetEHeapSpace()
+{
+    if (g_eheapScopeCount > 0) {
+        // Active contexts/scopes exist in the process. Resetting EHeapSpace would invalidate
+        // their AST memory and cause segmentation faults. Refuse to reset when scopes are active.
+        return;
+    }
+    if (gEHeapSpace_ != nullptr) {
+        gEHeapSpace_->Reset();
+    }
 }
 
 [[noreturn]] __attribute__((noinline)) void EHeap::OOMAction()
@@ -104,6 +121,12 @@ static void ReleaseMapping(void *mem, size_t size)
     ES2PANDA_ASSERT(res != 0);
 }
 
+static void DecommitMapping(void *mem, size_t size)
+{
+    [[maybe_unused]] auto res = VirtualFree(mem, size, MEM_DECOMMIT);
+    ES2PANDA_ASSERT(res != 0);
+}
+
 #else
 
 [[noreturn]] static void MappingFailureAction(char const *msg)
@@ -134,6 +157,17 @@ static void ReleaseMapping(void *mem, size_t size)
     ES2PANDA_ASSERT(res == 0);
 }
 
+static void DecommitMapping(void *mem, size_t size)
+{
+#if defined(__APPLE__)
+    (void)madvise(mem, size, MADV_FREE);
+#else
+    (void)madvise(mem, size, MADV_DONTNEED);
+#endif
+    [[maybe_unused]] int res = mprotect(mem, size, PROT_NONE);
+    ES2PANDA_ASSERT(res == 0);
+}
+
 #endif
 
 EHeap::EHeapSpace::EHeapSpace(size_t size) : bufferSize_(size)
@@ -152,6 +186,23 @@ EHeap::EHeapSpace::~EHeapSpace()
         ASAN_UNPOISON_MEMORY_REGION(buffer_, currentCommitted_ - ToUintPtr(buffer_));
     }
     ReleaseMapping(buffer_, bufferSize_);
+}
+
+void EHeap::EHeapSpace::Reset()
+{
+    if (currentCommitted_ > ToUintPtr(buffer_)) {
+        size_t committedSize = currentCommitted_ - ToUintPtr(buffer_);
+        ASAN_UNPOISON_MEMORY_REGION(buffer_, committedSize);
+        DecommitMapping(buffer_, committedSize);
+    }
+    current_ = ToUintPtr(buffer_);
+    currentCommitted_ = current_;
+#ifndef NDEBUG
+    freedSize_ = 0;
+#endif
+    gHeapId_++;
+    // consume the "nullptr" so the pointer compression may re-use it
+    [[maybe_unused]] void *unused = Alloc(1);
 }
 
 [[nodiscard]] __attribute__((returns_nonnull)) void *EHeap::EHeapSpace::Alloc(size_t sz)
@@ -192,9 +243,6 @@ size_t EHeap::FreedSize()
 {
     return gEHeapSpace_ == nullptr ? 0 : gEHeapSpace_->FreedSize();
 }
-
-// #32069 - there should be a single scope created within the single es2panda context
-static int64_t g_eheapScopeCount = 0;
 
 EHeap::Scope::Scope()
 {

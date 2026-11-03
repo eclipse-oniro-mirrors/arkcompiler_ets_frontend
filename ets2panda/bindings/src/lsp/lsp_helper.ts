@@ -104,6 +104,14 @@ function initBuildEnv(): void {
   process.env.PATH = `${currentPath}${path.delimiter}${pandaLibPath}`;
 }
 
+interface GlobalWithOptionalGc {
+  gc?: () => void;
+}
+
+interface TimeoutWithUnref {
+  unref?(): void;
+}
+
 interface mainFileCache {
   fileContent: string;
   fileConfig: Config;
@@ -128,6 +136,7 @@ export class Lsp {
   private compiledFileHashes: Map<string, string> = new Map<string, string>();
   private diagnosticFiles: Set<string> = new Set<string>();
   private pendingInitialDiagnosticFiles: Set<string> = new Set<string>();
+  private inMemoryFileContents: Map<string, string> = new Map<string, string>();
   private buildConfigs: Record<string, BuildConfig>; // Map<moduleName, build_config.json>
   private moduleInfos: Record<string, ModuleInfo>; // Map<fileName, ModuleInfo>
   private reverseModuleDeps: Map<string, Set<string>>;
@@ -139,6 +148,19 @@ export class Lsp {
   private perfMetricLogFilePath: string = '';
   private kitFiles: string[] = [];
   private disposed: boolean = false;
+  private idleRecycleTimer: ReturnType<typeof setTimeout> | undefined = undefined;
+  private lastQueryTimestamp: number = 0;
+  private consecutiveEditsCount: number = 0;
+  private baselineRssMB: number = 0;
+  private idleRecyclePostponeCount: number = 0;
+
+  public static idleRecycleDelayMs: number = 3000;
+  public static highMemoryRecycleDelayMs: number = 1500;
+  public static queryActivityQuietWindowMs: number = 1500;
+  public static consecutiveEditsThreshold: number = 25;
+  public static memoryGrowthThresholdMB: number = 500;
+  public static maxProcessRssLimitMB: number = 2048;
+  public static maxIdleRecyclePostponeCount: number = 3;
 
   constructor(
     pathConfig: PathConfig,
@@ -166,6 +188,9 @@ export class Lsp {
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
     PluginDriver.getInstance().initPlugins(this.defaultBuildConfig);
     this.lspDriverHelper.memInitialize(this.pandaLibPath);
+    if (typeof process !== 'undefined' && typeof process.memoryUsage === 'function') {
+      this.baselineRssMB = process.memoryUsage().rss / (1024 * 1024);
+    }
     try {
       global.es2panda._initSymbolReferenceIndex();
     } catch (error) {
@@ -196,6 +221,7 @@ export class Lsp {
   }
 
   deleteFile(fileName: string): void {
+    this.inMemoryFileContents.delete(fileName);
     if (this.filesMap.size === 1) {
       const [, activeFileCache] = Array.from(this.filesMap.entries())[0];
       this.invalidateDependantsByRoot(activeFileCache.fileContext, fileName);
@@ -211,7 +237,205 @@ export class Lsp {
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
+    this.inMemoryFileContents.set(fileName, fileContent.newDoc);
+    this.consecutiveEditsCount++;
+    this.checkAndProactivelyRecycleBeforeEdit();
     this.prepareFileCache(fileName, fileContent, true);
+    this.scheduleIdleContextRecycle();
+  }
+
+  private checkAndProactivelyRecycleBeforeEdit(): void {
+    if (this.disposed || this.isTestEnv() || this.filesMap.size === 0) {
+      return;
+    }
+    const currentRssMB =
+      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
+        ? process.memoryUsage().rss / (1024 * 1024)
+        : 0;
+    const growthMB = currentRssMB - this.baselineRssMB;
+
+    if (
+      (this.baselineRssMB > 0 && growthMB >= Lsp.memoryGrowthThresholdMB) ||
+      (Lsp.maxProcessRssLimitMB > 0 && currentRssMB >= Lsp.maxProcessRssLimitMB)
+    ) {
+      logger.info(
+        `[LSP MemGuard] Proactive emergency recycle triggered before edit (consecutive edits: ${this.consecutiveEditsCount}, growth: ${growthMB.toFixed(1)} MB, RSS: ${currentRssMB.toFixed(1)} MB)`
+      );
+      this.proactiveResetEHeap();
+    }
+  }
+
+  private proactiveResetEHeap(): void {
+    this.clearIdleRecycleTimer();
+    this.disposeCachedContexts();
+    if (global.es2panda && typeof global.es2panda._resetEHeap === 'function') {
+      global.es2panda._resetEHeap();
+    }
+    const runtimeGlobal = globalThis as unknown as GlobalWithOptionalGc;
+    if (typeof runtimeGlobal.gc === 'function') {
+      runtimeGlobal.gc();
+    }
+    this.consecutiveEditsCount = 0;
+    if (typeof process !== 'undefined' && typeof process.memoryUsage === 'function') {
+      this.baselineRssMB = process.memoryUsage().rss / (1024 * 1024);
+    }
+  }
+
+  public clearIdleRecycleTimer(): void {
+    if (this.idleRecycleTimer !== undefined) {
+      clearTimeout(this.idleRecycleTimer);
+      this.idleRecycleTimer = undefined;
+    }
+  }
+
+  private isTestEnv(): boolean {
+    if (typeof process === 'undefined' || !process.env) {
+      return false;
+    }
+    if (process.env.FORCE_LSP_IDLE_RECYCLE === 'true') {
+      return false;
+    }
+    return (
+      process.env.NODE_ENV === 'test' ||
+      process.env.JEST_WORKER_ID !== undefined ||
+      process.env.DISABLE_LSP_IDLE_RECYCLE === 'true'
+    );
+  }
+
+  private getAdaptiveRecycleDelay(): number {
+    const currentRssMB =
+      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
+        ? process.memoryUsage().rss / (1024 * 1024)
+        : 0;
+    const growthMB = currentRssMB - this.baselineRssMB;
+    if (this.baselineRssMB > 0 && growthMB >= 250) {
+      return Lsp.highMemoryRecycleDelayMs;
+    }
+    return Lsp.idleRecycleDelayMs;
+  }
+
+  private scheduleIdleContextRecycle(delayMs?: number): void {
+    if (this.disposed || this.isTestEnv()) {
+      return;
+    }
+    this.clearIdleRecycleTimer();
+    if (delayMs === undefined) {
+      this.idleRecyclePostponeCount = 0;
+    }
+    const delay = delayMs !== undefined ? delayMs : this.getAdaptiveRecycleDelay();
+    this.idleRecycleTimer = setTimeout(() => {
+      this.recycleContextOnIdle();
+    }, delay);
+    const timerObj = this.idleRecycleTimer as unknown as TimeoutWithUnref | undefined;
+    if (timerObj && typeof timerObj.unref === 'function') {
+      timerObj.unref();
+    }
+  }
+
+  public isIdleRecycleTimerActive(): boolean {
+    return this.idleRecycleTimer !== undefined;
+  }
+
+  public getConsecutiveEditsCount(): number {
+    return this.consecutiveEditsCount;
+  }
+
+  public getIdleRecyclePostponeCount(): number {
+    return this.idleRecyclePostponeCount;
+  }
+
+  public setLastQueryTimestampForTest(timestamp: number): void {
+    this.lastQueryTimestamp = timestamp;
+  }
+
+  private shouldPostponeIdleRecycle(): boolean {
+    const timeSinceLastQuery = Date.now() - this.lastQueryTimestamp;
+    if (
+      this.lastQueryTimestamp > 0 &&
+      timeSinceLastQuery < Lsp.queryActivityQuietWindowMs &&
+      this.idleRecyclePostponeCount < Lsp.maxIdleRecyclePostponeCount
+    ) {
+      this.idleRecyclePostponeCount++;
+      logger.info(
+        `[LSP MemGuard] Active query detected (${timeSinceLastQuery}ms ago). Postponing Context recycle by ${Lsp.queryActivityQuietWindowMs}ms (postpone count: ${this.idleRecyclePostponeCount}/${Lsp.maxIdleRecyclePostponeCount})`
+      );
+      this.scheduleIdleContextRecycle(Lsp.queryActivityQuietWindowMs);
+      return true;
+    }
+    this.idleRecyclePostponeCount = 0;
+    return false;
+  }
+
+  private rebuildActiveContext(
+    activeFilePath: string,
+    fileSource: string,
+    hash: string,
+    beforeRssMB: string,
+    destroyCost: number
+  ): void {
+    if (this.disposed) {
+      return;
+    }
+    const recreateStart = Date.now();
+    const newCache = this.createFileCache(activeFilePath, fileSource, hash, true);
+    const createCost = Date.now() - recreateStart;
+
+    const afterRss =
+      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
+        ? process.memoryUsage().rss / (1024 * 1024)
+        : 0;
+    this.baselineRssMB = afterRss;
+    const afterRssMB = afterRss.toFixed(1);
+
+    if (newCache !== undefined) {
+      logger.info(
+        `[LSP MemGuard] Context recycled successfully! Destroy: ${destroyCost}ms, Recreate: ${createCost}ms. RSS: ${beforeRssMB} MB -> ${afterRssMB} MB`
+      );
+    } else {
+      logger.error(`[LSP MemGuard] Context recreate returned undefined for ${activeFilePath}`);
+    }
+  }
+
+  public recycleContextOnIdle(): void {
+    this.clearIdleRecycleTimer();
+    if (this.disposed || this.filesMap.size === 0 || this.shouldPostponeIdleRecycle()) {
+      return;
+    }
+
+    const firstEntry = Array.from(this.filesMap.entries())[0];
+    if (!firstEntry || !firstEntry[1]) {
+      return;
+    }
+    const [activeFilePath, activeFileCache] = firstEntry;
+    const fileSource = activeFileCache.fileContent;
+    const hash = activeFileCache.fileHash;
+
+    const beforeRssMB =
+      typeof process !== 'undefined' && typeof process.memoryUsage === 'function'
+        ? (process.memoryUsage().rss / (1024 * 1024)).toFixed(1)
+        : '0.0';
+    const startTime = Date.now();
+
+    logger.info(
+      `[LSP MemGuard] Idle detected without onDidChange. Starting Context recycle for: ${activeFilePath} (Current RSS: ${beforeRssMB} MB, Consecutive Edits: ${this.consecutiveEditsCount})`
+    );
+
+    try {
+      this.disposeCachedContexts();
+      const destroyCost = Date.now() - startTime;
+
+      if (global.es2panda && typeof global.es2panda._resetEHeap === 'function') {
+        global.es2panda._resetEHeap();
+      }
+      const runtimeGlobal = globalThis as unknown as GlobalWithOptionalGc;
+      if (typeof runtimeGlobal.gc === 'function') {
+        runtimeGlobal.gc();
+      }
+      this.consecutiveEditsCount = 0;
+      this.rebuildActiveContext(activeFilePath, fileSource, hash, beforeRssMB, destroyCost);
+    } catch (error) {
+      logger.error(`[LSP MemGuard] Context recycle exception: ${String(error)}`);
+    }
   }
 
   private normalizePathForComparison(fileName: string): string {
@@ -319,6 +543,7 @@ export class Lsp {
     query: (fileCache: mainFileCache) => T | undefined,
     forceRecompile: boolean = false
   ): T | undefined {
+    this.lastQueryTimestamp = Date.now();
     const fileName = filename.valueOf();
     const activeFileEntry = Array.from(this.filesMap.entries())[0];
     const shouldRestoreActiveFile = activeFileEntry !== undefined && activeFileEntry[0] !== fileName;
@@ -446,7 +671,7 @@ export class Lsp {
       return undefined;
     }
 
-    this.tryBuildSymbolReferenceIndex(fileName, ctx);
+    this.tryBuildSymbolReferenceIndexWithExternal(fileName, ctx);
     this.recordCompilationState(fileName, hash);
     const newFileCache = {
       fileContent: fileSource,
@@ -465,6 +690,9 @@ export class Lsp {
       this.destroyContext(fileCache.fileConfig, fileCache.fileContext);
       this.filesMap.delete(fileName);
       this.pendingInitialDiagnosticFiles.delete(fileName);
+      if (this.filesMap.size === 0) {
+        this.clearIdleRecycleTimer();
+      }
     }
   }
 
@@ -479,6 +707,19 @@ export class Lsp {
     }
   }
 
+  private tryBuildSymbolReferenceIndexWithExternal(filePath: string, context: KNativePointer): void {
+    try {
+      if (global.es2panda && typeof global.es2panda._buildSymbolReferenceIndexForContextWithExternal === 'function') {
+        const ret = global.es2panda._buildSymbolReferenceIndexForContextWithExternal(context);
+        if (!ret) {
+          logger.warn(`build symbol reference index with external failed for ${filePath}`);
+        }
+      }
+    } catch (error) {
+      logger.warn(`build symbol reference index with external exception for ${filePath}: ${String(error)}`);
+    }
+  }
+
   private tryRemoveSymbolReferenceIndex(filePath: string): void {
     try {
       global.es2panda._removeSymbolReferenceIndexForFile(filePath);
@@ -489,7 +730,10 @@ export class Lsp {
 
   private getFileSource(filePath: string): string {
     const getSource =
-      this.filesMap.get(filePath)?.fileContent || this.getFileContent(filePath) || fs.readFileSync(filePath, 'utf8');
+      this.filesMap.get(filePath)?.fileContent ||
+      this.inMemoryFileContents.get(filePath) ||
+      this.getFileContent(filePath) ||
+      fs.readFileSync(filePath, 'utf8');
     if (getSource === undefined) {
       logger.error('File content not found for path: ', filePath);
     }
@@ -764,7 +1008,7 @@ export class Lsp {
   }
 
   private getTextChangeSource(filePath: string): string | undefined {
-    const cachedSource = this.filesMap.get(filePath)?.fileContent;
+    const cachedSource = this.filesMap.get(filePath)?.fileContent || this.inMemoryFileContents.get(filePath);
     if (cachedSource !== undefined) {
       return cachedSource.replace(/\r\n/g, '\n');
     }
@@ -2809,6 +3053,8 @@ export class Lsp {
       configs.set(fileCache.fileConfig.peer, fileCache.fileConfig);
     });
     this.filesMap.clear();
+    this.compiledFileHashes.clear();
+    this.diagnosticFiles.clear();
 
     try {
       if (contexts.size > 0) {
@@ -2838,6 +3084,8 @@ export class Lsp {
       return;
     }
     this.disposed = true;
+    this.clearIdleRecycleTimer();
+    this.inMemoryFileContents.clear();
 
     this.disposeCachedContexts();
     this.disposeGlobalContext();

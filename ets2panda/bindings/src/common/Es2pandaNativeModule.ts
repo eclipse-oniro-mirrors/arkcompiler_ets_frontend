@@ -630,6 +630,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _resetEHeap(): KInt {
+    throw new Error('Not implemented');
+  }
+
   _buildSymbolReferenceIndexForContext(context: KNativePointer): KBoolean {
     throw new Error('Not implemented');
   }
