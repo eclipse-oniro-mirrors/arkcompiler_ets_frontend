@@ -193,7 +193,9 @@ public:
         if (type->HasObjectFlag(ETSObjectFlags::ENUM)) {
             return;
         }
-        InstantiateType(type, typeArgs, pos);
+        // All type arguments are provided explicitly by the caller: none of them is resolved
+        // in the context of the collected substitution.
+        InstantiateType(type, typeArgs, pos, typeArgs.size());
     }
 
     Type *Result()
@@ -207,7 +209,8 @@ private:
 
     void InstantiateType(ETSObjectType *type, ir::TSTypeParameterInstantiation *typeArgs);
 
-    void InstantiateType(ETSObjectType *type, std::vector<Type *> &typeArgTypes, const lexer::SourcePosition &pos);
+    void InstantiateType(ETSObjectType *type, std::vector<Type *> &typeArgTypes, const lexer::SourcePosition &pos,
+                         std::size_t explicitTypeArgCount);
     util::StringView GetHashFromTypeArguments(ArenaVector<Type *> &typeArgTypes);
 
     ETSChecker *checker_;
