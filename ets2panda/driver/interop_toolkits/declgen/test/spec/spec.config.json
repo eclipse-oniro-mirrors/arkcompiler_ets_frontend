@@ -1,0 +1,16 @@
+{
+  "docId": "arkts-sta-declgen-spec",
+  "title": {
+    "zh": "ArkTS动静态类型互操作声明文件生成工具Declgen规格指南",
+    "en": "ArkTS Static-Dynamic Interop Declaration File Generator (Declgen) Specification Guide"
+  },
+  "frontMatter": [
+    "<!--Kit: ArkTS-->",
+    "<!--Subsystem: RuntimeCore-->",
+    "<!--Owner: @jiangkaiwen678217-->",
+    "<!--Designer: @luchenxu-->",
+    "<!--Tester: @kirl75; @zsw_zhushiwei-->",
+    "<!--Adviser: @k1ngqaquuu-->"
+  ],
+  "structure": "topic-major"
+}

@@ -18,7 +18,13 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['coverage/**', 'dist/**', 'node_modules/**'],
+    ignores: ['coverage/**', 'dist/**', 'node_modules/**', 'test/spec/framework/dist/**'],
+  },
+  {
+    // Spec fixture/sample files are generator inputs (test data); they
+    // intentionally contain constructs the linter forbids (namespaces,
+    // `let` without reassignment, ...).
+    ignores: ['test/spec/sections/**'],
   },
   {
     files: ['src/**/*.ts', 'test/**/*.ts'],

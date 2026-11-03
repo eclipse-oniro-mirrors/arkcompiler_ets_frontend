@@ -1,0 +1,4 @@
+{
+  "compat": "requires-transform",
+  "tags": ["ambient", "initializer"]
+}

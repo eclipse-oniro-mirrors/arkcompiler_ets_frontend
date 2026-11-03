@@ -29,3 +29,7 @@ CONTEXT.md
 skills-lock.json
 
 test/dynamic/cookbook_tests/*
+# Spec suite case content and generated docs: case dirs are generator
+# inputs/outputs (byte-meaningful), docs/ is a generated artifact.
+test/spec/sections/
+test/spec/docs/

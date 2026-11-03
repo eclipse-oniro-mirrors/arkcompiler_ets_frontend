@@ -1,0 +1,5 @@
+{
+  "compat": "requires-transform",
+  "tags": ["ambient"],
+  "pending": true
+}

@@ -83,6 +83,27 @@ npm run test:dynamic
 npm run test:dynamic:cookbook
 ```
 
+## Spec Test Suite
+
+`test/spec/` is the single source of truth for the Declgen specification
+guide: every scenario is a directory whose fixture runs against the generator
+and whose description/sample is exported into the published documents
+(`test/spec/docs/`, checked in). The `test/spec/framework/` tool keeps the
+suite, the generated documents, and the generator from drifting apart:
+
+```sh
+npm run test:spec      # build, then run the spec suite (self-tests + cases) via Jest
+npm run test:spec-kit  # framework unit tests only
+npm run spec:lint      # structural/content lint over test/spec
+npm run spec:render    # regenerate test/spec/docs/*.md (use -- --check in CI)
+npm run spec:new -- <parent/path> <slug>   # scaffold a new case
+```
+
+Golden outputs (`output/`, `sample.output.d.ets`) are only written by
+`node test/spec/framework/dist/cli.js test --update` and must be reviewed by
+a human before committing. Cases under `sta2dyn/` are marked `pending` until
+the static generator is wired into the suite.
+
 ## Repository Layout
 
 ```text
@@ -96,7 +117,10 @@ declgen/
 │   └── buildConfig.ts
 ├── test/
 │   ├── dynamic/    # Dynamic unit and cookbook tests
-│   └── static/     # Static declaration generation tests
+│   ├── static/     # Static declaration generation tests
+│   └── spec/       # Spec test suite (case dirs are the spec source of truth)
+│       ├── framework/  # spec-kit: lint / render / test / new commands
+│       └── ut/         # spec-kit self-tests
 ├── scripts/
 └── package.json
 ```

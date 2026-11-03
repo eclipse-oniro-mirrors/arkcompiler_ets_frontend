@@ -56,7 +56,8 @@ import {
     isHarOrHsp,
     FileChangeStatus,
     getDefaultFileChangeStatus,
-    COMPILE_MODE
+    COMPILE_MODE,
+    DependencyItem
 } from '../types';
 
 import { Logger, LogDataFactory } from '../logger';
@@ -98,6 +99,21 @@ export interface DepGraphContext {
     entryFiles: Set<string>;
     fileToModule: Map<string, ModuleInfo>;
     dependencyMap: DependencyFileMap;
+}
+
+const DYNAMIC_DEPENDENCY_LANGUAGE: string = 'js';
+
+// Inputs of a dynamic dependency that a static compilation observes:
+// the dynamic source file and the declaration file the compiler reads
+function getDynamicDependencyInputs(item: DependencyItem): string[] {
+    const inputs: string[] = [];
+    if (item.sourceFilePath && fs.existsSync(item.sourceFilePath)) {
+        inputs.push(item.sourceFilePath);
+    }
+    if (item.path && !item.path.endsWith(ABC_SUFFIX) && fs.existsSync(item.path)) {
+        inputs.push(item.path);
+    }
+    return inputs;
 }
 
 /**
@@ -358,6 +374,42 @@ export abstract class DepAnalyzer {
             this.filesChangeStatusCache[filePath] = getDefaultFileChangeStatus();
         }
         return this.filesChangeStatusCache[filePath];
+    }
+
+    /**
+     * Collects watchable inputs (dynamic source and decl files) per dynamic
+     * dependency key from the (already generated and merged) module arktsconfigs.
+     * The keys match the dependency-graph node names the dep analyzer records
+     * for imports of dynamic modules.
+     */
+    protected collectDynamicDependencyInputs(modules: ModuleInfo[]): Map<string, string[]> {
+        const keyToInputs: Map<string, string[]> = new Map<string, string[]>();
+        for (const module of modules) {
+            const arktsConfig: ArkTSConfig | undefined = this.generator.getArktsConfigByPackageName(module.packageName);
+            if (arktsConfig === undefined) {
+                continue;
+            }
+            for (const [key, item] of Object.entries(arktsConfig.dependencies)) {
+                if (item.language !== DYNAMIC_DEPENDENCY_LANGUAGE) {
+                    continue;
+                }
+                this.appendDynamicDependencyInputs(keyToInputs, key, getDynamicDependencyInputs(item));
+            }
+        }
+        return keyToInputs;
+    }
+
+    private appendDynamicDependencyInputs(keyToInputs: Map<string, string[]>, key: string, inputs: string[]): void {
+        if (inputs.length === 0) {
+            return;
+        }
+        const knownInputs: string[] = keyToInputs.get(key) ?? [];
+        for (const input of inputs) {
+            if (!knownInputs.includes(input)) {
+                knownInputs.push(input);
+            }
+        }
+        keyToInputs.set(key, knownInputs);
     }
 
     private verifyAndDumpGraph(graph: Graph<CompileJobInfo>, output: string): void {

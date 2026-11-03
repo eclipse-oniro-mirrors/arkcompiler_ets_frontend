@@ -1,0 +1,37 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/entry/index.ets"
+    ],
+    "packageName": "entry",
+    "moduleType": "feature",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/entry/",
+    "sourceRoots": [
+        "./"
+    ],
+    "loaderOutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dist/out/entry",
+    "cachePath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dist/cache",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dist/declgen/decl_ets1",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
+    "dependencyModuleList": [
+        {
+            "packageName": "dynhar",
+            "moduleName": "dynhar",
+            "moduleType": "har",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dynhar",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/IncrementDynamicDemo/dynhar/index.ets",
+            "declFilesPath": "${INCREMENT_DYNAMIC_DEMO_DECL_FILEINFO}",
+            "language": "1.1",
+            "dependencies": []
+        }
+    ],
+    "hasMainModule": true
+}
