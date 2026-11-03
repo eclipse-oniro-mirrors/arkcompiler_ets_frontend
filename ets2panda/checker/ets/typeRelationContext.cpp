@@ -60,6 +60,11 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ir::TSTypeParame
         }
     }
 
+    // Number of type arguments provided explicitly in source code: the remaining ones are
+    // filled in from declared default types below and therefore may reference type parameters
+    // of the instantiated generic.
+    auto const explicitTypeArgCount = typeArgTypes.size();
+
     while (typeArgTypes.size() < type->TypeArguments().size()) {
         Type *defaultType = nullptr;
         if (type->TypeArguments().at(typeArgTypes.size())->IsETSTypeParameter()) {
@@ -77,7 +82,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ir::TSTypeParame
     }
 
     auto pos = (typeArgs == nullptr) ? type->Variable()->Declaration()->Node()->Range().start : typeArgs->Range().start;
-    InstantiateType(type, typeArgTypes, pos);
+    InstantiateType(type, typeArgTypes, pos, explicitTypeArgCount);
     ES2PANDA_ASSERT(result_->IsETSObjectType());
     result_->AsETSObjectType()->AddObjectFlag(ETSObjectFlags::NO_OPTS);
 }
@@ -197,7 +202,7 @@ void ConstraintCheckScope::TryCheckConstraints()
 }
 
 void InstantiationContext::InstantiateType(ETSObjectType *type, std::vector<Type *> &typeArgTypes,
-                                           const lexer::SourcePosition &pos)
+                                           const lexer::SourcePosition &pos, std::size_t explicitTypeArgCount)
 {
     auto const &typeParams = type->TypeArguments();
 
@@ -207,7 +212,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, std::vector<Type
 
     auto substitution = Substitution {};
     for (size_t idx = 0; idx < typeParams.size(); idx++) {
-        if (!substitution.empty()) {
+        if (idx >= explicitTypeArgCount && !substitution.empty()) {
             typeArgTypes[idx] = typeArgTypes[idx]->Substitute(checker_->Relation(), &substitution);
         }
         if (!typeParams[idx]->IsETSTypeParameter()) {
